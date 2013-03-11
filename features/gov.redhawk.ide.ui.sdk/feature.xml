@@ -14,19 +14,21 @@
       label="%featureName"
       version="1.0.0.qualifier"
       provider-name="%providerName"
+      plugin="mil.jpeojtrs.sca.util"
       image="rh_logo_128x128.gif">
 
-  <description url="http://redhawksdr.org">
-  	%description
-  </description>
-  
-  <copyright url="http://redhawksd.orgr/copyright">
-  	%copyright
-  </copyright>
-  
-  <license url="%licenseURL">:
-  	%license
-  </license> 
+   <description url="http://redhawksdr.org">
+      %description
+   </description>
+
+   <copyright url="http://redhawksd.orgr/copyright">
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      :
+   %license
+   </license>
 
    <includes
          id="gov.redhawk.ide.ui.feature"
