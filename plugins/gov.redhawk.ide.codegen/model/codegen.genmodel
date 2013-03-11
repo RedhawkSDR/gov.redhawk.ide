@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/gov.redhawk.ide.codegen/src"
+    modelPluginID="gov.redhawk.ide.codegen" templateDirectory="mil.jpeojtrs.sca.templates/templates"
+    dynamicTemplates="true" forceOverwrite="true" modelName="Codegen" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="6.0" copyrightFields="false" tableProviders="true" runtimeVersion="2.6">
+  <foreignModel>codegen.ecore</foreignModel>
+  <genPackages prefix="Codegen" basePackage="gov.redhawk.ide" resource="XML" disposableProviderFactory="true"
+      contentTypeIdentifier="gov.redhawk.ide.codegen" ecorePackage="codegen.ecore#/">
+    <genClasses ecoreClass="codegen.ecore#//ImplementationSettings">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ImplementationSettings/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ImplementationSettings/outputDir"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ImplementationSettings/template"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//ImplementationSettings/properties"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ImplementationSettings/generatorId"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ImplementationSettings/generatedOn"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ImplementationSettings/id"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//ImplementationSettings/generatedFileCRCs"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//ImplementationSettings/portGenerators"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ImplementationSettings/primary"/>
+    </genClasses>
+    <genClasses ecoreClass="codegen.ecore#//Property">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Property/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Property/value"/>
+    </genClasses>
+    <genClasses ecoreClass="codegen.ecore#//WaveDevSettings">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//WaveDevSettings/implSettings"/>
+    </genClasses>
+    <genClasses ecoreClass="codegen.ecore#//ImplIdToSettingsMap">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//ImplIdToSettingsMap/value"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EAttribute codegen.ecore#//ImplIdToSettingsMap/key"/>
+    </genClasses>
+    <genClasses ecoreClass="codegen.ecore#//FileToCRCMap">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//FileToCRCMap/crc"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//FileToCRCMap/file"/>
+    </genClasses>
+    <genClasses ecoreClass="codegen.ecore#//PortRepToGeneratorMap">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//PortRepToGeneratorMap/generator"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//PortRepToGeneratorMap/repId"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

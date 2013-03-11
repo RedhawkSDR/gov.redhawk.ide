@@ -1,0 +1,23 @@
+<%@ jet package="gov.redhawk.ide.dcd.generator.newnode" skeleton="../generator.skeleton"
+    class="ScdFileTemplate"
+%>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softwarecomponent PUBLIC "-//JTRS//DTD SCA V2.2.2 SCD//EN" "softwarecomponent.dtd">
+<!-- Created with REDHAWK IDE-->
+<!-- Powered by Eclipse -->
+<softwarecomponent>
+    <corbaversion>2.2</corbaversion>
+    <componentrepid repid="IDL:CF/DeviceManager:1.0" />
+    <componenttype>devicemanager</componenttype>
+    <componentfeatures> 
+		<supportsinterface repid="IDL:CF/DeviceManager:1.0" supportsname="DeviceManager" />
+        <supportsinterface repid="IDL:CF/PropertySet:1.0" supportsname="PropertySet" />
+	    <ports/>
+    </componentfeatures>
+    <interfaces>
+		<interface repid="IDL:CF/DeviceManager:1.0" name="DeviceManager">
+        	<inheritsinterface repid="IDL:CF/PropertySet:1.0"/>
+        </interface>
+        <interface repid="IDL:CF/PropertySet:1.0" name="PropertySet"/>
+    </interfaces>
+</softwarecomponent>

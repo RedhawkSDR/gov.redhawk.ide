@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softpkg PUBLIC "-//JTRS//DTD SCA V2.2.2 SPD//EN" "softpkg.dtd">
+<softpkg name="OssieDomainManager" id="DCE:82f6515a-de05-47f0-8e7a-1c9f621c00ee" >
+	<author>
+	    <name>OSSIE</name>
+	</author>
+	<descriptor>
+		<localfile name="DomainManager.scd.xml"/>
+	</descriptor>
+	<implementation id="DCE:d3e8aba5-4421-45c5-9be6-372b763883e7">
+		<description>implementation of a Domain Manager</description>
+		<code type="Executable">
+		    <localfile name="nodeBooter"/>
+		    <entrypoint>nodeBooter</entrypoint>
+		</code>
+		<processor name="x86_64"/>
+		<processor name="x86"/>
+		<os name="Linux"/>
+	</implementation>
+</softpkg>

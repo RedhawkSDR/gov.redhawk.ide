@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA PRF V2.2.2//EN" "properties.dtd">
+<properties>
+  <simple id="DCE:b1435a94-c259-4f1a-a486-b88c6eb34b76" mode="readwrite" name="frequency" type="float">
+    <value>10</value>
+    <units>Hz</units>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="DCE:280b4e1a-80ae-4dd2-8db7-397e60212c7f" mode="readwrite" name="packet_size" type="long">
+    <value>8192</value>
+    <units>bytes</units>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="DCE:afb929ce-c339-4e63-9a5d-246187b1023e" mode="readwrite" name="sampling_rate" type="long">
+    <value>8000</value>
+    <units>Samples / second</units>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="nk" mode="readwrite" type="string">
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+</properties>

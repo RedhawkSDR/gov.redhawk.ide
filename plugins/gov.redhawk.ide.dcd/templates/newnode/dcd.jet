@@ -1,0 +1,57 @@
+<%@ jet package="gov.redhawk.ide.dcd.generator.newnode" skeleton="../generator.skeleton"
+class="DcdFileTemplate" imports="gov.redhawk.ide.dcd.generator.newnode.GeneratorArgs
+mil.jpeojtrs.sca.util.DceUuidUtil 
+mil.jpeojtrs.sca.spd.SoftPkg
+java.util.ArrayList
+java.util.HashMap 
+java.util.List
+java.util.UUID"
+%>
+<%
+    GeneratorArgs args = (GeneratorArgs)argument;
+    List<String> deviceList = new ArrayList<String>();
+%>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE deviceconfiguration PUBLIC "-//JTRS//DTD SCA V2.2.2 DCD//EN" "deviceconfiguration.dtd">
+<!-- Created with REDHAWK IDE-->
+<!-- Powered by Eclipse -->
+<deviceconfiguration name="<%=args.getProjectName()%>" id="<%=args.getProjectId()%>">
+    <devicemanagersoftpkg>
+    	<localfile name="/mgr/DeviceManager.spd.xml">
+    	</localfile>
+    </devicemanagersoftpkg>
+    <componentfiles>
+<%
+    HashMap<SoftPkg, String> devToId = new HashMap<SoftPkg, String>(); 
+    for (SoftPkg device : args.getDevices()) { 
+        devToId.put(device, device.getName() + "_" + UUID.randomUUID());
+%>
+    	<componentfile type="SPD" id="<%=devToId.get(device)%>">
+    		<localfile name="<%=device.eResource().getURI().path()%>">
+    		</localfile>
+    	</componentfile>
+<% } %>
+    </componentfiles>
+    <partitioning>
+<%
+    for (SoftPkg device : args.getDevices()) {
+        int devNum = 1;
+        while (deviceList.contains(device.getName() + "_" + devNum)) {
+            devNum++;
+        }
+        deviceList.add(device.getName() + "_" + devNum);
+%>
+		<componentplacement>
+	    	<componentfileref refid="<%=devToId.get(device)%>">
+    		</componentfileref>
+	     	<componentinstantiation id="<%=DceUuidUtil.createDceUUID()%>">
+	     		<usagename><%=device.getName()%>_<%=devNum%></usagename>
+	     	</componentinstantiation>
+    	</componentplacement>
+<% } %>
+    </partitioning>
+    <domainmanager>
+    	<namingservice name="<%=args.getDomainManagerName()%>/<%=args.getDomainManagerName()%>">
+    	</namingservice>
+    </domainmanager>
+</deviceconfiguration>

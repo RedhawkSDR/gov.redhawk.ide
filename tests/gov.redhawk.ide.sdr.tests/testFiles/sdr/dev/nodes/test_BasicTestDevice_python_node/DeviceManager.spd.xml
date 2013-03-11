@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softpkg SYSTEM "../../xml/dtd/softpkg.dtd">
+<!--Created with OSSIE WaveDev Beta Version 0.5.0b-->
+<!--Powered by Python-->
+<softpkg name="DeviceManager" id="DCE:82f6515a-de05-47f0-8e7a-1c9f621c00ee">
+    <author>
+      <name>OSSIE</name>
+      <company>Virginia Tech : MPRG</company>
+      <webpage>http://ossie.wireless.vt.edu</webpage>
+    </author>
+    <descriptor>
+        <localfile name="DeviceManager.scd.xml"/>
+    </descriptor>
+    <implementation id="DCE:d3e8aba5-4421-45c5-9be6-372b763883e7">
+        <description>implementation of a Device Manager</description>
+        <propertyfile>
+            <localfile name="DeviceManager.Linux.x86.prf.xml"/>
+        </propertyfile>
+        <code type="Executable">
+            <localfile name="/domainmanager.exe"/>
+            <entrypoint>domainmanager.exe</entrypoint> 
+        </code>
+        <os name="Linux" version="5.5.1" />
+        <processor name="x86"/>
+    </implementation>
+</softpkg>

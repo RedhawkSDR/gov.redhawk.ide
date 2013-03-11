@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:dcd="http://sca.jpeojtrs.mil/dcd" xmlns:dmd="http://sca.jpeojtrs.mil/dmd" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:sad="http://sca.jpeojtrs.mil/sad" xmlns:sdr="http://www.redhawk.gov/model/ide/sdr" xmlns:spd="http://sca.jpeojtrs.mil/spd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ecore:nsPrefix="sdr" ecore:package="gov.redhawk.ide.sdr" targetNamespace="http://www.redhawk.gov/model/ide/sdr">
+  <xsd:import namespace="http://sca.jpeojtrs.mil/dcd" schemaLocation="../../mil.jpeojtrs.sca.dcd/model/dcd.xsd"/>
+  <xsd:import namespace="http://sca.jpeojtrs.mil/sad" schemaLocation="../../mil.jpeojtrs.sca.sad/model/sad.xsd"/>
+  <xsd:import namespace="http://sca.jpeojtrs.mil/spd" schemaLocation="../../mil.jpeojtrs.sca.spd/model/spd.xsd"/>
+  <xsd:import namespace="http://sca.jpeojtrs.mil/dmd" schemaLocation="../../mil.jpeojtrs.sca.dmd/model/dmd.xsd"/>
+  <xsd:import namespace="http://www.eclipse.org/emf/2002/Ecore" schemaLocation="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.xsd"/>
+  <xsd:element ecore:ignore="true" name="SdrRoot" type="sdr:SdrRoot"/>
+  <xsd:element ecore:ignore="true" name="ComponentsContainer" type="sdr:ComponentsContainer"/>
+  <xsd:element ecore:ignore="true" name="WaveformsContainer" type="sdr:WaveformsContainer"/>
+  <xsd:element ecore:ignore="true" name="DevicesContainer" type="sdr:DevicesContainer"/>
+  <xsd:element ecore:ignore="true" name="ServicesContainer" type="sdr:ServicesContainer"/>
+  <xsd:element ecore:ignore="true" name="NodesContainer" type="sdr:NodesContainer"/>
+  <xsd:complexType name="SdrRoot">
+    <xsd:annotation>
+      <xsd:appinfo ecore:key="operations" source="http://www.eclipse.org/emf/2002/Ecore">
+        <operation name="load">
+          <parameter name="path" type="ecore:EString"/>
+          <parameter name="monitor" type="sdr:IProgressMonitor"/>
+        </operation>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:attribute ecore:unsettable="true" name="path" type="ecore:EString"/>
+    <xsd:attribute ecore:changeable="false" ecore:derived="true" ecore:volatile="true" name="uri" type="sdr:URI"/>
+    <xsd:attribute ecore:suppressedSetVisibility="true" ecore:suppressedUnsetVisibility="true" ecore:unsettable="false" name="state" type="sdr:LoadState"/>
+    <xsd:attribute ecore:opposite="sdrRoot" ecore:reference="sdr:ComponentsContainer" ecore:suppressedSetVisibility="true" ecore:suppressedUnsetVisibility="true" name="componentsContainer" type="xsd:anyURI"/>
+    <xsd:attribute ecore:opposite="sdrRoot" ecore:reference="sdr:WaveformsContainer" ecore:suppressedSetVisibility="true" ecore:suppressedUnsetVisibility="true" name="waveformsContainer" type="xsd:anyURI"/>
+    <xsd:attribute ecore:opposite="sdrRoot" ecore:reference="sdr:DevicesContainer" ecore:suppressedSetVisibility="true" ecore:suppressedUnsetVisibility="true" name="devicesContainer" type="xsd:anyURI"/>
+    <xsd:attribute ecore:opposite="sdrRoot" ecore:reference="sdr:ServicesContainer" ecore:suppressedSetVisibility="true" ecore:suppressedUnsetVisibility="true" name="servicesContainer" type="xsd:anyURI"/>
+    <xsd:attribute ecore:opposite="sdrRoot" ecore:reference="sdr:NodesContainer" ecore:suppressedSetVisibility="true" ecore:suppressedUnsetVisibility="true" name="nodesContainer" type="xsd:anyURI"/>
+    <xsd:attribute ecore:reference="dmd:domainmanagerconfiguration" ecore:suppressedSetVisibility="true" ecore:suppressedUnsetVisibility="true" name="domainConfiguration" type="xsd:anyURI"/>
+  </xsd:complexType>
+  <xsd:complexType name="ComponentsContainer">
+    <xsd:attribute ecore:opposite="componentsContainer" ecore:reference="sdr:SdrRoot" ecore:suppressedSetVisibility="true" ecore:suppressedUnsetVisibility="true" name="sdrRoot" type="xsd:anyURI"/>
+    <xsd:attribute ecore:reference="spd:softPkg" name="components">
+      <xsd:simpleType>
+        <xsd:list itemType="xsd:anyURI"/>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="WaveformsContainer">
+    <xsd:attribute ecore:opposite="waveformsContainer" ecore:reference="sdr:SdrRoot" ecore:suppressedSetVisibility="true" ecore:suppressedUnsetVisibility="true" name="sdrRoot" type="xsd:anyURI"/>
+    <xsd:attribute ecore:reference="sad:softwareAssembly" name="waveforms">
+      <xsd:simpleType>
+        <xsd:list itemType="xsd:anyURI"/>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="DevicesContainer">
+    <xsd:attribute ecore:opposite="devicesContainer" ecore:reference="sdr:SdrRoot" ecore:suppressedSetVisibility="true" ecore:suppressedUnsetVisibility="true" name="sdrRoot" type="xsd:anyURI"/>
+    <xsd:attribute ecore:reference="spd:softPkg" name="components">
+      <xsd:simpleType>
+        <xsd:list itemType="xsd:anyURI"/>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="ServicesContainer">
+    <xsd:attribute ecore:opposite="servicesContainer" ecore:reference="sdr:SdrRoot" ecore:suppressedSetVisibility="true" ecore:suppressedUnsetVisibility="true" name="sdrRoot" type="xsd:anyURI"/>
+    <xsd:attribute ecore:reference="spd:softPkg" name="components">
+      <xsd:simpleType>
+        <xsd:list itemType="xsd:anyURI"/>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="NodesContainer">
+    <xsd:attribute ecore:opposite="nodesContainer" ecore:reference="sdr:SdrRoot" ecore:suppressedSetVisibility="true" ecore:suppressedUnsetVisibility="true" name="sdrRoot" type="xsd:anyURI"/>
+    <xsd:attribute ecore:reference="dcd:deviceconfiguration" name="nodes">
+      <xsd:simpleType>
+        <xsd:list itemType="xsd:anyURI"/>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:simpleType ecore:instanceClass="org.eclipse.core.runtime.IProgressMonitor" name="IProgressMonitor">
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="LoadState">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="EMPTY"/>
+      <xsd:enumeration value="LOADING"/>
+      <xsd:enumeration value="LOADED"/>
+      <xsd:enumeration ecore:value="-1" value="ERROR"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType ecore:instanceClass="java.net.URI" name="URI">
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+</xsd:schema>

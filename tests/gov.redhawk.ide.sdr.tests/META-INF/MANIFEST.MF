@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IDE SDR Tests
+Bundle-SymbolicName: gov.redhawk.ide.sdr.tests;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: .
+Bundle-Vendor: United States Government
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: gov.redhawk.ide.sdr.tests
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
+ gov.redhawk.ide.sdr;bundle-version="8.0.0";visibility:=reexport,
+ mil.jpeojtrs.sca.dcd;bundle-version="2.2.2";visibility:=reexport,
+ mil.jpeojtrs.sca.dmd;bundle-version="2.2.2";visibility:=reexport,
+ org.eclipse.emf.ecore;bundle-version="2.6.1";visibility:=reexport,
+ gov.redhawk.eclipsecorba.idl;bundle-version="6.0.0";visibility:=reexport,
+ gov.redhawk.eclipsecorba.library;bundle-version="6.0.0";visibility:=reexport,
+ mil.jpeojtrs.sca.prf;bundle-version="2.2.2";visibility:=reexport,
+ mil.jpeojtrs.sca.sad;bundle-version="2.2.2";visibility:=reexport,
+ mil.jpeojtrs.sca.scd;bundle-version="2.2.2";visibility:=reexport,
+ mil.jpeojtrs.sca.spd;bundle-version="2.2.2";visibility:=reexport,
+ org.eclipse.emf.ecore.xmi;bundle-version="2.5.0";visibility:=reexport,
+ gov.redhawk.sca;bundle-version="2.4.0",
+ org.junit4;bundle-version="4.5.0",
+ org.eclipse.emf.transaction;bundle-version="1.4.0"

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="gov.redhawk.ide.debug.internal.ui.diagram.LocalScaEditor"
+            default="false"
+            icon="icons/RedHawk_Logo16x.gif"
+            id="gov.redhawk.ide.debug.ui.diagram.editor.localSca"
+            name="Chalkboard">
+      </editor>
+   </extension>
+   <extension
+         point="gov.redhawk.sca.ui.scaContentTypes">
+      <contentTypeBinding
+            contentTypeId="gov.redhawk.ide.debug.ui.contentType.localSca"
+            editorId="gov.redhawk.ide.debug.ui.diagram.editor.localSca"
+            priority="HIGHEST">
+      </contentTypeBinding>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="mil.jpeojtrs.sca.sad.diagram.edit.parts.SadComponentInstantiationEditPart"
+            class="gov.redhawk.ide.debug.internal.adapters.LocalSadComponentInstantiationEditPartAdapterFactory">
+         <adapter
+               type="gov.redhawk.ide.debug.LocalLaunch">
+         </adapter>
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="gov.redhawk.ide.ui.category.sca_development"
+            class="gov.redhawk.ide.debug.internal.ui.diagram.ScaChalkboardView"
+            icon="icons/RedHawk_Logo16x.gif"
+            id="gov.redhawk.ide.debug.ui.diagram.chalkboard.view"
+            name="Chalkboard"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         id="debugDecorationProvider"
+         name="Local Launch Decoration Provider"
+         point="org.eclipse.gmf.runtime.diagram.ui.decoratorProviders">
+      <decoratorProvider
+            class="gov.redhawk.ide.debug.internal.ui.diagram.LocalLaunchDecoratorProvider">
+         <Priority
+               name="Lowest">
+         </Priority>
+         <object
+               class="org.eclipse.gmf.runtime.notation.Node(org.eclipse.gmf.runtime.notation)"
+               id="NODE">
+         </object>
+         <context
+               decoratorTargets="NODE"></context>
+      </decoratorProvider>
+   </extension>
+
+</plugin>

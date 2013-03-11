@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softwareassembly PUBLIC "-//JTRS//DTD SCA SAD V2.2.2//EN" "softwareassembly.dtd">
+<softwareassembly id="DCE:1dab9798-68c2-48b5-9599-86f7da2b621a" name="test">
+  <componentfiles>
+    <componentfile id="Reader_ef4d6295-8a9e-4b7b-9817-e671a0957f77" type="SPD">
+      <localfile name="/components/Reader/Reader.spd.xml"/>
+    </componentfile>
+    <componentfile id="Writer_5b1e468b-a95b-4761-8119-cf6097b447c9" type="SPD">
+      <localfile name="/components/Writer/Writer.spd.xml"/>
+    </componentfile>
+  </componentfiles>
+  <partitioning>
+    <componentplacement>
+      <componentfileref refid="Reader_ef4d6295-8a9e-4b7b-9817-e671a0957f77"/>
+      <componentinstantiation id="DCE:aa050c31-1cd3-4c25-a5ba-19f76f926290">
+        <usagename>Reader_1</usagename>
+        <findcomponent>
+          <namingservice name="Reader_1"/>
+        </findcomponent>
+      </componentinstantiation>
+    </componentplacement>
+    <componentplacement>
+      <componentfileref refid="Writer_5b1e468b-a95b-4761-8119-cf6097b447c9"/>
+      <componentinstantiation id="DCE:1367eb74-6283-484a-80b0-eae30a65e8a8">
+        <usagename>Writer_1</usagename>
+        <findcomponent>
+          <namingservice name="Writer_1"/>
+        </findcomponent>
+      </componentinstantiation>
+    </componentplacement>
+  </partitioning>
+  <assemblycontroller>
+    <componentinstantiationref refid="DCE:aa050c31-1cd3-4c25-a5ba-19f76f926290"/>
+  </assemblycontroller>
+  <connections>
+    <connectinterface id="DCE:c95c584c-819a-4b59-a559-4705a08ea087">
+      <usesport>
+        <usesidentifier>dataFloatOut_port</usesidentifier>
+        <componentinstantiationref refid="DCE:aa050c31-1cd3-4c25-a5ba-19f76f926290"/>
+      </usesport>
+      <providesport>
+        <providesidentifier>dataFloatIn_port</providesidentifier>
+        <componentinstantiationref refid="DCE:1367eb74-6283-484a-80b0-eae30a65e8a8"/>
+      </providesport>
+    </connectinterface>
+  </connections>
+</softwareassembly>

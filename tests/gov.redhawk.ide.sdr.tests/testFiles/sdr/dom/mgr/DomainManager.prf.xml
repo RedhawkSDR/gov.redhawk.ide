@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
+<properties>
+    <description>These are the properties to configure the domain manager</description>
+
+    <simple id="LOGGING_CONFIG_URI" mode="readonly" name="LOGGING_CONFIG_URI" type="string">
+        <description>
+	A URI on the SCA FileManager that points to a log4j configuration file used
+	for the domain manager and the entire domain. 
+	</description>
+        <kind kindtype="configure"/>
+    </simple>
+</properties>

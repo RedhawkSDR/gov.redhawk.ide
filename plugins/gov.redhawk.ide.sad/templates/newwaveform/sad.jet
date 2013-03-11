@@ -1,0 +1,65 @@
+<%@ jet package="gov.redhawk.ide.sad.generator.newwaveform" skeleton="generator.skeleton"
+    class="SadFileTemplate" 
+    imports="gov.redhawk.ide.sad.generator.newwaveform.GeneratorArgs
+    mil.jpeojtrs.sca.spd.SoftPkg
+    mil.jpeojtrs.sca.util.DceUuidUtil
+    java.util.UUID
+    java.util.HashMap"
+%>
+<% 
+	GeneratorArgs args = (GeneratorArgs)argument;
+	SoftPkg assemblyController = null;
+	HashMap<SoftPkg, String> comToId = new HashMap<SoftPkg, String>();
+	String assemblyId = null;
+
+	if (args.getAssemblyController() != null) {
+		assemblyController = args.getAssemblyController();
+		comToId.put(assemblyController, assemblyController.getName() + "_" + UUID.randomUUID());
+		assemblyId = DceUuidUtil.createDceUUID();
+	}
+%>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softwareassembly PUBLIC "-//JTRS//DTD SCA V2.2.2 SAD//EN" "softwareassembly.dtd">
+<!-- Created with REDHAWK IDE-->
+<!-- Powered by Eclipse -->
+<softwareassembly name="<%=args.getProjectName()%>" id="<%=args.getProjectId()%>">
+    <componentfiles>
+<%
+	if (assemblyController != null) {
+%>
+		<componentfile type="SPD" id="<%=comToId.get(assemblyController)%>">
+			<localfile name="<%=assemblyController.eResource().getURI().path()%>">
+			</localfile>
+		</componentfile>
+<%
+	}
+%>
+    </componentfiles>
+    <partitioning>
+<%
+	if (assemblyController != null) {
+%>
+	<componentplacement>
+		<componentfileref refid="<%=comToId.get(assemblyController)%>">
+		</componentfileref>
+		<componentinstantiation id="<%=assemblyId%>">
+			<usagename><%=assemblyController.getName()%>_1</usagename>
+			<findcomponent>
+				<namingservice name="<%=assemblyController.getName()%>_1"/>
+			</findcomponent>
+		</componentinstantiation>
+	</componentplacement>
+<%
+	}
+%>
+    </partitioning>
+    <assemblycontroller>
+<%
+	if (assemblyController != null) {
+%>
+		<componentinstantiationref refid="<%=assemblyId%>"/>
+<%
+	}
+%>
+    </assemblycontroller>
+</softwareassembly>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softpkg PUBLIC "-//JTRS//DTD SCA SPD V2.2.2//EN" "softpkg.dtd">
+<softpkg id="DCE:3b5527f5-8488-4b09-bfff-2ec49a90cdd8" name="defaultCpp" type="sca_compliant">
+  <title></title>
+  <author>
+    <name></name>
+  </author>
+  <propertyfile type="PRF">
+    <localfile name="defaultCpp.prf.xml"/>
+  </propertyfile>
+  <descriptor>
+    <localfile name="defaultCpp.scd.xml"/>
+  </descriptor>
+  <implementation id="DCE:9c4257a0-4281-45c7-85f6-a66adc018c7e">
+    <description>The implementation contains descriptive information about the template for a software component.</description>
+    <code type="Executable">
+      <localfile name="defaultCpp_cpp_impl1/defaultCpp_cpp_impl1"/>
+      <entrypoint>defaultCpp_cpp_impl1/defaultCpp_cpp_impl1</entrypoint>
+    </code>
+    <compiler name="/usr/bin/gcc" version="4.1.2"/>
+    <programminglanguage name="C++"/>
+    <humanlanguage name="EN"/>
+    <os name="Linux"/>
+    <processor name="x86"/>
+  </implementation>
+</softpkg>

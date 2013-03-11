@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softpkg SYSTEM "../xml/dtd/softpkg.dtd">
+<softpkg id="DCE:82f6515a-de05-47f0-8e7a-1c9f621c00ee" name="DomainManager">
+  <author/>
+  <descriptor>
+    <localfile name="DomainManager.scd.xml"/>
+  </descriptor>
+  <implementation id="DCE:d3e8aba5-4421-45c5-9be6-372b763883e7">
+    <description>implementation of a Domain Manager</description>
+    <code type="Executable">
+      <localfile name="/domainmanager.exe"/>
+      <entrypoint>domainmanager.exe</entrypoint>
+    </code>
+    <compiler name="msvc" version="6.0"/>
+    <programminglanguage name="c++"/>
+    <processor name="x86"/>
+    <os name="WinNT" version="5.0"/>
+  </implementation>
+</softpkg>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softpkg PUBLIC "-//JTRS//DTD SCA SPD V2.2.2//EN" "softpkg.dtd">
+<softpkg id="DCE:e0cfeb24-1039-4b4c-93cb-33c42008d64f" name="FrequencyShift" type="sca_compliant">
+  <title></title>
+  <author>
+    <name></name>
+  </author>
+  <propertyfile type="PRF">
+    <localfile name="FrequencyShift.prf.xml"/>
+  </propertyfile>
+  <descriptor>
+    <localfile name="FrequencyShift.scd.xml"/>
+  </descriptor>
+  <implementation id="DCE:145edd08-2b7a-4c6d-95cd-468611e7544a">
+    <description>Sample description</description>
+    <code type="Executable">
+      <localfile name="FrequencyShift_cpp_impl1/FrequencyShift_cpp_impl1"/>
+      <entrypoint>FrequencyShift_cpp_impl1/FrequencyShift_cpp_impl1</entrypoint>
+    </code>
+    <compiler name="/usr/bin/gcc" version="4.1.2"/>
+    <programminglanguage name="C++"/>
+    <humanlanguage name="EN"/>
+    <os name="Linux"/>
+    <processor name="x86"/>
+  </implementation>
+</softpkg>

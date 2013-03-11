@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IDE SAD Plug-in
+Bundle-SymbolicName: gov.redhawk.ide.sad
+Bundle-Version: 2.1.0.qualifier
+Bundle-Activator: gov.redhawk.ide.sad.IdeSadPlugin
+Require-Bundle: org.eclipse.core.resources;bundle-version="3.6.0",
+ org.eclipse.core.runtime;bundle-version="3.6.0",
+ gov.redhawk.ide;bundle-version="5.0.0",
+ gov.redhawk.sca.model;bundle-version="13.0.0",
+ gov.redhawk.ide.codegen;bundle-version="9.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: gov.redhawk.ide.sad,
+ gov.redhawk.ide.sad.generator.newwaveform;x-internal:=true
+Bundle-Vendor: United States Government

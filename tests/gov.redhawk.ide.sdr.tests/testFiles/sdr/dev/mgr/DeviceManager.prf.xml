@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
+<properties>
+    <description>These are the properties to configure the device manager</description>
+
+    <simple id="LOGGING_CONFIG_URI" mode="readonly" name="LOGGING_CONFIG_URI" type="string">
+        <description>
+	A URI that points to a log4j configuration file used
+	for the device manager and all devices spawned by this device.
+	</description>
+        <kind kindtype="configure"/>
+    </simple>
+</properties>

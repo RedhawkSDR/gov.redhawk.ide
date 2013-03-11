@@ -1,0 +1,283 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="gov.redhawk.ide.codegen" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="gov.redhawk.ide.codegen" id="codegenTemplate" name="SCA Component Code Generation Template"/>
+      </appinfo>
+      <documentation>
+         Provide a template for a code generator.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="template"/>
+         </choice>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="template">
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="description"/>
+            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="componenttype" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of the class that provides the generated code
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":gov.redhawk.ide.codegen.IScaComponentCodegenTemplate"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="codegenId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The ID of the Code Generator that this template will generate source for.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="gov.redhawk.ide.codegen.codegens/codegen/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Unqiue identifier for this template
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Human readable name of this template
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="hasSettings" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  This should be set to true if the generator has properties for determining what code is output.  This may require a custom properties page as well.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="notDefaultable" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Set this to true if the generator will generate code and it should be able to be selected by default.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="selectable" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  Set this to false if the user should not be able to select the generator in the drop down.  This is mainly used to deprecate generators.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="templateLocation" type="string">
+            <annotation>
+               <documentation>
+                  Deprecated, do not use.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource" deprecated="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="portCodegenId" type="string">
+            <annotation>
+               <documentation>
+                  ID of the port generator to reference
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="gov.redhawk.ide.codegen.portGenerator/portHandler/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="usesPortTemplates" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  This attribute is used to indicate whether or not this template will delegate code generation to port generators if one is specified.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="property">
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="1">
+            <element ref="description"/>
+         </sequence>
+         <attribute name="key" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The key/id of the property.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="default_value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The default value for the property.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A user friendly name for the property.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="required" type="boolean">
+            <annotation>
+               <documentation>
+                  true if the property is required.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="deprecated" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  true if the property is now considered deprecated
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="description" type="string">
+      <annotation>
+         <documentation>
+            A user friendly description of the object.
+         </documentation>
+      </annotation>
+   </element>
+
+   <element name="componenttype">
+      <complexType>
+         <attribute name="type" use="required">
+            <annotation>
+               <documentation>
+                  Type of resource to contribute to
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="resource">
+                  </enumeration>
+                  <enumeration value="device">
+                  </enumeration>
+                  <enumeration value="service">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         The following is an example of the extension point: 
+&lt;p&gt;
+&lt;pre&gt;
+ &lt;extension
+         point=&quot;gov.redhawk.ide.codegen.codegenTemplate&quot;&gt;
+      &lt;template
+            class=&quot;gov.redhawk.ide.codegen.jet.java.pattern.LegacyTemplate&quot;
+            codegenId=&quot;gov.redhawk.ide.codegen.jet.java.JavaGenerator&quot;
+            hasSettings=&quot;true&quot;
+            id=&quot;gov.redhawk.ide.codegen.jet.java.pattern.LegacyTemplate&quot;
+            name=&quot;Legacy Project&quot;
+            notDefaultable=&quot;true&quot;
+            selectable=&quot;false&quot;
+            usesPortTemplates=&quot;false&quot;&gt;
+         &lt;description&gt;
+            This is the template for previously generated projects prior to template definitions.
+         &lt;/description&gt;
+         &lt;property
+               default_value=&quot;FALSE&quot;
+               deprecated=&quot;true&quot;
+               key=&quot;auto_start&quot;
+               name=&quot;Auto start&quot;
+               required=&quot;true&quot;&gt;
+            &lt;description&gt;
+               When this property is set, the generated code&apos;s initialize function is tied to the start function, which in turn starts the processing thread. 
+	When the property is not set, the start function needs to be explicitly called to start the processing thread.
+            &lt;/description&gt;
+         &lt;/property&gt;
+         &lt;property
+               default_value=&quot;TRUE&quot;
+               key=&quot;queued_ports&quot;
+               name=&quot;Enable queued ports&quot;
+               required=&quot;true&quot;&gt;
+            &lt;description&gt;
+               Set this to true to use queue&apos;s for sending and receiving port data
+            &lt;/description&gt;
+         &lt;/property&gt;
+         &lt;property
+               default_value=&quot;&quot;
+               key=&quot;java_package&quot;
+               name=&quot;Name of the Java package&quot;
+               required=&quot;true&quot;&gt;
+            &lt;description&gt;
+               The package that the generated component should be named.
+            &lt;/description&gt;
+         &lt;/property&gt;
+         &lt;componenttype
+               type=&quot;resource&quot;&gt;
+         &lt;/componenttype&gt;
+         &lt;componenttype
+               type=&quot;device&quot;&gt;
+         &lt;/componenttype&gt;
+      &lt;/template&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+
+
+
+</schema>

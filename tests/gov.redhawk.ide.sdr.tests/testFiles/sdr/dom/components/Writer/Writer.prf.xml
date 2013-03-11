@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA PRF V2.2.2//EN" "properties.dtd">
+<properties>
+  <simple id="DCE:1afe7fda-0f67-48b9-a107-b499510f216a" mode="readwrite" name="output_file_name" type="string">
+    <description>Name of the output file received data shall be written</description>
+    <value>/var/tmp/shiftedFrequency.bin</value>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+</properties>

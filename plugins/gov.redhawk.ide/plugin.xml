@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<!--
+	This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+	source distribution.
+
+	This file is part of REDHAWK IDE.
+	
+	All rights reserved.  This program and the accompanying materials are made available under 
+	the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+	http://www.eclipse.org/legal/epl-v10.html
+-->
+<plugin>
+   <extension 
+         point="org.eclipse.core.runtime.preferences"> 
+      <initializer 
+            class="gov.redhawk.ide.preferences.RedhawkIdePreferenceInitializer"> 
+      </initializer> 
+   </extension>
+   <extension
+         id="gov.redhawk.ide.targetplatform.problem"
+         name="SCA Target Platform Problem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         id="gov.redhawk.ide.builders.scaproject"
+         name="SCA Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            callOnEmptyDelta="true"
+            hasNature="true"
+            isConfigurable="true">
+         <run
+               class="gov.redhawk.ide.builders.SCABuilder">
+         </run></builder>
+   </extension>
+   <extension
+         id="gov.redhawk.ide.emf.validation.problem"
+         name="EMF Validation Problem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         id="gov.redhawk.ide.natures.scaproject"
+         name="SCA Project"
+         point="org.eclipse.core.resources.natures">
+      <builder
+            id="gov.redhawk.ide.builders.scaproject">
+      </builder>
+      <runtime>
+         <run
+               class="gov.redhawk.ide.natures.ScaProjectNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="gov.redhawk.ide.natures.sca.waveform"
+         name="SCA Waveform"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="gov.redhawk.ide.natures.ScaWaveformProjectNature">
+         </run>
+      </runtime>
+      <requires-nature
+            id="gov.redhawk.ide.natures.scaproject">
+      </requires-nature>
+   </extension>
+   <extension
+         id="gov.redhawk.ide.natures.sca.component"
+         name="SCA Component"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="gov.redhawk.ide.natures.ScaComponentProjectNature">
+         </run>
+      </runtime>
+      <requires-nature
+            id="gov.redhawk.ide.natures.scaproject">
+      </requires-nature>
+   </extension>
+   <extension
+         id="gov.redhawk.ide.natures.sca.node"
+         name="SCA Node"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="gov.redhawk.ide.natures.ScaNodeProjectNature">
+         </run>
+      </runtime>
+      <requires-nature
+            id="gov.redhawk.ide.natures.scaproject">
+      </requires-nature>
+   </extension>
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            description="Provides the REDHAWK IDE preference value for the OSSIEHOME variable (i.e. the target platform runtime location)"
+            name="OssieHome"
+            resolver="gov.redhawk.ide.variables.OssieHomeResolver"
+            supportsArgument="false">
+      </variable>
+   </extension>
+</plugin>

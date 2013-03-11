@@ -1,0 +1,10 @@
+<%@ jet package="gov.redhawk.ide.spd.generator.newcomponent" skeleton="generator.skeleton"
+    class="PrfFileTemplate"
+%>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
+<!-- Created with REDHAWK IDE-->
+<!-- Powered by Eclipse -->
+<properties>
+</properties>
+

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA PRF V2.2.2//EN" "properties.dtd">
+<properties>
+  <simple id="DCE:30707c6a-d5b3-4435-9fae-1f79eedb5136" mode="readwrite" name="input_name" type="string">
+    <description>Name of the file that shall serve as input data</description>
+    <value>/opt/examples/testsine.bin</value>
+    <units>ASCII</units>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+  <simple id="DCE:eb3f7334-9254-4a2b-9ab2-f847939a7b90" mode="readwrite" name="packet_size" type="long">
+    <value>8192</value>
+    <units>bytes</units>
+    <kind kindtype="configure"/>
+    <action type="external"/>
+  </simple>
+</properties>

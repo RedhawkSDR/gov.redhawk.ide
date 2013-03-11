@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ASCII"?>
+<codegen:WaveDevSettings xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:codegen="http://www.redhawk.gov/model/codegen">
+  <implSettings key="DCE:64d371b9-a912-497c-b6b8-3840e4465cdf">
+    <value name="component_cpp_impl1" outputDir="component_cpp_impl1" template="src/" generatorId="gov.redhawk.ide.codegen.jet.cplusplus.CplusplusGenerator">
+      <properties id="queued_ports" value="true"/>
+      <properties id="memcpy_buffer" value="true"/>
+    </value>
+  </implSettings>
+  <implSettings key="DCE:89222ce9-e37b-45eb-a5df-67cba7e5fe03">
+    <value name="component_cpp_impl2" outputDir="component_cpp_impl2" template="src/" generatorId="gov.redhawk.ide.codegen.cplusplus.GccManualGenerator">
+      <properties id="generate_skeleton" value="true"/>
+    </value>
+  </implSettings>
+  <implSettings key="DCE:5e000353-56cd-4ed7-b0f9-a645f1cbc0f9">
+    <value name="component_java_impl1" outputDir="component_java_impl1" template="src/" generatorId="gov.redhawk.ide.codegen.jet.java.JavaGenerator">
+      <properties id="queued_ports" value="true"/>
+      <properties id="java_package" value="component_java_impl1"/>
+    </value>
+  </implSettings>
+  <implSettings key="DCE:2aaf5197-4757-4e56-8e6b-2012fe42595b">
+    <value name="component_java_impl2" outputDir="component_java_impl2" template="src/" generatorId="gov.redhawk.ide.codegen.java.JavaManualGenerator">
+      <properties id="generate_skeleton" value="true"/>
+    </value>
+  </implSettings>
+  <implSettings key="DCE:dde14643-a05b-45fc-8c06-be44f39d61c3">
+    <value name="component_python_impl1" outputDir="component_python_impl1" template="src/" generatorId="gov.redhawk.ide.codegen.jet.python.PythonGenerator">
+      <properties id="thread_ports" value="true"/>
+      <properties id="use_workmodule" value="true"/>
+    </value>
+  </implSettings>
+  <implSettings key="DCE:b46eab12-ba92-415e-9af2-0b7cf97bff64">
+    <value name="component_python_impl2" outputDir="component_python_impl2" template="src/" generatorId="gov.redhawk.ide.codegen.python.PythonManualGenerator">
+      <properties id="generate_skeleton" value="true"/>
+    </value>
+  </implSettings>
+</codegen:WaveDevSettings>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/gov.redhawk.ide.sdr/src"
+    editorDirectory="" modelPluginID="gov.redhawk.ide.sdr" templateDirectory="/mil.jpeojtrs.sca.templates/templates"
+    dynamicTemplates="true" modelName="Sdr" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="5.0" copyrightFields="false" runtimeVersion="2.6" usedGenPackages="../../mil.jpeojtrs.sca.dcd/model/dcd.genmodel#//dcd ../../mil.jpeojtrs.sca.dmd/model/dmd.genmodel#//dmd platform:/plugin/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore ../../gov.redhawk.eclipsecorba.idl/model/idl.genmodel#//idl ../../gov.redhawk.eclipsecorba.idl/model/idl.genmodel#//expressions ../../gov.redhawk.eclipsecorba.library/model/library.genmodel#//library ../../mil.jpeojtrs.sca.prf/model/prf.genmodel#//prf ../../mil.jpeojtrs.sca.sad/model/sad.genmodel#//sad ../../mil.jpeojtrs.sca.scd/model/scd.genmodel#//scd ../../mil.jpeojtrs.sca.spd/model/spd.genmodel#//spd ../../mil.jpeojtrs.sca.partitioning/model/partitioning.genmodel#//partitioning ../../mil.jpeojtrs.sca.dpd/model/dpd.genmodel#//dpd">
+  <genAnnotations source="http://www.eclipse.org/emf/2002/GenModel/exporter/org.eclipse.xsd.ecore.exporter">
+    <genAnnotations source="selectedPackages">
+      <details key="http://www.redhawk.gov/model/ide/sdr" value="sdr.xsd"/>
+    </genAnnotations>
+    <genAnnotations source="selectedReferencedPackages">
+      <details key="http://sca.jpeojtrs.mil/dcd" value="dcd.xsd"/>
+      <details key="http://sca.jpeojtrs.mil/dmd" value="dmd.xsd"/>
+      <details key="http://www.eclipse.org/emf/2002/Ecore" value="Ecore.xsd"/>
+      <details key="http://sca.jpeojtrs.mil/prf" value="prf.xsd"/>
+      <details key="http://sca.jpeojtrs.mil/sad" value="sad.xsd"/>
+      <details key="http://sca.jpeojtrs.mil/scd" value="scd.xsd"/>
+      <details key="http://sca.jpeojtrs.mil/spd" value="spd.xsd"/>
+    </genAnnotations>
+    <details key="directoryURI" value="."/>
+  </genAnnotations>
+  <foreignModel>sdr.ecore</foreignModel>
+  <genPackages prefix="Sdr" basePackage="gov.redhawk.ide" resource="XML" disposableProviderFactory="true"
+      generateExampleClass="false" ecorePackage="sdr.ecore#/">
+    <genAnnotations source="http://www.eclipse.org/emf/2002/GenModel/exporter/org.eclipse.xsd.ecore.exporter">
+      <genAnnotations source="sdr.xsd"/>
+    </genAnnotations>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="sdr.ecore#//LoadState">
+      <genEnumLiterals ecoreEnumLiteral="sdr.ecore#//LoadState/UNLOADED"/>
+      <genEnumLiterals ecoreEnumLiteral="sdr.ecore#//LoadState/LOADING"/>
+      <genEnumLiterals ecoreEnumLiteral="sdr.ecore#//LoadState/LOADED"/>
+    </genEnums>
+    <genDataTypes ecoreDataType="sdr.ecore#//IStatus"/>
+    <genClasses ecoreClass="sdr.ecore#//SdrRoot">
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute sdr.ecore#//SdrRoot/loadStatus"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute sdr.ecore#//SdrRoot/state"/>
+      <genFeatures property="None" children="true" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference sdr.ecore#//SdrRoot/componentsContainer"/>
+      <genFeatures property="None" children="true" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference sdr.ecore#//SdrRoot/waveformsContainer"/>
+      <genFeatures property="None" children="true" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference sdr.ecore#//SdrRoot/devicesContainer"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sdr.ecore#//SdrRoot/servicesContainer"/>
+      <genFeatures property="None" children="true" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference sdr.ecore#//SdrRoot/nodesContainer"/>
+      <genFeatures property="Readonly" notify="false" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference sdr.ecore#//SdrRoot/domainConfiguration"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sdr.ecore#//SdrRoot/idlLibrary"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute sdr.ecore#//SdrRoot/devFileSystemRoot"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute sdr.ecore#//SdrRoot/domFileSystemRoot"/>
+      <genOperations ecoreOperation="sdr.ecore#//SdrRoot/load">
+        <genParameters ecoreParameter="sdr.ecore#//SdrRoot/load/monitor"/>
+      </genOperations>
+      <genOperations ecoreOperation="sdr.ecore#//SdrRoot/unload">
+        <genParameters ecoreParameter="sdr.ecore#//SdrRoot/unload/monitor"/>
+      </genOperations>
+      <genOperations ecoreOperation="sdr.ecore#//SdrRoot/reload">
+        <genParameters ecoreParameter="sdr.ecore#//SdrRoot/reload/monitor"/>
+      </genOperations>
+      <genOperations ecoreOperation="sdr.ecore#//SdrRoot/setSdrRoot">
+        <genParameters ecoreParameter="sdr.ecore#//SdrRoot/setSdrRoot/sdrRoot"/>
+        <genParameters ecoreParameter="sdr.ecore#//SdrRoot/setSdrRoot/domPath"/>
+        <genParameters ecoreParameter="sdr.ecore#//SdrRoot/setSdrRoot/devPath"/>
+      </genOperations>
+      <genOperations ecoreOperation="sdr.ecore#//SdrRoot/getDevResource">
+        <genParameters ecoreParameter="sdr.ecore#//SdrRoot/getDevResource/path"/>
+      </genOperations>
+      <genOperations ecoreOperation="sdr.ecore#//SdrRoot/getDomResource">
+        <genParameters ecoreParameter="sdr.ecore#//SdrRoot/getDomResource/path"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="sdr.ecore#//ComponentsContainer">
+      <genFeatures property="None" notify="false" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference sdr.ecore#//ComponentsContainer/sdrRoot"/>
+    </genClasses>
+    <genClasses ecoreClass="sdr.ecore#//WaveformsContainer">
+      <genFeatures property="None" notify="false" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference sdr.ecore#//WaveformsContainer/sdrRoot"/>
+      <genFeatures property="None" children="true" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference sdr.ecore#//WaveformsContainer/waveforms"/>
+    </genClasses>
+    <genClasses ecoreClass="sdr.ecore#//DevicesContainer">
+      <genFeatures property="None" notify="false" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference sdr.ecore#//DevicesContainer/sdrRoot"/>
+    </genClasses>
+    <genClasses ecoreClass="sdr.ecore#//ServicesContainer">
+      <genFeatures property="None" notify="false" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference sdr.ecore#//ServicesContainer/sdrRoot"/>
+    </genClasses>
+    <genClasses ecoreClass="sdr.ecore#//NodesContainer">
+      <genFeatures property="None" notify="false" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference sdr.ecore#//NodesContainer/sdrRoot"/>
+      <genFeatures property="None" children="true" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference sdr.ecore#//NodesContainer/nodes"/>
+    </genClasses>
+    <genClasses ecoreClass="sdr.ecore#//StringToAbstractProperty">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sdr.ecore#//StringToAbstractProperty/key"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sdr.ecore#//StringToAbstractProperty/value"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="sdr.ecore#//PropertyRegistry">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference sdr.ecore#//PropertyRegistry/properties"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="sdr.ecore#//SoftPkgRegistry">
+      <genFeatures property="None" children="true" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference sdr.ecore#//SoftPkgRegistry/components"/>
+      <genOperations ecoreOperation="sdr.ecore#//SoftPkgRegistry/getSoftPkg">
+        <genParameters ecoreParameter="sdr.ecore#//SoftPkgRegistry/getSoftPkg/softPkgId"/>
+      </genOperations>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
