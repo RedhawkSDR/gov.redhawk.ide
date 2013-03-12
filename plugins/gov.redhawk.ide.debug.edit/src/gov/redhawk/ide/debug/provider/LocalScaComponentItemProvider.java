@@ -102,9 +102,9 @@ public class LocalScaComponentItemProvider
 	 * @generated
 	 */
 	protected void addExecParamsPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+		itemPropertyDescriptors.add(
+			createItemPropertyDescriptor(
+				((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
 				 getString("_UI_LocalAbstractComponent_execParams_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_LocalAbstractComponent_execParams_feature", "_UI_LocalAbstractComponent_type"),
@@ -124,9 +124,9 @@ public class LocalScaComponentItemProvider
 	 * @generated
 	 */
 	protected void addImplementationIDPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+		itemPropertyDescriptors.add(
+			createItemPropertyDescriptor(
+				((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
 				 getString("_UI_LocalAbstractComponent_implementationID_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_LocalAbstractComponent_implementationID_feature", "_UI_LocalAbstractComponent_type"),
