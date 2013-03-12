@@ -13,4 +13,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: gov.redhawk.ide.sad,
  gov.redhawk.ide.sad.generator.newwaveform;x-internal:=true
-Bundle-Vendor: United States Government
+Bundle-Vendor: REDHAWK

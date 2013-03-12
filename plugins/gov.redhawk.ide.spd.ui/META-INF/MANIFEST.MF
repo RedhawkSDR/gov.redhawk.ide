@@ -52,4 +52,4 @@ Export-Package: gov.redhawk.ide.spd.internal.ui;x-friends:="gov.redhawk.ide.spd.
  gov.redhawk.ide.spd.ui,
  gov.redhawk.ide.spd.ui.editor,
  gov.redhawk.ide.spd.ui.wizard
-Bundle-Vendor: United States Government
+Bundle-Vendor: REDHAWK

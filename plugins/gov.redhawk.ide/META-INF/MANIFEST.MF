@@ -22,4 +22,4 @@ Export-Package: gov.redhawk.ide,
  gov.redhawk.ide.natures,
  gov.redhawk.ide.preferences,
  gov.redhawk.ide.util
-Bundle-Vendor: United States Government
+Bundle-Vendor: REDHAWK

@@ -29,4 +29,4 @@ Export-Package: gov.redhawk.ide.codegen.ui,
  gov.redhawk.ide.codegen.ui.action,
  gov.redhawk.ide.codegen.ui.internal;x-internal:=true,
  gov.redhawk.ide.codegen.ui.internal.command;x-internal:=true
-Bundle-Vendor: United States Government
+Bundle-Vendor: REDHAWK

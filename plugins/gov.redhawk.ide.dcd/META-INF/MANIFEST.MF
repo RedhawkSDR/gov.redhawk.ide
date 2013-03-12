@@ -18,4 +18,4 @@ Export-Package: gov.redhawk.ide.dcd,
  gov.redhawk.ide.dcd.generator.newdevice;x-friends:="gov.redhawk.ide.dcd.ui,gov.redhawk.ide.dcd.tests",
  gov.redhawk.ide.dcd.generator.newnode;x-friends:="gov.redhawk.ide.dcd.ui,gov.redhawk.ide.dcd.tests",
  gov.redhawk.ide.dcd.generator.newservice;x-friends:="gov.redhawk.ide.dcd.ui,gov.redhawk.ide.dcd.tests"
-Bundle-Vendor: United States Government
+Bundle-Vendor: REDHAWK
