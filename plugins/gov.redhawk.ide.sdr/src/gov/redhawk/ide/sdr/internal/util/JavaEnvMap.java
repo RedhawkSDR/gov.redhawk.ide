@@ -23,6 +23,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.common.CommonPlugin;
 import org.eclipse.emf.common.util.URI;
 
 public class JavaEnvMap extends AbstractEnvMap {
@@ -49,19 +50,11 @@ public class JavaEnvMap extends AbstractEnvMap {
 		if (retVal) {
 			String relativeCodePath = ScaEcoreUtils.getFeature(impl, SpdPackage.Literals.IMPLEMENTATION__CODE, SpdPackage.Literals.CODE__LOCAL_FILE,
 			        SpdPackage.Literals.LOCAL_FILE__NAME);
-	
-			String[] dir = URI.createFileURI(relativeCodePath).segments();
-			if (impl.eResource() != null && impl.eResource().getURI() != null) {
-				URI pathUri = impl.eResource().getURI().trimSegments(1).appendSegments(dir);
-				if ("jar".equals(pathUri.fileExtension())) {
-					path.add(getAbsolutePath(pathUri));
-				} else {
-					URI uri = pathUri.appendSegment("bin");
-					IFileStore store = EFS.getStore(java.net.URI.create(uri.toString()));
-					if (store.fetchInfo().exists()) {
-						path.add(getAbsolutePath(uri));
-					}
-					path.add(getAbsolutePath(pathUri) + File.separator + "*");
+
+			if (impl.eResource() != null) {
+				String newPath = createPath(relativeCodePath, impl.eResource().getURI());
+				if (newPath != null) {
+					path.add(newPath);
 				}
 			}
 		}
@@ -74,6 +67,9 @@ public class JavaEnvMap extends AbstractEnvMap {
 		}
 		
 		URI fullPath = spdUri.trimSegments(1).appendSegments(URI.createFileURI(relativePath).segments());
+		if (fullPath.isPlatformResource()) {
+			fullPath = CommonPlugin.resolve(spdUri);
+		}
 		IFileStore store = EFS.getStore(java.net.URI.create(fullPath.toString()));
 		IFileInfo info = store.fetchInfo();
 		if (info.exists()) {

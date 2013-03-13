@@ -25,6 +25,7 @@ import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.common.CommonPlugin;
 import org.eclipse.emf.common.util.URI;
 
 public class CppEnvMap extends AbstractEnvMap {
@@ -57,6 +58,9 @@ public class CppEnvMap extends AbstractEnvMap {
 			return null;
 		}
 		URI fullPathUri = spdUri.trimSegments(1).appendSegments(URI.createFileURI(relativeCodePath).segments());
+		if (fullPathUri.isPlatformResource()) {
+			fullPathUri = CommonPlugin.resolve(spdUri);
+		}
 		IFileStore store = EFS.getStore(java.net.URI.create(fullPathUri.toString()));
 		IFileInfo info = store.fetchInfo();
 		if (info.exists()) {
