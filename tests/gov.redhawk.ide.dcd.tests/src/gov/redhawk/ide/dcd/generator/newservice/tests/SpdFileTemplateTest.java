@@ -45,7 +45,7 @@ public class SpdFileTemplateTest {
 		final SpdFileTemplate spdTemplate = SpdFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setAuthorName("MyName");
-		args.setProjectId("MyIdentifier");
+		args.setSoftPkgId("MyIdentifier");
 		args.setProjectName("MyProject");
 		args.setSoftPkgName("MySpdName");
 		final String spdContent = spdTemplate.generate(args);
@@ -57,7 +57,7 @@ public class SpdFileTemplateTest {
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final SoftPkg softpkg = SoftPkg.Util.getSoftPkg(resourceSet.getResource(URI.createFileURI(spdFile.toString()), true));
 		Assert.assertEquals("MySpdName", softpkg.getName());
-		Assert.assertEquals(args.getProjectId(), softpkg.getId());
+		Assert.assertEquals("MyIdentifier", softpkg.getId());
 		Assert.assertEquals(SCAComplianceType.SCA_COMPLIANT, softpkg.getType());
 		Assert.assertEquals("", softpkg.getTitle());
 		Assert.assertEquals(args.getAuthorName(), softpkg.getAuthor().get(0).getName().get(0));
