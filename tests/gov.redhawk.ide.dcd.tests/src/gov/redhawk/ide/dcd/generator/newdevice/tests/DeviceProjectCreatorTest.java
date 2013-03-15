@@ -25,6 +25,7 @@ import mil.jpeojtrs.sca.spd.SpdPackage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
@@ -59,12 +60,14 @@ public class DeviceProjectCreatorTest {
 	public void testCreateDeviceFiles() throws CoreException {
 		final IProject project = DeviceProjectCreator.createEmptyProject("deviceProjectTest", null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
+		Assert.assertTrue(project.exists());
 		Assert.assertTrue("deviceProjectTest".equals(project.getName()));
 		DeviceProjectCreator.createDeviceFiles(project, "deviceProjectTest", "gov.redhawk.deviceProjectTest",
 		        "Author",
 		        RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE,
 		        false,
 		        new NullProgressMonitor());
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 
 		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
 		Assert.assertTrue(spdFile.exists());
@@ -98,12 +101,14 @@ public class DeviceProjectCreatorTest {
 	public void testCreateAggregateDevice() throws CoreException {
 		final IProject project = DeviceProjectCreator.createEmptyProject("aggDevTest", null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
+		Assert.assertTrue(project.exists());
 		Assert.assertTrue("aggDevTest".equals(project.getName()));
 		DeviceProjectCreator.createDeviceFiles(project, "deviceProjectTest", "gov.redhawk.deviceProjectTest",
 		        "Author",
 		        RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE,
-		        false,
+		        true,
 		        new NullProgressMonitor());
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 
 		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
 		Assert.assertTrue(spdFile.exists());
