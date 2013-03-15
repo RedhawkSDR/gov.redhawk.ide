@@ -60,8 +60,8 @@ public class DeviceProjectCreatorTest {
 		Assert.assertNotNull(project);
 		Assert.assertTrue("deviceProjectTest".equals(project.getName()));
 		DeviceProjectCreator.createDeviceFiles(project, "deviceProjectTest", "gov.redhawk.deviceProjectTest",
-		        "deviceProjectTest",
 		        "Author",
+		        "deviceProjectTest",
 		        false,
 		        new NullProgressMonitor());
 
@@ -100,8 +100,8 @@ public class DeviceProjectCreatorTest {
 		DeviceProjectCreator.createDeviceFiles(project,
 				"deviceProjectTest",
 				"gov.redhawk.deviceProjectTest",
-		        "aggDevTest",
 		        "Author",
+		        "aggDevTest",
 		        true,
 		        new NullProgressMonitor());
 
