@@ -67,7 +67,6 @@ public class DeviceProjectCreatorTest {
 		        RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE,
 		        false,
 		        new NullProgressMonitor());
-		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 
 		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
 		Assert.assertTrue(spdFile.exists());
@@ -108,7 +107,6 @@ public class DeviceProjectCreatorTest {
 		        RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE,
 		        true,
 		        new NullProgressMonitor());
-		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 
 		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
 		Assert.assertTrue(spdFile.exists());
