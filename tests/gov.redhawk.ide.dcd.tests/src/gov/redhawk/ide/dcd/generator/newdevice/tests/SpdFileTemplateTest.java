@@ -57,14 +57,14 @@ public class SpdFileTemplateTest {
 		// Try to create a model from the file
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final SoftPkg softpkg = SoftPkg.Util.getSoftPkg(resourceSet.getResource(URI.createFileURI(spdFile.toString()), true));
-		Assert.assertEquals("MySpdName", softpkg.getName());
-		Assert.assertEquals("MyIdentifier", softpkg.getId());
+		Assert.assertEquals(args.getSoftPkgName(), softpkg.getName());
+		Assert.assertEquals(args.getSoftPkgId(), softpkg.getId());
 		Assert.assertEquals(SCAComplianceType.SCA_COMPLIANT, softpkg.getType());
 		Assert.assertEquals("", softpkg.getTitle());
 		Assert.assertEquals(args.getAuthorName(), softpkg.getAuthor().get(0).getName().get(0));
 		Assert.assertEquals("PRF", softpkg.getPropertyFile().getType());
-		Assert.assertEquals(args.getProjectName() + PrfPackage.FILE_EXTENSION, softpkg.getPropertyFile().getLocalFile().getName());
-		Assert.assertEquals(args.getProjectName() + ScdPackage.FILE_EXTENSION, softpkg.getDescriptor().getLocalfile().getName());
+		Assert.assertEquals(args.getSoftPkgName() + PrfPackage.FILE_EXTENSION, softpkg.getPropertyFile().getLocalFile().getName());
+		Assert.assertEquals(args.getSoftPkgName() + ScdPackage.FILE_EXTENSION, softpkg.getDescriptor().getLocalfile().getName());
 	}
 
 }
