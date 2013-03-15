@@ -12,6 +12,7 @@
 package gov.redhawk.ide.dcd.generator.newdevice.tests;
 
 import gov.redhawk.ide.dcd.generator.newdevice.DeviceProjectCreator;
+import gov.redhawk.ide.preferences.RedhawkIdePreferenceConstants;
 
 import junit.framework.Assert;
 import mil.jpeojtrs.sca.prf.PrfPackage;
@@ -61,7 +62,7 @@ public class DeviceProjectCreatorTest {
 		Assert.assertTrue("deviceProjectTest".equals(project.getName()));
 		DeviceProjectCreator.createDeviceFiles(project, "deviceProjectTest", "gov.redhawk.deviceProjectTest",
 		        "Author",
-		        "executabledevice",
+		        RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE,
 		        false,
 		        new NullProgressMonitor());
 
@@ -97,16 +98,21 @@ public class DeviceProjectCreatorTest {
 	public void testCreateAggregateDevice() throws CoreException {
 		final IProject project = DeviceProjectCreator.createEmptyProject("aggDevTest", null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
-		DeviceProjectCreator.createDeviceFiles(project,
-				"deviceProjectTest",
-				"gov.redhawk.deviceProjectTest",
+		Assert.assertTrue("aggDevTest".equals(project.getName()));
+		DeviceProjectCreator.createDeviceFiles(project, "deviceProjectTest", "gov.redhawk.deviceProjectTest",
 		        "Author",
-		        "executabledevice",
-		        true,
+		        RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE,
+		        false,
 		        new NullProgressMonitor());
 
 		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
 		Assert.assertTrue(spdFile.exists());
+
+		final IFile prfFile = project.getFile(project.getName() + PrfPackage.FILE_EXTENSION);
+		Assert.assertTrue(prfFile.exists());
+
+		final IFile scdFile = project.getFile(project.getName() + ScdPackage.FILE_EXTENSION);
+		Assert.assertTrue(scdFile.exists());
 
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final SoftPkg dev = SoftPkg.Util.getSoftPkg(resourceSet.getResource(URI.createPlatformResourceURI("/aggDevTest/aggDevTest.spd.xml", true), true));
