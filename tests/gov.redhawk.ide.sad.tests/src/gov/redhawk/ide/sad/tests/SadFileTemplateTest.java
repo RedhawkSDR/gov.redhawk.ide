@@ -39,20 +39,21 @@ public class SadFileTemplateTest {
 	@Test
 	public void test() throws IOException {
 		// Generate XML using the template
-		final SadFileTemplate prfTemplate = SadFileTemplate.create(null);
+		final SadFileTemplate sadTemplate = SadFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
-		args.setSoftPkgId("MyID");
+		args.setWaveformId("MyID");
 		args.setProjectName("MyName");
-		final String prfContent = prfTemplate.generate(args);
+		
+		final String prfContent = sadTemplate.generate(args);
 
 		// Create an XML file with the content
-		final File prfFile = TestUtils.createFile(prfContent, SadPackage.FILE_EXTENSION);
+		final File sadFile = TestUtils.createFile(prfContent, SadPackage.FILE_EXTENSION);
 
 		// Try to create a model from the file
 		final ResourceSet resourceSet = new ResourceSetImpl();
-		final SoftwareAssembly assembly = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(URI.createFileURI(prfFile.toString()), true));
-		Assert.assertEquals(args.getSoftPkgId(), assembly.getId());
-		Assert.assertEquals(args.getProjectName(), assembly.getName());
+		final SoftwareAssembly assembly = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(URI.createFileURI(sadFile.toString()), true));
+		Assert.assertEquals(args.getWaveformId(), assembly.getId());
+		Assert.assertEquals(args.getWaveformName(), assembly.getName());
 		Assert.assertNotNull(assembly.getComponentFiles());
 		Assert.assertNotNull(assembly.getPartitioning());
 		Assert.assertNotNull(assembly.getAssemblyController());
