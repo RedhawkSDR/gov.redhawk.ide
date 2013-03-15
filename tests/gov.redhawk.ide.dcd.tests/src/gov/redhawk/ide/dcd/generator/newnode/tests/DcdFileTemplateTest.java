@@ -78,10 +78,10 @@ public class DcdFileTemplateTest {
 		Assert.assertEquals(args2.getNodeId(), devcfg.getId());
 		Assert.assertEquals("/mgr/DeviceManager.spd.xml", devcfg.getDeviceManagerSoftPkg().getLocalFile().getName());
 		Assert.assertEquals("SPD", devcfg.getComponentFiles().getComponentFile().get(0).getType());
-		Assert.assertTrue(devcfg.getComponentFiles().getComponentFile().get(0).getId().startsWith(args1.getProjectName() + "_"));
+		Assert.assertTrue(devcfg.getComponentFiles().getComponentFile().get(0).getId().startsWith(args1.getSoftPkgName() + "_"));
 		Assert.assertEquals(spdFile.getAbsolutePath(), devcfg.getComponentFiles().getComponentFile().get(0).getLocalFile().getName());
-		Assert.assertTrue(devcfg.getPartitioning().getComponentPlacement().get(0).getComponentFileRef().getRefid().startsWith(args1.getProjectName() + "_"));
-		Assert.assertEquals(args1.getProjectName() + "_1", devcfg.getPartitioning()
+		Assert.assertTrue(devcfg.getPartitioning().getComponentPlacement().get(0).getComponentFileRef().getRefid().startsWith(args1.getSoftPkgName() + "_"));
+		Assert.assertEquals(args1.getSoftPkgName() + "_1", devcfg.getPartitioning()
 		        .getComponentPlacement()
 		        .get(0)
 		        .getComponentInstantiation()
