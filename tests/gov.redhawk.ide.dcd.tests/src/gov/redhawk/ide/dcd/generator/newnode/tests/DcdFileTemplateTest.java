@@ -63,7 +63,7 @@ public class DcdFileTemplateTest {
 		});
 		args2.setDomainManagerName("MyDomain");
 		args2.setNodeName("MyNodeName");
-		args2.setSoftPkgId("MySpdID");
+		args2.setNodeId("MyNodeID");
 		args2.setProjectName(args1.getProjectName());
 		final DcdFileTemplate dcdTemplate = DcdFileTemplate.create(null);
 		final String dcdContent = dcdTemplate.generate(args2);
