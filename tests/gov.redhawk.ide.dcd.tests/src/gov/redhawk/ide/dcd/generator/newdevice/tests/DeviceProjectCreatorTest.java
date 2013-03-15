@@ -103,7 +103,7 @@ public class DeviceProjectCreatorTest {
 		Assert.assertNotNull(project);
 		Assert.assertTrue(project.exists());
 		Assert.assertTrue("aggDevTest".equals(project.getName()));
-		DeviceProjectCreator.createDeviceFiles(project, "deviceProjectTest", "gov.redhawk.deviceProjectTest",
+		DeviceProjectCreator.createDeviceFiles(project, "aggDevTest", "gov.redhawk.deviceProjectTest",
 		        "Author",
 		        RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE,
 		        true,
