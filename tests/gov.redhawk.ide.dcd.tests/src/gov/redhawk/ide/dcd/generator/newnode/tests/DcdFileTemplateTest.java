@@ -44,7 +44,7 @@ public class DcdFileTemplateTest {
 		final SpdFileTemplate spdTemplate = SpdFileTemplate.create(null);
 		final gov.redhawk.ide.dcd.generator.newdevice.GeneratorArgs args1 = new gov.redhawk.ide.dcd.generator.newdevice.GeneratorArgs();
 		args1.setAuthorName("MyName");
-		args1.setProjectId("MyIdentifier");
+		args1.setSoftPkgId("MyIdentifier");
 		args1.setProjectName("MyProject");
 		final String spdContent = spdTemplate.generate(args1);
 
