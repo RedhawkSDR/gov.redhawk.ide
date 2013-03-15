@@ -41,7 +41,7 @@ public class SadFileTemplateTest {
 		// Generate XML using the template
 		final SadFileTemplate prfTemplate = SadFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
-		args.setProjectId("MyID");
+		args.setSoftPkgId("MyID");
 		args.setProjectName("MyName");
 		final String prfContent = prfTemplate.generate(args);
 
@@ -51,7 +51,7 @@ public class SadFileTemplateTest {
 		// Try to create a model from the file
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final SoftwareAssembly assembly = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(URI.createFileURI(prfFile.toString()), true));
-		Assert.assertEquals(args.getProjectId(), assembly.getId());
+		Assert.assertEquals(args.getSoftPkgId(), assembly.getId());
 		Assert.assertEquals(args.getProjectName(), assembly.getName());
 		Assert.assertNotNull(assembly.getComponentFiles());
 		Assert.assertNotNull(assembly.getPartitioning());
