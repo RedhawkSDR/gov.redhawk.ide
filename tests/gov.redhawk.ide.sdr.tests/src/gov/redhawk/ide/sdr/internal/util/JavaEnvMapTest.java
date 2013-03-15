@@ -33,12 +33,16 @@ public class JavaEnvMapTest {
 	public void testCreatePath() throws CoreException, URISyntaxException, IOException {
 		SdrRoot sdr = SdrTests.getSdrTestsSdrRoot();
 		SoftPkg spd = sdr.getComponentsContainer().getSoftPkg("DCE:38279be0-4650-40c4-9084-352e6ebeedeb");
+		Assert.assertNotNull(spd.eResource());
+		Assert.assertNotNull(spd);
+		URI uri = spd.eResource().getURI();
+		Assert.assertNotNull(uri);
 		JavaEnvMap map = new JavaEnvMap();
 		Assert.assertNull(map.createPath(null, null));
-		File file = EFS.getStore(java.net.URI.create(spd.eResource().getURI().trimSegments(1).toString())).toLocalFile(0, null);
-		Assert.assertEquals(new File(file, "lib").toString() + "/*", map.createPath("lib", spd.eResource().getURI()));
-		Assert.assertEquals(new File(file, "lib").toString() + "/*", map.createPath("lib/", spd.eResource().getURI()));
-		Assert.assertEquals(new File(file, "lib/test.jar").toString(), map.createPath("lib/test.jar", spd.eResource().getURI()));
+		File file = EFS.getStore(java.net.URI.create(uri.trimSegments(1).toString())).toLocalFile(0, null);
+		Assert.assertEquals(new File(file, "lib").toString() + "/*", map.createPath("lib", uri));
+		Assert.assertEquals(new File(file, "lib").toString() + "/*", map.createPath("lib/", uri));
+		Assert.assertEquals(new File(file, "lib/test.jar").toString(), map.createPath("lib/test.jar", uri));
 	}
 
 }
