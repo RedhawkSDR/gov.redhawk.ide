@@ -52,15 +52,11 @@ public abstract class SoftPkgRegistryTest extends PropertyRegistryTest {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see gov.redhawk.ide.sdr.SoftPkgRegistry#getSoftPkg(java.lang.String)
-	 * @generated
+	 * @generated NOT
 	 */
 	public void testGetSoftPkg__String() {
 		// END GENERATED CODE
-		
-		// FIXME: implement this operation test method
-		// Ensure that you remove @generated or mark it @generated NOT
-		fail();
-		
+		getFixture().getSoftPkg(null);		
 		// BEGIN GENERATED CODE
 	}
 

@@ -96,5 +96,9 @@ public class StringToAbstractPropertyTest extends TestCase {
 	protected void tearDown() throws Exception {
 		setFixture(null);
 	}
+	
+	public void testStub() {
+		
+	}
 
 } //StringToAbstractPropertyTest

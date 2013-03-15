@@ -938,6 +938,9 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 */
 	public Resource getDevResource(String path) {
 		// END GENERATED CODE
+		if (path == null) {
+			return null;
+		}
 		path = trimPath(path);
 		return eResource().getResourceSet().getResource(getDevFileSystemRoot().appendSegments(path.split("/")), true);
 		// BEGIN GENERATED CODE
@@ -958,6 +961,9 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 */
 	public Resource getDomResource(String path) {
 		// END GENERATED CODE
+		if (path == null) {
+			return null;
+		}
 		path = trimPath(path);
 		return eResource().getResourceSet().getResource(getDomFileSystemRoot().appendSegments(path.split("/")), true);
 		// BEGIN GENERATED CODE

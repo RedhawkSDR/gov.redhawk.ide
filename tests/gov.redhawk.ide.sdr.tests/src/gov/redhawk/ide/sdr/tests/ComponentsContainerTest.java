@@ -24,8 +24,6 @@ import org.eclipse.emf.common.util.EList;
  * @generated
  */
 public class ComponentsContainerTest extends SoftPkgRegistryTest {
-
-	protected ComponentsContainer fixture = null;
 	
 	/**
 	 * <!-- begin-user-doc -->
@@ -84,12 +82,12 @@ public class ComponentsContainerTest extends SoftPkgRegistryTest {
 	}
 
 	public void testComponentsContainer() {
-		final EList<SoftPkg> components = this.fixture.getComponents();
+		final EList<SoftPkg> components = getFixture().getComponents();
 		Assert.assertEquals(3, components.size());
 		for (final SoftPkg softPkg : components) {
 			Assert.assertNotNull(softPkg);
 		}
-		Assert.assertEquals(this.sdrRoot, this.fixture.getSdrRoot());
+		Assert.assertEquals(this.sdrRoot, getFixture().getSdrRoot());
 		
 		Assert.assertNotNull(this.fixture);
 	}

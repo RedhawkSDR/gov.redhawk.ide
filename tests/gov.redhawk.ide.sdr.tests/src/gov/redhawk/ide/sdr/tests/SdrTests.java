@@ -78,7 +78,7 @@ public class SdrTests extends TestSuite {
 		return SdrTests.getSdrRoot(URI.createURI(rootPath.toString()));
 	}
 
-	public static SdrRoot getSdrRoot(final URI sdrRootPath) {
+	public static synchronized SdrRoot getSdrRoot(final URI sdrRootPath) {
 		Assert.isNotNull(sdrRootPath);
 		final TransactionalEditingDomain editingDomain = TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain();
 		final ResourceSet resourceSet = editingDomain.getResourceSet();
@@ -87,6 +87,10 @@ public class SdrTests extends TestSuite {
 		sdrRoot.setSdrRoot(sdrRootPath, "dom", "dev");
 		editingDomain.getCommandStack().execute(new AddCommand(editingDomain, sdrResource.getContents(), sdrRoot));
 		sdrRoot.load(null);
+		Assert.isNotNull(sdrRoot.getComponentsContainer(), "Failed to load Components SDR Root for path: " + sdrRootPath);
+		Assert.isNotNull(sdrRoot.getDevicesContainer(), "Failed to load Devices SDR Root for path: " + sdrRootPath);
+		Assert.isNotNull(sdrRoot.getWaveformsContainer(), "Failed to load Waveforms SDR Root for path: " + sdrRootPath);
+		Assert.isNotNull(sdrRoot.getServicesContainer(), "Failed to load Services SDR Root for path: " + sdrRootPath);
 		return sdrRoot;
 	}
 
