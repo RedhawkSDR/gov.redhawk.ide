@@ -42,7 +42,7 @@ public class SadFileTemplateTest {
 		final SadFileTemplate sadTemplate = SadFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setWaveformId("MyID");
-		args.setProjectName("MyName");
+		args.setWaveformName("MyName");
 		
 		final String prfContent = sadTemplate.generate(args);
 
