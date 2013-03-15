@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
-import gov.redhawk.ExtendedCF.Sandbox;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.model.sca.ScaComponent;
 
@@ -25,6 +24,7 @@ import CF.LifeCyclePackage.ReleaseError;
 import CF.ResourceFactoryPackage.CreateResourceFailure;
 import CF.ResourceFactoryPackage.InvalidResourceId;
 import CF.ResourceFactoryPackage.ShutdownFailure;
+import ExtendedCF.Sandbox;
 
 /**
  * 

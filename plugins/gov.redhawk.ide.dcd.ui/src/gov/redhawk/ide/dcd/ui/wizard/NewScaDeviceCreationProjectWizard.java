@@ -134,7 +134,10 @@ public class NewScaDeviceCreationProjectWizard extends NewScaResourceWizard impl
 							}
 
 							// Create the SCA XML files
-							NewScaDeviceCreationProjectWizard.this.setOpenEditorOn(DeviceProjectCreator.createDeviceFiles(project, id, null,
+							NewScaDeviceCreationProjectWizard.this.setOpenEditorOn(DeviceProjectCreator.createDeviceFiles(project, 
+									NewScaDeviceCreationProjectWizard.this.getSoftPkg().getName(), 
+									NewScaDeviceCreationProjectWizard.this.getSoftPkg().getId(),
+									null,
 							        NewScaDeviceCreationProjectWizard.this.resourcePropertiesPage.getDeviceType(),
 							        NewScaDeviceCreationProjectWizard.this.resourcePropertiesPage.getAggregateDeviceType(),
 							        progress.newChild(CREATE_XML_FILES_WORK)));
@@ -143,7 +146,7 @@ public class NewScaDeviceCreationProjectWizard extends NewScaResourceWizard impl
 							final ImplementationWizardPage page = (ImplementationWizardPage) getWizPages().get(1);
 							final Implementation impl = page.getImplementation();
 							final ImplementationSettings settings = page.getImplSettings();
-							ProjectCreator.addImplementation(project, impl, settings, progress.newChild(CREATE_IMPL_WORK));
+							ProjectCreator.addImplementation(project, NewScaDeviceCreationProjectWizard.this.getSoftPkg().getName(), impl, settings, progress.newChild(CREATE_IMPL_WORK));
 						} else {
 							final int delegatedWork = CREATE_XML_FILES_WORK + CREATE_IMPL_WORK * getImplList().size();
 							setOpenEditorOn(ProjectCreator.importFiles(project, existingSpdPath, getImplList(), getImportedSettingsMap(),
@@ -318,7 +321,9 @@ public class NewScaDeviceCreationProjectWizard extends NewScaResourceWizard impl
 
 		// Create a softpkg
 		final SoftPkg softPkg = SpdFactory.eINSTANCE.createSoftPkg();
-		softPkg.setName(this.resourcePropertiesPage.getProjectName());
+		
+		String[] tokens = this.resourcePropertiesPage.getProjectName().split("\\.");
+		softPkg.setName(tokens[tokens.length - 1]);
 
 		final boolean generateId = this.resourcePropertiesPage.getIdGroup().isGenerateId();
 		final String providedId = this.resourcePropertiesPage.getIdGroup().getProvidedId();

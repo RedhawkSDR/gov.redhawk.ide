@@ -38,8 +38,8 @@ import CF.LifeCyclePackage.ReleaseError;
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaComponentImpl#getLaunch <em>Launch</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaComponentImpl#getMode <em>Mode</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaComponentImpl#getExecParams <em>Exec Params</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaComponentImpl#getImplementationID <em>Implementation ID</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaComponentImpl#getExecParam <em>Exec Param</em>}</li>
  * </ul>
  * </p>
  *
@@ -83,15 +83,6 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	 */
 	protected String mode = MODE_EDEFAULT;
 	/**
-	 * The cached value of the '{@link #getExecParams() <em>Exec Params</em>}' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getExecParams()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<String> execParams;
-	/**
 	 * The default value of the '{@link #getImplementationID() <em>Implementation ID</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -109,6 +100,26 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	 * @ordered
 	 */
 	protected String implementationID = IMPLEMENTATION_ID_EDEFAULT;
+	/**
+	 * The default value of the '{@link #getExecParam() <em>Exec Param</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @see #getExecParam()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String EXEC_PARAM_EDEFAULT = "";
+	/**
+	 * The cached value of the '{@link #getExecParam() <em>Exec Param</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @see #getExecParam()
+	 * @generated
+	 * @ordered
+	 */
+	protected String execParam = EXEC_PARAM_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -176,36 +187,6 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<String> getExecParams() {
-		if (execParams == null) {
-			execParams = new EDataTypeUniqueEList.Unsettable<String>(String.class, this, ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAMS);
-		}
-		return execParams;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void unsetExecParams() {
-		if (execParams != null) ((InternalEList.Unsettable<?>)execParams).unset();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public boolean isSetExecParams() {
-		return execParams != null && ((InternalEList.Unsettable<?>)execParams).isSet();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public String getImplementationID() {
 		return implementationID;
 	}
@@ -224,6 +205,29 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getExecParam() {
+		return execParam;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setExecParam(String newExecParam) {
+		String oldExecParam = execParam;
+		execParam = newExecParam;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM, oldExecParam, execParam));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -234,10 +238,10 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 				return getLaunch();
 			case ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE:
 				return getMode();
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAMS:
-				return getExecParams();
 			case ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID:
 				return getImplementationID();
+			case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM:
+				return getExecParam();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -247,7 +251,6 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -257,12 +260,11 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 			case ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE:
 				setMode((String)newValue);
 				return;
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAMS:
-				getExecParams().clear();
-				getExecParams().addAll((Collection<? extends String>)newValue);
-				return;
 			case ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID:
 				setImplementationID((String)newValue);
+				return;
+			case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM:
+				setExecParam((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -282,11 +284,11 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 			case ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE:
 				setMode(MODE_EDEFAULT);
 				return;
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAMS:
-				unsetExecParams();
-				return;
 			case ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID:
 				setImplementationID(IMPLEMENTATION_ID_EDEFAULT);
+				return;
+			case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM:
+				setExecParam(EXEC_PARAM_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -304,10 +306,10 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 				return LAUNCH_EDEFAULT == null ? launch != null : !LAUNCH_EDEFAULT.equals(launch);
 			case ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE:
 				return MODE_EDEFAULT == null ? mode != null : !MODE_EDEFAULT.equals(mode);
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAMS:
-				return isSetExecParams();
 			case ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID:
 				return IMPLEMENTATION_ID_EDEFAULT == null ? implementationID != null : !IMPLEMENTATION_ID_EDEFAULT.equals(implementationID);
+			case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM:
+				return EXEC_PARAM_EDEFAULT == null ? execParam != null : !EXEC_PARAM_EDEFAULT.equals(execParam);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -328,8 +330,8 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 		}
 		if (baseClass == LocalAbstractComponent.class) {
 			switch (derivedFeatureID) {
-				case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAMS: return ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAMS;
 				case ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID: return ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID;
+				case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM: return ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAM;
 				default: return -1;
 			}
 		}
@@ -352,8 +354,8 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 		}
 		if (baseClass == LocalAbstractComponent.class) {
 			switch (baseFeatureID) {
-				case ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAMS: return ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAMS;
 				case ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID: return ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID;
+				case ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAM: return ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM;
 				default: return -1;
 			}
 		}
@@ -374,10 +376,10 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 		result.append(launch);
 		result.append(", mode: ");
 		result.append(mode);
-		result.append(", execParams: ");
-		result.append(execParams);
 		result.append(", implementationID: ");
 		result.append(implementationID);
+		result.append(", execParam: ");
+		result.append(execParam);
 		result.append(')');
 		return result.toString();
 	}

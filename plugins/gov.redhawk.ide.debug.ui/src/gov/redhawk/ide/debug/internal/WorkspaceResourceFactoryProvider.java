@@ -62,6 +62,7 @@ import CF.FileSystemPOATie;
 import CF.InvalidFileName;
 import CF.ResourceFactory;
 import CF.ResourceFactoryHelper;
+import CF.ResourceFactoryOperations;
 import CF.ResourceFactoryPOATie;
 import CF.FileManagerPackage.InvalidFileSystem;
 import CF.FileManagerPackage.MountPointAlreadyExists;
@@ -201,7 +202,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 						        WorkspaceResourceFactoryProvider.this.poa,
 						        EFS.getStore(resource.getParent().getLocationURI()));
 						final FileSystem fsRef = FileSystemHelper.narrow(WorkspaceResourceFactoryProvider.this.poa.servant_to_reference(new FileSystemPOATie(fs)));
-						AbstractResourceFactory resourceFactory = null;
+						ResourceFactoryOperations resourceFactory = null;
 						switch (type) {
 						case DEVICE:
 						case SERVICE:

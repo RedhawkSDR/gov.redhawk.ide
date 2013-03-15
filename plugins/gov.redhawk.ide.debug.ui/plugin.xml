@@ -193,7 +193,7 @@
             description="Launches a local Waveform"
             icon="icons/obj16/RedHawk_Logo16x.gif"
             id="gov.redhawk.ide.debug.ui.shortcut.sad"
-            label="Local Waveform"
+            label="SCA Waveform"
             modes="run, debug">
          <description
                description="Launch a local waveform"
@@ -211,27 +211,48 @@
                         value="1">
                   </count>
                   <iterate>
-                     <adapt
-                           type="org.eclipse.core.resources.IFile">
-                        <test
-                              property="org.eclipse.core.resources.name"
-                              value="*.sad.xml">
-                        </test>
-                     </adapt>
+                     <or>
+                        <adapt
+                              type="org.eclipse.core.resources.IFile">
+                           <test
+                                 property="org.eclipse.core.resources.name"
+                                 value="*.sad.xml">
+                           </test>
+                        </adapt>
+                        <adapt
+                              type="org.eclipse.core.resources.IProject">
+                           <and>
+                              <test
+                                    forcePluginActivation="true"
+                                    property="org.eclipse.core.resources.projectNature"
+                                    value="gov.redhawk.ide.natures.sca.waveform">
+                              </test>
+                              <test
+                                    forcePluginActivation="true"
+                                    property="org.eclipse.core.resources.open"
+                                    value="open">
+                              </test>
+                           </and>
+                        </adapt>
+                     </or>
                   </iterate>
                </with>
             </enablement>
          </contextualLaunch>
       </shortcut>
       <shortcut
-            class="gov.redhawk.ide.debug.internal.ui.LocalComponentProgramLaunchShortcut"
+            class="gov.redhawk.ide.debug.internal.ui.ComponentLaunchShortcut"
             icon="icons/obj16/RedHawk_Logo16x.gif"
-            id="gov.redhawk.ide.debug.ui.localComponentProgram"
-            label="Local Component Program"
-            modes="run">
+            id="gov.redhawk.ide.debug.ui.localComponent"
+            label="SCA Component"
+            modes="run, debug">
          <description
-               description="Launch a local component program"
+               description="Launch a component"
                mode="run">
+         </description>
+         <description
+               description="Debug a component"
+               mode="debug">
          </description>
          <contextualLaunch>
             <enablement>
@@ -243,17 +264,31 @@
                   <iterate
                         ifEmpty="false"
                         operator="and">
-                     <adapt
-                           type="org.eclipse.core.resources.IFile">
-                        <test
-                              property="org.eclipse.core.resources.name"
-                              value="*.spd.xml">
-                        </test>
-                        <test
-                              property="org.eclipse.core.resources.path"
-                              value="sdrroot://*">
-                        </test>
-                     </adapt>
+                     <or>
+                        <adapt
+                              type="org.eclipse.core.resources.IFile">
+                           <test
+                                 forcePluginActivation="true"
+                                 property="org.eclipse.core.resources.name"
+                                 value="*.spd.xml">
+                           </test>
+                        </adapt>
+                        <adapt
+                              type="org.eclipse.core.resources.IProject">
+                           <and>
+                              <test
+                                    forcePluginActivation="true"
+                                    property="org.eclipse.core.resources.projectNature"
+                                    value="gov.redhawk.ide.natures.sca.component">
+                              </test>
+                              <test
+                                    forcePluginActivation="true"
+                                    property="org.eclipse.core.resources.open"
+                                    value="open">
+                              </test>
+                           </and>
+                        </adapt>
+                     </or>
                   </iterate>
                </with>
             </enablement>

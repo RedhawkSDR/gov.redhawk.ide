@@ -12,6 +12,7 @@ package gov.redhawk.ide.debug;
 
 import gov.redhawk.model.sca.ScaPackage;
 
+import mil.jpeojtrs.sca.cf.CfPackage;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -81,13 +82,31 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA__DISPOSED = ScaPackage.IDISPOSABLE__DISPOSED;
 	/**
+	 * The feature id for the '<em><b>Orb</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA__ORB = ScaPackage.IDISPOSABLE_FEATURE_COUNT + 0;
+	/**
+	 * The feature id for the '<em><b>Poa</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA__POA = ScaPackage.IDISPOSABLE_FEATURE_COUNT + 1;
+	/**
 	 * The feature id for the '<em><b>Waveforms</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_SCA__WAVEFORMS = ScaPackage.IDISPOSABLE_FEATURE_COUNT + 0;
+	int LOCAL_SCA__WAVEFORMS = ScaPackage.IDISPOSABLE_FEATURE_COUNT + 2;
 	/**
 	 * The feature id for the '<em><b>Sandbox Waveform</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
@@ -95,7 +114,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_SCA__SANDBOX_WAVEFORM = ScaPackage.IDISPOSABLE_FEATURE_COUNT + 1;
+	int LOCAL_SCA__SANDBOX_WAVEFORM = ScaPackage.IDISPOSABLE_FEATURE_COUNT + 3;
 	/**
 	 * The feature id for the '<em><b>Sandbox Device Manager</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
@@ -103,7 +122,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_SCA__SANDBOX_DEVICE_MANAGER = ScaPackage.IDISPOSABLE_FEATURE_COUNT + 2;
+	int LOCAL_SCA__SANDBOX_DEVICE_MANAGER = ScaPackage.IDISPOSABLE_FEATURE_COUNT + 4;
 	/**
 	 * The feature id for the '<em><b>Root Context</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
@@ -111,7 +130,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_SCA__ROOT_CONTEXT = ScaPackage.IDISPOSABLE_FEATURE_COUNT + 3;
+	int LOCAL_SCA__ROOT_CONTEXT = ScaPackage.IDISPOSABLE_FEATURE_COUNT + 5;
 	/**
 	 * The feature id for the '<em><b>File Manager</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
@@ -119,15 +138,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_SCA__FILE_MANAGER = ScaPackage.IDISPOSABLE_FEATURE_COUNT + 4;
-	/**
-	 * The feature id for the '<em><b>Sandbox</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA__SANDBOX = ScaPackage.IDISPOSABLE_FEATURE_COUNT + 5;
+	int LOCAL_SCA__FILE_MANAGER = ScaPackage.IDISPOSABLE_FEATURE_COUNT + 6;
 	/**
 	 * The number of structural features of the '<em>Local Sca</em>' class.
 	 * <!-- begin-user-doc -->
@@ -135,7 +146,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_SCA_FEATURE_COUNT = ScaPackage.IDISPOSABLE_FEATURE_COUNT + 6;
+	int LOCAL_SCA_FEATURE_COUNT = ScaPackage.IDISPOSABLE_FEATURE_COUNT + 7;
 	/**
 	 * The meta object id for the '{@link org.omg.CosNaming.NamingContextExtOperations <em>Naming Context Ext Operations</em>}' class.
 	 * <!-- begin-user-doc -->
@@ -480,21 +491,22 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_ABSTRACT_COMPONENT__MODE = LOCAL_LAUNCH__MODE;
 	/**
-	 * The feature id for the '<em><b>Exec Params</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_ABSTRACT_COMPONENT__EXEC_PARAMS = LOCAL_LAUNCH_FEATURE_COUNT + 0;
-	/**
 	 * The feature id for the '<em><b>Implementation ID</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID = LOCAL_LAUNCH_FEATURE_COUNT + 1;
+	int LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID = LOCAL_LAUNCH_FEATURE_COUNT + 0;
+	/**
+	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_ABSTRACT_COMPONENT__EXEC_PARAM = LOCAL_LAUNCH_FEATURE_COUNT + 1;
 	/**
 	 * The number of structural features of the '<em>Local Abstract Component</em>' class.
 	 * <!-- begin-user-doc -->
@@ -689,7 +701,7 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_WAVEFORM__NAMING_CONTEXT = ScaPackage.SCA_WAVEFORM_FEATURE_COUNT + 2;
 	/**
-	 * The feature id for the '<em><b>Local App</b></em>' attribute.
+	 * The feature id for the '<em><b>Local App</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -882,21 +894,22 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_COMPONENT__MODE = ScaPackage.SCA_COMPONENT_FEATURE_COUNT + 1;
 	/**
-	 * The feature id for the '<em><b>Exec Params</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA_COMPONENT__EXEC_PARAMS = ScaPackage.SCA_COMPONENT_FEATURE_COUNT + 2;
-	/**
 	 * The feature id for the '<em><b>Implementation ID</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID = ScaPackage.SCA_COMPONENT_FEATURE_COUNT + 3;
+	int LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID = ScaPackage.SCA_COMPONENT_FEATURE_COUNT + 2;
+	/**
+	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_COMPONENT__EXEC_PARAM = ScaPackage.SCA_COMPONENT_FEATURE_COUNT + 3;
 	/**
 	 * The number of structural features of the '<em>Local Sca Component</em>' class.
 	 * <!-- begin-user-doc -->
@@ -1115,7 +1128,7 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_DEVICE_MANAGER__NAMING_CONTEXT = ScaPackage.SCA_DEVICE_MANAGER_FEATURE_COUNT + 2;
 	/**
-	 * The feature id for the '<em><b>Local Device Manager</b></em>' attribute.
+	 * The feature id for the '<em><b>Local Device Manager</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1332,21 +1345,22 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_EXECUTABLE_DEVICE__MODE = ScaPackage.SCA_EXECUTABLE_DEVICE_FEATURE_COUNT + 1;
 	/**
-	 * The feature id for the '<em><b>Exec Params</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA_EXECUTABLE_DEVICE__EXEC_PARAMS = ScaPackage.SCA_EXECUTABLE_DEVICE_FEATURE_COUNT + 2;
-	/**
 	 * The feature id for the '<em><b>Implementation ID</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID = ScaPackage.SCA_EXECUTABLE_DEVICE_FEATURE_COUNT + 3;
+	int LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID = ScaPackage.SCA_EXECUTABLE_DEVICE_FEATURE_COUNT + 2;
+	/**
+	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_EXECUTABLE_DEVICE__EXEC_PARAM = ScaPackage.SCA_EXECUTABLE_DEVICE_FEATURE_COUNT + 3;
 	/**
 	 * The number of structural features of the '<em>Local Sca Executable Device</em>' class.
 	 * <!-- begin-user-doc -->
@@ -1557,21 +1571,22 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_LOADABLE_DEVICE__MODE = ScaPackage.SCA_LOADABLE_DEVICE_FEATURE_COUNT + 1;
 	/**
-	 * The feature id for the '<em><b>Exec Params</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA_LOADABLE_DEVICE__EXEC_PARAMS = ScaPackage.SCA_LOADABLE_DEVICE_FEATURE_COUNT + 2;
-	/**
 	 * The feature id for the '<em><b>Implementation ID</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_SCA_LOADABLE_DEVICE__IMPLEMENTATION_ID = ScaPackage.SCA_LOADABLE_DEVICE_FEATURE_COUNT + 3;
+	int LOCAL_SCA_LOADABLE_DEVICE__IMPLEMENTATION_ID = ScaPackage.SCA_LOADABLE_DEVICE_FEATURE_COUNT + 2;
+	/**
+	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_LOADABLE_DEVICE__EXEC_PARAM = ScaPackage.SCA_LOADABLE_DEVICE_FEATURE_COUNT + 3;
 	/**
 	 * The number of structural features of the '<em>Local Sca Loadable Device</em>' class.
 	 * <!-- begin-user-doc -->
@@ -1782,21 +1797,22 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_DEVICE__MODE = ScaPackage.SCA_DEVICE_FEATURE_COUNT + 1;
 	/**
-	 * The feature id for the '<em><b>Exec Params</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA_DEVICE__EXEC_PARAMS = ScaPackage.SCA_DEVICE_FEATURE_COUNT + 2;
-	/**
 	 * The feature id for the '<em><b>Implementation ID</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_SCA_DEVICE__IMPLEMENTATION_ID = ScaPackage.SCA_DEVICE_FEATURE_COUNT + 3;
+	int LOCAL_SCA_DEVICE__IMPLEMENTATION_ID = ScaPackage.SCA_DEVICE_FEATURE_COUNT + 2;
+	/**
+	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_DEVICE__EXEC_PARAM = ScaPackage.SCA_DEVICE_FEATURE_COUNT + 3;
 	/**
 	 * The number of structural features of the '<em>Local Sca Device</em>' class.
 	 * <!-- begin-user-doc -->
@@ -1895,21 +1911,22 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_SERVICE__MODE = ScaPackage.SCA_SERVICE_FEATURE_COUNT + 1;
 	/**
-	 * The feature id for the '<em><b>Exec Params</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA_SERVICE__EXEC_PARAMS = ScaPackage.SCA_SERVICE_FEATURE_COUNT + 2;
-	/**
 	 * The feature id for the '<em><b>Implementation ID</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOCAL_SCA_SERVICE__IMPLEMENTATION_ID = ScaPackage.SCA_SERVICE_FEATURE_COUNT + 3;
+	int LOCAL_SCA_SERVICE__IMPLEMENTATION_ID = ScaPackage.SCA_SERVICE_FEATURE_COUNT + 2;
+	/**
+	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_SERVICE__EXEC_PARAM = ScaPackage.SCA_SERVICE_FEATURE_COUNT + 3;
 	/**
 	 * The number of structural features of the '<em>Local Sca Service</em>' class.
 	 * <!-- begin-user-doc -->
@@ -1926,7 +1943,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getName_()
 	 * @generated
 	 */
-	int NAME = 15;
+	int NAME = 16;
 	/**
 	 * The meta object id for the '<em>Naming Context</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -1935,7 +1952,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getNamingContext()
 	 * @generated
 	 */
-	int NAMING_CONTEXT = 16;
+	int NAMING_CONTEXT = 17;
 	/**
 	 * The meta object id for the '<em>ILaunch</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -1944,7 +1961,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getILaunch()
 	 * @generated
 	 */
-	int ILAUNCH = 17;
+	int ILAUNCH = 18;
 	/**
 	 * The meta object id for the '<em>Name Component Array</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -1952,25 +1969,26 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getNameComponentArray()
 	 * @generated
 	 */
-	int NAME_COMPONENT_ARRAY = 18;
+	int NAME_COMPONENT_ARRAY = 19;
 	/**
-	 * The meta object id for the '<em>Application Impl</em>' data type.
+	 * The meta object id for the '{@link ExtendedCF.ApplicationExtOperations <em>Application Ext Operations</em>}' class.
 	 * <!-- begin-user-doc -->
+	 * @since 2.0
 	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.debug.impl.ApplicationImpl
-	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getApplicationImpl()
+	 * @see ExtendedCF.ApplicationExtOperations
+	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getApplicationExtOperations()
 	 * @generated
 	 */
-	int APPLICATION_IMPL = 19;
+	int APPLICATION_EXT_OPERATIONS = 15;
 	/**
-	 * The meta object id for the '<em>Device Manager Impl</em>' data type.
+	 * The number of structural features of the '<em>Application Ext Operations</em>' class.
 	 * <!-- begin-user-doc -->
+	 * @since 2.0
 	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.debug.impl.DeviceManagerImpl
-	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getDeviceManagerImpl()
 	 * @generated
+	 * @ordered
 	 */
-	int DEVICE_MANAGER_IMPL = 20;
+	int APPLICATION_EXT_OPERATIONS_FEATURE_COUNT = CfPackage.APPLICATION_OPERATIONS_FEATURE_COUNT + 0;
 	/**
 	 * The meta object id for the '<em>Servant Not Active</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -1979,7 +1997,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getServantNotActive()
 	 * @generated
 	 */
-	int SERVANT_NOT_ACTIVE = 21;
+	int SERVANT_NOT_ACTIVE = 20;
 	/**
 	 * The meta object id for the '<em>Wrong Policy</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -1988,7 +2006,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getWrongPolicy()
 	 * @generated
 	 */
-	int WRONG_POLICY = 22;
+	int WRONG_POLICY = 21;
 	/**
 	 * The meta object id for the '<em>Core Exception</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -1997,17 +2015,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getCoreException()
 	 * @generated
 	 */
-	int CORE_EXCEPTION = 23;
-
-	/**
-	 * The meta object id for the '<em>Sandbox</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ExtendedCF.Sandbox
-	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getSandbox()
-	 * @generated
-	 */
-	int SANDBOX = 24;
+	int CORE_EXCEPTION = 22;
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.debug.LocalSca <em>Local Sca</em>}'.
@@ -2018,6 +2026,30 @@ public interface ScaDebugPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getLocalSca();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.debug.LocalSca#getOrb <em>Orb</em>}'.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Orb</em>'.
+	 * @see gov.redhawk.ide.debug.LocalSca#getOrb()
+	 * @see #getLocalSca()
+	 * @generated
+	 */
+	EAttribute getLocalSca_Orb();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.debug.LocalSca#getPoa <em>Poa</em>}'.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Poa</em>'.
+	 * @see gov.redhawk.ide.debug.LocalSca#getPoa()
+	 * @see #getLocalSca()
+	 * @generated
+	 */
+	EAttribute getLocalSca_Poa();
 
 	/**
 	 * Returns the meta object for the containment reference list '{@link gov.redhawk.ide.debug.LocalSca#getWaveforms <em>Waveforms</em>}'.
@@ -2053,11 +2085,11 @@ public interface ScaDebugPackage extends EPackage {
 	EReference getLocalSca_SandboxDeviceManager();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link gov.redhawk.ide.debug.LocalSca <em>Root Context</em>}'.
+	 * Returns the meta object for the containment reference '{@link gov.redhawk.ide.debug.LocalSca#getRootContext <em>Root Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Root Context</em>'.
-	 * @see gov.redhawk.ide.debug.LocalSca
+	 * @see gov.redhawk.ide.debug.LocalSca#getRootContext()
 	 * @see #getLocalSca()
 	 * @generated
 	 */
@@ -2073,17 +2105,6 @@ public interface ScaDebugPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getLocalSca_FileManager();
-
-	/**
-	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.debug.LocalSca#getSandbox <em>Sandbox</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Sandbox</em>'.
-	 * @see gov.redhawk.ide.debug.LocalSca#getSandbox()
-	 * @see #getLocalSca()
-	 * @generated
-	 */
-	EAttribute getLocalSca_Sandbox();
 
 	/**
 	 * Returns the meta object for class '{@link org.omg.CosNaming.NamingContextExtOperations <em>Naming Context Ext Operations</em>}'.
@@ -2304,17 +2325,6 @@ public interface ScaDebugPackage extends EPackage {
 	EClass getLocalAbstractComponent();
 
 	/**
-	 * Returns the meta object for the attribute list '{@link gov.redhawk.ide.debug.LocalAbstractComponent#getExecParams <em>Exec Params</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Exec Params</em>'.
-	 * @see gov.redhawk.ide.debug.LocalAbstractComponent#getExecParams()
-	 * @see #getLocalAbstractComponent()
-	 * @generated
-	 */
-	EAttribute getLocalAbstractComponent_ExecParams();
-
-	/**
 	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.debug.LocalAbstractComponent#getImplementationID <em>Implementation ID</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2324,6 +2334,18 @@ public interface ScaDebugPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getLocalAbstractComponent_ImplementationID();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.debug.LocalAbstractComponent#getExecParam <em>Exec Param</em>}'.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Exec Param</em>'.
+	 * @see gov.redhawk.ide.debug.LocalAbstractComponent#getExecParam()
+	 * @see #getLocalAbstractComponent()
+	 * @generated
+	 */
+	EAttribute getLocalAbstractComponent_ExecParam();
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.debug.LocalScaWaveform <em>Local Sca Waveform</em>}'.
@@ -2347,15 +2369,16 @@ public interface ScaDebugPackage extends EPackage {
 	EReference getLocalScaWaveform_NamingContext();
 
 	/**
-	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.debug.LocalScaWaveform#getLocalApp <em>Local App</em>}'.
+	 * Returns the meta object for the containment reference '{@link gov.redhawk.ide.debug.LocalScaWaveform#getLocalApp <em>Local App</em>}'.
 	 * <!-- begin-user-doc -->
+	 * @since 2.0
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Local App</em>'.
+	 * @return the meta object for the containment reference '<em>Local App</em>'.
 	 * @see gov.redhawk.ide.debug.LocalScaWaveform#getLocalApp()
 	 * @see #getLocalScaWaveform()
 	 * @generated
 	 */
-	EAttribute getLocalScaWaveform_LocalApp();
+	EReference getLocalScaWaveform_LocalApp();
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.debug.LocalScaComponent <em>Local Sca Component</em>}'.
@@ -2389,15 +2412,16 @@ public interface ScaDebugPackage extends EPackage {
 	EReference getLocalScaDeviceManager_NamingContext();
 
 	/**
-	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.debug.LocalScaDeviceManager#getLocalDeviceManager <em>Local Device Manager</em>}'.
+	 * Returns the meta object for the containment reference '{@link gov.redhawk.ide.debug.LocalScaDeviceManager#getLocalDeviceManager <em>Local Device Manager</em>}'.
 	 * <!-- begin-user-doc -->
+	 * @since 2.0
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Local Device Manager</em>'.
+	 * @return the meta object for the containment reference '<em>Local Device Manager</em>'.
 	 * @see gov.redhawk.ide.debug.LocalScaDeviceManager#getLocalDeviceManager()
 	 * @see #getLocalScaDeviceManager()
 	 * @generated
 	 */
-	EAttribute getLocalScaDeviceManager_LocalDeviceManager();
+	EReference getLocalScaDeviceManager_LocalDeviceManager();
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.debug.LocalScaExecutableDevice <em>Local Sca Executable Device</em>}'.
@@ -2483,26 +2507,16 @@ public interface ScaDebugPackage extends EPackage {
 	EDataType getNameComponentArray();
 
 	/**
-	 * Returns the meta object for data type '{@link gov.redhawk.ide.debug.impl.ApplicationImpl <em>Application Impl</em>}'.
+	 * Returns the meta object for class '{@link ExtendedCF.ApplicationExtOperations <em>Application Ext Operations</em>}'.
 	 * <!-- begin-user-doc -->
+	 * @since 2.0
 	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Application Impl</em>'.
-	 * @see gov.redhawk.ide.debug.impl.ApplicationImpl
-	 * @model instanceClass="gov.redhawk.ide.debug.impl.ApplicationImpl" serializeable="false"
+	 * @return the meta object for class '<em>Application Ext Operations</em>'.
+	 * @see ExtendedCF.ApplicationExtOperations
+	 * @model instanceClass="ExtendedCF.ApplicationExtOperations" superTypes="mil.jpeojtrs.sca.cf.ApplicationOperations"
 	 * @generated
 	 */
-	EDataType getApplicationImpl();
-
-	/**
-	 * Returns the meta object for data type '{@link gov.redhawk.ide.debug.impl.DeviceManagerImpl <em>Device Manager Impl</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Device Manager Impl</em>'.
-	 * @see gov.redhawk.ide.debug.impl.DeviceManagerImpl
-	 * @model instanceClass="gov.redhawk.ide.debug.impl.DeviceManagerImpl" serializeable="false"
-	 * @generated
-	 */
-	EDataType getDeviceManagerImpl();
+	EClass getApplicationExtOperations();
 
 	/**
 	 * Returns the meta object for data type '{@link org.omg.PortableServer.POAPackage.ServantNotActive <em>Servant Not Active</em>}'.
@@ -2532,21 +2546,10 @@ public interface ScaDebugPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>Core Exception</em>'.
 	 * @see org.eclipse.core.runtime.CoreException
-	 * @model instanceClass="org.eclipse.core.runtime.CoreException"
+	 * @model instanceClass="org.eclipse.core.runtime.CoreException" serializeable="false"
 	 * @generated
 	 */
 	EDataType getCoreException();
-
-	/**
-	 * Returns the meta object for data type '{@link gov.redhawk.ExtendedCF.Sandbox <em>Sandbox</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Sandbox</em>'.
-	 * @see gov.redhawk.ExtendedCF.Sandbox
-	 * @model instanceClass="gov.redhawk.ExtendedCF.Sandbox" serializeable="false"
-	 * @generated
-	 */
-	EDataType getSandbox();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -2580,6 +2583,22 @@ public interface ScaDebugPackage extends EPackage {
 		 * @generated
 		 */
 		EClass LOCAL_SCA = eINSTANCE.getLocalSca();
+		/**
+		 * The meta object literal for the '<em><b>Orb</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * @since 2.0
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LOCAL_SCA__ORB = eINSTANCE.getLocalSca_Orb();
+		/**
+		 * The meta object literal for the '<em><b>Poa</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * @since 2.0
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LOCAL_SCA__POA = eINSTANCE.getLocalSca_Poa();
 		/**
 		 * The meta object literal for the '<em><b>Waveforms</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
@@ -2615,13 +2634,6 @@ public interface ScaDebugPackage extends EPackage {
 		 * @generated
 		 */
 		EReference LOCAL_SCA__FILE_MANAGER = eINSTANCE.getLocalSca_FileManager();
-		/**
-		 * The meta object literal for the '<em><b>Sandbox</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute LOCAL_SCA__SANDBOX = eINSTANCE.getLocalSca_Sandbox();
 		/**
 		 * The meta object literal for the '{@link org.omg.CosNaming.NamingContextExtOperations <em>Naming Context Ext Operations</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -2777,19 +2789,20 @@ public interface ScaDebugPackage extends EPackage {
 		 */
 		EClass LOCAL_ABSTRACT_COMPONENT = eINSTANCE.getLocalAbstractComponent();
 		/**
-		 * The meta object literal for the '<em><b>Exec Params</b></em>' attribute list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute LOCAL_ABSTRACT_COMPONENT__EXEC_PARAMS = eINSTANCE.getLocalAbstractComponent_ExecParams();
-		/**
 		 * The meta object literal for the '<em><b>Implementation ID</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
 		EAttribute LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID = eINSTANCE.getLocalAbstractComponent_ImplementationID();
+		/**
+		 * The meta object literal for the '<em><b>Exec Param</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * @since 2.0
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LOCAL_ABSTRACT_COMPONENT__EXEC_PARAM = eINSTANCE.getLocalAbstractComponent_ExecParam();
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl <em>Local Sca Waveform</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -2807,12 +2820,12 @@ public interface ScaDebugPackage extends EPackage {
 		 */
 		EReference LOCAL_SCA_WAVEFORM__NAMING_CONTEXT = eINSTANCE.getLocalScaWaveform_NamingContext();
 		/**
-		 * The meta object literal for the '<em><b>Local App</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Local App</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute LOCAL_SCA_WAVEFORM__LOCAL_APP = eINSTANCE.getLocalScaWaveform_LocalApp();
+		EReference LOCAL_SCA_WAVEFORM__LOCAL_APP = eINSTANCE.getLocalScaWaveform_LocalApp();
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.debug.impl.LocalScaComponentImpl <em>Local Sca Component</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -2839,12 +2852,12 @@ public interface ScaDebugPackage extends EPackage {
 		 */
 		EReference LOCAL_SCA_DEVICE_MANAGER__NAMING_CONTEXT = eINSTANCE.getLocalScaDeviceManager_NamingContext();
 		/**
-		 * The meta object literal for the '<em><b>Local Device Manager</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Local Device Manager</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER = eINSTANCE.getLocalScaDeviceManager_LocalDeviceManager();
+		EReference LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER = eINSTANCE.getLocalScaDeviceManager_LocalDeviceManager();
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.debug.impl.LocalScaExecutableDeviceImpl <em>Local Sca Executable Device</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -2917,23 +2930,15 @@ public interface ScaDebugPackage extends EPackage {
 		 */
 		EDataType NAME_COMPONENT_ARRAY = eINSTANCE.getNameComponentArray();
 		/**
-		 * The meta object literal for the '<em>Application Impl</em>' data type.
+		 * The meta object literal for the '{@link ExtendedCF.ApplicationExtOperations <em>Application Ext Operations</em>}' class.
 		 * <!-- begin-user-doc -->
+		 * @since 2.0
 		 * <!-- end-user-doc -->
-		 * @see gov.redhawk.ide.debug.impl.ApplicationImpl
-		 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getApplicationImpl()
+		 * @see ExtendedCF.ApplicationExtOperations
+		 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getApplicationExtOperations()
 		 * @generated
 		 */
-		EDataType APPLICATION_IMPL = eINSTANCE.getApplicationImpl();
-		/**
-		 * The meta object literal for the '<em>Device Manager Impl</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see gov.redhawk.ide.debug.impl.DeviceManagerImpl
-		 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getDeviceManagerImpl()
-		 * @generated
-		 */
-		EDataType DEVICE_MANAGER_IMPL = eINSTANCE.getDeviceManagerImpl();
+		EClass APPLICATION_EXT_OPERATIONS = eINSTANCE.getApplicationExtOperations();
 		/**
 		 * The meta object literal for the '<em>Servant Not Active</em>' data type.
 		 * <!-- begin-user-doc -->
@@ -2961,15 +2966,6 @@ public interface ScaDebugPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType CORE_EXCEPTION = eINSTANCE.getCoreException();
-		/**
-		 * The meta object literal for the '<em>Sandbox</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see gov.redhawk.ExtendedCF.Sandbox
-		 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getSandbox()
-		 * @generated
-		 */
-		EDataType SANDBOX = eINSTANCE.getSandbox();
 
 	}
 

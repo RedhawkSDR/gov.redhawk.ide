@@ -66,9 +66,9 @@ public class SadFileTemplate
 	}
 
     stringBuffer.append(TEXT_1);
-    stringBuffer.append(args.getProjectName());
+    stringBuffer.append(args.getWaveformName());
     stringBuffer.append(TEXT_2);
-    stringBuffer.append(args.getProjectId());
+    stringBuffer.append(args.getWaveformId());
     stringBuffer.append(TEXT_3);
     
 	if (assemblyController != null) {

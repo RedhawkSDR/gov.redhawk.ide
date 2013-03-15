@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
-import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
@@ -20,8 +19,8 @@ import org.eclipse.emf.common.util.EList;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link gov.redhawk.ide.debug.LocalAbstractComponent#getExecParams <em>Exec Params</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalAbstractComponent#getImplementationID <em>Implementation ID</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.LocalAbstractComponent#getExecParam <em>Exec Param</em>}</li>
  * </ul>
  * </p>
  *
@@ -30,45 +29,6 @@ import org.eclipse.emf.common.util.EList;
  * @generated
  */
 public interface LocalAbstractComponent extends LocalLaunch {
-
-	/**
-	 * Returns the value of the '<em><b>Exec Params</b></em>' attribute list.
-	 * The list contents are of type {@link java.lang.String}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Exec Params</em>' attribute list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Exec Params</em>' attribute list.
-	 * @see #isSetExecParams()
-	 * @see #unsetExecParams()
-	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalAbstractComponent_ExecParams()
-	 * @model unsettable="true" transient="true"
-	 * @generated
-	 */
-	EList<String> getExecParams();
-
-	/**
-	 * Unsets the value of the '{@link gov.redhawk.ide.debug.LocalAbstractComponent#getExecParams <em>Exec Params</em>}' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isSetExecParams()
-	 * @see #getExecParams()
-	 * @generated
-	 */
-	void unsetExecParams();
-
-	/**
-	 * Returns whether the value of the '{@link gov.redhawk.ide.debug.LocalAbstractComponent#getExecParams <em>Exec Params</em>}' attribute list is set.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return whether the value of the '<em>Exec Params</em>' attribute list is set.
-	 * @see #unsetExecParams()
-	 * @see #getExecParams()
-	 * @generated
-	 */
-	boolean isSetExecParams();
 
 	/**
 	 * Returns the value of the '<em><b>Implementation ID</b></em>' attribute.
@@ -95,5 +55,30 @@ public interface LocalAbstractComponent extends LocalLaunch {
 	 * @generated
 	 */
 	void setImplementationID(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Exec Param</b></em>' attribute.
+	 * The default value is <code>""</code>.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Exec Param</em>' attribute.
+	 * @see #setExecParam(String)
+	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalAbstractComponent_ExecParam()
+	 * @model default=""
+	 * @generated
+	 */
+	String getExecParam();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalAbstractComponent#getExecParam <em>Exec Param</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Exec Param</em>' attribute.
+	 * @see #getExecParam()
+	 * @generated
+	 */
+	void setExecParam(String value);
 
 } // LocalAbstractComponent

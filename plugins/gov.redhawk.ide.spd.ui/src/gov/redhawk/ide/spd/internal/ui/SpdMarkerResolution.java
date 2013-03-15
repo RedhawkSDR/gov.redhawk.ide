@@ -51,8 +51,7 @@ import org.eclipse.emf.workspace.util.WorkspaceSynchronizer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
-
-import CosEventChannelAdmin.EventChannelHelper;
+import org.omg.CosEventChannelAdmin.EventChannelHelper;
 
 /**
  * 

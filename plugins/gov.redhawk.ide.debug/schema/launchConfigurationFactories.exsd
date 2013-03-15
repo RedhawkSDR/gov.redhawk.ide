@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="gov.redhawk.ide.debug" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="gov.redhawk.ide.debug" id="launchConfigurationFactories" name="Launch Configuration Factories"/>
+      </appInfo>
+      <documentation>
+         Allows plugins to contribute factories that create launch configurations based on SPD implementations and codegenerator ids.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="launchConfigurationFactory"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="launchConfigurationFactory">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  ID of this factory
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="codegenref" type="string" use="required">
+            <annotation>
+               <documentation>
+                  ID of the codegenerators that this factory is bound to.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="gov.redhawk.ide.codegen.codegens/codegen/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="launchConfigType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the launch configuration type that this factory creates.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.launchConfigurationTypes/launchConfigurationType/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="factory" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The actual factory.  Most implementations should extend AbstractLaunchConfigurationFactory or AbstractWorkspaceLaunchConfigurationFactory.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":gov.redhawk.ide.debug.ILaunchConfigurationFactory"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+
+</schema>

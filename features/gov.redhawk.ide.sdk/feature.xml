@@ -32,9 +32,8 @@
    <includes
          id="gov.redhawk.ide.feature"
          version="0.0.0"/>
-
-   <includes
-         id="gov.redhawk.ide.source"
+         
+	<includes
+         id="gov.redhawk.ide.feature.source"
          version="0.0.0"/>
-
 </feature>

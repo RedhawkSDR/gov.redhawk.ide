@@ -10,50 +10,47 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.ui;
 
+import gov.redhawk.ide.debug.ILaunchConfigurationFactory;
 import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
-import org.eclipse.core.expressions.EvaluationContext;
-import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.emf.workspace.util.WorkspaceSynchronizer;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * 
@@ -63,90 +60,44 @@ public final class LaunchUtil {
 
 	}
 
-	public static void launch(final IFile spdFile, final String mode, final Shell shell) {
-		String launchGroupIdentifier;
-		if (mode.equals(ILaunchManager.RUN_MODE)) {
-			launchGroupIdentifier = IDebugUIConstants.ID_RUN_LAUNCH_GROUP;
-		} else if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			launchGroupIdentifier = IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP;
+	/**
+	 * @since 1.1
+	 */
+	public static void launch(final SoftPkg spd, final String mode, final Shell shell) throws CoreException {
+		final EList<Implementation> impls = spd.getImplementation();
+		Implementation impl;
+		if (impls.size() == 1) {
+			impl = impls.get(0);
 		} else {
-			throw new IllegalStateException("Unknown run mode: " + mode);
+			impl = LaunchUtil.chooseImplementation(spd.getImplementation(), mode, shell);
 		}
-		final LaunchGroupExtension fGroup = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(launchGroupIdentifier);
-		final IEvaluationContext context = LaunchUtil.createContext(spdFile);
-		final List< ? > allShortCuts = LaunchUtil.getLaunchConfigurationManager().getLaunchShortcuts(fGroup.getCategory());
-		final Iterator< ? > iter = allShortCuts.iterator();
-		final List<LaunchShortcutExtension> filteredShortCuts = new ArrayList<LaunchShortcutExtension>(10);
-		while (iter.hasNext()) {
-			final LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
-			try {
-				if (!WorkbenchActivityHelper.filterItem(ext) && LaunchUtil.isApplicable(ext, context) && LaunchUtil.supportsMode(ext, mode)) {
-					filteredShortCuts.add(ext);
-				}
-			} catch (final CoreException e) {
-				//PASS 
-				/*not supported*/
-			}
+		if (impl == null) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to find implementation.", null));
 		}
-		if (filteredShortCuts.isEmpty()) {
-			MessageDialog.openError(shell, "No Launch Configurations", "Unable to locate a matching launch configuration, launch aborted.");
-			return;
-		} else if (filteredShortCuts.size() == 1) {
-			LaunchUtil.launch(filteredShortCuts.get(0), spdFile, mode);
+		final ILaunchConfigurationFactory factory = ScaDebugPlugin.getInstance().getLaunchConfigurationFactoryRegistry().getFactory(spd, impl.getId());
+		final ILaunchConfigurationWorkingCopy newConfig = factory.createLaunchConfiguration(null, impl.getId(), spd);
+		LaunchUtil.launchMerge(spd, newConfig, mode, shell);
+	}
+
+	private static void launchMerge(final EObject obj, final ILaunchConfigurationWorkingCopy newConfig, final String mode, final Shell shell)
+	        throws CoreException {
+		final ILaunchConfiguration[] configs = LaunchUtil.findLaunchConfigurations(obj, newConfig.getType());
+		final ILaunchConfigurationWorkingCopy config;
+		if (configs == null) {
+			config = newConfig;
+		} else if (configs.length == 1) {
+			config = configs[0].getWorkingCopy();
+			config.setAttributes(newConfig.getAttributes());
 		} else {
-			final ImageRegistry registry = new ImageRegistry();
-			for (final LaunchShortcutExtension ext : filteredShortCuts) {
-				registry.put(ext.getId(), ext.getImageDescriptor());
-			}
-			final ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, new LabelProvider() {
-
-				@Override
-				public String getText(final Object element) {
-					return ((LaunchShortcutExtension) element).getContextLabel(mode);
-				}
-
-				@Override
-				public Image getImage(final Object element) {
-					return registry.get(((LaunchShortcutExtension) element).getId());
-				}
-			});
-			dialog.setElements(filteredShortCuts.toArray());
-			dialog.setTitle("Select Launch Type");
-			final String label = mode.toUpperCase();
-			dialog.setMessage(label + " as:");
-			dialog.setMultipleSelection(false);
-			final int result = dialog.open();
-			registry.dispose();
-			if (result == Window.OK) {
-				LaunchUtil.launch((LaunchShortcutExtension) dialog.getFirstResult(), spdFile, mode);
+			final ILaunchConfiguration result = LaunchUtil.chooseConfiguration(mode, configs, shell);
+			if (result != null) {
+				config = result.getWorkingCopy();
+				config.setAttributes(newConfig.getAttributes());
+			} else {
+				return;
 			}
 		}
-
-	}
-
-	private static boolean supportsMode(final LaunchShortcutExtension ext, final String mode) {
-		return ext.getModes().contains(mode);
-	}
-
-	private static void launch(final LaunchShortcutExtension launchShortcutExtension, final IFile spd, final String mode) {
-		launchShortcutExtension.launch(new StructuredSelection(spd), mode);
-	}
-
-	private static boolean isApplicable(final LaunchShortcutExtension ext, final IEvaluationContext context) throws CoreException {
-		final Expression expr = ext.getContextualLaunchEnablementExpression();
-		return ext.evalEnablementExpression(context, expr);
-	}
-
-	private static LaunchConfigurationManager getLaunchConfigurationManager() {
-		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
-	}
-
-	private static IEvaluationContext createContext(final IFile file) {
-		final List< ? > list = Collections.singletonList(file);
-		final IEvaluationContext context = new EvaluationContext(null, list);
-		context.setAllowPluginActivation(true);
-		context.addVariable("selection", list); //$NON-NLS-1$
-		return context;
+		DebugUITools.launch(config.doSave(), mode);
 	}
 
 	public static ILaunchConfiguration chooseConfiguration(final String mode, final ILaunchConfiguration[] configs, final Shell shell) {
@@ -189,37 +140,22 @@ public final class LaunchUtil {
 		return null;
 	}
 
-	public static void launch(final SoftwareAssembly softwareAssembly, final IFile sadFile, final String mode, final Shell shell) throws CoreException {
-		final ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
-		final ILaunchConfigurationType configType = lm.getLaunchConfigurationType(ScaDebugLaunchConstants.ID_LOCAL_WAVEFORM_LAUNCH);
-		final ILaunchConfiguration[] configs = LaunchUtil.findLaunchConfigurations(softwareAssembly, configType);
-		ILaunchConfigurationWorkingCopy config;
-		if (configs == null) {
-			config = LaunchUtil.createLaunchConfiguration(mode, softwareAssembly, sadFile);
-		} else if (configs.length == 1) {
-			config = configs[0].getWorkingCopy();
-		} else {
-			final ILaunchConfiguration result = LaunchUtil.chooseConfiguration(mode, configs, shell);
-			if (result != null) {
-				config = result.getWorkingCopy();
-			} else {
-				return;
-			}
-		}
-		final ILaunchConfiguration launchConfig = config.doSave();
-
-		DebugUITools.launch(launchConfig, mode);
+	/**
+	 * @since 1.1
+	 */
+	public static void launch(final SoftwareAssembly softwareAssembly, final String mode, final Shell shell) throws CoreException {
+		final ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(mode, softwareAssembly);
+		LaunchUtil.launchMerge(softwareAssembly, newConfig, mode, shell);
 	}
 
-	private static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final String mode, final SoftwareAssembly softwareAssembly, final IFile sadFile)
-	        throws CoreException {
+	private static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final String mode, final SoftwareAssembly softwareAssembly) throws CoreException {
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		final String launcherPrefix = softwareAssembly.getName();
 		final String launchConfigName = launchManager.generateLaunchConfigurationName(launcherPrefix);
 		final ILaunchConfigurationType configType = launchManager.getLaunchConfigurationType(ScaDebugLaunchConstants.ID_LOCAL_WAVEFORM_LAUNCH);
 		final ILaunchConfigurationWorkingCopy retVal = configType.newInstance(null, launchConfigName);
 		retVal.setMappedResources(new IResource[] {
-			sadFile.getProject()
+			WorkspaceSynchronizer.getUnderlyingFile(softwareAssembly.eResource()).getProject()
 		});
 
 		retVal.setAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, softwareAssembly.eResource().getURI().toPlatformString(true));
@@ -227,12 +163,12 @@ public final class LaunchUtil {
 		return retVal;
 	}
 
-	private static ILaunchConfiguration[] findLaunchConfigurations(final SoftwareAssembly sad, final ILaunchConfigurationType configType) throws CoreException {
+	private static ILaunchConfiguration[] findLaunchConfigurations(final EObject obj, final ILaunchConfigurationType configType) throws CoreException {
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		final ILaunchConfiguration[] launchers = launchManager.getLaunchConfigurations(configType);
 		final List<ILaunchConfiguration> retVal = new ArrayList<ILaunchConfiguration>(1);
 		for (final ILaunchConfiguration config : launchers) {
-			if (config.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, "").equals(sad.eResource().getURI().toPlatformString(true))) {
+			if (config.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, "").equals(obj.eResource().getURI().toPlatformString(true))) {
 				retVal.add(config);
 			}
 		}
@@ -240,5 +176,28 @@ public final class LaunchUtil {
 			return null;
 		}
 		return retVal.toArray(new ILaunchConfiguration[retVal.size()]);
+	}
+
+	/**
+	 * @deprecated Use {@link #launch(SoftwareAssembly, String, Shell)} instead.
+	 */
+	@Deprecated
+	public static void launch(final SoftwareAssembly softwareAssembly, final IFile sadFile, final String mode, final Shell shell) throws CoreException {
+		LaunchUtil.launch(softwareAssembly, mode, shell);
+	}
+
+	/**
+	 * @deprecated Use {@link #launch(SoftPkg, String, Shell)} instead.
+	 */
+	@Deprecated
+	public static void launch(final IFile spdFile, final String mode, final Shell shell) {
+		final ResourceSet resourceSet = new ResourceSetImpl();
+		final Resource spdResource = resourceSet.getResource(URI.createPlatformResourceURI(spdFile.getFullPath().toString(), true), true);
+		try {
+			LaunchUtil.launch(SoftPkg.Util.getSoftPkg(spdResource), mode, shell);
+		} catch (final CoreException e) {
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException()),
+			        StatusManager.LOG | StatusManager.SHOW);
+		}
 	}
 }

@@ -59,9 +59,9 @@ public class DcdFileTemplate
     List<String> deviceList = new ArrayList<String>();
 
     stringBuffer.append(TEXT_1);
-    stringBuffer.append(args.getProjectName());
+    stringBuffer.append(args.getNodeName());
     stringBuffer.append(TEXT_2);
-    stringBuffer.append(args.getProjectId());
+    stringBuffer.append(args.getNodeId());
     stringBuffer.append(TEXT_3);
     
     HashMap<SoftPkg, String> devToId = new HashMap<SoftPkg, String>(); 

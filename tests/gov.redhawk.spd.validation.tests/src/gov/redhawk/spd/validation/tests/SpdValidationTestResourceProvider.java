@@ -25,7 +25,6 @@ import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdFactory;
 import mil.jpeojtrs.sca.spd.SpdPackage;
-import mil.jpeojtrs.sca.util.DceUuidUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -67,17 +66,16 @@ public class SpdValidationTestResourceProvider {
 	 */
 	private SoftPkg createNewResource(final IProgressMonitor m, final IProject project) throws Exception {
 		final GeneratorArgs args = new GeneratorArgs();
-		args.setProjectName(project.getName());
-
-		args.setProjectId(DceUuidUtil.createDceUUID());
+		args.setSoftPkgName("Name");
+		args.setSoftPkgId(project.getName());
 
 		final String spd = new SpdFileTemplate().generate(args);
 		final String prf = new PrfFileTemplate().generate(null);
 		final String scd = new ScdFileTemplate().generate(null);
 
-		final IFile spdFile = project.getFile(args.getProjectName() + SpdPackage.FILE_EXTENSION);
-		final IFile prfFile = project.getFile(args.getProjectName() + PrfPackage.FILE_EXTENSION);
-		final IFile scdFile = project.getFile(args.getProjectName() + ScdPackage.FILE_EXTENSION);
+		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
+		final IFile prfFile = project.getFile(project.getName() + PrfPackage.FILE_EXTENSION);
+		final IFile scdFile = project.getFile(project.getName() + ScdPackage.FILE_EXTENSION);
 
 		try {
 			spdFile.create(new ByteArrayInputStream(spd.getBytes("UTF-8")), true, null);

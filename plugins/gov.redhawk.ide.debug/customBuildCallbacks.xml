@@ -3,9 +3,9 @@
 <!-- Custom targets called from a project's generated build.xml            -->
 <!-- Set customBuildCallbacks=<path/to/this/file> in your build.properties.-->
 <!-- ===================================================================== -->
-<project name="Build specific targets and properties" default="noDefault">
+<project name="Build specific targets and properties" default="pre.@dot">
 	<property name="idl" value="idl" />
-	<property name="extended" value="idl/ExtendedCF" />
+	<property name="internal-idl" value="internal-idl/CF" />
 
 	<!-- ===================================================================== -->
 	<!-- Default target                                                        -->
@@ -74,7 +74,7 @@
 			<arg line="-fallTie" />
 			<arg line="-i ${idl}" />
 			<arg line="-td src-idl/" />
-			<fileset dir="${extended}">
+			<fileset dir="${internal-idl}">
 				<include name="**/*.idl" />
 			</fileset>
 		</apply>
@@ -89,7 +89,10 @@
 	
 	<target name="clean-headless">
 		<delete includeemptydirs="true">
-			<fileset dir="src-idl" includes="**/*" />
+			<fileset dir="src-idl">
+				<include name="**/*"/>
+				<exclude name="**/.gitignore"/>
+			</fileset>
 		</delete>
 	</target>
 	

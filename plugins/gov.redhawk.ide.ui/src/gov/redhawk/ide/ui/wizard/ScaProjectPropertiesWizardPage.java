@@ -11,12 +11,11 @@
 package gov.redhawk.ide.ui.wizard;
 
 import gov.redhawk.ide.ui.doc.IdeHelpConstants;
+import gov.redhawk.ui.validation.ProjectNameValidator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
-import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -46,8 +45,6 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 	private IDGroup idGroup;
 
 	private boolean showContentsGroup = true;
-
-	private static final String VALID_IMPL_NAME_REGEX = "^[A-Za-z][A-Za-z0-9_-]*";
 
 	protected ScaProjectPropertiesWizardPage(final String pageName, final String resourceType, final String resourceExtension) {
 		super(pageName);
@@ -118,6 +115,8 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 
 	@Override
 	protected boolean validatePage() {
+		ProjectNameValidator nameValidator = new ProjectNameValidator();
+		
 		if (!super.validatePage()) {
 			return false;
 		}
@@ -147,21 +146,12 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 			setMessage(status);
 			return false;
 		}
-
-		status = validateProjectName(getProjectName());
+		status = nameValidator.validate(getProjectName());
 		if (!status.isOK()) {
 			setMessage(status);
 			return false;
 		}
 		return true;
-	}
-
-	private IStatus validateProjectName(final String projectName) {
-		if (!Pattern.matches(ScaProjectPropertiesWizardPage.VALID_IMPL_NAME_REGEX, projectName)) {
-			return ValidationStatus.error("Invalid character present in project name.");
-		}
-
-		return ValidationStatus.ok();
 	}
 
 	protected void setMessage(final IStatus status) {

@@ -106,9 +106,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		form.setText("Overview");
 
 		fillBody(managedForm, toolkit);
-
-		
-		
 		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), 
 				IdeHelpConstants.reference_editors_component_overview);

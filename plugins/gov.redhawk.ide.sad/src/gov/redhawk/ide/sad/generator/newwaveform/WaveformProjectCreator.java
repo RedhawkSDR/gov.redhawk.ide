@@ -61,20 +61,25 @@ public class WaveformProjectCreator extends ProjectCreator {
 	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param project The project to generate files in
-	 * @param projectID The project's ID (DCE)
+	 * @param waveformID The waveform's ID
+	 * @param assemblyController The soft package of the assembly controller
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
 	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
 	 *  reported and that the operation cannot be canceled.
 	 * @return The newly created SAD file
 	 * @throws CoreException An error occurs while generating files
 	 */
-	public static IFile createWaveformFiles(final IProject project, final String projectID, final SoftPkg assemblyController, final IProgressMonitor monitor)
+	public static IFile createWaveformFiles(final IProject project, final String waveformID, final SoftPkg assemblyController, final IProgressMonitor monitor)
 	        throws CoreException {
 		final SubMonitor progress = SubMonitor.convert(monitor, "Creating SCA waveform files", 2);
 
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setProjectName(project.getName());
-		args.setProjectId(projectID);
+		args.setWaveformId(waveformID);
+		
+		String[] tokens = project.getName().split("\\.");
+		args.setWaveformName(tokens[tokens.length - 1]);
+		
 		args.setAssemblyConroller(assemblyController);
 
 		// Generate file content from templates
@@ -82,7 +87,7 @@ public class WaveformProjectCreator extends ProjectCreator {
 		progress.worked(1);
 
 		// Check that files/folders don't exist already
-		final IFile sadFile = project.getFile(project.getName() + SadPackage.FILE_EXTENSION);
+		final IFile sadFile = project.getFile(args.getWaveformName() + SadPackage.FILE_EXTENSION);
 		if (sadFile.exists()) {
 			throw new CoreException(new Status(IStatus.ERROR, IdeSadPlugin.PLUGIN_ID, "File " + sadFile.getName() + " already exists.", null));
 		}

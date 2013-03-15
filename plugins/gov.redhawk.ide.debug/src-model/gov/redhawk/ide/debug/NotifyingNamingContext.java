@@ -59,7 +59,7 @@ public interface NotifyingNamingContext extends NamingContextExtOperations, IDis
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Object Map</em>' map.
 	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getNotifyingNamingContext_ObjectMap()
-	 * @model mapType="gov.redhawk.ide.debug.NameToObjectEntry<gov.redhawk.ide.debug.Name, gov.redhawk.model.sca.Object>"
+	 * @model mapType="gov.redhawk.ide.debug.NameToObjectEntry<gov.redhawk.ide.debug.Name, gov.redhawk.model.sca.Object>" transient="true"
 	 * @generated
 	 */
 	EMap<Name, org.omg.CORBA.Object> getObjectMap();
@@ -76,7 +76,7 @@ public interface NotifyingNamingContext extends NamingContextExtOperations, IDis
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Context Map</em>' map.
 	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getNotifyingNamingContext_ContextMap()
-	 * @model mapType="gov.redhawk.ide.debug.NameToNamingContextEntry<gov.redhawk.ide.debug.Name, gov.redhawk.ide.debug.NamingContext>"
+	 * @model mapType="gov.redhawk.ide.debug.NameToNamingContextEntry<gov.redhawk.ide.debug.Name, gov.redhawk.ide.debug.NamingContext>" transient="true"
 	 * @generated
 	 */
 	EMap<Name, NamingContext> getContextMap();

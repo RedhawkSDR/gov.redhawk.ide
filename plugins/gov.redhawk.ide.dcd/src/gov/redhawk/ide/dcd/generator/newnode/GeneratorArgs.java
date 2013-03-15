@@ -19,6 +19,9 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 public class GeneratorArgs extends GeneratorArgsBase {
 
 	private String domainManagerName;
+	private String nodeName;
+	private String nodeId;
+	
 	private SoftPkg[] devices;
 
 	public String getDomainManagerName() {
@@ -36,4 +39,20 @@ public class GeneratorArgs extends GeneratorArgsBase {
 	public void setDevices(final SoftPkg[] devices) {
 		this.devices = devices;
 	}
+
+	public String getNodeName() {
+	    return nodeName;
+    }
+
+	public void setNodeName(String nodeName) {
+	    this.nodeName = nodeName;
+    }
+
+	public String getNodeId() {
+	    return nodeId;
+    }
+
+	public void setNodeId(String nodeId) {
+	    this.nodeId = nodeId;
+    }
 }

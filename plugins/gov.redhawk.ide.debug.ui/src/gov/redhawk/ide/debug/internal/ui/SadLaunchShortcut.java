@@ -13,11 +13,12 @@ package gov.redhawk.ide.debug.internal.ui;
 import gov.redhawk.ide.debug.ui.LaunchUtil;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ui.editor.SCAFormEditor;
+import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.sad.util.SadResourceImpl;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -52,6 +53,17 @@ public class SadLaunchShortcut implements ILaunchShortcut {
 					final Status status = new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException());
 					StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
 				}
+			} else if (element instanceof IProject) {
+				final IProject project = (IProject) element;
+				final IFile file = project.getFile(new Path(project.getName() + SadPackage.FILE_EXTENSION));
+				if (file.exists()) {
+					try {
+						launch((IFile) element, mode);
+					} catch (final CoreException e) {
+						final Status status = new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException());
+						StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
+					}
+				}
 			}
 		}
 
@@ -68,7 +80,7 @@ public class SadLaunchShortcut implements ILaunchShortcut {
 			        StatusManager.SHOW | StatusManager.LOG);
 			return;
 		}
-		LaunchUtil.launch(sad, element, mode, PlatformUI.getWorkbench().getDisplay().getActiveShell());
+		LaunchUtil.launch(sad, mode, PlatformUI.getWorkbench().getDisplay().getActiveShell());
 	}
 
 	/**
@@ -80,7 +92,7 @@ public class SadLaunchShortcut implements ILaunchShortcut {
 			if (formEditor.getMainResource() instanceof SadResourceImpl) {
 				final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(formEditor.getMainResource());
 				try {
-					LaunchUtil.launch(sad, getFile(sad.eResource()), mode, PlatformUI.getWorkbench().getDisplay().getActiveShell());
+					LaunchUtil.launch(sad, mode, PlatformUI.getWorkbench().getDisplay().getActiveShell());
 				} catch (final CoreException e) {
 					final Status status = new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException());
 					StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
@@ -89,7 +101,4 @@ public class SadLaunchShortcut implements ILaunchShortcut {
 		}
 	}
 
-	private IFile getFile(final Resource resource) {
-		return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(resource.getURI().toPlatformString(true)));
-	}
 }

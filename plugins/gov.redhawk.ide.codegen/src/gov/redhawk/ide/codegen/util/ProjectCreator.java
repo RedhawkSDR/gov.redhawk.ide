@@ -366,7 +366,9 @@ public abstract class ProjectCreator {
 	public static void resetProject(final IProject project, final IProgressMonitor monitor) throws CoreException {
 		final SubMonitor progress = SubMonitor.convert(monitor, 1);
 		
-		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
+		String[] tokens = project.getName().split("\\.");
+		
+		final IFile spdFile = project.getFile(tokens[tokens.length - 1] + SpdPackage.FILE_EXTENSION);
 		final URI spdUri = URI.createPlatformResourceURI(spdFile.getFullPath().toString(), true).appendFragment(SoftPkg.EOBJECT_PATH);
 		final IFile waveDevFile = project.getFile(CodegenUtil.getWaveDevSettingsURI(spdUri).lastSegment());
 		if (waveDevFile.exists()) {
@@ -447,17 +449,39 @@ public abstract class ProjectCreator {
 	 * based on the code generator template specified in {@link ImplementationSettings}.
 	 * <p />
 	 * This should be invoked in the context of a
+	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}. 
+	 * @param project
+	 * @param impl
+	 * @param settings
+	 * @param monitor
+	 * @deprecated This method will be removed in the future.  Use the updated method which takes in the String spdName.
+	 */
+	public static void addImplementation(final IProject project, final Implementation impl, final ImplementationSettings settings, final IProgressMonitor monitor) 
+		throws CoreException {
+		addImplementation(project, null, impl, settings, monitor);
+	}
+	
+	/**
+	 * Directly adds an implementation to a {@link SoftPkg}.
+	 * 
+     * The {@link Implementation} will have its {@link Code} entry filled in
+	 * based on the code generator template specified in {@link ImplementationSettings}.
+	 * <p />
+	 * This should be invoked in the context of a
 	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param project
 	 * @param impl
 	 * @param command null if the implementation isn't being added within an editor context
+	 * @since 9.1
 	 */
-	public static void addImplementation(final IProject project, final Implementation impl, final ImplementationSettings settings, final IProgressMonitor monitor) 
+	public static void addImplementation(final IProject project, final String spdName, final Implementation impl, final ImplementationSettings settings, final IProgressMonitor monitor) 
 	throws CoreException {
+		
+		String spdFileName = (spdName == null) ? project.getName() + SpdPackage.FILE_EXTENSION : spdName + SpdPackage.FILE_EXTENSION; //SUPPRESS CHECKSTYLE AvoidInLine
 		final SubMonitor progress = SubMonitor.convert(monitor, 2);
 		
-		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
+		final IFile spdFile = project.getFile(spdFileName);
 		final URI spdUri = URI.createPlatformResourceURI(spdFile.getFullPath().toString(), true).appendFragment(SoftPkg.EOBJECT_PATH);
 		final IFile waveDevFile = project.getFile(CodegenUtil.getWaveDevSettingsURI(spdUri).lastSegment());
 		final URI waveDevUri = URI.createPlatformResourceURI(waveDevFile.getFullPath().toString(), true);

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
+import gov.redhawk.ide.debug.variables.LaunchVariables;
 import gov.redhawk.model.sca.ProfileObjectWrapper;
 import gov.redhawk.model.sca.ScaAbstractComponent;
 import gov.redhawk.model.sca.ScaAbstractProperty;
@@ -23,8 +24,8 @@ import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 import gov.redhawk.sca.util.Debug;
+import gov.redhawk.sca.util.SubMonitor;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,6 +47,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
@@ -76,11 +78,10 @@ public final class ScaLauncherUtil {
 
 	private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
 
-	private static final String LAUNCH_ATT_DEVICE_LABEL = ScaDebugPlugin.ID + ".deviceLabel";
-	private static final String LAUNCH_ATT_SERVICE_NAME = ScaDebugPlugin.ID + ".serviceName";
-	private static final String LAUNCH_ATT_NAME_BINDING = ScaDebugPlugin.ID + ".nameBinding";
-	private static final String LAUNCH_ATT_NAMING_CONTEXT_IOR = ScaDebugPlugin.ID + ".namingContextIOR";
-	private static final String LAUNCH_ATT_EXEC_STR = ScaDebugPlugin.ID + ".execParams";
+	/**
+	 * @since 2.0
+	 */
+	public static final String LAUNCH_ATT_PROGRAM_ARGUMENT_MAP = ScaDebugPlugin.ID + ".programArgumentMap";
 	private static final String LAUNCH_ATT_URI = ScaDebugPlugin.ID + ".uri";
 
 	private static final Debug DEBUG_ARGS = new Debug(ScaDebugPlugin.getInstance(), "LauncherArgs");
@@ -88,16 +89,34 @@ public final class ScaLauncherUtil {
 	private ScaLauncherUtil() {
 
 	}
+	
+	/**
+	 * @since 2.0
+	 */
+	public static Map<String,String> createMap(String programArguments) {
+		String[] split = programArguments.split(" ");
+		Map<String,String> retVal = new HashMap<String, String>(split.length/2);
+		for (int i=0; i+1<split.length; i+=2) {
+			retVal.put(split[i], split[i+1]);
+		}
+		return retVal;
+	}
 
-	public static void postLaunch(final ILaunch launch) throws CoreException {
+	/**
+	 * @since 2.0
+	 */
+	public static void postLaunch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 		LocalAbstractComponent comp = null;
+		Map programArgMap = configuration.getAttribute(ScaLauncherUtil.LAUNCH_ATT_PROGRAM_ARGUMENT_MAP, Collections.EMPTY_MAP);
 		try {
-			if (launch.getAttribute(ScaLauncherUtil.LAUNCH_ATT_DEVICE_LABEL) != null) {
-				comp = ScaLauncherUtil.postLaunchDevice(launch);
-			} else if (launch.getAttribute(ScaLauncherUtil.LAUNCH_ATT_SERVICE_NAME) != null) {
-				comp = ScaLauncherUtil.postLaunchService(launch);
+			
+			if (launch.getAttribute(LaunchVariables.DEVICE_LABEL) != null) {
+				comp = ScaLauncherUtil.postLaunchDevice(configuration, mode,launch,subMonitor.newChild(50));
+			} else if (launch.getAttribute(LaunchVariables.SERVICE_NAME) != null) {
+				comp = ScaLauncherUtil.postLaunchService(configuration, mode,launch,subMonitor.newChild(50));
 			} else {
-				comp = ScaLauncherUtil.postLaunchComponent(launch);
+				comp = ScaLauncherUtil.postLaunchComponent(configuration, mode,launch,subMonitor.newChild(50));
 			}
 		} catch (final CoreException e) {
 			// If there is a problem with the component terminate it
@@ -110,13 +129,7 @@ public final class ScaLauncherUtil {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to resolve component.", null));
 		}
 
-		final String execString = launch.getAttribute(ScaLauncherUtil.LAUNCH_ATT_EXEC_STR);
-		final String[] execParams;
-		if (execString != null && execString.length() > 0) {
-			execParams = execString.split(" ");
-		} else {
-			execParams = null;
-		}
+		final String execString = ScaLauncherUtil.createExecParamString(programArgMap);
 		final String implID = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_IMPL_ID, (String) null);
 		final boolean autoStart = launch.getLaunchConfiguration().getAttribute(ScaLaunchConfigurationConstants.ATT_START,
 		        ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
@@ -132,12 +145,10 @@ public final class ScaLauncherUtil {
 		ScaModelCommand.execute(newComponent, new ScaModelCommand() {
 
 			public void execute() {
-				if (execParams != null) {
-					newComponent.getExecParams().addAll(Arrays.asList(execParams));
-				}
+				newComponent.setExecParam(execString);
 				newComponent.setImplementationID(implID);
 				newComponent.setLaunch(launch);
-				newComponent.setMode(launch.getLaunchMode());
+				newComponent.setMode(mode);
 				if (uri != null && newComponent instanceof ProfileObjectWrapper< ? >) {
 					((ProfileObjectWrapper< ? >) newComponent).setProfileURI(uri);
 				}
@@ -176,10 +187,12 @@ public final class ScaLauncherUtil {
 				}
 			}
 		}
+		subMonitor.done();
 	}
 
-	private static LocalAbstractComponent postLaunchComponent(final ILaunch launch) throws CoreException {
-		final String nameBinding = launch.getAttribute(ScaLauncherUtil.LAUNCH_ATT_NAME_BINDING);
+	private static LocalAbstractComponent postLaunchComponent(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
+		final Map programArgMap = configuration.getAttribute(ScaLauncherUtil.LAUNCH_ATT_PROGRAM_ARGUMENT_MAP, Collections.EMPTY_MAP);
+		final String nameBinding = (String) programArgMap.get(LaunchVariables.NAME_BINDING);
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 
 		final Future<LocalScaComponent> future = ScaLauncherUtil.EXECUTOR.submit(new Callable<LocalScaComponent>() {
@@ -187,8 +200,9 @@ public final class ScaLauncherUtil {
 				LocalScaComponent newComponent = null;
 				ORB orb = ORB.init((String[]) null, null);
 				try {
+					String contextIor = (String) programArgMap.get(LaunchVariables.NAMING_CONTEXT_IOR);
 					final NamingContextExt namingContext = NamingContextExtHelper.narrow(orb.string_to_object(launch
-					        .getAttribute(ScaLauncherUtil.LAUNCH_ATT_NAMING_CONTEXT_IOR)));
+					        .getAttribute(contextIor)));
 
 					while (newComponent == null) {
 						// If this launch was terminated, immediately bail
@@ -248,8 +262,9 @@ public final class ScaLauncherUtil {
 
 	}
 
-	private static LocalAbstractComponent postLaunchService(final ILaunch launch) throws CoreException {
-		final String name = launch.getAttribute(ScaLauncherUtil.LAUNCH_ATT_SERVICE_NAME);
+	private static LocalAbstractComponent postLaunchService(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
+		final Map programArgMap = configuration.getAttribute(ScaLauncherUtil.LAUNCH_ATT_PROGRAM_ARGUMENT_MAP, Collections.EMPTY_MAP);
+		final String name = (String) programArgMap.get(LaunchVariables.SERVICE_NAME);
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 
 		final Future<LocalAbstractComponent> future = ScaLauncherUtil.EXECUTOR.submit(new Callable<LocalAbstractComponent>() {
@@ -302,8 +317,9 @@ public final class ScaLauncherUtil {
 		}
 	}
 
-	private static LocalAbstractComponent postLaunchDevice(final ILaunch launch) throws CoreException {
-		final String deviceLabel = launch.getAttribute(ScaLauncherUtil.LAUNCH_ATT_DEVICE_LABEL);
+	private static LocalAbstractComponent postLaunchDevice(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
+		final Map programArgMap = configuration.getAttribute(ScaLauncherUtil.LAUNCH_ATT_PROGRAM_ARGUMENT_MAP, Collections.EMPTY_MAP);
+		final String deviceLabel = (String) programArgMap.get(LaunchVariables.DEVICE_LABEL);
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 
 		final Future<LocalAbstractComponent> future = ScaLauncherUtil.EXECUTOR.submit(new Callable<LocalAbstractComponent>() {
@@ -377,9 +393,6 @@ public final class ScaLauncherUtil {
 		final StringBuilder builder = new StringBuilder();
 		final String execParams = ScaLauncherUtil.getExecParams(impl, spd, override);
 
-		if (launch != null) {
-			launch.setAttribute(ScaLauncherUtil.LAUNCH_ATT_EXEC_STR, execParams);
-		}
 		builder.append(execParams);
 		if (builder.length() != 0) {
 			builder.append(" ");
@@ -453,7 +466,8 @@ public final class ScaLauncherUtil {
 	}
 
 	private static Map<String, String> createOverrideMap(final ILaunchConfiguration configuration) throws CoreException {
-		final Map<String, String> map = configuration.getAttribute(ScaDebugLaunchConstants.ATT_OVERRIDE_MAP, Collections.emptyMap());
+		@SuppressWarnings("unchecked")
+		final Map<String, String> map = configuration.getAttribute(ScaDebugLaunchConstants.ATT_OVERRIDE_MAP, Collections.EMPTY_MAP);
 		final Map<String, String> retVal = new HashMap<String, String>();
 		retVal.putAll(map);
 		return retVal;
@@ -478,9 +492,6 @@ public final class ScaLauncherUtil {
 			final NotifyingNamingContext nc = ScaLauncherUtil.getDomNamingContext(spd);
 			namingContextIOR = nc.getNamingContext().toString();
 		}
-		if (launch != null) {
-			launch.setAttribute(ScaLauncherUtil.LAUNCH_ATT_NAMING_CONTEXT_IOR, namingContextIOR);
-		}
 		builder.append(namingContextIOR);
 		builder.append(" ");
 
@@ -491,9 +502,6 @@ public final class ScaLauncherUtil {
 			name = override.get(ScaDebugLaunchConstants.ARG_NAME_BINDING);
 		} else {
 			name = ScaLauncherUtil.getUniqueName(spd, namingContextIOR);
-		}
-		if (launch != null) {
-			launch.setAttribute(ScaLauncherUtil.LAUNCH_ATT_NAME_BINDING, name);
 		}
 		builder.append(name);
 		builder.append(" ");
@@ -531,9 +539,6 @@ public final class ScaLauncherUtil {
 			final NotifyingNamingContext nc = ScaLauncherUtil.getDevNamingContext(spd);
 			namingContext = nc.getNamingContext().toString();
 		}
-		if (launch != null) {
-			launch.setAttribute(ScaLauncherUtil.LAUNCH_ATT_NAMING_CONTEXT_IOR, namingContext);
-		}
 		builder.append(namingContext);
 		builder.append(" ");
 
@@ -564,9 +569,6 @@ public final class ScaLauncherUtil {
 			serviceName = override.get(ScaDebugLaunchConstants.ARG_SERVICE_NAME);
 		} else {
 			serviceName = name;
-		}
-		if (launch != null) {
-			launch.setAttribute(ScaLauncherUtil.LAUNCH_ATT_SERVICE_NAME, serviceName);
 		}
 		builder.append(serviceName);
 		builder.append(" ");
@@ -618,7 +620,6 @@ public final class ScaLauncherUtil {
 		final StringBuilder builder = new StringBuilder();
 		final NotifyingNamingContext nc = ScaLauncherUtil.getDevNamingContext(spd);
 		final String namingContext = nc.getNamingContext().toString();
-		launch.setAttribute(ScaLauncherUtil.LAUNCH_ATT_NAMING_CONTEXT_IOR, namingContext);
 
 		builder.append(ScaDebugLaunchConstants.ARG_DEVICE_MGR_IOR);
 		builder.append(" ");
@@ -655,9 +656,6 @@ public final class ScaLauncherUtil {
 			label = stdArgs.get(ScaDebugLaunchConstants.ARG_DEVICE_LABEL);
 		} else {
 			label = ScaLauncherUtil.getDeviceUniqueName(spd);
-		}
-		if (launch != null) {
-			launch.setAttribute(ScaLauncherUtil.LAUNCH_ATT_DEVICE_LABEL, label);
 		}
 		builder.append(label);
 

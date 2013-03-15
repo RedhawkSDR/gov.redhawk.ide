@@ -16,5 +16,32 @@ import gov.redhawk.ide.codegen.args.GeneratorArgsBase;
  * The properties that can be set for the New Component generator.
  */
 public class GeneratorArgs extends GeneratorArgsBase {
+	public static final String SOFTPKG_NAME_KEY = "softpkg_name";
+	public static final String SOFTPKG_ID_KEY = "softpkg_id";
+	public static final String SOFTPKG_FILE_KEY = "softpkg_file";
+	
+	public void setSoftPkgName(final String softPkgName) {
+		this.setProperty(SOFTPKG_NAME_KEY, softPkgName);
+	}
+	
+	public String getSoftPkgName() {
+		return this.getProperty(SOFTPKG_NAME_KEY);
+	}
+
+	public void setSoftPkgFile(final String softPkgFile) {
+		this.setProperty(SOFTPKG_FILE_KEY, softPkgFile);
+	}
+
+	public String getSoftPkgFile() {
+		return this.getProperty(SOFTPKG_FILE_KEY);
+	}
+	
+	public void setSoftPkgId(final String softPkgFile) {
+		this.setProperty(SOFTPKG_ID_KEY, softPkgFile);
+	}
+
+	public String getSoftPkgId() {
+		return this.getProperty(SOFTPKG_ID_KEY);
+	}
 
 }

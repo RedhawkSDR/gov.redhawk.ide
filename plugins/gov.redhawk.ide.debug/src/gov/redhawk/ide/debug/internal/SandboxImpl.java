@@ -10,8 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
-import gov.redhawk.ExtendedCF.SandboxOperations;
-import gov.redhawk.ExtendedCF.SandboxPackage.Depth;
 import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
 import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
@@ -35,6 +33,8 @@ import CF.DeviceManager;
 import CF.FileManager;
 import CF.FileSystemOperations;
 import CF.ResourceFactory;
+import ExtendedCF.SandboxOperations;
+import ExtendedCF.SandboxPackage.Depth;
 
 /**
  * 
@@ -76,32 +76,32 @@ public class SandboxImpl implements SandboxOperations {
 		return this.localSca.getFileManager().getObj();
 	}
 
-	public gov.redhawk.ExtendedCF.ResourceDesc[] registeredResources() {
-		final List<gov.redhawk.ExtendedCF.ResourceDesc> retVal = new ArrayList<gov.redhawk.ExtendedCF.ResourceDesc>(this.localSca.getSandboxWaveform()
+	public ExtendedCF.ResourceDesc[] registeredResources() {
+		final List<ExtendedCF.ResourceDesc> retVal = new ArrayList<ExtendedCF.ResourceDesc>(this.localSca.getSandboxWaveform()
 		        .getComponents()
 		        .size()
 		        + this.localSca.getWaveforms().size() + this.localSca.getSandboxDeviceManager().getDevices().size());
 		final IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
 
 		for (final ScaComponent cp : this.localSca.getSandboxWaveform().getComponents()) {
-			final gov.redhawk.ExtendedCF.ResourceDesc desc = new gov.redhawk.ExtendedCF.ResourceDesc();
+			final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
 			desc.profile = registry.getProfilePath(registry.getDescByID(cp.getProfileObj().getId()));
 			desc.resource = cp.getObj();
 			retVal.add(desc);
 		}
 		for (final ScaDevice< ? > cp : this.localSca.getSandboxDeviceManager().getAllDevices()) {
-			final gov.redhawk.ExtendedCF.ResourceDesc desc = new gov.redhawk.ExtendedCF.ResourceDesc();
+			final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
 			desc.profile = registry.getProfilePath(registry.getDescByID(cp.getProfileObj().getId()));
 			desc.resource = cp.getObj();
 			retVal.add(desc);
 		}
 		for (final ScaWaveform cp : this.localSca.getWaveforms()) {
-			final gov.redhawk.ExtendedCF.ResourceDesc desc = new gov.redhawk.ExtendedCF.ResourceDesc();
+			final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
 			desc.profile = registry.getProfilePath(registry.getDescByID(cp.getProfileObj().getId()));
 			desc.resource = cp.getObj();
 			retVal.add(desc);
 		}
-		return retVal.toArray(new gov.redhawk.ExtendedCF.ResourceDesc[retVal.size()]);
+		return retVal.toArray(new ExtendedCF.ResourceDesc[retVal.size()]);
 	}
 
 	public ResourceFactory getResourceFactory(final String identifier) {

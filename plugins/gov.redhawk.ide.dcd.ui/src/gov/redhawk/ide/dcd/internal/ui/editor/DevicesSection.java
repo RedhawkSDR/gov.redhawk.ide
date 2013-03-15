@@ -18,9 +18,9 @@ import gov.redhawk.ide.sdr.LoadState;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.sca.ui.parts.FormFilteredTree;
 import gov.redhawk.ui.actions.SortAction;
 import gov.redhawk.ui.editor.TreeSection;
-import gov.redhawk.ui.parts.FormFilteredTree;
 import gov.redhawk.ui.parts.TreePart;
 import gov.redhawk.ui.util.SCAEditorUtil;
 

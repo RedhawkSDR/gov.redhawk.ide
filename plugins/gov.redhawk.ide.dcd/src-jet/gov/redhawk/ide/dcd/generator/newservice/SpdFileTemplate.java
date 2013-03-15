@@ -40,13 +40,13 @@ public class SpdFileTemplate
     final StringBuffer stringBuffer = new StringBuffer();
      GeneratorArgs args = (GeneratorArgs)argument; 
     stringBuffer.append(TEXT_1);
-    stringBuffer.append(args.getProjectName());
+    stringBuffer.append(args.getSoftPkgName());
     stringBuffer.append(TEXT_2);
-    stringBuffer.append(args.getProjectId());
+    stringBuffer.append(args.getSoftPkgId());
     stringBuffer.append(TEXT_3);
     stringBuffer.append(args.getAuthorName());
     stringBuffer.append(TEXT_4);
-    stringBuffer.append(args.getProjectName());
+    stringBuffer.append(args.getSoftPkgName());
     stringBuffer.append(TEXT_5);
     stringBuffer.append(TEXT_6);
     return stringBuffer.toString();

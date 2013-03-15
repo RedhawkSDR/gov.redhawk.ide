@@ -109,8 +109,6 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 				return createNameFromString(eDataType, initialValue);
 			case ScaDebugPackage.NAMING_CONTEXT:
 				return createNamingContextFromString(eDataType, initialValue);
-			case ScaDebugPackage.CORE_EXCEPTION:
-				return createCoreExceptionFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -128,8 +126,6 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 				return convertNameToString(eDataType, instanceValue);
 			case ScaDebugPackage.NAMING_CONTEXT:
 				return convertNamingContextToString(eDataType, instanceValue);
-			case ScaDebugPackage.CORE_EXCEPTION:
-				return convertCoreExceptionToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -288,24 +284,6 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 * @generated
 	 */
 	public String convertNamingContextToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public CoreException createCoreExceptionFromString(EDataType eDataType, String initialValue) {
-		return (CoreException)super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertCoreExceptionToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

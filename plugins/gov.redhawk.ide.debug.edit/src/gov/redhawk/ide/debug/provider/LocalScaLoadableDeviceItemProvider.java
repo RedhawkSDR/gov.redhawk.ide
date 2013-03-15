@@ -67,8 +67,8 @@ public class LocalScaLoadableDeviceItemProvider
 			super.getPropertyDescriptors(object);
 
 			addModePropertyDescriptor(object);
-			addExecParamsPropertyDescriptor(object);
 			addImplementationIDPropertyDescriptor(object);
+			addExecParamPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -96,28 +96,6 @@ public class LocalScaLoadableDeviceItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Exec Params feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addExecParamsPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_LocalAbstractComponent_execParams_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_LocalAbstractComponent_execParams_feature", "_UI_LocalAbstractComponent_type"),
-				 ScaDebugPackage.Literals.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAMS,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
 	 * This adds a property descriptor for the Implementation ID feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -131,7 +109,29 @@ public class LocalScaLoadableDeviceItemProvider
 				 getString("_UI_LocalAbstractComponent_implementationID_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_LocalAbstractComponent_implementationID_feature", "_UI_LocalAbstractComponent_type"),
 				 ScaDebugPackage.Literals.LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID,
-				 true,
+				 false,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Exec Param feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addExecParamPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_LocalAbstractComponent_execParam_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_LocalAbstractComponent_execParam_feature", "_UI_LocalAbstractComponent_type"),
+				 ScaDebugPackage.Literals.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAM,
+				 false,
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
@@ -163,8 +163,8 @@ public class LocalScaLoadableDeviceItemProvider
 
 		switch (notification.getFeatureID(LocalScaLoadableDevice.class)) {
 			case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__MODE:
-			case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__EXEC_PARAMS:
 			case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__IMPLEMENTATION_ID:
+			case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__EXEC_PARAM:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

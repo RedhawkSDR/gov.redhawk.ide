@@ -12,7 +12,7 @@
 package gov.redhawk.ide.dcd.generator.newdevice.tests;
 
 import gov.redhawk.ide.dcd.generator.newdevice.DeviceProjectCreator;
-import gov.redhawk.ide.preferences.RedhawkIdePreferenceConstants;
+
 import junit.framework.Assert;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.scd.Interface;
@@ -59,11 +59,9 @@ public class DeviceProjectCreatorTest {
 		final IProject project = DeviceProjectCreator.createEmptyProject("deviceProjectTest", null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
 		Assert.assertTrue("deviceProjectTest".equals(project.getName()));
-
-		DeviceProjectCreator.createDeviceFiles(project,
+		DeviceProjectCreator.createDeviceFiles(project, "deviceProjectTest", "gov.redhawk.deviceProjectTest",
 		        "deviceProjectTest",
 		        "Author",
-		        RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE,
 		        false,
 		        new NullProgressMonitor());
 
@@ -99,11 +97,11 @@ public class DeviceProjectCreatorTest {
 	public void testCreateAggregateDevice() throws CoreException {
 		final IProject project = DeviceProjectCreator.createEmptyProject("aggDevTest", null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
-
 		DeviceProjectCreator.createDeviceFiles(project,
+				"deviceProjectTest",
+				"gov.redhawk.deviceProjectTest",
 		        "aggDevTest",
 		        "Author",
-		        RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE,
 		        true,
 		        new NullProgressMonitor());
 

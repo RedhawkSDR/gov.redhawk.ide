@@ -65,19 +65,19 @@
       <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalLaunch/mode"/>
     </genClasses>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalAbstractComponent">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/execParams"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/implementationID"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/implementationID"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/execParam"/>
     </genClasses>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalScaWaveform">
       <genFeatures property="Readonly" notify="false" createChild="false" propertySortChoices="true"
           ecoreFeature="ecore:EReference scaDebug.ecore#//LocalScaWaveform/namingContext"/>
       <genFeatures property="None" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalScaWaveform/localApp"/>
       <genOperations ecoreOperation="scaDebug.ecore#//LocalScaWaveform/launch">
-        <genParameters ecoreParameter="scaDebug.ecore#//LocalScaWaveform/launch/usageName"/>
-        <genParameters ecoreParameter="scaDebug.ecore#//LocalScaWaveform/launch/instID"/>
+        <genParameters ecoreParameter="scaDebug.ecore#//LocalScaWaveform/launch/id"/>
         <genParameters ecoreParameter="scaDebug.ecore#//LocalScaWaveform/launch/execParams"/>
         <genParameters ecoreParameter="scaDebug.ecore#//LocalScaWaveform/launch/spdURI"/>
         <genParameters ecoreParameter="scaDebug.ecore#//LocalScaWaveform/launch/implID"/>
+        <genParameters ecoreParameter="scaDebug.ecore#//LocalScaWaveform/launch/mode"/>
       </genOperations>
       <genOperations ecoreOperation="scaDebug.ecore#//LocalScaWaveform/setLocalApp">
         <genParameters ecoreParameter="scaDebug.ecore#//LocalScaWaveform/setLocalApp/app"/>

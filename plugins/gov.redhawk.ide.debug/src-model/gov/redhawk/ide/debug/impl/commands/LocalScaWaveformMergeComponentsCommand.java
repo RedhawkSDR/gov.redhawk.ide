@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import CF.ComponentType;
 
 /**
+ * @since 2.0
  * 
  */
 public class LocalScaWaveformMergeComponentsCommand extends ScaWaveformMergeComponentsCommand {

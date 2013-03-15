@@ -64,6 +64,7 @@ import CF.PropertySetOperations;
 import CF.Resource;
 import CF.ResourceOperations;
 import CF.TestableObjectOperations;
+import ExtendedCF.ApplicationExtOperations;
 import gov.redhawk.ide.debug.*;
 
 /**
@@ -182,6 +183,10 @@ public class ScaDebugAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseLocalScaService(LocalScaService object) {
 				return createLocalScaServiceAdapter();
+			}
+			@Override
+			public Adapter caseApplicationExtOperations(ApplicationExtOperations object) {
+				return createApplicationExtOperationsAdapter();
 			}
 			@Override
 			public Adapter caseIDisposable(IDisposable object) {
@@ -533,6 +538,18 @@ public class ScaDebugAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createLocalScaServiceAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link ExtendedCF.ApplicationExtOperations <em>Application Ext Operations</em>}'.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * @return the new adapter.
+	 * @see ExtendedCF.ApplicationExtOperations
+	 * @generated
+	 */
+	public Adapter createApplicationExtOperationsAdapter() {
 		return null;
 	}
 

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
-import gov.redhawk.ide.debug.ScaLauncherUtil;
+import gov.redhawk.ide.debug.SpdLauncherUtil;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -62,7 +62,7 @@ public class WorkspaceWaveformFactory extends AbstractResourceFactory {
 		for (final DataType t : qualifiers) {
 			execParams.put(t.id, AnyUtils.convertAny(t.value));
 		}
-		return ScaLauncherUtil.createExecParamString(execParams);
+		return SpdLauncherUtil.createExecParamString(execParams);
 	}
 
 }

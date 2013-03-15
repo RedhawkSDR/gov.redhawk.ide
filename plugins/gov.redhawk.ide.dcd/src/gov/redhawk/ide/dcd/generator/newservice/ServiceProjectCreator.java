@@ -53,6 +53,8 @@ public class ServiceProjectCreator extends ProjectCreator {
 		return project;
 	}
 
+	
+	
 	/**
 	 * Creates the basic files for a service in an empty SCA resource project. Should be invoked in the context of a
 	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
@@ -65,42 +67,64 @@ public class ServiceProjectCreator extends ProjectCreator {
 	 *  reported and that the operation cannot be canceled.
 	 * @return The newly created DCD file
 	 * @throws CoreException An error occurs while generating files
+	 * @deprecated This method is deprecated.  Please use the method which takes in the spdName and spdID
 	 */
 	public static IFile createServiceFiles(final IProject project, final String projectID, final String authorName, final String serviceRepId, final IProgressMonitor monitor)
+	        throws CoreException {
+		return createServiceFiles(project, project.getName(), projectID, authorName, serviceRepId, monitor);
+	}
+	
+	/**
+	 * Creates the basic files for a service in an empty SCA resource project. Should be invoked in the context of a
+	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
+	 * 
+	 * @param project The project to generate files in
+	 * @param spdName The spd name
+	 * @param spdID The ID of the spd
+	 * @param authorName The name of the service author
+	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
+	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
+	 *  reported and that the operation cannot be canceled.
+	 * @return The newly created DCD file
+	 * @throws CoreException An error occurs while generating files
+	 */
+	public static IFile createServiceFiles(final IProject project, final String spdName, final String spdID, 
+			final String authorName, final String serviceRepId, final IProgressMonitor monitor)
 	        throws CoreException {
 		final SubMonitor progress = SubMonitor.convert(monitor, "Creating SCA Service files", 2);
 
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setProjectName(project.getName());
-		args.setProjectId(projectID);
+		args.setSoftPkgId(spdID);
+		args.setSoftPkgName(spdName);
 		args.setAuthorName(authorName);
 		args.setProperty("service_repid", serviceRepId);
 
 		// Generate file content from templates
-		final String spd = new SpdFileTemplate().generate(args);
-		final String scd = new ScdFileTemplate().generate(args);
+		final String spdContent = new SpdFileTemplate().generate(args);
+		final String scdContent = new ScdFileTemplate().generate(args);
 		progress.worked(1);
 
 		// Check that files/folders don't exist already
-		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
+		final IFile spdFile = project.getFile(spdName + SpdPackage.FILE_EXTENSION);
 		if (spdFile.exists()) {
 			throw new CoreException(new Status(IStatus.ERROR, IdeDcdPlugin.PLUGIN_ID, "File " + spdFile.getName() + " already exists.", null));
 		}
 
-		final IFile scdFile = project.getFile(project.getName() + ScdPackage.FILE_EXTENSION);
+		final IFile scdFile = project.getFile(spdName + ScdPackage.FILE_EXTENSION);
 		if (scdFile.exists()) {
 			throw new CoreException(new Status(IStatus.ERROR, IdeDcdPlugin.PLUGIN_ID, "File " + scdFile.getName() + " already exists.", null));
 		}
 
 		// Write files to disk
 		try {
-			spdFile.create(new ByteArrayInputStream(spd.getBytes("UTF-8")), true, progress.newChild(1));
+			spdFile.create(new ByteArrayInputStream(spdContent.getBytes("UTF-8")), true, progress.newChild(1));
 		} catch (final UnsupportedEncodingException e) {
 			throw new CoreException(new Status(IStatus.ERROR, IdeDcdPlugin.PLUGIN_ID, "Internal Error", e));
 		}
 
 		try {
-			scdFile.create(new ByteArrayInputStream(scd.getBytes("UTF-8")), true, progress.newChild(1));
+			scdFile.create(new ByteArrayInputStream(scdContent.getBytes("UTF-8")), true, progress.newChild(1));
 		} catch (final UnsupportedEncodingException e) {
 			throw new CoreException(new Status(IStatus.ERROR, IdeDcdPlugin.PLUGIN_ID, "Internal Error", e));
 		}

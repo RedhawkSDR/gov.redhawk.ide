@@ -18,6 +18,8 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
  */
 public class GeneratorArgs extends GeneratorArgsBase {
 	private SoftPkg assemblyController;
+	private String waveformName;
+	private String waveformId;
 
 	public void setAssemblyConroller(final SoftPkg assemblyController) {
 		this.assemblyController = assemblyController;
@@ -26,4 +28,20 @@ public class GeneratorArgs extends GeneratorArgsBase {
 	public SoftPkg getAssemblyController() {
 		return this.assemblyController;
 	}
+
+	public String getWaveformName() {
+	    return waveformName;
+    }
+
+	public void setWaveformName(String waveformName) {
+	    this.waveformName = waveformName;
+    }
+
+	public String getWaveformId() {
+	    return waveformId;
+    }
+
+	public void setWaveformId(String waveformId) {
+	    this.waveformId = waveformId;
+    }
 }

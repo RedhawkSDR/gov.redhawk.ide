@@ -10,11 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
-import gov.redhawk.ide.debug.impl.DeviceManagerImpl;
+import CF.DeviceManagerOperations;
 import gov.redhawk.model.sca.ScaDeviceManager;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -46,7 +47,7 @@ public interface LocalScaDeviceManager extends ScaDeviceManager, LocalLaunch {
 	 * @return the value of the '<em>Naming Context</em>' reference.
 	 * @see #setNamingContext(NotifyingNamingContext)
 	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalScaDeviceManager_NamingContext()
-	 * @model required="true"
+	 * @model required="true" transient="true"
 	 * @generated
 	 */
 	NotifyingNamingContext getNamingContext();
@@ -62,26 +63,36 @@ public interface LocalScaDeviceManager extends ScaDeviceManager, LocalLaunch {
 	void setNamingContext(NotifyingNamingContext value);
 
 	/**
-	 * Returns the value of the '<em><b>Local Device Manager</b></em>' attribute.
+	 * Returns the value of the '<em><b>Local Device Manager</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Local Device Manager</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
+	 * @since 2.0
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Local Device Manager</em>' attribute.
+	 * @return the value of the '<em>Local Device Manager</em>' containment reference.
+	 * @see #setLocalDeviceManager(DeviceManagerOperations)
 	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalScaDeviceManager_LocalDeviceManager()
-	 * @model dataType="gov.redhawk.ide.debug.DeviceManagerImpl" required="true" transient="true" suppressedSetVisibility="true" suppressedIsSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model type="mil.jpeojtrs.sca.cf.DeviceManagerOperations" containment="true" required="true" transient="true"
 	 * @generated
 	 */
-	DeviceManagerImpl getLocalDeviceManager();
+	DeviceManagerOperations getLocalDeviceManager();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaDeviceManager#getLocalDeviceManager <em>Local Device Manager</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Local Device Manager</em>' containment reference.
+	 * @see #getLocalDeviceManager()
+	 * @generated
+	 */
+	void setLocalDeviceManager(DeviceManagerOperations value);
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @since 2.0
 	 * <!-- end-user-doc -->
-	 * @model exceptions="gov.redhawk.ide.debug.ServantNotActive gov.redhawk.ide.debug.WrongPolicy" implDataType="gov.redhawk.ide.debug.DeviceManagerImpl" poaDataType="gov.redhawk.model.sca.POA"
+	 * @model exceptions="gov.redhawk.ide.debug.ServantNotActive gov.redhawk.ide.debug.WrongPolicy" implType="mil.jpeojtrs.sca.cf.DeviceManagerOperations" poaDataType="gov.redhawk.model.sca.POA"
 	 * @generated
 	 */
-	void setLocalDeviceManager(DeviceManagerImpl impl, POA poa) throws ServantNotActive, WrongPolicy;
+	void setLocalDeviceManager(DeviceManagerOperations impl, POA poa) throws ServantNotActive, WrongPolicy;
 
 } // LocalScaDeviceManager

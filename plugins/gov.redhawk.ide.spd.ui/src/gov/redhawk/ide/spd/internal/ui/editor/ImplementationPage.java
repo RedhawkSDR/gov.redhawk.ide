@@ -76,7 +76,7 @@ public class ImplementationPage extends ScaFormPage implements IViewerProvider {
 		// TODO
 		// form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXTENSIONS_OBJ));
 		this.fBlock.createContent(managedForm);
-
+		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
 				IdeHelpConstants.reference_editors_component_implementationsPage);
 		

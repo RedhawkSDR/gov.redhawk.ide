@@ -43,7 +43,7 @@ public class SpdFileTemplate
     stringBuffer.append(TEXT_1);
     stringBuffer.append(args.getProjectName());
     stringBuffer.append(TEXT_2);
-    stringBuffer.append(args.getProjectId());
+    stringBuffer.append(args.getSoftPkgId());
     stringBuffer.append(TEXT_3);
     stringBuffer.append(args.getAuthorName());
     stringBuffer.append(TEXT_4);

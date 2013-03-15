@@ -63,6 +63,7 @@ import CF.PropertySetOperations;
 import CF.Resource;
 import CF.ResourceOperations;
 import CF.TestableObjectOperations;
+import ExtendedCF.ApplicationExtOperations;
 import gov.redhawk.ide.debug.*;
 
 /**
@@ -201,6 +202,7 @@ public class ScaDebugSwitch< T1 > {
 				T1 result = caseLocalScaWaveform(localScaWaveform);
 				if (result == null) result = caseScaWaveform(localScaWaveform);
 				if (result == null) result = caseLocalLaunch(localScaWaveform);
+				if (result == null) result = caseApplicationExtOperations(localScaWaveform);
 				if (result == null) result = caseScaPropertyContainer(localScaWaveform);
 				if (result == null) result = caseApplicationOperations(localScaWaveform);
 				if (result == null) result = caseScaPortContainer(localScaWaveform);
@@ -578,6 +580,22 @@ public class ScaDebugSwitch< T1 > {
 	 * @generated
 	 */
 	public T1 caseLocalScaService(LocalScaService object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Application Ext Operations</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Application Ext Operations</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseApplicationExtOperations(ApplicationExtOperations object) {
 		return null;
 	}
 

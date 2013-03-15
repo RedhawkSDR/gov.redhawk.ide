@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="gov.redhawk.ide.debug" version="2">
+    <resource path="src-idl/ExtendedCF/ApplicationExtOperations.java" type="ExtendedCF.ApplicationExtOperations">
+        <filter id="1211105284">
+            <message_arguments>
+                <message_argument value="launch(String, DataType[], String, String, String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-idl/ExtendedCF/ApplicationExtPOATie.java" type="ExtendedCF.ApplicationExtPOATie">
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="launch(String, DataType[], String, String, String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-idl/ExtendedCF/_ApplicationExtStub.java" type="ExtendedCF._ApplicationExtStub">
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="launch(String, DataType[], String, String, String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

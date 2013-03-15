@@ -6,7 +6,7 @@
 <!DOCTYPE softpkg PUBLIC "-//JTRS//DTD SCA V2.2.2 SPD//EN" "softpkg.dtd">
 <!-- Created with REDHAWK IDE-->
 <!-- Powered by Eclipse -->
-<softpkg type="sca_compliant" name="<%=args.getProjectName()%>" id="<%=args.getProjectId()%>">
+<softpkg type="sca_compliant" name="<%=args.getProjectName()%>" id="<%=args.getSoftPkgId()%>">
     <title/>
     <author>
         <name><%=args.getAuthorName()%></name>

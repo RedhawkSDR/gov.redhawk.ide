@@ -13,6 +13,7 @@ package gov.redhawk.ide.debug.impl;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.internal.NamingContextExtPOATie;
 import gov.redhawk.model.sca.IDisposable;
 import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -28,8 +29,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -178,6 +181,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * @ordered
 	 */
 	protected static final String NAME_EDEFAULT = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -315,6 +319,51 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 	private static final Debug DEBUG = new Debug(ScaDebugPlugin.ID, "context");
 	private boolean destroyed = false;
+	private final Adapter adapter = new AdapterImpl() {
+		{
+			eAdapters().add(this);
+		}
+		@Override
+        public void notifyChanged(final Notification msg) {
+			switch(msg.getFeatureID(NotifyingNamingContext.class)) {
+			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
+				switch(msg.getEventType()) {
+				case Notification.REMOVE:
+					if (msg.getOldValue() instanceof NotifyingNamingContext) {
+						final NotifyingNamingContext context = (NotifyingNamingContext) msg.getOldValue();
+						removeReferences(context);
+					}
+					break;
+				case Notification.REMOVE_MANY:
+					for (final Object obj : (Collection<?>)msg.getOldValue()) {
+						if (obj instanceof NotifyingNamingContext) {
+							final NotifyingNamingContext context = (NotifyingNamingContext) obj;
+							removeReferences(context);
+						}
+					}
+					break;
+				default:
+					break;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	};
+
+	/**
+	 * @since 2.0
+	 */
+	protected void removeReferences(final NotifyingNamingContext context) {
+	    for (final Iterator<Entry<Name, NamingContext>> iterator = getContextMap().iterator(); iterator.hasNext();) {
+	    	final Entry<Name, NamingContext> entry = iterator.next();
+	    	if (entry.getValue()._is_equivalent(context.getNamingContext())) {
+	    		iterator.remove();
+	    	}
+	    }
+    }
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -501,7 +550,12 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	public void dispose() {
 		getObjectMap().clear();
 		getContextMap().clear();
+		getSubContexts().clear();
+		EcoreUtil.delete(this);
 		this.destroyed = true;
+		this.namingContext = null;
+		this.poa = null;
+		this.disposed = true;
 	}
 
 	/**
@@ -1024,20 +1078,12 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	}
 
 	public void destroy() throws NotEmpty {
-		if (this.destroyed) {
-			return;
-		}
-			ScaModelCommand.execute(this, new ScaModelCommand() {
+		ScaModelCommand.execute(this, new ScaModelCommand() {
 
-				public void execute() {
-					getObjectMap().clear();
-					getContextMap().clear();
-					EcoreUtil.delete(NotifyingNamingContextImpl.this);
-				}
-			});
-			this.objectMap = null;
-			this.contextMap = null;
-			this.destroyed = true;
+			public void execute() {
+				NotifyingNamingContextImpl.this.dispose();
+			}
+		});
 	}
 
 	/**

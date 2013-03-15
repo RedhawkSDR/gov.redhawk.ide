@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
-import gov.redhawk.ide.debug.ScaLauncherUtil;
+import gov.redhawk.ide.debug.SpdLauncherUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +53,7 @@ public class SdrWaveformFactory extends AbstractResourceFactory {
 		for (final DataType t : qualifiers) {
 			execParams.put(t.id, AnyUtils.convertAny(t.value));
 		}
-		return ScaLauncherUtil.createExecParamString(execParams);
+		return SpdLauncherUtil.createExecParamString(execParams);
 	}
 
 	private Implementation chooseImplementation(final SoftPkg spd) {

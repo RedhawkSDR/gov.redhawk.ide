@@ -29,28 +29,6 @@
       %license
    </license>
 
-   <requires>
-      <import feature="org.eclipse.emf.ecore.edit" version="2.5.0.v200906151043"/>
-      <import feature="org.eclipse.emf.codegen" version="2.5.0.v200906151043"/>
-      <import feature="org.eclipse.emf.codegen.ecore" version="2.5.0.v200906151043"/>
-      <import feature="org.eclipse.emf.codegen.ecore.ui" version="2.5.0.v200906151043"/>
-      <import feature="org.eclipse.emf.codegen.ui" version="2.4.0.v200906151043"/>
-      <import feature="org.eclipse.emf.common" version="2.5.0.v200906151043"/>
-      <import feature="org.eclipse.emf.common.ui" version="2.5.0.v200906151043"/>
-      <import feature="org.eclipse.emf.ecore" version="2.5.0.v200906151043"/>
-      <import feature="org.eclipse.emf.ecore.edit" version="2.5.0.v200906151043"/>
-      <import feature="org.eclipse.emf.edit" version="2.5.0.v200906151043"/>
-      <import feature="org.eclipse.emf.edit.ui" version="2.5.0.v200906151043"/>
-      <import feature="org.eclipse.emf.mapping" version="2.5.0.v200906151043"/>
-      <import feature="org.python.pydev.feature" version="1.5.7.2010050621"/>
-      <import feature="org.eclipse.cdt" version="7.0.2.201102110609"/>
-      <import feature="org.eclipse.emf" version="2.6.1.v20100914-1218"/>
-      <import feature="org.eclipse.cdt.sdk" version="7.0.2.201102110609"/>
-      <import feature="org.eclipse.emf.transaction" version="1.4.0.v20100428-2315-377-8s734C3E7D15D6B"/>
-      <import feature="org.eclipse.emf.validation" version="1.4.0.v20100428-2315-479-9oB56N5BBR6LCA6"/>
-      <import feature="org.eclipse.gef" version="3.6.1.v20100908-1100-777B181A3Bz-6B663E7974242"/>
-   </requires>
-
    <plugin
          id="gov.redhawk.ide"
          download-size="0"

@@ -13,6 +13,7 @@ package gov.redhawk.ide.dcd.generator.newservice.tests;
 
 import gov.redhawk.ide.dcd.generator.newdevice.DeviceProjectCreator;
 import gov.redhawk.ide.dcd.generator.newservice.ServiceProjectCreator;
+
 import junit.framework.Assert;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.scd.ScdPackage;
@@ -56,9 +57,8 @@ public class ServiceProjectCreatorTest {
 		final IProject project = DeviceProjectCreator.createEmptyProject("serviceProjectTest", null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
 		Assert.assertTrue("serviceProjectTest".equals(project.getName()));
-
-		ServiceProjectCreator.createServiceFiles(project,
-		        "serviceProjectTest",
+		ServiceProjectCreator.createServiceFiles(project, "serviceProjectTest",
+				"gov.redhawk.serviceProjectTest",
 		        "Author",
 		        "IDL:MULTICASTALLOCATION/MulticastAllocationService:1.0",
 		        new NullProgressMonitor());

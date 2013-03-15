@@ -14,9 +14,9 @@ import gov.redhawk.ide.dcd.internal.ui.editor.provider.ImplementationSectionImpl
 import gov.redhawk.ide.dcd.internal.ui.editor.provider.ImplementationSectionSoftPkgItemProvider;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.SpdItemProviderAdapterFactoryAdapter;
 import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.sca.ui.parts.FormFilteredTree;
 import gov.redhawk.ui.actions.SortAction;
 import gov.redhawk.ui.editor.TreeSection;
-import gov.redhawk.ui.parts.FormFilteredTree;
 import gov.redhawk.ui.parts.TreePart;
 import mil.jpeojtrs.sca.spd.Code;
 import mil.jpeojtrs.sca.spd.CodeFileType;

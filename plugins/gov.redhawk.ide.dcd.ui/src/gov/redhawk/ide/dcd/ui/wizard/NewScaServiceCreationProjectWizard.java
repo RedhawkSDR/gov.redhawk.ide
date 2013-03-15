@@ -107,23 +107,19 @@ public class NewScaServiceCreationProjectWizard extends NewScaResourceWizard imp
 
 						// If we're creating a new service (vs importing one)
 						if (isCreateNewResource) {
-							// Figure out the ID we'll use 
-							String id;
-							if (generateId) {
-								id = DceUuidUtil.createDceUUID();
-							} else {
-								id = providedId;
-							}
 
 							// Create the SCA XML files
-							final IFile defaultFile = ServiceProjectCreator.createServiceFiles(project, id, null, serviceRepId, progress.newChild(1));
+							final IFile defaultFile = ServiceProjectCreator.createServiceFiles(project, 
+									NewScaServiceCreationProjectWizard.this.getSoftPkg().getName(),
+									NewScaServiceCreationProjectWizard.this.getSoftPkg().getId(),
+									null, serviceRepId, progress.newChild(1));
 							NewScaServiceCreationProjectWizard.this.setOpenEditorOn(defaultFile);
 
 							// Create the implementation
 							final ImplementationWizardPage page = (ImplementationWizardPage) getWizPages().get(1);
 							final Implementation impl = page.getImplementation();
 							final ImplementationSettings settings = page.getImplSettings();
-							ProjectCreator.addImplementation(project, impl, settings, progress.newChild(1));
+							ProjectCreator.addImplementation(project, NewScaServiceCreationProjectWizard.this.getSoftPkg().getName(), impl, settings, progress.newChild(1));
 						} else {
 							setOpenEditorOn(ProjectCreator.importFiles(project, existingSpdPath, getImplList(), getImportedSettingsMap(), progress.newChild(2)));
 						}
@@ -298,7 +294,9 @@ public class NewScaServiceCreationProjectWizard extends NewScaResourceWizard imp
 
 		// Create a softpkg
 		final SoftPkg softPkg = SpdFactory.eINSTANCE.createSoftPkg();
-		softPkg.setName(this.resourcePropertiesPage.getProjectName());
+		
+		String[] tokens = this.resourcePropertiesPage.getProjectName().split("\\.");
+		softPkg.setName(tokens[tokens.length - 1]);
 
 		final boolean generateId = this.resourcePropertiesPage.getIdGroup().isGenerateId();
 		final String providedId = this.resourcePropertiesPage.getIdGroup().getProvidedId();

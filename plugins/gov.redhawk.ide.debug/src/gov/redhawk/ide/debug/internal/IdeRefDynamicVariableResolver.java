@@ -1,21 +1,17 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
- * Please refer to the COPYRIGHT file distributed with this source distribution.
+/** 
+ * REDHAWK HEADER
  *
- * This file is part of REDHAWK IDE.
- *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * Identification: $Revision: 9042 $
+ */
 package gov.redhawk.ide.debug.internal;
+
+import gov.redhawk.ide.debug.ScaDebugPlugin;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
 
-import gov.redhawk.ExtendedCF.Sandbox;
-import gov.redhawk.ide.debug.ScaDebugPlugin;
+import ExtendedCF.Sandbox;
 
 public class IdeRefDynamicVariableResolver implements IDynamicVariableResolver {
 

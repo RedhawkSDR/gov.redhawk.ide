@@ -15,6 +15,7 @@ import gov.redhawk.diagram.edit.helpers.ConnectInterfaceEditHelperAdvice;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ui.LaunchUtil;
+import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
@@ -44,6 +45,7 @@ import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -77,12 +79,9 @@ import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
 
 public class ModelMap {
-	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] {
-	        PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
-	        PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF,
-	        PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
-	        PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG
-	};
+	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
+	        PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
+	        PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 	private final LocalScaEditor editor;
 	private final SoftwareAssembly sad;
 	private final Map<EObject, EObject> sadToSca = new HashMap<EObject, EObject>();
@@ -312,7 +311,12 @@ public class ModelMap {
 			throw new ExecuteFail(ErrorNumberType.CF_EIO, "Failed to resolve spd.");
 		}
 		final URI spdURI = spd.eResource().getURI();
-		return this.waveform.launch(comp.getUsageName(), comp.getId(), execParams, spdURI, implID);
+		try {
+			return this.waveform.launch(comp.getId(), execParams, spdURI, implID, ILaunchManager.RUN_MODE);
+		} catch (final CoreException e) {
+			ScaDebugUiPlugin.getDefault().getLog().log(e.getStatus());
+			throw new ExecuteFail(ErrorNumberType.CF_EFAULT, e.getStatus().getMessage());
+		}
 	}
 
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
@@ -328,8 +332,7 @@ public class ModelMap {
 		final ScaUsesPort usesPort = (ScaUsesPort) sourceComp.getScaPort(conn.getUsesPort().getUsesIndentifier());
 		org.omg.CORBA.Object targetObj = null;
 		if (conn.getComponentSupportedInterface() != null) {
-			final LocalScaComponent targetComp = get((SadComponentInstantiation) conn.getComponentSupportedInterface().getComponentInstantiationRef()
-			        .getInstantiation());
+			final LocalScaComponent targetComp = get((SadComponentInstantiation) conn.getComponentSupportedInterface().getComponentInstantiationRef().getInstantiation());
 			targetObj = targetComp.getCorbaObj();
 		} else if (conn.getProvidesPort() != null) {
 			final LocalScaComponent targetComp = get(conn.getProvidesPort().getComponentInstantiationRef().getInstantiation());

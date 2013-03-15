@@ -115,14 +115,17 @@ public class NewScaResourceProjectWizard extends NewScaResourceWizard implements
 						// If we're creating a new component (vs importing one)
 						if (isCreateNewResource) {
 							// Create the SCA XML files
+							// Refs #175.  Passing in the spd file since spd name is now different than project name.
 							NewScaResourceProjectWizard.this.setOpenEditorOn(ComponentProjectCreator.createComponentFiles(project,
-							        NewScaResourceProjectWizard.this.getSoftPkg().getId(), null, progress.newChild(1)));
+							        NewScaResourceProjectWizard.this.getSoftPkg().getName(),
+							        NewScaResourceProjectWizard.this.getSoftPkg().getId(),
+							        null, progress.newChild(1)));
 
 							// Create the implementation
 							final ImplementationWizardPage page = (ImplementationWizardPage) NewScaResourceProjectWizard.this.getWizPages().get(1);
 							final Implementation impl = page.getImplementation();
 							final ImplementationSettings settings = page.getImplSettings();
-							ProjectCreator.addImplementation(project, impl, settings, progress.newChild(1));
+							ProjectCreator.addImplementation(project, NewScaResourceProjectWizard.this.getSoftPkg().getName(), impl, settings, progress.newChild(1));
 						} else {
 							NewScaResourceProjectWizard.this.setOpenEditorOn(ProjectCreator.importFiles(project, existingResourceLocation,
 							        NewScaResourceProjectWizard.this.getImplList(), NewScaResourceProjectWizard.this.getImportedSettingsMap(),
@@ -346,7 +349,9 @@ public class NewScaResourceProjectWizard extends NewScaResourceWizard implements
 
 		// Create a softpkg
 		final SoftPkg softPkg = SpdFactory.eINSTANCE.createSoftPkg();
-		softPkg.setName(this.resourcePropertiesPage.getProjectName());
+		
+		String[] tokens = this.resourcePropertiesPage.getProjectName().split("\\.");
+		softPkg.setName(tokens[tokens.length - 1]);
 
 		final boolean generateId = this.resourcePropertiesPage.getIdGroup().isGenerateId();
 		final String providedId = this.resourcePropertiesPage.getIdGroup().getProvidedId();

@@ -12,9 +12,9 @@ package gov.redhawk.ide.debug.internal.ui;
 
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.debug.SadLauncherUtil;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.ide.debug.ScaLauncherUtil;
-import gov.redhawk.ide.debug.impl.LocalApplicationFactory;
+import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
 import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaFactory;
@@ -57,7 +57,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		final boolean start = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
 		final String path = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, "");
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
-		final Map<String, String> implMap = ScaLauncherUtil.getImplementationMap(configuration);
+		final Map<String, String> implMap = SadLauncherUtil.getImplementationMap(configuration);
 
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final Resource sadResource = resourceSet.getResource(URI.createPlatformResourceURI(path, true), true);

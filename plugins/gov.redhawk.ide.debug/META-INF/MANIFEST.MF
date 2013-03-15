@@ -6,14 +6,17 @@ Bundle-Version: 2.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: ExtendedCF,
  gov.redhawk.ide.debug,
  gov.redhawk.ide.debug.impl,
  gov.redhawk.ide.debug.impl.commands;x-internal:=true,
  gov.redhawk.ide.debug.internal;x-internal:=true,
+ gov.redhawk.ide.debug.internal.cf.extended.impl;x-internal:=true,
+ gov.redhawk.ide.debug.internal.cf.impl;x-internal:=true,
+ gov.redhawk.ide.debug.internal.variables;x-internal:=true,
  gov.redhawk.ide.debug.util,
- org.jacorb.naming
+ gov.redhawk.ide.debug.variables
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  org.eclipse.emf.ecore;bundle-version="2.6.1";visibility:=reexport,
  org.eclipse.emf.ecore.xmi;bundle-version="2.5.0";visibility:=reexport,
@@ -33,7 +36,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  gov.redhawk.sca.launch;bundle-version="1.0.0";visibility:=reexport,
  org.eclipse.core.externaltools;bundle-version="1.0.1",
  gov.redhawk.core.resourceFactory;bundle-version="1.0.0",
- gov.redhawk.sandbox;bundle-version="1.0.0";visibility:=reexport,
+ gov.redhawk.ide.codegen;bundle-version="9.0.0",
  gov.redhawk.ide.sdr;bundle-version="8.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: gov.redhawk.ide.debug.ScaDebugPlugin

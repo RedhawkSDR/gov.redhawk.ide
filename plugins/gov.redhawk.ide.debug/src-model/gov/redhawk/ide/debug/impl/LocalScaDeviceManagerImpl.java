@@ -10,11 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.impl;
 
+import CF.DeviceManagerOperations;
 import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.internal.cf.impl.DeviceManagerImpl;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.impl.ScaDeviceManagerImpl;
@@ -27,6 +29,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -102,23 +105,14 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	 */
 	protected NotifyingNamingContext namingContext;
 	/**
-	 * The default value of the '{@link #getLocalDeviceManager() <em>Local Device Manager</em>}' attribute.
+	 * The cached value of the '{@link #getLocalDeviceManager() <em>Local Device Manager</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getLocalDeviceManager()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final DeviceManagerImpl LOCAL_DEVICE_MANAGER_EDEFAULT = null;
-	/**
-	 * The cached value of the '{@link #getLocalDeviceManager() <em>Local Device Manager</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalDeviceManager()
-	 * @generated
-	 * @ordered
-	 */
-	protected DeviceManagerImpl localDeviceManager = LOCAL_DEVICE_MANAGER_EDEFAULT;
+	protected DeviceManagerOperations localDeviceManager;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -221,11 +215,48 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @since 2.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public DeviceManagerImpl getLocalDeviceManager() {
+	public DeviceManagerOperations getLocalDeviceManager() {
 		return localDeviceManager;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetLocalDeviceManager(DeviceManagerOperations newLocalDeviceManager, NotificationChain msgs) {
+		DeviceManagerOperations oldLocalDeviceManager = localDeviceManager;
+		localDeviceManager = newLocalDeviceManager;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER, oldLocalDeviceManager, newLocalDeviceManager);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setLocalDeviceManager(DeviceManagerOperations newLocalDeviceManager) {
+		if (newLocalDeviceManager != localDeviceManager) {
+			NotificationChain msgs = null;
+			if (localDeviceManager != null)
+				msgs = ((InternalEObject)localDeviceManager).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER, null, msgs);
+			if (newLocalDeviceManager != null)
+				msgs = ((InternalEObject)newLocalDeviceManager).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER, null, msgs);
+			msgs = basicSetLocalDeviceManager(newLocalDeviceManager, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER, newLocalDeviceManager, newLocalDeviceManager));
 	}
 
 	/**
@@ -233,11 +264,13 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setLocalDeviceManager(DeviceManagerImpl newLocalDeviceManager) {
-		DeviceManagerImpl oldLocalDeviceManager = localDeviceManager;
-		localDeviceManager = newLocalDeviceManager;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER, oldLocalDeviceManager, localDeviceManager));
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER:
+				return basicSetLocalDeviceManager(null, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	private final Job refreshJob = new SilentJob("Refresh") {
@@ -262,10 +295,11 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @since 2.0
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public void setLocalDeviceManager(final DeviceManagerImpl impl, final POA poa) throws ServantNotActive, WrongPolicy {
+	public void setLocalDeviceManager(final DeviceManagerOperations impl, final POA poa) throws ServantNotActive, WrongPolicy {
 		// END GENERATED CODE
 		setLocalDeviceManager(impl);
 		final DeviceManager ref;
@@ -339,7 +373,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 				setNamingContext((NotifyingNamingContext)newValue);
 				return;
 			case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER:
-				setLocalDeviceManager((DeviceManagerImpl)newValue);
+				setLocalDeviceManager((DeviceManagerOperations)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -363,7 +397,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 				setNamingContext((NotifyingNamingContext)null);
 				return;
 			case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER:
-				setLocalDeviceManager(LOCAL_DEVICE_MANAGER_EDEFAULT);
+				setLocalDeviceManager((DeviceManagerOperations)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -384,7 +418,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 			case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__NAMING_CONTEXT:
 				return namingContext != null;
 			case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER:
-				return LOCAL_DEVICE_MANAGER_EDEFAULT == null ? localDeviceManager != null : !LOCAL_DEVICE_MANAGER_EDEFAULT.equals(localDeviceManager);
+				return localDeviceManager != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -437,8 +471,6 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 		result.append(launch);
 		result.append(", mode: ");
 		result.append(mode);
-		result.append(", localDeviceManager: ");
-		result.append(localDeviceManager);
 		result.append(')');
 		return result.toString();
 	}

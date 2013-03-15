@@ -10,12 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
-import gov.redhawk.ExtendedCF.Sandbox;
 import gov.redhawk.model.sca.IDisposable;
 import gov.redhawk.model.sca.ScaWaveform;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EList;
+import org.omg.CORBA.ORB;
+import org.omg.PortableServer.POA;
 
 /**
  * <!-- begin-user-doc -->
@@ -26,20 +27,69 @@ import org.eclipse.emf.common.util.EList;
  * <p>
  * The following features are supported:
  * <ul>
+ *   <li>{@link gov.redhawk.ide.debug.LocalSca#getOrb <em>Orb</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.LocalSca#getPoa <em>Poa</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalSca#getWaveforms <em>Waveforms</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalSca#getSandboxWaveform <em>Sandbox Waveform</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalSca#getSandboxDeviceManager <em>Sandbox Device Manager</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.LocalSca#getRootContext <em>Root Context</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalSca#getFileManager <em>File Manager</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.LocalSca#getSandbox <em>Sandbox</em>}</li>
  * </ul>
  * </p>
  *
  * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca()
- * @model features="rootContext" 
- *        rootContextType="gov.redhawk.ide.debug.NotifyingNamingContext" rootContextContainment="true" rootContextRequired="true" rootContextSuppressedGetVisibility="true" rootContextSuppressedSetVisibility="true" rootContextSuppressedIsSetVisibility="true" rootContextSuppressedUnsetVisibility="true"
+ * @model
  * @generated
  */
 public interface LocalSca extends IDisposable {
+
+	/**
+	 * Returns the value of the '<em><b>Orb</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Orb</em>' attribute.
+	 * @see #setOrb(ORB)
+	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca_Orb()
+	 * @model dataType="mil.jpeojtrs.sca.cf.ORB" transient="true"
+	 * @generated
+	 */
+	ORB getOrb();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalSca#getOrb <em>Orb</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Orb</em>' attribute.
+	 * @see #getOrb()
+	 * @generated
+	 */
+	void setOrb(ORB value);
+
+	/**
+	 * Returns the value of the '<em><b>Poa</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Poa</em>' attribute.
+	 * @see #setPoa(POA)
+	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca_Poa()
+	 * @model dataType="gov.redhawk.model.sca.POA" transient="true"
+	 * @generated
+	 */
+	POA getPoa();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalSca#getPoa <em>Poa</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Poa</em>' attribute.
+	 * @see #getPoa()
+	 * @generated
+	 */
+	void setPoa(POA value);
 
 	/**
 	 * Returns the value of the '<em><b>Waveforms</b></em>' containment reference list.
@@ -52,7 +102,7 @@ public interface LocalSca extends IDisposable {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Waveforms</em>' containment reference list.
 	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca_Waveforms()
-	 * @model containment="true"
+	 * @model containment="true" transient="true"
 	 * @generated
 	 */
 	EList<ScaWaveform> getWaveforms();
@@ -67,7 +117,7 @@ public interface LocalSca extends IDisposable {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Sandbox Waveform</em>' containment reference.
 	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca_SandboxWaveform()
-	 * @model containment="true" required="true" suppressedSetVisibility="true" suppressedIsSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model containment="true" required="true" transient="true" suppressedSetVisibility="true" suppressedIsSetVisibility="true" suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	LocalScaWaveform getSandboxWaveform();
@@ -82,10 +132,22 @@ public interface LocalSca extends IDisposable {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Sandbox Device Manager</em>' containment reference.
 	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca_SandboxDeviceManager()
-	 * @model containment="true" required="true" suppressedSetVisibility="true" suppressedIsSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model containment="true" required="true" transient="true" suppressedSetVisibility="true" suppressedIsSetVisibility="true" suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	LocalScaDeviceManager getSandboxDeviceManager();
+
+	/**
+	 * Returns the value of the '<em><b>Root Context</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Root Context</em>' containment reference.
+	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca_RootContext()
+	 * @model containment="true" required="true" transient="true" suppressedSetVisibility="true" suppressedIsSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @generated
+	 */
+	NotifyingNamingContext getRootContext();
 
 	/**
 	 * Returns the value of the '<em><b>File Manager</b></em>' containment reference.
@@ -97,36 +159,10 @@ public interface LocalSca extends IDisposable {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>File Manager</em>' containment reference.
 	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca_FileManager()
-	 * @model containment="true" required="true" suppressedSetVisibility="true" suppressedIsSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model containment="true" required="true" transient="true" suppressedSetVisibility="true" suppressedIsSetVisibility="true" suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	LocalFileManager getFileManager();
-
-	/**
-	 * Returns the value of the '<em><b>Sandbox</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Sandbox</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Sandbox</em>' attribute.
-	 * @see #setSandbox(Sandbox)
-	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca_Sandbox()
-	 * @model dataType="gov.redhawk.ide.debug.Sandbox" transient="true"
-	 * @generated
-	 */
-	Sandbox getSandbox();
-
-	/**
-	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalSca#getSandbox <em>Sandbox</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Sandbox</em>' attribute.
-	 * @see #getSandbox()
-	 * @generated
-	 */
-	void setSandbox(Sandbox value);
 
 	/**
 	 * <!-- begin-user-doc -->

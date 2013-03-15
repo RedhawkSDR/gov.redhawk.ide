@@ -10,14 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui;
 
-import gov.redhawk.ide.debug.LocalComponentProgramLaunchDelegate;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
-import mil.jpeojtrs.sca.util.DceUuidUtil;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -30,12 +29,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
@@ -140,19 +139,15 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 
 	private void launchImplementation(final Implementation impl, final ExecutionEvent event) throws CoreException {
 		final SoftPkg spd = impl.getSoftPkg();
-		final String instId = DceUuidUtil.createDceUUID() + ":" + spd.getId();
-		final URI uri = impl.eResource().getURI();
-		final ILaunchConfigurationWorkingCopy config = LocalComponentProgramLaunchDelegate.createLaunchConfiguration(spd.getName(),
-		        instId,
-		        impl.getId(),
-		        null,
-		        uri);
 		final Job job = new Job("Launching " + spd.getName()) {
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				try {
-					config.launch(ILaunchManager.RUN_MODE, monitor, false);
+					ScaDebugPlugin.getInstance()
+					        .getLocalSca()
+					        .getSandboxWaveform()
+					        .launch(null, null, EcoreUtil.getURI(spd), impl.getId(), ILaunchManager.RUN_MODE);
 				} catch (final CoreException e) {
 					return e.getStatus();
 				}

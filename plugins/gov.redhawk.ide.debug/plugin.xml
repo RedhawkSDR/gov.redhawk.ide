@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
+   <extension-point id="launchConfigurationFactories" name="Launch Configuration Factories" schema="schema/launchConfigurationFactories.exsd"/>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
@@ -19,20 +20,20 @@
       <variable
             description="Returns the IOR of the current Local Device Manager Stub, useful for debugging devices."
             name="LocalDeviceManagerIOR"
-            resolver="gov.redhawk.ide.debug.LocalDeviceManagerIORResolver"
+            resolver="gov.redhawk.ide.debug.internal.variables.LocalDeviceManagerIORResolver"
             supportsArgument="false">
       </variable>
       <variable
             description="Generate a unique service name within the context of the local sca."
             name="uniqueServiceName"
-            resolver="gov.redhawk.ide.debug.UniqueServiceNameBindingResolver"
+            resolver="gov.redhawk.ide.debug.internal.variables.UniqueServiceNameBindingResolver"
             supportsArgument="true">
       </variable>
    </extension>
     <extension
           point="org.eclipse.debug.core.launchConfigurationTypes">
        <launchConfigurationType
-             delegate="gov.redhawk.ide.debug.LocalComponentProgramLaunchDelegate"
+             delegate="gov.redhawk.ide.debug.internal.LocalComponentProgramLaunchDelegate"
              id="gov.redhawk.ide.debug.localComponentProgram"
              modes="run"
              name="Local Component Program">
@@ -47,7 +48,68 @@
       <variable
             description="The IOR to the IDE Sandbox Servant"
             name="IDE_REF"
-            resolver="gov.redhawk.ide.debug.internal.IdeRefDynamicVariableResolver">
+            resolver="gov.redhawk.ide.debug.internal.IdeRefDynamicVariableResolver"
+            supportsArgument="false">
+      </variable>
+      <variable
+            description="Replaced by the exec parameters of the component"
+            name="EXEC_PARAMS"
+            resolver="gov.redhawk.ide.debug.internal.variables.ExecParamResolver"
+            supportsArgument="false">
+      </variable>
+      <variable
+            description="IOR of the naming context to use"
+            name="NAMING_CONTEXT_IOR"
+            resolver="gov.redhawk.ide.debug.internal.variables.NamingContextIORResolver"
+            supportsArgument="false">
+      </variable>
+      <variable
+            description="The name to bind the component to"
+            name="NAME_BINDING"
+            resolver="gov.redhawk.ide.debug.internal.variables.NameBindingResolver"
+            supportsArgument="false">
+      </variable>
+      <variable
+            description="Replace with a generated component identifier"
+            name="COMPONENT_IDENTIFIER"
+            resolver="gov.redhawk.ide.debug.internal.variables.ComponentIdentifierResolver"
+            supportsArgument="false">
+      </variable>
+      <variable
+            description="Debug level to run the component at"
+            name="DEBUG_LEVEL"
+            resolver="gov.redhawk.ide.debug.internal.variables.DebugLevelResolver"
+            supportsArgument="false">
+      </variable>
+      <variable
+            description="IOR of the device manager to run the component from"
+            name="DEVICE_MGR_IOR"
+            resolver="gov.redhawk.ide.debug.internal.variables.DeviceManagerIORResolver"
+            supportsArgument="false">
+      </variable>
+      <variable
+            description="Get the profile name for the component"
+            name="PROFILE_NAME"
+            resolver="gov.redhawk.ide.debug.internal.variables.ProfileNameVariableResolver"
+            supportsArgument="false">
+      </variable>
+      <variable
+            description="Generate a device identifier"
+            name="DEVICE_ID"
+            resolver="gov.redhawk.ide.debug.internal.variables.DeviceIdentifierVariableResolver"
+            supportsArgument="false">
+      </variable>
+      <variable
+            description="Generate a device label"
+            name="DEVICE_LABEL"
+            resolver="gov.redhawk.ide.debug.internal.variables.DeviceLabelVariableResolver"
+            supportsArgument="false">
+      </variable>
+      <variable
+            description="Generate a service name"
+            name="SERVICE_NAME"
+            resolver="gov.redhawk.ide.debug.internal.variables.ServiceNameLauncherVariable"
+            supportsArgument="false">
       </variable>
    </extension>
 </plugin>

@@ -55,7 +55,7 @@ public class NodeProjectCreator extends ProjectCreator {
 	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
 	 * 
 	 * @param project The project to generate files in
-	 * @param projectID The project's ID (DCE)
+	 * @param nodeID The node ID value
 	 * @param authorName The name of the component author
 	 * @param domainManagerName The domain manager's name
 	 * @param devices The devices to add to the node
@@ -65,13 +65,17 @@ public class NodeProjectCreator extends ProjectCreator {
 	 * @return The newly created DCD file
 	 * @throws CoreException An error occurs while generating files
 	 */
-	public static IFile createNodeFiles(final IProject project, final String projectID, final String authorName, final String domainManagerName,
+	public static IFile createNodeFiles(final IProject project, final String nodeID, final String authorName, final String domainManagerName,
 	        final SoftPkg[] devices, final IProgressMonitor monitor) throws CoreException {
 		final SubMonitor progress = SubMonitor.convert(monitor, "Creating SCA node files", 2);
 
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setProjectName(project.getName());
-		args.setProjectId(projectID);
+		args.setNodeId(nodeID);
+		
+		String[] tokens = project.getName().split("\\.");
+		args.setNodeName(tokens[tokens.length - 1]);
+		
 		args.setAuthorName(authorName);
 		args.setDomainManagerName(domainManagerName);
 		args.setDevices(devices);
