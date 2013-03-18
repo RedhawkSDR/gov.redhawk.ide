@@ -873,6 +873,10 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	public synchronized void reload(IProgressMonitor monitor) {
 		// END GENERATED CODE
 		SubMonitor subMonitor = SubMonitor.convert(monitor, "Reloading SDR...", 3);
+		final TransactionalEditingDomain editingDomain = TransactionUtil.getEditingDomain(this);
+		if (editingDomain == null) {
+			throw new IllegalStateException("SDR Root must be within an editing domain.");
+		}
 		unload(subMonitor.newChild(1));
 		load(subMonitor.newChild(1));
 		if (getIdlLibrary() != null) {
