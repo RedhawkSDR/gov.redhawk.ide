@@ -31,6 +31,7 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -122,7 +123,11 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 				final SubMonitor progress = SubMonitor.convert(monitor, FETCH_INFO_WORK + TO_LOCAL_FILE_WORK + EXPORT_WORK);
 
 				try {
-					final URI scaRoot = URI.createFileURI(SdrUiPlugin.getDefault().getTargetSdrPath().toPortableString());
+					IPath sdrPath = SdrUiPlugin.getDefault().getTargetSdrPath();
+					if (sdrPath == null) {
+						throw new CoreException(new Status(Status.ERROR, SdrUiPlugin.PLUGIN_ID, "SDR Root undefined.", null));
+					}
+					final URI scaRoot = URI.createFileURI(sdrPath.toPortableString());
 					final IFileStore store = EFS.getStore(new java.net.URI(scaRoot.toString()));
 
 					if (!store.fetchInfo(EFS.NONE, progress.newChild(FETCH_INFO_WORK)).exists()) {
