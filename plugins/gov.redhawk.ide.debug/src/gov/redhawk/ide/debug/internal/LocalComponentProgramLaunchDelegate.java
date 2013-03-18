@@ -39,6 +39,12 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 			}
 		}
 	}
+	
+	@Override
+	protected boolean saveBeforeLaunch(ILaunchConfiguration configuration,
+			String mode, IProgressMonitor monitor) throws CoreException {
+		return true;
+	}
 
 	protected void insertProgramArguments(final SoftPkg spd, final ILaunch launch, final ILaunchConfigurationWorkingCopy configuration) throws CoreException {
 		final String args = configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, "");

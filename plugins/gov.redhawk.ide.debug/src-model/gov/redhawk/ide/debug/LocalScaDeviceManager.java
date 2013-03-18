@@ -10,11 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
-import CF.DeviceManagerOperations;
 import gov.redhawk.model.sca.ScaDeviceManager;
+
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
+
+import CF.DeviceManagerOperations;
 
 
 /**

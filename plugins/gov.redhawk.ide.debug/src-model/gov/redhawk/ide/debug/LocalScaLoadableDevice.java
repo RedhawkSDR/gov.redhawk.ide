@@ -10,9 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
-import CF.LoadableDevice;
-
 import gov.redhawk.model.sca.ScaLoadableDevice;
+import CF.LoadableDevice;
 
 /**
  * <!-- begin-user-doc -->

@@ -56,7 +56,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="codegenref" type="string" use="required">
+         <attribute name="codegenref" type="string">
             <annotation>
                <documentation>
                   ID of the codegenerators that this factory is bound to.

@@ -5,7 +5,6 @@
  */
 package gov.redhawk.ide.debug;
 
-import gov.redhawk.ide.debug.internal.LauncherVariableRegistry;
 import gov.redhawk.ide.debug.variables.LaunchVariables;
 import gov.redhawk.model.sca.ProfileObjectWrapper;
 import gov.redhawk.model.sca.ScaAbstractComponent;

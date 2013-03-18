@@ -16,16 +16,11 @@ import gov.redhawk.ide.debug.LocalScaExecutableDevice;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.model.sca.impl.ScaExecutableDeviceImpl;
 
-import java.util.Collection;
-
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
-import org.eclipse.emf.ecore.util.InternalEList;
 
 import CF.LifeCyclePackage.ReleaseError;
 

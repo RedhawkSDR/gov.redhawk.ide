@@ -112,4 +112,12 @@
             supportsArgument="false">
       </variable>
    </extension>
+   <extension
+         point="gov.redhawk.ide.debug.launchConfigurationFactories">
+      <launchConfigurationFactory
+            factory="gov.redhawk.ide.debug.internal.DefaultComponentLaunchConfigurationFactory"
+            id="gov.redhawk.ide.debug.defaultLaunchConfigurationFactory"
+            launchConfigType="gov.redhawk.ide.debug.localComponentProgram">
+      </launchConfigurationFactory>
+   </extension>
 </plugin>

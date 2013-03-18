@@ -25,7 +25,6 @@ import gov.redhawk.ide.debug.ScaDebugPackage;
 
 import java.util.Map.Entry;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;

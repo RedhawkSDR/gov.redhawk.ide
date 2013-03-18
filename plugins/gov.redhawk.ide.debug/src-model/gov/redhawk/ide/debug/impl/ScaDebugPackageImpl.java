@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.impl;
 
-import ExtendedCF.ApplicationExtOperations;
 import gov.redhawk.ide.debug.LocalAbstractComponent;
 import gov.redhawk.ide.debug.LocalFileManager;
 import gov.redhawk.ide.debug.LocalLaunch;
@@ -25,8 +24,6 @@ import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPackage;
-import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
-import gov.redhawk.ide.debug.internal.cf.impl.DeviceManagerImpl;
 import gov.redhawk.model.sca.ScaPackage;
 
 import java.util.Map.Entry;
@@ -51,6 +48,8 @@ import org.omg.CosNaming.NamingContext;
 import org.omg.CosNaming.NamingContextExtOperations;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
+
+import ExtendedCF.ApplicationExtOperations;
 
 
 /**

@@ -21,7 +21,6 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.emf.common.CommonPlugin;
 import org.eclipse.emf.common.util.URI;
@@ -31,10 +30,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * 
  */
 public class DefaultComponentLaunchConfigurationFactory extends AbstractLaunchConfigurationFactory {
-
-	public DefaultComponentLaunchConfigurationFactory() {
-		setLaunchConfigID(LocalComponentProgramLaunchDelegate.ID);
-	}
 
 	public boolean supports(final SoftPkg spd, final String implId) {
 		return true;
@@ -81,8 +76,5 @@ public class DefaultComponentLaunchConfigurationFactory extends AbstractLaunchCo
 		config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, progArgs);
 	}
 
-	public String getProgramArguments(final ILaunchConfiguration config) throws CoreException {
-		return config.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, "");
-	}
 
 }

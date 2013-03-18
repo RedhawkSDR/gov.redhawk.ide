@@ -11,8 +11,8 @@
 package gov.redhawk.ide.debug;
 
 import gov.redhawk.model.sca.ScaPackage;
-
 import mil.jpeojtrs.sca.cf.CfPackage;
+
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;

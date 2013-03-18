@@ -10,13 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.impl;
 
-import CF.DeviceManagerOperations;
 import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.ide.debug.internal.cf.impl.DeviceManagerImpl;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.impl.ScaDeviceManagerImpl;
@@ -40,6 +38,7 @@ import org.omg.PortableServer.POAPackage.WrongPolicy;
 
 import CF.DeviceManager;
 import CF.DeviceManagerHelper;
+import CF.DeviceManagerOperations;
 import CF.DeviceManagerPOATie;
 
 /**

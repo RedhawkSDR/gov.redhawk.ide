@@ -22,11 +22,9 @@ import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
-
 import gov.redhawk.ide.debug.impl.listeners.DisposableObjectContainerListener;
 import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
 import gov.redhawk.ide.debug.internal.cf.impl.DeviceManagerImpl;
-import gov.redhawk.ide.debug.internal.SandboxImpl;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaWaveform;
@@ -83,9 +81,6 @@ import CF.FileManager;
 import CF.FileManagerHelper;
 import CF.FileManagerPOATie;
 import CF.LifeCyclePackage.InitializeError;
-import ExtendedCF.Sandbox;
-import ExtendedCF.SandboxHelper;
-import ExtendedCF.SandboxPOATie;
 
 /**
  * <!-- begin-user-doc -->

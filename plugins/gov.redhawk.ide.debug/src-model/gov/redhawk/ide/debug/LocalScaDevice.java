@@ -10,9 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
-import CF.Device;
-
 import gov.redhawk.model.sca.ScaDevice;
+import CF.Device;
 
 /**
  * <!-- begin-user-doc -->

@@ -68,7 +68,6 @@ public enum LaunchConfigurationFactoryRegistry implements ILaunchConfigurationFa
 	public static final String EP_ID = "launchConfigurationFactories";
 	private final List<LaunchConfigurationFactoryDesc> descriptors = new ArrayList<LaunchConfigurationFactoryDesc>();
 	private final ExtensionTracker tracker;
-	private static final DefaultComponentLaunchConfigurationFactory DEFAULT_FACTORY = new DefaultComponentLaunchConfigurationFactory();
 
 	private LaunchConfigurationFactoryRegistry() {
 		final IExtensionRegistry reg = Platform.getExtensionRegistry();
@@ -93,14 +92,22 @@ public enum LaunchConfigurationFactoryRegistry implements ILaunchConfigurationFa
 		if (settings != null) {
 			final String codegenID = settings.getGeneratorId();
 			for (final LaunchConfigurationFactoryDesc desc : this.descriptors) {
-				if (desc.codegenref.equals(codegenID)) {
+				if (desc.codegenref != null && desc.codegenref.equals(codegenID)) {
 					if (desc.factory.supports(spd, implID)) {
 						return desc.factory;
 					}
-				}
+				} 
+			}			
+		} else {
+			for (final LaunchConfigurationFactoryDesc desc : this.descriptors) {
+				if (desc.codegenref == null) {
+					if (desc.factory.supports(spd, implID)) {
+						return desc.factory;
+					}
+				} 
 			}
 		}
-		return LaunchConfigurationFactoryRegistry.DEFAULT_FACTORY;
+		return null;
 	}
 
 	public void addExtension(final IExtensionTracker tracker, final IExtension extension) {

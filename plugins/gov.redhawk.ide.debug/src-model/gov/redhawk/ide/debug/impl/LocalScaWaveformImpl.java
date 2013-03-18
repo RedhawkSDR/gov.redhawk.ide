@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.impl;
 
-import CF.Application;
 import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
@@ -52,14 +51,14 @@ import org.omg.PortableServer.POAPackage.WrongPolicy;
 import CF.ApplicationHelper;
 import CF.ComponentType;
 import CF.DataType;
-import CF.ExecutableDevicePackage.ExecuteFail;
-import ExtendedCF.ApplicationExtOperations;
 import CF.Resource;
 import CF.ResourceHelper;
+import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.InitializeError;
 import CF.LifeCyclePackage.ReleaseError;
 import ExtendedCF.ApplicationExt;
 import ExtendedCF.ApplicationExtHelper;
+import ExtendedCF.ApplicationExtOperations;
 import ExtendedCF.ApplicationExtPOATie;
 
 /**

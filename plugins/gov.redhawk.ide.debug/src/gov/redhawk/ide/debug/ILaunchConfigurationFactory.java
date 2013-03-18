@@ -20,8 +20,4 @@ public interface ILaunchConfigurationFactory {
 
 	ILaunchConfigurationWorkingCopy createLaunchConfiguration(String name, String implId, SoftPkg spd) throws CoreException;
 
-	void setProgramArguments(String progArgs, ILaunchConfigurationWorkingCopy config) throws CoreException;
-
-	String getProgramArguments(ILaunchConfiguration config) throws CoreException;
-
 }

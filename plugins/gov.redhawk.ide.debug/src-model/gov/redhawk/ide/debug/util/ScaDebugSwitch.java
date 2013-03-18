@@ -10,11 +10,16 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.util;
 
+import gov.redhawk.ide.debug.LocalAbstractComponent;
 import gov.redhawk.ide.debug.LocalFileManager;
 import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaComponent;
+import gov.redhawk.ide.debug.LocalScaDevice;
 import gov.redhawk.ide.debug.LocalScaDeviceManager;
+import gov.redhawk.ide.debug.LocalScaExecutableDevice;
+import gov.redhawk.ide.debug.LocalScaLoadableDevice;
+import gov.redhawk.ide.debug.LocalScaService;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugPackage;
@@ -64,7 +69,6 @@ import CF.Resource;
 import CF.ResourceOperations;
 import CF.TestableObjectOperations;
 import ExtendedCF.ApplicationExtOperations;
-import gov.redhawk.ide.debug.*;
 
 /**
  * <!-- begin-user-doc -->

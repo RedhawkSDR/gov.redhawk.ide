@@ -31,11 +31,7 @@ public abstract class AbstractLaunchConfigurationFactory implements ILaunchConfi
 
 	private String launchConfigId;
 	private String id;
-
-	public void setLaunchConfigID(final String launchConfigId) {
-		this.launchConfigId = launchConfigId;
-	}
-
+	
 	public ILaunchConfigurationWorkingCopy createLaunchConfiguration(String name, final String implId, final SoftPkg spd) throws CoreException {
 		if (name == null) {
 			name = spd.getName();
@@ -55,7 +51,7 @@ public abstract class AbstractLaunchConfigurationFactory implements ILaunchConfi
 		retVal.setAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, getProfile(spd));
 
 		// Setup Environment variables for override locations of OSSIEHOME and SDRROOT
-		final Map<String, String> envVar = ScaEnvironmentUtil.getLauncherEnvMap();
+		final Map<String, String> envVar = ScaEnvironmentUtil.getLauncherEnvMap(spd.getImplementation(implId));
 
 		retVal.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 		retVal.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, envVar);
@@ -65,6 +61,9 @@ public abstract class AbstractLaunchConfigurationFactory implements ILaunchConfi
 
 		return retVal;
 	}
+	
+
+	protected abstract void setProgramArguments(String progArgs, ILaunchConfigurationWorkingCopy config) throws CoreException;
 
 	protected String getProgramArguments(final SoftPkg spd) {
 		final ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
