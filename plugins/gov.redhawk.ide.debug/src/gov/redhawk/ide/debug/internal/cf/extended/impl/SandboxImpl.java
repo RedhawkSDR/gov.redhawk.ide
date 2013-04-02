@@ -63,7 +63,7 @@ public class SandboxImpl implements SandboxOperations {
 		final ResourceDesc[] resources = registry.getResources();
 		final List<String> retVal = new ArrayList<String>(resources.length);
 		for (final ResourceDesc desc : resources) {
-			final String path = registry.getProfilePath(desc);
+			final String path = desc.getProfile();
 			retVal.add(path);
 		}
 		return retVal.toArray(new String[retVal.size()]);
@@ -82,19 +82,19 @@ public class SandboxImpl implements SandboxOperations {
 
 		for (final ScaComponent cp : this.localSca.getSandboxWaveform().getComponents()) {
 			final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
-			desc.profile = registry.getProfilePath(registry.getDescByID(cp.getProfileObj().getId()));
+			desc.profile = registry.getDescByID(cp.getProfileObj().getId()).getProfile();
 			desc.resource = cp.getObj();
 			retVal.add(desc);
 		}
 		for (final ScaDevice< ? > cp : this.localSca.getSandboxDeviceManager().getAllDevices()) {
 			final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
-			desc.profile = registry.getProfilePath(registry.getDescByID(cp.getProfileObj().getId()));
+			desc.profile = registry.getDescByID(cp.getProfileObj().getId()).getProfile();
 			desc.resource = cp.getObj();
 			retVal.add(desc);
 		}
 		for (final ScaWaveform cp : this.localSca.getWaveforms()) {
 			final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
-			desc.profile = registry.getProfilePath(registry.getDescByID(cp.getProfileObj().getId()));
+			desc.profile = registry.getDescByID(cp.getProfileObj().getId()).getProfile();
 			desc.resource = cp.getObj();
 			retVal.add(desc);
 		}

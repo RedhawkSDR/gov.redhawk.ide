@@ -15,7 +15,6 @@ import gov.redhawk.core.resourcefactory.AbstractResourceFactoryProvider;
 import gov.redhawk.core.resourcefactory.IResourceFactoryProvider;
 import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
-import gov.redhawk.core.resourcefactory.ResourceDesc.Type;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ide.natures.ScaProjectNature;
 
@@ -27,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import mil.jpeojtrs.sca.dcd.DcdPackage;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -88,28 +88,46 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 			switch (event.getType()) {
 			case IResourceChangeEvent.PRE_REFRESH:
 			case IResourceChangeEvent.POST_CHANGE:
+
 				if (event.getResource() instanceof IFile) {
 					final IFile file = (IFile) event.getResource();
-					if (file.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-						addResource(file, Type.COMPONENT);
-					} else if (file.getName().endsWith(SadPackage.FILE_EXTENSION)) {
-						addResource(file, Type.WAVEFORM);
+					try {
+						if (file.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
+							addResource(file, new WorkspaceResourceFactory(file));
+						} else if (file.getName().endsWith(SadPackage.FILE_EXTENSION)) {
+							addResource(file, new WorkspaceWaveformFactory(file));
+						}
+					} catch (IOException e) {
+						ScaDebugUiPlugin.getDefault().getLog()
+						        .log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to add workspace resource: " + file.getFullPath(), e));
 					}
 				} else if (event.getResource() instanceof IProject) {
 					final IProject project = (IProject) event.getResource();
 					try {
 						for (final IResource resource : project.members()) {
 							if (resource instanceof IFile) {
-								final IFile file = (IFile) resource;
-								if (resource.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-									addResource(file, Type.COMPONENT);
-								} else if (resource.getName().endsWith(SadPackage.FILE_EXTENSION)) {
-									addResource(file, Type.WAVEFORM);
+								try {
+									final IFile file = (IFile) resource;
+									if (resource.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
+										addResource(file, new WorkspaceResourceFactory((IFile) resource));
+									} else if (resource.getName().endsWith(SadPackage.FILE_EXTENSION)) {
+										addResource(file, new WorkspaceWaveformFactory((IFile) resource));
+									}
+								} catch (IOException e) {
+									ScaDebugUiPlugin
+									        .getDefault()
+									        .getLog()
+									        .log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to add workspace resource: "
+									                + resource.getFullPath(), e));
 								}
 							}
 						}
-					} catch (final CoreException e) {
-						// PASS
+					} catch (CoreException e) {
+						ScaDebugUiPlugin
+						        .getDefault()
+						        .getLog()
+						        .log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to search project contents for new resources to add: "
+						                + event.getResource().getFullPath(), e));
 					}
 				}
 				break;
@@ -150,44 +168,52 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 			ResourcesPlugin.getWorkspace().getRoot().accept(new IResourceVisitor() {
 
 				public boolean visit(final IResource resource) throws CoreException {
-					if (resource instanceof IWorkspaceRoot) {
-						return true;
-					} else if (resource instanceof IProject) {
-						return WorkspaceResourceFactoryProvider.shouldVisit((IProject) resource);
-					} else if (resource instanceof IFile && resource.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-						addResource((IFile) resource, getType((IFile) resource));
-					} else if (resource instanceof IFile && resource.getName().endsWith(SadPackage.FILE_EXTENSION)) {
-						addResource((IFile) resource, Type.WAVEFORM);
-					} else {
-						// PASS
-						// TODO
+					try {
+						if (resource instanceof IWorkspaceRoot) {
+							return true;
+						} else if (resource instanceof IProject) {
+							return WorkspaceResourceFactoryProvider.shouldVisit((IProject) resource);
+						} else if (resource instanceof IFile && resource.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
+							addResource((IFile) resource, new WorkspaceResourceFactory((IFile) resource));
+						} else if (resource instanceof IFile && resource.getName().endsWith(SadPackage.FILE_EXTENSION)) {
+							addResource((IFile) resource, new WorkspaceWaveformFactory((IFile) resource));
+						}
+					} catch (IOException e) {
+						ScaDebugUiPlugin.getDefault().getLog()
+						        .log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to add workspace resource: " + resource.getFullPath(), e));
 					}
 					return false;
 				}
 			});
 		} catch (final CoreException e) {
-			// PASS
+			ScaDebugUiPlugin.getDefault().getLog().log(e.getStatus());
 		}
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this.listener,
 		        IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_REFRESH);
 	}
 
-	protected Type getType(final IFile resource) {
+	protected String getTypeDir(final IFile resource) {
+		if (resource.getName().endsWith(SadPackage.FILE_EXTENSION)) {
+			return "waveforms";
+		}
+		if (resource.getName().endsWith(DcdPackage.FILE_EXTENSION)) {
+			return "nodes";
+		}
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(URI.createPlatformResourceURI(resource.getFullPath().toPortableString(), true),
 		        true));
 		SoftwareComponent scd = ScaEcoreUtils.getFeature(spd, SpdPackage.Literals.SOFT_PKG__DESCRIPTOR, SpdPackage.Literals.DESCRIPTOR__COMPONENT);
 		switch (SoftwareComponent.Util.getWellKnownComponentType(scd)) {
 		case DEVICE:
-			return Type.DEVICE;
+			return "devices";
 		case SERVICE:
-			return Type.SERVICE;
+			return "services";
 		default:
-			return Type.COMPONENT;
+			return "components";
 		}
 	}
 
-	private void addResource(final IFile resource, final Type type) {
+	private void addResource(final IFile resource, final ResourceFactoryOperations resourceFactory) {
 		final Job job = new Job("Adding resource") {
 
 			@Override
@@ -199,65 +225,44 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 					ResourceDesc desc = null;
 					try {
 						final FileStoreFileSystem fs = new FileStoreFileSystem(WorkspaceResourceFactoryProvider.this.orb,
-						        WorkspaceResourceFactoryProvider.this.poa,
-						        EFS.getStore(resource.getParent().getLocationURI()));
-						final FileSystem fsRef = FileSystemHelper.narrow(WorkspaceResourceFactoryProvider.this.poa.servant_to_reference(new FileSystemPOATie(fs)));
-						ResourceFactoryOperations resourceFactory = null;
-						switch (type) {
-						case DEVICE:
-						case SERVICE:
-						case COMPONENT:
-							resourceFactory = new WorkspaceResourceFactory(resource);
-							break;
-						case WAVEFORM:
-							resourceFactory = new WorkspaceWaveformFactory(resource);
-							break;
-						default:
-							throw new UnsupportedOperationException();
-						}
-						final ResourceFactory factory = ResourceFactoryHelper.narrow(WorkspaceResourceFactoryProvider.this.poa.servant_to_reference(new ResourceFactoryPOATie(resourceFactory)));
+						        WorkspaceResourceFactoryProvider.this.poa, EFS.getStore(resource.getParent().getLocationURI()));
+						final FileSystem fsRef = FileSystemHelper.narrow(WorkspaceResourceFactoryProvider.this.poa
+						        .servant_to_reference(new FileSystemPOATie(fs)));
+						final ResourceFactory factory = ResourceFactoryHelper.narrow(WorkspaceResourceFactoryProvider.this.poa
+						        .servant_to_reference(new ResourceFactoryPOATie(resourceFactory)));
 
 						final String refId = factory.identifier();
 						int length = SpdPackage.FILE_EXTENSION.length();
 						String name = resource.getName();
 						String folder = resource.getName().substring(0, name.length() - length);
-						String profile = File.separator + type.getDir() + File.separator + folder + File.separator + name;
-						desc = new ResourceDesc(fsRef, profile, refId, type, factory, getPriority());
+						String typeDir = getTypeDir(resource);
+						String profile = File.separator + typeDir + File.separator + folder + File.separator + name;
+						desc = new ResourceDesc(fsRef, profile, refId, factory, getPriority());
 						WorkspaceResourceFactoryProvider.this.registry.addResourceFactory(desc);
 						WorkspaceResourceFactoryProvider.this.componentMap.put(resource, desc);
 					} catch (final ServantNotActive e) {
-						ScaDebugUiPlugin.getDefault()
-						        .getLog()
+						ScaDebugUiPlugin.getDefault().getLog()
 						        .log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to add workspace resource: " + resource.getFullPath(), e));
 					} catch (final WrongPolicy e) {
-						ScaDebugUiPlugin.getDefault()
-						        .getLog()
+						ScaDebugUiPlugin.getDefault().getLog()
 						        .log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to add workspace resource: " + resource.getFullPath(), e));
 					} catch (final MountPointAlreadyExists e) {
 						if (desc != null) {
 							desc.dispose();
 						}
-						ScaDebugUiPlugin.getDefault()
-						        .getLog()
+						ScaDebugUiPlugin.getDefault().getLog()
 						        .log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to add workspace resource: " + resource.getFullPath(), e));
 					} catch (final InvalidFileName e) {
 						if (desc != null) {
 							desc.dispose();
 						}
-						ScaDebugUiPlugin.getDefault()
-						        .getLog()
-						        .log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to add workspace resource: " + resource.getFullPath(), e));
-					} catch (final IOException e) {
-						ScaDebugUiPlugin.getDefault()
-						        .getLog()
+						ScaDebugUiPlugin.getDefault().getLog()
 						        .log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to add workspace resource: " + resource.getFullPath(), e));
 					} catch (final CoreException e) {
-						ScaDebugUiPlugin.getDefault()
-						        .getLog()
+						ScaDebugUiPlugin.getDefault().getLog()
 						        .log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to add workspace resource: " + resource.getFullPath(), e));
 					} catch (final InvalidFileSystem e) {
-						ScaDebugUiPlugin.getDefault()
-						        .getLog()
+						ScaDebugUiPlugin.getDefault().getLog()
 						        .log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to add workspace resource: " + resource.getFullPath(), e));
 					}
 					return Status.OK_STATUS;

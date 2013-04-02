@@ -14,7 +14,6 @@ import gov.redhawk.core.filemanager.filesystem.FileStoreFileSystem;
 import gov.redhawk.core.resourcefactory.AbstractResourceFactoryProvider;
 import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
-import gov.redhawk.core.resourcefactory.ResourceDesc.Type;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
@@ -69,22 +68,16 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 
 	private class SPDListener extends AdapterImpl {
 
-		private final Type type;
-
-		public SPDListener(final Type type) {
-			this.type = type;
-		}
-
 		@Override
 		public void notifyChanged(final org.eclipse.emf.common.notify.Notification msg) {
 			if (msg.getFeature() == SdrPackage.Literals.SOFT_PKG_REGISTRY__COMPONENTS) {
 				switch (msg.getEventType()) {
 				case Notification.ADD:
-					addResource((SoftPkg) msg.getNewValue(), this.type);
+					addResource((SoftPkg) msg.getNewValue(), new SdrResourceFactory((SoftPkg) msg.getNewValue()));
 					break;
 				case Notification.ADD_MANY:
 					for (final Object obj : (Collection< ? >) msg.getNewValue()) {
-						addResource((SoftPkg) obj, this.type);
+						addResource((SoftPkg) obj, new SdrResourceFactory((SoftPkg) obj));
 					}
 					break;
 				case Notification.REMOVE:
@@ -108,11 +101,11 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			if (msg.getFeature() == SdrPackage.Literals.WAVEFORMS_CONTAINER__WAVEFORMS) {
 				switch (msg.getEventType()) {
 				case Notification.ADD:
-					addResource((SoftwareAssembly) msg.getNewValue(), Type.WAVEFORM);
+					addResource((SoftwareAssembly) msg.getNewValue(), new SdrWaveformFactory((SoftwareAssembly) msg.getNewValue()) );
 					break;
 				case Notification.ADD_MANY:
 					for (final Object obj : (Collection< ? >) msg.getNewValue()) {
-						addResource((SoftwareAssembly) obj, Type.WAVEFORM);
+						addResource((SoftwareAssembly) obj, new SdrWaveformFactory((SoftwareAssembly) obj));
 					}
 					break;
 				case Notification.REMOVE:
@@ -144,17 +137,17 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		this.orb = orb;
 		this.root = SdrUiPlugin.getDefault().getTargetSdrRoot();
 		if (this.root != null) {
-			this.componentsListener = new SPDListener(Type.COMPONENT);
-			this.devicesListener = new SPDListener(Type.DEVICE);
-			this.serviceListener = new SPDListener(Type.SERVICE);
+			this.componentsListener = new SPDListener();
+			this.devicesListener = new SPDListener();
+			this.serviceListener = new SPDListener();
 			ScaModelCommand.execute(this.root, new ScaModelCommand() {
 
 				public void execute() {
 					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getComponentsContainer().getComponents()) {
-						addResource(spd, Type.COMPONENT);
+						addResource(spd, new SdrResourceFactory(spd));
 					}
 					for (final SoftwareAssembly sad : SdrResourceFactoryProvider.this.root.getWaveformsContainer().getWaveforms()) {
-						addResource(sad, Type.WAVEFORM);
+						addResource(sad, new SdrWaveformFactory(sad));
 					}
 					SdrResourceFactoryProvider.this.root.getComponentsContainer().eAdapters().add(SdrResourceFactoryProvider.this.componentsListener);
 					SdrResourceFactoryProvider.this.root.getDevicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.devicesListener);
@@ -165,7 +158,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		}
 	}
 
-	private void addResource(final EObject resource, final Type type) {
+	private void addResource(final EObject resource, final ResourceFactoryOperations factory) {
 		final Job job = new Job("Adding resource") {
 
 			@Override
@@ -179,24 +172,10 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 						store = EFS.getStore(URI.create(resource.eResource().getURI().trimSegments(1).toString()));
 						final FileStoreFileSystem fs = new FileStoreFileSystem(SdrResourceFactoryProvider.this.orb, SdrResourceFactoryProvider.this.poa, store);
 						final FileSystem ref = FileSystemHelper.narrow(SdrResourceFactoryProvider.this.poa.servant_to_reference(new FileSystemPOATie(fs)));
-						final ResourceFactoryOperations factory;
-						switch (type) {
-						case COMPONENT:
-						case DEVICE:
-						case SERVICE:
-							factory = new SdrResourceFactory((SoftPkg) resource);
-							break;
-						case WAVEFORM:
-							factory = new SdrWaveformFactory((SoftwareAssembly) resource);
-							break;
-						default:
-							throw new UnsupportedOperationException();
-						}
 						final ResourceFactory factoryRef = ResourceFactoryHelper.narrow(SdrResourceFactoryProvider.this.poa.servant_to_reference(new ResourceFactoryPOATie(factory)));
 						final ResourceDesc desc = new ResourceDesc(ref,
 						        resource.eResource().getURI().path(),
 						        EcoreUtil.getID(resource),
-						        type,
 						        factoryRef,
 						        getPriority());
 
