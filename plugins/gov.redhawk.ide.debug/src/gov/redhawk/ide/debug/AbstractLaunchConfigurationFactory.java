@@ -66,6 +66,9 @@ public abstract class AbstractLaunchConfigurationFactory implements ILaunchConfi
 	protected abstract void setProgramArguments(String progArgs, ILaunchConfigurationWorkingCopy config) throws CoreException;
 
 	protected String getProgramArguments(final SoftPkg spd) {
+		if (spd.getDescriptor() == null || spd.getDescriptor().getComponent() == null) {
+			return "";
+		}
 		final ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
 		return SpdLauncherUtil.getDefaultProgramArguments(type);
 	}
