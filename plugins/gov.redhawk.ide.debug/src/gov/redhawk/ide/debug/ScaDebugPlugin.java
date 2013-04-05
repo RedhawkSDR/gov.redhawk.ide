@@ -47,12 +47,14 @@ public class ScaDebugPlugin extends Plugin {
 	@Override
 	public void stop(final BundleContext context) throws Exception {
 		super.stop(context);
-		ScaDebugInstance.INSTANCE.getLocalSca().dispose();
+		getLocalSca().dispose();
 		ScaDebugPlugin.instance = null;
 	}
 
 	public LocalSca getLocalSca() {
-		return ScaDebugInstance.INSTANCE.getLocalSca();
+		ScaDebugInstance instance = ScaDebugInstance.INSTANCE;
+		instance.init();
+		return instance.getLocalSca();
 	}
 
 	/**

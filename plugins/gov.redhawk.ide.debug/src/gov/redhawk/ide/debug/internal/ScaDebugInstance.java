@@ -17,6 +17,10 @@ import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.ScaPlugin;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -27,22 +31,37 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 public enum ScaDebugInstance {
 	INSTANCE;
 	private LocalSca localSca;
+	private boolean initialized;
+	private TransactionalEditingDomain editingDomain;
 
 	private ScaDebugInstance() {
-		final TransactionalEditingDomain editingDomain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(ScaPlugin.EDITING_DOMAIN_ID);
+		this.editingDomain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(ScaPlugin.EDITING_DOMAIN_ID);
 		final Resource resource = editingDomain.getResourceSet().createResource(URI.createURI("virtual://localSca.scaDebug"));
 		this.localSca = ScaDebugFactory.eINSTANCE.createLocalSca();
 		editingDomain.getCommandStack().execute(new ScaModelCommand() {
 
 			public void execute() {
 				resource.getContents().add(ScaDebugInstance.this.localSca);
+			}
+		});
+	}
+	
+	public synchronized void init() {
+		if (initialized) {
+			return;
+		}
+		initialized=true;
+		editingDomain.getCommandStack().execute(new ScaModelCommand() {
+
+			public void execute() {
 				try {
 					ScaDebugInstance.this.localSca.init();
 				} catch (final CoreException e) {
 					ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
 				}
 			}
-		});
+		});		
+		
 	}
 
 	public LocalSca getLocalSca() {
