@@ -12,6 +12,8 @@ import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 
 import java.io.File;
 
+import mil.jpeojtrs.sca.spd.Code;
+import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
@@ -47,7 +49,23 @@ public class DefaultComponentLaunchConfigurationFactory extends AbstractLaunchCo
 		retVal.setAttribute(ScaDebugLaunchConstants.ATT_WORKSPACE_PROFILE, false);
 
 		final Implementation impl = spd.getImplementation(implId);
-		final String location = new File(file.getParent(), impl.getCode().getEntryPoint()).toString();
+       if (impl == null) {
+    	   throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "No implementation of ID: " + implId + " for spd file " + file, null));
+       }
+       Code code = impl.getCode();
+       if (code == null) {
+    	   throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "No Code entry for " + file + " and implementation " + implId, null));
+       }
+       CodeFileType type = code.getType();
+       if (type != CodeFileType.EXECUTABLE) {
+    	   throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Code not executable for " + file + " and implementation " + implId, null));
+       }
+       String entryPoint = code.getEntryPoint();
+       if (entryPoint  == null) {
+    	   throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "No entry point for implementation " + implId + " in file " + file, null));
+       }
+       final String location = new File(file.getParent(), entryPoint).toString();
+
 		final String wd = file.getParent();
 		retVal.setAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, false);
 		retVal.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, "${none}");
