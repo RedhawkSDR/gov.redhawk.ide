@@ -21,6 +21,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import mil.jpeojtrs.sca.spd.Code;
+import mil.jpeojtrs.sca.spd.CodeFileType;
+import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -102,7 +105,23 @@ public class SadPaletteProvider extends DefaultPaletteProvider {
 		}
 		final EList<SoftPkg> components = container.getComponents();
 		final SoftPkg[] componentsArray = components.toArray(new SoftPkg[components.size()]);
-		for (final SoftPkg spd : componentsArray) {
+		spdLoop:for (final SoftPkg spd : componentsArray) {
+			for (Implementation impl : spd.getImplementation()) {
+				Code code = impl.getCode();
+				if (code == null) {
+					continue spdLoop;
+				}
+				CodeFileType type = code.getType();
+				if (type == null) {
+					continue spdLoop;
+				} 
+				switch(type) {
+				case EXECUTABLE:
+					break;
+				default:
+					continue spdLoop;
+				}
+			}
 			boolean foundTool = false;
 			for (int i = 0; i < entriesToRemove.size(); i++) {
 				final PaletteEntry entry = entriesToRemove.get(i);

@@ -23,6 +23,9 @@ import java.util.List;
 
 import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
+import mil.jpeojtrs.sca.spd.Code;
+import mil.jpeojtrs.sca.spd.CodeFileType;
+import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
@@ -189,17 +192,30 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 								final Resource spdResource = resourceSet.getResource(URI.createPlatformResourceURI(resource.getFullPath().toPortableString(),
 								        true), true);
 								final SoftPkg spd = SoftPkg.Util.getSoftPkg(spdResource);
-								final SoftwareComponent scd = ScaEcoreUtils.getFeature(spd, SandboxDiagramEditor.SCD);
-								if (scd != null) {
-									final ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(scd);
-									switch (type) {
-									case RESOURCE:
-										final SpdToolEntry entry = new SpdToolEntry(spd);
-										entriesToAdd.add(entry);
-										break;
-									default:
-										break;
+								boolean add = false;
+								out:for (Implementation impl : spd.getImplementation()) {
+									Code code = impl.getCode();
+									if (code == null) {
+										add = false;
+										break out;
 									}
+									CodeFileType type = code.getType();
+									if (type == null) {
+										add = false;
+										break out;
+									} 
+									switch(type) {
+									case EXECUTABLE:
+										add=true;
+										break out;
+									default:
+										add = false;
+										break out;
+									}
+								}
+								if (add) {
+									final SpdToolEntry entry = new SpdToolEntry(spd);
+									entriesToAdd.add(entry);
 								}
 							} catch (final Exception e) {
 								// PASS
