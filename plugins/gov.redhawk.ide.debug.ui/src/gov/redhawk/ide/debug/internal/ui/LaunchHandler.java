@@ -14,6 +14,8 @@ import gov.redhawk.ide.debug.LocalComponentProgramLaunchDelegate;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.spd.Code;
+import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
@@ -23,6 +25,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -43,6 +46,7 @@ import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -67,12 +71,66 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 				try {
 					handleLaunch(obj, event);
 				} catch (final CoreException e) {
-					StatusManager.getManager().handle(e, ScaDebugUiPlugin.PLUGIN_ID);
+					StatusManager.getManager().handle(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e
+							.getLocalizedMessage(), e), StatusManager.LOG | StatusManager.SHOW);
 				}
 			}
 		}
 		return null;
 	}
+	
+	@Override
+	public void setEnabled(Object evaluationContext) {
+		final IEvaluationContext context = (IEvaluationContext) evaluationContext;
+		final IWorkbenchWindow window = (IWorkbenchWindow) context.getVariable("activeWorkbenchWindow");
+		if (window == null) {
+			setBaseEnabled(false);
+			return;
+		}
+		
+		if (context.getVariable("activeMenuSelection") != null && context.getVariable("activeMenuSelection") instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection) context.getVariable("activeMenuSelection");
+			boolean enabled = true;
+			out:for (final Object obj : ss.toList()) {
+				if (obj instanceof SoftPkg) {
+					SoftPkg spd = (SoftPkg) obj;
+					for (Implementation impl : spd.getImplementation()) {
+						enabled = checkImpl(impl);
+						if (!enabled) {
+							break out;
+						}
+					}
+				} else if (obj instanceof Implementation) {
+					Implementation impl = (Implementation) obj;
+					enabled = checkImpl(impl);
+					if (!enabled) {
+						break out;
+					}
+				}
+			}
+			setBaseEnabled(enabled);
+		} 
+	}
+
+	private boolean checkImpl(Implementation impl) {
+	    if (impl.getCode() != null) {
+	    	Code code = impl.getCode();
+	    	CodeFileType type = code.getType();
+	    	if (type != null) {
+	    		switch(type) {
+	    		case EXECUTABLE:
+	    			return true;
+	    		case DRIVER:
+	    		case KERNEL_MODULE:
+	    		case NODE_BOOTER:
+	    		case SHARED_LIBRARY:
+	    		default:
+	    			return false;
+	    		}
+	    	}
+	    }
+	    return false;
+    }
 
 	private void handleLaunch(Object element, final ExecutionEvent event) throws CoreException {
 		if (element instanceof IFile) {

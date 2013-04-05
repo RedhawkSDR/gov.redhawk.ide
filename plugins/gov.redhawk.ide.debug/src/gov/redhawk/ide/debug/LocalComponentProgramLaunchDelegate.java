@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import mil.jpeojtrs.sca.spd.Code;
+import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
@@ -89,7 +91,22 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 
 		final SoftPkg spd = LocalComponentProgramLaunchDelegate.loadSpd(spdUri);
 		final Implementation impl = spd.getImplementation(implID);
-		final String location = new File(file.getParent(), impl.getCode().getEntryPoint()).toString();
+		if (impl == null) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "No implementation of ID: " + implID + " for spd file " + file, null));
+		}
+		Code code = impl.getCode();
+		if (code == null) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "No Code entry for " + file + " and implementation " + implID, null));
+		}
+		CodeFileType type = code.getType();
+		if (type != CodeFileType.EXECUTABLE) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Code not executable for " + file + " and implementation " + implID, null));
+		}
+		String entryPoint = code.getEntryPoint();
+		if (entryPoint  == null) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "No entry point for implementation " + implID + " in file " + file, null));
+		}
+		final String location = new File(file.getParent(), entryPoint).toString();
 		final String wd = file.getParent();
 		LocalComponentProgramLaunchDelegate.setExternalToolsConfiguration(retVal, location, wd);
 		
