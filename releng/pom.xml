@@ -24,7 +24,7 @@
         <redhawk-core-framework>http://download.redhawksdr.org/redhawk-core-framework/releases/1.9</redhawk-core-framework>
         <mil.jpeojtrs.sca>http://download.redhawksdr.org/mil.jpeojtrs.sca/releases/1.9</mil.jpeojtrs.sca>
         <gov.redhawk.common>http://download.redhawksdr.org/gov.redhawk.common/releases/1.9</gov.redhawk.common>
-        <gov.redhawk.rcp>http://download.redhawksdr.org/gov.redhawk.rcp/releases/1.9</gov.redhawk.common>
+        <gov.redhawk.rcp>http://download.redhawksdr.org/gov.redhawk.rcp/releases/1.9</gov.redhawk.rcp>
     </properties>
 
     <repositories>
