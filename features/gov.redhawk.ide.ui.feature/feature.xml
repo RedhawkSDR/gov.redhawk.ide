@@ -12,7 +12,7 @@
 <feature
       id="gov.redhawk.ide.ui.feature"
       label="%featureName"
-      version="1.0.0.qualifier"
+      version="1.8.4.qualifier"
       provider-name="%providerName"
       plugin="mil.jpeojtrs.sca.util"
       image="rh_logo_128x128.gif">
@@ -26,8 +26,7 @@
    </copyright>
 
    <license url="%licenseURL">
-      :
-   %license
+      %license
    </license>
 
    <plugin
