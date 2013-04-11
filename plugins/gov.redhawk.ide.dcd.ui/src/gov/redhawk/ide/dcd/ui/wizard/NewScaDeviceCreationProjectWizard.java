@@ -122,16 +122,17 @@ public class NewScaDeviceCreationProjectWizard extends NewScaResourceWizard impl
 						if (workingSets.length > 0) {
 							PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(project, workingSets);
 						}
+						
+						// Figure out the ID we'll use 
+						String id;
+						if (generateId) {
+							id = DceUuidUtil.createDceUUID();
+						} else {
+							id = providedId;
+						}
 
 						// If we're creating a new waveform (vs importing one)
 						if (isCreateNewResource) {
-							// Figure out the ID we'll use 
-							String id;
-							if (generateId) {
-								id = DceUuidUtil.createDceUUID();
-							} else {
-								id = providedId;
-							}
 
 							// Create the SCA XML files
 							NewScaDeviceCreationProjectWizard.this.setOpenEditorOn(DeviceProjectCreator.createDeviceFiles(project, id, null,
@@ -146,8 +147,9 @@ public class NewScaDeviceCreationProjectWizard extends NewScaResourceWizard impl
 							ProjectCreator.addImplementation(project, impl, settings, progress.newChild(CREATE_IMPL_WORK));
 						} else {
 							final int delegatedWork = CREATE_XML_FILES_WORK + CREATE_IMPL_WORK * getImplList().size();
+
 							setOpenEditorOn(ProjectCreator.importFiles(project, existingSpdPath, getImplList(), getImportedSettingsMap(),
-							        progress.newChild(delegatedWork)));
+							        progress.newChild(delegatedWork), id));
 						}
 
 						// Setup the IDL Path

@@ -126,7 +126,7 @@ public class NewScaResourceProjectWizard extends NewScaResourceWizard implements
 						} else {
 							NewScaResourceProjectWizard.this.setOpenEditorOn(ProjectCreator.importFiles(project, existingResourceLocation,
 							        NewScaResourceProjectWizard.this.getImplList(), NewScaResourceProjectWizard.this.getImportedSettingsMap(),
-							        progress.newChild(2)));
+							        progress.newChild(2), NewScaResourceProjectWizard.this.getSoftPkg().getId()));
 						}
 
 						// Setup the IDL Path
@@ -271,6 +271,17 @@ public class NewScaResourceProjectWizard extends NewScaResourceWizard implements
 				// Load the soft package
 				this.setSoftPkg(ModelUtil.loadSoftPkg(fileURI));
 				this.getSoftPkg().setName(this.resourcePropertiesPage.getProjectName());
+				
+				// Figure out the ID we'll use 
+				final boolean generateId = this.resourcePropertiesPage.getIdGroup().isGenerateId();
+				final String providedId = this.resourcePropertiesPage.getIdGroup().getProvidedId();
+				final String id;
+				if (generateId) {
+					id = DceUuidUtil.createDceUUID();
+				} else {
+					id = providedId;
+				}
+				getSoftPkg().setId(id);
 
 				WaveDevSettings waveSettings = null;
 				try {

@@ -104,16 +104,17 @@ public class NewScaServiceCreationProjectWizard extends NewScaResourceWizard imp
 						if (workingSets.length > 0) {
 							PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(project, workingSets);
 						}
+						
+						// Figure out the ID we'll use 
+						String id;
+						if (generateId) {
+							id = DceUuidUtil.createDceUUID();
+						} else {
+							id = providedId;
+						}
 
 						// If we're creating a new service (vs importing one)
 						if (isCreateNewResource) {
-							// Figure out the ID we'll use 
-							String id;
-							if (generateId) {
-								id = DceUuidUtil.createDceUUID();
-							} else {
-								id = providedId;
-							}
 
 							// Create the SCA XML files
 							final IFile defaultFile = ServiceProjectCreator.createServiceFiles(project, id, null, serviceRepId, progress.newChild(1));
@@ -125,7 +126,7 @@ public class NewScaServiceCreationProjectWizard extends NewScaResourceWizard imp
 							final ImplementationSettings settings = page.getImplSettings();
 							ProjectCreator.addImplementation(project, impl, settings, progress.newChild(1));
 						} else {
-							setOpenEditorOn(ProjectCreator.importFiles(project, existingSpdPath, getImplList(), getImportedSettingsMap(), progress.newChild(2)));
+							setOpenEditorOn(ProjectCreator.importFiles(project, existingSpdPath, getImplList(), getImportedSettingsMap(), progress.newChild(2), id));
 						}
 
 						// Setup the IDL Path

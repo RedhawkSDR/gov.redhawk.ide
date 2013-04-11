@@ -46,6 +46,7 @@ import mil.jpeojtrs.sca.spd.Processor;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdFactory;
 import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.DceUuidUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -202,6 +203,25 @@ public abstract class ProjectCreator {
 
 		return newFile;
 	}
+	
+	/**
+	 * 
+	 * Copies existing SPD, PRF and SCD files into an empty SCA resource project. Should be invoked in the
+	 * context of a {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
+	 * 
+	 * @param project The project that the files will be imported to
+	 * @param existingSpdFile Path to the existing SPD file
+	 * @param implList List of implementations
+	 * @param importedSettingsMap Mapping of imported implementations to their settings
+	 * @param monitor The progress monitor
+	 * @param id 
+	 * @return spdFile Returns a copy of the locally imported SPD file
+	 * @throws CoreException
+	 */
+	public static IFile importFiles(final IProject project, final IPath existingSpdFile, final List<ImplementationAndSettings> implList,
+	        final HashMap<String, Boolean> importedSettingsMap, final IProgressMonitor monitor) throws CoreException {
+		return importFiles(project, existingSpdFile, implList, importedSettingsMap, monitor, null);
+	}
 
 	/**
 	 * 
@@ -213,11 +233,13 @@ public abstract class ProjectCreator {
 	 * @param implList List of implementations
 	 * @param importedSettingsMap Mapping of imported implementations to their settings
 	 * @param monitor The progress monitor
+	 * @param id ID for new SPD
 	 * @return spdFile Returns a copy of the locally imported SPD file
 	 * @throws CoreException
+	 * @since 9.1
 	 */
 	public static IFile importFiles(final IProject project, final IPath existingSpdFile, final List<ImplementationAndSettings> implList,
-	        final HashMap<String, Boolean> importedSettingsMap, final IProgressMonitor monitor) throws CoreException {
+	        final HashMap<String, Boolean> importedSettingsMap, final IProgressMonitor monitor, String id) throws CoreException {
 		final SubMonitor subMonitor = SubMonitor.convert(monitor, "Importing SCA XML", 7); // SUPPRESS CHECKSTYLE MagicNumber
 		
 		// Copy the SPD file into the project
@@ -237,6 +259,11 @@ public abstract class ProjectCreator {
 		}
 
 		spd.setName(project.getName());
+		if (id == null) {
+			spd.setId(DceUuidUtil.createDceUUID());
+		} else {
+			spd.setId(id);
+		}
 		if (spd.getPropertyFile() != null) {
 			final IPath propertyFilePath = new Path(spd.getPropertyFile().getLocalFile().getName());
 			final IPath propertyFile = ProjectCreator.findLocalFile(existingSpdFile, propertyFilePath, new String[] { "*" + PrfPackage.FILE_EXTENSION });
