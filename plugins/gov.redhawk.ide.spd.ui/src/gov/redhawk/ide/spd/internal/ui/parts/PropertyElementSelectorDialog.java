@@ -122,7 +122,11 @@ public class PropertyElementSelectorDialog extends ElementListSelectionDialog {
 			@Override
 			public String getText(final Object element) {
 				final ElementHolder eh = (ElementHolder) element;
-				return eh.pkg.getName() + " : " + eh.prop.getName();
+				String name = eh.prop.getName();
+				if (name == null) {
+					name = eh.prop.getId();
+				}
+				return eh.pkg.getName() + " : " + name;
 			}
 
 		};
