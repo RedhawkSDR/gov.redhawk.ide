@@ -44,6 +44,7 @@ import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
+import mil.jpeojtrs.sca.util.NamedThreadFactory;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -74,7 +75,7 @@ import CF.ResourcePackage.StartError;
  */
 public final class ScaLauncherUtil {
 
-	private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
+	private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool(new NamedThreadFactory(ScaLauncherUtil.class.getName()));
 
 	private static final String LAUNCH_ATT_DEVICE_LABEL = ScaDebugPlugin.ID + ".deviceLabel";
 	private static final String LAUNCH_ATT_SERVICE_NAME = ScaDebugPlugin.ID + ".serviceName";

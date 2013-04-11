@@ -31,6 +31,7 @@ import java.util.concurrent.TimeoutException;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.AnyUtils;
+import mil.jpeojtrs.sca.util.NamedThreadFactory;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -51,7 +52,7 @@ import CF.ResourceFactoryPackage.CreateResourceFailure;
  */
 public class WorkspaceResourceFactory extends AbstractResourceFactory {
 
-	private static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+	private static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(WorkspaceResourceFactory.class.getName()));
 
 	private final SoftPkg spd;
 	private final IFile profile;
