@@ -46,6 +46,7 @@ import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.AnyUtils;
+import mil.jpeojtrs.sca.util.NamedThreadFactory;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.core.runtime.CoreException;
@@ -104,7 +105,7 @@ import ExtendedCF.ApplicationExtOperations;
  * 
  */
 public class ApplicationImpl extends PlatformObject implements IProcess, ApplicationOperations, ApplicationExtOperations {
-	private static final ExecutorService APP_EXECUTOR = Executors.newCachedThreadPool();
+	private static final ExecutorService APP_EXECUTOR = Executors.newCachedThreadPool(new NamedThreadFactory(ApplicationImpl.class.getName()));
 
 	private static interface ConnectionInfo {
 		String getConnectionID();
