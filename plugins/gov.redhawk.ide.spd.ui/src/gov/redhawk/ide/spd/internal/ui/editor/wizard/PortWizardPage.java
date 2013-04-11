@@ -314,7 +314,6 @@ public class PortWizardPage extends WizardPage {
 		this.setDescription(PortWizardPage.NEW_DIALOG_PROMPT);
 		this.model.setPorts(ports);
 		this.editor = editor;
-		this.editor.reloadIdlLibrary();
 	}
 
 	/**
@@ -327,7 +326,6 @@ public class PortWizardPage extends WizardPage {
 		this.model.setPort(port);
 		this.model.setPorts(ports);
 		this.editor = editor;
-		this.editor.reloadIdlLibrary();
 	}
 
 	protected boolean isReservedName(final String s) {

@@ -14,22 +14,26 @@ import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
 import gov.redhawk.eclipsecorba.idl.Module;
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.eclipsecorba.library.RepositoryModule;
+import gov.redhawk.eclipsecorba.library.util.RefreshIdlLibraryJob;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
-import org.eclipse.ui.dialogs.PatternFilter;
 
 /**
  * A FilteredTree composite that display items from an IDL library.
@@ -37,41 +41,35 @@ import org.eclipse.ui.dialogs.PatternFilter;
  * @since 1.1
  */
 public class IdlFilteredTree extends FilteredTree {
-	static final PatternFilter PATTERN_FILTER = new IdlPatternFilter();
-	private TreeViewer idlTree;
+	
+	private RefreshIdlLibraryJob refreshJob;
 
-	private IdlLibrary library;
+
 
 	public IdlFilteredTree(final Composite parent, final boolean useNewLook, final IdlLibrary library) {
-		super(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, IdlFilteredTree.PATTERN_FILTER, useNewLook);
+		super(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, new IdlPatternFilter(), false);
 		Assert.isNotNull(library);
-		Assert.isNotNull(TransactionUtil.getEditingDomain(library)); // The library must be in an editing domain
-
-		this.library = library;
-
-		IdlFilteredTree.PATTERN_FILTER.setIncludeLeadingWildcard(false);
-
-		this.idlTree = this.getViewer();
+		TransactionalEditingDomain editingDomain = TransactionUtil.getEditingDomain(library);
+		Assert.isNotNull(editingDomain); // The library must be in an editing domain
+		
+		refreshJob = new RefreshIdlLibraryJob(library);
+		refreshJob.setUser(true);
+		
+		getPatternFilter().setIncludeLeadingWildcard(false);
+		
 		this.getFilterControl().addModifyListener(new ModifyListener() {
 
 			public void modifyText(final ModifyEvent e) {
-				IdlFilteredTree.PATTERN_FILTER.setPattern(((Text) e.widget).getText());
+				getPatternFilter().setPattern(((Text) e.widget).getText());
 			}
 		});
 
-		this.getFilterControl().addDisposeListener(new DisposeListener() {
-
-			public void widgetDisposed(final DisposeEvent e) {
-				IdlFilteredTree.PATTERN_FILTER.setPattern("");
-			}
-		});
-
-		final IdlRepositoryContentProvider contentProvider = new IdlRepositoryContentProvider(TransactionUtil.getEditingDomain(library));
-
-		this.idlTree.setContentProvider(contentProvider);
-		this.idlTree.setLabelProvider(new IdlRepositoryLabelProvider(contentProvider.getAdapterFactory()));
-		this.idlTree.setSorter(new ViewerSorter());
-		this.idlTree.addFilter(new ViewerFilter() {
+		TreeViewer idlTreeViewer = this.getViewer();
+		final IdlRepositoryContentProvider contentProvider = new IdlRepositoryContentProvider(editingDomain);
+		idlTreeViewer.setContentProvider(contentProvider);
+		idlTreeViewer.setLabelProvider(new IdlRepositoryLabelProvider(contentProvider.getAdapterFactory()));
+		idlTreeViewer.setSorter(new ViewerSorter());
+		idlTreeViewer.addFilter(new ViewerFilter() {
 
 			@Override
 			public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
@@ -79,7 +77,59 @@ public class IdlFilteredTree extends FilteredTree {
 				        || element instanceof IdlRepositoryPendingUpdateAdapter;
 			}
 		});
-		this.idlTree.setInput(library);
+		
+		idlTreeViewer.setInput(library);
+		
+		if (library.getLoadStatus() == null) {
+			refresh();
+		}
+		
+	}
+	
+	@Override
+	protected Text doCreateFilterText(Composite parent) {
+		return new Text(parent, SWT.SINGLE | SWT.BORDER);
 	}
 
+	@Override
+	protected Composite createFilterControls(Composite parent) {
+		super.createFilterControls(parent);
+
+		if (this.filterToolBar != null) {
+			
+			IAction refreshAction= new Action("", IAction.AS_PUSH_BUTTON) {//$NON-NLS-1$
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.jface.action.Action#run()
+				 */
+				public void run() {
+					refresh();
+				}
+			};
+			refreshAction.setToolTipText("Refresh IDL Library");
+			ImageDescriptor desc = LibraryUIPlugin.getDefault().getImageDescriptor("icons/view-refresh.png");
+			refreshAction.setImageDescriptor(desc);
+			this.filterToolBar.add(refreshAction);
+			
+			filterToolBar.update(false);
+			// initially there is no text to clear
+			filterToolBar.getControl().setVisible(true);
+		}
+
+		return parent;
+	}
+
+	/**
+     * @since 1.1
+     */
+	protected void refresh() {
+	    refreshJob.schedule();
+    }
+
+	@Override
+	protected void updateToolbar(boolean visible) {
+		
+	}
+	
 }
