@@ -25,13 +25,17 @@ import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -43,6 +47,7 @@ import java.util.concurrent.TimeoutException;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.AnyUtils;
@@ -115,6 +120,52 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		void reconnect(final ScaWaveform waveform) throws InvalidPort, OccupiedPort;
 	}
 
+	private class ScaComponentComparator implements Comparator<ScaComponent> {
+		
+		/**
+		 * Compare on the start order as the first priority, if no start order is found, compare on the pointer location.
+		 */
+		public int compare(ScaComponent o1, ScaComponent o2) {
+			if (o1 == o2) {
+				return 0;
+			}
+			if (o1 == assemblyController) {
+				return -1;
+			} else if (o2 == assemblyController) {
+				return 1;
+			} else {
+				SadComponentInstantiation ci1 = o1.getComponentInstantiation();
+				SadComponentInstantiation ci2 = o2.getComponentInstantiation();
+				
+				// If neither have start order we'll order them on hash code arbitrarily.  They are not equal though.
+				if (ci1 == null && ci2 == null) {
+					return (o1.hashCode() < o2.hashCode()) ? -1 : 1;
+				}
+				
+				// If c1 != null but ci2 is
+				if (ci2 == null) {
+					return -1;
+				}
+				
+				// If c2 != null but ci1 is
+				if (ci1 == null) {
+					return 1;
+				}
+				
+				// Neither ci1 or ci2 is null
+				BigInteger s1 = ci1.getStartOrder();
+				BigInteger s2 = ci2.getStartOrder();
+				if (s1 != null) {
+					return s1.compareTo(s2);
+				} else if (s2 != null) {
+					return 1;
+				} else {
+					return (o1.hashCode() < o2.hashCode()) ? -1 : 1;
+				}
+			}
+        }
+	}
+	
 	private static class FromConnectionInfo implements ConnectionInfo {
 		private final String connectionID;
 		private final ScaUsesPort port;
@@ -261,15 +312,24 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	public void start() throws StartError {
 		this.streams.getOutStream().println("Starting...");
-		if (this.assemblyController == null) {
-			return;
+		SortedSet<ScaComponent> sortedSet = new TreeSet<ScaComponent>(new ScaComponentComparator());
+		
+		for (ScaComponent comp : waveform.getComponents()) {
+			if (comp.getInstantiationIdentifier() != null) {
+				sortedSet.add(comp);
+			}
 		}
-		try {
-			this.assemblyController.start();
-			this.streams.getOutStream().println("Start succeeded");
-		} catch (final StartError e) {
-			throw logException("Error during start", e);
+		
+		for (ScaComponent comp : sortedSet) {
+			this.streams.getOutStream().println("\t" + comp.getInstantiationIdentifier());
+			try {
+				comp.start();
+			} catch (final StartError e) {
+				throw logException("Error during start", e);
+			}
 		}
+		
+		this.streams.getOutStream().println("Start succeeded");
 	}
 
 	/**
@@ -278,13 +338,28 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	public void stop() throws StopError {
 		this.streams.getOutStream().println("Stopping...");
 		if (this.assemblyController == null) {
-			return;
-		}
-		try {
-			this.assemblyController.stop();
-			this.streams.getOutStream().println("Stop succeeded");
-		} catch (final StopError e) {
-			throw logException("Error during stop", e);
+			TreeSet<ScaComponent> sortedSet = new TreeSet<ScaComponent>(new ScaComponentComparator() {
+				@Override
+				public int compare(ScaComponent o1, ScaComponent o2) {
+					// Reverse the order for stopping
+				    return -1 * super.compare(o1, o2);
+				}
+			});
+			for (ScaComponent comp : waveform.getComponents()) {
+				sortedSet.add(comp);
+			}
+			
+			for (ScaComponent comp : sortedSet) {
+				this.streams.getOutStream().println("\t" + comp.getInstantiationIdentifier());
+				comp.stop();
+			}
+		} else {
+			try {
+				this.assemblyController.stop();
+				this.streams.getOutStream().println("Stop succeeded");
+			} catch (final StopError e) {
+				throw logException("Error during stop", e);
+			}
 		}
 	}
 
