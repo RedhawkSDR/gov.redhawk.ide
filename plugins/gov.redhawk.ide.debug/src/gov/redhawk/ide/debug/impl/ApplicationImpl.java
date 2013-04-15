@@ -134,15 +134,15 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			} else if (o2 == assemblyController) {
 				return 1;
 			} else {
+				
 				SadComponentInstantiation ci1 = o1.getComponentInstantiation();
 				int o1Index = o1.eContainer().eContents().indexOf(o1);
 				
 				SadComponentInstantiation ci2 = o2.getComponentInstantiation();
 				int o2Index = o2.eContainer().eContents().indexOf(o2);
 				
-				// If neither have start order we'll order them on hash code arbitrarily.  They are not equal though.
+				// If neither have start order we'll order them on list order.
 				if (ci1 == null && ci2 == null) {
-					
 					return (o1Index < o2Index) ? -1 : 1;
 				}
 				
