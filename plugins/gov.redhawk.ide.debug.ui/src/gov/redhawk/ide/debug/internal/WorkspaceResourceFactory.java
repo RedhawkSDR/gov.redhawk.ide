@@ -10,7 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.NamedThreadFactory;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.URI;

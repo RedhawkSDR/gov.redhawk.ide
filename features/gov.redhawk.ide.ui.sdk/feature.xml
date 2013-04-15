@@ -12,7 +12,7 @@
 <feature
       id="gov.redhawk.ide.ui.sdk"
       label="%featureName"
-      version="1.0.0.qualifier"
+      version="1.9.0.qualifier"
       provider-name="%providerName"
       plugin="mil.jpeojtrs.sca.util"
       image="rh_logo_128x128.gif">
@@ -21,20 +21,19 @@
       %description
    </description>
 
-   <copyright url="http://redhawksd.orgr/copyright">
+   <copyright url="http://redhawksdr.org">
       %copyright
    </copyright>
 
    <license url="%licenseURL">
-      :
-   %license
+      %license
    </license>
 
    <includes
          id="gov.redhawk.ide.ui.feature"
          version="0.0.0"/>
 
-	<includes
+   <includes
          id="gov.redhawk.ide.ui.feature.source"
          version="0.0.0"/>
 </feature>

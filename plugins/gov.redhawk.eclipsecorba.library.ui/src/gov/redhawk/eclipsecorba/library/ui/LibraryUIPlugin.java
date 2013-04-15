@@ -12,6 +12,8 @@ package gov.redhawk.eclipsecorba.library.ui;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -64,5 +66,19 @@ public class LibraryUIPlugin extends AbstractUIPlugin {
 	public static void logError(final String msg, final Throwable e) {
 		LibraryUIPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, LibraryUIPlugin.PLUGIN_ID, msg, e));
 	}
+
+	/**
+     * @since 1.1
+     */
+	public ImageDescriptor getImageDescriptor(String string) {
+		ImageDescriptor retVal = getImageRegistry().getDescriptor(string);
+		if (retVal == null) {
+			retVal = AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, string);
+			if (retVal != null) {
+				getImageRegistry().put(string, retVal);
+			}
+		}
+	    return retVal;
+    }
 
 }
