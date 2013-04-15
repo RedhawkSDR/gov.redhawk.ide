@@ -135,11 +135,15 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				return 1;
 			} else {
 				SadComponentInstantiation ci1 = o1.getComponentInstantiation();
+				int o1Index = o1.eContainer().eContents().indexOf(o1);
+				
 				SadComponentInstantiation ci2 = o2.getComponentInstantiation();
+				int o2Index = o2.eContainer().eContents().indexOf(o2);
 				
 				// If neither have start order we'll order them on hash code arbitrarily.  They are not equal though.
 				if (ci1 == null && ci2 == null) {
-					return (o1.hashCode() < o2.hashCode()) ? -1 : 1;
+					
+					return (o1Index < o2Index) ? -1 : 1;
 				}
 				
 				// If c1 != null but ci2 is
@@ -160,7 +164,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				} else if (s2 != null) {
 					return 1;
 				} else {
-					return (o1.hashCode() < o2.hashCode()) ? -1 : 1;
+					return (o1Index < o2Index) ? -1 : 1;
 				}
 			}
         }
