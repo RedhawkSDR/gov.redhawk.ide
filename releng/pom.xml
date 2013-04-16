@@ -25,7 +25,7 @@
         <jacorb>http://download.redhawksdr.org/jacorb/releases/3.1.0</jacorb>
         <mil.jpeojtrs.sca>http://download.redhawksdr.org/mil.jpeojtrs.sca/releases/1.9</mil.jpeojtrs.sca>
         <gov.redhawk.core>http://download.redhawksdr.org/gov.redhawk.core/releases/1.9</gov.redhawk.core>
-        <gov.redhawk.core.rcp>http://download.redhawksdr.org/gov.redhawk.core/releases/1.9</gov.redhawk.core.rcp>
+        <gov.redhawk.core.rcp>http://download.redhawksdr.org/gov.redhawk.core/rcp/releases/1.9</gov.redhawk.core.rcp>
     </properties>
 
     <repositories>
