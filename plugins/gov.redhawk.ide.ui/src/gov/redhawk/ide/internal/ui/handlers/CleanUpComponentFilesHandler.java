@@ -67,9 +67,9 @@ public class CleanUpComponentFilesHandler extends AbstractHandler implements IHa
 
 					if (eObject != null) {
 						if (eObject instanceof SoftwareAssembly) {
-							cleanAction.setSoftwareAssembly((SoftwareAssembly) eObject);
+							cleanAction.setRoot((SoftwareAssembly) eObject);
 						} else if (eObject instanceof DeviceConfiguration) {
-							cleanAction.setDeviceConfiguration((DeviceConfiguration) eObject);
+							cleanAction.setRoot((DeviceConfiguration) eObject);
 						} else {
 							return null;
 						}

@@ -23,7 +23,6 @@ import gov.redhawk.ide.codegen.util.CodegenFileHelper;
 import gov.redhawk.ide.codegen.util.ImplementationAndSettings;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.spd.generator.newcomponent.ComponentProjectCreator;
-import gov.redhawk.ide.spd.internal.ui.editor.wizard.OpenAssociatedPerspectiveJob;
 import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.ide.ui.wizard.IImportWizard;
 import gov.redhawk.ide.util.ResourceUtils;

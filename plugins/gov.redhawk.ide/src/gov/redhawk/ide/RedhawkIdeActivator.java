@@ -40,7 +40,7 @@ public class RedhawkIdeActivator extends Plugin {
 	/** The plugin. */
 	private static RedhawkIdeActivator plugin;
 
-	private final ScopedPreferenceAccessor preferenceAccessor = new ScopedPreferenceAccessor(new InstanceScope(), RedhawkIdeActivator.PLUGIN_ID);
+	private final ScopedPreferenceAccessor preferenceAccessor = new ScopedPreferenceAccessor(InstanceScope.INSTANCE, RedhawkIdeActivator.PLUGIN_ID);
 
 	/**
 	 * The constructor.

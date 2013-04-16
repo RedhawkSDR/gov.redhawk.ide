@@ -39,7 +39,7 @@ public class RedhawkIdePreferenceInitializer extends AbstractPreferenceInitializ
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
-		final IEclipsePreferences defaultNode = new DefaultScope().getNode(RedhawkIdeActivator.PLUGIN_ID);
+		final IEclipsePreferences defaultNode = DefaultScope.INSTANCE.getNode(RedhawkIdeActivator.PLUGIN_ID);
 
 		if (defaultNode != null) {
 			if (Platform.getOS().equals(Platform.OS_WIN32)) {
@@ -64,7 +64,7 @@ public class RedhawkIdePreferenceInitializer extends AbstractPreferenceInitializ
 	 */
 	public static void initializeIdlLibraryToDefaults(final IdlLibrary library) {
 		final PreferenceNodePathSet pathSet = LibraryFactory.eINSTANCE.createPreferenceNodePathSet();
-		IEclipsePreferences node = new DefaultScope().getNode(RedhawkIdeActivator.PLUGIN_ID);
+		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(RedhawkIdeActivator.PLUGIN_ID);
 		pathSet.setDelimiter(node.get(RedhawkIdePreferenceConstants.RH_IDE_IDL_INCLUDE_PATH_PREFERENCE_DELIMITER,
 		        RedhawkIdePreferenceConstants.RH_IDE_IDL_INCLUDE_PATH_PREFERENCE_DELIMITER));
 		pathSet.setFileUri(true);

@@ -12,6 +12,9 @@
 package gov.redhawk.ide.dcd.generator.newnode.tests;
 
 import gov.redhawk.ide.dcd.generator.newnode.NodeProjectCreator;
+
+import java.io.IOException;
+
 import junit.framework.Assert;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.spd.SoftPkg;

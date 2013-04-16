@@ -44,7 +44,7 @@ public class RedhawkIDEUiPlugin extends AbstractUIPlugin {
 	 */
 	public IPreferenceStore getRedhawkIdePreferenceStore() {
 		if (this.idePreferenceStore == null) {
-			this.idePreferenceStore = new ScopedPreferenceStore(new InstanceScope(), RedhawkIdeActivator.PLUGIN_ID);
+			this.idePreferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, RedhawkIdeActivator.PLUGIN_ID);
 		}
 		return this.idePreferenceStore;
 	}

@@ -24,7 +24,6 @@ import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationSectionSoft
 import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationSectionUsesDeviceItemProvider;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.SpdItemProviderAdapterFactoryAdapter;
 import gov.redhawk.ide.spd.internal.ui.editor.wizard.ImplementationWizard;
-import gov.redhawk.ide.spd.internal.ui.editor.wizard.OpenAssociatedPerspectiveJob;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.sca.ui.parts.FormFilteredTree;
 import gov.redhawk.ui.actions.SortAction;

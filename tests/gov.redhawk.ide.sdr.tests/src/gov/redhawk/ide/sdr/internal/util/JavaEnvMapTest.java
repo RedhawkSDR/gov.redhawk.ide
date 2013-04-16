@@ -10,14 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.internal.util;
 
-import static org.junit.Assert.*;
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.tests.SdrTests;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-
-import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.tests.SdrTests;
 
 import mil.jpeojtrs.sca.spd.SoftPkg;
 

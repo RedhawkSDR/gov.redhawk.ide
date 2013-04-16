@@ -43,7 +43,7 @@ public class SpdFileTemplateTest {
 		final SpdFileTemplate spdTemplate = SpdFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setAuthorName("MyName");
-		args.setProjectId("MyIdentifier");
+		args.setNodeId("MyIdentifier");
 		args.setProjectName("MyProject");
 		final String spdContent = spdTemplate.generate(args);
 
@@ -54,7 +54,7 @@ public class SpdFileTemplateTest {
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final SoftPkg softpkg = SoftPkg.Util.getSoftPkg(resourceSet.getResource(URI.createFileURI(spdFile.toString()), true));
 		Assert.assertEquals(args.getProjectName(), softpkg.getName());
-		Assert.assertEquals(args.getProjectId(), softpkg.getId());
+		Assert.assertEquals(args.getNodeId(), softpkg.getId());
 		Assert.assertEquals(args.getAuthorName(), softpkg.getAuthor().get(0).getName().get(0));
 		Assert.assertEquals("nodeBooter", softpkg.getImplementation().get(0).getCode().getLocalFile().getName());
 	}
