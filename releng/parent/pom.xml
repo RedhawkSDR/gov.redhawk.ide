@@ -146,6 +146,13 @@
                 <configuration>
                     <failIfNoTests>false</failIfNoTests>
                     <testFailureIgnore>true</testFailureIgnore>
+                    <dependencies>
+                       <dependency>
+                         <type>eclipse-feature</type>
+                         <artifactId>org.jacorb</artifactId>
+                         <version>0.0.0</version>
+                       </dependency>
+                    </dependencies>
                 </configuration>
             </plugin>
 
