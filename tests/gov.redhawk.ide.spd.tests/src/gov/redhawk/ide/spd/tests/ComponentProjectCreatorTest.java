@@ -12,6 +12,9 @@
 package gov.redhawk.ide.spd.tests;
 
 import gov.redhawk.ide.spd.generator.newcomponent.ComponentProjectCreator;
+
+import java.io.IOException;
+
 import junit.framework.Assert;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.scd.ScdPackage;
@@ -21,6 +24,7 @@ import mil.jpeojtrs.sca.spd.SpdPackage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
@@ -43,7 +47,10 @@ public class ComponentProjectCreatorTest {
 		final IProject project = ComponentProjectCreator.createEmptyProject("componentProjectTest", null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
 		Assert.assertTrue("componentProjectTest".equals(project.getName()));
-		project.delete(true, new NullProgressMonitor());
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		if (project.exists()) {
+			project.delete(true, new NullProgressMonitor());
+		}
 	}
 	
 	/**
@@ -57,7 +64,7 @@ public class ComponentProjectCreatorTest {
 		Assert.assertNotNull(project);
 		Assert.assertTrue("componentProjectTest".equals(project.getName()));
 		
-		ComponentProjectCreator.createComponentFiles(project, "componentProjectTestId", "Author", new NullProgressMonitor());
+		ComponentProjectCreator.createComponentFiles(project, "componentProjectTest", "gov.redhawk.componentProjectTest", "Author", new NullProgressMonitor());
 
 		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
 		Assert.assertTrue(spdFile.exists());
@@ -76,9 +83,12 @@ public class ComponentProjectCreatorTest {
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final SoftPkg dev = SoftPkg.Util.getSoftPkg(resourceSet.getResource(URI.createPlatformResourceURI("/componentProjectTest/componentProjectTest.spd.xml", true), true));
 		Assert.assertEquals(project.getName(), dev.getName());
-		Assert.assertEquals("componentProjectTestId", dev.getId());
+		Assert.assertEquals("gov.redhawk.componentProjectTest", dev.getId());
 		Assert.assertEquals("Author", dev.getAuthor().get(0).getName().get(0));
 
-		project.delete(true, new NullProgressMonitor());
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		if (project.exists()) {
+			project.delete(true, new NullProgressMonitor());
+		}
 	}
 }

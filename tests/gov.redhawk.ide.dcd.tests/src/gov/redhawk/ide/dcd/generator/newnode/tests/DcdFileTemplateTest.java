@@ -44,7 +44,7 @@ public class DcdFileTemplateTest {
 		final SpdFileTemplate spdTemplate = SpdFileTemplate.create(null);
 		final gov.redhawk.ide.dcd.generator.newdevice.GeneratorArgs args1 = new gov.redhawk.ide.dcd.generator.newdevice.GeneratorArgs();
 		args1.setAuthorName("MyName");
-		args1.setProjectId("MyIdentifier");
+		args1.setSoftPkgId("MyIdentifier");
 		args1.setProjectName("MyProject");
 		final String spdContent = spdTemplate.generate(args1);
 
@@ -62,7 +62,8 @@ public class DcdFileTemplateTest {
 			softpkg
 		});
 		args2.setDomainManagerName("MyDomain");
-		args2.setProjectId(args1.getProjectId());
+		args2.setNodeName("MyNodeName");
+		args2.setNodeId("MyNodeID");
 		args2.setProjectName(args1.getProjectName());
 		final DcdFileTemplate dcdTemplate = DcdFileTemplate.create(null);
 		final String dcdContent = dcdTemplate.generate(args2);
@@ -73,14 +74,14 @@ public class DcdFileTemplateTest {
 		// Try to create a model from the file and test some of the fields
 		// that should have been filled in
 		final DeviceConfiguration devcfg = DeviceConfiguration.Util.getDeviceConfiguration(resourceSet.getResource(URI.createFileURI(dcdFile.toString()), true));
-		Assert.assertEquals(args2.getProjectName(), devcfg.getName());
-		Assert.assertEquals(args2.getProjectId(), devcfg.getId());
+		Assert.assertEquals("MyNodeName", devcfg.getName());
+		Assert.assertEquals(args2.getNodeId(), devcfg.getId());
 		Assert.assertEquals("/mgr/DeviceManager.spd.xml", devcfg.getDeviceManagerSoftPkg().getLocalFile().getName());
 		Assert.assertEquals("SPD", devcfg.getComponentFiles().getComponentFile().get(0).getType());
-		Assert.assertTrue(devcfg.getComponentFiles().getComponentFile().get(0).getId().startsWith(args1.getProjectName() + "_"));
+		Assert.assertTrue(devcfg.getComponentFiles().getComponentFile().get(0).getId().startsWith(args1.getSoftPkgName() + "_"));
 		Assert.assertEquals(spdFile.getAbsolutePath(), devcfg.getComponentFiles().getComponentFile().get(0).getLocalFile().getName());
-		Assert.assertTrue(devcfg.getPartitioning().getComponentPlacement().get(0).getComponentFileRef().getRefid().startsWith(args1.getProjectName() + "_"));
-		Assert.assertEquals(args1.getProjectName() + "_1", devcfg.getPartitioning()
+		Assert.assertTrue(devcfg.getPartitioning().getComponentPlacement().get(0).getComponentFileRef().getRefid().startsWith(args1.getSoftPkgName() + "_"));
+		Assert.assertEquals(args1.getSoftPkgName() + "_1", devcfg.getPartitioning()
 		        .getComponentPlacement()
 		        .get(0)
 		        .getComponentInstantiation()

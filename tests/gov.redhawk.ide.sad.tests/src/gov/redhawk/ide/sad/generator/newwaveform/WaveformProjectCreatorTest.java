@@ -11,6 +11,8 @@
 
 package gov.redhawk.ide.sad.generator.newwaveform;
 
+import java.io.IOException;
+
 import junit.framework.Assert;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 

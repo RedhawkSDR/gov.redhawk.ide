@@ -292,7 +292,7 @@ public class SdrRootTest extends TestCase {
 	 */
 	public void testLoad__IProgressMonitor() {
 		// END GENERATED CODE
-		Assert.assertEquals(LoadState.LOADED, this.fixture.getState());
+		Assert.assertEquals(fixture.getLoadStatus().getMessage(), LoadState.LOADED, this.fixture.getState());
 		// BEGIN GENERATED CODE
 	}
 

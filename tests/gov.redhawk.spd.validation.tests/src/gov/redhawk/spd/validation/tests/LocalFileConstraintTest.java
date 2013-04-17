@@ -54,14 +54,16 @@ public class LocalFileConstraintTest {
 	public void testPropertyFileSoftPkg() throws Exception {
 		IValidationContext context = new TestValidationContext(LocalFileConstraint.PROPERTY_ID, this.provider.createWorkspaceSoftPkgResource());
 		//should succeed because the prf file has been created.
-		Assert.assertEquals(IStatus.OK, this.constraint.validate(context).getSeverity());
+		IStatus status = this.constraint.validate(context);
+		Assert.assertEquals(status.getMessage(), IStatus.OK, status.getSeverity());
 	}
 	
 	@Test
 	public void testSCDFile() throws Exception {
 		IValidationContext context = new TestValidationContext(LocalFileConstraint.SCD_ID, this.provider.createWorkspaceSoftPkgResource());
 		//should succeed because the scd file has been created.
-		Assert.assertEquals(IStatus.OK, this.constraint.validate(context).getSeverity());
+		IStatus status = this.constraint.validate(context);
+		Assert.assertEquals(status.getMessage(), IStatus.OK, status.getSeverity());
 	}
 	
 	@Test
@@ -72,7 +74,8 @@ public class LocalFileConstraintTest {
 		code.setLocalFile(file);
 		IValidationContext context = new TestValidationContext(LocalFileConstraint.CODE_ID, code);
 		//Should error because the test file does not exist in the project
-		Assert.assertEquals(IStatus.ERROR, this.constraint.validate(context).getSeverity());
+		IStatus status = this.constraint.validate(context);
+		Assert.assertEquals(IStatus.ERROR, status.getSeverity());
 	}
 
 }

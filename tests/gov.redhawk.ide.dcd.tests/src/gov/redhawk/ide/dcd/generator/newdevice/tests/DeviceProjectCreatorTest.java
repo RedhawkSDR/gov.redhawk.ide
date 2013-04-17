@@ -13,6 +13,9 @@ package gov.redhawk.ide.dcd.generator.newdevice.tests;
 
 import gov.redhawk.ide.dcd.generator.newdevice.DeviceProjectCreator;
 import gov.redhawk.ide.preferences.RedhawkIdePreferenceConstants;
+
+import java.io.IOException;
+
 import junit.framework.Assert;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.scd.Interface;
@@ -58,10 +61,9 @@ public class DeviceProjectCreatorTest {
 	public void testCreateDeviceFiles() throws CoreException {
 		final IProject project = DeviceProjectCreator.createEmptyProject("deviceProjectTest", null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
+		Assert.assertTrue(project.exists());
 		Assert.assertTrue("deviceProjectTest".equals(project.getName()));
-
-		DeviceProjectCreator.createDeviceFiles(project,
-		        "deviceProjectTest",
+		DeviceProjectCreator.createDeviceFiles(project, "deviceProjectTest", "gov.redhawk.deviceProjectTest",
 		        "Author",
 		        RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE,
 		        false,
@@ -99,9 +101,9 @@ public class DeviceProjectCreatorTest {
 	public void testCreateAggregateDevice() throws CoreException {
 		final IProject project = DeviceProjectCreator.createEmptyProject("aggDevTest", null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
-
-		DeviceProjectCreator.createDeviceFiles(project,
-		        "aggDevTest",
+		Assert.assertTrue(project.exists());
+		Assert.assertTrue("aggDevTest".equals(project.getName()));
+		DeviceProjectCreator.createDeviceFiles(project, "aggDevTest", "gov.redhawk.deviceProjectTest",
 		        "Author",
 		        RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE,
 		        true,
@@ -109,6 +111,12 @@ public class DeviceProjectCreatorTest {
 
 		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
 		Assert.assertTrue(spdFile.exists());
+
+		final IFile prfFile = project.getFile(project.getName() + PrfPackage.FILE_EXTENSION);
+		Assert.assertTrue(prfFile.exists());
+
+		final IFile scdFile = project.getFile(project.getName() + ScdPackage.FILE_EXTENSION);
+		Assert.assertTrue(scdFile.exists());
 
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final SoftPkg dev = SoftPkg.Util.getSoftPkg(resourceSet.getResource(URI.createPlatformResourceURI("/aggDevTest/aggDevTest.spd.xml", true), true));

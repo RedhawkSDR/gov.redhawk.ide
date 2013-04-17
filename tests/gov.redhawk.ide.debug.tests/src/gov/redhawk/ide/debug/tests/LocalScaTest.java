@@ -15,6 +15,7 @@ import gov.redhawk.ide.debug.ScaDebugFactory;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -112,16 +113,13 @@ public class LocalScaTest extends TestCase {
 	 * Tests the '{@link gov.redhawk.ide.debug.LocalSca#init() <em>Init</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @throws CoreException 
 	 * @see gov.redhawk.ide.debug.LocalSca#init()
-	 * @generated
+	 * @generated NOT
 	 */
-	public void testInit() {
+	public void testInit() throws CoreException {
 		// END GENERATED CODE
-		
-		// FIXME: implement this operation test method
-		// Ensure that you remove @generated or mark it @generated NOT
-		fail();
-		
+		getFixture().init();
 		// BEGIN GENERATED CODE
 	}
 
