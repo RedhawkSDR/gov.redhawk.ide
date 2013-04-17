@@ -548,7 +548,7 @@ public class ScaDebugAdapterFactory extends AdapterFactoryImpl {
 	/**
 	 * Creates a new adapter for an object of class '{@link ExtendedCF.ApplicationExtOperations <em>Application Ext Operations</em>}'.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * @return the new adapter.
 	 * @see ExtendedCF.ApplicationExtOperations
 	 * @generated

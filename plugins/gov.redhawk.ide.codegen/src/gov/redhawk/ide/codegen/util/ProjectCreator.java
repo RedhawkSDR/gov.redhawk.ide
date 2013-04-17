@@ -500,7 +500,7 @@ public abstract class ProjectCreator {
 	 * @param project
 	 * @param impl
 	 * @param command null if the implementation isn't being added within an editor context
-	 * @since 9.1
+	 * @since 9.2
 	 */
 	public static void addImplementation(final IProject project, final String spdName, final Implementation impl, final ImplementationSettings settings, final IProgressMonitor monitor) 
 	throws CoreException {

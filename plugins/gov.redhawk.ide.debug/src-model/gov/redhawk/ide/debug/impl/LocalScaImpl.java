@@ -126,7 +126,7 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 	/**
 	 * The default value of the '{@link #getOrb() <em>Orb</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @see #getOrb()
 	 * @generated
@@ -137,7 +137,7 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 	/**
 	 * The cached value of the '{@link #getOrb() <em>Orb</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @see #getOrb()
 	 * @generated
@@ -148,7 +148,7 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 	/**
 	 * The default value of the '{@link #getPoa() <em>Poa</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @see #getPoa()
 	 * @generated
@@ -159,7 +159,7 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 	/**
 	 * The cached value of the '{@link #getPoa() <em>Poa</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @see #getPoa()
 	 * @generated
@@ -251,7 +251,7 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -261,7 +261,7 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -283,7 +283,7 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */

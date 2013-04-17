@@ -46,7 +46,7 @@ public interface LocalSca extends IDisposable {
 	/**
 	 * Returns the value of the '<em><b>Orb</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Orb</em>' attribute.
 	 * @see #setOrb(ORB)
@@ -59,7 +59,7 @@ public interface LocalSca extends IDisposable {
 	/**
 	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalSca#getOrb <em>Orb</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Orb</em>' attribute.
 	 * @see #getOrb()
@@ -70,7 +70,7 @@ public interface LocalSca extends IDisposable {
 	/**
 	 * Returns the value of the '<em><b>Poa</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Poa</em>' attribute.
 	 * @see #setPoa(POA)
@@ -83,7 +83,7 @@ public interface LocalSca extends IDisposable {
 	/**
 	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalSca#getPoa <em>Poa</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Poa</em>' attribute.
 	 * @see #getPoa()
@@ -140,7 +140,7 @@ public interface LocalSca extends IDisposable {
 	/**
 	 * Returns the value of the '<em><b>Root Context</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Root Context</em>' containment reference.
 	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca_RootContext()

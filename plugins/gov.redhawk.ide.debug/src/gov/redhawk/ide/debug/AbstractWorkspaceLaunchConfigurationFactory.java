@@ -17,7 +17,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
- * @since 2.0
+ * @since 3.0
  */
 public abstract class AbstractWorkspaceLaunchConfigurationFactory extends AbstractLaunchConfigurationFactory {
 

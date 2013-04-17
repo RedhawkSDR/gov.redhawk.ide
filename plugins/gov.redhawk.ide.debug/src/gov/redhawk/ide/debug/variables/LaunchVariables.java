@@ -6,7 +6,7 @@
 package gov.redhawk.ide.debug.variables;
 
 /**
- * @since 2.0
+ * @since 3.0
  */
 public final class LaunchVariables {
 	private LaunchVariables() {

@@ -214,7 +214,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -224,7 +224,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -240,7 +240,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -294,7 +294,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */

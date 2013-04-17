@@ -58,7 +58,7 @@ public class ScaDebugPlugin extends Plugin {
 	}
 
 	/**
-	 * @since 2.0
+	 * @since 3.0
 	 */
 	public synchronized Sandbox getSandbox() {
 		if (this.sandbox == null) {
@@ -86,14 +86,14 @@ public class ScaDebugPlugin extends Plugin {
 	}
 
 	/**
-	 * @since 2.0
+	 * @since 3.0
 	 */
 	public ILaunchConfigurationFactoryRegistry getLaunchConfigurationFactoryRegistry() {
 		return LaunchConfigurationFactoryRegistry.INSTANCE;
 	}
 
 	/**
-	 * @since 2.0
+	 * @since 3.0
 	 */
 	public ILauncherVariableRegistry getLauncherVariableRegistry() {
 		return LauncherVariableRegistry.INSTANCE;

@@ -348,7 +348,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -359,7 +359,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -376,7 +376,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -396,7 +396,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 
 	/**
-	 * @since 2.0
+	 * @since 3.0
 	 */
 	public void setLocalApp(final ApplicationExtOperations newLocalApp, final POA poa) throws ServantNotActive, WrongPolicy {
 		setLocalApp(newLocalApp);
@@ -433,7 +433,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
@@ -444,14 +444,12 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	public Resource reset(String compInstId) throws ReleaseError, ExecuteFail {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		return getLocalApp().reset(compInstId);
 	}
 
 
@@ -616,7 +614,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */

@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 /**
- * @since 2.0
+ * @since 3.0
  */
 public interface ILaunchConfigurationFactory {
 

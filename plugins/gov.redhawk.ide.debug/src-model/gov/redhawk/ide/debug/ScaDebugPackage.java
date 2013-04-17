@@ -84,7 +84,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Orb</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -93,7 +93,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Poa</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -501,7 +501,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -904,7 +904,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -1355,7 +1355,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -1581,7 +1581,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -1807,7 +1807,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -1921,7 +1921,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -1973,7 +1973,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The meta object id for the '{@link ExtendedCF.ApplicationExtOperations <em>Application Ext Operations</em>}' class.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @see ExtendedCF.ApplicationExtOperations
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getApplicationExtOperations()
@@ -1983,7 +1983,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The number of structural features of the '<em>Application Ext Operations</em>' class.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -2030,7 +2030,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.debug.LocalSca#getOrb <em>Orb</em>}'.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Orb</em>'.
 	 * @see gov.redhawk.ide.debug.LocalSca#getOrb()
@@ -2042,7 +2042,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.debug.LocalSca#getPoa <em>Poa</em>}'.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Poa</em>'.
 	 * @see gov.redhawk.ide.debug.LocalSca#getPoa()
@@ -2338,7 +2338,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.debug.LocalAbstractComponent#getExecParam <em>Exec Param</em>}'.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Exec Param</em>'.
 	 * @see gov.redhawk.ide.debug.LocalAbstractComponent#getExecParam()
@@ -2371,7 +2371,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * Returns the meta object for the containment reference '{@link gov.redhawk.ide.debug.LocalScaWaveform#getLocalApp <em>Local App</em>}'.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Local App</em>'.
 	 * @see gov.redhawk.ide.debug.LocalScaWaveform#getLocalApp()
@@ -2414,7 +2414,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * Returns the meta object for the containment reference '{@link gov.redhawk.ide.debug.LocalScaDeviceManager#getLocalDeviceManager <em>Local Device Manager</em>}'.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Local Device Manager</em>'.
 	 * @see gov.redhawk.ide.debug.LocalScaDeviceManager#getLocalDeviceManager()
@@ -2509,7 +2509,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * Returns the meta object for class '{@link ExtendedCF.ApplicationExtOperations <em>Application Ext Operations</em>}'.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Application Ext Operations</em>'.
 	 * @see ExtendedCF.ApplicationExtOperations
@@ -2586,7 +2586,7 @@ public interface ScaDebugPackage extends EPackage {
 		/**
 		 * The meta object literal for the '<em><b>Orb</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
-		 * @since 2.0
+		 * @since 3.0
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
@@ -2594,7 +2594,7 @@ public interface ScaDebugPackage extends EPackage {
 		/**
 		 * The meta object literal for the '<em><b>Poa</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
-		 * @since 2.0
+		 * @since 3.0
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
@@ -2798,7 +2798,7 @@ public interface ScaDebugPackage extends EPackage {
 		/**
 		 * The meta object literal for the '<em><b>Exec Param</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
-		 * @since 2.0
+		 * @since 3.0
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
@@ -2932,7 +2932,7 @@ public interface ScaDebugPackage extends EPackage {
 		/**
 		 * The meta object literal for the '{@link ExtendedCF.ApplicationExtOperations <em>Application Ext Operations</em>}' class.
 		 * <!-- begin-user-doc -->
-		 * @since 2.0
+		 * @since 3.0
 		 * <!-- end-user-doc -->
 		 * @see ExtendedCF.ApplicationExtOperations
 		 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getApplicationExtOperations()

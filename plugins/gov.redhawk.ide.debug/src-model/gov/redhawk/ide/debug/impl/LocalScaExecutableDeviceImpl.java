@@ -98,7 +98,7 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 	/**
 	 * The default value of the '{@link #getExecParam() <em>Exec Param</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @see #getExecParam()
 	 * @generated
@@ -108,7 +108,7 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 	/**
 	 * The cached value of the '{@link #getExecParam() <em>Exec Param</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @see #getExecParam()
 	 * @generated
@@ -200,7 +200,7 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -210,7 +210,7 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */

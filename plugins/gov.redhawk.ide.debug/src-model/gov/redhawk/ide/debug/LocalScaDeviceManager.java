@@ -67,7 +67,7 @@ public interface LocalScaDeviceManager extends ScaDeviceManager, LocalLaunch {
 	/**
 	 * Returns the value of the '<em><b>Local Device Manager</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Local Device Manager</em>' containment reference.
 	 * @see #setLocalDeviceManager(DeviceManagerOperations)
@@ -80,7 +80,7 @@ public interface LocalScaDeviceManager extends ScaDeviceManager, LocalLaunch {
 	/**
 	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaDeviceManager#getLocalDeviceManager <em>Local Device Manager</em>}' containment reference.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Local Device Manager</em>' containment reference.
 	 * @see #getLocalDeviceManager()
@@ -90,7 +90,7 @@ public interface LocalScaDeviceManager extends ScaDeviceManager, LocalLaunch {
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @model exceptions="gov.redhawk.ide.debug.ServantNotActive gov.redhawk.ide.debug.WrongPolicy" implType="mil.jpeojtrs.sca.cf.DeviceManagerOperations" poaDataType="gov.redhawk.model.sca.POA"
 	 * @generated

@@ -80,7 +80,7 @@ public final class ScaLauncherUtil {
 	private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool(new NamedThreadFactory(ScaLauncherUtil.class.getName()));
 
 	/**
-	 * @since 2.0
+	 * @since 3.0
 	 */
 	public static final String LAUNCH_ATT_PROGRAM_ARGUMENT_MAP = ScaDebugPlugin.ID + ".programArgumentMap";
 	private static final String LAUNCH_ATT_URI = ScaDebugPlugin.ID + ".uri";
@@ -92,7 +92,7 @@ public final class ScaLauncherUtil {
 	}
 	
 	/**
-	 * @since 2.0
+	 * @since 3.0
 	 */
 	public static Map<String,String> createMap(String programArguments) {
 		String[] split = programArguments.split(" ");
@@ -104,7 +104,7 @@ public final class ScaLauncherUtil {
 	}
 
 	/**
-	 * @since 2.0
+	 * @since 3.0
 	 */
 	public static void postLaunch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);

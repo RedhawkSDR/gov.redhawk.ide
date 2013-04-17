@@ -69,7 +69,7 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch, ApplicationE
 	/**
 	 * Returns the value of the '<em><b>Local App</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Local App</em>' containment reference.
 	 * @see #setLocalApp(ApplicationExtOperations)
@@ -82,7 +82,7 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch, ApplicationE
 	/**
 	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaWaveform#getLocalApp <em>Local App</em>}' containment reference.
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Local App</em>' containment reference.
 	 * @see #getLocalApp()
@@ -92,7 +92,7 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch, ApplicationE
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @model exceptions="gov.redhawk.ide.debug.CoreException" execParamsDataType="gov.redhawk.model.sca.DataTypeArray" spdURIDataType="mil.jpeojtrs.sca.spd.URI"
 	 * @generated
@@ -101,7 +101,7 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch, ApplicationE
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 2.0
+	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @model exceptions="gov.redhawk.ide.debug.ServantNotActive gov.redhawk.ide.debug.WrongPolicy" appType="gov.redhawk.ide.debug.ApplicationExtOperations" poaDataType="gov.redhawk.model.sca.POA"
 	 * @generated

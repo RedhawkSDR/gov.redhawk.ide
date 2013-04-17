@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * @since 2.0
+ * @since 3.0
  */
 public final class SadLauncherUtil {
 	private SadLauncherUtil() {
