@@ -44,9 +44,8 @@ public class SpdFileTemplateTest {
 		final SpdFileTemplate spdTemplate = SpdFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setAuthorName("MyName");
-		args.setSoftPkgId("MyIdentifier");
-		args.setProjectName("MyProject");
-		args.setSoftPkgName("MyName");
+		args.setProjectId("MyIdentifier");
+		args.setProjectName("MyName");
 		final String spdContent = spdTemplate.generate(args);
 
 		// Create an XML file with the content
@@ -55,13 +54,13 @@ public class SpdFileTemplateTest {
 		// Try to create a model from the file
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final SoftPkg softpkg = SoftPkg.Util.getSoftPkg(resourceSet.getResource(URI.createFileURI(spdFile.toString()), true));
-		Assert.assertEquals(args.getSoftPkgName(), softpkg.getName());
-		Assert.assertEquals(args.getSoftPkgId(), softpkg.getId());
+		Assert.assertEquals(args.getProjectName(), softpkg.getName());
+		Assert.assertEquals(args.getProjectId(), softpkg.getId());
 		Assert.assertEquals("", softpkg.getTitle());
 		Assert.assertEquals(args.getAuthorName(), softpkg.getAuthor().get(0).getName().get(0));
 		Assert.assertEquals("PRF", softpkg.getPropertyFile().getType());
-		Assert.assertEquals(args.getSoftPkgName() + PrfPackage.FILE_EXTENSION, softpkg.getPropertyFile().getLocalFile().getName());
-		Assert.assertEquals(args.getSoftPkgName() + ScdPackage.FILE_EXTENSION, softpkg.getDescriptor().getLocalfile().getName());
+		Assert.assertEquals(args.getProjectName() + PrfPackage.FILE_EXTENSION, softpkg.getPropertyFile().getLocalFile().getName());
+		Assert.assertEquals(args.getProjectName() + ScdPackage.FILE_EXTENSION, softpkg.getDescriptor().getLocalfile().getName());
 	}
 
 }

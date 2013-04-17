@@ -12,4 +12,5 @@ Require-Bundle: gov.redhawk.ide.codegen;bundle-version="1.0.0",
  org.eclipse.jdt.core;bundle-version="3.6.1"
 Bundle-Vendor: REDHAWK
 Eclipse-ExtensibleAPI: true
-Export-Package: gov.redhawk.codegen.validation
+Export-Package: gov.redhawk.codegen.internal.validation;x-internal:=true,
+ gov.redhawk.codegen.validation

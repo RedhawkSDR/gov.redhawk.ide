@@ -63,8 +63,7 @@ public class DeviceProjectCreatorTest {
 		Assert.assertNotNull(project);
 		Assert.assertTrue(project.exists());
 		Assert.assertTrue("deviceProjectTest".equals(project.getName()));
-		DeviceProjectCreator.createDeviceFiles(project, "deviceProjectTest", "gov.redhawk.deviceProjectTest",
-		        "Author",
+		DeviceProjectCreator.createDeviceFiles(project, "deviceProjectTest", "Author", 
 		        RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE,
 		        false,
 		        new NullProgressMonitor());
@@ -103,7 +102,7 @@ public class DeviceProjectCreatorTest {
 		Assert.assertNotNull(project);
 		Assert.assertTrue(project.exists());
 		Assert.assertTrue("aggDevTest".equals(project.getName()));
-		DeviceProjectCreator.createDeviceFiles(project, "aggDevTest", "gov.redhawk.deviceProjectTest",
+		DeviceProjectCreator.createDeviceFiles(project, "aggDevTest", 
 		        "Author",
 		        RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE,
 		        true,

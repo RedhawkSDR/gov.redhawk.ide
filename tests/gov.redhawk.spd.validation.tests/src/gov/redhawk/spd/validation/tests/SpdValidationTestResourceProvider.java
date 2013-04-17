@@ -66,16 +66,16 @@ public class SpdValidationTestResourceProvider {
 	 */
 	private SoftPkg createNewResource(final IProgressMonitor m, final IProject project) throws Exception {
 		final GeneratorArgs args = new GeneratorArgs();
-		args.setSoftPkgName("Name");
-		args.setSoftPkgId(project.getName());
+		args.setProjectName("Name");
+		args.setProjectId(project.getName());
 
 		final String spd = new SpdFileTemplate().generate(args);
 		final String prf = new PrfFileTemplate().generate(null);
 		final String scd = new ScdFileTemplate().generate(null);
 
-		final IFile spdFile = project.getFile(args.getSoftPkgName() + SpdPackage.FILE_EXTENSION);
-		final IFile prfFile = project.getFile(args.getSoftPkgName() + PrfPackage.FILE_EXTENSION);
-		final IFile scdFile = project.getFile(args.getSoftPkgName() + ScdPackage.FILE_EXTENSION);
+		final IFile spdFile = project.getFile(args.getProjectName() + SpdPackage.FILE_EXTENSION);
+		final IFile prfFile = project.getFile(args.getProjectName() + PrfPackage.FILE_EXTENSION);
+		final IFile scdFile = project.getFile(args.getProjectName() + ScdPackage.FILE_EXTENSION);
 
 		try {
 			spdFile.create(new ByteArrayInputStream(spd.getBytes("UTF-8")), true, null);

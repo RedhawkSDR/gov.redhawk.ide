@@ -60,7 +60,6 @@ public class ServiceProjectCreatorTest {
 		Assert.assertNotNull(project);
 		Assert.assertTrue("serviceProjectTest".equals(project.getName()));
 		ServiceProjectCreator.createServiceFiles(project, "serviceProjectTest",
-				"gov.redhawk.serviceProjectTest",
 		        "Author",
 		        "IDL:MULTICASTALLOCATION/MulticastAllocationService:1.0",
 		        new NullProgressMonitor());

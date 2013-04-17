@@ -41,8 +41,8 @@ public class SadFileTemplateTest {
 		// Generate XML using the template
 		final SadFileTemplate sadTemplate = SadFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
-		args.setWaveformId("MyID");
-		args.setWaveformName("MyName");
+		args.setProjectId("MyID");
+		args.setProjectName("MyName");
 		
 		final String prfContent = sadTemplate.generate(args);
 
@@ -52,8 +52,8 @@ public class SadFileTemplateTest {
 		// Try to create a model from the file
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final SoftwareAssembly assembly = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(URI.createFileURI(sadFile.toString()), true));
-		Assert.assertEquals(args.getWaveformId(), assembly.getId());
-		Assert.assertEquals(args.getWaveformName(), assembly.getName());
+		Assert.assertEquals(args.getProjectId(), assembly.getId());
+		Assert.assertEquals(args.getProjectName(), assembly.getName());
 		Assert.assertNotNull(assembly.getComponentFiles());
 		Assert.assertNotNull(assembly.getPartitioning());
 		Assert.assertNotNull(assembly.getAssemblyController());

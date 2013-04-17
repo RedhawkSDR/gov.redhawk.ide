@@ -64,7 +64,7 @@ public class ComponentProjectCreatorTest {
 		Assert.assertNotNull(project);
 		Assert.assertTrue("componentProjectTest".equals(project.getName()));
 		
-		ComponentProjectCreator.createComponentFiles(project, "componentProjectTest", "gov.redhawk.componentProjectTest", "Author", new NullProgressMonitor());
+		ComponentProjectCreator.createComponentFiles(project, "componentProjectTest", "Author", new NullProgressMonitor());
 
 		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
 		Assert.assertTrue(spdFile.exists());
