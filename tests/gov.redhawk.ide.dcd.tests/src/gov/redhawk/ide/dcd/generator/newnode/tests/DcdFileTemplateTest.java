@@ -74,7 +74,7 @@ public class DcdFileTemplateTest {
 		// Try to create a model from the file and test some of the fields
 		// that should have been filled in
 		final DeviceConfiguration devcfg = DeviceConfiguration.Util.getDeviceConfiguration(resourceSet.getResource(URI.createFileURI(dcdFile.toString()), true));
-		Assert.assertEquals("MyNodeName", devcfg.getName());
+		Assert.assertEquals(args1.getProjectName(), devcfg.getName());
 		Assert.assertEquals(args2.getProjectId(), devcfg.getId());
 		Assert.assertEquals("/mgr/DeviceManager.spd.xml", devcfg.getDeviceManagerSoftPkg().getLocalFile().getName());
 		Assert.assertEquals("SPD", devcfg.getComponentFiles().getComponentFile().get(0).getType());
