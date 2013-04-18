@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
@@ -44,7 +45,11 @@ public class ComponentProjectCreatorTest {
 	 */
 	@Test
 	public void testCreateEmptyProject() throws CoreException {
-		final IProject project = ComponentProjectCreator.createEmptyProject("componentProjectTest", null, new NullProgressMonitor());
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("componentProjectTest");
+		if (project.exists()) {
+			project.delete(true, new NullProgressMonitor());
+		}
+		project = ComponentProjectCreator.createEmptyProject("componentProjectTest", null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
 		Assert.assertTrue("componentProjectTest".equals(project.getName()));
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -60,7 +65,11 @@ public class ComponentProjectCreatorTest {
 	 */
 	@Test
 	public void testCreateDeviceFiles() throws CoreException {
-		final IProject project = ComponentProjectCreator.createEmptyProject("componentProjectTest", null, new NullProgressMonitor());
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("componentProjectTest");
+		if (project.exists()) {
+			project.delete(true, new NullProgressMonitor());
+		}
+		project = ComponentProjectCreator.createEmptyProject("componentProjectTest", null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
 		Assert.assertTrue("componentProjectTest".equals(project.getName()));
 		
