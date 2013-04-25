@@ -298,7 +298,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	protected void removeResource(final NameComponent[] location, final org.omg.CORBA.Object obj, final Notification msg) {
 		// END GENERATED CODE
-		final Job addResourceJob = new SilentJob("Add Resource") {
+		final Job removeResourceJob = new SilentJob("Add Resource") {
 
 			@Override
 			protected IStatus runSilent(final IProgressMonitor monitor) {
@@ -314,8 +314,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 				return Status.OK_STATUS;
 			}
 		};
-		addResourceJob.setSystem(true);
-		addResourceJob.schedule();
+		removeResourceJob.setSystem(true);
+		removeResourceJob.schedule();
 		// BEGIN GENERATED CODE
 	    
     }

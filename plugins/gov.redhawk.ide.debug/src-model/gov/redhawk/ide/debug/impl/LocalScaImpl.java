@@ -31,7 +31,7 @@ import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.impl.listeners.DisposableObjectContainerListener;
 import gov.redhawk.sca.util.Debug;
-import gov.redhawk.sca.util.ORBUtil;
+import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SilentJob;
 
 import java.util.Collection;
@@ -67,12 +67,9 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.jacorb.naming.Name;
-import org.omg.CORBA.ORB;
 import org.omg.CORBA.SystemException;
-import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosNaming.NameComponent;
 import org.omg.PortableServer.POA;
-import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
@@ -488,9 +485,7 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 		}
 	};
 
-	private ORB orb;
-
-	private POA poa;
+	private OrbSession session;
 
 	private static LocalFileManager createFileManager(final POA poa) throws CoreException {
 		final LocalFileManager tmp = ScaDebugFactory.eINSTANCE.createLocalFileManager();
@@ -512,19 +507,6 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 	    context.setPoa(poa);
 	    return context;
     }
-
-	private static POA createPOA(final ORB orb) throws CoreException {
-        try {
-	        final POA retVal = (POA) orb.resolve_initial_references("RootPOA");
-	        retVal.the_POAManager().activate();
-	        return retVal;
-        } catch (final InvalidName e) {
-	        throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to find root POA reference", e));
-        } catch (final AdapterInactive e) {
-        	throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to activate root POA reference", e));
-        }
-        	
-    }
 	
 	private static Sandbox createSandbox(LocalScaImpl localSca, final POA poa) throws CoreException {
         try {
@@ -538,10 +520,6 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create sandbox", e));
 		}
         	
-    }
-
-	private static ORB createOrb() {
-		return ORBUtil.init(null);
     }
 
 	private static LocalScaDeviceManager createSandboxDeviceManager(final ResourceSet resourceSet, final FileManager fm, final POA poa, final NotifyingNamingContext context) throws CoreException {
@@ -741,20 +719,25 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 	public void init() throws CoreException {
 		// END GENERATED CODE
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this.launchListener);
-		this.orb = LocalScaImpl.createOrb();
-		this.poa = LocalScaImpl.createPOA(this.orb);
-		setRootContext(LocalScaImpl.createRootContext(this.poa));
-		setFileManager(LocalScaImpl.createFileManager(this.poa));
-		setSandboxWaveform(LocalScaImpl.createSandboxWaveform(getResourceSet(), this.poa, getRootContext()));
-		setSandboxDeviceManager(LocalScaImpl.createSandboxDeviceManager(getResourceSet(), getFileManager().getObj(), this.poa, getRootContext()));
-		setSandbox(LocalScaImpl.createSandbox(this, this.poa));
+		session = OrbSession.createSession();
+		POA poa = session.getPOA();
+		setRootContext(LocalScaImpl.createRootContext(poa));
+		setFileManager(LocalScaImpl.createFileManager(poa));
+		setSandboxWaveform(LocalScaImpl.createSandboxWaveform(getResourceSet(), poa, getRootContext()));
+		setSandboxDeviceManager(LocalScaImpl.createSandboxDeviceManager(getResourceSet(), getFileManager().getObj(), poa, getRootContext()));
+		setSandbox(LocalScaImpl.createSandbox(this, poa));
 		this.checkupJob.schedule();
 		eAdapters().add(this.adapter);
 		// BEGIN GENERATED CODE
 	}
 	
 	public POA getPoa() {
-		return poa;
+		try {
+	        return session.getPOA();
+        } catch (CoreException e) {
+	        ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
+        }
+		return null;
 	}
 
 	/**
