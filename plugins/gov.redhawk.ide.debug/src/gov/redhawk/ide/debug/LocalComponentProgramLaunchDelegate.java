@@ -60,10 +60,12 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 
 	public static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final String name, final String instID, final String implID,
 	        Map<String, String> overrideMap, final URI spdUri) throws CoreException {
-		if (overrideMap == null) {
-			overrideMap = new HashMap<String, String>(Collections.singletonMap(ScaDebugLaunchConstants.ARG_COMPONENT_IDENTIFIER, instID));
-		} else {
-			overrideMap.put(ScaDebugLaunchConstants.ARG_COMPONENT_IDENTIFIER, instID);
+		if (instID != null) {
+			if (overrideMap == null) {
+				overrideMap = new HashMap<String, String>(Collections.singletonMap(ScaDebugLaunchConstants.ARG_COMPONENT_IDENTIFIER, instID));
+			} else {
+				overrideMap.put(ScaDebugLaunchConstants.ARG_COMPONENT_IDENTIFIER, instID);
+			}
 		}
 		return LocalComponentProgramLaunchDelegate.createLaunchConfiguration(name, implID, overrideMap, spdUri);
 	}

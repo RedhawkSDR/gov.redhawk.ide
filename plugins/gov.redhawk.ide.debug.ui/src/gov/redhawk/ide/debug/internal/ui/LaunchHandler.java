@@ -198,10 +198,10 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 
 	private void launchImplementation(final Implementation impl, final ExecutionEvent event) throws CoreException {
 		final SoftPkg spd = impl.getSoftPkg();
-		final String instId = DceUuidUtil.createDceUUID() + ":" + spd.getId();
+//		final String instId = DceUuidUtil.createDceUUID() + ":" + spd.getId();
 		final URI uri = impl.eResource().getURI();
 		final ILaunchConfigurationWorkingCopy config = LocalComponentProgramLaunchDelegate.createLaunchConfiguration(spd.getName(),
-		        instId,
+		        null,
 		        impl.getId(),
 		        null,
 		        uri);
