@@ -67,12 +67,6 @@
         </repository>
 
         <repository>
-            <id>jacorb</id>
-            <layout>p2</layout>
-            <url>${jacorb}</url>
-        </repository>
-
-        <repository>
             <id>mil.jpeojtrs.sca</id>
             <layout>p2</layout>
             <url>${mil.jpeojtrs.sca}</url>
@@ -88,6 +82,12 @@
             <id>gov.redhawk.core.rcp</id>
             <layout>p2</layout>
             <url>${gov.redhawk.core.rcp}</url>
+        </repository>
+        
+        <repository>
+            <id>org.omg.jacorb</id>
+            <layout>p2</layout>
+            <url>${jacorb}</url>
         </repository>
     </repositories>
 
@@ -161,6 +161,22 @@
                                 </requirement>
                        </extraRequirements>
                     </dependency-resolution>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-surefire-plugin</artifactId>
+                <version>${tycho-version}</version>
+                <configuration>
+                    <argLine>-Xmx512m -Djava.net.preferIPv4Stack=true -Dorg.omg.CORBA.ORBClass=org.jacorb.orb.ORB -Dorg.omg.CORBA.ORBSingletonClass=org.jacorb.orb.ORBSingleton -Dorg.omg.PortableInterceptor.ORBInitializerClass.standard_init=org.jacorb.orb.standardInterceptors.IORInterceptorInitializer</argLine>
+                    <appArgLine>-nl en</appArgLine>
+                    <dependencies>
+                        <dependency>
+                            <type>eclipse-feature</type>
+                            <artifactId>org.jacorb</artifactId>
+                            <version>0.0.0</version>
+                        </dependency>
+                    </dependencies>
                 </configuration>
             </plugin>
         </plugins>

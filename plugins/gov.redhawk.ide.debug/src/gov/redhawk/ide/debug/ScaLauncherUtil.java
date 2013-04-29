@@ -24,6 +24,7 @@ import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 import gov.redhawk.sca.util.Debug;
+import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SubMonitor;
 
 import java.util.Collections;
@@ -46,6 +47,7 @@ import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
 import mil.jpeojtrs.sca.util.NamedThreadFactory;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -56,10 +58,10 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
@@ -199,20 +201,20 @@ public final class ScaLauncherUtil {
 		final Future<LocalScaComponent> future = ScaLauncherUtil.EXECUTOR.submit(new Callable<LocalScaComponent>() {
 			public LocalScaComponent call() throws Exception {
 				LocalScaComponent newComponent = null;
-				ORB orb = ORB.init((String[]) null, null);
+				OrbSession session = OrbSession.createSession();
+				NamingContextExt namingContext = null;
 				try {
 					String contextIor = (String) programArgMap.get(LaunchVariables.NAMING_CONTEXT_IOR);
-					final NamingContextExt namingContext = NamingContextExtHelper.narrow(orb.string_to_object(launch
-					        .getAttribute(contextIor)));
+					namingContext = NamingContextExtHelper.narrow(session.getOrb().string_to_object(launch.getAttribute(contextIor)));
 
 					while (newComponent == null) {
 						// If this launch was terminated, immediately bail
 						if (launch.isTerminated()) {
 							throw new Exception("Component terminated while waiting to launch.");
 						}
-
+						CF.Resource ref = null;
 						try {
-							final CF.Resource ref = ResourceHelper.narrow(namingContext.resolve_str(nameBinding));
+							ref = ResourceHelper.narrow(namingContext.resolve_str(nameBinding));
 							for (final ScaComponent comp : localSca.getSandboxWaveform().getComponents()) {
 								if (comp instanceof LocalScaComponent && ref._is_equivalent(comp.getCorbaObj())) {
 									newComponent = (LocalScaComponent) comp;
@@ -227,13 +229,22 @@ public final class ScaLauncherUtil {
 							}
 						} catch (final NotFound e) {
 							// PASS
+						} finally {
+							if (ref != null) {
+								ref._release();
+								ref = null;
+							}
 						}
 						if (newComponent == null) {
 							Thread.sleep(500);
 						}
 					}
 				} finally {
-					orb.destroy();
+					if (namingContext != null) {
+						namingContext._release();
+						namingContext = null;
+					}
+					session.dispose();
 				}
 				return newComponent;
 			}
@@ -480,7 +491,7 @@ public final class ScaLauncherUtil {
 	 * @param spd
 	 * @param builder
 	 */
-	private static String getComponentArgs(final ILaunch launch, final Map<String, String> override, final SoftPkg spd) {
+	private static String getComponentArgs(final ILaunch launch, final Map<String, String> override, final SoftPkg spd) throws CoreException {
 		final StringBuilder builder = new StringBuilder();
 
 		String namingContextIOR = null;
@@ -491,6 +502,9 @@ public final class ScaLauncherUtil {
 			namingContextIOR = override.get(ScaDebugLaunchConstants.ARG_NAMING_CONTEXT_IOR);
 		} else {
 			final NotifyingNamingContext nc = ScaLauncherUtil.getDomNamingContext(spd);
+			if (nc == null) {
+				throw new CoreException(new Status(Status.ERROR, ScaDebugPlugin.ID, "Unable to find Naming Context for component", null));
+			}
 			namingContextIOR = nc.getNamingContext().toString();
 		}
 		builder.append(namingContextIOR);
@@ -603,12 +617,28 @@ public final class ScaLauncherUtil {
 		return name;
 	}
 
+	private static EStructuralFeature [] DOM_NC_PATH = new EStructuralFeature []{
+		ScaDebugPackage.Literals.LOCAL_SCA__SANDBOX_WAVEFORM,
+		ScaDebugPackage.Literals.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT
+	};
 	private static NotifyingNamingContext getDomNamingContext(final SoftPkg spd) {
-		return ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform().getNamingContext().getResourceContext(spd.eResource().getURI());
+		NotifyingNamingContext ct = ScaEcoreUtils.getFeature(ScaDebugPlugin.getInstance().getLocalSca(), DOM_NC_PATH);
+		if (ct != null) {
+			return ct.getResourceContext(spd.eResource().getURI());
+		}
+		return null;
 	}
 
+	private static EStructuralFeature [] DEV_NC_PATH = new EStructuralFeature []{
+		ScaDebugPackage.Literals.LOCAL_SCA__SANDBOX_DEVICE_MANAGER,
+		ScaDebugPackage.Literals.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER
+	};
 	private static NotifyingNamingContext getDevNamingContext(final SoftPkg spd) {
-		return ScaDebugPlugin.getInstance().getLocalSca().getSandboxDeviceManager().getNamingContext().getResourceContext(spd.eResource().getURI());
+		NotifyingNamingContext ct = ScaEcoreUtils.getFeature(ScaDebugPlugin.getInstance().getLocalSca(), DEV_NC_PATH);
+		if (ct != null) {
+			return ct.getResourceContext(spd.eResource().getURI());
+		}
+		return null;
 	}
 
 	/**
@@ -686,14 +716,16 @@ public final class ScaLauncherUtil {
 	}
 
 	private static String getUniqueName(final SoftPkg spd, final String namingContextIOR) {
-		ORB orb = ORB.init((String[]) null, null);
+		OrbSession session = OrbSession.createSession();
+		NamingContextExt namingContext = null;
 		try {
-			final NamingContextExt namingContext = NamingContextExtHelper.narrow(orb.string_to_object(namingContextIOR));
+			namingContext = NamingContextExtHelper.narrow(session.getOrb().string_to_object(namingContextIOR));
 			final String name = spd.getName();
 			String retVal = name;
 			for (int i = 1; true; i++) {
+				org.omg.CORBA.Object obj = null; 
 				try {
-					namingContext.resolve_str(retVal);
+					obj = namingContext.resolve_str(retVal);
 					retVal = name + "_" + i;
 				} catch (final NotFound e) {
 					return retVal;
@@ -701,10 +733,17 @@ public final class ScaLauncherUtil {
 					throw new IllegalStateException(e);
 				} catch (final InvalidName e) {
 					throw new IllegalStateException(e);
+				} finally {
+					if (obj != null) {
+						obj._release();
+					}
 				}
 			}
 		} finally {
-			orb.destroy();
+			if (namingContext != null) {
+				namingContext._release();
+			}
+			session.dispose();
 		}
 	}
 
