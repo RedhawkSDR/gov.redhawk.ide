@@ -9,6 +9,7 @@ import gov.redhawk.ide.debug.ILauncherVariableDesc;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.variables.AbstractLauncherResolver;
 import gov.redhawk.ide.debug.variables.LaunchVariables;
+import gov.redhawk.sca.util.OrbSession;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
@@ -36,23 +37,36 @@ public class NameBindingResolver extends AbstractLauncherResolver {
 	}
 
 	private String getUniqueName(final SoftPkg spd, final String namingContextIOR) {
-		final NamingContextExt namingContext = NamingContextExtHelper.narrow(ScaDebugPlugin.getInstance()
-		        .getLocalSca()
-		        .getOrb()
-		        .string_to_object(namingContextIOR));
-		final String name = spd.getName();
-		String retVal = name;
-		for (int i = 1; true; i++) {
-			try {
-				namingContext.resolve_str(retVal);
-				retVal = name + "_" + i;
-			} catch (final NotFound e) {
-				return retVal;
-			} catch (final CannotProceed e) {
-				throw new IllegalStateException(e);
-			} catch (final InvalidName e) {
-				throw new IllegalStateException(e);
+		OrbSession session = OrbSession.createSession();
+		NamingContextExt namingContext = null;
+		try {
+			namingContext = NamingContextExtHelper.narrow(session.getOrb().string_to_object(namingContextIOR));
+			final String name = spd.getName();
+			String retVal = name;
+			for (int i = 1; true; i++) {
+				org.omg.CORBA.Object ref = null;
+				try {
+					ref = namingContext.resolve_str(retVal);
+					retVal = name + "_" + i;
+				} catch (final NotFound e) {
+					return retVal;
+				} catch (final CannotProceed e) {
+					throw new IllegalStateException(e);
+				} catch (final InvalidName e) {
+					throw new IllegalStateException(e);
+				} finally {
+					if (ref != null) {
+						ref._release();
+						ref = null;
+					}
+				}
 			}
+		} finally {
+			if (namingContext != null) {
+				namingContext._release();
+				namingContext = null;
+			}
+			session.dispose();
 		}
 	}
 

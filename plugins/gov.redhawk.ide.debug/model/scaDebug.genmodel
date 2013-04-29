@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<genmodel:GenModel xmi:version="2.0"
-    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
-    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/gov.redhawk.ide.debug/src-model"
-    editorDirectory="" modelPluginID="gov.redhawk.ide.debug" templateDirectory="/mil.jpeojtrs.sca.templates/templates"
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/gov.redhawk.ide.debug/src-model" editorDirectory=""
+    modelPluginID="gov.redhawk.ide.debug" templateDirectory="/mil.jpeojtrs.sca.templates/templates"
     dynamicTemplates="true" forceOverwrite="true" modelName="ScaDebug" importerID="org.eclipse.emf.importer.ecore"
     complianceLevel="5.0" copyrightFields="false" runtimeVersion="2.6" usedGenPackages="../../mil.jpeojtrs.sca.cf/model/cf.genmodel#//cf ../../mil.jpeojtrs.sca.cf/model/cf.genmodel#//extended ../../mil.jpeojtrs.sca.dcd/model/dcd.genmodel#//dcd ../../mil.jpeojtrs.sca.dmd/model/dmd.genmodel#//dmd ../../mil.jpeojtrs.sca.dpd/model/dpd.genmodel#//dpd platform:/plugin/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore ../../mil.jpeojtrs.sca.partitioning/model/partitioning.genmodel#//partitioning ../../mil.jpeojtrs.sca.prf/model/prf.genmodel#//prf ../../mil.jpeojtrs.sca.sad/model/sad.genmodel#//sad ../../gov.redhawk.sca.model/model/sca.genmodel#//sca ../../mil.jpeojtrs.sca.scd/model/scd.genmodel#//scd ../../mil.jpeojtrs.sca.spd/model/spd.genmodel#//spd">
   <foreignModel>scaDebug.ecore</foreignModel>
@@ -12,21 +11,20 @@
     <genDataTypes ecoreDataType="scaDebug.ecore#//NamingContext"/>
     <genDataTypes ecoreDataType="scaDebug.ecore#//ILaunch"/>
     <genDataTypes ecoreDataType="scaDebug.ecore#//NameComponentArray"/>
-    <genDataTypes ecoreDataType="scaDebug.ecore#//ApplicationImpl"/>
-    <genDataTypes ecoreDataType="scaDebug.ecore#//DeviceManagerImpl"/>
     <genDataTypes ecoreDataType="scaDebug.ecore#//ServantNotActive"/>
     <genDataTypes ecoreDataType="scaDebug.ecore#//WrongPolicy"/>
     <genDataTypes ecoreDataType="scaDebug.ecore#//CoreException"/>
+    <genDataTypes ecoreDataType="scaDebug.ecore#//AttrSandboxOperations"/>
+    <genDataTypes ecoreDataType="scaDebug.ecore#//AttrApplicationExtOperations"/>
+    <genDataTypes ecoreDataType="scaDebug.ecore#//AttrDeviceManagerOperations"/>
     <genClasses ecoreClass="scaDebug.ecore#//LocalSca">
-      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalSca/orb"/>
-      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalSca/poa"/>
       <genFeatures property="None" children="true" createChild="false" ecoreFeature="ecore:EReference scaDebug.ecore#//LocalSca/waveforms"/>
       <genFeatures property="None" children="true" createChild="false" ecoreFeature="ecore:EReference scaDebug.ecore#//LocalSca/sandboxWaveform"/>
       <genFeatures property="None" children="true" createChild="false" ecoreFeature="ecore:EReference scaDebug.ecore#//LocalSca/sandboxDeviceManager"/>
       <genFeatures property="None" notify="false" createChild="false" propertySortChoices="true"
           ecoreFeature="ecore:EReference scaDebug.ecore#//LocalSca/rootContext"/>
       <genFeatures property="None" children="true" createChild="false" ecoreFeature="ecore:EReference scaDebug.ecore#//LocalSca/fileManager"/>
-      <genOperations ecoreOperation="scaDebug.ecore#//LocalSca/init"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalSca/sandbox"/>
     </genClasses>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//NamingContextExtOperations"/>
     <genClasses ecoreClass="scaDebug.ecore#//NotifyingNamingContext">
@@ -71,7 +69,7 @@
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalScaWaveform">
       <genFeatures property="Readonly" notify="false" createChild="false" propertySortChoices="true"
           ecoreFeature="ecore:EReference scaDebug.ecore#//LocalScaWaveform/namingContext"/>
-      <genFeatures property="None" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalScaWaveform/localApp"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalScaWaveform/localApp"/>
       <genOperations ecoreOperation="scaDebug.ecore#//LocalScaWaveform/launch">
         <genParameters ecoreParameter="scaDebug.ecore#//LocalScaWaveform/launch/id"/>
         <genParameters ecoreParameter="scaDebug.ecore#//LocalScaWaveform/launch/execParams"/>
@@ -79,24 +77,30 @@
         <genParameters ecoreParameter="scaDebug.ecore#//LocalScaWaveform/launch/implID"/>
         <genParameters ecoreParameter="scaDebug.ecore#//LocalScaWaveform/launch/mode"/>
       </genOperations>
-      <genOperations ecoreOperation="scaDebug.ecore#//LocalScaWaveform/setLocalApp">
-        <genParameters ecoreParameter="scaDebug.ecore#//LocalScaWaveform/setLocalApp/app"/>
-        <genParameters ecoreParameter="scaDebug.ecore#//LocalScaWaveform/setLocalApp/poa"/>
-      </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalScaComponent"/>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalScaDeviceManager">
       <genFeatures property="Readonly" notify="false" createChild="false" propertySortChoices="true"
           ecoreFeature="ecore:EReference scaDebug.ecore#//LocalScaDeviceManager/namingContext"/>
-      <genFeatures property="None" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalScaDeviceManager/localDeviceManager"/>
-      <genOperations ecoreOperation="scaDebug.ecore#//LocalScaDeviceManager/setLocalDeviceManager">
-        <genParameters ecoreParameter="scaDebug.ecore#//LocalScaDeviceManager/setLocalDeviceManager/impl"/>
-        <genParameters ecoreParameter="scaDebug.ecore#//LocalScaDeviceManager/setLocalDeviceManager/poa"/>
-      </genOperations>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalScaDeviceManager/localDeviceManager"/>
     </genClasses>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalScaExecutableDevice"/>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalScaLoadableDevice"/>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalScaDevice"/>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalScaService"/>
+    <genClasses image="false" ecoreClass="scaDebug.ecore#//ApplicationExtOperations">
+      <genOperations ecoreOperation="scaDebug.ecore#//ApplicationExtOperations/launch">
+        <genParameters ecoreParameter="scaDebug.ecore#//ApplicationExtOperations/launch/id"/>
+        <genParameters ecoreParameter="scaDebug.ecore#//ApplicationExtOperations/launch/execParams"/>
+        <genParameters ecoreParameter="scaDebug.ecore#//ApplicationExtOperations/launch/spdURI"/>
+        <genParameters ecoreParameter="scaDebug.ecore#//ApplicationExtOperations/launch/implID"/>
+        <genParameters ecoreParameter="scaDebug.ecore#//ApplicationExtOperations/launch/mode"/>
+      </genOperations>
+      <genOperations ecoreOperation="scaDebug.ecore#//ApplicationExtOperations/reset">
+        <genParameters ecoreParameter="scaDebug.ecore#//ApplicationExtOperations/reset/compInstId"/>
+      </genOperations>
+    </genClasses>
+    <genClasses image="false" ecoreClass="scaDebug.ecore#//SandboxOperations"/>
+    <genClasses image="false" ecoreClass="scaDebug.ecore#//Sandbox"/>
   </genPackages>
 </genmodel:GenModel>

@@ -12,11 +12,10 @@ package gov.redhawk.ide.debug.internal;
 
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.ScaDebugFactory;
-import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.internal.cf.extended.impl.SandboxImpl;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.ScaPlugin;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -27,37 +26,20 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 public enum ScaDebugInstance {
 	INSTANCE;
 	private LocalSca localSca;
-	private boolean initialized;
 	private TransactionalEditingDomain editingDomain;
 
 	private ScaDebugInstance() {
 		this.editingDomain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(ScaPlugin.EDITING_DOMAIN_ID);
 		final Resource resource = editingDomain.getResourceSet().createResource(URI.createURI("virtual://localSca.scaDebug"));
 		this.localSca = ScaDebugFactory.eINSTANCE.createLocalSca();
+		final SandboxImpl impl = new SandboxImpl(localSca);
 		editingDomain.getCommandStack().execute(new ScaModelCommand() {
 
 			public void execute() {
 				resource.getContents().add(ScaDebugInstance.this.localSca);
+				localSca.setSandbox(impl);
 			}
 		});
-	}
-	
-	public synchronized void init() {
-		if (initialized) {
-			return;
-		}
-		initialized=true;
-		editingDomain.getCommandStack().execute(new ScaModelCommand() {
-
-			public void execute() {
-				try {
-					ScaDebugInstance.this.localSca.init();
-				} catch (final CoreException e) {
-					ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
-				}
-			}
-		});		
-		
 	}
 
 	public LocalSca getLocalSca() {

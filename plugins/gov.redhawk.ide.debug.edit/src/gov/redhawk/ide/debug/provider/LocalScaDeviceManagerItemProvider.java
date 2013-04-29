@@ -140,7 +140,6 @@ public class LocalScaDeviceManagerItemProvider
 
 		switch (notification.getFeatureID(LocalScaDeviceManager.class)) {
 			case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__MODE:
-			case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

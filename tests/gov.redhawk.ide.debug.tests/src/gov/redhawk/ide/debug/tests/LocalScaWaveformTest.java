@@ -10,13 +10,17 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.tests;
 
+import org.eclipse.core.runtime.AssertionFailedException;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.common.util.URI;
+
+import CF.DataType;
+import CF.ExecutableDevicePackage.ExecuteFail;
+import CF.LifeCyclePackage.ReleaseError;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugFactory;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
-
-import org.omg.PortableServer.POAPackage.ServantNotActive;
-import org.omg.PortableServer.POAPackage.WrongPolicy;
 
 /**
  * <!-- begin-user-doc -->
@@ -25,8 +29,9 @@ import org.omg.PortableServer.POAPackage.WrongPolicy;
  * <p>
  * The following operations are tested:
  * <ul>
- *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#launch(java.lang.String, java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String) <em>Launch</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#setLocalApp(gov.redhawk.ide.debug.impl.ApplicationImpl, org.omg.PortableServer.POA) <em>Set Local App</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String) <em>Launch</em>}</li>
+ *   <li>{@link ExtendedCF.ApplicationExtOperations#launch(java.lang.String, CF.DataType[], java.lang.String, java.lang.String, java.lang.String) <em>Launch</em>}</li>
+ *   <li>{@link ExtendedCF.ApplicationExtOperations#reset(java.lang.String) <em>Reset</em>}</li>
  * </ul>
  * </p>
  * @generated
@@ -103,29 +108,65 @@ public class LocalScaWaveformTest extends TestCase {
 	}
 
 	/**
-	 * Tests the '{@link gov.redhawk.ide.debug.LocalScaWaveform#launch(java.lang.String, java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String) <em>Launch</em>}' operation.
+	 * Tests the '{@link gov.redhawk.ide.debug.LocalScaWaveform#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String) <em>Launch</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.debug.LocalScaWaveform#launch(java.lang.String, java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String)
-	 * @generated NOT
+	 * @throws ExecuteFail 
+	 * @throws CoreException 
+	 * @see gov.redhawk.ide.debug.LocalScaWaveform#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String)
+	 * @generated
 	 */
-	public void testLaunch__String_String_DataType_URI_String() {
-		// END GENERATED CODE
-		// TODO
-		// BEGIN GENERATED CODE
+	public void testLaunch__String_DataType_URI_String_String() throws CoreException {
+		try {
+			getFixture().launch(null, (DataType[])null, (URI)null, null, null);
+			fail();
+		} catch (IllegalStateException e) {
+			
+		} catch (AssertionFailedException e) {
+			
+		}
 	}
 
 	/**
-	 * Tests the '{@link gov.redhawk.ide.debug.LocalScaWaveform#setLocalApp(gov.redhawk.ide.debug.impl.ApplicationImpl, org.omg.PortableServer.POA) <em>Set Local App</em>}' operation.
+	 * Tests the '{@link ExtendedCF.ApplicationExtOperations#launch(java.lang.String, CF.DataType[], java.lang.String, java.lang.String, java.lang.String) <em>Launch</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.debug.LocalScaWaveform#setLocalApp(gov.redhawk.ide.debug.impl.ApplicationImpl, org.omg.PortableServer.POA)
+	 * @throws ExecuteFail 
+	 * @see ExtendedCF.ApplicationExtOperations#launch(java.lang.String, CF.DataType[], java.lang.String, java.lang.String, java.lang.String)
 	 * @generated NOT
 	 */
-	public void testSetLocalApp__ApplicationImpl_POA() throws ServantNotActive, WrongPolicy {
-		// END GENERATED CODE
-		getFixture().setLocalApp(null, null);
-		// BEGIN GENERATED CODE
+	public void testLaunch__String_DataType_String_String_String() throws ExecuteFail {
+		try {
+			getFixture().launch(null, (DataType[])null, (String)null, null, null);
+			fail();
+		} catch (AssertionFailedException e) {
+			
+		}
 	}
+
+	/**
+	 * Tests the '{@link ExtendedCF.ApplicationExtOperations#reset(java.lang.String) <em>Reset</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @throws ExecuteFail 
+	 * @throws ReleaseError 
+	 * @see ExtendedCF.ApplicationExtOperations#reset(java.lang.String)
+	 * @generated NOT
+	 */
+	public void testReset__String() throws ReleaseError, ExecuteFail {
+		try {
+			getFixture().reset(null);
+			fail();
+		} catch (AssertionFailedException e) {
+			
+		}
+		try {
+			getFixture().reset("");
+			fail();
+		} catch (AssertionFailedException e) {
+			
+		}
+	}
+
 
 } //LocalScaWaveformTest

@@ -50,6 +50,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 import org.eclipse.emf.ecore.EObject;
 import org.jacorb.naming.Name;
+import org.omg.CORBA.portable.IDLEntity;
 import org.omg.CosNaming.NamingContext;
 import org.omg.CosNaming.NamingContextExtOperations;
 
@@ -70,6 +71,8 @@ import CF.Resource;
 import CF.ResourceOperations;
 import CF.TestableObjectOperations;
 import ExtendedCF.ApplicationExtOperations;
+import ExtendedCF.Sandbox;
+import ExtendedCF.SandboxOperations;
 
 /**
  * <!-- begin-user-doc -->
@@ -193,12 +196,20 @@ public class ScaDebugAdapterFactory extends AdapterFactoryImpl {
 				return createApplicationExtOperationsAdapter();
 			}
 			@Override
-			public Adapter caseIDisposable(IDisposable object) {
-				return createIDisposableAdapter();
+			public Adapter caseSandboxOperations(SandboxOperations object) {
+				return createSandboxOperationsAdapter();
+			}
+			@Override
+			public Adapter caseSandbox(Sandbox object) {
+				return createSandboxAdapter();
 			}
 			@Override
 			public Adapter caseIStatusProvider(IStatusProvider object) {
 				return createIStatusProviderAdapter();
+			}
+			@Override
+			public Adapter caseIDisposable(IDisposable object) {
+				return createIDisposableAdapter();
 			}
 			@Override
 			public Adapter caseIRefreshable(IRefreshable object) {
@@ -315,6 +326,14 @@ public class ScaDebugAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseScaService(ScaService object) {
 				return createScaServiceAdapter();
+			}
+			@Override
+			public Adapter caseObject(org.omg.CORBA.Object object) {
+				return createObjectAdapter();
+			}
+			@Override
+			public Adapter caseIDLEntity(IDLEntity object) {
+				return createIDLEntityAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -554,6 +573,34 @@ public class ScaDebugAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createApplicationExtOperationsAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link ExtendedCF.SandboxOperations <em>Sandbox Operations</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see ExtendedCF.SandboxOperations
+	 * @generated
+	 */
+	public Adapter createSandboxOperationsAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link ExtendedCF.Sandbox <em>Sandbox</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see ExtendedCF.Sandbox
+	 * @generated
+	 */
+	public Adapter createSandboxAdapter() {
 		return null;
 	}
 
@@ -988,6 +1035,34 @@ public class ScaDebugAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createScaServiceAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.omg.CORBA.Object <em>Object</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.omg.CORBA.Object
+	 * @generated
+	 */
+	public Adapter createObjectAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.omg.CORBA.portable.IDLEntity <em>IDL Entity</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.omg.CORBA.portable.IDLEntity
+	 * @generated
+	 */
+	public Adapter createIDLEntityAdapter() {
 		return null;
 	}
 

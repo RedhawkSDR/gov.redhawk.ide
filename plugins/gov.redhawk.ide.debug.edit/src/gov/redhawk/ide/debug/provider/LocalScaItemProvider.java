@@ -12,6 +12,7 @@ package gov.redhawk.ide.debug.provider;
 
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.ScaDebugPackage;
+import gov.redhawk.model.sca.provider.CorbaObjWrapperItemProvider;
 
 import java.util.Collection;
 import java.util.List;
@@ -26,7 +27,6 @@ import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
-import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
@@ -35,7 +35,7 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * <!-- end-user-doc -->
  * @generated
  */
-public class LocalScaItemProvider extends ItemProviderAdapter implements IEditingDomainItemProvider, IStructuredItemContentProvider, ITreeItemContentProvider,
+public class LocalScaItemProvider extends CorbaObjWrapperItemProvider implements IEditingDomainItemProvider, IStructuredItemContentProvider, ITreeItemContentProvider,
         IItemLabelProvider, IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.

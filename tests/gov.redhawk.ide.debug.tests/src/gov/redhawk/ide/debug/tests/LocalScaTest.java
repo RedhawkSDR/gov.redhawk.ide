@@ -15,7 +15,6 @@ import gov.redhawk.ide.debug.ScaDebugFactory;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -24,13 +23,6 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
  * <!-- begin-user-doc -->
  * A test case for the model object '<em><b>Local Sca</b></em>'.
  * <!-- end-user-doc -->
- * <p>
- * The following operations are tested:
- * <ul>
- *   <li>{@link gov.redhawk.ide.debug.LocalSca#init() <em>Init</em>}</li>
- *   <li>{@link gov.redhawk.model.sca.IDisposable#dispose() <em>Dispose</em>}</li>
- * </ul>
- * </p>
  * @generated
  */
 public class LocalScaTest extends TestCase {
@@ -107,20 +99,6 @@ public class LocalScaTest extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		setFixture(null);
-	}
-
-	/**
-	 * Tests the '{@link gov.redhawk.ide.debug.LocalSca#init() <em>Init</em>}' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @throws CoreException 
-	 * @see gov.redhawk.ide.debug.LocalSca#init()
-	 * @generated NOT
-	 */
-	public void testInit() throws CoreException {
-		// END GENERATED CODE
-		getFixture().init();
-		// BEGIN GENERATED CODE
 	}
 
 	/**

@@ -49,6 +49,7 @@ import java.util.Map.Entry;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.jacorb.naming.Name;
+import org.omg.CORBA.portable.IDLEntity;
 import org.omg.CosNaming.NamingContext;
 import org.omg.CosNaming.NamingContextExtOperations;
 
@@ -69,6 +70,8 @@ import CF.Resource;
 import CF.ResourceOperations;
 import CF.TestableObjectOperations;
 import ExtendedCF.ApplicationExtOperations;
+import ExtendedCF.Sandbox;
+import ExtendedCF.SandboxOperations;
 
 /**
  * <!-- begin-user-doc -->
@@ -148,7 +151,11 @@ public class ScaDebugSwitch< T1 > {
 			case ScaDebugPackage.LOCAL_SCA: {
 				LocalSca localSca = (LocalSca)theEObject;
 				T1 result = caseLocalSca(localSca);
+				if (result == null) result = caseCorbaObjWrapper(localSca);
+				if (result == null) result = caseDataProviderObject(localSca);
+				if (result == null) result = caseIStatusProvider(localSca);
 				if (result == null) result = caseIDisposable(localSca);
+				if (result == null) result = caseIRefreshable(localSca);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -600,6 +607,36 @@ public class ScaDebugSwitch< T1 > {
 	 * @generated
 	 */
 	public T1 caseApplicationExtOperations(ApplicationExtOperations object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Sandbox Operations</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Sandbox Operations</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseSandboxOperations(SandboxOperations object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Sandbox</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Sandbox</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseSandbox(Sandbox object) {
 		return null;
 	}
 
@@ -1065,6 +1102,36 @@ public class ScaDebugSwitch< T1 > {
 	 * @generated
 	 */
 	public T1 caseScaService(ScaService object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Object</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Object</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseObject(org.omg.CORBA.Object object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>IDL Entity</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>IDL Entity</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseIDLEntity(IDLEntity object) {
 		return null;
 	}
 

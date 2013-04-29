@@ -14,9 +14,6 @@ import gov.redhawk.model.sca.ScaWaveform;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.URI;
-import org.omg.PortableServer.POA;
-import org.omg.PortableServer.POAPackage.ServantNotActive;
-import org.omg.PortableServer.POAPackage.WrongPolicy;
 
 import CF.DataType;
 import ExtendedCF.ApplicationExtOperations;
@@ -67,24 +64,24 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch, ApplicationE
 	void setNamingContext(NotifyingNamingContext value);
 
 	/**
-	 * Returns the value of the '<em><b>Local App</b></em>' containment reference.
+	 * Returns the value of the '<em><b>Local App</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * @since 3.0
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Local App</em>' containment reference.
+	 * @return the value of the '<em>Local App</em>' attribute.
 	 * @see #setLocalApp(ApplicationExtOperations)
 	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalScaWaveform_LocalApp()
-	 * @model type="gov.redhawk.ide.debug.ApplicationExtOperations" containment="true" required="true" transient="true"
+	 * @model unique="false" dataType="gov.redhawk.ide.debug.AttrApplicationExtOperations" transient="true" ordered="false"
 	 * @generated
 	 */
 	ApplicationExtOperations getLocalApp();
 
 	/**
-	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaWaveform#getLocalApp <em>Local App</em>}' containment reference.
+	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaWaveform#getLocalApp <em>Local App</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * @since 3.0
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Local App</em>' containment reference.
+	 * @param value the new value of the '<em>Local App</em>' attribute.
 	 * @see #getLocalApp()
 	 * @generated
 	 */
@@ -98,13 +95,4 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch, ApplicationE
 	 * @generated
 	 */
 	LocalScaComponent launch(String id, DataType[] execParams, URI spdURI, String implID, String mode) throws CoreException;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @model exceptions="gov.redhawk.ide.debug.ServantNotActive gov.redhawk.ide.debug.WrongPolicy" appType="gov.redhawk.ide.debug.ApplicationExtOperations" poaDataType="gov.redhawk.model.sca.POA"
-	 * @generated
-	 */
-	void setLocalApp(ApplicationExtOperations app, POA poa) throws ServantNotActive, WrongPolicy;
 } // LocalScaWaveform

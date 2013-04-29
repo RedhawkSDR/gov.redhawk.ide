@@ -11,11 +11,6 @@
 package gov.redhawk.ide.debug;
 
 import gov.redhawk.model.sca.ScaDeviceManager;
-
-import org.omg.PortableServer.POA;
-import org.omg.PortableServer.POAPackage.ServantNotActive;
-import org.omg.PortableServer.POAPackage.WrongPolicy;
-
 import CF.DeviceManagerOperations;
 
 
@@ -65,36 +60,27 @@ public interface LocalScaDeviceManager extends ScaDeviceManager, LocalLaunch {
 	void setNamingContext(NotifyingNamingContext value);
 
 	/**
-	 * Returns the value of the '<em><b>Local Device Manager</b></em>' containment reference.
+	 * Returns the value of the '<em><b>Local Device Manager</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * @since 3.0
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Local Device Manager</em>' containment reference.
+	 * @return the value of the '<em>Local Device Manager</em>' attribute.
 	 * @see #setLocalDeviceManager(DeviceManagerOperations)
 	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalScaDeviceManager_LocalDeviceManager()
-	 * @model type="mil.jpeojtrs.sca.cf.DeviceManagerOperations" containment="true" required="true" transient="true"
+	 * @model unique="false" dataType="gov.redhawk.ide.debug.AttrDeviceManagerOperations" transient="true" ordered="false"
 	 * @generated
 	 */
 	DeviceManagerOperations getLocalDeviceManager();
 
 	/**
-	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaDeviceManager#getLocalDeviceManager <em>Local Device Manager</em>}' containment reference.
+	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaDeviceManager#getLocalDeviceManager <em>Local Device Manager</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * @since 3.0
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Local Device Manager</em>' containment reference.
+	 * @param value the new value of the '<em>Local Device Manager</em>' attribute.
 	 * @see #getLocalDeviceManager()
 	 * @generated
 	 */
 	void setLocalDeviceManager(DeviceManagerOperations value);
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @model exceptions="gov.redhawk.ide.debug.ServantNotActive gov.redhawk.ide.debug.WrongPolicy" implType="mil.jpeojtrs.sca.cf.DeviceManagerOperations" poaDataType="gov.redhawk.model.sca.POA"
-	 * @generated
-	 */
-	void setLocalDeviceManager(DeviceManagerOperations impl, POA poa) throws ServantNotActive, WrongPolicy;
 
 } // LocalScaDeviceManager

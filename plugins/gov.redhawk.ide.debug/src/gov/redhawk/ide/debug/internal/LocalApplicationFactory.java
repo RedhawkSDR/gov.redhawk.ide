@@ -57,8 +57,6 @@ import org.omg.CosNaming.NamingContextPackage.AlreadyBound;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.InvalidName;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
-import org.omg.PortableServer.POAPackage.ServantNotActive;
-import org.omg.PortableServer.POAPackage.WrongPolicy;
 
 import CF.DataType;
 import CF.ExecutableDevicePackage.ExecuteFail;
@@ -139,7 +137,7 @@ public class LocalApplicationFactory {
 
 			final ApplicationImpl app = new ApplicationImpl(waveform, appId, adjustedName);
 			this.launch.addProcess(app);
-			waveform.setLocalApp(app, this.localSca.getPoa());
+			waveform.setLocalApp(app);
 			ScaModelCommand.execute(this.localSca, new ScaModelCommand() {
 
 				public void execute() {
@@ -159,11 +157,7 @@ public class LocalApplicationFactory {
 			return waveform;
 		} catch (final SystemException e) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
-		} catch (final ServantNotActive e) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
-		} catch (final WrongPolicy e) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
-		}
+		} 
 	}
 
 	private String getImplId(final SadComponentInstantiation comp) {

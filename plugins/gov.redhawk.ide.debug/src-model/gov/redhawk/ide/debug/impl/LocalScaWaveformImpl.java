@@ -23,8 +23,8 @@ import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.impl.ScaWaveformImpl;
+import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SilentJob;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -44,7 +43,6 @@ import org.jacorb.naming.Name;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContextPackage.InvalidName;
-import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
@@ -129,14 +127,26 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	protected NotifyingNamingContext namingContext;
 
 	/**
-	 * The cached value of the '{@link #getLocalApp() <em>Local App</em>}' containment reference.
+	 * The default value of the '{@link #getLocalApp() <em>Local App</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getLocalApp()
 	 * @generated
 	 * @ordered
 	 */
-	protected ApplicationExtOperations localApp;
+	protected static final ApplicationExtOperations LOCAL_APP_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getLocalApp() <em>Local App</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalApp()
+	 * @generated
+	 * @ordered
+	 */
+	protected ApplicationExtOperations localApp = LOCAL_APP_EDEFAULT;
+	
+	private OrbSession session = OrbSession.createSession();
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -363,14 +373,11 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public NotificationChain basicSetLocalApp(ApplicationExtOperations newLocalApp, NotificationChain msgs) {
+	public void setLocalAppGen(ApplicationExtOperations newLocalApp) {
 		ApplicationExtOperations oldLocalApp = localApp;
 		localApp = newLocalApp;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP, oldLocalApp, newLocalApp);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP, oldLocalApp, localApp));
 	}
 
 
@@ -378,58 +385,52 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- begin-user-doc -->
 	 * @since 3.0
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
-	public void setLocalApp(ApplicationExtOperations newLocalApp) {
-		if (newLocalApp != localApp) {
-			NotificationChain msgs = null;
-			if (localApp != null)
-				msgs = ((InternalEObject)localApp).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP, null, msgs);
-			if (newLocalApp != null)
-				msgs = ((InternalEObject)newLocalApp).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP, null, msgs);
-			msgs = basicSetLocalApp(newLocalApp, msgs);
-			if (msgs != null) msgs.dispatch();
+	public void setLocalApp(final ApplicationExtOperations newLocalApp) {
+		setLocalAppGen(newLocalApp);
+		ApplicationExt ref = null;
+		
+		if (newLocalApp != null) {
+			try {
+				ref = ApplicationExtHelper.narrow(session.getPOA().servant_to_reference(new ApplicationExtPOATie(newLocalApp)));
+			} catch (ServantNotActive e) {
+				ScaDebugPlugin.logError("Failed to setup Device manager servant.", e);
+			} catch (WrongPolicy e) {
+				ScaDebugPlugin.logError("Failed to setup Device manager servant.", e);
+			} catch (CoreException e) {
+				ScaDebugPlugin.logError("Failed to setup Device manager servant.", e);
+			}
 		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP, newLocalApp, newLocalApp));
-	}
 
-
-	/**
-	 * @since 3.0
-	 */
-	public void setLocalApp(final ApplicationExtOperations newLocalApp, final POA poa) throws ServantNotActive, WrongPolicy {
-		setLocalApp(newLocalApp);
-		final ApplicationExt ref;
-		if (poa == null) {
-			ref = null;
-		} else {
-			ref = ApplicationExtHelper.narrow(poa.servant_to_reference(new ApplicationExtPOATie(newLocalApp)));
-		}
-        
-	        
-	        // We cache the old values since these have probably been set for a local waveform
-	    final String profile = getProfile();
-	    final boolean profileSet = isSetProfile();
-	    final URI profileURI = getProfileURI();
-	    final boolean profileURISet = isSetProfileURI();
-	    final SoftwareAssembly profileObj = getProfileObj();
-	    final boolean profileObjSet = isSetProfileObj();
 	    
 	    setCorbaObj(ref);
 	    setObj(ref);
-	    
-	    if (profileSet) {
-	    	setProfile(profile);
+	    if (ref != null) {
+	    	setIdentifier(newLocalApp.identifier());
+	    	setName(newLocalApp.name());
+	    	this.refreshJob.schedule();
+	    } else {
+	    	super.unsetProfileObj();
+	    	super.unsetProfileURI();
+	    	super.unsetProfile();
 	    }
-	    if (profileURISet) {
-	    	setProfileURI(profileURI);
-	    }
-	    if (profileObjSet) {
-	    	setProfileObj(profileObj);
-	    }
-	    this.refreshJob.schedule();
 	}
+	
+	@Override
+	public void unsetProfile() {
+		
+	}
+	@Override
+	public void unsetProfileURI() {
+		
+	}
+	@Override
+	public void unsetProfileObj() {
+		
+	}
+	
+	
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -438,6 +439,9 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * @generated NOT
 	 */
 	public Resource launch(String id, DataType[] execParams, String spdURI, String implID, String mode) throws ExecuteFail {
+		Assert.isNotNull(spdURI);
+		Assert.isNotNull(implID);
+		Assert.isNotNull(getLocalApp(), "Null application");
 		return getLocalApp().launch(id, execParams, spdURI, implID, mode);
 	}
 
@@ -449,6 +453,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * @generated NOT
 	 */
 	public Resource reset(String compInstId) throws ReleaseError, ExecuteFail {
+		Assert.isNotNull(compInstId);
+		Assert.isNotNull(getLocalApp(), "Null application");
 		return getLocalApp().reset(compInstId);
 	}
 
@@ -519,7 +525,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 				setNamingContext((NotifyingNamingContext)null);
 				return;
 			case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
-				setLocalApp((ApplicationExtOperations)null);
+				setLocalApp(LOCAL_APP_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -541,7 +547,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			case ScaDebugPackage.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT:
 				return namingContext != null;
 			case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
-				return localApp != null;
+				return LOCAL_APP_EDEFAULT == null ? localApp != null : !LOCAL_APP_EDEFAULT.equals(localApp);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -607,6 +613,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		result.append(launch);
 		result.append(", mode: ");
 		result.append(mode);
+		result.append(", localApp: ");
+		result.append(localApp);
 		result.append(')');
 		return result.toString();
 	}
@@ -623,23 +631,14 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		Assert.isNotNull(spdURI);
 		Assert.isNotNull(implID);
 		// TODO Fix this hack
-		return ((ApplicationImpl) getLocalApp()).launch(usageName, execParams, spdURI, implID, mode);
-		// BEGIN GENERATED CODE
-	}
-
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
-				return basicSetLocalApp(null, msgs);
+		if (getLocalApp() instanceof ApplicationImpl) {
+			return ((ApplicationImpl) getLocalApp()).launch(usageName, execParams, spdURI, implID, mode);
+		} else if (getLocalApp() != null){
+			throw new IllegalStateException("Unknown Application type " + getLocalApp());
+		} else {
+			throw new IllegalStateException("Null Application type");
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
+		// BEGIN GENERATED CODE
 	}
 
 
@@ -780,6 +779,10 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		releaseJob.setUser(false);
 		releaseJob.schedule();
 	    super.dispose();
+	    if (session != null) {
+	    	session.dispose();
+	    	session = null;
+	    }
 	}
 
 } //LocalScaWaveformImpl

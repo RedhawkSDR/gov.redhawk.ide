@@ -140,7 +140,6 @@ public class LocalScaWaveformItemProvider
 
 		switch (notification.getFeatureID(LocalScaWaveform.class)) {
 			case ScaDebugPackage.LOCAL_SCA_WAVEFORM__MODE:
-			case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

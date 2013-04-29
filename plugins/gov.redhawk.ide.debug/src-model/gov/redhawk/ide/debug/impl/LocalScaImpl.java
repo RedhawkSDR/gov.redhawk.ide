@@ -29,8 +29,9 @@ import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.model.sca.impl.CorbaObjWrapperImpl;
 import gov.redhawk.sca.util.Debug;
-import gov.redhawk.sca.util.ORBUtil;
+import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SilentJob;
 
 import java.util.Collection;
@@ -59,19 +60,15 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.jacorb.naming.Name;
-import org.omg.CORBA.ORB;
 import org.omg.CORBA.SystemException;
-import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosNaming.NameComponent;
 import org.omg.PortableServer.POA;
-import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
@@ -81,6 +78,9 @@ import CF.FileManager;
 import CF.FileManagerHelper;
 import CF.FileManagerPOATie;
 import CF.LifeCyclePackage.InitializeError;
+import ExtendedCF.Sandbox;
+import ExtendedCF.SandboxHelper;
+import ExtendedCF.SandboxOperations;
 
 /**
  * <!-- begin-user-doc -->
@@ -89,84 +89,18 @@ import CF.LifeCyclePackage.InitializeError;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaImpl#isDisposed <em>Disposed</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaImpl#getOrb <em>Orb</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaImpl#getPoa <em>Poa</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaImpl#getWaveforms <em>Waveforms</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaImpl#getSandboxWaveform <em>Sandbox Waveform</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaImpl#getSandboxDeviceManager <em>Sandbox Device Manager</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaImpl#getRootContext <em>Root Context</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaImpl#getFileManager <em>File Manager</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaImpl#getSandbox <em>Sandbox</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class LocalScaImpl extends EObjectImpl implements LocalSca {
-	/**
-	 * The default value of the '{@link #isDisposed() <em>Disposed</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isDisposed()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean DISPOSED_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isDisposed() <em>Disposed</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isDisposed()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean disposed = DISPOSED_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getOrb() <em>Orb</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @see #getOrb()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final ORB ORB_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getOrb() <em>Orb</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @see #getOrb()
-	 * @generated
-	 * @ordered
-	 */
-	protected ORB orb = ORB_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getPoa() <em>Poa</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @see #getPoa()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final POA POA_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getPoa() <em>Poa</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @see #getPoa()
-	 * @generated
-	 * @ordered
-	 */
-	protected POA poa = POA_EDEFAULT;
-
+public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalSca {
 	/**
 	 * The cached value of the '{@link #getWaveforms() <em>Waveforms</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -218,6 +152,28 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 	protected LocalFileManager fileManager;
 
 	/**
+	 * The default value of the '{@link #getSandbox() <em>Sandbox</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSandbox()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final SandboxOperations SANDBOX_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getSandbox() <em>Sandbox</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSandbox()
+	 * @generated
+	 * @ordered
+	 */
+	protected SandboxOperations sandbox = SANDBOX_EDEFAULT;
+	
+	private OrbSession session = OrbSession.createSession();
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated NOT
@@ -226,6 +182,7 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
               // END GENERATED CODE
               super();
               eAdapters().add(new DisposableObjectContainerListener());
+              DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this.launchListener);
               // BEGIN GENERATED CODE
 	}
 
@@ -238,60 +195,6 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 	@Override
 	protected EClass eStaticClass() {
 		return ScaDebugPackage.Literals.LOCAL_SCA;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public boolean isDisposed() {
-		return disposed;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ORB getOrb() {
-		return orb;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setOrb(ORB newOrb) {
-		ORB oldOrb = orb;
-		orb = newOrb;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__ORB, oldOrb, orb));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public POA getPoa() {
-		return poa;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setPoa(POA newPoa) {
-		POA oldPoa = poa;
-		poa = newPoa;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__POA, oldPoa, poa));
 	}
 
 	/**
@@ -478,6 +381,65 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__FILE_MANAGER, newFileManager, newFileManager));
 	}
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public SandboxOperations getSandbox() {
+		return sandbox;
+	}
+
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setSandboxGen(SandboxOperations newSandbox) {
+		SandboxOperations oldSandbox = sandbox;
+		sandbox = newSandbox;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__SANDBOX, oldSandbox, sandbox));
+	}
+	
+	private final SilentJob refreshJob = new SilentJob("Refresh") {
+		{
+			setSystem(true);
+			setPriority(Job.SHORT);
+		}
+
+		@Override
+        protected IStatus runSilent(final IProgressMonitor monitor) {
+			try {
+				refresh(monitor, RefreshDepth.FULL);
+			} catch (final InterruptedException e) {
+				// PASS
+			}
+			return Status.OK_STATUS;
+        }
+
+	};
+	
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setSandbox(SandboxOperations newSandbox) {
+		setSandboxGen(newSandbox);
+		if (this.sandbox != null) {
+			try {
+				init();
+				this.refreshJob.schedule();
+			} catch (CoreException e) {
+				ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
+			}
+		} else {
+			// TODO
+		}
+	}
+
 	private static final Debug DEBUG = new Debug(ScaDebugPlugin.getInstance(), "localSca");
 
 	private final NotifyingNamingContextAdapter adapter = new NotifyingNamingContextAdapter() {
@@ -559,23 +521,6 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 	    return context;
     }
 
-	private static POA createPOA(final ORB orb) throws CoreException {
-        try {
-	        final POA retVal = (POA) orb.resolve_initial_references("RootPOA");
-	        retVal.the_POAManager().activate();
-	        return retVal;
-        } catch (final InvalidName e) {
-	        throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to find root POA reference"));
-        } catch (final AdapterInactive e) {
-        	throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to activate root POA reference"));
-        }
-        	
-    }
-
-	private static ORB createOrb() {
-		return ORBUtil.init(null);
-    }
-
 	private static LocalScaDeviceManager createSandboxDeviceManager(final ResourceSet resourceSet, final FileManager fm, final POA poa, final NotifyingNamingContext context) throws CoreException {
 		final LocalScaDeviceManager tmp = ScaDebugFactory.eINSTANCE.createLocalScaDeviceManager();
 		final DeviceConfiguration dcd = LocalScaImpl.createSandboxDeviceConfiguration(resourceSet);
@@ -587,13 +532,7 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 		tmp.setProfileObj(dcd);
 		tmp.setNamingContext(context.getResourceContext(dcd.eResource().getURI()));
 		final DeviceManagerImpl impl = new DeviceManagerImpl(uri.path(), DceUuidUtil.createDceUUID(), "Device Manager", tmp, fm);
-        try {
-        	tmp.setLocalDeviceManager(impl, poa);
-        } catch (final ServantNotActive e) {
-        	throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create device manager"));
-        } catch (final WrongPolicy e) {
-        	throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create device manager"));
-        }
+        tmp.setLocalDeviceManager(impl);
 		return tmp;
     }
 
@@ -619,13 +558,7 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 		waveform.setNamingContext(context.getResourceContext(sad.eResource().getURI()));
 
 		final ApplicationImpl app = new ApplicationImpl(waveform, name, name);
-		try {
-	        waveform.setLocalApp(app, poa);
-        } catch (final ServantNotActive e) {
-	        throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create local waveform.",e));
-        } catch (final WrongPolicy e) {
-        	throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create local waveform.",e));
-        }
+		waveform.setLocalApp(app);
 		return waveform;
     }
 
@@ -769,15 +702,12 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public void init() throws CoreException {
+	private void init() throws CoreException {
 		// END GENERATED CODE
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this.launchListener);
-		setOrb(LocalScaImpl.createOrb());
-		setPoa(LocalScaImpl.createPOA(getOrb()));
-		setRootContext(LocalScaImpl.createRootContext(getPoa()));
-		setFileManager(LocalScaImpl.createFileManager(getPoa()));
-		setSandboxWaveform(LocalScaImpl.createSandboxWaveform(getResourceSet(), getPoa(), getRootContext()));
-		setSandboxDeviceManager(LocalScaImpl.createSandboxDeviceManager(getResourceSet(), getFileManager().getObj(), getPoa(), getRootContext()));
+		setRootContext(LocalScaImpl.createRootContext(session.getPOA()));
+		setFileManager(LocalScaImpl.createFileManager(session.getPOA()));
+		setSandboxWaveform(LocalScaImpl.createSandboxWaveform(getResourceSet(), session.getPOA(), getRootContext()));
+		setSandboxDeviceManager(LocalScaImpl.createSandboxDeviceManager(getResourceSet(), getFileManager().getObj(), session.getPOA(), getRootContext()));
 		this.checkupJob.schedule();
 		eAdapters().add(this.adapter);
 		// BEGIN GENERATED CODE
@@ -806,6 +736,10 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 		if (this.checkupJob != null) {
 			this.checkupJob.cancel();
 			this.checkupJob = null;
+		}
+		if (session != null) {
+			session.dispose();
+			session = null;
 		}
 		// BEGIN GENERATED CODE
 	}
@@ -840,12 +774,6 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case ScaDebugPackage.LOCAL_SCA__DISPOSED:
-				return isDisposed();
-			case ScaDebugPackage.LOCAL_SCA__ORB:
-				return getOrb();
-			case ScaDebugPackage.LOCAL_SCA__POA:
-				return getPoa();
 			case ScaDebugPackage.LOCAL_SCA__WAVEFORMS:
 				return getWaveforms();
 			case ScaDebugPackage.LOCAL_SCA__SANDBOX_WAVEFORM:
@@ -856,6 +784,8 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 				return getRootContext();
 			case ScaDebugPackage.LOCAL_SCA__FILE_MANAGER:
 				return getFileManager();
+			case ScaDebugPackage.LOCAL_SCA__SANDBOX:
+				return getSandbox();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -869,12 +799,6 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case ScaDebugPackage.LOCAL_SCA__ORB:
-				setOrb((ORB)newValue);
-				return;
-			case ScaDebugPackage.LOCAL_SCA__POA:
-				setPoa((POA)newValue);
-				return;
 			case ScaDebugPackage.LOCAL_SCA__WAVEFORMS:
 				getWaveforms().clear();
 				getWaveforms().addAll((Collection<? extends ScaWaveform>)newValue);
@@ -891,6 +815,9 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 			case ScaDebugPackage.LOCAL_SCA__FILE_MANAGER:
 				setFileManager((LocalFileManager)newValue);
 				return;
+			case ScaDebugPackage.LOCAL_SCA__SANDBOX:
+				setSandbox((SandboxOperations)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -903,12 +830,6 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case ScaDebugPackage.LOCAL_SCA__ORB:
-				setOrb(ORB_EDEFAULT);
-				return;
-			case ScaDebugPackage.LOCAL_SCA__POA:
-				setPoa(POA_EDEFAULT);
-				return;
 			case ScaDebugPackage.LOCAL_SCA__WAVEFORMS:
 				getWaveforms().clear();
 				return;
@@ -924,6 +845,9 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 			case ScaDebugPackage.LOCAL_SCA__FILE_MANAGER:
 				setFileManager((LocalFileManager)null);
 				return;
+			case ScaDebugPackage.LOCAL_SCA__SANDBOX:
+				setSandbox(SANDBOX_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -936,12 +860,6 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case ScaDebugPackage.LOCAL_SCA__DISPOSED:
-				return disposed != DISPOSED_EDEFAULT;
-			case ScaDebugPackage.LOCAL_SCA__ORB:
-				return ORB_EDEFAULT == null ? orb != null : !ORB_EDEFAULT.equals(orb);
-			case ScaDebugPackage.LOCAL_SCA__POA:
-				return POA_EDEFAULT == null ? poa != null : !POA_EDEFAULT.equals(poa);
 			case ScaDebugPackage.LOCAL_SCA__WAVEFORMS:
 				return waveforms != null && !waveforms.isEmpty();
 			case ScaDebugPackage.LOCAL_SCA__SANDBOX_WAVEFORM:
@@ -952,6 +870,8 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 				return rootContext != null;
 			case ScaDebugPackage.LOCAL_SCA__FILE_MANAGER:
 				return fileManager != null;
+			case ScaDebugPackage.LOCAL_SCA__SANDBOX:
+				return SANDBOX_EDEFAULT == null ? sandbox != null : !SANDBOX_EDEFAULT.equals(sandbox);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -966,14 +886,24 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (disposed: ");
-		result.append(disposed);
-		result.append(", orb: ");
-		result.append(orb);
-		result.append(", poa: ");
-		result.append(poa);
+		result.append(" (sandbox: ");
+		result.append(sandbox);
 		result.append(')');
 		return result.toString();
+	}
+
+
+	@Override
+	protected void internalFetchChildren(IProgressMonitor monitor)
+			throws InterruptedException {
+		// PASS
+		
+	}
+
+
+	@Override
+	protected Sandbox narrow(org.omg.CORBA.Object obj) {
+		return SandboxHelper.narrow(obj);
 	}
 
 } //LocalScaImpl

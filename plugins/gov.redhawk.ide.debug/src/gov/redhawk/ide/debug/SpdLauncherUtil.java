@@ -18,6 +18,7 @@ import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 import gov.redhawk.sca.util.Debug;
+import gov.redhawk.sca.util.OrbSession;
 
 import java.util.Collections;
 import java.util.Map;
@@ -161,41 +162,62 @@ public final class SpdLauncherUtil {
 		final Future<LocalScaComponent> future = SpdLauncherUtil.EXECUTOR.submit(new Callable<LocalScaComponent>() {
 			public LocalScaComponent call() throws Exception {
 				LocalScaComponent newComponent = null;
-				while (newComponent == null) {
-					// If this launch was terminated, immediately bail
-					if (launch.isTerminated()) {
-						throw new Exception("Component terminated while waiting to launch.");
-					}
+				OrbSession session = OrbSession.createSession();
 
-					try {
-						final NamingContextExt namingContext = NamingContextExtHelper.narrow(localSca.getOrb().string_to_object(namingContextIOR));
-						final CF.Resource ref = ResourceHelper.narrow(namingContext.resolve_str(nameBinding));
-						for (final ScaComponent comp : localSca.getSandboxWaveform().getComponents()) {
-							if (comp instanceof LocalScaComponent && ref._is_equivalent(comp.getCorbaObj())) {
-								newComponent = (LocalScaComponent) comp;
-							}
+				try {
+					while (newComponent == null) {
+						// If this launch was terminated, immediately bail
+						if (launch.isTerminated()) {
+							throw new Exception("Component terminated while waiting to launch.");
 						}
-						for (final ScaWaveform waveform : localSca.getWaveforms()) {
-							for (final ScaComponent comp : waveform.getComponents()) {
+						
+						NamingContextExt namingContext = null;
+						CF.Resource ref = null;
+						try {
+							namingContext = NamingContextExtHelper.narrow(session.getOrb().string_to_object(namingContextIOR));
+							ref = ResourceHelper.narrow(namingContext.resolve_str(nameBinding));
+							for (final ScaComponent comp : localSca.getSandboxWaveform().getComponents()) {
 								if (comp instanceof LocalScaComponent && ref._is_equivalent(comp.getCorbaObj())) {
 									newComponent = (LocalScaComponent) comp;
+									break;
 								}
 							}
+							if (newComponent == null) {
+								for (final ScaWaveform waveform : localSca.getWaveforms()) {
+									for (final ScaComponent comp : waveform.getComponents()) {
+										if (comp instanceof LocalScaComponent && ref._is_equivalent(comp.getCorbaObj())) {
+											newComponent = (LocalScaComponent) comp;
+											break;
+										}
+									}
+								}
+							}
+						} catch (final NotFound e) {
+							// PASS
+						} catch (final CannotProceed e) {
+							// PASS
+						} catch (final SystemException e) {
+							// PASS
+						} finally {
+							if (namingContext != null) {
+								namingContext._release();
+								namingContext = null;
+							}
+							if (ref != null) {
+								ref._release();
+								ref = null;
+							}
 						}
-					} catch (final NotFound e) {
-						// PASS
-					} catch (final CannotProceed e) {
-						// PASS
-					} catch (final SystemException e) {
-						// PASS
-					}
-					if (newComponent == null) {
-						try {
-							Thread.sleep(500);
-						} catch (final InterruptedException e) {
-							throw e;
+						if (newComponent == null) {
+							try {
+								Thread.sleep(500);
+							} catch (final InterruptedException e) {
+								throw e;
+							}
 						}
 					}
+				} finally {
+					session.dispose();
 				}
 				return newComponent;
 			}

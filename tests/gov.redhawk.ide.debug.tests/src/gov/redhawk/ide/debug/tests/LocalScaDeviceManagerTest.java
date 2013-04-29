@@ -15,19 +15,10 @@ import gov.redhawk.ide.debug.ScaDebugFactory;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
-import org.omg.PortableServer.POAPackage.ServantNotActive;
-import org.omg.PortableServer.POAPackage.WrongPolicy;
-
 /**
  * <!-- begin-user-doc -->
  * A test case for the model object '<em><b>Local Sca Device Manager</b></em>'.
  * <!-- end-user-doc -->
- * <p>
- * The following operations are tested:
- * <ul>
- *   <li>{@link gov.redhawk.ide.debug.LocalScaDeviceManager#setLocalDeviceManager(gov.redhawk.ide.debug.impl.DeviceManagerImpl, org.omg.PortableServer.POA) <em>Set Local Device Manager</em>}</li>
- * </ul>
- * </p>
  * @generated
  */
 public class LocalScaDeviceManagerTest extends TestCase {
@@ -100,19 +91,11 @@ public class LocalScaDeviceManagerTest extends TestCase {
 	protected void tearDown() throws Exception {
 		setFixture(null);
 	}
-
-	/**
-	 * Tests the '{@link gov.redhawk.ide.debug.LocalScaDeviceManager#setLocalDeviceManager(gov.redhawk.ide.debug.impl.DeviceManagerImpl, org.omg.PortableServer.POA) <em>Set Local Device Manager</em>}' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.debug.LocalScaDeviceManager#setLocalDeviceManager(gov.redhawk.ide.debug.impl.DeviceManagerImpl, org.omg.PortableServer.POA)
-	 * @generated NOT
-	 */
-	public void testSetLocalDeviceManager__DeviceManagerImpl_POA() throws ServantNotActive, WrongPolicy {
-		// END GENERATED CODE
-		getFixture().setLocalDeviceManager(null, null);
-
-		// BEGIN GENERATED CODE
+	
+	public void testStub() {
+		// stubTest
 	}
+
+
 
 } //LocalScaDeviceManagerTest

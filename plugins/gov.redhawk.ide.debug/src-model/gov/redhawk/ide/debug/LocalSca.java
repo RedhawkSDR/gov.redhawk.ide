@@ -10,13 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
-import gov.redhawk.model.sca.IDisposable;
+import gov.redhawk.model.sca.CorbaObjWrapper;
 import gov.redhawk.model.sca.ScaWaveform;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EList;
-import org.omg.CORBA.ORB;
-import org.omg.PortableServer.POA;
+
+import ExtendedCF.Sandbox;
+import ExtendedCF.SandboxOperations;
 
 /**
  * <!-- begin-user-doc -->
@@ -27,69 +27,20 @@ import org.omg.PortableServer.POA;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link gov.redhawk.ide.debug.LocalSca#getOrb <em>Orb</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.LocalSca#getPoa <em>Poa</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalSca#getWaveforms <em>Waveforms</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalSca#getSandboxWaveform <em>Sandbox Waveform</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalSca#getSandboxDeviceManager <em>Sandbox Device Manager</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalSca#getRootContext <em>Root Context</em>}</li>
  *   <li>{@link gov.redhawk.ide.debug.LocalSca#getFileManager <em>File Manager</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.LocalSca#getSandbox <em>Sandbox</em>}</li>
  * </ul>
  * </p>
  *
  * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca()
- * @model
+ * @model superTypes="gov.redhawk.model.sca.CorbaObjWrapper<gov.redhawk.ide.debug.Sandbox>"
  * @generated
  */
-public interface LocalSca extends IDisposable {
-
-	/**
-	 * Returns the value of the '<em><b>Orb</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Orb</em>' attribute.
-	 * @see #setOrb(ORB)
-	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca_Orb()
-	 * @model dataType="mil.jpeojtrs.sca.cf.ORB" transient="true"
-	 * @generated
-	 */
-	ORB getOrb();
-
-	/**
-	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalSca#getOrb <em>Orb</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Orb</em>' attribute.
-	 * @see #getOrb()
-	 * @generated
-	 */
-	void setOrb(ORB value);
-
-	/**
-	 * Returns the value of the '<em><b>Poa</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Poa</em>' attribute.
-	 * @see #setPoa(POA)
-	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca_Poa()
-	 * @model dataType="gov.redhawk.model.sca.POA" transient="true"
-	 * @generated
-	 */
-	POA getPoa();
-
-	/**
-	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalSca#getPoa <em>Poa</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Poa</em>' attribute.
-	 * @see #getPoa()
-	 * @generated
-	 */
-	void setPoa(POA value);
+public interface LocalSca extends CorbaObjWrapper<Sandbox> {
 
 	/**
 	 * Returns the value of the '<em><b>Waveforms</b></em>' containment reference list.
@@ -165,11 +116,29 @@ public interface LocalSca extends IDisposable {
 	LocalFileManager getFileManager();
 
 	/**
+	 * Returns the value of the '<em><b>Sandbox</b></em>' attribute.
 	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Sandbox</em>' containment reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
 	 * <!-- end-user-doc -->
-	 * @model exceptions="gov.redhawk.ide.debug.CoreException"
+	 * @return the value of the '<em>Sandbox</em>' attribute.
+	 * @see #setSandbox(SandboxOperations)
+	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca_Sandbox()
+	 * @model unique="false" dataType="gov.redhawk.ide.debug.AttrSandboxOperations" transient="true" ordered="false"
 	 * @generated
 	 */
-	void init() throws CoreException;
+	SandboxOperations getSandbox();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalSca#getSandbox <em>Sandbox</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Sandbox</em>' attribute.
+	 * @see #getSandbox()
+	 * @generated
+	 */
+	void setSandbox(SandboxOperations value);
 
 } // LocalSca

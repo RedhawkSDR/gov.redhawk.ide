@@ -82,7 +82,7 @@ public class LocalScaDeviceItemProvider
 	protected void addModePropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
 				 getString("_UI_LocalLaunch_mode_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_LocalLaunch_mode_feature", "_UI_LocalLaunch_type"),
@@ -104,7 +104,7 @@ public class LocalScaDeviceItemProvider
 	protected void addImplementationIDPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
 				 getString("_UI_LocalAbstractComponent_implementationID_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_LocalAbstractComponent_implementationID_feature", "_UI_LocalAbstractComponent_type"),
@@ -126,7 +126,7 @@ public class LocalScaDeviceItemProvider
 	protected void addExecParamPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
 				 getString("_UI_LocalAbstractComponent_execParam_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_LocalAbstractComponent_execParam_feature", "_UI_LocalAbstractComponent_type"),

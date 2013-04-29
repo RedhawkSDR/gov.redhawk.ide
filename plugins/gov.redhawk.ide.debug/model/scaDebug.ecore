@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="debug" nsURI="http://redhawk.gov/sca/debug" nsPrefix="sca.debug">
-  <eClassifiers xsi:type="ecore:EClass" name="LocalSca" eSuperTypes="../../gov.redhawk.sca.model/model/sca.ecore#//IDisposable">
-    <eOperations name="init" eExceptions="#//CoreException"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="orb" eType="ecore:EDataType platform:/plugin/mil.jpeojtrs.sca.cf/model/cf.ecore#//ORB"
-        transient="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="poa" eType="ecore:EDataType ../../gov.redhawk.sca.model/model/sca.ecore#//POA"
-        transient="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="LocalSca">
     <eStructuralFeatures xsi:type="ecore:EReference" name="waveforms" upperBound="-1"
         eType="ecore:EClass ../../gov.redhawk.sca.model/model/sca.ecore#//ScaWaveform"
         transient="true" containment="true"/>
@@ -42,6 +37,11 @@
         <details key="suppressedUnsetVisibility" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="sandbox" ordered="false"
+        unique="false" eType="#//AttrSandboxOperations" transient="true"/>
+    <eGenericSuperTypes eClassifier="ecore:EClass ../../gov.redhawk.sca.model/model/sca.ecore#//CorbaObjWrapper">
+      <eTypeArguments eClassifier="#//Sandbox"/>
+    </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="NamingContextExtOperations" instanceClassName="org.omg.CosNaming.NamingContextExtOperations"
       abstract="true" interface="true"/>
@@ -112,26 +112,17 @@
       <eParameters name="implID" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
       <eParameters name="mode" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
     </eOperations>
-    <eOperations name="setLocalApp" eExceptions="#//ServantNotActive #//WrongPolicy">
-      <eParameters name="app" eType="#//ApplicationExtOperations"/>
-      <eParameters name="poa" eType="ecore:EDataType ../../gov.redhawk.sca.model/model/sca.ecore#//POA"/>
-    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="namingContext" lowerBound="1"
         eType="#//NotifyingNamingContext" transient="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="localApp" lowerBound="1"
-        eType="#//ApplicationExtOperations" transient="true" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="localApp" ordered="false"
+        unique="false" eType="#//AttrApplicationExtOperations" transient="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LocalScaComponent" eSuperTypes="../../gov.redhawk.sca.model/model/sca.ecore#//ScaComponent #//LocalAbstractComponent"/>
   <eClassifiers xsi:type="ecore:EClass" name="LocalScaDeviceManager" eSuperTypes="../../gov.redhawk.sca.model/model/sca.ecore#//ScaDeviceManager #//LocalLaunch">
-    <eOperations name="setLocalDeviceManager" eExceptions="#//ServantNotActive #//WrongPolicy">
-      <eParameters name="impl" eType="ecore:EClass platform:/plugin/mil.jpeojtrs.sca.cf/model/cf.ecore#//DeviceManagerOperations"/>
-      <eParameters name="poa" eType="ecore:EDataType ../../gov.redhawk.sca.model/model/sca.ecore#//POA"/>
-    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="namingContext" lowerBound="1"
         eType="#//NotifyingNamingContext" transient="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="localDeviceManager" lowerBound="1"
-        eType="ecore:EClass platform:/plugin/mil.jpeojtrs.sca.cf/model/cf.ecore#//DeviceManagerOperations"
-        transient="true" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="localDeviceManager" ordered="false"
+        unique="false" eType="#//AttrDeviceManagerOperations" transient="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LocalScaExecutableDevice" eSuperTypes="../../gov.redhawk.sca.model/model/sca.ecore#//ScaExecutableDevice #//LocalAbstractComponent"/>
   <eClassifiers xsi:type="ecore:EDataType" name="ILaunch" instanceClassName="org.eclipse.debug.core.ILaunch"
@@ -172,4 +163,14 @@
       <eParameters name="compInstId" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
     </eOperations>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SandboxOperations" instanceClassName="ExtendedCF.SandboxOperations"
+      abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Sandbox" instanceClassName="ExtendedCF.Sandbox"
+      abstract="true" interface="true" eSuperTypes="platform:/plugin/mil.jpeojtrs.sca.cf/model/cf.ecore#//Object platform:/plugin/mil.jpeojtrs.sca.cf/model/cf.ecore#//IDLEntity #//SandboxOperations"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="AttrSandboxOperations" instanceClassName="ExtendedCF.SandboxOperations"
+      serializable="false"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="AttrApplicationExtOperations" instanceClassName="ExtendedCF.ApplicationExtOperations"
+      serializable="false"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="AttrDeviceManagerOperations" instanceClassName="CF.DeviceManagerOperations"
+      serializable="false"/>
 </ecore:EPackage>
