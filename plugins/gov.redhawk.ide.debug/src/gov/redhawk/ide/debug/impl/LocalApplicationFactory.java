@@ -30,6 +30,8 @@ import java.util.Map;
 import mil.jpeojtrs.sca.partitioning.ComponentProperties;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
+import mil.jpeojtrs.sca.prf.SimpleRef;
+import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
@@ -49,6 +51,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 import org.jacorb.naming.Name;
 import org.omg.CORBA.SystemException;
+import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.CosNaming.NamingContextPackage.AlreadyBound;
@@ -217,7 +220,10 @@ public class LocalApplicationFactory {
 
 	private void bindApp(final ApplicationImpl app) throws CoreException {
 		try {
-			app.getWaveformContext().bind(Name.toName(app.name()), app.getLocalWaveform().getCorbaObj());
+			NamingContextExt context = app.getWaveformContext();
+			NameComponent[] name = Name.toName(app.name());
+			org.omg.CORBA.Object obj = app.getLocalWaveform().getCorbaObj();
+			context.bind(name, obj);
 		} catch (final NotFound e) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to bind application to context " + e.getMessage(), e));
 		} catch (final CannotProceed e) {
@@ -343,9 +349,11 @@ public class LocalApplicationFactory {
 		final List<DataType> retVal = new ArrayList<DataType>();
 		if (props != null) {
 			for (final Entry entry : props.getProperties()) {
-				if (entry.getValue() instanceof AbstractPropertyRef< ? >) {
-					final AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
-					retVal.add(new DataType(ref.getRefID(), ref.toAny()));
+				if (entry.getValue() instanceof SimpleRef) {
+					final SimpleRef ref = (SimpleRef) entry.getValue();
+					if (ref.getProperty().isKind(PropertyConfigurationType.EXECPARAM)) {
+						retVal.add(new DataType(ref.getRefID(), ref.toAny()));
+					}
 				}
 			}
 		}

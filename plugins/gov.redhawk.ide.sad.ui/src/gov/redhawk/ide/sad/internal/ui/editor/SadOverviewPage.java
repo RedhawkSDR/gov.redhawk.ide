@@ -31,6 +31,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -177,9 +179,14 @@ public class SadOverviewPage extends AbstractOverviewPage {
 	}
 
 	private void launch(final String mode) {
-		final IFile sadFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(getEditor().getMainResource().getURI().toPlatformString(true)));
 		try {
-			LaunchUtil.launch(SoftwareAssembly.Util.getSoftwareAssembly(this.getEditor().getMainResource()), sadFile, mode, getEditorSite().getShell());
+			ILaunchConfigurationWorkingCopy config = LaunchUtil.createLaunchConfiguration(SoftwareAssembly.Util.getSoftwareAssembly(this.getEditor().getMainResource()), mode, getEditorSite().getShell());
+			if (getEditor().getMainResource().getURI().isPlatform()) {
+				ILaunchConfiguration result = config.doSave();
+				LaunchUtil.launch(result, mode);
+			} else {
+				LaunchUtil.launch(config, mode);
+			}
 		} catch (final CoreException e) {
 			final Status status = new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException());
 			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);

@@ -56,11 +56,17 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		monitor.beginTask("Launching waveform...", 2);
 		final boolean start = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
 		final String path = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, "");
+		boolean platform = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_WORKSPACE, true);
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 		final Map<String, String> implMap = ScaLauncherUtil.getImplementationMap(configuration);
 
 		final ResourceSet resourceSet = new ResourceSetImpl();
-		final Resource sadResource = resourceSet.getResource(URI.createPlatformResourceURI(path, true), true);
+		final Resource sadResource;
+		if(platform) {
+			sadResource = resourceSet.getResource(URI.createPlatformResourceURI(path, true), true);
+		} else {
+			sadResource = resourceSet.getResource(URI.createURI(path), true);
+		}
 		final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(sadResource);
 		final String name = sad.getName();
 		final List<DataType> assemblyConfig = new ArrayList<DataType>();

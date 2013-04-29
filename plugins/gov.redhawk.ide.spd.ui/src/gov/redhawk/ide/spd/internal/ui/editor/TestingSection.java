@@ -100,6 +100,7 @@ public class TestingSection extends ScaSection {
 		imageHyperlink.setText("Launch a local component in debug mode");
 		imageHyperlink.setHref(TestingSection.TESTING_HREF_LOCAL_DEBUG);
 		imageHyperlink.addHyperlinkListener(this.getPage());
+		imageHyperlink.setEnabled(getPage().getEditor().getMainResource().getURI().isPlatform());
 		imageHyperlink.setImage(ComponentImages.getImage(ComponentImages.DEBUG_EXEC));
 
 		//		imageHyperlink = toolkit.createImageHyperlink(client, SWT.None);

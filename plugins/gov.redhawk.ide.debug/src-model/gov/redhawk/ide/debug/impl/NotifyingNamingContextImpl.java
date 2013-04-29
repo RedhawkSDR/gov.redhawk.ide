@@ -315,6 +315,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 	private static final Debug DEBUG = new Debug(ScaDebugPlugin.ID, "context");
 	private boolean destroyed = false;
+	private NameComponent[] name;
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -354,21 +355,29 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 */
 	public String getName() {
 		// END GENERATED CODE
-		if (this.eContainer instanceof NotifyingNamingContext) {
-			final NotifyingNamingContext parent = (NotifyingNamingContext) this.eContainer;
-			for (final Entry<Name, NamingContext> entry : parent.getContextMap().entrySet()) {
-				if (entry.getValue()._is_equivalent(getNamingContext())) {
-					try {
-						return Name.toString(entry.getKey().components());
-					} catch (final InvalidName e) {
-						break;
-					}
-				}
-			}
-			return "N/A";
-		} else {
-			return "";
-		}
+		if (this.name != null) {
+			try {
+	            return Name.toString(name);
+            } catch (InvalidName e) {
+            	// PASS
+            }
+		} 
+		return "";
+//		if (this.eContainer instanceof NotifyingNamingContext) {
+//			final NotifyingNamingContext parent = (NotifyingNamingContext) this.eContainer;
+//			for (final Entry<Name, NamingContext> entry : parent.getContextMap().entrySet()) {
+//				if (entry.getValue()._is_equivalent(getNamingContext())) {
+//					try {
+//						return Name.toString(name);
+//					} catch (final InvalidName e) {
+//						break;
+//					}
+//				}
+//			}
+//			return "N/A";
+//		} else {
+//			return "";
+//		}
 		// BEGIN GENERATED CODE
 	}
 
@@ -970,8 +979,17 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 			throw new InvalidName();
 		}
 
-		final NamingContextExt ns = NamingContextExtHelper.narrow(new_context());
+		final NotifyingNamingContextImpl impl = new NotifyingNamingContextImpl();
+		impl.setPoa(getPoa());
+		impl.name = nc;
+		final NamingContextExt ns = NamingContextExtHelper.narrow(impl.getNamingContext());
 		bind_context(nc, ns);
+		ScaModelCommand.execute(this, new ScaModelCommand() {
+			
+			public void execute() {
+				getSubContexts().add(impl);
+			}
+		});
 
 		if (ns == null) {
 			throw new CannotProceed();
@@ -1125,12 +1143,6 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	public NamingContext new_context() {
 		final NotifyingNamingContextImpl impl = new NotifyingNamingContextImpl();
 		impl.setPoa(getPoa());
-		ScaModelCommand.execute(this, new ScaModelCommand() {
-			
-			public void execute() {
-				getSubContexts().add(impl);
-			}
-		});
 		return impl.getNamingContext();
 	}
 

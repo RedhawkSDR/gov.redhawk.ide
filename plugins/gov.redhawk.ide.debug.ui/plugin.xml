@@ -83,6 +83,9 @@
                         <instanceof
                               value="mil.jpeojtrs.sca.spd.Implementation">
                         </instanceof>
+                        <instanceof
+                              value="mil.jpeojtrs.sca.sad.SoftwareAssembly">
+                        </instanceof>
                      </or>
                   </iterate>
                   <count

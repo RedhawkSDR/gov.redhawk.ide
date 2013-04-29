@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -68,7 +70,9 @@ public class SadLaunchShortcut implements ILaunchShortcut {
 			        StatusManager.SHOW | StatusManager.LOG);
 			return;
 		}
-		LaunchUtil.launch(sad, element, mode, PlatformUI.getWorkbench().getDisplay().getActiveShell());
+		ILaunchConfigurationWorkingCopy config = LaunchUtil.createLaunchConfiguration(sad, mode, PlatformUI.getWorkbench().getDisplay().getActiveShell());
+		config.doSave();
+		LaunchUtil.launch(config, mode);
 	}
 
 	/**
@@ -80,7 +84,9 @@ public class SadLaunchShortcut implements ILaunchShortcut {
 			if (formEditor.getMainResource() instanceof SadResourceImpl) {
 				final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(formEditor.getMainResource());
 				try {
-					LaunchUtil.launch(sad, getFile(sad.eResource()), mode, PlatformUI.getWorkbench().getDisplay().getActiveShell());
+					ILaunchConfigurationWorkingCopy config = LaunchUtil.createLaunchConfiguration(sad, mode, PlatformUI.getWorkbench().getDisplay().getActiveShell());
+					config.doSave();
+					LaunchUtil.launch(config, mode);
 				} catch (final CoreException e) {
 					final Status status = new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException());
 					StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
