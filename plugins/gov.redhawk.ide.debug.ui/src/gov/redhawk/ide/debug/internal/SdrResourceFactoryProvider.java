@@ -19,6 +19,7 @@ import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.sca.util.MutexRule;
 
 import java.net.URI;
 import java.util.Collection;
@@ -38,6 +39,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -65,11 +67,18 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 	private IResourceFactoryRegistry registry;
 	private ORB orb;
 	private POA poa;
+	private static final MutexRule RULE = new MutexRule(SdrResourceFactoryProvider.class);
 
 	private class SPDListener extends AdapterImpl {
 
 		@Override
 		public void notifyChanged(final org.eclipse.emf.common.notify.Notification msg) {
+			if (disposed) {
+				if (msg.getNotifier() instanceof Notifier) {
+					((Notifier) msg.getNotifier()).eAdapters().remove(this);
+				}
+				return;
+			}
 			if (msg.getFeature() == SdrPackage.Literals.SOFT_PKG_REGISTRY__COMPONENTS) {
 				switch (msg.getEventType()) {
 				case Notification.ADD:
@@ -98,6 +107,12 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 	private final Adapter waveformsListener = new AdapterImpl() {
 		@Override
 		public void notifyChanged(final org.eclipse.emf.common.notify.Notification msg) {
+			if (disposed) {
+				if (msg.getNotifier() instanceof Notifier) {
+					((Notifier) msg.getNotifier()).eAdapters().remove(this);
+				}
+				return;
+			}
 			if (msg.getFeature() == SdrPackage.Literals.WAVEFORMS_CONTAINER__WAVEFORMS) {
 				switch (msg.getEventType()) {
 				case Notification.ADD:
@@ -127,6 +142,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 	private SPDListener componentsListener;
 	private SPDListener devicesListener;
 	private SPDListener serviceListener;
+	private boolean disposed;
 
 	/**
 	 * {@inheritDoc}
@@ -160,6 +176,11 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 
 	private void addResource(final EObject resource, final ResourceFactoryOperations factory) {
 		final Job job = new Job("Adding resource") {
+			
+			@Override
+			public boolean shouldRun() {
+			    return super.shouldRun() && !disposed;
+			}
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
@@ -211,6 +232,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			}
 
 		};
+		job.setRule(RULE);
 		job.schedule();
 	}
 
@@ -223,6 +245,11 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 
 	private void removeResourceDesc(final ResourceDesc desc) {
 		final Job job = new Job("Remove resource") {
+			
+			@Override
+			public boolean shouldRun() {
+			    return super.shouldRun() && !disposed;
+			}
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
@@ -234,6 +261,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			}
 
 		};
+		job.setRule(RULE);
 		job.schedule();
 	}
 
@@ -241,13 +269,23 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 	 * {@inheritDoc}
 	 */
 	public void dispose() {
-		if (this.root == null) {
-			return;
+		Job.getJobManager().beginRule(RULE, null);
+		try {
+			if (disposed) {
+				return;
+			}
+			disposed = true;
+		} finally {
+			Job.getJobManager().endRule(RULE);
 		}
 		this.root.getComponentsContainer().eAdapters().remove(this.componentsListener);
 		this.root.getDevicesContainer().eAdapters().remove(this.devicesListener);
 		this.root.getServicesContainer().eAdapters().remove(this.serviceListener);
 		this.root.getWaveformsContainer().eAdapters().remove(this.waveformsListener);
+		this.root = null;
+		this.orb = null;
+		this.poa = null;
+		this.registry = null;
 		synchronized (this.resourceMap) {
 			for (final ResourceDesc desc : this.resourceMap.values()) {
 				removeResourceDesc(desc);
