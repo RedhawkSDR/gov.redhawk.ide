@@ -26,6 +26,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -131,20 +132,22 @@ public class GenerateFilesDialog extends Dialog {
 
 		selectAllFiles();
 
-		final Button clear = new Button(container, SWT.PUSH);
+		final Composite panel = new Composite(container, SWT.NO_FOCUS);
+		panel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 2, 1));
+		panel.setLayout(new RowLayout());
+
+		final Button clear = new Button(panel, SWT.PUSH);
 		clear.setText("Deselect All Files");
 		clear.setToolTipText("Clicking this will deselect all files");
-		clear.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		clear.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(final Event event) {
 				GenerateFilesDialog.this.deselectAllFiles();
 			}
 		});
 
-		final Button restore = new Button(container, SWT.PUSH);
+		final Button restore = new Button(panel, SWT.PUSH);
 		restore.setText("Restore Defaults");
 		restore.setToolTipText("Clicking this will restore the selection to the default set of files");
-		restore.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		restore.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(final Event event) {
 				GenerateFilesDialog.this.selectAllFiles();
