@@ -409,7 +409,7 @@ public class GenerateCode {
 		try {
 			boolean fileExists = false;
 			if (PropertyUtil.getLastGenerated(wavedev, implSettings) == null) {
-				for (final String file : generator.getGeneratedFiles(implSettings, softpkg).keySet()) {
+				for (final String file : filesMap.keySet()) {
 					final String tempPath = implSettings.getOutputDir() + File.separator + file;
 					if (project.getFile(tempPath).exists()) {
 						this.generationConfirmed = false;
@@ -419,7 +419,7 @@ public class GenerateCode {
 				}
 
 				if (!fileExists) {
-					GenerateCode.this.filesToBeGenerated = generator.getGeneratedFiles(implSettings, softpkg).keySet().toArray(new String[0]);
+					GenerateCode.this.filesToBeGenerated = filesMap.keySet().toArray(new String[0]);
 					this.generationConfirmed = true;
 				}
 			}
