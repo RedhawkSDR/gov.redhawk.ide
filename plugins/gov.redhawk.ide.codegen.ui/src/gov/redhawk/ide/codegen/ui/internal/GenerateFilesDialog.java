@@ -40,6 +40,8 @@ public class GenerateFilesDialog extends Dialog {
 	 * state
 	 */
 	private HashMap<String, Boolean> generateFiles = null;
+	/** The initial list of selected files */
+	private List<String> defaultSelection = new ArrayList<String>();
 	/** The list of files to be generated */
 	private ArrayList<String> filesToGenerate = null;
 	/** The Checkbox Tree that handles the input */
@@ -50,6 +52,11 @@ public class GenerateFilesDialog extends Dialog {
 	public GenerateFilesDialog(final Shell parentShell, final HashMap<String, Boolean> generateFiles, final String name) {
 		super(parentShell);
 		this.generateFiles = generateFiles;
+		for (String fileName : this.generateFiles.keySet()) {
+			if (this.generateFiles.get(fileName)) {
+				defaultSelection.add(fileName);
+			}
+		}
 		this.filesToGenerate = new ArrayList<String>();
 		this.name = name;
 	}
@@ -124,6 +131,35 @@ public class GenerateFilesDialog extends Dialog {
 
 		selectAllFiles();
 
+		final Button clear = new Button(container, SWT.PUSH);
+		clear.setText("Deselect All Files");
+		clear.setToolTipText("Clicking this will deselect all files");
+		clear.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
+		clear.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(final Event event) {
+				GenerateFilesDialog.this.deselectAllFiles();
+			}
+		});
+
+		final Button restore = new Button(container, SWT.PUSH);
+		restore.setText("Restore Defaults");
+		restore.setToolTipText("Clicking this will restore the selection to the default set of files");
+		restore.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
+		restore.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(final Event event) {
+				GenerateFilesDialog.this.selectAllFiles();
+			}
+		});
+
+		// Enable the clear and restore buttons based on the setting of the "Generate All" checkbox.
+		button.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				boolean enabled = !button.getSelection();
+				clear.setEnabled(enabled);
+				restore.setEnabled(enabled);
+			}
+		});
+
 		return container;
 	}
 
@@ -158,7 +194,11 @@ public class GenerateFilesDialog extends Dialog {
 	 * This method will set the checkboxes for the default files.
 	 */
 	private void selectAllFiles() {
-		this.v.setCheckedElements(this.filesToGenerate.toArray(new String[this.filesToGenerate.size()]));
+		this.v.setCheckedElements(this.defaultSelection.toArray(new String[this.defaultSelection.size()]));
+	}
+
+	private void deselectAllFiles() {
+		this.v.setCheckedElements(new String[0]);
 	}
 
 	@Override
