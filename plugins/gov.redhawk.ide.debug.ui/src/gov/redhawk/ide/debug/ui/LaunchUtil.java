@@ -103,21 +103,6 @@ public final class LaunchUtil {
 		}
 		return null;
 	}
-
-	public static ILaunchConfiguration[] findLaunchConfigurations(ILaunchConfiguration newConfig) throws CoreException {
-		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-		final ILaunchConfiguration[] launchers = launchManager.getLaunchConfigurations(newConfig.getType());
-		final List<ILaunchConfiguration> retVal = new ArrayList<ILaunchConfiguration>(1);
-		for (final ILaunchConfiguration config : launchers) {
-			if (config.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, "").equals(newConfig.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, ""))) {
-				retVal.add(config);
-			}
-		}
-		if (retVal.isEmpty()) {
-			return null;
-		}
-		return retVal.toArray(new ILaunchConfiguration[retVal.size()]);
-	}
 	
 	public static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final SoftwareAssembly softwareAssembly, final Shell shell) throws CoreException {
 		return LaunchUtil.createLaunchConfiguration(softwareAssembly);
