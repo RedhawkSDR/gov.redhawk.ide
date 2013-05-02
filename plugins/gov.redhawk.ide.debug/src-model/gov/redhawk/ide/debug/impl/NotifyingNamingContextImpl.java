@@ -331,14 +331,14 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 				case Notification.REMOVE:
 					if (msg.getOldValue() instanceof NotifyingNamingContext) {
 						final NotifyingNamingContext context = (NotifyingNamingContext) msg.getOldValue();
-						removeReferences(context);
+						removeReferences((NotifyingNamingContextImpl) context);
 					}
 					break;
 				case Notification.REMOVE_MANY:
 					for (final Object obj : (Collection<?>)msg.getOldValue()) {
 						if (obj instanceof NotifyingNamingContext) {
 							final NotifyingNamingContext context = (NotifyingNamingContext) obj;
-							removeReferences(context);
+							removeReferences((NotifyingNamingContextImpl) context);
 						}
 					}
 					break;
@@ -355,15 +355,11 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	/**
 	 * @since 3.0
 	 */
-	protected void removeReferences(final NotifyingNamingContext context) {
-	    for (final Iterator<Entry<Name, NamingContext>> iterator = getContextMap().iterator(); iterator.hasNext();) {
-	    	final Entry<Name, NamingContext> entry = iterator.next();
-	    	if (entry.getValue()._is_equivalent(context.getNamingContext())) {
-	    		iterator.remove();
-	    	}
-	    }
+	protected void removeReferences(final NotifyingNamingContextImpl context) {
+		getContextMap().remove(context.name);
     }
 
+	private Name name;
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -403,21 +399,10 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 */
 	public String getName() {
 		// END GENERATED CODE
-		if (this.eContainer instanceof NotifyingNamingContext) {
-			final NotifyingNamingContext parent = (NotifyingNamingContext) this.eContainer;
-			for (final Entry<Name, NamingContext> entry : parent.getContextMap().entrySet()) {
-				if (entry.getValue()._is_equivalent(getNamingContext())) {
-					try {
-						return Name.toString(entry.getKey().components());
-					} catch (final InvalidName e) {
-						break;
-					}
-				}
-			}
-			return "N/A";
-		} else {
-			return "";
-		}
+		if (this.name != null) {
+			return name.toString();
+		} 
+		return "";
 		// BEGIN GENERATED CODE
 	}
 
@@ -473,15 +458,14 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 */
 	public String getFullName() {
 		// END GENERATED CODE
-		String result = "";
-		if (this.eContainer instanceof NotifyingNamingContext) {
-			result = ((NotifyingNamingContext) this.eContainer).getFullName();
-			if (result.length() > 0) {
-				result += "/";
+		try {
+			if (name != null) {
+				return name.fullName().toString();
 			}
+		} catch (InvalidName e) {
+			
 		}
-		result += getName();
-		return result;
+		return "";
 		// BEGIN GENERATED CODE
 	}
 
@@ -957,17 +941,19 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 			}
 		}
 	}
-
 	/**
 	 * Bind a context to a name
-	 */
-
+	 */	
 	public void bind_context(final NameComponent[] nc, final NamingContext obj) throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+		bind_context(new Name(nc), obj);
+	}
+
+		
+	private void bind_context(final Name n, final NamingContext obj) throws NotFound, CannotProceed, InvalidName, AlreadyBound {
 		if (this.destroyed) {
 			throw new CannotProceed();
 		}
 
-		final Name n = new Name(nc);
 		final Name ctx = n.ctxName();
 		final NameComponent nb = n.baseNameComponent();
 
@@ -1024,8 +1010,18 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 			throw new InvalidName();
 		}
 
-		final NamingContextExt ns = NamingContextExtHelper.narrow(new_context());
-		bind_context(nc, ns);
+		final NotifyingNamingContextImpl impl = new NotifyingNamingContextImpl();
+		impl.setPoa(getPoa());
+		Name n = new Name(nc);
+		impl.name = n;
+		final NamingContextExt ns = NamingContextExtHelper.narrow(impl.getNamingContext());
+		bind_context(n, ns);
+		ScaModelCommand.execute(this, new ScaModelCommand() {
+			
+			public void execute() {
+				getSubContexts().add(impl);
+			}
+		});
 
 		if (ns == null) {
 			throw new CannotProceed();
@@ -1171,12 +1167,6 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	public NamingContext new_context() {
 		final NotifyingNamingContextImpl impl = new NotifyingNamingContextImpl();
 		impl.setPoa(getPoa());
-		ScaModelCommand.execute(this, new ScaModelCommand() {
-			
-			public void execute() {
-				getSubContexts().add(impl);
-			}
-		});
 		return impl.getNamingContext();
 	}
 

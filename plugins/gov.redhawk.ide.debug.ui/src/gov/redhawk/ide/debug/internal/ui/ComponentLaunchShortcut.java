@@ -18,6 +18,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -28,6 +31,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
@@ -77,7 +81,13 @@ public class ComponentLaunchShortcut implements ILaunchShortcut {
 	private void launch(final SoftPkg spd, final String mode) {
 		final Shell shell = Display.getCurrent().getActiveShell();
 		try {
-			LaunchUtil.launch(spd, mode, shell);
+			ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(spd, shell);
+			ILaunchConfiguration config = LaunchUtil.chooseConfiguration(mode, LaunchUtil.findLaunchConfigurations(newConfig), shell);
+			if (config == null) {
+				config = newConfig.doSave();
+			}
+			
+			DebugUITools.launch(config, mode);
 		} catch (final CoreException e) {
 			final Status status = new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException());
 			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);

@@ -30,6 +30,13 @@
    </license>
 
    <plugin
+         id="gov.redhawk.ide.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="gov.redhawk.ide.ui"
          download-size="0"
          install-size="0"

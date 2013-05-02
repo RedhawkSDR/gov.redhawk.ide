@@ -23,6 +23,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -30,6 +33,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -80,7 +84,13 @@ public class SadLaunchShortcut implements ILaunchShortcut {
 			        StatusManager.SHOW | StatusManager.LOG);
 			return;
 		}
-		LaunchUtil.launch(sad, mode, PlatformUI.getWorkbench().getDisplay().getActiveShell());
+		Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+		ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(sad, shell);
+		ILaunchConfiguration config = LaunchUtil.chooseConfiguration(mode, LaunchUtil.findLaunchConfigurations(newConfig), shell);
+		if (config == null) {
+			config = newConfig.doSave();
+		}
+		LaunchUtil.launch(config, mode);
 	}
 
 	/**
@@ -92,7 +102,13 @@ public class SadLaunchShortcut implements ILaunchShortcut {
 			if (formEditor.getMainResource() instanceof SadResourceImpl) {
 				final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(formEditor.getMainResource());
 				try {
-					LaunchUtil.launch(sad, mode, PlatformUI.getWorkbench().getDisplay().getActiveShell());
+					Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+					ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(sad, shell);
+					ILaunchConfiguration config = LaunchUtil.chooseConfiguration(mode, LaunchUtil.findLaunchConfigurations(newConfig), shell);
+					if (config == null) {
+						config = newConfig.doSave();
+					}
+					LaunchUtil.launch(config, mode);
 				} catch (final CoreException e) {
 					final Status status = new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException());
 					StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);

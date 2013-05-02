@@ -120,6 +120,7 @@
         <module>../plugins/gov.redhawk.ide.spd.ui</module>
         <module>../plugins/gov.redhawk.ide.ui</module>
         <module>../plugins/gov.redhawk.ide.ui.templates</module>
+        <module>../plugins/gov.redhawk.ide.help</module>
         <module>../plugins/gov.redhawk.sca.efs.ui</module>
         <module>../tests/gov.redhawk.codegen.validation.tests</module>
         <module>../tests/gov.redhawk.ide.dcd.tests</module>

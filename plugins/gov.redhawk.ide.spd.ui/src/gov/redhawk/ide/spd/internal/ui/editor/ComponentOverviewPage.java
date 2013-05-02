@@ -14,6 +14,7 @@ import gov.redhawk.common.ui.editor.FormLayoutFactory;
 import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.debug.ui.LaunchUtil;
 import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
+import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.ide.spd.ui.editor.AuthorsSection;
 import gov.redhawk.ide.ui.doc.IdeHelpConstants;
 import gov.redhawk.model.sca.util.ModelUtil;
@@ -25,9 +26,15 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -43,6 +50,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * The Class ComponentOverviewPage.
@@ -260,12 +268,21 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	}
 
 	private void launch(final String mode) {
-		final IFile spdFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(this.spdResource.getURI().toPlatformString(true)));
-		LaunchUtil.launch(spdFile, mode, getEditorSite().getShell());
-	}
-
-	private IFile getFile() {
-		return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(this.spdResource.getURI().toPlatformString(true)));
+        try {
+            ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(SoftPkg.Util.getSoftPkg(spdResource), getEditorSite().getShell());
+            if (spdResource.getURI().isPlatform()) {
+            	ILaunchConfiguration config = LaunchUtil.chooseConfiguration(mode, LaunchUtil.findLaunchConfigurations(newConfig), getEditorSite().getShell());
+            	if (config == null) {
+            		config = newConfig.doSave();
+            	}
+    			DebugUITools.launch(config, mode);
+    		} else {
+    			LaunchUtil.launch(newConfig, mode);
+    		}
+        } catch (CoreException e) {
+        	final Status status = new Status(IStatus.ERROR, ComponentUiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException());
+			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
+        }
 	}
 
 	/**

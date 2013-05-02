@@ -17,6 +17,7 @@ import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ide.natures.ScaProjectNature;
+import gov.redhawk.sca.util.MutexRule;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,9 +76,13 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 	private POA poa;
 	private ORB orb;
 	private IResourceFactoryRegistry registry;
+	private static final MutexRule RULE = new MutexRule(WorkspaceResourceFactoryProvider.class);
 	private final IResourceChangeListener listener = new IResourceChangeListener() {
 
 		public void resourceChanged(final IResourceChangeEvent event) {
+			if (disposed) {
+				return;
+			}
 			try {
 				if (event.getResource() == null || !WorkspaceResourceFactoryProvider.shouldVisit(event.getResource().getProject())) {
 					return;
@@ -159,6 +164,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 		}
 	};
 	private final Map<IFile, ResourceDesc> componentMap = Collections.synchronizedMap(new HashMap<IFile, ResourceDesc>());
+	private boolean disposed;
 
 	public void init(final IResourceFactoryRegistry registry, final ORB orb, final POA poa) {
 		this.registry = registry;
@@ -215,6 +221,11 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 
 	private void addResource(final IFile resource, final ResourceFactoryOperations resourceFactory) {
 		final Job job = new Job("Adding resource") {
+			
+			@Override
+			public boolean shouldRun() {
+			    return super.shouldRun() && !disposed;
+			}
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
@@ -269,6 +280,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 				}
 			}
 		};
+		job.setRule(RULE);
 		job.schedule();
 	}
 
@@ -287,6 +299,11 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 
 	private void removeResourceDesc(final ResourceDesc desc) {
 		final Job job = new Job("Remove Job") {
+			
+			@Override
+			public boolean shouldRun() {
+			    return super.shouldRun() && !disposed;
+			}
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
@@ -297,10 +314,20 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 				return Status.OK_STATUS;
 			}
 		};
+		job.setRule(RULE);
 		job.schedule();
 	}
 
 	public void dispose() {
+		Job.getJobManager().beginRule(RULE, null);
+		try {
+			if (disposed) {
+				return;
+			}			
+			disposed = true;
+		} finally {
+			Job.getJobManager().endRule(RULE);
+		}
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this.listener);
 
 		synchronized (this.componentMap) {

@@ -11,6 +11,7 @@
 package gov.redhawk.ide.debug.internal.ui;
 
 import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.ui.LaunchUtil;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -32,7 +33,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -45,6 +48,7 @@ import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -135,14 +139,16 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 		if (element instanceof IFile) {
 			element = loadFile((IFile) element);
 		}
-
+		Shell shell = HandlerUtil.getActiveShell(event);
+		ILaunchConfiguration config = null;
 		if (element instanceof SoftPkg) {
-			handleLaunchSpd((SoftPkg) element, event);
+			config = LaunchUtil.createLaunchConfiguration((SoftPkg) element, shell);
 		} else if (element instanceof SoftwareAssembly) {
-			handleLaunchSad((SoftwareAssembly) element, event);
+			config = LaunchUtil.createLaunchConfiguration((SoftwareAssembly) element, shell);
 		} else if (element instanceof Implementation) {
-			launchImplementation((Implementation) element, event);
+			config = LaunchUtil.createLaunchConfiguration((Implementation) element);
 		}
+		LaunchUtil.launch(config, ILaunchManager.RUN_MODE);
 	}
 
 	private Object loadFile(final IFile element) {
@@ -158,41 +164,6 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 			// PASS
 		}
 		return element;
-	}
-
-	private void handleLaunchSad(final SoftwareAssembly element, final ExecutionEvent event) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
-	}
-
-	private void handleLaunchSpd(final SoftPkg spd, final ExecutionEvent event) throws CoreException {
-		if (spd.getImplementation().isEmpty()) {
-			return;
-		}
-		if (spd.getImplementation().size() == 1) {
-			final Implementation impl = spd.getImplementation().get(0);
-			launchImplementation(impl, event);
-		} else {
-			final ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
-			adapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
-
-			final DecoratingLabelProvider labelProvider = new DecoratingLabelProvider(new AdapterFactoryLabelProvider(adapterFactory),
-			        PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());
-
-			final ElementListSelectionDialog dialog = new ElementListSelectionDialog(HandlerUtil.getActiveShell(event), labelProvider);
-			dialog.setElements(spd.getImplementation().toArray());
-			dialog.setTitle("Launch");
-			dialog.setMessage("Select an implementation to run:");
-			dialog.setMultipleSelection(false);
-			final int result = dialog.open();
-			labelProvider.dispose();
-			adapterFactory.dispose();
-
-			if (result == Window.OK) {
-				launchImplementation((Implementation) dialog.getFirstResult(), event);
-			}
-		}
-
 	}
 
 	private void launchImplementation(final Implementation impl, final ExecutionEvent event) throws CoreException {

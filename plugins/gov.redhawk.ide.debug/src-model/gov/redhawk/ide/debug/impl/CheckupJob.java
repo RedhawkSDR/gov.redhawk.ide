@@ -53,6 +53,9 @@ public class CheckupJob extends Job {
 		final List<EObject> itemsToRemove = new ArrayList<EObject>();
 		for (final TreeIterator<EObject> iterator = this.container.eAllContents(); iterator.hasNext();) {
 			final EObject obj = iterator.next();
+			if (obj == this.container) {
+				continue;
+			}
 			if (obj instanceof CorbaObjWrapper< ? >) {
 				final CorbaObjWrapper< ? > wrapper = (CorbaObjWrapper< ? >) obj;
 				if (!wrapper.exists()) {
@@ -66,14 +69,16 @@ public class CheckupJob extends Job {
 			}
 		}
 
-		ScaModelCommand.execute(this.container, new ScaModelCommand() {
-
-			public void execute() {
-				for (final EObject obj : itemsToRemove) {
-					EcoreUtil.delete(obj);
+		if (!itemsToRemove.isEmpty()) {
+			ScaModelCommand.execute(this.container, new ScaModelCommand() {
+	
+				public void execute() {
+					for (final EObject obj : itemsToRemove) {
+						EcoreUtil.delete(obj);
+					}
 				}
-			}
-		});
+			});
+		}
 		if (!monitor.isCanceled()) {
 			schedule(5000);
 		}

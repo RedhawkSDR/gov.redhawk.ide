@@ -24,7 +24,6 @@ import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -64,7 +63,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.jacorb.naming.Name;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NameComponent;
@@ -264,6 +262,7 @@ public class ApplicationImpl extends EObjectImpl implements IProcess, Applicatio
 	private final String identifier;
 	private final String profile;
 	private final URI profileURI;
+	private boolean started;
 
 	public ApplicationImpl(final LocalScaWaveform waveform, final String identifier, final String name) {
 		super();
@@ -300,10 +299,7 @@ public class ApplicationImpl extends EObjectImpl implements IProcess, Applicatio
 	 * {@inheritDoc}
 	 */
 	public boolean started() {
-		if (this.assemblyController != null) {
-			return this.assemblyController.started();
-		}
-		return false;
+		return started;
 	}
 
 	public ApplicationStreams getStreams() {
@@ -334,6 +330,7 @@ public class ApplicationImpl extends EObjectImpl implements IProcess, Applicatio
 		}
 		
 		this.streams.getOutStream().println("Start succeeded");
+		this.started=true;
 	}
 
 	/**
@@ -367,6 +364,7 @@ public class ApplicationImpl extends EObjectImpl implements IProcess, Applicatio
 			}
 		}
 		this.streams.getOutStream().println("Stopped");
+		this.started = false;
 	}
 
 	/**
@@ -405,25 +403,15 @@ public class ApplicationImpl extends EObjectImpl implements IProcess, Applicatio
 		this.terminated = true;
 		this.streams.getOutStream().println("Releasing Application...");
 
-		disconnectAll();
+		try {
+			disconnectAll();
 
-		releaseAll();
+			releaseAll();
 
-		unbind();
-
-		ScaModelCommand.execute(this.waveform, new ScaModelCommand() {
-
-			public void execute() {
-				if (ApplicationImpl.this.waveform != null) {
-					EcoreUtil.delete(ApplicationImpl.this.waveform);
-					ApplicationImpl.this.waveform = null;
-				}
-				if (ApplicationImpl.this.waveformContext != null) {
-					EcoreUtil.delete(ApplicationImpl.this.waveformContext);
-					ApplicationImpl.this.waveformContext = null;
-				}
-			}
-		});
+			unbind();
+		} catch (Exception e) {
+			logException("Problems while releasing.", e);
+		} 
 
 		this.streams.getOutStream().println("Release finished");
 		this.assemblyController = null;
@@ -486,12 +474,6 @@ public class ApplicationImpl extends EObjectImpl implements IProcess, Applicatio
 		for (final ScaComponent info : this.waveform.getComponents().toArray(new ScaComponent[this.waveform.getComponents().size()])) {
 			release(info);
 		}
-		ScaModelCommand.execute(this.waveform, new ScaModelCommand() {
-
-			public void execute() {
-				ApplicationImpl.this.waveform.getComponents().clear();
-			}
-		});
 		this.streams.getOutStream().println("Released components");
 	}
 
