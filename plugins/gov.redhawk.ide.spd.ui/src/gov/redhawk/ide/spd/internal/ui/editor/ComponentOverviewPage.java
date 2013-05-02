@@ -72,7 +72,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	private Resource scdResource;
 	private IResource wavDevResource;
 
-	
 	/**
 	 * Instantiates a new component overview page.
 	 * 
@@ -104,7 +103,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	 */
 	@Override
 	protected void createFormContent(final IManagedForm managedForm) {
-		
+
 		final ScrolledForm form = managedForm.getForm();
 		final FormToolkit toolkit = managedForm.getToolkit();
 
@@ -113,15 +112,14 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 
 		fillBody(managedForm, toolkit);
 		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), 
-				IdeHelpConstants.reference_editors_component_overview);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IdeHelpConstants.reference_editors_component_overview);
 
 		// Refresh Page
 		refresh(this.spdResource);
 		refresh(this.scdResource);
-		
+
 		super.createFormContent(managedForm);
-		
+
 		final ToolBarManager manager = (ToolBarManager) form.getToolBarManager();
 		final IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
 		service.populateContributionManager(manager, "toolbar:" + ComponentOverviewPage.TOOLBAR_ID);
@@ -307,7 +305,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 			this.wavDevResource = ResourcesPlugin.getWorkspace().getRoot().getFile(wavDevPath);
 			this.getEditor().getResourceTracker().addTrackedResource(wavDevResource);
 		}
-		
+
 	}
 
 	/**

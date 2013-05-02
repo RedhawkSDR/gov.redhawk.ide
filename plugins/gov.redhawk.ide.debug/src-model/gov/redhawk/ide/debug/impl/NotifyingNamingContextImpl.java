@@ -463,7 +463,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 				return name.fullName().toString();
 			}
 		} catch (InvalidName e) {
-			
+			//PASS			
 		}
 		return "";
 		// BEGIN GENERATED CODE
@@ -948,7 +948,6 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 		bind_context(new Name(nc), obj);
 	}
 
-		
 	private void bind_context(final Name n, final NamingContext obj) throws NotFound, CannotProceed, InvalidName, AlreadyBound {
 		if (this.destroyed) {
 			throw new CannotProceed();
@@ -1012,8 +1011,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 		final NotifyingNamingContextImpl impl = new NotifyingNamingContextImpl();
 		impl.setPoa(getPoa());
-		Name n = new Name(nc);
-		impl.name = n;
+		impl.name = new Name(nc);
 		final NamingContextExt ns = NamingContextExtHelper.narrow(impl.getNamingContext());
 		bind_context(n, ns);
 		ScaModelCommand.execute(this, new ScaModelCommand() {

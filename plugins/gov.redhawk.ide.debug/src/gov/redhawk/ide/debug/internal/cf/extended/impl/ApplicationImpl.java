@@ -299,6 +299,9 @@ public class ApplicationImpl extends EObjectImpl implements IProcess, Applicatio
 	 * {@inheritDoc}
 	 */
 	public boolean started() {
+		if (this.assemblyController != null) {
+			return this.assemblyController.started();
+		}
 		return started;
 	}
 
