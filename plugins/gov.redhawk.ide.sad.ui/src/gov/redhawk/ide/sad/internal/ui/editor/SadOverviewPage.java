@@ -24,12 +24,9 @@ import gov.redhawk.ui.editor.AbstractOverviewPage;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -180,13 +177,18 @@ public class SadOverviewPage extends AbstractOverviewPage {
 
 	private void launch(final String mode) {
 		try {
-			ILaunchConfigurationWorkingCopy config = LaunchUtil.createLaunchConfiguration(SoftwareAssembly.Util.getSoftwareAssembly(this.getEditor().getMainResource()), mode, getEditorSite().getShell());
+			ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(
+			        SoftwareAssembly.Util.getSoftwareAssembly(this.getEditor().getMainResource()), getEditorSite().getShell());
 			if (getEditor().getMainResource().getURI().isPlatform()) {
-				ILaunchConfiguration result = config.doSave();
-				LaunchUtil.launch(result, mode);
-			} else {
+				ILaunchConfiguration config = LaunchUtil.chooseConfiguration(mode, LaunchUtil.findLaunchConfigurations(newConfig), getEditorSite().getShell());
+				if (config == null) {
+					config = newConfig.doSave();
+				}
 				LaunchUtil.launch(config, mode);
+			} else {
+				LaunchUtil.launch(newConfig, mode);
 			}
+
 		} catch (final CoreException e) {
 			final Status status = new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException());
 			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);

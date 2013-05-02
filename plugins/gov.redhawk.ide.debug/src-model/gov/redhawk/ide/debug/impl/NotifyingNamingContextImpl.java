@@ -315,7 +315,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 	private static final Debug DEBUG = new Debug(ScaDebugPlugin.ID, "context");
 	private boolean destroyed = false;
-	private NameComponent[] name;
+	private Name name;
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -356,11 +356,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	public String getName() {
 		// END GENERATED CODE
 		if (this.name != null) {
-			try {
-	            return Name.toString(name);
-            } catch (InvalidName e) {
-            	// PASS
-            }
+			return name.toString();
 		} 
 		return "";
 //		if (this.eContainer instanceof NotifyingNamingContext) {
@@ -433,15 +429,14 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 */
 	public String getFullName() {
 		// END GENERATED CODE
-		String result = "";
-		if (this.eContainer instanceof NotifyingNamingContext) {
-			result = ((NotifyingNamingContext) this.eContainer).getFullName();
-			if (result.length() > 0) {
-				result += "/";
-			}
+		if (name != null) {
+			try {
+	            return name.fullName().toString();
+            } catch (InvalidName e) {
+	            // PASS
+            }
 		}
-		result += getName();
-		return result;
+		return "";
 		// BEGIN GENERATED CODE
 	}
 
@@ -916,13 +911,15 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	/**
 	 * Bind a context to a name
 	 */
-
 	public void bind_context(final NameComponent[] nc, final NamingContext obj) throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+		bind_context(new Name(nc), obj);
+	}
+	
+	private void bind_context(final Name n, final NamingContext obj) throws NotFound, CannotProceed, InvalidName, AlreadyBound {
 		if (this.destroyed) {
 			throw new CannotProceed();
 		}
 
-		final Name n = new Name(nc);
 		final Name ctx = n.ctxName();
 		final NameComponent nb = n.baseNameComponent();
 
@@ -981,7 +978,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 		final NotifyingNamingContextImpl impl = new NotifyingNamingContextImpl();
 		impl.setPoa(getPoa());
-		impl.name = nc;
+		impl.name = new Name(nc);
 		final NamingContextExt ns = NamingContextExtHelper.narrow(impl.getNamingContext());
 		bind_context(nc, ns);
 		ScaModelCommand.execute(this, new ScaModelCommand() {

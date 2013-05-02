@@ -266,6 +266,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	private final String identifier;
 	private final String profile;
 	private boolean unbindOnRelease = true;
+	private boolean started;
 
 	public ApplicationImpl(final LocalScaWaveform waveform, final String identifier, final String name) {
 		super();
@@ -304,7 +305,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		if (this.assemblyController != null) {
 			return this.assemblyController.started();
 		}
-		return false;
+		return started;
 	}
 
 	public ApplicationStreams getStreams() {
@@ -334,6 +335,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 		
 		this.streams.getOutStream().println("Start succeeded");
+		this.started = true;
 	}
 
 	/**
@@ -365,6 +367,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				throw logException("Error during stop", e);
 			}
 		}
+		this.started = false;
 	}
 
 	/**
@@ -410,15 +413,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		if (unbindOnRelease) {
 			unbind();
 		}
-
-		ScaModelCommand.execute(this.waveform, new ScaModelCommand() {
-
-			public void execute() {
-				EcoreUtil.delete(ApplicationImpl.this.waveform);
-				// XXX This is causing an NPE do we need it?
-//				EcoreUtil.delete(ApplicationImpl.this.waveformContext);
-			}
-		});
 
 		this.streams.getOutStream().println("Release finished");
 		this.assemblyController = null;
@@ -481,12 +475,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		for (final ScaComponent info : this.waveform.getComponents().toArray(new ScaComponent[this.waveform.getComponents().size()])) {
 			release(info);
 		}
-		ScaModelCommand.execute(this.waveform, new ScaModelCommand() {
-
-			public void execute() {
-				ApplicationImpl.this.waveform.getComponents().clear();
-			}
-		});
 		this.streams.getOutStream().println("Released components");
 	}
 

@@ -31,8 +31,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -72,7 +74,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	private Resource scdResource;
 	private IResource wavDevResource;
 
-	
 	/**
 	 * Instantiates a new component overview page.
 	 * 
@@ -104,7 +105,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	 */
 	@Override
 	protected void createFormContent(final IManagedForm managedForm) {
-		
+
 		final ScrolledForm form = managedForm.getForm();
 		final FormToolkit toolkit = managedForm.getToolkit();
 
@@ -113,18 +114,14 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 
 		fillBody(managedForm, toolkit);
 
-		
-		
-		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), 
-				IdeHelpConstants.reference_editors_component_overview);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IdeHelpConstants.reference_editors_component_overview);
 
 		// Refresh Page
 		refresh(this.spdResource);
 		refresh(this.scdResource);
-		
+
 		super.createFormContent(managedForm);
-		
+
 		final ToolBarManager manager = (ToolBarManager) form.getToolBarManager();
 		final IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
 		service.populateContributionManager(manager, "toolbar:" + ComponentOverviewPage.TOOLBAR_ID);
@@ -275,15 +272,24 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 			final IFile spdFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(this.spdResource.getURI().toPlatformString(true)));
 			LaunchUtil.launch(spdFile, mode, getEditorSite().getShell());
 		} else {
-			ILaunchConfigurationWorkingCopy config;
-            try {
-	            config = LaunchUtil.createLaunchConfiguration(SoftPkg.Util.getSoftPkg(spdResource), getEditorSite().getShell());
-	            LaunchUtil.launch(config, mode);
-            } catch (CoreException e) {
-            	final Status status = new Status(IStatus.ERROR, ComponentUiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException());
-    			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
-            }
-			
+			try {
+				ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(SoftPkg.Util.getSoftPkg(spdResource), getEditorSite()
+				        .getShell());
+				if (spdResource.getURI().isPlatform()) {
+					ILaunchConfiguration config = LaunchUtil.chooseConfiguration(mode, LaunchUtil.findLaunchConfigurations(newConfig), getEditorSite()
+					        .getShell());
+					if (config == null) {
+						config = newConfig.doSave();
+					}
+					DebugUITools.launch(config, mode);
+				} else {
+					LaunchUtil.launch(newConfig, mode);
+				}
+			} catch (CoreException e) {
+				final Status status = new Status(IStatus.ERROR, ComponentUiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException());
+				StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
+			}
+
 		}
 	}
 
@@ -309,7 +315,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 			this.wavDevResource = ResourcesPlugin.getWorkspace().getRoot().getFile(wavDevPath);
 			this.getEditor().getResourceTracker().addTrackedResource(wavDevResource);
 		}
-		
+
 	}
 
 	/**

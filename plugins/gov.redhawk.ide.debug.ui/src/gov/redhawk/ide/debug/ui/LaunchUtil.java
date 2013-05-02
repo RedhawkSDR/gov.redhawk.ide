@@ -204,7 +204,7 @@ public final class LaunchUtil {
 		return null;
 	}
 
-	public static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final SoftwareAssembly softwareAssembly, String mode, final Shell shell) throws CoreException {
+	public static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final SoftwareAssembly softwareAssembly, final Shell shell) throws CoreException {
 		final ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
 		final ILaunchConfigurationType configType = lm.getLaunchConfigurationType(ScaDebugLaunchConstants.ID_LOCAL_WAVEFORM_LAUNCH);
 		final ILaunchConfiguration[] configs = LaunchUtil.findLaunchConfigurations(softwareAssembly, configType);
@@ -254,6 +254,24 @@ public final class LaunchUtil {
 		final List<ILaunchConfiguration> retVal = new ArrayList<ILaunchConfiguration>(1);
 		for (final ILaunchConfiguration config : launchers) {
 			if (config.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, "").equals(sad.eResource().getURI().toPlatformString(true))) {
+				retVal.add(config);
+			}
+		}
+		if (retVal.isEmpty()) {
+			return null;
+		}
+		return retVal.toArray(new ILaunchConfiguration[retVal.size()]);
+	}
+	
+	public static ILaunchConfiguration[] findLaunchConfigurations(final ILaunchConfiguration newConfig) throws CoreException {
+		if (newConfig == null) {
+			return null;
+		}
+		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		final ILaunchConfiguration[] launchers = launchManager.getLaunchConfigurations(newConfig.getType());
+		final List<ILaunchConfiguration> retVal = new ArrayList<ILaunchConfiguration>(1);
+		for (final ILaunchConfiguration config : launchers) {
+			if (config.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, "").equals(newConfig.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, ""))) {
 				retVal.add(config);
 			}
 		}
