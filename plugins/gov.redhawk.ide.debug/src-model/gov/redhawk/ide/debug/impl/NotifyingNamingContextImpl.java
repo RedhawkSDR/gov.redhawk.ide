@@ -980,7 +980,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 		impl.setPoa(getPoa());
 		impl.name = new Name(nc);
 		final NamingContextExt ns = NamingContextExtHelper.narrow(impl.getNamingContext());
-		bind_context(nc, ns);
+		bind_context(impl.name, ns);
 		ScaModelCommand.execute(this, new ScaModelCommand() {
 			
 			public void execute() {
