@@ -145,7 +145,7 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 		if (element instanceof SoftPkg) {
 			config = LaunchUtil.createLaunchConfiguration((SoftPkg) element, shell);
 		} else if (element instanceof SoftwareAssembly) {
-			config = LaunchUtil.createLaunchConfiguration((SoftwareAssembly) element, null, shell);
+			config = LaunchUtil.createLaunchConfiguration((SoftwareAssembly) element, shell);
 		} else if (element instanceof Implementation) {
 			config = LaunchUtil.createLaunchConfiguration((Implementation) element);
 		}
