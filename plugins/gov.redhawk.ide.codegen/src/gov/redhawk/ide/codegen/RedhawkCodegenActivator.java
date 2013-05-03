@@ -162,6 +162,16 @@ public class RedhawkCodegenActivator extends Plugin {
 	}
 
 	/**
+	 * Helper method to log an warning, optionally with an exception.
+	 *
+	 * @param msg the message to log
+	 * @param e the exception that caused this warning, if any
+	 */
+	public static final void logWarning(final String msg, final Throwable e) {
+		RedhawkCodegenActivator.getDefault().getLog().log(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID, msg, e));
+	}
+
+	/**
 	 * Helper method to log an info message
 	 * 
 	 * @param msg the message to log
