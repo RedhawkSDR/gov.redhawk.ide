@@ -12,4 +12,31 @@
   <artifactId>gov.redhawk.ide.help</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+
+  <properties>
+  	<gov.redhawk.ide.help.doc.zip>http://download.redhawksdr.org/docs/doc.zip</gov.redhawk.ide.help.doc.zip>
+  </properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+			        <version>1.7</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<configuration>
+							<target>
+								<get src="${gov.redhawk.ide.help.doc.zip}" 
+								     dest="doc.zip"/>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
