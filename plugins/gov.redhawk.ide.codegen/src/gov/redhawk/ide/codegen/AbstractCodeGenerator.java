@@ -185,7 +185,7 @@ public abstract class AbstractCodeGenerator implements IScaComponentCodegen {
 
 		try {
 			final IScaComponentCodegenTemplate temp = template.getTemplate();
-			final String srcDir = getSourceDir(implSettings);
+			final String srcDir = getSourceDir(impl, implSettings);
 			file = getDefaultFile(impl, implSettings, temp.getDefaultFilename((SoftPkg) impl.eContainer(), implSettings, srcDir));
 		} catch (final CoreException c) {
 			RedhawkCodegenActivator.logWarning("Unable to query code generator template '" + template.getId() + "' for default file", c);
@@ -194,7 +194,7 @@ public abstract class AbstractCodeGenerator implements IScaComponentCodegen {
 		return file;
 	}
 
-	protected String getSourceDir(final ImplementationSettings implSettings) {
+	protected String getSourceDir(Implementation impl, final ImplementationSettings implSettings) {
 		return implSettings.getOutputDir() + File.separator;
 	}
 }
