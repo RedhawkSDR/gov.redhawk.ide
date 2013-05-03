@@ -14,6 +14,7 @@ import gov.redhawk.model.sca.util.ModelUtil;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -44,8 +45,6 @@ public abstract class AbstractCodeGenerator implements IScaComponentCodegen {
 
 	public abstract IStatus generate(ImplementationSettings implSettings, Implementation impl, PrintStream out, PrintStream err, IProgressMonitor monitor, // SUPPRESS CHECKSTYLE NumParameters
 	        String[] generateFiles, boolean shouldGenerate, List<FileToCRCMap> crcMap);
-
-	public abstract IFile getDefaultFile(Implementation impl, ImplementationSettings implSettings);
 
 	public abstract HashMap<String, Boolean> getGeneratedFiles(ImplementationSettings implSettings, SoftPkg softpkg) throws CoreException;
 
@@ -173,11 +172,29 @@ public abstract class AbstractCodeGenerator implements IScaComponentCodegen {
 	/**
 	 * @since 5.0
 	 */
-	public IFile getDefaultFile(Implementation impl, ImplementationSettings implSettings, String defaultFilename) {
+	public IFile getDefaultFile(final Implementation impl, final ImplementationSettings implSettings, final String defaultFilename) {
 		final IResource resource = ModelUtil.getResource(implSettings);
 
 		final IProject project = resource.getProject();
 		return project.getFile(new Path(defaultFilename));
 	}
 
+	public IFile getDefaultFile(final Implementation impl, final ImplementationSettings implSettings) {
+		final ITemplateDesc template = CodegenUtil.getTemplate(implSettings.getTemplate(), implSettings.getGeneratorId());
+		IFile file = null;
+
+		try {
+			final IScaComponentCodegenTemplate temp = template.getTemplate();
+			final String srcDir = getSourceDir(implSettings);
+			file = getDefaultFile(impl, implSettings, temp.getDefaultFilename((SoftPkg) impl.eContainer(), implSettings, srcDir));
+		} catch (final CoreException c) {
+			RedhawkCodegenActivator.logWarning("Unable to query code generator template '" + template.getId() + "' for default file", c);
+		}
+
+		return file;
+	}
+
+	protected String getSourceDir(final ImplementationSettings implSettings) {
+		return implSettings.getOutputDir() + File.separator;
+	}
 }
