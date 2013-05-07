@@ -13,7 +13,7 @@ package gov.redhawk.ide.internal.ui.handlers;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
@@ -69,16 +69,16 @@ public class CleanUpComponentFilesAction extends Action {
 						final SoftPkg spd = cf.getSoftPkg();
 						if (spd != null) {
 							final Resource spdResource = spd.eResource();
-							final Resource scdResource = spd.getDescriptor().getComponent().eResource();
+							final Resource scdResource = spd.getDescriptor() != null ? spd.getDescriptor().getComponent().eResource() : null;
 							final Resource prfResource = spd.getPropertyFile() != null ? spd.getPropertyFile().getProperties().eResource() : null;
-							command.append(new DeleteCommand(localEditingDomain, Arrays.asList(new ComponentFile[] {
-								cf
-							})));
+							command.append(new DeleteCommand(localEditingDomain, Collections.singleton(cf)));
 							command.append(new ScaModelCommand() {
 
 								public void execute() {
 									spdResource.getResourceSet().getResources().remove(spdResource);
-									scdResource.getResourceSet().getResources().remove(scdResource);
+									if (scdResource != null) {
+										scdResource.getResourceSet().getResources().remove(scdResource);
+									}
 									if (prfResource != null) {
 										prfResource.getResourceSet().getResources().remove(prfResource);
 									}
@@ -88,11 +88,12 @@ public class CleanUpComponentFilesAction extends Action {
 							// This should ALMOST never happen.  See issue #115 for details.
 							// If the component was deleted from the SDRROOT during a previous instance of the IDE running, the 
 							// spd will be null but the component will still be in the SAD model.
-							command.append(new DeleteCommand(localEditingDomain, Arrays.asList(new ComponentFile[] {
-									cf
-							})));
+							command.append(new DeleteCommand(localEditingDomain, Collections.singleton(cf)));
 						}
 					}
+				}
+				if (compFiles.getComponentFile().isEmpty()) {
+					command.append(new DeleteCommand(localEditingDomain, Collections.singleton(compFiles)));
 				}
 			} else {
 				final Iterator<ComponentFile> iter = compFiles.getComponentFile().iterator();
@@ -113,6 +114,9 @@ public class CleanUpComponentFilesAction extends Action {
 					scdResource.getResourceSet().getResources().remove(scdResource);
 					prfResource.getResourceSet().getResources().remove(prfResource);
 					this.dirtied = true;
+				}
+				if (compFiles.getComponentFile().isEmpty()) {
+					EcoreUtil.delete(compFiles);
 				}
 			}
 
