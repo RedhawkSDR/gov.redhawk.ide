@@ -33,20 +33,22 @@ public class DcdFileTemplate
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
   protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<!DOCTYPE deviceconfiguration PUBLIC \"-//JTRS//DTD SCA V2.2.2 DCD//EN\" \"deviceconfiguration.dtd\">" + NL + "<!-- Created with REDHAWK IDE-->" + NL + "<!-- Powered by Eclipse -->" + NL + "<deviceconfiguration name=\"";
   protected final String TEXT_2 = "\" id=\"";
-  protected final String TEXT_3 = "\">" + NL + "    <devicemanagersoftpkg>" + NL + "    \t<localfile name=\"/mgr/DeviceManager.spd.xml\">" + NL + "    \t</localfile>" + NL + "    </devicemanagersoftpkg>" + NL + "    <componentfiles>";
-  protected final String TEXT_4 = NL + "    \t<componentfile type=\"SPD\" id=\"";
-  protected final String TEXT_5 = "\">" + NL + "    \t\t<localfile name=\"";
-  protected final String TEXT_6 = "\">" + NL + "    \t\t</localfile>" + NL + "    \t</componentfile>";
-  protected final String TEXT_7 = NL + "    </componentfiles>" + NL + "    <partitioning>";
-  protected final String TEXT_8 = NL + "\t\t<componentplacement>" + NL + "\t    \t<componentfileref refid=\"";
-  protected final String TEXT_9 = "\">" + NL + "    \t\t</componentfileref>" + NL + "\t     \t<componentinstantiation id=\"";
-  protected final String TEXT_10 = "\">" + NL + "\t     \t\t<usagename>";
-  protected final String TEXT_11 = "_";
-  protected final String TEXT_12 = "</usagename>" + NL + "\t     \t</componentinstantiation>" + NL + "    \t</componentplacement>";
-  protected final String TEXT_13 = NL + "    </partitioning>" + NL + "    <domainmanager>" + NL + "    \t<namingservice name=\"";
-  protected final String TEXT_14 = "/";
-  protected final String TEXT_15 = "\">" + NL + "    \t</namingservice>" + NL + "    </domainmanager>" + NL + "</deviceconfiguration>";
-  protected final String TEXT_16 = NL;
+  protected final String TEXT_3 = "\">" + NL + "    <devicemanagersoftpkg>" + NL + "    \t<localfile name=\"/mgr/DeviceManager.spd.xml\">" + NL + "    \t</localfile>" + NL + "    </devicemanagersoftpkg>";
+  protected final String TEXT_4 = NL + "    <componentfiles> ";
+  protected final String TEXT_5 = NL + "    \t<componentfile type=\"SPD\" id=\"";
+  protected final String TEXT_6 = "\">" + NL + "    \t\t<localfile name=\"";
+  protected final String TEXT_7 = "\">" + NL + "    \t\t</localfile>" + NL + "    \t</componentfile>";
+  protected final String TEXT_8 = NL + "    </componentfiles>";
+  protected final String TEXT_9 = "    " + NL + "    <partitioning>";
+  protected final String TEXT_10 = NL + "\t\t<componentplacement>" + NL + "\t    \t<componentfileref refid=\"";
+  protected final String TEXT_11 = "\">" + NL + "    \t\t</componentfileref>" + NL + "\t     \t<componentinstantiation id=\"";
+  protected final String TEXT_12 = "\">" + NL + "\t     \t\t<usagename>";
+  protected final String TEXT_13 = "_";
+  protected final String TEXT_14 = "</usagename>" + NL + "\t     \t</componentinstantiation>" + NL + "    \t</componentplacement>";
+  protected final String TEXT_15 = NL + "    </partitioning>" + NL + "    <domainmanager>" + NL + "    \t<namingservice name=\"";
+  protected final String TEXT_16 = "/";
+  protected final String TEXT_17 = "\">" + NL + "    \t</namingservice>" + NL + "    </domainmanager>" + NL + "</deviceconfiguration>";
+  protected final String TEXT_18 = NL;
 
     /**
      * {@inheritDoc}
@@ -63,18 +65,25 @@ public class DcdFileTemplate
     stringBuffer.append(TEXT_2);
     stringBuffer.append(args.getProjectId());
     stringBuffer.append(TEXT_3);
-    
-    HashMap<SoftPkg, String> devToId = new HashMap<SoftPkg, String>(); 
-    for (SoftPkg device : args.getDevices()) { 
-        devToId.put(device, device.getName() + "_" + UUID.randomUUID());
-
+    	
+	HashMap<SoftPkg, String> devToId = new HashMap<SoftPkg, String>(); 
+	if (args.getDevices() != null && args.getDevices().length > 0) { 
     stringBuffer.append(TEXT_4);
-    stringBuffer.append(devToId.get(device));
+    
+    	
+    	for (SoftPkg device : args.getDevices()) { 
+        	devToId.put(device, device.getName() + "_" + UUID.randomUUID());
+
     stringBuffer.append(TEXT_5);
-    stringBuffer.append(device.eResource().getURI().path());
+    stringBuffer.append(devToId.get(device));
     stringBuffer.append(TEXT_6);
-     } 
+    stringBuffer.append(device.eResource().getURI().path());
     stringBuffer.append(TEXT_7);
+     		} 
+    stringBuffer.append(TEXT_8);
+      } 
+
+    stringBuffer.append(TEXT_9);
     
     for (SoftPkg device : args.getDevices()) {
         int devNum = 1;
@@ -83,22 +92,22 @@ public class DcdFileTemplate
         }
         deviceList.add(device.getName() + "_" + devNum);
 
-    stringBuffer.append(TEXT_8);
-    stringBuffer.append(devToId.get(device));
-    stringBuffer.append(TEXT_9);
-    stringBuffer.append(DceUuidUtil.createDceUUID());
     stringBuffer.append(TEXT_10);
-    stringBuffer.append(device.getName());
+    stringBuffer.append(devToId.get(device));
     stringBuffer.append(TEXT_11);
-    stringBuffer.append(devNum);
+    stringBuffer.append(DceUuidUtil.createDceUUID());
     stringBuffer.append(TEXT_12);
-     } 
+    stringBuffer.append(device.getName());
     stringBuffer.append(TEXT_13);
-    stringBuffer.append(args.getDomainManagerName());
+    stringBuffer.append(devNum);
     stringBuffer.append(TEXT_14);
-    stringBuffer.append(args.getDomainManagerName());
+     } 
     stringBuffer.append(TEXT_15);
+    stringBuffer.append(args.getDomainManagerName());
     stringBuffer.append(TEXT_16);
+    stringBuffer.append(args.getDomainManagerName());
+    stringBuffer.append(TEXT_17);
+    stringBuffer.append(TEXT_18);
     return stringBuffer.toString();
   }
 }

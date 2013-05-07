@@ -1,5 +1,6 @@
 <%@ jet package="gov.redhawk.ide.codegen.jet"
 imports="gov.redhawk.model.sca.util.ModelUtil
+java.util.Collections
 java.util.List
 mil.jpeojtrs.sca.dcd.DeviceConfiguration
 mil.jpeojtrs.sca.partitioning.ComponentFile
@@ -11,7 +12,12 @@ skeleton="../generator.skeleton"
 <%
     final DeviceConfiguration devCfg = (DeviceConfiguration) argument;
     final SoftPkg devMgrSoftPkg = devCfg.getDeviceManagerSoftPkg().getSoftPkg();
-    final List<ComponentFile> componentFiles = devCfg.getComponentFiles().getComponentFile();
+    final List<ComponentFile> componentFiles;
+    if (devCfg.getComponentFiles() == null) {
+    	componentFiles = Collections.emptyList();
+    } else {
+    	componentFiles = devCfg.getComponentFiles().getComponentFile();
+    }
     final String nodeSubDir = "/dev/nodes";
 %>
 # RPM package for <%=devCfg.getName()%>

@@ -18,6 +18,7 @@ import mil.jpeojtrs.sca.dcd.DcdFactory;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.dcd.diagram.providers.DcdElementTypes;
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdFactory;
 import mil.jpeojtrs.sca.spd.impl.SoftPkgImpl;
@@ -85,9 +86,11 @@ public class DcdDNDEditPolicy extends DragDropEditPolicy implements EditPolicy {
 			map.putAll(createRequest.getExtendedData());
 
 			ComponentFile file = null;
-			for (final ComponentFile f : dcd.getComponentFiles().getComponentFile()) {
-				if (f.getLocalFile().getName().equals(spdURI.path())) {
-					file = f;
+			if (dcd.getComponentFiles() != null) {
+				for (final ComponentFile f : dcd.getComponentFiles().getComponentFile()) {
+					if (f.getLocalFile().getName().equals(spdURI.path())) {
+						file = f;
+					}
 				}
 			}
 
@@ -130,6 +133,9 @@ public class DcdDNDEditPolicy extends DragDropEditPolicy implements EditPolicy {
 		 */
 		@Override
 		protected CommandResult doExecuteWithResult(final IProgressMonitor monitor, final IAdaptable info) throws ExecutionException {
+			if (dcd.getComponentFiles() == null) {
+				dcd.setComponentFiles(PartitioningFactory.eINSTANCE.createComponentFiles());
+			}
 			this.dcd.getComponentFiles().getComponentFile().add(this.file);
 
 			return CommandResult.newOKCommandResult();

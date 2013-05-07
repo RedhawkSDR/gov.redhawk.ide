@@ -491,7 +491,7 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 				if (file == null) {
 					file = DcdFactory.eINSTANCE.createComponentFile();
 					file.setSoftPkg(device);
-					command.append(AddCommand.create(getEditingDomain(), dcd.getComponentFiles(), PartitioningPackage.Literals.COMPONENT_FILES__COMPONENT_FILE,
+					command.append(AddCommand.create(getEditingDomain(), files, PartitioningPackage.Literals.COMPONENT_FILES__COMPONENT_FILE,
 					        file));
 				}
 
@@ -557,10 +557,11 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 		final DeviceConfiguration dcd = getDeviceConfiguration();
 		final ComponentPlacement< ? > place = (ComponentPlacement< ? >) getSelection();
 		final String targetId = place.getComponentFileRef().getRefid();
-
-		for (final ComponentFile file : dcd.getComponentFiles().getComponentFile()) {
-			if (file.getId().equals(targetId)) {
-				return file.getSoftPkg();
+		if (dcd.getComponentFiles() != null) {
+			for (final ComponentFile file : dcd.getComponentFiles().getComponentFile()) {
+				if (file.getId().equals(targetId)) {
+					return file.getSoftPkg();
+				}
 			}
 		}
 
