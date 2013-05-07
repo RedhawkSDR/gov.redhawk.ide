@@ -20,18 +20,23 @@ java.util.UUID"
     	<localfile name="/mgr/DeviceManager.spd.xml">
     	</localfile>
     </devicemanagersoftpkg>
-    <componentfiles>
-<%
-    HashMap<SoftPkg, String> devToId = new HashMap<SoftPkg, String>(); 
-    for (SoftPkg device : args.getDevices()) { 
-        devToId.put(device, device.getName() + "_" + UUID.randomUUID());
+<%	
+	HashMap<SoftPkg, String> devToId = new HashMap<SoftPkg, String>(); 
+	if (args.getDevices() != null && args.getDevices().length > 0) { %>
+    <componentfiles> 
+    <%
+    	
+    	for (SoftPkg device : args.getDevices()) { 
+        	devToId.put(device, device.getName() + "_" + UUID.randomUUID());
 %>
     	<componentfile type="SPD" id="<%=devToId.get(device)%>">
     		<localfile name="<%=device.eResource().getURI().path()%>">
     		</localfile>
     	</componentfile>
-<% } %>
+<% 		} %>
     </componentfiles>
+<%  } 
+%>    
     <partitioning>
 <%
     for (SoftPkg device : args.getDevices()) {

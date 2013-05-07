@@ -12,6 +12,7 @@
 package gov.redhawk.ide.codegen.jet;
 
 import gov.redhawk.model.sca.util.ModelUtil;
+import java.util.Collections;
 import java.util.List;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
@@ -57,7 +58,12 @@ public class TopLevelDcdRpmSpecTemplate
     
     final DeviceConfiguration devCfg = (DeviceConfiguration) argument;
     final SoftPkg devMgrSoftPkg = devCfg.getDeviceManagerSoftPkg().getSoftPkg();
-    final List<ComponentFile> componentFiles = devCfg.getComponentFiles().getComponentFile();
+    final List<ComponentFile> componentFiles;
+    if (devCfg.getComponentFiles() == null) {
+    	componentFiles = Collections.emptyList();
+    } else {
+    	componentFiles = devCfg.getComponentFiles().getComponentFile();
+    }
     final String nodeSubDir = "/dev/nodes";
 
     stringBuffer.append(TEXT_1);
