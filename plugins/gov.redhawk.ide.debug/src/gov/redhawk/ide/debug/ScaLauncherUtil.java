@@ -631,7 +631,7 @@ public final class ScaLauncherUtil {
 
 	private static EStructuralFeature [] DEV_NC_PATH = new EStructuralFeature []{
 		ScaDebugPackage.Literals.LOCAL_SCA__SANDBOX_DEVICE_MANAGER,
-		ScaDebugPackage.Literals.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER
+		ScaDebugPackage.Literals.LOCAL_SCA_DEVICE_MANAGER__NAMING_CONTEXT
 	};
 	private static NotifyingNamingContext getDevNamingContext(final SoftPkg spd) {
 		NotifyingNamingContext ct = ScaEcoreUtils.getFeature(ScaDebugPlugin.getInstance().getLocalSca(), DEV_NC_PATH);
