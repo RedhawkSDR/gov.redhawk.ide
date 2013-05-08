@@ -42,11 +42,11 @@ public class OutputDirectoryValidator extends AbstractModelConstraint implements
 	private static final String BAD_DIR = "Invalid output directory";
 
 	private SoftPkg softPkg;
-	
+
 	public OutputDirectoryValidator() {
 		this.softPkg = null;
 	}
-	
+
 	/**
 	 * @since 2.0
 	 */
@@ -92,20 +92,22 @@ public class OutputDirectoryValidator extends AbstractModelConstraint implements
 		final EObject target = ctx.getTarget();
 		if (target instanceof ImplementationSettings) {
 			final ImplementationSettings implSettings = (ImplementationSettings) target;
-//			if (!(implSettings.getGeneratorId().equals(ManualGeneratorPlugin.MANUAL_GENERATOR_ID))) {
-				final String dir = implSettings.getOutputDir();
-				String result = validateDir(dir);
-				if (result != null) {
-					return new EnhancedConstraintStatus((ConstraintStatus) ctx.createFailureStatus(result),
-					        CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR);
-				}
-				result = validateUnique(dir);
-				if (result != null) {
-					return new EnhancedConstraintStatus((ConstraintStatus) ctx.createFailureStatus(result),
-					        CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR);
-				}
-//			}
-		}
+			final String dir = implSettings.getOutputDir();
+			String result = null;
+			// If it is a manual template don't worry about output directory
+			if (!(implSettings.getTemplate().toUpperCase().contains("MANUAL"))) {
+				result = validateDir(dir);
+			}	
+			if (result != null) {
+				return new EnhancedConstraintStatus((ConstraintStatus) ctx.createFailureStatus(result),
+				        CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR);
+			}
+			result = validateUnique(dir);
+			if (result != null) {
+				return new EnhancedConstraintStatus((ConstraintStatus) ctx.createFailureStatus(result),
+				        CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR);
+			}
+		}				
 		return ctx.createSuccessStatus();
 	}
 
@@ -124,7 +126,7 @@ public class OutputDirectoryValidator extends AbstractModelConstraint implements
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @since 2.0
 	 */
