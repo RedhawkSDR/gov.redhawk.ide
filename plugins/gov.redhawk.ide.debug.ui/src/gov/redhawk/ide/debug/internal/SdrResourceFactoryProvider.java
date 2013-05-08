@@ -162,6 +162,12 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getComponentsContainer().getComponents()) {
 						addResource(spd, new SdrResourceFactory(spd));
 					}
+					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getDevicesContainer().getComponents()) {
+						addResource(spd, new SdrResourceFactory(spd));
+					}
+					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getServicesContainer().getComponents()) {
+						addResource(spd, new SdrResourceFactory(spd));
+					}
 					for (final SoftwareAssembly sad : SdrResourceFactoryProvider.this.root.getWaveformsContainer().getWaveforms()) {
 						addResource(sad, new SdrWaveformFactory(sad));
 					}

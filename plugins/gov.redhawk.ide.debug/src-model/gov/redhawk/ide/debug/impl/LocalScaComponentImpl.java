@@ -401,5 +401,10 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 			terminateJob.schedule(5000);
 	    }
 	}
+	
+	@Override
+	public void unsetProfileURI() {
+	    
+	}
 
 } //LocalScaComponentImpl
