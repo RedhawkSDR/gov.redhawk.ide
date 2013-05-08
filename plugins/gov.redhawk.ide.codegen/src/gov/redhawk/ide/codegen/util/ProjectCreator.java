@@ -173,35 +173,28 @@ public abstract class ProjectCreator {
 	 * @return The newly created SCA file
 	 * @throws CoreException An error occurs while generating files
 	 */
-	public static IFile importFile(final IProject project, final IPath existingFilePath, final IProgressMonitor monitor) throws CoreException {
+	public static IFile importFile(final IProject project, IFile destination, final IPath existingFilePath, final IProgressMonitor monitor) throws CoreException {
 		final SubMonitor progress = SubMonitor.convert(monitor, "Importing SCA file", 2);
 
 		final File existingFile = existingFilePath.toFile();
-		final IFile newFile = project.getFile(existingFile.getName());
+		FileInputStream input = null;
 		try {
-			newFile.create(new FileInputStream(existingFile), true, progress.newChild(1));
+			input = new FileInputStream(existingFile);
+			destination.create(input, true, progress.newChild(1));
 		} catch (final FileNotFoundException e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "SCA file (" + existingFilePath.toString() + ") does not exist"));
-		}
-
-		// Check that we can load the model
-		final URI fileURI = URI.createFileURI(newFile.getLocation().toString());
-
-		if (fileURI.lastSegment().endsWith(SadPackage.FILE_EXTENSION)) {
-			final SoftwareAssembly softwareAssembly = ModelUtil.loadSoftwareAssembly(fileURI);
-			if (softwareAssembly == null) {
-				throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Invalid SAD File"));
-			}
-		} else {
-			final DeviceConfiguration deviceConfiguration = ModelUtil.loadDeviceConfiguration(fileURI);
-			if (deviceConfiguration == null) {
-				throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Invalid DCD File"));
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					// PASS
+				}
 			}
 		}
-
 		monitor.worked(1);
 
-		return newFile;
+		return destination;
 	}
 	
 	/**
