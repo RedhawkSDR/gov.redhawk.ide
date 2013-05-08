@@ -10,7 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
+import gov.redhawk.model.sca.IRefreshable;
 import gov.redhawk.model.sca.ProfileObjectWrapper;
+import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaAbstractComponent;
 import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaComponent;
@@ -143,10 +145,22 @@ public final class ScaLauncherUtil {
 				newComponent.setLaunch(launch);
 				newComponent.setMode(launch.getLaunchMode());
 				if (uri != null && newComponent instanceof ProfileObjectWrapper< ? >) {
+					((ProfileObjectWrapper< ? >) newComponent).unsetProfileObj();
 					((ProfileObjectWrapper< ? >) newComponent).setProfileURI(uri);
 				}
 			}
 		});
+		if (newComponent instanceof ProfileObjectWrapper< ? >) {
+			((ProfileObjectWrapper< ? >) newComponent).fetchProfileObject(null);
+		}
+		
+		if (newComponent instanceof IRefreshable) {
+			try {
+	            ((IRefreshable)newComponent).refresh(null, RefreshDepth.FULL);
+            } catch (InterruptedException e) {
+	            // PASS
+            }
+		}
 
 		if (newComponent instanceof ScaAbstractComponent< ? >) {
 			final ScaAbstractComponent< ? > scaComp = (ScaAbstractComponent< ? >) newComponent;
@@ -179,6 +193,14 @@ public final class ScaLauncherUtil {
 					// PASS
 				}
 			}
+		}
+		
+		if (newComponent instanceof IRefreshable) {
+			try {
+	            ((IRefreshable)newComponent).refresh(null, RefreshDepth.FULL);
+            } catch (InterruptedException e) {
+	            // PASS
+            }
 		}
 	}
 
