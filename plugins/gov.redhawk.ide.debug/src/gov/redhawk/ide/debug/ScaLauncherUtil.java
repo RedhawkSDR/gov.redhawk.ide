@@ -11,7 +11,9 @@
 package gov.redhawk.ide.debug;
 
 import gov.redhawk.ide.debug.variables.LaunchVariables;
+import gov.redhawk.model.sca.IRefreshable;
 import gov.redhawk.model.sca.ProfileObjectWrapper;
+import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaAbstractComponent;
 import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaComponent;
@@ -153,10 +155,22 @@ public final class ScaLauncherUtil {
 				newComponent.setLaunch(launch);
 				newComponent.setMode(mode);
 				if (uri != null && newComponent instanceof ProfileObjectWrapper< ? >) {
+					((ProfileObjectWrapper< ? >) newComponent).unsetProfileObj();
 					((ProfileObjectWrapper< ? >) newComponent).setProfileURI(uri);
 				}
 			}
 		});
+		if (newComponent instanceof ProfileObjectWrapper< ? >) {
+			((ProfileObjectWrapper< ? >) newComponent).fetchProfileObject(null);
+		}
+		
+		if (newComponent instanceof IRefreshable) {
+			try {
+	            ((IRefreshable)newComponent).refresh(null, RefreshDepth.FULL);
+            } catch (InterruptedException e) {
+	            // PASS
+            }
+		}
 
 		if (newComponent instanceof ScaAbstractComponent< ? >) {
 			final ScaAbstractComponent< ? > scaComp = (ScaAbstractComponent< ? >) newComponent;
@@ -189,6 +203,14 @@ public final class ScaLauncherUtil {
 					// PASS
 				}
 			}
+		}
+		
+		if (newComponent instanceof IRefreshable) {
+			try {
+	            ((IRefreshable)newComponent).refresh(null, RefreshDepth.FULL);
+            } catch (InterruptedException e) {
+	            // PASS
+            }
 		}
 		subMonitor.done();
 	}
@@ -631,7 +653,7 @@ public final class ScaLauncherUtil {
 
 	private static EStructuralFeature [] DEV_NC_PATH = new EStructuralFeature []{
 		ScaDebugPackage.Literals.LOCAL_SCA__SANDBOX_DEVICE_MANAGER,
-		ScaDebugPackage.Literals.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER
+		ScaDebugPackage.Literals.LOCAL_SCA_DEVICE_MANAGER__NAMING_CONTEXT
 	};
 	private static NotifyingNamingContext getDevNamingContext(final SoftPkg spd) {
 		NotifyingNamingContext ct = ScaEcoreUtils.getFeature(ScaDebugPlugin.getInstance().getLocalSca(), DEV_NC_PATH);

@@ -11,25 +11,28 @@
 package gov.redhawk.ide.debug.internal.cf.impl;
 
 import gov.redhawk.ide.debug.LocalScaDeviceManager;
-import gov.redhawk.ide.debug.ScaDebugFactory;
-import gov.redhawk.model.sca.ScaDevice;
-import gov.redhawk.model.sca.ScaService;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.model.sca.RefreshDepth;
+import gov.redhawk.sca.util.PluginUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.omg.CORBA.SystemException;
 
 import CF.DataType;
 import CF.Device;
 import CF.DeviceManagerOperations;
-import CF.ExecutableDeviceHelper;
 import CF.FileSystem;
 import CF.InvalidObjectReference;
-import CF.LoadableDeviceHelper;
 import CF.PropertiesHolder;
 import CF.UnknownProperties;
 import CF.DeviceManagerPackage.ServiceType;
@@ -46,8 +49,11 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	private final String profile;
 	private final String identifier;
 	private final String name;
-	private final LocalScaDeviceManager deviceManager;
 	private final FileSystem fileSystem;
+	private List<Device> devices = Collections.synchronizedList(new ArrayList<Device>());
+	private List<ServiceType> services = Collections.synchronizedList(new ArrayList<ServiceType>());
+	
+	private final Job refreshJob;
 
 	public DeviceManagerImpl(final String profile, final String identifier, final String name, final LocalScaDeviceManager deviceManager,
 	        final FileSystem fileSystem) {
@@ -55,8 +61,20 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		this.profile = profile;
 		this.identifier = identifier;
 		this.name = name;
-		this.deviceManager = deviceManager;
 		this.fileSystem = fileSystem;
+		refreshJob = new Job("Refreshing Device Manager") {
+
+			@Override
+	        protected IStatus run(IProgressMonitor monitor) {
+				try {
+		            deviceManager.refresh(monitor, RefreshDepth.FULL);
+	            } catch (InterruptedException e) {
+		            return Status.CANCEL_STATUS;
+	            }
+		        return Status.OK_STATUS;
+	        }
+			
+		};
 	}
 
 	/**
@@ -112,49 +130,63 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	 * {@inheritDoc}
 	 */
 	public Device[] registeredDevices() {
-		final List<Device> retVal = new ArrayList<Device>();
-		for (final ScaDevice< ? > d : this.deviceManager.getAllDevices()) {
-			retVal.add(d.getObj());
+		synchronized(devices) {
+			boolean changed = false;
+			for (Iterator<Device> iterator = devices.iterator(); iterator.hasNext();) {
+				Device d = iterator.next();
+				try {
+					if (d._non_existent()) {
+						iterator.remove();
+						changed = true;
+					}
+				} catch (SystemException e) {
+					iterator.remove();
+					changed = true;
+				}
+			}
+			if (changed) {
+				refreshJob.schedule();
+			}
+			return devices.toArray(new Device[devices.size()]);
 		}
-		return retVal.toArray(new Device[retVal.size()]);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public ServiceType[] registeredServices() {
-		final List<ServiceType> retVal = new ArrayList<ServiceType>();
-		for (final ScaService s : this.deviceManager.getServices()) {
-			retVal.add(new ServiceType(s.getObj(), s.getName()));
+		synchronized(services) {
+			boolean changed = false;
+			for (Iterator<ServiceType> iterator = services.iterator(); iterator.hasNext();) {
+				ServiceType type = iterator.next();
+				try {
+					if (type.serviceObject._non_existent()) {
+						iterator.remove();
+						changed = true;
+					}
+				} catch (SystemException e) {
+					iterator.remove();
+					changed = true;
+				}
+			}
+			if (changed) {
+				refreshJob.schedule();
+			}
+			return services.toArray(new ServiceType[services.size()]);
 		}
-		return retVal.toArray(new ServiceType[retVal.size()]);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void registerDevice(final Device registeringDevice) throws InvalidObjectReference {
-		final ScaDevice< ? > device;
-		if (registeringDevice._is_a(ExecutableDeviceHelper.id())) {
-			device = ScaDebugFactory.eINSTANCE.createLocalScaExecutableDevice();
-		} else if (registeringDevice._is_a(LoadableDeviceHelper.id())) {
-			device = ScaDebugFactory.eINSTANCE.createLocalScaLoadableDevice();
-		} else {
-			device = ScaDebugFactory.eINSTANCE.createLocalScaDevice();
-		}
-		device.setDataProvidersEnabled(false);
-		device.setCorbaObj(registeringDevice);
-		ScaModelCommand.execute(this.deviceManager, new ScaModelCommand() {
-
-			public void execute() {
-				DeviceManagerImpl.this.deviceManager.getRootDevices().add(device);
-			}
-		});
+		devices.add(registeringDevice);
 		try {
 			registeringDevice.initialize();
 		} catch (final InitializeError e) {
 			throw new InvalidObjectReference("Initialize error", Arrays.toString(e.errorMessages));
 		}
+		refreshJob.schedule();
 	}
 
 	/**
@@ -165,17 +197,16 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		if (deviceId == null) {
 			return;
 		}
-		ScaModelCommand.execute(this.deviceManager, new ScaModelCommand() {
-
-			public void execute() {
-				for (final ScaDevice< ? > device : DeviceManagerImpl.this.deviceManager.getAllDevices()) {
-					if (deviceId.equals(device.getIdentifier())) {
-						EcoreUtil.delete(device);
-						break;
-					}
+		synchronized(devices) {
+			for (Iterator<Device> iterator = devices.iterator(); iterator.hasNext();) {
+				Device d = iterator.next();
+				if (PluginUtil.equals(d.identifier(), deviceId)) {
+					iterator.remove();
+					return;
 				}
 			}
-		});
+		}
+		refreshJob.schedule();
 	}
 
 	/**
@@ -189,16 +220,9 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	 * {@inheritDoc}
 	 */
 	public void registerService(final org.omg.CORBA.Object registeringService, final String name) throws InvalidObjectReference {
-		final ScaService service = ScaDebugFactory.eINSTANCE.createLocalScaService();
-		service.setName(name);
-		service.setDataProvidersEnabled(false);
-		service.setCorbaObj(registeringService);
-		ScaModelCommand.execute(this.deviceManager, new ScaModelCommand() {
-
-			public void execute() {
-				DeviceManagerImpl.this.deviceManager.getServices().add(service);
-			}
-		});
+		ServiceType type = new ServiceType(registeringService, name);
+		services.add(type);
+		refreshJob.schedule();
 	}
 
 	/**
@@ -208,18 +232,16 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		if (name == null) {
 			return;
 		}
-		ScaModelCommand.execute(this.deviceManager, new ScaModelCommand() {
-
-			public void execute() {
-				for (final ScaService service : DeviceManagerImpl.this.deviceManager.getServices()) {
-					if (name.equals(service.getName())) {
-						EcoreUtil.delete(service);
-						break;
-					}
+		synchronized(services) {
+			for (Iterator<ServiceType> iterator = services.iterator(); iterator.hasNext();) {
+				ServiceType type = iterator.next();
+				if (PluginUtil.equals(type.serviceName, name)) {
+					iterator.remove();
+					return;
 				}
 			}
-		});
-
+		}
+		refreshJob.schedule();
 	}
 
 	/**

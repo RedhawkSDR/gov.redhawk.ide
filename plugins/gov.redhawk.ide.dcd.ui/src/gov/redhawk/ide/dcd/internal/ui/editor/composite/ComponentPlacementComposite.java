@@ -28,8 +28,10 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -106,6 +108,14 @@ public class ComponentPlacementComposite extends Composite implements IScaCompos
 		final Label label = this.toolkit.createLabel(this, "Parent:");
 		label.setForeground(this.toolkit.getColors().getColor(IFormColors.TITLE));
 		this.parentViewer = new ComboViewer(this, SWT.SINGLE | SWT.READ_ONLY | SWT.DROP_DOWN);
+		this.parentViewer.getCombo().addListener(SWT.MouseVerticalWheel, new Listener() {
+
+			public void handleEvent(Event event) {
+				// Disable Mouse Wheel Combo Box Control
+				event.doit = false;
+			}
+
+		});
 
 		this.parentViewer.setContentProvider(new ArrayContentProvider());
 		this.parentViewer.setLabelProvider(new LabelProvider() {

@@ -20,7 +20,7 @@
         <eclipse-support>http://download.eclipse.org/updates/3.8</eclipse-support>
         <eclipse-updates>http://download.eclipse.org/eclipse/updates/3.8</eclipse-updates>
         <orbit>http://download.eclipse.org/tools/orbit/downloads/drops/R20130118183705/repository</orbit>
-        <nxm>http://download.redhawksdr.org/nxm/releases/3.3.1</nxm>
+        <nxm>http://nextmidas.techma.com/p2/nxm/updates/stable</nxm>
         <nxm-rcp>http://download.redhawksdr.org/nxm-rcp/releases/1.0</nxm-rcp>
         <jacorb>http://download.redhawksdr.org/jacorb/releases/3.1.0</jacorb>
         <mil.jpeojtrs.sca>http://download.redhawksdr.org/mil.jpeojtrs.sca/releases/1.9</mil.jpeojtrs.sca>

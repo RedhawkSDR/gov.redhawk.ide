@@ -16,16 +16,25 @@ import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.dcd.generator.newnode.NodeProjectCreator;
 import gov.redhawk.ide.dcd.internal.ui.editor.NodeEditor;
 import gov.redhawk.ide.dcd.ui.DcdUiActivator;
+import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
+import mil.jpeojtrs.sca.dcd.DcdFactory;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.dcd.DomainManager;
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
+import mil.jpeojtrs.sca.sad.SadPackage;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
@@ -34,6 +43,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.gmf.runtime.diagram.ui.internal.properties.WorkspaceViewerProperties;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramGraphicalViewer;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -121,22 +133,40 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 						if (workingSets.length > 0) {
 							PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(project, workingSets);
 						}
+						
+						// Figure out the ID we'll use 
+						String id;
+						if (generateId) {
+							id = DceUuidUtil.createDceUUID();
+						} else {
+							id = providedId;
+						}
 
 						// If we're creating a new waveform (vs importing one)
 						if (isCreateNewResource) {
-							// Figure out the ID we'll use 
-							String id;
-							if (generateId) {
-								id = DceUuidUtil.createDceUUID();
-							} else {
-								id = providedId;
-							}
-
 							// Create the SCA XML files
 							NewScaNodeProjectWizard.this.openEditorOn = NodeProjectCreator.createNodeFiles(project, id, null, domainManagerName, devices,
 							        progress.newChild(1));
 						} else {
-							NewScaNodeProjectWizard.this.openEditorOn = ProjectCreator.importFile(project, existingDcdPath, progress.newChild(1));
+							openEditorOn = project.getFile("DeviceManager.dcd.xml");
+							ProjectCreator.importFile(project, openEditorOn, existingDcdPath, progress.newChild(1));
+							ResourceSet resourceSet = new ResourceSetImpl();
+							URI uri = URI.createPlatformResourceURI(openEditorOn.getFullPath().toString(), true).appendFragment(DeviceConfiguration.EOBJECT_PATH);
+							DeviceConfiguration dcd = (DeviceConfiguration) resourceSet.getEObject(uri, true);
+							dcd.setId(id);
+							dcd.setName(project.getName());
+							if (domainManagerName != null) {
+								DomainManager dm = DcdFactory.eINSTANCE.createDomainManager();
+								dm.setNamingService(PartitioningFactory.eINSTANCE.createNamingService());
+								dm.getNamingService().setName(domainManagerName + "/" + domainManagerName);
+								dcd.setDomainManager(dm);
+							}
+							try {
+	                            dcd.eResource().save(null);
+                            } catch (IOException e) {
+                            	throw new CoreException(new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, "Failed to modify SAD File."));
+                            }
+							openEditorOn.refreshLocal(IResource.DEPTH_ONE, null);
 						}
 
 						// Setup automatic RPM spec file generation

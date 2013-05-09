@@ -20,11 +20,17 @@ import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
 import java.lang.reflect.InvocationTargetException;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+
+import mil.jpeojtrs.sca.sad.SadPackage;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -34,6 +40,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.gmf.runtime.diagram.ui.internal.properties.WorkspaceViewerProperties;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramGraphicalViewer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -150,24 +159,36 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 						if (workingSets.length > 0) {
 							PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(project, workingSets);
 						}
+						
+						// Figure out the ID we'll use 
+						final String id;
+						if (generateId) {
+							id = DceUuidUtil.createDceUUID();
+						} else {
+							id = providedId;
+						}
 
 						// If we're creating a new waveform (vs importing one)
 						if (isCreateNewResource) {
-							// Figure out the ID we'll use 
-							final String id;
-							if (generateId) {
-								id = DceUuidUtil.createDceUUID();
-							} else {
-								id = providedId;
-							}
-
 							// Create the SCA XML files
 							NewScaWaveformProjectWizard.this.openEditorOn = WaveformProjectCreator.createWaveformFiles(project,
 							        id,
 							        assemblyController,
 							        progress.newChild(1));
 						} else {
-							NewScaWaveformProjectWizard.this.openEditorOn = ProjectCreator.importFile(project, existingSadPath, progress.newChild(1));
+							openEditorOn = project.getFile(project.getName() + SadPackage.FILE_EXTENSION);
+							ProjectCreator.importFile(project, openEditorOn, existingSadPath, progress.newChild(1));
+							ResourceSet resourceSet = new ResourceSetImpl();
+							URI uri = URI.createPlatformResourceURI(openEditorOn.getFullPath().toString(), true).appendFragment(SoftwareAssembly.EOBJECT_PATH);
+							SoftwareAssembly sad = (SoftwareAssembly) resourceSet.getEObject(uri, true);
+							sad.setId(id);
+							sad.setName(project.getName());
+							try {
+	                            sad.eResource().save(null);
+                            } catch (IOException e) {
+                            	throw new CoreException(new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, "Failed to modify SAD File."));
+                            }
+							openEditorOn.refreshLocal(IResource.DEPTH_ONE, null);
 						}
 
 						// Setup automatic RPM spec file generation

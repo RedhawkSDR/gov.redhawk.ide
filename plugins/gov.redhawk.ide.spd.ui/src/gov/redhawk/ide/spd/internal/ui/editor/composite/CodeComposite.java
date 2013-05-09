@@ -35,7 +35,9 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -147,6 +149,14 @@ public class CodeComposite extends Composite implements IScaComposite {
 		final Label label = this.toolkit.createLabel(this, "Type:");
 		label.setForeground(this.toolkit.getColors().getColor(IFormColors.TITLE));
 		this.codeTypeViewer = new ComboViewer(this, SWT.READ_ONLY | SWT.SINGLE | SWT.DROP_DOWN);
+		this.codeTypeViewer.getCombo().addListener(SWT.MouseVerticalWheel, new Listener() {
+
+			public void handleEvent(Event event) {
+				// Disable Mouse Wheel Combo Box Control
+				event.doit = false;
+			}
+
+		});
 		this.codeTypeViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
 		this.codeTypeViewer.setContentProvider(new ArrayContentProvider());
 		this.codeTypeViewer.setLabelProvider(new AdapterFactoryLabelProvider(getAdapterFactory()));

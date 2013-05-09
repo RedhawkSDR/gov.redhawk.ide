@@ -16,6 +16,11 @@ import gov.redhawk.ide.debug.LocalScaExecutableDevice;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.model.sca.impl.ScaExecutableDeviceImpl;
 
+import java.util.Collection;
+
+import mil.jpeojtrs.sca.spd.SoftPkg;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.common.notify.Notification;
@@ -397,6 +402,17 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 	        // PASS
         }
 	    super.dispose();
+	}
+	
+	
+	@Override
+	public void unsetProfileURI() {
+	    
+	}
+	
+	@Override
+	public void unsetProfile() {
+	    
 	}
 
 } //LocalScaExecutableDeviceImpl

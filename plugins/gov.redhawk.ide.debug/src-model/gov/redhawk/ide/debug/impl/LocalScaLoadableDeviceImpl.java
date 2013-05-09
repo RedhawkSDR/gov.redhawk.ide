@@ -399,5 +399,16 @@ public class LocalScaLoadableDeviceImpl extends ScaLoadableDeviceImpl<LoadableDe
         }
 	    super.dispose();
 	}
+	
+	
+	@Override
+	public void unsetProfileURI() {
+	    
+	}
+	
+	@Override
+	public void unsetProfile() {
+	    
+	}
 
 } //LocalScaLoadableDeviceImpl

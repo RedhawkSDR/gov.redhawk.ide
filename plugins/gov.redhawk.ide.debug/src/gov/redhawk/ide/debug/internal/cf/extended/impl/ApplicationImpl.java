@@ -524,9 +524,10 @@ public class ApplicationImpl extends EObjectImpl implements IProcess, Applicatio
 	}
 
 	private void fireTerminated() {
-		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {
-			new DebugEvent(this, DebugEvent.TERMINATE)
-		});
+		DebugPlugin plugin = DebugPlugin.getDefault();
+		if (plugin != null) {
+			plugin.fireDebugEventSet(new DebugEvent[] { new DebugEvent(this, DebugEvent.TERMINATE) });
+		}
 	}
 
 	/**

@@ -13,9 +13,12 @@ package gov.redhawk.ide.debug.impl;
 import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
+import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.model.sca.RefreshDepth;
+import gov.redhawk.model.sca.ScaDevice;
+import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.impl.ScaDeviceManagerImpl;
 import gov.redhawk.sca.util.OrbSession;
@@ -34,10 +37,13 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
+import CF.Device;
 import CF.DeviceManager;
 import CF.DeviceManagerHelper;
 import CF.DeviceManagerOperations;
 import CF.DeviceManagerPOATie;
+import CF.ExecutableDeviceHelper;
+import CF.LoadableDeviceHelper;
 
 /**
  * <!-- begin-user-doc -->
@@ -481,6 +487,22 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	    	session.dispose();
 	    	session = null;
 	    }
+	}
+	
+	@Override
+	protected EClass getType(Device dev) {
+		EClass type = ScaDebugPackage.Literals.LOCAL_SCA_DEVICE;
+		if (dev._is_a(ExecutableDeviceHelper.id())) {
+			type = ScaDebugPackage.Literals.LOCAL_SCA_EXECUTABLE_DEVICE;
+		} else if (dev._is_a(LoadableDeviceHelper.id())) {
+			type = ScaDebugPackage.Literals.LOCAL_SCA_LOADABLE_DEVICE;
+		}
+	    return type;
+	}
+	
+	@Override
+	protected ScaDevice< ? > createType(EClass type) {
+	    return (ScaDevice< ? >) ScaDebugFactory.eINSTANCE.create(type);
 	}
 
 } //LocalScaDeviceManagerImpl
