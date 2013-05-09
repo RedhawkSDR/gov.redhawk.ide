@@ -125,14 +125,14 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 				try {
 					IPath sdrPath = SdrUiPlugin.getDefault().getTargetSdrPath();
 					if (sdrPath == null) {
-						throw new CoreException(new Status(Status.ERROR, SdrUiPlugin.PLUGIN_ID, "SDR Root undefined.", null));
+						throw new CoreException(new Status(Status.ERROR, SdrUiPlugin.PLUGIN_ID, "The SDR root is undefined. Check the SDRROOT environment variable and your preference settings.", null));
 					}
 					final URI scaRoot = URI.createFileURI(sdrPath.toPortableString());
 					final IFileStore store = EFS.getStore(new java.net.URI(scaRoot.toString()));
 
 					if (!store.fetchInfo(EFS.NONE, progress.newChild(FETCH_INFO_WORK)).exists()) {
 						return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID,
-						        "SDR path does not exist.  Check the SDRROOT environment variable or preference.");
+						        "The defined SDR root path does not exist.  Check the SDRROOT environment variable and your preference settings.");
 					}
 
 					// Currently we only support local target SDR roots, although in the future
