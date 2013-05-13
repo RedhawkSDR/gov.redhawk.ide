@@ -48,6 +48,7 @@ import mil.jpeojtrs.sca.util.AnyUtils;
 import mil.jpeojtrs.sca.util.NamedThreadFactory;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -890,6 +891,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public Resource launch(final String usageName, final DataType[] execParams, final String spdURI, final String implId, final String mode) throws ExecuteFail {
+		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		LocalScaComponent retVal;
 		try {
 			retVal = launch(usageName, execParams, URI.createURI(spdURI), implId, mode);
@@ -908,6 +910,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 	private LocalScaComponent launch(final String nameBinding, final String execParams, final URI spdURI, final String implId, final String tmpMode)
 	        throws CoreException {
+		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
 		final String mode;

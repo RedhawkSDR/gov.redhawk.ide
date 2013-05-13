@@ -47,18 +47,24 @@ public enum ScaDebugInstance {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				editingDomain.getCommandStack().execute(new ScaModelCommand() {
-
-					public void execute() {
-						final SandboxImpl impl = new SandboxImpl(localSca);
-						localSca.setSandbox(impl);
-					}
-				});
+				init();
 				return Status.OK_STATUS;
 			}
 		};
 		job.schedule();
-		
+	}
+	
+	public synchronized void init() {
+		editingDomain.getCommandStack().execute(new ScaModelCommand() {
+
+			public void execute() {
+				if (localSca.getSandbox() != null) {
+					return;
+				}
+				final SandboxImpl impl = new SandboxImpl(localSca);
+				localSca.setSandbox(impl);
+			}
+		});
 	}
 
 	public LocalSca getLocalSca() {

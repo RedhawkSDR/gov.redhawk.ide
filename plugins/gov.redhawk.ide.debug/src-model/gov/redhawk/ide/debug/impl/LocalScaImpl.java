@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.impl;
 
-
 import gov.redhawk.core.filemanager.IFileManager;
 import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
 import gov.redhawk.ide.debug.LocalFileManager;
@@ -170,7 +169,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 * @ordered
 	 */
 	protected SandboxOperations sandbox = SANDBOX_EDEFAULT;
-	
+
 	private OrbSession session = OrbSession.createSession();
 
 	/**
@@ -179,11 +178,11 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 * @generated NOT
 	 */
 	protected LocalScaImpl() {
-              // END GENERATED CODE
-              super();
-              eAdapters().add(new DisposableObjectContainerListener());
-              DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this.launchListener);
-              // BEGIN GENERATED CODE
+		// END GENERATED CODE
+		super();
+		eAdapters().add(new DisposableObjectContainerListener());
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this.launchListener);
+		// BEGIN GENERATED CODE
 	}
 
 
@@ -424,13 +423,20 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	public void setSandbox(SandboxOperations newSandbox) {
-		SandboxOperations oldSandbox = sandbox;
-		sandbox = newSandbox;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__SANDBOX, oldSandbox, sandbox));
+		setSandboxGen(newSandbox);
+		if (this.sandbox != null) {
+			try {
+				init();
+				this.refreshJob.schedule();
+			} catch (CoreException e) {
+				ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
+			}
+		} else {
+			// TODO
+		}
 	}
 
 	private static final Debug DEBUG = new Debug(ScaDebugPlugin.getInstance(), "localSca");

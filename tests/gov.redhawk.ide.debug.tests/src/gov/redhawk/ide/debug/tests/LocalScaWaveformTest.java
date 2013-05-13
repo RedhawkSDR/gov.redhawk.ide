@@ -10,8 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.tests;
 
+import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugFactory;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
@@ -88,11 +91,12 @@ public class LocalScaWaveformTest extends TestCase {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see junit.framework.TestCase#setUp()
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	protected void setUp() throws Exception {
-		setFixture(ScaDebugFactory.eINSTANCE.createLocalScaWaveform());
+		ScaDebugInstance.INSTANCE.init();
+		setFixture(ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform());
 	}
 
 	/**
@@ -114,9 +118,13 @@ public class LocalScaWaveformTest extends TestCase {
 	 * @generated
 	 */
 	public void testLaunch__String_DataType_URI_String_String() throws CoreException {
-		// TODO: implement this operation test method
-		// Ensure that you remove @generated or mark it @generated NOT
-		fail();
+		try {
+			getFixture().launch(null, null, null, null, null);
+			fail();
+		} catch (AssertionFailedException e) {
+			
+		}
+		// TODO Add more tests
 	}
 
 	/**
@@ -129,11 +137,12 @@ public class LocalScaWaveformTest extends TestCase {
 	 */
 	public void testLaunch__String_DataType_String_String_String() throws ExecuteFail {
 		try {
-			((ApplicationImpl) getFixture()).launch(null, (DataType[])null, (String)null, null, null);
+			((ApplicationImpl) getFixture().getLocalApp()).launch(null, (DataType[])null, (String)null, null, null);
 			fail();
 		} catch (AssertionFailedException e) {
 			
 		}
+		// TODO Add more tests
 	}
 
 	/**
@@ -147,17 +156,20 @@ public class LocalScaWaveformTest extends TestCase {
 	 */
 	public void testReset__String() throws ReleaseError, ExecuteFail {
 		try {
-			((ApplicationImpl) getFixture()).reset(null);
+			((ApplicationImpl) getFixture().getLocalApp()).reset(null);
 			fail();
-		} catch (AssertionFailedException e) {
+		} catch (ReleaseError e) {
 			
 		}
+		// TODO Add more tests
 		try {
-			((ApplicationImpl) getFixture()).reset("");
+			((ApplicationImpl) getFixture().getLocalApp()).reset("");
 			fail();
-		} catch (AssertionFailedException e) {
+		} catch (ReleaseError e) {
 			
 		}
+		
+		// TODO Add more tests
 	}
 
 

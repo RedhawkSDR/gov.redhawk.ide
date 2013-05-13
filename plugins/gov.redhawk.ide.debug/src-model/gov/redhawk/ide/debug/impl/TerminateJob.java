@@ -35,7 +35,7 @@ public class TerminateJob extends Job {
 	 */
 	@Override
 	public boolean shouldRun() {
-		return super.shouldRun() && this.launch.getLaunch().canTerminate();
+		return super.shouldRun() && this.launch != null && this.launch.getLaunch().canTerminate();
 	}
 
 	@Override
