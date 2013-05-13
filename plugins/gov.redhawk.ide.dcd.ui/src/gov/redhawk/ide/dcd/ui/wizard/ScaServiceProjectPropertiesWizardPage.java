@@ -12,17 +12,11 @@ package gov.redhawk.ide.dcd.ui.wizard;
 
 import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
 import gov.redhawk.eclipsecorba.library.ui.IdlInterfaceSelectionDialog;
-import gov.redhawk.ide.ui.wizard.ScaProjectPropertiesWizardPage;
-import gov.redhawk.model.sca.util.ModelUtil;
-
-import java.io.File;
-
-import mil.jpeojtrs.sca.spd.SoftPkg;
+import gov.redhawk.ide.spd.ui.wizard.ScaResourceProjectPropertiesWizardPage;
 
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -36,42 +30,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class ScaServiceProjectPropertiesWizardPage extends ScaProjectPropertiesWizardPage {
-
-	/**
-	 * The Class SpdFileValidator.
-	 */
-	private static final class SpdFileValidator implements IValidator {
-		// Rules:
-		// The file must exist
-		// It must have the DOCTYPE for SPD
-		// It must pass a DTD check
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public IStatus validate(final Object value) {
-			// Project names are always stripped of whitespace
-			// (see the Java Project Wizard)
-			final String s = ((String) value).trim();
-			if ((s == null) || (s.length() == 0)) {
-				return ValidationStatus.error("Enter a file.");
-			}
-
-			final File spdFile = new File(s);
-			if (!spdFile.exists()) {
-				return ValidationStatus.error("SPD file does not exist.");
-			}
-
-			final URI fileURI = URI.createFileURI(spdFile.getAbsolutePath());
-			final SoftPkg softPkg = ModelUtil.loadSoftPkg(fileURI);
-			if (softPkg == null) {
-				return ValidationStatus.error("Invalid SPD file selected.");
-			}
-			
-			return ValidationStatus.ok();
-		}
-	}
+public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPropertiesWizardPage {
 	
 	/**
 	 * The Class ServiceIdlValidator.
@@ -104,8 +63,7 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaProjectPropertiesW
 	 * @param pageName the page name
 	 */
 	protected ScaServiceProjectPropertiesWizardPage(final String pageName, final String type) {
-		super(pageName, type, "SPD");
-		setTitle("Create a SCA " + type + " Project");
+		super(pageName, type);
 		this.setDescription("Choose to either create a new Service or import an existing one.");
 	}
 
@@ -169,14 +127,6 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaProjectPropertiesW
 			}
 			
 		});
-	}
-
-	@Override
-	public void setVisible(final boolean visible) {
-		if (!visible) {
-			((NewScaServiceCreationProjectWizard) this.getWizard()).switchingResourcePage();
-		}
-		super.setVisible(visible);
 	}
 
 	public String getRepId() {

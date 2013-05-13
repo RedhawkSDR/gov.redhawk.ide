@@ -871,7 +871,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 	private void addGeneratorListeners(final IActionBars actionBars) {
 		this.codeGenerationComposite.getOutputDirEntry().getText().addModifyListener(new ModifyListener() {
 			public void modifyText(final ModifyEvent e) {
-				ImplementationDetailsPage.this.updateCodeEntries(((Text) e.widget).getText(), null);
+				ImplementationDetailsPage.this.updateCodeEntries(((Text) e.widget).getText());
 			}
 		});
 
@@ -886,7 +886,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 					}
 					final IFolder newPath = EntryUtil.browseDir(project, folder);
 					if ((newPath != null) && (newPath != folder)) {
-						updateCodeEntries(newPath.getProjectRelativePath().toString(), null);
+						updateCodeEntries(newPath.getProjectRelativePath().toString());
 
 					}
 				}
@@ -894,7 +894,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 		});
 	}
 
-	protected void updateCodeEntries(final String dir, final String name) {
+	protected void updateCodeEntries(final String dir) {
 		if (this.bindingInProgress) {
 			return;
 		}
@@ -905,7 +905,6 @@ public class ImplementationDetailsPage extends ScaDetails {
 			return;
 		}
 		final String outputDir = (dir == null) ? settings.getOutputDir() : dir; // SUPPRESS CHECKSTYLE AvoidInLine
-		final String implName = (name == null) ? settings.getName() : name; // SUPPRESS CHECKSTYLE AvoidInLine
 
 		String commandName = "Change output directory";
 		if (dir == null) {
@@ -921,7 +920,6 @@ public class ImplementationDetailsPage extends ScaDetails {
 		final ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(settings.getGeneratorId());
 		final ImplementationSettings tmpSettings = EcoreUtil.copy(settings);
 		tmpSettings.setOutputDir(outputDir);
-		tmpSettings.setName(implName);
 		Code code;
 
 		try {

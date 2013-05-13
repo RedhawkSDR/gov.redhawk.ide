@@ -217,18 +217,22 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @deprecated
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Deprecated
 	public String getName() {
 		return name;
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * @deprecated
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Deprecated
 	public void setName(String newName) {
 		String oldName = name;
 		name = newName;

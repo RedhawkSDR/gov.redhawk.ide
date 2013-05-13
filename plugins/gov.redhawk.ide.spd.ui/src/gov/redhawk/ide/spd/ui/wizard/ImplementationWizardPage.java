@@ -161,8 +161,8 @@ public class ImplementationWizardPage extends WizardPage {
 	 * {@inheritDoc}
 	 */
 	public void createControl(final Composite parent) {
-		if (getWizard() instanceof NewScaResourceProjectWizard) {
-			this.importing = !(((NewScaResourceProjectWizard) getWizard()).getImportedSettingsMap().isEmpty());
+		if (getWizard() instanceof NewScaResourceWizard) {
+			this.importing = !(((NewScaResourceWizard) getWizard()).getImportedSettingsMap().isEmpty());
 		}
 
 		final Composite client = new Composite(parent, SWT.NULL);

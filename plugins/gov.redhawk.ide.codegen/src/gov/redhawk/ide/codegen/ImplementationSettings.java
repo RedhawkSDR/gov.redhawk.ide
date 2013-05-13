@@ -44,10 +44,7 @@ public interface ImplementationSettings extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
+	 * @deprecated
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
@@ -55,16 +52,19 @@ public interface ImplementationSettings extends EObject {
 	 * @model
 	 * @generated
 	 */
+	@Deprecated
 	String getName();
 
 	/**
 	 * Sets the value of the '{@link gov.redhawk.ide.codegen.ImplementationSettings#getName <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
+	 * @deprecated
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Name</em>' attribute.
 	 * @see #getName()
 	 * @generated
 	 */
+	@Deprecated
 	void setName(String value);
 
 	/**

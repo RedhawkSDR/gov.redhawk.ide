@@ -78,8 +78,7 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 
 		// Contents Group
 		if (this.showContentsGroup) {
-			this.contentsGroup = new ContentsGroup(dialogArea, SWT.None, this.resourceType, this.resourceExtension, this);
-			this.contentsGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL));
+			createContentsGroup(dialogArea);
 		}
 
 		// ID Group
@@ -95,6 +94,11 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 		setMessage((String) null);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialogArea, IdeHelpConstants.reference_wizardsAndDialogs_componentProjectWizard_projectNamePage);
 	}
+
+	protected void createContentsGroup(Composite parent) {
+		this.contentsGroup = new ContentsGroup(parent, SWT.None, this.resourceType, this.resourceExtension, this);
+		this.contentsGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL));
+    }
 
 	private String[] getWorkingSetNames() {
 		final List<String> workingSetNames = new ArrayList<String>();

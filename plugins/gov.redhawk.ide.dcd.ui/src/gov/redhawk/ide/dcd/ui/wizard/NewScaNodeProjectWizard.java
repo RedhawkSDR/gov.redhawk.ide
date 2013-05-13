@@ -114,8 +114,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 			} else {
 				locationURI = this.nodePropertiesPage.getLocationURI();
 			}
-			final boolean generateId = this.nodePropertiesPage.getIdGroup().isGenerateId();
-			final String providedId = this.nodePropertiesPage.getIdGroup().getProvidedId();
+			final String id = this.nodePropertiesPage.getIdGroup().getId();
 			final IPath existingDcdPath = this.nodePropertiesPage.getContentsGroup().getExistingResourcePath();
 
 			final String domainManagerName = this.nodePropertiesPage.getDomain();
@@ -134,13 +133,6 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 							PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(project, workingSets);
 						}
 						
-						// Figure out the ID we'll use 
-						String id;
-						if (generateId) {
-							id = DceUuidUtil.createDceUUID();
-						} else {
-							id = providedId;
-						}
 
 						// If we're creating a new waveform (vs importing one)
 						if (isCreateNewResource) {

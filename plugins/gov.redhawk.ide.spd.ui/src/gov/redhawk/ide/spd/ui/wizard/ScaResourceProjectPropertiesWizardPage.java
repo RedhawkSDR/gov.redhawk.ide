@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.widgets.Composite;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ScaResourceProjectPropertiesWizardPage.
  */
@@ -32,7 +31,7 @@ public class ScaResourceProjectPropertiesWizardPage extends ScaProjectProperties
 	/**
 	 * The Class SpdFileValidator.
 	 */
-	private static final class SpdFileValidator implements IValidator {
+	public static final class SpdFileValidator implements IValidator {
 		// Rules:
 		// The file must exist
 		// It must have the DOCTYPE for SPD
@@ -88,8 +87,8 @@ public class ScaResourceProjectPropertiesWizardPage extends ScaProjectProperties
 
 	@Override
 	public void setVisible(final boolean visible) {
-		if (!visible) {
-			((NewScaResourceProjectWizard) this.getWizard()).switchingResourcePage();
+		if (!visible && getWizard() instanceof NewScaResourceWizard) {
+			((NewScaResourceWizard) this.getWizard()).switchingResourcePage();
 		}
 		super.setVisible(visible);
 	}

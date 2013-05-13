@@ -11,19 +11,18 @@
 package gov.redhawk.ide.dcd.ui.wizard;
 
 import gov.redhawk.ide.preferences.RedhawkIdePreferenceConstants;
-import gov.redhawk.ide.ui.wizard.ScaProjectPropertiesWizardPage;
-import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.ide.spd.ui.wizard.ScaResourceProjectPropertiesWizardPage;
 
-import java.io.File;
-
-import mil.jpeojtrs.sca.spd.SoftPkg;
-
-import org.eclipse.core.databinding.validation.IValidator;
-import org.eclipse.core.databinding.validation.ValidationStatus;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.emf.common.util.URI;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -33,49 +32,33 @@ import org.eclipse.swt.widgets.Group;
 /**
  * The Class ScaDeviceProjectPropertiesWizardPage.
  */
-public class ScaDeviceProjectPropertiesWizardPage extends ScaProjectPropertiesWizardPage {
+public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectPropertiesWizardPage {
 
-	/** Device Type combo box. */
-	private Combo deviceTypeCombo;
+	private static class DeviceProjectSettings {
+		String deviceType;
+		boolean aggregate;
 
-	/** Aggregate device check box. */
-	private Button aggregateButton;
+		public String getDeviceType() {
+			return deviceType;
+		}
 
-	/**
-	 * The Class SpdFileValidator.
-	 */
-	private static final class SpdFileValidator implements IValidator {
-		// Rules:
-		// The file must exist
-		// It must have the DOCTYPE for SPD
-		// It must pass a DTD check
+		public void setDeviceType(String deviceType) {
+			this.deviceType = deviceType;
+		}
 
-		/**
-		 * {@inheritDoc}
-		 */
-		public IStatus validate(final Object value) {
+		public boolean isAggregate() {
+			return aggregate;
+		}
 
-			// Project names are always stripped of whitespace
-			// (see the Java Project Wizard)
-			final String s = ((String) value).trim();
-			if ((s == null) || (s.length() == 0)) {
-				return ValidationStatus.error("Enter a SPD file.");
-			}
-
-			final File spdFile = new File(s);
-			if (!spdFile.exists()) {
-				return ValidationStatus.error("SPD file does not exist.");
-			}
-
-			final URI fileURI = URI.createFileURI(spdFile.getAbsolutePath());
-			final SoftPkg softPkg = ModelUtil.loadSoftPkg(fileURI);
-			if (softPkg == null) {
-				return ValidationStatus.error("Invalid SPD file selected.");
-			}
-
-			return ValidationStatus.ok();
+		public void setAggregate(boolean aggregate) {
+			this.aggregate = aggregate;
 		}
 	}
+
+	private DeviceProjectSettings deviceProjSettings = new DeviceProjectSettings();
+	private Combo deviceTypeCombo;
+	private Button aggregateButton;
+	private Group deviceGroup;
 
 	/**
 	 * Instantiates a new sca resource project properties wizard page.
@@ -83,15 +66,8 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaProjectPropertiesWi
 	 * @param pageName the page name
 	 */
 	protected ScaDeviceProjectPropertiesWizardPage(final String pageName, final String type) {
-		super(pageName, type, "SPD");
-		setTitle("Create a SCA " + type + " Project");
+		super(pageName, type);
 		this.setDescription("Choose to either create a new Device or import an existing one.");
-	}
-
-	@Override
-	public void createControl(final Composite parent) {
-		super.createControl(parent);
-		getContentsGroup().setValidator(new SpdFileValidator());
 	}
 
 	/**
@@ -100,41 +76,70 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaProjectPropertiesWi
 	@Override
 	public void customCreateControl(final Composite parent) {
 		// Device Group
-		final Group deviceGroup = new Group(parent, SWT.NONE);
+		deviceGroup = new Group(parent, SWT.NONE);
 		deviceGroup.setText(getResourceType());
 		deviceGroup.setLayout(new GridLayout(2, false));
 		GridDataFactory.generate(deviceGroup, 2, 1);
 
-		this.deviceTypeCombo = new Combo(deviceGroup, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-		this.deviceTypeCombo.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
-		this.deviceTypeCombo.setItems(RedhawkIdePreferenceConstants.DEVICE_TYPES);
-		this.deviceTypeCombo.select(0);
+		deviceTypeCombo = new Combo(deviceGroup, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+		deviceTypeCombo.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
+		deviceTypeCombo.setItems(RedhawkIdePreferenceConstants.DEVICE_TYPES);
+		deviceTypeCombo.select(0);
 
-		this.aggregateButton = new Button(deviceGroup, SWT.CHECK);
-		this.aggregateButton.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
-		this.aggregateButton.setText(RedhawkIdePreferenceConstants.AGGREGATE_DEVICE + " device");
+		aggregateButton = new Button(deviceGroup, SWT.CHECK);
+		aggregateButton.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
+		aggregateButton.setText(RedhawkIdePreferenceConstants.AGGREGATE_DEVICE + " device");
+
+		final DataBindingContext context = new DataBindingContext();
+		context.bindValue(WidgetProperties.text().observe(deviceTypeCombo), PojoProperties.value("deviceType").observe(this.deviceProjSettings));
+		context.bindValue(WidgetProperties.selection().observe(aggregateButton), PojoProperties.value("aggregate").observe(this.deviceProjSettings));
+		deviceTypeCombo.addDisposeListener(new DisposeListener() {
+
+			public void widgetDisposed(DisposeEvent e) {
+				context.dispose();
+			}
+		});
+
 	}
 
 	@Override
-	public void setVisible(final boolean visible) {
-		if (!visible) {
-			((NewScaDeviceCreationProjectWizard) this.getWizard()).switchingResourcePage();
-		}
-		super.setVisible(visible);
+	protected void createContentsGroup(Composite parent) {
+		super.createContentsGroup(parent);
+		getContentsGroup().getImportFileButton().addSelectionListener(new SelectionListener() {
+
+			public void widgetSelected(SelectionEvent e) {
+				if (getContentsGroup().getImportFileButton().getSelection()) {
+					deviceGroup.setEnabled(false);
+					deviceTypeCombo.setEnabled(false);
+					aggregateButton.setSelection(false);
+					aggregateButton.setEnabled(false);
+				} else {
+					deviceGroup.setEnabled(true);
+					deviceTypeCombo.setEnabled(true);
+					deviceTypeCombo.select(0);
+					aggregateButton.setEnabled(true);
+				}
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 	}
 
 	/**
 	 * @return
 	 */
 	public String getDeviceType() {
-		return this.deviceTypeCombo.getText();
+		return deviceProjSettings.getDeviceType();
 	}
 
 	/**
 	 * @return
 	 */
 	public boolean getAggregateDeviceType() {
-		return this.aggregateButton.getSelection();
+		return deviceProjSettings.isAggregate();
 	}
 
 }

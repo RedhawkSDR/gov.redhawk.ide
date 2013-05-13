@@ -134,7 +134,7 @@ public abstract class ProjectCreator {
 	 * @return Path for the file found, specified in a dialog or null if no file
 	 *         was found
 	 */
-	protected static IPath findLocalFile(final IPath spdFile, final IPath localfilename, final String[] filters) {
+	public static IPath findLocalFile(final IPath spdFile, final IPath localfilename, final String[] filters) {
 		IPath localFile = spdFile.removeLastSegments(1).append(localfilename);
 		if (localFile.toFile().exists()) {
 			return localFile;
