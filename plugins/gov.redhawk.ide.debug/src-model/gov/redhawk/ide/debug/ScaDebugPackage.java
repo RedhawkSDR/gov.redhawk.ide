@@ -1981,7 +1981,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getName_()
 	 * @generated
 	 */
-	int NAME = 18;
+	int NAME = 17;
 	/**
 	 * The meta object id for the '<em>Naming Context</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -1990,7 +1990,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getNamingContext()
 	 * @generated
 	 */
-	int NAMING_CONTEXT = 19;
+	int NAMING_CONTEXT = 18;
 	/**
 	 * The meta object id for the '<em>ILaunch</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -1999,7 +1999,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getILaunch()
 	 * @generated
 	 */
-	int ILAUNCH = 20;
+	int ILAUNCH = 19;
 	/**
 	 * The meta object id for the '<em>Name Component Array</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -2007,26 +2007,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getNameComponentArray()
 	 * @generated
 	 */
-	int NAME_COMPONENT_ARRAY = 21;
-	/**
-	 * The meta object id for the '{@link ExtendedCF.ApplicationExtOperations <em>Application Ext Operations</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @see ExtendedCF.ApplicationExtOperations
-	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getApplicationExtOperations()
-	 * @generated
-	 */
-	int APPLICATION_EXT_OPERATIONS = 15;
-	/**
-	 * The number of structural features of the '<em>Application Ext Operations</em>' class.
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int APPLICATION_EXT_OPERATIONS_FEATURE_COUNT = CfPackage.APPLICATION_OPERATIONS_FEATURE_COUNT + 0;
+	int NAME_COMPONENT_ARRAY = 20;
 	/**
 	 * The meta object id for the '{@link ExtendedCF.SandboxOperations <em>Sandbox Operations</em>}' class.
 	 * <!-- begin-user-doc -->
@@ -2035,7 +2016,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getSandboxOperations()
 	 * @generated
 	 */
-	int SANDBOX_OPERATIONS = 16;
+	int SANDBOX_OPERATIONS = 15;
 	/**
 	 * The number of structural features of the '<em>Sandbox Operations</em>' class.
 	 * <!-- begin-user-doc -->
@@ -2052,7 +2033,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getSandbox()
 	 * @generated
 	 */
-	int SANDBOX = 17;
+	int SANDBOX = 16;
 	/**
 	 * The number of structural features of the '<em>Sandbox</em>' class.
 	 * <!-- begin-user-doc -->
@@ -2069,7 +2050,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getServantNotActive()
 	 * @generated
 	 */
-	int SERVANT_NOT_ACTIVE = 22;
+	int SERVANT_NOT_ACTIVE = 21;
 	/**
 	 * The meta object id for the '<em>Wrong Policy</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -2078,7 +2059,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getWrongPolicy()
 	 * @generated
 	 */
-	int WRONG_POLICY = 23;
+	int WRONG_POLICY = 22;
 	/**
 	 * The meta object id for the '<em>Core Exception</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -2087,7 +2068,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getCoreException()
 	 * @generated
 	 */
-	int CORE_EXCEPTION = 24;
+	int CORE_EXCEPTION = 23;
 
 	/**
 	 * The meta object id for the '<em>Attr Sandbox Operations</em>' data type.
@@ -2097,16 +2078,16 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getAttrSandboxOperations()
 	 * @generated
 	 */
-	int ATTR_SANDBOX_OPERATIONS = 25;
+	int ATTR_SANDBOX_OPERATIONS = 24;
 	/**
-	 * The meta object id for the '<em>Attr Application Ext Operations</em>' data type.
+	 * The meta object id for the '<em>Attr Application Operations</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see ExtendedCF.ApplicationExtOperations
-	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getAttrApplicationExtOperations()
+	 * @see CF.ApplicationOperations
+	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getAttrApplicationOperations()
 	 * @generated
 	 */
-	int ATTR_APPLICATION_EXT_OPERATIONS = 26;
+	int ATTR_APPLICATION_OPERATIONS = 25;
 	/**
 	 * The meta object id for the '<em>Attr Device Manager Operations</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -2115,7 +2096,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getAttrDeviceManagerOperations()
 	 * @generated
 	 */
-	int ATTR_DEVICE_MANAGER_OPERATIONS = 27;
+	int ATTR_DEVICE_MANAGER_OPERATIONS = 26;
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.debug.LocalSca <em>Local Sca</em>}'.
@@ -2594,18 +2575,6 @@ public interface ScaDebugPackage extends EPackage {
 	EDataType getNameComponentArray();
 
 	/**
-	 * Returns the meta object for class '{@link ExtendedCF.ApplicationExtOperations <em>Application Ext Operations</em>}'.
-	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Application Ext Operations</em>'.
-	 * @see ExtendedCF.ApplicationExtOperations
-	 * @model instanceClass="ExtendedCF.ApplicationExtOperations" superTypes="mil.jpeojtrs.sca.cf.ApplicationOperations"
-	 * @generated
-	 */
-	EClass getApplicationExtOperations();
-
-	/**
 	 * Returns the meta object for class '{@link ExtendedCF.SandboxOperations <em>Sandbox Operations</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2672,15 +2641,15 @@ public interface ScaDebugPackage extends EPackage {
 	EDataType getAttrSandboxOperations();
 
 	/**
-	 * Returns the meta object for data type '{@link ExtendedCF.ApplicationExtOperations <em>Attr Application Ext Operations</em>}'.
+	 * Returns the meta object for data type '{@link CF.ApplicationOperations <em>Attr Application Operations</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Attr Application Ext Operations</em>'.
-	 * @see ExtendedCF.ApplicationExtOperations
-	 * @model instanceClass="ExtendedCF.ApplicationExtOperations" serializeable="false"
+	 * @return the meta object for data type '<em>Attr Application Operations</em>'.
+	 * @see CF.ApplicationOperations
+	 * @model instanceClass="CF.ApplicationOperations" serializeable="false"
 	 * @generated
 	 */
-	EDataType getAttrApplicationExtOperations();
+	EDataType getAttrApplicationOperations();
 
 	/**
 	 * Returns the meta object for data type '{@link CF.DeviceManagerOperations <em>Attr Device Manager Operations</em>}'.
@@ -3063,16 +3032,6 @@ public interface ScaDebugPackage extends EPackage {
 		 */
 		EDataType NAME_COMPONENT_ARRAY = eINSTANCE.getNameComponentArray();
 		/**
-		 * The meta object literal for the '{@link ExtendedCF.ApplicationExtOperations <em>Application Ext Operations</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * @since 3.0
-		 * <!-- end-user-doc -->
-		 * @see ExtendedCF.ApplicationExtOperations
-		 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getApplicationExtOperations()
-		 * @generated
-		 */
-		EClass APPLICATION_EXT_OPERATIONS = eINSTANCE.getApplicationExtOperations();
-		/**
 		 * The meta object literal for the '{@link ExtendedCF.SandboxOperations <em>Sandbox Operations</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3127,14 +3086,14 @@ public interface ScaDebugPackage extends EPackage {
 		 */
 		EDataType ATTR_SANDBOX_OPERATIONS = eINSTANCE.getAttrSandboxOperations();
 		/**
-		 * The meta object literal for the '<em>Attr Application Ext Operations</em>' data type.
+		 * The meta object literal for the '<em>Attr Application Operations</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see ExtendedCF.ApplicationExtOperations
-		 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getAttrApplicationExtOperations()
+		 * @see CF.ApplicationOperations
+		 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getAttrApplicationOperations()
 		 * @generated
 		 */
-		EDataType ATTR_APPLICATION_EXT_OPERATIONS = eINSTANCE.getAttrApplicationExtOperations();
+		EDataType ATTR_APPLICATION_OPERATIONS = eINSTANCE.getAttrApplicationOperations();
 		/**
 		 * The meta object literal for the '<em>Attr Device Manager Operations</em>' data type.
 		 * <!-- begin-user-doc -->

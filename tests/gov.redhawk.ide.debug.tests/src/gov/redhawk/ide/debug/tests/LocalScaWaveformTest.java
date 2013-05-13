@@ -10,17 +10,18 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.tests;
 
+import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.debug.ScaDebugFactory;
+import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
+import junit.framework.TestCase;
+import junit.textui.TestRunner;
+
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.emf.common.util.URI;
 
 import CF.DataType;
 import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.ReleaseError;
-import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.ScaDebugFactory;
-import junit.framework.TestCase;
-import junit.textui.TestRunner;
 
 /**
  * <!-- begin-user-doc -->
@@ -30,8 +31,6 @@ import junit.textui.TestRunner;
  * The following operations are tested:
  * <ul>
  *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String) <em>Launch</em>}</li>
- *   <li>{@link ExtendedCF.ApplicationExtOperations#launch(java.lang.String, CF.DataType[], java.lang.String, java.lang.String, java.lang.String) <em>Launch</em>}</li>
- *   <li>{@link ExtendedCF.ApplicationExtOperations#reset(java.lang.String) <em>Reset</em>}</li>
  * </ul>
  * </p>
  * @generated
@@ -111,20 +110,13 @@ public class LocalScaWaveformTest extends TestCase {
 	 * Tests the '{@link gov.redhawk.ide.debug.LocalScaWaveform#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String) <em>Launch</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @throws ExecuteFail 
-	 * @throws CoreException 
 	 * @see gov.redhawk.ide.debug.LocalScaWaveform#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String)
 	 * @generated
 	 */
 	public void testLaunch__String_DataType_URI_String_String() throws CoreException {
-		try {
-			getFixture().launch(null, (DataType[])null, (URI)null, null, null);
-			fail();
-		} catch (IllegalStateException e) {
-			
-		} catch (AssertionFailedException e) {
-			
-		}
+		// TODO: implement this operation test method
+		// Ensure that you remove @generated or mark it @generated NOT
+		fail();
 	}
 
 	/**
@@ -137,7 +129,7 @@ public class LocalScaWaveformTest extends TestCase {
 	 */
 	public void testLaunch__String_DataType_String_String_String() throws ExecuteFail {
 		try {
-			getFixture().launch(null, (DataType[])null, (String)null, null, null);
+			((ApplicationImpl) getFixture()).launch(null, (DataType[])null, (String)null, null, null);
 			fail();
 		} catch (AssertionFailedException e) {
 			
@@ -155,13 +147,13 @@ public class LocalScaWaveformTest extends TestCase {
 	 */
 	public void testReset__String() throws ReleaseError, ExecuteFail {
 		try {
-			getFixture().reset(null);
+			((ApplicationImpl) getFixture()).reset(null);
 			fail();
 		} catch (AssertionFailedException e) {
 			
 		}
 		try {
-			getFixture().reset("");
+			((ApplicationImpl) getFixture()).reset("");
 			fail();
 		} catch (AssertionFailedException e) {
 			

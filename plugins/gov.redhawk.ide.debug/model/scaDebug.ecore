@@ -104,7 +104,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="execParam" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"
         defaultValueLiteral=""/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="LocalScaWaveform" eSuperTypes="../../gov.redhawk.sca.model/model/sca.ecore#//ScaWaveform #//LocalLaunch #//ApplicationExtOperations">
+  <eClassifiers xsi:type="ecore:EClass" name="LocalScaWaveform" eSuperTypes="../../gov.redhawk.sca.model/model/sca.ecore#//ScaWaveform #//LocalLaunch">
     <eOperations name="launch" eType="#//LocalScaComponent" eExceptions="#//CoreException">
       <eParameters name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eParameters name="execParams" eType="ecore:EDataType ../../gov.redhawk.sca.model/model/sca.ecore#//DataTypeArray"/>
@@ -115,7 +115,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="namingContext" lowerBound="1"
         eType="#//NotifyingNamingContext" transient="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="localApp" ordered="false"
-        unique="false" eType="#//AttrApplicationExtOperations" transient="true"/>
+        unique="false" eType="#//AttrApplicationOperations" transient="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LocalScaComponent" eSuperTypes="../../gov.redhawk.sca.model/model/sca.ecore#//ScaComponent #//LocalAbstractComponent"/>
   <eClassifiers xsi:type="ecore:EClass" name="LocalScaDeviceManager" eSuperTypes="../../gov.redhawk.sca.model/model/sca.ecore#//ScaDeviceManager #//LocalLaunch">
@@ -148,28 +148,13 @@
     <eGenericSuperTypes eClassifier="#//LocalAbstractComponent"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LocalScaService" eSuperTypes="../../gov.redhawk.sca.model/model/sca.ecore#//ScaService #//LocalAbstractComponent"/>
-  <eClassifiers xsi:type="ecore:EClass" name="ApplicationExtOperations" instanceClassName="ExtendedCF.ApplicationExtOperations"
-      abstract="true" interface="true" eSuperTypes="platform:/plugin/mil.jpeojtrs.sca.cf/model/cf.ecore#//ApplicationOperations">
-    <eOperations name="launch" eType="ecore:EClass platform:/plugin/mil.jpeojtrs.sca.cf/model/cf.ecore#//Resource"
-        eExceptions="ecore:EDataType platform:/plugin/mil.jpeojtrs.sca.cf/model/cf.ecore#//ExecuteFail">
-      <eParameters name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="execParams" eType="ecore:EDataType ../../gov.redhawk.sca.model/model/sca.ecore#//DataTypeArray"/>
-      <eParameters name="spdURI" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
-      <eParameters name="implID" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
-      <eParameters name="mode" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
-    </eOperations>
-    <eOperations name="reset" eType="ecore:EClass platform:/plugin/mil.jpeojtrs.sca.cf/model/cf.ecore#//Resource"
-        eExceptions="ecore:EDataType platform:/plugin/mil.jpeojtrs.sca.cf/model/cf.ecore#//ReleaseError ecore:EDataType platform:/plugin/mil.jpeojtrs.sca.cf/model/cf.ecore#//ExecuteFail">
-      <eParameters name="compInstId" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
-    </eOperations>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SandboxOperations" instanceClassName="ExtendedCF.SandboxOperations"
       abstract="true" interface="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="Sandbox" instanceClassName="ExtendedCF.Sandbox"
       abstract="true" interface="true" eSuperTypes="platform:/plugin/mil.jpeojtrs.sca.cf/model/cf.ecore#//Object platform:/plugin/mil.jpeojtrs.sca.cf/model/cf.ecore#//IDLEntity #//SandboxOperations"/>
   <eClassifiers xsi:type="ecore:EDataType" name="AttrSandboxOperations" instanceClassName="ExtendedCF.SandboxOperations"
       serializable="false"/>
-  <eClassifiers xsi:type="ecore:EDataType" name="AttrApplicationExtOperations" instanceClassName="ExtendedCF.ApplicationExtOperations"
+  <eClassifiers xsi:type="ecore:EDataType" name="AttrApplicationOperations" instanceClassName="CF.ApplicationOperations"
       serializable="false"/>
   <eClassifiers xsi:type="ecore:EDataType" name="AttrDeviceManagerOperations" instanceClassName="CF.DeviceManagerOperations"
       serializable="false"/>

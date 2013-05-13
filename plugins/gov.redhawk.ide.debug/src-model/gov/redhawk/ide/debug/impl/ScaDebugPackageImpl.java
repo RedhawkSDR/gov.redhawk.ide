@@ -49,8 +49,8 @@ import org.omg.CosNaming.NamingContextExtOperations;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
+import CF.ApplicationOperations;
 import CF.DeviceManagerOperations;
-import ExtendedCF.ApplicationExtOperations;
 import ExtendedCF.Sandbox;
 import ExtendedCF.SandboxOperations;
 
@@ -158,12 +158,6 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass applicationExtOperationsEClass = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EClass sandboxOperationsEClass = null;
 	/**
 	 * <!-- begin-user-doc -->
@@ -225,7 +219,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EDataType attrApplicationExtOperationsEDataType = null;
+	private EDataType attrApplicationOperationsEDataType = null;
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -698,16 +692,6 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getApplicationExtOperations() {
-		return applicationExtOperationsEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -765,8 +749,8 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EDataType getAttrApplicationExtOperations() {
-		return attrApplicationExtOperationsEDataType;
+	public EDataType getAttrApplicationOperations() {
+		return attrApplicationOperationsEDataType;
 	}
 
 	/**
@@ -861,8 +845,6 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 
 		localScaServiceEClass = createEClass(LOCAL_SCA_SERVICE);
 
-		applicationExtOperationsEClass = createEClass(APPLICATION_EXT_OPERATIONS);
-
 		sandboxOperationsEClass = createEClass(SANDBOX_OPERATIONS);
 
 		sandboxEClass = createEClass(SANDBOX);
@@ -876,7 +858,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		wrongPolicyEDataType = createEDataType(WRONG_POLICY);
 		coreExceptionEDataType = createEDataType(CORE_EXCEPTION);
 		attrSandboxOperationsEDataType = createEDataType(ATTR_SANDBOX_OPERATIONS);
-		attrApplicationExtOperationsEDataType = createEDataType(ATTR_APPLICATION_EXT_OPERATIONS);
+		attrApplicationOperationsEDataType = createEDataType(ATTR_APPLICATION_OPERATIONS);
 		attrDeviceManagerOperationsEDataType = createEDataType(ATTR_DEVICE_MANAGER_OPERATIONS);
 	}
 
@@ -924,7 +906,6 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		localAbstractComponentEClass.getESuperTypes().add(this.getLocalLaunch());
 		localScaWaveformEClass.getESuperTypes().add(theScaPackage.getScaWaveform());
 		localScaWaveformEClass.getESuperTypes().add(this.getLocalLaunch());
-		localScaWaveformEClass.getESuperTypes().add(this.getApplicationExtOperations());
 		localScaComponentEClass.getESuperTypes().add(theScaPackage.getScaComponent());
 		localScaComponentEClass.getESuperTypes().add(this.getLocalAbstractComponent());
 		localScaDeviceManagerEClass.getESuperTypes().add(theScaPackage.getScaDeviceManager());
@@ -945,7 +926,6 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		localScaDeviceEClass.getEGenericSuperTypes().add(g1);
 		localScaServiceEClass.getESuperTypes().add(theScaPackage.getScaService());
 		localScaServiceEClass.getESuperTypes().add(this.getLocalAbstractComponent());
-		applicationExtOperationsEClass.getESuperTypes().add(theCfPackage.getApplicationOperations());
 		sandboxEClass.getESuperTypes().add(theCfPackage.getObject());
 		sandboxEClass.getESuperTypes().add(theCfPackage.getIDLEntity());
 		sandboxEClass.getESuperTypes().add(this.getSandboxOperations());
@@ -1004,7 +984,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 
 		initEClass(localScaWaveformEClass, LocalScaWaveform.class, "LocalScaWaveform", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getLocalScaWaveform_NamingContext(), this.getNotifyingNamingContext(), null, "namingContext", null, 1, 1, LocalScaWaveform.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getLocalScaWaveform_LocalApp(), this.getAttrApplicationExtOperations(), "localApp", null, 0, 1, LocalScaWaveform.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEAttribute(getLocalScaWaveform_LocalApp(), this.getAttrApplicationOperations(), "localApp", null, 0, 1, LocalScaWaveform.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
 		op = addEOperation(localScaWaveformEClass, this.getLocalScaComponent(), "launch", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "id", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -1028,21 +1008,6 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 
 		initEClass(localScaServiceEClass, LocalScaService.class, "LocalScaService", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(applicationExtOperationsEClass, ApplicationExtOperations.class, "ApplicationExtOperations", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
-
-		op = addEOperation(applicationExtOperationsEClass, theCfPackage.getResource(), "launch", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEString(), "id", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theScaPackage.getDataTypeArray(), "execParams", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "spdURI", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "implID", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "mode", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEException(op, theCfPackage.getExecuteFail());
-
-		op = addEOperation(applicationExtOperationsEClass, theCfPackage.getResource(), "reset", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "compInstId", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEException(op, theCfPackage.getReleaseError());
-		addEException(op, theCfPackage.getExecuteFail());
-
 		initEClass(sandboxOperationsEClass, SandboxOperations.class, "SandboxOperations", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(sandboxEClass, Sandbox.class, "Sandbox", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
@@ -1056,7 +1021,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		initEDataType(wrongPolicyEDataType, WrongPolicy.class, "WrongPolicy", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(coreExceptionEDataType, CoreException.class, "CoreException", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(attrSandboxOperationsEDataType, SandboxOperations.class, "AttrSandboxOperations", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(attrApplicationExtOperationsEDataType, ApplicationExtOperations.class, "AttrApplicationExtOperations", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(attrApplicationOperationsEDataType, ApplicationOperations.class, "AttrApplicationOperations", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(attrDeviceManagerOperationsEDataType, DeviceManagerOperations.class, "AttrDeviceManagerOperations", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource

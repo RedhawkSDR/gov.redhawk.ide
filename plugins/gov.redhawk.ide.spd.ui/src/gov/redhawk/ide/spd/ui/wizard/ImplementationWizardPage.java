@@ -246,7 +246,7 @@ public class ImplementationWizardPage extends WizardPage {
 		this.importLabel = new Label(client, SWT.NULL);
 		this.importLabel.setLayoutData(labelFactory.create());
 		this.importSourceCode = new Button(client, SWT.CHECK | SWT.BORDER);
-		this.importLabel.setText("Import Source Code:");
+		this.importSourceCode.setText("Import Source Code");
 
 		this.importSourceCode.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(final SelectionEvent e) {

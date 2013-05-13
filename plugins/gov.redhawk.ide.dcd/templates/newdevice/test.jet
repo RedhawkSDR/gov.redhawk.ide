@@ -29,7 +29,7 @@ class DeviceTests(ossie.utils.testing.ScaComponentTestCase):
 	<% } else if ("Executable".equals(args.getDeviceType())) { %>
         self.assertEqual(self.comp.ref._is_a("IDL:CF/ExecutableDevice:1.0"), True)
 	<% } %>
-        self.assertEqual(self.spd.get_id(), self.comp.ref._get_identifier())
+        # self.assertEqual(self.spd.get_id(), self.comp.ref._get_identifier())
         
         #######################################################################
         # Simulate regular device startup

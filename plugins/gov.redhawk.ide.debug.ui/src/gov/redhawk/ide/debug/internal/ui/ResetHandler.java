@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui;
 
+import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.sca.ui.ScaUiPlugin;
@@ -33,8 +35,6 @@ import org.omg.CORBA.SystemException;
 
 import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.ReleaseError;
-import ExtendedCF.ApplicationExt;
-import ExtendedCF.ApplicationExtHelper;
 
 /**
  * 
@@ -54,10 +54,12 @@ public class ResetHandler extends AbstractHandler implements IHandler {
 		protected IStatus run(final IProgressMonitor monitor) {
 			final ScaWaveform waveform = this.component.getWaveform();
 			monitor.beginTask("Reseting Component " + this.component.getName(), 2);
-			if (waveform != null && waveform._is_a(ApplicationExtHelper.id())) {
+			
+				
+			if (waveform instanceof LocalScaWaveform) {
 				try {
-					final ApplicationExt ext = ApplicationExtHelper.narrow(waveform.getCorbaObj());
-					ext.reset(this.component.getInstantiationIdentifier());
+					LocalScaWaveform localWaveform = (LocalScaWaveform) waveform;
+					((ApplicationImpl) localWaveform.getLocalApp()).reset(this.component.getInstantiationIdentifier());
 					monitor.worked(1);
 				} catch (final ReleaseError e) {
 					return new Status(IStatus.ERROR, ScaUiPlugin.PLUGIN_ID, "Failed to reset component: " + this.component.getName() + " "
@@ -89,7 +91,7 @@ public class ResetHandler extends AbstractHandler implements IHandler {
 				final ScaComponent comp = PluginUtil.adapt(ScaComponent.class, obj);
 				if (comp != null) {
 					final ScaWaveform waveform = comp.getWaveform();
-					if (waveform != null && waveform._is_a(ApplicationExtHelper.id())) {
+					if (waveform != null && waveform instanceof LocalScaWaveform) {
 						new ResetJob(comp).schedule();
 					}
 				}
@@ -109,7 +111,7 @@ public class ResetHandler extends AbstractHandler implements IHandler {
 					final ScaComponent comp = PluginUtil.adapt(ScaComponent.class, obj);
 					if (comp != null && comp.getWaveform() != null) {
 						final ScaWaveform waveform = comp.getWaveform();
-						setBaseEnabled(waveform._is_a(ApplicationExtHelper.id()));
+						setBaseEnabled(waveform instanceof LocalScaWaveform);
 						return;
 					}
 				}

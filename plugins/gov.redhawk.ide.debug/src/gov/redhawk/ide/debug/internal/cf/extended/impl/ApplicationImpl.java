@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
@@ -43,6 +45,7 @@ import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.AnyUtils;
+import mil.jpeojtrs.sca.util.NamedThreadFactory;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.core.runtime.CoreException;
@@ -50,6 +53,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -60,7 +64,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.jacorb.naming.Name;
@@ -98,12 +101,12 @@ import CF.PropertySetPackage.PartialConfiguration;
 import CF.ResourcePackage.StartError;
 import CF.ResourcePackage.StopError;
 import CF.TestableObjectPackage.UnknownTest;
-import ExtendedCF.ApplicationExtOperations;
 
 /**
  * 
  */
-public class ApplicationImpl extends EObjectImpl implements IProcess, ApplicationOperations, ApplicationExtOperations, IAdaptable {
+public class ApplicationImpl extends PlatformObject implements IProcess, ApplicationOperations, IAdaptable {
+	private static final ExecutorService APP_EXECUTOR = Executors.newCachedThreadPool(new NamedThreadFactory(ApplicationImpl.class.getName()));
 
 	private static interface ConnectionInfo {
 		String getConnectionID();
@@ -849,11 +852,6 @@ public class ApplicationImpl extends EObjectImpl implements IProcess, Applicatio
 	}
 
 	private List<ConnectionInfo> getConnectionInfo(final LocalScaComponent oldComponent) {
-		try {
-			this.waveform.refresh(null, RefreshDepth.FULL);
-		} catch (final InterruptedException e) {
-			// PASS
-		}
 		final List<ConnectionInfo> retVal = new ArrayList<ApplicationImpl.ConnectionInfo>();
 
 		// Create list of connections that connect to me

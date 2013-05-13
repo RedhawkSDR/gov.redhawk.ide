@@ -15,8 +15,8 @@ import gov.redhawk.model.sca.ScaWaveform;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.URI;
 
+import CF.ApplicationOperations;
 import CF.DataType;
-import ExtendedCF.ApplicationExtOperations;
 
 /**
  * <!-- begin-user-doc -->
@@ -32,10 +32,10 @@ import ExtendedCF.ApplicationExtOperations;
  * </p>
  *
  * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalScaWaveform()
- * @model superTypes="gov.redhawk.model.sca.ScaWaveform gov.redhawk.ide.debug.LocalLaunch gov.redhawk.ide.debug.ApplicationExtOperations"
+ * @model
  * @generated
  */
-public interface LocalScaWaveform extends ScaWaveform, LocalLaunch, ApplicationExtOperations {
+public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 
 	/**
 	 * Returns the value of the '<em><b>Naming Context</b></em>' reference.
@@ -69,23 +69,22 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch, ApplicationE
 	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Local App</em>' attribute.
-	 * @see #setLocalApp(ApplicationExtOperations)
+	 * @see #setLocalApp(ApplicationOperations)
 	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalScaWaveform_LocalApp()
-	 * @model unique="false" dataType="gov.redhawk.ide.debug.AttrApplicationExtOperations" transient="true" ordered="false"
+	 * @model unique="false" dataType="gov.redhawk.ide.debug.AttrApplicationOperations" transient="true" ordered="false"
 	 * @generated
 	 */
-	ApplicationExtOperations getLocalApp();
+	ApplicationOperations getLocalApp();
 
 	/**
 	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaWaveform#getLocalApp <em>Local App</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Local App</em>' attribute.
 	 * @see #getLocalApp()
 	 * @generated
 	 */
-	void setLocalApp(ApplicationExtOperations value);
+	void setLocalApp(ApplicationOperations value);
 
 	/**
 	 * <!-- begin-user-doc -->

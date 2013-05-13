@@ -19,13 +19,6 @@ import gov.redhawk.model.sca.impl.ScaDeviceImpl;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.common.notify.Notification;
-import java.util.Collection;
-
-import mil.jpeojtrs.sca.spd.SoftPkg;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 

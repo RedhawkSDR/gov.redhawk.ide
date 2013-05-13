@@ -46,7 +46,10 @@ import org.omg.CosNaming.NamingContextPackage.InvalidName;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
+import CF.Application;
 import CF.ApplicationHelper;
+import CF.ApplicationOperations;
+import CF.ApplicationPOATie;
 import CF.ComponentType;
 import CF.DataType;
 import CF.Resource;
@@ -54,10 +57,6 @@ import CF.ResourceHelper;
 import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.InitializeError;
 import CF.LifeCyclePackage.ReleaseError;
-import ExtendedCF.ApplicationExt;
-import ExtendedCF.ApplicationExtHelper;
-import ExtendedCF.ApplicationExtOperations;
-import ExtendedCF.ApplicationExtPOATie;
 
 /**
  * <!-- begin-user-doc -->
@@ -134,7 +133,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * @generated
 	 * @ordered
 	 */
-	protected static final ApplicationExtOperations LOCAL_APP_EDEFAULT = null;
+	protected static final ApplicationOperations LOCAL_APP_EDEFAULT = null;
 
 	/**
 	 * The cached value of the '{@link #getLocalApp() <em>Local App</em>}' attribute.
@@ -144,7 +143,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * @generated
 	 * @ordered
 	 */
-	protected ApplicationExtOperations localApp = LOCAL_APP_EDEFAULT;
+	protected ApplicationOperations localApp = LOCAL_APP_EDEFAULT;
 	
 	private OrbSession session = OrbSession.createSession();
 
@@ -362,19 +361,18 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ApplicationExtOperations getLocalApp() {
+	public ApplicationOperations getLocalApp() {
 		return localApp;
 	}
 
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setLocalAppGen(ApplicationExtOperations newLocalApp) {
-		ApplicationExtOperations oldLocalApp = localApp;
+	public void setLocalAppGen(ApplicationOperations newLocalApp) {
+		ApplicationOperations oldLocalApp = localApp;
 		localApp = newLocalApp;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP, oldLocalApp, localApp));
@@ -387,13 +385,13 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public void setLocalApp(final ApplicationExtOperations newLocalApp) {
+	public void setLocalApp(final ApplicationOperations newLocalApp) {
 		setLocalAppGen(newLocalApp);
-		ApplicationExt ref = null;
+		Application ref = null;
 		
 		if (newLocalApp != null) {
 			try {
-				ref = ApplicationExtHelper.narrow(session.getPOA().servant_to_reference(new ApplicationExtPOATie(newLocalApp)));
+				ref = ApplicationHelper.narrow(session.getPOA().servant_to_reference(new ApplicationPOATie(newLocalApp)));
 			} catch (ServantNotActive e) {
 				ScaDebugPlugin.logError("Failed to setup Device manager servant.", e);
 			} catch (WrongPolicy e) {
@@ -442,7 +440,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		Assert.isNotNull(spdURI);
 		Assert.isNotNull(implID);
 		Assert.isNotNull(getLocalApp(), "Null application");
-		return getLocalApp().launch(id, execParams, spdURI, implID, mode);
+		return ((ApplicationImpl) getLocalApp()).launch(id, execParams, spdURI, implID, mode);
 	}
 
 
@@ -455,7 +453,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	public Resource reset(String compInstId) throws ReleaseError, ExecuteFail {
 		Assert.isNotNull(compInstId);
 		Assert.isNotNull(getLocalApp(), "Null application");
-		return getLocalApp().reset(compInstId);
+		return ((ApplicationImpl) getLocalApp()).reset(compInstId);
 	}
 
 
@@ -500,7 +498,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 				setNamingContext((NotifyingNamingContext)newValue);
 				return;
 			case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
-				setLocalApp((ApplicationExtOperations)newValue);
+				setLocalApp((ApplicationOperations)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -567,11 +565,6 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 				default: return -1;
 			}
 		}
-		if (baseClass == ApplicationExtOperations.class) {
-			switch (derivedFeatureID) {
-				default: return -1;
-			}
-		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -587,11 +580,6 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			switch (baseFeatureID) {
 				case ScaDebugPackage.LOCAL_LAUNCH__LAUNCH: return ScaDebugPackage.LOCAL_SCA_WAVEFORM__LAUNCH;
 				case ScaDebugPackage.LOCAL_LAUNCH__MODE: return ScaDebugPackage.LOCAL_SCA_WAVEFORM__MODE;
-				default: return -1;
-			}
-		}
-		if (baseClass == ApplicationExtOperations.class) {
-			switch (baseFeatureID) {
 				default: return -1;
 			}
 		}

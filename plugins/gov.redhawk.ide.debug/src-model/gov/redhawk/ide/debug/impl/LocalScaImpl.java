@@ -427,17 +427,10 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 * @generated
 	 */
 	public void setSandbox(SandboxOperations newSandbox) {
-		setSandboxGen(newSandbox);
-		if (this.sandbox != null) {
-			try {
-				init();
-				this.refreshJob.schedule();
-			} catch (CoreException e) {
-				ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
-			}
-		} else {
-			// TODO
-		}
+		SandboxOperations oldSandbox = sandbox;
+		sandbox = newSandbox;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__SANDBOX, oldSandbox, sandbox));
 	}
 
 	private static final Debug DEBUG = new Debug(ScaDebugPlugin.getInstance(), "localSca");
