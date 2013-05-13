@@ -7,8 +7,7 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: ExtendedCF,
- gov.redhawk.ide.debug,
+Export-Package: gov.redhawk.ide.debug,
  gov.redhawk.ide.debug.impl,
  gov.redhawk.ide.debug.impl.commands;x-internal:=true,
  gov.redhawk.ide.debug.internal;x-internal:=true,

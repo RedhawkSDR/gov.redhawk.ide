@@ -45,7 +45,9 @@ import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
+import CF.Application;
 import CF.ApplicationHelper;
+import CF.ApplicationPOATie;
 import CF.ComponentType;
 import CF.DataType;
 import CF.Resource;
@@ -53,9 +55,6 @@ import CF.ResourceHelper;
 import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.InitializeError;
 import CF.LifeCyclePackage.ReleaseError;
-import ExtendedCF.ApplicationExt;
-import ExtendedCF.ApplicationExtHelper;
-import ExtendedCF.ApplicationExtPOATie;
 
 /**
  * <!-- begin-user-doc -->
@@ -373,11 +372,11 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	public void setLocalApp(final ApplicationImpl newLocalApp, final POA poa) throws ServantNotActive, WrongPolicy {
 		setLocalApp(newLocalApp);
-		final ApplicationExt ref;
+		final Application ref;
 		if (poa == null) {
 			ref = null;
 		} else {
-			ref = ApplicationExtHelper.narrow(poa.servant_to_reference(new ApplicationExtPOATie(newLocalApp)));
+			ref = ApplicationHelper.narrow(poa.servant_to_reference(new ApplicationPOATie(newLocalApp)));
 		}
         
 	        

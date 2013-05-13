@@ -104,12 +104,11 @@ import CF.PropertySetPackage.PartialConfiguration;
 import CF.ResourcePackage.StartError;
 import CF.ResourcePackage.StopError;
 import CF.TestableObjectPackage.UnknownTest;
-import ExtendedCF.ApplicationExtOperations;
 
 /**
  * 
  */
-public class ApplicationImpl extends PlatformObject implements IProcess, ApplicationOperations, ApplicationExtOperations {
+public class ApplicationImpl extends PlatformObject implements IProcess, ApplicationOperations {
 	private static final ExecutorService APP_EXECUTOR = Executors.newCachedThreadPool(new NamedThreadFactory(ApplicationImpl.class.getName()));
 
 	private static interface ConnectionInfo {
@@ -844,11 +843,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	private List<ConnectionInfo> getConnectionInfo(final LocalScaComponent oldComponent) {
-		try {
-			this.waveform.refresh(null, RefreshDepth.FULL);
-		} catch (final InterruptedException e) {
-			// PASS
-		}
 		final List<ConnectionInfo> retVal = new ArrayList<ApplicationImpl.ConnectionInfo>();
 
 		// Create list of connections that connect to me
