@@ -210,6 +210,17 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 										break out;
 									}
 								}
+								if (spd.getDescriptor() != null) {
+									SoftwareComponent comp = spd.getDescriptor().getComponent();
+									ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(comp);
+									switch(type) {
+									case RESOURCE:
+										break;
+									default:
+										add = false;
+										break;
+									}
+								}
 								if (add) {
 									final SpdToolEntry entry = new SpdToolEntry(spd);
 									entriesToAdd.add(entry);

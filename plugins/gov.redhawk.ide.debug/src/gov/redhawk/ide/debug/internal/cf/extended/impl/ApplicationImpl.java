@@ -502,7 +502,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	protected void disconnectAll() {
 		this.streams.getOutStream().println("Disconnecting connections...");
 		// Disconnect components
-		for (final ScaComponent info : this.waveform.getComponents()) {
+		for (final ScaComponent info : this.waveform.getComponents().toArray(new ScaComponent[waveform.getComponents().size()])) {
 			disconnect(info);
 		}
 		this.streams.getOutStream().println("Disconnected");
@@ -512,7 +512,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 * @param info
 	 */
 	protected void disconnect(final ScaComponent comp) {
-		for (final ScaPort< ? , ? > port : comp.getPorts()) {
+		for (final ScaPort< ? , ? > port : comp.getPorts().toArray(new ScaPort<?,?>[comp.getPorts().size()])) {
 			if (port instanceof ScaUsesPort) {
 				final ScaUsesPort up = (ScaUsesPort) port;
 				final ScaConnection[] connections = up.getConnections().toArray(new ScaConnection[up.getConnections().size()]);
