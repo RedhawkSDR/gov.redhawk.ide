@@ -16,12 +16,15 @@ import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.impl.commands.LocalMergeServicesCommand;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDevice;
-import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.impl.ScaDeviceManagerImpl;
 import gov.redhawk.sca.util.SilentJob;
+
+import java.util.Map;
+
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,6 +32,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
@@ -44,6 +48,7 @@ import CF.DeviceManagerHelper;
 import CF.DeviceManagerPOATie;
 import CF.ExecutableDeviceHelper;
 import CF.LoadableDeviceHelper;
+import CF.DeviceManagerPackage.ServiceType;
 
 /**
  * <!-- begin-user-doc -->
@@ -483,6 +488,11 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	@Override
 	protected ScaDevice< ? > createType(EClass type) {
 	    return (ScaDevice< ? >) ScaDebugFactory.eINSTANCE.create(type);
+	}
+	
+	@Override
+	protected Command createMergeServicesCommand(Map<String, ServiceType> newServices) {
+	    return new LocalMergeServicesCommand(this, newServices);
 	}
 
 } //LocalScaDeviceManagerImpl
