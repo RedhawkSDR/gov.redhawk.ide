@@ -8,6 +8,8 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+
+ // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
 import gov.redhawk.ide.debug.LocalAbstractComponent;
@@ -380,6 +382,11 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	public void dispose() {
 	    super.dispose();
 	    new TerminateJob(this, getName()).schedule();
+	}
+	
+	@Override
+	public void unsetProfileURI() {
+	    
 	}
 
 } //LocalScaServiceImpl

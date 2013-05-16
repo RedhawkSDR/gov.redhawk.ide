@@ -10,33 +10,72 @@
  *******************************************************************************/
 package gov.redhawk.ide.spd.ui.wizard;
 
+import gov.redhawk.ide.RedhawkIdeActivator;
+import gov.redhawk.ide.codegen.CodegenFactory;
+import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
 import gov.redhawk.ide.codegen.IScaComponentCodegen;
 import gov.redhawk.ide.codegen.ITemplateDesc;
 import gov.redhawk.ide.codegen.ImplementationSettings;
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
+import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.ide.codegen.ui.ICodegenWizardPage;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
+import gov.redhawk.ide.codegen.util.CodegenFileHelper;
 import gov.redhawk.ide.codegen.util.ImplementationAndSettings;
+import gov.redhawk.ide.codegen.util.ProjectCreator;
+import gov.redhawk.ide.spd.generator.newcomponent.ComponentProjectCreator;
+import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
+import gov.redhawk.ide.ui.wizard.ScaProjectPropertiesWizardPage;
+import gov.redhawk.ide.util.ResourceUtils;
+import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.sca.util.SubMonitor;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import mil.jpeojtrs.sca.prf.PrfPackage;
+import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.spd.Code;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdFactory;
+import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.DceUuidUtil;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 /**
  * @since 7.0
@@ -51,12 +90,12 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	private String lastSpdFile = "";
 	private List<IWizardPage> wizPages;
 	private boolean initializing = false;
-
 	private IConfigurationElement fConfig;
-
 	private int firstImplPage;
-
 	private final String componentType;
+	/** The component properties page. */
+	protected ScaProjectPropertiesWizardPage resourcePropertiesPage;
+	protected ImplementationWizardPage implPage;
 
 	public NewScaResourceWizard(final String componentType) {
 		super();
@@ -129,8 +168,8 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 			}
 			ICodegenWizardPage codeGenPage = null;
 			boolean createControl = true;
-			final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry()
-			        .findTemplatesByCodegen(codeGeneratorDescriptor.getId(), this.componentType);
+			final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(codeGeneratorDescriptor.getId(),
+			        this.componentType);
 
 			// Add the new page first
 			if (templates.length > 0) {
@@ -312,6 +351,256 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	 */
 	public boolean checkGenerator(final ImplementationSettings settings, final ICodeGeneratorDescriptor codeGeneratorDescriptor) {
 		return false;
+	}
+
+	/**
+	 * @since 4.0
+	 */
+	public void importSelected(final String spdFile) {
+		if (!getLastSpdFile().equals(spdFile)) {
+			setLastSpdFile(spdFile);
+
+			// Clear out the last implementations pages
+			for (int i = (getWizPages().size() - 1); i > 0; --i) {
+				getWizPages().remove(i).dispose();
+			}
+			// Clear out the old implementations and map
+			getImplList().clear();
+
+			final String name = getProjectName();
+			final String id = getID();
+
+			// If spdFile is blank, then we're making a new implementation
+			if ("".equals(spdFile)) {
+				final ImplementationWizardPage page = new ImplementationWizardPage("", getType());
+				addPage(page);
+				page.setName(name);
+				getImplList().add(new ImplementationAndSettings(page.getImplementation(), page.getImplSettings()));
+				// Create a softpkg
+				final SoftPkg softPkg = SpdFactory.eINSTANCE.createSoftPkg();
+				softPkg.setName(name);
+				softPkg.setId(id);
+				setSoftPkg(softPkg);
+			} else {
+				final URI fileURI = URI.createFileURI(spdFile);
+
+				// Load the soft package
+				setSoftPkg(ModelUtil.loadSoftPkg(fileURI));
+				getSoftPkg().setName(name);
+				getSoftPkg().setId(id);
+
+				WaveDevSettings waveSettings = null;
+				try {
+					waveSettings = CodegenUtil.getWaveDevSettings(CodegenUtil.getWaveDevSettingsURI(fileURI));
+				} catch (final Exception e) {
+					RedhawkCodegenActivator.logInfo("Unable to find the wavedev settings file, using defaults.");
+					waveSettings = CodegenFactory.eINSTANCE.createWaveDevSettings();
+				}
+
+				// Make sure there are default settings for all implementations
+				CodegenUtil.recreateImplSettings(getSoftPkg(), waveSettings);
+
+				setImportedSettingsMap(CodegenFileHelper.settingsHasSourceCode(waveSettings, fileURI));
+
+				setInitializing(true);
+
+				try {
+					// Loop through all the implementations
+					for (final Implementation impl : getSoftPkg().getImplementation()) {
+						final ImplementationSettings oldImplSettings = waveSettings.getImplSettings().get(impl.getId());
+
+						// Create and add the page for the implementation
+						final ImplementationWizardPage page = new ImplementationWizardPage("", getSoftPkg());
+						addPage(page);
+
+						// Import the implementation
+						page.importImplementation(impl, oldImplSettings);
+
+						final ImplementationSettings settings = page.getImplSettings();
+
+						final Boolean found = getImportedSettingsMap().get(impl.getId());
+						if ((found != null) && found.booleanValue()) {
+							page.enableImportCode(true);
+						}
+
+						// Configure the settings page if there is one for this
+						// implementation
+						final ICodeGeneratorDescriptor codeGen = page.getCodeGenerator();
+						final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(codeGen.getId(), getType());
+						if (templates.length > 0) {
+							// findPageByGeneratorId is always guaranteed to return
+							// at least one page. Add this page to the wizard
+							final ICodegenWizardPage codeGenPage = RedhawkCodegenUiActivator.getCodeGeneratorsRegistry().findPageByGeneratorId(settings.getGeneratorId())[0];
+							addPage(codeGenPage);
+
+							// Enable the canFlip if this isn't the last page in the list
+							codeGenPage.setCanFlipToNextPage((getImplList().size() + 1) != getSoftPkg().getImplementation().size());
+
+							// Configure the wizard page with the current settings
+							codeGenPage.configure(getSoftPkg(), getImplementation(), codeGen, settings, getType());
+						}
+
+						// Save the settings
+						getImplList().add(new ImplementationAndSettings(impl, settings));
+					}
+
+				} finally {
+					setInitializing(false);
+				}
+			}
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean performFinish() {
+		this.updateEntryPoints();
+		final boolean isCreateNewResource = this.resourcePropertiesPage.getContentsGroup().isCreateNewResource();
+		final IWorkingSet[] workingSets = this.resourcePropertiesPage.getSelectedWorkingSets();
+		final String projectName = this.resourcePropertiesPage.getProjectName();
+		final java.net.URI locationURI;
+		if (this.resourcePropertiesPage.useDefaults()) {
+			locationURI = null;
+		} else {
+			locationURI = this.resourcePropertiesPage.getLocationURI();
+		}
+		this.resourcePropertiesPage.getProjectHandle();
+		final IPath existingResourceLocation = this.resourcePropertiesPage.getContentsGroup().getExistingResourcePath();
+
+		// Create the SCA component project
+		final WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
+
+			@Override
+			protected void execute(final IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
+				try {
+					final SubMonitor progress = SubMonitor.convert(monitor, "Creating project...", 4 + getImplList().size()); // SUPPRESS CHECKSTYLE MagicNumber 
+
+					// Create an empty project
+					final IProject project = createEmptyProject(projectName, locationURI, progress.newChild(1));
+					try {
+						if (workingSets.length > 0) {
+							PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(project, workingSets);
+						}
+						BasicNewProjectResourceWizard.updatePerspective(getfConfig());
+
+						// If we're creating a new component (vs importing one)
+						if (isCreateNewResource) {
+							// Create the SCA XML files
+							setOpenEditorOn(createComponentFiles(project, projectName, getSoftPkg().getId(), null, progress.newChild(1)));
+
+							// Create the implementation
+							final ImplementationWizardPage page = (ImplementationWizardPage) getWizPages().get(1);
+							final Implementation impl = page.getImplementation();
+							final ImplementationSettings settings = page.getImplSettings();
+							ProjectCreator.addImplementation(project, impl, settings, progress.newChild(1));
+						} else {
+							setOpenEditorOn(ProjectCreator.importFiles(project, existingResourceLocation, getImplList(), getImportedSettingsMap(), progress.newChild(2), getSoftPkg().getId()));
+						}
+
+						// Setup the IDL Path
+						ResourceUtils.createIdlLibraryResource(project, progress.newChild(1));
+
+						// Generate initial code
+						// Disable auto-generate at least for now until we have a better consensus on what state
+						// we want a project to be in immediately after it is created
+						//						if (isCreateNewResource) {
+						//							final GenerateCode gc = new GenerateCode();
+						//							for (final ImplementationAndSettings pair : NewScaResourceProjectWizard.this.getImplList()) {
+						//								final IStatus status = gc.generateImpl(pair.getImplementation(), progress.newChild(1));
+						//								if (!status.isOK()) {
+						//									throw new CoreException(status);
+						//								}
+						//							}
+						//						}
+					} catch (final Exception e) {
+						if (project != null) {
+							project.delete(true, progress.newChild(1));
+						}
+						throw e;
+					}
+				} catch (final CoreException e) {
+					throw e;
+				} catch (final Exception e) {
+					throw new CoreException(new Status(IStatus.ERROR, ComponentUiPlugin.PLUGIN_ID, "Error creating project", e));
+				} finally {
+
+					if (monitor != null) {
+						monitor.done();
+					}
+				}
+			}
+
+		};
+
+		try {
+			this.getContainer().run(true, false, operation);
+
+			// Open the default editor for the new SCA component; also invoke code generator for manual templates
+			final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			final IFile spdFile = this.getOpenEditorOn();
+			if ((spdFile != null) && spdFile.exists()) {
+				try {
+					IDE.openEditor(activePage, spdFile, true);
+				} catch (final PartInitException e) {
+					// PASS
+				}
+			}
+
+			// Only update perspective on new component projects (not imports)
+			//			if (isCreateNewResource) {
+			//				final ImplementationSettings settings = this.getImplList().get(0).getImplementationSettings();
+			//				final ICodeGeneratorDescriptor descriptor = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(settings.getGeneratorId());
+			//				new OpenAssociatedPerspectiveJob(descriptor).schedule();
+			//			}
+
+			return true;
+		} catch (final InvocationTargetException e1) {
+			if (e1.getCause() instanceof CoreException) {
+				ComponentUiPlugin.logException(e1);
+				//StatusManager.getManager().handle(((CoreException) e1.getCause()).getStatus(), StatusManager.SHOW);
+			}
+			return false;
+		} catch (final InterruptedException e1) {
+			return true;
+		}
+
+	}
+
+	protected abstract IFile createComponentFiles(IProject project, String spdName, String id, String author, IProgressMonitor monitor) throws CoreException;
+
+	protected abstract IProject createEmptyProject(String projectName, java.net.URI locationURI, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * @since 4.0
+	 */
+	public void switchingResourcePage() {
+		final ImplementationWizardPage page = (ImplementationWizardPage) this.getWizPages().get(1);
+		page.setName(this.resourcePropertiesPage.getProjectName());
+
+		// Create a softpkg
+		final SoftPkg softPkg = SpdFactory.eINSTANCE.createSoftPkg();
+		softPkg.setName(this.resourcePropertiesPage.getProjectName());
+		softPkg.setId(getID());
+		this.setSoftPkg(softPkg);
+	}
+
+	protected Implementation getImplementation() {
+		return implPage.getImplementation();
+	}
+
+	protected String getID() {
+		// Figure out the ID we'll use 
+		return this.resourcePropertiesPage.getIdGroup().getId();
+	}
+
+	protected String getProjectName() {
+		return resourcePropertiesPage.getProjectName();
+	}
+
+	protected String getType() {
+		return ICodeGeneratorDescriptor.COMPONENT_TYPE_RESOURCE;
 	}
 
 }

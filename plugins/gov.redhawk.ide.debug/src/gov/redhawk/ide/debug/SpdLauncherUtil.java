@@ -6,12 +6,14 @@
 package gov.redhawk.ide.debug;
 
 import gov.redhawk.ide.debug.variables.LaunchVariables;
+import gov.redhawk.model.sca.IRefreshable;
 import gov.redhawk.model.sca.ProfileObjectWrapper;
-import gov.redhawk.model.sca.ScaAbstractComponent;
+import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaFactory;
+import gov.redhawk.model.sca.ScaPropertyContainer;
 import gov.redhawk.model.sca.ScaService;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -21,6 +23,7 @@ import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.OrbSession;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -65,6 +68,10 @@ import CF.ResourcePackage.StartError;
  * @since 3.0
  */
 public final class SpdLauncherUtil {
+	/**
+	 * @since 3.0
+	 */
+	public static final String LAUNCH_ATT_PROGRAM_ARGUMENT_MAP = ScaDebugPlugin.ID + ".programArgumentMap";
 
 	private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
 	private static final Debug DEBUG_ARGS = new Debug(ScaDebugPlugin.getInstance(), "LauncherArgs");
@@ -73,8 +80,9 @@ public final class SpdLauncherUtil {
 
 	}
 
-	public static void postLaunch(final SoftPkg spd, final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
-		Map programArgs = configuration.getAttribute(ScaLauncherUtil.LAUNCH_ATT_PROGRAM_ARGUMENT_MAP, Collections.EMPTY_MAP);
+	public static void postLaunch(final SoftPkg spd, final ILaunchConfiguration configuration, final String mode, final ILaunch launch,
+	        final IProgressMonitor monitor) throws CoreException {
+		Map< ? , ? > programArgs = configuration.getAttribute(LAUNCH_ATT_PROGRAM_ARGUMENT_MAP, Collections.EMPTY_MAP);
 
 		LocalAbstractComponent comp = null;
 		try {
@@ -112,11 +120,24 @@ public final class SpdLauncherUtil {
 				((ProfileObjectWrapper< ? >) newComponent).setProfileURI(spd.eResource().getURI());
 			}
 		});
+		if (newComponent instanceof ProfileObjectWrapper< ? >) {
+			((ProfileObjectWrapper< ? >) newComponent).fetchProfileObject(null);
+		}
 
-		if (newComponent instanceof ScaAbstractComponent< ? >) {
-			final ScaAbstractComponent< ? > scaComp = (ScaAbstractComponent< ? >) newComponent;
+		if (newComponent instanceof IRefreshable) {
+			try {
+				((IRefreshable) newComponent).refresh(null, RefreshDepth.FULL);
+			} catch (InterruptedException e) {
+				// PASS
+			}
+		}
+
+		if (newComponent instanceof ScaPropertyContainer< ? , ? >) {
+			final ScaPropertyContainer< ? , ? > scaComp = (ScaPropertyContainer< ? , ? >) newComponent;
 			final ScaComponent tmp = ScaFactory.eINSTANCE.createScaComponent();
-			tmp.setProfileObj(scaComp.getProfileObj());
+			if (scaComp.getProfileObj() instanceof SoftPkg) {
+				tmp.setProfileObj((SoftPkg) scaComp.getProfileObj());
+			}
 			for (final ScaAbstractProperty< ? > prop : tmp.fetchProperties(null)) {
 				prop.setIgnoreRemoteSet(true);
 			}
@@ -145,6 +166,14 @@ public final class SpdLauncherUtil {
 				}
 			}
 		}
+
+		if (newComponent instanceof IRefreshable) {
+			try {
+				((IRefreshable) newComponent).refresh(null, RefreshDepth.FULL);
+			} catch (InterruptedException e) {
+				// PASS
+			}
+		}
 	}
 
 	private static LocalAbstractComponent postLaunchComponent(final ILaunch launch) throws CoreException {
@@ -153,10 +182,8 @@ public final class SpdLauncherUtil {
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 
 		if (nameBinding == null || namingContextIOR == null) {
-			throw new CoreException(new Status(IStatus.ERROR,
-			        ScaDebugPlugin.ID,
-			        "No naming context or name binding to locate component with, post launch failed.",
-			        null));
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID,
+			        "No naming context or name binding to locate component with, post launch failed.", null));
 		}
 
 		final Future<LocalScaComponent> future = SpdLauncherUtil.EXECUTOR.submit(new Callable<LocalScaComponent>() {
@@ -170,7 +197,7 @@ public final class SpdLauncherUtil {
 						if (launch.isTerminated()) {
 							throw new Exception("Component terminated while waiting to launch.");
 						}
-						
+
 						NamingContextExt namingContext = null;
 						CF.Resource ref = null;
 						try {
@@ -374,7 +401,7 @@ public final class SpdLauncherUtil {
 			builder.append(args.subSequence(previousEnd, matcher.start()));
 			final String var = matcher.group(2);
 			final String arg = matcher.group(4);
-			
+
 			final ILauncherVariableDesc desc = registry.getDesc(var);
 			if (desc != null) {
 				final String value = desc.resolveValue(arg, spd, launch, configuration);
@@ -517,6 +544,18 @@ public final class SpdLauncherUtil {
 			return null;
 		}
 
+	}
+	
+	/**
+	 * @since 3.0
+	 */
+	public static Map<String,String> createMap(String programArguments) {
+		String[] split = programArguments.split(" ");
+		Map<String,String> retVal = new HashMap<String, String>(split.length/2);
+		for (int i=0; i+1<split.length; i+=2) {
+			retVal.put(split[i], split[i+1]);
+		}
+		return retVal;
 	}
 
 	public static SoftPkg getSpd(final ILaunchConfiguration configuration) throws CoreException {

@@ -8,6 +8,8 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+
+ // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.provider;
 
 
@@ -18,6 +20,7 @@ import gov.redhawk.model.sca.provider.ScaDeviceItemProvider;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.ResourceLocator;
@@ -109,7 +112,7 @@ public class LocalScaDeviceItemProvider
 				 getString("_UI_LocalAbstractComponent_implementationID_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_LocalAbstractComponent_implementationID_feature", "_UI_LocalAbstractComponent_type"),
 				 ScaDebugPackage.Literals.LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID,
-				 false,
+				 true,
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
@@ -131,7 +134,7 @@ public class LocalScaDeviceItemProvider
 				 getString("_UI_LocalAbstractComponent_execParam_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_LocalAbstractComponent_execParam_feature", "_UI_LocalAbstractComponent_type"),
 				 ScaDebugPackage.Literals.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAM,
-				 false,
+				 true,
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,

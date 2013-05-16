@@ -31,6 +31,7 @@ import java.util.List;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
@@ -232,5 +233,17 @@ public class RecreateSettingsWizard extends NewScaResourceWizard {
 	public String getName() {
 		return getSoftPkg().getName();
 	}
+
+	@Override
+    protected IFile createComponentFiles(IProject project, String name, String id, String author, IProgressMonitor monitor) throws CoreException {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
+
+	@Override
+    protected IProject createEmptyProject(String projectName, java.net.URI locationURI, IProgressMonitor monitor) throws CoreException {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
 
 }

@@ -125,5 +125,13 @@ public class ContentsGroup {
 	public IPath getExistingResourcePath() {
 		return new Path(this.fileText.getText().trim());
 	}
+	
+	public Button getCreateNewResourceButton() {
+	    return createNewResourceButton;
+    }
+	
+	public Button getImportFileButton() {
+	    return importFileButton;
+    }
 
 }

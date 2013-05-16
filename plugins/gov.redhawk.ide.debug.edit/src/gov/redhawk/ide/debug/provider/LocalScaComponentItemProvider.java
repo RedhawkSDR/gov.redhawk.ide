@@ -8,6 +8,8 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+
+ // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.provider;
 
 
@@ -109,7 +111,7 @@ public class LocalScaComponentItemProvider
 				 getString("_UI_LocalAbstractComponent_implementationID_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_LocalAbstractComponent_implementationID_feature", "_UI_LocalAbstractComponent_type"),
 				 ScaDebugPackage.Literals.LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID,
-				 false,
+				 true,
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
@@ -131,7 +133,7 @@ public class LocalScaComponentItemProvider
 				 getString("_UI_LocalAbstractComponent_execParam_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_LocalAbstractComponent_execParam_feature", "_UI_LocalAbstractComponent_type"),
 				 ScaDebugPackage.Literals.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAM,
-				 false,
+				 true,
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,

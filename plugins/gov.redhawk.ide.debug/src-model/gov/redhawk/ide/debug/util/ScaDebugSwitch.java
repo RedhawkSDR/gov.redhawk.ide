@@ -8,6 +8,8 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+
+ // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.util;
 
 import gov.redhawk.ide.debug.LocalAbstractComponent;
@@ -71,6 +73,7 @@ import CF.ResourceOperations;
 import CF.TestableObjectOperations;
 import ExtendedCF.Sandbox;
 import ExtendedCF.SandboxOperations;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -354,8 +357,12 @@ public class ScaDebugSwitch< T1 > {
 				T1 result = caseLocalScaService(localScaService);
 				if (result == null) result = caseScaService(localScaService);
 				if (result == null) result = caseLocalAbstractComponent(localScaService);
-				if (result == null) result = caseCorbaObjWrapper(localScaService);
+				if (result == null) result = caseScaPropertyContainer(localScaService);
+				if (result == null) result = caseScaPortContainer(localScaService);
 				if (result == null) result = caseLocalLaunch(localScaService);
+				if (result == null) result = caseCorbaObjWrapper(localScaService);
+				if (result == null) result = caseProfileObjectWrapper(localScaService);
+				if (result == null) result = casePropertySetOperations(localScaService);
 				if (result == null) result = caseDataProviderObject(localScaService);
 				if (result == null) result = caseIStatusProvider(localScaService);
 				if (result == null) result = caseIDisposable(localScaService);

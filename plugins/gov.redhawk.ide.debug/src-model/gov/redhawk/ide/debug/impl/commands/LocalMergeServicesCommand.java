@@ -1,12 +1,13 @@
 package gov.redhawk.ide.debug.impl.commands;
 
-import java.util.Map;
-
-import CF.DeviceManagerPackage.ServiceType;
 import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.model.sca.ScaDeviceManager;
 import gov.redhawk.model.sca.ScaService;
 import gov.redhawk.model.sca.commands.MergeServicesCommand;
+
+import java.util.Map;
+
+import CF.DeviceManagerPackage.ServiceType;
 
 public class LocalMergeServicesCommand extends MergeServicesCommand {
 

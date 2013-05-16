@@ -12,6 +12,8 @@ package gov.redhawk.ide.ui.wizard;
 
 import gov.redhawk.validation.DceUuidConstraint;
 
+import mil.jpeojtrs.sca.util.DceUuidUtil;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -80,13 +82,13 @@ public class IDGroup {
 
 		return DceUuidConstraint.validate(this.providedIdText.getText());
 	}
-
-	public boolean isGenerateId() {
-		return this.generateIdButton.getSelection();
-	}
-
-	public String getProvidedId() {
-		return this.providedIdText.getText();
+	
+	public String getId() {
+		if (generateIdButton.getSelection()) {
+			return DceUuidUtil.createDceUUID();
+		} else {
+			return providedIdText.getText();
+		}
 	}
 
 	public void setLayoutData(final Object layoutData) {

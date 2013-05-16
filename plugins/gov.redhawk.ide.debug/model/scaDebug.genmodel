@@ -15,7 +15,7 @@
     <genDataTypes ecoreDataType="scaDebug.ecore#//WrongPolicy"/>
     <genDataTypes ecoreDataType="scaDebug.ecore#//CoreException"/>
     <genDataTypes ecoreDataType="scaDebug.ecore#//AttrSandboxOperations"/>
-    <genDataTypes ecoreDataType="scaDebug.ecore#//AttrApplicationExtOperations"/>
+    <genDataTypes ecoreDataType="scaDebug.ecore#//AttrApplicationOperations"/>
     <genDataTypes ecoreDataType="scaDebug.ecore#//AttrDeviceManagerOperations"/>
     <genClasses ecoreClass="scaDebug.ecore#//LocalSca">
       <genFeatures property="None" children="true" createChild="false" ecoreFeature="ecore:EReference scaDebug.ecore#//LocalSca/waveforms"/>
@@ -63,8 +63,8 @@
       <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalLaunch/mode"/>
     </genClasses>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalAbstractComponent">
-      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/implementationID"/>
-      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/execParam"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/implementationID"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/execParam"/>
     </genClasses>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalScaWaveform">
       <genFeatures property="Readonly" notify="false" createChild="false" propertySortChoices="true"
@@ -88,18 +88,6 @@
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalScaLoadableDevice"/>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalScaDevice"/>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalScaService"/>
-    <genClasses image="false" ecoreClass="scaDebug.ecore#//ApplicationExtOperations">
-      <genOperations ecoreOperation="scaDebug.ecore#//ApplicationExtOperations/launch">
-        <genParameters ecoreParameter="scaDebug.ecore#//ApplicationExtOperations/launch/id"/>
-        <genParameters ecoreParameter="scaDebug.ecore#//ApplicationExtOperations/launch/execParams"/>
-        <genParameters ecoreParameter="scaDebug.ecore#//ApplicationExtOperations/launch/spdURI"/>
-        <genParameters ecoreParameter="scaDebug.ecore#//ApplicationExtOperations/launch/implID"/>
-        <genParameters ecoreParameter="scaDebug.ecore#//ApplicationExtOperations/launch/mode"/>
-      </genOperations>
-      <genOperations ecoreOperation="scaDebug.ecore#//ApplicationExtOperations/reset">
-        <genParameters ecoreParameter="scaDebug.ecore#//ApplicationExtOperations/reset/compInstId"/>
-      </genOperations>
-    </genClasses>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//SandboxOperations"/>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//Sandbox"/>
   </genPackages>

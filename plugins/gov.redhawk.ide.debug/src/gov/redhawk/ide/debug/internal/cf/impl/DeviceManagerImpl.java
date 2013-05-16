@@ -11,6 +11,7 @@
 package gov.redhawk.ide.debug.internal.cf.impl;
 
 import gov.redhawk.ide.debug.LocalScaDeviceManager;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.sca.util.PluginUtil;
 
@@ -32,10 +33,13 @@ import CF.Device;
 import CF.DeviceManagerOperations;
 import CF.FileSystem;
 import CF.InvalidObjectReference;
+import CF.LifeCycle;
+import CF.LifeCycleHelper;
 import CF.PropertiesHolder;
 import CF.UnknownProperties;
 import CF.DeviceManagerPackage.ServiceType;
 import CF.LifeCyclePackage.InitializeError;
+import CF.LifeCyclePackage.ReleaseError;
 import CF.PortSupplierPackage.UnknownPort;
 import CF.PropertySetPackage.InvalidConfiguration;
 import CF.PropertySetPackage.PartialConfiguration;
@@ -51,7 +55,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	private final FileSystem fileSystem;
 	private List<Device> devices = Collections.synchronizedList(new ArrayList<Device>());
 	private List<ServiceType> services = Collections.synchronizedList(new ArrayList<ServiceType>());
-	
+
 	private final Job refreshJob;
 
 	public DeviceManagerImpl(final String profile, final String identifier, final String name, final LocalScaDeviceManager deviceManager,
@@ -64,15 +68,15 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		refreshJob = new Job("Refreshing Device Manager") {
 
 			@Override
-	        protected IStatus run(IProgressMonitor monitor) {
+			protected IStatus run(IProgressMonitor monitor) {
 				try {
-		            deviceManager.refresh(monitor, RefreshDepth.FULL);
-	            } catch (InterruptedException e) {
-		            return Status.CANCEL_STATUS;
-	            }
-		        return Status.OK_STATUS;
-	        }
-			
+					deviceManager.refresh(monitor, RefreshDepth.FULL);
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				}
+				return Status.OK_STATUS;
+			}
+
 		};
 	}
 
@@ -129,7 +133,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	 * {@inheritDoc}
 	 */
 	public Device[] registeredDevices() {
-		synchronized(devices) {
+		synchronized (devices) {
 			boolean changed = false;
 			for (Iterator<Device> iterator = devices.iterator(); iterator.hasNext();) {
 				Device d = iterator.next();
@@ -154,7 +158,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	 * {@inheritDoc}
 	 */
 	public ServiceType[] registeredServices() {
-		synchronized(services) {
+		synchronized (services) {
 			boolean changed = false;
 			for (Iterator<ServiceType> iterator = services.iterator(); iterator.hasNext();) {
 				ServiceType type = iterator.next();
@@ -180,39 +184,60 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	 */
 	public void registerDevice(final Device registeringDevice) throws InvalidObjectReference {
 		devices.add(registeringDevice);
+		refreshJob.schedule();
 		try {
 			registeringDevice.initialize();
 		} catch (final InitializeError e) {
 			throw new InvalidObjectReference("Initialize error", Arrays.toString(e.errorMessages));
 		}
-		refreshJob.schedule();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void unregisterDevice(final Device registeredDevice) throws InvalidObjectReference {
+		if (registeredDevice == null) {
+			throw new InvalidObjectReference("Null reference", "Null reference");
+		}
 		final String deviceId = registeredDevice.identifier();
 		if (deviceId == null) {
 			return;
 		}
-		synchronized(devices) {
+		synchronized (devices) {
 			for (Iterator<Device> iterator = devices.iterator(); iterator.hasNext();) {
 				Device d = iterator.next();
-				if (PluginUtil.equals(d.identifier(), deviceId)) {
+				if (d == registeredDevice || PluginUtil.equals(d.identifier(), deviceId)) {
 					iterator.remove();
 					return;
 				}
 			}
 		}
 		refreshJob.schedule();
+		try {
+			registeredDevice.releaseObject();
+		} catch (ReleaseError e) {
+			throw new InvalidObjectReference("Release error", Arrays.toString(e.errorMessages));
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void shutdown() {
-		// PASS do nothing
+		for (ServiceType type : this.services.toArray(new ServiceType[services.size()])) {
+			try {
+				unregisterService(type.serviceObject, type.serviceName);
+			} catch (InvalidObjectReference e) {
+				ScaDebugPlugin.logError("Failed to release service " + type.serviceName, e);
+			}
+		}
+		for (Device d : this.devices.toArray(new Device[devices.size()])) {
+			try {
+				unregisterDevice(d);
+			} catch (InvalidObjectReference e) {
+				ScaDebugPlugin.logError("Failed to release device", e);
+			}
+		}
 	}
 
 	/**
@@ -222,6 +247,14 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		ServiceType type = new ServiceType(registeringService, name);
 		services.add(type);
 		refreshJob.schedule();
+		if (registeringService._is_a(LifeCycleHelper.id())) {
+			LifeCycle service = LifeCycleHelper.narrow(registeringService);
+			try {
+				service.initialize();
+			} catch (InitializeError e) {
+				throw new InvalidObjectReference("Initialize error", Arrays.toString(e.errorMessages));
+			}
+		}
 	}
 
 	/**
@@ -231,7 +264,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		if (name == null) {
 			return;
 		}
-		synchronized(services) {
+		synchronized (services) {
 			for (Iterator<ServiceType> iterator = services.iterator(); iterator.hasNext();) {
 				ServiceType type = iterator.next();
 				if (PluginUtil.equals(type.serviceName, name)) {
@@ -240,7 +273,17 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 				}
 			}
 		}
+
 		refreshJob.schedule();
+
+		if (unregisteringService._is_a(LifeCycleHelper.id())) {
+			LifeCycle service = LifeCycleHelper.narrow(unregisteringService);
+			try {
+				service.releaseObject();
+			} catch (ReleaseError e) {
+				throw new InvalidObjectReference("Release error", Arrays.toString(e.errorMessages));
+			}
+		}
 	}
 
 	/**

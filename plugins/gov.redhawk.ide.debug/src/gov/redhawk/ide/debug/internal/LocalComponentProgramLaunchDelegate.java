@@ -5,7 +5,6 @@
  */
 package gov.redhawk.ide.debug.internal;
 
-import gov.redhawk.ide.debug.ScaLauncherUtil;
 import gov.redhawk.ide.debug.SpdLauncherUtil;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
@@ -50,7 +49,7 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 		final String args = configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, "");
 		final String scaArgs = SpdLauncherUtil.insertProgramArguments(spd, args, launch, configuration);
 		configuration.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, scaArgs);
-		configuration.setAttribute(ScaLauncherUtil.LAUNCH_ATT_PROGRAM_ARGUMENT_MAP, ScaLauncherUtil.createMap(scaArgs));
+		configuration.setAttribute(SpdLauncherUtil.LAUNCH_ATT_PROGRAM_ARGUMENT_MAP, SpdLauncherUtil.createMap(scaArgs));
 	}
 
 }

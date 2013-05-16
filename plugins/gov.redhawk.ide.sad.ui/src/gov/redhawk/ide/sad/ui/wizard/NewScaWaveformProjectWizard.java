@@ -18,15 +18,12 @@ import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
-import java.lang.reflect.InvocationTargetException;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.DceUuidUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -141,9 +138,8 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 			} else {
 				locationURI = this.waveformPropertiesPage.getLocationURI();
 			}
+			final String id = this.waveformPropertiesPage.getIdGroup().getId();
 			final boolean isCreateNewResource = this.waveformPropertiesPage.getContentsGroup().isCreateNewResource();
-			final boolean generateId = this.waveformPropertiesPage.getIdGroup().isGenerateId();
-			final String providedId = this.waveformPropertiesPage.getIdGroup().getProvidedId();
 			final IPath existingSadPath = this.waveformPropertiesPage.getContentsGroup().getExistingResourcePath();
 			final String projectName = this.waveformPropertiesPage.getProjectName();
 			final SoftPkg assemblyController = this.waveformACpage.getAssemblyController();
@@ -158,14 +154,6 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 						final IProject project = WaveformProjectCreator.createEmptyProject(projectName, locationURI, progress.newChild(1));
 						if (workingSets.length > 0) {
 							PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(project, workingSets);
-						}
-						
-						// Figure out the ID we'll use 
-						final String id;
-						if (generateId) {
-							id = DceUuidUtil.createDceUUID();
-						} else {
-							id = providedId;
 						}
 
 						// If we're creating a new waveform (vs importing one)
