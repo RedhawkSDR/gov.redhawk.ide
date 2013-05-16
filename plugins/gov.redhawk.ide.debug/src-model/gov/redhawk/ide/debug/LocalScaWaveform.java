@@ -8,16 +8,20 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+
+ // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug;
 
-import CF.DataType;
-import CF.ExecutableDevicePackage.ExecuteFail;
 import gov.redhawk.ide.debug.impl.ApplicationImpl;
 import gov.redhawk.model.sca.ScaWaveform;
+
 import org.eclipse.emf.common.util.URI;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
+
+import CF.DataType;
+import CF.ExecutableDevicePackage.ExecuteFail;
 
 /**
  * <!-- begin-user-doc -->

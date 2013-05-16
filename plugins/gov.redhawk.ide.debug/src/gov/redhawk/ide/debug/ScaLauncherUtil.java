@@ -13,11 +13,11 @@ package gov.redhawk.ide.debug;
 import gov.redhawk.model.sca.IRefreshable;
 import gov.redhawk.model.sca.ProfileObjectWrapper;
 import gov.redhawk.model.sca.RefreshDepth;
-import gov.redhawk.model.sca.ScaAbstractComponent;
 import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaFactory;
+import gov.redhawk.model.sca.ScaPropertyContainer;
 import gov.redhawk.model.sca.ScaService;
 import gov.redhawk.model.sca.ScaSimpleProperty;
 import gov.redhawk.model.sca.ScaWaveform;
@@ -123,8 +123,7 @@ public final class ScaLauncherUtil {
 			execParams = null;
 		}
 		final String implID = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_IMPL_ID, (String) null);
-		final boolean autoStart = launch.getLaunchConfiguration().getAttribute(ScaLaunchConfigurationConstants.ATT_START,
-		        ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
+		final boolean autoStart = launch.getLaunchConfiguration().getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
 		final String uriStr = launch.getAttribute(ScaLauncherUtil.LAUNCH_ATT_URI);
 		final URI uri;
 		if (uriStr != null) {
@@ -152,19 +151,21 @@ public final class ScaLauncherUtil {
 		if (newComponent instanceof ProfileObjectWrapper< ? >) {
 			((ProfileObjectWrapper< ? >) newComponent).fetchProfileObject(null);
 		}
-		
+
 		if (newComponent instanceof IRefreshable) {
 			try {
-	            ((IRefreshable)newComponent).refresh(null, RefreshDepth.FULL);
-            } catch (InterruptedException e) {
-	            // PASS
-            }
+				((IRefreshable) newComponent).refresh(null, RefreshDepth.FULL);
+			} catch (InterruptedException e) {
+				// PASS
+			}
 		}
 
-		if (newComponent instanceof ScaAbstractComponent< ? >) {
-			final ScaAbstractComponent< ? > scaComp = (ScaAbstractComponent< ? >) newComponent;
+		if (newComponent instanceof ScaPropertyContainer< ? , ?>) {
+			final ScaPropertyContainer< ? , ?> scaComp = (ScaPropertyContainer< ? , ?>) newComponent;
 			final ScaComponent tmp = ScaFactory.eINSTANCE.createScaComponent();
-			tmp.setProfileObj(scaComp.getProfileObj());
+			if (scaComp.getProfileObj() instanceof SoftPkg) {
+				tmp.setProfileObj((SoftPkg) scaComp.getProfileObj());
+			}
 			for (final ScaAbstractProperty< ? > prop : tmp.fetchProperties(null)) {
 				prop.setIgnoreRemoteSet(true);
 			}
@@ -193,13 +194,13 @@ public final class ScaLauncherUtil {
 				}
 			}
 		}
-		
+
 		if (newComponent instanceof IRefreshable) {
 			try {
-	            ((IRefreshable)newComponent).refresh(null, RefreshDepth.FULL);
-            } catch (InterruptedException e) {
-	            // PASS
-            }
+				((IRefreshable) newComponent).refresh(null, RefreshDepth.FULL);
+			} catch (InterruptedException e) {
+				// PASS
+			}
 		}
 	}
 
@@ -213,8 +214,7 @@ public final class ScaLauncherUtil {
 				OrbSession session = OrbSession.createSession();
 				NamingContextExt namingContext = null;
 				try {
-					namingContext = NamingContextExtHelper.narrow(session.getOrb().string_to_object(launch
-					        .getAttribute(ScaLauncherUtil.LAUNCH_ATT_NAMING_CONTEXT_IOR)));
+					namingContext = NamingContextExtHelper.narrow(session.getOrb().string_to_object(launch.getAttribute(ScaLauncherUtil.LAUNCH_ATT_NAMING_CONTEXT_IOR)));
 
 					while (newComponent == null) {
 						// If this launch was terminated, immediately bail
@@ -261,8 +261,7 @@ public final class ScaLauncherUtil {
 		});
 
 		try {
-			final int timeout = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT,
-			        ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
+			final int timeout = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT, ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
 			if (timeout < 0 || ILaunchManager.DEBUG_MODE.equals(launch.getLaunchMode())) {
 				// In debug-mode wait they may have placed a break-point
 				// that is delaying registration so wait forever
@@ -316,8 +315,7 @@ public final class ScaLauncherUtil {
 		});
 
 		try {
-			final int timeout = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT,
-			        ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
+			final int timeout = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT, ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
 			if (timeout < 0 || ILaunchManager.DEBUG_MODE.equals(launch.getLaunchMode())) {
 				// In debug-mode wait they may have placed a break-point
 				// that is delaying registration so wait forever
@@ -371,8 +369,7 @@ public final class ScaLauncherUtil {
 		});
 
 		try {
-			final int timeout = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT,
-			        ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
+			final int timeout = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT, ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
 			if (timeout < 0 || ILaunchManager.DEBUG_MODE.equals(launch.getLaunchMode())) {
 				// In debug-mode wait they may have placed a break-point
 				// that is delaying registration so wait forever
@@ -638,10 +635,9 @@ public final class ScaLauncherUtil {
 		return name;
 	}
 
-	private static EStructuralFeature [] DOM_NC_PATH = new EStructuralFeature []{
-		ScaDebugPackage.Literals.LOCAL_SCA__SANDBOX_WAVEFORM,
-		ScaDebugPackage.Literals.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT
-	};
+	private static EStructuralFeature[] DOM_NC_PATH = new EStructuralFeature[] { ScaDebugPackage.Literals.LOCAL_SCA__SANDBOX_WAVEFORM,
+	        ScaDebugPackage.Literals.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT };
+
 	private static NotifyingNamingContext getDomNamingContext(final SoftPkg spd) {
 		NotifyingNamingContext ct = ScaEcoreUtils.getFeature(ScaDebugPlugin.getInstance().getLocalSca(), DOM_NC_PATH);
 		if (ct != null) {
@@ -650,10 +646,9 @@ public final class ScaLauncherUtil {
 		return null;
 	}
 
-	private static EStructuralFeature [] DEV_NC_PATH = new EStructuralFeature []{
-		ScaDebugPackage.Literals.LOCAL_SCA__SANDBOX_DEVICE_MANAGER,
-		ScaDebugPackage.Literals.LOCAL_SCA_DEVICE_MANAGER__NAMING_CONTEXT
-	};
+	private static EStructuralFeature[] DEV_NC_PATH = new EStructuralFeature[] { ScaDebugPackage.Literals.LOCAL_SCA__SANDBOX_DEVICE_MANAGER,
+	        ScaDebugPackage.Literals.LOCAL_SCA_DEVICE_MANAGER__NAMING_CONTEXT };
+
 	private static NotifyingNamingContext getDevNamingContext(final SoftPkg spd) {
 		NotifyingNamingContext ct = ScaEcoreUtils.getFeature(ScaDebugPlugin.getInstance().getLocalSca(), DEV_NC_PATH);
 		if (ct != null) {
@@ -748,7 +743,7 @@ public final class ScaLauncherUtil {
 			final String name = spd.getName();
 			String retVal = name;
 			for (int i = 1; true; i++) {
-				org.omg.CORBA.Object obj = null; 
+				org.omg.CORBA.Object obj = null;
 				try {
 					obj = namingContext.resolve_str(retVal);
 					retVal = name + "_" + i;

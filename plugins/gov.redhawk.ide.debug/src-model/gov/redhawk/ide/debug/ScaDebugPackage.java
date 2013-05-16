@@ -8,6 +8,8 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+
+ // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug;
 
 import gov.redhawk.model.sca.ScaPackage;
@@ -1871,6 +1873,46 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_SERVICE__CORBA_OBJ = ScaPackage.SCA_SERVICE__CORBA_OBJ;
 	/**
+	 * The feature id for the '<em><b>Profile URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_SERVICE__PROFILE_URI = ScaPackage.SCA_SERVICE__PROFILE_URI;
+	/**
+	 * The feature id for the '<em><b>Profile Obj</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_SERVICE__PROFILE_OBJ = ScaPackage.SCA_SERVICE__PROFILE_OBJ;
+	/**
+	 * The feature id for the '<em><b>Root File Store</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_SERVICE__ROOT_FILE_STORE = ScaPackage.SCA_SERVICE__ROOT_FILE_STORE;
+	/**
+	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_SERVICE__PROPERTIES = ScaPackage.SCA_SERVICE__PROPERTIES;
+	/**
+	 * The feature id for the '<em><b>Ports</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_SERVICE__PORTS = ScaPackage.SCA_SERVICE__PORTS;
+	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1878,6 +1920,14 @@ public interface ScaDebugPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOCAL_SCA_SERVICE__NAME = ScaPackage.SCA_SERVICE__NAME;
+	/**
+	 * The feature id for the '<em><b>Dev Mgr</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_SERVICE__DEV_MGR = ScaPackage.SCA_SERVICE__DEV_MGR;
 	/**
 	 * The feature id for the '<em><b>Launch</b></em>' attribute.
 	 * <!-- begin-user-doc -->

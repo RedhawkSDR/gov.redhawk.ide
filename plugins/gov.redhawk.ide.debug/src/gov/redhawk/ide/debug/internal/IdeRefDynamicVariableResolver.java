@@ -10,12 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
+import gov.redhawk.ExtendedCF.Sandbox;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
-
-import gov.redhawk.ExtendedCF.Sandbox;
-import gov.redhawk.ide.debug.ScaDebugPlugin;
 
 public class IdeRefDynamicVariableResolver implements IDynamicVariableResolver {
 
