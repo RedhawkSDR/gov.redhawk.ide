@@ -1,11 +1,11 @@
 /*******************************************************************************
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.section;
@@ -24,7 +24,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 
 /**
- * 
+ *
  */
 public class TestingSection extends ScaSection {
 
@@ -34,7 +34,7 @@ public class TestingSection extends ScaSection {
 
 	/**
 	 * The Constructor.
-	 * 
+	 *
 	 * @param page the page
 	 * @param parent the parent
 	 */
@@ -56,7 +56,7 @@ public class TestingSection extends ScaSection {
 	 */
 	@Override
 	protected void createClient(final Section section, final FormToolkit toolkit) {
-		section.setText("Testing ");
+		section.setText("Testing \t"); // append space and tab to workaround Eclipse Bug 408509
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		final TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
 		section.setLayoutData(data);
@@ -76,7 +76,7 @@ public class TestingSection extends ScaSection {
 
 	/**
 	 * Creates the testing area.
-	 * 
+	 *
 	 * @param client the client
 	 * @param toolkit the toolkit
 	 * @param actionBars the action bars
