@@ -23,8 +23,6 @@ import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.util.List;
 
-import mil.jpeojtrs.sca.spd.SoftPkg;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -53,13 +51,13 @@ public class NewScaDeviceCreationProjectWizard extends NewScaResourceWizard impl
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addPages() {
-		this.resourcePropertiesPage = new ScaDeviceProjectPropertiesWizardPage("", "Device");
-		addPage(this.resourcePropertiesPage);
-		this.implPage = new ImplementationWizardPage("", ICodeGeneratorDescriptor.COMPONENT_TYPE_DEVICE);
-		this.implPage.setDescription("Choose the initial settings for the new implementation.");
-		addPage(this.implPage);
+		setResourcePropertiesPage(new ScaDeviceProjectPropertiesWizardPage("", "Device"));
+		addPage(getResourcePropertiesPage());
+		setImplPage(new ImplementationWizardPage("", ICodeGeneratorDescriptor.COMPONENT_TYPE_DEVICE));
+		getImplPage().setDescription("Choose the initial settings for the new implementation.");
+		addPage(getImplPage());
 
-		getImplList().add(new ImplementationAndSettings(this.implPage.getImplementation(), this.implPage.getImplSettings()));
+		getImplList().add(new ImplementationAndSettings(getImplPage().getImplementation(), getImplPage().getImplSettings()));
 
 		try {
 			final Field field = Wizard.class.getDeclaredField("pages");
@@ -81,8 +79,8 @@ public class NewScaDeviceCreationProjectWizard extends NewScaResourceWizard impl
 
 	@Override
     protected IFile createComponentFiles(IProject project, String id, String author, IProgressMonitor monitor) throws CoreException {
-		String deviceType = ((ScaDeviceProjectPropertiesWizardPage) NewScaDeviceCreationProjectWizard.this.resourcePropertiesPage).getDeviceType();
-		boolean aggregateDevice = ((ScaDeviceProjectPropertiesWizardPage) NewScaDeviceCreationProjectWizard.this.resourcePropertiesPage).getAggregateDeviceType();
+		String deviceType = ((ScaDeviceProjectPropertiesWizardPage) getResourcePropertiesPage()).getDeviceType();
+		boolean aggregateDevice = ((ScaDeviceProjectPropertiesWizardPage) getResourcePropertiesPage()).getAggregateDeviceType();
 	    return DeviceProjectCreator.createDeviceFiles(project, id, author, deviceType, aggregateDevice, monitor);
     }
 

@@ -282,7 +282,7 @@ public class PropertyDialog extends Dialog {
 			// no error text (empty or whitespace only). Hide it also to avoid
 			// color change.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=130281
-			final boolean hasError = errorMessage != null && (StringConverter.removeWhiteSpaces(errorMessage)).length() > 0;
+			final boolean hasError = (StringConverter.removeWhiteSpaces(errorMessage)).length() > 0;
 			this.errorMessageText.setEnabled(hasError);
 			this.errorMessageText.setVisible(hasError);
 			this.errorMessageText.getParent().update();

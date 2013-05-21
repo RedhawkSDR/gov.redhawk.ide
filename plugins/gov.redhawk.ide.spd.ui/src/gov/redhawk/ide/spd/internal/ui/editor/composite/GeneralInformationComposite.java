@@ -12,8 +12,6 @@ package gov.redhawk.ide.spd.internal.ui.editor.composite;
 
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
 import gov.redhawk.common.ui.parts.FormEntry;
-import gov.redhawk.ide.ui.doc.IdeHelpConstants;
-import gov.redhawk.ui.doc.HelpUtil;
 import gov.redhawk.ui.editor.IScaComposite;
 
 import org.eclipse.swt.SWT;
@@ -101,7 +99,6 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 			tData.grabVertical = true;
 			tData.heightHint = 75; // SUPPRESS CHECKSTYLE MagicNumber
 		}
-		HelpUtil.assignTooltip(this.descriptionEntry.getText(), IdeHelpConstants.spd_description);
 	}
 
 	/**
@@ -113,7 +110,6 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	 */
 	private void createScdFileEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.scdEntry = new FormEntry(client, toolkit, "SCD:", "Browse...", true);
-		HelpUtil.assignTooltip(this.scdEntry.getText(), IdeHelpConstants.spd_scd);
 	}
 
 	/**
@@ -125,7 +121,6 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	 */
 	private void createPrfFileEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.prfEntry = new FormEntry(client, toolkit, "PRF:", "Browse...", true);
-		HelpUtil.assignTooltip(this.prfEntry.getText(), IdeHelpConstants.spd_prf);
 	}
 
 	/**
@@ -137,7 +132,6 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	 */
 	private void createTitleEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.titleEntry = new FormEntry(client, toolkit, "Title:", null, false);
-		HelpUtil.assignTooltip(this.titleEntry.getText(), IdeHelpConstants.spd_title);
 	}
 
 	/**
@@ -149,7 +143,6 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	 */
 	private void createIDEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.idEntry = new FormEntry(client, toolkit, "ID*:", "Generate", false);
-		HelpUtil.assignTooltip(this.idEntry.getText(), IdeHelpConstants.spd_id);
 
 	}
 
@@ -162,7 +155,6 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	 */
 	private void createVersionEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.versionEntry = new FormEntry(client, toolkit, "Version:", null, false);
-		HelpUtil.assignTooltip(this.versionEntry.getText(), IdeHelpConstants.spd_version);
 	}
 
 	/**
@@ -174,7 +166,6 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	 */
 	private void createNameEntry(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		this.nameEntry = new FormEntry(client, toolkit, "Name*:", null, false);
-		HelpUtil.assignTooltip(this.nameEntry.getText(), IdeHelpConstants.spd_name);
 	}
 
 	/**

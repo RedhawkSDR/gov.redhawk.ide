@@ -126,10 +126,16 @@ public class ContentsGroup {
 		return new Path(this.fileText.getText().trim());
 	}
 	
+	/**
+     * @since 9.0
+     */
 	public Button getCreateNewResourceButton() {
 	    return createNewResourceButton;
     }
 	
+	/**
+     * @since 9.0
+     */
 	public Button getImportFileButton() {
 	    return importFileButton;
     }

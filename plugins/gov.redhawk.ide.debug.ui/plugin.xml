@@ -21,7 +21,7 @@
             icon="icons/obj16/RedHawk_Logo16x.gif"
             id="gov.redhawk.ide.debug.ui.navigatorContent"
             labelProvider="gov.redhawk.ide.debug.internal.ui.ScaDebugLabelProvider"
-            name="Local SCA"
+            name="%navigatorContent.name"
             priority="lowest"
             providesSaveables="false"
             sortOnly="false">
@@ -165,18 +165,18 @@
             categoryId="gov.redhawk.ui.commands.category.sca"
             defaultHandler="gov.redhawk.ide.debug.internal.ui.LaunchHandler"
             id="gov.redhawk.ide.debug.ui.launch"
-            name="Launch">
+            name="%command.name">
       </command>
       <command
             defaultHandler="gov.redhawk.ide.debug.internal.ui.ResetHandler"
             id="gov.redhawk.ide.debug.ui.command.reset"
-            name="Reset">
+            name="%command.name.0">
       </command>
       <command
             categoryId="gov.redhawk.ui.commands.category.sca"
             defaultHandler="gov.redhawk.ide.debug.internal.ui.ShowConsoleHandler"
             id="gov.redhawk.ide.debug.ui.showConsole"
-            name="Show Console">
+            name="%command.name.1">
       </command>
    </extension>
    <extension
@@ -185,7 +185,7 @@
             delegate="gov.redhawk.ide.debug.internal.ui.LocalWaveformLaunchDelegate"
             id="gov.redhawk.ide.debug.ui.launchLocalWaveform"
             modes="run"
-            name="Local Waveform"
+            name="%launchDelegate.name"
             type="gov.redhawk.ide.debug.launchLocalWaveform">
       </launchDelegate>
    </extension>
@@ -193,17 +193,17 @@
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
             class="gov.redhawk.ide.debug.internal.ui.SadLaunchShortcut"
-            description="Launches a local Waveform"
+            description="%shortcut.description"
             icon="icons/obj16/RedHawk_Logo16x.gif"
             id="gov.redhawk.ide.debug.ui.shortcut.sad"
-            label="Local Waveform"
+            label="%shortcut.label"
             modes="run, debug">
          <description
-               description="Launch a local waveform"
+               description="%description.description"
                mode="run">
          </description>
          <description
-               description="Debug a local waveform"
+               description="%description.description.0"
                mode="debug">
          </description>
          <contextualLaunch>
@@ -230,10 +230,10 @@
             class="gov.redhawk.ide.debug.internal.ui.LocalComponentProgramLaunchShortcut"
             icon="icons/obj16/RedHawk_Logo16x.gif"
             id="gov.redhawk.ide.debug.ui.localComponentProgram"
-            label="Local Component Program"
+            label="%shortcut.label.0"
             modes="run">
          <description
-               description="Launch a local component program"
+               description="%description.description.1"
                mode="run">
          </description>
          <contextualLaunch>
@@ -353,7 +353,7 @@
       <decorator
             class="gov.redhawk.ide.debug.internal.ui.LocalLaunchDecorator"
             id="gov.redhawk.ide.debug.ui.decorator"
-            label="SCA Debug"
+            label="%decorator.label"
             lightweight="true"
             state="true">
          <enablement>

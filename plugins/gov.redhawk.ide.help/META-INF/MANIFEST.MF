@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: REDHAWK Help Plugin
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: gov.redhawk.ide.help; singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: gov.redhawk.ide.help.RedhawkHelpPlugin

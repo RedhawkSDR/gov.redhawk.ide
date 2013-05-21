@@ -62,7 +62,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final Resource sadResource;
-		if(platform) {
+		if (platform) {
 			sadResource = resourceSet.getResource(URI.createPlatformResourceURI(path, true), true);
 		} else {
 			sadResource = resourceSet.getResource(URI.createURI(path), true);

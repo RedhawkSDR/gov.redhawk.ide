@@ -10,8 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.wizard;
 
-import gov.redhawk.ide.ui.doc.IdeHelpConstants;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -92,9 +90,11 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 		// Show description on opening
 		setErrorMessage(null);
 		setMessage((String) null);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialogArea, IdeHelpConstants.reference_wizardsAndDialogs_componentProjectWizard_projectNamePage);
 	}
 
+	/**
+     * @since 9.0
+     */
 	protected void createContentsGroup(Composite parent) {
 		this.contentsGroup = new ContentsGroup(parent, SWT.None, this.resourceType, this.resourceExtension, this);
 		this.contentsGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL));

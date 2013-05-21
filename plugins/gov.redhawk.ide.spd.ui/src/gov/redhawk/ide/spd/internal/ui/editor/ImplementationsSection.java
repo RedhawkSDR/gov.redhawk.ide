@@ -24,7 +24,6 @@ import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationSectionSoft
 import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationSectionUsesDeviceItemProvider;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.SpdItemProviderAdapterFactoryAdapter;
 import gov.redhawk.ide.spd.internal.ui.editor.wizard.ImplementationWizard;
-import gov.redhawk.ide.spd.internal.ui.editor.wizard.OpenAssociatedPerspectiveJob;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.actions.SortAction;
 import gov.redhawk.ui.editor.TreeSection;
@@ -286,7 +285,7 @@ public class ImplementationsSection extends TreeSection implements IPropertyChan
 		// Cursor needs to be explicitly disposed
 		toolbar.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(final DisposeEvent e) {
-				if ((handCursor != null) && !handCursor.isDisposed()) {
+				if (!handCursor.isDisposed()) {
 					handCursor.dispose();
 				}
 			}

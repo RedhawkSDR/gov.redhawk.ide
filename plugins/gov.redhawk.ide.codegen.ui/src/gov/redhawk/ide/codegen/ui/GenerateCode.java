@@ -557,11 +557,12 @@ public class GenerateCode {
 		if (waveDev == null) {
 			retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID,
 			        "Unable to find project settings (wavedev) file. Cannot generate code."));
-		}
-		for (final Implementation impl : impls) {
-			if (!waveDev.getImplSettings().containsKey(impl.getId())) {
-				retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to find settings in wavedev file for implementation "
-				        + impl.getId()));
+		} else {
+			for (final Implementation impl : impls) {
+				if (!waveDev.getImplSettings().containsKey(impl.getId())) {
+					retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to find settings in wavedev file for implementation "
+					        + impl.getId()));
+				}
 			}
 		}
 

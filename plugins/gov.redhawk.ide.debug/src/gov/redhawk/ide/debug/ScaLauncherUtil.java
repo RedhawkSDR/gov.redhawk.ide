@@ -635,7 +635,7 @@ public final class ScaLauncherUtil {
 		return name;
 	}
 
-	private static EStructuralFeature[] DOM_NC_PATH = new EStructuralFeature[] { ScaDebugPackage.Literals.LOCAL_SCA__SANDBOX_WAVEFORM,
+	private static final EStructuralFeature[] DOM_NC_PATH = new EStructuralFeature[] { ScaDebugPackage.Literals.LOCAL_SCA__SANDBOX_WAVEFORM,
 	        ScaDebugPackage.Literals.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT };
 
 	private static NotifyingNamingContext getDomNamingContext(final SoftPkg spd) {
@@ -646,7 +646,7 @@ public final class ScaLauncherUtil {
 		return null;
 	}
 
-	private static EStructuralFeature[] DEV_NC_PATH = new EStructuralFeature[] { ScaDebugPackage.Literals.LOCAL_SCA__SANDBOX_DEVICE_MANAGER,
+	private static final EStructuralFeature[] DEV_NC_PATH = new EStructuralFeature[] { ScaDebugPackage.Literals.LOCAL_SCA__SANDBOX_DEVICE_MANAGER,
 	        ScaDebugPackage.Literals.LOCAL_SCA_DEVICE_MANAGER__NAMING_CONTEXT };
 
 	private static NotifyingNamingContext getDevNamingContext(final SoftPkg spd) {
@@ -705,9 +705,8 @@ public final class ScaLauncherUtil {
 		} else {
 			label = ScaLauncherUtil.getDeviceUniqueName(spd);
 		}
-		if (launch != null) {
-			launch.setAttribute(ScaLauncherUtil.LAUNCH_ATT_DEVICE_LABEL, label);
-		}
+		
+		launch.setAttribute(ScaLauncherUtil.LAUNCH_ATT_DEVICE_LABEL, label);
 		builder.append(label);
 
 		return builder.toString();

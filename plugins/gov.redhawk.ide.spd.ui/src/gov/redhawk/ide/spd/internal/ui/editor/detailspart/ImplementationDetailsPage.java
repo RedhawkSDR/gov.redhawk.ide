@@ -880,9 +880,9 @@ public class ImplementationDetailsPage extends ScaDetails {
 			public void buttonSelected(final FormEntry entry) {
 				final IProject project = getProject();
 				if (project != null) {
-					final IFolder folder = null;
+					IFolder folder = null;
 					if (!entry.getText().getText().equals("")) {
-						project.getFolder(entry.getText().getText());
+						folder = project.getFolder(entry.getText().getText());
 					}
 					final IFolder newPath = EntryUtil.browseDir(project, folder);
 					if ((newPath != null) && (newPath != folder)) {

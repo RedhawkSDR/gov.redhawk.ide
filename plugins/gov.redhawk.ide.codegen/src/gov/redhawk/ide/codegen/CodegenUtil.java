@@ -8,6 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+ // BEGIN GENERATED CODE
 package gov.redhawk.ide.codegen;
 
 import gov.redhawk.ide.codegen.builders.TopLevelBuildScript;
@@ -401,6 +402,10 @@ public class CodegenUtil {
 					name = ep.substring(idx + 1);
 				} else if (idx == 0) {
 					name = softPkg.getName();
+				} 
+				
+				if (name == null) {
+					name = "";
 				}
 
 				String outputDir = ep.substring(0, idx);

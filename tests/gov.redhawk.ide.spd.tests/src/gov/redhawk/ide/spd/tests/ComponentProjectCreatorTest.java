@@ -13,8 +13,6 @@ package gov.redhawk.ide.spd.tests;
 
 import gov.redhawk.ide.spd.generator.newcomponent.ComponentProjectCreator;
 
-import java.io.IOException;
-
 import junit.framework.Assert;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.scd.ScdPackage;

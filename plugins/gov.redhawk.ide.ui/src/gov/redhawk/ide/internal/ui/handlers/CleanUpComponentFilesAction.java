@@ -69,8 +69,8 @@ public class CleanUpComponentFilesAction extends Action {
 						final SoftPkg spd = cf.getSoftPkg();
 						if (spd != null) {
 							final Resource spdResource = spd.eResource();
-							final Resource scdResource = spd.getDescriptor() != null ? spd.getDescriptor().getComponent().eResource() : null;
-							final Resource prfResource = spd.getPropertyFile() != null ? spd.getPropertyFile().getProperties().eResource() : null;
+							final Resource scdResource = (spd.getDescriptor() != null) ? spd.getDescriptor().getComponent().eResource() : null;
+							final Resource prfResource = (spd.getPropertyFile() != null) ? spd.getPropertyFile().getProperties().eResource() : null;
 							command.append(new DeleteCommand(localEditingDomain, Collections.singleton(cf)));
 							command.append(new ScaModelCommand() {
 

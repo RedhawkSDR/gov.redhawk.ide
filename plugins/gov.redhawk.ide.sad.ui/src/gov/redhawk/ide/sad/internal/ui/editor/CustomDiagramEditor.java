@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.editor;
 
-import gov.redhawk.ide.ui.doc.IdeHelpConstants;
 import gov.redhawk.sca.sad.diagram.part.SadDiagramEditor;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import mil.jpeojtrs.sca.sad.diagram.part.SadDiagramActionBarContributor;
@@ -42,7 +41,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -240,7 +238,6 @@ public class CustomDiagramEditor extends SadDiagramEditor implements IFormPage {
 	@Override
 	public void createPartControl(final Composite parent) {
 		super.createPartControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getGraphicalViewer().getControl(), IdeHelpConstants.reference_editors_waveform_diagram);
 	}
 
 	/**

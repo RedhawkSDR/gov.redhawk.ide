@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Dcd Plug-in
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: gov.redhawk.ide.dcd
 Bundle-Version: 2.1.0.qualifier
 Bundle-Activator: gov.redhawk.ide.dcd.IdeDcdPlugin
@@ -18,4 +18,4 @@ Export-Package: gov.redhawk.ide.dcd,
  gov.redhawk.ide.dcd.generator.newdevice;x-friends:="gov.redhawk.ide.dcd.ui,gov.redhawk.ide.dcd.tests",
  gov.redhawk.ide.dcd.generator.newnode;x-friends:="gov.redhawk.ide.dcd.ui,gov.redhawk.ide.dcd.tests",
  gov.redhawk.ide.dcd.generator.newservice;x-friends:="gov.redhawk.ide.dcd.ui,gov.redhawk.ide.dcd.tests"
-Bundle-Vendor: REDHAWK
+Bundle-Vendor: %Bundle-Vendor

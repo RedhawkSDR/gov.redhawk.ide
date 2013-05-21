@@ -33,7 +33,7 @@
             category="gov.redhawk.ide.ui.templates"
             icon="icons/etool16/newex_wiz.gif"
             id="gov.redhawk.ide.ui.templates.wizard.component"
-            name="Component Control Panel"
+            name="%wizard.name.1"
             template="gov.redhawk.ide.ui.templates.controlPanel.component">
          <description>
             %newExtension.templates.editor.desc
@@ -44,7 +44,7 @@
             category="gov.redhawk.ide.ui.templates"
             icon="icons/etool16/newex_wiz.gif"
             id="gov.redhawk.ide.ui.templates.wizard.device"
-            name="Device Control Panel"
+            name="%wizard.name.2"
             template="gov.redhawk.ide.ui.templates.controlPanel.device">
          <description>
             %newExtension.templates.editor.desc
@@ -55,7 +55,7 @@
             category="gov.redhawk.ide.ui.templates"
             icon="icons/etool16/newex_wiz.gif"
             id="gov.redhawk.ide.ui.templates.wizard.corba"
-            name="Corba Control Panel"
+            name="%wizard.name.3"
             template="gov.redhawk.ide.ui.templates.controlPanel.corba">
          <description>
             %newExtension.templates.editor.desc
@@ -74,19 +74,19 @@
             class="gov.redhawk.ide.internal.ui.templates.ComponentControlPanelTemplateSection"
             contributingId="gov.redhawk.sca.ui.scaContentTypes"
             id="gov.redhawk.ide.ui.templates.controlPanel.component"
-            name="Component Control Panel Template">
+            name="%template.name.0">
       </template>
       <template
             class="gov.redhawk.ide.internal.ui.templates.DeviceControlPanelTemplateSection"
             contributingId="gov.redhawk.sca.ui.scaContentTypes"
             id="gov.redhawk.ide.ui.templates.controlPanel.device"
-            name="Device Control Panel Template">
+            name="%template.name.1">
       </template>
       <template
             class="gov.redhawk.ide.internal.ui.templates.CorbaControlPanelTemplateSection"
             contributingId="gov.redhawk.sca.ui.scaContentTypes"
             id="gov.redhawk.ide.ui.templates.controlPanel.corba"
-            name="Corba Control Panel Template">
+            name="%template.name.2">
       </template>
    </extension>
    <extension
@@ -112,7 +112,7 @@
             icon="icons/etool16/newexprj_wiz.gif"
             id="gov.redhawk.ide.ui.pluginContent.component"
             java="true"
-            name="SCA Plugin with Component Control Panel"
+            name="%wizard.name.4"
             pureOSGi="false"
             rcp="false"
             requiresActivator="false"
@@ -127,7 +127,7 @@
             icon="icons/etool16/newexprj_wiz.gif"
             id="gov.redhawk.ide.ui.pluginContent.device"
             java="true"
-            name="SCA Plugin with Device Control Panel"
+            name="%wizard.name.5"
             pureOSGi="false"
             rcp="false"
             requiresActivator="false"
@@ -142,7 +142,7 @@
             icon="icons/etool16/newexprj_wiz.gif"
             id="gov.redhawk.ide.ui.pluginContent.corba"
             java="true"
-            name="SCA Plugin with Corba Control Panel"
+            name="%wizard.name.6"
             pureOSGi="false"
             rcp="false"
             requiresActivator="false"
@@ -162,10 +162,10 @@
             hasPages="true"
             icon="icons/etool16/newprj_wiz.gif"
             id="gov.redhawk.ide.ui.wizard.controlPanel"
-            name="SCA Control Panel Project"
+            name="%wizard.name.7"
             project="true">
          <description>
-            Create an SCA Control Panel Plug-in Project
+            %wizard.description.4
          </description>
          <keywordReference
                id="org.eclipse.pde.ui.pde">

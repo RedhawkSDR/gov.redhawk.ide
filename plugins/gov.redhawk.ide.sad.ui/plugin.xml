@@ -96,7 +96,7 @@
          <propertyTab
                category="domain"
                id="property.tab.idl"
-               label="IDL">
+               label="%propertyTab.label">
          </propertyTab>
       </propertyTabs>
    </extension>
@@ -120,7 +120,7 @@
             categoryId="gov.redhawk.ide.ui.category"
             defaultHandler="gov.redhawk.ide.sad.internal.ui.handler.MarkExternalHandler"
             id="gov.redhawk.ide.sad.ui.command.addExternalPort"
-            name="Mark as External Port">
+            name="%command.name">
       </command>
    </extension>
    <extension
@@ -177,7 +177,7 @@
        <renameParticipant
              class="gov.redhawk.ide.sad.ui.action.RenameDiagramFileParticipant"
              id="gov.redhawk.ide.sad.ui.renameDiagramFile"
-             name="RenameDiagramFile">
+             name="%renameParticipant.name">
           <enablement>
               <or>
                  <adapt

@@ -258,15 +258,11 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 						ScaDebugUiPlugin.getDefault().getLog()
 						        .log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to add workspace resource: " + resource.getFullPath(), e));
 					} catch (final MountPointAlreadyExists e) {
-						if (desc != null) {
-							desc.dispose();
-						}
+						desc.dispose();
 						ScaDebugUiPlugin.getDefault().getLog()
 						        .log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to add workspace resource: " + resource.getFullPath(), e));
 					} catch (final InvalidFileName e) {
-						if (desc != null) {
-							desc.dispose();
-						}
+						desc.dispose();
 						ScaDebugUiPlugin.getDefault().getLog()
 						        .log(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to add workspace resource: " + resource.getFullPath(), e));
 					} catch (final CoreException e) {

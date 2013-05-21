@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
-   <extension-point id="codegenPages" name="SCA Component Code Generator Property Page" schema="schema/codegenPages.exsd"/>
+   <extension-point id="codegenPages" name="%extension-point.name" schema="schema/codegenPages.exsd"/>
    <extension
          point="org.eclipse.ui.commands">
       <command
             defaultHandler="gov.redhawk.ide.codegen.ui.internal.command.GenerateCodeHandler"
-            description="Generate code for this Component"
+            description="%command.description"
             id="gov.redhawk.ide.codegen.ui.command.generatecode"
-            name="Generate Component">
+            name="%command.name">
       </command>
       <command
-            description="Export SCA Resource to the target SDR"
+            description="%command.description.0"
             id="gov.redhawk.ide.codegen.ui.command.exportResource"
-            name="Export SCA Resource">
+            name="%command.name.0">
       </command>
    </extension>
    <extension
@@ -174,9 +174,9 @@
          <command
                commandId="gov.redhawk.ide.codegen.ui.command.generatecode"
                icon="icons/generate_code.gif"
-               label="Generate All Implementations"
+               label="%command.label"
                style="push"
-               tooltip="Generate All Implementations">
+               tooltip="%command.tooltip">
             <visibleWhen
                   checkEnabled="false">
             </visibleWhen>
@@ -187,9 +187,9 @@
          <command
                commandId="gov.redhawk.ide.codegen.ui.command.generatecode"
                icon="icons/generate_code.gif"
-               label="Generate All Implementations"
+               label="%command.label.0"
                style="push"
-               tooltip="Generate All Implementations">
+               tooltip="%command.tooltip.0">
             <visibleWhen
                   checkEnabled="false">
             </visibleWhen>
@@ -200,9 +200,9 @@
          <command
                commandId="gov.redhawk.ide.codegen.ui.command.generatecode"
                icon="icons/generate_code.gif"
-               label="Generate All Implementations"
+               label="%command.label.1"
                style="push"
-               tooltip="Generate All Implementations">
+               tooltip="%command.tooltip.1">
             <visibleWhen
                   checkEnabled="false">
             </visibleWhen>

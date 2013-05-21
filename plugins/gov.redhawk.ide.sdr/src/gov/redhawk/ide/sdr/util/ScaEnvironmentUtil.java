@@ -32,7 +32,7 @@ public final class ScaEnvironmentUtil {
 
 	}
 	
-	private static final AbstractEnvMap [] registry = new AbstractEnvMap []{
+	private static final AbstractEnvMap [] REGISTRY = new AbstractEnvMap []{
 		new CppEnvMap(),
 		new JavaEnvMap(),
 		new OssieHomeEnvMap(),
@@ -62,7 +62,7 @@ public final class ScaEnvironmentUtil {
 	 */
 	public static Map<String, String> getLauncherEnvMap(Implementation impl) throws CoreException {
 		final Map<String, String> retVal = new HashMap<String, String>();
-		for (AbstractEnvMap map : registry) {
+		for (AbstractEnvMap map : REGISTRY) {
 			if (map.handles(impl)) {
 				map.initEnv(impl, retVal);
 			}

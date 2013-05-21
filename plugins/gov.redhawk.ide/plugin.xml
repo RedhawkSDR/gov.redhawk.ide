@@ -19,7 +19,7 @@
    </extension>
    <extension
          id="gov.redhawk.ide.targetplatform.problem"
-         name="SCA Target Platform Problem"
+         name="%extension.name"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.core.resources.problemmarker">
@@ -30,7 +30,7 @@
    </extension>
    <extension
          id="gov.redhawk.ide.builders.scaproject"
-         name="SCA Builder"
+         name="%extension.name.0"
          point="org.eclipse.core.resources.builders">
       <builder
             callOnEmptyDelta="true"
@@ -42,7 +42,7 @@
    </extension>
    <extension
          id="gov.redhawk.ide.emf.validation.problem"
-         name="EMF Validation Problem"
+         name="%extension.name.1"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.core.resources.problemmarker">
@@ -53,7 +53,7 @@
    </extension>
    <extension
          id="gov.redhawk.ide.natures.scaproject"
-         name="SCA Project"
+         name="%extension.name.2"
          point="org.eclipse.core.resources.natures">
       <builder
             id="gov.redhawk.ide.builders.scaproject">
@@ -66,7 +66,7 @@
    </extension>
    <extension
          id="gov.redhawk.ide.natures.sca.waveform"
-         name="SCA Waveform"
+         name="%extension.name.3"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
@@ -79,7 +79,7 @@
    </extension>
    <extension
          id="gov.redhawk.ide.natures.sca.component"
-         name="SCA Component"
+         name="%extension.name.4"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
@@ -92,7 +92,7 @@
    </extension>
    <extension
          id="gov.redhawk.ide.natures.sca.node"
-         name="SCA Node"
+         name="%extension.name.5"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
@@ -106,7 +106,7 @@
    <extension
          point="org.eclipse.core.variables.dynamicVariables">
       <variable
-            description="Provides the REDHAWK IDE preference value for the OSSIEHOME variable (i.e. the target platform runtime location)"
+            description="%variable.description"
             name="OssieHome"
             resolver="gov.redhawk.ide.variables.OssieHomeResolver"
             supportsArgument="false">

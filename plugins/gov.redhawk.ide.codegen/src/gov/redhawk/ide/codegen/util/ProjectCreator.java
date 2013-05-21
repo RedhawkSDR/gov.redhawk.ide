@@ -8,6 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+ // BEGIN GENERATED CODE
 package gov.redhawk.ide.codegen.util;
 
 import gov.redhawk.ide.RedhawkIdeActivator;
@@ -21,7 +22,6 @@ import gov.redhawk.ide.codegen.ImplementationSettings;
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.ide.natures.ScaProjectNature;
-import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.sca.util.SubMonitor;
 
 import java.io.File;
@@ -34,10 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.prf.PrfPackage;
-import mil.jpeojtrs.sca.sad.SadPackage;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.spd.Code;
 import mil.jpeojtrs.sca.spd.Implementation;
@@ -133,6 +130,7 @@ public abstract class ProjectCreator {
 	 * @param filters filter for file types matching the desired file
 	 * @return Path for the file found, specified in a dialog or null if no file
 	 *         was found
+	 * @since 9.2
 	 */
 	public static IPath findLocalFile(final IPath spdFile, final IPath localfilename, final String[] filters) {
 		IPath localFile = spdFile.removeLastSegments(1).append(localfilename);

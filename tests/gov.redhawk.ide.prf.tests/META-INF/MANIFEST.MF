@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: IDE PRF Tests
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: gov.redhawk.ide.prf.tests;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: gov.redhawk.ide.prf;bundle-version="2.0.0",
@@ -10,4 +10,4 @@ Require-Bundle: gov.redhawk.ide.prf;bundle-version="2.0.0",
  org.junit4;bundle-version="4.8.1"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: gov.redhawk.ide.prf.tests
-Bundle-Vendor: United States Government
+Bundle-Vendor: %Bundle-Vendor

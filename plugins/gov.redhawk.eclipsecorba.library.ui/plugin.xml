@@ -19,7 +19,7 @@
             icon="icons/IdlLibrary.gif"
             id="gov.redhawk.eclipsecorba.library.ui.navigatorContent"
             labelProvider="gov.redhawk.eclipsecorba.library.internal.ui.LibraryNavigatorLabelProvider"
-            name="IDL Library"
+            name="%navigatorContent.name"
             priority="high">
          <possibleChildren>
             <or>
@@ -130,9 +130,9 @@
           point="org.eclipse.ui.commands">
        <command
              defaultHandler="gov.redhawk.eclipsecorba.library.internal.ResetLibraryFileHandler"
-             description="Resets the IDL library file to defaults"
+             description="%command.description"
              id="gov.redhawk.eclipsecorba.library.ui.command.reset"
-             name="Reset IDL Library">
+             name="%command.name">
        </command>
     </extension>
 </plugin>

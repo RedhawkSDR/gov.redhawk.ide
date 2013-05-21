@@ -17,13 +17,13 @@
 	   <extension
          point="org.eclipse.core.variables.dynamicVariables">
       <variable
-            description="Returns the IOR of the current Local Device Manager Stub, useful for debugging devices."
+            description="%variable.description"
             name="LocalDeviceManagerIOR"
             resolver="gov.redhawk.ide.debug.LocalDeviceManagerIORResolver"
             supportsArgument="false">
       </variable>
       <variable
-            description="Generate a unique service name within the context of the local sca."
+            description="%variable.description.0"
             name="uniqueServiceName"
             resolver="gov.redhawk.ide.debug.UniqueServiceNameBindingResolver"
             supportsArgument="true">
@@ -35,17 +35,17 @@
              delegate="gov.redhawk.ide.debug.LocalComponentProgramLaunchDelegate"
              id="gov.redhawk.ide.debug.localComponentProgram"
              modes="run"
-             name="Local Component Program">
+             name="%launchConfigurationType.name">
        </launchConfigurationType>
        <launchConfigurationType
              id="gov.redhawk.ide.debug.launchLocalWaveform"
-             name="Local Waveform">
+             name="%launchConfigurationType.name.0">
        </launchConfigurationType>
     </extension>
    <extension
          point="org.eclipse.core.variables.dynamicVariables">
       <variable
-            description="The IOR to the IDE Sandbox Servant"
+            description="%variable.description.1"
             name="IDE_REF"
             resolver="gov.redhawk.ide.debug.internal.IdeRefDynamicVariableResolver">
       </variable>

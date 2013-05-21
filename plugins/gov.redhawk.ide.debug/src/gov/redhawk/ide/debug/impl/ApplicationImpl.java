@@ -504,7 +504,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 * @param info
 	 */
 	protected void disconnect(final ScaComponent comp) {
-		for (final ScaPort< ? , ? > port : comp.getPorts().toArray(new ScaPort<?,?>[comp.getPorts().size()])) {
+		for (final ScaPort< ? , ? > port : comp.getPorts().toArray(new ScaPort< ? , ? >[comp.getPorts().size()])) {
 			if (port instanceof ScaUsesPort) {
 				final ScaUsesPort up = (ScaUsesPort) port;
 				final ScaConnection[] connections = up.getConnections().toArray(new ScaConnection[up.getConnections().size()]);

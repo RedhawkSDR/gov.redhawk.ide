@@ -13,7 +13,6 @@
 package gov.redhawk.ide.debug.provider;
 
 
-import gov.redhawk.ide.debug.LocalFileManager;
 import gov.redhawk.model.sca.provider.ScaFileManagerItemProvider;
 
 import java.util.Collection;

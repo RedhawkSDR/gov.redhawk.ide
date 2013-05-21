@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: IDE SPD Tests
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: gov.redhawk.ide.spd.tests;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-Vendor: United States Government
+Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: gov.redhawk.ide.spd;bundle-version="2.0.0",
  mil.jpeojtrs.sca.prf;bundle-version="2.2.2",
  mil.jpeojtrs.sca.scd;bundle-version="2.2.2",

@@ -17,8 +17,6 @@ import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSect
 import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSectionOsItemProvider;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSectionProcessorItemProvider;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.SpdItemProviderAdapterFactoryAdapter;
-import gov.redhawk.ide.ui.doc.IdeHelpConstants;
-import gov.redhawk.ui.doc.HelpUtil;
 import gov.redhawk.ui.editor.IScaComposite;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
@@ -85,7 +83,6 @@ public class ImplementationComposite extends Composite implements IScaComposite 
 		this.idEntry = new FormEntry(this, this.toolkit, "ID*:", SWT.SINGLE);
 		this.idEntry.getText().setToolTipText(
 		        "The implementation element's id attribute uniquely" + " identifies a specific implementation of the component and is a DCE UUID value.");
-		HelpUtil.assignTooltip(this.idEntry.getText(), IdeHelpConstants.spd_implementation_id);
 	}
 
 	/**
@@ -98,7 +95,6 @@ public class ImplementationComposite extends Composite implements IScaComposite 
 	private void createProgLangEntry() {
 		this.progLangEntry = new FormEntry(this, this.toolkit, "Prog. Lang:", SWT.SINGLE);
 		this.progLangEntry.setEditable(false);
-		HelpUtil.assignTooltip(this.progLangEntry.getText(), IdeHelpConstants.spd_implementation_progLang);
 	}
 
 	/**
@@ -111,7 +107,6 @@ public class ImplementationComposite extends Composite implements IScaComposite 
 	private void createCompilerEntry() {
 		this.compilerEntry = new FormEntry(this, this.toolkit, "Compiler:", SWT.SINGLE);
 		this.compilerEntry.setEditable(false);
-		HelpUtil.assignTooltip(this.compilerEntry.getText(), IdeHelpConstants.spd_implementation_compiler);
 	}
 
 	/**
@@ -124,7 +119,6 @@ public class ImplementationComposite extends Composite implements IScaComposite 
 	private void createRuntimeEntry() {
 		this.runtimeEntry = new FormEntry(this, this.toolkit, "Runtime:", SWT.SINGLE);
 		this.runtimeEntry.setEditable(false);
-		HelpUtil.assignTooltip(this.runtimeEntry.getText(), IdeHelpConstants.spd_implementation_runtime);
 	}
 
 	/**
@@ -137,7 +131,6 @@ public class ImplementationComposite extends Composite implements IScaComposite 
 	private void createHumanLangEntry() {
 		this.humanLangEntry = new FormEntry(this, this.toolkit, "Human Lang:", SWT.SINGLE);
 		this.humanLangEntry.setEditable(false);
-		HelpUtil.assignTooltip(this.humanLangEntry.getText(), IdeHelpConstants.spd_implementation_runtime);
 	}
 
 	/**
@@ -152,7 +145,6 @@ public class ImplementationComposite extends Composite implements IScaComposite 
 		this.prfEntry.getText().setToolTipText(
 		        "The propertyfile element is used to indicate the local filename" + " of the Property Descriptor file associated with this component "
 		                + "package described by the implementation element.");
-		HelpUtil.assignTooltip(this.prfEntry.getText(), IdeHelpConstants.spd_implementation_propertyFile);
 	}
 
 	/**
@@ -211,7 +203,6 @@ public class ImplementationComposite extends Composite implements IScaComposite 
 			tData.grabVertical = true;
 			tData.heightHint = 75; // SUPPRESS CHECKSTYLE MagicNumber
 		}
-		HelpUtil.assignTooltip(this.descriptionEntry.getText(), IdeHelpConstants.spd_implementation_description);
 	}
 
 	/**

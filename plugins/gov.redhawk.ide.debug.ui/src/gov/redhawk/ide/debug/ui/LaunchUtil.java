@@ -51,8 +51,6 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
-import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -168,7 +166,7 @@ public final class LaunchUtil {
 		if (mode != null) {
 			dialog.setMessage("Select a launch configuration to " + mode + ":");
 		} else {
-			dialog.setMessage("Select launch configuration: " );
+			dialog.setMessage("Select launch configuration: ");
 		}
 		dialog.setMultipleSelection(false);
 		final int result = dialog.open();
