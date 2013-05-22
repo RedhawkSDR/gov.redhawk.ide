@@ -406,7 +406,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	    
 	    setCorbaObj(ref);
 	    setObj(ref);
-	    if (ref != null) {
+	    if (ref != null && newLocalApp != null) {
 	    	setIdentifier(newLocalApp.identifier());
 	    	setName(newLocalApp.name());
 	    	this.refreshJob.schedule();

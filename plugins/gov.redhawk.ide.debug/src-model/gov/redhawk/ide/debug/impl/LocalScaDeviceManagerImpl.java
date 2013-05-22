@@ -299,7 +299,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 		
 		setCorbaObj(ref);
 		setObj(ref);
-		if (ref != null) {
+		if (ref != null && impl != null) {
 	    	setIdentifier(impl.identifier());
 	    	setLabel(impl.label());
 			this.refreshJob.schedule();
