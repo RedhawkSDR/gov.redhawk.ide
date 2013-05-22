@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.spd.ui.wizard;
 
-import gov.redhawk.ide.RedhawkIdeActivator;
 import gov.redhawk.ide.codegen.CodegenFactory;
 import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
@@ -24,45 +23,32 @@ import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 import gov.redhawk.ide.codegen.util.CodegenFileHelper;
 import gov.redhawk.ide.codegen.util.ImplementationAndSettings;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
-import gov.redhawk.ide.spd.generator.newcomponent.ComponentProjectCreator;
 import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.ide.ui.wizard.ScaProjectPropertiesWizardPage;
 import gov.redhawk.ide.util.ResourceUtils;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.sca.util.SubMonitor;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import mil.jpeojtrs.sca.prf.PrfPackage;
-import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.spd.Code;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdFactory;
-import mil.jpeojtrs.sca.spd.SpdPackage;
-import mil.jpeojtrs.sca.util.DceUuidUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -94,8 +80,8 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	private int firstImplPage;
 	private final String componentType;
 	/** The component properties page. */
-	protected ScaProjectPropertiesWizardPage resourcePropertiesPage;
-	protected ImplementationWizardPage implPage;
+	private ScaProjectPropertiesWizardPage resourcePropertiesPage;
+	private ImplementationWizardPage implPage;
 
 	public NewScaResourceWizard(final String componentType) {
 		super();
@@ -105,6 +91,34 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	public void init(final IWorkbench workbench, final IStructuredSelection selection) {
 		this.firstImplPage = 1;
 	}
+	
+	/**
+     * @since 8.0
+     */
+	protected void setResourcePropertiesPage(ScaProjectPropertiesWizardPage resourcePropertiesPage) {
+	    this.resourcePropertiesPage = resourcePropertiesPage;
+    }
+	
+	/**
+     * @since 8.0
+     */
+	protected ScaProjectPropertiesWizardPage getResourcePropertiesPage() {
+	    return resourcePropertiesPage;
+    }
+	
+	/**
+     * @since 8.0
+     */
+	protected void setImplPage(ImplementationWizardPage implPage) {
+	    this.implPage = implPage;
+    }
+	
+	/**
+     * @since 8.0
+     */
+	public ImplementationWizardPage getImplPage() {
+	    return implPage;
+    }
 
 	@Override
 	public void createPageControls(final Composite pageContainer) {
@@ -172,7 +186,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 			        this.componentType);
 
 			// Add the new page first
-			if (templates.length > 0) {
+			if (settings != null && templates.length > 0) {
 				// findPageByGeneratorId is always guaranteed to return at least
 				// one page.
 				codeGenPage = RedhawkCodegenUiActivator.getCodeGeneratorsRegistry().findPageByGeneratorId(settings.getGeneratorId())[0];
@@ -211,7 +225,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 			}
 
 			// Initialize the settings page
-			if (templates.length > 0) {
+			if (codeGenPage != null && settings != null && templates.length > 0) {
 				if (createControl) {
 					codeGenPage.setWizard(this);
 				}
@@ -237,8 +251,8 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	@Override
 	public IWizardPage getNextPage(final IWizardPage page) {
 		if (page instanceof ImplementationWizardPage) {
-			final ImplementationWizardPage implPage = (ImplementationWizardPage) page;
-			this.importedSettingsMap.put(implPage.getImplementation().getId(), implPage.shouldImportCode());
+			final ImplementationWizardPage nextImplPage = (ImplementationWizardPage) page;
+			this.importedSettingsMap.put(nextImplPage.getImplementation().getId(), nextImplPage.shouldImportCode());
 		}
 		return super.getNextPage(page);
 	}
@@ -354,7 +368,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	}
 
 	/**
-	 * @since 4.0
+	 * @since 8.0
 	 */
 	public void importSelected(final String spdFile) {
 		if (!getLastSpdFile().equals(spdFile)) {
@@ -377,10 +391,10 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 				page.setName(name);
 				getImplList().add(new ImplementationAndSettings(page.getImplementation(), page.getImplSettings()));
 				// Create a softpkg
-				final SoftPkg softPkg = SpdFactory.eINSTANCE.createSoftPkg();
-				softPkg.setName(name);
-				softPkg.setId(id);
-				setSoftPkg(softPkg);
+				final SoftPkg newSoftPkg = SpdFactory.eINSTANCE.createSoftPkg();
+				newSoftPkg.setName(name);
+				newSoftPkg.setId(id);
+				setSoftPkg(newSoftPkg);
 			} else {
 				final URI fileURI = URI.createFileURI(spdFile);
 
@@ -570,35 +584,50 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 
 	protected abstract IFile createComponentFiles(IProject project, String spdName, String id, String author, IProgressMonitor monitor) throws CoreException;
 
+	/**
+     * @since 8.0
+     */
 	protected abstract IProject createEmptyProject(String projectName, java.net.URI locationURI, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * @since 4.0
+	 * @since 8.0
 	 */
 	public void switchingResourcePage() {
 		final ImplementationWizardPage page = (ImplementationWizardPage) this.getWizPages().get(1);
 		page.setName(this.resourcePropertiesPage.getProjectName());
 
 		// Create a softpkg
-		final SoftPkg softPkg = SpdFactory.eINSTANCE.createSoftPkg();
-		softPkg.setName(this.resourcePropertiesPage.getProjectName());
-		softPkg.setId(getID());
-		this.setSoftPkg(softPkg);
+		final SoftPkg newSoftPkg = SpdFactory.eINSTANCE.createSoftPkg();
+		newSoftPkg.setName(this.resourcePropertiesPage.getProjectName());
+		newSoftPkg.setId(getID());
+		this.setSoftPkg(newSoftPkg);
 	}
 
+	/**
+     * @since 8.0
+     */
 	protected Implementation getImplementation() {
 		return implPage.getImplementation();
 	}
 
+	/**
+     * @since 8.0
+     */
 	protected String getID() {
 		// Figure out the ID we'll use 
 		return this.resourcePropertiesPage.getIdGroup().getId();
 	}
 
+	/**
+     * @since 8.0
+     */
 	protected String getProjectName() {
 		return resourcePropertiesPage.getProjectName();
 	}
 
+	/**
+     * @since 8.0
+     */
 	protected String getType() {
 		return ICodeGeneratorDescriptor.COMPONENT_TYPE_RESOURCE;
 	}

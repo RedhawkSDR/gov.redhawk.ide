@@ -25,11 +25,11 @@
                   id="impl_name"
                   lang="java"
                   mode="Live"
-                  name="Unique Implementation name"
+                  name="%constraint.name"
                   severity="WARNING"
                   statusCode="2">
                <message>
-                  The Implementation name should be unique."{0}" is already in use.
+                  %constraint.message
                </message>
                <target
                      class="ImplementationSettings">
@@ -53,11 +53,11 @@
                   isEnabledByDefault="true"
                   lang="java"
                   mode="Live"
-                  name="Output Directory"
+                  name="%constraint.name.0"
                   severity="ERROR"
                   statusCode="1">
                <message>
-                  {0}
+                  %constraint.message.0
                </message>
                <target
                      class="ImplementationSettings">

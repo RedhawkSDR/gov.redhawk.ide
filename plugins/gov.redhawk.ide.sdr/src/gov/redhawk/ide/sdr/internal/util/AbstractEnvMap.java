@@ -68,7 +68,7 @@ public abstract class AbstractEnvMap {
 			retVal.append(s);
 		}
 		// Insert in reverse order
-		while(i.hasNext()) {
+		while (i.hasNext()) {
 			s = i.next();
 			if (s != null) {
 				retVal.insert(0, s + File.pathSeparatorChar);
@@ -81,7 +81,7 @@ public abstract class AbstractEnvMap {
 		if (pathUri.isPlatformResource()) {
 			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(pathUri.toPlatformString(true)));
 			if (resource != null) {
-				return "${workspace_loc:" + resource.getFullPath()+"}";
+				return "${workspace_loc:" + resource.getFullPath() + "}";
 			}
 		} else {
 			IFileStore store = EFS.getStore(java.net.URI.create(pathUri.toString()));

@@ -192,7 +192,7 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 								        true), true);
 								final SoftPkg spd = SoftPkg.Util.getSoftPkg(spdResource);
 								boolean add = false;
-								out:for (Implementation impl : spd.getImplementation()) {
+								out: for (Implementation impl : spd.getImplementation()) {
 									Code code = impl.getCode();
 									if (code == null) {
 										add = false;
@@ -205,7 +205,7 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 									} 
 									switch(type) {
 									case EXECUTABLE:
-										add=true;
+										add = true;
 										break out;
 									default:
 										add = false;

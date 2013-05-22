@@ -481,16 +481,16 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 		if (uri == null) {
 			return null;
 		}
-		Name name;
+		Name newName;
 		try {
-			name = new Name(getName(uri));
+			newName = new Name(getName(uri));
 		} catch (final org.omg.CosNaming.NamingContextPackage.InvalidName e1) {
 			throw new IllegalStateException(e1);
 		}
-		NamingContext context = getContextMap().get(name);
+		NamingContext context = getContextMap().get(newName);
 		if (context == null) {
 			try {
-				context = bind_new_context(name.components());
+				context = bind_new_context(newName.components());
 			} catch (final NotFound e) {
 				// PASS
 			} catch (final AlreadyBound e) {

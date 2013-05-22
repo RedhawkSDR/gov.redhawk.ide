@@ -42,7 +42,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.window.Window;
@@ -69,7 +68,11 @@ public final class LaunchUtil {
 		final ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, labelProvider);
 		dialog.setElements(configs);
 		dialog.setTitle("Select Configuration");
-		dialog.setMessage("Select a launch configuration to " + mode + ":");
+		if (mode != null) {
+			dialog.setMessage("Select a launch configuration to " + mode + ":");
+		} else {
+			dialog.setMessage("Select launch configuration: ");
+		}
 		dialog.setMultipleSelection(false);
 		final int result = dialog.open();
 		labelProvider.dispose();

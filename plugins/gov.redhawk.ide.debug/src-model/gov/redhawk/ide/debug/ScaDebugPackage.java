@@ -1929,6 +1929,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Profile URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -1937,6 +1938,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Profile Obj</b></em>' reference.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -1945,6 +1947,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Root File Store</b></em>' attribute.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -1953,6 +1956,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -1961,6 +1965,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Ports</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -1977,6 +1982,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Dev Mgr</b></em>' container reference.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered

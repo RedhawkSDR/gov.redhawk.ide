@@ -8,6 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+ // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
 import gov.redhawk.ide.sdr.PropertyRegistry;
@@ -75,7 +76,7 @@ public abstract class PropertyRegistryImpl extends EObjectImpl implements Proper
 	 */
 	public EMap<String, AbstractProperty> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String,AbstractProperty>(SdrPackage.Literals.STRING_TO_ABSTRACT_PROPERTY, StringToAbstractPropertyImpl.class, this, SdrPackage.PROPERTY_REGISTRY__PROPERTIES);
+			properties = new EcoreEMap<String, AbstractProperty>(SdrPackage.Literals.STRING_TO_ABSTRACT_PROPERTY, StringToAbstractPropertyImpl.class, this, SdrPackage.PROPERTY_REGISTRY__PROPERTIES);
 		}
 		return properties;
 	}
@@ -89,7 +90,7 @@ public abstract class PropertyRegistryImpl extends EObjectImpl implements Proper
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case SdrPackage.PROPERTY_REGISTRY__PROPERTIES:
-				return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
+				return ((InternalEList<?>) getProperties()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}

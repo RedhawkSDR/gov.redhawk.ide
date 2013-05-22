@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: IDl Library Plugin
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: gov.redhawk.eclipsecorba.library.ui;singleton:=true
 Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: gov.redhawk.eclipsecorba.library.ui.LibraryUIPlugin
@@ -17,7 +17,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  gov.redhawk.ide.sdr.ui;bundle-version="3.2.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-Vendor: REDHAWK
+Bundle-Vendor: %Bundle-Vendor
 Export-Package: gov.redhawk.eclipsecorba.library.internal;x-internal:=true,
  gov.redhawk.eclipsecorba.library.internal.ui;x-internal:=true,
  gov.redhawk.eclipsecorba.library.ui

@@ -15,7 +15,7 @@
          point="org.eclipse.ui.ide.filesystemSupport">
       <filesystemContributor
             class="gov.redhawk.sca.efs.internal.ui.ScaFileSystemContributor"
-            label="SCA"
+            label="%filesystemContributor.label"
             scheme="sca">
       </filesystemContributor>
    </extension>

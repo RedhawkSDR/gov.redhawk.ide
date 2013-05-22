@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui.varables;
 
-import gov.redhawk.ide.RedhawkIdeActivator;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
 import org.eclipse.core.runtime.CoreException;

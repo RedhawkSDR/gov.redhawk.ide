@@ -178,7 +178,7 @@
            activeByDefault="true"
            description="%commonFilter.description.objectFiles"
            id="gov.redhawk.ui.filter.object_files"
-           name="*.o files">
+           name="%commonFilter.name">
         <filterExpression>
            <and>
               <adapt
@@ -195,7 +195,7 @@
            activeByDefault="true"
            description="%commonFilter.description.m4Files"
            id="gov.redhawk.ui.filter.m4_files"
-           name="*.m4 files">
+           name="%commonFilter.name.0">
         <filterExpression>
            <and>
               <adapt
@@ -212,7 +212,7 @@
            activeByDefault="true"
            description="%commonFilter.description.configFiles"
            id="gov.redhawk.ui.filter.config_files"
-           name="config.* files">
+           name="%commonFilter.name.1">
         <filterExpression>
            <and>
               <adapt
@@ -247,7 +247,7 @@
            activeByDefault="true"
            description="%commonFilter.description.objectFiles"
            id="gov.redhawk.ui.filter.loobject_files"
-           name="*.lo files">
+           name="%commonFilter.name.2">
         <filterExpression>
            <and>
               <adapt
@@ -264,7 +264,7 @@
            activeByDefault="true"
            description="%commonFilter.description.objectFiles"
            id="gov.redhawk.ui.filter.laobject_files"
-           name="*.la files">
+           name="%commonFilter.name.3">
         <filterExpression>
            <and>
               <adapt
@@ -307,7 +307,7 @@
        <renameParticipant
              class="gov.redhawk.ide.ui.action.RenameFileParticipant"
              id="gov.redhawk.ide.ui.renameDiagramFile"
-             name="RenameDiagramFile">
+             name="%renameParticipant.name">
           <enablement>
               <or>
                  <adapt

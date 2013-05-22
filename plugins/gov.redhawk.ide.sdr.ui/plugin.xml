@@ -159,9 +159,9 @@
      </navigatorContent>
      <commonFilter
            activeByDefault="true"
-           description="Filters Foward declaration of IDL Types"
+           description="%commonFilter.description"
            id="gov.redhawk.ide.sdr.ui.commonFilter.forwardDcl"
-           name="Filter IDL Forward DCL">
+           name="%commonFilter.name">
         <filterExpression>
            <or>
               <instanceof
@@ -318,16 +318,16 @@
      <command
            categoryId="gov.redhawk.ide.ui.category"
            defaultHandler="gov.redhawk.ide.sdr.ui.internal.handlers.RefreshSdrRootHandler"
-           description="Command for refreshing the SDR Root"
+           description="%command.description"
            id="gov.redhawk.ide.sdr.ui.command.RefreshSdrRoot"
-           name="Refresh Sdr Root">
+           name="%command.name">
      </command>
      <command
            categoryId="gov.redhawk.ide.ui.category"
            defaultHandler="gov.redhawk.ide.sdr.ui.internal.handlers.LaunchDomainManagerWithOptions"
-           description="Configure first, then launch a Domain Manager."
+           description="%command.description.0"
            id="gov.redhawk.ide.sdr.ui.command.LaunchDomainManagerWithOptions"
-           name="Launch...">
+           name="%command.name.0">
      </command>
   </extension>
   <extension
@@ -345,7 +345,7 @@
            category="gov.redhawk.ui.preferences"
            class="gov.redhawk.ide.sdr.ui.preferences.SdrPreferencePage"
            id="gov.redhawk.ide.sdr.ui.preferences.SdrPreferencePage"
-           name="SDR">
+           name="%page.name">
      </page>
   </extension>
   <extension
@@ -359,7 +359,7 @@
      <decorator
            class="gov.redhawk.ide.sdr.internal.ui.IdlLibraryDecorator"
            id="gov.redhawk.ide.sdr.ui.decorator.idlRepo"
-           label="IDL Repository Decorator"
+           label="%decorator.label"
            lightweight="true"
            location="BOTTOM_RIGHT"
            state="true">
@@ -372,7 +372,7 @@
      <decorator
            class="gov.redhawk.ide.sdr.internal.ui.SdrRootDecorator"
            id="gov.redhawk.ide.sdr.ui.decorator.sdrRoot"
-           label="SDR Root Decorator"
+           label="%decorator.label.0"
            lightweight="true"
            location="BOTTOM_RIGHT"
            state="true">
@@ -445,7 +445,7 @@
    <extension
          point="org.eclipse.core.variables.dynamicVariables">
       <variable
-            description="Provides the REDHAWK IDE preference value for the SDRROOT variable"
+            description="%variable.description"
             name="SdrRoot"
             resolver="gov.redhawk.ide.sdr.ui.varables.SdrRootResolver"
             supportsArgument="false">

@@ -322,6 +322,10 @@ public class RenameFileParticipant extends RenameParticipant {
 				}
 			}
 		}
+		
+		if (spdFile == null) {
+			return false;
+		}
 
 		final URI spdURI = URI.createPlatformResourceURI(spdFile.getFullPath().toString(), false);
 		final SoftPkg softPkg = ModelUtil.loadSoftPkg(spdURI);

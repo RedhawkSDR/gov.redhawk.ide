@@ -20,7 +20,6 @@ import gov.redhawk.ide.codegen.ImplementationSettings;
 import gov.redhawk.ide.codegen.Property;
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.ide.codegen.WaveDevSettings;
-import gov.redhawk.ide.ui.doc.IdeHelpConstants;
 import gov.redhawk.sca.util.StringUtil;
 import gov.redhawk.ui.util.EMFEmptyStringToNullUpdateValueStrategy;
 
@@ -277,7 +276,6 @@ public class ImplementationWizardPage extends WizardPage {
 		}
 
 		this.setControl(client);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(client, IdeHelpConstants.reference_wizardsAndDialogs_componentProjectWizard_implementationPage);
 
 		this.created = true;
 	}
@@ -495,7 +493,7 @@ public class ImplementationWizardPage extends WizardPage {
 				// one that is set in the previous settings
 				if (genId != null && desc.getId().equals(genId)) {
 					defaultGen = desc;
-					templateName = oldImplSettings.getTemplate();
+					templateName = (oldImplSettings == null) ? null : oldImplSettings.getTemplate();
 					break;
 				}
 			}

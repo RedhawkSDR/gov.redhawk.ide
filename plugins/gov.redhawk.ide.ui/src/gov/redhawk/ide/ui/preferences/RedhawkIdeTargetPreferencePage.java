@@ -12,7 +12,6 @@ package gov.redhawk.ide.ui.preferences;
 
 import gov.redhawk.ide.preferences.RedhawkIdePreferenceConstants;
 import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
-import gov.redhawk.ide.ui.doc.IdeHelpConstants;
 import gov.redhawk.ui.util.DirectoryFieldEditorWithSupportForEnvironment;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -21,7 +20,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -50,8 +48,6 @@ public class RedhawkIdeTargetPreferencePage extends FieldEditorPreferencePage im
 
 		final IdlListEditor idlLibraries = new IdlListEditor("IDL Locations", getFieldEditorParent(), this.getPreferenceStore());
 		addField(idlLibraries);
-
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this.getControl(), IdeHelpConstants.reference_preferences_targetPlatform);
 	}
 
 	/**

@@ -116,7 +116,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			if (msg.getFeature() == SdrPackage.Literals.WAVEFORMS_CONTAINER__WAVEFORMS) {
 				switch (msg.getEventType()) {
 				case Notification.ADD:
-					addResource((SoftwareAssembly) msg.getNewValue(), new SdrWaveformFactory((SoftwareAssembly) msg.getNewValue()) );
+					addResource((SoftwareAssembly) msg.getNewValue(), new SdrWaveformFactory((SoftwareAssembly) msg.getNewValue()));
 					break;
 				case Notification.ADD_MANY:
 					for (final Object obj : (Collection< ? >) msg.getNewValue()) {

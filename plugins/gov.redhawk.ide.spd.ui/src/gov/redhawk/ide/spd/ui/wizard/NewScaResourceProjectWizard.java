@@ -51,13 +51,13 @@ public class NewScaResourceProjectWizard extends NewScaResourceWizard implements
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addPages() {
-		this.resourcePropertiesPage = new ScaResourceProjectPropertiesWizardPage("", "Component");
-		this.addPage(this.resourcePropertiesPage);
-		this.implPage = new ImplementationWizardPage("", ICodeGeneratorDescriptor.COMPONENT_TYPE_RESOURCE);
-		this.implPage.setDescription("Choose the initial settings for the new implementation.");
-		this.addPage(this.implPage);
+		setResourcePropertiesPage(new ScaResourceProjectPropertiesWizardPage("", "Component"));
+		this.addPage(getResourcePropertiesPage());
+		setImplPage(new ImplementationWizardPage("", ICodeGeneratorDescriptor.COMPONENT_TYPE_RESOURCE));
+		getImplPage().setDescription("Choose the initial settings for the new implementation.");
+		this.addPage(getImplPage());
 
-		this.getImplList().add(new ImplementationAndSettings(this.implPage.getImplementation(), this.implPage.getImplSettings()));
+		this.getImplList().add(new ImplementationAndSettings(getImplPage().getImplementation(), getImplPage().getImplSettings()));
 
 		try {
 			final Field field = Wizard.class.getDeclaredField("pages");

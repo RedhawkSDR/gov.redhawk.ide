@@ -20,7 +20,6 @@ import gov.redhawk.model.sca.provider.ScaExecutableDeviceItemProvider;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.ResourceLocator;

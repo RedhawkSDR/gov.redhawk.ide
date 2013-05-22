@@ -95,7 +95,7 @@ public class IdlFilteredTree extends FilteredTree {
 
 		if (this.filterToolBar != null) {
 			
-			IAction refreshAction= new Action("", IAction.AS_PUSH_BUTTON) {//$NON-NLS-1$
+			IAction refreshAction = new Action("", IAction.AS_PUSH_BUTTON) { //$NON-NLS-1$
 				/*
 				 * (non-Javadoc)
 				 * 

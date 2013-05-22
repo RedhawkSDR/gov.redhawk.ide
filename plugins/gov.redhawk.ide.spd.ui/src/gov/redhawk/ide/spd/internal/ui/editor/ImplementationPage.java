@@ -11,14 +11,12 @@
 
 package gov.redhawk.ide.spd.internal.ui.editor;
 
-import gov.redhawk.ide.ui.doc.IdeHelpConstants;
 import gov.redhawk.ui.editor.ScaFormPage;
 
 import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.menus.IMenuService;
@@ -58,14 +56,6 @@ public class ImplementationPage extends ScaFormPage implements IViewerProvider {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected String getHelpResource() {
-		return IdeHelpConstants.reference_editors_component_implementationsPage;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	protected void createFormContent(final IManagedForm managedForm) {
 		
 		final ScrolledForm form = managedForm.getForm();
@@ -74,9 +64,6 @@ public class ImplementationPage extends ScaFormPage implements IViewerProvider {
 		// TODO
 		// form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXTENSIONS_OBJ));
 		this.fBlock.createContent(managedForm);
-		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
-				IdeHelpConstants.reference_editors_component_implementationsPage);
 		
 		final ToolBarManager manager = (ToolBarManager) form.getToolBarManager();
 		super.createFormContent(managedForm);

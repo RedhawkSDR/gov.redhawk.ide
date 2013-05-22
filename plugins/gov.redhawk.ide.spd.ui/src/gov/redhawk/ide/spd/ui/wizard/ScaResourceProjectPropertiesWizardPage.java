@@ -30,6 +30,7 @@ public class ScaResourceProjectPropertiesWizardPage extends ScaProjectProperties
 
 	/**
 	 * The Class SpdFileValidator.
+	 * @since 8.0
 	 */
 	public static final class SpdFileValidator implements IValidator {
 		// Rules:

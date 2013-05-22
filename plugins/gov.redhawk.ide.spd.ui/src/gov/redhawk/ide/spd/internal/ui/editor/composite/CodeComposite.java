@@ -20,8 +20,6 @@ import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSect
 import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSectionOsItemProvider;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSectionProcessorItemProvider;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.SpdItemProviderAdapterFactoryAdapter;
-import gov.redhawk.ide.ui.doc.IdeHelpConstants;
-import gov.redhawk.ui.doc.HelpUtil;
 import gov.redhawk.ui.editor.IScaComposite;
 import mil.jpeojtrs.sca.spd.CodeFileType;
 
@@ -99,7 +97,6 @@ public class CodeComposite extends Composite implements IScaComposite {
 	 */
 	private void createCodeEntryPointEntry() {
 		this.entryPoint = new FormEntry(this, this.toolkit, "Entry Point:", SWT.SINGLE);
-		HelpUtil.assignTooltip(this.entryPoint.getText(), IdeHelpConstants.spd_implementation_code_entryPoint);
 	}
 
 	/**
@@ -111,7 +108,6 @@ public class CodeComposite extends Composite implements IScaComposite {
 	 */
 	private void createCodeLocalFileEntry() {
 		this.localFile = new FormEntry(this, this.toolkit, "File*:", SWT.SINGLE);
-		HelpUtil.assignTooltip(this.localFile.getText(), IdeHelpConstants.spd_implementation_code_file);
 	}
 
 	/**
@@ -123,7 +119,6 @@ public class CodeComposite extends Composite implements IScaComposite {
 	 */
 	private void createCodePriorityEntry() {
 		this.codePriority = new FormEntry(this, this.toolkit, "Priority:", SWT.SINGLE);
-		HelpUtil.assignTooltip(this.codePriority.getText(), IdeHelpConstants.spd_implementation_code_priority);
 	}
 
 	/**
@@ -135,7 +130,6 @@ public class CodeComposite extends Composite implements IScaComposite {
 	 */
 	private void createCodeStackSizeEntry() {
 		this.codeStackSize = new FormEntry(this, this.toolkit, "Stack Size:", SWT.SINGLE);
-		HelpUtil.assignTooltip(this.codeStackSize.getText(), IdeHelpConstants.spd_implementation_code_stackSize);
 	}
 
 	/**
@@ -161,7 +155,6 @@ public class CodeComposite extends Composite implements IScaComposite {
 		this.codeTypeViewer.setContentProvider(new ArrayContentProvider());
 		this.codeTypeViewer.setLabelProvider(new AdapterFactoryLabelProvider(getAdapterFactory()));
 		this.codeTypeViewer.setInput(CodeFileType.VALUES);
-		HelpUtil.assignTooltip(this.codeTypeViewer.getControl(), IdeHelpConstants.spd_implementation_code_type);
 	}
 
 	/**

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Redhawk IDE
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: gov.redhawk.ide;singleton:=true
 Bundle-Version: 6.0.0.qualifier
 Bundle-Activator: gov.redhawk.ide.RedhawkIdeActivator
@@ -22,4 +22,4 @@ Export-Package: gov.redhawk.ide,
  gov.redhawk.ide.natures,
  gov.redhawk.ide.preferences,
  gov.redhawk.ide.util
-Bundle-Vendor: REDHAWK
+Bundle-Vendor: %Bundle-Vendor

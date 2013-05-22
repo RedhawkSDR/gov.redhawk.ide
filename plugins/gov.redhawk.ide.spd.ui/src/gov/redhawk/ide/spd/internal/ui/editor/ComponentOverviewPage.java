@@ -16,13 +16,11 @@ import gov.redhawk.ide.debug.ui.LaunchUtil;
 import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
 import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.ide.spd.ui.editor.AuthorsSection;
-import gov.redhawk.ide.ui.doc.IdeHelpConstants;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
 import gov.redhawk.ui.editor.AbstractOverviewPage;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -43,7 +41,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -94,14 +91,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected String getHelpResource() {
-		return IdeHelpConstants.reference_editors_component_overview;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	protected void createFormContent(final IManagedForm managedForm) {
 
 		final ScrolledForm form = managedForm.getForm();
@@ -111,8 +100,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		form.setText("Overview");
 
 		fillBody(managedForm, toolkit);
-		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IdeHelpConstants.reference_editors_component_overview);
 
 		// Refresh Page
 		refresh(this.spdResource);

@@ -20,7 +20,7 @@
             hasPages="true"
             icon="icons/etool16/newprj_wiz.gif"
             id="gov.redhawk.ide.ui.wizards.newnode"
-            name="SCA Node Project"
+            name="%wizard.name"
             preferredPerspectives="gov.redhawk.ide.ui.wizards.category.sca, org.eclipse.cdt.ui.CPerspective, org.python.pydev.ui.PythonPerspective"
             project="true">
       </wizard>
@@ -35,7 +35,7 @@
             hasPages="true"
             icon="icons/etool16/newprj_wiz.gif"
             id="gov.redhawk.ide.ui.wizard.newdevice"
-            name="SCA Device Project"
+            name="%wizard.name.0"
             preferredPerspectives="gov.redhawk.ide.ui.wizards.category.sca, org.eclipse.cdt.ui.CPerspective, org.python.pydev.ui.PythonPerspective"
             project="true">
       </wizard>
@@ -50,7 +50,7 @@
             hasPages="true"
             icon="icons/etool16/newprj_wiz.gif"
             id="gov.redhawk.ide.ui.wizard.newservice"
-            name="SCA Service Project"
+            name="%wizard.name.1"
             preferredPerspectives="gov.redhawk.ide.ui.wizards.category.sca, org.eclipse.cdt.ui.CPerspective, org.python.pydev.ui.PythonPerspective"
             project="true">
       </wizard>
@@ -66,7 +66,7 @@
           default="true"
           icon="icons/obj16/SpdModelFile.gif"
           id="gov.redhawk.ide.ui.editors.NodeEditor"
-          name="SCA Node Editor">
+          name="%editor.name">
        <contentTypeBinding
              contentTypeId="mil.jpeojtrs.sca.dcd.content-type">
        </contentTypeBinding>
@@ -113,7 +113,7 @@
     <command
           defaultHandler="gov.redhawk.ide.dcd.internal.ui.handlers.LaunchDeviceManager"
           id="gov.redhawk.ide.dcd.ui.command.LaunchDeviceManager"
-          name="Launch Device Manager">
+          name="%command.name">
     </command>
  </extension>
  <extension
@@ -154,7 +154,7 @@
          <propertyTab
                category="domain"
                id="property.tab.idl"
-               label="IDL">
+               label="%propertyTab.label">
          </propertyTab>
       </propertyTabs>
    </extension>
@@ -206,7 +206,7 @@
        <renameParticipant
              class="gov.redhawk.ide.dcd.ui.action.RenameDiagramFileParticipant"
              id="gov.redhawk.ide.dcd.ui.renameDiagramFile"
-             name="RenameDiagramFile">
+             name="%renameParticipant.name">
           <enablement>
               <or>
                  <adapt

@@ -118,7 +118,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	private class ScaComponentComparator implements Comparator<ScaComponent> {
-		
+
 		/**
 		 * Compare on the start order as the first priority, if no start order is found, compare on the pointer location.
 		 */
@@ -131,28 +131,28 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			} else if (o2 == assemblyController) {
 				return 1;
 			} else {
-				
+
 				SadComponentInstantiation ci1 = o1.getComponentInstantiation();
 				int o1Index = o1.eContainer().eContents().indexOf(o1);
-				
+
 				SadComponentInstantiation ci2 = o2.getComponentInstantiation();
 				int o2Index = o2.eContainer().eContents().indexOf(o2);
-				
+
 				// If neither have start order we'll order them on list order.
 				if (ci1 == null && ci2 == null) {
 					return (o1Index < o2Index) ? -1 : 1;
 				}
-				
+
 				// If c1 != null but ci2 is
 				if (ci2 == null) {
 					return -1;
 				}
-				
+
 				// If c2 != null but ci1 is
 				if (ci1 == null) {
 					return 1;
 				}
-				
+
 				// Neither ci1 or ci2 is null
 				BigInteger s1 = ci1.getStartOrder();
 				BigInteger s2 = ci2.getStartOrder();
@@ -164,9 +164,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 					return (o1Index < o2Index) ? -1 : 1;
 				}
 			}
-        }
+		}
 	}
-	
+
 	private static class FromConnectionInfo implements ConnectionInfo {
 		private final String connectionID;
 		private final ScaUsesPort port;
@@ -249,11 +249,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 	}
 
-	private static final EStructuralFeature[] ASSEMBLY_ID_PATH = new EStructuralFeature[] {
-	        SadPackage.Literals.SOFTWARE_ASSEMBLY__ASSEMBLY_CONTROLLER,
-	        SadPackage.Literals.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF,
-	        PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__REFID
-	};
+	private static final EStructuralFeature[] ASSEMBLY_ID_PATH = new EStructuralFeature[] { SadPackage.Literals.SOFTWARE_ASSEMBLY__ASSEMBLY_CONTROLLER,
+	        SadPackage.Literals.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__REFID };
 	private LocalScaComponent assemblyController;
 	private NotifyingNamingContext waveformContext;
 	private final ApplicationStreams streams = new ApplicationStreams();
@@ -320,13 +317,13 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.streams.getOutStream().println("Starting...");
 
 		SortedSet<ScaComponent> sortedSet = new TreeSet<ScaComponent>(new ScaComponentComparator());
-		
+
 		for (ScaComponent comp : waveform.getComponents()) {
 			if (comp.getInstantiationIdentifier() != null) {
 				sortedSet.add(comp);
 			}
 		}
-		
+
 		for (ScaComponent comp : sortedSet) {
 			this.streams.getOutStream().println("\t" + comp.getInstantiationIdentifier());
 			try {
@@ -335,9 +332,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				throw logException("Error during start", e);
 			}
 		}
-		
+
 		this.streams.getOutStream().println("Start succeeded");
-		this.started=true;
+		this.started = true;
 	}
 
 	/**
@@ -351,13 +348,13 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				@Override
 				public int compare(ScaComponent o1, ScaComponent o2) {
 					// Reverse the order for stopping
-				    return -1 * super.compare(o1, o2);
+					return -1 * super.compare(o1, o2);
 				}
 			});
 			for (ScaComponent comp : waveform.getComponents()) {
 				sortedSet.add(comp);
 			}
-			
+
 			for (ScaComponent comp : sortedSet) {
 				this.streams.getOutStream().println("\t" + comp.getInstantiationIdentifier());
 				comp.stop();
@@ -418,7 +415,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			unbind();
 		} catch (Exception e) {
 			logException("Problems while releasing.", e);
-		} 
+		}
 
 		this.streams.getOutStream().println("Release finished");
 		this.assemblyController = null;
@@ -431,20 +428,20 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	protected void unbind() {
 		if (this.waveformContext != null) {
-			
+
 			if (this.waveformContext.eContainer() instanceof NotifyingNamingContext) {
 				this.streams.getOutStream().println("Unbinding application");
 
 				try {
 					NotifyingNamingContext localSCANamingContext = (NotifyingNamingContext) this.waveformContext.eContainer();
 					localSCANamingContext.unbind(Name.toName(this.name));
-                } catch (NotFound e) {
-                	this.streams.getErrStream().println("Error while unbinding waveform:\n" + e);
-                } catch (CannotProceed e) {
-                	this.streams.getErrStream().println("Error while unbinding waveform:\n" + e);
-                } catch (InvalidName e) {
-                	this.streams.getErrStream().println("Error while unbinding waveform:\n" + e);
-                }
+				} catch (NotFound e) {
+					this.streams.getErrStream().println("Error while unbinding waveform:\n" + e);
+				} catch (CannotProceed e) {
+					this.streams.getErrStream().println("Error while unbinding waveform:\n" + e);
+				} catch (InvalidName e) {
+					this.streams.getErrStream().println("Error while unbinding waveform:\n" + e);
+				}
 			}
 
 			final NotifyingNamingContext rootContext = ScaDebugPlugin.getInstance().getLocalSca().getRootContext();
@@ -512,7 +509,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 * @param info
 	 */
 	protected void disconnect(final ScaComponent comp) {
-		for (final ScaPort< ? , ? > port : comp.getPorts().toArray(new ScaPort<?,?>[comp.getPorts().size()])) {
+		for (final ScaPort< ? , ? > port : comp.getPorts().toArray(new ScaPort< ? , ? >[comp.getPorts().size()])) {
 			if (port instanceof ScaUsesPort) {
 				final ScaUsesPort up = (ScaUsesPort) port;
 				final ScaConnection[] connections = up.getConnections().toArray(new ScaConnection[up.getConnections().size()]);
@@ -766,9 +763,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 	public Resource reset(final String compInstId) throws ReleaseError, ExecuteFail {
 		if (compInstId == null) {
-			throw new ReleaseError(new String[] {
-				"Unknown component: " + compInstId
-			});
+			throw new ReleaseError(new String[] { "Unknown component: " + compInstId });
 		}
 		this.streams.getOutStream().println("Reseting component " + compInstId);
 
@@ -778,9 +773,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			if (compInstId.equals(info.getInstantiationIdentifier())) {
 				if (!(info instanceof LocalScaComponent)) {
 					// This should never happen but check for it anyway
-					throw logException(new ReleaseError(new String[] {
-						"Can only reset local components"
-					}));
+					throw logException(new ReleaseError(new String[] { "Can only reset local components" }));
 				}
 				oldComponent = (LocalScaComponent) info;
 				break;
@@ -789,9 +782,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 		if (oldComponent == null) {
 			this.streams.getErrStream().println("No component " + compInstId);
-			throw new ReleaseError(new String[] {
-				"Unknown component: " + compInstId
-			});
+			throw new ReleaseError(new String[] { "Unknown component: " + compInstId });
 		}
 		final String usageName = oldComponent.getName();
 		final String execParams = oldComponent.getExecParam();
@@ -1011,7 +1002,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 		return SpdLauncherUtil.createExecParamString(map);
 	}
-	
+
 	public Object getAdapter(Class adapter) {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}

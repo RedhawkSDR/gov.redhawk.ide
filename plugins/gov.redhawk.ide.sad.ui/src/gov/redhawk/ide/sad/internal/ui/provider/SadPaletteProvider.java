@@ -105,7 +105,7 @@ public class SadPaletteProvider extends DefaultPaletteProvider {
 		}
 		final EList<SoftPkg> components = container.getComponents();
 		final SoftPkg[] componentsArray = components.toArray(new SoftPkg[components.size()]);
-		spdLoop:for (final SoftPkg spd : componentsArray) {
+		spdLoop: for (final SoftPkg spd : componentsArray) {
 			for (Implementation impl : spd.getImplementation()) {
 				Code code = impl.getCode();
 				if (code == null) {

@@ -21,7 +21,7 @@
             hasPages="true"
             icon="icons/etool16/newprj_wiz.gif"
             id="gov.redhawk.ide.ui.wizards.newcomponent"
-            name="SCA Component Project"
+            name="%wizard.name"
             project="true">
       </wizard>
       <primaryWizard
@@ -36,7 +36,7 @@
             default="true"
             icon="icons/obj16/SpdModelFile.gif"
             id="gov.redhawk.ide.ui.editors.ComponentEditor"
-            name="SCA Component Editor">
+            name="%editor.name">
          <contentTypeBinding
                contentTypeId="mil.jpeojtrs.sca.spd.content-type">
          </contentTypeBinding>
@@ -77,29 +77,29 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            description="Organize the Interfaces for this Component"
+            description="%command.description"
             id="gov.redhawk.ide.spd.ui.command.organizeinterfaces"
-            name="Organize Interfaces">
+            name="%command.name">
       </command>
       <command
-            description="Removes the Selected Ports"
+            description="%command.description.0"
             id="gov.redhawk.ide.spd.ui.command.removePorts"
-            name="Remove">
+            name="%command.name.0">
       </command>
       <command
-            description="Adds a New Port"
+            description="%command.description.1"
             id="gov.redhawk.ide.spd.ui.command.addPort"
-            name="Add...">
+            name="%command.name.1">
       </command>
       <command
-            description="Edits a Port"
+            description="%command.description.2"
             id="gov.redhawk.ide.spd.ui.command.editPort"
-            name="Edit">
+            name="%command.name.2">
       </command>
       <command
-            description="Recreates the Implementation Settings"
+            description="%command.description.3"
             id="gov.redhawk.ide.spd.ui.command.recreateSettings"
-            name="Recreate Settings">
+            name="%command.name.3">
       </command>
    </extension>
    <extension
@@ -239,7 +239,7 @@
        <decorator
              class="gov.redhawk.ide.spd.internal.ui.editor.provider.PrimaryImplementationDecorator"
              id="gov.redhawk.ide.spd.ui.editor.provider.PrimaryImplementationDecorator"
-             label="Primary Implementation Decorator"
+             label="%decorator.label"
              lightweight="true"
              state="true">
           <enablement>

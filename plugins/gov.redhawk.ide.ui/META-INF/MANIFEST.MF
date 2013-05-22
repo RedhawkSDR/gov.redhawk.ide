@@ -27,7 +27,6 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: gov.redhawk.ide.internal.ui.handlers,
  gov.redhawk.ide.internal.ui.perspective;x-internal:=true,
  gov.redhawk.ide.ui,
- gov.redhawk.ide.ui.doc,
  gov.redhawk.ide.ui.preferences,
  gov.redhawk.ide.ui.wizard
 Bundle-Localization: plugin

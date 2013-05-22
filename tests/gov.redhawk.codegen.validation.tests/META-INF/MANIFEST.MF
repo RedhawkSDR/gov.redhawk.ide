@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Tests
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: gov.redhawk.codegen.validation.tests;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
@@ -11,4 +11,4 @@ Require-Bundle: org.junit4;bundle-version="4.5.0",
  gov.redhawk.codegen.validation;bundle-version="2.0.0",
  gov.redhawk.ide.codegen;bundle-version="9.1.0"
 Export-Package: gov.redhawk.codegen.validation.tests
-Bundle-Vendor: United States Government
+Bundle-Vendor: %Bundle-Vendor

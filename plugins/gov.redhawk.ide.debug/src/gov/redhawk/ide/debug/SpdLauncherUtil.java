@@ -1,8 +1,13 @@
-/** 
- * REDHAWK HEADER
+/*******************************************************************************
+ * This file is protected by Copyright. 
+ * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
- * Identification: $Revision: 9208 $
- */
+ * This file is part of REDHAWK IDE.
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under 
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package gov.redhawk.ide.debug;
 
 import gov.redhawk.ide.debug.variables.LaunchVariables;
@@ -545,15 +550,15 @@ public final class SpdLauncherUtil {
 		}
 
 	}
-	
+
 	/**
 	 * @since 3.0
 	 */
-	public static Map<String,String> createMap(String programArguments) {
+	public static Map<String, String> createMap(String programArguments) {
 		String[] split = programArguments.split(" ");
-		Map<String,String> retVal = new HashMap<String, String>(split.length/2);
-		for (int i=0; i+1<split.length; i+=2) {
-			retVal.put(split[i], split[i+1]);
+		Map<String, String> retVal = new HashMap<String, String>(split.length / 2);
+		for (int i = 0; i + 1 < split.length; i += 2) {
+			retVal.put(split[i], split[i + 1]);
 		}
 		return retVal;
 	}

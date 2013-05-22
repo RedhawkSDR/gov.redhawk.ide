@@ -83,6 +83,9 @@ public class IDGroup {
 		return DceUuidConstraint.validate(this.providedIdText.getText());
 	}
 	
+	/**
+     * @since 9.0
+     */
 	public String getId() {
 		if (generateIdButton.getSelection()) {
 			return DceUuidUtil.createDceUUID();

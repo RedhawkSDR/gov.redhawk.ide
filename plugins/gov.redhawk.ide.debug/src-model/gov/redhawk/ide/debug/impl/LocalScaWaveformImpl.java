@@ -623,7 +623,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		// TODO Fix this hack
 		if (getLocalApp() instanceof ApplicationImpl) {
 			return ((ApplicationImpl) getLocalApp()).launch(usageName, execParams, spdURI, implID, mode);
-		} else if (getLocalApp() != null){
+		} else if (getLocalApp() != null) {
 			throw new IllegalStateException("Unknown Application type " + getLocalApp());
 		} else {
 			throw new IllegalStateException("Null Application type");

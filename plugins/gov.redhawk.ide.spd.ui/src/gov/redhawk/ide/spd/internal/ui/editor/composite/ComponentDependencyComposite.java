@@ -18,8 +18,6 @@ import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSect
 import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSectionProcessorItemProvider;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.ImplementationDetailsSectionPropertyRefItemProvider;
 import gov.redhawk.ide.spd.internal.ui.editor.provider.SpdItemProviderAdapterFactoryAdapter;
-import gov.redhawk.ide.ui.doc.IdeHelpConstants;
-import gov.redhawk.ui.doc.HelpUtil;
 import gov.redhawk.ui.editor.IScaComposite;
 import gov.redhawk.ui.util.SWTUtil;
 import mil.jpeojtrs.sca.spd.Dependency;
@@ -128,7 +126,6 @@ public class ComponentDependencyComposite extends Composite implements IScaCompo
 				ComponentDependencyComposite.this.editOsButton.setEnabled(!event.getSelection().isEmpty());
 			}
 		});
-		HelpUtil.assignTooltip(this.osViewer.getControl(), IdeHelpConstants.spd_implementation_dependency_os);
 	}
 
 	/**
@@ -229,8 +226,6 @@ public class ComponentDependencyComposite extends Composite implements IScaCompo
 		});
 
 		this.removeProcessorButton.setEnabled(!this.processorViewer.getSelection().isEmpty());
-
-		HelpUtil.assignTooltip(this.processorViewer.getControl(), IdeHelpConstants.spd_implementation_dependency_processor);
 	}
 
 	/**
@@ -296,8 +291,6 @@ public class ComponentDependencyComposite extends Composite implements IScaCompo
 				ComponentDependencyComposite.this.editDependencyButton.setEnabled(!event.getSelection().isEmpty());
 			}
 		});
-
-		HelpUtil.assignTooltip(this.dependencyViewer.getControl(), IdeHelpConstants.spd_implementation_dependency_dependency);
 	}
 
 	/**
