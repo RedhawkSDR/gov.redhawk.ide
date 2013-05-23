@@ -59,7 +59,7 @@ public class DcdPaletteProvider extends DefaultPaletteProvider {
 	private static final String TOOL_PREFIX = "deviceTool.";
 
 	@Override
-	public void contributeToPalette(final IEditorPart editor, final Object content, final PaletteRoot root, final Map predefinedEntries) {
+	public void contributeToPalette(final IEditorPart editor, final Object content, final PaletteRoot root, @SuppressWarnings("rawtypes") final Map predefinedEntries) {
 		final PaletteDrawer ddrawer = new PaletteDrawer("Devices");
 		root.add(ddrawer);
 		ddrawer.add(new PaletteSeparator("devices"));

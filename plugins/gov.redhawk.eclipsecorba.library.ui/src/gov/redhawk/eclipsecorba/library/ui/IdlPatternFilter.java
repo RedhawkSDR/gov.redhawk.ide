@@ -29,7 +29,9 @@ public class IdlPatternFilter extends PatternFilter {
 
 	@Override
 	public void setPattern(String patternString) {
-		if (patternString == null) patternString = "";
+		if (patternString == null) {
+			patternString = "";
+		}
 		patternString = patternString.replaceAll("\\*", ".*");
 		patternString = patternString.replaceAll("\\?", ".?");
 		try {

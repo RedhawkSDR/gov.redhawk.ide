@@ -31,7 +31,8 @@ public class ScaDebugUiPlugin extends AbstractUIPlugin {
 	// The shared instance
 	private static ScaDebugUiPlugin plugin;
 
-	private ServiceRegistration reg;
+	private ServiceRegistration< IScaObjectLocator > reg;
+
 
 	/**
 	 * The constructor
@@ -47,7 +48,7 @@ public class ScaDebugUiPlugin extends AbstractUIPlugin {
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		ScaDebugUiPlugin.plugin = this;
-		this.reg = context.registerService(IScaObjectLocator.class.getName(), new LocalScaObjectLocator(), null);
+		this.reg = context.registerService(IScaObjectLocator.class, new LocalScaObjectLocator(), null);
 	}
 
 	/*

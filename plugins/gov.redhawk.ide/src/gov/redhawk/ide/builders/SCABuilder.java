@@ -110,7 +110,7 @@ public class SCABuilder extends IncrementalProjectBuilder {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected IProject[] build(final int kind, final Map args, final IProgressMonitor monitor) throws CoreException {
+	protected IProject[] build(final int kind, @SuppressWarnings("rawtypes") final Map args, final IProgressMonitor monitor) throws CoreException {
 		IResourceDelta delta = null;
 		if (kind != IncrementalProjectBuilder.FULL_BUILD) {
 			delta = getDelta(getProject());

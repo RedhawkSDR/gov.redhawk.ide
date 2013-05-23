@@ -1003,7 +1003,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return SpdLauncherUtil.createExecParamString(map);
 	}
 
-	public Object getAdapter(Class adapter) {
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 

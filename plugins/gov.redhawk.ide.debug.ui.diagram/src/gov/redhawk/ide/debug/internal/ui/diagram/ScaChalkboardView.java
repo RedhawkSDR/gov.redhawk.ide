@@ -8,6 +8,8 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+  // BEGIN GENERATED CODE
+
 package gov.redhawk.ide.debug.internal.ui.diagram;
 
 import gov.redhawk.ide.debug.internal.ui.LocalScaElementFactory;
@@ -75,7 +77,7 @@ public class ScaChalkboardView extends ViewPart {
 
 	}
 	
-	public Object getAdapter(Class adapter) {
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (adapter == IEditingDomainProvider.class) {
 			return editingDomainProvider;
 		} else {
@@ -164,15 +166,15 @@ public class ScaChalkboardView extends ViewPart {
 			site.setSelectionProvider(provider);
 		}
 
-		public Object getAdapter(Class adapter) {
+		public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 			return site.getAdapter(adapter);
 		}
 
-		public Object getService(Class api) {
+		public Object getService(@SuppressWarnings("rawtypes") Class api) {
 			return site.getService(api);
 		}
 
-		public boolean hasService(Class api) {
+		public boolean hasService(@SuppressWarnings("rawtypes") Class api) {
 			return site.hasService(api);
 		}
 

@@ -54,7 +54,7 @@ public class TopLevelBuildScript extends IncrementalProjectBuilder {
 	}
 
 	@Override
-	protected IProject[] build(int kind, @SuppressWarnings("unchecked") Map args, IProgressMonitor monitor) throws CoreException {
+	protected IProject[] build(int kind, @SuppressWarnings("rawtypes") Map args, IProgressMonitor monitor) throws CoreException {
 		try {
 			if (kind == IncrementalProjectBuilder.FULL_BUILD || kind == IncrementalProjectBuilder.CLEAN_BUILD) {
 				generateBuildScript(monitor);

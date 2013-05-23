@@ -90,7 +90,9 @@ public class SdrRootDecorator extends LabelProvider implements ILightweightLabel
 			if (sdrRoot.getLoadStatus() != null) {
 				final ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 				final IStatus status = sdrRoot.getLoadStatus();
-				if (status == null) return;
+				if (status == null) {
+					return;
+				}
 				switch (status.getSeverity()) {
 				case IStatus.WARNING:
 					decoration.addOverlay(sharedImages.getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING), IDecoration.BOTTOM_RIGHT);

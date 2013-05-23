@@ -104,6 +104,8 @@ public class PortWizardPage extends WizardPage {
 					}
 				});
 				break;
+			default:
+				break;
 			}
 		}
 

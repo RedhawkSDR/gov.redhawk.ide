@@ -244,7 +244,7 @@ public class CustomDiagramEditor extends SadDiagramEditor implements IFormPage {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object getAdapter(final Class type) {
+	public Object getAdapter(@SuppressWarnings("rawtypes") final Class type) {
 		if (type == IContentOutlinePage.class) {
 			final TreeViewer viewer = new TreeViewer();
 			viewer.setRootEditPart(new DiagramRootTreeEditPart());

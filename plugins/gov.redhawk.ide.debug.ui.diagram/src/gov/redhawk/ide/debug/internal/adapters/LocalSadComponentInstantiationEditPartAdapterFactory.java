@@ -29,7 +29,7 @@ public class LocalSadComponentInstantiationEditPartAdapterFactory implements IAd
 	/**
 	 * {@inheritDoc}
 	 */
-	public Object getAdapter(final Object adaptableObject, final Class adapterType) {
+	public Object getAdapter(final Object adaptableObject, @SuppressWarnings("rawtypes") final Class adapterType) {
 		if (adapterType == LocalLaunch.class) {
 			if (adaptableObject instanceof SadComponentInstantiationEditPart) {
 				final ScaComponent comp = PluginUtil.adapt(ScaComponent.class, adaptableObject);
@@ -44,7 +44,7 @@ public class LocalSadComponentInstantiationEditPartAdapterFactory implements IAd
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class[] getAdapterList() {
+	public Class < ? > [] getAdapterList() {
 		return LocalSadComponentInstantiationEditPartAdapterFactory.CLASS_LIST;
 	}
 

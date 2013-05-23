@@ -120,7 +120,7 @@ public class IdlInterfaceSelectionDialog extends SelectionStatusDialog {
 	 */
 	@Override
 	protected void computeResult() {
-		java.util.List selectedElements = ((StructuredSelection) filteredTree.getViewer().getSelection()).toList();
+		java.util.List< ? > selectedElements = ((StructuredSelection) filteredTree.getViewer().getSelection()).toList();
 		setResult(selectedElements);
 	}
 	

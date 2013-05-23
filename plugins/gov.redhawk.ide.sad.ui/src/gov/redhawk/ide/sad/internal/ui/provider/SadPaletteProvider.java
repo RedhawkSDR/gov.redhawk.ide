@@ -54,7 +54,7 @@ public class SadPaletteProvider extends DefaultPaletteProvider {
 		// TODO Auto-generated constructor stub
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void contributeToPalette(final IEditorPart editor, final Object content, final PaletteRoot root, final Map predefinedEntries) {
 		final PaletteDrawer drawer = new PaletteDrawer("Components");
