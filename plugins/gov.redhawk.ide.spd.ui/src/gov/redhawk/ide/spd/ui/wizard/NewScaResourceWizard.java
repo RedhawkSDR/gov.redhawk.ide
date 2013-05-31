@@ -508,7 +508,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 							final ImplementationWizardPage page = (ImplementationWizardPage) getWizPages().get(1);
 							final Implementation impl = page.getImplementation();
 							final ImplementationSettings settings = page.getImplSettings();
-							ProjectCreator.addImplementation(project, impl, settings, progress.newChild(1));
+							ProjectCreator.addImplementation(project, projectName, impl, settings, progress.newChild(1));
 						} else {
 							setOpenEditorOn(ProjectCreator.importFiles(project, existingResourceLocation, getImplList(), getImportedSettingsMap(), progress.newChild(2), getSoftPkg().getId()));
 						}

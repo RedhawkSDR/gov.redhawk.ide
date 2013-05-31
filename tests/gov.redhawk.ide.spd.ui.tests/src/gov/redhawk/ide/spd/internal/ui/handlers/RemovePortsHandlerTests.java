@@ -16,6 +16,7 @@ import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.eclipsecorba.library.LibraryFactory;
 import gov.redhawk.eclipsecorba.library.RepositoryModule;
 import gov.redhawk.eclipsecorba.library.URIPathSet;
+import gov.redhawk.ide.spd.internal.ui.editor.wizard.PortWizardPage.PortWizardModel;
 import gov.redhawk.ide.spd.ui.tests.SpdUiTestUtils;
 
 import java.io.IOException;
@@ -78,7 +79,7 @@ public class RemovePortsHandlerTests {
 	public void removePort() {
 		//Add a port
 		final Provides provides = SpdUiTestUtils.createProvides("IDL:omg.org/CosContainment/ContainedInRole:1.0");
-		PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, provides), this.editingDomain);
+		PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides)), this.editingDomain);
 		Assert.assertEquals("The provides port " + provides.getRepID() + " should be contained in the SCD", true, this.scd.getComponentFeatures()
 		        .getPorts()
 		        .getProvides()
@@ -118,9 +119,9 @@ public class RemovePortsHandlerTests {
 				for (final Definition definition : module.getDefinitions()) {
 					if (definition instanceof IdlInterfaceDcl) {
 						final Provides provides = SpdUiTestUtils.createProvides(definition.getRepId());
-						PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, provides), this.editingDomain);
+						PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides)), this.editingDomain);
 						final Uses uses = SpdUiTestUtils.createUses(definition.getRepId());
-						PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, uses), this.editingDomain);
+						PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, new PortWizardModel(uses)), this.editingDomain);
 					}
 				}
 			}
