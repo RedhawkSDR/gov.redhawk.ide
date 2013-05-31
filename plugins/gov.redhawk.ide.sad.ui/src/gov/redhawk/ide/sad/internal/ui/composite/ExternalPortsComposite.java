@@ -10,17 +10,26 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.composite;
 
+import mil.jpeojtrs.sca.sad.Port;
+import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.provider.SadItemProviderAdapterFactory;
 
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.provider.IDisposable;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -76,7 +85,8 @@ public class ExternalPortsComposite extends Composite {
 		portTable.setHeaderVisible(true);
 		portTable.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 3).create()); // SUPPRESS CHECKSTYLE MagicNumber
 		final TableLayout tableLayout = new TableLayout();
-		tableLayout.addColumnData(new ColumnWeightData(70, 10, true)); // SUPPRESS CHECKSTYLE MagicNumber
+		tableLayout.addColumnData(new ColumnWeightData(40, 10, true)); // SUPPRESS CHECKSTYLE MagicNumber
+		tableLayout.addColumnData(new ColumnWeightData(30, 10, true)); // SUPPRESS CHECKSTYLE MagicNumber
 		tableLayout.addColumnData(new ColumnWeightData(30, 10, true)); // SUPPRESS CHECKSTYLE MagicNumber
 		portTable.setLayout(tableLayout);
 		this.tableViewer = new TableViewer(portTable);
@@ -86,6 +96,51 @@ public class ExternalPortsComposite extends Composite {
 		final TableViewerColumn column2 = new TableViewerColumn(this.tableViewer, SWT.LEFT);
 		column2.getColumn().setText("Port");
 		column2.getColumn().setResizable(true);
+		final TableViewerColumn column3 = new TableViewerColumn(this.tableViewer, SWT.LEFT);
+		column3.getColumn().setText("External Name");
+		column3.getColumn().setResizable(true);
+		column3.setEditingSupport(new EditingSupport(tableViewer) {
+
+			@Override
+			protected void setValue(Object element, Object value) {
+				if (element instanceof Port) {
+					Port port = (Port) element;
+					String newValue = null;
+					if (value instanceof String && ((String) value).length() > 0) {
+						newValue = (String) value;
+					}
+
+					TransactionalEditingDomain ed = TransactionUtil.getEditingDomain(port);
+					if (ed != null) {
+						Command command = SetCommand.create(ed, port, SadPackage.Literals.PORT__EXTERNAL_NAME, newValue);
+						ed.getCommandStack().execute(command);
+					} else {
+						port.setExternalName(newValue);
+					}
+				}
+
+			}
+
+			@Override
+			protected Object getValue(Object element) {
+				if (element instanceof Port) {
+					Port port = (Port) element;
+					return (port.getExternalName() == null) ? "" : port.getExternalName();
+				}
+				return "";
+			}
+
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return new TextCellEditor(tableViewer.getTable(), SWT.None);
+			}
+
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		});
+
 		this.tableViewer.setContentProvider(new AdapterFactoryContentProvider(this.adapterFactory));
 		this.tableViewer.setLabelProvider(new AdapterFactoryLabelProvider(this.adapterFactory));
 	}
