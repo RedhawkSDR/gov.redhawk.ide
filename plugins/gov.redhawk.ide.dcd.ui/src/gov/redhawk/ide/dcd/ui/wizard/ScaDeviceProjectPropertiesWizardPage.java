@@ -34,8 +34,8 @@ import org.eclipse.swt.widgets.Group;
 public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectPropertiesWizardPage {
 
 	private static class DeviceProjectSettings {
-		String deviceType;
-		boolean aggregate;
+		String deviceType =  RedhawkIdePreferenceConstants.DEVICE;
+		boolean aggregate = false;
 
 		public String getDeviceType() {
 			return deviceType;
@@ -58,6 +58,7 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectProp
 	private Combo deviceTypeCombo;
 	private Button aggregateButton;
 	private Group deviceGroup;
+	private DataBindingContext context;
 
 	/**
 	 * Instantiates a new sca resource project properties wizard page.
@@ -67,6 +68,7 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectProp
 	protected ScaDeviceProjectPropertiesWizardPage(final String pageName, final String type) {
 		super(pageName, type);
 		this.setDescription("Choose to either create a new Device or import an existing one.");
+		context = new DataBindingContext();
 	}
 
 	/**
@@ -89,7 +91,6 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectProp
 		aggregateButton.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
 		aggregateButton.setText(RedhawkIdePreferenceConstants.AGGREGATE_DEVICE + " device");
 
-		final DataBindingContext context = new DataBindingContext();
 		context.bindValue(WidgetProperties.text().observe(deviceTypeCombo), PojoProperties.value("deviceType").observe(this.deviceProjSettings));
 		context.bindValue(WidgetProperties.selection().observe(aggregateButton), PojoProperties.value("aggregate").observe(this.deviceProjSettings));
 		deviceTypeCombo.addDisposeListener(new DisposeListener() {
@@ -99,6 +100,15 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectProp
 			}
 		});
 
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		if (context != null) {
+			context.dispose();
+			context = null;
+		}
 	}
 
 	@Override
