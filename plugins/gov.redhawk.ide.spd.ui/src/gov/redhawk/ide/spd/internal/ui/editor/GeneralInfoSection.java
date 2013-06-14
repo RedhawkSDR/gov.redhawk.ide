@@ -323,6 +323,10 @@ public class GeneralInfoSection extends ScaSection {
 		final IProject project = getProject();
 		if (project != null) {
 			final PrfModelWizard wizard = new PrfModelWizard(project);
+			if (getSoftPkg().getPropertyFile() != null && getSoftPkg().getPropertyFile().getLocalFile() != null) {
+				String initialValue = getSoftPkg().getPropertyFile().getLocalFile().getName();
+				wizard.setInitialValue(initialValue);
+			}
 			wizard.init(getPage().getSite().getWorkbenchWindow().getWorkbench(), new StructuredSelection(project));
 			final WizardDialog dialog = new WizardDialog(getPage().getSite().getShell(), wizard);
 			if (dialog.open() == Window.OK) {
@@ -339,6 +343,10 @@ public class GeneralInfoSection extends ScaSection {
 		final IProject project = getProject();
 		if (project != null) {
 			final ScdModelWizard wizard = new ScdModelWizard(project);
+			if (getSoftPkg().getDescriptor() != null && getSoftPkg().getDescriptor().getLocalfile() != null) {
+				String initialValue = getSoftPkg().getDescriptor().getLocalfile().getName();
+				wizard.setInitialValue(initialValue);
+			}
 			wizard.init(getPage().getSite().getWorkbenchWindow().getWorkbench(), new StructuredSelection(project));
 			final WizardDialog dialog = new WizardDialog(getPage().getSite().getShell(), wizard);
 			if (dialog.open() == Window.OK) {
@@ -366,7 +374,11 @@ public class GeneralInfoSection extends ScaSection {
 	 * @return the prf file
 	 */
 	private IFile getPrfFile() {
-		return ModelUtil.getPrfFile(getSoftPkg().getPropertyFile());
+		IFile file = ModelUtil.getPrfFile(getSoftPkg().getPropertyFile());
+		if (file == null || !file.exists()) {
+			return null;
+		}
+		return file;
 	}
 
 	/**
@@ -375,7 +387,11 @@ public class GeneralInfoSection extends ScaSection {
 	 * @return the scd file
 	 */
 	private IFile getScdFile() {
-		return ModelUtil.getScdFile(getSoftPkg().getDescriptor());
+		IFile file = ModelUtil.getScdFile(getSoftPkg().getDescriptor());
+		if (file == null || !file.exists()) {
+			return null;
+		}
+		return file;
 	}
 
 	/**
