@@ -58,6 +58,9 @@ public class ImplementationDetailsSectionPropertyRefItemProvider extends Propert
 	}
 
 	public AbstractProperty getProperty(final PropertyRef propRef) {
+		if (propRef == null) {
+			return null;
+		}
 		if (SdrUiPlugin.getDefault().getTargetSdrRoot().getState() == LoadState.LOADED) {
 			return SdrUiPlugin.getDefault().getTargetSdrRoot().getDevicesContainer().getProperties().get(propRef.getRefId());
 		} else if (!this.added) {
