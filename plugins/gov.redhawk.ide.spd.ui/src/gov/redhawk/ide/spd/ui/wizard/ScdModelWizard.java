@@ -11,11 +11,9 @@
 package gov.redhawk.ide.spd.ui.wizard;
 
 import gov.redhawk.ide.spd.generator.newcomponent.ScdFileTemplate;
-import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
-import gov.redhawk.ui.parts.WizardNewFileCreationPage;
 
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
 import java.util.List;
 
 import mil.jpeojtrs.sca.scd.ScdFactory;
@@ -27,22 +25,13 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
+import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 /**
  * This is a simple wizard for creating a new model file.
@@ -84,6 +73,8 @@ public class ScdModelWizard extends Wizard implements INewWizard {
 
 	private final IProject project;
 
+	private String initialValue;
+
 	public ScdModelWizard(final IProject project) {
 		this.project = project;
 	}
@@ -113,61 +104,14 @@ public class ScdModelWizard extends Wizard implements INewWizard {
 	 */
 	@Override
 	public boolean performFinish() {
-		try {
-			// Remember the file.
-			//
-			this.modelFile = this.newFileCreationPage.getModelFile();
-
-			// Do the work within an operation.
-			//
-			final WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
-				@Override
-				protected void execute(final IProgressMonitor progressMonitor) {
-					try {
-
-						final String scd = new ScdFileTemplate().generate(null);
-
-						final IFile scdFile = ScdModelWizard.this.modelFile;
-						if (scdFile.exists()) {
-							throw new CoreException(new Status(IStatus.ERROR, ComponentUiPlugin.PLUGIN_ID, "File "
-							        + scdFile.getName() + " already exists.", null));
-						}
-
-						try {
-							scdFile.create(new ByteArrayInputStream(scd.getBytes("UTF-8")), true, progressMonitor);
-						} catch (final UnsupportedEncodingException e) {
-							throw new CoreException(new Status(IStatus.ERROR, ComponentUiPlugin.getPluginId(),
-							        "Internal Error", e));
-						}
-					} catch (final Exception exception) {
-						ComponentUiPlugin.logException(exception);
-					} finally {
-						progressMonitor.done();
-					}
-				}
-			};
-
-			getContainer().run(false, false, operation);
-
-			// Select the new file resource in the current view.
-			//
-			final IWorkbenchWindow workbenchWindow = this.workbench.getActiveWorkbenchWindow();
-			final IWorkbenchPage page = workbenchWindow.getActivePage();
-			final IWorkbenchPart activePart = page.getActivePart();
-			if (activePart instanceof ISetSelectionTarget) {
-				final ISelection targetSelection = new StructuredSelection(this.modelFile);
-				getShell().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						((ISetSelectionTarget) activePart).selectReveal(targetSelection);
-					}
-				});
-			}
-
-			return true;
-		} catch (final Exception exception) {
-			ComponentUiPlugin.logException(exception);
+		modelFile = newFileCreationPage.createNewFile();
+		if (modelFile == null) {
 			return false;
 		}
+
+		BasicNewResourceWizard.selectAndReveal(modelFile, workbench.getActiveWorkbenchWindow());
+
+		return true;
 	}
 
 	/**
@@ -183,7 +127,7 @@ public class ScdModelWizard extends Wizard implements INewWizard {
 		 * 
 		 */
 		public ScdModelWizardNewFileCreationPage(final String pageId, final IStructuredSelection selection) {
-			super(pageId, selection, ScdModelWizard.this.project);
+			super(pageId, selection);
 		}
 
 		/**
@@ -199,6 +143,12 @@ public class ScdModelWizard extends Wizard implements INewWizard {
 				return true;
 			}
 			return false;
+		}
+
+		@Override
+		protected InputStream getInitialContents() {
+			final String prf = new ScdFileTemplate().generate(null);
+			return new ByteArrayInputStream(prf.getBytes());
 		}
 
 		/**
@@ -224,13 +174,15 @@ public class ScdModelWizard extends Wizard implements INewWizard {
 		this.newFileCreationPage = new ScdModelWizardNewFileCreationPage("Whatever", this.selection);
 		this.newFileCreationPage.setTitle("Scd File");
 		this.newFileCreationPage.setDescription("Create a new Scd file");
-		this.newFileCreationPage.setFileName("My.scd.xml");
 		addPage(this.newFileCreationPage);
 
 		// Try and get the resource selection to determine a current directory
 		// for the file dialog.
 		//
-		if (this.selection != null && !this.selection.isEmpty()) {
+		String modelFilename = "My.scd.xml";
+		if (this.initialValue != null && this.initialValue.length() > 0) {
+			modelFilename = this.initialValue;
+		} else if (this.selection != null && !this.selection.isEmpty()) {
 			// Get the resource...
 			//
 			final Object selectedElement = this.selection.iterator().next();
@@ -253,14 +205,14 @@ public class ScdModelWizard extends Wizard implements INewWizard {
 					//
 					final String defaultModelBaseFilename = selectedResource.getProject().getName();
 					final String defaultModelFilenameExtension = ScdPackage.FILE_EXTENSION;
-					String modelFilename = defaultModelBaseFilename + "." + defaultModelFilenameExtension;
+					modelFilename = defaultModelBaseFilename + defaultModelFilenameExtension;
 					for (int i = 1; ((IContainer) selectedResource).findMember(modelFilename) != null; ++i) {
-						modelFilename = defaultModelBaseFilename + i + "." + defaultModelFilenameExtension;
+						modelFilename = defaultModelBaseFilename + i + defaultModelFilenameExtension;
 					}
-					this.newFileCreationPage.setFileName(modelFilename);
 				}
 			}
 		}
+		this.newFileCreationPage.setFileName(modelFilename);
 	}
 
 	/**
@@ -268,6 +220,17 @@ public class ScdModelWizard extends Wizard implements INewWizard {
 	 */
 	public IFile getModelFile() {
 		return this.modelFile;
+	}
+
+	/**
+	 * @since 8.0
+	 * @param initialValue
+	 */
+	public void setInitialValue(String initialValue) {
+		this.initialValue = initialValue;
+		if (newFileCreationPage != null) {
+			newFileCreationPage.setFileName(initialValue);
+		}
 	}
 
 }

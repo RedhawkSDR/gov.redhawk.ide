@@ -12,11 +12,9 @@
 package gov.redhawk.ide.prf.ui.wizard;
 
 import gov.redhawk.ide.prf.generator.PrfFileTemplate;
-import gov.redhawk.ide.prf.ui.IdePrfUiPlugin;
-import gov.redhawk.ui.parts.WizardNewFileCreationPage;
 
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
 
 import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.PrfPackage;
@@ -27,22 +25,13 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
+import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 /**
  * This is a simple wizard for creating a new model file.
@@ -68,6 +57,8 @@ public class PrfModelWizard extends Wizard implements INewWizard {
 	private IFile modelFile;
 
 	private final IProject project;
+
+	private String initialValue;
 
 	public PrfModelWizard(final IProject project) {
 		this.project = project;
@@ -97,59 +88,14 @@ public class PrfModelWizard extends Wizard implements INewWizard {
 	 */
 	@Override
 	public boolean performFinish() {
-		try {
-			// Remember the file.
-			//
-			this.modelFile = this.newFileCreationPage.getModelFile();
-
-			// Do the work within an operation.
-			//
-			final WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
-				@Override
-				protected void execute(final IProgressMonitor progressMonitor) {
-					try {
-						final String prf = new PrfFileTemplate().generate(null);
-
-						final IFile prfFile = PrfModelWizard.this.modelFile;
-						if (prfFile.exists()) {
-							throw new CoreException(new Status(IStatus.ERROR, IdePrfUiPlugin.PLUGIN_ID, "File " + prfFile.getName() + " already exists.", null));
-						}
-
-						try {
-							prfFile.create(new ByteArrayInputStream(prf.getBytes("UTF-8")), true, progressMonitor);
-						} catch (final UnsupportedEncodingException e) {
-							throw new CoreException(new Status(IStatus.ERROR, IdePrfUiPlugin.getPluginId(), "Internal Error", e));
-						}
-
-					} catch (final Exception exception) {
-						IdePrfUiPlugin.logException(exception);
-					} finally {
-						progressMonitor.done();
-					}
-				}
-			};
-
-			getContainer().run(false, false, operation);
-
-			// Select the new file resource in the current view.
-			//
-			final IWorkbenchWindow workbenchWindow = this.workbench.getActiveWorkbenchWindow();
-			final IWorkbenchPage page = workbenchWindow.getActivePage();
-			final IWorkbenchPart activePart = page.getActivePart();
-			if (activePart instanceof ISetSelectionTarget) {
-				final ISelection targetSelection = new StructuredSelection(this.modelFile);
-				getShell().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						((ISetSelectionTarget) activePart).selectReveal(targetSelection);
-					}
-				});
-			}
-
-			return true;
-		} catch (final Exception exception) {
-			IdePrfUiPlugin.logException(exception);
+		modelFile = newFileCreationPage.createNewFile();
+		if (modelFile == null) {
 			return false;
 		}
+
+		BasicNewResourceWizard.selectAndReveal(modelFile, workbench.getActiveWorkbenchWindow());
+
+		return true;
 	}
 
 	/**
@@ -162,7 +108,7 @@ public class PrfModelWizard extends Wizard implements INewWizard {
 		 * @generated
 		 */
 		public PrfModelWizardNewFileCreationPage(final String pageId, final IStructuredSelection selection) {
-			super(pageId, selection, PrfModelWizard.this.project);
+			super(pageId, selection);
 		}
 
 		/**
@@ -180,6 +126,12 @@ public class PrfModelWizard extends Wizard implements INewWizard {
 			return false;
 		}
 
+		@Override
+		protected InputStream getInitialContents() {
+			final String prf = new PrfFileTemplate().generate(null);
+			return new ByteArrayInputStream(prf.getBytes());
+		}
+		
 		public IFile getModelFile() {
 			return ResourcesPlugin.getWorkspace().getRoot().getFile(getContainerFullPath().append(getFileName()));
 		}
@@ -195,13 +147,15 @@ public class PrfModelWizard extends Wizard implements INewWizard {
 		this.newFileCreationPage = new PrfModelWizardNewFileCreationPage(PrfModelWizardNewFileCreationPage.class.getCanonicalName(), this.selection);
 		this.newFileCreationPage.setTitle("PRF File");
 		this.newFileCreationPage.setDescription("Create a new PRF file");
-		this.newFileCreationPage.setFileName("My.prf.xml");
 		addPage(this.newFileCreationPage);
 
 		// Try and get the resource selection to determine a current directory
 		// for the file dialog.
 		//
-		if (this.selection != null && !this.selection.isEmpty()) {
+		String modelFilename = "My.prf.xml";
+		if (this.initialValue != null && this.initialValue.length() > 0) {
+			modelFilename = this.initialValue;
+		} else if (this.selection != null && !this.selection.isEmpty()) {
 			// Get the resource...
 			//
 			final Object selectedElement = this.selection.iterator().next();
@@ -224,14 +178,14 @@ public class PrfModelWizard extends Wizard implements INewWizard {
 					//
 					final String defaultModelBaseFilename = selectedResource.getProject().getName();
 					final String defaultModelFilenameExtension = PrfPackage.FILE_EXTENSION;
-					String modelFilename = defaultModelBaseFilename + "." + defaultModelFilenameExtension;
+					modelFilename = defaultModelBaseFilename + defaultModelFilenameExtension;
 					for (int i = 1; ((IContainer) selectedResource).findMember(modelFilename) != null; ++i) {
-						modelFilename = defaultModelBaseFilename + i + "." + defaultModelFilenameExtension;
+						modelFilename = defaultModelBaseFilename + i + defaultModelFilenameExtension;
 					}
-					this.newFileCreationPage.setFileName(modelFilename);
 				}
 			}
 		}
+		this.newFileCreationPage.setFileName(modelFilename);
 	}
 
 	/**
@@ -239,6 +193,17 @@ public class PrfModelWizard extends Wizard implements INewWizard {
 	 */
 	public IFile getModelFile() {
 		return this.modelFile;
+	}
+
+	/**
+	 * @since 3.0
+	 * @param initialValue
+	 */
+	public void setInitialValue(String initialValue) {
+		this.initialValue = initialValue;
+		if (newFileCreationPage != null) {
+			newFileCreationPage.setFileName(initialValue);
+		}
 	}
 
 }
