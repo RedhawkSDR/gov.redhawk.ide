@@ -449,6 +449,9 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 	 * @return the specified template or a default one if it's not found
 	 */
 	protected ITemplateDesc getTemplateDesc(final ICodeGeneratorDescriptor generator) {
+		if (generator == null) {
+			return null;
+		}
 		String templateId = this.implSettings.getTemplate();
 		// If the templateId is null or old style, select the legacy code 
 		// generator template if the implementationSettings has existing props

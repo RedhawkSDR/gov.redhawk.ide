@@ -238,16 +238,18 @@ public class DefaultGeneratorPropertiesComposite extends BaseGeneratorProperties
 						final ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(
 						        DefaultGeneratorPropertiesComposite.this.getImplSettings().getGeneratorId());
 						final ITemplateDesc template = getTemplateDesc(generator);
-						for (final IPropertyDescriptor propDesc : template.getPropertyDescriptors()) {
-							if (propDesc.getKey().equals(prop.getId())) {
-								text = propDesc.getDefaultValue();
-								for (final Property tempProp : DefaultGeneratorPropertiesComposite.this.getImplSettings().getProperties()) {
-									if (tempProp.getId().equals(prop.getId())) {
-										text = tempProp.getValue();
-										break;
+						if (template != null) {
+							for (final IPropertyDescriptor propDesc : template.getPropertyDescriptors()) {
+								if (propDesc.getKey().equals(prop.getId())) {
+									text = propDesc.getDefaultValue();
+									for (final Property tempProp : DefaultGeneratorPropertiesComposite.this.getImplSettings().getProperties()) {
+										if (tempProp.getId().equals(prop.getId())) {
+											text = tempProp.getValue();
+											break;
+										}
 									}
+									break;
 								}
-								break;
 							}
 						}
 					}
