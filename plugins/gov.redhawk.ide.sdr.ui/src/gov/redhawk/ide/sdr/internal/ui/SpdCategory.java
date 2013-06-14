@@ -17,8 +17,11 @@ import java.util.List;
 
 import mil.jpeojtrs.sca.prf.Properties;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
@@ -50,14 +53,28 @@ public class SpdCategory implements Category {
 	 * {@inheritDoc}
 	 */
 	public List<Properties> getProperties() {
-		return Collections.singletonList(this.softPkg.getPropertyFile().getProperties());
+		Properties properties = ScaEcoreUtils.getFeature(softPkg, PATH);
+		if (properties == null) {
+			return Collections.emptyList();
+		} else {
+			return Collections.singletonList(properties);
+		}
 	}
 
+	private static final EStructuralFeature [] PATH = new EStructuralFeature[] {
+		SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
+		SpdPackage.Literals.PROPERTY_FILE__PROPERTIES
+	};
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean containsProperty(final EObject obj) {
-		return EcoreUtil.isAncestor(this.softPkg.getPropertyFile().getProperties(), obj);
+		Properties properties = ScaEcoreUtils.getFeature(softPkg, PATH);
+		if (properties != null && obj != null) {
+			return EcoreUtil.isAncestor(properties, obj);
+		} else {
+			return false;
+		}
 	}
 
 }
