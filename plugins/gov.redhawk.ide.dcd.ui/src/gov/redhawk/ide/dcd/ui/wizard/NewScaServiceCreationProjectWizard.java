@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.widgets.Display;
 
 public class NewScaServiceCreationProjectWizard extends NewScaResourceWizard implements IImportWizard {
 
@@ -93,13 +92,7 @@ public class NewScaServiceCreationProjectWizard extends NewScaResourceWizard imp
 
 	@Override
     protected IFile createComponentFiles(IProject project, String name, String spdId, String author, IProgressMonitor monitor) throws CoreException {
-		final String[] repIdHolder = new String[1];
-		Display.getDefault().syncExec(new Runnable() {
-			public void run() {
-				repIdHolder[0] = ((ScaServiceProjectPropertiesWizardPage) NewScaServiceCreationProjectWizard.this.getResourcePropertiesPage()).getRepId();
-            }
-		});
-		final String serviceRepId = repIdHolder[0];
+		final String serviceRepId = ((ScaServiceProjectPropertiesWizardPage) NewScaServiceCreationProjectWizard.this.getResourcePropertiesPage()).getRepId();
 	    return ServiceProjectCreator.createServiceFiles(project, name, spdId, author, serviceRepId, monitor);
     }
 

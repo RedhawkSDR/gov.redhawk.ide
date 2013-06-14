@@ -55,6 +55,7 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 	
 
 	private Text serviceIdlText;
+	private String serviceIdl;
 	private ServiceIdlValidator serviceIdlValidator = new ServiceIdlValidator();
 
 	/**
@@ -111,6 +112,7 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 		this.serviceIdlText.addModifyListener(new ModifyListener() {
 			public void modifyText(final ModifyEvent e) {
 				validate();
+				serviceIdl = serviceIdlText.getText();
 			}
 		});
 		
@@ -130,6 +132,6 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 	}
 
 	public String getRepId() {
-		return this.serviceIdlText.getText();
+		return serviceIdl;
 	}
 }
