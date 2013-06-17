@@ -9,7 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
 import gov.redhawk.core.filemanager.IFileManager;
@@ -82,6 +82,7 @@ import CF.LifeCyclePackage.InitializeError;
 import ExtendedCF.Sandbox;
 import ExtendedCF.SandboxHelper;
 import ExtendedCF.SandboxOperations;
+import ExtendedCF.SandboxPOATie;
 
 /**
  * <!-- begin-user-doc -->
@@ -515,6 +516,18 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
         tmp.setCorbaObj(ref);
         return tmp;
     }
+	
+	private static Sandbox createSandboxRef(final POA poa, SandboxOperations sandbox) throws CoreException {
+	    Sandbox ref;
+        try {
+            ref = SandboxHelper.narrow(poa.servant_to_reference(new SandboxPOATie(sandbox)));
+        } catch (final ServantNotActive e) {
+            throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create sandbox ref"));
+        } catch (final WrongPolicy e) {
+            throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create sandbox ref"));
+        }
+        return ref;
+    }
 
 	private static NotifyingNamingContext createRootContext(final POA poa) {
 	    final NotifyingNamingContext context = ScaDebugFactory.eINSTANCE.createNotifyingNamingContext();
@@ -705,6 +718,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 */
 	private void init() throws CoreException {
 		// END GENERATED CODE
+	    setObj(createSandboxRef(session.getPOA(), sandbox));
 		setRootContext(LocalScaImpl.createRootContext(session.getPOA()));
 		setFileManager(LocalScaImpl.createFileManager(session.getPOA()));
 		setSandboxWaveform(LocalScaImpl.createSandboxWaveform(getResourceSet(), session.getPOA(), getRootContext()));
@@ -721,6 +735,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 */
 	public void dispose() {
 		// END GENERATED CODE
+	    super.dispose();
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this.launchListener);
 		ScaModelCommand.execute(this, new ScaModelCommand() {
 
@@ -741,6 +756,9 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		if (session != null) {
 			session.dispose();
 			session = null;
+		}
+		if (sandbox != null) {
+		    sandbox = null;
 		}
 		// BEGIN GENERATED CODE
 	}
