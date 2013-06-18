@@ -12,7 +12,7 @@ package gov.redhawk.ide.debug;
 
 
 /**
- * @since 3.0
+ * @since 4.0
  */
 public interface ILauncherVariableDesc extends ILauncherVariableResolver {
 	String getName();

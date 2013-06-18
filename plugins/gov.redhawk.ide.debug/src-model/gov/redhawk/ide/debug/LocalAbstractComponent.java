@@ -62,7 +62,7 @@ public interface LocalAbstractComponent extends LocalLaunch {
 	 * Returns the value of the '<em><b>Exec Param</b></em>' attribute.
 	 * The default value is <code>""</code>.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Exec Param</em>' attribute.
 	 * @see #setExecParam(String)
@@ -75,7 +75,7 @@ public interface LocalAbstractComponent extends LocalLaunch {
 	/**
 	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalAbstractComponent#getExecParam <em>Exec Param</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Exec Param</em>' attribute.
 	 * @see #getExecParam()

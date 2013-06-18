@@ -49,7 +49,7 @@ public class ScaDebugPlugin extends Plugin {
 	
 
 	/**
-	 * @since 3.0
+	 * @since 4.0
 	 */
 	public Sandbox getSandbox() {
 		return getLocalSca().getObj();
@@ -60,14 +60,14 @@ public class ScaDebugPlugin extends Plugin {
 	}
 
 	/**
-	 * @since 3.0
+	 * @since 4.0
 	 */
 	public ILaunchConfigurationFactoryRegistry getLaunchConfigurationFactoryRegistry() {
 		return LaunchConfigurationFactoryRegistry.INSTANCE;
 	}
 
 	/**
-	 * @since 3.0
+	 * @since 4.0
 	 */
 	public ILauncherVariableRegistry getLauncherVariableRegistry() {
 		return LauncherVariableRegistry.INSTANCE;

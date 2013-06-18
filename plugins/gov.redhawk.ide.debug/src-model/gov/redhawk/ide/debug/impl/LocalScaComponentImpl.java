@@ -100,7 +100,7 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	/**
 	 * The default value of the '{@link #getExecParam() <em>Exec Param</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @see #getExecParam()
 	 * @generated
@@ -110,7 +110,7 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	/**
 	 * The cached value of the '{@link #getExecParam() <em>Exec Param</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @see #getExecParam()
 	 * @generated
@@ -202,7 +202,7 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -212,7 +212,7 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */

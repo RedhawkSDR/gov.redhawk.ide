@@ -29,7 +29,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 
 /**
- * @since 3.0
+ * @since 4.0
  * 
  */
 public abstract class AbstractLaunchConfigurationFactory implements ILaunchConfigurationFactory, IExecutableExtension {

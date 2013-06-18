@@ -13,7 +13,7 @@ package gov.redhawk.ide.debug;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 /**
- * @since 3.0
+ * @since 4.0
  * 
  */
 public interface ILaunchConfigurationFactoryRegistry {

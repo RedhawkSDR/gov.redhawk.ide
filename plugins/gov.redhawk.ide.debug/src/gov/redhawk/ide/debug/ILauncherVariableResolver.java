@@ -18,7 +18,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * @since 3.0
+ * @since 4.0
  */
 public interface ILauncherVariableResolver extends IDynamicVariableResolver {
 	String resolveValue(String arg, SoftPkg spd, ILaunch launch, ILaunchConfiguration config) throws CoreException;

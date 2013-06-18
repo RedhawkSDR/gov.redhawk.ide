@@ -70,7 +70,7 @@ import CF.PropertySetPackage.PartialConfiguration;
 import CF.ResourcePackage.StartError;
 
 /**
- * @since 3.0
+ * @since 4.0
  */
 public final class SpdLauncherUtil {
 	/**

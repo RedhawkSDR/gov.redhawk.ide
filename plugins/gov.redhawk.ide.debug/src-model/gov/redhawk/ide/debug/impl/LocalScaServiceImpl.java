@@ -97,7 +97,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	/**
 	 * The default value of the '{@link #getExecParam() <em>Exec Param</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @see #getExecParam()
 	 * @generated
@@ -107,7 +107,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	/**
 	 * The cached value of the '{@link #getExecParam() <em>Exec Param</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @see #getExecParam()
 	 * @generated
@@ -199,7 +199,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -209,7 +209,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */

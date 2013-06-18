@@ -78,6 +78,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Status</b></em>' attribute.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -94,6 +95,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Data Providers</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -102,6 +104,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Data Providers Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -110,6 +113,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Ior</b></em>' attribute.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -118,6 +122,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Obj</b></em>' attribute.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -126,6 +131,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Corba Obj</b></em>' attribute.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -541,7 +547,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -944,7 +950,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -1395,7 +1401,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -1621,7 +1627,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -1847,7 +1853,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -2015,7 +2021,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Exec Param</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -2067,6 +2073,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The meta object id for the '{@link ExtendedCF.SandboxOperations <em>Sandbox Operations</em>}' class.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @see ExtendedCF.SandboxOperations
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getSandboxOperations()
@@ -2076,6 +2083,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The number of structural features of the '<em>Sandbox Operations</em>' class.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -2093,6 +2101,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The number of structural features of the '<em>Sandbox</em>' class.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
@@ -2129,6 +2138,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The meta object id for the '<em>Attr Sandbox Operations</em>' data type.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @see ExtendedCF.SandboxOperations
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getAttrSandboxOperations()
@@ -2138,6 +2148,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The meta object id for the '<em>Attr Application Operations</em>' data type.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @see CF.ApplicationOperations
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getAttrApplicationOperations()
@@ -2147,6 +2158,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The meta object id for the '<em>Attr Device Manager Operations</em>' data type.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @see CF.DeviceManagerOperations
 	 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getAttrDeviceManagerOperations()
@@ -2462,7 +2474,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.debug.LocalAbstractComponent#getExecParam <em>Exec Param</em>}'.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Exec Param</em>'.
 	 * @see gov.redhawk.ide.debug.LocalAbstractComponent#getExecParam()
@@ -2633,6 +2645,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * Returns the meta object for class '{@link ExtendedCF.SandboxOperations <em>Sandbox Operations</em>}'.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Sandbox Operations</em>'.
 	 * @see ExtendedCF.SandboxOperations
@@ -2644,6 +2657,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * Returns the meta object for class '{@link ExtendedCF.Sandbox <em>Sandbox</em>}'.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Sandbox</em>'.
 	 * @see ExtendedCF.Sandbox
@@ -2688,6 +2702,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * Returns the meta object for data type '{@link ExtendedCF.SandboxOperations <em>Attr Sandbox Operations</em>}'.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>Attr Sandbox Operations</em>'.
 	 * @see ExtendedCF.SandboxOperations
@@ -2699,6 +2714,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * Returns the meta object for data type '{@link CF.ApplicationOperations <em>Attr Application Operations</em>}'.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>Attr Application Operations</em>'.
 	 * @see CF.ApplicationOperations
@@ -2710,6 +2726,7 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * Returns the meta object for data type '{@link CF.DeviceManagerOperations <em>Attr Device Manager Operations</em>}'.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>Attr Device Manager Operations</em>'.
 	 * @see CF.DeviceManagerOperations
@@ -2956,7 +2973,7 @@ public interface ScaDebugPackage extends EPackage {
 		/**
 		 * The meta object literal for the '<em><b>Exec Param</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
-		 * @since 3.0
+		 * @since 4.0
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
@@ -3090,6 +3107,7 @@ public interface ScaDebugPackage extends EPackage {
 		/**
 		 * The meta object literal for the '{@link ExtendedCF.SandboxOperations <em>Sandbox Operations</em>}' class.
 		 * <!-- begin-user-doc -->
+		 * @since 4.0
 		 * <!-- end-user-doc -->
 		 * @see ExtendedCF.SandboxOperations
 		 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getSandboxOperations()
@@ -3135,6 +3153,7 @@ public interface ScaDebugPackage extends EPackage {
 		/**
 		 * The meta object literal for the '<em>Attr Sandbox Operations</em>' data type.
 		 * <!-- begin-user-doc -->
+		 * @since 4.0
 		 * <!-- end-user-doc -->
 		 * @see ExtendedCF.SandboxOperations
 		 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getAttrSandboxOperations()
@@ -3144,6 +3163,7 @@ public interface ScaDebugPackage extends EPackage {
 		/**
 		 * The meta object literal for the '<em>Attr Application Operations</em>' data type.
 		 * <!-- begin-user-doc -->
+		 * @since 4.0
 		 * <!-- end-user-doc -->
 		 * @see CF.ApplicationOperations
 		 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getAttrApplicationOperations()
@@ -3153,6 +3173,7 @@ public interface ScaDebugPackage extends EPackage {
 		/**
 		 * The meta object literal for the '<em>Attr Device Manager Operations</em>' data type.
 		 * <!-- begin-user-doc -->
+		 * @since 4.0
 		 * <!-- end-user-doc -->
 		 * @see CF.DeviceManagerOperations
 		 * @see gov.redhawk.ide.debug.impl.ScaDebugPackageImpl#getAttrDeviceManagerOperations()

@@ -118,10 +118,20 @@ public class LocalScaExecutableDeviceItemProvider
 				 null,
 				 null));
 	}
+	
+	/**
+	 * 
+	 * @deprecated Use {@link #addExecParamPropertyDescriptor(Object)}
+	 */
+	@Deprecated
+	protected void addExecParamsPropertyDescriptor(Object object) {
+		addExecParamPropertyDescriptor(object);
+	}
 
 	/**
 	 * This adds a property descriptor for the Exec Param feature.
 	 * <!-- begin-user-doc -->
+	 * @since 1.1
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */

@@ -582,6 +582,9 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 
 	}
 
+	/**
+     * @since 8.0
+     */
 	protected abstract IFile createComponentFiles(IProject project, String spdName, String id, String author, IProgressMonitor monitor) throws CoreException;
 
 	/**

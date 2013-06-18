@@ -14,6 +14,7 @@ import gov.redhawk.ide.debug.ILaunchConfigurationFactory;
 import gov.redhawk.ide.debug.ILaunchConfigurationFactoryRegistry;
 import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.List;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
 import org.eclipse.core.resources.IFile;
@@ -42,6 +44,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.window.Window;
@@ -169,6 +172,26 @@ public final class LaunchUtil {
 		ILaunchConfigurationFactory factory = registry.getFactory(spd, impl.getId());
 		ILaunchConfigurationWorkingCopy config = factory.createLaunchConfiguration(spd.getName(), impl.getId(), spd);
 		return config;
+	}
+	
+	/**
+	 * @deprecated Use {@link #createLaunchConfiguration(SoftPkg, Shell)} instead
+	 * Doesn't save launch configuration 
+	 * @param file
+	 * @param mode
+	 * @param shell
+	 * @throws CoreException 
+	 */
+	@Deprecated
+	public static void launch(IFile file, String mode, Shell shell) throws CoreException {
+		if (!file.exists()) {
+			return;
+		}
+		if (file.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
+			SoftPkg spd = ModelUtil.loadSoftPkg(URI.createURI(file.getLocationURI().toString()));
+			ILaunchConfigurationWorkingCopy config = createLaunchConfiguration(spd, shell);
+			launch(config, mode);
+		}
 	}
 	
 	public static void launch(final ILaunchConfiguration config, final String mode) {

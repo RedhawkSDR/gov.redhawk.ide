@@ -93,7 +93,7 @@ public interface LocalSca extends CorbaObjWrapper<Sandbox> {
 	/**
 	 * Returns the value of the '<em><b>Root Context</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Root Context</em>' containment reference.
 	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca_RootContext()
@@ -124,6 +124,7 @@ public interface LocalSca extends CorbaObjWrapper<Sandbox> {
 	 * If the meaning of the '<em>Sandbox</em>' containment reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Sandbox</em>' attribute.
 	 * @see #setSandbox(SandboxOperations)
@@ -136,6 +137,7 @@ public interface LocalSca extends CorbaObjWrapper<Sandbox> {
 	/**
 	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalSca#getSandbox <em>Sandbox</em>}' attribute.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Sandbox</em>' attribute.
 	 * @see #getSandbox()

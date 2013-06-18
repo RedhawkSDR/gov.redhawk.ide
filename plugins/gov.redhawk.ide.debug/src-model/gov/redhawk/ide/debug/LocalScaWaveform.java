@@ -69,7 +69,7 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 	/**
 	 * Returns the value of the '<em><b>Local App</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Local App</em>' attribute.
 	 * @see #setLocalApp(ApplicationOperations)
@@ -82,6 +82,7 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 	/**
 	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaWaveform#getLocalApp <em>Local App</em>}' attribute.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Local App</em>' attribute.
 	 * @see #getLocalApp()
@@ -91,7 +92,7 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @model exceptions="gov.redhawk.ide.debug.CoreException" execParamsDataType="gov.redhawk.model.sca.DataTypeArray" spdURIDataType="mil.jpeojtrs.sca.spd.URI"
 	 * @generated

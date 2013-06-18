@@ -355,7 +355,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	};
 
 	/**
-	 * @since 3.0
+	 * @since 4.0
 	 */
 	protected void removeReferences(final NotifyingNamingContextImpl context) {
 		getContextMap().remove(context.name);

@@ -62,7 +62,7 @@ public interface LocalScaDeviceManager extends ScaDeviceManager, LocalLaunch {
 	/**
 	 * Returns the value of the '<em><b>Local Device Manager</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Local Device Manager</em>' attribute.
 	 * @see #setLocalDeviceManager(DeviceManagerOperations)
@@ -75,7 +75,7 @@ public interface LocalScaDeviceManager extends ScaDeviceManager, LocalLaunch {
 	/**
 	 * Sets the value of the '{@link gov.redhawk.ide.debug.LocalScaDeviceManager#getLocalDeviceManager <em>Local Device Manager</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 3.0
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Local Device Manager</em>' attribute.
 	 * @see #getLocalDeviceManager()
