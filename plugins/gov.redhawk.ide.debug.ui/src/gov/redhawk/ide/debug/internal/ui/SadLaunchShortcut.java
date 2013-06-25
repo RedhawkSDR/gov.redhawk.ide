@@ -16,6 +16,7 @@ import gov.redhawk.ui.editor.SCAFormEditor;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.sad.util.SadResourceImpl;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -29,7 +30,6 @@ import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -73,7 +73,7 @@ public class SadLaunchShortcut implements ILaunchShortcut {
 	}
 
 	private void launch(final IFile element, final String mode) throws CoreException {
-		final ResourceSet resourceSet = new ResourceSetImpl();
+		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		SoftwareAssembly sad;
 		try {
 			final Resource resource = resourceSet.getResource(URI.createPlatformResourceURI(element.getFullPath().toString(), true), true);

@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.debug.internal;
+package gov.redhawk.ide.debug;
 
 import gov.redhawk.ide.debug.SpdLauncherUtil;
 
@@ -18,17 +18,17 @@ import java.util.Map;
 
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.AnyUtils;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-
 import CF.DataType;
 import CF.Resource;
 import CF.ResourceFactoryPackage.CreateResourceFailure;
 
 /**
+ * @since 4.0
  * 
  */
 public class WorkspaceWaveformFactory extends AbstractResourceFactory {
@@ -37,7 +37,7 @@ public class WorkspaceWaveformFactory extends AbstractResourceFactory {
 	private final IFile profile;
 
 	public WorkspaceWaveformFactory(final IFile profile) throws IOException {
-		final ResourceSet resourceSet = new ResourceSetImpl();
+		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		final org.eclipse.emf.ecore.resource.Resource resource = resourceSet.getResource(URI.createPlatformResourceURI(profile.getFullPath().toString(), true),
 		        true);
 		resource.load(null);

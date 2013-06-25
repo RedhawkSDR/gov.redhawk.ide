@@ -29,6 +29,7 @@ import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -38,7 +39,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -294,7 +294,7 @@ public class ImplementationTab extends AbstractLaunchConfigurationTab {
 				setSoftwareAssembly(null);
 				return;
 			}
-			final ResourceSet resourceSet = new ResourceSetImpl();
+			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 			final Resource resource = resourceSet.getResource(URI.createPlatformResourceURI(sadPath, true), true);
 			setSoftwareAssembly(SoftwareAssembly.Util.getSoftwareAssembly(resource));
 		} catch (final CoreException e) {

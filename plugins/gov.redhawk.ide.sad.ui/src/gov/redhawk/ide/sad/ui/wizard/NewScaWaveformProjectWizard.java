@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -39,7 +40,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.gmf.runtime.diagram.ui.internal.properties.WorkspaceViewerProperties;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramGraphicalViewer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -166,7 +166,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 						} else {
 							openEditorOn = project.getFile(project.getName() + SadPackage.FILE_EXTENSION);
 							ProjectCreator.importFile(project, openEditorOn, existingSadPath, progress.newChild(1));
-							ResourceSet resourceSet = new ResourceSetImpl();
+							ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 							URI uri = URI.createPlatformResourceURI(openEditorOn.getFullPath().toString(), true).appendFragment(SoftwareAssembly.EOBJECT_PATH);
 							SoftwareAssembly sad = (SoftwareAssembly) resourceSet.getEObject(uri, true);
 							sad.setId(id);

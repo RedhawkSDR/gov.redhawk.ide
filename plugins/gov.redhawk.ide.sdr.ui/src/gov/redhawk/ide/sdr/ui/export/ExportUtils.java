@@ -31,6 +31,7 @@ import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -46,7 +47,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
@@ -217,7 +217,7 @@ public class ExportUtils {
 			progress.beginTask("Exporting resources of " + spdResource.getName(), SPD_WORK + PRF_WORK + SCD_WORK + IMPL_WORK + MKDIR_WORK);
 
 			// Now load the SPD file and copy the prf and scd files, if any
-			final ResourceSet resourceSet = new ResourceSetImpl();
+			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 			final Resource resource = resourceSet.getResource(URI.createURI(spdResource.getLocationURI().toString()), true);
 			final SoftPkg softPkg = ModelUtil.getSoftPkg(resource);
 

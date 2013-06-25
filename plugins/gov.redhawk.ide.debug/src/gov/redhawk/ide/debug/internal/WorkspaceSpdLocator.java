@@ -12,6 +12,7 @@ package gov.redhawk.ide.debug.internal;
 
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -20,14 +21,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 /**
  * 
  */
 public class WorkspaceSpdLocator implements IResourceVisitor {
 	private IFile result;
-	private final ResourceSet resourceSet = new ResourceSetImpl();
+	private final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 	private final String profileId;
 	private SoftPkg spd;
 

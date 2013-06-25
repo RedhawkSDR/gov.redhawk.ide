@@ -14,7 +14,6 @@ import gov.redhawk.diagram.edit.helpers.ComponentPlacementEditHelperAdvice;
 import gov.redhawk.diagram.edit.helpers.ConnectInterfaceEditHelperAdvice;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.ui.LaunchUtil;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
 import gov.redhawk.model.sca.ScaComponent;
@@ -36,15 +35,16 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.impl.SadComponentInstantiationImpl;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.sad.diagram.edit.parts.SadConnectInterfaceEditPart;
 import mil.jpeojtrs.sca.sad.diagram.providers.SadElementTypes;
-import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -80,8 +80,8 @@ import CF.PortPackage.OccupiedPort;
 
 public class ModelMap {
 	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
-	        PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
-	        PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
+	    PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
+	    PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 	private final LocalScaEditor editor;
 	private final SoftwareAssembly sad;
 	private final Map<EObject, EObject> sadToSca = new HashMap<EObject, EObject>();
@@ -90,6 +90,9 @@ public class ModelMap {
 	private final MutexRule mapRule = new MutexRule(this);
 
 	public ModelMap(final LocalScaEditor editor, final SoftwareAssembly sad, final LocalScaWaveform waveform) {
+		Assert.isNotNull(waveform, "Sandbox Waveform must not be null");
+		Assert.isNotNull(editor, "Sandbox Editor must not be null");
+		Assert.isNotNull(sad, "Software Assembly must not be null");
 		this.waveform = waveform;
 		this.sad = sad;
 		this.editor = editor;
@@ -130,20 +133,7 @@ public class ModelMap {
 			return;
 		}
 		final Display display = Display.getCurrent();
-		final SoftPkg spd = ScaEcoreUtils.getFeature(comp, ModelMap.SPD_PATH);
-		final Implementation impl;
-		if (display != null) {
-			impl = LaunchUtil.chooseImplementation(spd.getImplementation(), ILaunchManager.RUN_MODE, display.getActiveShell());
-		} else if (!spd.getImplementation().isEmpty()) {
-			impl = spd.getImplementation().get(0);
-		} else {
-			impl = null;
-		}
-
-		if (impl == null) {
-			throw new CancellationException();
-		}
-
+		final String implID = ((SadComponentInstantiationImpl) comp).getImplID();
 		final Job job = new Job("Launching component " + comp.getUsageName()) {
 
 			@Override
@@ -159,7 +149,7 @@ public class ModelMap {
 					return Status.CANCEL_STATUS;
 				}
 				try {
-					newComp = create(comp, impl.getId());
+					newComp = create(comp, implID);
 				} catch (final ExecuteFail e) {
 					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to launch: " + comp.getUsageName(), e);
 				}
@@ -189,6 +179,7 @@ public class ModelMap {
 		} else {
 			return;
 		}
+
 		if (job.getResult() == null || job.getResult() == Status.CANCEL_STATUS) {
 			throw new CancellationException();
 		} else if (!job.getResult().isOK()) {
@@ -269,7 +260,7 @@ public class ModelMap {
 			return null;
 		}
 		final CreateViewRequest createRequest = CreateViewRequestFactory.getCreateShapeRequest(SadElementTypes.SadComponentPlacement_3001,
-		        diagramEditPart.getDiagramPreferencesHint());
+		    diagramEditPart.getDiagramPreferencesHint());
 
 		final HashMap<Object, Object> map = new HashMap<Object, Object>();
 		map.putAll(createRequest.getExtendedData());
@@ -286,6 +277,7 @@ public class ModelMap {
 		map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_INST_ID, newValue.getInstantiationIdentifier());
 		map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_INST_NAME, newValue.getName());
 		map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_COMPONENT_INSTANTIATION, retVal);
+		map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_IMPL_ID, newValue.getImplementationID());
 
 		createRequest.setExtendedData(map);
 		final Command command = getDiagramEditPart().getCommand(createRequest);
@@ -320,7 +312,7 @@ public class ModelMap {
 	}
 
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
-	        PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
+	    PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
 
 	private ScaConnection create(final SadConnectInterface conn) throws InvalidPort, OccupiedPort {
 		SadComponentInstantiation inst = ScaEcoreUtils.getFeature(conn, CONN_INST_PATH);
@@ -395,7 +387,7 @@ public class ModelMap {
 		}
 
 		final CreateConnectionViewRequest ccr = CreateViewRequestFactory.getCreateConnectionRequest(SadElementTypes.SadConnectInterface_4001,
-		        getDiagramEditPart().getDiagramPreferencesHint());
+		    getDiagramEditPart().getDiagramPreferencesHint());
 		final HashMap<Object, Object> map = new HashMap<Object, Object>();
 		map.putAll(ccr.getExtendedData());
 		map.put(ConnectInterfaceEditHelperAdvice.CONFIGURE_OPTIONS_ID, newValue.getId());

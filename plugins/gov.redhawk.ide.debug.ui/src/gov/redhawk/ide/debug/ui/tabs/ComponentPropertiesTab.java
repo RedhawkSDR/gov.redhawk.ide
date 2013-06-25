@@ -13,6 +13,7 @@ package gov.redhawk.ide.debug.ui.tabs;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 import gov.redhawk.sca.launch.ui.ScaLauncherActivator;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -21,7 +22,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 /**
  * 
@@ -36,7 +36,7 @@ public class ComponentPropertiesTab extends AbstractPropertiesTab {
 				return null;
 			}
 			if (ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(spdPath)).exists()) {
-				final ResourceSet resourceSet = new ResourceSetImpl();
+				final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 				final Resource resource = resourceSet.getResource(URI.createPlatformResourceURI(spdPath, true), true);
 				return SoftPkg.Util.getSoftPkg(resource);
 			} else {

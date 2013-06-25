@@ -31,6 +31,7 @@ import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.scd.Uses;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdDocumentRoot;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -49,7 +50,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -82,7 +82,7 @@ public class OrganizeInterfacesHandler extends AbstractHandler implements IHandl
 			for (final Object obj : OrganizeInterfacesHandler.this.fSelection.toArray()) {
 				if (obj instanceof IFile) {
 					final IFile file = (IFile) obj;
-					final ResourceSet set = new ResourceSetImpl();
+					final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
 					final Resource tempRes = set.getResource(URI.createPlatformResourceURI(file.getFullPath().toString(), true), true);
 
 					// Load the resource and get the root object
@@ -275,7 +275,7 @@ public class OrganizeInterfacesHandler extends AbstractHandler implements IHandl
 	 */
 	public IdlLibrary loadIdlLibrary(final IProgressMonitor monitor, final IProject project) throws CoreException {
 		if (this.idlLibrary == null) {
-			final ResourceSet set = new ResourceSetImpl();
+			final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
 			final IFile libraryFile = project.getFile(".library");
 			if (libraryFile.exists()) {
 				final Resource res = set.getResource(URI.createPlatformResourceURI(libraryFile.getFullPath().toString(), true), true);

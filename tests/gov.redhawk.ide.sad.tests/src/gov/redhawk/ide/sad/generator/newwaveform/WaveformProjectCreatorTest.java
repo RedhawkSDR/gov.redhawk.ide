@@ -13,6 +13,7 @@ package gov.redhawk.ide.sad.generator.newwaveform;
 
 import junit.framework.Assert;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -20,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.junit.Test;
 
 /**
@@ -56,7 +56,7 @@ public class WaveformProjectCreatorTest {
 		final IFile sadFile = project.getFile("waveformProjectTest.sad.xml");
 		Assert.assertTrue(sadFile.exists());
 		
-		final ResourceSet resourceSet = new ResourceSetImpl();
+		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		final SoftwareAssembly wave = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(URI.createPlatformResourceURI("/waveformProjectTest/waveformProjectTest.sad.xml", true), true));
 		Assert.assertEquals(project.getName(), wave.getName());
 

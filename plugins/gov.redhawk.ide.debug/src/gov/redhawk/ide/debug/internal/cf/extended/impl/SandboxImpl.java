@@ -23,7 +23,9 @@ import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -60,8 +62,8 @@ public class SandboxImpl implements SandboxOperations {
 
 	public String[] availableProfiles() {
 		final IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
-		final ResourceDesc[] resources = registry.getResources();
-		final List<String> retVal = new ArrayList<String>(resources.length);
+		final ResourceDesc[] resources = registry.getResourceDescriptors();
+		final Set<String> retVal = new HashSet<String>(resources.length);
 		for (final ResourceDesc desc : resources) {
 			final String path = desc.getProfile();
 			retVal.add(path);
@@ -82,19 +84,19 @@ public class SandboxImpl implements SandboxOperations {
 
 		for (final ScaComponent cp : this.localSca.getSandboxWaveform().getComponents()) {
 			final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
-			desc.profile = registry.getDescByID(cp.getProfileObj().getId()).getProfile();
+			desc.profile = cp.getProfileObj().eResource().getURI().path();
 			desc.resource = cp.getObj();
 			retVal.add(desc);
 		}
 		for (final ScaDevice< ? > cp : this.localSca.getSandboxDeviceManager().getAllDevices()) {
 			final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
-			desc.profile = registry.getDescByID(cp.getProfileObj().getId()).getProfile();
+			desc.profile = cp.getProfileObj().eResource().getURI().path();
 			desc.resource = cp.getObj();
 			retVal.add(desc);
 		}
 		for (final ScaWaveform cp : this.localSca.getWaveforms()) {
 			final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
-			desc.profile = registry.getDescByID(cp.getProfileObj().getId()).getProfile();
+			desc.profile = cp.getProfileObj().eResource().getURI().path();
 			desc.resource = cp.getObj();
 			retVal.add(desc);
 		}
@@ -103,9 +105,9 @@ public class SandboxImpl implements SandboxOperations {
 
 	public ResourceFactory getResourceFactory(final String identifier) {
 		final IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
-		final ResourceDesc desc = registry.getDescByID(identifier);
+		final ResourceDesc desc = registry.getResourceDesc(identifier);
 		if (desc != null) {
-			return desc.getFactory();
+			return desc.getFactoryRef();
 		} else {
 			return null;
 		}
@@ -113,9 +115,9 @@ public class SandboxImpl implements SandboxOperations {
 
 	public ResourceFactory getResourceFactoryByProfile(final String profile) {
 		final IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
-		final ResourceDesc desc = registry.getDescByProfile(profile);
+		final ResourceDesc desc = registry.getResourceDesc(profile);
 		if (desc != null) {
-			return desc.getFactory();
+			return desc.getFactoryRef();
 		} else {
 			return null;
 		}

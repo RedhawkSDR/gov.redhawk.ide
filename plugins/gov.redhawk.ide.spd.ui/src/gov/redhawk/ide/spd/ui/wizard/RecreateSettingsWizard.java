@@ -30,6 +30,7 @@ import java.util.List;
 
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -42,7 +43,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -93,7 +93,7 @@ public class RecreateSettingsWizard extends NewScaResourceWizard {
 					final IProject project = ModelUtil.getProject(softPkg);
 					// Create the URI to the .wavedev file
 					final URI uri = URI.createPlatformResourceURI(project.getName() + "/." + softPkg.getName() + ".wavedev", false);
-					final ResourceSet set = new ResourceSetImpl();
+					final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
 					final Resource res = set.createResource(uri);
 
 					// Add the WaveDevSettings to the resource and save to disk to persist the newly created WaveDevSettings

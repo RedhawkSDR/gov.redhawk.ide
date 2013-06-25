@@ -14,6 +14,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  gov.redhawk.diagram;bundle-version="4.0.0",
  gov.redhawk.ide.debug.ui;bundle-version="1.0.0",
  org.eclipse.debug.ui;bundle-version="3.6.1",
- gov.redhawk.ide;bundle-version="5.0.0"
+ gov.redhawk.ide;bundle-version="5.0.0",
+ gov.redhawk.core.resourceFactory;bundle-version="2.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy

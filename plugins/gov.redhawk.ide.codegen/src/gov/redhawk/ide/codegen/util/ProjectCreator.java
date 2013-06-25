@@ -44,6 +44,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdFactory;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -62,7 +63,6 @@ import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 /**
  * A utility class for creating SCA projects.
@@ -242,7 +242,7 @@ public abstract class ProjectCreator {
 		}
 		// Get the URI of the model file.
 		final URI fileURI = URI.createPlatformResourceURI(spdFile.getFullPath().toString(), true).appendFragment(SoftPkg.EOBJECT_PATH);
-		final ResourceSet set = new ResourceSetImpl();
+		final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
 		final SoftPkg spd = (SoftPkg) set.getEObject(fileURI, true);
 
 		if (spd == null) {
@@ -395,7 +395,7 @@ public abstract class ProjectCreator {
 			progress.setWorkRemaining(1);
 		}
 		
-		final ResourceSet resourceSet = new ResourceSetImpl();
+		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		final Resource waveResource = resourceSet.createResource(URI.createPlatformResourceURI(waveDevFile.getFullPath().toString(), true));
 		final WaveDevSettings wavedevSettings = CodegenFactory.eINSTANCE.createWaveDevSettings();
 		waveResource.getContents().add(wavedevSettings);
@@ -504,7 +504,7 @@ public abstract class ProjectCreator {
 		final IFile waveDevFile = project.getFile(CodegenUtil.getWaveDevSettingsURI(spdUri).lastSegment());
 		final URI waveDevUri = URI.createPlatformResourceURI(waveDevFile.getFullPath().toString(), true);
 		
-		final ResourceSet resourceSet = new ResourceSetImpl();
+		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 
 		Assert.isTrue(waveDevFile.exists());
 		Assert.isTrue(spdFile.exists());

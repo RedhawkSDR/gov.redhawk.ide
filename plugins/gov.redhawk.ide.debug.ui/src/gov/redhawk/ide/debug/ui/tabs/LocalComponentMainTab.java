@@ -20,6 +20,7 @@ import java.util.List;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -27,7 +28,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
@@ -125,7 +125,7 @@ public class LocalComponentMainTab extends LocalAbstractMainTab {
 	}
 
 	protected List<String> getImplementationIDs() {
-		final ResourceSet resourceSet = new ResourceSetImpl();
+		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		final Resource spdResource = resourceSet.getResource(URI.createPlatformResourceURI(getProfileText().getText(), true), true);
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(spdResource);
 		final ArrayList<String> retVal = new ArrayList<String>();

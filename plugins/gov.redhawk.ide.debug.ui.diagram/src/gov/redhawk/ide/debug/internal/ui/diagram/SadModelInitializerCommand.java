@@ -168,24 +168,24 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		this.sad.setConnections(SadFactory.eINSTANCE.createSadConnections());
 		this.sad.setAssemblyController(null);
 		this.sad.setExternalPorts(null);
+		if (waveform != null) {
+			for (final ScaComponent comp : this.waveform.getComponents()) {
+				initComponent((LocalScaComponent) comp);
+			}
 
-		for (final ScaComponent comp : this.waveform.getComponents()) {
-			initComponent((LocalScaComponent) comp);
-		}
-
-		for (final ScaComponent comp : this.waveform.getComponents()) {
-			final EList<ScaPort< ? , ? >> ports = comp.fetchPorts(null);
-			for (final ScaPort< ? , ? > port : ports) {
-				if (port instanceof ScaUsesPort) {
-					final ScaUsesPort uses = (ScaUsesPort) port;
-					final EList<ScaConnection> connections = uses.fetchConnections(null);
-					for (final ScaConnection con : connections) {
-						initConnection(con);
+			for (final ScaComponent comp : this.waveform.getComponents()) {
+				final EList<ScaPort< ? , ? >> ports = comp.fetchPorts(null);
+				for (final ScaPort< ? , ? > port : ports) {
+					if (port instanceof ScaUsesPort) {
+						final ScaUsesPort uses = (ScaUsesPort) port;
+						final EList<ScaConnection> connections = uses.fetchConnections(null);
+						for (final ScaConnection con : connections) {
+							initConnection(con);
+						}
 					}
 				}
 			}
 		}
-
 	}
 
 	@Override

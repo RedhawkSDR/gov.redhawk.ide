@@ -13,6 +13,7 @@ package gov.redhawk.ide.debug;
 import gov.redhawk.ide.debug.internal.LaunchConfigurationFactoryRegistry;
 import gov.redhawk.ide.debug.internal.LauncherVariableRegistry;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
@@ -39,7 +40,13 @@ public class ScaDebugPlugin extends Plugin {
 	@Override
 	public void stop(final BundleContext context) throws Exception {
 		super.stop(context);
-		getLocalSca().dispose();
+		ScaModelCommand.execute(getLocalSca(), new ScaModelCommand() {
+			
+			@Override
+			public void execute() {
+				getLocalSca().dispose();
+			}
+		});
 		ScaDebugPlugin.instance = null;
 	}
 

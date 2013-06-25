@@ -23,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -36,7 +37,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gmf.runtime.diagram.ui.internal.properties.WorkspaceViewerProperties;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramGraphicalViewer;
@@ -133,7 +133,7 @@ public class NewWaveformFromLocalWizard extends Wizard implements IExecutableExt
 						}
 						NewWaveformFromLocalWizard.this.openEditorOn = WaveformProjectCreator.createWaveformFiles(project, newSad.getId(), null, null);
 						final URI uri = URI.createPlatformResourceURI(NewWaveformFromLocalWizard.this.openEditorOn.getFullPath().toPortableString(), true);
-						final ResourceSet resourceSet = new ResourceSetImpl();
+						final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 						final Resource resource = resourceSet.getResource(uri, true);
 						resource.getContents().clear();
 						resource.getContents().add(newSad);

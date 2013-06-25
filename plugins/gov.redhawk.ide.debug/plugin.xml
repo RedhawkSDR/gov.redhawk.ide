@@ -2,6 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension-point id="launchConfigurationFactories" name="Launch Configuration Factories" schema="schema/launchConfigurationFactories.exsd"/>
+   <extension-point id="spdBundle" name="spdBundle" schema="schema/spdBundle.exsd"/>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
@@ -119,5 +120,18 @@
             id="gov.redhawk.ide.debug.defaultLaunchConfigurationFactory"
             launchConfigType="gov.redhawk.ide.debug.localComponentProgram">
       </launchConfigurationFactory>
+   </extension>
+   <extension
+         point="gov.redhawk.core.resourceFactory.resourceFactories">
+      <factoryProvider
+            class="gov.redhawk.ide.debug.internal.WorkspaceResourceFactoryProvider"
+            id="gov.redhawk.ide.debug.workspaceFactoryProvider"
+            priority="10">
+      </factoryProvider>
+      <factoryProvider
+            class="gov.redhawk.ide.debug.internal.BundleResourceFactoryProvider"
+            id="gov.redhawk.ide.debug.bundleFactoryProvider"
+            priority="-1">
+      </factoryProvider>
    </extension>
 </plugin>

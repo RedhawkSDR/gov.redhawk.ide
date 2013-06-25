@@ -22,6 +22,7 @@ import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.partitioning.ComponentFiles;
 import mil.jpeojtrs.sca.sad.SadPackage;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -33,7 +34,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
@@ -105,7 +105,7 @@ public class SadMarkerResolution extends WorkbenchMarkerResolution {
 	public void run(final IMarker marker) {
 		final String uri = marker.getAttribute(EValidator.URI_ATTRIBUTE, null);
 		if (uri != null) {
-			final ResourceSet set = new ResourceSetImpl();
+			final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
 			final EObject obj = set.getEObject(URI.createURI(uri), true);
 			if (obj instanceof ComponentFile) {
 				final ComponentFile file = (ComponentFile) obj;
@@ -129,7 +129,7 @@ public class SadMarkerResolution extends WorkbenchMarkerResolution {
 		if (markers == null) {
 			return;
 		}
-		final ResourceSet set = new ResourceSetImpl();
+		final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
 		final Collection<Resource> editedResources = new HashSet<Resource>();
 		final SubMonitor subMonitor = SubMonitor.convert(monitor, "Removing unnecessary Component File references.", 100);
 		try {

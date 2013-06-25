@@ -30,6 +30,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SoftPkgRef;
 import mil.jpeojtrs.sca.spd.SpdFactory;
 import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -44,7 +45,6 @@ import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
@@ -105,7 +105,7 @@ public class DependencyWizardPage extends WizardPage {
 
 	private ComboViewer dependencyTypeComboViewer;
 
-	private final ResourceSet resourceSet = new ResourceSetImpl();
+	private final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 
 	private final Resource dependencyResource;
 

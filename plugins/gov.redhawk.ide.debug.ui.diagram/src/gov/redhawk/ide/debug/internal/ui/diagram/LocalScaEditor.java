@@ -12,10 +12,12 @@ package gov.redhawk.ide.debug.internal.ui.diagram;
 
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
 import gov.redhawk.ide.sad.internal.ui.editor.SadEditor;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
+import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.sad.diagram.part.SadDiagramEditor;
 import gov.redhawk.sca.util.Debug;
@@ -30,6 +32,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IEditorInput;
@@ -48,15 +52,52 @@ public class LocalScaEditor extends SadEditor {
 	@Override
 	protected void createModel() {
 		super.createModel();
-		final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(getMainResource());
+		
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 		final LocalScaWaveform waveform = localSca.getSandboxWaveform();
+		if (waveform == null) {
+			localSca.eAdapters().add(new AdapterImpl() {
+				@Override
+				public void notifyChanged(Notification msg) {
+					switch (msg.getFeatureID(LocalSca.class)) {
+					case ScaDebugPackage.LOCAL_SCA__SANDBOX_WAVEFORM:
+						if (msg.getNewValue() instanceof ScaWaveform) {
+							initModelMap();
+							localSca.eAdapters().remove(this);
+						}
+						break;
+					default:
+						break;
+					}
+
+				}
+
+			});
+		} else {
+			initModelMap();
+		}
+
+
+
+	}
+
+	private void initModelMap() {
+		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
+		final LocalScaWaveform waveform = localSca.getSandboxWaveform();
+		final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(getMainResource());
 		final ModelMap modelMap = new ModelMap(this, sad, waveform);
 		this.sadlistener = new SadModelAdapter(modelMap);
+		sad.eAdapters().add(this.sadlistener);
 		this.scaListener = new ScaModelAdapter(modelMap);
+		ScaModelCommand.execute(localSca, new ScaModelCommand() {
+
+			public void execute() {
+				localSca.eAdapters().add(LocalScaEditor.this.scaListener);
+			}
+		});
 		getEditingDomain().getCommandStack().execute(new SadModelInitializerCommand(modelMap, sad, waveform));
 		getEditingDomain().getCommandStack().flush();
-
+		
 		if (LocalScaEditor.DEBUG.enabled) {
 			try {
 				sad.eResource().save(null);
@@ -64,16 +105,6 @@ public class LocalScaEditor extends SadEditor {
 				LocalScaEditor.DEBUG.catching("Failed to save local diagram.", e);
 			}
 		}
-
-		ScaModelCommand.execute(localSca, new ScaModelCommand() {
-
-			public void execute() {
-				localSca.eAdapters().add(LocalScaEditor.this.scaListener);
-			}
-		});
-
-		sad.eAdapters().add(this.sadlistener);
-
 	}
 
 	@Override
@@ -108,7 +139,7 @@ public class LocalScaEditor extends SadEditor {
 		// Only creates the other pages if there is something that can be edited
 		//
 		if (!getEditingDomain().getResourceSet().getResources().isEmpty()
-		        && !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
+		    && !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
 			try {
 				int pageIndex = 0;
 
@@ -124,13 +155,13 @@ public class LocalScaEditor extends SadEditor {
 
 			} catch (final PartInitException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
-				        StatusManager.LOG | StatusManager.SHOW);
+				    StatusManager.LOG | StatusManager.SHOW);
 			} catch (final IOException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
-				        StatusManager.LOG | StatusManager.SHOW);
+				    StatusManager.LOG | StatusManager.SHOW);
 			} catch (final CoreException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
-				        StatusManager.LOG | StatusManager.SHOW);
+				    StatusManager.LOG | StatusManager.SHOW);
 			}
 		}
 	}
@@ -172,9 +203,9 @@ public class LocalScaEditor extends SadEditor {
 	public String getTitle() {
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 		final LocalScaWaveform waveform = localSca.getSandboxWaveform();
-		final String name = waveform.getName();
-		if (name == null) {
-			return "Chalkboard";
+		String name = "Chalkboard";
+		if (waveform != null && waveform.getName() != null) {
+			name = waveform.getName();
 		}
 		return name;
 	}

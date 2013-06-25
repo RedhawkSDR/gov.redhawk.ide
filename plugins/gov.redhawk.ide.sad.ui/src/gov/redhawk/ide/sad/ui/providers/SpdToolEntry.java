@@ -36,18 +36,35 @@ public class SpdToolEntry extends PaletteToolEntry {
 	private final IElementType elementType;
 	private final URI spdUri;
 
-	public SpdToolEntry(final SoftPkg spd) {
-		super(null, spd.getName(), null);
-		String description = spd.getDescription();
+	private String spdId;
+
+	private String implID;
+
+	/**
+	 * @since 5.0
+	 */
+	public SpdToolEntry(String name, String description, URI spdURI, String id, String implID) {
+		super(null, name, null);
 		if (description == null) {
-			description = MessageFormat.format("Create a new instance of the component \"{0}\".", spd.getName());
+			description = MessageFormat.format("Create a new instance of the component \"{0}\".", name);
 		}
 		this.setDescription(description);
 		this.elementType = SadElementTypes.SadComponentPlacement_3001;
-		this.spdUri = EcoreUtil.getURI(spd);
+		this.spdUri = spdURI;
 		setSmallIcon(SadElementTypes.getImageDescriptor(SadElementTypes.SadComponentPlacement_3001));
 		setLargeIcon(getSmallIcon());
-		setId(SpdToolEntry.TOOL_PREFIX + spd.getId());
+
+		this.spdId = id;
+		this.implID = implID;
+		if (implID == null) {
+			setId(SpdToolEntry.TOOL_PREFIX + id);
+		} else {
+			setId(SpdToolEntry.TOOL_PREFIX + id + ":" + implID);
+		}
+	}
+
+	public SpdToolEntry(final SoftPkg spd) {
+		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null);
 	}
 
 	@Override
@@ -60,11 +77,28 @@ public class SpdToolEntry extends PaletteToolEntry {
 				final HashMap<Object, Object> map = new HashMap<Object, Object>();
 				map.putAll(retVal.getExtendedData());
 				map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_SPD_URI, SpdToolEntry.this.spdUri);
+				if (implID != null) {
+					map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_IMPL_ID, SpdToolEntry.this.implID);
+				}
 				retVal.setExtendedData(map);
 				return retVal;
 			}
 		};
 		tool.setProperties(getToolProperties());
 		return tool;
+	}
+
+	/**
+	 * @since 5.0
+	 */
+	public String getImplID() {
+		return implID;
+	}
+
+	/**
+	 * @since 5.0
+	 */
+	public String getSpdID() {
+		return spdId;
 	}
 }

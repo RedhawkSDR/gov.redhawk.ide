@@ -32,6 +32,7 @@ import mil.jpeojtrs.sca.scd.Uses;
 import mil.jpeojtrs.sca.spd.Descriptor;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -46,7 +47,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.workspace.util.WorkspaceSynchronizer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -120,7 +120,7 @@ public class SpdMarkerResolution extends WorkbenchMarkerResolution {
 	public void run(final IMarker marker) {
 		final String uri = marker.getAttribute(EValidator.URI_ATTRIBUTE, null);
 		if (uri != null) {
-			final ResourceSet set = new ResourceSetImpl();
+			final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
 			final EObject obj = set.getEObject(URI.createURI(uri), true);
 			if (obj instanceof SoftPkg) {
 				final SoftPkg spd = (SoftPkg) obj;
@@ -144,7 +144,7 @@ public class SpdMarkerResolution extends WorkbenchMarkerResolution {
 		if (markers == null) {
 			return;
 		}
-		final ResourceSet set = new ResourceSetImpl();
+		final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
 		final Collection<Resource> editedResources = new HashSet<Resource>();
 		final SubMonitor subMonitor = SubMonitor.convert(monitor, "Adding event port.", 100);
 		try {

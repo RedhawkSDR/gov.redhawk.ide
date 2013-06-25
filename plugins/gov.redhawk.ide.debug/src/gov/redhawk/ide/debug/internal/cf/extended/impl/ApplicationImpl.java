@@ -47,6 +47,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.AnyUtils;
 import mil.jpeojtrs.sca.util.NamedThreadFactory;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -66,7 +67,6 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.jacorb.naming.Name;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NameComponent;
@@ -902,7 +902,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	private LocalScaComponent launch(final String nameBinding, final String execParams, final URI spdURI, final String implId, final String tmpMode)
 	        throws CoreException {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
-		final ResourceSet resourceSet = new ResourceSetImpl();
+		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
 		final String mode;
 		if (tmpMode == null) {

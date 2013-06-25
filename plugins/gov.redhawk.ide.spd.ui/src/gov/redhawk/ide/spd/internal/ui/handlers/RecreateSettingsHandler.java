@@ -16,6 +16,7 @@ import gov.redhawk.ide.spd.ui.wizard.RecreateSettingsWizard;
 import java.io.IOException;
 
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -28,7 +29,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -45,7 +45,7 @@ public class RecreateSettingsHandler extends AbstractHandler implements IHandler
 			for (final Object obj : ((IStructuredSelection) selection).toArray()) {
 				if (obj instanceof IFile) {
 					final IFile file = (IFile) obj;
-					final ResourceSet set = new ResourceSetImpl();
+					final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
 					final Resource tempRes = set.getResource(URI.createPlatformResourceURI(file.getFullPath().toString(), true), true);
 
 					// Load the resource and get the root object

@@ -28,6 +28,7 @@ import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.dcd.DomainManager;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -42,7 +43,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.gmf.runtime.diagram.ui.internal.properties.WorkspaceViewerProperties;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramGraphicalViewer;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -139,7 +139,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 						} else {
 							openEditorOn = project.getFile("DeviceManager.dcd.xml");
 							ProjectCreator.importFile(project, openEditorOn, existingDcdPath, progress.newChild(1));
-							ResourceSet resourceSet = new ResourceSetImpl();
+							ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 							URI uri = URI.createPlatformResourceURI(openEditorOn.getFullPath().toString(), true).appendFragment(DeviceConfiguration.EOBJECT_PATH);
 							DeviceConfiguration dcd = (DeviceConfiguration) resourceSet.getEObject(uri, true);
 							dcd.setId(id);

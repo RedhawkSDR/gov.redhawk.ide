@@ -16,6 +16,7 @@ import gov.redhawk.ui.editor.SCAFormEditor;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.spd.util.SpdResourceImpl;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -30,7 +31,6 @@ import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
@@ -71,7 +71,7 @@ public class ComponentLaunchShortcut implements ILaunchShortcut {
 	 * @param file
 	 */
 	private void launch(final String mode, final IFile file) {
-		final ResourceSet resourceSet = new ResourceSetImpl();
+		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		try {
 			final Resource resource = resourceSet.getResource(URI.createPlatformResourceURI(file.getFullPath().toPortableString(), true), true);
 			final SoftPkg spd = SoftPkg.Util.getSoftPkg(resource);

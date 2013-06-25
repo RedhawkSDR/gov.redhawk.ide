@@ -21,6 +21,7 @@ import java.util.Collections;
 
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
@@ -39,7 +40,6 @@ import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -169,7 +169,7 @@ public class CodegenUtil {
 			if (file.exists()) {
 				waveDevResource = resourceSet.getResource(uri, true);
 			} else {
-				final ResourceSet set = new ResourceSetImpl();
+				final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
 				waveDevResource = set.createResource(uri, CodegenPackage.eCONTENT_TYPE);
 				WaveDevSettings retVal = CodegenFactory.eINSTANCE.createWaveDevSettings();
 				waveDevResource.getContents().add(retVal);
@@ -230,7 +230,7 @@ public class CodegenUtil {
 	 * @since 5.0
 	 */
 	public static WaveDevSettings getWaveDevSettings(final URI fileURI) {
-		final ResourceSet resourceSet = new ResourceSetImpl();
+		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		final Resource resource = resourceSet.getResource(fileURI, true);
 
 		return CodegenUtil.getWaveDevSettings(resource);

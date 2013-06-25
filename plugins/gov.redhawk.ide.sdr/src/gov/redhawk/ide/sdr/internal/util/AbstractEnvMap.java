@@ -10,7 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.internal.util;
 
+import gov.redhawk.ide.sdr.IdeSdrActivator;
+
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,20 +33,23 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
+import org.osgi.framework.Bundle;
 
 public abstract class AbstractEnvMap {
-	
-	
+
 	public abstract boolean handles(Implementation impl);
 
 	protected static String getImplProgrammingLanguage(Implementation impl) {
-		return (String) ScaEcoreUtils.getFeature(
-				impl, SpdPackage.Literals.IMPLEMENTATION__PROGRAMMING_LANGUAGE, SpdPackage.Literals.PROGRAMMING_LANGUAGE__NAME);
+		return (String) ScaEcoreUtils.getFeature(impl, SpdPackage.Literals.IMPLEMENTATION__PROGRAMMING_LANGUAGE, SpdPackage.Literals.PROGRAMMING_LANGUAGE__NAME);
 	}
-	
-	protected boolean addToPath(Set<String> path, Implementation impl) throws CoreException {	
+
+	protected boolean addToPath(Set<String> path, Implementation impl) throws CoreException {
 		if (!handles(impl)) {
 			return false;
 		}
@@ -76,9 +84,27 @@ public abstract class AbstractEnvMap {
 		}
 		return retVal.toString();
 	}
-	
+
 	protected String getAbsolutePath(URI pathUri) throws CoreException {
-		if (pathUri.isPlatformResource()) {
+		if (pathUri.isPlatformPlugin()) {
+			String bundleId = pathUri.segment(1);
+			Bundle bundle = Platform.getBundle(bundleId);
+			IPath path = new Path(pathUri.toPlatformString(true));
+			path = path.removeFirstSegments(1);
+			URL url = FileLocator.find(bundle, path, null);
+			if (url != null) {
+				try {
+					url = FileLocator.toFileURL(url);
+					return new File(url.toURI()).getAbsolutePath();
+				} catch (IOException e) {
+					throw new CoreException(new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to find bundle file: " + pathUri, e));
+				} catch (URISyntaxException e) {
+					throw new CoreException(new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to find bundle file: " + pathUri, e));
+				}
+			} else {
+				throw new CoreException(new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to find bundle file: " + pathUri, null));
+			}
+		} else if (pathUri.isPlatformResource()) {
 			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(pathUri.toPlatformString(true)));
 			if (resource != null) {
 				return "${workspace_loc:" + resource.getFullPath() + "}";
@@ -91,7 +117,7 @@ public abstract class AbstractEnvMap {
 			}
 		}
 		return null;
-    }
+	}
 
 	public abstract void initEnv(Implementation impl, Map<String, String> envMap) throws CoreException;
 }

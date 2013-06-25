@@ -342,11 +342,6 @@
             id="gov.redhawk.ide.debug.ui.sdrFactoryProvider"
             priority="20">
       </factoryProvider>
-      <factoryProvider
-            class="gov.redhawk.ide.debug.internal.WorkspaceResourceFactoryProvider"
-            id="gov.redhawk.ide.debug.ui.factoryProvider.workspace"
-            priority="10">
-      </factoryProvider>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">

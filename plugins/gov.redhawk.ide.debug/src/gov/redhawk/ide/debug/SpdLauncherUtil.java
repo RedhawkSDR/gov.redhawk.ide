@@ -44,6 +44,7 @@ import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
 import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -56,7 +57,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
@@ -570,7 +570,7 @@ public final class SpdLauncherUtil {
 		} else {
 			spdURI = URI.createFileURI(configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, ""));
 		}
-		final ResourceSet resourceSet = new ResourceSetImpl();
+		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		return SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
 	}
 

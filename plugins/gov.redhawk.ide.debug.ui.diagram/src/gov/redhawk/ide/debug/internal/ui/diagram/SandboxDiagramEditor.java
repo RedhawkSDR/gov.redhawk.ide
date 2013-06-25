@@ -10,236 +10,151 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui.diagram;
 
-import gov.redhawk.ide.natures.ScaComponentProjectNature;
+import gov.redhawk.core.resourcefactory.ComponentDesc;
+import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
+import gov.redhawk.core.resourcefactory.ResourceDesc;
+import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
 import gov.redhawk.ide.sad.internal.ui.editor.CustomDiagramEditor;
 import gov.redhawk.ide.sad.ui.providers.SpdToolEntry;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mil.jpeojtrs.sca.scd.ComponentType;
-import mil.jpeojtrs.sca.scd.SoftwareComponent;
-import mil.jpeojtrs.sca.spd.Code;
-import mil.jpeojtrs.sca.spd.CodeFileType;
-import mil.jpeojtrs.sca.spd.Implementation;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.spd.SpdPackage;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.gef.palette.PaletteContainer;
 import org.eclipse.gef.palette.PaletteDrawer;
 import org.eclipse.gef.palette.PaletteEntry;
 import org.eclipse.gef.palette.PaletteRoot;
-import org.eclipse.gef.palette.PaletteSeparator;
-import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.gef.palette.PaletteStack;
+import org.eclipse.ui.PlatformUI;
 
 public class SandboxDiagramEditor extends CustomDiagramEditor {
-	protected static final EStructuralFeature[] SCD = new EStructuralFeature[] {
-	        SpdPackage.Literals.SOFT_PKG__DESCRIPTOR, SpdPackage.Literals.DESCRIPTOR__COMPONENT
-	};
-	private final Job getComponentsJob = new Job("Refreshing workspace components") {
 
-		{
-			setSystem(true);
+	private java.beans.PropertyChangeListener listener = new PropertyChangeListener() {
+
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (IResourceFactoryRegistry.PROP_RESOURCES.equals(evt.getPropertyName())) {
+				updatePaletteJob.schedule(500);
+			}
 		}
+	};
+
+	private final Job updatePaletteJob = new Job("Updating Palette") {
 
 		@Override
-		protected IStatus run(final IProgressMonitor monitor) {
-			final List<PaletteEntry> entriesToAdd = getWorkspaceComponentTools();
-			final WorkbenchJob job = new WorkbenchJob("Refresh palette") {
+		public IStatus run(IProgressMonitor monitor) {
+			final PaletteRoot root = getEditDomain().getPaletteViewer().getPaletteRoot();
+			final List<PaletteEntry> tools = getWorkspaceComponentTools();
+			if (root != null) {
+				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
-				{
-					setSystem(true);
-				}
-
-				@Override
-				public IStatus runInUIThread(final IProgressMonitor monitor) {
-					SandboxDiagramEditor.this.workspaceDrawer.setChildren(entriesToAdd);
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
-			return Status.OK_STATUS;
-		}
-	};
-	private final PaletteDrawer workspaceDrawer = new PaletteDrawer("Workspace");
-	private final IResourceChangeListener listener = new IResourceChangeListener() {
-
-		public void resourceChanged(final IResourceChangeEvent event) {
-			final boolean[] shouldRefresh = {
-				false
-			};
-			switch (event.getType()) {
-			case IResourceChangeEvent.POST_CHANGE:
-				if (event.getDelta() == null) {
-					return;
-				}
-				switch (event.getDelta().getKind()) {
-				case IResourceDelta.ADDED:
-				case IResourceDelta.CHANGED:
-				case IResourceDelta.REMOVED:
-					try {
-						event.getDelta().accept(new IResourceDeltaVisitor() {
-
-							public boolean visit(final IResourceDelta delta) throws CoreException {
-								if (shouldRefresh[0]) {
-									return false;
-								}
-								final IResource resource = delta.getResource();
-								if (resource instanceof IFile) {
-									shouldRefresh[0] = delta.getResource().getName().endsWith(SpdPackage.FILE_EXTENSION);
-								}
-								return !shouldRefresh[0];
-							}
-						});
-					} catch (final CoreException e) {
-						// PASS
+					public void run() {
+						root.setChildren(tools);
 					}
-					break;
-				default:
-					break;
-				}
-				if (shouldRefresh[0]) {
-					SandboxDiagramEditor.this.getComponentsJob.schedule(1000);
-				}
-				break;
-			default:
-				break;
+
+				});
+				
 			}
+			return Status.OK_STATUS;
 		}
 	};
 
 	public SandboxDiagramEditor(final SCAFormEditor editor) {
 		super(editor);
 
-		this.workspaceDrawer.add(new PaletteSeparator("components"));
-		this.workspaceDrawer.setInitialState(PaletteDrawer.INITIAL_STATE_PINNED_OPEN);
 	}
 
 	@Override
 	public void dispose() {
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this.listener);
+		IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
+		registry.removeListener(listener);
 		super.dispose();
 	}
 
 	@Override
 	protected PaletteRoot createPaletteRoot(final PaletteRoot existingPaletteRoot) {
-		final PaletteRoot result = super.createPaletteRoot(existingPaletteRoot);
-		final List<PaletteEntry> entriesToRemove = new ArrayList<PaletteEntry>();
-		for (final Iterator< ? > iterator = result.getChildren().iterator(); iterator.hasNext();) {
-			final Object obj = iterator.next();
-			if (obj instanceof PaletteEntry) {
-				final PaletteEntry entry = (PaletteEntry) obj;
-				if (entry.getId().equals("findBy")) {
-					entriesToRemove.add(entry);
-				} else if (entry.getId().equals("createBaseTypes1Group")) {
-					entriesToRemove.add(entry);
+		final PaletteRoot retVal = new PaletteRoot();
+		retVal.setChildren(getWorkspaceComponentTools());
+
+		IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
+		registry.addListener(listener);
+		return retVal;
+	}
+
+	private synchronized List<PaletteEntry> getWorkspaceComponentTools() {
+		final List<PaletteEntry> retVal = new ArrayList<PaletteEntry>();
+		Map<String, PaletteContainer> containerMap = new HashMap<String, PaletteContainer>();
+
+		IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
+		registry.addListener(listener);
+		for (ResourceDesc desc : registry.getResourceDescriptors()) {
+			if (!shouldAdd(desc)) {
+				continue;
+			}
+			String category = desc.getCategory();
+			PaletteContainer container = containerMap.get(category);
+			if (container == null) {
+				String label = category;
+				if (label == null) {
+					label = "Other";
+				}
+				container = new PaletteDrawer(label);
+				containerMap.put(category, container);
+				retVal.add(container);
+			}
+			if (desc instanceof ComponentDesc) {
+				PaletteEntry newEntry = null;
+				ComponentDesc compDesc = (ComponentDesc) desc;
+				List<PaletteEntry> entries = createPaletteEntries(compDesc);
+				sort(entries);
+				if (entries.size() > 1) {
+					PaletteStack stack = new PaletteStack(entries.get(0).getLabel(), entries.get(0).getDescription(), entries.get(0).getLargeIcon());
+					stack.setChildren(entries);
+					newEntry = stack;
+				} else if (!entries.isEmpty()) {
+					newEntry = entries.get(0);
+				}
+				if (newEntry != null) {
+					container.add(newEntry);
 				}
 			}
 		}
-		for (final PaletteEntry entry : entriesToRemove) {
-			result.remove(entry);
-		}
 
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this.listener);
-		this.workspaceDrawer.setChildren(getWorkspaceComponentTools());
-		result.add(this.workspaceDrawer);
+		sort(retVal);
 
-		return result;
+		return retVal;
 	}
 
-	private List<PaletteEntry> getWorkspaceComponentTools() {
-		final List<PaletteEntry> entriesToAdd = new ArrayList<PaletteEntry>();
-		final ResourceSet resourceSet = new ResourceSetImpl();
-
-		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		try {
-			root.accept(new IResourceVisitor() {
-
-				public boolean visit(final IResource resource) throws CoreException {
-					if (resource instanceof IWorkspaceRoot) {
-						return true;
-					}
-					if (resource == null || !resource.isAccessible() || resource.getProject() == null || resource.getProject().getDescription() == null
-					        || !resource.getProject().getDescription().hasNature(ScaComponentProjectNature.ID)) {
-						return false;
-					}
-					if (resource instanceof IFile) {
-						if (resource.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-							try {
-								final Resource spdResource = resourceSet.getResource(URI.createPlatformResourceURI(resource.getFullPath().toPortableString(),
-								        true), true);
-								final SoftPkg spd = SoftPkg.Util.getSoftPkg(spdResource);
-								boolean add = false;
-								out: for (Implementation impl : spd.getImplementation()) {
-									Code code = impl.getCode();
-									if (code == null) {
-										add = false;
-										break out;
-									}
-									CodeFileType type = code.getType();
-									if (type == null) {
-										add = false;
-										break out;
-									} 
-									switch(type) {
-									case EXECUTABLE:
-										add = true;
-										break out;
-									default:
-										add = false;
-										break out;
-									}
-								}
-								if (spd.getDescriptor() != null) {
-									SoftwareComponent comp = spd.getDescriptor().getComponent();
-									ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(comp);
-									switch(type) {
-									case RESOURCE:
-										break;
-									default:
-										add = false;
-										break;
-									}
-								}
-								if (add) {
-									final SpdToolEntry entry = new SpdToolEntry(spd);
-									entriesToAdd.add(entry);
-								}
-							} catch (final Exception e) {
-								// PASS
-							}
-						}
-						return false;
-					}
-					return true;
-				}
-			});
-		} catch (final CoreException e) {
-			// PASS
+	private boolean shouldAdd(ResourceDesc desc) {
+		if (desc instanceof ComponentDesc) {
+			ComponentDesc compDesc = (ComponentDesc) desc;
+			String type = compDesc.getComponentType();
+			if (!ComponentType.RESOURCE.getLiteral().equalsIgnoreCase(type)) {
+				return false;
+			} else if (compDesc.getImplementationIds().isEmpty()) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return false;
 		}
-		Collections.sort(entriesToAdd, new Comparator<PaletteEntry>() {
+	}
+
+	private void sort(List<PaletteEntry> entries) {
+		Collections.sort(entries, new Comparator<PaletteEntry>() {
 
 			public int compare(final PaletteEntry o1, final PaletteEntry o2) {
 				final String str1 = o1.getLabel();
@@ -258,6 +173,17 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 			}
 
 		});
-		return entriesToAdd;
+	}
+
+	private List<PaletteEntry> createPaletteEntries(ComponentDesc desc) {
+		List<PaletteEntry> retVal = new ArrayList<PaletteEntry>(desc.getImplementationIds().size());
+		if (desc.getImplementationIds().size() == 1) {
+			retVal.add(new SpdToolEntry(desc.getName(), desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(), desc.getImplementationIds().get(0)));
+		} else {
+			for (String implID : desc.getImplementationIds()) {
+				retVal.add(new SpdToolEntry(desc.getName() + " (" + implID + ")", desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(), implID));
+			}
+		}
+		return retVal;
 	}
 }
