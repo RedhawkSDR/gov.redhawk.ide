@@ -66,14 +66,14 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 				try {
 					handleLaunch(obj, event);
 				} catch (final CoreException e) {
-					StatusManager.getManager().handle(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e
-							.getLocalizedMessage(), e), StatusManager.LOG | StatusManager.SHOW);
+					StatusManager.getManager().handle(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e),
+						StatusManager.LOG | StatusManager.SHOW);
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void setEnabled(Object evaluationContext) {
 		final IEvaluationContext context = (IEvaluationContext) evaluationContext;
@@ -82,7 +82,7 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 			setBaseEnabled(false);
 			return;
 		}
-		
+
 		if (context.getVariable("activeMenuSelection") != null && context.getVariable("activeMenuSelection") instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) context.getVariable("activeMenuSelection");
 			boolean enabled = true;
@@ -104,28 +104,28 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 				}
 			}
 			setBaseEnabled(enabled);
-		} 
+		}
 	}
 
 	private boolean checkImpl(Implementation impl) {
-	    if (impl.getCode() != null) {
-	    	Code code = impl.getCode();
-	    	CodeFileType type = code.getType();
-	    	if (type != null) {
-	    		switch(type) {
-	    		case EXECUTABLE:
-	    			return true;
-	    		case DRIVER:
-	    		case KERNEL_MODULE:
-	    		case NODE_BOOTER:
-	    		case SHARED_LIBRARY:
-	    		default:
-	    			return false;
-	    		}
-	    	}
-	    }
-	    return false;
-    }
+		if (impl.getCode() != null) {
+			Code code = impl.getCode();
+			CodeFileType type = code.getType();
+			if (type != null) {
+				switch (type) {
+				case EXECUTABLE:
+					return true;
+				case DRIVER:
+				case KERNEL_MODULE:
+				case NODE_BOOTER:
+				case SHARED_LIBRARY:
+				default:
+					return false;
+				}
+			}
+		}
+		return false;
+	}
 
 	private void handleLaunch(Object element, final ExecutionEvent event) throws CoreException {
 		if (element instanceof IFile) {
@@ -140,7 +140,9 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 		} else if (element instanceof Implementation) {
 			config = LaunchUtil.createLaunchConfiguration((Implementation) element);
 		}
-		LaunchUtil.launch(config, ILaunchManager.RUN_MODE);
+		if (config != null) {
+			LaunchUtil.launch(config, ILaunchManager.RUN_MODE);
+		}
 	}
 
 	private Object loadFile(final IFile element) {
@@ -165,10 +167,8 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				try {
-					ScaDebugPlugin.getInstance()
-					        .getLocalSca()
-					        .getSandboxWaveform()
-					        .launch(null, null, EcoreUtil.getURI(spd), impl.getId(), ILaunchManager.RUN_MODE);
+					ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform().launch(null, null, EcoreUtil.getURI(spd), impl.getId(),
+						ILaunchManager.RUN_MODE);
 				} catch (final CoreException e) {
 					return e.getStatus();
 				}

@@ -75,7 +75,9 @@
             <visibleWhen
                   checkEnabled="false">
                <and>
-                  <iterate>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
                      <or>
                         <instanceof
                               value="mil.jpeojtrs.sca.spd.SoftPkg">
@@ -94,6 +96,28 @@
                </and>
             </visibleWhen>
          </command>
+         <menu
+               label="Launch As">
+            <dynamic
+                  class="gov.redhawk.ide.debug.internal.ui.LaunchContributionItem"
+                  id="gov.redhawk.ide.debug.ui.launchDynamicMenu">
+            </dynamic>
+            <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <instanceof
+                           value="mil.jpeojtrs.sca.spd.SoftPkg">
+                     </instanceof>
+                  </iterate>
+                  <count
+                        value="1">
+                  </count>
+               </and>
+            </visibleWhen>
+         </menu>
       </menuContribution>
       <menuContribution
             locationURI="popup:org.eclipse.ui.popup.any?after=group.control">

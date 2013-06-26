@@ -170,7 +170,10 @@ public final class LaunchUtil {
 		final SoftPkg spd = impl.getSoftPkg();
 		ILaunchConfigurationFactoryRegistry registry = ScaDebugPlugin.getInstance().getLaunchConfigurationFactoryRegistry();
 		ILaunchConfigurationFactory factory = registry.getFactory(spd, impl.getId());
-		ILaunchConfigurationWorkingCopy config = factory.createLaunchConfiguration(spd.getName(), impl.getId(), spd);
+		ILaunchConfigurationWorkingCopy config = null;
+		if (factory != null) {
+			config = factory.createLaunchConfiguration(spd.getName(), impl.getId(), spd);
+		}
 		return config;
 	}
 	
