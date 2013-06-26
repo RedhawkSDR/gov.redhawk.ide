@@ -52,7 +52,7 @@ public class LocalScaEditor extends SadEditor {
 	@Override
 	protected void createModel() {
 		super.createModel();
-		
+
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 		final LocalScaWaveform waveform = localSca.getSandboxWaveform();
 		if (waveform == null) {
@@ -77,8 +77,6 @@ public class LocalScaEditor extends SadEditor {
 			initModelMap();
 		}
 
-
-
 	}
 
 	private void initModelMap() {
@@ -87,17 +85,19 @@ public class LocalScaEditor extends SadEditor {
 		final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(getMainResource());
 		final ModelMap modelMap = new ModelMap(this, sad, waveform);
 		this.sadlistener = new SadModelAdapter(modelMap);
-		sad.eAdapters().add(this.sadlistener);
 		this.scaListener = new ScaModelAdapter(modelMap);
+
+		getEditingDomain().getCommandStack().execute(new SadModelInitializerCommand(modelMap, sad, waveform));
+		getEditingDomain().getCommandStack().flush();
+
 		ScaModelCommand.execute(localSca, new ScaModelCommand() {
 
 			public void execute() {
 				localSca.eAdapters().add(LocalScaEditor.this.scaListener);
 			}
 		});
-		getEditingDomain().getCommandStack().execute(new SadModelInitializerCommand(modelMap, sad, waveform));
-		getEditingDomain().getCommandStack().flush();
-		
+		sad.eAdapters().add(this.sadlistener);
+
 		if (LocalScaEditor.DEBUG.enabled) {
 			try {
 				sad.eResource().save(null);
@@ -139,7 +139,7 @@ public class LocalScaEditor extends SadEditor {
 		// Only creates the other pages if there is something that can be edited
 		//
 		if (!getEditingDomain().getResourceSet().getResources().isEmpty()
-		    && !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
+			&& !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
 			try {
 				int pageIndex = 0;
 
@@ -155,13 +155,13 @@ public class LocalScaEditor extends SadEditor {
 
 			} catch (final PartInitException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
-				    StatusManager.LOG | StatusManager.SHOW);
+					StatusManager.LOG | StatusManager.SHOW);
 			} catch (final IOException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
-				    StatusManager.LOG | StatusManager.SHOW);
+					StatusManager.LOG | StatusManager.SHOW);
 			} catch (final CoreException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
-				    StatusManager.LOG | StatusManager.SHOW);
+					StatusManager.LOG | StatusManager.SHOW);
 			}
 		}
 	}
