@@ -10,8 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.wizard;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.databinding.validation.ValidationStatus;
@@ -22,8 +20,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 /**
@@ -84,7 +80,9 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 		this.idGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL));
 
 		// Working Set group
-		createWorkingSetGroup(dialogArea, new StructuredSelection(), getWorkingSetNames());
+		String[] wsTypes = new String[1];
+		wsTypes[0] = "org.eclipse.ui.resourceWorkingSetPage";
+		createWorkingSetGroup(dialogArea, new StructuredSelection(), wsTypes);
 
 		setPageComplete(validatePage());
 		// Show description on opening
@@ -99,14 +97,6 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 		this.contentsGroup = new ContentsGroup(parent, SWT.None, this.resourceType, this.resourceExtension, this);
 		this.contentsGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL));
     }
-
-	private String[] getWorkingSetNames() {
-		final List<String> workingSetNames = new ArrayList<String>();
-		for (final IWorkingSet set : PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets()) {
-			workingSetNames.add(set.getId());
-		}
-		return workingSetNames.toArray(new String[workingSetNames.size()]);
-	}
 
 	public void customCreateControl(final Composite composite) {
 		return;
