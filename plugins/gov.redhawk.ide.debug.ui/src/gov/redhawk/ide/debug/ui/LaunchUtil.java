@@ -162,7 +162,11 @@ public final class LaunchUtil {
 			return createLaunchConfiguration(impl);
 		} else {
 			Implementation impl = chooseImplementation(spd.getImplementation(), ILaunchManager.RUN_MODE, shell);
-			return createLaunchConfiguration(impl);
+			if (impl != null) {
+				return createLaunchConfiguration(impl);
+			} else {
+				return null;
+			}
 		}
 	}
 	
