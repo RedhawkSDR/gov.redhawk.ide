@@ -53,6 +53,8 @@ else
         pushd $impl &> /dev/null
         if [ -e build.sh ]; then
             ./build.sh $*
+        elif [ -e reconf ]; then
+            ./reconf && ./configure && make
         else
             echo "No build.sh found for $impl"
         fi
