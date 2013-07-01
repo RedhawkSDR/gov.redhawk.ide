@@ -374,10 +374,12 @@ public class SadActionBarContributor extends EditingDomainActionBarContributor i
 		final IAction cu = actionBars.getGlobalActionHandler(ActionFactory.CUT.getId());
 		final IAction cp = actionBars.getGlobalActionHandler(ActionFactory.COPY.getId());
 		final IAction pt = actionBars.getGlobalActionHandler(ActionFactory.PASTE.getId());
+		final IAction sv = actionBars.getGlobalActionHandler(ActionFactory.SAVE.getId());
 		super.init(actionBars);
 		actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(), cu);
 		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), cp);
 		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), pt);
+		actionBars.setGlobalActionHandler(ActionFactory.SAVE.getId(), sv);
 	}
 
 }
