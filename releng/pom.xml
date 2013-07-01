@@ -106,6 +106,7 @@
         <module>../plugins/gov.redhawk.ide.dcd</module>
         <module>../plugins/gov.redhawk.ide.dcd.ui</module>
         <module>../plugins/gov.redhawk.ide.debug</module>
+        <module>../plugins/gov.redhawk.ide.debug.linux</module>
         <module>../plugins/gov.redhawk.ide.debug.edit</module>
         <module>../plugins/gov.redhawk.ide.debug.ui</module>
         <module>../plugins/gov.redhawk.ide.debug.ui.diagram</module>

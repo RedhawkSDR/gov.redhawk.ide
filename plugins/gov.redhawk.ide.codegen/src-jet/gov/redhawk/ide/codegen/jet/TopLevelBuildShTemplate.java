@@ -37,7 +37,7 @@ public class TopLevelBuildShTemplate
   }
 
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
-  protected final String TEXT_1 = "#!/bin/sh" + NL + "" + NL + "if [ \"$1\" == \"rpm\" ]; then" + NL + "    # A very simplistic RPM build scenario" + NL + "    if [ -e ";
+  protected final String TEXT_1 = "#!/bin/sh" + NL + "" + NL + "if [ \"$1\" = \"rpm\" ]; then" + NL + "    # A very simplistic RPM build scenario" + NL + "    if [ -e ";
   protected final String TEXT_2 = ".spec ]; then" + NL + "        mydir=`dirname $0`" + NL + "        tmpdir=`mktemp -d`" + NL + "        cp -r ${mydir} ${tmpdir}/";
   protected final String TEXT_3 = "-";
   protected final String TEXT_4 = NL + "        tar czf ${tmpdir}/";
@@ -48,7 +48,7 @@ public class TopLevelBuildShTemplate
   protected final String TEXT_9 = "-";
   protected final String TEXT_10 = ".tar.gz" + NL + "        rm -rf $tmpdir" + NL + "    else" + NL + "        echo \"Missing RPM spec file in\" `pwd`" + NL + "        exit 1" + NL + "    fi" + NL + "else" + NL + "    for impl in";
   protected final String TEXT_11 = " ";
-  protected final String TEXT_12 = " ; do" + NL + "        pushd $impl &> /dev/null" + NL + "        if [ -e build.sh ]; then" + NL + "            ./build.sh $*" + NL + "        else" + NL + "            echo \"No build.sh found for $impl\"" + NL + "        fi" + NL + "        popd &> /dev/null" + NL + "    done" + NL + "fi";
+  protected final String TEXT_12 = " ; do" + NL + "        cd $impl" + NL + "        if [ -e build.sh ]; then" + NL + "            ./build.sh $*" + NL + "        elif [ -e reconf ]; then" + NL + "            ./reconf && ./configure && make" + NL + "        else" + NL + "            echo \"No build.sh found for $impl\"" + NL + "        fi" + NL + "        cd -" + NL + "    done" + NL + "fi";
   protected final String TEXT_13 = NL;
 
   public String generate(Object argument) throws CoreException
