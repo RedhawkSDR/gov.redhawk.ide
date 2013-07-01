@@ -31,14 +31,17 @@ import mil.jpeojtrs.sca.partitioning.ComponentProperties;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
 import mil.jpeojtrs.sca.prf.SimpleRef;
+import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.AnyUtils;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -186,7 +189,8 @@ public class LocalApplicationFactory {
 		app.getStreams().getOutStream().println("Configuring Components...");
 		for (final ScaComponent comp : app.getLocalWaveform().getComponents()) {
 			try {
-				configureComponent(comp);
+				app.getStreams().getOutStream().println("Configuring component: " + comp.getName());
+				configureComponent(app, comp);
 				app.getStreams().getOutStream().println("");
 			} catch (final InvalidConfiguration e) {
 				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to configure: " + comp.getName() + " " + e.getMessage(), e));
@@ -273,20 +277,46 @@ public class LocalApplicationFactory {
 		}
 	}
 
-	private void configureComponent(final ScaComponent comp) throws InvalidConfiguration, PartialConfiguration {
+	private void configureComponent(ApplicationImpl app, final ScaComponent comp) throws InvalidConfiguration, PartialConfiguration {
 		DataType[] configuration = getConfiguration(comp);
+		if (configuration == null || configuration.length == 0) {
+			app.getStreams().getOutStream().println("\tNo configuration.");
+			return;
+		} 
 		if (this.assemblyConfig != null && isAssemblyController(comp.getComponentInstantiation())) {
 			configuration = this.assemblyConfig;
 		}
+		for (DataType t : configuration) {
+			app.getStreams().getOutStream().println(toString(t));
+		}
 		comp.configure(configuration);
 		comp.fetchProperties(null);
+	}
+
+	private String toString(DataType t) {
+		Object value = AnyUtils.convertAny(t.value);
+		if (value instanceof DataType[]) {
+			StringBuilder builder = new StringBuilder();
+			builder.append("\t" + t.id + " = {");
+			for (DataType child : (DataType[]) value) {
+				builder.append("\n\t\t" + child.id + toString(child));
+			}
+			builder.append("\n\t}");
+			return builder.toString();
+		} else if (value instanceof DataType) {
+			return "\t" + t.id + " = {" + toString((DataType) value) + "}";
+		} else if (value != null && value.getClass().isArray()) {
+			return "\t" + t.id + " = " + ArrayUtils.toString(value);
+		} else {
+			return "\t" + t.id + " = " + value;
+		}
 	}
 
 	private DataType[] getConfiguration(final ScaComponent comp) {
 		final Map<String, DataType> retVal = new HashMap<String, DataType>();
 		comp.fetchProperties(null);
 		for (final ScaAbstractProperty< ? > prop : comp.getProperties()) {
-			if (prop.getDefinition().isKind(PropertyConfigurationType.CONFIGURE)) {
+			if (PropertiesUtil.canConfigure(prop.getDefinition())) {
 				retVal.put(prop.getId(), new DataType(prop.getId(), prop.toAny()));
 			}
 		}
@@ -307,10 +337,11 @@ public class LocalApplicationFactory {
 
 		final ComponentProperties props = compInst.getComponentProperties();
 		if (props != null) {
+			// Override default values
 			for (final Entry entry : props.getProperties()) {
 				if (entry.getValue() instanceof AbstractPropertyRef< ? >) {
 					final AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
-					if (ref.getProperty().isKind(PropertyConfigurationType.CONFIGURE)) {
+					if (retVal.containsKey(ref.getRefID())) {
 						retVal.put(ref.getRefID(), new DataType(ref.getRefID(), ref.toAny()));
 					}
 				}
