@@ -22,6 +22,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -60,6 +61,10 @@ public abstract class AbstractLaunchConfigurationFactory implements ILaunchConfi
 
 		retVal.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 		retVal.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, envVar);
+		
+		if (Platform.getOS().equals("linux")) {
+			retVal.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, "gov.redhawk.ide.debug.linux.processFactory");
+		}
 
 		final String progArgs = getProgramArguments(spd);
 		setProgramArguments(progArgs, retVal);

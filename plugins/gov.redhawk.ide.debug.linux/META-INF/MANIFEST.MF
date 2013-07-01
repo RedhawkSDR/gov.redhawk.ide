@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Debug Linux
+Bundle-SymbolicName: gov.redhawk.ide.debug.linux;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: gov.redhawk.ide.debug;bundle-version="4.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Eclipse-PlatformFilter: (& (osgi.os=linux))
