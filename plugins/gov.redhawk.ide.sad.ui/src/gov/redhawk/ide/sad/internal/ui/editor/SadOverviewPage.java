@@ -165,18 +165,23 @@ public class SadOverviewPage extends AbstractOverviewPage {
 
 	private void launch(final String mode) {
 		try {
-			ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(
-			        SoftwareAssembly.Util.getSoftwareAssembly(this.getEditor().getMainResource()), getEditorSite().getShell());
+			ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(SoftwareAssembly.Util.getSoftwareAssembly(this.getEditor().getMainResource()),
+					getEditorSite().getShell());
 			if (getEditor().getMainResource().getURI().isPlatform()) {
-				ILaunchConfiguration config = LaunchUtil.chooseConfiguration(mode, LaunchUtil.findLaunchConfigurations(newConfig), getEditorSite().getShell());
-				if (config == null) {
+				ILaunchConfiguration[] oldConfigs = LaunchUtil.findLaunchConfigurations(newConfig);
+				ILaunchConfiguration config = null;
+				if (oldConfigs != null) {
+					config = LaunchUtil.chooseConfiguration(mode, oldConfigs, getEditorSite().getShell());
+				} else {
 					config = newConfig.doSave();
+				}
+				if (config == null) {
+					return;
 				}
 				LaunchUtil.launch(config, mode);
 			} else {
 				LaunchUtil.launch(newConfig, mode);
 			}
-
 		} catch (final CoreException e) {
 			final Status status = new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException());
 			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);

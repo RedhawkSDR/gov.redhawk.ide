@@ -159,6 +159,9 @@ public final class LaunchUtil {
 	}
 
 	public static ILaunchConfiguration chooseConfiguration(final String mode, final ILaunchConfiguration[] configs, final Shell shell) {
+		if (configs != null && configs.length == 1) {
+			return configs[0];
+		}
 		final IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		final ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, labelProvider);
 		dialog.setElements(configs);
