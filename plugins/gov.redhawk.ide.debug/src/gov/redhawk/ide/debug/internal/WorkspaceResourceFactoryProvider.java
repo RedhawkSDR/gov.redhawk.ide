@@ -176,6 +176,9 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 
 	protected ResourceFactoryOperations createSpdResourceFactory(IFile file) {
 		SoftPkg spd = loadSpd(file);
+		if (spd == null) {
+			return null;
+		}
 		return new SpdResourceFactory(spd);
 	}
 
@@ -206,7 +209,13 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 	}
 
 	private void addResource(final IFile resource, final ResourceFactoryOperations resourceFactory) {
+		if (resourceFactory == null) {
+			return;
+		}
 		SoftPkg spd = loadSpd(resource);
+		if (spd == null) {
+			return;
+		}
 		ComponentDesc desc = new ComponentDesc(spd, new SpdResourceFactory(spd));
 		desc.setCategory(WORKSPACE_CATEGORY);
 		this.componentMap.put(resource, desc);

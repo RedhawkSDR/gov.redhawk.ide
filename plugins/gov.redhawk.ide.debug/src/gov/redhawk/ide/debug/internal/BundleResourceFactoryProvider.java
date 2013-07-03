@@ -82,10 +82,16 @@ public class BundleResourceFactoryProvider extends AbstractResourceFactoryProvid
 			ResourceDesc desc;
 			try {
 				desc = createDesc(entry);
-				addResourceDesc(desc);
+				if (desc == null) {
+					addResourceDesc(desc);
+				} else {
+					ScaDebugPlugin.logError("Failed to add Factory Descriptor entry: " + entry.bundle + ", " + entry.path, null);
+				}
 			} catch (ServantNotActive e) {
 				ScaDebugPlugin.logError("Failed to add Factory Descriptor entry: " + entry.bundle + ", " + entry.path, e);
 			} catch (WrongPolicy e) {
+				ScaDebugPlugin.logError("Failed to add Factory Descriptor entry: " + entry.bundle + ", " + entry.path, e);
+			} catch (Exception e) {
 				ScaDebugPlugin.logError("Failed to add Factory Descriptor entry: " + entry.bundle + ", " + entry.path, e);
 			}
 		}
@@ -97,6 +103,9 @@ public class BundleResourceFactoryProvider extends AbstractResourceFactoryProvid
 		ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		Resource spdResource = resourceSet.getResource(URI.createPlatformPluginURI(bundle + "/" + profilePathStr, true), true);
 		SoftPkg spd = SoftPkg.Util.getSoftPkg(spdResource);
+		if (spd == null) {
+			return null;
+		}
 		entry.desc = new ComponentDesc(spd, new SpdResourceFactory(spd));
 		entry.desc.setCategory(BUNDLE_CATEGORY);
 		return entry.desc;
