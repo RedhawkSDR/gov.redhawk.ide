@@ -21,12 +21,14 @@ import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
+import gov.redhawk.sca.util.OrbSession;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.omg.CosNaming.NamingContext;
@@ -44,9 +46,19 @@ import ExtendedCF.SandboxPackage.Depth;
 public class SandboxImpl implements SandboxOperations {
 
 	private final LocalSca localSca;
-	
-	public SandboxImpl(LocalSca localSca) {
+	private OrbSession session = OrbSession.createSession();
+
+	public SandboxImpl(LocalSca localSca) throws CoreException {
 		this.localSca = localSca;
+		session.getPOA();
+	}
+
+	public void dispose() {
+		session.dispose();
+	}
+
+	public OrbSession getSession() {
+		return session;
 	}
 
 	/**
@@ -76,10 +88,8 @@ public class SandboxImpl implements SandboxOperations {
 	}
 
 	public ExtendedCF.ResourceDesc[] registeredResources() {
-		final List<ExtendedCF.ResourceDesc> retVal = new ArrayList<ExtendedCF.ResourceDesc>(this.localSca.getSandboxWaveform()
-		        .getComponents()
-		        .size()
-		        + this.localSca.getWaveforms().size() + this.localSca.getSandboxDeviceManager().getDevices().size());
+		final List<ExtendedCF.ResourceDesc> retVal = new ArrayList<ExtendedCF.ResourceDesc>(this.localSca.getSandboxWaveform().getComponents().size()
+			+ this.localSca.getWaveforms().size() + this.localSca.getSandboxDeviceManager().getDevices().size());
 		final IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
 
 		for (final ScaComponent cp : this.localSca.getSandboxWaveform().getComponents()) {
@@ -167,7 +177,8 @@ public class SandboxImpl implements SandboxOperations {
 				return;
 			}
 		}
-
 	}
+
+
 
 }

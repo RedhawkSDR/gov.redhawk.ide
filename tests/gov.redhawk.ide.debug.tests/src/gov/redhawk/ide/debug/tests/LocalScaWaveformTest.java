@@ -95,7 +95,7 @@ public class LocalScaWaveformTest extends TestCase {
 	 */
 	@Override
 	protected void setUp() throws Exception {
-		ScaDebugInstance.INSTANCE.init();
+		ScaDebugInstance.INSTANCE.init(null);
 		setFixture(ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform());
 	}
 

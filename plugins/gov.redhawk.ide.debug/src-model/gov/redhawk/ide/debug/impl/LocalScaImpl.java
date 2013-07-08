@@ -400,49 +400,11 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setSandboxGen(SandboxOperations newSandbox) {
+	public void setSandbox(SandboxOperations newSandbox) {
 		SandboxOperations oldSandbox = sandbox;
 		sandbox = newSandbox;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__SANDBOX, oldSandbox, sandbox));
-	}
-	
-	private final SilentJob refreshJob = new SilentJob("Refresh") {
-		{
-			setSystem(true);
-			setPriority(Job.SHORT);
-		}
-
-		@Override
-        protected IStatus runSilent(final IProgressMonitor monitor) {
-			try {
-				refresh(monitor, RefreshDepth.FULL);
-			} catch (final InterruptedException e) {
-				// PASS
-			}
-			return Status.OK_STATUS;
-        }
-
-	};
-	
-	/**
-	 * <!-- begin-user-doc -->
-	 * @since 4.0
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public void setSandbox(SandboxOperations newSandbox) {
-		setSandboxGen(newSandbox);
-		if (this.sandbox != null) {
-			try {
-				init();
-				this.refreshJob.schedule();
-			} catch (CoreException e) {
-				ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
-			}
-		} else {
-			// TODO
-		}
 	}
 
 	private static final Debug DEBUG = new Debug(ScaDebugPlugin.getInstance(), "localSca");
@@ -504,101 +466,6 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 			}
 		}
 	};
-
-	private static LocalFileManager createFileManager(final POA poa) throws CoreException {
-		final LocalFileManager tmp = ScaDebugFactory.eINSTANCE.createLocalFileManager();
-		final IFileManager fm = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry().getFileManager();
-        FileManager ref;
-        try {
-	        ref = FileManagerHelper.narrow(poa.servant_to_reference(new FileManagerPOATie(fm)));
-        } catch (final ServantNotActive e) {
-	        throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create file manager"));
-        } catch (final WrongPolicy e) {
-        	throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create file manager"));
-        }
-        tmp.setCorbaObj(ref);
-        return tmp;
-    }
-	
-	private static Sandbox createSandboxRef(final POA poa, SandboxOperations sandbox) throws CoreException {
-	    Sandbox ref;
-        try {
-            ref = SandboxHelper.narrow(poa.servant_to_reference(new SandboxPOATie(sandbox)));
-        } catch (final ServantNotActive e) {
-            throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create sandbox ref"));
-        } catch (final WrongPolicy e) {
-            throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create sandbox ref"));
-        }
-        return ref;
-    }
-
-	private static NotifyingNamingContext createRootContext(final POA poa) {
-	    final NotifyingNamingContext context = ScaDebugFactory.eINSTANCE.createNotifyingNamingContext();
-	    context.setPoa(poa);
-	    return context;
-    }
-
-	private static LocalScaDeviceManager createSandboxDeviceManager(final ResourceSet resourceSet, final FileManager fm, final POA poa, final NotifyingNamingContext context) throws CoreException {
-		final LocalScaDeviceManager tmp = ScaDebugFactory.eINSTANCE.createLocalScaDeviceManager();
-		final DeviceConfiguration dcd = LocalScaImpl.createSandboxDeviceConfiguration(resourceSet);
-		final URI uri = dcd.eResource().getURI();
-		
-		tmp.setDataProvidersEnabled(false);
-		tmp.setProfileURI(uri);
-		tmp.setProfile(uri.path());
-		tmp.setProfileObj(dcd);
-		tmp.setNamingContext(context.getResourceContext(dcd.eResource().getURI()));
-		final DeviceManagerImpl impl = new DeviceManagerImpl(uri.path(), DceUuidUtil.createDceUUID(), "Device Manager", tmp, fm);
-        tmp.setLocalDeviceManager(impl);
-		return tmp;
-    }
-
-	private static DeviceConfiguration createSandboxDeviceConfiguration(final ResourceSet resourceSet) {
-		final URI uri = URI.createURI("mem:///sandboxDeviceManager.dcd.xml");
-		final Resource resource = resourceSet.createResource(uri);
-		final DeviceConfiguration dcd = DcdFactory.eINSTANCE.createDeviceConfiguration();
-		final DcdDocumentRoot root = DcdFactory.eINSTANCE.createDcdDocumentRoot();
-		root.setDeviceconfiguration(dcd);
-		resource.getContents().add(root);
-	    return dcd;
-    }
-
-	private static LocalScaWaveform createSandboxWaveform(final ResourceSet resourceSet, final POA poa, final NotifyingNamingContext context) throws CoreException {
-		final String name = "Chalkboard";
-		final SoftwareAssembly sad = LocalScaImpl.createSandboxSoftwareAssembly(resourceSet);
-		
-		final LocalScaWaveform waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
-		waveform.setDataProvidersEnabled(false);
-		waveform.setProfile(sad.eResource().getURI().path());
-		waveform.setProfileURI(sad.eResource().getURI());
-		waveform.setProfileObj(sad);
-		waveform.setNamingContext(context.getResourceContext(sad.eResource().getURI()));
-
-		final ApplicationImpl app = new ApplicationImpl(waveform, name, name);
-		waveform.setLocalApp(app);
-		return waveform;
-    }
-
-	private static SoftwareAssembly createSandboxSoftwareAssembly(final ResourceSet resourceSet) {
-		final URI sadUri = URI.createURI("mem://sandbox.sad.xml");
-		
-		final SoftwareAssembly sad = SadFactory.eINSTANCE.createSoftwareAssembly();
-		final SadDocumentRoot root = SadFactory.eINSTANCE.createSadDocumentRoot();
-		root.setSoftwareassembly(sad);
-		
-		if (resourceSet != null) {
-			final Resource resource = resourceSet.createResource(sadUri);
-			resource.getContents().add(root);
-		}
-		return sad;
-    }
-
-	private ResourceSet getResourceSet() {
-		if (eResource() == null) {
-			return null;
-		}
-	    return eResource().getResourceSet();
-    }
 
 	protected void addResource(final NameComponent[] location, final org.omg.CORBA.Object obj, final Notification msg) {
 		// END GENERATED CODE
@@ -715,20 +582,31 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * @param sandboxRef 
+	 * @param fileManagerRef 
+	 * @param sandboxWaveformRef 
+	 * @param sandboxDeviceManagerRef 
+	 * @param newRootContext 
 	 * @generated NOT
+	 * @since 4.0
 	 */
-	private void init() throws CoreException {
+	public void init(Sandbox sandboxRef, LocalFileManager fileManagerRef, LocalScaWaveform sandboxWaveformRef, LocalScaDeviceManager sandboxDeviceManagerRef, NotifyingNamingContext newRootContext) {
 		// END GENERATED CODE
-	    setObj(createSandboxRef(session.getPOA(), sandbox));
-		setRootContext(LocalScaImpl.createRootContext(session.getPOA()));
-		setFileManager(LocalScaImpl.createFileManager(session.getPOA()));
-		setSandboxWaveform(LocalScaImpl.createSandboxWaveform(getResourceSet(), session.getPOA(), getRootContext()));
-		setSandboxDeviceManager(LocalScaImpl.createSandboxDeviceManager(getResourceSet(), getFileManager().getObj(), session.getPOA(), getRootContext()));
+	    setObj(sandboxRef);
+		setRootContext(newRootContext);
+		setFileManager(fileManagerRef);
+		setSandboxWaveform(sandboxWaveformRef);
+		setSandboxDeviceManager(sandboxDeviceManagerRef);
 		this.checkupJob.schedule();
 		eAdapters().add(this.adapter);
 		// BEGIN GENERATED CODE
+	}
+	
+	/**
+	 * @since 4.0
+	 */
+	public OrbSession getSession() {
+		return session;
 	}
 
 	/**
@@ -760,9 +638,8 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 			session.dispose();
 			session = null;
 		}
-		if (sandbox != null) {
-		    sandbox = null;
-		}
+		sandbox = null;
+		
 		// BEGIN GENERATED CODE
 	}
 
