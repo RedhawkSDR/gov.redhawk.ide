@@ -662,6 +662,12 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 
 	@Override
 	public boolean isPersisted(final Resource resource) {
+		if (resource == null || resource.getURI() == null) {
+			return false;
+		}
+		if (getDeviceConfiguration() == null || getDeviceConfiguration().eResource() == null) {
+			return false;
+		}
 		return resource.getURI().equals(getDeviceConfiguration().eResource().getURI()) && super.isPersisted(resource);
 	}
 
