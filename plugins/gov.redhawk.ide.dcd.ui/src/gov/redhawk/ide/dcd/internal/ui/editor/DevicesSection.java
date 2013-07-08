@@ -609,6 +609,9 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 			return;
 		}
 		this.dcdResource = resource;
+		if (this.dcdResource == null) {
+			return;
+		}
 		if (this.fExtensionTree != null) {
 			if (this.context != null) {
 				this.context.dispose();
