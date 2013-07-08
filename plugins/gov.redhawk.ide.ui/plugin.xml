@@ -42,6 +42,14 @@
             id="gov.redhawk.ide.ui.category.sca_development"
             name="%view.category.name.sca">
       </category>
+      <view
+            category="gov.redhawk.ide.ui.category.sca_development"
+            class="gov.redhawk.ide.internal.ui.event.EventView"
+            icon="icons/emblem-documents.png"
+            id="gov.redhawk.ide.ui.eventViewer"
+            name="Event Viewer"
+            restorable="true">
+      </view>
    </extension>
     <extension
         point="org.eclipse.ui.navigator.viewer">
