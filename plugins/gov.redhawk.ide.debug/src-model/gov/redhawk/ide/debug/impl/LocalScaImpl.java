@@ -807,5 +807,15 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	protected Sandbox narrow(org.omg.CORBA.Object obj) {
 		return SandboxHelper.narrow(obj);
 	}
+	
+	@Override
+	public boolean isDataProvidersEnabled() {
+		return false;
+	}
+	
+	@Override
+	public void attachDataProviders() {
+		// Do nothing
+	}
 
 } //LocalScaImpl

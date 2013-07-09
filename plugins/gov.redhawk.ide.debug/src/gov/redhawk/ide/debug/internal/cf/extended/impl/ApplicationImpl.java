@@ -581,6 +581,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 		this.streams.getOutStream().println("Query " + properties);
 		if (this.assemblyController == null) {
+			this.streams.getOutStream().println("No Assembly Controller");
 			return;
 		}
 		try {
@@ -977,6 +978,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		if (newComponent == null) {
 			subLaunch.terminate();
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to find component after launch", null));
+		} else {
+			newComponent.setDataProvidersEnabled(false);
 		}
 
 		// Add Child processes
