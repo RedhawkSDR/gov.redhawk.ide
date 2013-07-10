@@ -22,11 +22,11 @@ public class EventViewerFactory extends XViewerFactory {
 
 	public static final String NAMESPACE = EventView.ID + ".viewer";
 
-	static final XViewerColumn TIME_COL = new XViewerColumn(NAMESPACE + ".time", "Time", 80, SWT.LEFT, true, SortDataType.Date, false,
+	static final XViewerColumn TIME_COL = new XViewerColumn(NAMESPACE + ".time", "Time (HH:MM::ms)", 140, SWT.LEFT, true, SortDataType.Date, false,
 		"Timestamp of the event");
-	static final XViewerColumn TYPE_COL = new XViewerColumn(NAMESPACE + ".type", "Type", 80, SWT.LEFT, true, SortDataType.String, false,
+	static final XViewerColumn TYPE_COL = new XViewerColumn(NAMESPACE + ".type", "Type", 140, SWT.LEFT, true, SortDataType.String, false,
 		"Type of event");
-	static final XViewerColumn CHANNEL_COL = new XViewerColumn(NAMESPACE + ".channel", "Channel", 80, SWT.LEFT, true, SortDataType.String, false,
+	static final XViewerColumn CHANNEL_COL = new XViewerColumn(NAMESPACE + ".channel", "Channel", 110, SWT.LEFT, true, SortDataType.String, false,
 		"Channel event was received from.");
 	static final XViewerColumn SOURCE_ID_COL = new XViewerColumn(NAMESPACE + ".sourceID", "Source ID", 80, SWT.LEFT, true, SortDataType.String, false,
 		"ID of the source");

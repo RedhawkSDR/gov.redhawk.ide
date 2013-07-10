@@ -44,7 +44,7 @@ import StandardEvent.StateChangeType;
  */
 public class EventViewerLabelProvider extends XViewerLabelProvider {
 	
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm:ss");
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm::SSSS");
 
 	/**
 	 * @param viewer
