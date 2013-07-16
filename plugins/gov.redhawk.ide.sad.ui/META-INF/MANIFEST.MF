@@ -6,7 +6,7 @@ Bundle-Version: 5.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  org.eclipse.core.resources;bundle-version="3.6.0";visibility:=reexport,
  mil.jpeojtrs.sca.sad.edit;bundle-version="2.2.2";visibility:=reexport,
@@ -45,7 +45,8 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  org.eclipse.debug.core;bundle-version="3.6.0",
  gov.redhawk.ide.debug.ui;bundle-version="1.0.0",
  org.eclipse.debug.ui;bundle-version="3.6.1",
- gov.redhawk.ide.spd.ui;bundle-version="7.0.0"
+ gov.redhawk.ide.spd.ui;bundle-version="7.0.0",
+ org.eclipse.nebula.widgets.xviewer;bundle-version="0.9.9"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: gov.redhawk.ide.sad.ui.SadUiActivator
 Export-Package: gov.redhawk.ide.sad.internal.ui;x-internal:=true,

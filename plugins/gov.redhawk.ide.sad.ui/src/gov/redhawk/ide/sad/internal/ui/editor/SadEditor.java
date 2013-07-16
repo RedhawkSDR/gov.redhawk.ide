@@ -143,6 +143,8 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 
 	private IFormPage overviewPage;
 
+	private IFormPage propertiesPage;
+
 	private class ResourceListener extends AdapterImpl {
 		private SoftwareAssembly sad;
 		private final Resource sadResource;
@@ -580,6 +582,9 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 				final IFormPage page = createOverviewPage(sadResource);
 				setOverviewPage(page);
 				this.addPage(page);
+				
+				this.propertiesPage = createPropertiesPage(sadResource);
+				addPage(propertiesPage);
 
 				final SadDiagramEditor editor = createDiagramEditor();
 				setDiagramEditor(editor);
@@ -606,6 +611,16 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 				        StatusManager.LOG | StatusManager.SHOW);
 			}
 		}
+	}
+	
+	public IFormPage getPropertiesPage() {
+		return propertiesPage;
+	}
+
+	protected IFormPage createPropertiesPage(Resource sadResource) {
+		SadPropertiesPage retVal = new SadPropertiesPage(this, "propertiesPage", "Properties", true);
+		retVal.setInput(sadResource);
+		return retVal;
 	}
 
 	protected IEditorPart createTextEditor() {
