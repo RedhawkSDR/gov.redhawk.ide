@@ -25,6 +25,8 @@ import org.eclipse.gef.Tool;
 import org.eclipse.gmf.runtime.diagram.ui.internal.services.palette.PaletteToolEntry;
 import org.eclipse.gmf.runtime.diagram.ui.tools.CreationTool;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * @since 4.1
@@ -51,7 +53,19 @@ public class SpdToolEntry extends PaletteToolEntry {
 		this.setDescription(description);
 		this.elementType = SadElementTypes.SadComponentPlacement_3001;
 		this.spdUri = spdURI;
-		setSmallIcon(SadElementTypes.getImageDescriptor(SadElementTypes.SadComponentPlacement_3001));
+		if (Display.getCurrent() == null) { 
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+
+				@Override
+				public void run() {
+					setSmallIcon(SadElementTypes.getImageDescriptor(SadElementTypes.SadComponentPlacement_3001));
+				}
+				
+			});
+		} else {
+			setSmallIcon(SadElementTypes.getImageDescriptor(SadElementTypes.SadComponentPlacement_3001));
+		}
+		
 		setLargeIcon(getSmallIcon());
 
 		this.spdId = id;
