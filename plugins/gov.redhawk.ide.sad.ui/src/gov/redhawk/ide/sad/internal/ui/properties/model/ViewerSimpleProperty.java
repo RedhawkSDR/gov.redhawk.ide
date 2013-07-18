@@ -10,32 +10,59 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
+import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 
 public class ViewerSimpleProperty extends ViewerProperty<Simple> {
-	
+
 	private String value;
 
 	public ViewerSimpleProperty(Simple def, Object parent) {
 		super(def, parent);
 	}
-	
+
 	public String getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public void setToDefault() {
-		this.value = null;
+		setValue((String) null);
 	}
-	
+
 	public void setValue(SimpleRef value) {
 		if (value != null) {
-			this.value = value.getValue();
+			setValue(value.getValue());
 		} else {
-			this.value = null;
+			setToDefault();
 		}
+	}
+
+	public void setValue(String newValue) {
+		if (newValue != null) {
+			newValue = newValue.trim();
+			if (newValue.isEmpty()) {
+				newValue = null;
+			}
+		}
+		if (!checkValue(newValue)) {
+			// XXX Throw exception?
+			return;
+		}
+		String oldValue = this.value;
+		this.value = newValue;
+		if (!PluginUtil.equals(oldValue, value)) {
+			firePropertyChangeEvent();
+		}
+	}
+
+
+	public boolean checkValue(String text) {
+		if (text == null || text.isEmpty() || def.getType().isValueOfType(text, def.isComplex())) {
+			return true;
+		}
+		return false;
 	}
 
 }

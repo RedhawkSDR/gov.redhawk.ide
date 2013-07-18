@@ -12,6 +12,9 @@ package gov.redhawk.ide.sad.internal.ui.properties;
 
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
+import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSequenceProperty;
+import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSimpleProperty;
+import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceProperty;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,18 +23,23 @@ import java.util.List;
 import mil.jpeojtrs.sca.prf.Enumeration;
 import mil.jpeojtrs.sca.prf.PropertyValueType;
 import mil.jpeojtrs.sca.prf.Simple;
-import mil.jpeojtrs.sca.prf.SimpleSequence;
-import mil.jpeojtrs.sca.prf.StructSequence;
 
+import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor;
 import org.eclipse.nebula.widgets.xviewer.edit.DefaultXViewerControlFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * 
@@ -53,33 +61,88 @@ public class PropertiesViewerControlFactory extends DefaultXViewerControlFactory
 			}
 			return null;
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
-			if (editElement instanceof ViewerProperty< ? >) {
-				ViewerProperty< ? > prop = (ViewerProperty< ? >) editElement;
-				if (prop.getDefinition() instanceof Simple) {
-					Simple simple = (Simple) prop.getDefinition();
-					if (simple.getType() == PropertyValueType.BOOLEAN) {
-						Combo combo = new Combo(xv.getTree(), ced.getSwtStyle() | SWT.READ_ONLY);
-						combo.setItems(new String[] { "", "true", "false" });
-						return combo;
-					} else if (simple.getEnumerations() != null) {
-						Combo combo = new Combo(xv.getTree(), ced.getSwtStyle() | SWT.READ_ONLY);
-						List<String> values = new ArrayList<String>(simple.getEnumerations().getEnumeration().size());
-						for (Enumeration v : simple.getEnumerations().getEnumeration()) {
-							values.add(v.getLabel());
-						}
-						Collections.sort(values);
-						combo.setItems(values.toArray(new String[values.size()]));
-						return combo;
-					} else {
-						return new Text(xv.getTree(), ced.getSwtStyle());
+			if (editElement instanceof ViewerSimpleProperty) {
+				final ViewerSimpleProperty simpleProp = (ViewerSimpleProperty) editElement;
+				final Simple simple = simpleProp.getDefinition();
+				if (simple.getType() == PropertyValueType.BOOLEAN) {
+					Combo combo = new Combo(xv.getTree(), ced.getSwtStyle() | SWT.READ_ONLY);
+					combo.setItems(new String[] { "", "true", "false" });
+					return combo;
+				} else if (simple.getEnumerations() != null) {
+					Combo combo = new Combo(xv.getTree(), ced.getSwtStyle() | SWT.READ_ONLY);
+					List<String> values = new ArrayList<String>(simple.getEnumerations().getEnumeration().size());
+					for (Enumeration v : simple.getEnumerations().getEnumeration()) {
+						values.add(v.getLabel());
 					}
-				} else if (prop.getDefinition() instanceof SimpleSequence) {
-					return new Text(xv.getTree(), ced.getSwtStyle());
-				} else if (prop.getDefinition() instanceof StructSequence) {
-					Button button = new Button(xv.getTree(), SWT.PUSH);
-					button.setText("Edit");
-					return button;
+					Collections.sort(values);
+					combo.setItems(values.toArray(new String[values.size()]));
+					return combo;
+				} else {
+					final Text text = new Text(xv.getTree(), ced.getSwtStyle());
+					final ControlDecoration dec = new ControlDecoration(text, SWT.TOP | SWT.LEFT);
+					text.addDisposeListener(new DisposeListener() {
+
+						@Override
+						public void widgetDisposed(DisposeEvent e) {
+							dec.dispose();
+						}
+					});
+					dec.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR));
+					dec.hide();
+					dec.setShowOnlyOnFocus(true);
+					dec.setShowHover(true);
+					dec.setDescriptionText("Value must of of type " + simple.getType());
+					text.addModifyListener(new ModifyListener() {
+
+						@Override
+						public void modifyText(ModifyEvent e) {
+							if (simpleProp.checkValue(text.getText())) {
+								dec.hide();
+							} else {
+								dec.show();
+							}
+						}
+					});
+					return text;
 				}
+			} else if (editElement instanceof ViewerSequenceProperty) {
+				final ViewerSequenceProperty seqProperty = (ViewerSequenceProperty) editElement;
+				final Text text = new Text(xv.getTree(), ced.getSwtStyle());
+				final ControlDecoration dec = new ControlDecoration(text, SWT.TOP | SWT.LEFT);
+				text.addDisposeListener(new DisposeListener() {
+
+					@Override
+					public void widgetDisposed(DisposeEvent e) {
+						dec.dispose();
+					}
+				});
+				dec.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR));
+				dec.hide();
+				dec.setShowOnlyOnFocus(true);
+				dec.setShowHover(true);
+				dec.setDescriptionText("Value must of of type [" + seqProperty.getDefinition().getType() + "]");
+				text.addModifyListener(new ModifyListener() {
+
+					@Override
+					public void modifyText(ModifyEvent event) {
+						try {
+							String[] newValue = PropertiesViewerConverter.split(text.getText());
+							if (seqProperty.checkValues(newValue)) {
+								dec.hide();
+							} else {
+								dec.show();
+							}
+						} catch (IllegalArgumentException e) {
+							dec.show();
+						}
+						
+					}
+				});
+				return text;
+			} else if (editElement instanceof ViewerStructSequenceProperty) {
+				Button button = new Button(xv.getTree(), SWT.PUSH);
+				button.setText("Edit");
+				return button;
 			}
 		}
 		return super.createControl(ced, xv);

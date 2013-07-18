@@ -32,6 +32,22 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 		}
 		setToDefault();
 	}
+	
+	@Override
+	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
+		super.addPropertyChangeListener(listener);
+		for (ViewerStructSequenceSimpleProperty p : structs) {
+			p.addPropertyChangeListener(listener);
+		}
+	}
+	
+	@Override
+	public void removePropertyChangeListener(IViewerPropertyChangeListener listener) {
+		super.removePropertyChangeListener(listener);
+		for (ViewerStructSequenceSimpleProperty p : structs) {
+			p.removePropertyChangeListener(listener);
+		}
+	}
 
 	@Override
 	public void setToDefault() {

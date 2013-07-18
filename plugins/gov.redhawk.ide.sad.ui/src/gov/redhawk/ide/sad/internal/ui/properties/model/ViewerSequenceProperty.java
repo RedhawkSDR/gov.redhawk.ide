@@ -10,42 +10,78 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
+import gov.redhawk.sca.util.PluginUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import mil.jpeojtrs.sca.prf.SimpleSequence;
+import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
 import mil.jpeojtrs.sca.prf.Values;
 
 /**
  * 
  */
 public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
-	
+
 	private List<String> values = new ArrayList<String>();
 
 	public ViewerSequenceProperty(SimpleSequence def, Object parent) {
 		super(def, parent);
 	}
-	
+
 	@Override
 	public void setToDefault() {
-		values.clear();
+		setValues((String[]) null);
 	}
 
 	public List<String> getValues() {
 		return values;
 	}
-	
-	public void setValues(String ... values) {
-		this.values = new ArrayList<String>(Arrays.asList(values));
+
+	public void setValues(String... newValues) {
+		List<String> oldValue = this.values;
+		if (!checkValues(newValues)) {
+			// XXX Throw Exception?
+			return;
+		}
+		if (newValues == null || newValues.length == 0) {
+			this.values = Collections.emptyList();
+		} else {
+			this.values = new ArrayList<String>(Arrays.asList(newValues));
+		}
+
+		if (!PluginUtil.equals(oldValue, this.values)) {
+			firePropertyChangeEvent();
+		}
 	}
 
-	public void setValues(Values newValue) {
+	public boolean checkValues(String... newValues) {
+		if (newValues != null) {
+			for (String s : newValues) {
+				if (!def.getType().isValueOfType(s, def.isComplex())) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private void setValues(Values newValue) {
 		if (newValue != null) {
 			setValues(newValue.getValue().toArray(new String[newValue.getValue().size()]));
 		} else {
-			setValues();
+			setToDefault();
+		}
+	}
+
+	public void setValues(SimpleSequenceRef propRef) {
+		if (propRef != null) {
+			setValues(propRef.getValues());
+		} else {
+			setToDefault();
 		}
 	}
 }

@@ -31,7 +31,6 @@ import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.StructValue;
 import mil.jpeojtrs.sca.prf.Values;
 import mil.jpeojtrs.sca.prf.provider.PrfItemProviderAdapterFactory;
-import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.provider.SadItemProviderAdapterFactory;
 
 import org.eclipse.emf.common.util.EList;
@@ -125,22 +124,15 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		return "";
 	}
 
-	protected String getExternalValue(Object element) {
+	public String getExternalValue(Object element) {
 		if (element instanceof ViewerProperty< ? >) {
 			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
-			ExternalProperty externalProp = prop.getExternalProperty();
-			if (externalProp != null) {
-				if (externalProp.getExternalPropID() != null) {
-					return externalProp.getExternalPropID();
-				} else {
-					return externalProp.getPropID();
-				}
-			}
+			return prop.getExternalID();
 		}
 		return "";
 	}
 
-	protected String getDescription(Object element) {
+	public String getDescription(Object element) {
 		if (element instanceof ViewerProperty< ? >) {
 			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
 			return prop.getDefinition().getDescription();
@@ -148,7 +140,7 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		return "";
 	}
 
-	protected String getType(Object element) {
+	public String getType(Object element) {
 		if (element instanceof ViewerProperty< ? >) {
 			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
 			AbstractProperty def = prop.getDefinition();
@@ -163,7 +155,7 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		return "";
 	}
 
-	protected String getMode(Object element) {
+	public String getMode(Object element) {
 		if (element instanceof ViewerProperty< ? >) {
 			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
 			if (prop.getParent() instanceof ViewerComponent) {
@@ -173,7 +165,7 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		return null;
 	}
 
-	protected String getKind(Object element) {
+	public String getKind(Object element) {
 		if (element instanceof ViewerProperty< ? >) {
 			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
 			if (prop.getParent() instanceof ViewerComponent) {
@@ -212,7 +204,7 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		return Arrays.toString(retVal.toArray());
 	}
 
-	protected String getID(Object element) {
+	public String getID(Object element) {
 		if (element instanceof ViewerComponent) {
 			return ((ViewerComponent) element).getComponentInstantiation().getId();
 		} else if (element instanceof ViewerProperty< ? >) {
@@ -221,7 +213,7 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		return "";
 	}
 
-	protected String getName(Object element) {
+	public String getName(Object element) {
 		if (element instanceof ViewerComponent) {
 			return ((ViewerComponent) element).getComponentInstantiation().getUsageName();
 		} else if (element instanceof ViewerProperty< ? >) {
@@ -230,7 +222,7 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		return "";
 	}
 
-	protected String getPrfValue(Object element) {
+	public String getPrfValue(Object element) {
 		if (element instanceof ViewerSimpleProperty) {
 			return ((ViewerSimpleProperty) element).getDefinition().getValue();
 		} else if (element instanceof ViewerSequenceProperty) {
@@ -252,7 +244,7 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		return "";
 	}
 
-	protected String getSadValue(Object element) {
+	public String getSadValue(Object element) {
 		if (element instanceof ViewerSimpleProperty) {
 			ViewerSimpleProperty prop = ((ViewerSimpleProperty) element);
 			return prop.getValue();

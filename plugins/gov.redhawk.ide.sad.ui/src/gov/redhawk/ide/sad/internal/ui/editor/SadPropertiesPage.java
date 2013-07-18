@@ -15,14 +15,9 @@ import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewer;
 import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerControlFactory;
 import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerConverter;
 import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerLabelProvider;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
+import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerModelConverter;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.ecore.resource.Resource;
@@ -42,7 +37,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public class SadPropertiesPage extends ScaFormPage {
 
 	private PropertiesViewer viewer;
-	private List<ViewerComponent> properties = new ArrayList<ViewerComponent>();
+	private ViewerModelConverter model = new ViewerModelConverter();
 
 	/**
 	 * @param editor
@@ -76,14 +71,16 @@ public class SadPropertiesPage extends ScaFormPage {
 		viewer = new PropertiesViewer(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		viewer.getTree().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
 		viewer.setContentProvider(new PropertiesContentProvider());
-		viewer.setLabelProvider(new PropertiesViewerLabelProvider(viewer));
+		PropertiesViewerLabelProvider labelProvider = new PropertiesViewerLabelProvider(viewer);
+		viewer.setLabelProvider(labelProvider);
 		
 		XViewerControlFactory cFactory = new PropertiesViewerControlFactory();
-		XViewerConverter converter = new PropertiesViewerConverter();
+		XViewerConverter converter = new PropertiesViewerConverter(labelProvider);
 		viewer.setXViewerEditAdapter(new XViewerEditAdapter(cFactory,
 				converter));
 		
-		viewer.setInput(properties);
+		model.setViewer(viewer);
+		viewer.setInput(model);
 		viewer.expandToLevel(2);
 	}
 
@@ -93,14 +90,7 @@ public class SadPropertiesPage extends ScaFormPage {
 	@Override
 	protected void refresh(Resource resource) {
 		SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);
-		properties.clear();
-		for (SadComponentInstantiation inst : sad.getAllComponentInstantiations()) {
-			properties.add(new ViewerComponent(inst));
-		}
-		if (viewer != null) {
-			viewer.setInput(properties);
-			viewer.expandToLevel(2);
-		}
+		model.setSoftwareAssembly(sad);
 	}
 
 }

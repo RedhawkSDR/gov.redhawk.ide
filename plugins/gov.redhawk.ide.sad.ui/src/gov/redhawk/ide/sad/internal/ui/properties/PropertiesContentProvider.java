@@ -11,11 +11,11 @@
 package gov.redhawk.ide.sad.internal.ui.properties;
 
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
+import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerModelConverter;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceProperty;
 
-import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -53,8 +53,8 @@ public class PropertiesContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof Collection< ? >) {
-			return ((Collection< ? >) inputElement).toArray();
+		if (inputElement instanceof ViewerModelConverter) {
+			return ((ViewerModelConverter) inputElement).getViewerModel().toArray();
 		}
 		return Collections.EMPTY_LIST.toArray();
 	}

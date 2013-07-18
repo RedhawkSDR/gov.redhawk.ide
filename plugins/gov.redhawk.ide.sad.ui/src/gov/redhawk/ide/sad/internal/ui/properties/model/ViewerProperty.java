@@ -10,12 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
+import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
-import mil.jpeojtrs.sca.sad.ExternalProperties;
-import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
+
+import org.eclipse.core.runtime.ListenerList;
 
 /**
  * 
@@ -23,7 +22,9 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 public abstract class ViewerProperty< T extends AbstractProperty > {
 
 	protected final T def;
+	private String externalID;
 	private Object parent;
+	private ListenerList listenerList = new ListenerList(ListenerList.IDENTITY);
 
 	/**
 	 * 
@@ -31,6 +32,28 @@ public abstract class ViewerProperty< T extends AbstractProperty > {
 	public ViewerProperty(T def, Object parent) {
 		this.def = def;
 		this.parent = parent;
+	}
+
+	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
+		listenerList.add(listener);
+	}
+
+	public void removePropertyChangeListener(IViewerPropertyChangeListener listener) {
+		listenerList.add(listener);
+	}
+
+	protected void firePropertyChangeEvent() {
+		Object[] listeners = listenerList.getListeners();
+		for (Object obj : listeners) {
+			((IViewerPropertyChangeListener) obj).valueChanged(this);
+		}
+	}
+
+	protected void fireExternalIDChangeEvent() {
+		Object[] listeners = listenerList.getListeners();
+		for (Object obj : listeners) {
+			((IViewerPropertyChangeListener) obj).externalIDChanged(this);
+		}
 	}
 
 	public Object getParent() {
@@ -55,22 +78,25 @@ public abstract class ViewerProperty< T extends AbstractProperty > {
 		return null;
 	}
 
-	public ExternalProperty getExternalProperty() {
-		SadComponentInstantiation comp = getComponentInstantiation();
-		SoftwareAssembly sad = ScaEcoreUtils.getEContainerOfType(comp, SoftwareAssembly.class);
-		if (sad != null && comp != null) {
-			ExternalProperties externalProps = sad.getExternalProperties();
-			if (externalProps != null) {
-				for (ExternalProperty eprop : externalProps.getProperties()) {
-					if (eprop.getCompRefID().equals(comp.getId()) && eprop.getPropID().equals(getDefinition().getId())) {
-						return eprop;
-					}
-				}
+	public String getExternalID() {
+		return externalID;
+	}
+
+	public void setExternalID(String newExternalID) {
+		if (newExternalID != null) {
+			newExternalID = newExternalID.trim();
+			if (newExternalID.isEmpty()) {
+				newExternalID = null;
 			}
 		}
-		return null;
+
+		String oldId = this.externalID;
+		this.externalID = newExternalID;
+		if (!PluginUtil.equals(oldId, this.externalID)) {
+			fireExternalIDChangeEvent();
+		}
 	}
-	
+
 	public String getID() {
 		return def.getId();
 	}

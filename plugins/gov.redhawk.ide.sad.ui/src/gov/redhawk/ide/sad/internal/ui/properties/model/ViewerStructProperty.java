@@ -54,8 +54,24 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 			}
 		} else {
 			for (ViewerSimpleProperty prop : simples) {
-				prop.setValue(null);
+				prop.setValue((SimpleRef) null);
 			}
+		}
+	}
+	
+	@Override
+	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
+		super.addPropertyChangeListener(listener);
+		for (ViewerSimpleProperty p : simples) {
+			p.addPropertyChangeListener(listener);
+		}
+	}
+	
+	@Override
+	public void removePropertyChangeListener(IViewerPropertyChangeListener listener) {
+		super.removePropertyChangeListener(listener);
+		for (ViewerSimpleProperty p : simples) {
+			p.removePropertyChangeListener(listener);
 		}
 	}
 
@@ -70,7 +86,7 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 			}
 		} else {
 			for (ViewerSimpleProperty prop : simples) {
-				prop.setValue(null);
+				prop.setValue((SimpleRef) null);
 			}
 		}
 	}

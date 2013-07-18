@@ -22,8 +22,12 @@ import mil.jpeojtrs.sca.prf.Struct;
 import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
+import mil.jpeojtrs.sca.sad.ExternalProperties;
+import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
 
@@ -32,9 +36,11 @@ public class ViewerComponent {
 	private List<ViewerProperty< ? >> properties = new ArrayList<ViewerProperty< ? >>();
 	private SadComponentInstantiation compInst;
 	private SoftPkg spd;
+	private SoftwareAssembly sad;
 
 	public ViewerComponent(SadComponentInstantiation compInst) {
 		this.compInst = compInst;
+		this.sad = ScaEcoreUtils.getEContainerOfType(compInst, SoftwareAssembly.class);
 		spd = compInst.getPlacement().getComponentFileRef().getFile().getSoftPkg();
 		for (ValueListIterator<Object> i = spd.getPropertyFile().getProperties().getProperties().valueListIterator(); i.hasNext();) {
 			final Object value = i.next();
@@ -44,26 +50,47 @@ public class ViewerComponent {
 			}
 		}
 	}
-	
+
+	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
+		for (ViewerProperty< ? > p : properties) {
+			p.addPropertyChangeListener(listener);
+		}
+	}
+
+	public void removePropertyChangeListener(IViewerPropertyChangeListener listener) {
+		for (ViewerProperty< ? > p : properties) {
+			p.removePropertyChangeListener(listener);
+		}
+	}
+
 	public SadComponentInstantiation getComponentInstantiation() {
 		return compInst;
 	}
-	
+
 	public List<ViewerProperty< ? >> getProperties() {
 		return properties;
 	}
 
 	private ViewerProperty< ? > createViewerProperty(AbstractProperty def) {
+		ViewerProperty< ? > retVal = null;
 		if (def instanceof Simple) {
-			return createViewerProperty((Simple) def);
+			retVal = createViewerProperty((Simple) def);
 		} else if (def instanceof SimpleSequence) {
-			return createViewerProperty((SimpleSequence) def);
+			retVal = createViewerProperty((SimpleSequence) def);
 		} else if (def instanceof Struct) {
-			return createViewerProperty((Struct) def);
+			retVal = createViewerProperty((Struct) def);
 		} else if (def instanceof StructSequence) {
-			return createViewerProperty((StructSequence) def);
+			retVal = createViewerProperty((StructSequence) def);
 		}
-		return null;
+		ExternalProperty externalProp = getExternalProp(def);
+		if (retVal != null && externalProp != null) {
+			if (externalProp.getExternalPropID() != null) {
+				retVal.setExternalID(externalProp.getExternalPropID());
+			} else {
+				retVal.setExternalID(externalProp.getPropID());
+			}
+		}
+		return retVal;
 	}
 
 	private ViewerSimpleProperty createViewerProperty(Simple def) {
@@ -73,27 +100,39 @@ public class ViewerComponent {
 		return retVal;
 	}
 
+	private ExternalProperty getExternalProp(AbstractProperty prop) {
+		ExternalProperties externalProperties = sad.getExternalProperties();
+		if (externalProperties != null) {
+			for (ExternalProperty p : externalProperties.getProperties()) {
+				if (p.getCompRefID().equals(compInst.getId()) && p.getPropID().equals(prop.getId())) {
+					return p;
+				}
+			}
+		}
+		return null;
+	}
+
 	private ViewerSequenceProperty createViewerProperty(SimpleSequence def) {
 		ViewerSequenceProperty retVal = new ViewerSequenceProperty(def, this);
 		SimpleSequenceRef ref = getRef(def);
-		retVal.setValues(ref.getValues());
+		retVal.setValues(ref);
 		return retVal;
 	}
-	
+
 	private ViewerStructProperty createViewerProperty(Struct def) {
 		ViewerStructProperty retVal = new ViewerStructProperty(def, this);
 		StructRef ref = getRef(def);
 		retVal.setValue(ref);
 		return retVal;
 	}
-	
+
 	private ViewerStructSequenceProperty createViewerProperty(StructSequence def) {
 		ViewerStructSequenceProperty retVal = new ViewerStructSequenceProperty(def, this);
 		StructSequenceRef ref = getRef(def);
 		retVal.setValue(ref);
 		return retVal;
 	}
-	
+
 	private SimpleRef getRef(Simple prop) {
 		if (compInst.getComponentProperties() != null) {
 			for (SimpleRef ref : compInst.getComponentProperties().getSimpleRef()) {
@@ -104,7 +143,7 @@ public class ViewerComponent {
 		}
 		return null;
 	}
-	
+
 	private SimpleSequenceRef getRef(SimpleSequence prop) {
 		if (compInst.getComponentProperties() != null) {
 			for (SimpleSequenceRef ref : compInst.getComponentProperties().getSimpleSequenceRef()) {
@@ -115,7 +154,7 @@ public class ViewerComponent {
 		}
 		return null;
 	}
-	
+
 	private StructRef getRef(Struct prop) {
 		if (compInst.getComponentProperties() != null) {
 			for (StructRef ref : compInst.getComponentProperties().getStructRef()) {
@@ -126,7 +165,7 @@ public class ViewerComponent {
 		}
 		return null;
 	}
-	
+
 	private StructSequenceRef getRef(StructSequence prop) {
 		if (compInst.getComponentProperties() != null) {
 			for (StructSequenceRef ref : compInst.getComponentProperties().getStructSequenceRef()) {

@@ -8,24 +8,14 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.internal.ui.properties;
-
-import org.eclipse.nebula.widgets.xviewer.XViewer;
-import org.eclipse.swt.widgets.Composite;
+package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 /**
  * 
  */
-public class PropertiesViewer extends XViewer {
+public interface IViewerPropertyChangeListener {
 
-	/**
-	 * @param parent
-	 * @param style
-	 * @param xViewerFactory
-	 */
-	public PropertiesViewer(Composite parent, int style) {
-		super(parent, style, new PropertiesViewerFactory());
-		setAutoExpandLevel(1);
-	}
-
+	public void valueChanged(ViewerProperty<?> source);
+	
+	public void externalIDChanged(ViewerProperty<?> source);
 }
