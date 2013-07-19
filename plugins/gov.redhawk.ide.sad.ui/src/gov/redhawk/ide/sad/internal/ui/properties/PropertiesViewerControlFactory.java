@@ -15,6 +15,8 @@ import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSequenceProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSimpleProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceProperty;
+import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceSimpleProperty;
+import gov.redhawk.model.sca.ScaStructSequenceProperty;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,6 +25,7 @@ import java.util.List;
 import mil.jpeojtrs.sca.prf.Enumeration;
 import mil.jpeojtrs.sca.prf.PropertyValueType;
 import mil.jpeojtrs.sca.prf.Simple;
+import mil.jpeojtrs.sca.prf.StructSequenceRef;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -47,7 +50,7 @@ import org.eclipse.ui.PlatformUI;
 public class PropertiesViewerControlFactory extends DefaultXViewerControlFactory {
 
 	@Override
-	public Control createControl(CellEditDescriptor ced, XViewer xv) {
+	public Control createControl(CellEditDescriptor ced, final XViewer xv) {
 		IStructuredSelection ss = (IStructuredSelection) xv.getSelection();
 		Object editElement = ss.getFirstElement();
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
@@ -91,7 +94,11 @@ public class PropertiesViewerControlFactory extends DefaultXViewerControlFactory
 					dec.hide();
 					dec.setShowOnlyOnFocus(true);
 					dec.setShowHover(true);
-					dec.setDescriptionText("Value must of of type " + simple.getType());
+					if (simple.isComplex()) {
+						dec.setDescriptionText("Value must of of type complex " + simple.getType());
+					} else {
+						dec.setDescriptionText("Value must of of type " + simple.getType());
+					}
 					text.addModifyListener(new ModifyListener() {
 
 						@Override
@@ -120,7 +127,11 @@ public class PropertiesViewerControlFactory extends DefaultXViewerControlFactory
 				dec.hide();
 				dec.setShowOnlyOnFocus(true);
 				dec.setShowHover(true);
-				dec.setDescriptionText("Value must of of type [" + seqProperty.getDefinition().getType() + "]");
+				if (seqProperty.getDefinition().isComplex()) {
+					dec.setDescriptionText("Value must of of type complex " + seqProperty.getDefinition().getType() + "[]");
+				} else {
+					dec.setDescriptionText("Value must of of type " + seqProperty.getDefinition().getType() + "[]");
+				}
 				text.addModifyListener(new ModifyListener() {
 
 					@Override
@@ -135,16 +146,24 @@ public class PropertiesViewerControlFactory extends DefaultXViewerControlFactory
 						} catch (IllegalArgumentException e) {
 							dec.show();
 						}
-						
+
 					}
 				});
 				return text;
 			} else if (editElement instanceof ViewerStructSequenceProperty) {
-				Button button = new Button(xv.getTree(), SWT.PUSH);
+				final Button button = new Button(xv.getTree(), SWT.PUSH);
 				button.setText("Edit");
 				return button;
+			} else if (editElement instanceof ViewerStructSequenceSimpleProperty) {
+				// TODO
+				return null;
 			}
 		}
 		return super.createControl(ced, xv);
+	}
+
+	protected StructSequenceRef getRef(ScaStructSequenceProperty property) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

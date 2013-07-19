@@ -350,10 +350,18 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 			return prop.getValue();
 		} else if (element instanceof ViewerSequenceProperty) {
 			ViewerSequenceProperty prop = (ViewerSequenceProperty) element;
-			return Arrays.toString(prop.getValues().toArray());
+			if (prop.getValues() == null) {
+				return null;
+			} else {
+				return prop.getValues().toString();
+			}
 		} else if (element instanceof ViewerStructSequenceSimpleProperty) {
 			ViewerStructSequenceSimpleProperty prop = (ViewerStructSequenceSimpleProperty) element;
-			return Arrays.toString(prop.getValues().toArray());
+			if (prop.getValues() == null) {
+				return null;
+			} else {
+				return prop.getValues().toString();
+			}
 		}
 		return "";
 	}

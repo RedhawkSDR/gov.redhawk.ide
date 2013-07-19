@@ -66,7 +66,7 @@ public class PropertiesContentProvider implements ITreeContentProvider {
 		if (parentElement instanceof ViewerStructProperty) {
 			return ((ViewerStructProperty) parentElement).getSimples().toArray();
 		} else if (parentElement instanceof ViewerStructSequenceProperty) {
-			return ((ViewerStructSequenceProperty) parentElement).getStructs().toArray();
+			return ((ViewerStructSequenceProperty) parentElement).getSimples().toArray();
 		} else if (parentElement instanceof ViewerComponent) {
 			return ((ViewerComponent) parentElement).getProperties().toArray();
 		} else {
@@ -91,7 +91,7 @@ public class PropertiesContentProvider implements ITreeContentProvider {
 		if (parentElement instanceof ViewerStructProperty) {
 			return !((ViewerStructProperty) parentElement).getSimples().isEmpty();
 		} else if (parentElement instanceof ViewerStructSequenceProperty) {
-			return !((ViewerStructSequenceProperty) parentElement).getStructs().isEmpty();
+			return !((ViewerStructSequenceProperty) parentElement).getSimples().isEmpty();
 		} else if (parentElement instanceof ViewerComponent) {
 			return !((ViewerComponent) parentElement).getProperties().isEmpty();
 		} else {

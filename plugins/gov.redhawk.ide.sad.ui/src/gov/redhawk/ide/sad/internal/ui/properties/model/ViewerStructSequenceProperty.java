@@ -56,7 +56,7 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 		}
 	}
 
-	public List<ViewerStructSequenceSimpleProperty> getStructs() {
+	public List<ViewerStructSequenceSimpleProperty> getSimples() {
 		return structs;
 	}
 
@@ -78,6 +78,6 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 				}
 			}
 		}
+		firePropertyChangeEvent();
 	}
-
 }

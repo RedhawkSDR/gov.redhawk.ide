@@ -14,7 +14,6 @@ import gov.redhawk.sca.util.PluginUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import mil.jpeojtrs.sca.prf.SimpleSequence;
@@ -26,7 +25,7 @@ import mil.jpeojtrs.sca.prf.Values;
  */
 public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 
-	private List<String> values = new ArrayList<String>();
+	private List<String> values = null;
 
 	public ViewerSequenceProperty(SimpleSequence def, Object parent) {
 		super(def, parent);
@@ -48,7 +47,7 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 			return;
 		}
 		if (newValues == null || newValues.length == 0) {
-			this.values = Collections.emptyList();
+			this.values = null;
 		} else {
 			this.values = new ArrayList<String>(Arrays.asList(newValues));
 		}

@@ -10,13 +10,31 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties;
 
+import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
+import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerModelConverter;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSequenceProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSimpleProperty;
+import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceProperty;
+import gov.redhawk.model.sca.ScaFactory;
+import gov.redhawk.model.sca.ScaSimpleProperty;
+import gov.redhawk.model.sca.ScaStructProperty;
+import gov.redhawk.model.sca.ScaStructSequenceProperty;
+import gov.redhawk.sca.internal.ui.properties.SequencePropertyValueWizard;
+import mil.jpeojtrs.sca.prf.PrfFactory;
+import mil.jpeojtrs.sca.prf.SimpleRef;
+import mil.jpeojtrs.sca.prf.StructSequenceRef;
+import mil.jpeojtrs.sca.prf.StructValue;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor;
 import org.eclipse.nebula.widgets.xviewer.edit.XViewerConverter;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
@@ -44,8 +62,50 @@ public class PropertiesViewerConverter implements XViewerConverter {
 			setControlValue(c, value);
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
 			String value = labelProvider.getSadValue(selObject);
+			if (c instanceof Button) {
+				final Button button = (Button) c;
+
+				final ViewerStructSequenceProperty viewerProp = (ViewerStructSequenceProperty) selObject;
+				button.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						ScaStructSequenceProperty property = ScaFactory.eINSTANCE.createScaStructSequenceProperty();
+						ViewerComponent component = (ViewerComponent) viewerProp.getParent();
+						SadComponentInstantiation inst = component.getComponentInstantiation();
+						StructSequenceRef ref = (StructSequenceRef) ViewerModelConverter.getRef(inst, viewerProp);
+						property.setDefinition(viewerProp.getDefinition());
+						if (ref != null) {
+							property.fromAny(ref.toAny());
+						}
+						SequencePropertyValueWizard wizard = new SequencePropertyValueWizard(property);
+						WizardDialog dialog = new WizardDialog(button.getShell(), wizard);
+						if (dialog.open() == Window.OK) {
+							viewerProp.setValue(createRef(property));
+						}
+					}
+				});
+			}
 			setControlValue(c, value);
 		}
+	}
+
+	protected StructSequenceRef createRef(ScaStructSequenceProperty property) {
+		if (property.isDefaultValue()) {
+			return null;
+		}
+		StructSequenceRef retVal = PrfFactory.eINSTANCE.createStructSequenceRef();
+		retVal.setRefID(property.getId());
+		for (ScaStructProperty struct : property.getStructs()) {
+			StructValue structRef = PrfFactory.eINSTANCE.createStructValue();
+			for (ScaSimpleProperty simple : struct.getSimples()) {
+				SimpleRef simpleRef = PrfFactory.eINSTANCE.createSimpleRef();
+				simpleRef.setRefID(simple.getId());
+				simpleRef.setValue(simple.getValue().toString());
+				structRef.getSimpleRef().add(simpleRef);
+			}
+			retVal.getStructValue().add(structRef);
+		}
+		return retVal;
 	}
 
 	private void setControlValue(Control c, String value) {
@@ -108,10 +168,12 @@ public class PropertiesViewerConverter implements XViewerConverter {
 		if (seqValue == null || seqValue.isEmpty()) {
 			return null;
 		}
-		if (seqValue.charAt(0) != '[' || seqValue.charAt(seqValue.length() - 1) != ']') {
-			throw new IllegalArgumentException("Invalid Array Value.");
+		if (seqValue.charAt(0) == '[') {
+			seqValue = seqValue.substring(1);
 		}
-		seqValue = seqValue.substring(1, seqValue.length() - 1);
+		if (seqValue.charAt(seqValue.length() - 1) == ']') {
+			seqValue = seqValue.substring(0, seqValue.length() - 1);
+		}
 		String[] newArray = seqValue.split(",");
 		for (int i = 0; i < newArray.length; i++) {
 			newArray[i] = newArray[i].trim();

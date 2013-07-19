@@ -41,6 +41,6 @@ public class ViewerStructSequenceSimpleProperty extends ViewerProperty<Simple> {
 
 	@Override
 	public void setToDefault() {
-		this.values = Collections.emptyList();
+		this.values = null;
 	}
 }

@@ -28,6 +28,7 @@ import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
 import mil.jpeojtrs.sca.prf.Struct;
 import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
+import mil.jpeojtrs.sca.prf.StructValue;
 import mil.jpeojtrs.sca.prf.Values;
 import mil.jpeojtrs.sca.sad.ExternalProperties;
 import mil.jpeojtrs.sca.sad.ExternalProperty;
@@ -43,6 +44,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
@@ -199,15 +201,15 @@ public class ViewerModelConverter {
 			setUser(false);
 			setSystem(true);
 		}
-		
+
 		public boolean shouldSchedule() {
 			return super.shouldSchedule() && viewer != null;
 		}
-		
+
 		public boolean shouldRun() {
 			return super.shouldRun() && viewer != null;
 		}
-		
+
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (viewer != null) {
@@ -363,6 +365,41 @@ public class ViewerModelConverter {
 			} else {
 				throw new UnsupportedOperationException();
 			}
+		} else if (source instanceof ViewerStructSequenceProperty) {
+			ViewerStructSequenceProperty structSeq = (ViewerStructSequenceProperty) source;
+			Object parent = source.getParent();
+			if (parent instanceof ViewerComponent) {
+				ViewerComponent comp = (ViewerComponent) parent;
+				SadComponentInstantiation inst = comp.getComponentInstantiation();
+				ComponentProperties properties = inst.getComponentProperties();
+				StructSequenceRef ref = (StructSequenceRef) getRef(inst, structSeq);
+				if (ref == null) {
+					ref = createRef(structSeq);
+					if (properties == null) {
+						properties = PartitioningFactory.eINSTANCE.createComponentProperties();
+						properties.getStructSequenceRef().add(ref);
+						command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
+					} else {
+						command = AddCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_SEQUENCE_REF, ref);
+					}
+				} else {
+					if (!structSeq.getSimples().isEmpty() && structSeq.getSimples().get(0).getValues() != null) {
+						ref = createRef(structSeq);
+						CompoundCommand replace = new CompoundCommand();
+						replace.append(RemoveCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF, ref));
+						replace.append(AddCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_SEQUENCE_REF, ref));
+						command = replace;
+					} else {
+						if (properties.getProperties().size() == 1) {
+							command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, null);
+						} else {
+							command = RemoveCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_SEQUENCE_REF, ref);
+						}
+					}
+				}
+			} else {
+				throw new UnsupportedOperationException();
+			}
 		} else {
 			throw new UnsupportedOperationException();
 		}
@@ -372,8 +409,31 @@ public class ViewerModelConverter {
 		}
 	}
 
+	private StructSequenceRef createRef(ViewerStructSequenceProperty structSeq) {
+		if (structSeq == null) {
+			return null;
+		}
+		StructSequenceRef retVal = PrfFactory.eINSTANCE.createStructSequenceRef();
+		retVal.setRefID(structSeq.getID());
+		int numStructs = structSeq.getSimples().get(0).getValues().size();
+		for (int i = 0; i < numStructs; i++) {
+			StructValue value = PrfFactory.eINSTANCE.createStructValue();
+			for (ViewerStructSequenceSimpleProperty simple : structSeq.getSimples()) {
+				if (simple.getValues() != null) {
+					SimpleRef simpleRef = PrfFactory.eINSTANCE.createSimpleRef();
+					simpleRef.setRefID(simple.getID());
+					simpleRef.setValue(simple.getValues().get(i));
+					value.getSimpleRef().add(simpleRef);
+				}
+			}
+			retVal.getStructValue().add(value);
+		}
+		return retVal;
+	}
+
 	private SimpleSequenceRef createRef(ViewerSequenceProperty seqProp, List<String> newValues) {
 		SimpleSequenceRef retVal = PrfFactory.eINSTANCE.createSimpleSequenceRef();
+		retVal.setRefID(seqProp.getID());
 		retVal.setValues(PrfFactory.eINSTANCE.createValues());
 		retVal.getValues().getValue().addAll(newValues);
 		return retVal;
@@ -508,7 +568,7 @@ public class ViewerModelConverter {
 		}
 	}
 
-	private AbstractPropertyRef< ? > getRef(SadComponentInstantiation inst, ViewerProperty< ? > p) {
+	public static AbstractPropertyRef< ? > getRef(SadComponentInstantiation inst, ViewerProperty< ? > p) {
 		ComponentProperties properties = inst.getComponentProperties();
 		if (properties != null) {
 			for (ValueListIterator<Object> i = properties.getProperties().valueListIterator(); i.hasNext();) {
