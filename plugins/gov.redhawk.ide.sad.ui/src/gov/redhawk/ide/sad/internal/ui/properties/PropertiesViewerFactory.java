@@ -21,6 +21,7 @@ import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceSimp
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn.SortDataType;
 import org.eclipse.nebula.widgets.xviewer.XViewerFactory;
+import org.eclipse.nebula.widgets.xviewer.customize.IXViewerCustomizations;
 import org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor;
 import org.eclipse.nebula.widgets.xviewer.edit.ExtendedViewerColumn;
 import org.eclipse.swt.SWT;
@@ -34,7 +35,7 @@ public class PropertiesViewerFactory extends XViewerFactory {
 
 	public static final String NAMESPACE = SadEditor.ID + ".propertiesViewer";
 
-	public static final XViewerColumn NAME = new XViewerColumn(NAMESPACE + ".name", "Name", 140, SWT.LEFT, true, SortDataType.String, false,
+	public static final XViewerColumn NAME = new XViewerColumn(NAMESPACE + ".name", "Name", 140, SWT.LEFT, false, SortDataType.String, false,
 		"Name of the property or component");
 	public static final XViewerColumn ID = new XViewerColumn(NAMESPACE + ".id", "ID", 140, SWT.LEFT, true, SortDataType.String, false,
 		"ID of the property or component");
@@ -50,6 +51,14 @@ public class PropertiesViewerFactory extends XViewerFactory {
 		"Kind of the property");
 	public static final XViewerColumn MODE = new XViewerColumn(NAMESPACE + ".mode", "Mode", 100, SWT.LEFT, false, SortDataType.String, false,
 		"Mode of the property");
+	public static final XViewerColumn UNITS = new XViewerColumn(NAMESPACE + ".units", "Units", 100, SWT.LEFT, false, SortDataType.String, false,
+			"Units of the property");
+	public static final XViewerColumn ACTION = new XViewerColumn(NAMESPACE + ".action", "Action", 100, SWT.LEFT, false, SortDataType.String, false,
+			"Action of the property");
+	public static final XViewerColumn ENUMERATIONS = new XViewerColumn(NAMESPACE + ".enums", "Enumerations", 100, SWT.LEFT, false, SortDataType.String, false,
+			"Enumerations of the property");
+	public static final XViewerColumn RANGE = new XViewerColumn(NAMESPACE + ".range", "Range", 100, SWT.LEFT, false, SortDataType.String, false,
+			"Range of the property");
 	public static final XViewerColumn DESCRIPTION = new XViewerColumn(NAMESPACE + ".description", "Description", 100, SWT.LEFT, false,
 		SortDataType.String_MultiLine, false, "Description of the property");
 	
@@ -73,7 +82,7 @@ public class PropertiesViewerFactory extends XViewerFactory {
 	 */
 	public PropertiesViewerFactory() {
 		super(NAMESPACE);
-		registerColumns(ID, NAME, EXTERNAL, PRF_VALUE, SAD_VALUE, TYPE, KIND, MODE, DESCRIPTION);
+		registerColumns(ID, NAME, EXTERNAL, PRF_VALUE, SAD_VALUE, TYPE, KIND, MODE, UNITS, ACTION, ENUMERATIONS, DESCRIPTION);
 	}
 
 	/* (non-Javadoc)
@@ -86,6 +95,11 @@ public class PropertiesViewerFactory extends XViewerFactory {
 	@Override
 	public boolean isSearhTop() {
 		return false;
+	}
+	
+	@Override
+	public IXViewerCustomizations getXViewerCustomizations() {
+		return new PropertiesViewerCustomizations();
 	}
 
 }

@@ -22,6 +22,7 @@ import java.util.List;
 
 import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.ConfigurationKind;
+import mil.jpeojtrs.sca.prf.Enumeration;
 import mil.jpeojtrs.sca.prf.Kind;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
@@ -96,7 +97,7 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider#getColumnText(java.lang.Object, org.eclipse.nebula.widgets.xviewer.XViewerColumn, int)
 	 */
@@ -109,7 +110,6 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		return retVal;
 	}
 
-	
 	private String internalGetColumnText(Object element, XViewerColumn xCol, int columnIndex) throws Exception {
 		if (xCol.equals(PropertiesViewerFactory.ID)) {
 			return getID(element);
@@ -129,6 +129,87 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 			return getType(element);
 		} else if (xCol.equals(PropertiesViewerFactory.DESCRIPTION)) {
 			return getDescription(element);
+		} else if (xCol.equals(PropertiesViewerFactory.ACTION)) {
+			return getAction(element);
+		} else if (xCol.equals(PropertiesViewerFactory.ENUMERATIONS)) {
+			return getEnumerations(element);
+		} else if (xCol.equals(PropertiesViewerFactory.RANGE)) {
+			return getRange(element);
+		} else if (xCol.equals(PropertiesViewerFactory.UNITS)) {
+			return getUnits(element);
+		}
+		return "";
+	}
+
+	private String getAction(Object element) {
+		if (element instanceof ViewerProperty< ? >) {
+			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+			return getAction(prop.getDefinition());
+		} else if (element instanceof Simple) {
+			Simple simple = (Simple) element;
+			if (simple.getAction() != null && simple.getAction().getType() != null) {
+				return simple.getAction().getType().getLiteral();
+			}
+		} else if (element instanceof SimpleSequence) {
+			SimpleSequence seq = (SimpleSequence) element;
+			if (seq.getAction() != null && seq.getAction().getType() != null) {
+				return seq.getAction().getType().getLiteral();
+			}
+		}
+		return "";
+	}
+
+	public String getEnumerations(Object element) {
+		if (element instanceof ViewerProperty< ? >) {
+			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+			return getEnumerations(prop.getDefinition());
+		} else if (element instanceof Simple) {
+			Simple simple = (Simple) element;
+			if (simple.getEnumerations() != null) {
+				List<String> retVal = new ArrayList<String>();
+				for (Enumeration en : simple.getEnumerations().getEnumeration()) {
+					retVal.add(en.getLabel() + "=" + en.getValue());
+				}
+				return retVal.toString();
+			} else {
+				return "";
+			}
+		}
+		return "";
+	}
+
+	public String getRange(Object element) {
+		if (element instanceof ViewerProperty< ? >) {
+			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+			return getRange(prop.getDefinition());
+		} else if (element instanceof Simple) {
+			Simple simple = (Simple) element;
+			if (simple.getRange() != null) {
+				return "[" + simple.getRange().getMin() + ", " + simple.getRange().getMax() + "]";
+			} else {
+				return "";
+			}
+		} else if (element instanceof SimpleSequence) {
+			SimpleSequence seq = (SimpleSequence) element;
+			if (seq.getRange() != null) {
+				return "[" + seq.getRange().getMin() + ", " + seq.getRange().getMax() + "]";
+			} else {
+				return "";
+			}
+		}
+		return "";
+	}
+
+	public String getUnits(Object element) {
+		if (element instanceof ViewerProperty< ? >) {
+			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+			return getUnits(prop.getDefinition());
+		} else if (element instanceof Simple) {
+			Simple simple = (Simple) element;
+			return simple.getUnits();
+		} else if (element instanceof SimpleSequence) {
+			SimpleSequence seq = (SimpleSequence) element;
+			return seq.getUnits();
 		}
 		return "";
 	}
@@ -155,10 +236,18 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 			AbstractProperty def = prop.getDefinition();
 			if (def instanceof Simple) {
 				Simple simple = (Simple) def;
-				return simple.getType().getLiteral();
+				if (simple.isComplex()) {
+					return "complex " + simple.getType().getLiteral();
+				} else {
+					return simple.getType().getLiteral();
+				}
 			} else if (def instanceof SimpleSequence) {
 				SimpleSequence seq = (SimpleSequence) def;
-				return seq.getType().getLiteral();
+				if (seq.isComplex()) {
+					return "complex " + seq.getType().getLiteral();
+				} else {
+					return seq.getType().getLiteral();
+				}
 			}
 		}
 		return "";
@@ -167,9 +256,7 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	public String getMode(Object element) {
 		if (element instanceof ViewerProperty< ? >) {
 			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
-			if (prop.getParent() instanceof ViewerComponent) {
-				return prop.getDefinition().getMode().getLiteral();
-			}
+			return prop.getDefinition().getMode().getLiteral();
 		}
 		return null;
 	}
@@ -177,22 +264,26 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	public String getKind(Object element) {
 		if (element instanceof ViewerProperty< ? >) {
 			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
-			if (prop.getParent() instanceof ViewerComponent) {
-				AbstractProperty def = prop.getDefinition();
-				if (def instanceof Simple) {
-					Simple simple = (Simple) def;
-					return toKindString(simple.getKind());
-				} else if (def instanceof SimpleSequence) {
-					SimpleSequence seq = (SimpleSequence) def;
-					return toKindString(seq.getKind());
-				} else if (def instanceof Struct) {
-					Struct struct = (Struct) def;
-					return toConfigurationKindString(struct.getConfigurationKind());
-				} else if (def instanceof StructSequence) {
-					StructSequence seq = (StructSequence) def;
-					return toConfigurationKindString(seq.getConfigurationKind());
-				}
+			AbstractProperty def = prop.getDefinition();
+			return getKind(def);
+		} else if (element instanceof Simple) {
+			Simple simple = (Simple) element;
+			if (simple.eContainer() instanceof Struct) {
+				return getKind(simple.eContainer());
 			}
+			return toKindString(simple.getKind());
+		} else if (element instanceof SimpleSequence) {
+			SimpleSequence seq = (SimpleSequence) element;
+			return toKindString(seq.getKind());
+		} else if (element instanceof Struct) {
+			Struct struct = (Struct) element;
+			if (struct.eContainer() instanceof StructSequence) {
+				return getKind(struct.eContainer());
+			}
+			return toConfigurationKindString(struct.getConfigurationKind());
+		} else if (element instanceof StructSequence) {
+			StructSequence seq = (StructSequence) element;
+			return toConfigurationKindString(seq.getConfigurationKind());
 		}
 		return "";
 	}
