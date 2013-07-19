@@ -10,28 +10,35 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties;
 
-import org.eclipse.nebula.widgets.xviewer.XViewer;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerTextFilter;
-import org.eclipse.swt.widgets.Composite;
 
 /**
  * 
  */
-public class PropertiesViewer extends XViewer {
+public class PropertiesViewerFilter extends XViewerTextFilter {
 
-	/**
-	 * @param parent
-	 * @param style
-	 * @param xViewerFactory
-	 */
-	public PropertiesViewer(Composite parent, int style) {
-		super(parent, style, new PropertiesViewerFactory());
-		setAutoExpandLevel(1);
+	public PropertiesViewerFilter(PropertiesViewer xViewer) {
+		super(xViewer);
 	}
-	
+
 	@Override
-	public XViewerTextFilter getXViewerTextFilter() {
-		return new PropertiesViewerFilter(this);
+	public boolean select(Viewer viewer, Object parentElement, Object element) {
+		ITreeContentProvider cp = (ITreeContentProvider) this.xViewer.getContentProvider();
+		boolean retVal = super.select(viewer, parentElement, element);
+		if (retVal) {
+			return true;
+		}
+		if (cp.hasChildren(element)) {
+			for (Object child : cp.getChildren(element)) {
+				retVal = select(viewer, element, child);
+				if (retVal) {
+					break;
+				}
+			}
+		}
+		return retVal;
 	}
 
 }

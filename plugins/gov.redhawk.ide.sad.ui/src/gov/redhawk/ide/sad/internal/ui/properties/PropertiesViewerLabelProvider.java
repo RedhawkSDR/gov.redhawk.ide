@@ -96,12 +96,21 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		}
 		return null;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider#getColumnText(java.lang.Object, org.eclipse.nebula.widgets.xviewer.XViewerColumn, int)
 	 */
 	@Override
 	public String getColumnText(Object element, XViewerColumn xCol, int columnIndex) throws Exception {
+		String retVal = internalGetColumnText(element, xCol, columnIndex);
+		if (retVal == null) {
+			return "";
+		}
+		return retVal;
+	}
+
+	
+	private String internalGetColumnText(Object element, XViewerColumn xCol, int columnIndex) throws Exception {
 		if (xCol.equals(PropertiesViewerFactory.ID)) {
 			return getID(element);
 		} else if (xCol.equals(PropertiesViewerFactory.NAME)) {
