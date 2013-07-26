@@ -57,6 +57,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.transaction.RunnableWithResult;
+import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
@@ -86,7 +88,7 @@ public final class SpdLauncherUtil {
 	}
 
 	public static void postLaunch(final SoftPkg spd, final ILaunchConfiguration configuration, final String mode, final ILaunch launch,
-	        final IProgressMonitor monitor) throws CoreException {
+		final IProgressMonitor monitor) throws CoreException {
 		Map< ? , ? > programArgs = configuration.getAttribute(LAUNCH_ATT_PROGRAM_ARGUMENT_MAP, Collections.EMPTY_MAP);
 
 		LocalAbstractComponent comp = null;
@@ -112,7 +114,7 @@ public final class SpdLauncherUtil {
 		final String execString = launch.getAttribute(LaunchVariables.EXEC_PARAMS);
 		final String implID = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_IMPL_ID, (String) null);
 		final boolean autoStart = launch.getLaunchConfiguration().getAttribute(ScaLaunchConfigurationConstants.ATT_START,
-		        ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
+			ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
 
 		final LocalAbstractComponent newComponent = comp;
 		ScaModelCommand.execute(newComponent, new ScaModelCommand() {
@@ -188,7 +190,7 @@ public final class SpdLauncherUtil {
 
 		if (nameBinding == null || namingContextIOR == null) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID,
-			        "No naming context or name binding to locate component with, post launch failed.", null));
+				"No naming context or name binding to locate component with, post launch failed.", null));
 		}
 
 		final Future<LocalScaComponent> future = SpdLauncherUtil.EXECUTOR.submit(new Callable<LocalScaComponent>() {
@@ -208,22 +210,29 @@ public final class SpdLauncherUtil {
 						try {
 							namingContext = NamingContextExtHelper.narrow(session.getOrb().string_to_object(namingContextIOR));
 							ref = ResourceHelper.narrow(namingContext.resolve_str(nameBinding));
-							for (final ScaComponent comp : localSca.getSandboxWaveform().getComponents()) {
-								if (comp instanceof LocalScaComponent && ref._is_equivalent(comp.getCorbaObj())) {
-									newComponent = (LocalScaComponent) comp;
-									break;
-								}
-							}
-							if (newComponent == null) {
-								for (final ScaWaveform waveform : localSca.getWaveforms()) {
-									for (final ScaComponent comp : waveform.getComponents()) {
-										if (comp instanceof LocalScaComponent && ref._is_equivalent(comp.getCorbaObj())) {
-											newComponent = (LocalScaComponent) comp;
-											break;
+							final CF.Resource localRef = ref;
+							RunnableWithResult<LocalScaComponent> runnable = new RunnableWithResult.Impl<LocalScaComponent>() {
+
+								@Override
+								public void run() {
+									for (final ScaComponent comp : localSca.getSandboxWaveform().getComponents()) {
+										if (comp instanceof LocalScaComponent && localRef._is_equivalent(comp.getCorbaObj())) {
+											setResult((LocalScaComponent) comp);
+											return;
+										}
+									}
+									for (final ScaWaveform waveform : localSca.getWaveforms()) {
+										for (final ScaComponent comp : waveform.getComponents()) {
+											if (comp instanceof LocalScaComponent && localRef._is_equivalent(comp.getCorbaObj())) {
+												setResult((LocalScaComponent) comp);
+												return;
+											}
 										}
 									}
 								}
-							}
+							};
+							newComponent = TransactionUtil.runExclusive(TransactionUtil.getEditingDomain(localSca), runnable);
+
 						} catch (final NotFound e) {
 							// PASS
 						} catch (final CannotProceed e) {
@@ -258,7 +267,7 @@ public final class SpdLauncherUtil {
 
 		try {
 			final int timeout = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT,
-			        ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
+				ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
 			if (timeout < 0 || ILaunchManager.DEBUG_MODE.equals(launch.getLaunchMode())) {
 				// In debug-mode wait they may have placed a break-point
 				// that is delaying registration so wait forever
@@ -313,7 +322,7 @@ public final class SpdLauncherUtil {
 
 		try {
 			final int timeout = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT,
-			        ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
+				ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
 			if (timeout < 0 || ILaunchManager.DEBUG_MODE.equals(launch.getLaunchMode())) {
 				// In debug-mode wait they may have placed a break-point
 				// that is delaying registration so wait forever
@@ -368,7 +377,7 @@ public final class SpdLauncherUtil {
 
 		try {
 			final int timeout = launch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT,
-			        ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
+				ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
 			if (timeout < 0 || ILaunchManager.DEBUG_MODE.equals(launch.getLaunchMode())) {
 				// In debug-mode wait they may have placed a break-point
 				// that is delaying registration so wait forever
@@ -392,7 +401,7 @@ public final class SpdLauncherUtil {
 	private static final Pattern VARIABLE_PATTERN = Pattern.compile("\\$\\{((\\w+)(:(\\w+))?)\\}");
 
 	public static String insertProgramArguments(final SoftPkg spd, String input, final ILaunch launch, final ILaunchConfiguration configuration)
-	        throws CoreException {
+		throws CoreException {
 		if (input == null || input.trim().length() == 0) {
 			final ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
 			input = SpdLauncherUtil.getDefaultProgramArguments(type);

@@ -770,6 +770,10 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		releaseJob.setUser(false);
 		releaseJob.schedule();
 	    super.dispose();
+	    if (namingContext != null) {
+	    	namingContext.dispose();
+	    	namingContext = null;
+	    }
 	    if (session != null) {
 	    	session.dispose();
 	    	session = null;

@@ -10,13 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
-
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
+import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaPort;
@@ -54,6 +54,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 import org.jacorb.naming.Name;
+import org.omg.CORBA.Any;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContextExt;
@@ -94,7 +95,7 @@ public class LocalApplicationFactory {
 	}
 
 	public LocalApplicationFactory(final Map<String, String> implMap, final LocalSca localSca, final String mode, final ILaunch launch,
-	        final DataType[] assemblyExec, final DataType[] assemblyConfig) {
+		final DataType[] assemblyExec, final DataType[] assemblyConfig) {
 		this.implMap = implMap;
 		this.localSca = localSca;
 		this.mode = mode;
@@ -110,7 +111,7 @@ public class LocalApplicationFactory {
 	public LocalScaWaveform create(final SoftwareAssembly sad, String name, final IProgressMonitor monitor) throws CoreException {
 		String adjustedName = name;
 		NamingContextExt waveformContext = null;
-		
+
 		// Try and narrow to the given name.  If an already bound exception occurs, append _ + i to the end and try again until 
 		// we've found a good name.
 		try {
@@ -120,14 +121,17 @@ public class LocalApplicationFactory {
 				} catch (AlreadyBound e) {
 					adjustedName = name + "_" + i;
 				} catch (NotFound e) {
-					throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
+					throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID,
+						"Failed to create application: " + adjustedName + " " + e.getMessage(), e));
 				} catch (CannotProceed e) {
-					throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
+					throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID,
+						"Failed to create application: " + adjustedName + " " + e.getMessage(), e));
 				} catch (InvalidName e) {
-					throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
+					throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID,
+						"Failed to create application: " + adjustedName + " " + e.getMessage(), e));
 				}
 			}
-			
+
 			final String appId = DceUuidUtil.createDceUUID();
 			final String profile = sad.eResource().getURI().path();
 
@@ -157,12 +161,18 @@ public class LocalApplicationFactory {
 			createConnections(app, sad);
 
 			bindApp(app);
+			
+			try {
+				waveform.refresh(null, RefreshDepth.FULL);
+			} catch (InterruptedException e) {
+				// PASS
+			}
 
 			app.getStreams().getOutStream().println("Done");
 			return waveform;
 		} catch (final SystemException e) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
-		} 
+		}
 	}
 
 	private String getImplId(final SadComponentInstantiation comp) {
@@ -182,7 +192,7 @@ public class LocalApplicationFactory {
 	 * @param assemblyConfig
 	 * @throws CoreException
 	 */
-	protected void configureComponents(final ApplicationImpl app, final SoftwareAssembly sad, final DataType[] assemblyConfig) throws CoreException {
+	protected void configureComponents(final ApplicationImpl app, final SoftwareAssembly sad, final DataType[] assemblyConfig) {
 		app.getStreams().getOutStream().println("Configuring Components...");
 		for (final ScaComponent comp : app.getLocalWaveform().getComponents()) {
 			try {
@@ -190,9 +200,9 @@ public class LocalApplicationFactory {
 				configureComponent(app, comp);
 				app.getStreams().getOutStream().println("");
 			} catch (final InvalidConfiguration e) {
-				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to configure: " + comp.getName() + " " + e.getMessage(), e));
+				app.logException("WARNING: Error while configuring component: " + comp.getName() + " InvalidConfiguration ", e);
 			} catch (final PartialConfiguration e) {
-				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to configure: " + comp.getName() + " " + e.getMessage(), e));
+				app.logException("WARNING: Error while configuring component: " + comp.getName() + " PartialConfiguration ", e);
 			}
 		}
 	}
@@ -247,15 +257,11 @@ public class LocalApplicationFactory {
 					final String providesId = connection.getProvidesPort().getProvidesIdentifier();
 
 					if (connection.getProvidesPort().getComponentInstantiationRef() != null) {
-						target = app.getLocalWaveform()
-						        .getScaComponent(connection.getProvidesPort().getComponentInstantiationRef().getRefid())
-						        .getScaPort(providesId)
-						        .getCorbaObj();
+						target = app.getLocalWaveform().getScaComponent(connection.getProvidesPort().getComponentInstantiationRef().getRefid()).getScaPort(
+							providesId).getCorbaObj();
 					}
 				} else if (connection.getComponentSupportedInterface() != null) {
-					target = app.getLocalWaveform()
-					        .getScaComponent(connection.getComponentSupportedInterface().getComponentInstantiationRef().getRefid())
-					        .getCorbaObj();
+					target = app.getLocalWaveform().getScaComponent(connection.getComponentSupportedInterface().getComponentInstantiationRef().getRefid()).getCorbaObj();
 				}
 
 				if (target != null) {
@@ -283,7 +289,7 @@ public class LocalApplicationFactory {
 		if (configuration == null || configuration.length == 0) {
 			app.getStreams().getOutStream().println("\tNo configuration.");
 			return;
-		} 
+		}
 		if (this.assemblyConfig != null && isAssemblyController(comp.getComponentInstantiation())) {
 			configuration = this.assemblyConfig;
 		}
@@ -294,19 +300,45 @@ public class LocalApplicationFactory {
 		comp.fetchProperties(null);
 	}
 
-	private String toString(DataType t) {
+	public static String toString(DataType t) {
 		Object value = AnyUtils.convertAny(t.value);
 		if (value instanceof DataType[]) {
 			StringBuilder builder = new StringBuilder();
 			builder.append("\t" + t.id + " = {");
 			for (DataType child : (DataType[]) value) {
-				builder.append("\n\t\t" + child.id + toString(child));
+				builder.append("\n\t\t" + toString(child));
 			}
 			builder.append("\n\t}");
 			return builder.toString();
 		} else if (value instanceof DataType) {
 			return "\t" + t.id + " = {" + toString((DataType) value) + "}";
+		} else if (value instanceof Any[]) {
+			StringBuilder builder = new StringBuilder();
+			builder.append("\t" + t.id + " = [] {");
+			int i = 0;
+			for (Any child : (Any[]) value) {
+				builder.append("\n\t\t[" + i++ + "] = ");
+				Object childValue = AnyUtils.convertAny(child);
+				String valueStr;
+				if (childValue instanceof DataType) {
+					valueStr = toString((DataType) childValue);
+				} else if (childValue instanceof DataType[]) {
+					StringBuilder valueStrBuilder = new StringBuilder();
+					valueStrBuilder.append("{");
+					for (DataType childType : (DataType[]) childValue) {
+						valueStrBuilder.append("\n\t\t" + toString(childType));
+					}
+					valueStrBuilder.append("\n\t\t}");
+					valueStr = valueStrBuilder.toString();
+				} else {
+					valueStr = String.valueOf(childValue);
+				}
+				builder.append(valueStr);
+			}
+			builder.append("\n\t}");
+			return builder.toString();
 		} else if (value != null && value.getClass().isArray()) {
+
 			return "\t" + t.id + " = " + ArrayUtils.toString(value);
 		} else {
 			return "\t" + t.id + " = " + value;

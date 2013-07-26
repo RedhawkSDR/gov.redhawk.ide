@@ -17,8 +17,10 @@ import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.SpdLauncherUtil;
 import gov.redhawk.ide.debug.internal.ApplicationStreams;
+import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
 import gov.redhawk.ide.debug.variables.LaunchVariables;
 import gov.redhawk.model.sca.RefreshDepth;
+import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
@@ -27,11 +29,14 @@ import gov.redhawk.model.sca.ScaWaveform;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
@@ -39,6 +44,8 @@ import java.util.concurrent.Executors;
 
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
+import mil.jpeojtrs.sca.sad.ExternalProperties;
+import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadPackage;
@@ -68,6 +75,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.jacorb.naming.Name;
+import org.jacorb.orb.ORB;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContext;
@@ -76,7 +84,6 @@ import org.omg.CosNaming.NamingContextHelper;
 import org.omg.CosNaming.NamingContextPackage.AlreadyBound;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.InvalidName;
-import org.omg.CosNaming.NamingContextPackage.NotEmpty;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import CF.ApplicationOperations;
@@ -250,13 +257,12 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	private static final EStructuralFeature[] ASSEMBLY_ID_PATH = new EStructuralFeature[] { SadPackage.Literals.SOFTWARE_ASSEMBLY__ASSEMBLY_CONTROLLER,
-	        SadPackage.Literals.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__REFID };
+		SadPackage.Literals.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__REFID };
 	private LocalScaComponent assemblyController;
 	private NotifyingNamingContext waveformContext;
 	private final ApplicationStreams streams = new ApplicationStreams();
 	private boolean terminated;
 	private final ILaunch parentLaunch;
-	private ExternalPorts externalPorts;
 	private final String assemblyID;
 	private LocalScaWaveform waveform;
 	private final String name;
@@ -387,12 +393,12 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 	}
 
-	private < T extends Throwable > T logException(final T e) {
+	public < T extends Throwable > T logException(final T e) {
 		this.streams.getErrStream().printStackTrace("\n\n" + e.getMessage(), e); // SUPPRESS CHECKSTYLE OUTPUT
 		return e;
 	}
 
-	private < T extends Throwable > T logException(final String msg, final T e) {
+	public < T extends Throwable > T logException(final String msg, final T e) {
 		this.streams.getErrStream().printStackTrace("\n\n" + msg, e); // SUPPRESS CHECKSTYLE OUTPUT
 		return e;
 	}
@@ -443,28 +449,22 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 					this.streams.getErrStream().println("Error while unbinding waveform:\n" + e);
 				}
 			}
+			ScaDebugPlugin debugInstance = ScaDebugPlugin.getInstance();
+			if (debugInstance != null) {
+				final NotifyingNamingContext rootContext = debugInstance.getLocalSca().getRootContext();
+				final NotifyingNamingContext resourceContext = rootContext.getResourceContext(this.profileURI);
 
-			final NotifyingNamingContext rootContext = ScaDebugPlugin.getInstance().getLocalSca().getRootContext();
-			final NotifyingNamingContext resourceContext = rootContext.getResourceContext(this.profileURI);
-
-			try {
-				resourceContext.unbind(Name.toName(this.name));
-			} catch (final NotFound e) {
-				this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
-			} catch (final CannotProceed e) {
-				this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
-			} catch (final InvalidName e) {
-				this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
-			} catch (final SystemException e) {
-				this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
-			}
-
-			try {
-				this.waveformContext.destroy();
-			} catch (final NotEmpty e) {
-				this.streams.getErrStream().println("Error while destorying waveform context:\n" + e);
-			} catch (final SystemException e) {
-				this.streams.getErrStream().println("Error while destorying waveform context:\n" + e);
+				try {
+					resourceContext.unbind(Name.toName(this.name));
+				} catch (final NotFound e) {
+					this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
+				} catch (final CannotProceed e) {
+					this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
+				} catch (final InvalidName e) {
+					this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
+				} catch (final SystemException e) {
+					this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
+				}
 			}
 		}
 	}
@@ -553,21 +553,50 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 * {@inheritDoc}
 	 */
 	public void configure(final DataType[] configProperties) throws InvalidConfiguration, PartialConfiguration {
-		final Map<String, String> propertyMap = new HashMap<String, String>();
-		for (final DataType type : configProperties) {
-			propertyMap.put(type.id, type.value.toString());
+		this.streams.getOutStream().println("Configuring application: ");
+		for (DataType t : configProperties) {
+			streams.getOutStream().println("\n\t" + LocalApplicationFactory.toString(t));
 		}
-		this.streams.getOutStream().println("Configuring application: " + propertyMap);
-		if (this.assemblyController == null) {
-			return;
+
+		Map<String, List<DataType>> configMap = new HashMap<String, List<DataType>>();
+		ExternalProperties externalProperties = waveform.getProfileObj().getExternalProperties();
+		for (DataType t : configProperties) {
+			boolean isExternalProp = false;
+			if (externalProperties != null) {
+				for (ExternalProperty p : externalProperties.getProperties()) {
+					String propId = (p.getExternalPropID() != null) ? p.getExternalPropID() : p.getPropID();
+					if (propId.equals(t.id)) {
+						List<DataType> configList = configMap.get(p.getCompRefID());
+						if (configList == null) {
+							configList = new ArrayList<DataType>();
+							configMap.put(p.getCompRefID(), configList);
+						}
+						configList.add(t);
+						isExternalProp = true;
+						break;
+					}
+				}
+			}
+			if (!isExternalProp) {
+				List<DataType> configList = configMap.get(null);
+				if (configList == null) {
+					configList = new ArrayList<DataType>();
+					configMap.put(null, configList);
+				}
+				configList.add(t);
+			}
 		}
-		try {
-			this.assemblyController.configure(configProperties);
-			this.streams.getOutStream().println("Configure succeeded");
-		} catch (final InvalidConfiguration e) {
-			throw logException("Error during configure", e);
-		} catch (final PartialConfiguration e) {
-			throw logException("Error during configure", e);
+
+		for (Map.Entry<String, List<DataType>> entry : configMap.entrySet()) {
+			ScaComponent inst;
+			if (entry.getKey() == null) {
+				inst = waveform.getAssemblyController();
+			} else {
+				inst = waveform.getScaComponent(entry.getKey());
+			}
+			if (inst != null) {
+				inst.configure(entry.getValue().toArray(new DataType[entry.getValue().size()]));
+			}
 		}
 	}
 
@@ -575,21 +604,47 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 * {@inheritDoc}
 	 */
 	public void query(final PropertiesHolder configProperties) throws UnknownProperties {
-		final List<String> properties = new ArrayList<String>();
-		for (final DataType type : configProperties.value) {
-			properties.add(type.id);
+		Set<String> queryProperties = new HashSet<String>();
+		if (configProperties.value != null) {
+			for (DataType t : configProperties.value) {
+				queryProperties.add(t.id);
+			}
 		}
-		this.streams.getOutStream().println("Query " + properties);
-		if (this.assemblyController == null) {
-			this.streams.getOutStream().println("No Assembly Controller");
-			return;
+		this.streams.getOutStream().println("Query: " + queryProperties);
+
+		ExternalProperties externalProperties = this.waveform.getProfileObj().getExternalProperties();
+		List<DataType> retVal = new ArrayList<DataType>();
+
+		if (this.assemblyController != null) {
+			PropertiesHolder tmpHolder = new PropertiesHolder();
+			if (!queryProperties.isEmpty()) {
+				List<DataType> propsToQuery = new ArrayList<DataType>();
+				for (ScaAbstractProperty< ? > p : assemblyController.getProperties()) {
+					if (queryProperties.contains(p.getId())) {
+						propsToQuery.add(new DataType(p.getId(), ORB.init().create_any()));
+					}
+				}
+				tmpHolder.value = propsToQuery.toArray(new DataType[propsToQuery.size()]);
+			}
+			this.assemblyController.query(tmpHolder);
+			retVal.addAll(Arrays.asList(tmpHolder.value));
 		}
-		try {
-			this.assemblyController.query(configProperties);
-			this.streams.getOutStream().println("Query succeeded");
-		} catch (final UnknownProperties e) {
-			throw logException("Error during query", e);
+		if (externalProperties != null) {
+			for (ExternalProperty prop : externalProperties.getProperties()) {
+				String propId = (prop.getExternalPropID() != null) ? prop.getExternalPropID() : prop.getPropID();
+				if (queryProperties.isEmpty() || queryProperties.contains(propId)) {
+					PropertiesHolder tmpHolder = new PropertiesHolder();
+					tmpHolder.value = new DataType[] { new DataType(prop.getPropID(), ORB.init().create_any()) };
+					ScaComponent component = waveform.getScaComponent(prop.getCompRefID());
+					if (component != null) {
+						component.query(tmpHolder);
+						retVal.addAll(Arrays.asList(tmpHolder.value));
+					}
+				}
+			}
 		}
+		configProperties.value = retVal.toArray(new DataType[retVal.size()]);
+
 	}
 
 	/**
@@ -601,12 +656,19 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			if (name == null) {
 				throw new UnknownPort("No external port of name: " + name);
 			}
-			if (this.externalPorts != null) {
-				for (final Port p : this.externalPorts.getPort()) {
-					if (name.equals(p.getProvidesIndentifier()) || name.equals(p.getUsesIdentifier())) {
+			ExternalPorts externalPorts = waveform.getProfileObj().getExternalPorts();
+			if (externalPorts != null) {
+				for (final Port p : externalPorts.getPort()) {
+					if (name.equals(p.getProvidesIndentifier()) || name.equals(p.getUsesIdentifier()) || name.equals(p.getExternalName())) {
 						final ScaComponent comp = findComponent(p.getComponentInstantiationRef().getRefid());
 						if (comp != null) {
-							return comp.getPort(name);
+							String portName;
+							if (p.getProvidesIndentifier() != null) {
+								portName = p.getProvidesIndentifier();
+							} else {
+								portName = p.getUsesIdentifier();
+							}
+							return comp.getPort(portName);
 						}
 					} else if (name.equals(p.getSupportedIdentifier())) {
 						final ScaComponent comp = findComponent(p.getComponentInstantiationRef().getRefid());
@@ -623,20 +685,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	private ScaComponent findComponent(final String instId) {
-		for (final ScaComponent comp : this.waveform.getComponents()) {
-			if (comp.getInstantiationIdentifier().equals(instId)) {
-				return comp;
-			}
-		}
-		return null;
-	}
-
-	public ExternalPorts getExternalPorts() {
-		return this.externalPorts;
-	}
-
-	public void setExternalPorts(final ExternalPorts externalPorts) {
-		this.externalPorts = externalPorts;
+		return waveform.getScaComponent(instId);
 	}
 
 	/**
@@ -896,12 +945,12 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public LocalScaComponent launch(final String usageName, final DataType[] execParams, final URI spdURI, final String implId, final String mode)
-	        throws CoreException {
+		throws CoreException {
 		return launch(usageName, createExecParamStr(execParams), spdURI, implId, mode);
 	}
 
 	private LocalScaComponent launch(final String nameBinding, final String execParams, final URI spdURI, final String implId, final String tmpMode)
-	        throws CoreException {
+		throws CoreException {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
