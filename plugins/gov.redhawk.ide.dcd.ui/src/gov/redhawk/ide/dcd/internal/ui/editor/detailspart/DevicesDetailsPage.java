@@ -235,25 +235,6 @@ public class DevicesDetailsPage extends ScaDetails {
 	}
 
 	/**
-	 * Determines if PropertyConfigurationType.CONFIGURE or
-	 * PropertyConfigurationType.EXECPARAM types are present in the kind list.
-	 * 
-	 * @param kinds the Kind List to evaluate
-	 * @return<code> true </code> if configure or execparam are present;
-	 *               <code> false </code> otherwise
-	 */
-	private boolean hasConfigureOrExecKind(final List<Kind> kinds) {
-		boolean retVal = false;
-		for (final Kind kind : kinds) {
-			final PropertyConfigurationType type = kind.getType();
-			if (type.equals(PropertyConfigurationType.CONFIGURE) || type.equals(PropertyConfigurationType.EXECPARAM)) {
-				retVal = true;
-			}
-		}
-		return retVal;
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override
