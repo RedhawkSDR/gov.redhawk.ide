@@ -148,7 +148,7 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 		final SoftPkg spd = loadSpd();
 
 		if (implementationID == null) {
-			if (spd.getImplementation().isEmpty()) {
+			if (!spd.getImplementation().isEmpty()) {
 				implementationID = spd.getImplementation().get(0).getId();
 			} else {
 				throw new CreateResourceFailure(ErrorNumberType.CF_EINVAL, "No implementations for component: " + identifier());
