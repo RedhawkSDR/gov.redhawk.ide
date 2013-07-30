@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
 import gov.redhawk.ide.sdr.ComponentsContainer;
@@ -20,11 +20,8 @@ import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ServicesContainer;
 import gov.redhawk.ide.sdr.WaveformsContainer;
-
 import java.util.Map;
-
 import mil.jpeojtrs.sca.prf.AbstractProperty;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -48,7 +45,7 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 */
 	public static SdrFactory init() {
 		try {
-			SdrFactory theSdrFactory = (SdrFactory)EPackage.Registry.INSTANCE.getEFactory("http://www.redhawk.gov/model/ide/sdr"); 
+			SdrFactory theSdrFactory = (SdrFactory)EPackage.Registry.INSTANCE.getEFactory(SdrPackage.eNS_URI);
 			if (theSdrFactory != null) {
 				return theSdrFactory;
 			}

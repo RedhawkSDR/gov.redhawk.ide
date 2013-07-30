@@ -9,7 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.util;
 
 import gov.redhawk.ide.debug.LocalAbstractComponent;
@@ -44,9 +44,7 @@ import gov.redhawk.model.sca.ScaPortContainer;
 import gov.redhawk.model.sca.ScaPropertyContainer;
 import gov.redhawk.model.sca.ScaService;
 import gov.redhawk.model.sca.ScaWaveform;
-
 import java.util.Map.Entry;
-
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
@@ -55,7 +53,6 @@ import org.jacorb.naming.Name;
 import org.omg.CORBA.portable.IDLEntity;
 import org.omg.CosNaming.NamingContext;
 import org.omg.CosNaming.NamingContextExtOperations;
-
 import CF.ApplicationOperations;
 import CF.Device;
 import CF.DeviceManagerOperations;

@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.tests;
 
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
@@ -57,7 +57,7 @@ public abstract class SoftPkgRegistryTest extends PropertyRegistryTest {
 	 */
 	public void testGetSoftPkg__String() {
 		// END GENERATED CODE
-		getFixture().getSoftPkg(null);		
+		getFixture().getSoftPkg(null);
 		// BEGIN GENERATED CODE
 	}
 

@@ -9,7 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.util;
 
 import gov.redhawk.ide.debug.LocalAbstractComponent;
@@ -44,17 +44,14 @@ import gov.redhawk.model.sca.ScaPortContainer;
 import gov.redhawk.model.sca.ScaPropertyContainer;
 import gov.redhawk.model.sca.ScaService;
 import gov.redhawk.model.sca.ScaWaveform;
-
-import java.util.List;
 import java.util.Map.Entry;
-
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.util.Switch;
 import org.jacorb.naming.Name;
 import org.omg.CORBA.portable.IDLEntity;
 import org.omg.CosNaming.NamingContext;
 import org.omg.CosNaming.NamingContextExtOperations;
-
 import CF.ApplicationOperations;
 import CF.Device;
 import CF.DeviceManagerOperations;
@@ -88,7 +85,7 @@ import ExtendedCF.SandboxOperations;
  * @see gov.redhawk.ide.debug.ScaDebugPackage
  * @generated
  */
-public class ScaDebugSwitch< T1 > {
+public class ScaDebugSwitch< T1 > extends Switch<T1> {
 
 	/**
 	 * The cached model package
@@ -111,14 +108,16 @@ public class ScaDebugSwitch< T1 > {
 	}
 
 	/**
-	 * Calls <code>caseXXX</code> for each class of the model until one returns a non null result; it yields that result.
+	 * Checks whether this is a switch for the given package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the first non-null result returned by a <code>caseXXX</code> call.
+	 * @parameter ePackage the package in question.
+	 * @return whether this is a switch for the given package.
 	 * @generated
 	 */
-	public T1 doSwitch(EObject theEObject) {
-		return doSwitch(theEObject.eClass(), theEObject);
+	@Override
+	protected boolean isSwitchFor(EPackage ePackage) {
+		return ePackage == modelPackage;
 	}
 
 	/**
@@ -128,26 +127,7 @@ public class ScaDebugSwitch< T1 > {
 	 * @return the first non-null result returned by a <code>caseXXX</code> call.
 	 * @generated
 	 */
-	protected T1 doSwitch(EClass theEClass, EObject theEObject) {
-		if (theEClass.eContainer() == modelPackage) {
-			return doSwitch(theEClass.getClassifierID(), theEObject);
-		}
-		else {
-			List<EClass> eSuperTypes = theEClass.getESuperTypes();
-			return
-				eSuperTypes.isEmpty() ?
-					defaultCase(theEObject) :
-					doSwitch(eSuperTypes.get(0), theEObject);
-		}
-	}
-
-	/**
-	 * Calls <code>caseXXX</code> for each class of the model until one returns a non null result; it yields that result.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the first non-null result returned by a <code>caseXXX</code> call.
-	 * @generated
-	 */
+	@Override
 	protected T1 doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
 			case ScaDebugPackage.LOCAL_SCA: {
@@ -158,6 +138,12 @@ public class ScaDebugSwitch< T1 > {
 				if (result == null) result = caseIStatusProvider(localSca);
 				if (result == null) result = caseIDisposable(localSca);
 				if (result == null) result = caseIRefreshable(localSca);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case ScaDebugPackage.NAMING_CONTEXT_EXT_OPERATIONS: {
+				NamingContextExtOperations namingContextExtOperations = (NamingContextExtOperations)theEObject;
+				T1 result = caseNamingContextExtOperations(namingContextExtOperations);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -367,6 +353,21 @@ public class ScaDebugSwitch< T1 > {
 				if (result == null) result = caseIStatusProvider(localScaService);
 				if (result == null) result = caseIDisposable(localScaService);
 				if (result == null) result = caseIRefreshable(localScaService);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case ScaDebugPackage.SANDBOX_OPERATIONS: {
+				SandboxOperations sandboxOperations = (SandboxOperations)theEObject;
+				T1 result = caseSandboxOperations(sandboxOperations);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case ScaDebugPackage.SANDBOX: {
+				Sandbox sandbox = (Sandbox)theEObject;
+				T1 result = caseSandbox(sandbox);
+				if (result == null) result = caseObject(sandbox);
+				if (result == null) result = caseIDLEntity(sandbox);
+				if (result == null) result = caseSandboxOperations(sandbox);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -1139,6 +1140,7 @@ public class ScaDebugSwitch< T1 > {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject)
 	 * @generated
 	 */
+	@Override
 	public T1 defaultCase(EObject object) {
 		return null;
 	}

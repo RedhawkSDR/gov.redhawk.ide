@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
 import gov.redhawk.ide.sdr.DevicesContainer;
@@ -63,7 +63,7 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	 */
 	public SdrRoot getSdrRoot() {
 		if (eContainerFeatureID() != SdrPackage.DEVICES_CONTAINER__SDR_ROOT) return null;
-		return (SdrRoot)eContainer();
+		return (SdrRoot)eInternalContainer();
 	}
 
 	/**

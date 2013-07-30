@@ -9,7 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
 import gov.redhawk.ide.debug.LocalFileManager;
@@ -24,9 +24,7 @@ import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPackage;
-
 import java.util.Map.Entry;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -52,7 +50,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 */
 	public static ScaDebugFactory init() {
 		try {
-			ScaDebugFactory theScaDebugFactory = (ScaDebugFactory)EPackage.Registry.INSTANCE.getEFactory("http://redhawk.gov/sca/debug"); 
+			ScaDebugFactory theScaDebugFactory = (ScaDebugFactory)EPackage.Registry.INSTANCE.getEFactory(ScaDebugPackage.eNS_URI);
 			if (theScaDebugFactory != null) {
 				return theScaDebugFactory;
 			}

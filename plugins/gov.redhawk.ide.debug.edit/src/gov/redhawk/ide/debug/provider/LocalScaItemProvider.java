@@ -9,16 +9,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.provider;
 
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.model.sca.provider.CorbaObjWrapperItemProvider;
-
 import java.util.Collection;
 import java.util.List;
-
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.ResourceLocator;

@@ -9,7 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
 import gov.redhawk.ide.debug.LocalLaunch;
@@ -297,18 +297,18 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 				ScaDebugPlugin.logError("Failed to setup Device manager servant.", e);
 			}
 		}
-		
+
 		setCorbaObj(ref);
 		setObj(ref);
 		if (ref != null && impl != null) {
-	    	setIdentifier(impl.identifier());
-	    	setLabel(impl.label());
+			setIdentifier(impl.identifier());
+			setLabel(impl.label());
 			this.refreshJob.schedule();
-	    } else {
-	    	super.unsetProfileObj();
-	    	super.unsetProfileURI();
-	    	super.unsetProfile();
-	    }
+		} else {
+			super.unsetProfileObj();
+			super.unsetProfileURI();
+			super.unsetProfile();
+		}
 
 		// BEGIN GENERATED CODE
 	}

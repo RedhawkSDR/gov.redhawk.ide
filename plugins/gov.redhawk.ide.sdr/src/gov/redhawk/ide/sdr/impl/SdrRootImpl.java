@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
@@ -903,12 +903,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			final URI domUri;
 			if (domPath != null) {
 				String[] path = domPath.split("/");
-				domUri = URI.createHierarchicalURI(ScaFileSystemConstants.SCHEME,
-				        null,
-				        null,
-				        null,
-				        QueryParser.createQuery(Collections.singletonMap(ScaFileSystemConstants.QUERY_PARAM_FS, sdrRoot.appendSegments(path).toString())),
-				        null);
+				domUri = URI.createHierarchicalURI(ScaFileSystemConstants.SCHEME, null, null, null,
+					QueryParser.createQuery(Collections.singletonMap(ScaFileSystemConstants.QUERY_PARAM_FS, sdrRoot.appendSegments(path).toString())), null);
 			} else {
 				domUri = null;
 			}
@@ -917,12 +913,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			final URI devUri;
 			if (devPath != null) {
 				String[] path = devPath.split("/");
-				devUri = URI.createHierarchicalURI(ScaFileSystemConstants.SCHEME,
-				        null,
-				        null,
-				        null,
-				        QueryParser.createQuery(Collections.singletonMap(ScaFileSystemConstants.QUERY_PARAM_FS, sdrRoot.appendSegments(path).toString())),
-				        null);
+				devUri = URI.createHierarchicalURI(ScaFileSystemConstants.SCHEME, null, null, null,
+					QueryParser.createQuery(Collections.singletonMap(ScaFileSystemConstants.QUERY_PARAM_FS, sdrRoot.appendSegments(path).toString())), null);
 			} else {
 				devUri = null;
 			}
@@ -1279,8 +1271,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		// END GENERATED CODE
 		SubMonitor submonitor = SubMonitor.convert(monitor, "Loading SPD " + spdFile.getName(), 2); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 
-		final org.eclipse.emf.common.util.URI spdFileUri = org.eclipse.emf.common.util.URI.createURI(spdFile.toURI().toString())
-		        .appendFragment(SoftPkg.EOBJECT_PATH);
+		final org.eclipse.emf.common.util.URI spdFileUri = org.eclipse.emf.common.util.URI.createURI(spdFile.toURI().toString()).appendFragment(
+			SoftPkg.EOBJECT_PATH);
 		SoftPkg softPkg;
 		try {
 			softPkg = (SoftPkg) domain.getResourceSet().getEObject(spdFileUri, true);
@@ -1339,9 +1331,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 */
 	private void addUnknownComponentType(final SoftwareComponent component, final SoftPkg softPkg) {
 		// END GENERATED CODE
-		IdeSdrActivator.getDefault().logWarning(MessageFormat.format("Component \"{0}\" of type \"{1}\" ignored, unknown type.",
-		        softPkg.getName(),
-		        component.getComponentType()));
+		IdeSdrActivator.getDefault().logWarning(
+			MessageFormat.format("Component \"{0}\" of type \"{1}\" ignored, unknown type.", softPkg.getName(), component.getComponentType()));
 		// BEGIN GENERATED CODE
 
 	}
@@ -1362,7 +1353,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			boolean isDevice = false;
 			for (final SupportsInterface iface : component.getComponentFeatures().getSupportsInterface()) {
 				if (iface.getRepId().startsWith("IDL:CF/Device") || iface.getRepId().startsWith("IDL:CF/LoadableDevice")
-				        || iface.getRepId().startsWith("IDL:CF/ExecutableDevice") || iface.getRepId().startsWith("IDL:CF/AggregateDevice")) {
+					|| iface.getRepId().startsWith("IDL:CF/ExecutableDevice") || iface.getRepId().startsWith("IDL:CF/AggregateDevice")) {
 					isDevice = true;
 					break;
 				}
@@ -1371,7 +1362,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			if (isDevice) {
 				if (DEBUG.enabled) {
 					DEBUG.message("Component \"{0}\" forced to be device based on supported interfaces.  Component should be of type \"device\".",
-					        softPkg.getName());
+						softPkg.getName());
 				}
 				addDevice(domain, softPkg, component);
 			} else {
@@ -1438,8 +1429,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		// END GENERATED CODE
 		SubMonitor submonitor = SubMonitor.convert(monitor, "Loading SAD " + sadFile.getName(), 2); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 
-		final org.eclipse.emf.common.util.URI sadFileUri = org.eclipse.emf.common.util.URI.createURI(sadFile.toURI().toString())
-		        .appendFragment(SoftwareAssembly.EOBJECT_PATH);
+		final org.eclipse.emf.common.util.URI sadFileUri = org.eclipse.emf.common.util.URI.createURI(sadFile.toURI().toString()).appendFragment(
+			SoftwareAssembly.EOBJECT_PATH);
 		SoftwareAssembly sad;
 		try {
 			sad = (SoftwareAssembly) eResource().getResourceSet().getEObject(sadFileUri, true);
@@ -1472,8 +1463,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		// END GENERATED CODE
 		SubMonitor submonitor = SubMonitor.convert(monitor, "Loading DCD " + dcdFile.getName(), 2); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 
-		final org.eclipse.emf.common.util.URI dcdFileURI = org.eclipse.emf.common.util.URI.createURI(dcdFile.toURI().toString())
-		        .appendFragment(DeviceConfiguration.EOBJECT_PATH);
+		final org.eclipse.emf.common.util.URI dcdFileURI = org.eclipse.emf.common.util.URI.createURI(dcdFile.toURI().toString()).appendFragment(
+			DeviceConfiguration.EOBJECT_PATH);
 		DeviceConfiguration dcd;
 		try {
 			dcd = (DeviceConfiguration) eResource().getResourceSet().getEObject(dcdFileURI, true);
@@ -1500,8 +1491,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		if (eResource() == null || eResource().getResourceSet() == null) {
 			throw new IllegalStateException("Can not load a domain outside of a resource set.");
 		}
-		final org.eclipse.emf.common.util.URI dmdURI = org.eclipse.emf.common.util.URI.createURI(dmdFile.toURI().toString())
-		        .appendFragment(DomainManagerConfiguration.EOBJECT_PATH);
+		final org.eclipse.emf.common.util.URI dmdURI = org.eclipse.emf.common.util.URI.createURI(dmdFile.toURI().toString()).appendFragment(
+			DomainManagerConfiguration.EOBJECT_PATH);
 		DomainManagerConfiguration dmd;
 		try {
 			dmd = (DomainManagerConfiguration) eResource().getResourceSet().getEObject(dmdURI, true);

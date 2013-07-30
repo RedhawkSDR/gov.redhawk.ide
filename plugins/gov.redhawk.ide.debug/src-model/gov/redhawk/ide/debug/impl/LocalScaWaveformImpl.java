@@ -9,7 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
 import gov.redhawk.ide.debug.LocalLaunch;
@@ -675,30 +675,30 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 				public void execute() {
 					// TODO Find / create component Instantiation and assign
-//					DomComponentFile cf = PartitioningFactory.eINSTANCE.createDomComponentFile();
-//					cf.setSoftPkg(component.getProfileObj());
-//					if (getProfileObj().getComponentFiles() == null) {
-//						getProfileObj().setComponentFiles(PartitioningFactory.eINSTANCE.createComponentFiles());
-//					}
-//					getProfileObj().getComponentFiles().getComponentFile().add(cf);
-//					
-//					SadComponentInstantiation inst = SadFactory.eINSTANCE.createSadComponentInstantiation();
-//					inst.setId(component.getInstantiationIdentifier());
-//					inst.setUsageName(component.getName());
-//					inst.setStartOrder(BigInteger.valueOf(getProfileObj().getComponentFiles().getComponentFile().size()));
-//					
-//					SadComponentPlacement cp = SadFactory.eINSTANCE.createSadComponentPlacement();
-//					ComponentFileRef ref = PartitioningFactory.eINSTANCE.createComponentFileRef();
-//					ref.setFile(cf);
-//					
-//					cp.setComponentFileRef(ref);
-//					cp.getComponentInstantiation().add(inst);
-//					if (getProfileObj().getPartitioning() == null) {
-//						getProfileObj().setPartitioning(SadFactory.eINSTANCE.createSadPartitioning());
-//					}
-//					getProfileObj().getPartitioning().getComponentPlacement().add(cp);
-//					
-//					component.setComponentInstantiation(inst);
+					//					DomComponentFile cf = PartitioningFactory.eINSTANCE.createDomComponentFile();
+					//					cf.setSoftPkg(component.getProfileObj());
+					//					if (getProfileObj().getComponentFiles() == null) {
+					//						getProfileObj().setComponentFiles(PartitioningFactory.eINSTANCE.createComponentFiles());
+					//					}
+					//					getProfileObj().getComponentFiles().getComponentFile().add(cf);
+					//					
+					//					SadComponentInstantiation inst = SadFactory.eINSTANCE.createSadComponentInstantiation();
+					//					inst.setId(component.getInstantiationIdentifier());
+					//					inst.setUsageName(component.getName());
+					//					inst.setStartOrder(BigInteger.valueOf(getProfileObj().getComponentFiles().getComponentFile().size()));
+					//					
+					//					SadComponentPlacement cp = SadFactory.eINSTANCE.createSadComponentPlacement();
+					//					ComponentFileRef ref = PartitioningFactory.eINSTANCE.createComponentFileRef();
+					//					ref.setFile(cf);
+					//					
+					//					cp.setComponentFileRef(ref);
+					//					cp.getComponentInstantiation().add(inst);
+					//					if (getProfileObj().getPartitioning() == null) {
+					//						getProfileObj().setPartitioning(SadFactory.eINSTANCE.createSadPartitioning());
+					//					}
+					//					getProfileObj().getPartitioning().getComponentPlacement().add(cp);
+					//					
+					//					component.setComponentInstantiation(inst);
 					getComponents().add(component);
 				}
 			});
@@ -711,20 +711,16 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 
 				public void execute() {
-					component.setStatus(ScaPackage.Literals.SCA_COMPONENT__COMPONENT_INSTANTIATION, new Status(IStatus.ERROR,
-					        ScaDebugPlugin.ID,
-					        "Component failed to initialize",
-					        e));
+					component.setStatus(ScaPackage.Literals.SCA_COMPONENT__COMPONENT_INSTANTIATION, new Status(IStatus.ERROR, ScaDebugPlugin.ID,
+						"Component failed to initialize", e));
 				}
 			});
 		} catch (final SystemException e) {
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 
 				public void execute() {
-					component.setStatus(ScaPackage.Literals.SCA_COMPONENT__COMPONENT_INSTANTIATION, new Status(IStatus.ERROR,
-					        ScaDebugPlugin.ID,
-					        "Component failed to initialize",
-					        e));
+					component.setStatus(ScaPackage.Literals.SCA_COMPONENT__COMPONENT_INSTANTIATION, new Status(IStatus.ERROR, ScaDebugPlugin.ID,
+						"Component failed to initialize", e));
 				}
 			});
 		}

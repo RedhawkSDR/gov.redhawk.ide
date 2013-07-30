@@ -9,7 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
 import gov.redhawk.ide.debug.NotifyingNamingContext;
@@ -276,7 +276,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 */
 	public NotifyingNamingContext getParentContext() {
 		if (eContainerFeatureID() != ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT) return null;
-		return (NotifyingNamingContext)eContainer();
+		return (NotifyingNamingContext)eInternalContainer();
 	}
 
 	/**
@@ -403,7 +403,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 		// END GENERATED CODE
 		if (this.name != null) {
 			return name.toString();
-		} 
+		}
 		return "";
 		// BEGIN GENERATED CODE
 	}

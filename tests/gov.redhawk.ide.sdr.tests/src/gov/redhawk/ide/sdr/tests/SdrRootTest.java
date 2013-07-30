@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.tests;
 
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
@@ -17,13 +17,10 @@ import gov.redhawk.ide.sdr.LoadState;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
-
 import java.net.URI;
-
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
-
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -139,8 +136,8 @@ public class SdrRootTest extends TestCase {
 	 */
 	public void testGetLoadStatus() {
 		// END GENERATED CODE
-		Assert.assertEquals("SDRROOT Load Status not OK: " + this.getFixture().getLoadStatus().getMessage(), IStatus.OK, this.fixture.getLoadStatus()
-		        .getSeverity());
+		Assert.assertEquals("SDRROOT Load Status not OK: " + this.getFixture().getLoadStatus().getMessage(), IStatus.OK,
+			this.fixture.getLoadStatus().getSeverity());
 		// BEGIN GENERATED CODE
 	}
 
@@ -307,7 +304,7 @@ public class SdrRootTest extends TestCase {
 	public void testUnload__IProgressMonitor() {
 		// END GENERATED CODE
 		getFixture().unload(null);
-		Assert.assertEquals(LoadState.UNLOADED, getFixture().getState()); 
+		Assert.assertEquals(LoadState.UNLOADED, getFixture().getState());
 		// BEGIN GENERATED CODE
 	}
 
@@ -334,12 +331,12 @@ public class SdrRootTest extends TestCase {
 	public void testSetSdrRoot__URI_String_String() {
 		// END GENERATED CODE
 		ScaModelCommand.execute(getFixture(), new ScaModelCommand() {
-			
+
 			public void execute() {
-				getFixture().setSdrRoot(null, null, null);		
+				getFixture().setSdrRoot(null, null, null);
 			}
 		});
-		
+
 		// BEGIN GENERATED CODE
 	}
 

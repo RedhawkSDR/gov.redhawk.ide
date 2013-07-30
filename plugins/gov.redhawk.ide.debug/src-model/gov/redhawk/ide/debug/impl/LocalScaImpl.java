@@ -12,8 +12,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
-import gov.redhawk.core.filemanager.IFileManager;
-import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
 import gov.redhawk.ide.debug.LocalFileManager;
 import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalSca;
@@ -24,8 +22,6 @@ import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.impl.listeners.DisposableObjectContainerListener;
-import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
-import gov.redhawk.ide.debug.internal.cf.impl.DeviceManagerImpl;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaWaveform;
@@ -34,18 +30,7 @@ import gov.redhawk.model.sca.impl.CorbaObjWrapperImpl;
 import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SilentJob;
-
 import java.util.Collection;
-
-import mil.jpeojtrs.sca.dcd.DcdDocumentRoot;
-import mil.jpeojtrs.sca.dcd.DcdFactory;
-import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-import mil.jpeojtrs.sca.sad.SadDocumentRoot;
-import mil.jpeojtrs.sca.sad.SadFactory;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.util.DceUuidUtil;
-
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -61,28 +46,18 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.jacorb.naming.Name;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NameComponent;
-import org.omg.PortableServer.POA;
-import org.omg.PortableServer.POAPackage.ServantNotActive;
-import org.omg.PortableServer.POAPackage.WrongPolicy;
-
 import CF.Application;
 import CF.ApplicationHelper;
-import CF.FileManager;
-import CF.FileManagerHelper;
-import CF.FileManagerPOATie;
 import CF.LifeCyclePackage.InitializeError;
 import ExtendedCF.Sandbox;
 import ExtendedCF.SandboxHelper;
 import ExtendedCF.SandboxOperations;
-import ExtendedCF.SandboxPOATie;
 
 /**
  * <!-- begin-user-doc -->
@@ -198,6 +173,19 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	protected EClass eStaticClass() {
 		return ScaDebugPackage.Literals.LOCAL_SCA;
 	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * @since 4.0
+	 * <!-- end-user-doc -->
+	 * This is specialized for the more specific type known in this context.
+	 * @generated
+	 */
+	@Override
+	public void setObj(Sandbox newObj) {
+		super.setObj(newObj);
+	}
+
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -545,20 +533,16 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 
 				public void execute() {
-					waveform.setStatus(ScaPackage.Literals.SCA_WAVEFORM__DOM_MGR, new Status(IStatus.ERROR,
-					        ScaDebugPlugin.ID,
-					        "Component failed to initialize",
-					        e));
+					waveform.setStatus(ScaPackage.Literals.SCA_WAVEFORM__DOM_MGR, new Status(IStatus.ERROR, ScaDebugPlugin.ID,
+						"Component failed to initialize", e));
 				}
 			});
 		} catch (final SystemException e) {
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 
 				public void execute() {
-					waveform.setStatus(ScaPackage.Literals.SCA_WAVEFORM__DOM_MGR, new Status(IStatus.ERROR,
-					        ScaDebugPlugin.ID,
-					        "Component failed to initialize",
-					        e));
+					waveform.setStatus(ScaPackage.Literals.SCA_WAVEFORM__DOM_MGR, new Status(IStatus.ERROR, ScaDebugPlugin.ID,
+						"Component failed to initialize", e));
 				}
 			});
 		}
@@ -592,7 +576,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 */
 	public void init(Sandbox sandboxRef, LocalFileManager fileManagerRef, LocalScaWaveform sandboxWaveformRef, LocalScaDeviceManager sandboxDeviceManagerRef, NotifyingNamingContext newRootContext) {
 		// END GENERATED CODE
-	    setObj(sandboxRef);
+		setObj(sandboxRef);
 		setRootContext(newRootContext);
 		setFileManager(fileManagerRef);
 		setSandboxWaveform(sandboxWaveformRef);
@@ -616,7 +600,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 */
 	public void dispose() {
 		// END GENERATED CODE
-	    super.dispose();
+		super.dispose();
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this.launchListener);
 		ScaModelCommand.execute(this, new ScaModelCommand() {
 
@@ -639,7 +623,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 			session = null;
 		}
 		sandbox = null;
-		
+
 		// BEGIN GENERATED CODE
 	}
 

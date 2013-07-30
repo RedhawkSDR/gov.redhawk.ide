@@ -23,6 +23,7 @@ import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+
 import CF.DataType;
 import CF.Resource;
 import CF.ResourceFactoryPackage.CreateResourceFailure;
