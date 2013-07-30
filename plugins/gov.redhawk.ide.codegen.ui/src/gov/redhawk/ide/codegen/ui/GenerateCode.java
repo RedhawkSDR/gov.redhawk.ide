@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.CancellationException;
 
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -153,7 +154,7 @@ public class GenerateCode {
 			}
 
 			final SubMonitor progress = SubMonitor.convert(monitor, "Generating component code", GENERATE_CODE_WORK + ADD_BUILDER_WORK + ADD_BUILDER_WORK
-			        + REFRESH_WORKSPACE_WORK);
+				+ REFRESH_WORKSPACE_WORK);
 
 			final SoftPkg softPkg = (SoftPkg) impls.get(0).eContainer();
 			final IProject project = ModelUtil.getProject(softPkg);
@@ -197,7 +198,7 @@ public class GenerateCode {
 					updateCRCs(settings, mapping);
 				} catch (final IOException e) {
 					retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID, "Problem while generating CRCs for implementation "
-					        + settings.getName(), e));
+						+ impl.getId(), e));
 				}
 
 				if (progress.isCanceled()) {
@@ -270,15 +271,15 @@ public class GenerateCode {
 	 * @return The status of any problems encountered while generating the implementation
 	 */
 	protected IStatus generateImplementation(final Implementation impl, final ImplementationSettings settings, final IProgressMonitor monitor,
-	        final SoftPkg softpkg, final List<FileToCRCMap> crcMap, boolean openEditor) {
+		final SoftPkg softpkg, final List<FileToCRCMap> crcMap, boolean openEditor) {
 		if (settings == null) {
 			return new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to find settings (wavedev) for " + impl.getId()
-			        + ", skipping generation");
+				+ ", skipping generation");
 		}
 
 		final String implId = impl.getId();
-		final MultiStatus retStatus = new MultiStatus(RedhawkCodegenUiActivator.PLUGIN_ID, IStatus.OK, "Problems while generating implementation "
-		        + implId, null);
+		final MultiStatus retStatus = new MultiStatus(RedhawkCodegenUiActivator.PLUGIN_ID, IStatus.OK, "Problems while generating implementation " + implId,
+			null);
 		final SubMonitor progress = SubMonitor.convert(monitor, 1);
 		progress.setTaskName("Generating implementation " + implId);
 
@@ -287,7 +288,7 @@ public class GenerateCode {
 			final ICodeGeneratorDescriptor codeGenDesc = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(codegenId);
 			if (codeGenDesc == null) {
 				retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID,
-				        "The code generator specified in the settings (wavedev) could not be found. Check your generator selection for the implementation"));
+					"The code generator specified in the settings (wavedev) could not be found. Check your generator selection for the implementation"));
 				return retStatus;
 			}
 
@@ -319,64 +320,63 @@ public class GenerateCode {
 				}
 
 				// Confirm files to generate
-				final String[] files = this.verifyGeneration(generator, settings, softpkg);
-
-				if (files != null) {
-					final IFile mainFile = generator.getDefaultFile(impl, settings);
-					openEditor = openEditor && (mainFile == null || !mainFile.exists());
-
-					status = generator.generate(settings, impl, genConsole.getOutStream(), genConsole.getErrStream(), progress.newChild(1), files,
-					        generator.shouldGenerate(), crcMap);
-					if (!status.isOK()) {
-						retStatus.add(status);
-						if (status.getSeverity() == IStatus.ERROR) {
-							return retStatus;
-						}
-					}
-
-					// Update last generated date
-					PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-						public void run() {
-							final WaveDevSettings wavedev = CodegenUtil.loadWaveDevSettings(softpkg);
-							PropertyUtil.setLastGenerated(wavedev, settings, new Date(System.currentTimeMillis()));
-						}
-					});
-
-					if (openEditor && (mainFile != null) && mainFile.exists()) {
-						progress.subTask("Opening editor for main file");
-
-						// Open the selected editor
-						final UIJob openJob = new UIJob("Open editor") {
-							@Override
-							public IStatus runInUIThread(final IProgressMonitor monitor) {
-								try {
-									IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), mainFile, true);
-								} catch (final PartInitException p) {
-									return new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to open main file for editing.");
-								}
-								return new Status(IStatus.OK, RedhawkCodegenUiActivator.PLUGIN_ID, "");
-							}
-						};
-						openJob.setPriority(Job.SHORT);
-						openJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
-						openJob.setSystem(false);
-						openJob.setUser(true);
-						openJob.schedule();
-					}
-
-					if (retStatus.isOK()) {
-						return new Status(IStatus.OK, RedhawkCodegenActivator.PLUGIN_ID, "Succeeded generating code for implementation");
-					}
-				} else {
+				final String[] files;
+				try {
+					files = this.verifyGeneration(generator, settings, softpkg);
+				} catch (CancellationException e) {
 					retStatus.add(new Status(IStatus.CANCEL, RedhawkCodegenActivator.PLUGIN_ID, "User cancelled code generation"));
+					return retStatus;
 				}
-				 
+				final IFile mainFile = generator.getDefaultFile(impl, settings);
+				openEditor = openEditor && (mainFile == null || !mainFile.exists());
+
+				status = generator.generate(settings, impl, genConsole.getOutStream(), genConsole.getErrStream(), progress.newChild(1), files,
+					generator.shouldGenerate(), crcMap);
+				if (!status.isOK()) {
+					retStatus.add(status);
+					if (status.getSeverity() == IStatus.ERROR) {
+						return retStatus;
+					}
+				}
+
+				// Update last generated date
+				final WaveDevSettings wavedev = CodegenUtil.loadWaveDevSettings(softpkg);
+				PropertyUtil.setLastGenerated(wavedev, settings, new Date(System.currentTimeMillis()));
+
+				if (openEditor && (mainFile != null) && mainFile.exists()) {
+					progress.subTask("Opening editor for main file");
+
+					// Open the selected editor
+					final UIJob openJob = new UIJob("Open editor") {
+						@Override
+						public IStatus runInUIThread(final IProgressMonitor monitor) {
+							try {
+								IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), mainFile, true);
+							} catch (final PartInitException p) {
+								return new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to open main file for editing.");
+							}
+							return new Status(IStatus.OK, RedhawkCodegenUiActivator.PLUGIN_ID, "");
+						}
+					};
+					openJob.setPriority(Job.SHORT);
+					openJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
+					openJob.setSystem(false);
+					openJob.setUser(true);
+					openJob.schedule();
+				}
+
+				if (retStatus.isOK()) {
+					return new Status(IStatus.OK, RedhawkCodegenActivator.PLUGIN_ID, "Succeeded generating code for implementation");
+				}
+
 			} catch (final CoreException e) {
 				retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenActivator.PLUGIN_ID, "Unexpected error", e));
 			}
 		} else {
-			retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID,
-			                "No code generator is specified in the settings (wavedev). Code generation was skipped for the implementation. Check your generator selection for the implementation."));
+			retStatus.add(new Status(
+				IStatus.WARNING,
+				RedhawkCodegenActivator.PLUGIN_ID,
+				"No code generator is specified in the settings (wavedev). Code generation was skipped for the implementation. Check your generator selection for the implementation."));
 		}
 
 		return retStatus;
@@ -394,8 +394,8 @@ public class GenerateCode {
 	 * @throws CoreException A problem occurs while determining which files to generate
 	 */
 	protected String[] verifyGeneration(final IScaComponentCodegen generator, final ImplementationSettings implSettings, final SoftPkg softpkg)
-	        throws CoreException {
-		this.filesToBeGenerated = new String[0];
+		throws CoreException {
+		this.filesToBeGenerated = null;
 
 		final IResource res = ModelUtil.getResource(softpkg);
 		final IProject project = res.getProject();
@@ -424,11 +424,12 @@ public class GenerateCode {
 				}
 			}
 		} catch (final CoreException e1) {
-			RedhawkCodegenUiActivator.getDefault().getLog()
-			        .log(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to get the last generated date."));
+			RedhawkCodegenUiActivator.getDefault().getLog().log(
+				new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to get the last generated date."));
 		}
 
 		if (generator.shouldGenerate()) {
+			final boolean [] abort = {false};
 			while (!this.generationConfirmed) {
 				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
@@ -449,11 +450,14 @@ public class GenerateCode {
 							GenerateCode.this.filesToBeGenerated = dialog.getFilesToGenerate();
 
 						} else {
-							GenerateCode.this.filesToBeGenerated = null;
+							abort[0] = true;
 						}
 					}
 
 				});
+				if (abort[0]) {
+					throw new CancellationException();
+				}
 			}
 		}
 
@@ -556,12 +560,12 @@ public class GenerateCode {
 		// Wavedev checks
 		if (waveDev == null) {
 			retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID,
-			        "Unable to find project settings (wavedev) file. Cannot generate code."));
+				"Unable to find project settings (wavedev) file. Cannot generate code."));
 		} else {
 			for (final Implementation impl : impls) {
 				if (!waveDev.getImplSettings().containsKey(impl.getId())) {
 					retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to find settings in wavedev file for implementation "
-					        + impl.getId()));
+						+ impl.getId()));
 				}
 			}
 		}

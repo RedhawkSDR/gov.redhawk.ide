@@ -49,6 +49,7 @@ public class GenerateFilesDialog extends Dialog {
 	private CheckboxTreeViewer v = null;
 	/** The implementation settings for these generated file **/
 	private String name = null;
+	private boolean generateAll;
 
 	public GenerateFilesDialog(final Shell parentShell, final HashMap<String, Boolean> generateFiles, final String name) {
 		super(parentShell);
@@ -96,6 +97,7 @@ public class GenerateFilesDialog extends Dialog {
 
 				// If the All button is selected, save the currently selected
 				// files, then enable all of them
+				generateAll = button.getSelection();
 				if (button.getSelection()) {
 					GenerateFilesDialog.this.filesToGenerate.clear();
 					for (final Object fileName : GenerateFilesDialog.this.v.getCheckedElements()) {
@@ -221,6 +223,9 @@ public class GenerateFilesDialog extends Dialog {
 	 * @return list of filenames to be generated
 	 */
 	public String[] getFilesToGenerate() {
+		if (generateAll) {
+			return null;
+		}
 		return this.filesToGenerate.toArray(new String[this.filesToGenerate.size()]);
 	}
 }
