@@ -57,12 +57,15 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -141,9 +144,12 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		final Label label = this.toolkit.createLabel(this, "Generator:");
 		label.setForeground(this.toolkit.getColors().getColor(IFormColors.TITLE));
 		this.generatorViewer = new ComboViewer(this, SWT.SINGLE | SWT.READ_ONLY | SWT.DROP_DOWN);
-		// Disable for now in support of ticket #209
-		this.generatorViewer.getCombo().setEnabled(false);
-
+		this.generatorViewer.getControl().addListener(SWT.MouseVerticalWheel, new Listener() {
+			
+			public void handleEvent(Event event) {
+				event.doit = false;
+			}
+		});
 		this.generatorViewer.setContentProvider(new ArrayContentProvider());
 		this.generatorViewer.setLabelProvider(new LabelProvider() {
 			@Override
@@ -161,8 +167,16 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 				if (desc == null) {
 					BaseGeneratorPropertiesComposite.this.templateViewer.setInput(Collections.EMPTY_LIST);
 				} else {
-					BaseGeneratorPropertiesComposite.this.templateViewer.setInput(RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry()
-					        .findTemplatesByCodegen(desc.getId()));
+					ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(desc.getId());
+					
+					if (templates != null) {
+						BaseGeneratorPropertiesComposite.this.templateViewer.setInput(templates);
+						if (templates.length > 0) {
+							BaseGeneratorPropertiesComposite.this.templateViewer.setSelection(new StructuredSelection(templates[0]));
+						}
+					} else {
+						BaseGeneratorPropertiesComposite.this.templateViewer.setInput(Collections.EMPTY_LIST);
+					}
 				}
 			}
 
@@ -193,6 +207,13 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		label.setForeground(this.toolkit.getColors().getColor(IFormColors.TITLE));
 		label.setLayoutData(GridDataFactory.fillDefaults().align(SWT.LEFT, SWT.TOP).create());
 		this.templateViewer = new ComboViewer(this, SWT.READ_ONLY | SWT.SINGLE | SWT.DROP_DOWN);
+		this.templateViewer.getControl().addListener(SWT.MouseVerticalWheel, new Listener() {
+
+			public void handleEvent(Event event) {
+				event.doit = false;
+			}
+
+		});
 		this.templateViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().span(2, 1).grab(true, false).create());
 		this.templateViewer.getControl().setToolTipText("Template for the code generator");
 		this.templateViewer.setContentProvider(new ArrayContentProvider());
@@ -218,10 +239,8 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 					// - this gets called when you actually click the dropdown,
 					//   here we actually want to change the properties
 					if (!desc.getId().equals(BaseGeneratorPropertiesComposite.this.implSettings.getTemplate())) {
-						final Command command = SetCommand.create(dom,
-						        BaseGeneratorPropertiesComposite.this.implSettings,
-						        CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__TEMPLATE,
-						        desc.getId());
+						final Command command = SetCommand.create(dom, BaseGeneratorPropertiesComposite.this.implSettings,
+							CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__TEMPLATE, desc.getId());
 						dom.getCommandStack().execute(command);
 
 						// Change the enablement of the port map if the new
@@ -284,8 +303,8 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 				final boolean enabled = BaseGeneratorPropertiesComposite.this.portMapComposite.isEnabled();
 				BaseGeneratorPropertiesComposite.this.portMapComposite.getRemovePropertyButton().setEnabled(enabled && !event.getSelection().isEmpty());
 				BaseGeneratorPropertiesComposite.this.portMapComposite.getEditPropertyButton().setEnabled(enabled && !event.getSelection().isEmpty());
-				BaseGeneratorPropertiesComposite.this.portMapComposite.getAddPropertyButton().setEnabled(enabled
-				        && BaseGeneratorPropertiesComposite.this.getUnmappedRepIds(null).size() > 0);
+				BaseGeneratorPropertiesComposite.this.portMapComposite.getAddPropertyButton().setEnabled(
+					enabled && BaseGeneratorPropertiesComposite.this.getUnmappedRepIds(null).size() > 0);
 			}
 		});
 	}
@@ -318,11 +337,8 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		return (ITemplateDesc) ((IStructuredSelection) this.templateViewer.getSelection()).getFirstElement();
 	}
 
-	public void bind(final ArrayList<Binding> bindList,
-	        final EditingDomain editingDomain,
-	        final DataBindingContext context,
-	        final Implementation impl,
-	        final ImplementationSettings implSettings) {
+	public void bind(final ArrayList<Binding> bindList, final EditingDomain editingDomain, final DataBindingContext context, final Implementation impl,
+		final ImplementationSettings implSettings) {
 		this.impl = impl;
 		this.implSettings = implSettings;
 		this.context = context;
@@ -331,20 +347,13 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		preBind(this.impl, this.implSettings, bindList);
 
 		bindList.add(context.bindValue(ViewersObservables.observeSingleSelection(this.generatorViewer),
-		        EMFEditObservables.observeValue(editingDomain, implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__GENERATOR_ID),
-		        createGeneratorTargetToModel(),
-		        createGeneratorModelToTarget()));
-		bindList.add(FormEntryBindingFactory.bind(context,
-		        this.outputDirEntry,
-		        editingDomain,
-		        CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR,
-		        implSettings,
-		        null,
-		        null));
+			EMFEditObservables.observeValue(editingDomain, implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__GENERATOR_ID),
+			createGeneratorTargetToModel(), createGeneratorModelToTarget()));
+		bindList.add(FormEntryBindingFactory.bind(context, this.outputDirEntry, editingDomain, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR,
+			implSettings, null, null));
 		bindList.add(context.bindValue(ViewersObservables.observeSingleSelection(this.templateViewer),
-		        EMFEditObservables.observeValue(editingDomain, implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__TEMPLATE),
-		        createTemplateTargetToModel(),
-		        createTemplateModelToTarget()));
+			EMFEditObservables.observeValue(editingDomain, implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__TEMPLATE),
+			createTemplateTargetToModel(), createTemplateModelToTarget()));
 
 		this.portMapComposite.setEnabled(this.getEnablePortMap());
 
@@ -486,10 +495,8 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		final GeneratorDialog dialog = new GeneratorDialog(getShell(), "Add Generator Mapping", null, repIds, this.impl.getProgrammingLanguage().getName());
 		if (dialog.open() == Window.OK) {
 			final EObject ref = dialog.getValue();
-			this.domain.getCommandStack().execute(AddCommand.create(this.domain,
-			        this.implSettings,
-			        CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__PORT_GENERATORS,
-			        ref));
+			this.domain.getCommandStack().execute(
+				AddCommand.create(this.domain, this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__PORT_GENERATORS, ref));
 		}
 	}
 
@@ -503,10 +510,8 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		final GeneratorDialog dialog = new GeneratorDialog(getShell(), "Edit Generator Mapping", curProp, repIds, this.impl.getProgrammingLanguage().getName());
 		if (dialog.open() == Window.OK) {
 			final PortRepToGeneratorMap ref = (PortRepToGeneratorMap) dialog.getValue();
-			this.domain.getCommandStack().execute(SetCommand.create(this.domain,
-			        curProp,
-			        CodegenPackage.Literals.PORT_REP_TO_GENERATOR_MAP__GENERATOR,
-			        ref.getGenerator()));
+			this.domain.getCommandStack().execute(
+				SetCommand.create(this.domain, curProp, CodegenPackage.Literals.PORT_REP_TO_GENERATOR_MAP__GENERATOR, ref.getGenerator()));
 		}
 	}
 
@@ -515,10 +520,8 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 	 */
 	private void handleRemovePortMapping() {
 		final PortRepToGeneratorMap curProp = (PortRepToGeneratorMap) ((IStructuredSelection) this.portMapComposite.getPortMapViewer().getSelection()).getFirstElement();
-		this.domain.getCommandStack().execute(RemoveCommand.create(this.domain,
-		        this.implSettings,
-		        CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__PORT_GENERATORS,
-		        curProp));
+		this.domain.getCommandStack().execute(
+			RemoveCommand.create(this.domain, this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__PORT_GENERATORS, curProp));
 	}
 
 	/**
@@ -533,7 +536,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 	private HashSet<String> getUnmappedRepIds(final String currentRep) {
 		final HashSet<String> repIds = new HashSet<String>();
 		final Descriptor descriptor = ((SoftPkg) this.impl.eContainer()).getDescriptor();
-		
+
 		if ((descriptor != null) && (descriptor.getComponent() != null)) {
 			final Ports ports = descriptor.getComponent().getComponentFeatures().getPorts();
 
