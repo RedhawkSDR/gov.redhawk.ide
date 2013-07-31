@@ -25,8 +25,7 @@ import org.eclipse.gef.Tool;
 import org.eclipse.gmf.runtime.diagram.ui.internal.services.palette.PaletteToolEntry;
 import org.eclipse.gmf.runtime.diagram.ui.tools.CreationTool;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * @since 4.1
@@ -41,11 +40,18 @@ public class SpdToolEntry extends PaletteToolEntry {
 	private String spdId;
 
 	private String implID;
+	
+	/**
+	 * @since 5.0
+	 */
+	public static ImageDescriptor getDefaultIcon() {
+		return SadElementTypes.getImageDescriptor(SadElementTypes.SadComponentPlacement_3001);
+	}
 
 	/**
 	 * @since 5.0
 	 */
-	public SpdToolEntry(String name, String description, URI spdURI, String id, String implID) {
+	public SpdToolEntry(String name, String description, URI spdURI, String id, String implID, ImageDescriptor icon) {
 		super(null, name, null);
 		if (description == null) {
 			description = MessageFormat.format("Create a new instance of the component \"{0}\".", name);
@@ -53,18 +59,7 @@ public class SpdToolEntry extends PaletteToolEntry {
 		this.setDescription(description);
 		this.elementType = SadElementTypes.SadComponentPlacement_3001;
 		this.spdUri = spdURI;
-		if (Display.getCurrent() == null) { 
-			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					setSmallIcon(SadElementTypes.getImageDescriptor(SadElementTypes.SadComponentPlacement_3001));
-				}
-				
-			});
-		} else {
-			setSmallIcon(SadElementTypes.getImageDescriptor(SadElementTypes.SadComponentPlacement_3001));
-		}
+		setSmallIcon(icon);
 		
 		setLargeIcon(getSmallIcon());
 
@@ -77,8 +72,15 @@ public class SpdToolEntry extends PaletteToolEntry {
 		}
 	}
 
+	/**
+	 * @since 5.0
+	 */
+	public SpdToolEntry(final SoftPkg spd, ImageDescriptor icon) {
+		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, icon);
+	}
+	
 	public SpdToolEntry(final SoftPkg spd) {
-		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null);
+		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, getDefaultIcon());
 	}
 
 	@Override

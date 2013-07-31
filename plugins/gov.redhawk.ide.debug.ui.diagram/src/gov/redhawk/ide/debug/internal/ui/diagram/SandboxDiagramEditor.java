@@ -38,9 +38,12 @@ import org.eclipse.gef.palette.PaletteDrawer;
 import org.eclipse.gef.palette.PaletteEntry;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.palette.PaletteStack;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
 
 public class SandboxDiagramEditor extends CustomDiagramEditor {
+	
+	private static final ImageDescriptor TOOL_ICON = SpdToolEntry.getDefaultIcon();
 
 	private java.beans.PropertyChangeListener listener = new PropertyChangeListener() {
 
@@ -178,10 +181,10 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 	private List<PaletteEntry> createPaletteEntries(ComponentDesc desc) {
 		List<PaletteEntry> retVal = new ArrayList<PaletteEntry>(desc.getImplementationIds().size());
 		if (desc.getImplementationIds().size() == 1) {
-			retVal.add(new SpdToolEntry(desc.getName(), desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(), desc.getImplementationIds().get(0)));
+			retVal.add(new SpdToolEntry(desc.getName(), desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(), desc.getImplementationIds().get(0), TOOL_ICON));
 		} else {
 			for (String implID : desc.getImplementationIds()) {
-				retVal.add(new SpdToolEntry(desc.getName() + " (" + implID + ")", desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(), implID));
+				retVal.add(new SpdToolEntry(desc.getName() + " (" + implID + ")", desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(), implID, TOOL_ICON));
 			}
 		}
 		return retVal;
