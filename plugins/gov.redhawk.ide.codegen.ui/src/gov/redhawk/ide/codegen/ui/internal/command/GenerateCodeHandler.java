@@ -187,7 +187,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 								implSettings.setTemplate(newTemplate.getId());
 								try {
 									implSettings.eResource().save(null);
-									return true;
+									break;
 								} catch (IOException e) {
 									StatusManager.getManager().handle(
 										new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to update code generator.", e),
@@ -195,7 +195,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 									return false;
 								}
 							case SWT.NO:
-								return true;
+								break;
 							default:
 								return false;
 							}
@@ -203,12 +203,16 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 							return false;
 						}
 					} else {
-						return true;
+						continue;
 					}
+				} else {
+					return false;
 				}
+			} else {
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 	/**
