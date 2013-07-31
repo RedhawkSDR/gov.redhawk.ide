@@ -10,9 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.codegen.internal;
 
+import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
 import gov.redhawk.ide.codegen.IPropertyDescriptor;
 import gov.redhawk.ide.codegen.IScaComponentCodegenTemplate;
 import gov.redhawk.ide.codegen.ITemplateDesc;
+import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,9 +55,13 @@ public class TemplateDescriptor implements ITemplateDesc {
 	private final IConfigurationElement element;
 	private final String delegatePortGeneration;
 	private final String[] componentTypes;
+	private final boolean deprecated;
+	private final String newTemplateID;
 
 	public TemplateDescriptor(final IConfigurationElement element) {
 		this.element = element;
+		this.deprecated = Boolean.valueOf(element.getAttribute("deprecated"));
+		this.newTemplateID = element.getAttribute("newTemplateID");
 		this.hasSettings = element.getAttribute(TemplateDescriptor.ATTR_HAS_SETTINGS);
 		this.id = element.getAttribute(TemplateDescriptor.ATTR_ID);
 		this.name = element.getAttribute(TemplateDescriptor.ATTR_NAME);
@@ -75,7 +81,7 @@ public class TemplateDescriptor implements ITemplateDesc {
 			tempDesc.add(new PropertyDescriptor(elem));
 		}
 		this.propertyDescs = tempDesc.toArray(new IPropertyDescriptor[tempDesc.size()]);
-		
+
 		final List<String> tempCt = new ArrayList<String>();
 		for (final IConfigurationElement elem : element.getChildren(TemplateDescriptor.ELM_COMPONENT_TYPE)) {
 			tempCt.add(elem.getAttribute(ELM_COMPONENT_TYPE_ATTR_TYPE));
@@ -165,11 +171,11 @@ public class TemplateDescriptor implements ITemplateDesc {
 	}
 
 	/**
-     * @since 7.0
-     */
+	 * @since 7.0
+	 */
 	public boolean delegatePortGeneration() {
-	    return Boolean.parseBoolean(this.delegatePortGeneration);
-    }
+		return Boolean.parseBoolean(this.delegatePortGeneration);
+	}
 
 	/**
 	 * @since 7.0
@@ -186,18 +192,34 @@ public class TemplateDescriptor implements ITemplateDesc {
 	}
 
 	/**
-     * @since 8.0
-     */
+	 * @since 8.0
+	 */
 	public boolean isSelectable() {
-	    return Boolean.parseBoolean(this.selectable);
-    }
-	
+		return Boolean.parseBoolean(this.selectable);
+	}
+
 	/**
 	 * @since 9.0
 	 */
 	public boolean supportsComponentType(String componentType) {
 		final int i = Arrays.binarySearch(this.componentTypes, componentType);
 		return (i >= 0);
+	}
+
+	public boolean isDeprecated() {
+		return deprecated;
+	}
+
+	public String getNewTemplateID() {
+		return this.newTemplateID;
+	}
+
+	public ITemplateDesc getNewTemplate() {
+		return RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplate(this.newTemplateID);
+	}
+
+	public ICodeGeneratorDescriptor getCodegen() {
+		return RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(codegenId);
 	}
 
 }

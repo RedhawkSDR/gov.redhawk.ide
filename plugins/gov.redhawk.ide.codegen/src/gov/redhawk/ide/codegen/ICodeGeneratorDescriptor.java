@@ -14,7 +14,7 @@ package gov.redhawk.ide.codegen;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICodeGeneratorDescriptor extends Comparable<ICodeGeneratorDescriptor> {
 	/**

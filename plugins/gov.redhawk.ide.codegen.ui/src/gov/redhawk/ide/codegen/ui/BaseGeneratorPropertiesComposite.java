@@ -57,7 +57,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -168,15 +167,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 					BaseGeneratorPropertiesComposite.this.templateViewer.setInput(Collections.EMPTY_LIST);
 				} else {
 					ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(desc.getId());
-					
-					if (templates != null) {
-						BaseGeneratorPropertiesComposite.this.templateViewer.setInput(templates);
-						if (templates.length > 0) {
-							BaseGeneratorPropertiesComposite.this.templateViewer.setSelection(new StructuredSelection(templates[0]));
-						}
-					} else {
-						BaseGeneratorPropertiesComposite.this.templateViewer.setInput(Collections.EMPTY_LIST);
-					}
+					BaseGeneratorPropertiesComposite.this.templateViewer.setInput(templates);
 				}
 			}
 

@@ -15,6 +15,7 @@ import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.codegen.FileToCRCMap;
 import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
 import gov.redhawk.ide.codegen.IScaComponentCodegen;
+import gov.redhawk.ide.codegen.ITemplateDesc;
 import gov.redhawk.ide.codegen.ImplementationSettings;
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.ide.codegen.WaveDevSettings;
@@ -563,9 +564,21 @@ public class GenerateCode {
 				"Unable to find project settings (wavedev) file. Cannot generate code."));
 		} else {
 			for (final Implementation impl : impls) {
-				if (!waveDev.getImplSettings().containsKey(impl.getId())) {
+				ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
+				if (implSettings == null) {
 					retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to find settings in wavedev file for implementation "
-						+ impl.getId()));
+							+ impl.getId()));
+				} else {
+					String templateId = implSettings.getTemplate();
+					ITemplateDesc template = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplate(templateId);
+					if (template != null) {
+						if (template.isDeprecated()) {
+							retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Code Generator Template is deprecated: " + templateId));
+						}
+					} else {
+						retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to find code generator template"
+								+ templateId));
+					}
 				}
 			}
 		}

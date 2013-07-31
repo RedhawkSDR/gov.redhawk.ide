@@ -11,12 +11,20 @@
 package gov.redhawk.ide.codegen.ui.internal.command;
 
 import gov.redhawk.ide.codegen.CodegenUtil;
+import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
+import gov.redhawk.ide.codegen.ITemplateDesc;
+import gov.redhawk.ide.codegen.ImplementationSettings;
+import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.ide.codegen.ui.GenerateCode;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
+import gov.redhawk.model.sca.util.ModelUtil;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import mil.jpeojtrs.sca.prf.PrfPackage;
@@ -34,12 +42,16 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -51,6 +63,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	private GenerateCode codeGenerator = null;
@@ -60,18 +73,18 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	}
 
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		
+
 		// GenerateCode Class simply takes an object to generate from.  It should be either a list of implementations, an implementation or IFile
-		
+
 		// If the user used a context menu, generate code on the selection(s)
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
-		
+
 		// for each of the elements in the selection
 		// if its empty or null then its the editor (IFile)
 		// if its not empty / null then it should be either an Implementation or an IFile.
 		// We need to get the project so we can save related resources.
 		// Fom the IFile its easy, from the implementation we need to get the EMF Resource and get the IFile from there
-		
+
 		// If the menu selection is empty then Generate button was pressed within the editor 
 		if (selection == null || selection.isEmpty()) {
 			final IEditorPart editor = HandlerUtil.getActiveEditor(event);
@@ -85,10 +98,10 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 					}
 				}
 			}
-		} else {  // The selection was made either via the right click menu from the Project Explorer, or in the Implementations tab.
+		} else { // The selection was made either via the right click menu from the Project Explorer, or in the Implementations tab.
 			if (selection instanceof IStructuredSelection) {
 				final IStructuredSelection ss = (IStructuredSelection) selection;
-				
+
 				for (Object obj : ss.toList()) {
 					if (obj instanceof IFile && isSpdFile((IFile) obj)) {
 						saveAndGenerate(obj, ((IFile) obj).getProject(), HandlerUtil.getActiveShell(event));
@@ -96,22 +109,21 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 						Implementation impl = (Implementation) obj;
 						String platformURI = impl.eResource().getURI().toPlatformString(true);
 						IResource spdFile = ResourcesPlugin.getWorkspace().getRoot().findMember(platformURI);
-						
+
 						if (spdFile instanceof IFile && isSpdFile((IFile) spdFile)) {
-							saveAndGenerate(impl, ((IFile) spdFile).getProject(), HandlerUtil.getActiveShell(event));								
+							saveAndGenerate(impl, ((IFile) spdFile).getProject(), HandlerUtil.getActiveShell(event));
 						}
 					}
 				}
 				return null;
 			}
 		}
-		
+
 		// If we get here, somehow the generate code handler was triggered from somewhere it shouldn't be - log this
 		RedhawkCodegenUiActivator.logError("Generate code handler was triggered without a valid selection", null);
 		return null;
 	}
 
-	
 	/**
 	 * Attempts to save the project associated with the object to generate if there are unsaved changes.  The object to generate 
 	 * is then passed into the GenerateCode class for code generation.
@@ -121,14 +133,84 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	 * @return True if code generation has been attempted.
 	 */
 	private boolean saveAndGenerate(Object objectToGenerate, IProject parentProject, Shell shell) {
-		if (relatedResourcesSaved(shell, parentProject)) {
+		if (relatedResourcesSaved(shell, parentProject) && checkDeprecated(objectToGenerate, shell)) {
 			this.codeGenerator.generate(objectToGenerate);
 			return true;
 		}
 		return false;
 	}
-	
-	
+
+	private boolean checkDeprecated(Object selectedObj, Shell parent) {
+		if (selectedObj instanceof EList) {
+			return checkImpls(parent, (List<Implementation>) selectedObj);
+		} else if (selectedObj instanceof Implementation) {
+			final List<Implementation> impls = new ArrayList<Implementation>();
+			impls.add((Implementation) selectedObj);
+			return checkImpls(parent, impls);
+		} else if (selectedObj instanceof IFile) {
+			// The selected object should be an IFile for the SPD
+			final IFile file = (IFile) selectedObj;
+			final URI spdURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
+			final SoftPkg softpkg = ModelUtil.loadSoftPkg(spdURI);
+			return checkImpls(parent, softpkg.getImplementation());
+		}
+		return false;
+	}
+
+	private boolean checkImpls(Shell parent, List<Implementation> impls) {
+		if (impls == null || impls.isEmpty()) {
+			return false;
+		}
+
+		final SoftPkg softPkg = (SoftPkg) impls.get(0).eContainer();
+		final WaveDevSettings waveDev = CodegenUtil.loadWaveDevSettings(softPkg);
+		for (final Implementation impl : impls) {
+			ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
+			if (implSettings != null) {
+				String templateId = implSettings.getTemplate();
+				ITemplateDesc template = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplate(templateId);
+				if (template != null) {
+					ICodeGeneratorDescriptor generator = template.getCodegen();
+					if (template.isDeprecated()) {
+						ITemplateDesc newTemplate = template.getNewTemplate();
+						if (newTemplate != null) {
+							ICodeGeneratorDescriptor newGenerator = newTemplate.getCodegen();
+							String message = "WARNING: The code generator '" + generator.getName() + "' with template '" + template.getName()
+								+ "' is deprecated.\n\n" + "Yes, update to use new template and generator\n" + "No, continue to use the existing generator\n"
+								+ "Cancel, abort generation.";
+							MessageBox dialog = new MessageBox(parent, SWT.ICON_WARNING | SWT.YES | SWT.NO | SWT.CANCEL);
+							dialog.setText("Deprecated Generator");
+							dialog.setMessage(message);
+							switch (dialog.open()) {
+							case SWT.YES:
+								implSettings.setGeneratorId(newGenerator.getId());
+								implSettings.setTemplate(newTemplate.getId());
+								try {
+									implSettings.eResource().save(null);
+									return true;
+								} catch (IOException e) {
+									StatusManager.getManager().handle(
+										new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to update code generator.", e),
+										StatusManager.LOG | StatusManager.SHOW);
+									return false;
+								}
+							case SWT.NO:
+								return true;
+							default:
+								return false;
+							}
+						} else {
+							return false;
+						}
+					} else {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Tries to save the resources which are in the same project as the editorFile provided.  The user is prompted to save
 	 * if any related unsaved resources are present.  
@@ -137,53 +219,53 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	 * @return True if everything saved correctly.  False otherwise.
 	 */
 	private boolean relatedResourcesSaved(final Shell shell, final IProject parentProject) {
-		
+
 		final Set<ISaveablePart> dirtyPartsSet = getRelatedDirtyParts(parentProject);
-		
+
 		// If there were unsaved parts in this project.
-		if (!dirtyPartsSet.isEmpty()) { 
+		if (!dirtyPartsSet.isEmpty()) {
 
 			// Prompt the user that they MUST save before generation
-			if (MessageDialog.openQuestion(shell, "File Changed", 
-					"Resources in the project '" + parentProject.getName() + "' have unsaved changes.  Changes must be saved prior to code generation.\n\nDo you want to save these changes now?")) {
-				
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell); 
-				try {
-	                dialog.run(false, true, new IRunnableWithProgress() { 
-	                    public void run(IProgressMonitor monitor) { 
-	                        monitor.beginTask("Saving Resources ...", dirtyPartsSet.size()); 
+			if (MessageDialog.openQuestion(shell, "File Changed", "Resources in the project '" + parentProject.getName()
+				+ "' have unsaved changes.  Changes must be saved prior to code generation.\n\nDo you want to save these changes now?")) {
 
-	                        // Go through and save each of the parts that were previously identified.
-	                        for (ISaveablePart dirtyPart : dirtyPartsSet) {
-	                        	dirtyPart.doSave(monitor);
-	                        	monitor.worked(1);
-	                        	if (monitor.isCanceled()) {
-	                        		break;
-	                        	}
-	                        }
-	                        monitor.done(); 
-	                    } 
-	                });
-                } catch (InvocationTargetException e) {
-                	return false;	// There was an error during save, do not generate
-                } catch (InterruptedException e) {
-                	return false;	// The user canceled this save dialog.
-                }
-				
-				if (dialog.getProgressMonitor().isCanceled()) {
-					return false;	// The user has canceled another dialog which was passed our monitor.
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
+				try {
+					dialog.run(false, true, new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) {
+							monitor.beginTask("Saving Resources ...", dirtyPartsSet.size());
+
+							// Go through and save each of the parts that were previously identified.
+							for (ISaveablePart dirtyPart : dirtyPartsSet) {
+								dirtyPart.doSave(monitor);
+								monitor.worked(1);
+								if (monitor.isCanceled()) {
+									break;
+								}
+							}
+							monitor.done();
+						}
+					});
+				} catch (InvocationTargetException e) {
+					return false; // There was an error during save, do not generate
+				} catch (InterruptedException e) {
+					return false; // The user canceled this save dialog.
 				}
-				
-				return true;  // User saved all unsaved parts with no errors, generate code.
+
+				if (dialog.getProgressMonitor().isCanceled()) {
+					return false; // The user has canceled another dialog which was passed our monitor.
+				}
+
+				return true; // User saved all unsaved parts with no errors, generate code.
 			}
 
 			// User canceled the save dialog do not generate
 			return false;
 		}
-		
+
 		// Resources don't need to be saved 
 		return true;
-    }
+	}
 
 	/**
 	 * Returns any ISavableParts which are part of the same project as the given editor file.
@@ -191,8 +273,8 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	 * @return A set of dirty ISavableParts from the same project as the editorFile.
 	 */
 	private Set<ISaveablePart> getRelatedDirtyParts(final IProject project) {
-	    final Set<ISaveablePart> dirtyPartsSet = new HashSet<ISaveablePart>();
-		
+		final Set<ISaveablePart> dirtyPartsSet = new HashSet<ISaveablePart>();
+
 		// Go through each of the workbench windows pages
 		for (IWorkbenchPage page : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages()) {
 			// If the page contains at least one dirty editor 
@@ -210,8 +292,8 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 				}
 			}
 		}
-	    return dirtyPartsSet;
-    }
+		return dirtyPartsSet;
+	}
 
 	/**
 	 * Checks the file extension to see if it ends with the SpdPackage extension of ".spd.xml".  Returns false if file is null.  
@@ -237,29 +319,29 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 		// We check two things.
 		// 1.) If the user has right clicked on an item that is appropriate
 		// 2.) If not then we check the open active editor.
-		
+
 		// The highest priority check is the right click action.  If they have right clicked on something that object is the proper context
 		// so we check that first.
 		if (context.getVariable("activeMenuSelection") != null && context.getVariable("activeMenuSelection") instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) context.getVariable("activeMenuSelection");
-			
+
 			for (Object selection : ss.toList()) {
 				if (selection instanceof IFile && isSpdFile((IFile) selection) && waveDevFileExists((IFile) selection)) {
 					continue;
 				} else if (selection instanceof Implementation) {
 					Implementation impl = (Implementation) selection;
 					WaveDevSettings wavDev = CodegenUtil.getWaveDevSettings(impl);
-					
+
 					if (wavDev != null) {
 						continue;
 					}
 				}
-				
+
 				// One of the selections did not meet the tests above.
 				setBaseEnabled(false);
 				return;
 			}
-			
+
 			// If we made it through the for loop then all the objects passed.
 			setBaseEnabled(true);
 			return;
@@ -277,7 +359,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 				}
 			}
 		}
-		
+
 		// Set to false if none of the appropriate situations are met
 		setBaseEnabled(false);
 		return;

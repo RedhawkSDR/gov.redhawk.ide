@@ -14,12 +14,27 @@ package gov.redhawk.ide.codegen;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ITemplateDesc extends Comparable<ITemplateDesc> {
 	String getName();
 
 	String getDescription();
+	
+	/**
+	 * @since 9.2
+	 */
+	boolean isDeprecated();
+	
+	/**
+	 * @since 9.2
+	 */
+	String getNewTemplateID();
+	
+	/**
+	 * @since 9.2
+	 */
+	ITemplateDesc getNewTemplate();
 
 	String getContributingBundleID();
 
@@ -52,6 +67,11 @@ public interface ITemplateDesc extends Comparable<ITemplateDesc> {
 	 * @since 7.0
 	 */
 	public String getCodegenId();
+	
+	/**
+	 * @since 9.2
+	 */
+	public ICodeGeneratorDescriptor getCodegen();
 
 	/**
 	 * @since 7.0
