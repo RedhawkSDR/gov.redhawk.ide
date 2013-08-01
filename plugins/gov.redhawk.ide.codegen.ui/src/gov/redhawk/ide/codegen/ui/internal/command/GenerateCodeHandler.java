@@ -176,7 +176,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 						if (newTemplate != null) {
 							ICodeGeneratorDescriptor newGenerator = newTemplate.getCodegen();
 							String message = "WARNING: The code generator '" + generator.getName() + "' with template '" + template.getName()
-								+ "' is deprecated.\n\n" + "Yes, update to use new template and generator\n" + "No, continue to use the existing generator\n"
+								+ "' is deprecated.\n\n" + "Yes, update to use new template and generator.\n" + "No, continue to use the existing generator.\n"
 								+ "Cancel, abort generation.";
 							MessageBox dialog = new MessageBox(parent, SWT.ICON_WARNING | SWT.YES | SWT.NO | SWT.CANCEL);
 							dialog.setText("Deprecated Generator");
@@ -196,6 +196,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 								}
 							case SWT.NO:
 								break;
+							case SWT.CANCEL:
 							default:
 								return false;
 							}
