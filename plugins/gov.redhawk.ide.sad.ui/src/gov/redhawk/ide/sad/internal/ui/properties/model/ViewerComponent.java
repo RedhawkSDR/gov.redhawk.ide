@@ -42,6 +42,9 @@ public class ViewerComponent {
 		this.compInst = compInst;
 		this.sad = ScaEcoreUtils.getEContainerOfType(compInst, SoftwareAssembly.class);
 		spd = compInst.getPlacement().getComponentFileRef().getFile().getSoftPkg();
+		if (spd == null) {
+			return;
+		}
 		for (ValueListIterator<Object> i = spd.getPropertyFile().getProperties().getProperties().valueListIterator(); i.hasNext();) {
 			final Object value = i.next();
 			if (value instanceof AbstractProperty) {
