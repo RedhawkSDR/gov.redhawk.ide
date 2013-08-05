@@ -103,7 +103,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > {
 	public String getID() {
 		return def.getId();
 	}
-	
+
 	public boolean isAssemblyControllerProperty() {
 		SadComponentInstantiation compInst = getComponentInstantiation();
 		SoftwareAssembly sad = ScaEcoreUtils.getEContainerOfType(compInst, SoftwareAssembly.class);
@@ -116,6 +116,14 @@ public abstract class ViewerProperty< T extends AbstractProperty > {
 			}
 		}
 		return false;
+	}
+
+	public String resolveExternalID() {
+		if (this.externalID != null) {
+			return this.externalID;
+		} else {
+			return this.getID();
+		}
 	}
 
 }

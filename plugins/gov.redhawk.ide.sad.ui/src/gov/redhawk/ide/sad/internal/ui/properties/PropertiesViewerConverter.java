@@ -21,11 +21,16 @@ import gov.redhawk.model.sca.ScaSimpleProperty;
 import gov.redhawk.model.sca.ScaStructProperty;
 import gov.redhawk.model.sca.ScaStructSequenceProperty;
 import gov.redhawk.sca.internal.ui.properties.SequencePropertyValueWizard;
+import gov.redhawk.sca.sad.validation.DuplicateExternalPropertyIDContraint;
 import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
 import mil.jpeojtrs.sca.prf.StructValue;
+import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadFactory;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -55,10 +60,8 @@ public class PropertiesViewerConverter implements XViewerConverter {
 	 */
 	public void setInput(Control c, CellEditDescriptor ced, Object selObject) {
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId()) && selObject instanceof ViewerProperty< ? >) {
-			String value = labelProvider.getExternalValue(selObject);
-			if (value == null) {
-				value = ((ViewerProperty< ? >) selObject).getID();
-			}
+			ViewerProperty< ? > prop = ((ViewerProperty< ? >) selObject);
+			String value = getUniqueValue(prop);
 			setControlValue(c, value);
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
 			String value = labelProvider.getSadValue(selObject);
@@ -87,6 +90,20 @@ public class PropertiesViewerConverter implements XViewerConverter {
 			}
 			setControlValue(c, value);
 		}
+	}
+
+	private String getUniqueValue(ViewerProperty< ? > viewerProp) {
+		if (viewerProp.getExternalID() != null) {
+			return viewerProp.getExternalID();
+		}
+
+		ExternalProperty prop = SadFactory.eINSTANCE.createExternalProperty();
+		prop.setPropID(viewerProp.resolveExternalID());
+		SoftwareAssembly sad = ScaEcoreUtils.getEContainerOfType(viewerProp.getComponentInstantiation(), SoftwareAssembly.class);
+		for (int i = 1; !DuplicateExternalPropertyIDContraint.validateProperty(prop, sad); i++) {
+			prop.setPropID(viewerProp.getID() + "_" + i);
+		}
+		return prop.getPropID();
 	}
 
 	protected StructSequenceRef createRef(ScaStructSequenceProperty property) {

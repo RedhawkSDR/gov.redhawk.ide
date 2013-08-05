@@ -679,7 +679,7 @@ public class ViewerModelConverter {
 		ExternalProperties externalProperties = sad.getExternalProperties();
 		if (externalProperties != null) {
 			for (ExternalProperty p : externalProperties.getProperties()) {
-				if (p.getPropID().equals(prop.getID())) {
+				if (p.getCompRefID().equals(prop.getComponentInstantiation().getId()) && p.getPropID().equals(prop.getID())) {
 					return p;
 				}
 			}

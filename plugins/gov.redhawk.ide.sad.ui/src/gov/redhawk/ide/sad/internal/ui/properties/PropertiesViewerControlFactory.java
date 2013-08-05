@@ -16,7 +16,7 @@ import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSequenceProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSimpleProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceSimpleProperty;
-import gov.redhawk.model.sca.ScaStructSequenceProperty;
+import gov.redhawk.sca.sad.validation.DuplicateExternalPropertyIDContraint;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +25,10 @@ import java.util.List;
 import mil.jpeojtrs.sca.prf.Enumeration;
 import mil.jpeojtrs.sca.prf.PropertyValueType;
 import mil.jpeojtrs.sca.prf.Simple;
-import mil.jpeojtrs.sca.prf.StructSequenceRef;
+import mil.jpeojtrs.sca.sad.ExternalProperty;
+import mil.jpeojtrs.sca.sad.SadFactory;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -55,13 +58,43 @@ public class PropertiesViewerControlFactory extends DefaultXViewerControlFactory
 		Object editElement = ss.getFirstElement();
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
 			if (editElement instanceof ViewerProperty< ? >) {
-				ViewerProperty< ? > prop = (ViewerProperty< ? >) editElement;
+				final ViewerProperty< ? > prop = (ViewerProperty< ? >) editElement;
 				if (prop.isAssemblyControllerProperty()) {
 					return null;
 				}
 				if (prop.getParent() instanceof ViewerComponent) {
-					Combo combo = new Combo(xv.getTree(), ced.getSwtStyle());
+
+					final Combo combo = new Combo(xv.getTree(), ced.getSwtStyle());
 					combo.setItems(new String[] { "", prop.getDefinition().getId() });
+					final ControlDecoration dec = new ControlDecoration(combo, SWT.TOP | SWT.LEFT);
+					combo.addDisposeListener(new DisposeListener() {
+
+						@Override
+						public void widgetDisposed(DisposeEvent e) {
+							dec.dispose();
+						}
+					});
+					dec.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR));
+					dec.hide();
+					dec.setShowOnlyOnFocus(true);
+					dec.setShowHover(true);
+					dec.setDescriptionText("Duplicate external property ID");
+					
+					final SoftwareAssembly sad = ScaEcoreUtils.getEContainerOfType(prop.getComponentInstantiation(), SoftwareAssembly.class);
+					combo.addModifyListener(new ModifyListener() {
+
+						@Override
+						public void modifyText(ModifyEvent e) {
+							String currentValue = prop.getExternalID();
+							if (currentValue != null && currentValue.equals(combo.getText())) {
+								dec.hide();
+							} else if (isUniqueProperty(combo.getText(), sad)) {
+								dec.hide();
+							} else {
+								dec.show();
+							}
+						}
+					});
 					return combo;
 				}
 			}
@@ -165,8 +198,10 @@ public class PropertiesViewerControlFactory extends DefaultXViewerControlFactory
 		return super.createControl(ced, xv);
 	}
 
-	protected StructSequenceRef getRef(ScaStructSequenceProperty property) {
-		// TODO Auto-generated method stub
-		return null;
+	protected boolean isUniqueProperty(String text, SoftwareAssembly sad) {
+		ExternalProperty prop = SadFactory.eINSTANCE.createExternalProperty();
+		prop.setPropID(text);
+		return DuplicateExternalPropertyIDContraint.validateProperty(prop, sad);
 	}
+
 }
