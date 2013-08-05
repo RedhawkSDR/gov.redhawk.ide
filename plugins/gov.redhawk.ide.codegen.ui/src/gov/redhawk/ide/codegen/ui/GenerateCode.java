@@ -434,6 +434,7 @@ public class GenerateCode {
 			while (!this.generationConfirmed) {
 				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
+					@SuppressWarnings("deprecation")
 					public void run() {
 						String name = "";
 						if (implSettings.getName() != null && !"".equals(implSettings.getName())) {
@@ -571,11 +572,7 @@ public class GenerateCode {
 				} else {
 					String templateId = implSettings.getTemplate();
 					ITemplateDesc template = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplate(templateId);
-					if (template != null) {
-						if (template.isDeprecated()) {
-							retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Code Generator Template is deprecated: " + templateId));
-						}
-					} else {
+					if (template == null) {
 						retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to find code generator template"
 								+ templateId));
 					}

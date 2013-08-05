@@ -140,6 +140,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	private boolean checkDeprecated(Object selectedObj, Shell parent) {
 		if (selectedObj instanceof EList) {
 			return checkImpls(parent, (List<Implementation>) selectedObj);
