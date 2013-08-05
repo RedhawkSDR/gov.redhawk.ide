@@ -254,6 +254,7 @@ public class ModelMap {
 		job.schedule();
 	}
 
+	@SuppressWarnings("unchecked")
 	private SadComponentInstantiation create(final LocalScaComponent newValue) {
 		final DiagramEditPart diagramEditPart = getDiagramEditPart();
 		if (diagramEditPart == null) {
@@ -347,6 +348,7 @@ public class ModelMap {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	private SadConnectInterface create(final ScaConnection newValue) {
 		UsesPortStub source = null;
 		final SadComponentInstantiation sourceComponent = get((LocalScaComponent) newValue.getPort().eContainer());

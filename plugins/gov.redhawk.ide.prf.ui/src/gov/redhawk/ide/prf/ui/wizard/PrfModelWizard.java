@@ -56,12 +56,10 @@ public class PrfModelWizard extends Wizard implements INewWizard {
 
 	private IFile modelFile;
 
-	private final IProject project;
-
 	private String initialValue;
 
 	public PrfModelWizard(final IProject project) {
-		this.project = project;
+		
 	}
 
 	/**

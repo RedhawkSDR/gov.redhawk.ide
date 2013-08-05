@@ -32,6 +32,7 @@ public class ValidImplementationNameConstraint extends AbstractModelConstraint {
 		// TODO Auto-generated constructor stub
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public IStatus validate(IValidationContext ctx) {
 		final EObject target = ctx.getTarget();

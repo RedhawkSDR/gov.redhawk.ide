@@ -61,6 +61,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 
 	private HashMap<DeviceConfiguration, Integer> devicesMap = new HashMap<DeviceConfiguration, Integer>();
 
+	@SuppressWarnings("unchecked")
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
 		if (selection instanceof IStructuredSelection) {

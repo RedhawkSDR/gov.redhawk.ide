@@ -133,7 +133,8 @@ public class CodegenFileHelper {
 	 * This code is specifically designed to retain compatibility with R.1.7.X series generators.
 	 * @since 9.0
 	 */
-    public static String safeGetImplementationName(Implementation impl, ImplementationSettings settings) {
+    @SuppressWarnings("deprecation")
+	public static String safeGetImplementationName(Implementation impl, ImplementationSettings settings) {
 		String result = null;
 		if (DceUuidUtil.isValid(impl.getId())) {
 			result = settings.getName();
@@ -155,7 +156,8 @@ public class CodegenFileHelper {
 	 * 
 	 * @since 9.0
 	 */
-    public static String getPreferredFilePrefix(SoftPkg softPkg, ImplementationSettings settings) {
+    @SuppressWarnings("deprecation")
+	public static String getPreferredFilePrefix(SoftPkg softPkg, ImplementationSettings settings) {
 		Assert.isNotNull(softPkg);
 		Assert.isNotNull(settings);
 		String result = null;

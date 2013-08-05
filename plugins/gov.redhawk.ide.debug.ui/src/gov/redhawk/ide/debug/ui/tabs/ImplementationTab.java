@@ -306,6 +306,7 @@ public class ImplementationTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void updateImplementations(final ILaunchConfiguration configuration) {
 		this.implMap.clear();
 		try {

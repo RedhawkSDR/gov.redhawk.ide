@@ -55,6 +55,7 @@ public class ImplementationNameValidator implements IValidator {
 				for (final Implementation anImpl : implList) {
 					final ImplementationSettings settings = waveDevSettings.getImplSettings().get(anImpl.getId());
 					if (settings != null) {
+						@SuppressWarnings("deprecation")
 						final String theName = settings.getName();
 						if (theName != null && theName.equals(s)) {
 							return ValidationStatus.warning("Implementation names should be unique.  The name " + s + " is already in use.");

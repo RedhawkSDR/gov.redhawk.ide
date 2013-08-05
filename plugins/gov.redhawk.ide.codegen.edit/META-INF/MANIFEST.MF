@@ -7,7 +7,7 @@ Bundle-ClassPath: .
 Bundle-Activator: gov.redhawk.ide.codegen.provider.CodegenEditPlugin$Implementation
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: gov.redhawk.ide.codegen.provider
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  gov.redhawk.ide.codegen;bundle-version="9.0.0";visibility:=reexport,

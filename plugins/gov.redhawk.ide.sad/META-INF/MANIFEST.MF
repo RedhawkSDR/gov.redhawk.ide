@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.6.0",
  gov.redhawk.sca.model;bundle-version="13.0.0",
  gov.redhawk.ide.codegen;bundle-version="9.0.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: gov.redhawk.ide.sad,
  gov.redhawk.ide.sad.generator.newwaveform;x-internal:=true
 Bundle-Vendor: %Bundle-Vendor

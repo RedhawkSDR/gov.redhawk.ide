@@ -40,6 +40,7 @@ public final class PropertyUtil {
 	 * @throws CoreException The persistent property on the wavedev resource cannot be retrieved
 	 * @since 2.0
 	 */
+	@SuppressWarnings("deprecation")
 	public static Date getLastGenerated(final WaveDevSettings wavedev, final ImplementationSettings settings) throws CoreException {
 		final String prop = ModelUtil.getResource(wavedev).getPersistentProperty(
 		        new QualifiedName(RedhawkCodegenActivator.PLUGIN_ID, settings.getName() + "lastGenerated"));
@@ -64,6 +65,7 @@ public final class PropertyUtil {
 	public static void setLastGenerated(final WaveDevSettings wavedev, final ImplementationSettings settings, final Date date) {
 		final WorkspaceJob job = new WorkspaceJob("Saving last generated date") {
 
+			@SuppressWarnings("deprecation")
 			@Override
 			public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
 				final IResource resource = ModelUtil.getResource(wavedev);

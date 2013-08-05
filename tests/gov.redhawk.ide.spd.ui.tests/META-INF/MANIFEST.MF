@@ -4,7 +4,7 @@ Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: gov.redhawk.ide.spd.ui.tests;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit;bundle-version="4.8.1",
  org.eclipse.emf.transaction;bundle-version="1.4.0",
  gov.redhawk.ide.spd.ui;bundle-version="7.0.0",

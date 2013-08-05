@@ -20,6 +20,7 @@ import org.eclipse.ui.externaltools.internal.program.launchConfigurations.Progra
 /**
  * 
  */
+@SuppressWarnings("restriction")
 public class LocalComponentProgramTabGroup extends ProgramTabGroup {
 
 	/**

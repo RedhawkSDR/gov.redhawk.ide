@@ -265,6 +265,7 @@ public class LaunchDomainManager extends AbstractHandler implements IHandler {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private IStatus startDeviceManager(final IProgressMonitor monitor, final String domainName, final ExecutionEvent event) {
 		// auto connect to launched domain
 		final SdrRoot sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();

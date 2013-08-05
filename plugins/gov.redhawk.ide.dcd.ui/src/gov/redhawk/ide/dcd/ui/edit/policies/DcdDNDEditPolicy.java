@@ -49,6 +49,7 @@ public class DcdDNDEditPolicy extends DragDropEditPolicy implements EditPolicy {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Command getDropElementCommand(final EObject element, final DropObjectsRequest request) {
 		if (element instanceof SoftPkg) {

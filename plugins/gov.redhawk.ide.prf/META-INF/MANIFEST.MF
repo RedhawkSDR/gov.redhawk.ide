@@ -6,6 +6,6 @@ Bundle-Version: 2.0.0.qualifier
 Bundle-Activator: gov.redhawk.ide.prf.IdePrfPlugin
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: gov.redhawk.ide.prf.generator;x-friends:="gov.redhawk.ide.prf.ui,gov.redhawk.ide.prf.tests"
 Bundle-Vendor: %Bundle-Vendor

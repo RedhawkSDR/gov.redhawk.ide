@@ -38,6 +38,7 @@ import CF.LifeCyclePackage.ReleaseError;
  * </p>
  * @generated
  */
+@SuppressWarnings("restriction")
 public class LocalScaWaveformTest extends TestCase {
 
 	/**
