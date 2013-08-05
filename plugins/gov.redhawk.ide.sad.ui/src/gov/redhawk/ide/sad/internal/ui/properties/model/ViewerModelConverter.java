@@ -30,10 +30,12 @@ import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
 import mil.jpeojtrs.sca.prf.StructValue;
 import mil.jpeojtrs.sca.prf.Values;
+import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.ExternalProperties;
 import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SadPackage;
@@ -133,6 +135,25 @@ public class ViewerModelConverter {
 				case SadPackage.SOFTWARE_ASSEMBLY__PARTITIONING:
 					handleSoftwareAssemblyPartitioningChanged(notification);
 					break;
+				case SadPackage.SOFTWARE_ASSEMBLY__ASSEMBLY_CONTROLLER:
+					handleAssemblyControlerUpdate(notification);
+					break;
+				default:
+					break;
+				}
+			} else if (notification.getNotifier() instanceof AssemblyController) {
+				switch (notification.getFeatureID(AssemblyController.class)) {
+				case SadPackage.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF:
+					handleAssemblyControlerUpdate(notification);
+					break;
+				default:
+					break;
+				}
+			} else if (notification.getNotifier() instanceof SadComponentInstantiationRef) {
+				switch (notification.getFeatureID(SadComponentInstantiationRef.class)) {
+				case SadPackage.SAD_COMPONENT_INSTANTIATION_REF__REFID:
+					handleAssemblyControlerUpdate(notification);
+					break;
 				default:
 					break;
 				}
@@ -221,6 +242,10 @@ public class ViewerModelConverter {
 
 	public void setViewer(PropertiesViewer viewer) {
 		this.viewer = viewer;
+	}
+
+	private void handleAssemblyControlerUpdate(Notification notification) {
+		refresh();
 	}
 
 	private void handleComponentPlacementComponentInstantiationChanged(Notification notification) {
@@ -589,12 +614,14 @@ public class ViewerModelConverter {
 			return;
 		}
 		if (this.sad != null) {
-			sadListener.unsetTarget(this.sad);
+//			sadListener.unsetTarget(this.sad);
+			sad.eAdapters().remove(sadListener);
 		}
 		this.sad = sad;
 		setupModel();
 		if (this.sad != null) {
-			sadListener.setTarget(sad);
+			sad.eAdapters().add(sadListener);
+//			sadListener.setTarget(sad);
 		}
 	}
 
@@ -675,7 +702,7 @@ public class ViewerModelConverter {
 			if (viewer != null) {
 				viewer.refresh();
 			}
-		} else {
+		} else if (viewer != null) {
 			refreshJob.schedule();
 		}
 	}
@@ -683,7 +710,7 @@ public class ViewerModelConverter {
 	private void refresh(Object obj) {
 		if (viewer != null) {
 			viewer.refresh(obj);
-		} else {
+		} else if (viewer != null) {
 			refreshJob.schedule();
 		}
 	}

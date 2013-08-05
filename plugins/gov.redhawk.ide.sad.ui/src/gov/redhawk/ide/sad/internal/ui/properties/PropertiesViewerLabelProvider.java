@@ -41,7 +41,10 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * 
@@ -217,9 +220,25 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	public String getExternalValue(Object element) {
 		if (element instanceof ViewerProperty< ? >) {
 			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+			if (prop.isAssemblyControllerProperty()) {
+				return prop.getID();
+			}
 			return prop.getExternalID();
 		}
 		return "";
+	}
+
+	@Override
+	public Color getForeground(Object element, XViewerColumn xCol, int columnIndex) {
+		if (xCol.equals(PropertiesViewerFactory.EXTERNAL)) {
+			if (element instanceof ViewerProperty< ? >) {
+				ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
+				if (prop.isAssemblyControllerProperty()) {
+					return PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_GRAY);
+				}
+			}
+		}
+		return super.getForeground(element, xCol, columnIndex);
 	}
 
 	public String getDescription(Object element) {
