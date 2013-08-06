@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Data Reader Control Panel"
+            icon="icons/sample.gif"
+            class="gov.redhawk.datareader.ui.controlPanels.DataReaderControlPanelEditor"
+            id="gov.redhawk.datareader.ui.controlPanels.DataReaderControlPanel">
+      </editor>
+   </extension>
+   <extension
+         point="gov.redhawk.sca.ui.scaContentTypes">
+      <contentType
+            name="Data Reader Content Type"
+            priority="NORMAL"
+            id="gov.redhawk.datareader.ui.controlPanels.DataReaderControlPanel.contentType">
+         <describer
+               plugin="gov.redhawk.sca.ui"
+               class="gov.redhawk.sca.ui.editors.ScaContentDescriber">
+            <parameter
+                  name="profileId"
+                  value="DCE:8c0ccd2b-9645-43b3-a7f7-9762b6278549">
+            </parameter>
+         </describer>
+      </contentType>
+      <contentTypeBinding
+            contentTypeId="gov.redhawk.datareader.ui.controlPanels.DataReaderControlPanel.contentType"
+            priority="NORMAL"
+            editorId="gov.redhawk.datareader.ui.controlPanels.DataReaderControlPanel">
+      </contentTypeBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+      <propertyTabs
+            contributorId="gov.redhawk.ui.sca_explorer">
+         <propertyTab
+               label="Control Panel"
+               category="general"
+               id="gov.redhawk.datareader.ui.controlPanels.propertyTab">
+         </propertyTab>
+      </propertyTabs>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
+      <propertySections
+            contributorId="gov.redhawk.ui.sca_explorer">
+         <propertySection
+               tab="gov.redhawk.datareader.ui.controlPanels.propertyTab"
+               filter="gov.redhawk.datareader.ui.controlPanels.DataReaderControlPanelPropertyFilter"
+               class="gov.redhawk.datareader.ui.controlPanels.DataReaderControlPanelPropertySection"
+               id="gov.redhawk.datareader.ui.controlPanels.propertySection">
+            <input
+                  type="gov.redhawk.model.sca.ScaComponent">
+            </input>
+         </propertySection>
+      </propertySections>
+   </extension>
+
+</plugin>

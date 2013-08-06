@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Data Reader UI
+Bundle-SymbolicName: gov.redhawk.datareader.ui; singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: gov.redhawk.datareader.ui.Activator
+Bundle-Vendor: REDHAWK
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ gov.redhawk.sca.ui,
+ gov.redhawk.sca.model,
+ org.eclipse.emf.edit.ui,
+ org.eclipse.ui.views.properties.tabbed,
+ org.eclipse.core.databinding;bundle-version="1.4.1",
+ org.eclipse.core.databinding.observable;bundle-version="1.4.1",
+ org.eclipse.core.databinding.property;bundle-version="1.4.100",
+ org.eclipse.emf.databinding;bundle-version="1.2.0",
+ org.eclipse.emf.databinding.edit;bundle-version="1.2.1",
+ org.eclipse.jface.databinding;bundle-version="1.6.0",
+ gov.redhawk.sca.observables;bundle-version="1.1.0",
+ gov.redhawk.ide.debug;bundle-version="4.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
