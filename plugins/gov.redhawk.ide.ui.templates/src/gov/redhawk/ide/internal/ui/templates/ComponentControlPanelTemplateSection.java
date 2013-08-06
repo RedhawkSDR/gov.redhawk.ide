@@ -56,13 +56,19 @@ public class ComponentControlPanelTemplateSection extends BaseControlPanelTempla
 	@Override
 	public IPluginReference[] getDependencies(final String schemaVersion) {
 		if (schemaVersion != null) {
-			final IPluginReference[] dep = new IPluginReference[6]; // SUPPRESS CHECKSTYLE MagicNumber
+			final IPluginReference[] dep = new IPluginReference[12]; // SUPPRESS CHECKSTYLE MagicNumber
 			dep[0] = new PluginReference("org.eclipse.ui", null, 0); //$NON-NLS-1$
 			dep[1] = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
 			dep[2] = new PluginReference("gov.redhawk.sca.ui", null, 0); //$NON-NLS-1$
 			dep[3] = new PluginReference("gov.redhawk.sca.model", null, 0); // SUPPRESS CHECKSTYLE MagicNumber //$NON-NLS-1$
 			dep[4] = new PluginReference("org.eclipse.emf.edit.ui", null, 0); // SUPPRESS CHECKSTYLE MagicNumber //$NON-NLS-1$
 			dep[5] = new PluginReference("org.eclipse.ui.views.properties.tabbed", null, 0); // SUPPRESS CHECKSTYLE MagicNumber //$NON-NLS-1$
+			dep[6] = new PluginReference("gov.redhawk.sca.observables", null, 0); // SUPPRESS CHECKSTYLE MagicNumber //$NON-NLS-1$
+			dep[7] = new PluginReference("org.eclipse.core.databinding", null, 0); // SUPPRESS CHECKSTYLE MagicNumber //$NON-NLS-1$
+			dep[8] = new PluginReference("org.eclipse.core.databinding.observable", null, 0); // SUPPRESS CHECKSTYLE MagicNumber //$NON-NLS-1$
+			dep[9] = new PluginReference("org.eclipse.core.databinding.property", null, 0); // SUPPRESS CHECKSTYLE MagicNumber //$NON-NLS-1$
+			dep[10] = new PluginReference("org.eclipse.emf.databinding", null, 0); // SUPPRESS CHECKSTYLE MagicNumber //$NON-NLS-1$
+			dep[11] = new PluginReference("org.eclipse.jface.databinding", null, 0); // SUPPRESS CHECKSTYLE MagicNumber //$NON-NLS-1$
 			return dep;
 		}
 		return super.getDependencies(schemaVersion);
@@ -78,24 +84,9 @@ public class ComponentControlPanelTemplateSection extends BaseControlPanelTempla
 
 	private void createOptions() {
 		// first page
-		addOption(AbstractTemplateSection.KEY_PACKAGE_NAME, "&Java Package Name:", (String) null, 0).setRequired(true);
-		addOption("editorClassName", //$NON-NLS-1$
-		        "&Editor Class Name:", "SampleComponentControlPanel", //$NON-NLS-1$
-		        0).setRequired(true);
-		addOption("contributorClassName", //$NON-NLS-1$
-		        "&Editor Contributor Class Name:", "SampleComponentControlPanelContributor", //$NON-NLS-1$
-		        0).setRequired(true);
-		addOption("sectionClassName", //$NON-NLS-1$
-		        "&Section Class Name:", "SampleComponentControlPanelPropertySection", //$NON-NLS-1$
-		        0).setRequired(true);
-		addOption("filterClassName", //$NON-NLS-1$
-		        "&Filter Contributor Class Name:", "SampleComponentControlPanelPropertyFilter", //$NON-NLS-1$
-		        0).setRequired(true);
 		addOption("editorName", //$NON-NLS-1$
-		        "&Control Panel Name:", "Sample Component Control Panel", 0).setRequired(true);
+			"&Control Panel Name:", "Name", 0).setRequired(true);
 
-		addOption("contentTypeName", //$NON-NLS-1$
-		        "&Content Type Name:", "Sample Component Content Type", 0).setRequired(false);
 		final SdrRoot sdr = SdrUiPlugin.getDefault().getTargetSdrRoot();
 		sdr.load(null);
 		final ComponentsContainer components = sdr.getComponentsContainer();
@@ -110,11 +101,27 @@ public class ComponentControlPanelTemplateSection extends BaseControlPanelTempla
 		}
 		if (choices.size() > 0) {
 			addOption("contentTypeProfileId", //$NON-NLS-1$
-			        "&Component:", choices.toArray(new String[choices.size()][]), choices.get(0)[0], 0).setRequired(true);
+				"&Component:", choices.toArray(new String[choices.size()][]), choices.get(0)[0], 0).setRequired(true);
 		}
 		addOption("contentTypePriority", "Priority:",
-		        new String[][] { new String[] { "LOW", "LOW" }, new String[] { "NORMAL", "NORMAL" }, new String[] { "HIGH", "HIGH" } }, "NORMAL", 0)
-		        .setRequired(true);
+			new String[][] { new String[] { "LOW", "LOW" }, new String[] { "NORMAL", "NORMAL" }, new String[] { "HIGH", "HIGH" } }, "NORMAL", 0).setRequired(
+			true);
+
+		addOption(AbstractTemplateSection.KEY_PACKAGE_NAME, "&Java Package Name:", (String) null, 0).setRequired(true);
+		addOption("compositeName", //$NON-NLS-1$
+			"&Composite Class Name:", "ControlPanelComposite", //$NON-NLS-1$
+			0).setRequired(true);
+		addOption("editorClassName", //$NON-NLS-1$
+			"&Editor Class Name:", "ComponentEditor", //$NON-NLS-1$
+			0).setRequired(true);
+		addOption("contentTypeName", //$NON-NLS-1$
+			"&Content Type Name:", "Content Type Name", 0).setRequired(false);
+		addOption("sectionClassName", //$NON-NLS-1$
+			"&Section Class Name:", "ComponentPropertySection", //$NON-NLS-1$
+			0).setRequired(true);
+		addOption("filterClassName", //$NON-NLS-1$
+			"&Filter Contributor Class Name:", "ComponentPropertySectionFilter", //$NON-NLS-1$
+			0).setRequired(true);
 	}
 
 	@Override
@@ -175,7 +182,7 @@ public class ComponentControlPanelTemplateSection extends BaseControlPanelTempla
 
 		final String editorClassName = getStringOption(AbstractTemplateSection.KEY_PACKAGE_NAME) + "." + getStringOption("editorClassName"); //$NON-NLS-1$ //$NON-NLS-2$
 		final String contributorClassName = getStringOption(AbstractTemplateSection.KEY_PACKAGE_NAME) + "." //$NON-NLS-1$
-		        + getStringOption("contributorClassName"); //$NON-NLS-1$
+			+ getStringOption("contributorClassName"); //$NON-NLS-1$
 
 		final IPluginExtension extension = createExtension("org.eclipse.ui.editors", true); //$NON-NLS-1$
 		final IPluginElement editorElement = factory.createElement(extension);
@@ -230,7 +237,7 @@ public class ComponentControlPanelTemplateSection extends BaseControlPanelTempla
 	 * @throws CoreException
 	 */
 	private void createBindingElement(final IPluginElement bindingElement, final String editorClassName, final String contentTypeId, final String priority)
-	        throws CoreException {
+		throws CoreException {
 		bindingElement.setName("contentTypeBinding"); //$NON-NLS-1$
 		bindingElement.setAttribute("editorId", editorClassName); //$NON-NLS-1$
 		bindingElement.setAttribute("contentTypeId", contentTypeId); //$NON-NLS-1$
@@ -244,7 +251,7 @@ public class ComponentControlPanelTemplateSection extends BaseControlPanelTempla
 	 * @throws CoreException
 	 */
 	private void createContentTypeElement(final IPluginElement contentTypeElement, final String contentTypeId, final String priority,
-	        final IPluginModelFactory factory) throws CoreException {
+		final IPluginModelFactory factory) throws CoreException {
 		contentTypeElement.setName("contentType"); //$NON-NLS-1$
 		contentTypeElement.setAttribute("id", contentTypeId); //$NON-NLS-1$
 		contentTypeElement.setAttribute("name", getStringOption("contentTypeName")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -332,7 +339,7 @@ public class ComponentControlPanelTemplateSection extends BaseControlPanelTempla
 	 * @throws CoreException
 	 */
 	private void createPropertySectionElement(final IPluginElement propertySectionElement, final String sectionId, final String tabId,
-			final IPluginModelFactory factory) throws CoreException {
+		final IPluginModelFactory factory) throws CoreException {
 		propertySectionElement.setName("propertySections"); //$NON-NLS-1$
 		propertySectionElement.setAttribute("contributorId", "gov.redhawk.ui.sca_explorer"); //$NON-NLS-1$
 
@@ -346,8 +353,8 @@ public class ComponentControlPanelTemplateSection extends BaseControlPanelTempla
 	 * @param factory
 	 * @throws CoreException
 	 */
-	private void createSectionElement(final IPluginElement sectionElement, final String sectionId, final String tabId,
-	        final IPluginModelFactory factory) throws CoreException {
+	private void createSectionElement(final IPluginElement sectionElement, final String sectionId, final String tabId, final IPluginModelFactory factory)
+		throws CoreException {
 		sectionElement.setName("propertySection");
 		sectionElement.setAttribute("class", getStringOption(AbstractTemplateSection.KEY_PACKAGE_NAME) + "." + getStringOption("sectionClassName"));
 		sectionElement.setAttribute("id", sectionId);

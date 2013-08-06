@@ -1,16 +1,13 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
- * Please refer to the COPYRIGHT file distributed with this source distribution.
- *
- * This file is part of REDHAWK IDE.
- *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+/**
+ * 
+ */
 package $packageName$;
 
+import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.sca.util.PluginUtil;
+
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -22,7 +19,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
  * An example showing how to create a property section.
  */
 public class $sectionClassName$ extends AbstractPropertySection {
-	private $editorClassName$ controlPanel;
+	private $compositeName$ composite;
 
 	/**
 	 * {@inheritDoc}
@@ -32,25 +29,23 @@ public class $sectionClassName$ extends AbstractPropertySection {
 		Composite c = new Composite(parent, SWT.NONE);
 		c.setLayout(new GridLayout(1, true));
 		super.createControls(c, aTabbedPropertySheetPage);
-		controlPanel = new $editorClassName$();
-		controlPanel.createPartControl(c);
+		composite = new $compositeName$(c, SWT.None);
 	}
 
 	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		super.setInput(part, selection);
-		controlPanel.setSelection(selection);
-	}
-
-	@Override
-	public void refresh() {
-		super.refresh();
-		controlPanel.refresh();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection) selection;
+			Object element = ss.getFirstElement();
+			ScaComponent component = PluginUtil.adapt(ScaComponent.class, element);
+			composite.setInput(component);
+		}
 	}
 
 	@Override
 	public boolean shouldUseExtraSpace() {
-	    return true;
+		return true;
 	}
 
 }
