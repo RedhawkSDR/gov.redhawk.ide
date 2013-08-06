@@ -21,7 +21,6 @@ import gov.redhawk.ui.util.SCAEditorUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import mil.jpeojtrs.sca.dcd.CompositePartOfDevice;
@@ -32,17 +31,11 @@ import mil.jpeojtrs.sca.dcd.DcdPackage;
 import mil.jpeojtrs.sca.dcd.DcdPartitioning;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
-import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.PrfPackage;
-import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
-import mil.jpeojtrs.sca.prf.SimpleSequence;
 import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
-import mil.jpeojtrs.sca.prf.Struct;
 import mil.jpeojtrs.sca.prf.StructRef;
-import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
-import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.databinding.Binding;
@@ -215,24 +208,6 @@ public class DevicesDetailsPage extends ScaDetails {
 	}
 
 	/**
-	 * Determines whether a property can be overridden. A property can be
-	 * overridden if it isn't readonly and it has a configure or execparam kind
-	 * type.
-	 * 
-	 * @param property the Simple or SimpleSequence EObject to evaluate
-	 * @return <code> true </code> if the property can be overridden;
-	 *         <code> false </code> otherwise
-	 */
-	private boolean canOverrideProperty(final EObject obj) {
-		final boolean retVal = false;
-		if (obj instanceof AbstractProperty) {
-			final AbstractProperty property = (AbstractProperty) obj;
-			return PropertiesUtil.canOverride(property);
-		}
-		return retVal;
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -367,45 +342,6 @@ public class DevicesDetailsPage extends ScaDetails {
 			return PrfPackage.Literals.STRUCT_SEQUENCE_REF__STRUCT_VALUE;
 		}
 		return null;
-	}
-
-	/**
-	 * This method returns the Name of the passed in EObject
-	 * 
-	 * @param propertyObject the EObject to get the Name from
-	 * @return the EObjects Name
-	 */
-	private String getPropertyName(final EObject propertyObject) {
-		String refName = "";
-		if (propertyObject instanceof Simple) {
-			refName = ((Simple) propertyObject).getName();
-		} else if (propertyObject instanceof SimpleSequence) {
-			refName = ((SimpleSequence) propertyObject).getName();
-		} else if (propertyObject instanceof Struct) {
-			refName = ((Struct) propertyObject).getName();
-		} else if (propertyObject instanceof StructSequence) {
-			refName = ((StructSequence) propertyObject).getName();
-		}
-		return refName;
-	}
-
-	/**
-	 * This class compares the names of two properties.
-	 */
-	private class PropertyComparator implements Comparator<EObject> {
-		public int compare(final EObject o1, final EObject o2) {
-			if (o1 == null) {
-				return -1;
-			}
-			if (o2 == null) {
-				return 1;
-			}
-
-			final String o1name = getPropertyName(o1);
-			final String o2name = getPropertyName(o2);
-
-			return o1name.compareTo(o2name);
-		}
 	}
 
 	/**

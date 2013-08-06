@@ -35,12 +35,12 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.impl.SadComponentInstantiationImpl;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.sad.diagram.edit.parts.SadConnectInterfaceEditPart;
 import mil.jpeojtrs.sca.sad.diagram.providers.SadElementTypes;
+import mil.jpeojtrs.sca.sad.impl.SadComponentInstantiationImpl;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
@@ -411,10 +411,6 @@ public class ModelMap {
 		final SadConnectInterface retVal = (SadConnectInterface) connector.getElement();
 		return retVal;
 
-	}
-
-	private String createId(final SoftPkg spd) {
-		return SoftwareAssembly.Util.createComponentIdentifier(this.sad, spd.getName());
 	}
 
 	/**

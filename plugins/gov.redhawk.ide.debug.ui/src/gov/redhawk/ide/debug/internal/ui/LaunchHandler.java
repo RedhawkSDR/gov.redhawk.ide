@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui;
 
-import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.ui.LaunchUtil;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import mil.jpeojtrs.sca.sad.SadPackage;
@@ -30,16 +29,13 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -160,22 +156,4 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 		return element;
 	}
 
-	private void launchImplementation(final Implementation impl, final ExecutionEvent event) throws CoreException {
-		final SoftPkg spd = impl.getSoftPkg();
-		final Job job = new Job("Launching " + spd.getName()) {
-
-			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				try {
-					ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform().launch(null, null, EcoreUtil.getURI(spd), impl.getId(),
-						ILaunchManager.RUN_MODE);
-				} catch (final CoreException e) {
-					return e.getStatus();
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-
-	}
 }

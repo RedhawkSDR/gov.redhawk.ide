@@ -50,8 +50,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -741,11 +739,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		}
 	    
     }
-
-	private IStatus loadWorkspaceRoot(TransactionalEditingDomain editingDomain, IProgressMonitor monitor) {
-		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		return processResource(editingDomain, workspaceRoot, monitor);
-	}
 
 	private IStatus processResource(EditingDomain domain, IFile resource, IProgressMonitor monitor) {
 		try {

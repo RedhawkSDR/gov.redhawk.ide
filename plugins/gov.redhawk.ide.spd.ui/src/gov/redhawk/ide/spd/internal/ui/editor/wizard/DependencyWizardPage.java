@@ -295,7 +295,8 @@ public class DependencyWizardPage extends WizardPage {
 
 		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy();
 		strategy.setConverter(new Converter(PropertyRef.class, String.class) {
-			private final ImplementationDetailsSectionPropertyRefItemProvider itemPropertyRefItemProvider = new ImplementationDetailsSectionPropertyRefItemProvider(DependencyWizardPage.this.adapterFactory);
+			private final ImplementationDetailsSectionPropertyRefItemProvider itemPropertyRefItemProvider = new ImplementationDetailsSectionPropertyRefItemProvider(
+				DependencyWizardPage.this.adapterFactory);
 
 			public Object convert(final Object fromObject) {
 				final AbstractProperty prop = this.itemPropertyRefItemProvider.getProperty(DependencyWizardPage.this.dependency.getPropertyRef());

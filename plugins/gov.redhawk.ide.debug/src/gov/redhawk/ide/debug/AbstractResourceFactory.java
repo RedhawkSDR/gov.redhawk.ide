@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
-import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.model.sca.ScaComponent;
 
 import java.util.ArrayList;

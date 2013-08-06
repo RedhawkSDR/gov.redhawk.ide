@@ -114,22 +114,6 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		private String domainName = "";
 
 		private String debugLevel = "";
-
-		public void setDebugLevel(final String debugLevel) {
-			this.debugLevel = debugLevel;
-		}
-
-		public String getDomainName() {
-			return this.domainName;
-		}
-
-		public void setDomainName(final String domainName) {
-			this.domainName = domainName;
-		}
-
-		public String getDebugLevel() {
-			return this.debugLevel;
-		}
 	}
 	
 	// Load the domains that are on the Naming service already
@@ -167,7 +151,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 
 		public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			monitor.beginTask("Checking domain name...", IProgressMonitor.UNKNOWN);
-			final String domainName = LaunchDomainManagerWithOptionsDialog.this.model.getDomainName();
+			final String domainName = LaunchDomainManagerWithOptionsDialog.this.model.domainName;
 			
 			final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
 			final ScaDomainManager dom = ScaPlugin.getDefault().getDomainManagerRegistry().findDomain(domainName);
@@ -516,7 +500,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	}
 
 	protected int getDebugLevel() {
-		int level = Arrays.asList(LaunchDomainManagerWithOptionsDialog.this.debugLevels).indexOf(this.model.getDebugLevel());
+		int level = Arrays.asList(LaunchDomainManagerWithOptionsDialog.this.debugLevels).indexOf(this.model.debugLevel);
 		if (level < 0) {
 			return LaunchDomainManagerWithOptionsDialog.DEFAULT_DEBUG_LEVEL;
 		}
@@ -525,7 +509,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	}
 
 	protected String getDomainName() {
-		return this.model.getDomainName();
+		return this.model.domainName;
 	}
 
 	@Override

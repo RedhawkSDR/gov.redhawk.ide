@@ -239,7 +239,7 @@ public class CustomDiagramEditor extends DcdDiagramEditor implements IFormPage {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object getAdapter(@SuppressWarnings({ "unchecked", "rawtypes" }) final Class type) {
+	public Object getAdapter(@SuppressWarnings({ "rawtypes" }) final Class type) {
 		if (type == IContentOutlinePage.class) {
 			final TreeViewer viewer = new TreeViewer();
 			viewer.setRootEditPart(new DiagramRootTreeEditPart());

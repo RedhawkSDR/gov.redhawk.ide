@@ -41,33 +41,33 @@ public class ScdModelWizard extends Wizard implements INewWizard {
 	/**
 	 * This caches an instance of the model package.
 	 */
-	protected ScdPackage scdPackage = ScdPackage.eINSTANCE;
+	private ScdPackage scdPackage = ScdPackage.eINSTANCE;
 
 	/**
 	 * This caches an instance of the model factory.
 	 */
-	protected ScdFactory scdFactory = this.scdPackage.getScdFactory();
+	private ScdFactory scdFactory = this.scdPackage.getScdFactory();
 
 	/**
 	 * This is the file creation page.
 	 */
-	protected ScdModelWizardNewFileCreationPage newFileCreationPage;
+	private ScdModelWizardNewFileCreationPage newFileCreationPage;
 
 	/**
 	 * Remember the selection during initialization for populating the default
 	 * container.
 	 */
-	protected IStructuredSelection selection;
+	private IStructuredSelection selection;
 
 	/**
 	 * Remember the workbench during initialization.
 	 */
-	protected IWorkbench workbench;
+	private IWorkbench workbench;
 
 	/**
 	 * Caches the names of the features representing global elements.
 	 */
-	protected List<String> initialObjectNames;
+	private List<String> initialObjectNames;
 
 	private IFile modelFile;
 

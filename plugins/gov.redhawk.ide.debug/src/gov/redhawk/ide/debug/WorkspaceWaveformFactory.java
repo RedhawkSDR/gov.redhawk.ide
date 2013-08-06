@@ -10,14 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
-import gov.redhawk.ide.debug.SpdLauncherUtil;
-
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.util.AnyUtils;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
@@ -56,14 +51,6 @@ public class WorkspaceWaveformFactory extends AbstractResourceFactory {
 	@Override
 	protected Resource createInstance(final String resourceId, final DataType[] qualifiers, final String mode) throws CreateResourceFailure {
 		throw new UnsupportedOperationException();
-	}
-
-	private String createParams(final DataType[] qualifiers) {
-		final Map<String, Object> execParams = new HashMap<String, Object>();
-		for (final DataType t : qualifiers) {
-			execParams.put(t.id, AnyUtils.convertAny(t.value));
-		}
-		return SpdLauncherUtil.createExecParamString(execParams);
 	}
 
 }

@@ -52,22 +52,6 @@ public enum LaunchConfigurationFactoryRegistry implements ILaunchConfigurationFa
 			this.launchConfigType = launchConfigType;
 			this.factory = factory;
 		}
-
-		public String getCodegenRefID() {
-			return this.codegenref;
-		}
-
-		public String getId() {
-			return this.id;
-		}
-
-		public String getLaunchConfigType() {
-			return this.launchConfigType;
-		}
-
-		public ILaunchConfigurationFactory getFactory() {
-			return this.factory;
-		}
 	}
 
 	public static final String EP_ID = "launchConfigurationFactories";

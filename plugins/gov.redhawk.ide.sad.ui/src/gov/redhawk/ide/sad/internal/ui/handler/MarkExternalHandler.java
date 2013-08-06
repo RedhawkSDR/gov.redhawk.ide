@@ -167,21 +167,6 @@ public class MarkExternalHandler extends AbstractHandler implements IElementUpda
 		return null;
 	}
 
-	private Port findInExternalPorts(final ComponentSupportedInterfaceStub interfacePort) {
-		// TODO
-		//		final SoftwareAssembly sad = (SoftwareAssembly) EcoreUtil.getRootContainer(interfacePort);
-		//		final String portName = interfacePort.getInterface().getSupportsName();
-		//		if (sad.getExternalPorts() != null) {
-		//			for (final Port port : sad.getExternalPorts().getPort()) {
-		//				final String id = port.getSupportedIdentifier();
-		//				if (interfacePort.eContainer() == port.getComponentInstantiationRef().getInstantiation() && portName.equals(id)) {
-		//					return port;
-		//				}
-		//			}
-		//		}
-		return null;
-	}
-
 	@Override
 	public void setEnabled(final Object evaluationContext) {
 		if ((evaluationContext != null) && (evaluationContext instanceof EvaluationContext)) {

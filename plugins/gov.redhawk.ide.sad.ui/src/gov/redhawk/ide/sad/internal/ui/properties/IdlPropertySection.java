@@ -11,7 +11,6 @@
 package gov.redhawk.ide.sad.internal.ui.properties;
 
 import gov.redhawk.eclipsecorba.idl.Identifiable;
-import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
 import gov.redhawk.eclipsecorba.idl.expressions.util.ExpressionsAdapterFactory;
 import gov.redhawk.eclipsecorba.idl.operations.provider.OperationsItemProviderAdapterFactory;
 import gov.redhawk.eclipsecorba.idl.provider.IdlItemProviderAdapterFactory;
@@ -20,10 +19,7 @@ import gov.redhawk.eclipsecorba.library.provider.LibraryItemProviderAdapterFacto
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
@@ -117,15 +113,6 @@ public class IdlPropertySection extends AbstractModelerPropertySection {
 					return ((List< ? >) object).toArray();
 				}
 				return super.getChildren(object);
-			}
-
-			private Object[] getInterChildren(final IdlInterfaceDcl inter) {
-				final Set<Object> retVal = new HashSet<Object>();
-				retVal.addAll(Arrays.asList(super.getChildren(inter)));
-				for (final IdlInterfaceDcl i : inter.getInheritedInterfaces()) {
-					retVal.addAll(Arrays.asList(getInterChildren(i)));
-				}
-				return retVal.toArray();
 			}
 
 		});

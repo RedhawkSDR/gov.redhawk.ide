@@ -125,7 +125,8 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 				try {
 					IPath sdrPath = SdrUiPlugin.getDefault().getTargetSdrPath();
 					if (sdrPath == null) {
-						throw new CoreException(new Status(Status.ERROR, SdrUiPlugin.PLUGIN_ID, "The SDR root is undefined. Check the SDRROOT environment variable and your preference settings.", null));
+						throw new CoreException(new Status(Status.ERROR, SdrUiPlugin.PLUGIN_ID,
+							"The SDR root is undefined. Check the SDRROOT environment variable and your preference settings.", null));
 					}
 					final URI scaRoot = URI.createFileURI(sdrPath.toPortableString());
 					final IFileStore store = EFS.getStore(new java.net.URI(scaRoot.toString()));

@@ -34,23 +34,11 @@ import org.eclipse.swt.widgets.Group;
 public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectPropertiesWizardPage {
 
 	private static class DeviceProjectSettings {
-		String deviceType =  RedhawkIdePreferenceConstants.DEVICE;
-		boolean aggregate = false;
+		private String deviceType = RedhawkIdePreferenceConstants.DEVICE;
+		private boolean aggregate = false;
 
 		public String getDeviceType() {
 			return deviceType;
-		}
-
-		public void setDeviceType(String deviceType) {
-			this.deviceType = deviceType;
-		}
-
-		public boolean isAggregate() {
-			return aggregate;
-		}
-
-		public void setAggregate(boolean aggregate) {
-			this.aggregate = aggregate;
 		}
 	}
 
@@ -148,7 +136,7 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectProp
 	 * @return
 	 */
 	public boolean getAggregateDeviceType() {
-		return deviceProjSettings.isAggregate();
+		return deviceProjSettings.aggregate;
 	}
 
 }

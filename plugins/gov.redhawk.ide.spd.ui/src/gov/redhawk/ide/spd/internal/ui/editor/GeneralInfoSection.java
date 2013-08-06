@@ -255,19 +255,6 @@ public class GeneralInfoSection extends ScaSection {
 	}
 
 	/**
-	 * Gets the prf file name.
-	 * 
-	 * @return the prf file name
-	 */
-	private String getPrfFileName() {
-		String retVal = ModelUtil.getPrfFileName(getSoftPkg().getPropertyFile());
-		if (retVal == null) {
-			retVal = "";
-		}
-		return retVal;
-	}
-
-	/**
 	 * Sets the prf file name.
 	 * 
 	 * @param name the new prf file name

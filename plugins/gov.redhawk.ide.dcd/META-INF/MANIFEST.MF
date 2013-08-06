@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  gov.redhawk.sca.model;bundle-version="13.0.0",
  gov.redhawk.ide.codegen;bundle-version="9.0.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: gov.redhawk.ide.dcd,
  gov.redhawk.ide.dcd.generator.newdevice;x-friends:="gov.redhawk.ide.dcd.ui,gov.redhawk.ide.dcd.tests",
  gov.redhawk.ide.dcd.generator.newnode;x-friends:="gov.redhawk.ide.dcd.ui,gov.redhawk.ide.dcd.tests",
