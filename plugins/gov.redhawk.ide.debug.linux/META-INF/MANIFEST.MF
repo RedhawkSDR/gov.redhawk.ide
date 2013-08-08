@@ -7,3 +7,4 @@ Fragment-Host: gov.redhawk.ide.debug;bundle-version="4.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Eclipse-PlatformFilter: (& (osgi.os=linux))
 Export-Package: gov.redhawk.ide.debug.linux
+Bundle-Vendor: %Bundle-Vendor
