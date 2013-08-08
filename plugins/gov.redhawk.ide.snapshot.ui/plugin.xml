@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="gov.redhawk.ide.snapshot.datareceiver" name="DataReceiver" schema="schema/gov.redhawk.ide.snapshot.datareceiver.exsd"/>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="gov.redhawk.ide.ui.category"
+            defaultHandler="gov.redhawk.ide.snapshot.internal.ui.SnapshotHandler"
+            id="gov.redhawk.ide.snapshot.ui.commands.snapshot"
+            name="Snapshot">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="gov.redhawk.ide.snapshot.ui.commands.snapshot"
+               id="gov.redhawk.ide.snapshot.ui.menus.snapshot"
+               mnemonic="S">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     operator="and">
+                  <adapt
+                        type="gov.redhawk.model.sca.ScaUsesPort">
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="gov.redhawk.ide.snapshot.datareceiver">
+      <DataReceiver
+            class="gov.redhawk.ide.snapshot.datareceiver.blue.BlueDataReceiverAttributes">
+      </DataReceiver>
+      <DataReceiver
+            class="gov.redhawk.ide.snapshot.datareceiver.bin.sri.BinSRIDataReceiverAttributes"></DataReceiver>
+   </extension>
+
+</plugin>

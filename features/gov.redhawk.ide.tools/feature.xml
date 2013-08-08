@@ -12,10 +12,10 @@
 <feature
       id="gov.redhawk.ide.tools"
       label="%featureName"
-      provider-name="%providerName"
-      version="1.0.0.qualifier">
+      version="1.0.0.qualifier"
+      provider-name="%providerName">
 
-  <description url="http://redhawksdr.org">
+   <description url="http://redhawksdr.org">
       %description
    </description>
 
@@ -29,6 +29,34 @@
 
    <plugin
          id="gov.redhawk.datareader.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="gov.redhawk.datalist.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="gov.redhawk.ide.snapshot.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="gov.redhawk.statistics.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.math"
          download-size="0"
          install-size="0"
          version="0.0.0"

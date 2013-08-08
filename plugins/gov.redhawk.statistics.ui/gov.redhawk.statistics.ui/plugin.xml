@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            class="gov.redhawk.statistics.ui.views.StatisticsView"
+            id="gov.redhawk.statistics.ui.views.StatisticsView"
+            name="StatisticsView"
+            restorable="false">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+   </extension>
+
+</plugin>
