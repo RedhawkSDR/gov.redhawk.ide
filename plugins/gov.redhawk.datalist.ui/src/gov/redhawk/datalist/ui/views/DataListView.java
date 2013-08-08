@@ -15,8 +15,6 @@ import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.datalist.ui.DataListPlugin;
 import gov.redhawk.datalist.ui.internal.DataBuffer;
 import gov.redhawk.datalist.ui.internal.DataBufferFactory;
-import gov.redhawk.datalist.ui.internal.OptionsComposite;
-import gov.redhawk.datalist.ui.internal.OptionsComposite.CaptureMethod;
 import gov.redhawk.datalist.ui.internal.DataCollectionSettings;
 import gov.redhawk.datalist.ui.internal.IDataBufferListener;
 import gov.redhawk.datalist.ui.internal.IFullListener;
@@ -392,7 +390,7 @@ public class DataListView extends ViewPart {
 			createTable(columns);
 			prevCols = columns;
 		}  
-		switch (CaptureMethod.stringToValue(settings.getProcessType())) {
+		switch (OptionsComposite.CaptureMethod.stringToValue(settings.getProcessType())) {
 		case NUMBER: 
 			dataCourier.setProperties(columns, (int) samples);
 			this.viewer.getTable().setItemCount((int) samples);
@@ -423,6 +421,7 @@ public class DataListView extends ViewPart {
 		this.buffer.disconnect();
 		Sample[] elements = dataCourier.getList().toArray(new Sample[0]);
 		dataCourier.setSize(elements.length);
+		dataCourier.fireListIsFull();
 		
 		input.showSamples(elements.length); 
 		input.getSettings().setSamples(elements.length);

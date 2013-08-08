@@ -12,7 +12,7 @@
 package gov.redhawk.datalist.ui.internal;
 
 import gov.redhawk.datalist.ui.DataListPlugin;
-import gov.redhawk.datalist.ui.internal.OptionsComposite.CaptureMethod;
+import gov.redhawk.datalist.ui.views.OptionsComposite.CaptureMethod;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.sca.util.OrbSession;
 

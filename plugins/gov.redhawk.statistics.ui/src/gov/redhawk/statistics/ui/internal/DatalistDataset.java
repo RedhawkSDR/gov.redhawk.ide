@@ -427,10 +427,8 @@ Serializable {
             return false;
         }
         DatalistDataset that = (DatalistDataset) obj;
-        if (!ObjectUtilities.equal(this.type, that.type)) {
-            return false;
-        }
-        if (!ObjectUtilities.equal(this.list, that.list)) {
+        if (!ObjectUtilities.equal(this.type, that.type)
+        		|| !ObjectUtilities.equal(this.list, that.list)) {
             return false;
         }
         return true;

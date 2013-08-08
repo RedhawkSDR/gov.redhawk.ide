@@ -30,5 +30,5 @@ Export-Package: gov.redhawk.ide.snapshot.datareceiver,
  gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData;x-internal:=true,
  gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl;x-internal:=true,
  gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.util;x-internal:=true,
- gov.redhawk.ide.snapshot.ui,
+ gov.redhawk.ide.snapshot.ui;x-internal:=true,
  gov.redhawk.ide.snapshot.ui.handlers

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Data List View
-Bundle-SymbolicName: gov.redhawk.datalist.ui; singleton:=true
+Bundle-SymbolicName: gov.redhawk.datalist.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: gov.redhawk.datalist.ui.DataListPlugin
 Bundle-Vendor: REDHAWK
@@ -17,7 +17,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.databinding;bundle-version="1.6.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: gov.redhawk.datalist.ui,
- gov.redhawk.datalist.ui.internal,
- gov.redhawk.datalist.ui.views
+Export-Package: gov.redhawk.datalist.ui
 Bundle-ClassPath: .
