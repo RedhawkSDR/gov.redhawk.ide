@@ -8,8 +8,8 @@
     <version>0.0.1-SNAPSHOT</version>
     <relativePath>../../releng/</relativePath>
   </parent>
-  <groupId>gov.redhawk.datareader.ui</groupId>
-  <artifactId>gov.redhawk.ide</artifactId>
+  <groupId>gov.redhawk.ide</groupId>
+  <artifactId>gov.redhawk.datareader.ui</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
