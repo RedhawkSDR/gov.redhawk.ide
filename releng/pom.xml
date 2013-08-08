@@ -132,6 +132,9 @@
     <module>../plugins/gov.redhawk.ide.help</module>
     <module>../plugins/gov.redhawk.sca.efs.ui</module>
     <module>../plugins/gov.redhawk.datareader.ui</module>
+    <module>../plugins/gov.redhawk.ide.snapshot.ui</module>
+    <module>../plugins/gov.redhawk.datalist.ui</module>
+    <module>../plugins/gov.redhawk.statistics.ui</module>
     <module>../tests/gov.redhawk.codegen.validation.tests</module>
     <module>../tests/gov.redhawk.ide.dcd.tests</module>
     <module>../tests/gov.redhawk.ide.debug.tests</module>
