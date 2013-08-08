@@ -35,8 +35,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
@@ -101,7 +103,7 @@ public class DataReaderComposite extends Composite {
 
 	public void createText(final Composite parent) {
 		parent.setLayout(GridLayoutFactory.fillDefaults().numColumns(6).margins(0, 0).create());
-		
+
 		GridData textGridData = new GridData();
 		textGridData.horizontalAlignment = GridData.FILL;
 		textGridData.horizontalSpan = 2;
@@ -111,6 +113,7 @@ public class DataReaderComposite extends Composite {
 		label.setText("Sample Rate (Hz):");
 		sampleRateText = new Text(parent, SWT.BORDER);
 		sampleRateText.setLayoutData(textGridData);
+		setNumValidation(sampleRateText);
 
 		label = new Label(parent, SWT.None);
 		label.setText("Stream ID:");
@@ -121,22 +124,26 @@ public class DataReaderComposite extends Composite {
 		label.setText("Frontend RF (Hz):");
 		frontEndRfText = new Text(parent, SWT.BORDER);
 		frontEndRfText.setLayoutData(textGridData);
+		setNumValidation(frontEndRfText);
 
 		label = new Label(parent, SWT.None);
 		label.setText("Speed Factor:");
 		speedFactorText = new Text(parent, SWT.BORDER);
 		speedFactorText.setLayoutData(textGridData);
+		setNumValidation(speedFactorText);
 
 		label = new Label(parent, SWT.None);
 		label.setText("Y Delta:");
 		yDeltaText = new Text(parent, SWT.BORDER);
 		yDeltaText.setLayoutData(textGridData);
+		setNumValidation(yDeltaText);
 
 		label = new Label(parent, SWT.None);
 		label.setText("Subsize:");
 		subsizeText = new Text(parent, SWT.BORDER);
 		subsizeText.setLayoutData(textGridData);
-		
+		setNumValidation(subsizeText);
+
 		label = new Label(parent, SWT.None);
 		label.setText("Input File:");
 		inputFileText = new Text(parent, SWT.BORDER);
@@ -172,9 +179,27 @@ public class DataReaderComposite extends Composite {
 		});
 	}
 
+	private void setNumValidation(Widget widget) {
+		widget.addListener(SWT.Verify, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				String string = event.text;
+				char[] chars = new char[string.length()];
+				string.getChars(0, chars.length, chars, 0);
+				for (int i = 0; i < chars.length; i++) {
+					if (!('0' <= chars[i] && chars[i] <= '9' || chars[i] == '.')) {
+						event.doit = false;
+						return;
+					}
+				}
+			}
+		});
+	}
+
 	public void createCombos(Composite parent) {
 		parent.setLayout(GridLayoutFactory.fillDefaults().numColumns(2).margins(0, 0).spacing(64, 10).create());
-		
+
 		GridData comboGridData = new GridData();
 		comboGridData.widthHint = 100;
 
@@ -191,18 +216,14 @@ public class DataReaderComposite extends Composite {
 		loopCombo = new Combo(parent, SWT.READ_ONLY);
 		loopCombo.add("true");
 		loopCombo.add("false");
-//		loopCombo.setEnabled(false);
+		//		loopCombo.setEnabled(false);
 		loopCombo.setToolTipText("Do we continue to replay and loop over the input file when we are done or not");
 		loopCombo.setLayoutData(comboGridData);
 	}
 
 	public void createButtons(Composite parent) {
-//		GridLayout gridLayout = new GridLayout(3, true);
-//		gridLayout.marginLeft = 85;
-//		parent.setLayout(gridLayout);
-		
 		parent.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).margins(0, 0).create());
-		
+
 		GridData buttonGridData = new GridData();
 		buttonGridData.horizontalSpan = 1;
 		buttonGridData.horizontalAlignment = GridData.CENTER;
