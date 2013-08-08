@@ -103,6 +103,7 @@
     <module>../features/gov.redhawk.ide.feature</module>
     <module>../features/gov.redhawk.ide.sdk</module>
     <module>../features/gov.redhawk.ide.ui.feature</module>
+    <module>../features/gov.redhawk.ide.tools</module>
     <module>../features/gov.redhawk.ide.ui.sdk</module>
     <module>../plugins/gov.redhawk.codegen.validation</module>
     <module>../plugins/gov.redhawk.eclipsecorba.library.ui</module>
@@ -130,6 +131,7 @@
     <module>../plugins/gov.redhawk.ide.ui.templates</module>
     <module>../plugins/gov.redhawk.ide.help</module>
     <module>../plugins/gov.redhawk.sca.efs.ui</module>
+    <module>../plugins/gov.redhawk.datareader.ui</module>
     <module>../tests/gov.redhawk.codegen.validation.tests</module>
     <module>../tests/gov.redhawk.ide.dcd.tests</module>
     <module>../tests/gov.redhawk.ide.debug.tests</module>
