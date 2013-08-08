@@ -384,6 +384,9 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	    new TerminateJob(this, getName()).schedule();
 	}
 	
+	/**
+	 * @since 4.0
+	 */
 	@Override
 	public void unsetProfileURI() {
 	    

@@ -110,6 +110,7 @@ public class ScaDebugSwitch< T1 > extends Switch<T1> {
 	/**
 	 * Checks whether this is a switch for the given package.
 	 * <!-- begin-user-doc -->
+	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @parameter ePackage the package in question.
 	 * @return whether this is a switch for the given package.
