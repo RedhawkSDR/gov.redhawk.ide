@@ -115,7 +115,10 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectProp
 		deviceTypeCombo.addDisposeListener(new DisposeListener() {
 
 			public void widgetDisposed(DisposeEvent e) {
-				context.dispose();
+				if (context != null) {
+					context.dispose();
+					context = null;
+				}
 			}
 		});
 
