@@ -175,16 +175,18 @@ public class SnapshotWizardPage extends WizardPage {
 		context.bindValue(WidgetProperties.selection().observeDelayed(500, workspaceCheck), PojoObservables.observeValue(settings, "saveToWorkspace"));
 
 		//region to hold the different pages for saving to the workspace or the file system
-		final Composite fileFinder = new Composite(parent, SWT.BORDER);
-		fileFinder.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
+		final Group fileFinder = new Group(parent, SWT.SHADOW_ETCHED_IN);
+		fileFinder.setText("Save to");
 		fileFinder.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(3, 2).create());
 		final StackLayout fileFinderLayout = new StackLayout();
+		fileFinderLayout.marginHeight = 5;
+		fileFinderLayout.marginWidth = 5;
 		fileFinder.setLayout(fileFinderLayout);
 
 		// the different pages: search file system, search workspace
-		final Group searchFileSystem = makeFileSystemSave(fileFinder);
+		final Composite searchFileSystem = makeFileSystemSave(fileFinder);
 		searchFileSystem.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(3, 2).create());
-		final Group searchWorkbench = makeWorkbenchTree(fileFinder);
+		final Composite searchWorkbench = makeWorkbenchTree(fileFinder);
 		searchWorkbench.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(3, 2).create());
 
 		//determining which page starts on top
@@ -215,8 +217,8 @@ public class SnapshotWizardPage extends WizardPage {
 		setControl(parent);
 	}
 
-	private Group makeFileSystemSave(Composite parent) {
-		Group searchFileSystem = new Group(parent, SWT.None);
+	private Composite makeFileSystemSave(Composite parent) {
+		Composite searchFileSystem = new Composite(parent, SWT.None);
 		searchFileSystem.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
 
 		//the label and text field for files from the file system
@@ -242,8 +244,8 @@ public class SnapshotWizardPage extends WizardPage {
 		return searchFileSystem;
 	}
 
-	private Group makeWorkbenchTree(Composite parent) {
-		Group searchWorkbench = new Group(parent, SWT.None);
+	private Composite makeWorkbenchTree(Composite parent) {
+		Composite searchWorkbench = new Composite(parent, SWT.None);
 		searchWorkbench.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
 
 		//create label and text field for inputing the file name
