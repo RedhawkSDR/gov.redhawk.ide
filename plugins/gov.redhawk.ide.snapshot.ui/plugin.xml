@@ -40,4 +40,18 @@
             class="gov.redhawk.ide.snapshot.datareceiver.bin.sri.BinSRIDataReceiverAttributes"></DataReceiver>
    </extension>
 
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated SnapshotMetaData -->
+      <package
+            uri="platform:/resource/gov.redhawk.ide.snapshot.ui/src/snapshotMetaData.xsd"
+            class="gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SnapshotMetadataPackage"
+            genModel="model/SnapshotMetaData.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <!-- @generated SnapshotMetaData -->
+      <parser
+            type="snapshotmetadata"
+            class="gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.util.SnapshotMetadataResourceFactoryImpl"/>
+   </extension>
 </plugin>

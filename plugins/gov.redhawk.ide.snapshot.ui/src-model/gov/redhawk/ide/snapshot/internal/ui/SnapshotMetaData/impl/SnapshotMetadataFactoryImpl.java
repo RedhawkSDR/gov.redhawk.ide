@@ -36,7 +36,7 @@ public class SnapshotMetadataFactoryImpl extends EFactoryImpl implements Snapsho
 	 */
 	public static SnapshotMetadataFactory init() {
 		try {
-			SnapshotMetadataFactory theSnapshotMetadataFactory = (SnapshotMetadataFactory) EPackage.Registry.INSTANCE.getEFactory("platform:/resource/gov.redhawk.ide.snapshot.ui/src/snapshotMetaData.xsd");
+			SnapshotMetadataFactory theSnapshotMetadataFactory = (SnapshotMetadataFactory) EPackage.Registry.INSTANCE.getEFactory(SnapshotMetadataPackage.eNS_URI);
 			if (theSnapshotMetadataFactory != null) {
 				return theSnapshotMetadataFactory;
 			}
