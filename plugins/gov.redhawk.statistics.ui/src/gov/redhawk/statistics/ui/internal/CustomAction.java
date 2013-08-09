@@ -15,16 +15,16 @@ import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 
 public abstract class CustomAction extends Action implements IWorkbenchAction {
 
-	private static final String ID = "gov.redhawk.statistics.ui.customAction";  
-	  
+	private static final String ID = "gov.redhawk.statistics.ui.customAction";
+
 	public CustomAction() {
 		setId(ID);
-	} 
-	
+	}
+
 	public abstract void run();
 
 	@Override
-	public void dispose() { 
+	public void dispose() {
 
 	}
 

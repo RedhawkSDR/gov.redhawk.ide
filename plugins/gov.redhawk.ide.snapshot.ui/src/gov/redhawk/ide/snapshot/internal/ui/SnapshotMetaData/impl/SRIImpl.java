@@ -109,7 +109,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public int getHversion() {
-		return (Integer)getMixed().get(SnapshotMetadataPackage.Literals.SRI__HVERSION, true);
+		return (Integer) getMixed().get(SnapshotMetadataPackage.Literals.SRI__HVERSION, true);
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void setHversion(int newHversion) {
-		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__HVERSION, newHversion);
+		((FeatureMap.Internal) getMixed()).set(SnapshotMetadataPackage.Literals.SRI__HVERSION, newHversion);
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void unsetHversion() {
-		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__HVERSION);
+		((FeatureMap.Internal) getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__HVERSION);
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public boolean isSetHversion() {
-		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__HVERSION);
+		return !((FeatureMap.Internal) getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__HVERSION);
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public double getXstart() {
-		return (Double)getMixed().get(SnapshotMetadataPackage.Literals.SRI__XSTART, true);
+		return (Double) getMixed().get(SnapshotMetadataPackage.Literals.SRI__XSTART, true);
 	}
 
 	/**
@@ -154,7 +154,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void setXstart(double newXstart) {
-		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__XSTART, newXstart);
+		((FeatureMap.Internal) getMixed()).set(SnapshotMetadataPackage.Literals.SRI__XSTART, newXstart);
 	}
 
 	/**
@@ -163,7 +163,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void unsetXstart() {
-		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__XSTART);
+		((FeatureMap.Internal) getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__XSTART);
 	}
 
 	/**
@@ -172,7 +172,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public boolean isSetXstart() {
-		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__XSTART);
+		return !((FeatureMap.Internal) getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__XSTART);
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public double getXdelta() {
-		return (Double)getMixed().get(SnapshotMetadataPackage.Literals.SRI__XDELTA, true);
+		return (Double) getMixed().get(SnapshotMetadataPackage.Literals.SRI__XDELTA, true);
 	}
 
 	/**
@@ -190,7 +190,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void setXdelta(double newXdelta) {
-		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__XDELTA, newXdelta);
+		((FeatureMap.Internal) getMixed()).set(SnapshotMetadataPackage.Literals.SRI__XDELTA, newXdelta);
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void unsetXdelta() {
-		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__XDELTA);
+		((FeatureMap.Internal) getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__XDELTA);
 	}
 
 	/**
@@ -208,7 +208,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public boolean isSetXdelta() {
-		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__XDELTA);
+		return !((FeatureMap.Internal) getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__XDELTA);
 	}
 
 	/**
@@ -217,7 +217,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public short getXunits() {
-		return (Short)getMixed().get(SnapshotMetadataPackage.Literals.SRI__XUNITS, true);
+		return (Short) getMixed().get(SnapshotMetadataPackage.Literals.SRI__XUNITS, true);
 	}
 
 	/**
@@ -226,7 +226,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void setXunits(short newXunits) {
-		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__XUNITS, newXunits);
+		((FeatureMap.Internal) getMixed()).set(SnapshotMetadataPackage.Literals.SRI__XUNITS, newXunits);
 	}
 
 	/**
@@ -235,7 +235,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void unsetXunits() {
-		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__XUNITS);
+		((FeatureMap.Internal) getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__XUNITS);
 	}
 
 	/**
@@ -244,7 +244,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public boolean isSetXunits() {
-		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__XUNITS);
+		return !((FeatureMap.Internal) getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__XUNITS);
 	}
 
 	/**
@@ -253,7 +253,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public double getSubsize() {
-		return (Double)getMixed().get(SnapshotMetadataPackage.Literals.SRI__SUBSIZE, true);
+		return (Double) getMixed().get(SnapshotMetadataPackage.Literals.SRI__SUBSIZE, true);
 	}
 
 	/**
@@ -262,7 +262,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void setSubsize(double newSubsize) {
-		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__SUBSIZE, newSubsize);
+		((FeatureMap.Internal) getMixed()).set(SnapshotMetadataPackage.Literals.SRI__SUBSIZE, newSubsize);
 	}
 
 	/**
@@ -271,7 +271,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void unsetSubsize() {
-		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__SUBSIZE);
+		((FeatureMap.Internal) getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__SUBSIZE);
 	}
 
 	/**
@@ -280,7 +280,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public boolean isSetSubsize() {
-		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__SUBSIZE);
+		return !((FeatureMap.Internal) getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__SUBSIZE);
 	}
 
 	/**
@@ -289,7 +289,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public double getYstart() {
-		return (Double)getMixed().get(SnapshotMetadataPackage.Literals.SRI__YSTART, true);
+		return (Double) getMixed().get(SnapshotMetadataPackage.Literals.SRI__YSTART, true);
 	}
 
 	/**
@@ -298,7 +298,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void setYstart(double newYstart) {
-		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__YSTART, newYstart);
+		((FeatureMap.Internal) getMixed()).set(SnapshotMetadataPackage.Literals.SRI__YSTART, newYstart);
 	}
 
 	/**
@@ -307,7 +307,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void unsetYstart() {
-		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__YSTART);
+		((FeatureMap.Internal) getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__YSTART);
 	}
 
 	/**
@@ -316,7 +316,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public boolean isSetYstart() {
-		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__YSTART);
+		return !((FeatureMap.Internal) getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__YSTART);
 	}
 
 	/**
@@ -325,7 +325,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public double getYdelta() {
-		return (Double)getMixed().get(SnapshotMetadataPackage.Literals.SRI__YDELTA, true);
+		return (Double) getMixed().get(SnapshotMetadataPackage.Literals.SRI__YDELTA, true);
 	}
 
 	/**
@@ -334,7 +334,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void setYdelta(double newYdelta) {
-		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__YDELTA, newYdelta);
+		((FeatureMap.Internal) getMixed()).set(SnapshotMetadataPackage.Literals.SRI__YDELTA, newYdelta);
 	}
 
 	/**
@@ -343,7 +343,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void unsetYdelta() {
-		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__YDELTA);
+		((FeatureMap.Internal) getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__YDELTA);
 	}
 
 	/**
@@ -352,7 +352,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public boolean isSetYdelta() {
-		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__YDELTA);
+		return !((FeatureMap.Internal) getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__YDELTA);
 	}
 
 	/**
@@ -361,7 +361,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public short getYunits() {
-		return (Short)getMixed().get(SnapshotMetadataPackage.Literals.SRI__YUNITS, true);
+		return (Short) getMixed().get(SnapshotMetadataPackage.Literals.SRI__YUNITS, true);
 	}
 
 	/**
@@ -370,7 +370,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void setYunits(short newYunits) {
-		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__YUNITS, newYunits);
+		((FeatureMap.Internal) getMixed()).set(SnapshotMetadataPackage.Literals.SRI__YUNITS, newYunits);
 	}
 
 	/**
@@ -379,7 +379,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void unsetYunits() {
-		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__YUNITS);
+		((FeatureMap.Internal) getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__YUNITS);
 	}
 
 	/**
@@ -388,7 +388,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public boolean isSetYunits() {
-		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__YUNITS);
+		return !((FeatureMap.Internal) getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__YUNITS);
 	}
 
 	/**
@@ -397,7 +397,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public short getMode() {
-		return (Short)getMixed().get(SnapshotMetadataPackage.Literals.SRI__MODE, true);
+		return (Short) getMixed().get(SnapshotMetadataPackage.Literals.SRI__MODE, true);
 	}
 
 	/**
@@ -406,7 +406,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void setMode(short newMode) {
-		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__MODE, newMode);
+		((FeatureMap.Internal) getMixed()).set(SnapshotMetadataPackage.Literals.SRI__MODE, newMode);
 	}
 
 	/**
@@ -415,7 +415,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void unsetMode() {
-		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__MODE);
+		((FeatureMap.Internal) getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__MODE);
 	}
 
 	/**
@@ -424,7 +424,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public boolean isSetMode() {
-		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__MODE);
+		return !((FeatureMap.Internal) getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__MODE);
 	}
 
 	/**
@@ -433,7 +433,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public String getStreamID() {
-		return (String)getMixed().get(SnapshotMetadataPackage.Literals.SRI__STREAM_ID, true);
+		return (String) getMixed().get(SnapshotMetadataPackage.Literals.SRI__STREAM_ID, true);
 	}
 
 	/**
@@ -442,7 +442,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void setStreamID(String newStreamID) {
-		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__STREAM_ID, newStreamID);
+		((FeatureMap.Internal) getMixed()).set(SnapshotMetadataPackage.Literals.SRI__STREAM_ID, newStreamID);
 	}
 
 	/**
@@ -451,7 +451,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public boolean isBlocking() {
-		return (Boolean)getMixed().get(SnapshotMetadataPackage.Literals.SRI__BLOCKING, true);
+		return (Boolean) getMixed().get(SnapshotMetadataPackage.Literals.SRI__BLOCKING, true);
 	}
 
 	/**
@@ -460,7 +460,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void setBlocking(boolean newBlocking) {
-		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__BLOCKING, newBlocking);
+		((FeatureMap.Internal) getMixed()).set(SnapshotMetadataPackage.Literals.SRI__BLOCKING, newBlocking);
 	}
 
 	/**
@@ -469,7 +469,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void unsetBlocking() {
-		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__BLOCKING);
+		((FeatureMap.Internal) getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__BLOCKING);
 	}
 
 	/**
@@ -478,7 +478,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public boolean isSetBlocking() {
-		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__BLOCKING);
+		return !((FeatureMap.Internal) getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__BLOCKING);
 	}
 
 	/**
@@ -487,7 +487,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public KeywordsType getKeywords() {
-		return (KeywordsType)getMixed().get(SnapshotMetadataPackage.Literals.SRI__KEYWORDS, true);
+		return (KeywordsType) getMixed().get(SnapshotMetadataPackage.Literals.SRI__KEYWORDS, true);
 	}
 
 	/**
@@ -496,7 +496,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public NotificationChain basicSetKeywords(KeywordsType newKeywords, NotificationChain msgs) {
-		return ((FeatureMap.Internal)getMixed()).basicAdd(SnapshotMetadataPackage.Literals.SRI__KEYWORDS, newKeywords, msgs);
+		return ((FeatureMap.Internal) getMixed()).basicAdd(SnapshotMetadataPackage.Literals.SRI__KEYWORDS, newKeywords, msgs);
 	}
 
 	/**
@@ -505,7 +505,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	public void setKeywords(KeywordsType newKeywords) {
-		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__KEYWORDS, newKeywords);
+		((FeatureMap.Internal) getMixed()).set(SnapshotMetadataPackage.Literals.SRI__KEYWORDS, newKeywords);
 	}
 
 	/**
@@ -516,10 +516,10 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case SnapshotMetadataPackage.SRI__MIXED:
-				return ((InternalEList<?>)getMixed()).basicRemove(otherEnd, msgs);
-			case SnapshotMetadataPackage.SRI__KEYWORDS:
-				return basicSetKeywords(null, msgs);
+		case SnapshotMetadataPackage.SRI__MIXED:
+			return ((InternalEList< ? >) getMixed()).basicRemove(otherEnd, msgs);
+		case SnapshotMetadataPackage.SRI__KEYWORDS:
+			return basicSetKeywords(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -532,33 +532,34 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case SnapshotMetadataPackage.SRI__MIXED:
-				if (coreType) return getMixed();
-				return ((FeatureMap.Internal)getMixed()).getWrapper();
-			case SnapshotMetadataPackage.SRI__HVERSION:
-				return getHversion();
-			case SnapshotMetadataPackage.SRI__XSTART:
-				return getXstart();
-			case SnapshotMetadataPackage.SRI__XDELTA:
-				return getXdelta();
-			case SnapshotMetadataPackage.SRI__XUNITS:
-				return getXunits();
-			case SnapshotMetadataPackage.SRI__SUBSIZE:
-				return getSubsize();
-			case SnapshotMetadataPackage.SRI__YSTART:
-				return getYstart();
-			case SnapshotMetadataPackage.SRI__YDELTA:
-				return getYdelta();
-			case SnapshotMetadataPackage.SRI__YUNITS:
-				return getYunits();
-			case SnapshotMetadataPackage.SRI__MODE:
-				return getMode();
-			case SnapshotMetadataPackage.SRI__STREAM_ID:
-				return getStreamID();
-			case SnapshotMetadataPackage.SRI__BLOCKING:
-				return isBlocking();
-			case SnapshotMetadataPackage.SRI__KEYWORDS:
-				return getKeywords();
+		case SnapshotMetadataPackage.SRI__MIXED:
+			if (coreType)
+				return getMixed();
+			return ((FeatureMap.Internal) getMixed()).getWrapper();
+		case SnapshotMetadataPackage.SRI__HVERSION:
+			return getHversion();
+		case SnapshotMetadataPackage.SRI__XSTART:
+			return getXstart();
+		case SnapshotMetadataPackage.SRI__XDELTA:
+			return getXdelta();
+		case SnapshotMetadataPackage.SRI__XUNITS:
+			return getXunits();
+		case SnapshotMetadataPackage.SRI__SUBSIZE:
+			return getSubsize();
+		case SnapshotMetadataPackage.SRI__YSTART:
+			return getYstart();
+		case SnapshotMetadataPackage.SRI__YDELTA:
+			return getYdelta();
+		case SnapshotMetadataPackage.SRI__YUNITS:
+			return getYunits();
+		case SnapshotMetadataPackage.SRI__MODE:
+			return getMode();
+		case SnapshotMetadataPackage.SRI__STREAM_ID:
+			return getStreamID();
+		case SnapshotMetadataPackage.SRI__BLOCKING:
+			return isBlocking();
+		case SnapshotMetadataPackage.SRI__KEYWORDS:
+			return getKeywords();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -571,45 +572,45 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case SnapshotMetadataPackage.SRI__MIXED:
-				((FeatureMap.Internal)getMixed()).set(newValue);
-				return;
-			case SnapshotMetadataPackage.SRI__HVERSION:
-				setHversion((Integer)newValue);
-				return;
-			case SnapshotMetadataPackage.SRI__XSTART:
-				setXstart((Double)newValue);
-				return;
-			case SnapshotMetadataPackage.SRI__XDELTA:
-				setXdelta((Double)newValue);
-				return;
-			case SnapshotMetadataPackage.SRI__XUNITS:
-				setXunits((Short)newValue);
-				return;
-			case SnapshotMetadataPackage.SRI__SUBSIZE:
-				setSubsize((Double)newValue);
-				return;
-			case SnapshotMetadataPackage.SRI__YSTART:
-				setYstart((Double)newValue);
-				return;
-			case SnapshotMetadataPackage.SRI__YDELTA:
-				setYdelta((Double)newValue);
-				return;
-			case SnapshotMetadataPackage.SRI__YUNITS:
-				setYunits((Short)newValue);
-				return;
-			case SnapshotMetadataPackage.SRI__MODE:
-				setMode((Short)newValue);
-				return;
-			case SnapshotMetadataPackage.SRI__STREAM_ID:
-				setStreamID((String)newValue);
-				return;
-			case SnapshotMetadataPackage.SRI__BLOCKING:
-				setBlocking((Boolean)newValue);
-				return;
-			case SnapshotMetadataPackage.SRI__KEYWORDS:
-				setKeywords((KeywordsType)newValue);
-				return;
+		case SnapshotMetadataPackage.SRI__MIXED:
+			((FeatureMap.Internal) getMixed()).set(newValue);
+			return;
+		case SnapshotMetadataPackage.SRI__HVERSION:
+			setHversion((Integer) newValue);
+			return;
+		case SnapshotMetadataPackage.SRI__XSTART:
+			setXstart((Double) newValue);
+			return;
+		case SnapshotMetadataPackage.SRI__XDELTA:
+			setXdelta((Double) newValue);
+			return;
+		case SnapshotMetadataPackage.SRI__XUNITS:
+			setXunits((Short) newValue);
+			return;
+		case SnapshotMetadataPackage.SRI__SUBSIZE:
+			setSubsize((Double) newValue);
+			return;
+		case SnapshotMetadataPackage.SRI__YSTART:
+			setYstart((Double) newValue);
+			return;
+		case SnapshotMetadataPackage.SRI__YDELTA:
+			setYdelta((Double) newValue);
+			return;
+		case SnapshotMetadataPackage.SRI__YUNITS:
+			setYunits((Short) newValue);
+			return;
+		case SnapshotMetadataPackage.SRI__MODE:
+			setMode((Short) newValue);
+			return;
+		case SnapshotMetadataPackage.SRI__STREAM_ID:
+			setStreamID((String) newValue);
+			return;
+		case SnapshotMetadataPackage.SRI__BLOCKING:
+			setBlocking((Boolean) newValue);
+			return;
+		case SnapshotMetadataPackage.SRI__KEYWORDS:
+			setKeywords((KeywordsType) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -622,45 +623,45 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case SnapshotMetadataPackage.SRI__MIXED:
-				getMixed().clear();
-				return;
-			case SnapshotMetadataPackage.SRI__HVERSION:
-				unsetHversion();
-				return;
-			case SnapshotMetadataPackage.SRI__XSTART:
-				unsetXstart();
-				return;
-			case SnapshotMetadataPackage.SRI__XDELTA:
-				unsetXdelta();
-				return;
-			case SnapshotMetadataPackage.SRI__XUNITS:
-				unsetXunits();
-				return;
-			case SnapshotMetadataPackage.SRI__SUBSIZE:
-				unsetSubsize();
-				return;
-			case SnapshotMetadataPackage.SRI__YSTART:
-				unsetYstart();
-				return;
-			case SnapshotMetadataPackage.SRI__YDELTA:
-				unsetYdelta();
-				return;
-			case SnapshotMetadataPackage.SRI__YUNITS:
-				unsetYunits();
-				return;
-			case SnapshotMetadataPackage.SRI__MODE:
-				unsetMode();
-				return;
-			case SnapshotMetadataPackage.SRI__STREAM_ID:
-				setStreamID(STREAM_ID_EDEFAULT);
-				return;
-			case SnapshotMetadataPackage.SRI__BLOCKING:
-				unsetBlocking();
-				return;
-			case SnapshotMetadataPackage.SRI__KEYWORDS:
-				setKeywords((KeywordsType)null);
-				return;
+		case SnapshotMetadataPackage.SRI__MIXED:
+			getMixed().clear();
+			return;
+		case SnapshotMetadataPackage.SRI__HVERSION:
+			unsetHversion();
+			return;
+		case SnapshotMetadataPackage.SRI__XSTART:
+			unsetXstart();
+			return;
+		case SnapshotMetadataPackage.SRI__XDELTA:
+			unsetXdelta();
+			return;
+		case SnapshotMetadataPackage.SRI__XUNITS:
+			unsetXunits();
+			return;
+		case SnapshotMetadataPackage.SRI__SUBSIZE:
+			unsetSubsize();
+			return;
+		case SnapshotMetadataPackage.SRI__YSTART:
+			unsetYstart();
+			return;
+		case SnapshotMetadataPackage.SRI__YDELTA:
+			unsetYdelta();
+			return;
+		case SnapshotMetadataPackage.SRI__YUNITS:
+			unsetYunits();
+			return;
+		case SnapshotMetadataPackage.SRI__MODE:
+			unsetMode();
+			return;
+		case SnapshotMetadataPackage.SRI__STREAM_ID:
+			setStreamID(STREAM_ID_EDEFAULT);
+			return;
+		case SnapshotMetadataPackage.SRI__BLOCKING:
+			unsetBlocking();
+			return;
+		case SnapshotMetadataPackage.SRI__KEYWORDS:
+			setKeywords((KeywordsType) null);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -673,32 +674,32 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case SnapshotMetadataPackage.SRI__MIXED:
-				return mixed != null && !mixed.isEmpty();
-			case SnapshotMetadataPackage.SRI__HVERSION:
-				return isSetHversion();
-			case SnapshotMetadataPackage.SRI__XSTART:
-				return isSetXstart();
-			case SnapshotMetadataPackage.SRI__XDELTA:
-				return isSetXdelta();
-			case SnapshotMetadataPackage.SRI__XUNITS:
-				return isSetXunits();
-			case SnapshotMetadataPackage.SRI__SUBSIZE:
-				return isSetSubsize();
-			case SnapshotMetadataPackage.SRI__YSTART:
-				return isSetYstart();
-			case SnapshotMetadataPackage.SRI__YDELTA:
-				return isSetYdelta();
-			case SnapshotMetadataPackage.SRI__YUNITS:
-				return isSetYunits();
-			case SnapshotMetadataPackage.SRI__MODE:
-				return isSetMode();
-			case SnapshotMetadataPackage.SRI__STREAM_ID:
-				return STREAM_ID_EDEFAULT == null ? getStreamID() != null : !STREAM_ID_EDEFAULT.equals(getStreamID());
-			case SnapshotMetadataPackage.SRI__BLOCKING:
-				return isSetBlocking();
-			case SnapshotMetadataPackage.SRI__KEYWORDS:
-				return getKeywords() != null;
+		case SnapshotMetadataPackage.SRI__MIXED:
+			return mixed != null && !mixed.isEmpty();
+		case SnapshotMetadataPackage.SRI__HVERSION:
+			return isSetHversion();
+		case SnapshotMetadataPackage.SRI__XSTART:
+			return isSetXstart();
+		case SnapshotMetadataPackage.SRI__XDELTA:
+			return isSetXdelta();
+		case SnapshotMetadataPackage.SRI__XUNITS:
+			return isSetXunits();
+		case SnapshotMetadataPackage.SRI__SUBSIZE:
+			return isSetSubsize();
+		case SnapshotMetadataPackage.SRI__YSTART:
+			return isSetYstart();
+		case SnapshotMetadataPackage.SRI__YDELTA:
+			return isSetYdelta();
+		case SnapshotMetadataPackage.SRI__YUNITS:
+			return isSetYunits();
+		case SnapshotMetadataPackage.SRI__MODE:
+			return isSetMode();
+		case SnapshotMetadataPackage.SRI__STREAM_ID:
+			return STREAM_ID_EDEFAULT == null ? getStreamID() != null : !STREAM_ID_EDEFAULT.equals(getStreamID());
+		case SnapshotMetadataPackage.SRI__BLOCKING:
+			return isSetBlocking();
+		case SnapshotMetadataPackage.SRI__KEYWORDS:
+			return getKeywords() != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -710,7 +711,8 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (mixed: ");

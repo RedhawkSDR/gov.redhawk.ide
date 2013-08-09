@@ -111,7 +111,7 @@ public class CFDataTypeImpl extends EObjectImpl implements CFDataType {
 	 * @generated
 	 */
 	public EObject getValue() {
-		return (EObject)getMixed().get(SnapshotMetadataPackage.Literals.CF_DATA_TYPE__VALUE, true);
+		return (EObject) getMixed().get(SnapshotMetadataPackage.Literals.CF_DATA_TYPE__VALUE, true);
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class CFDataTypeImpl extends EObjectImpl implements CFDataType {
 	 * @generated
 	 */
 	public NotificationChain basicSetValue(EObject newValue, NotificationChain msgs) {
-		return ((FeatureMap.Internal)getMixed()).basicAdd(SnapshotMetadataPackage.Literals.CF_DATA_TYPE__VALUE, newValue, msgs);
+		return ((FeatureMap.Internal) getMixed()).basicAdd(SnapshotMetadataPackage.Literals.CF_DATA_TYPE__VALUE, newValue, msgs);
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class CFDataTypeImpl extends EObjectImpl implements CFDataType {
 	 * @generated
 	 */
 	public void setValue(EObject newValue) {
-		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.CF_DATA_TYPE__VALUE, newValue);
+		((FeatureMap.Internal) getMixed()).set(SnapshotMetadataPackage.Literals.CF_DATA_TYPE__VALUE, newValue);
 	}
 
 	/**
@@ -161,10 +161,10 @@ public class CFDataTypeImpl extends EObjectImpl implements CFDataType {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case SnapshotMetadataPackage.CF_DATA_TYPE__MIXED:
-				return ((InternalEList<?>)getMixed()).basicRemove(otherEnd, msgs);
-			case SnapshotMetadataPackage.CF_DATA_TYPE__VALUE:
-				return basicSetValue(null, msgs);
+		case SnapshotMetadataPackage.CF_DATA_TYPE__MIXED:
+			return ((InternalEList< ? >) getMixed()).basicRemove(otherEnd, msgs);
+		case SnapshotMetadataPackage.CF_DATA_TYPE__VALUE:
+			return basicSetValue(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -177,13 +177,14 @@ public class CFDataTypeImpl extends EObjectImpl implements CFDataType {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case SnapshotMetadataPackage.CF_DATA_TYPE__MIXED:
-				if (coreType) return getMixed();
-				return ((FeatureMap.Internal)getMixed()).getWrapper();
-			case SnapshotMetadataPackage.CF_DATA_TYPE__VALUE:
-				return getValue();
-			case SnapshotMetadataPackage.CF_DATA_TYPE__ID:
-				return getId();
+		case SnapshotMetadataPackage.CF_DATA_TYPE__MIXED:
+			if (coreType)
+				return getMixed();
+			return ((FeatureMap.Internal) getMixed()).getWrapper();
+		case SnapshotMetadataPackage.CF_DATA_TYPE__VALUE:
+			return getValue();
+		case SnapshotMetadataPackage.CF_DATA_TYPE__ID:
+			return getId();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -196,15 +197,15 @@ public class CFDataTypeImpl extends EObjectImpl implements CFDataType {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case SnapshotMetadataPackage.CF_DATA_TYPE__MIXED:
-				((FeatureMap.Internal)getMixed()).set(newValue);
-				return;
-			case SnapshotMetadataPackage.CF_DATA_TYPE__VALUE:
-				setValue((EObject)newValue);
-				return;
-			case SnapshotMetadataPackage.CF_DATA_TYPE__ID:
-				setId((String)newValue);
-				return;
+		case SnapshotMetadataPackage.CF_DATA_TYPE__MIXED:
+			((FeatureMap.Internal) getMixed()).set(newValue);
+			return;
+		case SnapshotMetadataPackage.CF_DATA_TYPE__VALUE:
+			setValue((EObject) newValue);
+			return;
+		case SnapshotMetadataPackage.CF_DATA_TYPE__ID:
+			setId((String) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -217,15 +218,15 @@ public class CFDataTypeImpl extends EObjectImpl implements CFDataType {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case SnapshotMetadataPackage.CF_DATA_TYPE__MIXED:
-				getMixed().clear();
-				return;
-			case SnapshotMetadataPackage.CF_DATA_TYPE__VALUE:
-				setValue((EObject)null);
-				return;
-			case SnapshotMetadataPackage.CF_DATA_TYPE__ID:
-				setId(ID_EDEFAULT);
-				return;
+		case SnapshotMetadataPackage.CF_DATA_TYPE__MIXED:
+			getMixed().clear();
+			return;
+		case SnapshotMetadataPackage.CF_DATA_TYPE__VALUE:
+			setValue((EObject) null);
+			return;
+		case SnapshotMetadataPackage.CF_DATA_TYPE__ID:
+			setId(ID_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -238,12 +239,12 @@ public class CFDataTypeImpl extends EObjectImpl implements CFDataType {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case SnapshotMetadataPackage.CF_DATA_TYPE__MIXED:
-				return mixed != null && !mixed.isEmpty();
-			case SnapshotMetadataPackage.CF_DATA_TYPE__VALUE:
-				return getValue() != null;
-			case SnapshotMetadataPackage.CF_DATA_TYPE__ID:
-				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
+		case SnapshotMetadataPackage.CF_DATA_TYPE__MIXED:
+			return mixed != null && !mixed.isEmpty();
+		case SnapshotMetadataPackage.CF_DATA_TYPE__VALUE:
+			return getValue() != null;
+		case SnapshotMetadataPackage.CF_DATA_TYPE__ID:
+			return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -255,7 +256,8 @@ public class CFDataTypeImpl extends EObjectImpl implements CFDataType {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (mixed: ");

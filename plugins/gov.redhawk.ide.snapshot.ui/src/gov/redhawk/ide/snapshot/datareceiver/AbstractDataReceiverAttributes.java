@@ -18,19 +18,19 @@ import BULKIO.StreamSRI;
 import gov.redhawk.bulkio.util.BulkIOType;
 
 public abstract class AbstractDataReceiverAttributes {
-	
+
 	/**
 	 * 
 	 * @return the printable name of the file type this receiver prints to
 	 */
 	public abstract String getReceiverName();
-	
+
 	/**
 	 * 
 	 * @return the extensions this data receiver uses
 	 */
-	public abstract String [] getReceiverExtensions();
-	
+	public abstract String[] getReceiverExtensions();
+
 	/**
 	 * 
 	 * @param file : The file to start saving with
@@ -46,10 +46,9 @@ public abstract class AbstractDataReceiverAttributes {
 	 * @return an IDataReceiver
 	 * @throws IOException
 	 */
-	public abstract IDataReceiver dataReceiverFactory(File file, long samples, double time, 
-			BulkIOType type, boolean upcastUnsigned, IDataReceiver.CaptureMethod method) 
-					throws IOException;
-	
+	public abstract IDataReceiver dataReceiverFactory(File file, long samples, double time, BulkIOType type, boolean upcastUnsigned,
+		IDataReceiver.CaptureMethod method) throws IOException;
+
 	/**
 	 * 
 	 * @param file : The file to write to
@@ -59,12 +58,10 @@ public abstract class AbstractDataReceiverAttributes {
 	 * @param sri : The data's sri
 	 * @throws IOException
 	 */
-	public String[][] writeFile(File file, Object [] data, BulkIOType type, boolean upcastUnsigned, 
-			StreamSRI sri) throws IOException {
-		IDataReceiver receiver = dataReceiverFactory(file, data.length, 0, type, upcastUnsigned, 
-				IDataReceiver.CaptureMethod.NUMBER);
+	public String[][] writeFile(File file, Object[] data, BulkIOType type, boolean upcastUnsigned, StreamSRI sri) throws IOException {
+		IDataReceiver receiver = dataReceiverFactory(file, data.length, 0, type, upcastUnsigned, IDataReceiver.CaptureMethod.NUMBER);
 		receiver.writeFile(data, sri);
-		String [][] outputFiles = receiver.getOutputFiles();
+		String[][] outputFiles = receiver.getOutputFiles();
 		receiver.dispose();
 		return outputFiles;
 	}

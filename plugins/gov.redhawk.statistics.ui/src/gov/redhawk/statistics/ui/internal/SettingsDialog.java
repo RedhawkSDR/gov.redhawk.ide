@@ -29,12 +29,12 @@ import org.eclipse.swt.widgets.Text;
 public class SettingsDialog extends TitleAreaDialog {
 
 	private Text barText;
-	private int numBars; 
+	private int numBars;
 	private int numDims, selIndex;
 
 	public SettingsDialog(Shell parentShell, int dimensions, int currentIndex, int currentBars) {
 		super(parentShell);
-		numDims = dimensions; 
+		numDims = dimensions;
 		selIndex = currentIndex;
 		numBars = currentBars;
 	}
@@ -44,19 +44,17 @@ public class SettingsDialog extends TitleAreaDialog {
 		super.create();
 		setDialogHelpAvailable(false);
 
-		setTitle("Chart Options"); 
+		setTitle("Chart Options");
 
-		String messageText = "Please set the number of bars "
-				+ ((numDims > 1) ? "and select dimension(s) " : "") 
-				+ "to be shown.";
-		setMessage(messageText, IMessageProvider.NONE); 
+		String messageText = "Please set the number of bars " + ((numDims > 1) ? "and select dimension(s) " : "") + "to be shown.";
+		setMessage(messageText, IMessageProvider.NONE);
 
 		//resize dialog window to ideal size
 		this.getShell().pack();
 	}
 
 	@Override
-	protected Control createDialogArea(Composite parent) {  
+	protected Control createDialogArea(Composite parent) {
 
 		Composite dialogComp = new Composite(parent, SWT.None);
 		dialogComp.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
@@ -71,9 +69,9 @@ public class SettingsDialog extends TitleAreaDialog {
 
 		barText = new Text(barComposite, SWT.BORDER);
 		barText.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-		barText.setText(String.valueOf(numBars)); 
+		barText.setText(String.valueOf(numBars));
 		barText.setSelection(0, barText.getText().length());
-		barText.addModifyListener(new ModifyListener() { 
+		barText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				getButton(OK).setEnabled(isValidInput());
@@ -85,7 +83,7 @@ public class SettingsDialog extends TitleAreaDialog {
 			buttons.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 			buttons.setLayout(GridLayoutFactory.fillDefaults().margins(10, 10).create());
 
-			for (int i = -1; i < numDims; i++) { 
+			for (int i = -1; i < numDims; i++) {
 				final Button button = new Button(buttons, SWT.RADIO);
 				button.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 				button.setSelection(i == selIndex);
@@ -95,7 +93,7 @@ public class SettingsDialog extends TitleAreaDialog {
 					public void widgetSelected(SelectionEvent e) {
 						selIndex = (Integer) button.getData();
 
-					} 
+					}
 				});
 
 				if (i == -1) {
@@ -116,18 +114,16 @@ public class SettingsDialog extends TitleAreaDialog {
 	}
 
 	private boolean isValidInput() {
-		try { 
-			if (Integer.parseInt(barText.getText()) < 1) { 
+		try {
+			if (Integer.parseInt(barText.getText()) < 1) {
 				setMessage("Please enter a positive integer.", IMessageProvider.ERROR);
 				return false;
 			}
-		} catch (NumberFormatException e) { 
+		} catch (NumberFormatException e) {
 			setMessage("Please enter a positive integer.", IMessageProvider.ERROR);
-			return false; 
+			return false;
 		}
-		setMessage("Please set the number of bars " 
-				+ ((numDims > 1) ? "and select dimension(s) " : "") 
-				+ "to be shown.", IMessageProvider.NONE); 
+		setMessage("Please set the number of bars " + ((numDims > 1) ? "and select dimension(s) " : "") + "to be shown.", IMessageProvider.NONE);
 		return true;
 	}
 
@@ -139,20 +135,20 @@ public class SettingsDialog extends TitleAreaDialog {
 	// We need to have the textFields into Strings because the UI gets disposed
 	// and the Text Fields are not accessible any more.
 	private void saveInput() {
-		numBars = Integer.parseInt(barText.getText());  
+		numBars = Integer.parseInt(barText.getText());
 	}
 
 	@Override
 	protected void okPressed() {
 		saveInput();
 		super.okPressed();
-	} 
+	}
 
 	public int getNumBars() {
 		return numBars;
-	} 
+	}
 
 	public int getSelectedIndex() {
 		return selIndex;
 	}
-} 
+}

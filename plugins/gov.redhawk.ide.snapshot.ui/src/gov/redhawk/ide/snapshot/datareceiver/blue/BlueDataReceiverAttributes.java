@@ -19,37 +19,36 @@ import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver.CaptureMethod;
 
 public class BlueDataReceiverAttributes extends AbstractDataReceiverAttributes {
-	
+
 	private final String receiverName = "Blue Midas file (.tmp)";
-	private final String [] receiverExtensions = {".tmp"};
+	private final String[] receiverExtensions = { ".tmp" };
 
 	@Override
-    public String getReceiverName() {
-	    return receiverName;
-    }
+	public String getReceiverName() {
+		return receiverName;
+	}
 
 	@Override
-    public String[] getReceiverExtensions() {
-	    return receiverExtensions;
-    }
+	public String[] getReceiverExtensions() {
+		return receiverExtensions;
+	}
 
 	@Override
-    public IDataReceiver dataReceiverFactory(File file, long samples, double time, BulkIOType type, 
-    		boolean upcastUnsigned, IDataReceiver.CaptureMethod method) throws IOException {
-	    if (type == BulkIOType.OCTET || type == BulkIOType.ULONG || type == BulkIOType.ULONG_LONG
-	    		|| type == BulkIOType.USHORT) {
-	    	if (method == CaptureMethod.NUMBER || method == CaptureMethod.SAMPLE_TIME) {
-	    		return new UBLUEDataReceiver(file, samples, time, type, method);
-	    	} else {
-	    		return new UBLUEDataReceiverClock(file, time, type, method);
-	    	}
-	    } else {
-	    	if (method == CaptureMethod.NUMBER || method == CaptureMethod.SAMPLE_TIME) {
-	    		return new BLUEDataReceiver(file, samples, time, type, method);
-	    	} else {
-	    		return new BLUEDataReceiverClock(file, time, type, method);
-	    	}
-	    }
-    }
+	public IDataReceiver dataReceiverFactory(File file, long samples, double time, BulkIOType type, boolean upcastUnsigned, IDataReceiver.CaptureMethod method)
+		throws IOException {
+		if (type == BulkIOType.OCTET || type == BulkIOType.ULONG || type == BulkIOType.ULONG_LONG || type == BulkIOType.USHORT) {
+			if (method == CaptureMethod.NUMBER || method == CaptureMethod.SAMPLE_TIME) {
+				return new UBLUEDataReceiver(file, samples, time, type, method);
+			} else {
+				return new UBLUEDataReceiverClock(file, time, type, method);
+			}
+		} else {
+			if (method == CaptureMethod.NUMBER || method == CaptureMethod.SAMPLE_TIME) {
+				return new BLUEDataReceiver(file, samples, time, type, method);
+			} else {
+				return new BLUEDataReceiverClock(file, time, type, method);
+			}
+		}
+	}
 
 }

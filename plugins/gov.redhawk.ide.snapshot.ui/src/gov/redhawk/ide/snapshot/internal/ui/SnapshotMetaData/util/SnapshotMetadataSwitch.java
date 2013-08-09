@@ -31,7 +31,7 @@ import org.eclipse.emf.ecore.util.Switch;
  * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SnapshotMetadataPackage
  * @generated
  */
-public class SnapshotMetadataSwitch<T> extends Switch<T> {
+public class SnapshotMetadataSwitch< T > extends Switch<T> {
 	/**
 	 * The cached model package
 	 * <!-- begin-user-doc -->
@@ -75,43 +75,50 @@ public class SnapshotMetadataSwitch<T> extends Switch<T> {
 	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
-			case SnapshotMetadataPackage.CF_DATA_TYPE: {
-				CFDataType cfDataType = (CFDataType)theEObject;
-				T result = caseCFDataType(cfDataType);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SnapshotMetadataPackage.KEYWORDS_TYPE: {
-				KeywordsType keywordsType = (KeywordsType)theEObject;
-				T result = caseKeywordsType(keywordsType);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SnapshotMetadataPackage.MODEL: {
-				Model model = (Model)theEObject;
-				T result = caseModel(model);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SnapshotMetadataPackage.SRI: {
-				SRI sri = (SRI)theEObject;
-				T result = caseSRI(sri);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SnapshotMetadataPackage.TIME: {
-				Time time = (Time)theEObject;
-				T result = caseTime(time);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SnapshotMetadataPackage.VALUE: {
-				Value value = (Value)theEObject;
-				T result = caseValue(value);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			default: return defaultCase(theEObject);
+		case SnapshotMetadataPackage.CF_DATA_TYPE: {
+			CFDataType cfDataType = (CFDataType) theEObject;
+			T result = caseCFDataType(cfDataType);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case SnapshotMetadataPackage.KEYWORDS_TYPE: {
+			KeywordsType keywordsType = (KeywordsType) theEObject;
+			T result = caseKeywordsType(keywordsType);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case SnapshotMetadataPackage.MODEL: {
+			Model model = (Model) theEObject;
+			T result = caseModel(model);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case SnapshotMetadataPackage.SRI: {
+			SRI sri = (SRI) theEObject;
+			T result = caseSRI(sri);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case SnapshotMetadataPackage.TIME: {
+			Time time = (Time) theEObject;
+			T result = caseTime(time);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case SnapshotMetadataPackage.VALUE: {
+			Value value = (Value) theEObject;
+			T result = caseValue(value);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		default:
+			return defaultCase(theEObject);
 		}
 	}
 

@@ -23,7 +23,7 @@ public class SnapshotActivator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static SnapshotActivator plugin;
-	
+
 	/**
 	 * The constructor
 	 */

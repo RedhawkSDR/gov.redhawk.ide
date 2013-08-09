@@ -9,6 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.statistics.ui;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -23,7 +24,7 @@ public class StatisticsPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static StatisticsPlugin plugin;
-	
+
 	/**
 	 * The constructor
 	 */

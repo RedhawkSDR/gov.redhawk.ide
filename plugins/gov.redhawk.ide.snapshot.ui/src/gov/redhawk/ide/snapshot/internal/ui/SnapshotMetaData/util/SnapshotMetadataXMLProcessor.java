@@ -41,7 +41,7 @@ public class SnapshotMetadataXMLProcessor extends XMLProcessor {
 		super(new EPackageRegistryImpl(EPackage.Registry.INSTANCE));
 		extendedMetaData.putPackage(null, SnapshotMetadataPackage.eINSTANCE);
 	}
-	
+
 	/**
 	 * Register for "*" and "xml" file extensions the SnapshotMetadataResourceFactoryImpl factory.
 	 * <!-- begin-user-doc -->

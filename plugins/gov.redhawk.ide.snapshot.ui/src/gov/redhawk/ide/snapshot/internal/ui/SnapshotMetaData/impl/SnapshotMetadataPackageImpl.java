@@ -116,10 +116,12 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public static SnapshotMetadataPackage init() {
-		if (isInited) return (SnapshotMetadataPackage)EPackage.Registry.INSTANCE.getEPackage(SnapshotMetadataPackage.eNS_URI);
+		if (isInited)
+			return (SnapshotMetadataPackage) EPackage.Registry.INSTANCE.getEPackage(SnapshotMetadataPackage.eNS_URI);
 
 		// Obtain or create and register package
-		SnapshotMetadataPackageImpl theSnapshotMetadataPackage = (SnapshotMetadataPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof SnapshotMetadataPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new SnapshotMetadataPackageImpl());
+		SnapshotMetadataPackageImpl theSnapshotMetadataPackage = (SnapshotMetadataPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof SnapshotMetadataPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI)
+			: new SnapshotMetadataPackageImpl());
 
 		isInited = true;
 
@@ -135,7 +137,6 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 		// Mark meta-data to indicate it can't be changed
 		theSnapshotMetadataPackage.freeze();
 
-  
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(SnapshotMetadataPackage.eNS_URI, theSnapshotMetadataPackage);
 		return theSnapshotMetadataPackage;
@@ -156,7 +157,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getCFDataType_Mixed() {
-		return (EAttribute)cfDataTypeEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) cfDataTypeEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -165,7 +166,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EReference getCFDataType_Value() {
-		return (EReference)cfDataTypeEClass.getEStructuralFeatures().get(1);
+		return (EReference) cfDataTypeEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -174,7 +175,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getCFDataType_Id() {
-		return (EAttribute)cfDataTypeEClass.getEStructuralFeatures().get(2);
+		return (EAttribute) cfDataTypeEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -192,7 +193,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getKeywordsType_Mixed() {
-		return (EAttribute)keywordsTypeEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) keywordsTypeEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -201,7 +202,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EReference getKeywordsType_CFDataType() {
-		return (EReference)keywordsTypeEClass.getEStructuralFeatures().get(1);
+		return (EReference) keywordsTypeEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -219,7 +220,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getModel_Mixed() {
-		return (EAttribute)modelEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) modelEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -228,7 +229,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getModel_NumberOfSamples() {
-		return (EAttribute)modelEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) modelEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -237,7 +238,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EReference getModel_Time() {
-		return (EReference)modelEClass.getEStructuralFeatures().get(2);
+		return (EReference) modelEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -246,7 +247,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getModel_BulkIOType() {
-		return (EAttribute)modelEClass.getEStructuralFeatures().get(3);
+		return (EAttribute) modelEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -255,7 +256,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EReference getModel_StreamSRI() {
-		return (EReference)modelEClass.getEStructuralFeatures().get(4);
+		return (EReference) modelEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -273,7 +274,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getSRI_Mixed() {
-		return (EAttribute)sriEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) sriEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -282,7 +283,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getSRI_Hversion() {
-		return (EAttribute)sriEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) sriEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -291,7 +292,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getSRI_Xstart() {
-		return (EAttribute)sriEClass.getEStructuralFeatures().get(2);
+		return (EAttribute) sriEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -300,7 +301,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getSRI_Xdelta() {
-		return (EAttribute)sriEClass.getEStructuralFeatures().get(3);
+		return (EAttribute) sriEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -309,7 +310,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getSRI_Xunits() {
-		return (EAttribute)sriEClass.getEStructuralFeatures().get(4);
+		return (EAttribute) sriEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -318,7 +319,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getSRI_Subsize() {
-		return (EAttribute)sriEClass.getEStructuralFeatures().get(5);
+		return (EAttribute) sriEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -327,7 +328,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getSRI_Ystart() {
-		return (EAttribute)sriEClass.getEStructuralFeatures().get(6);
+		return (EAttribute) sriEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -336,7 +337,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getSRI_Ydelta() {
-		return (EAttribute)sriEClass.getEStructuralFeatures().get(7);
+		return (EAttribute) sriEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -345,7 +346,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getSRI_Yunits() {
-		return (EAttribute)sriEClass.getEStructuralFeatures().get(8);
+		return (EAttribute) sriEClass.getEStructuralFeatures().get(8);
 	}
 
 	/**
@@ -354,7 +355,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getSRI_Mode() {
-		return (EAttribute)sriEClass.getEStructuralFeatures().get(9);
+		return (EAttribute) sriEClass.getEStructuralFeatures().get(9);
 	}
 
 	/**
@@ -363,7 +364,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getSRI_StreamID() {
-		return (EAttribute)sriEClass.getEStructuralFeatures().get(10);
+		return (EAttribute) sriEClass.getEStructuralFeatures().get(10);
 	}
 
 	/**
@@ -372,7 +373,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getSRI_Blocking() {
-		return (EAttribute)sriEClass.getEStructuralFeatures().get(11);
+		return (EAttribute) sriEClass.getEStructuralFeatures().get(11);
 	}
 
 	/**
@@ -381,7 +382,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EReference getSRI_Keywords() {
-		return (EReference)sriEClass.getEStructuralFeatures().get(12);
+		return (EReference) sriEClass.getEStructuralFeatures().get(12);
 	}
 
 	/**
@@ -399,7 +400,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getTime_StartTime() {
-		return (EAttribute)timeEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) timeEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -408,7 +409,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getTime_EndTime() {
-		return (EAttribute)timeEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) timeEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -426,7 +427,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getValue_Mixed() {
-		return (EAttribute)valueEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) valueEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -435,7 +436,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getValue_Value() {
-		return (EAttribute)valueEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) valueEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -444,7 +445,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public EAttribute getValue_JavaType() {
-		return (EAttribute)valueEClass.getEStructuralFeatures().get(2);
+		return (EAttribute) valueEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -453,7 +454,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public SnapshotMetadataFactory getSnapshotMetadataFactory() {
-		return (SnapshotMetadataFactory)getEFactoryInstance();
+		return (SnapshotMetadataFactory) getEFactoryInstance();
 	}
 
 	/**
@@ -471,7 +472,8 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public void createPackageContents() {
-		if (isCreated) return;
+		if (isCreated)
+			return;
 		isCreated = true;
 
 		// Create classes and their features
@@ -531,7 +533,8 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	public void initializePackageContents() {
-		if (isInitialized) return;
+		if (isInitialized)
+			return;
 		isInitialized = true;
 
 		// Initialize package
@@ -540,7 +543,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
-		XMLTypePackage theXMLTypePackage = (XMLTypePackage)EPackage.Registry.INSTANCE.getEPackage(XMLTypePackage.eNS_URI);
+		XMLTypePackage theXMLTypePackage = (XMLTypePackage) EPackage.Registry.INSTANCE.getEPackage(XMLTypePackage.eNS_URI);
 
 		// Create type parameters
 
@@ -550,44 +553,76 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(cfDataTypeEClass, CFDataType.class, "CFDataType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getCFDataType_Mixed(), ecorePackage.getEFeatureMapEntry(), "mixed", null, 0, -1, CFDataType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getCFDataType_Value(), ecorePackage.getEObject(), null, "value", null, 1, 1, CFDataType.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCFDataType_Id(), theXMLTypePackage.getString(), "id", null, 0, 1, CFDataType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCFDataType_Mixed(), ecorePackage.getEFeatureMapEntry(), "mixed", null, 0, -1, CFDataType.class, !IS_TRANSIENT, !IS_VOLATILE,
+			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getCFDataType_Value(), ecorePackage.getEObject(), null, "value", null, 1, 1, CFDataType.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE,
+			IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCFDataType_Id(), theXMLTypePackage.getString(), "id", null, 0, 1, CFDataType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+			!IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(keywordsTypeEClass, KeywordsType.class, "KeywordsType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getKeywordsType_Mixed(), ecorePackage.getEFeatureMapEntry(), "mixed", null, 0, -1, KeywordsType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getKeywordsType_CFDataType(), this.getCFDataType(), null, "cFDataType", null, 0, -1, KeywordsType.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getKeywordsType_Mixed(), ecorePackage.getEFeatureMapEntry(), "mixed", null, 0, -1, KeywordsType.class, !IS_TRANSIENT, !IS_VOLATILE,
+			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getKeywordsType_CFDataType(), this.getCFDataType(), null, "cFDataType", null, 0, -1, KeywordsType.class, IS_TRANSIENT, IS_VOLATILE,
+			IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getModel_Mixed(), ecorePackage.getEFeatureMapEntry(), "mixed", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getModel_NumberOfSamples(), theXMLTypePackage.getLong(), "numberOfSamples", null, 1, 1, Model.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEReference(getModel_Time(), this.getTime(), null, "time", null, 1, 1, Model.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getModel_BulkIOType(), theXMLTypePackage.getString(), "bulkIOType", null, 1, 1, Model.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEReference(getModel_StreamSRI(), this.getSRI(), null, "streamSRI", null, 1, 1, Model.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getModel_Mixed(), ecorePackage.getEFeatureMapEntry(), "mixed", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+			!IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getModel_NumberOfSamples(), theXMLTypePackage.getLong(), "numberOfSamples", null, 1, 1, Model.class, IS_TRANSIENT, IS_VOLATILE,
+			IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEReference(getModel_Time(), this.getTime(), null, "time", null, 1, 1, Model.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
+			!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getModel_BulkIOType(), theXMLTypePackage.getString(), "bulkIOType", null, 1, 1, Model.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE,
+			!IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEReference(getModel_StreamSRI(), this.getSRI(), null, "streamSRI", null, 1, 1, Model.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
+			!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		initEClass(sriEClass, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, "SRI", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getSRI_Mixed(), ecorePackage.getEFeatureMapEntry(), "mixed", null, 0, -1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSRI_Hversion(), theXMLTypePackage.getInt(), "hversion", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSRI_Xstart(), theXMLTypePackage.getDouble(), "xstart", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSRI_Xdelta(), theXMLTypePackage.getDouble(), "xdelta", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSRI_Xunits(), theXMLTypePackage.getShort(), "xunits", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSRI_Subsize(), theXMLTypePackage.getDouble(), "subsize", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSRI_Ystart(), theXMLTypePackage.getDouble(), "ystart", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSRI_Ydelta(), theXMLTypePackage.getDouble(), "ydelta", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSRI_Yunits(), theXMLTypePackage.getShort(), "yunits", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSRI_Mode(), theXMLTypePackage.getShort(), "mode", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSRI_StreamID(), theXMLTypePackage.getString(), "streamID", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSRI_Blocking(), theXMLTypePackage.getBoolean(), "blocking", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEReference(getSRI_Keywords(), this.getKeywordsType(), null, "keywords", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSRI_Mixed(), ecorePackage.getEFeatureMapEntry(), "mixed", null, 0, -1,
+			gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE,
+			!IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSRI_Hversion(), theXMLTypePackage.getInt(), "hversion", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class,
+			IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSRI_Xstart(), theXMLTypePackage.getDouble(), "xstart", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class,
+			IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSRI_Xdelta(), theXMLTypePackage.getDouble(), "xdelta", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class,
+			IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSRI_Xunits(), theXMLTypePackage.getShort(), "xunits", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class,
+			IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSRI_Subsize(), theXMLTypePackage.getDouble(), "subsize", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class,
+			IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSRI_Ystart(), theXMLTypePackage.getDouble(), "ystart", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class,
+			IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSRI_Ydelta(), theXMLTypePackage.getDouble(), "ydelta", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class,
+			IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSRI_Yunits(), theXMLTypePackage.getShort(), "yunits", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class,
+			IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSRI_Mode(), theXMLTypePackage.getShort(), "mode", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class,
+			IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSRI_StreamID(), theXMLTypePackage.getString(), "streamID", null, 1, 1,
+			gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+			IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSRI_Blocking(), theXMLTypePackage.getBoolean(), "blocking", null, 1, 1,
+			gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+			IS_DERIVED, IS_ORDERED);
+		initEReference(getSRI_Keywords(), this.getKeywordsType(), null, "keywords", null, 1, 1,
+			gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+			!IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		initEClass(timeEClass, Time.class, "Time", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getTime_StartTime(), theXMLTypePackage.getString(), "startTime", "0", 1, 1, Time.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getTime_EndTime(), theXMLTypePackage.getString(), "endTime", "0", 1, 1, Time.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTime_StartTime(), theXMLTypePackage.getString(), "startTime", "0", 1, 1, Time.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+			IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTime_EndTime(), theXMLTypePackage.getString(), "endTime", "0", 1, 1, Time.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+			IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(valueEClass, Value.class, "Value", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getValue_Mixed(), ecorePackage.getEFeatureMapEntry(), "mixed", null, 0, -1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getValue_Value(), theXMLTypePackage.getString(), "value", null, 1, 1, Value.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getValue_JavaType(), theXMLTypePackage.getString(), "javaType", null, 1, 1, Value.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getValue_Mixed(), ecorePackage.getEFeatureMapEntry(), "mixed", null, 0, -1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+			!IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getValue_Value(), theXMLTypePackage.getString(), "value", null, 1, 1, Value.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE,
+			!IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getValue_JavaType(), theXMLTypePackage.getString(), "javaType", null, 1, 1, Value.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE,
+			!IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
@@ -606,13 +641,8 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	protected void createXMIAnnotations() {
-		String source = "http://www.omg.org/XMI";		
-		addAnnotation
-		  (this, 
-		   source, 
-		   new String[] {
-			 "version", "2.0"
-		   });																																			
+		String source = "http://www.omg.org/XMI";
+		addAnnotation(this, source, new String[] { "version", "2.0" });
 	}
 
 	/**
@@ -622,274 +652,42 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * @generated
 	 */
 	protected void createExtendedMetaDataAnnotations() {
-		String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";			
-		addAnnotation
-		  (this, 
-		   source, 
-		   new String[] {
-			 "qualified", "false"
-		   });		
-		addAnnotation
-		  (cfDataTypeEClass, 
-		   source, 
-		   new String[] {
-			 "name", "CFDataType",
-			 "kind", "mixed"
-		   });		
-		addAnnotation
-		  (getCFDataType_Mixed(), 
-		   source, 
-		   new String[] {
-			 "kind", "elementWildcard",
-			 "name", ":mixed"
-		   });		
-		addAnnotation
-		  (getCFDataType_Value(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "value",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getCFDataType_Id(), 
-		   source, 
-		   new String[] {
-			 "kind", "attribute",
-			 "name", "id",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (keywordsTypeEClass, 
-		   source, 
-		   new String[] {
-			 "name", "keywords_._type",
-			 "kind", "mixed"
-		   });		
-		addAnnotation
-		  (getKeywordsType_Mixed(), 
-		   source, 
-		   new String[] {
-			 "kind", "elementWildcard",
-			 "name", ":mixed"
-		   });		
-		addAnnotation
-		  (getKeywordsType_CFDataType(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "CFDataType",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (modelEClass, 
-		   source, 
-		   new String[] {
-			 "name", "Model",
-			 "kind", "mixed"
-		   });		
-		addAnnotation
-		  (getModel_Mixed(), 
-		   source, 
-		   new String[] {
-			 "kind", "elementWildcard",
-			 "name", ":mixed"
-		   });		
-		addAnnotation
-		  (getModel_NumberOfSamples(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "numberOfSamples",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getModel_Time(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "time",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getModel_BulkIOType(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "BulkIOType",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getModel_StreamSRI(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "StreamSRI",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (sriEClass, 
-		   source, 
-		   new String[] {
-			 "name", "SRI",
-			 "kind", "mixed"
-		   });		
-		addAnnotation
-		  (getSRI_Mixed(), 
-		   source, 
-		   new String[] {
-			 "kind", "elementWildcard",
-			 "name", ":mixed"
-		   });		
-		addAnnotation
-		  (getSRI_Hversion(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "hversion",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getSRI_Xstart(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "xstart",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getSRI_Xdelta(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "xdelta",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getSRI_Xunits(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "xunits",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getSRI_Subsize(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "subsize",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getSRI_Ystart(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "ystart",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getSRI_Ydelta(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "ydelta",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getSRI_Yunits(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "yunits",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getSRI_Mode(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "mode",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getSRI_StreamID(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "streamID",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getSRI_Blocking(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "blocking",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getSRI_Keywords(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "keywords",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (timeEClass, 
-		   source, 
-		   new String[] {
-			 "name", "Time",
-			 "kind", "elementOnly"
-		   });		
-		addAnnotation
-		  (getTime_StartTime(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "startTime",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getTime_EndTime(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "endTime",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (valueEClass, 
-		   source, 
-		   new String[] {
-			 "name", "Value",
-			 "kind", "mixed"
-		   });		
-		addAnnotation
-		  (getValue_Mixed(), 
-		   source, 
-		   new String[] {
-			 "kind", "elementWildcard",
-			 "name", ":mixed"
-		   });		
-		addAnnotation
-		  (getValue_Value(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "value",
-			 "namespace", "##targetNamespace"
-		   });		
-		addAnnotation
-		  (getValue_JavaType(), 
-		   source, 
-		   new String[] {
-			 "kind", "element",
-			 "name", "javaType",
-			 "namespace", "##targetNamespace"
-		   });
+		String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";
+		addAnnotation(this, source, new String[] { "qualified", "false" });
+		addAnnotation(cfDataTypeEClass, source, new String[] { "name", "CFDataType", "kind", "mixed" });
+		addAnnotation(getCFDataType_Mixed(), source, new String[] { "kind", "elementWildcard", "name", ":mixed" });
+		addAnnotation(getCFDataType_Value(), source, new String[] { "kind", "element", "name", "value", "namespace", "##targetNamespace" });
+		addAnnotation(getCFDataType_Id(), source, new String[] { "kind", "attribute", "name", "id", "namespace", "##targetNamespace" });
+		addAnnotation(keywordsTypeEClass, source, new String[] { "name", "keywords_._type", "kind", "mixed" });
+		addAnnotation(getKeywordsType_Mixed(), source, new String[] { "kind", "elementWildcard", "name", ":mixed" });
+		addAnnotation(getKeywordsType_CFDataType(), source, new String[] { "kind", "element", "name", "CFDataType", "namespace", "##targetNamespace" });
+		addAnnotation(modelEClass, source, new String[] { "name", "Model", "kind", "mixed" });
+		addAnnotation(getModel_Mixed(), source, new String[] { "kind", "elementWildcard", "name", ":mixed" });
+		addAnnotation(getModel_NumberOfSamples(), source, new String[] { "kind", "element", "name", "numberOfSamples", "namespace", "##targetNamespace" });
+		addAnnotation(getModel_Time(), source, new String[] { "kind", "element", "name", "time", "namespace", "##targetNamespace" });
+		addAnnotation(getModel_BulkIOType(), source, new String[] { "kind", "element", "name", "BulkIOType", "namespace", "##targetNamespace" });
+		addAnnotation(getModel_StreamSRI(), source, new String[] { "kind", "element", "name", "StreamSRI", "namespace", "##targetNamespace" });
+		addAnnotation(sriEClass, source, new String[] { "name", "SRI", "kind", "mixed" });
+		addAnnotation(getSRI_Mixed(), source, new String[] { "kind", "elementWildcard", "name", ":mixed" });
+		addAnnotation(getSRI_Hversion(), source, new String[] { "kind", "element", "name", "hversion", "namespace", "##targetNamespace" });
+		addAnnotation(getSRI_Xstart(), source, new String[] { "kind", "element", "name", "xstart", "namespace", "##targetNamespace" });
+		addAnnotation(getSRI_Xdelta(), source, new String[] { "kind", "element", "name", "xdelta", "namespace", "##targetNamespace" });
+		addAnnotation(getSRI_Xunits(), source, new String[] { "kind", "element", "name", "xunits", "namespace", "##targetNamespace" });
+		addAnnotation(getSRI_Subsize(), source, new String[] { "kind", "element", "name", "subsize", "namespace", "##targetNamespace" });
+		addAnnotation(getSRI_Ystart(), source, new String[] { "kind", "element", "name", "ystart", "namespace", "##targetNamespace" });
+		addAnnotation(getSRI_Ydelta(), source, new String[] { "kind", "element", "name", "ydelta", "namespace", "##targetNamespace" });
+		addAnnotation(getSRI_Yunits(), source, new String[] { "kind", "element", "name", "yunits", "namespace", "##targetNamespace" });
+		addAnnotation(getSRI_Mode(), source, new String[] { "kind", "element", "name", "mode", "namespace", "##targetNamespace" });
+		addAnnotation(getSRI_StreamID(), source, new String[] { "kind", "element", "name", "streamID", "namespace", "##targetNamespace" });
+		addAnnotation(getSRI_Blocking(), source, new String[] { "kind", "element", "name", "blocking", "namespace", "##targetNamespace" });
+		addAnnotation(getSRI_Keywords(), source, new String[] { "kind", "element", "name", "keywords", "namespace", "##targetNamespace" });
+		addAnnotation(timeEClass, source, new String[] { "name", "Time", "kind", "elementOnly" });
+		addAnnotation(getTime_StartTime(), source, new String[] { "kind", "element", "name", "startTime", "namespace", "##targetNamespace" });
+		addAnnotation(getTime_EndTime(), source, new String[] { "kind", "element", "name", "endTime", "namespace", "##targetNamespace" });
+		addAnnotation(valueEClass, source, new String[] { "name", "Value", "kind", "mixed" });
+		addAnnotation(getValue_Mixed(), source, new String[] { "kind", "elementWildcard", "name", ":mixed" });
+		addAnnotation(getValue_Value(), source, new String[] { "kind", "element", "name", "value", "namespace", "##targetNamespace" });
+		addAnnotation(getValue_JavaType(), source, new String[] { "kind", "element", "name", "javaType", "namespace", "##targetNamespace" });
 	}
 
 } //SnapshotMetadataPackageImpl

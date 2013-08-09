@@ -63,7 +63,7 @@ public class SnapshotMetadataAdapterFactory extends AdapterFactoryImpl {
 			return true;
 		}
 		if (object instanceof EObject) {
-			return ((EObject)object).eClass().getEPackage() == modelPackage;
+			return ((EObject) object).eClass().getEPackage() == modelPackage;
 		}
 		return false;
 	}
@@ -74,37 +74,42 @@ public class SnapshotMetadataAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected SnapshotMetadataSwitch<Adapter> modelSwitch =
-		new SnapshotMetadataSwitch<Adapter>() {
-			@Override
-			public Adapter caseCFDataType(CFDataType object) {
-				return createCFDataTypeAdapter();
-			}
-			@Override
-			public Adapter caseKeywordsType(KeywordsType object) {
-				return createKeywordsTypeAdapter();
-			}
-			@Override
-			public Adapter caseModel(Model object) {
-				return createModelAdapter();
-			}
-			@Override
-			public Adapter caseSRI(SRI object) {
-				return createSRIAdapter();
-			}
-			@Override
-			public Adapter caseTime(Time object) {
-				return createTimeAdapter();
-			}
-			@Override
-			public Adapter caseValue(Value object) {
-				return createValueAdapter();
-			}
-			@Override
-			public Adapter defaultCase(EObject object) {
-				return createEObjectAdapter();
-			}
-		};
+	protected SnapshotMetadataSwitch<Adapter> modelSwitch = new SnapshotMetadataSwitch<Adapter>() {
+		@Override
+		public Adapter caseCFDataType(CFDataType object) {
+			return createCFDataTypeAdapter();
+		}
+
+		@Override
+		public Adapter caseKeywordsType(KeywordsType object) {
+			return createKeywordsTypeAdapter();
+		}
+
+		@Override
+		public Adapter caseModel(Model object) {
+			return createModelAdapter();
+		}
+
+		@Override
+		public Adapter caseSRI(SRI object) {
+			return createSRIAdapter();
+		}
+
+		@Override
+		public Adapter caseTime(Time object) {
+			return createTimeAdapter();
+		}
+
+		@Override
+		public Adapter caseValue(Value object) {
+			return createValueAdapter();
+		}
+
+		@Override
+		public Adapter defaultCase(EObject object) {
+			return createEObjectAdapter();
+		}
+	};
 
 	/**
 	 * Creates an adapter for the <code>target</code>.
@@ -116,9 +121,8 @@ public class SnapshotMetadataAdapterFactory extends AdapterFactoryImpl {
 	 */
 	@Override
 	public Adapter createAdapter(Notifier target) {
-		return modelSwitch.doSwitch((EObject)target);
+		return modelSwitch.doSwitch((EObject) target);
 	}
-
 
 	/**
 	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.CFDataType <em>CF Data Type</em>}'.

@@ -147,7 +147,8 @@ public class TimeImpl extends EObjectImpl implements Time {
 		startTime = START_TIME_EDEFAULT;
 		startTimeESet = false;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.UNSET, SnapshotMetadataPackage.TIME__START_TIME, oldStartTime, START_TIME_EDEFAULT, oldStartTimeESet));
+			eNotify(new ENotificationImpl(this, Notification.UNSET, SnapshotMetadataPackage.TIME__START_TIME, oldStartTime, START_TIME_EDEFAULT,
+				oldStartTimeESet));
 	}
 
 	/**
@@ -213,10 +214,10 @@ public class TimeImpl extends EObjectImpl implements Time {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case SnapshotMetadataPackage.TIME__START_TIME:
-				return getStartTime();
-			case SnapshotMetadataPackage.TIME__END_TIME:
-				return getEndTime();
+		case SnapshotMetadataPackage.TIME__START_TIME:
+			return getStartTime();
+		case SnapshotMetadataPackage.TIME__END_TIME:
+			return getEndTime();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -229,12 +230,12 @@ public class TimeImpl extends EObjectImpl implements Time {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case SnapshotMetadataPackage.TIME__START_TIME:
-				setStartTime((String)newValue);
-				return;
-			case SnapshotMetadataPackage.TIME__END_TIME:
-				setEndTime((String)newValue);
-				return;
+		case SnapshotMetadataPackage.TIME__START_TIME:
+			setStartTime((String) newValue);
+			return;
+		case SnapshotMetadataPackage.TIME__END_TIME:
+			setEndTime((String) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -247,12 +248,12 @@ public class TimeImpl extends EObjectImpl implements Time {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case SnapshotMetadataPackage.TIME__START_TIME:
-				unsetStartTime();
-				return;
-			case SnapshotMetadataPackage.TIME__END_TIME:
-				unsetEndTime();
-				return;
+		case SnapshotMetadataPackage.TIME__START_TIME:
+			unsetStartTime();
+			return;
+		case SnapshotMetadataPackage.TIME__END_TIME:
+			unsetEndTime();
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -265,10 +266,10 @@ public class TimeImpl extends EObjectImpl implements Time {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case SnapshotMetadataPackage.TIME__START_TIME:
-				return isSetStartTime();
-			case SnapshotMetadataPackage.TIME__END_TIME:
-				return isSetEndTime();
+		case SnapshotMetadataPackage.TIME__START_TIME:
+			return isSetStartTime();
+		case SnapshotMetadataPackage.TIME__END_TIME:
+			return isSetEndTime();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -280,13 +281,20 @@ public class TimeImpl extends EObjectImpl implements Time {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (startTime: ");
-		if (startTimeESet) result.append(startTime); else result.append("<unset>");
+		if (startTimeESet)
+			result.append(startTime);
+		else
+			result.append("<unset>");
 		result.append(", endTime: ");
-		if (endTimeESet) result.append(endTime); else result.append("<unset>");
+		if (endTimeESet)
+			result.append(endTime);
+		else
+			result.append("<unset>");
 		result.append(')');
 		return result.toString();
 	}

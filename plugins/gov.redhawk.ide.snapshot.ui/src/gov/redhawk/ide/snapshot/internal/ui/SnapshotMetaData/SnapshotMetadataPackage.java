@@ -432,7 +432,6 @@ public interface SnapshotMetadataPackage extends EPackage {
 	 */
 	int VALUE_FEATURE_COUNT = 3;
 
-
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.CFDataType <em>CF Data Type</em>}'.
 	 * <!-- begin-user-doc -->

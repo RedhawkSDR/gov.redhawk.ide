@@ -37,75 +37,70 @@ import BULKIO.dataUlongLongHelper;
 import BULKIO.dataUshortHelper;
 
 public class SnapshotHandler extends AbstractHandler {
-    /**
-     * The constructor.
-     */
-    public SnapshotHandler() {
-    }
+	/**
+	 * The constructor.
+	 */
+	public SnapshotHandler() {
+	}
 
-    /**
-     * the command has been executed, so extract extract the needed information
-     * from the application context.
-     */
-    public Object execute(ExecutionEvent event) throws ExecutionException {
-        Shell shell = HandlerUtil.getActiveShell(event);
-        ISelection selection = HandlerUtil.getActiveMenuSelection(event);
-        if (selection == null) {
-            selection = HandlerUtil.getCurrentSelection(event);
-        }
-        if (selection instanceof IStructuredSelection) {
-            IStructuredSelection ss = (IStructuredSelection) selection;
+	/**
+	 * the command has been executed, so extract extract the needed information
+	 * from the application context.
+	 */
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		Shell shell = HandlerUtil.getActiveShell(event);
+		ISelection selection = HandlerUtil.getActiveMenuSelection(event);
+		if (selection == null) {
+			selection = HandlerUtil.getCurrentSelection(event);
+		}
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection) selection;
 
-            Object obj = ss.getFirstElement();
-            if (obj instanceof ScaUsesPort && checkPort((ScaUsesPort) obj)) {
-            	SnapshotWizard wizard = new SnapshotWizard((ScaUsesPort) obj);
-                WizardDialog dialog = new WizardDialog(shell, wizard);
-                dialog.open();
-            } else if (obj instanceof UsesPortStubEditPart) {
-            	//get ScaUsesPort from UsesPortStubEditPart and continue
-            	ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, (UsesPortStubEditPart) obj);
-        		if (this.checkPort(port)) {
-	            	SnapshotWizard wizard = new SnapshotWizard(port);
-	                WizardDialog dialog = new WizardDialog(shell, wizard);
-	                dialog.open();
-        		}
-            }
-        }
-        return null;
-    }
+			Object obj = ss.getFirstElement();
+			if (obj instanceof ScaUsesPort && checkPort((ScaUsesPort) obj)) {
+				SnapshotWizard wizard = new SnapshotWizard((ScaUsesPort) obj);
+				WizardDialog dialog = new WizardDialog(shell, wizard);
+				dialog.open();
+			} else if (obj instanceof UsesPortStubEditPart) {
+				//get ScaUsesPort from UsesPortStubEditPart and continue
+				ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, (UsesPortStubEditPart) obj);
+				if (this.checkPort(port)) {
+					SnapshotWizard wizard = new SnapshotWizard(port);
+					WizardDialog dialog = new WizardDialog(shell, wizard);
+					dialog.open();
+				}
+			}
+		}
+		return null;
+	}
 
-    private boolean checkPort(ScaUsesPort port) {
-        if (port.getRepid().equals(dataCharHelper.id())
-                || port.getRepid().equals(dataDoubleHelper.id())
-                || port.getRepid().equals(dataFloatHelper.id())
-                || port.getRepid().equals(dataLongHelper.id())
-                || port.getRepid().equals(dataLongLongHelper.id())
-                || port.getRepid().equals(dataOctetHelper.id())
-                || port.getRepid().equals(dataShortHelper.id())
-                || port.getRepid().equals(dataUlongHelper.id())
-                || port.getRepid().equals(dataUlongLongHelper.id())
-                || port.getRepid().equals(dataUshortHelper.id())) {
-            return true;
-        }
-        return false;
-    }
-    @Override
-    public void setEnabled(Object evaluationContext) {
-        final IEvaluationContext context = (IEvaluationContext) evaluationContext;
-        Object obj = context.getVariable("activeMenuSelection");
-        if (obj instanceof IStructuredSelection) {
-            IStructuredSelection ss = (IStructuredSelection) obj;
-            Object element = ss.getFirstElement();
-            if (element instanceof ScaUsesPort) {
-                setBaseEnabled(checkPort((ScaUsesPort) element));
-                return;
-            } else if (element instanceof UsesPortStubEditPart) {
-            	//get ScaUsesPort from UsesPortStubEditPart and continue
-            	ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, (UsesPortStubEditPart) element);
-            	setBaseEnabled(checkPort(port));
-                return;
-            }
-        }
-        setBaseEnabled(false);
-    }
+	private boolean checkPort(ScaUsesPort port) {
+		if (port.getRepid().equals(dataCharHelper.id()) || port.getRepid().equals(dataDoubleHelper.id()) || port.getRepid().equals(dataFloatHelper.id())
+			|| port.getRepid().equals(dataLongHelper.id()) || port.getRepid().equals(dataLongLongHelper.id()) || port.getRepid().equals(dataOctetHelper.id())
+			|| port.getRepid().equals(dataShortHelper.id()) || port.getRepid().equals(dataUlongHelper.id()) || port.getRepid().equals(dataUlongLongHelper.id())
+			|| port.getRepid().equals(dataUshortHelper.id())) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void setEnabled(Object evaluationContext) {
+		final IEvaluationContext context = (IEvaluationContext) evaluationContext;
+		Object obj = context.getVariable("activeMenuSelection");
+		if (obj instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection) obj;
+			Object element = ss.getFirstElement();
+			if (element instanceof ScaUsesPort) {
+				setBaseEnabled(checkPort((ScaUsesPort) element));
+				return;
+			} else if (element instanceof UsesPortStubEditPart) {
+				//get ScaUsesPort from UsesPortStubEditPart and continue
+				ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, (UsesPortStubEditPart) element);
+				setBaseEnabled(checkPort(port));
+				return;
+			}
+		}
+		setBaseEnabled(false);
+	}
 }

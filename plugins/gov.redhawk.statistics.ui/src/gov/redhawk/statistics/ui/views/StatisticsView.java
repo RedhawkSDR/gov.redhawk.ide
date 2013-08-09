@@ -53,12 +53,11 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.xy.XYDataset;
 
-public class StatisticsView extends ViewPart   {
+public class StatisticsView extends ViewPart {
 
-	public static final String ID = "gov.redhawk.statistics.ui.views.StatisticsView"; 
+	public static final String ID = "gov.redhawk.statistics.ui.views.StatisticsView";
 
-	public static final String[] STAT_PROPS = { Stats.MINIMUM, Stats.MAXIMUM, Stats.MEDIAN, 
-		Stats.MEAN, Stats.STD_DEV, Stats.NUM };
+	public static final String[] STAT_PROPS = { Stats.MINIMUM, Stats.MAXIMUM, Stats.MEDIAN, Stats.MEAN, Stats.STD_DEV, Stats.NUM };
 
 	private Label[] labels = new Label[STAT_PROPS.length];
 
@@ -68,13 +67,13 @@ public class StatisticsView extends ViewPart   {
 
 	private int dimensions;
 
-	private Stats[] stats; 
+	private Stats[] stats;
 
 	private Stats magnitudeStats;
 
 	private Composite parent;
 
-	private Section section; 
+	private Section section;
 
 	private DatalistDataset dataSet = new DatalistDataset();
 
@@ -82,32 +81,32 @@ public class StatisticsView extends ViewPart   {
 
 	private int numBars = 4;
 
-	private final List<DisposeListener> listeners = 
-			Collections.synchronizedList(new ArrayList<DisposeListener>());
+	private final List<DisposeListener> listeners = Collections.synchronizedList(new ArrayList<DisposeListener>());
 
 	private WorkbenchJob refreshJob = new WorkbenchJob("Refreshing Data and Composite") {
 		{
 			setSystem(true);
 			setUser(false);
 		}
+
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
-			refresh(); 
+			refresh();
 			return Status.OK_STATUS;
 		}
-	};  
+	};
 
 	/**
 	 * the constructor
 	 */
-	public StatisticsView() {  
+	public StatisticsView() {
 	}
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize it.
 	 */
 	@Override
-	public void createPartControl(Composite comp) { 
+	public void createPartControl(Composite comp) {
 
 		parent = comp;
 		parent.setLayout(GridLayoutFactory.fillDefaults().margins(10, 10).numColumns(1).create());
@@ -117,36 +116,30 @@ public class StatisticsView extends ViewPart   {
 
 			@Override
 			public void run() {
-				SettingsDialog dialog = new SettingsDialog(parent.getShell(), dimensions, curIndex, numBars); 
+				SettingsDialog dialog = new SettingsDialog(parent.getShell(), dimensions, curIndex, numBars);
 				dialog.create();
 				if (dialog.open() == Window.OK) {
 					numBars = dialog.getNumBars();
 					curIndex = dialog.getSelectedIndex();
 					refreshJob.schedule();
-				} 				
+				}
 			}
 		};
 		customAction.setText("Settings");
 		getViewSite().getActionBars().getMenuManager().add(customAction);
 
-
 		// creation of chart composite and selection of associated options
 		Composite chartComposite = new Composite(parent, SWT.EMBEDDED);
 		chartComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
 
-		chart = ChartFactory.createXYBarChart(null, null, false, null, dataSet, 
-				PlotOrientation.VERTICAL, false, true, false);
+		chart = ChartFactory.createXYBarChart(null, null, false, null, dataSet, PlotOrientation.VERTICAL, false, true, false);
 
 		org.eclipse.swt.graphics.Color backgroundColor = chartComposite.getBackground();
-		chart.setBackgroundPaint(new Color(backgroundColor.getRed(),
-				backgroundColor.getGreen(),
-				backgroundColor.getBlue()));
+		chart.setBackgroundPaint(new Color(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue()));
 		chart.getXYPlot().setBackgroundPaint(ChartColor.WHITE);
 
 		Frame chartFrame = SWT_AWT.new_Frame(chartComposite);
-		chartFrame.setBackground(new Color(backgroundColor.getRed(),
-				backgroundColor.getGreen(),
-				backgroundColor.getBlue()));
+		chartFrame.setBackground(new Color(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue()));
 		chartFrame.setLayout(new GridLayout());
 
 		ChartPanel jFreeChartPanel = new ChartPanel(chart);
@@ -175,20 +168,20 @@ public class StatisticsView extends ViewPart   {
 						return "Imaginary";
 					} else {
 						return "Complex";
-					}		
+					}
 				} else if (ds.getSeriesCount() > 1) {
 					return "Dimension " + i;
 				}
 
 				return null;
 			}
-		}); 
-		chart.getXYPlot().setRenderer(renderer);  
+		});
+		chart.getXYPlot().setRenderer(renderer);
 
 		dataSet.addChangeListener(new DatasetChangeListener() {
 
 			@Override
-			public void datasetChanged(DatasetChangeEvent event) { 
+			public void datasetChanged(DatasetChangeEvent event) {
 				chart.getPlot().datasetChanged(event);
 
 			}
@@ -213,7 +206,7 @@ public class StatisticsView extends ViewPart   {
 			Label label = new Label(composite, SWT.None);
 			label.setText(STAT_PROPS[j] + ":");
 			labels[j] = new Label(composite, SWT.None);
-			labels[j].setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());	
+			labels[j].setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 		}
 
 	}
@@ -222,8 +215,8 @@ public class StatisticsView extends ViewPart   {
 		if (datalist != null) {
 			createStatsArray(dimensions, datalist);
 			setAllCategories(dimensions, datalist);
-			updateStatsLabels(curIndex); 
-			parent.redraw(); 
+			updateStatsLabels(curIndex);
+			parent.redraw();
 			Display.getCurrent().update();
 
 		}
@@ -234,10 +227,10 @@ public class StatisticsView extends ViewPart   {
 			stats = new Stats[dims];
 			for (int i = 0; i < dims; i++) {
 				stats[i] = new Stats(doubleArray(i, list));
-			} 
+			}
 			magnitudeStats = new Stats(magArray(list));
 		}
-	} 
+	}
 
 	private void updateStatsLabels(int i) {
 		int showIndex = i;
@@ -297,17 +290,15 @@ public class StatisticsView extends ViewPart   {
 
 	}
 
-	public void setInput(List<Object> datalist, int dimensions, BulkIOType type) { 
+	public void setInput(List<Object> datalist, int dimensions, BulkIOType type) {
 		this.datalist = datalist;
-		this.dimensions = dimensions; 
-		switch(type) { 
+		this.dimensions = dimensions;
+		switch (type) {
 		case DOUBLE:
 			break;
 		default:
-			throw new IllegalArgumentException(
-					"This data type is not currently supported in the statistics chart feature.");
+			throw new IllegalArgumentException("This data type is not currently supported in the statistics chart feature.");
 		}
-
 
 		refreshJob.schedule();
 	}
@@ -336,7 +327,7 @@ public class StatisticsView extends ViewPart   {
 		double n = 0;
 		for (int i = 0; i < nums.length; i++) {
 			n += Math.pow(nums[i], 2);
-		} 
+		}
 		return Math.sqrt(n);
 	}
 
@@ -367,13 +358,14 @@ public class StatisticsView extends ViewPart   {
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
-	public void setFocus() {  }
+	public void setFocus() {
+	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
 		for (DisposeListener listener : listeners) {
-			listener.widgetDisposed(null); 
+			listener.widgetDisposed(null);
 		}
 	}
 
