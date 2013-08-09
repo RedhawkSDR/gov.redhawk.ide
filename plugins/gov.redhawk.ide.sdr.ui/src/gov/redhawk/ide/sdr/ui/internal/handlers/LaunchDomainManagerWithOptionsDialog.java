@@ -110,10 +110,43 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	private boolean useCustomProgressMonitorPart;
 	private ProgressMonitorPart progressMonitorPart;
 
+	/**
+	 * <b> NOTE </b> DO NOT REMOVE get/set Methods
+	 * These are needed by the PojoObservable databinding
+	 */
 	private static class DomainManagerConfigurationModel {
 		private String domainName = "";
-
 		private String debugLevel = "";
+		/**
+		 * @return the domainName
+		 */
+		@SuppressWarnings("unused")
+		public String getDomainName() {
+			return domainName;
+		}
+		/**
+		 * @param domainName the domainName to set
+		 */
+		@SuppressWarnings("unused")
+		public void setDomainName(String domainName) {
+			this.domainName = domainName;
+		}
+		/**
+		 * @return the debugLevel
+		 */
+		@SuppressWarnings("unused")
+		public String getDebugLevel() {
+			return debugLevel;
+		}
+		/**
+		 * @param debugLevel the debugLevel to set
+		 */
+		@SuppressWarnings("unused")
+		public void setDebugLevel(String debugLevel) {
+			this.debugLevel = debugLevel;
+		}
+		
+		
 	}
 	
 	// Load the domains that are on the Naming service already
