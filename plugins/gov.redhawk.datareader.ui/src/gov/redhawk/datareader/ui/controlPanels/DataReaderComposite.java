@@ -26,19 +26,24 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
@@ -113,7 +118,8 @@ public class DataReaderComposite extends Composite {
 		label.setText("Sample Rate (Hz):");
 		sampleRateText = new Text(parent, SWT.BORDER);
 		sampleRateText.setLayoutData(textGridData);
-		setNumValidation(sampleRateText);
+		ControlDecoration sampleRateDecoration = createControlDecoration(sampleRateText, label);
+		validate(sampleRateText, sampleRateDecoration);
 
 		label = new Label(parent, SWT.None);
 		label.setText("Stream ID:");
@@ -124,25 +130,29 @@ public class DataReaderComposite extends Composite {
 		label.setText("Frontend RF (Hz):");
 		frontEndRfText = new Text(parent, SWT.BORDER);
 		frontEndRfText.setLayoutData(textGridData);
-		setNumValidation(frontEndRfText);
+		ControlDecoration frontEndRfDecoration = createControlDecoration(frontEndRfText, label);
+		validate(frontEndRfText, frontEndRfDecoration);
 
 		label = new Label(parent, SWT.None);
 		label.setText("Speed Factor:");
 		speedFactorText = new Text(parent, SWT.BORDER);
 		speedFactorText.setLayoutData(textGridData);
-		setNumValidation(speedFactorText);
+		ControlDecoration speedFactorDecoration = createControlDecoration(speedFactorText, label);
+		validate(speedFactorText, speedFactorDecoration);
 
 		label = new Label(parent, SWT.None);
 		label.setText("Y Delta:");
 		yDeltaText = new Text(parent, SWT.BORDER);
 		yDeltaText.setLayoutData(textGridData);
-		setNumValidation(yDeltaText);
+		ControlDecoration yDeltaDecoration = createControlDecoration(yDeltaText, label);
+		validate(yDeltaText, yDeltaDecoration);
 
 		label = new Label(parent, SWT.None);
 		label.setText("Subsize:");
 		subsizeText = new Text(parent, SWT.BORDER);
 		subsizeText.setLayoutData(textGridData);
-		setNumValidation(subsizeText);
+		ControlDecoration subsizeDecoration = createControlDecoration(subsizeText, label);
+		validate(subsizeText, subsizeDecoration);
 
 		label = new Label(parent, SWT.None);
 		label.setText("Input File:");
@@ -173,24 +183,6 @@ public class DataReaderComposite extends Composite {
 						displayFiles(new String[] { file.toString() });
 					} else {
 						displayFiles(file.list());
-					}
-				}
-			}
-		});
-	}
-
-	private void setNumValidation(Widget widget) {
-		widget.addListener(SWT.Verify, new Listener() {
-
-			@Override
-			public void handleEvent(Event event) {
-				String string = event.text;
-				char[] chars = new char[string.length()];
-				string.getChars(0, chars.length, chars, 0);
-				for (int i = 0; i < chars.length; i++) {
-					if (!('0' <= chars[i] && chars[i] <= '9' || chars[i] == '.')) {
-						event.doit = false;
-						return;
 					}
 				}
 			}
@@ -337,5 +329,30 @@ public class DataReaderComposite extends Composite {
 		for (int i = 0; files != null && i < files.length; i++) {
 			inputFileText.setText(files[i]);
 		}
+	}
+
+	private ControlDecoration createControlDecoration(Control control, Label label) {
+		ControlDecoration controlDecoration = new ControlDecoration(control, SWT.LEFT | SWT.TOP);
+		controlDecoration.setDescriptionText(label.getText());
+		FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
+		controlDecoration.setImage(fieldDecoration.getImage());
+		return controlDecoration;
+	}
+
+	private void validate(final Text text, final ControlDecoration decoration) {
+		text.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent event) {
+				String input = text.getText();
+				try {
+					Double.parseDouble(input);
+					decoration.hide();
+				} catch (NumberFormatException ex) {
+					decoration.setDescriptionText(decoration.getDescriptionText() + " Not a valid number");
+					decoration.show();
+				}
+			}
+		});
 	}
 }
