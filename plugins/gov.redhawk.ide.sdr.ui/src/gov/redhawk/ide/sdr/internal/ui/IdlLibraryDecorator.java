@@ -12,6 +12,7 @@ package gov.redhawk.ide.sdr.internal.ui;
 
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.eclipsecorba.library.LibraryPackage;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.notify.Adapter;
@@ -38,6 +39,9 @@ public class IdlLibraryDecorator extends LabelProvider implements ILightweightLa
 				}
 				return;
 			}
+			if (msg.isTouch()) {
+				return;
+			}
 			switch (msg.getFeatureID(IdlLibrary.class)) {
 			case LibraryPackage.IDL_LIBRARY__LOAD_STATUS:
 				final Object oldValue = msg.getOldValue();
@@ -59,9 +63,9 @@ public class IdlLibraryDecorator extends LabelProvider implements ILightweightLa
 	};
 	private boolean disposed;
 
-	private void fireStatusChanged(final Object... libraries) {
-		final LabelProviderChangedEvent event = new LabelProviderChangedEvent(this, libraries);
-		this.fireLabelProviderChanged(event);
+	private void fireStatusChanged(final Object object) {
+		final LabelProviderChangedEvent event = new LabelProviderChangedEvent(this, object);
+		fireLabelProviderChanged(event);
 	}
 
 	@Override
@@ -76,9 +80,14 @@ public class IdlLibraryDecorator extends LabelProvider implements ILightweightLa
 	public void decorate(final Object element, final IDecoration decoration) {
 		if (element instanceof IdlLibrary) {
 			final IdlLibrary library = (IdlLibrary) element;
-			if (!library.eAdapters().contains(this.libraryListener)) {
-				library.eAdapters().add(this.libraryListener);
-			}
+			ScaModelCommand.execute(library, new ScaModelCommand() {
+
+				public void execute() {
+					if (!library.eAdapters().contains(libraryListener)) {
+						library.eAdapters().add(libraryListener);
+					}
+				}
+			});
 			if (library.getLoadStatus() != null) {
 				final ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 				final IStatus status = library.getLoadStatus();

@@ -12,6 +12,7 @@ package gov.redhawk.ide.sdr.internal.ui;
 
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.notify.Adapter;
@@ -38,6 +39,9 @@ public class SdrRootDecorator extends LabelProvider implements ILightweightLabel
 				}
 				return;
 			}
+			if (msg.isTouch()) {
+				return;
+			}
 			switch (msg.getFeatureID(SdrRoot.class)) {
 			case SdrPackage.SDR_ROOT__LOAD_STATUS:
 				final Object oldValue = msg.getOldValue();
@@ -60,8 +64,8 @@ public class SdrRootDecorator extends LabelProvider implements ILightweightLabel
 
 	private boolean disposed;
 
-	private void fireStatusChanged(final Object... objs) {
-		final LabelProviderChangedEvent event = new LabelProviderChangedEvent(this, objs);
+	private void fireStatusChanged(final Object object) {
+		final LabelProviderChangedEvent event = new LabelProviderChangedEvent(this, object);
 		fireLabelProviderChanged(event);
 	}
 
@@ -84,9 +88,14 @@ public class SdrRootDecorator extends LabelProvider implements ILightweightLabel
 	public void decorate(final Object element, final IDecoration decoration) {
 		if (element instanceof SdrRoot) {
 			final SdrRoot sdrRoot = (SdrRoot) element;
-			if (!sdrRoot.eAdapters().contains(this.sdrRootListener)) {
-				sdrRoot.eAdapters().add(this.sdrRootListener);
-			}
+			ScaModelCommand.execute(sdrRoot, new ScaModelCommand() {
+
+				public void execute() {
+					if (!sdrRoot.eAdapters().contains(sdrRootListener)) {
+						sdrRoot.eAdapters().add(sdrRootListener);
+					}
+				}
+			});
 			if (sdrRoot.getLoadStatus() != null) {
 				final ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 				final IStatus status = sdrRoot.getLoadStatus();
