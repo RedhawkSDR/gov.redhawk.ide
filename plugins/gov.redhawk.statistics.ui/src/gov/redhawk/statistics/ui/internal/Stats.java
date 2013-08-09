@@ -10,9 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.statistics.ui.internal;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
-import org.apache.commons.math3.stat.descriptive.rank.Median;
+import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math.stat.descriptive.UnivariateStatistic;
+import org.apache.commons.math.stat.descriptive.rank.Median;
 
 public class Stats extends DescriptiveStatistics { 
     /**
