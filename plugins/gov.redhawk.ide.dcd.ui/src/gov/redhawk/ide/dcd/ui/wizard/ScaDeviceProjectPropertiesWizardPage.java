@@ -33,12 +33,43 @@ import org.eclipse.swt.widgets.Group;
  */
 public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectPropertiesWizardPage {
 
+	/**
+	 * NOTE DO NOT REMOVE GET / SET Methods
+	 * These are referenced from the PojoObservable
+	 */
 	private static class DeviceProjectSettings {
 		private String deviceType = RedhawkIdePreferenceConstants.DEVICE;
 		private boolean aggregate = false;
 
+		/**
+		 * @return the aggregate
+		 */
 		public String getDeviceType() {
 			return deviceType;
+		}
+
+		/**
+		 * @return the aggregate
+		 */
+		@SuppressWarnings("unused")
+		public boolean isAggregate() {
+			return aggregate;
+		}
+
+		/**
+		 * @param aggregate the aggregate to set
+		 */
+		@SuppressWarnings("unused")
+		public void setAggregate(boolean aggregate) {
+			this.aggregate = aggregate;
+		}
+
+		/**
+		 * @param deviceType the deviceType to set
+		 */
+		@SuppressWarnings("unused")
+		public void setDeviceType(String deviceType) {
+			this.deviceType = deviceType;
 		}
 	}
 
