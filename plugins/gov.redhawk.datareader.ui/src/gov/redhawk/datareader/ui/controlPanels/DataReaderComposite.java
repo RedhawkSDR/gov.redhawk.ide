@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.datareader.ui.controlPanels;
 
-import gov.redhawk.datareader.ui.Activator;
+import gov.redhawk.datareader.ui.DataReaderActivator;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaSimpleProperty;
@@ -88,7 +88,7 @@ public class DataReaderComposite extends Composite {
 	private void createControls(final Composite parent) {
 		parent.setLayout(GridLayoutFactory.fillDefaults().numColumns(1).margins(10, 10).create());
 		Composite textInput = new Composite(parent, SWT.None);
-		
+
 		Composite comboInput = new Composite(parent, SWT.None);
 
 		GridData buttonGridData = new GridData();
@@ -245,7 +245,7 @@ public class DataReaderComposite extends Composite {
 						try {
 							input.start();
 						} catch (StartError e) {
-							return new Status(Status.ERROR, Activator.PLUGIN_ID, "Failed to start data reader.", e);
+							return new Status(Status.ERROR, DataReaderActivator.PLUGIN_ID, "Failed to start data reader.", e);
 						}
 						return Status.OK_STATUS;
 					}
@@ -287,7 +287,7 @@ public class DataReaderComposite extends Composite {
 						try {
 							input.stop();
 						} catch (StopError e) {
-							return new Status(Status.ERROR, Activator.PLUGIN_ID, "Failed to stop data reader.", e);
+							return new Status(Status.ERROR, DataReaderActivator.PLUGIN_ID, "Failed to stop data reader.", e);
 						}
 						return Status.OK_STATUS;
 					}
@@ -322,15 +322,15 @@ public class DataReaderComposite extends Composite {
 	}
 
 	public void setTextBindings(ScaComponent input, String id, Widget value) {
-		IObservableValue ScaProperty = SCAObservables.observeSimpleProperty(input, id);
-		IObservableValue CPanelProperty = WidgetProperties.text(SWT.Modify).observeDelayed(500, value);
-		context.bindValue(CPanelProperty, ScaProperty);
+		IObservableValue scaProperty = SCAObservables.observeSimpleProperty(input, id);
+		IObservableValue cPanelProperty = WidgetProperties.text(SWT.Modify).observeDelayed(500, value);
+		context.bindValue(cPanelProperty, scaProperty);
 	}
 
 	public void setComboBindings(ScaComponent input, String id, Widget value) {
-		IObservableValue ScaProperty = SCAObservables.observeSimpleProperty(input, id);
-		IObservableValue CPanelProperty = WidgetProperties.selection().observeDelayed(500, value);
-		context.bindValue(CPanelProperty, ScaProperty);
+		IObservableValue scaProperty = SCAObservables.observeSimpleProperty(input, id);
+		IObservableValue cPanelProperty = WidgetProperties.selection().observeDelayed(500, value);
+		context.bindValue(cPanelProperty, scaProperty);
 	}
 
 	public void displayFiles(String[] files) {

@@ -27,9 +27,9 @@ public class DataReaderControlPanelPropertySection extends AbstractPropertySecti
 
 	private DataReaderComposite readerControls;
 
-/**
- * {@inheritDoc}
- */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void createControls(Composite parent, TabbedPropertySheetPage aTabbedPropertySheetPage) {
 		readerControls = new DataReaderComposite(parent, SWT.None);

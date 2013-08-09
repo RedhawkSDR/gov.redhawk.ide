@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Data Reader UI
 Bundle-SymbolicName: gov.redhawk.datareader.ui; singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: gov.redhawk.datareader.ui.Activator
+Bundle-Activator: gov.redhawk.datareader.ui.DataReaderActivator
 Bundle-Vendor: REDHAWK
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

@@ -27,20 +27,20 @@ public class DataReaderControlPanelEditor extends AbstractScaContentEditor<ScaCo
 	public DataReaderControlPanelEditor() {
 	}
 
-/**
- * {@inheritDoc}
- */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void createPartControl(final Composite main) {
 		main.setLayout(new FillLayout());
 		readerControls = new DataReaderComposite(main, SWT.None);
 		readerControls.setInput(getInput());
-//		 TODO Plot?
+		//		 TODO Plot?
 	}
 
-/**
- * {@inheritDoc}
- */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setFocus() {
 		if (readerControls != null) {
@@ -48,9 +48,9 @@ public class DataReaderControlPanelEditor extends AbstractScaContentEditor<ScaCo
 		}
 	}
 
-/**
- * {@inheritDoc}
- */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected Class<ScaComponent> getInputType() {
 		return ScaComponent.class;
