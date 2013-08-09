@@ -11,13 +11,5 @@
 	http://www.eclipse.org/legal/epl-v10.html
 -->
 <plugin>
-   <extension
-         point="org.eclipse.ui.ide.filesystemSupport">
-      <filesystemContributor
-            class="gov.redhawk.sca.efs.internal.ui.ScaFileSystemContributor"
-            label="%filesystemContributor.label"
-            scheme="sca">
-      </filesystemContributor>
-   </extension>
 
 </plugin>
