@@ -7,8 +7,9 @@
       <view
             allowMultiple="true"
             class="gov.redhawk.statistics.ui.views.StatisticsView"
+            icon="icons/chart.gif"
             id="gov.redhawk.statistics.ui.views.StatisticsView"
-            name="Basic Statistics"
+            name="Statistics"
             restorable="false">
       </view>
    </extension>

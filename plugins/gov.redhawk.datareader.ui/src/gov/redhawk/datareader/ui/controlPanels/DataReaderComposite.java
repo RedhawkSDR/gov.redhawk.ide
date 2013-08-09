@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -344,9 +343,9 @@ public class DataReaderComposite extends Composite {
 
 			@Override
 			public void modifyText(ModifyEvent event) {
-				String input = text.getText();
+				String textInput = text.getText();
 				try {
-					Double.parseDouble(input);
+					Double.parseDouble(textInput);
 					decoration.hide();
 				} catch (NumberFormatException ex) {
 					decoration.setDescriptionText(decoration.getDescriptionText() + " Not a valid number");
