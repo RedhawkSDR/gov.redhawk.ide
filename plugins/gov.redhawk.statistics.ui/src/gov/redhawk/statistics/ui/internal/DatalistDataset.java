@@ -407,7 +407,7 @@ public class DatalistDataset extends AbstractIntervalXYDataset implements Interv
 	 *
 	 * @return A boolean.
 	 */
-	public boolean equals(Object obj) {
+	public boolean equalTo(Object obj) {
 		if (obj == this) {
 			return true;
 		}

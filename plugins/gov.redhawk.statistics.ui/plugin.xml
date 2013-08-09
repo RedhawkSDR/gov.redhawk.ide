@@ -8,15 +8,9 @@
             allowMultiple="true"
             class="gov.redhawk.statistics.ui.views.StatisticsView"
             id="gov.redhawk.statistics.ui.views.StatisticsView"
-            name="StatisticsView"
+            name="Basic Statistics"
             restorable="false">
       </view>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-   </extension>
-   <extension
-         point="org.eclipse.ui.commands">
    </extension>
 
 </plugin>

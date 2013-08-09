@@ -20,11 +20,6 @@
             id="gov.redhawk.datalist.ui.commands.dataList"
             name="Data List">
       </command>
-      <command
-            defaultHandler="gov.redhawk.statistics.ui.handlers.StatisticsHandler"
-            id="gov.redhawk.datalist.ui.commands.openStatisticsView"
-            name="Open Statistics View">
-      </command>     name="Open Statistics View">
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
