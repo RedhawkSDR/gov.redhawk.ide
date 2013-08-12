@@ -12,6 +12,7 @@ package gov.redhawk.ide.sdr.internal.ui;
 
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.eclipsecorba.library.LibraryPackage;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.notify.Adapter;
@@ -76,9 +77,14 @@ public class IdlLibraryDecorator extends LabelProvider implements ILightweightLa
 	public void decorate(final Object element, final IDecoration decoration) {
 		if (element instanceof IdlLibrary) {
 			final IdlLibrary library = (IdlLibrary) element;
-			if (!library.eAdapters().contains(this.libraryListener)) {
-				library.eAdapters().add(this.libraryListener);
-			}
+			ScaModelCommand.execute(library, new ScaModelCommand() {
+
+				public void execute() {
+					if (!library.eAdapters().contains(libraryListener)) {
+						library.eAdapters().add(libraryListener);
+					}
+				}
+			});
 			if (library.getLoadStatus() != null) {
 				final ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 				final IStatus status = library.getLoadStatus();

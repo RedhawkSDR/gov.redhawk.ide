@@ -12,6 +12,7 @@ package gov.redhawk.ide.sdr.internal.ui;
 
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.notify.Adapter;
@@ -84,13 +85,20 @@ public class SdrRootDecorator extends LabelProvider implements ILightweightLabel
 	public void decorate(final Object element, final IDecoration decoration) {
 		if (element instanceof SdrRoot) {
 			final SdrRoot sdrRoot = (SdrRoot) element;
-			if (!sdrRoot.eAdapters().contains(this.sdrRootListener)) {
-				sdrRoot.eAdapters().add(this.sdrRootListener);
-			}
+			ScaModelCommand.execute(sdrRoot, new ScaModelCommand() {
+
+				public void execute() {
+					if (!sdrRoot.eAdapters().contains(sdrRootListener)) {
+						sdrRoot.eAdapters().add(sdrRootListener);
+					}
+				}
+			});
 			if (sdrRoot.getLoadStatus() != null) {
 				final ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 				final IStatus status = sdrRoot.getLoadStatus();
-				if (status == null) return;
+				if (status == null) {
+					return;
+				}
 				switch (status.getSeverity()) {
 				case IStatus.WARNING:
 					decoration.addOverlay(sharedImages.getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING), IDecoration.BOTTOM_RIGHT);
