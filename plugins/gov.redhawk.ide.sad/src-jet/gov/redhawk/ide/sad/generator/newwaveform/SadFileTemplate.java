@@ -62,7 +62,7 @@ public class SadFileTemplate
 	if (args.getAssemblyController() != null) {
 		assemblyController = args.getAssemblyController();
 		comToId.put(assemblyController, assemblyController.getName() + "_" + UUID.randomUUID());
-		assemblyId = DceUuidUtil.createDceUUID();
+		assemblyId = assemblyController.getName() + "_1";
 	}
 
     stringBuffer.append(TEXT_1);
