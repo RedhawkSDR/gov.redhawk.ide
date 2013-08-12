@@ -15,7 +15,7 @@
 	if (args.getAssemblyController() != null) {
 		assemblyController = args.getAssemblyController();
 		comToId.put(assemblyController, assemblyController.getName() + "_" + UUID.randomUUID());
-		assemblyId = DceUuidUtil.createDceUUID();
+		assemblyId = assemblyController.getName() + "_1";
 	}
 %>
 <?xml version="1.0" encoding="UTF-8"?>
