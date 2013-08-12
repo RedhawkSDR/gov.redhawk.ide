@@ -72,7 +72,7 @@ public class PrfListener extends EContentAdapter {
 	public PrfListener(final EditingDomain editingDomain, final Resource mainResource) {
 		this.editingDomain = editingDomain;
 		this.spd = SoftPkg.Util.getSoftPkg(mainResource);
-		if (this.spd.getPropertyFile() != null && this.spd.getPropertyFile().getProperties() != null) {
+		if (this.spd != null && this.spd.getPropertyFile() != null && this.spd.getPropertyFile().getProperties() != null) {
 			this.properties = this.spd.getPropertyFile().getProperties();
 			this.properties.eAdapters().add(this);
 		}
