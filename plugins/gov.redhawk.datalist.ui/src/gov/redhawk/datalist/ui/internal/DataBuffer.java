@@ -246,14 +246,16 @@ public class DataBuffer extends AbstractBulkIOPort implements dataDoubleOperatio
 	}
 
 	public DataCollectionSettings saveSettings() {
-
-		switch (captureMethod) {
-		case NUMBER:
-			return settings;
-		default:
-			settings.setSamples((double) samples);
-			return settings;
+		if (captureMethod != null) {
+			switch (captureMethod) {
+			case NUMBER:
+				return settings;
+			default:
+				settings.setSamples((double) samples);
+				return settings;
+			}
 		}
+		return null;
 	}
 
 	public List<Object> listCopy() {
