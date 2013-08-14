@@ -13,6 +13,8 @@ package gov.redhawk.ide.debug.internal.ui;
 import gov.redhawk.ide.debug.ui.LaunchUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import mil.jpeojtrs.sca.spd.Implementation;
@@ -68,6 +70,16 @@ public class LaunchContributionItem extends CompoundContributionItem implements 
 				}
 			}
 		}
+		Collections.sort(items, new Comparator<IContributionItem>() {
+
+			@Override
+			public int compare(IContributionItem o1, IContributionItem o2) {
+				String s1 = ((ActionContributionItem) o1).getAction().getText();
+				String s2 = ((ActionContributionItem) o2).getAction().getText();
+				return s1.compareTo(s2);
+			}
+
+		});
 		return items.toArray(new IContributionItem[items.size()]);
 	}
 
