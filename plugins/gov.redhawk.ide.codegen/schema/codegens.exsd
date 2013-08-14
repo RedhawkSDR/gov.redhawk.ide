@@ -206,23 +206,6 @@
                </restriction>
             </simpleType>
          </attribute>
-         <attribute name="deprecated" type="boolean">
-            <annotation>
-               <documentation>
-                  True if this generated is now considered deprecated and should not be used anymore.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="newGeneratorID" type="string">
-            <annotation>
-               <documentation>
-                  If deprecated this will point to the ID of a new codegenerator to use instead of this code generator
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="gov.redhawk.ide.codegen.codegens/codegen/@id"/>
-               </appinfo>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 

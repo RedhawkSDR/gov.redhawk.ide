@@ -29,6 +29,11 @@ public interface ITemplateDesc extends Comparable<ITemplateDesc> {
 	/**
 	 * @since 9.2
 	 */
+	ICodegenTemplateMigrator getMigrationTool();
+	
+	/**
+	 * @since 9.2
+	 */
 	String getNewTemplateID();
 	
 	/**

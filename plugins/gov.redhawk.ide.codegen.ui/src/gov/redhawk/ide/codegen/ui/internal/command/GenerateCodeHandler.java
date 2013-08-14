@@ -20,7 +20,6 @@ import gov.redhawk.ide.codegen.ui.GenerateCode;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 import gov.redhawk.model.sca.util.ModelUtil;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,8 +40,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -175,7 +175,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 					if (template.isDeprecated()) {
 						ITemplateDesc newTemplate = template.getNewTemplate();
 						if (newTemplate != null) {
-							ICodeGeneratorDescriptor newGenerator = newTemplate.getCodegen();
+							
 							String message = "WARNING: The code generator '" + generator.getName() + "' with template '" + template.getName()
 								+ "' is deprecated.\n\n" + "Yes, update to use new template and generator.\n" + "No, continue to use the existing generator.\n"
 								+ "Cancel, abort generation.";
@@ -184,17 +184,15 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 							dialog.setMessage(message);
 							switch (dialog.open()) {
 							case SWT.YES:
-								implSettings.setGeneratorId(newGenerator.getId());
-								implSettings.setTemplate(newTemplate.getId());
 								try {
-									implSettings.eResource().save(null);
-									break;
-								} catch (IOException e) {
-									StatusManager.getManager().handle(
-										new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to update code generator.", e),
-										StatusManager.LOG | StatusManager.SHOW);
+									// TODO Run in Job!
+									template.getMigrationTool().migrate(null, template, impl, implSettings);
+								} catch (CoreException e) {
+									IStatus status = e.getStatus();
+									StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
 									return false;
 								}
+								break;
 							case SWT.NO:
 								break;
 							case SWT.CANCEL:
