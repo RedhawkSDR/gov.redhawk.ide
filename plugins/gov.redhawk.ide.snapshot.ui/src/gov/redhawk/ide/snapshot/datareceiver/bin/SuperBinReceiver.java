@@ -61,6 +61,7 @@ public class SuperBinReceiver extends AbstractBulkIOPort {
 	private SnapshotMetadataFactory modelFactory;
 
 	public SuperBinReceiver(File file, BulkIOType type) throws IOException {
+		super(type);
 		aFile = new RandomAccessFile(file, "rw");
 		startFile = file;
 		channel = aFile.getChannel();

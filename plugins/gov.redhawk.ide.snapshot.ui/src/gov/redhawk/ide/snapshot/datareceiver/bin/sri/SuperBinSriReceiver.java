@@ -57,6 +57,7 @@ public class SuperBinSriReceiver extends AbstractBulkIOPort {
 	private PrecisionUTCTime lastPushPacket;
 
 	public SuperBinSriReceiver(File file, BulkIOType type) throws IOException {
+		super(type);
 		aFile = new RandomAccessFile(file, "rw");
 		startFile = file;
 		channel = aFile.getChannel();

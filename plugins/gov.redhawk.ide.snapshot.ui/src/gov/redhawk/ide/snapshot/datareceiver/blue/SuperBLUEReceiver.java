@@ -50,6 +50,7 @@ public class SuperBLUEReceiver extends AbstractBulkIOPort {
 	private File startFile;
 
 	public SuperBLUEReceiver(File file, BulkIOType type) throws IOException {
+		super(type);
 		this.df = new DataFile(m, file.getAbsolutePath());
 		this.df.open(DataFile.OUTPUT);
 		this.startFile = file;
