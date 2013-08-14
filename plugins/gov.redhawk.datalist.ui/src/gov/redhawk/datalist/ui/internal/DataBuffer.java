@@ -11,10 +11,11 @@
 
 package gov.redhawk.datalist.ui.internal;
 
-import gov.redhawk.datalist.ui.DataListPlugin;
+import gov.redhawk.bulkio.util.AbstractBulkIOPort;
+import gov.redhawk.bulkio.util.BulkIOType;
+import gov.redhawk.bulkio.util.BulkIOUtilActivator;
 import gov.redhawk.datalist.ui.views.OptionsComposite.CaptureMethod;
 import gov.redhawk.model.sca.ScaUsesPort;
-import gov.redhawk.sca.util.OrbSession;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -28,26 +29,26 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.omg.PortableServer.POA;
-import org.omg.PortableServer.POAPackage.ServantNotActive;
-import org.omg.PortableServer.POAPackage.WrongPolicy;
 
-import BULKIO.PortStatistics;
-import BULKIO.PortUsageType;
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
-import CF.PortPackage.InvalidPort;
-import CF.PortPackage.OccupiedPort;
+import BULKIO.dataCharOperations;
+import BULKIO.dataDoubleOperations;
+import BULKIO.dataFloatOperations;
+import BULKIO.dataLongLongOperations;
+import BULKIO.dataLongOperations;
+import BULKIO.dataOctetOperations;
+import BULKIO.dataShortOperations;
+import BULKIO.dataUlongLongOperations;
+import BULKIO.dataUlongOperations;
+import BULKIO.dataUshortOperations;
 
-public abstract class DataBuffer {
+public class DataBuffer extends AbstractBulkIOPort implements dataDoubleOperations, dataFloatOperations, dataLongLongOperations, dataCharOperations,
+		dataLongOperations, dataOctetOperations, dataShortOperations, dataUlongLongOperations, dataUlongOperations, dataUshortOperations {
 
 	private final List<Sample> dataBuffer = new CopyOnWriteArrayList<Sample>();
 	private int dimension = 1;
-	private StreamSRI sri;
-	private ScaUsesPort port;
-	private final OrbSession session = OrbSession.createSession();
-	private org.omg.CORBA.Object ref;
-	private String connectionId;
+	private final ScaUsesPort port;
 	private final List<IDataBufferListener> listeners = Collections.synchronizedList(new LinkedList<IDataBufferListener>());
 
 	private List<Object> cached;
@@ -56,18 +57,7 @@ public abstract class DataBuffer {
 
 		@Override
 		protected IStatus run(final IProgressMonitor monitor) {
-			if (DataBuffer.this.connectionId != null) {
-				try {
-					DataBuffer.this.port.disconnectPort(DataBuffer.this.connectionId);
-				} catch (final InvalidPort e) {
-					e.fillInStackTrace();
-					DataListPlugin.getDefault().getLog().log(new Status(
-							Status.WARNING, 
-							DataListPlugin.PLUGIN_ID, 
-							"Invalid port.", e));
-				}
-			}
-			DataBuffer.this.connectionId = null;
+			BulkIOUtilActivator.getBulkIOPortConnectionManager().disconnect(port.getIor(), DataBuffer.this);
 			return Status.OK_STATUS;
 		}
 
@@ -78,56 +68,31 @@ public abstract class DataBuffer {
 		protected IStatus run(final IProgressMonitor monitor) {
 
 			try {
-				if (DataBuffer.this.ref == null) {
-					DataBuffer.this.ref = createRef(DataBuffer.this.session.getPOA());
-				}
-				DataBuffer.this.connectionId = "dataList_" + System.currentTimeMillis();
-				DataBuffer.this.port.connectPort(DataBuffer.this.ref, DataBuffer.this.connectionId);
-				// converting to seconds (double)
-				DataBuffer.this.initialTime = ((double) System.currentTimeMillis()) / 1000; 
-			} catch (final InvalidPort e) {
-				e.fillInStackTrace();
-				DataListPlugin.getDefault().getLog().log(new Status(
-						Status.WARNING, 
-						DataListPlugin.PLUGIN_ID, 
-						"Invalid port.", e));
-			} catch (final OccupiedPort e) {
-				e.fillInStackTrace();
-				DataListPlugin.getDefault().getLog().log(new Status(
-						Status.WARNING, 
-						DataListPlugin.PLUGIN_ID, 
-						"Occupied port.", e));
-			} catch (final ServantNotActive e) {
-				e.fillInStackTrace();
-				DataListPlugin.getDefault().getLog().log(new Status(
-						Status.WARNING, 
-						DataListPlugin.PLUGIN_ID, 
-						"Servant not active.", e));
-			} catch (final WrongPolicy e) {
-				e.fillInStackTrace();
-				DataListPlugin.getDefault().getLog().log(new Status(
-						Status.WARNING, 
-						DataListPlugin.PLUGIN_ID, 
-						"Wrong policy.", e));
-			} catch (final CoreException e) {
-				e.fillInStackTrace();
-				DataListPlugin.getDefault().getLog().log(new Status(
-						Status.WARNING, 
-						DataListPlugin.PLUGIN_ID, 
-						"Core exception.", e));
+				BulkIOUtilActivator.getBulkIOPortConnectionManager().connect(port.getIor(), getBulkIOType(), DataBuffer.this);
+			} catch (CoreException e) {
+				return e.getStatus();
 			}
+
+			// converting to seconds (double)
+			DataBuffer.this.initialTime = ((double) System.currentTimeMillis()) / 1000;
+
 			return Status.OK_STATUS;
 		}
 
 	};
 	private int samples;
-	private int index; 
+	private int index;
 	private double initialTime;
 	private double currentTimeDuration;
 	private double currentSampleDelta;
 	private double totalTime;
 	private CaptureMethod captureMethod;
 	private DataCollectionSettings settings;
+
+	public DataBuffer(ScaUsesPort port, BulkIOType type) {
+		super(type);
+		this.port = port;
+	}
 
 	public void addDataBufferListener(final IDataBufferListener listener) {
 		this.listeners.add(listener);
@@ -141,10 +106,6 @@ public abstract class DataBuffer {
 		for (final IDataBufferListener listener : this.listeners) {
 			listener.dataBufferChanged(this);
 		}
-	}
-
-	public void setPort(final ScaUsesPort port) {
-		this.port = port;
 	}
 
 	public ScaUsesPort getPort() {
@@ -176,7 +137,7 @@ public abstract class DataBuffer {
 			this.samples = 0;
 			break;
 		case CLOCK_TIME:
-			this.totalTime = settings.getSamples(); 
+			this.totalTime = settings.getSamples();
 			this.samples = 0;
 			break;
 		default:
@@ -186,15 +147,10 @@ public abstract class DataBuffer {
 		this.settings = settings;
 		this.connectJob.schedule();
 
-
 	}
 
 	public void dispose() {
 		disconnect();
-		if (this.ref != null) {
-			this.ref._release();
-		}
-		this.session.dispose();
 		this.listeners.clear();
 	}
 
@@ -205,9 +161,9 @@ public abstract class DataBuffer {
 	public void clear() {
 		this.index = 0;
 		this.currentTimeDuration = 0;
-		this.totalTime = 0; 
+		this.totalTime = 0;
 		this.dataBuffer.clear();
-		if (this.cached != null) { 
+		if (this.cached != null) {
 			this.cached.clear();
 			this.cached = null;
 		}
@@ -218,49 +174,31 @@ public abstract class DataBuffer {
 		this.dimension = dimension;
 	}
 
-	public PortUsageType state() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public PortStatistics statistics() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public StreamSRI[] activeSRIs() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public StreamSRI getSri() {
-		return this.sri;
-	}
-
 	public void pushSRI(final StreamSRI sri) {
+		super.pushSRI(sri);
 		if (samples > index) {
 			if (this.captureMethod == CaptureMethod.SAMPLE_TIME) {
 				this.currentSampleDelta = (sri.xdelta != 0) ? sri.xdelta : 1;
-				samples = ((int) (((this.totalTime - this.currentTimeDuration) 
-						/ currentSampleDelta) + .5)) + this.index;
+				samples = ((int) (((this.totalTime - this.currentTimeDuration) / currentSampleDelta) + .5)) + this.index;
 			}
-			this.sri = sri;
 		}
 	}
 
 	public void pushPacket(final Object data, final PrecisionUTCTime time, final boolean eos, final String streamID) {
+		final int length = Array.getLength(data);
+
+		super.pushPacket(length, time, eos, streamID);
+
 		// converting from milliseconds to seconds (double)
 		double t = ((double) System.currentTimeMillis()) / 1000;
 		if (reachedLimit(t) || eos) {
 			return;
 		}
 
-		final int length = Array.getLength(data); 
-
 		for (int i = 0; i < length; i++) {
 			if (this.dimension == 1) {
 				this.dataBuffer.add(new Sample(time, this.index++, Array.get(data, i)));
-			} else { 
+			} else {
 				List<Object> sampleList = new ArrayList<Object>();
 
 				if (cached != null) {
@@ -281,18 +219,18 @@ public abstract class DataBuffer {
 				} else {
 					cached = sampleList;
 				}
-			} 
-		} 
+			}
+		}
 		fireDataBufferChanged();
 
 		if (reachedLimit(t)) {
-			disconnect();  
+			disconnect();
 		}
 	}
 
 	private boolean reachedLimit(double currentTime) {
-		switch(captureMethod) {
-		case NUMBER: 
+		switch (captureMethod) {
+		case NUMBER:
 			return (this.index >= this.samples);
 		case SAMPLE_TIME:
 			return (this.index >= this.samples);
@@ -302,18 +240,18 @@ public abstract class DataBuffer {
 		case INDEFINITELY:
 			return false;
 		default:
-			return false; 
+			return false;
 		}
 
 	}
 
 	public DataCollectionSettings saveSettings() {
 
-		switch(captureMethod) {
+		switch (captureMethod) {
 		case NUMBER:
 			return settings;
 		default:
-			settings.setSamples((double) samples); 
+			settings.setSamples((double) samples);
 			return settings;
 		}
 	}
@@ -325,6 +263,7 @@ public abstract class DataBuffer {
 		}
 		return s;
 	}
+
 	public List<Sample> samplesCopy() {
 		List<Sample> s = new ArrayList<Sample>();
 		for (Sample smpl : dataBuffer) {
@@ -332,6 +271,7 @@ public abstract class DataBuffer {
 		}
 		return s;
 	}
+
 	public void disconnect() {
 		saveSettings();
 		this.disconnectJob.schedule();
@@ -341,6 +281,48 @@ public abstract class DataBuffer {
 	public List<Sample> getList() {
 		return dataBuffer;
 	}
-	public abstract org.omg.CORBA.Object createRef(POA poa) throws ServantNotActive, WrongPolicy;
+
+	@Override
+	public void pushPacket(short[] data, PrecisionUTCTime time, boolean eos, String streamID) {
+		pushPacket((Object) data, time, eos, streamID);
+	}
+
+	@Override
+	public void pushPacket(byte[] data, PrecisionUTCTime time, boolean eos, String streamID) {
+		pushPacket((Object) data, time, eos, streamID);
+	}
+
+	@Override
+	public void pushPacket(int[] data, PrecisionUTCTime time, boolean eos, String streamID) {
+		pushPacket((Object) data, time, eos, streamID);
+	}
+
+	@Override
+	public void pushPacket(char[] data, PrecisionUTCTime time, boolean eos, String streamID) {
+		pushPacket((Object) data, time, eos, streamID);
+	}
+
+	@Override
+	public void pushPacket(long[] data, PrecisionUTCTime time, boolean eos, String streamID) {
+		pushPacket((Object) data, time, eos, streamID);
+	}
+
+	@Override
+	public void pushPacket(float[] data, PrecisionUTCTime time, boolean eos, String streamID) {
+		pushPacket((Object) data, time, eos, streamID);
+	}
+
+	@Override
+	public void pushPacket(double[] data, PrecisionUTCTime time, boolean eos, String streamID) {
+		pushPacket((Object) data, time, eos, streamID);
+	}
+
+	public StreamSRI getSri() {
+		StreamSRI[] sris = activeSRIs();
+		if (sris != null && sris.length > 0) {
+			return sris[0];
+		}
+		return null;
+	}
 
 }
