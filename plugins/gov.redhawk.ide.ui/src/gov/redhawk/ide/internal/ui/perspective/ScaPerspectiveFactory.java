@@ -13,6 +13,7 @@ package gov.redhawk.ide.internal.ui.perspective;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.IPlaceholderFolderLayout;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 // TODO: Auto-generated Javadoc
@@ -53,6 +54,13 @@ public class ScaPerspectiveFactory implements IPerspectiveFactory {
 		bottom.addView(IPageLayout.ID_PROP_SHEET);
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 		bottom.addView(ScaPerspectiveFactory.CONSOLE_VIEW_ID);
+		bottom.addPlaceholder("*");
+		
+		IPlaceholderFolderLayout plotFolder = layout.createPlaceholderFolder("plotFolder", IPageLayout.BOTTOM, (float) 0.25, editorArea);
+		plotFolder.addPlaceholder("gov.redhawk.ui.port.nxmplot.PlotView2");
+		plotFolder.addPlaceholder("gov.redhawk.ui.port.nxmplot.PlotView2:*");
+		
+		layout.addPlaceholder("gov.redhawk.ui.port.playaudio.view", IPageLayout.BOTTOM, (float) 0.25, editorArea);
 	}
 
 }
