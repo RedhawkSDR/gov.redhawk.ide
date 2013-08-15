@@ -105,6 +105,8 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 
 	public static final String EDITING_DOMAIN_ID = SadDiagramEditor.EDITING_DOMAIN_ID;
 
+	private static final String DIAGRAM_PAGE_ID = "2";
+
 	/**
 	 * This is the content outline page.
 	 */
@@ -355,7 +357,7 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 	protected String getPropertyEditorPageKey(final IFileEditorInput input) {
 		final String retVal = super.getPropertyEditorPageKey(input);
 		if (retVal == null) {
-			return "1";
+			return DIAGRAM_PAGE_ID;
 		}
 		return retVal;
 	}
