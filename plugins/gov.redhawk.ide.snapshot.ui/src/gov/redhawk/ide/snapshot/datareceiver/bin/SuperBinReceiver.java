@@ -12,7 +12,7 @@ package gov.redhawk.ide.snapshot.datareceiver.bin;
 
 import gov.redhawk.bulkio.util.AbstractBulkIOPort;
 import gov.redhawk.bulkio.util.BulkIOType;
-import gov.redhawk.ide.snapshot.datareceiver.DataReceiverUtils;
+import gov.redhawk.bulkio.util.StreamSRIUtil;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.CFDataType;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Model;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SnapshotMetadataFactory;
@@ -120,7 +120,7 @@ public class SuperBinReceiver extends AbstractBulkIOPort {
 		}
 		try {
 			super.pushSRI(sri);
-			if (DataReceiverUtils.isSRIChanged(sri, this.currentSri)) {
+			if (!StreamSRIUtil.equals(sri, this.currentSri)) {
 				if (this.currentSri != null) {
 					try {
 						this.saveXML();

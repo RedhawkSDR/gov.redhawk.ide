@@ -26,7 +26,8 @@ public final class DataReceiverUtils {
 	 * @param sri2
 	 * @return true if they match, false if not
 	 */
-	public static boolean isSRIChanged(StreamSRI sri1, StreamSRI sri2) {
+	// TODO delete this, use StreamSRIUtil.equals(..) instead
+	private static boolean isSRIChanged(StreamSRI sri1, StreamSRI sri2) {
 		boolean match = true;
 		if (sri1 == null || sri2 == null) {
 			if ((sri1 == null && sri2 != null) || (sri2 == null && sri1 != null)) {

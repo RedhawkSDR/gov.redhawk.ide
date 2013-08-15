@@ -12,6 +12,7 @@ package gov.redhawk.ide.snapshot.datareceiver.bin.sri;
 
 import gov.redhawk.bulkio.util.AbstractBulkIOPort;
 import gov.redhawk.bulkio.util.BulkIOType;
+import gov.redhawk.bulkio.util.StreamSRIUtil;
 import gov.redhawk.ide.snapshot.datareceiver.DataReceiverUtils;
 
 import java.io.File;
@@ -24,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 
 import nxm.sys.lib.Table;
-
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
 
@@ -142,7 +142,7 @@ public class SuperBinSriReceiver extends AbstractBulkIOPort {
 		}
 		try {
 			super.pushSRI(sri);
-			if (DataReceiverUtils.isSRIChanged(sri, this.currentSri)) {
+			if (!StreamSRIUtil.equals(sri, this.currentSri)) {
 				Table sriSubTable;
 				if (this.currentSri != null) {
 					try {

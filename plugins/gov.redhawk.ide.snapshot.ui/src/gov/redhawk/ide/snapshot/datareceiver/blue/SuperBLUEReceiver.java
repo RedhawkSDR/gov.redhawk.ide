@@ -12,7 +12,7 @@ package gov.redhawk.ide.snapshot.datareceiver.blue;
 
 import gov.redhawk.bulkio.util.AbstractBulkIOPort;
 import gov.redhawk.bulkio.util.BulkIOType;
-import gov.redhawk.ide.snapshot.datareceiver.DataReceiverUtils;
+import gov.redhawk.bulkio.util.StreamSRIUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +23,6 @@ import nxm.sys.lib.Data;
 import nxm.sys.lib.DataFile;
 import nxm.sys.lib.Midas;
 import nxm.sys.lib.NeXtMidas;
-
 //import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
 
@@ -119,7 +118,7 @@ public class SuperBLUEReceiver extends AbstractBulkIOPort {
 		try {
 			super.pushSRI(sri);
 
-			if (DataReceiverUtils.isSRIChanged(sri, this.currentSri)) {
+			if (!StreamSRIUtil.equals(sri, this.currentSri)) {
 				if (this.currentSri != null) {
 					df.close();
 					fileNumber++;
