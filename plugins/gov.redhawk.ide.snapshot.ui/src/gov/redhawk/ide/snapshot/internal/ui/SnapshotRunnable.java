@@ -11,32 +11,25 @@
 package gov.redhawk.ide.snapshot.internal.ui;
 
 import gov.redhawk.bulkio.util.BulkIOType;
-
+import gov.redhawk.bulkio.util.BulkIOUtilActivator;
 import gov.redhawk.ide.snapshot.datareceiver.AbstractDataReceiverAttributes;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
 import gov.redhawk.ide.snapshot.ui.handlers.SnapshotSettings;
 import gov.redhawk.model.sca.ScaUsesPort;
-import gov.redhawk.sca.util.OrbSession;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.resources.IResource;
 //import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.omg.CORBA.SystemException;
-import org.omg.PortableServer.POA;
-import org.omg.PortableServer.POAPackage.ServantNotActive;
-import org.omg.PortableServer.POAPackage.WrongPolicy;
 
 import BULKIO.StreamSRI;
-import CF.PortPackage.InvalidPort;
-import CF.PortPackage.OccupiedPort;
 
 public class SnapshotRunnable implements IRunnableWithProgress {
 
@@ -176,46 +169,20 @@ public class SnapshotRunnable implements IRunnableWithProgress {
 			}
 			return;
 		}
-		final OrbSession session = OrbSession.createSession();
-		org.omg.CORBA.Object ref = null;
 		IDataReceiver receiver = null;
-		String connectionId = null;
 		try {
-			POA poa = session.getPOA();
 			receiver = recAttributes.dataReceiverFactory(startFile, (long) settings.getSamples(), settings.getSamples(), type, false, this.processingMethod);
-			ref = type.createRef(poa, receiver);
-			connectionId = "snapshot_" + System.currentTimeMillis();
-			port.connectPort(ref, connectionId);
+			BulkIOUtilActivator.getBulkIOPortConnectionManager().connect(port.getIor(), type, receiver);
 			receiver.processSamples(monitor);
 			outputFiles = receiver.getOutputFiles();
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} catch (IOException e) {
 			throw new InvocationTargetException(e);
-		} catch (ServantNotActive e) {
-			throw new InvocationTargetException(e);
-		} catch (WrongPolicy e) {
-			throw new InvocationTargetException(e);
-		} catch (InvalidPort e) {
-			throw new InvocationTargetException(e);
-		} catch (OccupiedPort e) {
-			throw new InvocationTargetException(e);
 		} catch (NullPointerException e) {
 			throw new InvocationTargetException(e);
 		} finally {
-			if (connectionId != null) {
-				try {
-					port.disconnectPort(connectionId);
-				} catch (InvalidPort e) {
-					// PASS
-				} catch (SystemException e) {
-					// PASS
-				}
-			}
-			if (ref != null) {
-				ref._release();
-				ref = null;
-			}
+			BulkIOUtilActivator.getBulkIOPortConnectionManager().disconnect(port.getIor(), type, receiver);
 			if (receiver != null) {
 				try {
 					receiver.dispose();
@@ -224,7 +191,6 @@ public class SnapshotRunnable implements IRunnableWithProgress {
 				}
 				receiver = null;
 			}
-			session.dispose();
 		}
 
 	}

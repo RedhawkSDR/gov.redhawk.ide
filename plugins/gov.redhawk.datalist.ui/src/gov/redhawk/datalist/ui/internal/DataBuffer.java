@@ -57,7 +57,7 @@ public class DataBuffer extends AbstractBulkIOPort implements dataDoubleOperatio
 
 		@Override
 		protected IStatus run(final IProgressMonitor monitor) {
-			BulkIOUtilActivator.getBulkIOPortConnectionManager().disconnect(port.getIor(), DataBuffer.this);
+			BulkIOUtilActivator.getBulkIOPortConnectionManager().disconnect(port.getIor(), getBulkIOType(), DataBuffer.this);
 			return Status.OK_STATUS;
 		}
 

@@ -15,8 +15,9 @@ import java.io.IOException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import BULKIO.StreamSRI;
+import BULKIO.updateSRIOperations;
 
-public interface IDataReceiver {
+public interface IDataReceiver extends updateSRIOperations {
 
 	public static enum CaptureMethod {
 		NUMBER("Number of Samples"), INDEFINITELY("Indefinitely"), CLOCK_TIME("Clock Time"), SAMPLE_TIME("Sample Time");
