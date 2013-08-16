@@ -25,7 +25,6 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-//import java.util.concurrent.CancellationException;
 
 import mil.jpeojtrs.sca.util.AnyUtils;
 
@@ -45,12 +44,12 @@ public class SuperBinReceiver extends AbstractBulkIOPort {
 	private long currentSamples;
 	/**the BulkIO data type pushed by the port to capture from*/
 	private BulkIOType type;
-	/**the Number of file sets that have been created*/
+	/** the Number of file sets that have been created. */
 	private int fileNumber = 1;
 	private IOException writeException;
-	/** EMF model for the metadata for bin snapshots*/
+	/** EMF model for the metadata for binary/raw snapshots. */
 	private Model metaInfo;
-	/**boolean for whether or not an end of stream has occurred*/
+	/** boolean for whether or not an end of stream has occurred. */
 	//protected boolean eos;
 
 	private RandomAccessFile aFile;
@@ -204,7 +203,7 @@ public class SuperBinReceiver extends AbstractBulkIOPort {
 	protected long deriveNumberOfSamples(long value) {
 		int divideBy = 1;
 		if (this.currentSri.subsize > 0 && this.currentSri.mode == 1) {
-			divideBy = 4;
+			divideBy = 4; // ????
 		} else if (this.currentSri.subsize > 0 || this.currentSri.mode == 1) {
 			divideBy = 2;
 		}

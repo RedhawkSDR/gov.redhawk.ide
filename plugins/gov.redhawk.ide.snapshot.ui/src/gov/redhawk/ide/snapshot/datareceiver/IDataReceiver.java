@@ -13,6 +13,7 @@ package gov.redhawk.ide.snapshot.datareceiver;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.annotation.NonNull;
 
 import BULKIO.StreamSRI;
 import BULKIO.updateSRIOperations;
@@ -23,9 +24,9 @@ public interface IDataReceiver extends updateSRIOperations {
 		NUMBER("Number of Samples"), INDEFINITELY("Indefinitely"), CLOCK_TIME("Clock Time"), SAMPLE_TIME("Sample Time");
 
 		/** the description of the enum, outputted by toString()*/
-		private String description; // DO NOT SET to null!
+		private String description;
 
-		CaptureMethod(String description) {
+		private CaptureMethod(@NonNull String description) {
 			this.description = description;
 		}
 
@@ -35,11 +36,10 @@ public interface IDataReceiver extends updateSRIOperations {
 		}
 
 		/**
-		 * 
 		 * @param arg0 the name or the description of the enum to be returned
 		 * @return a CaptureMethod corresponding to the name or description provided
 		 */
-		public static IDataReceiver.CaptureMethod stringToValue(String arg0) {
+		public static CaptureMethod stringToValue(String arg0) {
 			if (arg0.equals(NUMBER.name()) || arg0.equals(NUMBER.toString())) {
 				return NUMBER;
 			} else if (arg0.equals(INDEFINITELY.name()) || arg0.equals(INDEFINITELY.toString())) {
@@ -49,10 +49,10 @@ public interface IDataReceiver extends updateSRIOperations {
 			} else if (arg0.equals(SAMPLE_TIME.name()) || arg0.equals(SAMPLE_TIME.toString())) {
 				return SAMPLE_TIME;
 			} else {
-				return IDataReceiver.CaptureMethod.valueOf(arg0);
+				return CaptureMethod.valueOf(arg0);
 			}
 		}
-	}
+	} // end enum CaptureMethod
 
 	/**
 	 * 
@@ -68,7 +68,7 @@ public interface IDataReceiver extends updateSRIOperations {
 
 	/**
 	 * 
-	 * @param monitor
+	 * @param monitor progress monitor
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */

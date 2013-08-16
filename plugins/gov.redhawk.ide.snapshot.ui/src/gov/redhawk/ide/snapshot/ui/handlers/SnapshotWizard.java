@@ -12,6 +12,7 @@ package gov.redhawk.ide.snapshot.ui.handlers;
 
 import gov.redhawk.ide.snapshot.datareceiver.AbstractDataReceiverAttributes;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
+import gov.redhawk.ide.snapshot.datareceiver.IDataReceiverAttributes;
 import gov.redhawk.ide.snapshot.datareceiver.bin.BinDataReceiverAttributes;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotRunnable;
 import gov.redhawk.ide.snapshot.ui.SnapshotActivator;
@@ -52,7 +53,7 @@ import CF.ResourcePackage.StartError;
 public class SnapshotWizard extends Wizard {
 
 	private SnapshotWizardPage snapshotPage;
-	private ArrayList<AbstractDataReceiverAttributes> receivers = new ArrayList<AbstractDataReceiverAttributes>(0);
+	private ArrayList<AbstractDataReceiverAttributes> receivers = new ArrayList<AbstractDataReceiverAttributes>();
 	private ScaUsesPort port;
 	private Object[] datalist;
 	private StreamSRI sri;
@@ -128,7 +129,7 @@ public class SnapshotWizard extends Wizard {
 		//load the extensions for data receivers
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IConfigurationElement[] extensions = reg.getConfigurationElementsFor("gov.redhawk.ide.snapshot.datareceiver");
-		String[] types = new String[extensions.length + 1];
+		String[] types = new String[extensions.length + 1]; // +1 since we always have capture to binary/raw file  
 		receivers.add(new BinDataReceiverAttributes());
 		types[0] = receivers.get(0).getReceiverName();
 		for (int i = 0; i < extensions.length; i++) {
@@ -136,7 +137,7 @@ public class SnapshotWizard extends Wizard {
 				Object temp = extensions[i].createExecutableExtension("class");
 				if (temp instanceof AbstractDataReceiverAttributes) {
 					receivers.add((AbstractDataReceiverAttributes) temp);
-					types[i + 1] = ((AbstractDataReceiverAttributes) temp).getReceiverName();
+					types[i + 1] = ((IDataReceiverAttributes) temp).getReceiverName();
 				}
 			} catch (CoreException e) {
 				//PASS
@@ -186,7 +187,7 @@ public class SnapshotWizard extends Wizard {
 				new Status(Status.ERROR, SnapshotActivator.PLUGIN_ID, "Failed to aqquire snapshot.\n" + e.getMessage(), e.getCause()), StatusManager.SHOW);
 			return false;
 		}
-		if (run.checkForSimilarFiles()) {
+		if (settings.isConfirmOverwrite() && run.checkForSimilarFiles()) {
 			MessageBox override = new MessageBox(snapshotShell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 			override.setMessage("There are files in this directory that may be overwritten.\n" + "Do you want to proceed?");
 			int result = override.open();
@@ -212,7 +213,7 @@ public class SnapshotWizard extends Wizard {
 					ISchedulingRule rule = null;
 					IResource resource = null;
 					// get rule for workspace if needed
-					if (!settings.getSaveToWorkspace()) {
+					if (!settings.isSaveToWorkspace()) {
 						IResourceRuleFactory factory = ResourcesPlugin.getWorkspace().getRuleFactory();
 						resource = ResourcesPlugin.getWorkspace().getRoot().findMember(settings.getFilePath());
 						rule = factory.createRule(resource);
@@ -235,7 +236,7 @@ public class SnapshotWizard extends Wizard {
 							Job.getJobManager().endRule(rule);
 						}
 					}
-					if (settings.getSaveToWorkspace()) {
+					if (settings.isSaveToWorkspace()) {
 						try {
 							ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 						} catch (CoreException e) {
@@ -298,7 +299,7 @@ public class SnapshotWizard extends Wizard {
 		} catch (PartInitException e) {
 			MessageBox report = new MessageBox(snapshotShell, SWT.OK);
 			report.setMessage("The Progress of the Snapshot is displayed in the Progress View\n"
-				+ "which can be opened by going to Window>Show View>Other General/Progress");
+				+ "which can be opened by going to Window > Show View > Other... > General > Progress");
 			report.open();
 		}
 		return true;

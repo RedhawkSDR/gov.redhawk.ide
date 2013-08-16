@@ -28,12 +28,12 @@ public final class BinDataReceiverAttributes extends AbstractDataReceiverAttribu
 	}
 
 	@Override
-	public String[] getReceiverExtensions() {
+	public String[] getReceiverFilenameExtensions() {
 		return recevierExtensions;
 	}
 
 	@Override
-	public IDataReceiver dataReceiverFactory(File file, long samples, double time, BulkIOType type, boolean upcastUnsigned, IDataReceiver.CaptureMethod method)
+	public IDataReceiver newInstance(File file, long samples, double time, BulkIOType type, boolean upcastUnsigned, IDataReceiver.CaptureMethod method)
 		throws IOException {
 		if (!upcastUnsigned) {
 			if (method == CaptureMethod.NUMBER || method == CaptureMethod.SAMPLE_TIME) {

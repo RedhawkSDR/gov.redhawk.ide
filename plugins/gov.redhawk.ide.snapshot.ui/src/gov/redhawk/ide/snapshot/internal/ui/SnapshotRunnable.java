@@ -23,7 +23,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IResource;
-//import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,10 +37,9 @@ public class SnapshotRunnable implements IRunnableWithProgress {
 	private File startFile;
 	private String[][] outputFiles;
 	private AbstractDataReceiverAttributes recAttributes = null;
-	/**Storage for data provided to the snapshot at start up, will not connect to the port
-	 * if this is not null*/
+	/** Storage for data provided to the snapshot at start up, will not connect to the port if this is not null. */
 	private Object[] datalist = null;
-	/**Storage for the sri provided to the snapshot at start up*/
+	/** Storage for the SRI provided to the snapshot at start up. */
 	private StreamSRI sri = null;
 	private IDataReceiver.CaptureMethod processingMethod;
 
@@ -83,12 +81,12 @@ public class SnapshotRunnable implements IRunnableWithProgress {
 		//add the file type extension to the file name if it was not added, defaulting to the 
 		//	first supported type
 		settings.setFileType((settings.getFileType() == null | settings.getFileType() == "") ? settings.getSupportedTypes()[0] : settings.getFileType());
-		if (!settings.getFileName().endsWith(recAttributes.getReceiverExtensions()[0])) {
-			settings.setFileName(settings.getFileName() + recAttributes.getReceiverExtensions()[0]);
+		if (!settings.getFileName().endsWith(recAttributes.getReceiverFilenameExtensions()[0])) {
+			settings.setFileName(settings.getFileName() + recAttributes.getReceiverFilenameExtensions()[0]);
 		}
 
 		//instantiating startFile
-		if (settings.getSaveToWorkspace()) {
+		if (settings.isSaveToWorkspace()) {
 			//ensuring the filePath is not blank
 			if (settings.getFilePath() == null | settings.getFilePath() == "") {
 				throw new IllegalArgumentException("The file must be saved in a project\nif it is to be saved to the workspace");
@@ -120,12 +118,12 @@ public class SnapshotRunnable implements IRunnableWithProgress {
 		if (settings.getFileType() == null) {
 			throw new IllegalArgumentException("The File Type should be set to something");
 		}
-		String search = startFile.getName().substring(0, startFile.getName().lastIndexOf(recAttributes.getReceiverExtensions()[0]));
+		String search = startFile.getName().substring(0, startFile.getName().lastIndexOf(recAttributes.getReceiverFilenameExtensions()[0]));
 		if (datalist == null) {
 			search = search + "[0-9]*";
 		}
 		search = search + "(";
-		String[] extensions = recAttributes.getReceiverExtensions();
+		String[] extensions = recAttributes.getReceiverFilenameExtensions();
 		for (int i = 0; i < extensions.length - 1; i++) {
 			search += extensions[i] + "|";
 		}
@@ -149,7 +147,7 @@ public class SnapshotRunnable implements IRunnableWithProgress {
 	}
 
 	public String[] getOutputExtensions() {
-		return this.recAttributes.getReceiverExtensions();
+		return this.recAttributes.getReceiverFilenameExtensions();
 	}
 
 	@Override
@@ -171,7 +169,7 @@ public class SnapshotRunnable implements IRunnableWithProgress {
 		}
 		IDataReceiver receiver = null;
 		try {
-			receiver = recAttributes.dataReceiverFactory(startFile, (long) settings.getSamples(), settings.getSamples(), type, false, this.processingMethod);
+			receiver = recAttributes.newInstance(startFile, (long) settings.getSamples(), settings.getSamples(), type, false, this.processingMethod);
 			BulkIOUtilActivator.getBulkIOPortConnectionManager().connect(port.getIor(), type, receiver);
 			receiver.processSamples(monitor);
 			outputFiles = receiver.getOutputFiles();

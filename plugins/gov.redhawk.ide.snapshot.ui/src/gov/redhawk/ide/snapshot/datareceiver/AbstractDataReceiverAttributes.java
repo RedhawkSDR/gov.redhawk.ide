@@ -10,44 +10,14 @@
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.datareceiver;
 
+import gov.redhawk.bulkio.util.BulkIOType;
+
 import java.io.File;
 import java.io.IOException;
 
 import BULKIO.StreamSRI;
 
-import gov.redhawk.bulkio.util.BulkIOType;
-
-public abstract class AbstractDataReceiverAttributes {
-
-	/**
-	 * 
-	 * @return the printable name of the file type this receiver prints to
-	 */
-	public abstract String getReceiverName();
-
-	/**
-	 * 
-	 * @return the extensions this data receiver uses
-	 */
-	public abstract String[] getReceiverExtensions();
-
-	/**
-	 * 
-	 * @param file : The file to start saving with
-	 * @param samples : The number of samples to save (used by NUMBER)
-	 * @param time : The duration of the sample capture (used by SAMPLE_TIME or CAPTURE_TIME)
-	 * @param type : The BulkIOType of the port
-	 * @param upcastUnsigned : whether or not unsigned data should be upcast
-	 * @param method : method used to process samples, 
-	 * 			NUMBER to process a certain number of samples,
-	 * 			INDEFINATELY to process till an end of stream occurs,
-	 * 			CLOCK_TIME to process for a certain amount of time in real time,
-	 * 			SAMPLE_TIME to process for a certain amount of time in sample time
-	 * @return an IDataReceiver
-	 * @throws IOException
-	 */
-	public abstract IDataReceiver dataReceiverFactory(File file, long samples, double time, BulkIOType type, boolean upcastUnsigned,
-		IDataReceiver.CaptureMethod method) throws IOException;
+public abstract class AbstractDataReceiverAttributes implements IDataReceiverAttributes {
 
 	/**
 	 * 
@@ -59,7 +29,7 @@ public abstract class AbstractDataReceiverAttributes {
 	 * @throws IOException
 	 */
 	public String[][] writeFile(File file, Object[] data, BulkIOType type, boolean upcastUnsigned, StreamSRI sri) throws IOException {
-		IDataReceiver receiver = dataReceiverFactory(file, data.length, 0, type, upcastUnsigned, IDataReceiver.CaptureMethod.NUMBER);
+		IDataReceiver receiver = newInstance(file, data.length, 0, type, upcastUnsigned, IDataReceiver.CaptureMethod.NUMBER);
 		receiver.writeFile(data, sri);
 		String[][] outputFiles = receiver.getOutputFiles();
 		receiver.dispose();

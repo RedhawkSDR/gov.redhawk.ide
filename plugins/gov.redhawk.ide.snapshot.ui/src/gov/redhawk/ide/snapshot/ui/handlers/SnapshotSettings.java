@@ -11,22 +11,24 @@
 package gov.redhawk.ide.snapshot.ui.handlers;
 
 public class SnapshotSettings {
-	/**The fileName of the output file relative to the workspace or the absolute path*/
+	/** The fileName of the output file relative to the workspace or the absolute path. */
 	private String fileName = "";
-	/**relative file path form the workspace, only to be used if saveToWorkspace=true*/
+	/** relative file path form the workspace, only to be used if saveToWorkspace=true. */
 	private String filePath = "";
-	/**whether or not to save to the workspace*/
+	/** whether or not to save to the workspace. */
 	private boolean saveToWorkspace = false;
-	/** number of samples to take*/
+	/** number of samples to take/capture. */
 	private double samples = 1024;
-	/** the types supported by the snapshot, index 0 is the default*/
+	/** the capture file types supported by the snapshot, index 0 is the default. */
 	private String[] supportedTypes = { ".bin", ".BLUE" };
-	/**The type of file to save to Blue file, bin*/
+	/** The type of file to save to port data snapshot to. */
 	private String fileType = supportedTypes[0];
-	/**How the samples are to be capture*/
+	/** How the samples are to be captured. */
 	private String captureType = "";
-	/**The options of how to capture samples*/
+	/** The options of how to capture samples. */
 	private String[] captureTypes;
+	/** Confirm with user if overwrite existing file(s). */
+	private boolean confirmOverwrite = true;
 
 	public double getSamples() {
 		return samples;
@@ -69,7 +71,7 @@ public class SnapshotSettings {
 		this.filePath = filePath;
 	}
 
-	public boolean getSaveToWorkspace() {
+	public boolean isSaveToWorkspace() {
 		return saveToWorkspace;
 	}
 
@@ -93,4 +95,13 @@ public class SnapshotSettings {
 		this.captureTypes = processingTypes;
 		this.captureType = this.captureTypes[0];
 	}
+
+	public boolean isConfirmOverwrite() {
+		return confirmOverwrite;
+	}
+
+	public void setConfirmOverwrite(boolean confirmOverwrite) {
+		this.confirmOverwrite = confirmOverwrite;
+	}
+
 }

@@ -12,12 +12,12 @@ package gov.redhawk.ide.snapshot.datareceiver.blue;
 
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
-
 import nxm.sys.lib.Convert;
 import nxm.sys.lib.Data;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -145,15 +145,6 @@ public class BLUEDataReceiver extends SuperBLUEReceiver implements dataDoubleOpe
 		if (eos) {
 			this.eos = true;
 		}
-		/*ByteBuffer bBuffer = ByteBuffer.allocateDirect(super.getType() .getBytePerAtom() * length);
-		CharBuffer tBuff = bBuffer.asCharBuffer();
-		tBuff.put(data, 0, length);
-		try {
-		    channel.write(bBuffer);
-		} catch (IOException e) {
-		    super.getWriteException()(e);
-		    return;
-		}*/
 		/*Data dataFile = super.getDataFile() .getDataBuffer(data.length, Data.INT);
 		dataFile.uncast((short[])data, true);
 		super.getDataFile() .write(dataFile);*/
@@ -239,24 +230,46 @@ public class BLUEDataReceiver extends SuperBLUEReceiver implements dataDoubleOpe
 
 	@Override
 	public void pushPacket(float[] data, PrecisionUTCTime time, boolean eos, String streamID) {
+		if (!super.pushPacket(data.length, time, eos, streamID)) {
+			return;
+		}
 		if (this.totalNumSamples <= super.getCurrentSamples() || super.getWriteException() != null || this.eos) {
 			return;
 		}
 		if (eos) {
 			this.eos = true;
 		}
-		int length = (int) Math.min(data.length, this.totalNumSamples - super.getCurrentSamples());
+//		int length = (int) Math.min(data.length, this.totalNumSamples - super.getCurrentSamples());
+		if (getSRI() == null) {
+			return; // ignore data until we get the first SRI
+		}
+		final long numDataLeftToProcess;
+		// = this.totalNumSamples - super.getCurrentSamples();
+		if (getSRI().mode == 1) { // complex data
+			numDataLeftToProcess = (this.totalNumSamples - super.getCurrentSamples()) * 2;
+		} else {
+			numDataLeftToProcess = this.totalNumSamples - super.getCurrentSamples();
+		}
+		
+		int numFloatsToProcess = Math.min(data.length, (int) numDataLeftToProcess);
+
 		try {
-			int byteBufferLen = super.getType().getBytePerAtom() * length;
+			int byteBufferLen = super.getType().getBytePerAtom() * numFloatsToProcess;
 			byte[] byteBuffer = new byte[byteBufferLen];
+// BEGIN DEBUG CODE
+ByteBuffer bBuf = ByteBuffer.wrap(byteBuffer); // DEBUG
+byte[] array = bBuf.array(); // DEBUG
+boolean isSame = (array == byteBuffer); // DEBUG
+System.out.println("ByteBuffer.array() is same as our byte[] = " + isSame);// DEBUG
+// END DEBUG CODE
 			// convert float[] to byte[]
 			Convert.ja2bb(data, Data.FLOAT, byteBuffer, super.getDataFile().dataType, data.length);
 			super.getDataFile().write(byteBuffer, 0, byteBuffer.length);
 		} catch (Exception e) {
 			super.writeException(new IOException(e));
 		}
-		super.incrementSamples(super.deriveNumberOfSamples(length));
-		this.incrementTime(super.deriveNumberOfSamples(length) * this.currentSampleDelta);
+		super.incrementSamples(super.deriveNumberOfSamples(numFloatsToProcess));
+		this.incrementTime(super.deriveNumberOfSamples(numFloatsToProcess) * this.currentSampleDelta);
 	}
 
 	// increament increment assuper.getDataFile() a

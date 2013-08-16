@@ -20,6 +20,14 @@ import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.ResourcesPlugin; //added by Ryan on 6-18
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -35,22 +43,14 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Combo; //added by Ryan on 6-18
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceRuleFactory;
-import org.eclipse.core.resources.ResourcesPlugin; //added by Ryan on 6-18
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -174,6 +174,11 @@ public class SnapshotWizardPage extends WizardPage {
 		workspaceCheck.setText("Save to Workspace");
 		context.bindValue(WidgetProperties.selection().observeDelayed(500, workspaceCheck), PojoObservables.observeValue(settings, "saveToWorkspace"));
 
+		// add check box to see if user wants to confirm overwrite of existing file(s)
+		final Button confirmOverwrite = new Button(parent, SWT.CHECK);
+		confirmOverwrite.setText("Confirm overwrite");
+		context.bindValue(WidgetProperties.selection().observeDelayed(500, confirmOverwrite), PojoObservables.observeValue(settings, "confirmOverwrite"));
+		
 		//region to hold the different pages for saving to the workspace or the file system
 		final Group fileFinder = new Group(parent, SWT.SHADOW_ETCHED_IN);
 		fileFinder.setText("Save to");

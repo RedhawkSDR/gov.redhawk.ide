@@ -75,10 +75,12 @@ public class SnapshotHandler extends AbstractHandler {
 	}
 
 	private boolean checkPort(ScaUsesPort port) {
-		if (port.getRepid().equals(dataCharHelper.id()) || port.getRepid().equals(dataDoubleHelper.id()) || port.getRepid().equals(dataFloatHelper.id())
-			|| port.getRepid().equals(dataLongHelper.id()) || port.getRepid().equals(dataLongLongHelper.id()) || port.getRepid().equals(dataOctetHelper.id())
-			|| port.getRepid().equals(dataShortHelper.id()) || port.getRepid().equals(dataUlongHelper.id()) || port.getRepid().equals(dataUlongLongHelper.id())
-			|| port.getRepid().equals(dataUshortHelper.id())) {
+		final String portRepId = port.getRepid();
+		if (portRepId.equals(dataLongLongHelper.id())     || portRepId.equals(dataUlongLongHelper.id())
+				|| portRepId.equals(dataFloatHelper.id()) || portRepId.equals(dataDoubleHelper.id()) 
+				|| portRepId.equals(dataShortHelper.id()) || portRepId.equals(dataUshortHelper.id())
+				|| portRepId.equals(dataLongHelper.id())  || portRepId.equals(dataUlongHelper.id())
+				|| portRepId.equals(dataOctetHelper.id()) || portRepId.equals(dataCharHelper.id())) {
 			return true;
 		}
 		return false;

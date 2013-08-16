@@ -203,6 +203,7 @@ public class DataReceiver extends SuperBinReceiver implements dataDoubleOperatio
 			this.eos = true;
 		}
 		int length = (int) Math.min(data.length, this.totalNumSamples - super.getCurrentSamples());
+// ByteBuffer byteBuf = ByteBuffer.wrap(new byte[0]); // API
 		ByteBuffer bBuffer = ByteBuffer.allocateDirect(super.getType().getBytePerAtom() * length);
 		ShortBuffer tBuff = bBuffer.asShortBuffer();
 		tBuff.put(data, 0, length);
@@ -262,30 +263,45 @@ public class DataReceiver extends SuperBinReceiver implements dataDoubleOperatio
 
 	@Override
 	public void pushPacket(float[] data, PrecisionUTCTime time, boolean eos, String streamID) {
+		if (!super.pushPacket(data.length, time, eos, streamID)) {
+			return;
+		}
 		if (this.totalNumSamples <= super.getCurrentSamples() || super.getWriteException() != null || this.eos) {
 			return;
 		}
 		if (eos) {
 			this.eos = true;
 		}
-		int length = (int) Math.min(data.length, this.totalNumSamples - super.getCurrentSamples());
-		ByteBuffer bBuffer = ByteBuffer.allocateDirect(super.getType().getBytePerAtom() * length);
+		if (getSRI() == null) {
+			return; // ignore data until we get the first SRI
+		}
+		final long numDataLeftToProcess;
+		// = this.totalNumSamples - super.getCurrentSamples();
+		if (getSRI().mode == 1) { // complex data
+			numDataLeftToProcess = (this.totalNumSamples - super.getCurrentSamples()) * 2;
+		} else {
+			numDataLeftToProcess = this.totalNumSamples - super.getCurrentSamples();
+		}
+		
+		int numDataElementsToProcess = Math.min(data.length, (int) numDataLeftToProcess);
+		ByteBuffer bBuffer = ByteBuffer.allocateDirect(super.getType().getBytePerAtom() * numDataElementsToProcess);
 		FloatBuffer tBuff = bBuffer.asFloatBuffer();
-		tBuff.put(data, 0, length);
+		tBuff.put(data, 0, numDataElementsToProcess);
 		try {
 			super.getChannel().write(bBuffer);
 		} catch (IOException e) {
 			super.writeException(e);
 			return;
 		}
-		super.incrementSamples(super.deriveNumberOfSamples(length));
-		this.incrementTime(super.deriveNumberOfSamples(length) * this.currentSampleDelta);
+		super.incrementSamples(super.deriveNumberOfSamples(numDataElementsToProcess));
+		this.incrementTime(super.deriveNumberOfSamples(numDataElementsToProcess) * this.currentSampleDelta);
 	}
 
 	private synchronized void incrementTime(double time) {
 		this.currentTimeDuration += time;
 	}
 
+	@Override
 	public void processSamples(IProgressMonitor monitor) throws InterruptedException, IOException {
 		super.getMetaDataModel().getTime().setStartTime(new SimpleDateFormat(super.getTimeFormat()).format(new Date()));
 		int work;
@@ -346,9 +362,19 @@ public class DataReceiver extends SuperBinReceiver implements dataDoubleOperatio
 			}
 			this.saveXML();
 		} finally {
-			// truncate for case when we are overwriting an existing file
+			// truncate file to actual size for case when we are overwriting an existing file
 			try {
-				getChannel().truncate(super.getCurrentSamples() * super.getType().getBytePerAtom());
+				long fileSize = getCurrentSamples() * getType().getBytePerAtom();
+				StreamSRI sri = getSRI();
+				if (sri != null) {
+					if (sri.mode == 1) {         // complex data
+						fileSize *= 2;           // file size should be double
+					}
+					if (sri.subsize > 1) {       // framed data
+						fileSize *= sri.subsize; // file size should be multiplied by subsize ? 
+					}
+				}
+				getChannel().truncate(fileSize);
 			} catch (IOException e) {
 				// PASS
 			}

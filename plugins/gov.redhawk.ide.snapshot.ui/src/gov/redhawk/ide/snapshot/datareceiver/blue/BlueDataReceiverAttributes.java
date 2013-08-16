@@ -20,7 +20,7 @@ import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver.CaptureMethod;
 
 public class BlueDataReceiverAttributes extends AbstractDataReceiverAttributes {
 
-	private final String receiverName = "Blue Midas file (.tmp)";
+	private final String receiverName = "Midas BLUE file (.tmp)";
 	private final String[] receiverExtensions = { ".tmp" };
 
 	@Override
@@ -29,12 +29,12 @@ public class BlueDataReceiverAttributes extends AbstractDataReceiverAttributes {
 	}
 
 	@Override
-	public String[] getReceiverExtensions() {
+	public String[] getReceiverFilenameExtensions() {
 		return receiverExtensions;
 	}
 
 	@Override
-	public IDataReceiver dataReceiverFactory(File file, long samples, double time, BulkIOType type, boolean upcastUnsigned, IDataReceiver.CaptureMethod method)
+	public IDataReceiver newInstance(File file, long samples, double time, BulkIOType type, boolean upcastUnsigned, IDataReceiver.CaptureMethod method)
 		throws IOException {
 		if (type == BulkIOType.OCTET || type == BulkIOType.ULONG || type == BulkIOType.ULONG_LONG || type == BulkIOType.USHORT) {
 			if (method == CaptureMethod.NUMBER || method == CaptureMethod.SAMPLE_TIME) {
