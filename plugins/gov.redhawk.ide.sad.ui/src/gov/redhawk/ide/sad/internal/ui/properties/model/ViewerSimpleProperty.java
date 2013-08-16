@@ -46,10 +46,6 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 				newValue = null;
 			}
 		}
-		if (!checkValue(newValue)) {
-			// XXX Throw exception?
-			return;
-		}
 		String oldValue = this.value;
 		this.value = newValue;
 		if (!PluginUtil.equals(oldValue, value)) {

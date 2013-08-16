@@ -42,10 +42,6 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 
 	public void setValues(String... newValues) {
 		List<String> oldValue = this.values;
-		if (!checkValues(newValues)) {
-			// XXX Throw Exception?
-			return;
-		}
 		if (newValues == null || newValues.length == 0) {
 			this.values = null;
 		} else {
