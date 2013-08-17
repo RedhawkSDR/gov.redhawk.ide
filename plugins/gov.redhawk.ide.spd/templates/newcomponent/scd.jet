@@ -3,8 +3,6 @@
 %>
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE softwarecomponent PUBLIC "-//JTRS//DTD SCA V2.2.2 SCD//EN" "softwarecomponent.dtd">
-<!-- Created with REDHAWK IDE-->
-<!-- Powered by Eclipse -->
 <softwarecomponent>
     <corbaversion>2.2</corbaversion> 
     <componentrepid repid="IDL:CF/Resource:1.0"/>

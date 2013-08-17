@@ -3,8 +3,6 @@
 %>
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
-<!-- Created with REDHAWK IDE-->
-<!-- Powered by Eclipse -->
 <properties>
   <description>SCA required properties describing the Operating System</description>
   <!-- Provide a processor_name and os_name matching property -->

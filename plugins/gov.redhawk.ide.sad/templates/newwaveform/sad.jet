@@ -20,8 +20,6 @@
 %>
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE softwareassembly PUBLIC "-//JTRS//DTD SCA V2.2.2 SAD//EN" "softwareassembly.dtd">
-<!-- Created with REDHAWK IDE-->
-<!-- Powered by Eclipse -->
 <softwareassembly name="<%=args.getWaveformName()%>" id="<%=args.getWaveformId()%>">
     <componentfiles>
 <%

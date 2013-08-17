@@ -23,7 +23,7 @@ public class PrfFileTemplate
   }
 
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
-  protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<!DOCTYPE properties PUBLIC \"-//JTRS//DTD SCA V2.2.2 PRF//EN\" \"properties.dtd\">" + NL + "<!-- Created with REDHAWK IDE-->" + NL + "<!-- Powered by Eclipse -->" + NL + "<properties>" + NL + "</properties>" + NL;
+  protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<!DOCTYPE properties PUBLIC \"-//JTRS//DTD SCA V2.2.2 PRF//EN\" \"properties.dtd\">" + NL + "<properties>" + NL + "</properties>" + NL;
   protected final String TEXT_2 = NL;
 
     /**

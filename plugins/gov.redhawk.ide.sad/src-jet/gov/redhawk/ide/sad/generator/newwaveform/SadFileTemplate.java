@@ -29,7 +29,7 @@ public class SadFileTemplate
   }
 
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
-  protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<!DOCTYPE softwareassembly PUBLIC \"-//JTRS//DTD SCA V2.2.2 SAD//EN\" \"softwareassembly.dtd\">" + NL + "<!-- Created with REDHAWK IDE-->" + NL + "<!-- Powered by Eclipse -->" + NL + "<softwareassembly name=\"";
+  protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<!DOCTYPE softwareassembly PUBLIC \"-//JTRS//DTD SCA V2.2.2 SAD//EN\" \"softwareassembly.dtd\">" + NL + "<softwareassembly name=\"";
   protected final String TEXT_2 = "\" id=\"";
   protected final String TEXT_3 = "\">" + NL + "    <componentfiles>";
   protected final String TEXT_4 = NL + "\t\t<componentfile type=\"SPD\" id=\"";

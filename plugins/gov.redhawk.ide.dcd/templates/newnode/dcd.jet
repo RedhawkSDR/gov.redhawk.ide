@@ -13,8 +13,6 @@ java.util.UUID"
 %>
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE deviceconfiguration PUBLIC "-//JTRS//DTD SCA V2.2.2 DCD//EN" "deviceconfiguration.dtd">
-<!-- Created with REDHAWK IDE-->
-<!-- Powered by Eclipse -->
 <deviceconfiguration name="<%=args.getNodeName()%>" id="<%=args.getNodeId()%>">
     <devicemanagersoftpkg>
     	<localfile name="/mgr/DeviceManager.spd.xml">

@@ -26,7 +26,7 @@ public class ScdFileTemplate
   }
 
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
-  protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<!DOCTYPE softwarecomponent PUBLIC \"-//JTRS//DTD SCA V2.2.2 SCD//EN\" \"softwarecomponent.dtd\">" + NL + "<!-- Created with REDHAWK IDE-->" + NL + "<!-- Powered by Eclipse -->" + NL + "<softwarecomponent>" + NL + "    <corbaversion>2.2</corbaversion>";
+  protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<!DOCTYPE softwarecomponent PUBLIC \"-//JTRS//DTD SCA V2.2.2 SCD//EN\" \"softwarecomponent.dtd\">" + NL + "<softwarecomponent>" + NL + "    <corbaversion>2.2</corbaversion>";
   protected final String TEXT_2 = NL + "    <componentrepid repid=\"IDL:CF/ExecutableDevice:1.0\"/>" + NL + "    <componenttype>executabledevice</componenttype>";
   protected final String TEXT_3 = NL + "    <componentrepid repid=\"IDL:CF/LoadableDevice:1.0\"/>" + NL + "    <componenttype>loadabledevice</componenttype>";
   protected final String TEXT_4 = NL + "    <componentrepid repid=\"IDL:CF/Device:1.0\"/>" + NL + "    <componenttype>device</componenttype>";
