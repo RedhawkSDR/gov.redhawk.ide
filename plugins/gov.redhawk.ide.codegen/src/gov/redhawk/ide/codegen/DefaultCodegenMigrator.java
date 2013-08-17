@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 
 /**
- * @since 9.2
+ * @since 10.0
  * 
  */
 public class DefaultCodegenMigrator implements ICodegenTemplateMigrator {

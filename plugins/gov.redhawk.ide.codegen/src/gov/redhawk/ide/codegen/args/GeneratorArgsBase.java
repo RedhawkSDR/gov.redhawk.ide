@@ -23,7 +23,7 @@ public class GeneratorArgsBase {
 	public static final String SOFTPKG_FILE_KEY = "softpkg_file";
 	public static final String AUTHOR_NAME_KEY = "author_name";
 	/**
-	 * @since 9.2
+	 * @since 10.0
 	 */
 	public static final String SOFT_PKG_ID_KEY = "soft_pkg_id";
 	/**
@@ -84,13 +84,13 @@ public class GeneratorArgsBase {
 	}
 	
 	/**
-	 * @since 9.2
+	 * @since 10.0
 	 */
 	public void setSoftPkgId(String pkgID) {
 		this.setProperty(SOFT_PKG_ID_KEY, pkgID);
 	}
 	/**
-	 * @since 9.2
+	 * @since 10.0
 	 */
 	public String getSoftPkgId() {
 		return this.getProperty(SOFT_PKG_ID_KEY);

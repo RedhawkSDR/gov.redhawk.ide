@@ -14,6 +14,7 @@ package gov.redhawk.ide.codegen;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mil.jpeojtrs.sca.spd.Code;
 import mil.jpeojtrs.sca.spd.Implementation;
@@ -95,9 +96,9 @@ public interface IScaComponentCodegen {
 	 *         file will be generated
 	 * @throws CoreException The generator is unable to determine which files
 	 *             will be generated due to an error
-	 * @since 3.0
+	 * @since 10.0
 	 */
-	HashMap<String, Boolean> getGeneratedFiles(final ImplementationSettings implSettings, final SoftPkg softpkg) throws CoreException;
+	Map<String, Boolean> getGeneratedFiles(final ImplementationSettings implSettings, final SoftPkg softpkg) throws CoreException;
 
 	/**
 	 * Boolean flag that indicates if code generation should be performed

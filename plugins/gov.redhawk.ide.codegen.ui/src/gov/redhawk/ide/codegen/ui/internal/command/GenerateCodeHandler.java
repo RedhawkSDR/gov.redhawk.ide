@@ -19,6 +19,7 @@ import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.ide.codegen.ui.GenerateCode;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.ui.editor.SCAFormEditor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -66,11 +69,6 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 public class GenerateCodeHandler extends AbstractHandler implements IHandler {
-	private GenerateCode codeGenerator = null;
-
-	public GenerateCodeHandler() {
-		this.codeGenerator = new GenerateCode();
-	}
 
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 
@@ -89,12 +87,22 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 		if (selection == null || selection.isEmpty()) {
 			final IEditorPart editor = HandlerUtil.getActiveEditor(event);
 			if (editor != null) {
-				final IEditorInput editorInput = editor.getEditorInput();
-				if (editorInput instanceof IFileEditorInput) {
-					final IFile f = ((IFileEditorInput) editorInput).getFile();
-					if (isSpdFile(f)) {
-						saveAndGenerate(f, f.getProject(), HandlerUtil.getActiveShell(event));
+				if (editor instanceof SCAFormEditor) {
+					SCAFormEditor scaEditor = (SCAFormEditor) editor;
+					SoftPkg spd = SoftPkg.Util.getSoftPkg(scaEditor.getMainResource());
+					if (spd != null) {
+						IProject project = ModelUtil.getProject(spd);
+						saveAndGenerate(spd, project, HandlerUtil.getActiveShell(event));
 						return null;
+					}
+				} else {
+					final IEditorInput editorInput = editor.getEditorInput();
+					if (editorInput instanceof IFileEditorInput) {
+						final IFile f = ((IFileEditorInput) editorInput).getFile();
+						if (isSpdFile(f)) {
+							saveAndGenerate(f, f.getProject(), HandlerUtil.getActiveShell(event));
+							return null;
+						}
 					}
 				}
 			}
@@ -134,7 +142,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	 */
 	private boolean saveAndGenerate(Object objectToGenerate, IProject parentProject, Shell shell) {
 		if (relatedResourcesSaved(shell, parentProject) && checkDeprecated(objectToGenerate, shell)) {
-			this.codeGenerator.generate(objectToGenerate);
+			GenerateCode.generate(objectToGenerate);
 			return true;
 		}
 		return false;
@@ -142,7 +150,9 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 
 	@SuppressWarnings("unchecked")
 	private boolean checkDeprecated(Object selectedObj, Shell parent) {
-		if (selectedObj instanceof EList) {
+		if (selectedObj instanceof SoftPkg) {
+			return checkImpls(parent, ((SoftPkg) selectedObj).getImplementation());
+		} else if (selectedObj instanceof EList) {
 			return checkImpls(parent, (List<Implementation>) selectedObj);
 		} else if (selectedObj instanceof Implementation) {
 			final List<Implementation> impls = new ArrayList<Implementation>();
@@ -166,44 +176,20 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 		final SoftPkg softPkg = (SoftPkg) impls.get(0).eContainer();
 		final WaveDevSettings waveDev = CodegenUtil.loadWaveDevSettings(softPkg);
 		for (final Implementation impl : impls) {
-			ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
+			final ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
 			if (implSettings != null) {
 				String templateId = implSettings.getTemplate();
-				ITemplateDesc template = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplate(templateId);
+				final ITemplateDesc template = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplate(templateId);
 				if (template != null) {
-					ICodeGeneratorDescriptor generator = template.getCodegen();
 					if (template.isDeprecated()) {
 						ITemplateDesc newTemplate = template.getNewTemplate();
 						if (newTemplate != null) {
-							
-							String message = "WARNING: The code generator '" + generator.getName() + "' with template '" + template.getName()
-								+ "' is deprecated.\n\n" + "Yes, update to use new template and generator.\n" + "No, continue to use the existing generator.\n"
-								+ "Cancel, abort generation.";
-							MessageBox dialog = new MessageBox(parent, SWT.ICON_WARNING | SWT.YES | SWT.NO | SWT.CANCEL);
-							dialog.setText("Deprecated Generator");
-							dialog.setMessage(message);
-							switch (dialog.open()) {
-							case SWT.YES:
-								try {
-									// TODO Run in Job!
-									template.getMigrationTool().migrate(null, template, impl, implSettings);
-								} catch (CoreException e) {
-									IStatus status = e.getStatus();
-									StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
-									return false;
-								}
-								break;
-							case SWT.NO:
-								break;
-							case SWT.CANCEL:
-							default:
-								return false;
-							}
+							return shouldUpgrade(parent, impl, implSettings, template, newTemplate);
 						} else {
-							return false;
+							return shouldContinueWhileDeprecated(parent, template);
 						}
 					} else {
-						continue;
+						return shouldContinueWhileDeprecated(parent, template);
 					}
 				} else {
 					return false;
@@ -213,6 +199,67 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 			}
 		}
 		return true;
+	}
+
+	protected boolean shouldUpgrade(Shell parent, final Implementation impl, final ImplementationSettings implSettings, final ITemplateDesc template,
+		ITemplateDesc newTemplate) {
+		ICodeGeneratorDescriptor generator = template.getCodegen();
+		ICodeGeneratorDescriptor newCodegen = newTemplate.getCodegen();
+		String message = "The code generator '" + generator.getName() + "' with template '" + template.getName() + "' is deprecated.\n\n"
+			+ "Would you like to upgrade this project?\n\n" + "READ CAREFULLY\tREAD CAREFULLY\n" + "READ CAREFULLY\tREAD CAREFULLY\n\n"
+			+ "Yes: Update to use new template '" + newTemplate.getName() + "' + and generator '" + newCodegen.getName()
+			+ "'. \n\tNOTE: THIS CAN NOT BE UNDONE.\n\n" + "No: Continue to use the existing generator.\n\tNew features may be unavailable.\n\n"
+			+ "Cancel: Abort generation.";
+		MessageBox dialog = new MessageBox(parent, SWT.ICON_WARNING | SWT.YES | SWT.NO | SWT.CANCEL);
+		dialog.setText("Deprecated Generator");
+		dialog.setMessage(message);
+		switch (dialog.open()) {
+		case SWT.YES:
+			ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(parent);
+			try {
+				progressDialog.run(true, true, new IRunnableWithProgress() {
+
+					@Override
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						try {
+							template.getMigrationTool().migrate(monitor, template, impl, implSettings);
+						} catch (CoreException e) {
+							throw new InvocationTargetException(e);
+						}
+					}
+				});
+			} catch (InvocationTargetException e1) {
+				IStatus status;
+				if (e1.getCause() instanceof CoreException) {
+					CoreException core = (CoreException) e1.getCause();
+					status = core.getStatus();
+				} else if (e1.getCause() instanceof OperationCanceledException) {
+					return false;
+				} else {
+					status = new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to update code generator.", e1.getCause());
+				}
+				StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
+				return false;
+			} catch (InterruptedException e1) {
+				return false;
+			}
+			return true;
+		case SWT.NO:
+			return true;
+		case SWT.CANCEL:
+		default:
+			return false;
+		}
+	}
+
+	private boolean shouldContinueWhileDeprecated(Shell parent, ITemplateDesc template) {
+		ICodeGeneratorDescriptor generator = template.getCodegen();
+		MessageBox dialog = new MessageBox(parent, SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
+		dialog.setText("Deprecated Generator");
+		String message = "The code generator '" + generator.getName() + "' with template '" + template.getName() + "' is deprecated.\n\n"
+			+ "Would you like to continue?\nNew features may be unavailable.\n";
+		dialog.setMessage(message);
+		return false;
 	}
 
 	/**

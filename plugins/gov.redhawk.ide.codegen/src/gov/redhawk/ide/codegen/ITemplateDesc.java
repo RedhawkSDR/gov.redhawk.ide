@@ -22,22 +22,22 @@ public interface ITemplateDesc extends Comparable<ITemplateDesc> {
 	String getDescription();
 	
 	/**
-	 * @since 9.2
+	 * @since 10.0
 	 */
 	boolean isDeprecated();
 	
 	/**
-	 * @since 9.2
+	 * @since 10.0
 	 */
 	ICodegenTemplateMigrator getMigrationTool();
 	
 	/**
-	 * @since 9.2
+	 * @since 10.0
 	 */
 	String getNewTemplateID();
 	
 	/**
-	 * @since 9.2
+	 * @since 10.0
 	 */
 	ITemplateDesc getNewTemplate();
 
@@ -74,7 +74,7 @@ public interface ITemplateDesc extends Comparable<ITemplateDesc> {
 	public String getCodegenId();
 	
 	/**
-	 * @since 9.2
+	 * @since 10.0
 	 */
 	public ICodeGeneratorDescriptor getCodegen();
 

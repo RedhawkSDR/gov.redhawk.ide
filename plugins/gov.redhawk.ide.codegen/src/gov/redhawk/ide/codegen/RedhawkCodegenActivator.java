@@ -167,7 +167,7 @@ public class RedhawkCodegenActivator extends Plugin {
 	 *
 	 * @param msg the message to log
 	 * @param e the exception that caused this warning, if any
-	 * @since 9.2
+	 * @since 10.0
 	 */
 	public static final void logWarning(final String msg, final Throwable e) {
 		RedhawkCodegenActivator.getDefault().getLog().log(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID, msg, e));

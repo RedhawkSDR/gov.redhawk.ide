@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * @since 9.2
+ * @since 10.0
  * 
  */
 public interface ICodegenTemplateMigrator {

@@ -24,19 +24,26 @@ import gov.redhawk.ide.codegen.ui.internal.GeneratorConsole;
 import gov.redhawk.ide.codegen.util.PropertyUtil;
 import gov.redhawk.model.sca.util.ModelUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.CancellationException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.NamedThreadFactory;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -49,17 +56,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.command.CompoundCommand;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.window.Window;
@@ -68,124 +75,184 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * @since 7.0
  */
-public class GenerateCode {
+public final class GenerateCode {
 
-	private String[] filesToBeGenerated;
-	private boolean generationConfirmed;
-	private TransactionalEditingDomain domain;
+	private GenerateCode() {
 
-	/**
-	 * Accepts an {@link EList}<{@link Implementation}>, an {@link Implementation}, or an {@link IFile} for an SPD. Performs
-	 * the appropriate code generation actions for the associated implementation(s). Code generation is performed as a
-	 * job.
-	 * 
-	 * @param selectedObj The object to perform code generation actions for.
-	 */
-	@SuppressWarnings("unchecked")
-	public void generate(final Object selectedObj) {
-		if (selectedObj instanceof EList) {
-			processImpls((List<Implementation>) selectedObj);
-		} else if (selectedObj instanceof Implementation) {
-			final List<Implementation> impls = new ArrayList<Implementation>();
-			impls.add((Implementation) selectedObj);
-			processImpls(impls);
-		} else if (selectedObj instanceof IFile) {
-			// The selected object should be an IFile for the SPD
-			final IFile file = (IFile) selectedObj;
-			final URI spdURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
-			final SoftPkg softpkg = ModelUtil.loadSoftPkg(spdURI);
-			processImpls(softpkg.getImplementation());
+	}
+
+	private static final ExecutorService EXECUTOR_POOL = Executors.newSingleThreadExecutor(new NamedThreadFactory(GenerateCode.class.getName()));
+
+	public static void generate(Object objectToGenerate) {
+		if (objectToGenerate instanceof IFile) {
+			generate((IFile) objectToGenerate);
+		} else if (objectToGenerate instanceof SoftPkg) {
+			generate(((SoftPkg) objectToGenerate).getImplementation());
+		} else if (objectToGenerate instanceof Implementation) {
+			generate((Implementation) objectToGenerate);
+		} else if (objectToGenerate instanceof List< ? >) {
+			generate((List<Implementation>) objectToGenerate);
+		} else {
+			throw new IllegalArgumentException("Unknown object to generate" + objectToGenerate);
 		}
+
 	}
 
 	/**
-	 * This generates a specific implementation with an optional progress monitor.
-	 * 
-	 * @param impl the implementation to generate
-	 * @param monitor the optional {@link IProgressMonitor} for progress
-	 * @throws CoreException for any problems generating code
+	 * @since 8.0
 	 */
-	public IStatus generateImpl(final Implementation impl, final IProgressMonitor monitor) throws CoreException {
-		try {
-			return processImpls(Collections.singletonList(impl), monitor, false);
-		} finally {
-			monitor.done();
-		}
+	public static void generate(IFile spd) {
+		final IFile file = (IFile) spd;
+		final URI spdURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
+		final SoftPkg softpkg = ModelUtil.loadSoftPkg(spdURI);
+		generate(softpkg.getImplementation());
 	}
 
 	/**
-	 * Performs code generation actions for one or more implementations from the same SPD as a background
-	 * {@link WorkspaceJob}.
-	 * 
-	 * @param impls The implementation(s) to generate code for.
+	 * @since 8.0
 	 */
-	private void processImpls(final List<Implementation> impls) {
-		if (impls.size() == 0) {
+	public static void generate(final Implementation impl) {
+		generate(Collections.singletonList(impl));
+	}
+
+	/**
+	 * @since 8.0
+	 */
+	public static void generate(final List<Implementation> impls) {
+		if (impls.isEmpty()) {
 			return;
 		}
-
-		final WorkspaceJob job = new WorkspaceJob("Generate Component(s)") {
+		Job getFilesJob = new Job("Getting files to generate...") {
 
 			@Override
-			public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
-				return processImpls(impls, monitor, true);
-			}
+			protected IStatus run(IProgressMonitor monitor) {
+				// Map of Implementation ->  ( map of FileName relative to output location -> true will regenerate, false wants to regenerate but contents different
+				final Map<Implementation, Map<String, Boolean>> implMap = new HashMap<Implementation, Map<String, Boolean>>();
+				for (Implementation impl : impls) {
+					try {
+						Map<String, Boolean> resultSet = getFilesToGenerateMap(monitor, impl);
+						implMap.put(impl, resultSet);
+					} catch (CoreException e) {
+						return e.getStatus();
+					}
+				}
+				WorkbenchJob checkFilesJob = new WorkbenchJob("Check files") {
 
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						Map<String, Boolean> aggregate = new HashMap<String, Boolean>();
+						for (Map<String, Boolean> v : implMap.values()) {
+							aggregate.putAll(v);
+						}
+						List<String> filesToGenerate = new ArrayList<String>();
+						for (Map.Entry<String, Boolean> entry : aggregate.entrySet()) {
+							if (entry.getValue() != null && entry.getValue()) {
+								filesToGenerate.add(entry.getKey());
+							}
+						}
+						aggregate.keySet().removeAll(filesToGenerate);
+
+						if (!aggregate.isEmpty()) {
+							GenerateFilesDialog dialog = new GenerateFilesDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), aggregate);
+							if (dialog.open() == Window.OK) {
+								String[] result = dialog.getFilesToGenerate();
+								if (result == null) {
+									filesToGenerate = null;
+								} else {
+									filesToGenerate.addAll(Arrays.asList(result));
+								}
+							} else {
+								return Status.CANCEL_STATUS;
+							}
+						} else {
+							// No questions to ask so generate all by default
+							filesToGenerate = null;
+						}
+
+						if (filesToGenerate != null && filesToGenerate.isEmpty()) {
+							return Status.CANCEL_STATUS;
+						}
+
+						final Map<Implementation, String[]> implFileMap = new HashMap<Implementation, String[]>();
+						for (Map.Entry<Implementation, Map<String, Boolean>> entry : implMap.entrySet()) {
+							if (filesToGenerate == null) {
+								implFileMap.put(entry.getKey(), null);
+								continue;
+							} else {
+								List<String> subsetFilesToGenerate = new ArrayList<String>(entry.getValue().keySet());
+								List<String> filesToRemove = new ArrayList<String>(subsetFilesToGenerate);
+								filesToRemove.removeAll(filesToGenerate);
+								subsetFilesToGenerate.removeAll(filesToRemove);
+
+								implFileMap.put(entry.getKey(), subsetFilesToGenerate.toArray(new String[subsetFilesToGenerate.size()]));
+							}
+						}
+
+						WorkspaceJob processJob = new WorkspaceJob("Generating...") {
+
+							@Override
+							public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+								return processImpls(implFileMap, monitor);
+							}
+						};
+						processJob.setUser(true);
+						processJob.schedule();
+
+						return Status.OK_STATUS;
+					}
+				};
+				checkFilesJob.setUser(true);
+				checkFilesJob.schedule();
+
+				return Status.OK_STATUS;
+			}
 		};
-		job.setPriority(Job.LONG);
-		job.setUser(true);
-		job.setSystem(false);
-		job.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
-		job.schedule();
+		getFilesJob.setUser(true);
+		getFilesJob.schedule();
 	}
 
-	private IStatus processImpls(final List<Implementation> impls, IProgressMonitor monitor, final boolean openEditor) throws CoreException {
+	private static IStatus processImpls(Map<Implementation, String[]> implMap, IProgressMonitor monitor) throws CoreException {
 		try {
-			final int GENERATE_CODE_WORK = 9;
-			final int ADD_BUILDER_WORK = 1;
-			final int REFRESH_WORKSPACE_WORK = 1;
-
-			if (monitor == null) {
-				monitor = new NullProgressMonitor();
-			}
-
-			final SubMonitor progress = SubMonitor.convert(monitor, "Generating component code", GENERATE_CODE_WORK + ADD_BUILDER_WORK + ADD_BUILDER_WORK
-				+ REFRESH_WORKSPACE_WORK);
-
-			final SoftPkg softPkg = (SoftPkg) impls.get(0).eContainer();
+			SubMonitor progress = SubMonitor.convert(monitor, "Generating...", implMap.size() + 2);
+			final SoftPkg softPkg = (SoftPkg) implMap.entrySet().iterator().next().getKey().eContainer();
+			TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(softPkg);
 			final IProject project = ModelUtil.getProject(softPkg);
 			final WaveDevSettings waveDev = CodegenUtil.loadWaveDevSettings(softPkg);
 
-			// Initial validation
-			final MultiStatus retStatus = new MultiStatus(RedhawkCodegenUiActivator.PLUGIN_ID, IStatus.OK, "Problems while generating code", null);
-			IStatus status = validate(project, softPkg, impls, waveDev);
-			if (!status.isOK()) {
-				retStatus.add(status);
-				if (retStatus.getSeverity() == IStatus.ERROR) {
-					return retStatus;
-				}
-			}
-			if (progress.isCanceled()) {
-				return retStatus;
-			}
-
 			// Refresh project before generating code
-			progress.setTaskName("Refreshing project");
-			project.refreshLocal(IResource.DEPTH_INFINITE, progress.newChild(REFRESH_WORKSPACE_WORK));
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 
-			// Generate code for each implementation
-			final EMap<String, ImplementationSettings> implSet = waveDev.getImplSettings();
-			final SubMonitor implProgress = progress.newChild(GENERATE_CODE_WORK).setWorkRemaining(impls.size());
-			for (final Implementation impl : impls) {
+			final MultiStatus retStatus = new MultiStatus(RedhawkCodegenUiActivator.PLUGIN_ID, IStatus.OK, "Problems while generating code", null);
+			for (Map.Entry<Implementation, String[]> entry : implMap.entrySet()) {
+				if (progress.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
+
+				SubMonitor implGenerateWork = progress.newChild(1);
+				implGenerateWork.beginTask("Generating " + entry.getKey().getId(), 1);
+
+				final Implementation impl = entry.getKey();
+				IStatus status = validate(project, softPkg, impl, waveDev);
+				if (!status.isOK()) {
+					retStatus.add(status);
+					if (retStatus.getSeverity() == IStatus.ERROR) {
+						return retStatus;
+					}
+				}
+
+				// Generate code for each implementation
+				final EMap<String, ImplementationSettings> implSet = waveDev.getImplSettings();
 				// Generate code for implementation
 				final ImplementationSettings settings = implSet.get(impl.getId());
 				final ArrayList<FileToCRCMap> mapping = new ArrayList<FileToCRCMap>();
-				status = generateImplementation(impl, settings, implProgress.newChild(1), softPkg, mapping, openEditor);
+
+				String[] filesToGenerate = entry.getValue();
+				status = generateImplementation(filesToGenerate, impl, settings, implGenerateWork.newChild(1), softPkg, mapping);
 				if (!status.isOK()) {
 					retStatus.add(status);
 					if (status.getSeverity() == IStatus.ERROR) {
@@ -194,59 +261,41 @@ public class GenerateCode {
 				}
 
 				// Update CRCs for implementation
-				implProgress.subTask("Updating CRCs");
 				try {
-					updateCRCs(settings, mapping);
+					updateCRCs(domain, settings, mapping);
 				} catch (final IOException e) {
-					retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID, "Problem while generating CRCs for implementation "
-						+ impl.getId(), e));
-				}
-
-				if (progress.isCanceled()) {
-					break;
+					retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID, "Problem while generating CRCs for implementations", e));
 				}
 			}
 
 			// Save the implementation settings if there were any implementations we generated for (saves the CRC modifications)
 			progress.setTaskName("Save wavedev settings");
-			if (impls.size() > 0) {
-				try {
-					saveResource(waveDev);
-				} catch (final CoreException ex) {
-					retStatus.add(new Status(ex.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to save CRCs", ex));
-				}
-			}
-
-			if (progress.isCanceled()) {
-				return retStatus;
+			try {
+				saveResource(domain, waveDev);
+			} catch (final CoreException ex) {
+				retStatus.add(new Status(ex.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to save CRCs", ex));
 			}
 
 			// Add general builders
 			progress.setTaskName("Adding builders");
-			CodegenUtil.addTopLevelBuildScriptBuilder(project, progress.newChild(ADD_BUILDER_WORK));
+			CodegenUtil.addTopLevelBuildScriptBuilder(project, progress.newChild(1));
 
 			// Refresh project after generating code
 			progress.setTaskName("Refreshing project");
-			project.refreshLocal(IResource.DEPTH_INFINITE, progress.newChild(REFRESH_WORKSPACE_WORK));
-
-			if (progress.isCanceled()) {
-				return retStatus;
-			}
+			project.refreshLocal(IResource.DEPTH_INFINITE, progress.newChild(1));
 
 			if (ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding()) {
 				// Schedule a new job which will run a full build; this should ensure all resource change
 				// notifications are dispatched before beginning the build
-				final WorkspaceJob buildJob = new WorkspaceJob("Build generated code") {
+				final WorkspaceJob buildJob = new WorkspaceJob("Building Project " + project.getName()) {
 					@Override
 					public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
-						project.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+						project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 						return new Status(IStatus.OK, RedhawkCodegenUiActivator.PLUGIN_ID, "");
 					}
 				};
 				buildJob.setPriority(Job.LONG);
 				buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
-				buildJob.setSystem(false);
-				buildJob.setUser(true);
 				buildJob.schedule();
 			}
 
@@ -257,22 +306,8 @@ public class GenerateCode {
 
 	}
 
-	/**
-	 * Generates the code for an {@link Implementation}.
-	 * 
-	 * @param impl The {@link Implementation} to generate code for.
-	 * @param settings The implementation settings
-	 * @param monitor The progress monitor to use for reporting progress to the
-	 *            user. It is the caller's responsibility to call done() on the
-	 *            given monitor. Accepts null, indicating that no progress
-	 *            should be reported and that the operation cannot be canceled.
-	 * @param softpkg The parent SPD of the {@link Implementation}
-	 * @param crcMap A {@link List} that will be populated with the CRCs of all generated files
-	 * @param openEditor Indicates whether or not to open the editor after generating
-	 * @return The status of any problems encountered while generating the implementation
-	 */
-	protected IStatus generateImplementation(final Implementation impl, final ImplementationSettings settings, final IProgressMonitor monitor,
-		final SoftPkg softpkg, final List<FileToCRCMap> crcMap, boolean openEditor) {
+	private static IStatus generateImplementation(final String[] files, final Implementation impl, final ImplementationSettings settings,
+		final IProgressMonitor monitor, final SoftPkg softpkg, final List<FileToCRCMap> crcMap) {
 		if (settings == null) {
 			return new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to find settings (wavedev) for " + impl.getId()
 				+ ", skipping generation");
@@ -320,16 +355,8 @@ public class GenerateCode {
 					}
 				}
 
-				// Confirm files to generate
-				final String[] files;
-				try {
-					files = this.verifyGeneration(generator, settings, softpkg);
-				} catch (CancellationException e) {
-					retStatus.add(new Status(IStatus.CANCEL, RedhawkCodegenActivator.PLUGIN_ID, "User cancelled code generation"));
-					return retStatus;
-				}
 				final IFile mainFile = generator.getDefaultFile(impl, settings);
-				openEditor = openEditor && (mainFile == null || !mainFile.exists());
+				boolean openEditor = (mainFile == null || !mainFile.exists());
 
 				status = generator.generate(settings, impl, genConsole.getOutStream(), genConsole.getErrStream(), progress.newChild(1), files,
 					generator.shouldGenerate(), crcMap);
@@ -348,7 +375,7 @@ public class GenerateCode {
 					progress.subTask("Opening editor for main file");
 
 					// Open the selected editor
-					final UIJob openJob = new UIJob("Open editor") {
+					final WorkbenchJob openJob = new WorkbenchJob("Open editor") {
 						@Override
 						public IStatus runInUIThread(final IProgressMonitor monitor) {
 							try {
@@ -360,9 +387,6 @@ public class GenerateCode {
 						}
 					};
 					openJob.setPriority(Job.SHORT);
-					openJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
-					openJob.setSystem(false);
-					openJob.setUser(true);
 					openJob.schedule();
 				}
 
@@ -393,96 +417,69 @@ public class GenerateCode {
 	 * @param softpkg The SPD
 	 * @return An array of the files which are to be generated
 	 * @throws CoreException A problem occurs while determining which files to generate
+	 * @since 8.0
 	 */
-	protected String[] verifyGeneration(final IScaComponentCodegen generator, final ImplementationSettings implSettings, final SoftPkg softpkg)
-		throws CoreException {
-		this.filesToBeGenerated = null;
-
-		final IResource res = ModelUtil.getResource(softpkg);
-		final IProject project = res.getProject();
-
-		final HashMap<String, Boolean> filesMap = generator.getGeneratedFiles(implSettings, softpkg);
-		this.setFileDefaults(filesMap, implSettings);
-
-		this.generationConfirmed = (filesMap.size() == 0);
-
-		final WaveDevSettings wavedev = CodegenUtil.loadWaveDevSettings(softpkg);
+	private static Map<String, Boolean> getFilesToGenerateMap(IProgressMonitor monitor, Implementation impl) throws CoreException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, "Calculator files to generate...", IProgressMonitor.UNKNOWN);
 		try {
-			boolean fileExists = false;
-			if (PropertyUtil.getLastGenerated(wavedev, implSettings) == null) {
-				for (final String file : filesMap.keySet()) {
-					final String tempPath = implSettings.getOutputDir() + File.separator + file;
-					if (project.getFile(tempPath).exists()) {
-						this.generationConfirmed = false;
-						fileExists = true;
-						break;
+			final ImplementationSettings implSettings = getImplSettings(impl);
+			final IScaComponentCodegen generator = getGenerator(implSettings);
+
+			final SoftPkg softpkg = (SoftPkg) impl.eContainer();
+
+			if (generator.shouldGenerate()) {
+				Future<Map<String, Boolean>> future = EXECUTOR_POOL.submit(new Callable<Map<String, Boolean>>() {
+
+					@Override
+					public Map<String, Boolean> call() throws Exception {
+						return generator.getGeneratedFiles(implSettings, softpkg);
 					}
-				}
-
-				if (!fileExists) {
-					GenerateCode.this.filesToBeGenerated = filesMap.keySet().toArray(new String[0]);
-					this.generationConfirmed = true;
-				}
-			}
-		} catch (final CoreException e1) {
-			RedhawkCodegenUiActivator.getDefault().getLog().log(
-				new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to get the last generated date."));
-		}
-
-		if (generator.shouldGenerate()) {
-			final boolean [] abort = {false};
-			while (!this.generationConfirmed) {
-				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-					@SuppressWarnings("deprecation")
-					public void run() {
-						String name = "";
-						if (implSettings.getName() != null && !"".equals(implSettings.getName())) {
-							name = implSettings.getName();
-						} else {
-							name = implSettings.getId();
-						}
-
-						final GenerateFilesDialog dialog = new GenerateFilesDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), filesMap, name);
-
-						final int result = dialog.open();
-						GenerateCode.this.generationConfirmed = true;
-
-						if (result == Window.OK) {
-							GenerateCode.this.filesToBeGenerated = dialog.getFilesToGenerate();
-
-						} else {
-							abort[0] = true;
-						}
-					}
-
 				});
-				if (abort[0]) {
-					throw new CancellationException();
+				Map<String, Boolean> retVal;
+				while (true) {
+					try {
+						retVal = future.get(1, TimeUnit.SECONDS);
+						break;
+					} catch (InterruptedException e) {
+						throw new CoreException(Status.CANCEL_STATUS);
+					} catch (ExecutionException e) {
+						if (e.getCause() instanceof CoreException) {
+							throw ((CoreException) e.getCause());
+						} else {
+							throw new CoreException(new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID,
+								"Failed in calling generator get generated files.", e));
+						}
+					} catch (TimeoutException e) {
+						if (subMonitor.isCanceled()) {
+							throw new OperationCanceledException();
+						}
+					}
 				}
+				return retVal;
+			} else {
+				return Collections.emptyMap();
 			}
+		} finally {
+			subMonitor.done();
 		}
-
-		return this.filesToBeGenerated;
 	}
 
-	/**
-	 * For each file which does not exist in the implementation's output
-	 * directory, the generate flag (boolean value in the map) is changed to
-	 * true.
-	 * 
-	 * @param filesMap A mapping of file names to a boolean indicating if the
-	 *            file will be generated
-	 * @param implSettings The implementation settings
-	 */
-	private void setFileDefaults(final HashMap<String, Boolean> filesMap, final ImplementationSettings implSettings) {
-		final IProject project = ModelUtil.getResource(implSettings).getProject();
+	private static ImplementationSettings getImplSettings(Implementation impl) {
+		final WaveDevSettings waveDev = CodegenUtil.loadWaveDevSettings((SoftPkg) impl.eContainer());
+		// Generate code for each implementation
+		final EMap<String, ImplementationSettings> implSet = waveDev.getImplSettings();
+		// Generate code for implementation
+		final ImplementationSettings settings = implSet.get(impl.getId());
 
-		for (final String fileName : filesMap.keySet()) {
-			if (!project.getFile(implSettings.getOutputDir() + File.separator + fileName).exists()) {
-				filesMap.put(fileName, true);
-			}
-		}
+		return settings;
+	}
+
+	private static IScaComponentCodegen getGenerator(ImplementationSettings settings) throws CoreException {
+		final String codegenId = settings.getGeneratorId();
+		final ICodeGeneratorDescriptor codeGenDesc = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(codegenId);
+		// Get the specific code generator
+		final IScaComponentCodegen generator = codeGenDesc.getGenerator();
+		return generator;
 	}
 
 	/**
@@ -495,7 +492,7 @@ public class GenerateCode {
 	 * @return An {@link IStatus} indicating any issues found; problems should be of severity {@link IStatus#ERROR} to
 	 *   prevent code generation
 	 */
-	private IStatus validate(final IProject project, final SoftPkg softPkg, final List<Implementation> impls, final WaveDevSettings waveDev) {
+	private static IStatus validate(final IProject project, final SoftPkg softPkg, Implementation impl, final WaveDevSettings waveDev) {
 		final MultiStatus retStatus = new MultiStatus(RedhawkCodegenUiActivator.PLUGIN_ID, IStatus.OK, "Validation problems prior to generating code", null);
 
 		if (project == null) {
@@ -564,18 +561,15 @@ public class GenerateCode {
 			retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID,
 				"Unable to find project settings (wavedev) file. Cannot generate code."));
 		} else {
-			for (final Implementation impl : impls) {
-				ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
-				if (implSettings == null) {
-					retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to find settings in wavedev file for implementation "
-							+ impl.getId()));
-				} else {
-					String templateId = implSettings.getTemplate();
-					ITemplateDesc template = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplate(templateId);
-					if (template == null) {
-						retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to find code generator template"
-								+ templateId));
-					}
+			ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
+			if (implSettings == null) {
+				retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to find settings in wavedev file for implementation "
+					+ impl.getId()));
+			} else {
+				String templateId = implSettings.getTemplate();
+				ITemplateDesc template = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplate(templateId);
+				if (template == null) {
+					retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to find code generator template" + templateId));
 				}
 			}
 		}
@@ -583,14 +577,7 @@ public class GenerateCode {
 		return retStatus;
 	}
 
-	private void updateCRCs(final ImplementationSettings implSettings, final List<FileToCRCMap> crcMap) throws IOException {
-		this.domain = TransactionUtil.getEditingDomain(implSettings);
-
-		if (this.domain == null) {
-			this.domain = TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain();
-			this.domain.setID("gov.redhawk.spd.editingDomainId");
-		}
-
+	private static void updateCRCs(EditingDomain domain, final ImplementationSettings implSettings, final List<FileToCRCMap> crcMap) throws IOException {
 		final Map<FileToCRCMap, FileToCRCMap> foundCRCs = new HashMap<FileToCRCMap, FileToCRCMap>();
 		for (final FileToCRCMap entry : implSettings.getGeneratedFileCRCs()) {
 			for (final FileToCRCMap currCRC : crcMap) {
@@ -601,25 +588,29 @@ public class GenerateCode {
 				}
 			}
 		}
-
-		final CompoundCommand updateCommand = new CompoundCommand();
-		for (final FileToCRCMap crc : crcMap) {
-			final AddCommand cmd = new AddCommand(this.domain, implSettings.getGeneratedFileCRCs(), crc);
-			updateCommand.append(cmd);
-		}
-
-		for (final Entry<FileToCRCMap, FileToCRCMap> crcEntry : foundCRCs.entrySet()) {
-			final SetCommand cmd = new SetCommand(this.domain, crcEntry.getKey(), CodegenPackage.Literals.FILE_TO_CRC_MAP__CRC, crcEntry.getValue().getCrc());
-			updateCommand.append(cmd);
-		}
-
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				if (GenerateCode.this.domain != null) {
-					GenerateCode.this.domain.getCommandStack().execute(updateCommand);
-				}
+		if (domain != null) {
+			final CompoundCommand updateCommand = new CompoundCommand();
+			for (final FileToCRCMap crc : crcMap) {
+				final AddCommand cmd = new AddCommand(domain, implSettings.getGeneratedFileCRCs(), crc);
+				updateCommand.append(cmd);
 			}
-		});
+
+			for (final Entry<FileToCRCMap, FileToCRCMap> crcEntry : foundCRCs.entrySet()) {
+				final SetCommand cmd = new SetCommand(domain, crcEntry.getKey(), CodegenPackage.Literals.FILE_TO_CRC_MAP__CRC, crcEntry.getValue().getCrc());
+				updateCommand.append(cmd);
+			}
+			if (!updateCommand.isEmpty()) {
+				domain.getCommandStack().execute(updateCommand);
+			}
+		} else {
+			for (final FileToCRCMap crc : crcMap) {
+				implSettings.getGeneratedFileCRCs().add(crc);
+			}
+
+			for (final Entry<FileToCRCMap, FileToCRCMap> crcEntry : foundCRCs.entrySet()) {
+				crcEntry.getKey().setCrc(crcEntry.getValue().getCrc());
+			}
+		}
 	}
 
 	/**
@@ -628,18 +619,14 @@ public class GenerateCode {
 	 * @param waveDevSettings The settings to save
 	 * @throws CoreException A problem occurs while writing the settings to disk
 	 */
-	private void saveResource(final WaveDevSettings waveDevSettings) throws CoreException {
+	private static void saveResource(EditingDomain domain, final WaveDevSettings waveDevSettings) throws CoreException {
 		try {
 			waveDevSettings.eResource().save(null);
 
-			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					if (GenerateCode.this.domain != null) {
-						GenerateCode.this.domain.getCommandStack().flush();
-						((BasicCommandStack) GenerateCode.this.domain.getCommandStack()).saveIsDone();
-					}
-				}
-			});
+			if (domain != null) {
+				((BasicCommandStack) domain.getCommandStack()).saveIsDone();
+				domain.getCommandStack().flush();
+			}
 
 		} catch (final IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to save the updated implementation settings", e));
