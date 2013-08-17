@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 //import java.util.concurrent.CancellationException;
 
+
 //import nxm.sys.lib.Convert;
 import nxm.sys.lib.Data;
 import nxm.sys.lib.DataFile;
@@ -26,6 +27,8 @@ import nxm.sys.lib.NeXtMidas;
 //import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
 
+//TODO: DELETE ME
+@Deprecated
 public class SuperBLUEReceiver extends AbstractBulkIOPort {
 
 	/** number of samples to save to file */

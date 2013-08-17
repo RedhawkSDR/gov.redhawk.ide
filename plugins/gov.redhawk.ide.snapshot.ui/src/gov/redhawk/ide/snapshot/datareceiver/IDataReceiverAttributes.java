@@ -20,16 +20,17 @@ public interface IDataReceiverAttributes {
 	/**
 	 * @return the printable name of the file type this receiver prints to
 	 */
-	public abstract String getReceiverName();
+	@Deprecated
+	public abstract String getReceiverName(); // TODO use extension point "name"
 
 	/**
 	 * The first index is main filename extension, the subsequent extensions are for metadata filename extensions. 
 	 * @return the filename extensions (should be prepended with a dot) this data receiver uses.
 	 */
-	public abstract String[] getReceiverFilenameExtensions();
+	@Deprecated
+	public abstract String[] getReceiverFilenameExtensions(); // TODO use extension point "???"
 
 	/**
-	 * 
 	 * @param file : The file to start saving with
 	 * @param samples : The number of samples to save (used by NUMBER)
 	 * @param time : The duration of the sample capture (used by SAMPLE_TIME or CAPTURE_TIME)
@@ -43,6 +44,7 @@ public interface IDataReceiverAttributes {
 	 * @return an IDataReceiver
 	 * @throws IOException
 	 */
+	// TODO: make CaptureSettings 
 	public abstract IDataReceiver newInstance(File file, long samples, double time, BulkIOType type, boolean upcastUnsigned, IDataReceiver.CaptureMethod method)
 		throws IOException;
 

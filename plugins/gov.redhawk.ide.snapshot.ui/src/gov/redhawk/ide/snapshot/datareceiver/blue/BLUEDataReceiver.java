@@ -18,9 +18,11 @@ import nxm.sys.lib.Data;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.annotation.NonNull;
 
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
@@ -31,9 +33,12 @@ import BULKIO.dataLongLongOperations;
 import BULKIO.dataLongOperations;
 import BULKIO.dataShortOperations;
 
+//TODO: DELETE ME
+@Deprecated
 public class BLUEDataReceiver extends SuperBLUEReceiver implements dataDoubleOperations, dataFloatOperations, dataLongLongOperations, dataLongOperations,
 		dataShortOperations, dataCharOperations, IDataReceiver {
 
+	
 	/**The total number of samples to capture*/
 	private long totalNumSamples;
 	/**the total time for capturing samples*/
@@ -391,6 +396,13 @@ System.out.println("ByteBuffer.array() is same as our byte[] = " + isSame);// DE
 		        // PASS
 		    }
 		}*/
+	}
+
+	@Override
+	@NonNull
+	public List<FilePair> getOutpuFileList() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -49,14 +49,28 @@
 
    <element name="DataReceiver">
       <complexType>
-         <attribute name="class" type="string">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="gov.redhawk.ide.snapshot.datareceiver.AbstractDataReceiverAttributes:"/>
+                  <meta.attribute kind="java" basedOn=":gov.redhawk.ide.snapshot.datareceiver.IDataReceiverAttributes"/>
                </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

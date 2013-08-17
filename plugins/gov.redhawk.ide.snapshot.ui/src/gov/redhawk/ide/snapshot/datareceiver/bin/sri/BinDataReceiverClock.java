@@ -14,6 +14,8 @@ import gov.redhawk.bulkio.util.BulkIOType;
 //import nxm.sys.inc.Units;
 //import nxm.sys.lib.*;
 
+
+
 import java.io.File;
 import java.io.IOException;
 //import java.io.RandomAccessFile;
@@ -31,6 +33,9 @@ import java.util.Date;
 
 //import mil.jpeojtrs.sca.util.AnyUtils;
 
+
+import java.util.List;
+
 import nxm.sys.lib.Time;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -41,6 +46,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 //import org.eclipse.emf.common.util.URI;
 //import org.eclipse.emf.ecore.resource.Resource;
 //import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
+
+
+import org.eclipse.jdt.annotation.NonNull;
 
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
@@ -64,6 +72,8 @@ import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SnapshotMetadataFac
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Value;*/
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
 
+//TODO: DELETE ME
+@Deprecated
 public class BinDataReceiverClock extends SuperBinSriReceiver implements dataDoubleOperations, dataFloatOperations, dataLongLongOperations, dataLongOperations,
 		dataShortOperations, dataCharOperations, dataOctetOperations, dataUlongLongOperations, dataUlongOperations, dataUshortOperations, IDataReceiver {
 
@@ -373,6 +383,13 @@ public class BinDataReceiverClock extends SuperBinSriReceiver implements dataDou
 			}
 			monitor.done();
 		}
+	}
+
+	@Override
+	@NonNull
+	public List<FilePair> getOutpuFileList() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

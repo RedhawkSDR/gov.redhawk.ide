@@ -28,6 +28,8 @@ import nxm.sys.lib.Table;
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
 
+//TODO: DELETE ME
+@Deprecated
 public class SuperBinSriReceiver extends AbstractBulkIOPort {
 	protected static final String GENERAL_HEADER = "General Information";
 	protected static final String FIRST_PACKET_HEADER = "First Packet Time";

@@ -14,16 +14,21 @@ import gov.redhawk.bulkio.util.BulkIOType;
 //import nxm.sys.inc.Units;
 //import nxm.sys.lib.*;
 
+
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
+import java.util.List;
+
 import mil.jpeojtrs.sca.util.UnsignedUtils;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.annotation.NonNull;
 
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
@@ -31,9 +36,10 @@ import BULKIO.dataOctetOperations;
 import BULKIO.dataUlongLongOperations;
 import BULKIO.dataUlongOperations;
 import BULKIO.dataUshortOperations;
-
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
 
+//TODO: DELETE ME
+@Deprecated
 public class UBinDataReceiver extends SuperBinSriReceiver implements dataOctetOperations, dataUlongLongOperations, dataUlongOperations, dataUshortOperations,
 		IDataReceiver {
 
@@ -316,5 +322,12 @@ public class UBinDataReceiver extends SuperBinSriReceiver implements dataOctetOp
 				// PASS
 			}
 		}
+	}
+
+	@Override
+	@NonNull
+	public List<FilePair> getOutpuFileList() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

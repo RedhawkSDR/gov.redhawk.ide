@@ -36,6 +36,8 @@ import BULKIO.StreamSRI;
 import CF.DataType;
 import CF.DataTypeHelper;
 
+//TODO: DELETE ME
+@Deprecated
 public class SuperBinReceiver extends AbstractBulkIOPort {
 	private FileChannel channel;
 	/**the string representation of the format to print the start and end times of files*/
@@ -65,7 +67,7 @@ public class SuperBinReceiver extends AbstractBulkIOPort {
 		startFile = file;
 		channel = aFile.getChannel();
 		this.type = type;
-		SnapshotMetadataPackage.eINSTANCE.eClass();
+		SnapshotMetadataPackage.eINSTANCE.eClass(); // <<----- TODO: is this needed ????
 		modelFactory = SnapshotMetadataFactory.eINSTANCE;
 		metaInfo = modelFactory.createModel();
 		metaInfo.setNumberOfSamples(0);

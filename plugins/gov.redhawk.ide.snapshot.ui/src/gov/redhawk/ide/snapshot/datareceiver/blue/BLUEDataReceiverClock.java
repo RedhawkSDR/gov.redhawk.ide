@@ -12,7 +12,6 @@ package gov.redhawk.ide.snapshot.datareceiver.blue;
 
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
-
 import nxm.sys.lib.Convert;
 import nxm.sys.lib.Data;
 import nxm.sys.lib.Time;
@@ -20,9 +19,11 @@ import nxm.sys.lib.Time;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.annotation.NonNull;
 
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
@@ -33,6 +34,8 @@ import BULKIO.dataLongLongOperations;
 import BULKIO.dataLongOperations;
 import BULKIO.dataShortOperations;
 
+//TODO: DELETE ME
+@Deprecated
 public class BLUEDataReceiverClock extends SuperBLUEReceiver implements dataDoubleOperations, dataFloatOperations, dataLongLongOperations, dataLongOperations,
 		dataShortOperations, dataCharOperations, IDataReceiver {
 
@@ -333,6 +336,13 @@ public class BLUEDataReceiverClock extends SuperBLUEReceiver implements dataDoub
 			//TODO truncate if desired
 			monitor.done();
 		}
+	}
+
+	@Override
+	@NonNull
+	public List<FilePair> getOutpuFileList() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

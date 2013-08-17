@@ -18,6 +18,8 @@ import gov.redhawk.ide.snapshot.datareceiver.AbstractDataReceiverAttributes;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver.CaptureMethod;
 
+//TODO: DELETE ME
+@Deprecated
 public final class BinSRIDataReceiverAttributes extends AbstractDataReceiverAttributes {
 	private final String receiverName = "Binary files (.bin & .sri)";
 	private final String[] recevierExtensions = { ".bin", ".sri" };

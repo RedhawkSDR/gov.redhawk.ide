@@ -34,10 +34,19 @@
    <extension
          point="gov.redhawk.ide.snapshot.datareceiver">
       <DataReceiver
-            class="gov.redhawk.ide.snapshot.datareceiver.blue.BlueDataReceiverAttributes">
+            class="gov.redhawk.ide.snapshot.datareceiver.bin.BinDataReceiver"
+            id="gov.redhawk.ide.snapshot.datareceiver.bin.BinDataReceiver"
+            name="Binary files (.bin and .xml)">
       </DataReceiver>
       <DataReceiver
-            class="gov.redhawk.ide.snapshot.datareceiver.bin.sri.BinSRIDataReceiverAttributes"></DataReceiver>
+            class="gov.redhawk.ide.snapshot.datareceiver.bin.BinSriDataReceiver"
+            id="gov.redhawk.ide.snapshot.datareceiver.bin.BinSriDataReceiver"
+            name="Binary files (.bin and .sri)"></DataReceiver>
+      <DataReceiver
+            class="gov.redhawk.ide.snapshot.datareceiver.blue.BlueDataReceiver"
+            id="gov.redhawk.ide.snapshot.datareceiver.blue.BlueDataReceiver"
+            name="Midas BLUE file (.tmp)">
+      </DataReceiver>
    </extension>
 
    <extension point="org.eclipse.emf.ecore.generated_package">

@@ -20,10 +20,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import nxm.sys.inc.Units;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import nxm.sys.inc.Units;
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
 
@@ -48,6 +50,9 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort
 	/** System clock time duration that has elapsed so far. */
 	private double elapsedClockTimeDuration;
 	
+	/**the time that has elapsed in sample time*/
+	private double currentTimeDuration;
+
 	/** BulkIO data type that we are capturing. */
 	private BulkIOType dataType;
 	/** SRI of the current data stream / file. */
@@ -70,10 +75,11 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort
 	/** number of file(s) or set of file(s) (when have separate metadata file) that have been saved. */
 	private int fileCount = 1;
 	
-	private Exception writeException;
+	private IOException writeException;
 
 	/** scalars (primitive data type, e.g. float, long, etc.). 2 if complex data (i.e. sri.mode == 1), otherwise 1. */
 	private int scalarsPerAtom;
+	/** frame size (min of 1). */
 	private int atomsPerSample;
 	private double sampleTimeDelta;
 	
@@ -103,7 +109,7 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort
 	
 	// ===== getter/setter methods for fields =====
 
-	public Exception getWriteException() {
+	public IOException getWriteException() {
 		return writeException;
 	}
 
@@ -121,8 +127,22 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort
 		return capturedSamples;
 	}
 
-	public void setWriteException(Exception writeException) {
+	public void setWriteException(IOException writeException) {
 		this.writeException = writeException;
+	}
+
+	/**
+	 * @return the scalarsPerAtom
+	 */
+	public int getScalarsPerAtom() {
+		return scalarsPerAtom;
+	}
+
+	/**
+	 * @return the atomsPerSample
+	 */
+	public int getAtomsPerSample() {
+		return atomsPerSample;
 	}
 
 	protected boolean hasWriteException() {
@@ -240,13 +260,98 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort
 		return Collections.unmodifiableList(this.outputFileList);
 	}
 
+	@Override
+	public void processSamples(IProgressMonitor monitor) throws InterruptedException, IOException {
+		// TODO Auto-generated method stub
+		// subclass before start of process/aquire data method
+		this.startTime = new Date();
+		doTaskBeforeAquireData(startTime);
+		
+		int work;
+		if (captureMethod == CaptureMethod.NUMBER) {
+			if (this.desiredSamples > Integer.MAX_VALUE) {
+				work = IProgressMonitor.UNKNOWN;
+			} else {
+				work = (int) this.desiredSamples;
+			}
+		} else if (captureMethod == CaptureMethod.SAMPLE_TIME) {
+			work = (int) this.desiredSampleTimeDuration;
+		} else { // system/clock time based
+			//work = IProgressMonitor.UNKNOWN;
+			if (this.desiredClockTimeDuration > Integer.MAX_VALUE) {
+				work = IProgressMonitor.UNKNOWN;
+			} else {
+				work = (int) (this.desiredClockTimeDuration + .5);
+			}
+		}
+		monitor.beginTask("Acquiring samples...", work);
+		try {
+			long lastWorked = this.capturedSamples;
+			double lastTime = this.currentTimeDuration;
+			double deltaProgress;
+			if (captureMethod == CaptureMethod.NUMBER) {
+				deltaProgress = this.capturedSamples;
+			} else {
+				deltaProgress = this.currentTimeDuration;
+			}
+			double workedProgress = 0;
+			while (this.capturedSamples < this.desiredSamples) {
+				if (hasWriteException()) {
+					throw getWriteException();
+				}
+				workedProgress += deltaProgress;
+				int worked = (int) workedProgress;
+				if (worked > 0) {
+					monitor.worked(worked);
+					workedProgress -= worked;
+				}
+				synchronized (this) {
+					wait(500);
+					if (monitor.isCanceled()) {
+						//throw new CancellationException();
+						this.eos = true;
+						break;
+					}
+					if (captureMethod == CaptureMethod.NUMBER) {
+						deltaProgress = this.capturedSamples - lastWorked;
+						lastWorked = this.capturedSamples;
+					} else {
+						deltaProgress = this.currentTimeDuration - lastTime;
+						lastTime = this.currentTimeDuration;
+					}
+					//this.time += deltaProgress;
+				}
+				if (this.eos) {
+					break;
+				}
+			}
+			// done with capture of 
+			saveMetadata();
+			
+		} finally {
+			
+			doTaskAfterAquireData(); // subclass should override this method
+			
+
+			monitor.done();
+		}
+
+	}
+	
+	
 	// ===== subclasses MUST override these methods =====
 	
+	/** subclasses can optinall override this */
+	protected void doTaskAfterAquireData() {
+	}
+
+	protected abstract void doTaskBeforeAquireData(Date startTime);
+
 	/**
      * @return metadata filename (null if none, i.e. a separate metadata file is not needed)
      * @throws IOException
      */
-	@Nullable protected abstract  String saveMetadata() throws IOException;
+	@Nullable protected abstract String saveMetadata() throws IOException;
 	
 	/**
 	 * capture future data packets into new file using specified file name.
