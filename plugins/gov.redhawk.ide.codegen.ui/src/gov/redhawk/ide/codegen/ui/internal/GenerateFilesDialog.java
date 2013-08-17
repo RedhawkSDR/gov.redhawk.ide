@@ -13,7 +13,6 @@ package gov.redhawk.ide.codegen.ui.internal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,18 +39,17 @@ public class GenerateFilesDialog extends Dialog {
 	 * The list of all files that can be generated and the default generation
 	 * state
 	 */
-	private HashMap<String, Boolean> generateFiles = null;
+	private Map<String, Boolean> generateFiles = null;
 	/** The initial list of selected files */
 	private List<String> defaultSelection = new ArrayList<String>();
 	/** The list of files to be generated */
-	private ArrayList<String> filesToGenerate = null;
+	private List<String> filesToGenerate = null;
 	/** The Checkbox Tree that handles the input */
 	private CheckboxTreeViewer v = null;
-	/** The implementation settings for these generated file **/
-	private String name = null;
+
 	private boolean generateAll;
 
-	public GenerateFilesDialog(final Shell parentShell, final HashMap<String, Boolean> generateFiles, final String name) {
+	public GenerateFilesDialog(final Shell parentShell, final Map<String, Boolean> generateFiles) {
 		super(parentShell);
 		this.generateFiles = generateFiles;
 		for (String fileName : this.generateFiles.keySet()) {
@@ -60,12 +58,11 @@ public class GenerateFilesDialog extends Dialog {
 			}
 		}
 		this.filesToGenerate = new ArrayList<String>();
-		this.name = name;
 	}
 
 	@Override
 	protected void configureShell(final Shell newShell) {
-		newShell.setText("Regenerate files for: " + this.name);
+		newShell.setText("Regenerate files: ");
 
 		super.configureShell(newShell);
 	}
