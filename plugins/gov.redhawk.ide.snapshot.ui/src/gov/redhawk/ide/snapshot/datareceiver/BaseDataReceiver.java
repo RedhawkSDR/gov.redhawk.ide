@@ -12,17 +12,23 @@ package gov.redhawk.ide.snapshot.datareceiver;
 
 import gov.redhawk.bulkio.util.AbstractBulkIOPort;
 import gov.redhawk.bulkio.util.BulkIOType;
-import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver.CaptureMethod;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import nxm.sys.inc.Units;
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
 
-public abstract class BaseDataReceiver extends AbstractBulkIOPort implements IDataReceiverAttributes {
+public abstract class BaseDataReceiver extends AbstractBulkIOPort 
+	implements IDataReceiverAttributes, IDataReceiver {
 
 	/** Data capture method */
 	private IDataReceiver.CaptureMethod captureMethod;
@@ -70,7 +76,8 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort implements IDa
 	private int scalarsPerAtom;
 	private int atomsPerSample;
 	private double sampleTimeDelta;
-
+	
+	private List<FilePair> outputFileList = new ArrayList<FilePair>(); 
 	
 	public BaseDataReceiver(BulkIOType type, File file, IDataReceiver.CaptureMethod method,
 		long numberSamples, double durationTime) throws IOException {
@@ -95,9 +102,23 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort implements IDa
 	}
 	
 	// ===== getter/setter methods for fields =====
-	
+
 	public Exception getWriteException() {
 		return writeException;
+	}
+
+	/**
+	 * @return the desiredSamples
+	 */
+	public long getDesiredSamples() {
+		return desiredSamples;
+	}
+
+	/**
+	 * @return the capturedSamples
+	 */
+	public long getCapturedSamples() {
+		return capturedSamples;
 	}
 
 	public void setWriteException(Exception writeException) {
@@ -118,7 +139,10 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort implements IDa
 	protected String getNextFileName() {
 		String filePath = initialFile.getAbsolutePath();
 		String extension = getReceiverFilenameExtensions()[0];
-		filePath = filePath.substring(0, filePath.lastIndexOf(".")) + fileCount + extension;
+		synchronized (this) {
+			filePath = filePath.substring(0, filePath.lastIndexOf(".")) + fileCount + extension;
+			fileCount++;
+		}
 		return filePath;
 	}
 	
@@ -136,6 +160,7 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort implements IDa
 	}
 	
 	/** get number of primitive (double, float, long, byte,etc.) data elements to capture.
+	 *  NOTE: subclass MUST call this first thing in their pushPacket(..) method.
 	 * @param length   incoming data array (packet) length
 	 * @param time     precision time of data 
 	 * @param eos      end of stream
@@ -150,11 +175,8 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort implements IDa
 		final int  numArrayElementsToProcess;
 		
 		if (captureMethod == CaptureMethod.NUMBER || captureMethod == CaptureMethod.SAMPLE_TIME) {
-//		case NUMBER:      // fall-through
-//		case SAMPLE_TIME: 
 			long numArrayElementsLeftToProcess = (this.desiredSamples - this.capturedSamples) * atomsPerSample * scalarsPerAtom;
 			numArrayElementsToProcess = Math.min(length, (int) numArrayElementsLeftToProcess);
-//			this.desiredSampleTimeDuration = durationTime;
 		} else { // clock time, indefinite, etc.
 			numArrayElementsToProcess = length;
 		}
@@ -162,7 +184,7 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort implements IDa
 		return numArrayElementsToProcess;
 	}
 	
-	/** update data capture statistics 
+	/** update data capture statistics (should be called after a successful pushPacket(..)
 	 * @param length number of primitive data types (scalars, e.g. float, int) captured 
 	 */
 	protected synchronized void updateCapturedSamples(long length) {
@@ -173,33 +195,64 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort implements IDa
 	}
 	
 	// ===== override super classe's methods =====
-	
+
+	/** handle when getting first SRI (oldSri == null), or SRI has changed. */
 	@Override
 	protected void handleStreamSRIChanged(StreamSRI oldSri, StreamSRI newSri) {
 		if (this.sri != null) {
-			// TODO: save previous SRI, spawn new file, etc.
-			
-			this.sri = newSri; 
-			this.scalarsPerAtom = (this.sri.mode == 1) ? 2 : 1; // 2=complex, otherwise 1=scalar
-			if (this.sri.subsize > 0) {                     // have two dimensional data (framed)
-				if (this.sri.yunits == Units.TIME_S) {      // if yunits is time
-					this.sampleTimeDelta = this.sri.ydelta; //   use ydelta for time delta
-				} else {
-					this.sampleTimeDelta = 1;               // else unknown units, fallback to 1 sec 
-				}
-			} else {                                        // have one dimensional data
-				if (this.sri.xunits == Units.TIME_S) {      // if xunits is time
-					this.sampleTimeDelta = this.sri.xunits; //   use xdelta for time delta 
-				} else {
-					this.sampleTimeDelta = 1;               // else unknown units, fallback to 1 sec 
-				}
+			try {
+				String metadataFile = saveMetadata();
+				String snapshotFile = startNewFile(this.getNextFileName(), newSri);
+				outputFileList.add(new FilePair(snapshotFile, metadataFile));
+			} catch (IOException ioe) {
+				this.setWriteException(ioe);
+				return;
 			}
-			if (this.captureMethod == CaptureMethod.SAMPLE_TIME) {
-				long numSamplesLeft = (long) ((this.desiredSampleTimeDuration - this.elapsedSampleTimeDuration) + 0.5); // round up
-				this.desiredSamples = this.capturedSamples + numSamplesLeft;
-			}
-			this.atomsPerSample = Math.min(1, this.sri.subsize);
 		}
+		this.sri = newSri; 
+		
+		this.scalarsPerAtom = (this.sri.mode == 1) ? 2 : 1; // 2=complex, otherwise 1=scalar
+		if (this.sri.subsize > 0) {                     // have two dimensional data (framed)
+			if (this.sri.yunits == Units.TIME_S) {      // if yunits is time
+				this.sampleTimeDelta = this.sri.ydelta; //   use ydelta for time delta
+			} else {
+				this.sampleTimeDelta = 1;               // else unknown units, fallback to 1 sec 
+			}
+		} else {                                        // have one dimensional data
+			if (this.sri.xunits == Units.TIME_S) {      // if xunits is time
+				this.sampleTimeDelta = this.sri.xunits; //   use xdelta for time delta 
+			} else {
+				this.sampleTimeDelta = 1;               // else unknown units, fallback to 1 sec 
+			}
+		}
+		if (this.captureMethod == CaptureMethod.SAMPLE_TIME) {
+			long numSamplesLeft = (long) ((this.desiredSampleTimeDuration - this.elapsedSampleTimeDuration) + 0.5); // round up
+			this.desiredSamples = this.capturedSamples + numSamplesLeft;
+		}
+		this.atomsPerSample = Math.min(1, this.sri.subsize);
 	}
 	
+    /* (non-Javadoc)
+	 * @see gov.redhawk.ide.snapshot.datareceiver.IDataReceiver#getOutpuFileList()
+	 */
+	@Override
+	@NonNull public List<FilePair> getOutpuFileList() {
+		return Collections.unmodifiableList(this.outputFileList);
+	}
+
+	// ===== subclasses MUST override these methods =====
+	
+	/**
+     * @return metadata filename (null if none, i.e. a separate metadata file is not needed)
+     * @throws IOException
+     */
+	@Nullable protected abstract  String saveMetadata() throws IOException;
+	
+	/**
+	 * capture future data packets into new file using specified file name.
+	 * @param nextFileName
+	 * @return previous snapshot filename (full path)
+	 * @throws IOException
+	 */
+	@NonNull protected abstract String startNewFile(String nextFileName, StreamSRI sri) throws IOException;
 }
