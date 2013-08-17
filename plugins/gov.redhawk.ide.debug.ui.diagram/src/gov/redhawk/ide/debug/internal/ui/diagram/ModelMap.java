@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CancellationException;
 
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
@@ -48,6 +47,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchManager;
@@ -181,7 +181,7 @@ public class ModelMap {
 		}
 
 		if (job.getResult() == null || job.getResult() == Status.CANCEL_STATUS) {
-			throw new CancellationException();
+			throw new OperationCanceledException();
 		} else if (!job.getResult().isOK()) {
 			throw new RuntimeException("Failed to start component", job.getResult().getException());
 		}

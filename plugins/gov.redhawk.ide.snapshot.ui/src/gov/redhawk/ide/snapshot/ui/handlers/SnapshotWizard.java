@@ -21,7 +21,6 @@ import gov.redhawk.model.sca.ScaWaveform;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.concurrent.CancellationException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
@@ -31,6 +30,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -103,7 +103,7 @@ public class SnapshotWizard extends Wizard {
 			shouldStart.setMessage(name + " has not been started, would you like to start it now?");
 			int result = shouldStart.open();
 			if (result == SWT.CANCEL) {
-				throw new CancellationException();
+				throw new OperationCanceledException();
 			} else if (result == SWT.YES) {
 				//start the component/waveform
 				Job startComponent = new Job("Starting Component") {
@@ -152,7 +152,7 @@ public class SnapshotWizard extends Wizard {
 		if (types == null || types.length == 0 || captureMethods == null || captureMethods.length == 0) {
 			//snapshotPage = new SnapshotWizardPage("snapshot", null);
 			MessageDialog.openError(this.getShell(), "Snapshot Error", "The snapshot wizard page could not be opened");
-			throw new CancellationException();
+			throw new OperationCanceledException();
 		} else {
 			if (this.datalist != null) {
 				long numSamples = datalist.length;
@@ -225,8 +225,6 @@ public class SnapshotWizard extends Wizard {
 						} else {
 							run.run(monitor);
 						}
-					} catch (CancellationException e) {
-						this.cancel();
 					} catch (InterruptedException e) {
 						return new Status(Status.ERROR, SnapshotActivator.PLUGIN_ID, "Failed to aqquire snapshot.", e.getCause());
 					} catch (InvocationTargetException e) {
@@ -291,8 +289,6 @@ public class SnapshotWizard extends Wizard {
 		} catch (IllegalArgumentException e) {
 			StatusManager.getManager().handle(
 				new Status(Status.ERROR, SnapshotActivator.PLUGIN_ID, "Failed to aqquire snapshot.\n" + e.getMessage(), e.getCause()), StatusManager.SHOW);
-			return false;
-		} catch (CancellationException e) {
 			return false;
 		}
 
