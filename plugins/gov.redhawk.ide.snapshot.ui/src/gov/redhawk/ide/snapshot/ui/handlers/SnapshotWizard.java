@@ -14,7 +14,6 @@ import gov.redhawk.ide.snapshot.datareceiver.AbstractDataReceiverAttributes;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiverAttributes;
 import gov.redhawk.ide.snapshot.datareceiver.bin.BinDataReceiver;
-import gov.redhawk.ide.snapshot.datareceiver.bin.BinDataReceiverAttributes;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotRunnable;
 import gov.redhawk.ide.snapshot.ui.SnapshotActivator;
 import gov.redhawk.model.sca.ScaComponent;
@@ -132,6 +131,7 @@ public class SnapshotWizard extends Wizard {
 		IConfigurationElement[] extensions = reg.getConfigurationElementsFor("gov.redhawk.ide.snapshot.datareceiver");
 //		String[] types = new String[extensions.length + 1]; // +1 since we always have capture to binary/raw file  
 		receivers.add(BinDataReceiver.getInstance()); // TODO:
+		
 String[] types = new String[1]; // 
 		types[0] = receivers.get(0).getReceiverName();
 		for (int i = 0; i < extensions.length; i++) {

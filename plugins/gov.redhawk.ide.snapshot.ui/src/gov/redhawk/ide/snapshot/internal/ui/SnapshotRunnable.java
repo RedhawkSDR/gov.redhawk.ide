@@ -12,7 +12,6 @@ package gov.redhawk.ide.snapshot.internal.ui;
 
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.bulkio.util.BulkIOUtilActivator;
-import gov.redhawk.ide.snapshot.datareceiver.AbstractDataReceiverAttributes;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiverAttributes;
 import gov.redhawk.ide.snapshot.ui.handlers.SnapshotSettings;
