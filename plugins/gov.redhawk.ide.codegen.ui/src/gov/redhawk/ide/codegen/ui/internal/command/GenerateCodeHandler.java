@@ -19,6 +19,7 @@ import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.ide.codegen.ui.GenerateCode;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.ui.RedhawkUiActivator;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
 import java.lang.reflect.InvocationTargetException;
@@ -43,7 +44,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
@@ -92,7 +92,12 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 					SoftPkg spd = SoftPkg.Util.getSoftPkg(scaEditor.getMainResource());
 					if (spd != null) {
 						IProject project = ModelUtil.getProject(spd);
-						saveAndGenerate(spd, project, HandlerUtil.getActiveShell(event));
+						try {
+							saveAndGenerate(spd, project, HandlerUtil.getActiveShell(event));
+						} catch (CoreException e) {
+							StatusManager.getManager().handle(e.getStatus(), StatusManager.SHOW | StatusManager.LOG);
+							return null;
+						}
 						return null;
 					}
 				} else {
@@ -100,7 +105,12 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 					if (editorInput instanceof IFileEditorInput) {
 						final IFile f = ((IFileEditorInput) editorInput).getFile();
 						if (isSpdFile(f)) {
-							saveAndGenerate(f, f.getProject(), HandlerUtil.getActiveShell(event));
+							try {
+								saveAndGenerate(f, f.getProject(), HandlerUtil.getActiveShell(event));
+							} catch (CoreException e) {
+								StatusManager.getManager().handle(e.getStatus(), StatusManager.SHOW | StatusManager.LOG);
+								return null;
+							}
 							return null;
 						}
 					}
@@ -112,14 +122,24 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 
 				for (Object obj : ss.toList()) {
 					if (obj instanceof IFile && isSpdFile((IFile) obj)) {
-						saveAndGenerate(obj, ((IFile) obj).getProject(), HandlerUtil.getActiveShell(event));
+						try {
+							saveAndGenerate(obj, ((IFile) obj).getProject(), HandlerUtil.getActiveShell(event));
+						} catch (CoreException e) {
+							StatusManager.getManager().handle(e.getStatus(), StatusManager.SHOW | StatusManager.LOG);
+							return null;
+						}
 					} else if (obj instanceof Implementation) {
 						Implementation impl = (Implementation) obj;
 						String platformURI = impl.eResource().getURI().toPlatformString(true);
 						IResource spdFile = ResourcesPlugin.getWorkspace().getRoot().findMember(platformURI);
 
 						if (spdFile instanceof IFile && isSpdFile((IFile) spdFile)) {
-							saveAndGenerate(impl, ((IFile) spdFile).getProject(), HandlerUtil.getActiveShell(event));
+							try {
+								saveAndGenerate(impl, ((IFile) spdFile).getProject(), HandlerUtil.getActiveShell(event));
+							} catch (CoreException e) {
+								StatusManager.getManager().handle(e.getStatus(), StatusManager.SHOW | StatusManager.LOG);
+								return null;
+							}
 						}
 					}
 				}
@@ -139,8 +159,9 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	 * @param parentProject The IProject which contains the objectToGenerate resource
 	 * @param shell A shell used for dialog generation 
 	 * @return True if code generation has been attempted.
+	 * @throws CoreException 
 	 */
-	private boolean saveAndGenerate(Object objectToGenerate, IProject parentProject, Shell shell) {
+	private boolean saveAndGenerate(Object objectToGenerate, IProject parentProject, Shell shell) throws CoreException {
 		if (relatedResourcesSaved(shell, parentProject) && checkDeprecated(objectToGenerate, shell)) {
 			GenerateCode.generate(objectToGenerate);
 			return true;
@@ -149,7 +170,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean checkDeprecated(Object selectedObj, Shell parent) {
+	private boolean checkDeprecated(Object selectedObj, Shell parent) throws CoreException {
 		if (selectedObj instanceof SoftPkg) {
 			return checkImpls(parent, ((SoftPkg) selectedObj).getImplementation());
 		} else if (selectedObj instanceof EList) {
@@ -168,7 +189,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 		return false;
 	}
 
-	private boolean checkImpls(Shell parent, List<Implementation> impls) {
+	private boolean checkImpls(Shell parent, List<Implementation> impls) throws CoreException {
 		if (impls == null || impls.isEmpty()) {
 			return false;
 		}
@@ -189,20 +210,21 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 							return shouldContinueWhileDeprecated(parent, template);
 						}
 					} else {
-						return shouldContinueWhileDeprecated(parent, template);
+						// Not Deprecated so good to go
+						return true;
 					}
 				} else {
-					return false;
+					throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID, "GENERATE FAILED: Failed to find template of id: " + templateId, null));
 				}
 			} else {
-				return false;
+				throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID, "GENERATE FAILED: Failed to find implementation settings for implementation: " + impl.getId(), null));
 			}
 		}
 		return true;
 	}
 
 	protected boolean shouldUpgrade(Shell parent, final Implementation impl, final ImplementationSettings implSettings, final ITemplateDesc template,
-		ITemplateDesc newTemplate) {
+		ITemplateDesc newTemplate) throws CoreException {
 		ICodeGeneratorDescriptor generator = template.getCodegen();
 		ICodeGeneratorDescriptor newCodegen = newTemplate.getCodegen();
 		String message = "The code generator '" + generator.getName() + "' with template '" + template.getName() + "' is deprecated.\n\n"
@@ -229,17 +251,15 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 					}
 				});
 			} catch (InvocationTargetException e1) {
-				IStatus status;
 				if (e1.getCause() instanceof CoreException) {
 					CoreException core = (CoreException) e1.getCause();
-					status = core.getStatus();
+					throw core;
 				} else if (e1.getCause() instanceof OperationCanceledException) {
 					return false;
 				} else {
-					status = new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to update code generator.", e1.getCause());
+					Status status = new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to update code generator.", e1.getCause());
+					throw new CoreException(status);
 				}
-				StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
-				return false;
 			} catch (InterruptedException e1) {
 				return false;
 			}
@@ -257,9 +277,15 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 		MessageBox dialog = new MessageBox(parent, SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
 		dialog.setText("Deprecated Generator");
 		String message = "The code generator '" + generator.getName() + "' with template '" + template.getName() + "' is deprecated.\n\n"
-			+ "Would you like to continue?\nNew features may be unavailable.\n";
+			+ "Would you like to continue?\n\tNew features may be unavailable.\n";
 		dialog.setMessage(message);
-		return false;
+		switch(dialog.open()) {
+		case SWT.OK:
+			return true;
+		case SWT.CANCEL:
+		default:
+			return false;
+		}
 	}
 
 	/**
@@ -268,8 +294,9 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	 * @param event Handler event
 	 * @param editorFile File who's project we are using to find related editor pages.
 	 * @return True if everything saved correctly.  False otherwise.
+	 * @throws CoreException 
 	 */
-	private boolean relatedResourcesSaved(final Shell shell, final IProject parentProject) {
+	private boolean relatedResourcesSaved(final Shell shell, final IProject parentProject) throws CoreException {
 
 		final Set<ISaveablePart> dirtyPartsSet = getRelatedDirtyParts(parentProject);
 
@@ -298,7 +325,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 						}
 					});
 				} catch (InvocationTargetException e) {
-					return false; // There was an error during save, do not generate
+					throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID, "Error while attempting to save editors", e.getCause()));
 				} catch (InterruptedException e) {
 					return false; // The user canceled this save dialog.
 				}
