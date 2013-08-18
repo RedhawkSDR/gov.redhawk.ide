@@ -77,10 +77,10 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort
 	
 	private IOException writeException;
 
-	/** scalars (primitive data type, e.g. float, long, etc.). 2 if complex data (i.e. sri.mode == 1), otherwise 1. */
+	/** scalars (primitive data type, e.g. float, long, etc.). 2 if complex data (i.e. sri.mode == 1), otherwise 1. MUST NOT be zero. */
 	private int scalarsPerAtom;
-	/** frame size (min of 1). */
-	private int atomsPerSample;
+	/** frame size (min of 1). MUST NOT be zero. */
+	private int atomsPerSample; // 
 	private double sampleTimeDelta;
 	
 	private List<FilePair> outputFileList = new ArrayList<FilePair>(); 
@@ -88,6 +88,8 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort
 	public BaseDataReceiver(BulkIOType type, File file, IDataReceiver.CaptureMethod method,
 		long numberSamples, double durationTime) throws IOException {
 		super(type);
+		this.atomsPerSample = 1;
+		this.scalarsPerAtom = 1;
 		this.initialFile = file;
 		switch (method) {
 		case NUMBER:
@@ -249,7 +251,7 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort
 			long numSamplesLeft = (long) ((this.desiredSampleTimeDuration - this.elapsedSampleTimeDuration) + 0.5); // round up
 			this.desiredSamples = this.capturedSamples + numSamplesLeft;
 		}
-		this.atomsPerSample = Math.min(1, this.sri.subsize);
+		this.atomsPerSample = Math.max(1, this.sri.subsize);
 	}
 	
     /* (non-Javadoc)

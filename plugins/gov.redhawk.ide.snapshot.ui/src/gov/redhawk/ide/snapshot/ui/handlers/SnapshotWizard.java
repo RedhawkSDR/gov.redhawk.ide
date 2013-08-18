@@ -13,6 +13,7 @@ package gov.redhawk.ide.snapshot.ui.handlers;
 import gov.redhawk.ide.snapshot.datareceiver.AbstractDataReceiverAttributes;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiverAttributes;
+import gov.redhawk.ide.snapshot.datareceiver.bin.BinDataReceiver;
 import gov.redhawk.ide.snapshot.datareceiver.bin.BinDataReceiverAttributes;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotRunnable;
 import gov.redhawk.ide.snapshot.ui.SnapshotActivator;
@@ -53,7 +54,7 @@ import CF.ResourcePackage.StartError;
 public class SnapshotWizard extends Wizard {
 
 	private SnapshotWizardPage snapshotPage;
-	private ArrayList<AbstractDataReceiverAttributes> receivers = new ArrayList<AbstractDataReceiverAttributes>();
+	private ArrayList<IDataReceiverAttributes> receivers = new ArrayList<IDataReceiverAttributes>();
 	private ScaUsesPort port;
 	private Object[] datalist;
 	private StreamSRI sri;
@@ -129,13 +130,14 @@ public class SnapshotWizard extends Wizard {
 		//load the extensions for data receivers
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IConfigurationElement[] extensions = reg.getConfigurationElementsFor("gov.redhawk.ide.snapshot.datareceiver");
-		String[] types = new String[extensions.length + 1]; // +1 since we always have capture to binary/raw file  
-		receivers.add(new BinDataReceiverAttributes());
+//		String[] types = new String[extensions.length + 1]; // +1 since we always have capture to binary/raw file  
+		receivers.add(BinDataReceiver.getInstance()); // TODO:
+String[] types = new String[1]; // 
 		types[0] = receivers.get(0).getReceiverName();
 		for (int i = 0; i < extensions.length; i++) {
 			try {
 				Object temp = extensions[i].createExecutableExtension("class");
-				if (temp instanceof AbstractDataReceiverAttributes) {
+				if (temp instanceof IDataReceiverAttributes) {
 					receivers.add((AbstractDataReceiverAttributes) temp);
 					types[i + 1] = ((IDataReceiverAttributes) temp).getReceiverName();
 				}

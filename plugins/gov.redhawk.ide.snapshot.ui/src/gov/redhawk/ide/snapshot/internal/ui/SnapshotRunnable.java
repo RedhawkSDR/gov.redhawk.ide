@@ -14,6 +14,7 @@ import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.bulkio.util.BulkIOUtilActivator;
 import gov.redhawk.ide.snapshot.datareceiver.AbstractDataReceiverAttributes;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
+import gov.redhawk.ide.snapshot.datareceiver.IDataReceiverAttributes;
 import gov.redhawk.ide.snapshot.ui.handlers.SnapshotSettings;
 import gov.redhawk.model.sca.ScaUsesPort;
 
@@ -36,20 +37,20 @@ public class SnapshotRunnable implements IRunnableWithProgress {
 	private ScaUsesPort port;
 	private File startFile;
 	private String[][] outputFiles;
-	private AbstractDataReceiverAttributes recAttributes = null;
+	private IDataReceiverAttributes recAttributes = null;
 	/** Storage for data provided to the snapshot at start up, will not connect to the port if this is not null. */
 	private Object[] datalist = null;
 	/** Storage for the SRI provided to the snapshot at start up. */
 	private StreamSRI sri = null;
 	private IDataReceiver.CaptureMethod processingMethod;
 
-	public SnapshotRunnable(SnapshotSettings settings, ScaUsesPort port, Object[] datalist, StreamSRI sri, ArrayList<AbstractDataReceiverAttributes> receivers) {
+	public SnapshotRunnable(SnapshotSettings settings, ScaUsesPort port, Object[] datalist, StreamSRI sri, ArrayList<IDataReceiverAttributes> receivers) {
 		this(settings, port, receivers);
 		this.datalist = datalist;
 		this.sri = sri;
 	}
 
-	public SnapshotRunnable(SnapshotSettings settings, ScaUsesPort port, ArrayList<AbstractDataReceiverAttributes> receivers) {
+	public SnapshotRunnable(SnapshotSettings settings, ScaUsesPort port, ArrayList<IDataReceiverAttributes> receivers) {
 		this.settings = settings;
 		this.port = port;
 		this.outputFiles = null;
@@ -57,8 +58,9 @@ public class SnapshotRunnable implements IRunnableWithProgress {
 
 		//get the data receiver attributes associated with the file type selected
 		for (int i = 0; i < receivers.size(); i++) {
-			if (receivers.get(i).getReceiverName().equals(settings.getFileType())) {
-				this.recAttributes = receivers.get(i);
+			IDataReceiverAttributes iDataReceiverAttributes = receivers.get(i);
+			if (iDataReceiverAttributes != null && iDataReceiverAttributes.getReceiverName().equals(settings.getFileType())) {
+				this.recAttributes = iDataReceiverAttributes;
 				break;
 			}
 		}
@@ -160,11 +162,12 @@ public class SnapshotRunnable implements IRunnableWithProgress {
 			throw new InvocationTargetException(e);
 		}
 		if (this.datalist != null) {
-			try {
-				this.outputFiles = recAttributes.writeFile(startFile, datalist, type, false, sri);
-			} catch (IOException e) {
-				throw new InvocationTargetException(e);
-			}
+//			try {
+				// TODO: fix this
+				// this.outputFiles = recAttributes.writeFile(startFile, datalist, type, false, sri);
+//			} catch (IOException e) {
+//				throw new InvocationTargetException(e);
+//			}
 			return;
 		}
 		IDataReceiver receiver = null;
