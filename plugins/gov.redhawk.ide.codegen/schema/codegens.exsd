@@ -206,6 +206,13 @@
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="deprecated" type="boolean">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -11,7 +11,11 @@
  // BEGIN GENERATED CODE
 package gov.redhawk.ide.codegen;
 
+/**
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
 public interface ICodeGeneratorsRegistry {
+	
 	/**
 	 * Find the specified codegen.
 	 * 

@@ -12,7 +12,7 @@ package gov.redhawk.ide.codegen.ui.internal.command;
 
 import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
-import gov.redhawk.ide.codegen.ITemplateDesc;
+import gov.redhawk.ide.codegen.IComponentProjectUpgrader;
 import gov.redhawk.ide.codegen.ImplementationSettings;
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.ide.codegen.WaveDevSettings;
@@ -53,8 +53,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -162,7 +160,12 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	 * @throws CoreException 
 	 */
 	private boolean saveAndGenerate(Object objectToGenerate, IProject parentProject, Shell shell) throws CoreException {
-		if (relatedResourcesSaved(shell, parentProject) && checkDeprecated(objectToGenerate, shell)) {
+		if (relatedResourcesSaved(shell, parentProject)) {
+			try {
+				checkDeprecated(objectToGenerate, shell);
+			} catch (OperationCanceledException e) {
+				return false;
+			}
 			GenerateCode.generate(shell, objectToGenerate);
 			return true;
 		}
@@ -170,116 +173,106 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean checkDeprecated(Object selectedObj, Shell parent) throws CoreException {
+	private void checkDeprecated(Object selectedObj, Shell parent) throws CoreException {
 		if (selectedObj instanceof SoftPkg) {
-			return checkImpls(parent, ((SoftPkg) selectedObj).getImplementation());
+			checkDeprecatedImpls(parent, ((SoftPkg) selectedObj).getImplementation());
 		} else if (selectedObj instanceof EList) {
-			return checkImpls(parent, (List<Implementation>) selectedObj);
+			checkDeprecatedImpls(parent, (List<Implementation>) selectedObj);
 		} else if (selectedObj instanceof Implementation) {
 			final List<Implementation> impls = new ArrayList<Implementation>();
 			impls.add((Implementation) selectedObj);
-			return checkImpls(parent, impls);
+			checkDeprecatedImpls(parent, impls);
 		} else if (selectedObj instanceof IFile) {
 			// The selected object should be an IFile for the SPD
 			final IFile file = (IFile) selectedObj;
 			final URI spdURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
 			final SoftPkg softpkg = ModelUtil.loadSoftPkg(spdURI);
-			return checkImpls(parent, softpkg.getImplementation());
+			checkDeprecatedImpls(parent, softpkg.getImplementation());
 		}
-		return false;
 	}
 
-	private boolean checkImpls(Shell parent, List<Implementation> impls) throws CoreException {
+	private void checkDeprecatedImpls(Shell parent, List<Implementation> impls) throws CoreException {
 		if (impls == null || impls.isEmpty()) {
-			return false;
+			throw new OperationCanceledException();
 		}
 
 		final SoftPkg softPkg = (SoftPkg) impls.get(0).eContainer();
 		final WaveDevSettings waveDev = CodegenUtil.loadWaveDevSettings(softPkg);
+		boolean hasDeprecated = false;
 		for (final Implementation impl : impls) {
-			final ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
-			if (implSettings != null) {
-				String templateId = implSettings.getTemplate();
-				final ITemplateDesc template = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplate(templateId);
-				if (template != null) {
-					if (template.isDeprecated()) {
-						ITemplateDesc newTemplate = template.getNewTemplate();
-						if (newTemplate != null) {
-							return shouldUpgrade(parent, impl, implSettings, template, newTemplate);
+			hasDeprecated = isDeprecated(impl, waveDev);
+			if (hasDeprecated) {
+				break;
+			}
+		}
+		if (hasDeprecated && shouldUpgrade(parent, softPkg.getName())) {
+			upgrade(parent, softPkg, waveDev);
+		}
+	}
+
+	private void upgrade(Shell parent, final SoftPkg spd, final WaveDevSettings implSettings) throws CoreException {
+		ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(parent);
+		try {
+			progressDialog.run(true, true, new IRunnableWithProgress() {
+
+				@Override
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						IComponentProjectUpgrader service = RedhawkCodegenActivator.getDefault().getProjectUpgradeService();
+						if (service != null) {
+							service.upgrade(monitor, spd, implSettings);
 						} else {
-							return shouldContinueWhileDeprecated(parent, template);
+							throw new CoreException(new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to find project upgrade service.", null));
 						}
-					} else {
-						// Not Deprecated so good to go
-						return true;
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
 					}
-				} else {
-					throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID, "GENERATE FAILED: Failed to find template of id: " + templateId, null));
 				}
+			});
+		} catch (InvocationTargetException e1) {
+			if (e1.getCause() instanceof CoreException) {
+				CoreException core = (CoreException) e1.getCause();
+				throw core;
+			} else if (e1.getCause() instanceof OperationCanceledException) {
+				throw new OperationCanceledException();
 			} else {
-				throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID, "GENERATE FAILED: Failed to find implementation settings for implementation: " + impl.getId(), null));
+				Status status = new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to update code generator.", e1.getCause());
+				throw new CoreException(status);
 			}
+		} catch (InterruptedException e1) {
+			throw new OperationCanceledException();
 		}
-		return true;
 	}
 
-	protected boolean shouldUpgrade(Shell parent, final Implementation impl, final ImplementationSettings implSettings, final ITemplateDesc template,
-		ITemplateDesc newTemplate) throws CoreException {
-		ICodeGeneratorDescriptor generator = template.getCodegen();
-		ICodeGeneratorDescriptor newCodegen = newTemplate.getCodegen();
-		String message = "The code generator '" + generator.getName() + "' with template '" + template.getName() + "' is deprecated.\n\n"
-			+ "Would you like to upgrade this project to use '" + newCodegen.getName() + "' with template '" + newTemplate.getName() + "'?";
-		MessageDialog dialog = new MessageDialog(parent, "Deprecated Generator", null, message, MessageDialog.WARNING, new String[] {"Upgrade", "Cancel", "Use Existing"}, 1);
+	private boolean isDeprecated(Implementation impl, WaveDevSettings waveDev) throws CoreException {
+		final ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
+		if (implSettings != null) {
+			ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(implSettings.getGeneratorId());
+			if (generator != null) {
+				return generator.isDeprecated();
+			} else {
+				// Can't find generator assume then deprecated
+				return true;
+			}
+		} else {
+			throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID,
+				"GENERATE FAILED: Failed to find implementation settings for implementation: " + impl.getId(), null));
+		}
+	}
+
+	private boolean shouldUpgrade(Shell parent, String name) throws CoreException {
+		String message = name + " uses deprecated code generators.\n\n"
+			+ "Would you like to upgrade this project?";
+		MessageDialog dialog = new MessageDialog(parent, "Deprecated Generator", null, message, MessageDialog.WARNING, new String[] { "Upgrade", "Cancel",
+			"Use Existing" }, 1);
 		switch (dialog.open()) {
-		case 0:
-			ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(parent);
-			try {
-				progressDialog.run(true, true, new IRunnableWithProgress() {
-
-					@Override
-					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						try {
-							template.getMigrationTool().migrate(monitor, template, impl, implSettings);
-						} catch (CoreException e) {
-							throw new InvocationTargetException(e);
-						}
-					}
-				});
-			} catch (InvocationTargetException e1) {
-				if (e1.getCause() instanceof CoreException) {
-					CoreException core = (CoreException) e1.getCause();
-					throw core;
-				} else if (e1.getCause() instanceof OperationCanceledException) {
-					return false;
-				} else {
-					Status status = new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to update code generator.", e1.getCause());
-					throw new CoreException(status);
-				}
-			} catch (InterruptedException e1) {
-				return false;
-			}
+		case 0: // Upgrade
 			return true;
-		case 2:
-			return true;
-		case 1:
-		default:
+		case 2: // Use Existing
 			return false;
-		}
-	}
-
-	private boolean shouldContinueWhileDeprecated(Shell parent, ITemplateDesc template) {
-		ICodeGeneratorDescriptor generator = template.getCodegen();
-		MessageBox dialog = new MessageBox(parent, SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
-		dialog.setText("Deprecated Generator");
-		String message = "The code generator '" + generator.getName() + "' with template '" + template.getName() + "' is deprecated.\n\n"
-			+ "Would you like to continue?\n\tNew features may be unavailable.\n";
-		dialog.setMessage(message);
-		switch(dialog.open()) {
-		case SWT.OK:
-			return true;
-		case SWT.CANCEL:
+		case 1:// Cancel
 		default:
-			return false;
+			throw new OperationCanceledException();
 		}
 	}
 

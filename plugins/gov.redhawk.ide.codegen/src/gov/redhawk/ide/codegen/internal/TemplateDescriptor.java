@@ -10,9 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.codegen.internal;
 
-import gov.redhawk.ide.codegen.DefaultCodegenMigrator;
 import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
-import gov.redhawk.ide.codegen.ICodegenTemplateMigrator;
 import gov.redhawk.ide.codegen.IPropertyDescriptor;
 import gov.redhawk.ide.codegen.IScaComponentCodegenTemplate;
 import gov.redhawk.ide.codegen.ITemplateDesc;
@@ -57,14 +55,9 @@ public class TemplateDescriptor implements ITemplateDesc {
 	private final IConfigurationElement element;
 	private final String delegatePortGeneration;
 	private final String[] componentTypes;
-	private final boolean deprecated;
-	private final String newTemplateID;
-	private ICodegenTemplateMigrator migrator;
 
 	public TemplateDescriptor(final IConfigurationElement element) {
 		this.element = element;
-		this.deprecated = Boolean.valueOf(element.getAttribute("deprecated"));
-		this.newTemplateID = element.getAttribute("newTemplateID");
 		this.hasSettings = element.getAttribute(TemplateDescriptor.ATTR_HAS_SETTINGS);
 		this.id = element.getAttribute(TemplateDescriptor.ATTR_ID);
 		this.name = element.getAttribute(TemplateDescriptor.ATTR_NAME);
@@ -74,14 +67,6 @@ public class TemplateDescriptor implements ITemplateDesc {
 		this.portCodegenId = element.getAttribute(TemplateDescriptor.ATTR_PORT_CODEGEN_ID);
 		this.bundleId = element.getContributor().getName();
 		this.delegatePortGeneration = element.getAttribute(TemplateDescriptor.ATTR_USES_PORT_TEMPLATES);
-		this.migrator = new DefaultCodegenMigrator();
-		try {
-			if (element.getAttribute("migrator") != null) {
-				this.migrator = (ICodegenTemplateMigrator) element.createExecutableExtension("migrator");
-			}
-		} catch (CoreException e) {
-			RedhawkCodegenActivator.logError("Failed to instantiate codegen template migrator.", e);
-		}
 		
 		final IConfigurationElement[] children = element.getChildren(CodeGeneratorDescriptor.ELM_DESCRIPTION);
 		if (children.length == 1) {
@@ -218,25 +203,8 @@ public class TemplateDescriptor implements ITemplateDesc {
 		return (i >= 0);
 	}
 
-	public boolean isDeprecated() {
-		return deprecated;
-	}
-
-	public String getNewTemplateID() {
-		return this.newTemplateID;
-	}
-
-	public ITemplateDesc getNewTemplate() {
-		return RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplate(this.newTemplateID);
-	}
-
 	public ICodeGeneratorDescriptor getCodegen() {
 		return RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(codegenId);
-	}
-
-	@Override
-	public ICodegenTemplateMigrator getMigrationTool() {
-		return migrator;
 	}
 
 }

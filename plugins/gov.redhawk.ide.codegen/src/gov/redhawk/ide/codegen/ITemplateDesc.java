@@ -20,26 +20,6 @@ public interface ITemplateDesc extends Comparable<ITemplateDesc> {
 	String getName();
 
 	String getDescription();
-	
-	/**
-	 * @since 10.0
-	 */
-	boolean isDeprecated();
-	
-	/**
-	 * @since 10.0
-	 */
-	ICodegenTemplateMigrator getMigrationTool();
-	
-	/**
-	 * @since 10.0
-	 */
-	String getNewTemplateID();
-	
-	/**
-	 * @since 10.0
-	 */
-	ITemplateDesc getNewTemplate();
 
 	String getContributingBundleID();
 

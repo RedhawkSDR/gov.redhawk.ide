@@ -87,4 +87,9 @@ public interface ICodeGeneratorDescriptor extends Comparable<ICodeGeneratorDescr
 	 * @since 9.0
 	 */
 	boolean supportsComponentType(String componentType);
+	
+	/**
+	 * @since 10.0
+	 */
+	boolean isDeprecated();
 }

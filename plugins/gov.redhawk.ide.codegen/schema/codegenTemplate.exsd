@@ -136,33 +136,6 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="deprecated" type="boolean">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="newTemplateID" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="gov.redhawk.ide.codegen.codegenTemplate/template/@id"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="migrator" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":gov.redhawk.ide.codegen.IScaComponentCodegenTemplateMigrator"/>
-               </appinfo>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 

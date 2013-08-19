@@ -114,6 +114,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	private String priority;
 	
 	private final String[] componentTypes;
+	private final boolean deprecated;
 
 	/**
 	 * @param name
@@ -125,6 +126,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	 */
 	public CodeGeneratorDescriptor(final IConfigurationElement element) {
 		super();
+		this.deprecated = Boolean.valueOf(element.getAttribute("deprecated"));
 		this.notDefaultable = element.getAttribute(CodeGeneratorDescriptor.ATT_NOT_DEFAULTABLE);
 		this.autoGenerate = element.getAttribute(CodeGeneratorDescriptor.ATT_AUTO_GENERATE);
 		this.name = element.getAttribute(CodeGeneratorDescriptor.ATTR_NAME);
@@ -347,6 +349,11 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	public boolean supportsComponentType(String componentType) {
 		final int i = Arrays.binarySearch(this.componentTypes, componentType);
 		return (i >= 0);
+	}
+	
+	@Override
+	public boolean isDeprecated() {
+		return this.deprecated;
 	}
 
 }

@@ -10,17 +10,14 @@
  *******************************************************************************/
 package gov.redhawk.ide.codegen;
 
-import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * @since 10.0
- * 
  */
-public interface ICodegenTemplateMigrator {
-
-	void migrate(IProgressMonitor monitor, ITemplateDesc template, Implementation impl, ImplementationSettings implSettings) throws CoreException;
-
+public interface IComponentProjectUpgrader {
+	void upgrade(IProgressMonitor monitor, SoftPkg spd, WaveDevSettings settings) throws CoreException;
 }

@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.codegen;
 
 import gov.redhawk.ide.codegen.internal.CodeGeneratorPortTemplatesRegistry;
@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -64,6 +65,8 @@ public class RedhawkCodegenActivator extends Plugin {
 	public static final String SAMPLE_PROPERTY_FILE = "samplePropertyFile.dtd";
 	public static final String SAMPLE_PROPERTY_FILE_EXTENSION = "DTD";
 
+	private ServiceTracker<IComponentProjectUpgrader, IComponentProjectUpgrader> upgradeServiceTracker;
+
 	/**
 	 * The constructor.
 	 */
@@ -84,6 +87,8 @@ public class RedhawkCodegenActivator extends Plugin {
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		RedhawkCodegenActivator.plugin = this;
+		upgradeServiceTracker = new ServiceTracker<IComponentProjectUpgrader, IComponentProjectUpgrader>(getBundle().getBundleContext(), IComponentProjectUpgrader.class, null);
+		upgradeServiceTracker.open();
 	}
 
 	/*
@@ -99,6 +104,8 @@ public class RedhawkCodegenActivator extends Plugin {
 	@Override
 	public void stop(final BundleContext context) throws Exception {
 		RedhawkCodegenActivator.plugin = null;
+		upgradeServiceTracker.close();
+		upgradeServiceTracker = null;
 		super.stop(context);
 	}
 
@@ -181,5 +188,15 @@ public class RedhawkCodegenActivator extends Plugin {
 	 */
 	public static final void logInfo(final String msg) {
 		RedhawkCodegenActivator.getDefault().getLog().log(new Status(IStatus.INFO, RedhawkCodegenActivator.PLUGIN_ID, msg));
+	}
+	
+	/**
+	 * @since 10.0
+	 */
+	public IComponentProjectUpgrader getProjectUpgradeService() {
+		if (upgradeServiceTracker != null) {
+			return upgradeServiceTracker.getService();
+		} 
+		return null;
 	}
 }
