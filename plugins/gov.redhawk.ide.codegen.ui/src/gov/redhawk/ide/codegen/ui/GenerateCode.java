@@ -154,12 +154,13 @@ public final class GenerateCode {
 							aggregate.putAll(v);
 						}
 						List<String> filesToGenerate = new ArrayList<String>();
-						for (Map.Entry<String, Boolean> entry : aggregate.entrySet()) {
-							if (entry.getValue() != null && entry.getValue()) {
-								filesToGenerate.add(entry.getKey());
-							}
-						}
-						aggregate.keySet().removeAll(filesToGenerate);
+						// TODO
+//						for (Map.Entry<String, Boolean> entry : aggregate.entrySet()) {
+//							if (entry.getValue() != null && entry.getValue()) {
+//								filesToGenerate.add(entry.getKey());
+//							}
+//						}
+//						aggregate.keySet().removeAll(filesToGenerate);
 
 						if (!aggregate.isEmpty()) {
 							GenerateFilesDialog dialog = new GenerateFilesDialog(shell, aggregate);
