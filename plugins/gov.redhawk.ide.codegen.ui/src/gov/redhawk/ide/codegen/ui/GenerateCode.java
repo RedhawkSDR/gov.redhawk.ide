@@ -70,6 +70,7 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -88,15 +89,18 @@ public final class GenerateCode {
 
 	private static final ExecutorService EXECUTOR_POOL = Executors.newSingleThreadExecutor(new NamedThreadFactory(GenerateCode.class.getName()));
 
-	public static void generate(Object objectToGenerate) {
+	/**
+	 * @since 8.0
+	 */
+	public static void generate(Shell parent, Object objectToGenerate) {
 		if (objectToGenerate instanceof IFile) {
-			generate((IFile) objectToGenerate);
+			generate(parent, (IFile) objectToGenerate);
 		} else if (objectToGenerate instanceof SoftPkg) {
-			generate(((SoftPkg) objectToGenerate).getImplementation());
+			generate(parent, ((SoftPkg) objectToGenerate).getImplementation());
 		} else if (objectToGenerate instanceof Implementation) {
-			generate((Implementation) objectToGenerate);
+			generate(parent, (Implementation) objectToGenerate);
 		} else if (objectToGenerate instanceof List< ? >) {
-			generate((List<Implementation>) objectToGenerate);
+			generate(parent, (List<Implementation>) objectToGenerate);
 		} else {
 			throw new IllegalArgumentException("Unknown object to generate" + objectToGenerate);
 		}
@@ -106,24 +110,24 @@ public final class GenerateCode {
 	/**
 	 * @since 8.0
 	 */
-	public static void generate(IFile spd) {
+	public static void generate(Shell parent, IFile spd) {
 		final IFile file = (IFile) spd;
 		final URI spdURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
 		final SoftPkg softpkg = ModelUtil.loadSoftPkg(spdURI);
-		generate(softpkg.getImplementation());
+		generate(parent, softpkg.getImplementation());
 	}
 
 	/**
 	 * @since 8.0
 	 */
-	public static void generate(final Implementation impl) {
-		generate(Collections.singletonList(impl));
+	public static void generate(Shell parent, final Implementation impl) {
+		generate(parent, Collections.singletonList(impl));
 	}
 
 	/**
 	 * @since 8.0
 	 */
-	public static void generate(final List<Implementation> impls) {
+	public static void generate(final Shell shell, final List<Implementation> impls) {
 		if (impls.isEmpty()) {
 			return;
 		}
@@ -158,7 +162,8 @@ public final class GenerateCode {
 						aggregate.keySet().removeAll(filesToGenerate);
 
 						if (!aggregate.isEmpty()) {
-							GenerateFilesDialog dialog = new GenerateFilesDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), aggregate);
+							GenerateFilesDialog dialog = new GenerateFilesDialog(shell, aggregate);
+							dialog.setBlockOnOpen(true);
 							if (dialog.open() == Window.OK) {
 								String[] result = dialog.getFilesToGenerate();
 								if (result == null) {

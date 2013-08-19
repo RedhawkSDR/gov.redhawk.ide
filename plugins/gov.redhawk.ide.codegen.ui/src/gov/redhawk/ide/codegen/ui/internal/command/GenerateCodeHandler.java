@@ -163,7 +163,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	 */
 	private boolean saveAndGenerate(Object objectToGenerate, IProject parentProject, Shell shell) throws CoreException {
 		if (relatedResourcesSaved(shell, parentProject) && checkDeprecated(objectToGenerate, shell)) {
-			GenerateCode.generate(objectToGenerate);
+			GenerateCode.generate(shell, objectToGenerate);
 			return true;
 		}
 		return false;
