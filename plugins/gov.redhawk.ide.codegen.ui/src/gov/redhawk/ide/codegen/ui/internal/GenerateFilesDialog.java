@@ -62,7 +62,7 @@ public class GenerateFilesDialog extends Dialog {
 
 	@Override
 	protected void configureShell(final Shell newShell) {
-		newShell.setText("Regenerate files: ");
+		newShell.setText("Regenerate files");
 
 		super.configureShell(newShell);
 	}
