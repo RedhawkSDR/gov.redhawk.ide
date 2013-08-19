@@ -11,6 +11,7 @@
 package gov.redhawk.ide.snapshot.datareceiver.blue;
 
 import gov.redhawk.bulkio.util.BulkIOType;
+import gov.redhawk.ide.snapshot.datareceiver.CaptureMethod;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
 import mil.jpeojtrs.sca.util.UnsignedUtils;
 import nxm.sys.lib.Convert;
@@ -49,7 +50,7 @@ public class UBLUEDataReceiverClock extends SuperBLUEReceiver implements dataOct
 	/**boolean for whether or not an end of stream has occurred*/
 	private boolean eos = false;
 
-	public UBLUEDataReceiverClock(File file, double time, BulkIOType type, IDataReceiver.CaptureMethod method) throws IOException {
+	public UBLUEDataReceiverClock(File file, double time, BulkIOType type, CaptureMethod method) throws IOException {
 		super(file, type);
 		switch (method) {
 		case CLOCK_TIME:

@@ -22,46 +22,6 @@ import BULKIO.updateSRIOperations;
 
 public interface IDataReceiver extends updateSRIOperations {
 
-	public static enum CaptureMethod {
-		NUMBER("Number of Samples"), INDEFINITELY("Indefinitely"), CLOCK_TIME("Clock Time"), SAMPLE_TIME("Sample Time");
-
-		/** the description of the enum, outputted by toString()*/
-		private String description;
-
-		private CaptureMethod(@NonNull String description) {
-			this.description = description;
-		}
-
-		@Override
-		public String toString() {
-			return description;
-		}
-
-		/**
-		 * @param arg0 the name or the description of the enum to be returned
-		 * @return a CaptureMethod corresponding to the name or description provided
-		 */
-		public static CaptureMethod stringToValue(String arg0) {
-			if (arg0.equals(NUMBER.name()) || arg0.equals(NUMBER.toString())) {
-				return NUMBER;
-			} else if (arg0.equals(INDEFINITELY.name()) || arg0.equals(INDEFINITELY.toString())) {
-				return INDEFINITELY;
-			} else if (arg0.equals(CLOCK_TIME.name()) || arg0.equals(CLOCK_TIME.toString())) {
-				return CLOCK_TIME;
-			} else if (arg0.equals(SAMPLE_TIME.name()) || arg0.equals(SAMPLE_TIME.toString())) {
-				return SAMPLE_TIME;
-			} else {
-				return CaptureMethod.valueOf(arg0);
-			}
-		}
-	} // end enum CaptureMethod
-
-	/**
-	 * @return the files written to by the data receiver
-	 */
-	@Deprecated
-	public String[][] getOutputFiles();
-	
 	/**
 	 * @return files written to by the data receiver
 	 */

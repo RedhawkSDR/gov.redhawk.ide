@@ -16,6 +16,7 @@ import gov.redhawk.bulkio.util.BulkIOType;
 
 
 
+
 import java.io.File;
 import java.io.IOException;
 //import java.io.RandomAccessFile;
@@ -44,6 +45,7 @@ import BULKIO.dataShortOperations;
 import BULKIO.dataUlongLongOperations;
 import BULKIO.dataUlongOperations;
 import BULKIO.dataUshortOperations;
+import gov.redhawk.ide.snapshot.datareceiver.CaptureMethod;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
 
 //TODO: DELETE ME
@@ -60,12 +62,12 @@ public class DataReceiver extends SuperBinSriReceiver implements dataDoubleOpera
 	/**the number of samples that have been captured so far*/
 	private double currentSampleDelta;
 	/**the Selected capture method, only supports NUMBER and SAMPLE_TIME*/
-	private IDataReceiver.CaptureMethod captureMethod;
+	private CaptureMethod captureMethod;
 	private boolean eos = false;;
 	/** number of samples saved when this file was opened */
 	private long startSample = 0;
 
-	public DataReceiver(File file, long numSamples, double sampleDurationTime, BulkIOType type, IDataReceiver.CaptureMethod method) throws IOException {
+	public DataReceiver(File file, long numSamples, double sampleDurationTime, BulkIOType type, CaptureMethod method) throws IOException {
 		super(file, type);
 		this.currentSampleDelta = 1;
 		switch (method) {

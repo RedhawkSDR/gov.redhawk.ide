@@ -16,6 +16,7 @@ import gov.redhawk.bulkio.util.BulkIOType;
 
 
 
+
 import java.io.File;
 import java.io.IOException;
 //import java.io.RandomAccessFile;
@@ -62,6 +63,7 @@ import BULKIO.dataShortOperations;
 import BULKIO.dataUlongLongOperations;
 import BULKIO.dataUlongOperations;
 import BULKIO.dataUshortOperations;
+import gov.redhawk.ide.snapshot.datareceiver.CaptureMethod;
 /*import CF.DataType;
 import CF.DataTypeHelper;
 
@@ -88,7 +90,7 @@ public class BinDataReceiverClock extends SuperBinSriReceiver implements dataDou
 	/** number of samples saved when this file was opened */
 	private long startSample = 0;
 
-	public BinDataReceiverClock(File file, double time, BulkIOType type, IDataReceiver.CaptureMethod method) throws IOException {
+	public BinDataReceiverClock(File file, double time, BulkIOType type, CaptureMethod method) throws IOException {
 		super(file, type);
 		switch (method) {
 		case CLOCK_TIME:

@@ -16,6 +16,7 @@ import gov.redhawk.bulkio.util.BulkIOType;
 
 
 
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -42,6 +43,7 @@ import BULKIO.dataOctetOperations;
 import BULKIO.dataUlongLongOperations;
 import BULKIO.dataUlongOperations;
 import BULKIO.dataUshortOperations;
+import gov.redhawk.ide.snapshot.datareceiver.CaptureMethod;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
 
 //TODO: DELETE ME (instead can have class that extends BinDataReceiver (e.g. UpcastBinDataReceiver) or strategy pattern
@@ -58,12 +60,12 @@ public class UBinDataReceiver extends SuperBinReceiver implements dataOctetOpera
 	/**the number of samples that have been captured so far*/
 	private double currentSampleDelta;
 	/**the Selected capture method, only supports NUMBER and SAMPLE_TIME*/
-	private IDataReceiver.CaptureMethod captureMethod;
+	private CaptureMethod captureMethod;
 	private boolean eos = false;
 	/** number of samples saved when this file was opened */
 	private long startSample = 0;
 
-	public UBinDataReceiver(File file, long samples, double time, BulkIOType type, IDataReceiver.CaptureMethod method) throws IOException {
+	public UBinDataReceiver(File file, long samples, double time, BulkIOType type, CaptureMethod method) throws IOException {
 		super(file, type);
 		this.currentSampleDelta = 1;
 		switch (method) {

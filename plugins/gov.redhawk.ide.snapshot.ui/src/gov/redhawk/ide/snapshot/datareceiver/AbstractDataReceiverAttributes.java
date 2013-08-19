@@ -17,7 +17,7 @@ import java.io.IOException;
 
 import BULKIO.StreamSRI;
 
-public abstract class AbstractDataReceiverAttributes implements IDataReceiverAttributes {
+public abstract class AbstractDataReceiverAttributes implements IDataReceiverFactory {
 
 	/**
 	 * 
@@ -29,7 +29,7 @@ public abstract class AbstractDataReceiverAttributes implements IDataReceiverAtt
 	 * @throws IOException
 	 */
 	public String[][] writeFile(File file, Object[] data, BulkIOType type, boolean upcastUnsigned, StreamSRI sri) throws IOException {
-		IDataReceiver receiver = newInstance(file, data.length, 0, type, upcastUnsigned, IDataReceiver.CaptureMethod.NUMBER);
+		IDataReceiver receiver = newInstance(file, data.length, 0, type, upcastUnsigned, CaptureMethod.NUMBER);
 		receiver.writeFile(data, sri);
 		String[][] outputFiles = receiver.getOutputFiles();
 		receiver.dispose();

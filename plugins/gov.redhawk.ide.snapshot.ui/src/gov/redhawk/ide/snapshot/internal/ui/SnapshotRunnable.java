@@ -12,8 +12,9 @@ package gov.redhawk.ide.snapshot.internal.ui;
 
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.bulkio.util.BulkIOUtilActivator;
+import gov.redhawk.ide.snapshot.datareceiver.CaptureMethod;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
-import gov.redhawk.ide.snapshot.datareceiver.IDataReceiverAttributes;
+import gov.redhawk.ide.snapshot.datareceiver.IDataReceiverFactory;
 import gov.redhawk.ide.snapshot.ui.handlers.SnapshotSettings;
 import gov.redhawk.model.sca.ScaUsesPort;
 
@@ -36,28 +37,28 @@ public class SnapshotRunnable implements IRunnableWithProgress {
 	private ScaUsesPort port;
 	private File startFile;
 	private String[][] outputFiles;
-	private IDataReceiverAttributes recAttributes = null;
+	private IDataReceiverFactory recAttributes = null;
 	/** Storage for data provided to the snapshot at start up, will not connect to the port if this is not null. */
 	private Object[] datalist = null;
 	/** Storage for the SRI provided to the snapshot at start up. */
 	private StreamSRI sri = null;
-	private IDataReceiver.CaptureMethod processingMethod;
+	private CaptureMethod processingMethod;
 
-	public SnapshotRunnable(SnapshotSettings settings, ScaUsesPort port, Object[] datalist, StreamSRI sri, ArrayList<IDataReceiverAttributes> receivers) {
+	public SnapshotRunnable(SnapshotSettings settings, ScaUsesPort port, Object[] datalist, StreamSRI sri, ArrayList<IDataReceiverFactory> receivers) {
 		this(settings, port, receivers);
 		this.datalist = datalist;
 		this.sri = sri;
 	}
 
-	public SnapshotRunnable(SnapshotSettings settings, ScaUsesPort port, ArrayList<IDataReceiverAttributes> receivers) {
+	public SnapshotRunnable(SnapshotSettings settings, ScaUsesPort port, ArrayList<IDataReceiverFactory> receivers) {
 		this.settings = settings;
 		this.port = port;
 		this.outputFiles = null;
-		this.processingMethod = IDataReceiver.CaptureMethod.stringToValue(settings.getCaptureType());
+		this.processingMethod = CaptureMethod.stringToValue(settings.getCaptureType());
 
 		//get the data receiver attributes associated with the file type selected
 		for (int i = 0; i < receivers.size(); i++) {
-			IDataReceiverAttributes iDataReceiverAttributes = receivers.get(i);
+			IDataReceiverFactory iDataReceiverAttributes = receivers.get(i);
 			if (iDataReceiverAttributes != null && iDataReceiverAttributes.getReceiverName().equals(settings.getFileType())) {
 				this.recAttributes = iDataReceiverAttributes;
 				break;

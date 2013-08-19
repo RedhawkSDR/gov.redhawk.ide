@@ -30,10 +30,10 @@ import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
 
 public abstract class BaseDataReceiver extends AbstractBulkIOPort 
-	implements IDataReceiverAttributes, IDataReceiver {
+	implements IDataReceiverFactory, IDataReceiver {
 
 	/** Data capture method */
-	private IDataReceiver.CaptureMethod captureMethod;
+	private CaptureMethod captureMethod;
 	
 	/** Number of samples to capture. */
 	private long desiredSamples;
@@ -85,7 +85,7 @@ public abstract class BaseDataReceiver extends AbstractBulkIOPort
 	
 	private List<FilePair> outputFileList = new ArrayList<FilePair>(); 
 	
-	public BaseDataReceiver(BulkIOType type, File file, IDataReceiver.CaptureMethod method,
+	public BaseDataReceiver(BulkIOType type, File file, CaptureMethod method,
 		long numberSamples, double durationTime) throws IOException {
 		super(type);
 		this.atomsPerSample = 1;

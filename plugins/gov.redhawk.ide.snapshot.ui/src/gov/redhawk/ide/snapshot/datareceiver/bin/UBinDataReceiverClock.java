@@ -16,6 +16,7 @@ import gov.redhawk.bulkio.util.BulkIOType;
 
 
 
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -43,6 +44,7 @@ import BULKIO.dataOctetOperations;
 import BULKIO.dataUlongLongOperations;
 import BULKIO.dataUlongOperations;
 import BULKIO.dataUshortOperations;
+import gov.redhawk.ide.snapshot.datareceiver.CaptureMethod;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
 
 //TODO: DELETE ME

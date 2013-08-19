@@ -15,8 +15,8 @@ import java.io.IOException;
 
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.ide.snapshot.datareceiver.AbstractDataReceiverAttributes;
+import gov.redhawk.ide.snapshot.datareceiver.CaptureMethod;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
-import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver.CaptureMethod;
 
 //TODO: DELETE ME
 @Deprecated
@@ -36,7 +36,7 @@ public class BlueDataReceiverAttributes extends AbstractDataReceiverAttributes {
 	}
 
 	@Override
-	public IDataReceiver newInstance(File file, long samples, double time, BulkIOType type, boolean upcastUnsigned, IDataReceiver.CaptureMethod method)
+	public IDataReceiver newInstance(File file, long samples, double time, BulkIOType type, boolean upcastUnsigned, CaptureMethod method)
 		throws IOException {
 		if (type == BulkIOType.OCTET || type == BulkIOType.ULONG || type == BulkIOType.ULONG_LONG || type == BulkIOType.USHORT) {
 			if (method == CaptureMethod.NUMBER || method == CaptureMethod.SAMPLE_TIME) {

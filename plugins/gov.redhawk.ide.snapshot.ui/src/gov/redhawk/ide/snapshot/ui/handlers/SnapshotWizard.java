@@ -11,9 +11,8 @@
 package gov.redhawk.ide.snapshot.ui.handlers;
 
 import gov.redhawk.ide.snapshot.datareceiver.AbstractDataReceiverAttributes;
-import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
-import gov.redhawk.ide.snapshot.datareceiver.IDataReceiverAttributes;
-import gov.redhawk.ide.snapshot.datareceiver.bin.BinDataReceiver;
+import gov.redhawk.ide.snapshot.datareceiver.CaptureMethod;
+import gov.redhawk.ide.snapshot.datareceiver.IDataReceiverFactory;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotRunnable;
 import gov.redhawk.ide.snapshot.ui.SnapshotActivator;
 import gov.redhawk.model.sca.ScaComponent;
@@ -53,7 +52,7 @@ import CF.ResourcePackage.StartError;
 public class SnapshotWizard extends Wizard {
 
 	private SnapshotWizardPage snapshotPage;
-	private ArrayList<IDataReceiverAttributes> receivers = new ArrayList<IDataReceiverAttributes>();
+	private ArrayList<IDataReceiverFactory> receivers = new ArrayList<IDataReceiverFactory>();
 	private ScaUsesPort port;
 	private Object[] datalist;
 	private StreamSRI sri;
@@ -137,9 +136,9 @@ String[] types = new String[1]; //
 		for (int i = 0; i < extensions.length; i++) {
 			try {
 				Object temp = extensions[i].createExecutableExtension("class");
-				if (temp instanceof IDataReceiverAttributes) {
+				if (temp instanceof IDataReceiverFactory) {
 					receivers.add((AbstractDataReceiverAttributes) temp);
-					types[i + 1] = ((IDataReceiverAttributes) temp).getReceiverName();
+					types[i + 1] = ((IDataReceiverFactory) temp).getReceiverName();
 				}
 			} catch (CoreException e) {
 				//PASS
@@ -147,7 +146,7 @@ String[] types = new String[1]; //
 		}
 
 		//load the capture types
-		IDataReceiver.CaptureMethod[] methods = IDataReceiver.CaptureMethod.values();
+		CaptureMethod[] methods = CaptureMethod.values();
 		String[] captureMethods = new String[methods.length];
 		for (int i = 0; i < methods.length; i++) {
 			captureMethods[i] = methods[i].toString();

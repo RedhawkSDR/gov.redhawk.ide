@@ -12,6 +12,7 @@ package gov.redhawk.ide.snapshot.datareceiver.blue;
 
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.ide.snapshot.datareceiver.BaseDataReceiver;
+import gov.redhawk.ide.snapshot.datareceiver.CaptureMethod;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
 
 import java.io.File;

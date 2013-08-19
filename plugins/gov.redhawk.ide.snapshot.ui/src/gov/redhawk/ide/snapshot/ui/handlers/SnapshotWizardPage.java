@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.ui.handlers;
 
-import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
+import gov.redhawk.ide.snapshot.datareceiver.CaptureMethod;
 
 import java.io.File;
 
@@ -76,7 +76,7 @@ public class SnapshotWizardPage extends WizardPage {
 	public SnapshotWizardPage(String pageName, ImageDescriptor titleImage, String[] supportedTypes, String[] processMethods, long samples) {
 		this(pageName, titleImage, supportedTypes, processMethods);
 		this.settings.setSamples((double) samples);
-		this.settings.setCaptureType(IDataReceiver.CaptureMethod.NUMBER.toString());
+		this.settings.setCaptureType(CaptureMethod.NUMBER.toString());
 		this.dataProvided = true;
 	}
 
@@ -101,14 +101,14 @@ public class SnapshotWizardPage extends WizardPage {
 			@Override
 			public IStatus validate(Object value) {
 				if (value instanceof Double) {
-					IDataReceiver.CaptureMethod method = IDataReceiver.CaptureMethod.stringToValue(settings.getCaptureType());
-					if (method == IDataReceiver.CaptureMethod.INDEFINITELY) {
+					CaptureMethod method = CaptureMethod.stringToValue(settings.getCaptureType());
+					if (method == CaptureMethod.INDEFINITELY) {
 						return ValidationStatus.ok();
 					}
 					if (((Double) value).doubleValue() <= 0) {
 						return ValidationStatus.error(settings.getCaptureType() + " must be greater than 0");
 					}
-					if (method == IDataReceiver.CaptureMethod.NUMBER) {
+					if (method == CaptureMethod.NUMBER) {
 						double val = ((Double) value).doubleValue();
 						if (val > Long.MAX_VALUE) {
 							return ValidationStatus.error(settings.getCaptureType() + " must less than or equal to " + Long.MAX_VALUE);
@@ -142,14 +142,14 @@ public class SnapshotWizardPage extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				settings.setCaptureType(captureCombo.getText());
-				IDataReceiver.CaptureMethod method = IDataReceiver.CaptureMethod.stringToValue(captureCombo.getText());
-				if (method == IDataReceiver.CaptureMethod.INDEFINITELY) {
+				CaptureMethod method = CaptureMethod.stringToValue(captureCombo.getText());
+				if (method == CaptureMethod.INDEFINITELY) {
 					samplesTxt.setText("1");
 					unitsLabel.setText("");
 					samplesBinding.updateTargetToModel();
 					samplesTxt.setEnabled(false);
 					return;
-				} else if (method == IDataReceiver.CaptureMethod.CLOCK_TIME || method == IDataReceiver.CaptureMethod.SAMPLE_TIME) {
+				} else if (method == CaptureMethod.CLOCK_TIME || method == CaptureMethod.SAMPLE_TIME) {
 					unitsLabel.setText("(s)");
 					samplesTxt.setEnabled(true);
 					samplesBinding.updateTargetToModel();

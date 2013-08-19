@@ -11,6 +11,7 @@
 package gov.redhawk.ide.snapshot.datareceiver.blue;
 
 import gov.redhawk.bulkio.util.BulkIOType;
+import gov.redhawk.ide.snapshot.datareceiver.CaptureMethod;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
 import mil.jpeojtrs.sca.util.UnsignedUtils;
 import nxm.sys.lib.Convert;
@@ -47,11 +48,11 @@ public class UBLUEDataReceiver extends SuperBLUEReceiver implements dataOctetOpe
 	/**the number of samples that have been captured so far*/
 	private double currentSampleDelta;
 	/**the Selected capture method, only supports NUMBER and SAMPLE_TIME*/
-	private IDataReceiver.CaptureMethod captureMethod;
+	private CaptureMethod captureMethod;
 	/**boolean for whether or not an end of stream has occurred*/
 	private boolean eos = false;
 
-	public UBLUEDataReceiver(File file, long numSamples, double sampleDurationTime, BulkIOType type, IDataReceiver.CaptureMethod method) throws IOException {
+	public UBLUEDataReceiver(File file, long numSamples, double sampleDurationTime, BulkIOType type, CaptureMethod method) throws IOException {
 		super(file, type);
 		this.currentSampleDelta = 1;
 		switch (method) {

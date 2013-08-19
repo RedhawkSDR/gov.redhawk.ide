@@ -15,21 +15,7 @@ import gov.redhawk.bulkio.util.BulkIOType;
 import java.io.File;
 import java.io.IOException;
 
-public interface IDataReceiverAttributes {
-
-	/**
-	 * @return the printable name of the file type this receiver prints to
-	 */
-	@Deprecated
-	public abstract String getReceiverName(); // TODO use extension point "name"
-
-	/**
-	 * The first index is main filename extension, the subsequent extensions are for metadata filename extensions. 
-	 * @return the filename extensions (should be prepended with a dot) this data receiver uses.
-	 */
-	@Deprecated
-	public abstract String[] getReceiverFilenameExtensions(); // TODO use extension point "???"
-
+public interface IDataReceiverFactory {
 	/**
 	 * @param file : The file to start saving with
 	 * @param samples : The number of samples to save (used by NUMBER)
@@ -45,7 +31,7 @@ public interface IDataReceiverAttributes {
 	 * @throws IOException
 	 */
 	// TODO: make CaptureSettings 
-	public abstract IDataReceiver newInstance(File file, long samples, double time, BulkIOType type, boolean upcastUnsigned, IDataReceiver.CaptureMethod method)
+	public abstract IDataReceiver newInstance(File file, long samples, double time, BulkIOType type, boolean upcastUnsigned, CaptureMethod method)
 		throws IOException;
 
 }

@@ -11,6 +11,7 @@
 package gov.redhawk.ide.snapshot.datareceiver.blue;
 
 import gov.redhawk.bulkio.util.BulkIOType;
+import gov.redhawk.ide.snapshot.datareceiver.CaptureMethod;
 import gov.redhawk.ide.snapshot.datareceiver.IDataReceiver;
 import nxm.sys.lib.Convert;
 import nxm.sys.lib.Data;
@@ -48,11 +49,11 @@ public class BLUEDataReceiver extends SuperBLUEReceiver implements dataDoubleOpe
 	/**the number of samples that have been captured so far*/
 	private double currentSampleDelta;
 	/**the Selected capture method, only supports NUMBER and SAMPLE_TIME*/
-	private IDataReceiver.CaptureMethod captureMethod;
+	private CaptureMethod captureMethod;
 	/**boolean for whether or not an end of stream has occurred*/
 	private boolean eos = false;
 
-	public BLUEDataReceiver(File file, long numSamples, double sampleDurationTime, BulkIOType type, IDataReceiver.CaptureMethod method) throws IOException {
+	public BLUEDataReceiver(File file, long numSamples, double sampleDurationTime, BulkIOType type, CaptureMethod method) throws IOException {
 		super(file, type);
 		this.currentSampleDelta = 1;
 		switch (method) {

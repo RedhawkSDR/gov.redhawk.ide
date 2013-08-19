@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="gov.redhawk.ide.snapshot.datareceiver" name="DataReceiver" schema="schema/gov.redhawk.ide.snapshot.datareceiver.exsd"/>
+   <extension-point id="datareceiver" name="DataReceiver" schema="schema/datareceiver.exsd"/>
    <extension
          point="org.eclipse.ui.commands">
       <command
@@ -31,23 +31,6 @@
          </command>
       </menuContribution>
    </extension>
-   <extension
-         point="gov.redhawk.ide.snapshot.datareceiver">
-      <DataReceiver
-            class="gov.redhawk.ide.snapshot.datareceiver.bin.BinDataReceiver"
-            id="gov.redhawk.ide.snapshot.datareceiver.bin.BinDataReceiver"
-            name="Binary files (.bin and .xml)">
-      </DataReceiver>
-      <DataReceiver
-            class="gov.redhawk.ide.snapshot.datareceiver.bin.BinSriDataReceiver"
-            id="gov.redhawk.ide.snapshot.datareceiver.bin.BinSriDataReceiver"
-            name="Binary files (.bin and .sri)"></DataReceiver>
-      <DataReceiver
-            class="gov.redhawk.ide.snapshot.datareceiver.blue.BlueDataReceiver"
-            id="gov.redhawk.ide.snapshot.datareceiver.blue.BlueDataReceiver"
-            name="Midas BLUE file (.tmp)">
-      </DataReceiver>
-   </extension>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated SnapshotMetaData -->
@@ -62,5 +45,22 @@
       <parser
             type="snapshotmetadata"
             class="gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.util.SnapshotMetadataResourceFactoryImpl"/>
+   </extension>
+   <extension
+         point="gov.redhawk.ide.snapshot.ui.datareceiver">
+          <DataReceiver
+            class="gov.redhawk.ide.snapshot.datareceiver.bin.BinDataReceiver"
+            id="gov.redhawk.ide.snapshot.datareceiver.bin.BinDataReceiver"
+            name="Binary files (.bin and .xml)">
+      </DataReceiver>
+      <DataReceiver
+            class="gov.redhawk.ide.snapshot.datareceiver.bin.BinSriDataReceiver"
+            id="gov.redhawk.ide.snapshot.datareceiver.bin.BinSriDataReceiver"
+            name="Binary files (.bin and .sri)"></DataReceiver>
+      <DataReceiver
+            class="gov.redhawk.ide.snapshot.datareceiver.blue.BlueDataReceiver"
+            id="gov.redhawk.ide.snapshot.datareceiver.blue.BlueDataReceiver"
+            name="Midas BLUE file (.tmp)">
+      </DataReceiver>
    </extension>
 </plugin>
