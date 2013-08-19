@@ -228,15 +228,10 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 		ICodeGeneratorDescriptor generator = template.getCodegen();
 		ICodeGeneratorDescriptor newCodegen = newTemplate.getCodegen();
 		String message = "The code generator '" + generator.getName() + "' with template '" + template.getName() + "' is deprecated.\n\n"
-			+ "Would you like to upgrade this project?\n\n" + "READ CAREFULLY\tREAD CAREFULLY\n" + "READ CAREFULLY\tREAD CAREFULLY\n\n"
-			+ "Yes: Update to use new template '" + newTemplate.getName() + "' + and generator '" + newCodegen.getName()
-			+ "'. \n\tNOTE: THIS CAN NOT BE UNDONE.\n\n" + "No: Continue to use the existing generator.\n\tNew features may be unavailable.\n\n"
-			+ "Cancel: Abort generation.";
-		MessageBox dialog = new MessageBox(parent, SWT.ICON_WARNING | SWT.YES | SWT.NO | SWT.CANCEL);
-		dialog.setText("Deprecated Generator");
-		dialog.setMessage(message);
+			+ "Would you like to upgrade this project to use '" + newCodegen.getName() + "' with template '" + newTemplate.getName() + "'?";
+		MessageDialog dialog = new MessageDialog(parent, "Deprecated Generator", null, message, MessageDialog.WARNING, new String[] {"Upgrade", "Cancel", "Use Existing"}, 1);
 		switch (dialog.open()) {
-		case SWT.YES:
+		case 0:
 			ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(parent);
 			try {
 				progressDialog.run(true, true, new IRunnableWithProgress() {
@@ -264,9 +259,9 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 				return false;
 			}
 			return true;
-		case SWT.NO:
+		case 2:
 			return true;
-		case SWT.CANCEL:
+		case 1:
 		default:
 			return false;
 		}
