@@ -451,6 +451,7 @@ public final class GenerateCode {
 						}
 					} catch (TimeoutException e) {
 						if (subMonitor.isCanceled()) {
+							future.cancel(true);
 							throw new OperationCanceledException();
 						}
 					}

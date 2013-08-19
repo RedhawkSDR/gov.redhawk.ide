@@ -200,7 +200,7 @@ public abstract class AbstractCodeGenerator implements IScaComponentCodegen {
 	 * @param impl
 	 * @param implSettings
 	 * @return
-	 * @since 9.2
+	 * @since 10.0
 	 */
 	protected String getSourceDir(Implementation impl, final ImplementationSettings implSettings) {
 		return implSettings.getOutputDir() + File.separator;
