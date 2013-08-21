@@ -90,7 +90,7 @@ public class DataCourier {
 	}
 	
 	private static List<Object> toObjectList(List<Sample> list) {
-		List<Object> objList = new ArrayList<Object>();
+		List<Object> objList = new ArrayList<Object>(list.size());
 		for (Sample s : list) {
 			objList.add(s.getIndex(), s.getData());
 		}

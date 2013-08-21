@@ -10,8 +10,18 @@
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.internal.ui;
 
-import gov.redhawk.ide.snapshot.ui.handlers.SnapshotWizard;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import gov.redhawk.bulkio.util.BulkIOType;
+import gov.redhawk.ide.snapshot.capture.CorbaDataReceiver;
+import gov.redhawk.ide.snapshot.ui.BulkIOSnapshotWizard;
+import gov.redhawk.ide.snapshot.ui.SnapshotActivator;
+import gov.redhawk.ide.snapshot.ui.SnapshotJob;
+import gov.redhawk.model.sca.ScaDomainManagerRegistry;
 import gov.redhawk.model.sca.ScaUsesPort;
+import gov.redhawk.model.sca.provider.ScaItemProviderAdapterFactory;
 import gov.redhawk.sca.sad.diagram.edit.parts.UsesPortStubEditPart;
 import gov.redhawk.sca.util.PluginUtil;
 
@@ -19,8 +29,17 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.provider.IItemLabelProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -35,6 +54,8 @@ import BULKIO.dataShortHelper;
 import BULKIO.dataUlongHelper;
 import BULKIO.dataUlongLongHelper;
 import BULKIO.dataUshortHelper;
+import CF.ResourceOperations;
+import CF.ResourcePackage.StartError;
 
 public class SnapshotHandler extends AbstractHandler {
 	/**
@@ -57,17 +78,58 @@ public class SnapshotHandler extends AbstractHandler {
 			IStructuredSelection ss = (IStructuredSelection) selection;
 
 			Object obj = ss.getFirstElement();
-			if (obj instanceof ScaUsesPort && checkPort((ScaUsesPort) obj)) {
-				SnapshotWizard wizard = new SnapshotWizard((ScaUsesPort) obj);
+			ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, obj);
+			if (port != null) {
+				if (port.eContainer() instanceof ResourceOperations) {
+					final ResourceOperations lf = (ResourceOperations) port.eContainer();
+					if (!lf.started()) {
+						MessageDialog dialog = new MessageDialog(HandlerUtil.getActiveShell(event), "Start Resource", null,
+							"The ports container is not started would you like to start it now?", MessageDialog.QUESTION, new String[] { "Yes", "No" }, 0);
+						if (dialog.open() == Window.OK) {
+							Job job = new Job("Starting...") {
+
+								@Override
+								protected IStatus run(IProgressMonitor monitor) {
+									try {
+										lf.start();
+									} catch (StartError e) {
+										return new Status(Status.ERROR, SnapshotActivator.PLUGIN_ID, "Failed to start resource", e);
+									}
+									return Status.OK_STATUS;
+								}
+
+							};
+							job.schedule();
+						}
+					}
+				}
+				BulkIOSnapshotWizard wizard = new BulkIOSnapshotWizard();
 				WizardDialog dialog = new WizardDialog(shell, wizard);
-				dialog.open();
-			} else if (obj instanceof UsesPortStubEditPart) {
-				//get ScaUsesPort from UsesPortStubEditPart and continue
-				ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, (UsesPortStubEditPart) obj);
-				if (this.checkPort(port)) {
-					SnapshotWizard wizard = new SnapshotWizard(port);
-					WizardDialog dialog = new WizardDialog(shell, wizard);
-					dialog.open();
+				if (dialog.open() == Window.OK) {
+					CorbaDataReceiver receiver = wizard.getCorbaReceiver();
+					receiver.setPort(port);
+					receiver.getDataWriter().getSettings().setType(BulkIOType.getType(port.getRepid()));
+
+					final ScaItemProviderAdapterFactory factory = new ScaItemProviderAdapterFactory();
+					final StringBuilder tooltip = new StringBuilder();
+					List<String> tmpList = new LinkedList<String>();
+					for (EObject eObj = port; !(eObj instanceof ScaDomainManagerRegistry) && eObj != null; eObj = eObj.eContainer()) {
+						Adapter adapter = factory.adapt(eObj, IItemLabelProvider.class);
+						if (adapter instanceof IItemLabelProvider) {
+							IItemLabelProvider lp = (IItemLabelProvider) adapter;
+							tmpList.add(0, lp.getText(eObj));
+						}
+					}
+					for (Iterator<String> i = tmpList.iterator(); i.hasNext();) {
+						tooltip.append(i.next());
+						if (i.hasNext()) {
+							tooltip.append(" -> ");
+						}
+					}
+					factory.dispose();
+
+					SnapshotJob job = new SnapshotJob("Snapshot of " + tooltip, receiver);
+					job.schedule();
 				}
 			}
 		}
@@ -76,11 +138,10 @@ public class SnapshotHandler extends AbstractHandler {
 
 	private boolean checkPort(ScaUsesPort port) {
 		final String portRepId = port.getRepid();
-		if (portRepId.equals(dataLongLongHelper.id())     || portRepId.equals(dataUlongLongHelper.id())
-				|| portRepId.equals(dataFloatHelper.id()) || portRepId.equals(dataDoubleHelper.id()) 
-				|| portRepId.equals(dataShortHelper.id()) || portRepId.equals(dataUshortHelper.id())
-				|| portRepId.equals(dataLongHelper.id())  || portRepId.equals(dataUlongHelper.id())
-				|| portRepId.equals(dataOctetHelper.id()) || portRepId.equals(dataCharHelper.id())) {
+		if (portRepId.equals(dataLongLongHelper.id()) || portRepId.equals(dataUlongLongHelper.id()) || portRepId.equals(dataFloatHelper.id())
+			|| portRepId.equals(dataDoubleHelper.id()) || portRepId.equals(dataShortHelper.id()) || portRepId.equals(dataUshortHelper.id())
+			|| portRepId.equals(dataLongHelper.id()) || portRepId.equals(dataUlongHelper.id()) || portRepId.equals(dataOctetHelper.id())
+			|| portRepId.equals(dataCharHelper.id())) {
 			return true;
 		}
 		return false;

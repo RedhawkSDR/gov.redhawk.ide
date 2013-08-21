@@ -15,18 +15,17 @@ import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.datalist.ui.DataListPlugin;
 import gov.redhawk.datalist.ui.internal.DataBuffer;
 import gov.redhawk.datalist.ui.internal.DataCollectionSettings;
+import gov.redhawk.datalist.ui.internal.DataCourierReceiver;
 import gov.redhawk.datalist.ui.internal.IDataBufferListener;
 import gov.redhawk.datalist.ui.internal.IFullListener;
 import gov.redhawk.datalist.ui.internal.Sample;
-import gov.redhawk.ide.snapshot.ui.handlers.SnapshotWizard;
+import gov.redhawk.ide.snapshot.ui.SnapshotJob;
+import gov.redhawk.ide.snapshot.ui.SnapshotWizard;
 import gov.redhawk.model.sca.ScaUsesPort;
 
 import java.lang.reflect.Array;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -54,7 +53,6 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import BULKIO.PrecisionUTCTime;
-import BULKIO.StreamSRI;
 
 public class DataListView extends ViewPart {
 	/**
@@ -261,9 +259,14 @@ public class DataListView extends ViewPart {
 		snapshotButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				SnapshotWizard wizard = DataListView.instantiateWizard(dataCourier.getObjectData(), dataCourier.getType(), buffer.getPort(), buffer.getSri());
+				SnapshotWizard wizard = new SnapshotWizard();
+
 				WizardDialog dialog = new WizardDialog(parent.getShell(), wizard);
 				dialog.open();
+				DataCourierReceiver receiver = new DataCourierReceiver(dataCourier);
+				receiver.setDataWriter(wizard.getDataWriter());
+				SnapshotJob job = new SnapshotJob("Data list snapshot", receiver);
+				job.schedule();
 			}
 		});
 
@@ -454,34 +457,6 @@ public class DataListView extends ViewPart {
 			if (this.viewer != null) {
 				this.viewer.getControl().setEnabled(false);
 			}
-		}
-	}
-
-	public static SnapshotWizard instantiateWizard(List<Object> list, BulkIOType type, ScaUsesPort port, StreamSRI sri) {
-		Assert.isNotNull(list);
-		List<Object> l = new ArrayList<Object>();
-		if (!list.isEmpty() && list.get(0).getClass().isArray()) {
-			for (Object o : list) {
-				for (int i = 0; i < Array.getLength(o); i++) {
-					l.add(Array.get(o, i));
-				}
-			}
-		} else {
-			l = list;
-		}
-		switch (type) {
-		case DOUBLE:
-			return new SnapshotWizard(port, l.toArray(new Double[0]), sri);
-		case CHAR:
-			return new SnapshotWizard(port, l.toArray(new Character[0]), sri);
-		case FLOAT:
-			return new SnapshotWizard(port, l.toArray(new Float[0]), sri);
-		case LONG:
-			return new SnapshotWizard(port, l.toArray(new Long[0]), sri);
-		case SHORT:
-			return new SnapshotWizard(port, l.toArray(new Short[0]), sri);
-		default:
-			throw new IllegalArgumentException("Capture type is unsupported in Data List.");
 		}
 	}
 

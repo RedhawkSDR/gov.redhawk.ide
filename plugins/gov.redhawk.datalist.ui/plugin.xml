@@ -48,10 +48,15 @@
                   checkEnabled="false">
                <iterate
                      ifEmpty="false"
-                     operator="and">
+                     operator="or">
                   <adapt
                         type="gov.redhawk.model.sca.ScaUsesPort">
                   </adapt>
+                  <test
+                        forcePluginActivation="true"
+                        property="gov.redhawk.ui.port.interface"
+                        value="IDL:BULKIO/data.*">
+                  </test>
                </iterate>
             </visibleWhen>
          </command>

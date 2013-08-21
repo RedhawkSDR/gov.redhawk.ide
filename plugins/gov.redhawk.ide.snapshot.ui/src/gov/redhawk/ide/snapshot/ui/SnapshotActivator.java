@@ -10,6 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.ui;
 
+import gov.redhawk.ide.snapshot.writer.IDataWriterRegistry;
+import gov.redhawk.ide.snapshot.writer.internal.DataWriterRegistry;
+
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -55,6 +58,10 @@ public class SnapshotActivator extends AbstractUIPlugin {
 	 */
 	public static SnapshotActivator getDefault() {
 		return plugin;
+	}
+	
+	public static IDataWriterRegistry getDataReceiverRegistry() {
+		return DataWriterRegistry.INSTANCE;
 	}
 
 }

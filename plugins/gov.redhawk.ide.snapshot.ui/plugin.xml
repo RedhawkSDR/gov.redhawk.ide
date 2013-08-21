@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="datareceiver" name="DataReceiver" schema="schema/datareceiver.exsd"/>
+   <extension-point id="writers" name="Writers" schema="schema/writers.exsd"/>
    <extension
          point="org.eclipse.ui.commands">
       <command
@@ -19,13 +19,19 @@
                commandId="gov.redhawk.ide.snapshot.ui.commands.snapshot"
                id="gov.redhawk.ide.snapshot.ui.menus.snapshot"
                mnemonic="S">
-            <visibleWhen
+           <visibleWhen
                   checkEnabled="false">
                <iterate
-                     operator="and">
+                     ifEmpty="false"
+                     operator="or">
                   <adapt
                         type="gov.redhawk.model.sca.ScaUsesPort">
                   </adapt>
+                  <test
+                        forcePluginActivation="true"
+                        property="gov.redhawk.ui.port.interface"
+                        value="IDL:BULKIO/data.*">
+                  </test>
                </iterate>
             </visibleWhen>
          </command>
@@ -47,20 +53,21 @@
             class="gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.util.SnapshotMetadataResourceFactoryImpl"/>
    </extension>
    <extension
-         point="gov.redhawk.ide.snapshot.ui.datareceiver">
-          <DataReceiver
-            class="gov.redhawk.ide.snapshot.datareceiver.bin.BinDataReceiver"
-            id="gov.redhawk.ide.snapshot.datareceiver.bin.BinDataReceiver"
+         point="gov.redhawk.ide.snapshot.ui.writers">
+      <writer
+            class="gov.redhawk.ide.snapshot.writer.internal.BinXMLDataWriter"
+            id="gov.redhawk.ide.snapshot.writer.BinXMLDataWriter"
             name="Binary files (.bin and .xml)">
-      </DataReceiver>
-      <DataReceiver
-            class="gov.redhawk.ide.snapshot.datareceiver.bin.BinSriDataReceiver"
-            id="gov.redhawk.ide.snapshot.datareceiver.bin.BinSriDataReceiver"
-            name="Binary files (.bin and .sri)"></DataReceiver>
-      <DataReceiver
-            class="gov.redhawk.ide.snapshot.datareceiver.blue.BlueDataReceiver"
-            id="gov.redhawk.ide.snapshot.datareceiver.blue.BlueDataReceiver"
+      </writer>
+      <writer
+            class="gov.redhawk.ide.snapshot.writer.internal.BinSriDataWriter"
+            id="gov.redhawk.ide.snapshot.writer.BinSriDataWriter"
+            name="Binary files (.bin and .sri)">
+      </writer>
+      <writer
+            class="gov.redhawk.ide.snapshot.writer.internal.BlueDataWriter"
+            id="gov.redhawk.ide.snapshot.writer.BlueDataWriter"
             name="Midas BLUE file (.tmp)">
-      </DataReceiver>
+      </writer>
    </extension>
 </plugin>
