@@ -332,7 +332,7 @@ public class DataReaderComposite extends Composite {
 
 	private ControlDecoration createControlDecoration(Control control, Label label) {
 		ControlDecoration controlDecoration = new ControlDecoration(control, SWT.LEFT | SWT.TOP);
-		controlDecoration.setDescriptionText(label.getText());
+		controlDecoration.setDescriptionText(label.getText() + " Not a valid entry.  Data must be numeric.");
 		FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
 		controlDecoration.setImage(fieldDecoration.getImage());
 		return controlDecoration;
@@ -348,7 +348,6 @@ public class DataReaderComposite extends Composite {
 					Double.parseDouble(textInput);
 					decoration.hide();
 				} catch (NumberFormatException ex) {
-					decoration.setDescriptionText(decoration.getDescriptionText() + " Not a valid number");
 					decoration.show();
 				}
 			}
