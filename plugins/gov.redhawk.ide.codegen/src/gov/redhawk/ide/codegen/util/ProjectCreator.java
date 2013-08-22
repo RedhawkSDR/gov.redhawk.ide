@@ -130,7 +130,7 @@ public abstract class ProjectCreator {
 	 * @param filters filter for file types matching the desired file
 	 * @return Path for the file found, specified in a dialog or null if no file
 	 *         was found
-	 * @since 9.2
+	 * @since 10.0
 	 */
 	public static IPath findLocalFile(final IPath spdFile, final IPath localfilename, final String[] filters) {
 		IPath localFile = spdFile.removeLastSegments(1).append(localfilename);
@@ -491,7 +491,7 @@ public abstract class ProjectCreator {
 	 * @param project
 	 * @param impl
 	 * @param command null if the implementation isn't being added within an editor context
-	 * @since 9.2
+	 * @since 10.0
 	 */
 	public static void addImplementation(final IProject project, final String spdName, final Implementation impl, final ImplementationSettings settings, final IProgressMonitor monitor) 
 	throws CoreException {
