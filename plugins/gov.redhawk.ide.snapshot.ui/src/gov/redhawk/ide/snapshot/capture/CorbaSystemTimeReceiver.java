@@ -18,6 +18,8 @@ import nxm.sys.lib.Time;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import BULKIO.PrecisionUTCTime;
+
 /**
  * 
  */
@@ -43,11 +45,28 @@ public class CorbaSystemTimeReceiver extends CorbaDataReceiver {
 	}
 	
 	@Override
-	protected void processSamples(IProgressMonitor monitor) {
-		super.processSamples(monitor);
+	protected void postPushPacket(int samplesProcessed, PrecisionUTCTime time) {
+		super.postPushPacket(samplesProcessed, time);
 		if (Time.currentTime().diff(endTime) >= 0) {
 			setProcessing(false);
 		}
+	}
+	
+	@Override
+	protected void processSamples(IProgressMonitor monitor) {
+		int work = (int) Math.ceil(timeInSeconds);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, "Capturing Samples...", work);
+		setProcessing(true);
+		while (isProcessing() && !monitor.isCanceled()) {
+			try {
+				Thread.sleep(1000);
+				subMonitor.worked(1);
+			} catch (InterruptedException e) {
+				// PASS
+			}
+		}
+		subMonitor.done();
+		
 	}
 
 }

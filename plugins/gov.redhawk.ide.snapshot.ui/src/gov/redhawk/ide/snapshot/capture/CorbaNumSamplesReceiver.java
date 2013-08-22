@@ -38,7 +38,7 @@ public class CorbaNumSamplesReceiver extends CorbaDataReceiver {
 			subMonitor = SubMonitor.convert(monitor, "Capturing Samples...", (int) samples);
 		}
 		setProcessing(true);
-		while (isProcessing() && monitor.isCanceled()) {
+		while (isProcessing() && !monitor.isCanceled()) {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {

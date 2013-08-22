@@ -11,7 +11,7 @@
 
 package gov.redhawk.datalist.ui.internal;
 
-import gov.redhawk.bulkio.util.AbstractBulkIOPort;
+import gov.redhawk.bulkio.util.AbstractUberBulkIOPort;
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.bulkio.util.BulkIOUtilActivator;
 import gov.redhawk.datalist.ui.views.OptionsComposite.CaptureMethod;
@@ -32,19 +32,8 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
-import BULKIO.dataCharOperations;
-import BULKIO.dataDoubleOperations;
-import BULKIO.dataFloatOperations;
-import BULKIO.dataLongLongOperations;
-import BULKIO.dataLongOperations;
-import BULKIO.dataOctetOperations;
-import BULKIO.dataShortOperations;
-import BULKIO.dataUlongLongOperations;
-import BULKIO.dataUlongOperations;
-import BULKIO.dataUshortOperations;
 
-public class DataBuffer extends AbstractBulkIOPort implements dataDoubleOperations, dataFloatOperations, dataLongLongOperations, dataCharOperations,
-		dataLongOperations, dataOctetOperations, dataShortOperations, dataUlongLongOperations, dataUlongOperations, dataUshortOperations {
+public class DataBuffer extends AbstractUberBulkIOPort {
 
 	private final List<Sample> dataBuffer = new CopyOnWriteArrayList<Sample>();
 	private int dimension = 1;
@@ -317,14 +306,6 @@ public class DataBuffer extends AbstractBulkIOPort implements dataDoubleOperatio
 	@Override
 	public void pushPacket(double[] data, PrecisionUTCTime time, boolean eos, String streamID) {
 		pushPacket((Object) data, time, eos, streamID);
-	}
-
-	public StreamSRI getSri() {
-		StreamSRI[] sris = activeSRIs();
-		if (sris != null && sris.length > 0) {
-			return sris[0];
-		}
-		return null;
 	}
 
 }

@@ -263,7 +263,7 @@ public class DataListView extends ViewPart {
 
 				WizardDialog dialog = new WizardDialog(parent.getShell(), wizard);
 				dialog.open();
-				DataCourierReceiver receiver = new DataCourierReceiver(dataCourier);
+				DataCourierReceiver receiver = new DataCourierReceiver(dataCourier, buffer.getStreamSRI());
 				receiver.setDataWriter(wizard.getDataWriter());
 				SnapshotJob job = new SnapshotJob("Data list snapshot", receiver);
 				job.schedule();

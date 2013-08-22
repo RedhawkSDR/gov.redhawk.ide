@@ -13,14 +13,9 @@ package gov.redhawk.ide.snapshot.ui;
 import gov.redhawk.ide.snapshot.writer.IDataWriterDesc;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoObservables;
-import org.eclipse.core.databinding.validation.IValidator;
-import org.eclipse.core.databinding.validation.ValidationStatus;
-import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin; //added by Ryan on 6-18
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -112,7 +107,7 @@ public class SnapshotWizardPage extends WizardPage {
 		fileTypeCombo.setContentProvider(new ArrayContentProvider());
 		IDataWriterDesc[] input = SnapshotActivator.getDataReceiverRegistry().getRecieverDescs();
 		fileTypeCombo.setInput(input);
-		context.bindValue(ViewerProperties.singleSelection().observeDelayed(500, fileTypeCombo), PojoObservables.observeValue(settings, "dataWriter"));
+		context.bindValue(ViewerProperties.singleSelection().observe(fileTypeCombo), BeansObservables.observeValue(settings, "dataWriter"));
 		if (input.length > 0) {
 			fileTypeCombo.setSelection(new StructuredSelection(input[0]));
 		}
@@ -120,12 +115,12 @@ public class SnapshotWizardPage extends WizardPage {
 		//add check box to see if the user wants to save to their workspace
 		final Button workspaceCheck = new Button(parent, SWT.CHECK);
 		workspaceCheck.setText("Save to Workspace");
-		context.bindValue(WidgetProperties.selection().observeDelayed(500, workspaceCheck), PojoObservables.observeValue(settings, "saveToWorkspace"));
+		context.bindValue(WidgetProperties.selection().observe(workspaceCheck), BeansObservables.observeValue(settings, "saveToWorkspace"));
 
 		// add check box to see if user wants to confirm overwrite of existing file(s)
 		final Button confirmOverwrite = new Button(parent, SWT.CHECK);
 		confirmOverwrite.setText("Confirm overwrite");
-		context.bindValue(WidgetProperties.selection().observeDelayed(500, confirmOverwrite), PojoObservables.observeValue(settings, "confirmOverwrite"));
+		context.bindValue(WidgetProperties.selection().observe(confirmOverwrite), BeansObservables.observeValue(settings, "confirmOverwrite"));
 
 		//region to hold the different pages for saving to the workspace or the file system
 		final Group fileFinder = new Group(parent, SWT.SHADOW_ETCHED_IN);
@@ -176,7 +171,7 @@ public class SnapshotWizardPage extends WizardPage {
 		final Text fileNameTxt = new Text(searchFileSystem, SWT.BORDER);
 		fileNameTxt.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
 
-		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(500, fileNameTxt), PojoObservables.observeValue(settings, "fileName"));
+		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(500, fileNameTxt), BeansObservables.observeValue(settings, "fileName"));
 		// the browse button
 		Button button = new Button(searchFileSystem, SWT.PUSH);
 		button.setText("Browse");
@@ -202,11 +197,11 @@ public class SnapshotWizardPage extends WizardPage {
 		fileNameLbl.setText("File Name:");
 		final Text fileNameTxt = new Text(searchWorkbench, SWT.BORDER);
 
-		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(500, fileNameTxt), PojoObservables.observeValue(settings, "path"));
+		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(500, fileNameTxt), BeansObservables.observeValue(settings, "path"));
 		fileNameTxt.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
 
 		//create tree with which to navigate the workbench file system
-		final TreeViewer workbenchTree = new TreeViewer(searchWorkbench, SWT.BORDER | SWT.V_SCROLL);
+		final TreeViewer workbenchTree = new TreeViewer(searchWorkbench, SWT.BORDER | SWT.V_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION);
 		WorkbenchContentProvider contentProvider = new WorkbenchContentProvider();
 		workbenchTree.setContentProvider(contentProvider);
 		final WorkbenchLabelProvider labels = new WorkbenchLabelProvider();
@@ -214,19 +209,7 @@ public class SnapshotWizardPage extends WizardPage {
 		workbenchTree.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		workbenchTree.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(3, 1).hint(SWT.DEFAULT, 150).create());
 
-		UpdateValueStrategy strategy = new UpdateValueStrategy();
-		strategy.setBeforeSetValidator(new IValidator() {
-
-			@Override
-			public IStatus validate(Object value) {
-				if (value instanceof IContainer) {
-					return ValidationStatus.ok();
-				} else {
-					return ValidationStatus.error("Must select a project or folder.", null);
-				}
-			}
-		});
-		context.bindValue(ViewerProperties.singleSelection().observe(workbenchTree), PojoObservables.observeValue(settings, "container"), strategy, null);
+		context.bindValue(ViewerProperties.singleSelection().observe(workbenchTree), BeansObservables.observeValue(settings, "resource"));
 		Object[] elements = contentProvider.getElements(ResourcesPlugin.getWorkspace().getRoot());
 		if (elements.length > 0) {
 			workbenchTree.setSelection(new StructuredSelection(elements[0]));

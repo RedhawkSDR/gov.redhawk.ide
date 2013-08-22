@@ -18,7 +18,6 @@ import java.io.File;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
@@ -40,11 +39,11 @@ public class SnapshotWizard extends Wizard {
 
 		addPage(snapshotPage);
 	}
-	
+
 	protected void setSnapshotPage(SnapshotWizardPage snapshotWizardPage) {
 		this.snapshotPage = snapshotWizardPage;
 	}
-	
+
 	public SnapshotWizardPage getSnapshotPage() {
 		return snapshotPage;
 	}
@@ -60,13 +59,13 @@ public class SnapshotWizard extends Wizard {
 		try {
 			IDataWriterSettings writerSettings = desc.createWriterSettings();
 			if (settings.isSaveToWorkspace()) {
-				writerSettings.setDestination(settings.getContainer().getFile(new Path(settings.getPath())));
+				writerSettings.setDestination(settings.getIFile());
 			} else {
 				writerSettings.setDestination(settings.getDestinationFile());
 			}
 			this.dataWriter = desc.createWriter();
 			this.dataWriter.setSettings(writerSettings);
-			
+
 			final Shell parent = this.getShell().getParent().getShell();
 			if (settings.isConfirmOverwrite() && checkForSimilarFiles()) {
 				MessageBox override = new MessageBox(parent, SWT.ICON_QUESTION | SWT.YES | SWT.NO);

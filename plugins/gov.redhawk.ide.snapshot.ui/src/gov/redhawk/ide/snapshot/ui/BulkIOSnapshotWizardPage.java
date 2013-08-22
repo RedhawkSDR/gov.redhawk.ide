@@ -10,10 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.ui;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
@@ -40,6 +43,9 @@ import org.eclipse.swt.widgets.Text;
 public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 
 	private BulkIOSnapshotSettings bulkIOsettings = new BulkIOSnapshotSettings();
+	private Text samplesTxt;
+	private Label unitsLabel;
+	private Binding samplesBinding;
 
 	public BulkIOSnapshotWizardPage(String pageName, ImageDescriptor titleImage) {
 		super(pageName, "Port Snapshot", titleImage);
@@ -63,9 +69,9 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 		captureCombo.setLabelProvider(new LabelProvider());
 		captureCombo.setContentProvider(new ArrayContentProvider());
 		captureCombo.setInput(CaptureMethod.values());
-		context.bindValue(ViewerProperties.singleSelection().observeDelayed(500, captureCombo), PojoObservables.observeValue(bulkIOsettings, "captureMethod"));
+		context.bindValue(ViewerProperties.singleSelection().observe(captureCombo), BeansObservables.observeValue(bulkIOsettings, "captureMethod"));
 
-		final Text samplesTxt = new Text(parent, SWT.BORDER);
+		samplesTxt = new Text(parent, SWT.BORDER);
 		samplesTxt.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
 		//ensure that invalid number of samples are caught and displayed
 		UpdateValueStrategy validateSamples = new UpdateValueStrategy();
@@ -95,10 +101,10 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 				}
 			}
 		});
-		final Binding samplesBinding = context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(500, samplesTxt),
-			PojoObservables.observeValue(bulkIOsettings, "samples"), validateSamples, null);
+		samplesBinding = context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(500, samplesTxt),
+			BeansObservables.observeValue(bulkIOsettings, "samples"), validateSamples, null);
 
-		final Label unitsLabel = new Label(parent, SWT.None);
+		unitsLabel = new Label(parent, SWT.None);
 		unitsLabel.setText("");
 		GridData unitsLayout = new GridData();
 		unitsLayout.widthHint = 20;
@@ -108,28 +114,55 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				CaptureMethod method = bulkIOsettings.getCaptureMethod();
-				if (method == CaptureMethod.INDEFINITELY) {
-					samplesTxt.setText("1");
-					unitsLabel.setText("");
-					samplesBinding.updateTargetToModel();
-					samplesTxt.setEnabled(false);
-					return;
-				} else if (method == CaptureMethod.CLOCK_TIME || method == CaptureMethod.SAMPLE_TIME) {
-					unitsLabel.setText("(s)");
-					samplesTxt.setEnabled(true);
-					samplesBinding.updateTargetToModel();
-				} else {
-					unitsLabel.setText("");
-					samplesTxt.setEnabled(true);
-					samplesBinding.updateTargetToModel();
-				}
+				updateControls(method);
+				
 			}
 		});
 
 		createOutputControls(parent);
+		
+		bulkIOsettings.addPropertyChangeListener(new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getPropertyName().equals("captureMethod")) {
+					updateControls((CaptureMethod) evt.getNewValue());
+				}
+			}
+		});
 
 		setPageComplete(false);
 		setPageSupport(WizardPageSupport.create(this, context));
 		setControl(parent);
+	}
+
+	protected void updateControls(CaptureMethod method) {
+		switch(method) {
+		case INDEFINITELY:
+			samplesTxt.setText("-1");
+			unitsLabel.setText("");
+			samplesBinding.updateTargetToModel();
+			samplesTxt.setEnabled(false);
+			break;
+		case CLOCK_TIME:
+		case SAMPLE_TIME:
+			if (bulkIOsettings.getSamples() < 0) {
+				samplesTxt.setText("1024");
+			}
+			unitsLabel.setText("(s)");
+			samplesTxt.setEnabled(true);
+			samplesBinding.updateTargetToModel();
+			break;
+		case NUM_SAMPLES:
+			if (bulkIOsettings.getSamples() < 0) {
+				samplesTxt.setText("1024");
+			}
+			unitsLabel.setText("");
+			samplesTxt.setEnabled(true);
+			samplesBinding.updateTargetToModel();
+			break;
+		default:
+			break;
+		}
 	}
 }

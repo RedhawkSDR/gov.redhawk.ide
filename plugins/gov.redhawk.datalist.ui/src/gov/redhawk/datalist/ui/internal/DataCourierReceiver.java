@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import BULKIO.PrecisionUTCTime;
+import BULKIO.StreamSRI;
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.datalist.ui.DataListPlugin;
 import gov.redhawk.datalist.ui.views.DataCourier;
@@ -28,9 +29,11 @@ import gov.redhawk.ide.snapshot.writer.IDataWriterSettings;
 public class DataCourierReceiver implements IDataReceiver {
 
 	private DataCourier courier;
+	private StreamSRI sri;
 
-	public DataCourierReceiver(DataCourier courier) {
+	public DataCourierReceiver(DataCourier courier, StreamSRI sri) {
 		this.courier = courier;
+		this.sri = sri;
 	}
 
 	private IDataWriter writer;
@@ -64,6 +67,7 @@ public class DataCourierReceiver implements IDataReceiver {
 			}
 		}
 		try {
+			writer.pushSRI(sri);
 			writer.open();
 			try {
 				switch (type) {

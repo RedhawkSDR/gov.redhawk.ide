@@ -10,6 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.ui;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 
 /**
  * 
@@ -19,13 +22,16 @@ public class BulkIOSnapshotSettings {
 	private double samples = 1024;
 	/** How the samples are to be captured. */
 	private CaptureMethod captureMethod = CaptureMethod.NUM_SAMPLES;
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	public double getSamples() {
 		return samples;
 	}
 
 	public void setSamples(double samples) {
+		double oldValue = this.samples;
 		this.samples = samples;
+		pcs.firePropertyChange("samples", oldValue, samples);
 	}
 	
 	public CaptureMethod getCaptureMethod() {
@@ -33,7 +39,27 @@ public class BulkIOSnapshotSettings {
 	}
 	
 	public void setCaptureMethod(CaptureMethod captureMethod) {
+		CaptureMethod oldValue = this.captureMethod;
 		this.captureMethod = captureMethod;
+		pcs.firePropertyChange("captureMethod", oldValue, captureMethod);
 	}
+
+	/**
+	 * @param listener
+	 * @see java.beans.PropertyChangeSupport#addPropertyChangeListener(java.beans.PropertyChangeListener)
+	 */
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+
+	/**
+	 * @param listener
+	 * @see java.beans.PropertyChangeSupport#removePropertyChangeListener(java.beans.PropertyChangeListener)
+	 */
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
+	}
+	
+	
 
 }
