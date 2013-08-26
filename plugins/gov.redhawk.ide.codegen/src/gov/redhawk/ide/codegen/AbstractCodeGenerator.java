@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.CRC32;
 
 import mil.jpeojtrs.sca.spd.Code;
@@ -46,8 +47,6 @@ public abstract class AbstractCodeGenerator implements IScaComponentCodegen {
 
 	public abstract IStatus generate(ImplementationSettings implSettings, Implementation impl, PrintStream out, PrintStream err, IProgressMonitor monitor, // SUPPRESS CHECKSTYLE NumParameters
 	        String[] generateFiles, boolean shouldGenerate, List<FileToCRCMap> crcMap);
-
-	public abstract HashMap<String, Boolean> getGeneratedFiles(ImplementationSettings implSettings, SoftPkg softpkg) throws CoreException;
 
 	/**
 	 * @since 9.0

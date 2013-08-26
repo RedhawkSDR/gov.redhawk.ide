@@ -10,18 +10,25 @@
  *******************************************************************************/
 package gov.redhawk.ide.codegen.ui.internal;
 
+import gov.redhawk.ide.codegen.FileStatus;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -39,25 +46,49 @@ public class GenerateFilesDialog extends Dialog {
 	 * The list of all files that can be generated and the default generation
 	 * state
 	 */
-	private Map<String, Boolean> generateFiles = null;
-	/** The initial list of selected files */
-	private List<String> defaultSelection = new ArrayList<String>();
-	/** The list of files to be generated */
-	private List<String> filesToGenerate = null;
+	private final Set<FileStatus> fileStatus;
 	/** The Checkbox Tree that handles the input */
-	private CheckboxTreeViewer v = null;
+	private CheckboxTreeViewer treeViewer;
+	private boolean asked = false;
+	private boolean showUserFiles = false;
 
-	private boolean generateAll;
+	private static class FileStatusContentProvider implements ITreeContentProvider {
 
-	public GenerateFilesDialog(final Shell parentShell, final Map<String, Boolean> generateFiles) {
-		super(parentShell);
-		this.generateFiles = generateFiles;
-		for (String fileName : this.generateFiles.keySet()) {
-			if (this.generateFiles.get(fileName)) {
-				defaultSelection.add(fileName);
-			}
+		@Override
+		public void dispose() {
+
 		}
-		this.filesToGenerate = new ArrayList<String>();
+
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+
+		}
+
+		@Override
+		public Object[] getElements(Object inputElement) {
+			return ((Set< ? >) inputElement).toArray();
+		}
+
+		@Override
+		public Object[] getChildren(Object parentElement) {
+			return new Object[0];
+		}
+
+		@Override
+		public Object getParent(Object element) {
+			return null;
+		}
+
+		@Override
+		public boolean hasChildren(Object element) {
+			return false;
+		}
+
+	}
+
+	public GenerateFilesDialog(final Shell parentShell, final Set<FileStatus> generateFiles) {
+		super(parentShell);
+		this.fileStatus = generateFiles;
 	}
 
 	@Override
@@ -81,137 +112,162 @@ public class GenerateFilesDialog extends Dialog {
 		final Label label = new Label(container, SWT.NONE);
 		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 		label.setText("The following generated files have had their contents modified since they were generated.\n"
-		        + "Selected files will be re-generated and their current contents will be lost.");
+			+ "Selected files will be re-generated and their current contents will be lost.");
 
-		final Button button = new Button(container, SWT.CHECK);
-		button.setText("Generate All Files");
-		button.setToolTipText("Checking this will cause all files to be regenerated.");
-		button.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1));
-		button.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(final Event event) {
-				// Disable the tree if the All button is selected
-				GenerateFilesDialog.this.v.getControl().setEnabled(!button.getSelection());
+		this.treeViewer = new CheckboxTreeViewer(container, SWT.SINGLE | SWT.FULL_SELECTION | SWT.H_SCROLL);
+		this.treeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+		this.treeViewer.setContentProvider(new FileStatusContentProvider());
+		this.treeViewer.setLabelProvider(new LabelProvider());
+		this.treeViewer.getTree().setLinesVisible(true);
+		this.treeViewer.getTree().setHeaderVisible(false);
+		this.treeViewer.setCheckStateProvider(new ICheckStateProvider() {
 
-				// If the All button is selected, save the currently selected
-				// files, then enable all of them
-				generateAll = button.getSelection();
-				if (button.getSelection()) {
-					GenerateFilesDialog.this.filesToGenerate.clear();
-					for (final Object fileName : GenerateFilesDialog.this.v.getCheckedElements()) {
-						GenerateFilesDialog.this.filesToGenerate.add((String) fileName);
-					}
+			@Override
+			public boolean isGrayed(Object element) {
+				return false;
+			}
 
-					GenerateFilesDialog.this.v.setCheckedElements(GenerateFilesDialog.this.generateFiles.keySet().toArray(new String[0]));
-
-					// Otherwise, restore the previously selected files
-				} else {
-					GenerateFilesDialog.this.v.setCheckedElements(GenerateFilesDialog.this.filesToGenerate.toArray(new String[0]));
+			@Override
+			public boolean isChecked(Object element) {
+				if (element instanceof FileStatus) {
+					return ((FileStatus) element).isDoIt();
 				}
+				return false;
+			}
+		});
+		this.treeViewer.addCheckStateListener(new ICheckStateListener() {
+
+			@Override
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				FileStatus s = (FileStatus) event.getElement();
+				if (checkForUserFiles()) {
+					s.setDoIt(event.getChecked());
+				}
+				treeViewer.refresh();
+			}
+		});
+		this.treeViewer.setInput(this.fileStatus);
+		this.treeViewer.addFilter(new ViewerFilter() {
+
+			@Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (((FileStatus) element).getType() == FileStatus.Type.USER) {
+					return showUserFiles;
+				}
+				return true;
 			}
 		});
 
-		this.v = new CheckboxTreeViewer(container);
-		this.v.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
-		this.v.setContentProvider(new MyContentProvider());
-		this.v.setLabelProvider(new LabelProvider());
-		this.v.getTree().setLinesVisible(true);
-		this.v.getTree().setHeaderVisible(false);
-
-		// Get a list of files that are currently checked
-		for (final Map.Entry<String, Boolean> entry : this.generateFiles.entrySet()) {
-			if (entry.getValue()) {
-				this.filesToGenerate.add(entry.getKey());
-			}
-		}
-
-		// Set the tree input, check the boxes later
-		final List<String> vals = Arrays.asList(this.generateFiles.keySet().toArray(new String[0]));
-		Collections.sort(vals);
-		this.v.setInput(vals.toArray(new String[0]));
-
-		selectAllFiles();
-
-		final Composite panel = new Composite(container, SWT.NO_FOCUS);
+		Composite panel = new Composite(container, SWT.NO_FOCUS);
 		panel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 2, 1));
 		panel.setLayout(new RowLayout());
 
-		final Button clear = new Button(panel, SWT.PUSH);
-		clear.setText("Deselect All Files");
-		clear.setToolTipText("Clicking this will deselect all files");
-		clear.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(final Event event) {
-				GenerateFilesDialog.this.deselectAllFiles();
-			}
-		});
-
 		final Button restore = new Button(panel, SWT.PUSH);
-		restore.setText("Restore Defaults");
+		restore.setText("Defaults");
 		restore.setToolTipText("Clicking this will restore the selection to the default set of files");
 		restore.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(final Event event) {
-				GenerateFilesDialog.this.selectAllFiles();
+				selectDefaults();
 			}
 		});
 
-		// Enable the clear and restore buttons based on the setting of the "Generate All" checkbox.
-		button.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				boolean enabled = !button.getSelection();
-				clear.setEnabled(enabled);
-				restore.setEnabled(enabled);
+		final Button selectAll = new Button(panel, SWT.PUSH);
+		selectAll.setText("Select All");
+		selectAll.setToolTipText("Clicking this will select all files");
+		selectAll.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(final Event event) {
+				selectAllFiles();
+			}
+		});
+
+		final Button clear = new Button(panel, SWT.PUSH);
+		clear.setText("Clear");
+		clear.setToolTipText("Clicking this will deselect all files");
+		clear.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(final Event event) {
+				GenerateFilesDialog.this.clear();
+			}
+		});
+		
+		panel = new Composite(container, SWT.NO_FOCUS);
+		panel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 2, 1));
+		panel.setLayout(new RowLayout());
+		Button showUserButton = new Button(panel, SWT.CHECK);
+		showUserButton.setText("Show User Files");
+		showUserButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				showUserFiles = !showUserFiles;
+				treeViewer.refresh();
 			}
 		});
 
 		return container;
 	}
 
-	private class MyContentProvider implements ITreeContentProvider {
-		private Object input = null;
-
-		public Object[] getChildren(final Object parentElement) {
-			return new Object[0];
+	private void selectDefaults() {
+		for (FileStatus s : this.fileStatus) {
+			s.setToDefault();
 		}
+		this.treeViewer.refresh();
+	}
+	
+	public void setShowUserFiles(boolean showUserFiles) {
+		this.showUserFiles = showUserFiles;
+	}
+	
+	public boolean isShowUserFiles() {
+		return showUserFiles;
+	}
 
-		public Object getParent(final Object element) {
-			return null;
+	protected boolean checkForUserFiles() {
+		if (!asked) {
+			for (FileStatus s : this.fileStatus) {
+				if (s.getType() == FileStatus.Type.USER && s.isDoIt() && !s.getDoItDefault()) {
+					MessageDialog dialog = new MessageDialog(getShell(), "WARNING", null,
+						"You have indicated you wish to generate a file that is marked as a USER file.  " 
+					+ "This file may contain code that was written by the user.  "
+					+ "Continuing will overwrite this code.\n\n" 
+					+ "Are you sure you want to do this?", 
+					MessageDialog.WARNING, new String[] { "Yes", "No" }, 1);
+					if (dialog.open() == 1) {
+						asked = true;
+						return true;
+					} else {
+						return false;
+					}
+				}
+			}
+			return true;
+		} else {
+			return true;
 		}
-
-		public boolean hasChildren(final Object element) {
-			return false;
-		}
-
-		public Object[] getElements(final Object inputElement) {
-			return (Object[]) this.input;
-		}
-
-		public void dispose() {
-		}
-
-		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
-			this.input = newInput;
-		}
-	};
+	}
 
 	/**
 	 * This method will set the checkboxes for the default files.
 	 */
 	private void selectAllFiles() {
-		this.v.setCheckedElements(this.defaultSelection.toArray(new String[this.defaultSelection.size()]));
-	}
-
-	private void deselectAllFiles() {
-		this.v.setCheckedElements(new String[0]);
-	}
-
-	@Override
-	protected void okPressed() {
-		// Need to save the filenames here, doing it in getFilesToGenerate
-		// is too late, the Tree is disposed
-		this.filesToGenerate.clear();
-		for (final Object fileName : this.v.getCheckedElements()) {
-			this.filesToGenerate.add((String) fileName);
+		for (FileStatus s : this.fileStatus) {
+			// TODO Only select visible
+			if (showUserFiles) {
+				s.setDoIt(true);
+			} else {
+				if (s.getType() == FileStatus.Type.USER) {
+					s.setToDefault();
+				} else {
+					s.setDoIt(true);
+				}
+			}
 		}
-		super.okPressed();
+		this.treeViewer.refresh();
+	}
+
+	private void clear() {
+		for (FileStatus s : this.fileStatus) {
+			s.setDoIt(false);
+		}
+		this.treeViewer.refresh();
 	}
 
 	/**
@@ -220,9 +276,12 @@ public class GenerateFilesDialog extends Dialog {
 	 * @return list of filenames to be generated
 	 */
 	public String[] getFilesToGenerate() {
-		if (generateAll) {
-			return null;
+		List<String> retVal = new ArrayList<String>();
+		for (FileStatus s : this.fileStatus) {
+			if (s.isDoIt()) {
+				retVal.add(s.getFilename());
+			}
 		}
-		return this.filesToGenerate.toArray(new String[this.filesToGenerate.size()]);
+		return retVal.toArray(new String[retVal.size()]);
 	}
 }

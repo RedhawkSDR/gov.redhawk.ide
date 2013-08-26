@@ -8,13 +8,12 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.codegen;
 
 import java.io.PrintStream;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import mil.jpeojtrs.sca.spd.Code;
 import mil.jpeojtrs.sca.spd.Implementation;
@@ -85,20 +84,18 @@ public interface IScaComponentCodegen {
 	 * @since 7.0
 	 */
 	IStatus cleanupSourceFolders(final IProject project, IProgressMonitor monitor);
-
+	
 	/**
-	 * Get a {@link HashMap} of all files the generator will generate.
+	 * Get a {@link List} of all files the generator will generate.
 	 * 
 	 * @param implSettings The {@link ImplementationSettings} for the
 	 *            {@link Implementation}
 	 * @param softpkg the {@link SoftPkg} for the {@link Implementation}
-	 * @return a {@link HashMap} of filenames and booleans on whether or not the
-	 *         file will be generated
-	 * @throws CoreException The generator is unable to determine which files
-	 *             will be generated due to an error
+	 * @return a {@link List} of file status
+	 * @throws CoreException The generator is unable to determine which files will be generated due to an error
 	 * @since 10.0
 	 */
-	Map<String, Boolean> getGeneratedFiles(final ImplementationSettings implSettings, final SoftPkg softpkg) throws CoreException;
+	Set<FileStatus> getGeneratedFilesStatus(final ImplementationSettings implSettings, final SoftPkg softpkg) throws CoreException;
 
 	/**
 	 * Boolean flag that indicates if code generation should be performed

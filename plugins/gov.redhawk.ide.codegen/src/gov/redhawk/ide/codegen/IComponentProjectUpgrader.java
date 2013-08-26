@@ -14,10 +14,11 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * @since 10.0
  */
 public interface IComponentProjectUpgrader {
-	void upgrade(IProgressMonitor monitor, SoftPkg spd, WaveDevSettings settings) throws CoreException;
+	IStatus upgrade(IProgressMonitor monitor, SoftPkg spd, WaveDevSettings settings) throws CoreException;
 }

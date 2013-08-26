@@ -12,6 +12,7 @@ package gov.redhawk.ide.codegen.ui;
 
 import gov.redhawk.ide.codegen.CodegenPackage;
 import gov.redhawk.ide.codegen.CodegenUtil;
+import gov.redhawk.ide.codegen.FileStatus;
 import gov.redhawk.ide.codegen.FileToCRCMap;
 import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
 import gov.redhawk.ide.codegen.IScaComponentCodegen;
@@ -30,9 +31,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -92,6 +95,7 @@ public final class GenerateCode {
 	/**
 	 * @since 8.0
 	 */
+	@SuppressWarnings("unchecked")
 	public static void generate(Shell parent, Object objectToGenerate) {
 		if (objectToGenerate instanceof IFile) {
 			generate(parent, (IFile) objectToGenerate);
@@ -136,10 +140,10 @@ public final class GenerateCode {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				// Map of Implementation ->  ( map of FileName relative to output location -> true will regenerate, false wants to regenerate but contents different
-				final Map<Implementation, Map<String, Boolean>> implMap = new HashMap<Implementation, Map<String, Boolean>>();
+				final Map<Implementation, Set<FileStatus>> implMap = new HashMap<Implementation, Set<FileStatus>>();
 				for (Implementation impl : impls) {
 					try {
-						Map<String, Boolean> resultSet = getFilesToGenerateMap(monitor, impl);
+						Set<FileStatus> resultSet = getFilesToGenerate(monitor, impl);
 						implMap.put(impl, resultSet);
 					} catch (CoreException e) {
 						return e.getStatus();
@@ -149,20 +153,21 @@ public final class GenerateCode {
 
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
-						Map<String, Boolean> aggregate = new HashMap<String, Boolean>();
-						for (Map<String, Boolean> v : implMap.values()) {
-							aggregate.putAll(v);
+						Set<FileStatus> aggregate = new HashSet<FileStatus>();
+						for (Set<FileStatus> v : implMap.values()) {
+							aggregate.addAll(v);
 						}
 						List<String> filesToGenerate = new ArrayList<String>();
-						// TODO
-//						for (Map.Entry<String, Boolean> entry : aggregate.entrySet()) {
-//							if (entry.getValue() != null && entry.getValue()) {
-//								filesToGenerate.add(entry.getKey());
-//							}
-//						}
-//						aggregate.keySet().removeAll(filesToGenerate);
+						boolean showDialog = false;
+						for (FileStatus s : aggregate) {
+							if (!s.isDoIt()) {
+								showDialog = true;
+								break;
+							}
+						}
 
-						if (!aggregate.isEmpty()) {
+
+						if (showDialog) {
 							GenerateFilesDialog dialog = new GenerateFilesDialog(shell, aggregate);
 							dialog.setBlockOnOpen(true);
 							if (dialog.open() == Window.OK) {
@@ -176,7 +181,6 @@ public final class GenerateCode {
 								return Status.CANCEL_STATUS;
 							}
 						} else {
-							// No questions to ask so generate all by default
 							filesToGenerate = null;
 						}
 
@@ -185,13 +189,16 @@ public final class GenerateCode {
 						}
 
 						final Map<Implementation, String[]> implFileMap = new HashMap<Implementation, String[]>();
-						for (Map.Entry<Implementation, Map<String, Boolean>> entry : implMap.entrySet()) {
+						for (Map.Entry<Implementation, Set<FileStatus>> entry : implMap.entrySet()) {
 							if (filesToGenerate == null) {
 								implFileMap.put(entry.getKey(), null);
 								continue;
 							} else {
-								List<String> subsetFilesToGenerate = new ArrayList<String>(entry.getValue().keySet());
-								List<String> filesToRemove = new ArrayList<String>(subsetFilesToGenerate);
+								Set<String> subsetFilesToGenerate = new HashSet<String>();
+								for (FileStatus s : entry.getValue()) {
+									subsetFilesToGenerate.add(s.getFilename());
+								}
+								Set<String> filesToRemove = new HashSet<String>(subsetFilesToGenerate);
 								filesToRemove.removeAll(filesToGenerate);
 								subsetFilesToGenerate.removeAll(filesToRemove);
 
@@ -425,7 +432,7 @@ public final class GenerateCode {
 	 * @throws CoreException A problem occurs while determining which files to generate
 	 * @since 8.0
 	 */
-	private static Map<String, Boolean> getFilesToGenerateMap(IProgressMonitor monitor, Implementation impl) throws CoreException {
+	private static Set<FileStatus> getFilesToGenerate(IProgressMonitor monitor, Implementation impl) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, "Calculating files to generate...", IProgressMonitor.UNKNOWN);
 		try {
 			final ImplementationSettings implSettings = getImplSettings(impl);
@@ -434,14 +441,14 @@ public final class GenerateCode {
 			final SoftPkg softpkg = (SoftPkg) impl.eContainer();
 
 			if (generator.shouldGenerate()) {
-				Future<Map<String, Boolean>> future = EXECUTOR_POOL.submit(new Callable<Map<String, Boolean>>() {
+				Future<Set<FileStatus>> future = EXECUTOR_POOL.submit(new Callable<Set<FileStatus>>() {
 
 					@Override
-					public Map<String, Boolean> call() throws Exception {
-						return generator.getGeneratedFiles(implSettings, softpkg);
+					public Set<FileStatus> call() throws Exception {
+						return generator.getGeneratedFilesStatus(implSettings, softpkg);
 					}
 				});
-				Map<String, Boolean> retVal;
+				Set<FileStatus> retVal;
 				while (true) {
 					try {
 						retVal = future.get(1, TimeUnit.SECONDS);
@@ -464,7 +471,7 @@ public final class GenerateCode {
 				}
 				return retVal;
 			} else {
-				return Collections.emptyMap();
+				return Collections.emptySet();
 			}
 		} finally {
 			subMonitor.done();
