@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IDataWriterDesc {
+public interface IDataWriterDesc extends Comparable<IDataWriterDesc> {
 	IDataWriter createWriter() throws CoreException;
 	IDataWriterSettings createWriterSettings() throws CoreException;
 	String getName();

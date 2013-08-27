@@ -12,10 +12,12 @@ package gov.redhawk.ide.snapshot.ui;
 
 import gov.redhawk.ide.snapshot.writer.IDataWriterDesc;
 
+import java.util.Arrays;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin; //added by Ryan on 6-18
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -53,8 +55,6 @@ import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.actions.RenameResourceAction;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-
-//added by Ryan on 6-18
 
 public class SnapshotWizardPage extends WizardPage {
 
@@ -106,6 +106,7 @@ public class SnapshotWizardPage extends WizardPage {
 		});
 		fileTypeCombo.setContentProvider(new ArrayContentProvider());
 		IDataWriterDesc[] input = SnapshotActivator.getDataReceiverRegistry().getRecieverDescs();
+		Arrays.sort(input);
 		fileTypeCombo.setInput(input);
 		context.bindValue(ViewerProperties.singleSelection().observe(fileTypeCombo), BeansObservables.observeValue(settings, "dataWriter"));
 		if (input.length > 0) {

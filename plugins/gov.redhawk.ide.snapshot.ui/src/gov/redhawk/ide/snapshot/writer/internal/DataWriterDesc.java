@@ -76,4 +76,9 @@ public class DataWriterDesc implements IDataWriterDesc {
 		return new DefaultDataWriterSettings();
 	}
 
+	@Override
+	public int compareTo(IDataWriterDesc o) {
+		return name.compareToIgnoreCase(o.getName());
+	}
+
 }
