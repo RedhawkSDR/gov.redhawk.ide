@@ -426,7 +426,7 @@ public final class GenerateCode {
 	 * @since 8.0
 	 */
 	private static Map<String, Boolean> getFilesToGenerateMap(IProgressMonitor monitor, Implementation impl) throws CoreException {
-		SubMonitor subMonitor = SubMonitor.convert(monitor, "Calculator files to generate...", IProgressMonitor.UNKNOWN);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, "Calculating files to generate...", IProgressMonitor.UNKNOWN);
 		try {
 			final ImplementationSettings implSettings = getImplSettings(impl);
 			final IScaComponentCodegen generator = getGenerator(implSettings);
