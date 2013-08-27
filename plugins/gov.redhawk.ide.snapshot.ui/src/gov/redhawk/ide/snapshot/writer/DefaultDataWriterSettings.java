@@ -28,6 +28,7 @@ public class DefaultDataWriterSettings implements IDataWriterSettings {
 		return destination;
 	}
 
+	@Override
 	public void setDestination(Object destination) {
 		this.destination = destination;
 	}
@@ -40,6 +41,7 @@ public class DefaultDataWriterSettings implements IDataWriterSettings {
 		return type;
 	}
 
+	@Override
 	public void setType(BulkIOType type) {
 		this.type = type;
 	}
@@ -52,6 +54,7 @@ public class DefaultDataWriterSettings implements IDataWriterSettings {
 		return this.upcastUnsigned;
 	}
 
+	@Override
 	public void setUpcastUnsigned(boolean upcastUnsigned) {
 		this.upcastUnsigned = upcastUnsigned;
 	}

@@ -41,7 +41,8 @@ public class BinXMLDataWriter extends BinDataWriter {
 
 	protected void saveMetaData() throws IOException {
 		Model metaInfo = SnapshotMetadataFactory.eINSTANCE.createModel();
-		metaInfo.setNumberOfSamples(0);
+		int divisor = (getSRI().mode == 1) ? 2 : 1;
+		metaInfo.setNumberOfSamples(getNumSamples() / divisor);
 		metaInfo.setTime(SnapshotMetadataFactory.eINSTANCE.createTime());
 		metaInfo.setStreamSRI(SnapshotMetadataFactory.eINSTANCE.createSRI());
 		
@@ -66,7 +67,6 @@ public class BinXMLDataWriter extends BinDataWriter {
 			metaInfo.getStreamSRI().getKeywords().getCFDataType().add(keyword);
 		}
 		
-		metaInfo.setNumberOfSamples(getNumSamples());
 		metaInfo.getTime().setEndTime(new SimpleDateFormat(TIME_FORMAT).format(new Date()));
 
 		// save to XML file using EMF model

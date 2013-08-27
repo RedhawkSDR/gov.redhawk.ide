@@ -54,7 +54,7 @@ public abstract class BaseDataWriter implements IDataWriter {
 	}
 
 	public boolean isUnsignedData() {
-		return sri.mode == 1;
+		return settings.getType().isUnsigned();
 	}
 
 	@Override

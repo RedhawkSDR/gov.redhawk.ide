@@ -20,6 +20,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.LongBuffer;
+import java.nio.ShortBuffer;
 import java.nio.channels.FileChannel;
 
 import mil.jpeojtrs.sca.util.AnyUtils;
@@ -93,9 +98,8 @@ public abstract class BinDataWriter extends BaseDataWriter {
 	@Override
 	public void pushPacket(double[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
 		ByteBuffer buffer = ByteBuffer.allocateDirect(length * getSettings().getType().getBytePerAtom());
-		for (int i = offset; i < length; i++) {
-			buffer.putDouble(data[i]);
-		}
+		DoubleBuffer tBuff = buffer.asDoubleBuffer();
+		tBuff.put(data, offset, length); 
 		fileChannel.write(buffer);
 		numSamples += length;
 	}
@@ -103,22 +107,22 @@ public abstract class BinDataWriter extends BaseDataWriter {
 	@Override
 	public void pushPacket(float[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
 		ByteBuffer buffer = ByteBuffer.allocateDirect(length * getSettings().getType().getBytePerAtom());
-		for (int i = offset; i < length; i++) {
-			buffer.putFloat(data[i]);
-		}
+		FloatBuffer tBuff = buffer.asFloatBuffer();
+		tBuff.put(data, offset, length); 
 		fileChannel.write(buffer);
 		numSamples += length;
 	}
 
 	@Override
 	public void pushPacket(long[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocateDirect(length * getSettings().getType().getBytePerAtom());
-		for (int i = offset; i < length; i++) {
-			if (getSettings().isUpcastUnsigned() && isUnsignedData()) {
-				throw new IOException("Can not store ulong long as upcasted value.");
-			} else {
-				buffer.putLong(data[i]);
-			}
+		ByteBuffer buffer;
+		boolean upcastUnsignedType = getSettings().isUpcastUnsigned() && getSettings().getType().isUnsigned();
+		if (upcastUnsignedType) {
+			throw new IOException("Can not store ulong long as upcasted value.");
+		} else {
+			buffer = ByteBuffer.allocateDirect(length * getSettings().getType().getBytePerAtom());
+			LongBuffer tBuff = buffer.asLongBuffer();
+			tBuff.put(data, offset, length); 
 		}
 		fileChannel.write(buffer);
 		numSamples += length;
@@ -126,27 +130,18 @@ public abstract class BinDataWriter extends BaseDataWriter {
 
 	@Override
 	public void pushPacket(int[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocateDirect(length * getSettings().getType().getBytePerAtom());
-		for (int i = offset; i < length; i++) {
-			if (getSettings().isUpcastUnsigned() && isUnsignedData()) {
-				buffer.putLong(UnsignedUtils.toSigned(data[i]));
-			} else {
-				buffer.putInt(data[i]);
+		ByteBuffer buffer;
+		boolean upcastUnsignedType = getSettings().isUpcastUnsigned() && getSettings().getType().isUnsigned();
+		if (upcastUnsignedType) {
+			buffer = ByteBuffer.allocateDirect(length * BulkIOType.LONG_LONG.getBytePerAtom());
+			LongBuffer tBuff = buffer.asLongBuffer();
+			for (int i = offset; i < length; i++) {
+				tBuff.put(UnsignedUtils.toSigned(data[i]));
 			}
-		}
-		fileChannel.write(buffer);
-		numSamples += length;
-	}
-
-	@Override
-	public void pushPacket(byte[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocateDirect(length * getSettings().getType().getBytePerAtom());
-		for (int i = offset; i < length; i++) {
-			if (getSettings().isUpcastUnsigned() && isUnsignedData()) {
-				buffer.putShort(UnsignedUtils.toSigned(data[i]));
-			} else {
-				buffer.put(data[i]);
-			}
+		} else {
+			buffer = ByteBuffer.allocateDirect(length * getSettings().getType().getBytePerAtom());
+			IntBuffer tBuff = buffer.asIntBuffer();
+			tBuff.put(data, offset, length); 
 		}
 		fileChannel.write(buffer);
 		numSamples += length;
@@ -154,13 +149,35 @@ public abstract class BinDataWriter extends BaseDataWriter {
 
 	@Override
 	public void pushPacket(short[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocateDirect(length * getSettings().getType().getBytePerAtom());
-		for (int i = offset; i < length; i++) {
-			if (getSettings().isUpcastUnsigned() && isUnsignedData()) {
-				buffer.putInt(UnsignedUtils.toSigned(data[i]));
-			} else {
-				buffer.putShort(data[i]);
+		ByteBuffer buffer;
+		boolean upcastUnsignedType = getSettings().isUpcastUnsigned() && getSettings().getType().isUnsigned();
+		if (upcastUnsignedType) {
+			buffer = ByteBuffer.allocateDirect(length * BulkIOType.LONG.getBytePerAtom());
+			IntBuffer tBuff = buffer.asIntBuffer();
+			for (int i = offset; i < length; i++) {
+				tBuff.put(UnsignedUtils.toSigned(data[i]));
 			}
+		} else {
+			buffer = ByteBuffer.allocateDirect(length * getSettings().getType().getBytePerAtom());
+			ShortBuffer tBuf = buffer.asShortBuffer();
+			tBuf.put(data, offset, length);
+		}
+		fileChannel.write(buffer);
+		numSamples += length;
+	}
+
+	@Override
+	public void pushPacket(byte[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+		ByteBuffer buffer;
+		boolean upcastUnsignedType = getSettings().isUpcastUnsigned() && getSettings().getType().isUnsigned();
+		if (upcastUnsignedType) {
+			buffer = ByteBuffer.allocateDirect(length * BulkIOType.SHORT.getBytePerAtom());
+			ShortBuffer tBuff = buffer.asShortBuffer();
+			for (int i = offset; i < length; i++) {
+				tBuff.put(UnsignedUtils.toSigned(data[i]));
+			}
+		} else {
+			buffer = ByteBuffer.wrap(data, offset, length);
 		}
 		fileChannel.write(buffer);
 		numSamples += length;
@@ -188,8 +205,6 @@ public abstract class BinDataWriter extends BaseDataWriter {
 		numSamples = 0;
 	}
 
-	protected abstract void saveMetaData() throws IOException;
-	
 	public File getMetaDataFile() {
 		File destination = getFileDestination();
 		int iLastDot = destination.getName().lastIndexOf('.');
@@ -199,7 +214,8 @@ public abstract class BinDataWriter extends BaseDataWriter {
 			return new File(destination.getParentFile(), destination.getName() + "." + getMetaDataFileExtension());
 		}
 	}
-
+	
+	protected abstract void saveMetaData() throws IOException;
 
 	protected abstract String getMetaDataFileExtension();
 

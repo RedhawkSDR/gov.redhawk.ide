@@ -36,7 +36,6 @@ public class BinSriDataWriter extends BinDataWriter {
 	private PrecisionUTCTime startTime;
 	private PrecisionUTCTime endTime;
 	private Date startDate;
-	private int samples;
 
 	@Override
 	public List<File> getOutputFileList() {
@@ -55,7 +54,6 @@ public class BinSriDataWriter extends BinDataWriter {
 			startTime = time;
 		}
 		endTime = time;
-		this.samples += length;
 		super.pushPacket(data, offset, length, time);
 	}
 
@@ -65,7 +63,6 @@ public class BinSriDataWriter extends BinDataWriter {
 			startTime = time;
 		}
 		endTime = time;
-		this.samples += length;
 		super.pushPacket(data, offset, length, time);
 	}
 
@@ -75,7 +72,6 @@ public class BinSriDataWriter extends BinDataWriter {
 			startTime = time;
 		}
 		endTime = time;
-		this.samples += length;
 		super.pushPacket(data, offset, length, time);
 	}
 
@@ -85,7 +81,6 @@ public class BinSriDataWriter extends BinDataWriter {
 			startTime = time;
 		}
 		endTime = time;
-		this.samples += length;
 		super.pushPacket(data, offset, length, time);
 	}
 
@@ -95,7 +90,6 @@ public class BinSriDataWriter extends BinDataWriter {
 			startTime = time;
 		}
 		endTime = time;
-		this.samples += length;
 		super.pushPacket(data, offset, length, time);
 	}
 
@@ -105,7 +99,6 @@ public class BinSriDataWriter extends BinDataWriter {
 			startTime = time;
 		}
 		endTime = time;
-		this.samples += length;
 		super.pushPacket(data, offset, length, time);
 	}
 
@@ -115,7 +108,6 @@ public class BinSriDataWriter extends BinDataWriter {
 			startTime = time;
 		}
 		endTime = time;
-		this.samples += length;
 		super.pushPacket(data, offset, length, time);
 	}
 
@@ -156,7 +148,8 @@ public class BinSriDataWriter extends BinDataWriter {
 
 	private void putGeneralInformation(Table table) {
 		SimpleDateFormat format = new SimpleDateFormat(this.timeFormat);
-		table.put("Number of Samples", samples);
+		int divisor = (getSRI().mode == 1) ? 2 : 1;
+		table.put("Number of Samples", getNumSamples() / divisor);
 		table.put("Start Time", format.format(startDate));
 		table.put("End Time", format.format(new Date()));
 	}

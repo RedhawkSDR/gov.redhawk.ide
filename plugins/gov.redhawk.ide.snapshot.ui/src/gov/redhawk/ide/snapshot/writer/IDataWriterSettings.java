@@ -31,10 +31,9 @@ public interface IDataWriterSettings {
 	void setType(BulkIOType type);
 	
 	/**
-	 * 
-	 * @return whether or not unsigned data should be upcast
+	 * @return whether or not unsigned data should be upcast to next larger signed type that can represent it 
 	 */
 	boolean isUpcastUnsigned();
 	
-	void setUpcastUnsigned(boolean unsigned);
+	void setUpcastUnsigned(boolean upcastUnsigned);
 }
