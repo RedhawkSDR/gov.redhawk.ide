@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 
 import mil.jpeojtrs.sca.util.UnsignedUtils;
+import nxm.sys.lib.Convert;
 import nxm.sys.lib.Data;
 import nxm.sys.lib.DataFile;
 import nxm.sys.lib.Midas;
@@ -45,43 +46,34 @@ public class BlueDataWriter extends BaseDataWriter {
 		Data data = new Data();
 		switch (t) {
 		case CHAR:
-			data.setFormatType('I');
+			data.setFormatType(Data.INT);  // treat char as 16-bit integer
 			break;
 		case DOUBLE:
-			//return 'D';
-			data.setFormatType('D');
+			data.setFormatType(Data.DOUBLE);
 			break;
 		case FLOAT:
-			//return 'F';
-			data.setFormatType('F');
+			data.setFormatType(Data.FLOAT);
 			break;
 		case LONG:
-			//return 'L';
-			data.setFormatType('L');
+			data.setFormatType(Data.LONG);
 			break;
 		case LONG_LONG:
-			//return 'X';
-			data.setFormatType('X');
+			data.setFormatType(Data.XLONG);
 			break;
 		case SHORT:
-			//return 'I';
-			data.setFormatType('I');
-			break;
-		case OCTET:
-			//return 'I';
 			data.setFormatType(Data.INT);
 			break;
+		case OCTET:
+			data.setFormatType(Data.INT);   // upcast to next larger signed type (TODO: give option not to upcast?)
+			break;
 		case ULONG:
-			//return 'X';
-			data.setFormatType(Data.XLONG);
+			data.setFormatType(Data.XLONG); // upcast to next larger signed type
 			break;
 		case ULONG_LONG:
-			//return 'X';
-			data.setFormatType(Data.XLONG);
+			data.setFormatType(Data.XLONG); // CANNOT upcast
 			break;
 		case USHORT:
-			//return 'L';
-			data.setFormatType(Data.LONG);
+			data.setFormatType(Data.LONG);  // upcast to next larger signed type
 			break;
 		default:
 			throw new IllegalArgumentException("The BulkIOType was not a recognized Type");
@@ -124,78 +116,89 @@ public class BlueDataWriter extends BaseDataWriter {
 
 	@Override
 	public void pushPacket(char[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		char[] subArray = new char[length];
-		System.arraycopy(data, offset, subArray, 0, length);
-		df.write(new Data(subArray));
+		final byte type = Data.INT; 
+		final int bufferSize = length * Data.getBPS(type);
+		byte[] byteBuffer = new byte[bufferSize];
+		Convert.ja2bb(data, offset, type, byteBuffer, 0, type, length);
+		df.write(byteBuffer, 0, bufferSize);
 	}
 
 	@Override
 	public void pushPacket(double[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		double[] subArray = new double[length];
-		System.arraycopy(data, offset, subArray, 0, length);
-		df.write(new Data(subArray));
+		final byte type = Data.DOUBLE;
+		final int bufferSize = length * Data.getBPS(type);
+		byte[] byteBuffer = new byte[bufferSize];
+		Convert.ja2bb(data, offset, type, byteBuffer, 0, type, length);
+		df.write(byteBuffer, 0, bufferSize);
 	}
 
 	@Override
 	public void pushPacket(float[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		float[] subArray = new float[length];
-		System.arraycopy(data, offset, subArray, 0, length);
-		df.write(new Data(subArray));
+		final byte type = Data.FLOAT;
+		final int bufferSize = length * Data.getBPS(type);
+		byte[] byteBuffer = new byte[bufferSize];
+		Convert.ja2bb(data, offset, type, byteBuffer, 0, type, length);
+		df.write(byteBuffer, 0, bufferSize);
 	}
 
 	@Override
 	public void pushPacket(long[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
 		if (isUnsignedData()) {
 			throw new IOException("Can not upcast unsigned long");
+			// should we clip to Long.MAX_VALUE like corbareceiver?
 		} else {
-			long[] subArray = new long[length];
-			System.arraycopy(data, offset, subArray, 0, length);
-			df.write(new Data(subArray));
+			final byte type = Data.XLONG;
+			final int bufferSize = length * Data.getBPS(type);
+			byte[] byteBuffer = new byte[bufferSize];
+			Convert.ja2bb(data, offset, type, byteBuffer, 0, type, length);
+			df.write(byteBuffer, 0, bufferSize);
 		}
 	}
 
 	@Override
 	public void pushPacket(int[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
 		if (isUnsignedData()) {
-			long[] subArray = new long[length];
-			for (int i = 0; i < length; i++) {
-				subArray[i] = UnsignedUtils.toSigned(data[i]);
-			}
-			df.write(new Data(subArray));
+			final byte type = Data.XLONG; // upcast to next larger signed type
+			final int bufferSize = length * Data.getBPS(type);
+			byte[] byteBuffer = new byte[bufferSize];
+			Convert.ja2bb(UnsignedUtils.toSigned(data), offset, type, byteBuffer, 0, type, length);
+			df.write(byteBuffer, 0, bufferSize);
 		} else {
-			int[] subArray = new int[length];
-			System.arraycopy(data, offset, subArray, 0, length);
-			df.write(new Data(subArray));
-		}
-	}
-
-	@Override
-	public void pushPacket(byte[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		if (isUnsignedData()) {
-			short[] subArray = new short[length];
-			for (int i = 0; i < length; i++) {
-				subArray[i] = UnsignedUtils.toSigned(data[i]);
-			}
-			df.write(new Data(subArray));
-		} else {
-			byte[] subArray = new byte[length];
-			System.arraycopy(data, offset, subArray, 0, length);
-			df.write(new Data(subArray));
+			final byte type = Data.LONG;
+			final int bufferSize = length * Data.getBPS(type);
+			byte[] byteBuffer = new byte[bufferSize];
+			Convert.ja2bb(data, offset, type, byteBuffer, 0, type, length);
+			df.write(byteBuffer, 0, bufferSize);
 		}
 	}
 
 	@Override
 	public void pushPacket(short[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
 		if (isUnsignedData()) {
-			int[] subArray = new int[length];
-			for (int i = 0; i < length; i++) {
-				subArray[i] = UnsignedUtils.toSigned(data[i]);
-			}
-			df.write(new Data(subArray));
+			final byte type = Data.LONG; // upcast to next larger signed type
+			final int bufferSize = length * Data.getBPS(type);
+			byte[] byteBuffer = new byte[bufferSize];
+			Convert.ja2bb(UnsignedUtils.toSigned(data), offset, type, byteBuffer, 0, type, length);
+			df.write(byteBuffer, 0, bufferSize);
 		} else {
-			short[] subArray = new short[length];
-			System.arraycopy(data, offset, subArray, 0, length);
-			df.write(new Data(subArray));
+			final byte type = Data.INT;
+			final int bufferSize = length * Data.getBPS(type);
+			byte[] byteBuffer = new byte[bufferSize];
+			Convert.ja2bb(data, offset, type, byteBuffer, 0, type, length);
+			df.write(byteBuffer, 0, bufferSize);
+		}
+	}
+	
+	@Override
+	public void pushPacket(byte[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
+		if (isUnsignedData()) {
+			final byte type = Data.INT; // upcast to next larger signed type
+			final int bufferSize = length * Data.getBPS(type);
+			byte[] byteBuffer = new byte[bufferSize];
+			Convert.ja2bb(UnsignedUtils.toSigned(data), offset, type, byteBuffer, 0, type, length);
+			df.write(byteBuffer, 0, bufferSize);
+		} else {
+			df.write(data, offset, length);
 		}
 	}
 
