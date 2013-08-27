@@ -301,7 +301,7 @@ public class GenerateFilesDialog extends Dialog {
 		if (!askedUserFile) {
 			if (newValue && !element.getDoItDefault()) {
 				MessageDialog dialog = new MessageDialog(getShell(), "WARNING", null,
-					"You have indicated you wish to generate a file that is marked as a 'USER' file.  "
+					"The file '" + element.getFilename() + "' is a 'USER' file.\n"
 						+ "This file may contain code that was written by the user.  " + "\n\nCONTINUING WILL OVERWRITE THIS CODE.\n\n"
 						+ "Are you sure you want to do this?", MessageDialog.WARNING, new String[] { "Yes", "No" }, 1);
 				if (dialog.open() == 0) {
@@ -321,7 +321,7 @@ public class GenerateFilesDialog extends Dialog {
 		if (!askedSystemFileGenerate && newValue) {
 			if (!element.getDoItDefault()) {
 				MessageDialog dialog = new MessageDialog(getShell(), "WARNING", null,
-					"You have indicated you wish to generate a 'SYSTEM' file that has been modified.  "
+					"The file '" + element.getFilename() + "' has been modified.  "
 						+ "This file may contain code that was written by the user.  " + "\n\nCONTINUING WILL OVERWRITE THIS CODE.\n\n"
 						+ "Are you sure you want to do this?", MessageDialog.WARNING, new String[] { "Yes", "No" }, 1);
 				if (dialog.open() == 0) {
@@ -334,7 +334,7 @@ public class GenerateFilesDialog extends Dialog {
 		} else if (!askedSystemFileNotGenerate && !newValue) {
 			if (element.getDoItDefault()) {
 				MessageDialog dialog = new MessageDialog(getShell(), "WARNING", null,
-					"You have indicated you wish to NOT generate a 'SYSTEM' file.\n"
+					"You have indicated you wish to NOT generate the file '" + element.getFilename() + "'\n"
 						+ "Not generating this file may have undesired side effects.\n\n"
 						+ "Are you sure you want to do this?", MessageDialog.WARNING, new String[] { "Yes", "No" }, 1);
 				if (dialog.open() == 0) {
@@ -363,7 +363,11 @@ public class GenerateFilesDialog extends Dialog {
 	
 	@Override
 	protected void okPressed() {
-		// TODO Auto-generated method stub
+		for (FileStatus f : this.fileStatus) {
+			if (!checkFile(f.isDoIt(), f)) {
+				return;
+			}
+		}
 		super.okPressed();
 	}
 
