@@ -181,4 +181,19 @@
          </codegenId>
       </codegenPage>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="gov.redhawk.ui.preferences"
+            class="gov.redhawk.ide.codegen.ui.preferences.CodegenPreferencePage"
+            id="gov.redhawk.ide.codegen.ui.preferences.CodegenPreferencePage"
+            name="Code Generation">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="gov.redhawk.ide.codegen.ui.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
 </plugin>

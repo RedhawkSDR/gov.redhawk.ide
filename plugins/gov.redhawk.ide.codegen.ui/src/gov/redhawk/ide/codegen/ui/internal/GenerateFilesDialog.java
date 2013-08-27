@@ -11,6 +11,8 @@
 package gov.redhawk.ide.codegen.ui.internal;
 
 import gov.redhawk.ide.codegen.FileStatus;
+import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
+import gov.redhawk.ide.codegen.ui.preferences.CodegenPreferenceConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +20,19 @@ import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.TreeColumnLayout;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TreeColumnViewerLabelProvider;
+import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -49,8 +57,10 @@ public class GenerateFilesDialog extends Dialog {
 	private final Set<FileStatus> fileStatus;
 	/** The Checkbox Tree that handles the input */
 	private CheckboxTreeViewer treeViewer;
-	private boolean asked = false;
+	private boolean askedUserFile = false;
 	private boolean showUserFiles = false;
+	private boolean askedSystemFileGenerate;
+	private boolean askedSystemFileNotGenerate;
 
 	private static class FileStatusContentProvider implements ITreeContentProvider {
 
@@ -103,23 +113,77 @@ public class GenerateFilesDialog extends Dialog {
 		final Composite container = (Composite) super.createDialogArea(parent);
 		final GridLayout gridLayout = new GridLayout(2, false);
 		container.setLayout(gridLayout);
+		
+		boolean warning = false;
+		for (FileStatus s : this.fileStatus) {
+			if (!s.getDoItDefault() && s.getType() != FileStatus.Type.USER) {
+				warning = true;
+				break;
+			}
+		}
+		if (warning) {
+			final Image image = parent.getDisplay().getSystemImage(SWT.ICON_WARNING);
+			final Label warningLabel = new Label(container, SWT.NONE);
+			warningLabel.setImage(image);
+			warningLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+	
+			final Label label = new Label(container, SWT.NONE);
+			label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
+			label.setText("The following generated files have had their contents modified since they were generated.\n"
+				+ "Selected files will be generated and their current contents will be lost.");
+		} else {
+			final Image image = parent.getDisplay().getSystemImage(SWT.ICON_INFORMATION);
+			final Label warningLabel = new Label(container, SWT.NONE);
+			warningLabel.setImage(image);
+			warningLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+	
+			final Label label = new Label(container, SWT.NONE);
+			label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
+			label.setText("Select files to be generated:");
+		}
 
-		final Image image = parent.getDisplay().getSystemImage(SWT.ICON_WARNING);
-		final Label warning = new Label(container, SWT.NONE);
-		warning.setImage(image);
-		warning.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-
-		final Label label = new Label(container, SWT.NONE);
-		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
-		label.setText("The following generated files have had their contents modified since they were generated.\n"
-			+ "Selected files will be re-generated and their current contents will be lost.");
-
-		this.treeViewer = new CheckboxTreeViewer(container, SWT.SINGLE | SWT.FULL_SELECTION | SWT.H_SCROLL);
-		this.treeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+		Composite treeContainer = new Composite(container, SWT.None);
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
+		data.widthHint = 600;
+		treeContainer.setLayoutData(data);
+		TreeColumnLayout layout = new TreeColumnLayout();
+		treeContainer.setLayout(layout);
+		this.treeViewer = new CheckboxTreeViewer(treeContainer, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION | SWT.H_SCROLL);
 		this.treeViewer.setContentProvider(new FileStatusContentProvider());
-		this.treeViewer.setLabelProvider(new LabelProvider());
 		this.treeViewer.getTree().setLinesVisible(true);
-		this.treeViewer.getTree().setHeaderVisible(false);
+		this.treeViewer.getTree().setHeaderVisible(true);
+
+		TreeViewerColumn column = new TreeViewerColumn(this.treeViewer, SWT.None);
+		column.getColumn().setResizable(true);
+		column.getColumn().setMoveable(false);
+		column.getColumn().setText("File Name");
+		column.setLabelProvider(new TreeColumnViewerLabelProvider(new LabelProvider()));
+		layout.setColumnData(column.getColumn(), new ColumnWeightData(80, 80, true));
+
+		column = new TreeViewerColumn(this.treeViewer, SWT.None);
+		column.getColumn().setResizable(true);
+		column.getColumn().setMoveable(false);
+		column.getColumn().setText("Action");
+		column.setLabelProvider(new TreeColumnViewerLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return ((FileStatus) element).getDesiredAction().toString();
+			}
+		}));
+		layout.setColumnData(column.getColumn(), new ColumnWeightData(10, 80, true));
+
+		column = new TreeViewerColumn(this.treeViewer, SWT.None);
+		column.getColumn().setResizable(true);
+		column.getColumn().setMoveable(false);
+		column.getColumn().setText("Type");
+		column.setLabelProvider(new TreeColumnViewerLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return ((FileStatus) element).getType().toString();
+			}
+		}));
+		layout.setColumnData(column.getColumn(), new ColumnWeightData(10, 80, true));
+
 		this.treeViewer.setCheckStateProvider(new ICheckStateProvider() {
 
 			@Override
@@ -140,13 +204,12 @@ public class GenerateFilesDialog extends Dialog {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				FileStatus s = (FileStatus) event.getElement();
-				if (checkForUserFiles()) {
+				if (checkFile(event.getChecked(), s)) {
 					s.setDoIt(event.getChecked());
 				}
 				treeViewer.refresh();
 			}
 		});
-		this.treeViewer.setInput(this.fileStatus);
 		this.treeViewer.addFilter(new ViewerFilter() {
 
 			@Override
@@ -157,6 +220,9 @@ public class GenerateFilesDialog extends Dialog {
 				return true;
 			}
 		});
+		this.treeViewer.setComparator(new ViewerComparator());
+
+		this.treeViewer.setInput(this.fileStatus);
 
 		Composite panel = new Composite(container, SWT.NO_FOCUS);
 		panel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 2, 1));
@@ -188,10 +254,10 @@ public class GenerateFilesDialog extends Dialog {
 				GenerateFilesDialog.this.clear();
 			}
 		});
-		
+
 		panel = new Composite(container, SWT.NO_FOCUS);
 		panel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 2, 1));
-		panel.setLayout(new RowLayout());
+		panel.setLayout(new GridLayout(1, false));
 		Button showUserButton = new Button(panel, SWT.CHECK);
 		showUserButton.setText("Show User Files");
 		showUserButton.addSelectionListener(new SelectionAdapter() {
@@ -201,6 +267,17 @@ public class GenerateFilesDialog extends Dialog {
 				treeViewer.refresh();
 			}
 		});
+		final Button alwaysButton = new Button(panel, SWT.CHECK);
+		alwaysButton.setText("Always Generate Default Files Without Asking");
+		final IPreferenceStore store = RedhawkCodegenUiActivator.getDefault().getPreferenceStore();
+		alwaysButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				alwaysButton.getSelection();
+				store.setValue(CodegenPreferenceConstants.P_ALWAYS_GENERATE_DEFAULTS, alwaysButton.getSelection());
+			}
+		});
+		alwaysButton.setSelection(store.getBoolean(CodegenPreferenceConstants.P_ALWAYS_GENERATE_DEFAULTS));
 
 		return container;
 	}
@@ -211,31 +288,27 @@ public class GenerateFilesDialog extends Dialog {
 		}
 		this.treeViewer.refresh();
 	}
-	
+
 	public void setShowUserFiles(boolean showUserFiles) {
 		this.showUserFiles = showUserFiles;
 	}
-	
+
 	public boolean isShowUserFiles() {
 		return showUserFiles;
 	}
-
-	protected boolean checkForUserFiles() {
-		if (!asked) {
-			for (FileStatus s : this.fileStatus) {
-				if (s.getType() == FileStatus.Type.USER && s.isDoIt() && !s.getDoItDefault()) {
-					MessageDialog dialog = new MessageDialog(getShell(), "WARNING", null,
-						"You have indicated you wish to generate a file that is marked as a USER file.  " 
-					+ "This file may contain code that was written by the user.  "
-					+ "Continuing will overwrite this code.\n\n" 
-					+ "Are you sure you want to do this?", 
-					MessageDialog.WARNING, new String[] { "Yes", "No" }, 1);
-					if (dialog.open() == 1) {
-						asked = true;
-						return true;
-					} else {
-						return false;
-					}
+	
+	protected boolean checkUserFile(boolean newValue, FileStatus element) {
+		if (!askedUserFile) {
+			if (newValue && !element.getDoItDefault()) {
+				MessageDialog dialog = new MessageDialog(getShell(), "WARNING", null,
+					"You have indicated you wish to generate a file that is marked as a 'USER' file.  "
+						+ "This file may contain code that was written by the user.  " + "\n\nCONTINUING WILL OVERWRITE THIS CODE.\n\n"
+						+ "Are you sure you want to do this?", MessageDialog.WARNING, new String[] { "Yes", "No" }, 1);
+				if (dialog.open() == 0) {
+					askedUserFile = true;
+					return true;
+				} else {
+					return false;
 				}
 			}
 			return true;
@@ -243,15 +316,66 @@ public class GenerateFilesDialog extends Dialog {
 			return true;
 		}
 	}
+	
+	protected boolean checkSystemFile(boolean newValue, FileStatus element) {
+		if (!askedSystemFileGenerate && newValue) {
+			if (!element.getDoItDefault()) {
+				MessageDialog dialog = new MessageDialog(getShell(), "WARNING", null,
+					"You have indicated you wish to generate a 'SYSTEM' file that has been modified.  "
+						+ "This file may contain code that was written by the user.  " + "\n\nCONTINUING WILL OVERWRITE THIS CODE.\n\n"
+						+ "Are you sure you want to do this?", MessageDialog.WARNING, new String[] { "Yes", "No" }, 1);
+				if (dialog.open() == 0) {
+					askedSystemFileGenerate = true;
+					return true;
+				} else {
+					return false;
+				}
+			}
+		} else if (!askedSystemFileNotGenerate && !newValue) {
+			if (element.getDoItDefault()) {
+				MessageDialog dialog = new MessageDialog(getShell(), "WARNING", null,
+					"You have indicated you wish to NOT generate a 'SYSTEM' file.\n"
+						+ "Not generating this file may have undesired side effects.\n\n"
+						+ "Are you sure you want to do this?", MessageDialog.WARNING, new String[] { "Yes", "No" }, 1);
+				if (dialog.open() == 0) {
+					askedSystemFileNotGenerate = true;
+					return true;
+				} else {
+					return false;
+				}
+			}
+		} 
+		
+		return true;
+	}
+
+	protected boolean checkFile(boolean newValue, FileStatus element) {
+		switch(element.getType()) {
+		case USER:
+			return checkUserFile(newValue, element);
+		case SYSTEM:
+			return checkSystemFile(newValue, element);
+		default:
+			break;
+		}
+		return true;
+	}
+	
+	@Override
+	protected void okPressed() {
+		// TODO Auto-generated method stub
+		super.okPressed();
+	}
 
 	/**
 	 * This method will set the checkboxes for the default files.
 	 */
 	private void selectAllFiles() {
 		for (FileStatus s : this.fileStatus) {
-			// TODO Only select visible
 			if (showUserFiles) {
-				s.setDoIt(true);
+				if (checkFile(true, s)) {
+					s.setDoIt(true);
+				}
 			} else {
 				if (s.getType() == FileStatus.Type.USER) {
 					s.setToDefault();
@@ -264,6 +388,11 @@ public class GenerateFilesDialog extends Dialog {
 	}
 
 	private void clear() {
+		for (FileStatus s : this.fileStatus) {
+			if (!checkFile(false, s)) {
+				return;
+			}
+		}
 		for (FileStatus s : this.fileStatus) {
 			s.setDoIt(false);
 		}

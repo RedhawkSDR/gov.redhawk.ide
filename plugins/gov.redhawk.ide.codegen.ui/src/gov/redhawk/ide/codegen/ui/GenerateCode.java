@@ -22,6 +22,7 @@ import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.ide.codegen.ui.internal.GenerateFilesDialog;
 import gov.redhawk.ide.codegen.ui.internal.GeneratorConsole;
+import gov.redhawk.ide.codegen.ui.preferences.CodegenPreferenceConstants;
 import gov.redhawk.ide.codegen.util.PropertyUtil;
 import gov.redhawk.model.sca.util.ModelUtil;
 
@@ -72,6 +73,7 @@ import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
@@ -135,7 +137,7 @@ public final class GenerateCode {
 		if (impls.isEmpty()) {
 			return;
 		}
-		Job getFilesJob = new Job("Getting files to generate...") {
+		Job getFilesJob = new Job("Calculating files to generate...") {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -157,13 +159,19 @@ public final class GenerateCode {
 						for (Set<FileStatus> v : implMap.values()) {
 							aggregate.addAll(v);
 						}
+						final IPreferenceStore store = RedhawkCodegenUiActivator.getDefault().getPreferenceStore();
 						List<String> filesToGenerate = new ArrayList<String>();
 						boolean showDialog = false;
-						for (FileStatus s : aggregate) {
-							if (!s.isDoIt()) {
-								showDialog = true;
-								break;
+						boolean generateDefault = store.getBoolean(CodegenPreferenceConstants.P_ALWAYS_GENERATE_DEFAULTS);
+						if (generateDefault) {
+							for (FileStatus s : aggregate) {
+								if (!s.isDoIt() && s.getType() != FileStatus.Type.USER) {
+									showDialog = true;
+									break;
+								}
 							}
+						} else {
+							showDialog = true;
 						}
 
 
@@ -181,7 +189,16 @@ public final class GenerateCode {
 								return Status.CANCEL_STATUS;
 							}
 						} else {
-							filesToGenerate = null;
+							for (FileStatus s : aggregate) {
+								if (s.isDoIt()) {
+									filesToGenerate.add(s.getFilename());
+								}
+							}
+							
+							// If Generate ALL
+							if (filesToGenerate.size() == aggregate.size()) {
+								filesToGenerate = null;
+							}
 						}
 
 						if (filesToGenerate != null && filesToGenerate.isEmpty()) {
@@ -219,7 +236,8 @@ public final class GenerateCode {
 						return Status.OK_STATUS;
 					}
 				};
-				checkFilesJob.setUser(true);
+				checkFilesJob.setUser(false);
+				checkFilesJob.setSystem(true);
 				checkFilesJob.schedule();
 
 				return Status.OK_STATUS;
