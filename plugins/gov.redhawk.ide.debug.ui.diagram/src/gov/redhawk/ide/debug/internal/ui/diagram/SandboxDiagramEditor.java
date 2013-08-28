@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.gef.palette.PaletteContainer;
 import org.eclipse.gef.palette.PaletteDrawer;
 import org.eclipse.gef.palette.PaletteEntry;
 import org.eclipse.gef.palette.PaletteRoot;
@@ -97,8 +96,7 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 	}
 
 	private synchronized List<PaletteEntry> getWorkspaceComponentTools() {
-		final List<PaletteEntry> retVal = new ArrayList<PaletteEntry>();
-		Map<String, PaletteContainer> containerMap = new HashMap<String, PaletteContainer>();
+		Map<String, List<PaletteEntry>> containerMap = new HashMap<String, List<PaletteEntry>>();
 
 		IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
 		registry.addListener(listener);
@@ -107,15 +105,14 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 				continue;
 			}
 			String category = desc.getCategory();
-			PaletteContainer container = containerMap.get(category);
-			if (container == null) {
+			List<PaletteEntry> containerList = containerMap.get(category);
+			if (containerList == null) {
 				String label = category;
 				if (label == null) {
 					label = "Other";
 				}
-				container = new PaletteDrawer(label);
-				containerMap.put(category, container);
-				retVal.add(container);
+				containerList = new ArrayList<PaletteEntry>();
+				containerMap.put(category, containerList);
 			}
 			if (desc instanceof ComponentDesc) {
 				PaletteEntry newEntry = null;
@@ -130,11 +127,18 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 					newEntry = entries.get(0);
 				}
 				if (newEntry != null) {
-					container.add(newEntry);
+					containerList.add(newEntry);
 				}
 			}
 		}
 
+		final List<PaletteEntry> retVal = new ArrayList<PaletteEntry>();
+		for (Map.Entry<String, List<PaletteEntry>> entry : containerMap.entrySet()) {
+			PaletteDrawer container = new PaletteDrawer(entry.getKey());
+			sort(entry.getValue());
+			container.addAll(entry.getValue());
+			retVal.add(container);
+		}
 		sort(retVal);
 
 		return retVal;
