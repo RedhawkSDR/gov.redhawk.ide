@@ -108,6 +108,9 @@ public class MarkExternalHandler extends AbstractHandler implements IElementUpda
 
 	public void updateElement(final UIElement element, @SuppressWarnings("rawtypes") final Map parameters) {
 		final Object partSite = parameters.get("org.eclipse.ui.part.IWorkbenchPartSite");
+		if (partSite == null) {
+			return;
+		}
 		final ISelection currentSelection = ((IWorkbenchSite) partSite).getSelectionProvider().getSelection();
 		if (currentSelection instanceof IStructuredSelection) {
 			final IStructuredSelection ss = (IStructuredSelection) currentSelection;

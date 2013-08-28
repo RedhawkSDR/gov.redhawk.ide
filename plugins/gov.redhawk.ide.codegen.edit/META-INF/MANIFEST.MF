@@ -2,15 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: gov.redhawk.ide.codegen.edit;singleton:=true
-Bundle-Version: 5.0.0.qualifier
+Bundle-Version: 6.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: gov.redhawk.ide.codegen.provider.CodegenEditPlugin$Implementation
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: gov.redhawk.ide.codegen.provider
-Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
- gov.redhawk.ide.codegen;bundle-version="9.0.0";visibility:=reexport,
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
+ gov.redhawk.ide.codegen;bundle-version="10.0.0";visibility:=reexport,
  org.eclipse.emf.edit;bundle-version="2.6.0";visibility:=reexport,
  org.eclipse.emf.ecore;bundle-version="2.6.1";visibility:=reexport,
  org.eclipse.emf.ecore.edit;bundle-version="2.6.0";visibility:=reexport,

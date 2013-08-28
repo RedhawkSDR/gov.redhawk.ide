@@ -4,7 +4,7 @@ Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: gov.redhawk.codegen.validation;singleton:=true
 Bundle-Version: 2.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: gov.redhawk.ide.codegen;bundle-version="1.0.0",
+Require-Bundle: gov.redhawk.ide.codegen;bundle-version="10.0.0",
  gov.redhawk.validation;bundle-version="1.0.0",
  mil.jpeojtrs.sca.spd;bundle-version="2.2.2",
  org.eclipse.core.runtime;bundle-version="3.4.0",

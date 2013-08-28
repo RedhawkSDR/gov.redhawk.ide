@@ -301,7 +301,7 @@ public class ModelMap {
 		}
 		final SoftPkg spd = ScaEcoreUtils.getFeature(comp, ModelMap.SPD_PATH);
 		if (spd == null) {
-			throw new ExecuteFail(ErrorNumberType.CF_EIO, "Failed to resolve spd.");
+			throw new ExecuteFail("Failed to resolve spd.", ErrorNumberType.CF_EIO, "Failed to resolve spd.");
 		}
 		final URI spdURI = spd.eResource().getURI();
 		try {
