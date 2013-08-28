@@ -222,7 +222,8 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 						if (service != null) {
 							service.upgrade(monitor, spd, implSettings);
 						} else {
-							throw new CoreException(new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to find project upgrade service.", null));
+							throw new CoreException(new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to find project upgrade service.",
+								null));
 						}
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
@@ -245,9 +246,9 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	}
 
 	private boolean isDeprecated(Implementation impl, WaveDevSettings waveDev) throws CoreException {
-		if(waveDev == null) {
-			throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID,
-				"GENERATE FAILED: Failed to find implementation settings in " + impl.getSoftPkg().getName() + ".wavedev file", null));
+		if (waveDev == null) {
+			throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID, "GENERATE FAILED: Failed to find implementation settings in "
+				+ impl.getSoftPkg().getName() + ".wavedev file", null));
 		}
 		final ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
 		if (implSettings != null) {
@@ -265,8 +266,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	}
 
 	private boolean shouldUpgrade(Shell parent, String name) throws CoreException {
-		String message = name + " uses deprecated code generators.\n\n"
-			+ "Would you like to upgrade this project?";
+		String message = name + " uses deprecated code generators.\n\n" + "Would you like to upgrade this project?";
 		MessageDialog dialog = new MessageDialog(parent, "Deprecated Generator", null, message, MessageDialog.WARNING, new String[] { "Upgrade", "Cancel",
 			"Use Existing" }, 1);
 		switch (dialog.open()) {
