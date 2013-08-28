@@ -245,6 +245,10 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	}
 
 	private boolean isDeprecated(Implementation impl, WaveDevSettings waveDev) throws CoreException {
+		if(waveDev == null) {
+			throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID,
+				"GENERATE FAILED: Failed to find implementation settings in " + impl.getSoftPkg().getName() + ".wavedev file", null));
+		}
 		final ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
 		if (implSettings != null) {
 			ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(implSettings.getGeneratorId());
