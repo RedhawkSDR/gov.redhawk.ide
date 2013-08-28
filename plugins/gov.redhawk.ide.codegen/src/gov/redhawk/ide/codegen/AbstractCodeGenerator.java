@@ -15,19 +15,26 @@ import gov.redhawk.model.sca.util.ModelUtil;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.CRC32;
 
 import mil.jpeojtrs.sca.spd.Code;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
+import org.apache.commons.io.CopyUtils;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -35,13 +42,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 
 /**
  * @since 7.0
  */
 public abstract class AbstractCodeGenerator implements IScaComponentCodegen {
-
-	private final CRC32 check = new CRC32();
 
 	public abstract IStatus cleanupSourceFolders(IProject project, IProgressMonitor monitor);
 
@@ -60,48 +66,40 @@ public abstract class AbstractCodeGenerator implements IScaComponentCodegen {
 	 * 
 	 * @param implSettings the Implementation settings for this generation
 	 * @param project The project containing the implementation
-	 * @param fileMap a map of FileName and changed status, only populated if it
-	 *            has changed
-	 * @param unchangedList a List to add the filename to if it hasn't changed
 	 * @param fileName the name of the file to check
-	 * @return true if the file has changed or the project doesn't exist
-	 * @since 5.0
+	 * @return true if the file has changed
+	 * @throws  
+	 * @throws CoreException 
+	 * @since 10.0
 	 */
-	protected boolean checkFile(final ImplementationSettings implSettings, final IProject project, final HashMap<String, Boolean> fileMap,
-	        final List<String> unchangedList, final String fileName) {
-		if (project == null) {
-			fileMap.put(fileName, false);
-			return true;
+	protected boolean checkFile(final ImplementationSettings implSettings, final IProject project, final String fileName) throws CoreException {
+		if (project == null || !project.exists()) {
+			return false;
 		}
-		
 		final String outputDir = implSettings.getOutputDir();
 		final IFile file = project.getFile(outputDir + "/" + fileName);
 
 		if (file.exists()) {
-			this.check.reset();
-			this.check.update(getFileBytes(file));
-			final long crc = this.check.getValue();
+			CRC32 check = new CRC32();
+			check.reset();
+			check.update(getFileBytes(file));
+			final long crc = check.getValue();
 
 			if (implSettings.getGeneratedFileCRCs() != null) {
 				for (final FileToCRCMap map : implSettings.getGeneratedFileCRCs()) {
 					if (map.getFile().equals(fileName)) {
 						if (crc == map.getCrc()) {
-							if (unchangedList != null) {
-								unchangedList.add(fileName);
-							}
 							return false;
 						} else {
-							break;
+							return true;
 						}
 					}
 				}
 			}
+		} else {
+			return false;
 		}
-
-		if (fileMap != null) {
-			fileMap.put(fileName, !file.exists());
-		}
-		return true;
+		return false;
 	}
 
 	/**
@@ -112,61 +110,42 @@ public abstract class AbstractCodeGenerator implements IScaComponentCodegen {
 			return;
 		}
 		final FileToCRCMap map = CodegenFactory.eINSTANCE.createFileToCRCMap();
-		this.check.reset();
-		this.check.update(bs);
+		CRC32 check = new CRC32();
+		check.reset();
+		check.update(bs);
 
-		map.setCrc(this.check.getValue());
+		map.setCrc(check.getValue());
 		map.setFile(fileName);
 		crcMap.add(map);
 	}
 
 	/**
 	 * Gets the contents of a file as an array of bytes. Line-terminators are removed from the data (BUG ALERT!)
+	 * @throws CoreException 
+	 * @throws IOException 
 	 * 
 	 * @since 3.0
 	 */
-	protected byte[] getFileBytes(final IFile file) {
-		byte[] ret = new byte[0];
+	protected byte[] getFileBytes(final IFile file) throws CoreException {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
+		InputStream input = null;
 		try {
-			final BufferedReader r = new BufferedReader(new InputStreamReader(file.getContents()));
-			final StringBuilder s = new StringBuilder();
-			while (r.ready()) {
-				s.append(r.readLine());
+			input = file.getContents();
+			IOUtils.copy(input, bos);
+		} catch (IOException e) {
+			throw new CoreException(new Status(Status.ERROR, RedhawkCodegenActivator.PLUGIN_ID, "Failed to read file " + file, e));
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					// PASS
+				}
 			}
-			ret = s.toString().getBytes();
-		} catch (final CoreException e) {
-			// PASS
-		} catch (final IOException e) {
-			// PASS
 		}
 
-		return ret;
-	}
-
-	/**
-	 * Strips newlines from an array of bytes. This is used to modify byte arrays to be backwards compatible with
-	 * those returned by {@link #getFileBytes(IFile)}, which reads a file in without newlines.
-	 * 
-	 * @param input The input to be processed
-	 * @return A new byte array without newlines
-	 * @since 8.0
-	 */
-	protected byte[] stripNewlines(final byte[] input) {
-		byte[] ret = new byte[0];
-
-		try {
-			final BufferedReader r = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(input)));
-			final StringBuilder s = new StringBuilder();
-			while (r.ready()) {
-				s.append(r.readLine());
-			}
-			ret = s.toString().getBytes();
-		} catch (final IOException e) {
-			// PASS
-		}
-
-		return ret;
+		return bos.toByteArray();
 	}
 
 	/**
@@ -203,5 +182,81 @@ public abstract class AbstractCodeGenerator implements IScaComponentCodegen {
 	 */
 	protected String getSourceDir(Implementation impl, final ImplementationSettings implSettings) {
 		return implSettings.getOutputDir() + File.separator;
+	}
+	
+	/**
+	 * @since 10.0
+	 */
+	@Deprecated
+	public Map<String, Boolean> getGeneratedFiles(final ImplementationSettings implSettings, final SoftPkg softPkg) throws CoreException {
+		final IProject project = ModelUtil.getProject(softPkg);
+		final HashMap<String, Boolean> fileMap = new HashMap<String, Boolean>();
+		final ITemplateDesc template = CodegenUtil.getTemplate(implSettings.getTemplate(), implSettings.getGeneratorId());
+		if (template == null) {
+			throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenActivator.PLUGIN_ID,
+				"Unable to find code generation template. Please check your template selection under the 'Code"
+					+ " Generation Details' section of the Implementation tab of your component."));
+		}
+
+		final List<String> templateFileList = template.getTemplate().getAllGeneratedFileNames(implSettings, softPkg);
+		if (templateFileList != null) {
+			for (final String fileName : templateFileList) {
+				if (project != null) {
+					fileMap.put(fileName, checkFile(implSettings, project, fileName));
+				} else {
+					fileMap.put(fileName, true);
+				}
+			}
+		}
+
+		return fileMap;
+	}
+	
+	/**
+	 * @since 10.0
+	 */
+	public List<String> getUnchangedFiles(final ImplementationSettings implSettings, final SoftPkg softPkg) throws CoreException {
+		final IProject project = ModelUtil.getProject(softPkg);
+		final List<String> fileList = new ArrayList<String>();
+		final ITemplateDesc template = CodegenUtil.getTemplate(implSettings.getTemplate(), implSettings.getGeneratorId());
+		if (template == null) {
+			throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenActivator.PLUGIN_ID,
+				"Unable to find code generation template. Please check your template selection under the 'Code"
+					+ " Generation Details' section of the Implementation tab of your component."));
+		}
+
+		final List<String> templateFileList = template.getTemplate().getAllGeneratedFileNames(implSettings, softPkg);
+		if (templateFileList != null) {
+			for (final String fileName : templateFileList) {
+				if (!checkFile(implSettings, project, fileName)) {
+					fileList.add(fileName);
+				}
+			}
+		}
+
+		return fileList;
+	}
+
+	/**
+	 * @since 10.0
+	 */
+	@Override
+	public Set<FileStatus> getGeneratedFilesStatus(ImplementationSettings implSettings, SoftPkg softpkg) throws CoreException {
+		Map<String, Boolean> result = getGeneratedFiles(implSettings, softpkg);
+		Set<FileStatus> retVal = new HashSet<FileStatus>();
+		for (Map.Entry<String, Boolean> entry : result.entrySet()) {
+			String filename = entry.getKey();
+			Boolean modified = entry.getValue();
+			if (modified != null) {
+				if (modified) {
+					retVal.add(new FileStatus(filename, FileStatus.Action.REGEN, FileStatus.State.MODIFIED, FileStatus.Type.SYSTEM));
+				} else {
+					retVal.add(new FileStatus(filename, FileStatus.Action.REGEN, FileStatus.State.MATCHES, FileStatus.Type.SYSTEM));
+				}
+			} else {
+				retVal.add(new FileStatus(filename, FileStatus.Action.REGEN, FileStatus.State.MATCHES, FileStatus.Type.SYSTEM));
+			}
+		}
+		return retVal;
 	}
 }
