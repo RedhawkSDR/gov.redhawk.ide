@@ -15,11 +15,13 @@ import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.CFDataType;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SnapshotMetadataFactory;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Value;
 import gov.redhawk.ide.snapshot.writer.BaseDataWriter;
+import gov.redhawk.ide.snapshot.writer.IDataWriterSettings;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -43,6 +45,7 @@ public abstract class BinDataWriter extends BaseDataWriter {
 	private RandomAccessFile raf;
 	private FileChannel fileChannel;
 	private ByteBuffer byteBuffer;
+	private ByteOrder byteOrder;
 
 	private long numSamples;
 
@@ -85,6 +88,15 @@ public abstract class BinDataWriter extends BaseDataWriter {
 		}
 		raf = new RandomAccessFile(getFileDestination(), "rw");
 		fileChannel = raf.getChannel();
+		
+		IDataWriterSettings settings = getSettings();
+		if (settings instanceof BinDataWriterSettings) {
+			BinDataWriterSettings binSettings = (BinDataWriterSettings) settings;
+			byteOrder = binSettings.getByteOrder();
+		} else {
+			byteOrder = BinDataWriterSettings.DEFAULT_BYTE_ORDER;
+		}
+		
 		setOpen(true);
 	}
 
@@ -92,6 +104,7 @@ public abstract class BinDataWriter extends BaseDataWriter {
 		ByteBuffer buffer = this.byteBuffer;
 		if ((buffer == null) || (buffer.capacity() < byteBufferSize)) {
 			buffer = ByteBuffer.allocateDirect(byteBufferSize);
+			buffer.order(byteOrder);
 			this.byteBuffer = buffer;
 		}
 		buffer.position(0); // reset buffer's position 
@@ -228,6 +241,10 @@ public abstract class BinDataWriter extends BaseDataWriter {
 		} else {
 			return new File(destination.getParentFile(), destination.getName() + "." + getMetaDataFileExtension());
 		}
+	}
+	
+	protected ByteOrder getByteOrder() {
+		return byteOrder;
 	}
 	
 	protected abstract void saveMetaData() throws IOException;

@@ -150,6 +150,7 @@ public class BinSriDataWriter extends BinDataWriter {
 		SimpleDateFormat format = new SimpleDateFormat(this.timeFormat);
 		int divisor = (getSRI().mode == 1) ? 2 : 1;
 		table.put("Number of Samples", getNumSamples() / divisor);
+		table.put("Data Byte Order", getByteOrder());
 		table.put("Start Time", format.format(startDate));
 		table.put("End Time", format.format(new Date()));
 	}

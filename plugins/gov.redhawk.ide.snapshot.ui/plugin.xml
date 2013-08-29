@@ -57,12 +57,14 @@
       <writer
             class="gov.redhawk.ide.snapshot.writer.internal.BinXMLDataWriter"
             id="gov.redhawk.ide.snapshot.writer.BinXMLDataWriter"
-            name="Binary files (.bin and .xml)">
+            name="Binary files (.bin and .xml)"
+            settings="gov.redhawk.ide.snapshot.writer.internal.BinDataWriterSettings">
       </writer>
       <writer
             class="gov.redhawk.ide.snapshot.writer.internal.BinSriDataWriter"
             id="gov.redhawk.ide.snapshot.writer.BinSriDataWriter"
-            name="Binary files (.bin and .sri)">
+            name="Binary files (.bin and .sri)"
+            settings="gov.redhawk.ide.snapshot.writer.internal.BinDataWriterSettings">
       </writer>
       <writer
             class="gov.redhawk.ide.snapshot.writer.internal.BlueDataWriter"
