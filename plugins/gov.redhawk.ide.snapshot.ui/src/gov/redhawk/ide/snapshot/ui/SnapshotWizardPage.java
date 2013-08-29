@@ -11,13 +11,16 @@
 package gov.redhawk.ide.snapshot.ui;
 
 import gov.redhawk.ide.snapshot.writer.IDataWriterDesc;
-
-import java.util.Arrays;
+import gov.redhawk.ui.util.EmptyStringToNullConverter;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -34,6 +37,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -58,6 +62,8 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class SnapshotWizardPage extends WizardPage {
 
+	private static final int UPDATE_DELAY_MS = 200;
+	
 	private final SnapshotSettings settings = new SnapshotSettings();
 	private DataBindingContext context;
 	private WizardPageSupport support;
@@ -106,11 +112,11 @@ public class SnapshotWizardPage extends WizardPage {
 		});
 		fileTypeCombo.setContentProvider(new ArrayContentProvider());
 		IDataWriterDesc[] input = SnapshotActivator.getDataReceiverRegistry().getRecieverDescs();
-		Arrays.sort(input);
 		fileTypeCombo.setInput(input);
+		fileTypeCombo.setSorter(new ViewerSorter()); // sort combo items alphabetically (this selects last item?)
 		context.bindValue(ViewerProperties.singleSelection().observe(fileTypeCombo), BeansObservables.observeValue(settings, "dataWriter"));
 		if (input.length > 0) {
-			fileTypeCombo.setSelection(new StructuredSelection(input[0]));
+			fileTypeCombo.setSelection(new StructuredSelection(fileTypeCombo.getElementAt(0))); // select first sorted element
 		}
 
 		//add check box to see if the user wants to save to their workspace
@@ -158,10 +164,30 @@ public class SnapshotWizardPage extends WizardPage {
 					fileFinderLayout.topControl = searchFileSystem;
 					fileFinder.layout();
 				}
+				context.updateModels(); // <-- this will update filename validators
 			}
 		});
 	}
 
+	private UpdateValueStrategy createFilenameT2MUpdateStrategy(final String fieldName, final boolean onWorkspace) {
+		UpdateValueStrategy updateValueStrategy = new UpdateValueStrategy();
+		updateValueStrategy.setConverter(new EmptyStringToNullConverter());
+		updateValueStrategy.setAfterConvertValidator(new IValidator() {
+			@Override
+			public IStatus validate(Object value) {
+				if (onWorkspace == settings.isSaveToWorkspace()) {
+					if (value instanceof String) {
+						return ValidationStatus.ok();
+					}
+					return ValidationStatus.error(fieldName + " must be specified.");
+				} 
+				return ValidationStatus.ok();
+			}
+		});
+		
+		return updateValueStrategy;
+	}
+	
 	private Composite makeFileSystemSave(Composite parent) {
 		Composite searchFileSystem = new Composite(parent, SWT.None);
 		searchFileSystem.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
@@ -172,7 +198,10 @@ public class SnapshotWizardPage extends WizardPage {
 		final Text fileNameTxt = new Text(searchFileSystem, SWT.BORDER);
 		fileNameTxt.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
 
-		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(500, fileNameTxt), BeansObservables.observeValue(settings, "fileName"));
+ 		UpdateValueStrategy fnameTargetToModelValidator = createFilenameT2MUpdateStrategy("File Name", false);
+		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, fileNameTxt), 
+			BeansObservables.observeValue(settings, "fileName"), fnameTargetToModelValidator, null);
+		
 		// the browse button
 		Button button = new Button(searchFileSystem, SWT.PUSH);
 		button.setText("Browse");
@@ -195,10 +224,13 @@ public class SnapshotWizardPage extends WizardPage {
 
 		//create label and text field for inputing the file name
 		Label fileNameLbl = new Label(searchWorkbench, SWT.None);
-		fileNameLbl.setText("File Name:");
+		fileNameLbl.setText("Workspace File Name:");
 		final Text fileNameTxt = new Text(searchWorkbench, SWT.BORDER);
-
-		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(500, fileNameTxt), BeansObservables.observeValue(settings, "path"));
+		
+ 		UpdateValueStrategy wkspFnameTargetToModelValidator = createFilenameT2MUpdateStrategy("Workspace File Name", true);
+ 		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, fileNameTxt),
+ 			BeansObservables.observeValue(settings, "path"), wkspFnameTargetToModelValidator, null);
+		
 		fileNameTxt.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
 
 		//create tree with which to navigate the workbench file system
@@ -283,5 +315,5 @@ public class SnapshotWizardPage extends WizardPage {
 	public SnapshotSettings getSettings() {
 		return settings;
 	}
-
+	
 }
