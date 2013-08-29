@@ -34,12 +34,15 @@ import CF.DataType;
 import CF.DataTypeHelper;
 
 /**
- * 
+ * NOTE1: the BulkIO data type MUST NOT be changing during a Port snapshot.
+ * NOTE2: this class is NOT meant to have pushPacket(..) calls from different threads simultaneously,
+ * that should never happen in normal operation.
  */
 public abstract class BinDataWriter extends BaseDataWriter {
 
 	private RandomAccessFile raf;
 	private FileChannel fileChannel;
+	private ByteBuffer byteBuffer;
 
 	private long numSamples;
 
@@ -85,9 +88,20 @@ public abstract class BinDataWriter extends BaseDataWriter {
 		setOpen(true);
 	}
 
+	private ByteBuffer allocateByteBuffer(int byteBufferSize) {
+		ByteBuffer buffer = this.byteBuffer;
+		if ((buffer == null) || (buffer.capacity() < byteBufferSize)) {
+			buffer = ByteBuffer.allocateDirect(byteBufferSize);
+			this.byteBuffer = buffer;
+		}
+		buffer.position(0); // reset buffer's position 
+		buffer.limit(byteBufferSize);
+		return buffer;
+	}
+
 	@Override
 	public void pushPacket(char[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocateDirect(length * getSettings().getType().getBytePerAtom());
+		ByteBuffer buffer = allocateByteBuffer(length * getSettings().getType().getBytePerAtom());
 		for (int i = offset; i < length; i++) {
 			buffer.putChar(data[i]);
 		}
@@ -97,7 +111,7 @@ public abstract class BinDataWriter extends BaseDataWriter {
 
 	@Override
 	public void pushPacket(double[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocateDirect(length * getSettings().getType().getBytePerAtom());
+		ByteBuffer buffer = allocateByteBuffer(length * getSettings().getType().getBytePerAtom());
 		DoubleBuffer tBuff = buffer.asDoubleBuffer();
 		tBuff.put(data, offset, length); 
 		fileChannel.write(buffer);
@@ -106,7 +120,7 @@ public abstract class BinDataWriter extends BaseDataWriter {
 
 	@Override
 	public void pushPacket(float[] data, int offset, int length, PrecisionUTCTime time) throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocateDirect(length * getSettings().getType().getBytePerAtom());
+		ByteBuffer buffer = allocateByteBuffer(length * getSettings().getType().getBytePerAtom());
 		FloatBuffer tBuff = buffer.asFloatBuffer();
 		tBuff.put(data, offset, length); 
 		fileChannel.write(buffer);
@@ -119,8 +133,9 @@ public abstract class BinDataWriter extends BaseDataWriter {
 		boolean upcastUnsignedType = getSettings().isUpcastUnsigned() && getSettings().getType().isUnsigned();
 		if (upcastUnsignedType) {
 			throw new IOException("Can not store ulong long as upcasted value.");
+			// TODO -should we still have to signed 64-bit integer and cap upper value like in corbareceiver?
 		} else {
-			buffer = ByteBuffer.allocateDirect(length * getSettings().getType().getBytePerAtom());
+			buffer = allocateByteBuffer(length * getSettings().getType().getBytePerAtom());
 			LongBuffer tBuff = buffer.asLongBuffer();
 			tBuff.put(data, offset, length); 
 		}
@@ -133,13 +148,13 @@ public abstract class BinDataWriter extends BaseDataWriter {
 		ByteBuffer buffer;
 		boolean upcastUnsignedType = getSettings().isUpcastUnsigned() && getSettings().getType().isUnsigned();
 		if (upcastUnsignedType) {
-			buffer = ByteBuffer.allocateDirect(length * BulkIOType.LONG_LONG.getBytePerAtom());
+			buffer = allocateByteBuffer(length * BulkIOType.LONG_LONG.getBytePerAtom());
 			LongBuffer tBuff = buffer.asLongBuffer();
 			for (int i = offset; i < length; i++) {
 				tBuff.put(UnsignedUtils.toSigned(data[i]));
 			}
 		} else {
-			buffer = ByteBuffer.allocateDirect(length * getSettings().getType().getBytePerAtom());
+			buffer = allocateByteBuffer(length * getSettings().getType().getBytePerAtom());
 			IntBuffer tBuff = buffer.asIntBuffer();
 			tBuff.put(data, offset, length); 
 		}
@@ -152,13 +167,13 @@ public abstract class BinDataWriter extends BaseDataWriter {
 		ByteBuffer buffer;
 		boolean upcastUnsignedType = getSettings().isUpcastUnsigned() && getSettings().getType().isUnsigned();
 		if (upcastUnsignedType) {
-			buffer = ByteBuffer.allocateDirect(length * BulkIOType.LONG.getBytePerAtom());
+			buffer = allocateByteBuffer(length * BulkIOType.LONG.getBytePerAtom());
 			IntBuffer tBuff = buffer.asIntBuffer();
 			for (int i = offset; i < length; i++) {
 				tBuff.put(UnsignedUtils.toSigned(data[i]));
 			}
 		} else {
-			buffer = ByteBuffer.allocateDirect(length * getSettings().getType().getBytePerAtom());
+			buffer = allocateByteBuffer(length * getSettings().getType().getBytePerAtom());
 			ShortBuffer tBuf = buffer.asShortBuffer();
 			tBuf.put(data, offset, length);
 		}
@@ -171,7 +186,7 @@ public abstract class BinDataWriter extends BaseDataWriter {
 		ByteBuffer buffer;
 		boolean upcastUnsignedType = getSettings().isUpcastUnsigned() && getSettings().getType().isUnsigned();
 		if (upcastUnsignedType) {
-			buffer = ByteBuffer.allocateDirect(length * BulkIOType.SHORT.getBytePerAtom());
+			buffer = allocateByteBuffer(length * BulkIOType.SHORT.getBytePerAtom());
 			ShortBuffer tBuff = buffer.asShortBuffer();
 			for (int i = offset; i < length; i++) {
 				tBuff.put(UnsignedUtils.toSigned(data[i]));
