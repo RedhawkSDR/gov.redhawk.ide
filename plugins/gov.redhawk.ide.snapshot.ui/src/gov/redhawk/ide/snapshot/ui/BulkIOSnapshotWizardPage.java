@@ -42,6 +42,8 @@ import org.eclipse.swt.widgets.Text;
  */
 public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 
+	private static final int UPDATE_DELAY_MS = 200;
+	
 	private BulkIOSnapshotSettings bulkIOsettings = new BulkIOSnapshotSettings();
 	private Text samplesTxt;
 	private Label unitsLabel;
@@ -63,8 +65,7 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 
 		DataBindingContext context = getContext();
 
-		//Add Combo Box and text field to input how to capture samples
-		Label label;
+		// Add Combo Box and text field to input how to capture samples
 		final ComboViewer captureCombo = new ComboViewer(parent, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SIMPLE);
 		captureCombo.setLabelProvider(new LabelProvider());
 		captureCombo.setContentProvider(new ArrayContentProvider());
@@ -73,35 +74,9 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 
 		samplesTxt = new Text(parent, SWT.BORDER);
 		samplesTxt.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
-		//ensure that invalid number of samples are caught and displayed
-		UpdateValueStrategy validateSamples = new UpdateValueStrategy();
-		validateSamples.setBeforeSetValidator(new IValidator() {
-			@Override
-			public IStatus validate(Object value) {
-				if (value instanceof Double) {
-					CaptureMethod method = bulkIOsettings.getCaptureMethod();
-					if (method == CaptureMethod.INDEFINITELY) {
-						return ValidationStatus.ok();
-					} else if (((Double) value).doubleValue() <= 0) {
-						return ValidationStatus.error(method + " must be greater than 0");
-					} else if (method == CaptureMethod.NUM_SAMPLES) {
-						double val = ((Double) value).doubleValue();
-						if (val > Long.MAX_VALUE) {
-							return ValidationStatus.error(method + " must less than or equal to " + Long.MAX_VALUE);
-						}
-						if ((val - (long) val) > 0) {
-							return ValidationStatus.error(method + " must be a whole number");
-						}
-						return ValidationStatus.ok();
-					} else {
-						return ValidationStatus.ok();
-					}
-				} else {
-					return ValidationStatus.error("The Number of Samples must be a positive number");
-				}
-			}
-		});
-		samplesBinding = context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(500, samplesTxt),
+		// ensure that invalid number of samples are caught and displayed
+		UpdateValueStrategy validateSamples = createSamplesValidatorStrategy();
+		samplesBinding = context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, samplesTxt),
 			BeansObservables.observeValue(bulkIOsettings, "samples"), validateSamples, null);
 
 		unitsLabel = new Label(parent, SWT.None);
@@ -109,20 +84,18 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 		GridData unitsLayout = new GridData();
 		unitsLayout.widthHint = 20;
 		unitsLabel.setLayoutData(unitsLayout);
-		//update validator, set text field enable, and units as needed
+		// update validator, set text field enable, and units as needed
 		captureCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				CaptureMethod method = bulkIOsettings.getCaptureMethod();
 				updateControls(method);
-				
 			}
 		});
 
 		createOutputControls(parent);
 		
 		bulkIOsettings.addPropertyChangeListener(new PropertyChangeListener() {
-			
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (evt.getPropertyName().equals("captureMethod")) {
@@ -164,5 +137,37 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 		default:
 			break;
 		}
+	}
+	
+	private UpdateValueStrategy createSamplesValidatorStrategy() {
+		UpdateValueStrategy updateValueStrategy = new UpdateValueStrategy();
+		updateValueStrategy.setBeforeSetValidator(new IValidator() {
+			@Override
+			public IStatus validate(Object value) {
+				if (value instanceof Double) {
+					CaptureMethod method = bulkIOsettings.getCaptureMethod();
+					if (method == CaptureMethod.INDEFINITELY) {
+						return ValidationStatus.ok();
+					} else if (((Double) value).doubleValue() <= 0) {
+						return ValidationStatus.error(method + " must be greater than 0");
+					} else if (method == CaptureMethod.NUM_SAMPLES) {
+						double val = ((Double) value).doubleValue();
+						if (val > Long.MAX_VALUE) {
+							return ValidationStatus.error(method + " must less than or equal to " + Long.MAX_VALUE);
+						}
+						if ((val - (long) val) > 0) {
+							return ValidationStatus.error(method + " must be a whole number");
+						}
+						return ValidationStatus.ok();
+					} else {
+						return ValidationStatus.ok();
+					}
+				} else {
+					return ValidationStatus.error("The Number of Samples must be a positive number");
+				}
+			}
+		});
+		
+		return updateValueStrategy;
 	}
 }
