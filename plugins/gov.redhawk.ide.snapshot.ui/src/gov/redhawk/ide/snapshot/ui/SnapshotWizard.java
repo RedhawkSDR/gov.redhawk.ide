@@ -18,6 +18,7 @@ import java.io.File;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
@@ -59,8 +60,14 @@ public class SnapshotWizard extends Wizard {
 		try {
 			IDataWriterSettings writerSettings = desc.createWriterSettings();
 			if (settings.isSaveToWorkspace()) {
+				if (settings.getPath() == null || settings.getPath().trim().length() == 0) {
+					throw new CoreException(new Status(IStatus.WARNING, SnapshotActivator.PLUGIN_ID, "Workspace File Name must be specified."));
+				}
 				writerSettings.setDestination(settings.getIFile());
 			} else {
+				if (settings.getFileName() == null || settings.getFileName().trim().length() == 0) {
+					throw new CoreException(new Status(IStatus.WARNING, SnapshotActivator.PLUGIN_ID, "File Name must be specified."));
+				}
 				writerSettings.setDestination(settings.getDestinationFile());
 			}
 			this.dataWriter = desc.createWriter();
