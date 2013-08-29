@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-//BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl;
 
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.CFDataType;
@@ -80,7 +80,8 @@ public class KeywordsTypeImpl extends EObjectImpl implements KeywordsType {
 	 * @generated
 	 */
 	public FeatureMap getMixed() {
-		if (mixed == null) {
+		if (mixed == null)
+		{
 			mixed = new BasicFeatureMap(this, SnapshotMetadataPackage.KEYWORDS_TYPE__MIXED);
 		}
 		return mixed;
@@ -102,11 +103,12 @@ public class KeywordsTypeImpl extends EObjectImpl implements KeywordsType {
 	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-		case SnapshotMetadataPackage.KEYWORDS_TYPE__MIXED:
-			return ((InternalEList< ? >) getMixed()).basicRemove(otherEnd, msgs);
-		case SnapshotMetadataPackage.KEYWORDS_TYPE__CF_DATA_TYPE:
-			return ((InternalEList< ? >) getCFDataType()).basicRemove(otherEnd, msgs);
+		switch (featureID)
+		{
+			case SnapshotMetadataPackage.KEYWORDS_TYPE__MIXED:
+				return ((InternalEList<?>)getMixed()).basicRemove(otherEnd, msgs);
+			case SnapshotMetadataPackage.KEYWORDS_TYPE__CF_DATA_TYPE:
+				return ((InternalEList<?>)getCFDataType()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -118,13 +120,13 @@ public class KeywordsTypeImpl extends EObjectImpl implements KeywordsType {
 	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-		case SnapshotMetadataPackage.KEYWORDS_TYPE__MIXED:
-			if (coreType)
-				return getMixed();
-			return ((FeatureMap.Internal) getMixed()).getWrapper();
-		case SnapshotMetadataPackage.KEYWORDS_TYPE__CF_DATA_TYPE:
-			return getCFDataType();
+		switch (featureID)
+		{
+			case SnapshotMetadataPackage.KEYWORDS_TYPE__MIXED:
+				if (coreType) return getMixed();
+				return ((FeatureMap.Internal)getMixed()).getWrapper();
+			case SnapshotMetadataPackage.KEYWORDS_TYPE__CF_DATA_TYPE:
+				return getCFDataType();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -137,14 +139,15 @@ public class KeywordsTypeImpl extends EObjectImpl implements KeywordsType {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-		case SnapshotMetadataPackage.KEYWORDS_TYPE__MIXED:
-			((FeatureMap.Internal) getMixed()).set(newValue);
-			return;
-		case SnapshotMetadataPackage.KEYWORDS_TYPE__CF_DATA_TYPE:
-			getCFDataType().clear();
-			getCFDataType().addAll((Collection< ? extends CFDataType>) newValue);
-			return;
+		switch (featureID)
+		{
+			case SnapshotMetadataPackage.KEYWORDS_TYPE__MIXED:
+				((FeatureMap.Internal)getMixed()).set(newValue);
+				return;
+			case SnapshotMetadataPackage.KEYWORDS_TYPE__CF_DATA_TYPE:
+				getCFDataType().clear();
+				getCFDataType().addAll((Collection<? extends CFDataType>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -156,13 +159,14 @@ public class KeywordsTypeImpl extends EObjectImpl implements KeywordsType {
 	 */
 	@Override
 	public void eUnset(int featureID) {
-		switch (featureID) {
-		case SnapshotMetadataPackage.KEYWORDS_TYPE__MIXED:
-			getMixed().clear();
-			return;
-		case SnapshotMetadataPackage.KEYWORDS_TYPE__CF_DATA_TYPE:
-			getCFDataType().clear();
-			return;
+		switch (featureID)
+		{
+			case SnapshotMetadataPackage.KEYWORDS_TYPE__MIXED:
+				getMixed().clear();
+				return;
+			case SnapshotMetadataPackage.KEYWORDS_TYPE__CF_DATA_TYPE:
+				getCFDataType().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -174,11 +178,12 @@ public class KeywordsTypeImpl extends EObjectImpl implements KeywordsType {
 	 */
 	@Override
 	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-		case SnapshotMetadataPackage.KEYWORDS_TYPE__MIXED:
-			return mixed != null && !mixed.isEmpty();
-		case SnapshotMetadataPackage.KEYWORDS_TYPE__CF_DATA_TYPE:
-			return !getCFDataType().isEmpty();
+		switch (featureID)
+		{
+			case SnapshotMetadataPackage.KEYWORDS_TYPE__MIXED:
+				return mixed != null && !mixed.isEmpty();
+			case SnapshotMetadataPackage.KEYWORDS_TYPE__CF_DATA_TYPE:
+				return !getCFDataType().isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -190,8 +195,7 @@ public class KeywordsTypeImpl extends EObjectImpl implements KeywordsType {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
-			return super.toString();
+		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (mixed: ");

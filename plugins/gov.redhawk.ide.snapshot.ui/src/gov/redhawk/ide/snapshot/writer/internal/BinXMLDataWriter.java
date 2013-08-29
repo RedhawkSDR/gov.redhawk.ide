@@ -43,6 +43,7 @@ public class BinXMLDataWriter extends BinDataWriter {
 		Model metaInfo = SnapshotMetadataFactory.eINSTANCE.createModel();
 		int divisor = (getSRI().mode == 1) ? 2 : 1;
 		metaInfo.setNumberOfSamples(getNumSamples() / divisor);
+		metaInfo.setDataByteOrder("" + getByteOrder());
 		metaInfo.setTime(SnapshotMetadataFactory.eINSTANCE.createTime());
 		metaInfo.setStreamSRI(SnapshotMetadataFactory.eINSTANCE.createSRI());
 		

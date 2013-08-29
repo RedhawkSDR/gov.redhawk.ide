@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-//BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.util;
 
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SnapshotMetadataPackage;
@@ -50,7 +50,8 @@ public class SnapshotMetadataXMLProcessor extends XMLProcessor {
 	 */
 	@Override
 	protected Map<String, Resource.Factory> getRegistrations() {
-		if (registrations == null) {
+		if (registrations == null)
+		{
 			super.getRegistrations();
 			registrations.put(XML_EXTENSION, new SnapshotMetadataResourceFactoryImpl());
 			registrations.put(STAR_EXTENSION, new SnapshotMetadataResourceFactoryImpl());

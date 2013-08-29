@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-//BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.util;
 
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.*;
@@ -47,7 +47,8 @@ public class SnapshotMetadataSwitch< T > extends Switch<T> {
 	 * @generated
 	 */
 	public SnapshotMetadataSwitch() {
-		if (modelPackage == null) {
+		if (modelPackage == null)
+		{
 			modelPackage = SnapshotMetadataPackage.eINSTANCE;
 		}
 	}
@@ -74,51 +75,51 @@ public class SnapshotMetadataSwitch< T > extends Switch<T> {
 	 */
 	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
-		switch (classifierID) {
-		case SnapshotMetadataPackage.CF_DATA_TYPE: {
-			CFDataType cfDataType = (CFDataType) theEObject;
-			T result = caseCFDataType(cfDataType);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
-		case SnapshotMetadataPackage.KEYWORDS_TYPE: {
-			KeywordsType keywordsType = (KeywordsType) theEObject;
-			T result = caseKeywordsType(keywordsType);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
-		case SnapshotMetadataPackage.MODEL: {
-			Model model = (Model) theEObject;
-			T result = caseModel(model);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
-		case SnapshotMetadataPackage.SRI: {
-			SRI sri = (SRI) theEObject;
-			T result = caseSRI(sri);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
-		case SnapshotMetadataPackage.TIME: {
-			Time time = (Time) theEObject;
-			T result = caseTime(time);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
-		case SnapshotMetadataPackage.VALUE: {
-			Value value = (Value) theEObject;
-			T result = caseValue(value);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
-		default:
-			return defaultCase(theEObject);
+		switch (classifierID)
+		{
+			case SnapshotMetadataPackage.CF_DATA_TYPE:
+			{
+				CFDataType cfDataType = (CFDataType)theEObject;
+				T result = caseCFDataType(cfDataType);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SnapshotMetadataPackage.KEYWORDS_TYPE:
+			{
+				KeywordsType keywordsType = (KeywordsType)theEObject;
+				T result = caseKeywordsType(keywordsType);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SnapshotMetadataPackage.MODEL:
+			{
+				Model model = (Model)theEObject;
+				T result = caseModel(model);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SnapshotMetadataPackage.SRI:
+			{
+				SRI sri = (SRI)theEObject;
+				T result = caseSRI(sri);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SnapshotMetadataPackage.TIME:
+			{
+				Time time = (Time)theEObject;
+				T result = caseTime(time);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SnapshotMetadataPackage.VALUE:
+			{
+				Value value = (Value)theEObject;
+				T result = caseValue(value);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			default: return defaultCase(theEObject);
 		}
 	}
 

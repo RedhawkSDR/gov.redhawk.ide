@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-//BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.util;
 
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.*;
@@ -44,7 +44,8 @@ public class SnapshotMetadataAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public SnapshotMetadataAdapterFactory() {
-		if (modelPackage == null) {
+		if (modelPackage == null)
+		{
 			modelPackage = SnapshotMetadataPackage.eINSTANCE;
 		}
 	}
@@ -59,11 +60,13 @@ public class SnapshotMetadataAdapterFactory extends AdapterFactoryImpl {
 	 */
 	@Override
 	public boolean isFactoryForType(Object object) {
-		if (object == modelPackage) {
+		if (object == modelPackage)
+		{
 			return true;
 		}
-		if (object instanceof EObject) {
-			return ((EObject) object).eClass().getEPackage() == modelPackage;
+		if (object instanceof EObject)
+		{
+			return ((EObject)object).eClass().getEPackage() == modelPackage;
 		}
 		return false;
 	}
@@ -74,42 +77,44 @@ public class SnapshotMetadataAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected SnapshotMetadataSwitch<Adapter> modelSwitch = new SnapshotMetadataSwitch<Adapter>() {
-		@Override
-		public Adapter caseCFDataType(CFDataType object) {
-			return createCFDataTypeAdapter();
-		}
-
-		@Override
-		public Adapter caseKeywordsType(KeywordsType object) {
-			return createKeywordsTypeAdapter();
-		}
-
-		@Override
-		public Adapter caseModel(Model object) {
-			return createModelAdapter();
-		}
-
-		@Override
-		public Adapter caseSRI(SRI object) {
-			return createSRIAdapter();
-		}
-
-		@Override
-		public Adapter caseTime(Time object) {
-			return createTimeAdapter();
-		}
-
-		@Override
-		public Adapter caseValue(Value object) {
-			return createValueAdapter();
-		}
-
-		@Override
-		public Adapter defaultCase(EObject object) {
-			return createEObjectAdapter();
-		}
-	};
+	protected SnapshotMetadataSwitch<Adapter> modelSwitch = new SnapshotMetadataSwitch<Adapter>()
+		{
+			@Override
+			public Adapter caseCFDataType(CFDataType object)
+			{
+				return createCFDataTypeAdapter();
+			}
+			@Override
+			public Adapter caseKeywordsType(KeywordsType object)
+			{
+				return createKeywordsTypeAdapter();
+			}
+			@Override
+			public Adapter caseModel(Model object)
+			{
+				return createModelAdapter();
+			}
+			@Override
+			public Adapter caseSRI(SRI object)
+			{
+				return createSRIAdapter();
+			}
+			@Override
+			public Adapter caseTime(Time object)
+			{
+				return createTimeAdapter();
+			}
+			@Override
+			public Adapter caseValue(Value object)
+			{
+				return createValueAdapter();
+			}
+			@Override
+			public Adapter defaultCase(EObject object)
+			{
+				return createEObjectAdapter();
+			}
+		};
 
 	/**
 	 * Creates an adapter for the <code>target</code>.
@@ -121,7 +126,7 @@ public class SnapshotMetadataAdapterFactory extends AdapterFactoryImpl {
 	 */
 	@Override
 	public Adapter createAdapter(Notifier target) {
-		return modelSwitch.doSwitch((EObject) target);
+		return modelSwitch.doSwitch((EObject)target);
 	}
 
 	/**

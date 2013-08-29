@@ -3,6 +3,7 @@
 	<xsd:complexType mixed="true" name="Model">
 		<xsd:sequence>
 			<xsd:element name="numberOfSamples" type="xsd:long"/>
+			<xsd:element name="dataByteOrder" type="xsd:string"/>
 			<xsd:element name="time" type="Time"/>
 			<xsd:element name="BulkIOType" type="xsd:string"/>
 			<xsd:element name="StreamSRI" type="SRI"/>

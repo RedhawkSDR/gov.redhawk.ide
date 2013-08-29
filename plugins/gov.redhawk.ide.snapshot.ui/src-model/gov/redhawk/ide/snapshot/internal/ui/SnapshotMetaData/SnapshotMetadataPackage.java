@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-//BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData;
 
 import org.eclipse.emf.ecore.EAttribute;
@@ -178,13 +178,22 @@ public interface SnapshotMetadataPackage extends EPackage {
 	int MODEL__NUMBER_OF_SAMPLES = 1;
 
 	/**
+	 * The feature id for the '<em><b>Data Byte Order</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL__DATA_BYTE_ORDER = 2;
+
+	/**
 	 * The feature id for the '<em><b>Time</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL__TIME = 2;
+	int MODEL__TIME = 3;
 
 	/**
 	 * The feature id for the '<em><b>Bulk IO Type</b></em>' attribute.
@@ -193,7 +202,7 @@ public interface SnapshotMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL__BULK_IO_TYPE = 3;
+	int MODEL__BULK_IO_TYPE = 4;
 
 	/**
 	 * The feature id for the '<em><b>Stream SRI</b></em>' containment reference.
@@ -202,7 +211,7 @@ public interface SnapshotMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL__STREAM_SRI = 4;
+	int MODEL__STREAM_SRI = 5;
 
 	/**
 	 * The number of structural features of the '<em>Model</em>' class.
@@ -211,7 +220,7 @@ public interface SnapshotMetadataPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_FEATURE_COUNT = 5;
+	int MODEL_FEATURE_COUNT = 6;
 
 	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.SRIImpl <em>SRI</em>}' class.
@@ -573,6 +582,17 @@ public interface SnapshotMetadataPackage extends EPackage {
 	EReference getModel_StreamSRI();
 
 	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Model#getDataByteOrder <em>Data Byte Order</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Data Byte Order</em>'.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Model#getDataByteOrder()
+	 * @see #getModel()
+	 * @generated
+	 */
+	EAttribute getModel_DataByteOrder();
+
+	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI <em>SRI</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -931,6 +951,14 @@ public interface SnapshotMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EReference MODEL__STREAM_SRI = eINSTANCE.getModel_StreamSRI();
+
+		/**
+		 * The meta object literal for the '<em><b>Data Byte Order</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MODEL__DATA_BYTE_ORDER = eINSTANCE.getModel_DataByteOrder();
 
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.SRIImpl <em>SRI</em>}' class.

@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-//BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl;
 
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SnapshotMetadataPackage;
@@ -96,7 +96,8 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 * @generated
 	 */
 	public FeatureMap getMixed() {
-		if (mixed == null) {
+		if (mixed == null)
+		{
 			mixed = new BasicFeatureMap(this, SnapshotMetadataPackage.VALUE__MIXED);
 		}
 		return mixed;
@@ -108,7 +109,7 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 * @generated
 	 */
 	public String getValue() {
-		return (String) getMixed().get(SnapshotMetadataPackage.Literals.VALUE__VALUE, true);
+		return (String)getMixed().get(SnapshotMetadataPackage.Literals.VALUE__VALUE, true);
 	}
 
 	/**
@@ -117,7 +118,7 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 * @generated
 	 */
 	public void setValue(String newValue) {
-		((FeatureMap.Internal) getMixed()).set(SnapshotMetadataPackage.Literals.VALUE__VALUE, newValue);
+		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.VALUE__VALUE, newValue);
 	}
 
 	/**
@@ -126,7 +127,7 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 * @generated
 	 */
 	public String getJavaType() {
-		return (String) getMixed().get(SnapshotMetadataPackage.Literals.VALUE__JAVA_TYPE, true);
+		return (String)getMixed().get(SnapshotMetadataPackage.Literals.VALUE__JAVA_TYPE, true);
 	}
 
 	/**
@@ -135,7 +136,7 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 * @generated
 	 */
 	public void setJavaType(String newJavaType) {
-		((FeatureMap.Internal) getMixed()).set(SnapshotMetadataPackage.Literals.VALUE__JAVA_TYPE, newJavaType);
+		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.VALUE__JAVA_TYPE, newJavaType);
 	}
 
 	/**
@@ -145,9 +146,10 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-		case SnapshotMetadataPackage.VALUE__MIXED:
-			return ((InternalEList< ? >) getMixed()).basicRemove(otherEnd, msgs);
+		switch (featureID)
+		{
+			case SnapshotMetadataPackage.VALUE__MIXED:
+				return ((InternalEList<?>)getMixed()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -159,15 +161,15 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-		case SnapshotMetadataPackage.VALUE__MIXED:
-			if (coreType)
-				return getMixed();
-			return ((FeatureMap.Internal) getMixed()).getWrapper();
-		case SnapshotMetadataPackage.VALUE__VALUE:
-			return getValue();
-		case SnapshotMetadataPackage.VALUE__JAVA_TYPE:
-			return getJavaType();
+		switch (featureID)
+		{
+			case SnapshotMetadataPackage.VALUE__MIXED:
+				if (coreType) return getMixed();
+				return ((FeatureMap.Internal)getMixed()).getWrapper();
+			case SnapshotMetadataPackage.VALUE__VALUE:
+				return getValue();
+			case SnapshotMetadataPackage.VALUE__JAVA_TYPE:
+				return getJavaType();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -179,16 +181,17 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 */
 	@Override
 	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-		case SnapshotMetadataPackage.VALUE__MIXED:
-			((FeatureMap.Internal) getMixed()).set(newValue);
-			return;
-		case SnapshotMetadataPackage.VALUE__VALUE:
-			setValue((String) newValue);
-			return;
-		case SnapshotMetadataPackage.VALUE__JAVA_TYPE:
-			setJavaType((String) newValue);
-			return;
+		switch (featureID)
+		{
+			case SnapshotMetadataPackage.VALUE__MIXED:
+				((FeatureMap.Internal)getMixed()).set(newValue);
+				return;
+			case SnapshotMetadataPackage.VALUE__VALUE:
+				setValue((String)newValue);
+				return;
+			case SnapshotMetadataPackage.VALUE__JAVA_TYPE:
+				setJavaType((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -200,16 +203,17 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 */
 	@Override
 	public void eUnset(int featureID) {
-		switch (featureID) {
-		case SnapshotMetadataPackage.VALUE__MIXED:
-			getMixed().clear();
-			return;
-		case SnapshotMetadataPackage.VALUE__VALUE:
-			setValue(VALUE_EDEFAULT);
-			return;
-		case SnapshotMetadataPackage.VALUE__JAVA_TYPE:
-			setJavaType(JAVA_TYPE_EDEFAULT);
-			return;
+		switch (featureID)
+		{
+			case SnapshotMetadataPackage.VALUE__MIXED:
+				getMixed().clear();
+				return;
+			case SnapshotMetadataPackage.VALUE__VALUE:
+				setValue(VALUE_EDEFAULT);
+				return;
+			case SnapshotMetadataPackage.VALUE__JAVA_TYPE:
+				setJavaType(JAVA_TYPE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -221,13 +225,14 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 */
 	@Override
 	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-		case SnapshotMetadataPackage.VALUE__MIXED:
-			return mixed != null && !mixed.isEmpty();
-		case SnapshotMetadataPackage.VALUE__VALUE:
-			return VALUE_EDEFAULT == null ? getValue() != null : !VALUE_EDEFAULT.equals(getValue());
-		case SnapshotMetadataPackage.VALUE__JAVA_TYPE:
-			return JAVA_TYPE_EDEFAULT == null ? getJavaType() != null : !JAVA_TYPE_EDEFAULT.equals(getJavaType());
+		switch (featureID)
+		{
+			case SnapshotMetadataPackage.VALUE__MIXED:
+				return mixed != null && !mixed.isEmpty();
+			case SnapshotMetadataPackage.VALUE__VALUE:
+				return VALUE_EDEFAULT == null ? getValue() != null : !VALUE_EDEFAULT.equals(getValue());
+			case SnapshotMetadataPackage.VALUE__JAVA_TYPE:
+				return JAVA_TYPE_EDEFAULT == null ? getJavaType() != null : !JAVA_TYPE_EDEFAULT.equals(getJavaType());
 		}
 		return super.eIsSet(featureID);
 	}
@@ -239,8 +244,7 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
-			return super.toString();
+		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (mixed: ");

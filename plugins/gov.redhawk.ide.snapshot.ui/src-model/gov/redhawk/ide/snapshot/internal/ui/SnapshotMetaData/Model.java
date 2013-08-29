@@ -8,11 +8,10 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-//BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData;
 
 import org.eclipse.emf.ecore.EObject;
-
 import org.eclipse.emf.ecore.util.FeatureMap;
 
 /**
@@ -25,6 +24,7 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  * <ul>
  *   <li>{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Model#getMixed <em>Mixed</em>}</li>
  *   <li>{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Model#getNumberOfSamples <em>Number Of Samples</em>}</li>
+ *   <li>{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Model#getDataByteOrder <em>Data Byte Order</em>}</li>
  *   <li>{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Model#getTime <em>Time</em>}</li>
  *   <li>{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Model#getBulkIOType <em>Bulk IO Type</em>}</li>
  *   <li>{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Model#getStreamSRI <em>Stream SRI</em>}</li>
@@ -187,5 +187,60 @@ public interface Model extends EObject {
 	 * @generated
 	 */
 	void setStreamSRI(SRI value);
+
+	/**
+	 * Returns the value of the '<em><b>Data Byte Order</b></em>' attribute.
+	 * The default value is <code>""</code>.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Data Byte Order</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Data Byte Order</em>' attribute.
+	 * @see #isSetDataByteOrder()
+	 * @see #unsetDataByteOrder()
+	 * @see #setDataByteOrder(String)
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SnapshotMetadataPackage#getModel_DataByteOrder()
+	 * @model default="" unsettable="true" dataType="org.eclipse.emf.ecore.xml.type.String" required="true" transient="true" volatile="true" derived="true"
+	 *        extendedMetaData="kind='element' name='dataByteOrder' namespace='##targetNamespace'"
+	 * @generated
+	 */
+	String getDataByteOrder();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Model#getDataByteOrder <em>Data Byte Order</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Data Byte Order</em>' attribute.
+	 * @see #isSetDataByteOrder()
+	 * @see #unsetDataByteOrder()
+	 * @see #getDataByteOrder()
+	 * @generated
+	 */
+	void setDataByteOrder(String value);
+
+	/**
+	 * Unsets the value of the '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Model#getDataByteOrder <em>Data Byte Order</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isSetDataByteOrder()
+	 * @see #getDataByteOrder()
+	 * @see #setDataByteOrder(String)
+	 * @generated
+	 */
+	void unsetDataByteOrder();
+
+	/**
+	 * Returns whether the value of the '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Model#getDataByteOrder <em>Data Byte Order</em>}' attribute is set.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return whether the value of the '<em>Data Byte Order</em>' attribute is set.
+	 * @see #unsetDataByteOrder()
+	 * @see #getDataByteOrder()
+	 * @see #setDataByteOrder(String)
+	 * @generated
+	 */
+	boolean isSetDataByteOrder();
 
 } // Model

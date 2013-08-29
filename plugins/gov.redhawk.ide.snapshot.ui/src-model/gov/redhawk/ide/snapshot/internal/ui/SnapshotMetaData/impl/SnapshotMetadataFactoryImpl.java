@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-//BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl;
 
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.*;
@@ -35,12 +35,16 @@ public class SnapshotMetadataFactoryImpl extends EFactoryImpl implements Snapsho
 	 * @generated
 	 */
 	public static SnapshotMetadataFactory init() {
-		try {
-			SnapshotMetadataFactory theSnapshotMetadataFactory = (SnapshotMetadataFactory) EPackage.Registry.INSTANCE.getEFactory(SnapshotMetadataPackage.eNS_URI);
-			if (theSnapshotMetadataFactory != null) {
+		try
+		{
+			SnapshotMetadataFactory theSnapshotMetadataFactory = (SnapshotMetadataFactory)EPackage.Registry.INSTANCE.getEFactory(SnapshotMetadataPackage.eNS_URI);
+			if (theSnapshotMetadataFactory != null)
+			{
 				return theSnapshotMetadataFactory;
 			}
-		} catch (Exception exception) {
+		}
+		catch (Exception exception)
+		{
 			EcorePlugin.INSTANCE.log(exception);
 		}
 		return new SnapshotMetadataFactoryImpl();
@@ -63,21 +67,16 @@ public class SnapshotMetadataFactoryImpl extends EFactoryImpl implements Snapsho
 	 */
 	@Override
 	public EObject create(EClass eClass) {
-		switch (eClass.getClassifierID()) {
-		case SnapshotMetadataPackage.CF_DATA_TYPE:
-			return createCFDataType();
-		case SnapshotMetadataPackage.KEYWORDS_TYPE:
-			return createKeywordsType();
-		case SnapshotMetadataPackage.MODEL:
-			return createModel();
-		case SnapshotMetadataPackage.SRI:
-			return createSRI();
-		case SnapshotMetadataPackage.TIME:
-			return createTime();
-		case SnapshotMetadataPackage.VALUE:
-			return createValue();
-		default:
-			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+		switch (eClass.getClassifierID())
+		{
+			case SnapshotMetadataPackage.CF_DATA_TYPE: return createCFDataType();
+			case SnapshotMetadataPackage.KEYWORDS_TYPE: return createKeywordsType();
+			case SnapshotMetadataPackage.MODEL: return createModel();
+			case SnapshotMetadataPackage.SRI: return createSRI();
+			case SnapshotMetadataPackage.TIME: return createTime();
+			case SnapshotMetadataPackage.VALUE: return createValue();
+			default:
+				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
 	}
 
@@ -147,7 +146,7 @@ public class SnapshotMetadataFactoryImpl extends EFactoryImpl implements Snapsho
 	 * @generated
 	 */
 	public SnapshotMetadataPackage getSnapshotMetadataPackage() {
-		return (SnapshotMetadataPackage) getEPackage();
+		return (SnapshotMetadataPackage)getEPackage();
 	}
 
 	/**
