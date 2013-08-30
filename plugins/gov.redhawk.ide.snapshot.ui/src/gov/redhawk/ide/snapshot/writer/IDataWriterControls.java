@@ -16,6 +16,6 @@ import org.eclipse.swt.widgets.Composite;
  * 
  */
 public interface IDataWriterControls {
-	public void createControls(Composite paremt);
+	public void createControls(Composite parent);
 	public IDataWriterSettings getSettings();
 }

@@ -13,6 +13,8 @@ package gov.redhawk.ide.snapshot.ui;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 
 /**
  * 
@@ -38,7 +40,7 @@ public class BulkIOSnapshotSettings {
 		return captureMethod;
 	}
 	
-	public void setCaptureMethod(CaptureMethod captureMethod) {
+	public void setCaptureMethod(@NonNull CaptureMethod captureMethod) {
 		CaptureMethod oldValue = this.captureMethod;
 		this.captureMethod = captureMethod;
 		pcs.firePropertyChange("captureMethod", oldValue, captureMethod);

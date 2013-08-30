@@ -27,6 +27,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -64,9 +65,18 @@ public class SnapshotWizardPage extends WizardPage {
 
 	private static final int UPDATE_DELAY_MS = 200;
 	
+	// === BEGIN: dialog page settings storage keys === 
+	private static final String SS_FILE_TYPE_ID        = "outFileType_id";
+	private static final String SS_SAVE_TO_WORKSPACE   = "saveToWorkspace";
+	private static final String SS_CONFIRM_OVERWRITE   = "confirmOverwrite";
+	private static final String SS_FILESYSTEM_FILENAME = "filename";
+	private static final String SS_WORKSPACE_FILENAME  = "workspaceFilename";
+	// === END: dialog page settings storage keys ===
+	
 	private final SnapshotSettings settings = new SnapshotSettings();
 	private DataBindingContext context;
 	private WizardPageSupport support;
+	private IDialogSettings pageSettings;
 
 	public SnapshotWizardPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
@@ -79,6 +89,8 @@ public class SnapshotWizardPage extends WizardPage {
 
 	@Override
 	public void createControl(Composite main) {
+		setupDialogSettingsStorage(); // for saving wizard page settings
+		
 		final Composite parent = new Composite(main, SWT.None);
 		parent.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
 
@@ -128,7 +140,7 @@ public class SnapshotWizardPage extends WizardPage {
 		final Button confirmOverwrite = new Button(parent, SWT.CHECK);
 		confirmOverwrite.setText("Confirm overwrite");
 		context.bindValue(WidgetProperties.selection().observe(confirmOverwrite), BeansObservables.observeValue(settings, "confirmOverwrite"));
-
+	
 		//region to hold the different pages for saving to the workspace or the file system
 		final Group fileFinder = new Group(parent, SWT.SHADOW_ETCHED_IN);
 		fileFinder.setText("Save to");
@@ -167,6 +179,8 @@ public class SnapshotWizardPage extends WizardPage {
 				context.updateModels(); // <-- this will update filename validators
 			}
 		});
+		
+		restoreWidgetValues(settings);
 	}
 
 	private UpdateValueStrategy createFilenameT2MUpdateStrategy(final String fieldName, final boolean onWorkspace) {
@@ -315,5 +329,44 @@ public class SnapshotWizardPage extends WizardPage {
 	public SnapshotSettings getSettings() {
 		return settings;
 	}
+
+	public void setupDialogSettingsStorage() {
+		pageSettings = getDialogSettings().getSection(getName());
+		if (pageSettings == null) {
+			pageSettings = getDialogSettings().addNewSection(getName());
+		}
+	}
 	
+	protected IDialogSettings getPageSettingsSection() {
+		return pageSettings;
+	}
+	
+	protected void saveWidgetValues(SnapshotSettings ss) {
+		pageSettings.put(SS_FILE_TYPE_ID,        ss.getDataWriter().getID());
+		pageSettings.put(SS_SAVE_TO_WORKSPACE,   ss.isSaveToWorkspace());
+		pageSettings.put(SS_CONFIRM_OVERWRITE,   ss.isConfirmOverwrite());
+		pageSettings.put(SS_FILESYSTEM_FILENAME, ss.getFileName());
+		pageSettings.put(SS_WORKSPACE_FILENAME,  ss.getPath());
+	}
+	
+	private void restoreWidgetValues(SnapshotSettings sss) {
+		String tmp;
+		tmp = pageSettings.get(SS_FILE_TYPE_ID);
+		if (tmp != null) {
+			IDataWriterDesc dwd = SnapshotActivator.getDataReceiverRegistry().getRecieverDesc(tmp);
+			if (dwd != null) {
+				sss.setDataWriter(dwd);
+			}
+		}
+		tmp = pageSettings.get(SS_SAVE_TO_WORKSPACE);
+		if (tmp != null) {
+			sss.setSaveToWorkspace(Boolean.valueOf(tmp));
+		}
+		tmp = pageSettings.get(SS_CONFIRM_OVERWRITE);
+		if (tmp != null) {
+			sss.setConfirmOverwrite(Boolean.valueOf(tmp));
+		}
+		sss.setFileName(pageSettings.get(SS_FILESYSTEM_FILENAME));
+		sss.setPath(pageSettings.get(SS_WORKSPACE_FILENAME));
+	}
 }

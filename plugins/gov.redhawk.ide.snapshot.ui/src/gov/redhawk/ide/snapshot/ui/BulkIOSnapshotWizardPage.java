@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -44,6 +45,11 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 
 	private static final int UPDATE_DELAY_MS = 200;
 	
+	// === BEGIN: dialog page settings storage keys === 
+	private static final String BSS_NUM_SAMPLES    = "numberSamples";
+	private static final String BSS_CAPTURE_METHOD = "captureMethod";
+	// === END: dialog page settings storage keys === 
+	
 	private BulkIOSnapshotSettings bulkIOsettings = new BulkIOSnapshotSettings();
 	private Text samplesTxt;
 	private Label unitsLabel;
@@ -60,6 +66,8 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 
 	@Override
 	public void createControl(Composite main) {
+		setupDialogSettingsStorage(); // for saving wizard page settings
+		
 		final Composite parent = new Composite(main, SWT.None);
 		parent.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
 
@@ -107,6 +115,8 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 		setPageComplete(false);
 		setPageSupport(WizardPageSupport.create(this, context));
 		setControl(parent);
+		
+		restoreWidgetValues(bulkIOsettings);
 	}
 
 	protected void updateControls(CaptureMethod method) {
@@ -169,5 +179,34 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 		});
 		
 		return updateValueStrategy;
+	}
+	
+	protected void saveWidgetValues(BulkIOSnapshotSettings bss) {
+		IDialogSettings pageSettings = getPageSettingsSection();
+		pageSettings.put(BSS_NUM_SAMPLES,    bss.getSamples());
+		pageSettings.put(BSS_CAPTURE_METHOD, bss.getCaptureMethod().name());
+	}
+	
+	private void restoreWidgetValues(BulkIOSnapshotSettings bss) {
+		IDialogSettings pageSettings = getPageSettingsSection();
+		if (pageSettings != null && bss != null) {
+			String tmp;
+			tmp = pageSettings.get(BSS_NUM_SAMPLES);
+			if (tmp != null) {
+				try {
+					bss.setSamples(Double.valueOf(tmp));
+				} catch (NumberFormatException nfe) {
+					// PASS - ignore
+				}
+			} 
+			tmp = pageSettings.get(BSS_CAPTURE_METHOD);
+			if (tmp != null) {
+				try {
+					bss.setCaptureMethod(CaptureMethod.valueOf(tmp));
+				} catch (IllegalArgumentException iae) {
+					// PASS - ignore
+				}
+			}
+		}
 	}
 }

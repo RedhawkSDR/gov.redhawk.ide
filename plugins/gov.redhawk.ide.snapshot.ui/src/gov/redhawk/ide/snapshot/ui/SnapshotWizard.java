@@ -13,12 +13,14 @@ package gov.redhawk.ide.snapshot.ui;
 import gov.redhawk.ide.snapshot.writer.IDataWriter;
 import gov.redhawk.ide.snapshot.writer.IDataWriterDesc;
 import gov.redhawk.ide.snapshot.writer.IDataWriterSettings;
+import gov.redhawk.sca.ui.ScaUiPlugin;
 
 import java.io.File;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
@@ -26,12 +28,20 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 public class SnapshotWizard extends Wizard {
+	
+	private static final String DIALOG_SETTINGS_SECTION = SnapshotWizard.class.getName();
 
 	private SnapshotWizardPage snapshotPage;
 	private IDataWriter dataWriter;
 
 	public SnapshotWizard() {
 		setWindowTitle("Snapshot");
+		
+		IDialogSettings section = ScaUiPlugin.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS_SECTION);
+		if (section == null) {
+			section = ScaUiPlugin.getDefault().getDialogSettings().addNewSection(DIALOG_SETTINGS_SECTION);
+		}
+		setDialogSettings(section);
 	}
 
 	@Override
@@ -56,6 +66,7 @@ public class SnapshotWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 		final SnapshotSettings settings = snapshotPage.getSettings();
+		snapshotPage.saveWidgetValues(settings);
 		IDataWriterDesc desc = settings.getDataWriter();
 		try {
 			IDataWriterSettings writerSettings = desc.createWriterSettings();

@@ -51,6 +51,7 @@ public class BulkIOSnapshotWizard extends SnapshotWizard {
 		if (retVal) {
 			BulkIOSnapshotSettings bulkIOSettings = bulkIOPage.getBulkIOsettings();
 			CaptureMethod method = bulkIOSettings.getCaptureMethod();
+			bulkIOPage.saveWidgetValues(bulkIOSettings);
 			switch (method) {
 			case CLOCK_TIME:
 				corbaReceiver = new CorbaSystemTimeReceiver();

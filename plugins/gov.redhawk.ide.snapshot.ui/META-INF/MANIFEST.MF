@@ -37,5 +37,6 @@ Export-Package: gov.redhawk.ide.snapshot.capture,
  gov.redhawk.ide.snapshot.ui,
  gov.redhawk.ide.snapshot.writer,
  gov.redhawk.ide.snapshot.writer.internal;x-internal:=true
-Import-Package: gov.redhawk.ui.util,
+Import-Package: gov.redhawk.sca.ui,
+ gov.redhawk.ui.util,
  org.eclipse.jdt.annotation
