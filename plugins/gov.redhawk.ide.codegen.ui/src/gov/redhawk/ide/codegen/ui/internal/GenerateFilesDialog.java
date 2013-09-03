@@ -60,7 +60,6 @@ public class GenerateFilesDialog extends Dialog {
 	private boolean askedUserFile = false;
 	private boolean showUserFiles = false;
 	private boolean askedSystemFileGenerate;
-	private boolean askedSystemFileNotGenerate;
 
 	private static class FileStatusContentProvider implements ITreeContentProvider {
 
@@ -103,8 +102,8 @@ public class GenerateFilesDialog extends Dialog {
 
 	@Override
 	protected void configureShell(final Shell newShell) {
-		newShell.setText("Regenerate files");
-
+		newShell.setText("Regenerate Files");
+		
 		super.configureShell(newShell);
 	}
 
@@ -129,8 +128,8 @@ public class GenerateFilesDialog extends Dialog {
 	
 			final Label label = new Label(container, SWT.NONE);
 			label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
-			label.setText("The following generated files have had their contents modified since they were generated.\n"
-				+ "Selected files will be generated and their current contents will be lost.");
+			label.setText("Selected files will be generated and their current contents will be lost.\n"
+				+ "Unselected files have had their content modified since last generation.");
 		} else {
 			final Image image = parent.getDisplay().getSystemImage(SWT.ICON_INFORMATION);
 			final Label warningLabel = new Label(container, SWT.NONE);
@@ -320,10 +319,10 @@ public class GenerateFilesDialog extends Dialog {
 	protected boolean checkSystemFile(boolean newValue, FileStatus element) {
 		if (!askedSystemFileGenerate && newValue) {
 			if (!element.getDoItDefault()) {
-				MessageDialog dialog = new MessageDialog(getShell(), "WARNING", null,
-					"The file '" + element.getFilename() + "' has been modified.  "
-						+ "This file may contain code that was written by the user.  " + "\n\nCONTINUING WILL OVERWRITE THIS CODE.\n\n"
-						+ "Are you sure you want to do this?", MessageDialog.WARNING, new String[] { "Yes", "No" }, 1);
+				MessageDialog dialog = new MessageDialog(getShell(), getShell().getText(), null,
+					"The 'SYSTEM' file '" + element.getFilename() + "' has been modified and may contain code that was written by the user.\n\n"
+						+ "It is recommended you overwrite this file.\n\n"
+						+ "Do you want to overwrite this file?", MessageDialog.QUESTION, new String[] { "Yes", "No" }, 1);
 				if (dialog.open() == 0) {
 					askedSystemFileGenerate = true;
 					return true;
@@ -331,20 +330,7 @@ public class GenerateFilesDialog extends Dialog {
 					return false;
 				}
 			}
-		} else if (!askedSystemFileNotGenerate && !newValue) {
-			if (element.getDoItDefault()) {
-				MessageDialog dialog = new MessageDialog(getShell(), "WARNING", null,
-					"You have indicated you wish to NOT generate the file '" + element.getFilename() + "'\n"
-						+ "Not generating this file may have undesired side effects.\n\n"
-						+ "Are you sure you want to do this?", MessageDialog.WARNING, new String[] { "Yes", "No" }, 1);
-				if (dialog.open() == 0) {
-					askedSystemFileNotGenerate = true;
-					return true;
-				} else {
-					return false;
-				}
-			}
-		} 
+		}
 		
 		return true;
 	}
