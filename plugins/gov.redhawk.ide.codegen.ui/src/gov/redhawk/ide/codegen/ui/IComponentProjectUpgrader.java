@@ -8,8 +8,9 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.codegen;
+package gov.redhawk.ide.codegen.ui;
 
+import gov.redhawk.ide.codegen.WaveDevSettings;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.runtime.CoreException;
@@ -17,7 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * @since 10.0
+ * @since 8.0
  */
 public interface IComponentProjectUpgrader {
 	IStatus upgrade(IProgressMonitor monitor, SoftPkg spd, WaveDevSettings settings) throws CoreException;

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -37,6 +38,8 @@ public class RedhawkCodegenUiActivator extends AbstractUIPlugin {
 	// The shared instance
 	private static RedhawkCodegenUiActivator plugin;
 
+	private ServiceTracker<IComponentProjectUpgrader, IComponentProjectUpgrader> upgradeProjectServiceTracker;
+
 	/**
 	 * The constructor
 	 */
@@ -54,6 +57,8 @@ public class RedhawkCodegenUiActivator extends AbstractUIPlugin {
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		RedhawkCodegenUiActivator.plugin = this;
+		upgradeProjectServiceTracker = new ServiceTracker<IComponentProjectUpgrader, IComponentProjectUpgrader>(context, IComponentProjectUpgrader.class, null);
+		upgradeProjectServiceTracker.open();
 	}
 
 	/*
@@ -66,7 +71,19 @@ public class RedhawkCodegenUiActivator extends AbstractUIPlugin {
 	@Override
 	public void stop(final BundleContext context) throws Exception {
 		RedhawkCodegenUiActivator.plugin = null;
+		upgradeProjectServiceTracker.close();
+		upgradeProjectServiceTracker = null;
 		super.stop(context);
+	}
+	
+	/**
+	 * @since 8.0
+	 */
+	public IComponentProjectUpgrader getComponentProjectUpgraderService() {
+		if (upgradeProjectServiceTracker != null) {
+			return upgradeProjectServiceTracker.getService();
+		}
+		return null;
 	}
 
 	/**

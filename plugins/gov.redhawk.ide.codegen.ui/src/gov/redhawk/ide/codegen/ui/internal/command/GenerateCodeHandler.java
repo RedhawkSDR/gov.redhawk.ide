@@ -12,11 +12,11 @@ package gov.redhawk.ide.codegen.ui.internal.command;
 
 import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
-import gov.redhawk.ide.codegen.IComponentProjectUpgrader;
 import gov.redhawk.ide.codegen.ImplementationSettings;
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.ide.codegen.ui.GenerateCode;
+import gov.redhawk.ide.codegen.ui.IComponentProjectUpgrader;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.RedhawkUiActivator;
@@ -218,7 +218,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						IComponentProjectUpgrader service = RedhawkCodegenActivator.getDefault().getProjectUpgradeService();
+						IComponentProjectUpgrader service = RedhawkCodegenUiActivator.getDefault().getComponentProjectUpgraderService();
 						if (service != null) {
 							service.upgrade(monitor, spd, implSettings);
 						} else {
