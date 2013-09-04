@@ -266,6 +266,10 @@ public class LocalApplicationFactory {
 
 				if (target != null) {
 					final String usesID = connection.getUsesPort().getUsesIndentifier();
+					if (connection.getUsesPort().getComponentInstantiationRef() == null) {
+						app.getStreams().getErrStream().println("Failed to create connection " + connection.getId());
+						continue;
+					}
 					final ScaComponent component = app.getLocalWaveform().getScaComponent(connection.getUsesPort().getComponentInstantiationRef().getRefid());
 					final ScaPort< ? , ? > port = component.getScaPort(usesID);
 					if (port instanceof ScaUsesPort) {
