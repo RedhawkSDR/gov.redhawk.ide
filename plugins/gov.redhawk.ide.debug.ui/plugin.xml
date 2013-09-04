@@ -22,7 +22,7 @@
             id="gov.redhawk.ide.debug.ui.navigatorContent"
             labelProvider="gov.redhawk.ide.debug.internal.ui.ScaDebugLabelProvider"
             name="%navigatorContent.name"
-            priority="lowest"
+            priority="lower"
             providesSaveables="false"
             sortOnly="false">
          <triggerPoints>
