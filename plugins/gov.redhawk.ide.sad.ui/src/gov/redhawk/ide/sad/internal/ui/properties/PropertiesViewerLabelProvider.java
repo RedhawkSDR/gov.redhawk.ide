@@ -221,6 +221,10 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		if (element instanceof ViewerProperty< ? >) {
 			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
 			if (prop.isAssemblyControllerProperty()) {
+				String value = prop.getExternalID();
+				if (value != null) {
+					return value;
+				}
 				return prop.getID();
 			}
 			return prop.getExternalID();
@@ -233,7 +237,7 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 		if (xCol.equals(PropertiesViewerFactory.EXTERNAL)) {
 			if (element instanceof ViewerProperty< ? >) {
 				ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
-				if (prop.isAssemblyControllerProperty()) {
+				if (prop.isAssemblyControllerProperty() && prop.getExternalID() == null) {
 					return PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_GRAY);
 				}
 			}
