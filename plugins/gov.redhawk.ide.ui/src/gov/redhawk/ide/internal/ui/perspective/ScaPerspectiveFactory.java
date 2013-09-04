@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.internal.ui.perspective;
 
+import gov.redhawk.ui.port.nxmplot.PlotActivator;
+
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
@@ -57,8 +59,8 @@ public class ScaPerspectiveFactory implements IPerspectiveFactory {
 		bottom.addPlaceholder("*");
 		
 		IPlaceholderFolderLayout plotFolder = layout.createPlaceholderFolder("plotFolder", IPageLayout.BOTTOM, (float) 0.25, editorArea);
-		plotFolder.addPlaceholder("gov.redhawk.ui.port.nxmplot.PlotView2");
-		plotFolder.addPlaceholder("gov.redhawk.ui.port.nxmplot.PlotView2:*");
+		plotFolder.addPlaceholder(PlotActivator.VIEW_PLOT_2);
+		plotFolder.addPlaceholder(PlotActivator.VIEW_PLOT_2 + ":*");
 		
 		layout.addPlaceholder("gov.redhawk.ui.port.playaudio.view", IPageLayout.BOTTOM, (float) 0.25, editorArea);
 	}
