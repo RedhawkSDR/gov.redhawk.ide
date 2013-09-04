@@ -26,20 +26,21 @@ public class ScdFileTemplate
   }
 
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
-  protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<!DOCTYPE softwarecomponent PUBLIC \"-//JTRS//DTD SCA V2.2.2 SCD//EN\" \"softwarecomponent.dtd\">" + NL + "<softwarecomponent>" + NL + "    <corbaversion>2.2</corbaversion>";
-  protected final String TEXT_2 = NL + "    <componentrepid repid=\"IDL:CF/ExecutableDevice:1.0\"/>" + NL + "    <componenttype>executabledevice</componenttype>";
-  protected final String TEXT_3 = NL + "    <componentrepid repid=\"IDL:CF/LoadableDevice:1.0\"/>" + NL + "    <componenttype>loadabledevice</componenttype>";
-  protected final String TEXT_4 = NL + "    <componentrepid repid=\"IDL:CF/Device:1.0\"/>" + NL + "    <componenttype>device</componenttype>";
-  protected final String TEXT_5 = NL + "    <componentfeatures> ";
-  protected final String TEXT_6 = NL + "\t\t<supportsinterface repid=\"IDL:CF/ExecutableDevice:1.0\" supportsname=\"ExecutableDevice\"/>" + NL + "        <supportsinterface repid=\"IDL:CF/LoadableDevice:1.0\" supportsname=\"LoadableDevice\"/>";
-  protected final String TEXT_7 = NL + "        <supportsinterface repid=\"IDL:CF/LoadableDevice:1.0\" supportsname=\"LoadableDevice\"/> ";
-  protected final String TEXT_8 = NL + "        <supportsinterface repid=\"IDL:CF/AggregateDevice:1.0\" supportsname=\"AggregateDevice\"/>";
-  protected final String TEXT_9 = NL + "        <supportsinterface repid=\"IDL:CF/Device:1.0\" supportsname=\"Device\"/>" + NL + "        <supportsinterface repid=\"IDL:CF/Resource:1.0\" supportsname=\"Resource\"/>" + NL + "        <supportsinterface repid=\"IDL:CF/LifeCycle:1.0\" supportsname=\"LifeCycle\"/>" + NL + "        <supportsinterface repid=\"IDL:CF/PortSupplier:1.0\" supportsname=\"PortSupplier\"/>" + NL + "        <supportsinterface repid=\"IDL:CF/PropertySet:1.0\" supportsname=\"PropertySet\"/>" + NL + "        <supportsinterface repid=\"IDL:CF/TestableObject:1.0\" supportsname=\"TestableObject\"/>" + NL + "        <ports>" + NL + "        </ports>" + NL + "    </componentfeatures>" + NL + "    <interfaces>";
-  protected final String TEXT_10 = NL + "        <interface repid=\"IDL:CF/ExecutableDevice:1.0\"  name=\"ExecutableDevice\">" + NL + "            <!--[Inherited interface IDL:CF/LoadableDevice:1.0]-->" + NL + "            <inheritsinterface repid=\"IDL:CF/LoadableDevice:1.0\"/>" + NL + "        </interface>" + NL + "        <interface repid=\"IDL:CF/LoadableDevice:1.0\"  name=\"LoadableDevice\"> " + NL + " \t\t\t<!--[Inherited interface IDL:CF/Device:1.0]-->" + NL + "            <inheritsinterface repid=\"IDL:CF/Device:1.0\"/>" + NL + "        </interface>";
-  protected final String TEXT_11 = NL + "        <interface repid=\"IDL:CF/LoadableDevice:1.0\"  name=\"LoadableDevice\"> " + NL + " \t\t\t<!--[Inherited interface IDL:CF/Device:1.0]-->" + NL + "            <inheritsinterface repid=\"IDL:CF/Device:1.0\"/>" + NL + "        </interface>";
-  protected final String TEXT_12 = "   " + NL + "\t\t<interface repid=\"IDL:CF/Device:1.0\"  name=\"Device\">" + NL + "            <!--[Inherited interface IDL:CF/Resource:1.0]-->" + NL + "            <inheritsinterface repid=\"IDL:CF/Resource:1.0\" />" + NL + "        </interface>" + NL + "        <interface name=\"Resource\" repid=\"IDL:CF/Resource:1.0\">" + NL + "            <!--[Inherited interface IDL:CF/PropertySet:1.0]-->" + NL + "            <inheritsinterface repid=\"IDL:CF/PropertySet:1.0\" />" + NL + "            <!--[Inherited interface IDL:CF/LifeCycle:1.0]-->" + NL + "            <inheritsinterface repid=\"IDL:CF/LifeCycle:1.0\" />" + NL + "\t\t\t<!--[Inherited interface IDL:CF/PortSupplier:1.0]-->" + NL + "            <inheritsinterface repid=\"IDL:CF/PortSupplier:1.0\" />" + NL + "            <!--[Inherited interface IDL:CF/TestableObject:1.0]-->" + NL + "            <inheritsinterface repid=\"IDL:CF/TestableObject:1.0\" />" + NL + "        </interface>" + NL + "        <interface name=\"LifeCycle\" repid=\"IDL:CF/LifeCycle:1.0\"/>" + NL + "        <interface name=\"PortSupplier\" repid=\"IDL:CF/PortSupplier:1.0\"/>" + NL + "        <interface name=\"PropertySet\" repid=\"IDL:CF/PropertySet:1.0\"/>" + NL + "        <interface name=\"TestableObject\" repid=\"IDL:CF/TestableObject:1.0\"/>";
-  protected final String TEXT_13 = NL + "        <interface name=\"AggregateDevice\" repid=\"IDL:CF/AggregateDevice:1.0\"/>";
-  protected final String TEXT_14 = NL + "    </interfaces>" + NL + "</softwarecomponent>";
+  protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<!DOCTYPE softwarecomponent PUBLIC \"-//JTRS//DTD SCA V2.2.2 SCD//EN\" \"softwarecomponent.dtd\">" + NL + "<softwarecomponent>" + NL + "  <corbaversion>2.2</corbaversion>";
+  protected final String TEXT_2 = NL + "  <componentrepid repid=\"IDL:CF/ExecutableDevice:1.0\"/>" + NL + "  <componenttype>executabledevice</componenttype>";
+  protected final String TEXT_3 = NL + "  <componentrepid repid=\"IDL:CF/LoadableDevice:1.0\"/>" + NL + "  <componenttype>loadabledevice</componenttype>";
+  protected final String TEXT_4 = NL + "  <componentrepid repid=\"IDL:CF/Device:1.0\"/>" + NL + "  <componenttype>device</componenttype>";
+  protected final String TEXT_5 = NL + "  <componentfeatures>";
+  protected final String TEXT_6 = NL + "    <supportsinterface repid=\"IDL:CF/ExecutableDevice:1.0\" supportsname=\"ExecutableDevice\"/>" + NL + "    <supportsinterface repid=\"IDL:CF/LoadableDevice:1.0\" supportsname=\"LoadableDevice\"/>";
+  protected final String TEXT_7 = NL + "    <supportsinterface repid=\"IDL:CF/LoadableDevice:1.0\" supportsname=\"LoadableDevice\"/>";
+  protected final String TEXT_8 = NL + "    <supportsinterface repid=\"IDL:CF/AggregateDevice:1.0\" supportsname=\"AggregateDevice\"/>";
+  protected final String TEXT_9 = NL + "    <supportsinterface repid=\"IDL:CF/Device:1.0\" supportsname=\"Device\"/>" + NL + "    <supportsinterface repid=\"IDL:CF/Resource:1.0\" supportsname=\"Resource\"/>" + NL + "    <supportsinterface repid=\"IDL:CF/LifeCycle:1.0\" supportsname=\"LifeCycle\"/>" + NL + "    <supportsinterface repid=\"IDL:CF/PortSupplier:1.0\" supportsname=\"PortSupplier\"/>" + NL + "    <supportsinterface repid=\"IDL:CF/PropertySet:1.0\" supportsname=\"PropertySet\"/>" + NL + "    <supportsinterface repid=\"IDL:CF/TestableObject:1.0\" supportsname=\"TestableObject\"/>" + NL + "    <ports/>" + NL + "  </componentfeatures>" + NL + "  <interfaces>";
+  protected final String TEXT_10 = NL + "    <interface name=\"ExecutableDevice\" repid=\"IDL:CF/ExecutableDevice:1.0\">" + NL + "      <inheritsinterface repid=\"IDL:CF/LoadableDevice:1.0\"/>" + NL + "    </interface>" + NL + "    <interface name=\"LoadableDevice\" repid=\"IDL:CF/LoadableDevice:1.0\">" + NL + "      <inheritsinterface repid=\"IDL:CF/Device:1.0\"/>" + NL + "    </interface>";
+  protected final String TEXT_11 = NL + "    <interface name=\"LoadableDevice\" repid=\"IDL:CF/LoadableDevice:1.0\">" + NL + "      <inheritsinterface repid=\"IDL:CF/Device:1.0\"/>" + NL + "    </interface>";
+  protected final String TEXT_12 = NL + "    <interface name=\"Device\" repid=\"IDL:CF/Device:1.0\">" + NL + "      <inheritsinterface repid=\"IDL:CF/Resource:1.0\"/>" + NL + "    </interface>" + NL + "    <interface name=\"Resource\" repid=\"IDL:CF/Resource:1.0\">" + NL + "      <inheritsinterface repid=\"IDL:CF/PropertySet:1.0\"/>" + NL + "      <inheritsinterface repid=\"IDL:CF/LifeCycle:1.0\"/>" + NL + "      <inheritsinterface repid=\"IDL:CF/PortSupplier:1.0\"/>" + NL + "      <inheritsinterface repid=\"IDL:CF/TestableObject:1.0\"/>" + NL + "    </interface>" + NL + "    <interface name=\"LifeCycle\" repid=\"IDL:CF/LifeCycle:1.0\"/>" + NL + "    <interface name=\"PortSupplier\" repid=\"IDL:CF/PortSupplier:1.0\"/>" + NL + "    <interface name=\"PropertySet\" repid=\"IDL:CF/PropertySet:1.0\"/>" + NL + "    <interface name=\"TestableObject\" repid=\"IDL:CF/TestableObject:1.0\"/>";
+  protected final String TEXT_13 = NL + "    <interface name=\"AggregateDevice\" repid=\"IDL:CF/AggregateDevice:1.0\"/>";
+  protected final String TEXT_14 = NL + "  </interfaces>" + NL + "</softwarecomponent>";
+  protected final String TEXT_15 = NL;
 
     /**
      * {@inheritDoc}
@@ -102,6 +103,7 @@ public class ScdFileTemplate
   }
 
     stringBuffer.append(TEXT_14);
+    stringBuffer.append(TEXT_15);
     return stringBuffer.toString();
   }
 }

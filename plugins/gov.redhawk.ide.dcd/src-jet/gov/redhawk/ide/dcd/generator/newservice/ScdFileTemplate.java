@@ -29,9 +29,10 @@ public class ScdFileTemplate
   protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<!DOCTYPE softwarecomponent PUBLIC \"-//JTRS//DTD SCA V2.2.2 SCD//EN\" \"softwarecomponent.dtd\">" + NL + "<softwarecomponent>" + NL + "  <corbaversion>2.2</corbaversion>" + NL + "  <componentrepid repid=\"";
   protected final String TEXT_2 = "\"/>" + NL + "  <componenttype>service</componenttype>" + NL + "  <componentfeatures>" + NL + "    <supportsinterface repid=\"";
   protected final String TEXT_3 = "\" supportsname=\"";
-  protected final String TEXT_4 = "\"/>" + NL + "    <ports/>" + NL + "  </componentfeatures>" + NL + "  <interfaces>" + NL + "      <interface name=\"";
+  protected final String TEXT_4 = "\"/>" + NL + "    <ports/>" + NL + "  </componentfeatures>" + NL + "  <interfaces>" + NL + "    <interface name=\"";
   protected final String TEXT_5 = "\" repid=\"";
   protected final String TEXT_6 = "\"/>" + NL + "  </interfaces>" + NL + "</softwarecomponent>";
+  protected final String TEXT_7 = NL;
 
     /**
      * {@inheritDoc}
@@ -51,6 +52,7 @@ public class ScdFileTemplate
     stringBuffer.append(TEXT_5);
     stringBuffer.append(args.getProperty("service_repid"));
     stringBuffer.append(TEXT_6);
+    stringBuffer.append(TEXT_7);
     return stringBuffer.toString();
   }
 }

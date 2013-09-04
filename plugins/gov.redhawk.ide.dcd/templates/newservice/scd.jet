@@ -13,6 +13,6 @@
     <ports/>
   </componentfeatures>
   <interfaces>
-      <interface name="<%=gov.redhawk.ide.dcd.RepIdHelper.getProperInterfaceName(args.getProperty("service_repid"))%>" repid="<%=args.getProperty("service_repid")%>"/>
+    <interface name="<%=gov.redhawk.ide.dcd.RepIdHelper.getProperInterfaceName(args.getProperty("service_repid"))%>" repid="<%=args.getProperty("service_repid")%>"/>
   </interfaces>
 </softwarecomponent>
