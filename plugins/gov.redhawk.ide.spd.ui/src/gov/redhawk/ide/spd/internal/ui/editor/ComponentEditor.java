@@ -70,6 +70,8 @@ import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -263,6 +265,7 @@ public class ComponentEditor extends SCAFormEditor {
 					if (msg.getFeatureID(SoftPkg.class) == SpdPackage.LOCAL_FILE__NAME) {
 						createPrfInput(spd);
 						if (ComponentEditor.this.prfInput == null) {
+							spd.getPropertyFile().eAdapters().remove(this);
 							removePrfPage();
 						} else {
 							replacePrf();
@@ -418,6 +421,15 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 	}
 
+	private void removeControlMessages(Control c) {
+		this.getActivePageInstance().getManagedForm().getMessageManager().removeMessages(c);
+		if (c instanceof Composite) {
+			for (Control child: ((Composite) c).getChildren()) {
+				removeControlMessages(child);
+			}
+		}
+	}
+	
 	private void removePrfPage() {
 		if (this.propertiesPage != null || getPrfPageIndex() >= 0) {
 			Display.getDefault().asyncExec(new Runnable() {
@@ -426,6 +438,8 @@ public class ComponentEditor extends SCAFormEditor {
 						return;
 					}
 					if (ComponentEditor.this.propertiesPage != null) {
+						// NPE thrown by ControlDecoration if we don't remove page's messages first
+						removeControlMessages(ComponentEditor.this.propertiesPage.getManagedForm().getForm().getBody());
 						removePage(ComponentEditor.this.propertiesPage.getIndex());
 						ComponentEditor.this.propertiesPage.dispose();
 						ComponentEditor.this.propertiesPage = null;
