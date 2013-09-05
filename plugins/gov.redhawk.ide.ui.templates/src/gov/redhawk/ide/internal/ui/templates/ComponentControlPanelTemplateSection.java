@@ -181,12 +181,9 @@ public class ComponentControlPanelTemplateSection extends BaseControlPanelTempla
 		final IPluginModelFactory factory = this.model.getPluginFactory();
 
 		final String editorClassName = getStringOption(AbstractTemplateSection.KEY_PACKAGE_NAME) + "." + getStringOption("editorClassName"); //$NON-NLS-1$ //$NON-NLS-2$
-		final String contributorClassName = getStringOption(AbstractTemplateSection.KEY_PACKAGE_NAME) + "." //$NON-NLS-1$
-			+ getStringOption("contributorClassName"); //$NON-NLS-1$
-
 		final IPluginExtension extension = createExtension("org.eclipse.ui.editors", true); //$NON-NLS-1$
 		final IPluginElement editorElement = factory.createElement(extension);
-		createEditorElement(editorElement, editorClassName, contributorClassName);
+		createEditorElement(editorElement, editorClassName);
 		extension.add(editorElement);
 		if (!extension.isInTheModel()) {
 			plugin.add(extension);
@@ -296,13 +293,12 @@ public class ComponentControlPanelTemplateSection extends BaseControlPanelTempla
 	 * @param createElement
 	 * @throws CoreException
 	 */
-	private void createEditorElement(final IPluginElement editorElement, final String editorClassName, final String contributorClassName) throws CoreException {
+	private void createEditorElement(final IPluginElement editorElement, final String editorClassName) throws CoreException {
 		editorElement.setName("editor"); //$NON-NLS-1$
 		editorElement.setAttribute("id", editorClassName); //$NON-NLS-1$
 		editorElement.setAttribute("name", getStringOption("editorName")); //$NON-NLS-1$ //$NON-NLS-2$
 		editorElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
 		editorElement.setAttribute("class", editorClassName); //$NON-NLS-1$
-		editorElement.setAttribute("contributorClass", contributorClassName); //$NON-NLS-1$
 	}
 
 	/**

@@ -4,11 +4,13 @@
 package $packageName$;
 
 import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaSimpleProperty;
 import gov.redhawk.model.sca.provider.ScaItemProviderAdapterFactory;
 import gov.redhawk.sca.observables.SCAObservables;
 
 import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -28,6 +30,7 @@ public class $compositeName$ extends Composite {
 	private ScaComponent input;
 	private TreeViewer viewer;
 	private Text propertyTextField;
+	private Text componentNameField;
 	private EMFDataBindingContext context;
 
 	public $compositeName$(Composite parent, int style) {
@@ -62,10 +65,8 @@ public class $compositeName$ extends Composite {
 		Label label = new Label(parent, SWT.None);
 		label.setText("Component:");
 
-		Text text = new Text(parent, SWT.BORDER | SWT.READ_ONLY);
-		text.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-
-		text.setText(input.getIdentifier());
+		componentNameField = new Text(parent, SWT.BORDER | SWT.READ_ONLY);
+		componentNameField.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 		
 		/**
 		 * <b> SAMPLE CODE</b>
@@ -127,6 +128,8 @@ public class $compositeName$ extends Composite {
 		/**
 		 * EXAMPLE
 		 */
+		context.bindValue(WidgetProperties.text().observe(componentNameField), 
+				EMFProperties.value(ScaPackage.Literals.SCA_COMPONENT__NAME).observe(input));
 		/* 
 		ScaSimpleProperty simpleProp = (ScaSimpleProperty) input.getProperty("propid");
 		context.bindValue(
