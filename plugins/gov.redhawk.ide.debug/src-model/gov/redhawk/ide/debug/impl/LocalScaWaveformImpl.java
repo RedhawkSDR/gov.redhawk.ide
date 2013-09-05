@@ -658,7 +658,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		if (compName != null) {
 			component.setName(compName);
 		}
-		final URI uri = this.namingContext.getURI(name.components());
+		final URI uri = this.namingContext.getURI(nameComponents);
 		if (uri == null) {
 			return;
 		}

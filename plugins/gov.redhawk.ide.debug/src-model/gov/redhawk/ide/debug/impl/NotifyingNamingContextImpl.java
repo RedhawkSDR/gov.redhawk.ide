@@ -442,7 +442,8 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 			try {
 				final String uriStr = URLDecoder.decode(c.id, "UTF-8");
 				final URI uri = URI.createURI(uriStr);
-				if (uri.scheme() != null) {
+				
+				if (uri.scheme() != null && uri.segmentCount() > 0) {
 					return uri;
 				}
 			} catch (final Exception e) {

@@ -26,6 +26,7 @@ import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
+import gov.redhawk.sca.efs.WrappedFileStore;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -53,6 +54,8 @@ import mil.jpeojtrs.sca.util.AnyUtils;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -945,10 +948,15 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return launch(usageName, createExecParamStr(execParams), spdURI, implId, mode);
 	}
 
-	private LocalScaComponent launch(final String nameBinding, final String execParams, final URI spdURI, final String implId, final String tmpMode)
+	private LocalScaComponent launch(final String nameBinding, final String execParams, URI spdURI, final String implId, final String tmpMode)
 		throws CoreException {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+		IFileStore store = EFS.getStore(java.net.URI.create(spdURI.toString()));
+		IFileStore unwrappedStore = WrappedFileStore.unwrap(store);
+		if (unwrappedStore != null) {
+			spdURI = URI.createURI(unwrappedStore.toURI().toString());
+		}
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
 		final String mode;
 		if (tmpMode == null) {

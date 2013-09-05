@@ -42,7 +42,6 @@ import ExtendedCF.Sandbox;
  */
 public class SpdResourceFactory extends AbstractResourceFactory {
 
-	private final LocalScaWaveform chalkboard;
 	private final List<LocalScaComponent> launched = Collections.synchronizedList(new ArrayList<LocalScaComponent>());
 	private final URI spdURI;
 	private final String identifier;
@@ -54,9 +53,12 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 	public SpdResourceFactory(final URI spdURI, String identifier) {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		Assert.isNotNull(spdURI, "Identifier must not be null");
-		this.chalkboard = ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform();
 		this.spdURI = spdURI;
 		this.identifier = identifier;
+	}
+
+	public LocalScaWaveform getChalkboard() {
+		return ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform();
 	}
 
 	/**
@@ -74,10 +76,10 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 
 	protected LocalScaComponent getComponent(final String instantiationID) {
 		try {
-			return ScaModelCommand.runExclusive(this.chalkboard, new RunnableWithResult.Impl<LocalScaComponent>() {
+			return ScaModelCommand.runExclusive(getChalkboard(), new RunnableWithResult.Impl<LocalScaComponent>() {
 
 				public void run() {
-					for (final ScaComponent comp : SpdResourceFactory.this.chalkboard.getComponents()) {
+					for (final ScaComponent comp : getChalkboard().getComponents()) {
 						if (instantiationID.equals(comp.getInstantiationIdentifier())) {
 							setResult((LocalScaComponent) comp);
 							return;
@@ -156,8 +158,8 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 		}
 
 		try {
-			final LocalScaComponent component = this.chalkboard.launch(name, params.toArray(new DataType[params.size()]), spdURI.trimFragment(),
-			                                                           implementationID, launchMode);
+			final LocalScaComponent component = getChalkboard().launch(name, params.toArray(new DataType[params.size()]), spdURI.trimFragment(),
+				implementationID, launchMode);
 			this.launched.add(component);
 			return component.getObj();
 		} catch (final CoreException e) {
