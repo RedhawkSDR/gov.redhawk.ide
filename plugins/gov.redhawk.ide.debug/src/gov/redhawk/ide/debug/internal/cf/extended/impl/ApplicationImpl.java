@@ -437,7 +437,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 			if (this.waveformContext.eContainer() instanceof NotifyingNamingContext) {
 				this.streams.getOutStream().println("Unbinding application");
-
 				try {
 					NotifyingNamingContext localSCANamingContext = (NotifyingNamingContext) this.waveformContext.eContainer();
 					localSCANamingContext.unbind(Name.toName(this.name));
@@ -451,11 +450,10 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 			ScaDebugPlugin debugInstance = ScaDebugPlugin.getInstance();
 			if (debugInstance != null) {
-				final NotifyingNamingContext rootContext = debugInstance.getLocalSca().getRootContext();
-				final NotifyingNamingContext resourceContext = rootContext.getResourceContext(this.profileURI);
+				final NamingContextExt context = getWaveformContext();
 
 				try {
-					resourceContext.unbind(Name.toName(this.name));
+					context.unbind(Name.toName(this.name));
 				} catch (final NotFound e) {
 					this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
 				} catch (final CannotProceed e) {
