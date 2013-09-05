@@ -39,10 +39,6 @@
              modes="run"
              name="%launchConfigurationType.name">
        </launchConfigurationType>
-       <launchConfigurationType
-             id="gov.redhawk.ide.debug.launchLocalWaveform"
-             name="%launchConfigurationType.name.0">
-       </launchConfigurationType>
     </extension>
    <extension
          point="org.eclipse.core.variables.dynamicVariables">
