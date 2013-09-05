@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
+import gov.redhawk.ide.debug.variables.LaunchVariables;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 
 /**
@@ -32,17 +33,17 @@ public interface ScaDebugLaunchConstants extends ScaLaunchConfigurationConstants
 	 */
 	public static final int DEFAULT_ATT_LAUNCH_TIMEOUT = 5;
 
-	public static final String ARG_NAMING_CONTEXT_IOR = "NAMING_CONTEXT_IOR";
-	public static final String ARG_NAME_BINDING = "NAME_BINDING";
-	public static final String ARG_COMPONENT_IDENTIFIER = "COMPONENT_IDENTIFIER";
-	public static final String ARG_EXEC_PARAMS = "EXEC_PARAMS";
+	public static final String ARG_NAMING_CONTEXT_IOR = LaunchVariables.NAMING_CONTEXT_IOR;
+	public static final String ARG_NAME_BINDING = LaunchVariables.NAME_BINDING;
+	public static final String ARG_COMPONENT_IDENTIFIER = LaunchVariables.COMPONENT_IDENTIFIER;
+	public static final String ARG_EXEC_PARAMS = LaunchVariables.EXEC_PARAMS;
 
-	public static final String ARG_DEVICE_MGR_IOR = "DEVICE_MGR_IOR";
-	public static final String ARG_PROFILE_NAME = "PROFILE_NAME";
-	public static final String ARG_DEVICE_ID = "DEVICE_ID";
-	public static final String ARG_DEVICE_LABEL = "DEVICE_LABEL";
+	public static final String ARG_DEVICE_MGR_IOR = LaunchVariables.DEVICE_MGR_IOR;
+	public static final String ARG_PROFILE_NAME = LaunchVariables.PROFILE_NAME;
+	public static final String ARG_DEVICE_ID = LaunchVariables.DEVICE_ID;
+	public static final String ARG_DEVICE_LABEL = LaunchVariables.DEVICE_LABEL;
 
-	public static final String ARG_SERVICE_NAME = "SERVICE_NAME";
+	public static final String ARG_SERVICE_NAME = LaunchVariables.SERVICE_NAME;
 
 	public static final String ID_LOCAL_WAVEFORM_LAUNCH = "gov.redhawk.ide.debug.launchLocalWaveform";
 

@@ -26,6 +26,7 @@ import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
+import gov.redhawk.model.sca.impl.ScaComponentImpl;
 import gov.redhawk.sca.efs.WrappedFileStore;
 
 import java.math.BigInteger;
@@ -834,6 +835,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			throw new ReleaseError(new String[] { "Unknown component: " + compInstId });
 		}
 		final String usageName = oldComponent.getName();
+		String instId = oldComponent.getIdentifier();
 		final String execParams = oldComponent.getExecParam();
 		final URI spdUri = oldComponent.getProfileURI();
 		final String implId = oldComponent.getImplementationID();
@@ -857,7 +859,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 		}
 		try {
-			final LocalScaComponent retVal = launch(usageName, execParams, spdUri, implId, mode);
+			final LocalScaComponent retVal = launch(usageName, instId, execParams, spdUri, implId, mode);
 			this.streams.getOutStream().println("Reconnecting component");
 			makeConnections(oldConnections);
 			this.streams.getOutStream().println("Done resetting component " + oldComponent.getName());
@@ -930,11 +932,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return retVal;
 	}
 
-	public Resource launch(final String usageName, final DataType[] execParams, final String spdURI, final String implId, final String mode) throws ExecuteFail {
+	public Resource launch(final String compId, final DataType[] execParams, final String spdURI, final String implId, final String mode) throws ExecuteFail {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		LocalScaComponent retVal;
 		try {
-			retVal = launch(usageName, execParams, URI.createURI(spdURI), implId, mode);
+			retVal = launch(null, compId, createExecParamStr(execParams), URI.createURI(spdURI), implId, mode);
 		} catch (final CoreException e) {
 			ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
 			logException(e);
@@ -942,13 +944,18 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 		return retVal.getObj();
 	}
+	
+	public LocalScaComponent launch(final String usageName, String compId, final DataType[] execParams, final URI spdURI, final String implId, final String mode)
+			throws CoreException {
+			return launch(usageName, compId, createExecParamStr(execParams), spdURI, implId, mode);
+		}
 
 	public LocalScaComponent launch(final String usageName, final DataType[] execParams, final URI spdURI, final String implId, final String mode)
 		throws CoreException {
-		return launch(usageName, createExecParamStr(execParams), spdURI, implId, mode);
+		return launch(usageName, null, execParams, spdURI, implId, mode);
 	}
 
-	private LocalScaComponent launch(final String nameBinding, final String execParams, URI spdURI, final String implId, final String tmpMode)
+	public LocalScaComponent launch(String usageName, final String compId, final String execParams, URI spdURI, final String implId, String mode)
 		throws CoreException {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
@@ -958,11 +965,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			spdURI = URI.createURI(unwrappedStore.toURI().toString());
 		}
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
-		final String mode;
-		if (tmpMode == null) {
+		if (mode == null) {
 			mode = ILaunchManager.RUN_MODE;
-		} else {
-			mode = tmpMode;
 		}
 
 		this.streams.getOutStream().println("Launching component: " + spd.getName());
@@ -1001,9 +1005,20 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create sub context for spd: " + spdContextNameStr, e));
 		}
 		config.setAttribute(LaunchVariables.NAMING_CONTEXT_IOR, spdContext.toString());
-		if (nameBinding != null) {
-			config.setAttribute(LaunchVariables.NAME_BINDING, nameBinding);
+		
+		if (usageName == null && compId != null) {
+			usageName = ScaComponentImpl.convertIdentifierToInstantiationID(compId);
 		}
+		
+		if (usageName != null) {
+			this.streams.getOutStream().println("\tLaunching with name: " + usageName);
+			config.setAttribute(LaunchVariables.NAME_BINDING, usageName);
+		}
+		if (compId != null) {
+			this.streams.getOutStream().println("\tLaunching with id: " + compId);
+			config.setAttribute(LaunchVariables.COMPONENT_IDENTIFIER, compId);
+		}
+		
 		if (execParams != null && execParams.length() > 0) {
 			this.streams.getOutStream().println("\tExec params: " + execParams);
 			config.setAttribute(LaunchVariables.EXEC_PARAMS, execParams);
@@ -1020,8 +1035,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		if (newCompId != null) {
 			for (final ScaComponent comp : ApplicationImpl.this.waveform.getComponents()) {
 				comp.fetchAttributes(null);
-				final String compId = comp.getIdentifier();
-				if (compId.equals(newCompId)) {
+				final String id = comp.getIdentifier();
+				if (id.equals(newCompId)) {
 					newComponent = (LocalScaComponent) comp;
 					break;
 				}

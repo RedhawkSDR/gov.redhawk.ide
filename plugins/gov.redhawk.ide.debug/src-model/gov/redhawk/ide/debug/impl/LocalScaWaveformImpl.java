@@ -439,11 +439,11 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public Resource launch(String id, DataType[] execParams, String spdURI, String implID, String mode) throws ExecuteFail {
+	public Resource launch(String compId, DataType[] execParams, String spdURI, String implID, String mode) throws ExecuteFail {
 		Assert.isNotNull(spdURI);
 		Assert.isNotNull(implID);
 		Assert.isNotNull(getLocalApp(), "Null application");
-		return ((ApplicationImpl) getLocalApp()).launch(id, execParams, spdURI, implID, mode);
+		return ((ApplicationImpl) getLocalApp()).launch(compId, execParams, spdURI, implID, mode);
 	}
 
 
@@ -617,13 +617,13 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public LocalScaComponent launch(final String usageName, final DataType[] execParams, final URI spdURI, final String implID, final String mode) throws CoreException {
+	public LocalScaComponent launch(final String compID, final DataType[] execParams, final URI spdURI, final String implID, final String mode) throws CoreException {
 		// END GENERATED CODE
 		Assert.isNotNull(spdURI);
 		Assert.isNotNull(implID);
 		// TODO Fix this hack
 		if (getLocalApp() instanceof ApplicationImpl) {
-			return ((ApplicationImpl) getLocalApp()).launch(usageName, execParams, spdURI, implID, mode);
+			return ((ApplicationImpl) getLocalApp()).launch(null, compID, execParams, spdURI, implID, mode);
 		} else if (getLocalApp() != null) {
 			throw new IllegalStateException("Unknown Application type " + getLocalApp());
 		} else {

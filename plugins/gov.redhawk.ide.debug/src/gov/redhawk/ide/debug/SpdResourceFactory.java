@@ -131,8 +131,8 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 	}
 
 	@Override
-	protected CF.Resource createInstance(final String name, final DataType[] qualifiers, final String launchMode) throws CreateResourceFailure {
-		final LocalScaComponent comp = getComponent(name);
+	protected CF.Resource createInstance(final String compID, final DataType[] qualifiers, final String launchMode) throws CreateResourceFailure {
+		final LocalScaComponent comp = getComponent(compID);
 		if (comp != null) {
 			return comp.getObj();
 		}
@@ -158,7 +158,7 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 		}
 
 		try {
-			final LocalScaComponent component = getChalkboard().launch(name, params.toArray(new DataType[params.size()]), spdURI.trimFragment(),
+			final LocalScaComponent component = getChalkboard().launch(compID, params.toArray(new DataType[params.size()]), spdURI.trimFragment(),
 				implementationID, launchMode);
 			this.launched.add(component);
 			return component.getObj();

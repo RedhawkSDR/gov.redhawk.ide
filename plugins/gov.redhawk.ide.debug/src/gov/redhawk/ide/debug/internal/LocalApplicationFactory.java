@@ -65,7 +65,6 @@ import org.omg.CosNaming.NamingContextPackage.InvalidName;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import CF.DataType;
-import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
 import CF.PropertySetPackage.InvalidConfiguration;
@@ -218,12 +217,7 @@ public class LocalApplicationFactory {
 
 		app.getStreams().getOutStream().println("Launching components...");
 		for (final SadComponentInstantiation comp : instantiations) {
-			try {
-				app.launch(comp.getUsageName(), createExecParam(comp), getSpdURI(comp).toString(), getImplId(comp), this.mode);
-			} catch (final ExecuteFail e) {
-				app.getStreams().getErrStream().println("Failed to launch " + comp.getUsageName() + " " + e.msg);
-				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to launch " + comp.getUsageName(), e));
-			}
+			app.launch(comp.getUsageName(), createExecParam(comp), getSpdURI(comp), getImplId(comp), this.mode);
 			app.getStreams().getOutStream().println("\n");
 		}
 	}
