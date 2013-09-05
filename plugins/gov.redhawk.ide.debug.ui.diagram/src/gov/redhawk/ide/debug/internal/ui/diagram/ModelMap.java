@@ -70,7 +70,6 @@ import org.eclipse.gmf.runtime.emf.type.core.requests.DestroyElementRequest;
 import org.eclipse.gmf.runtime.notation.Connector;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 
 import CF.DataType;
 import CF.ErrorNumberType;
@@ -475,11 +474,7 @@ public class ModelMap {
 
 	private void execute(final Command command) {
 		if (command != null && command.canExecute()) {
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					getDiagramEditDomain().getDiagramCommandStack().execute(command);
-				}
-			});
+			getDiagramEditDomain().getDiagramCommandStack().execute(command);
 		}
 	}
 
