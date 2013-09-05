@@ -20,4 +20,6 @@ public final class CodegenPreferenceConstants {
 
 	public static final String P_ALWAYS_GENERATE_DEFAULTS = "alwaysGenerateDefault";
 	
+	public static final String P_ENABLE_DEPRECATED_CODE_GENERATORS = "enableDeprecatedCodeGenerators";
+	
 }

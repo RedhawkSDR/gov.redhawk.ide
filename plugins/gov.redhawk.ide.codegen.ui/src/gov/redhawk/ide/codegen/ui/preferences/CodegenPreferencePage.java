@@ -52,6 +52,12 @@ public class CodegenPreferencePage
 				CodegenPreferenceConstants.P_ALWAYS_GENERATE_DEFAULTS,
 				"&Always Generate Default Files",
 				getFieldEditorParent()));
+		
+		addField(
+			new BooleanFieldEditor(
+				CodegenPreferenceConstants.P_ENABLE_DEPRECATED_CODE_GENERATORS,
+				"&Enable Deprecated Code Generators",
+				getFieldEditorParent()));
 	}
 
 	/* (non-Javadoc)

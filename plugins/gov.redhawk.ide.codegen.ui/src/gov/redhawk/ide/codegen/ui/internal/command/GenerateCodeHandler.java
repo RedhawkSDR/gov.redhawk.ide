@@ -18,6 +18,7 @@ import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.ide.codegen.ui.GenerateCode;
 import gov.redhawk.ide.codegen.ui.IComponentProjectUpgrader;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
+import gov.redhawk.ide.codegen.ui.preferences.CodegenPreferenceConstants;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.RedhawkUiActivator;
 import gov.redhawk.ui.editor.SCAFormEditor;
@@ -174,6 +175,11 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 
 	@SuppressWarnings("unchecked")
 	private void checkDeprecated(Object selectedObj, Shell parent) throws CoreException {
+		boolean enableDeprecated = RedhawkCodegenUiActivator.getDefault().getPreferenceStore().getBoolean(CodegenPreferenceConstants.P_ENABLE_DEPRECATED_CODE_GENERATORS);
+		// Skip check since the user has asked to enable deprecated generators
+		if (enableDeprecated) {
+			return;
+		}
 		if (selectedObj instanceof SoftPkg) {
 			checkDeprecatedImpls(parent, ((SoftPkg) selectedObj).getImplementation());
 		} else if (selectedObj instanceof EList) {
@@ -267,13 +273,10 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 
 	private boolean shouldUpgrade(Shell parent, String name) throws CoreException {
 		String message = name + " uses deprecated code generators.\n\n" + "Would you like to upgrade this project?";
-		MessageDialog dialog = new MessageDialog(parent, "Deprecated Generator", null, message, MessageDialog.WARNING, new String[] { "Upgrade", "Cancel",
-			"Use Existing" }, 1);
+		MessageDialog dialog = new MessageDialog(parent, "Deprecated Generator", null, message, MessageDialog.WARNING, new String[] { "Upgrade", "Cancel" }, 1);
 		switch (dialog.open()) {
 		case 0: // Upgrade
 			return true;
-		case 2: // Use Existing
-			return false;
 		case 1:// Cancel
 		default:
 			throw new OperationCanceledException();

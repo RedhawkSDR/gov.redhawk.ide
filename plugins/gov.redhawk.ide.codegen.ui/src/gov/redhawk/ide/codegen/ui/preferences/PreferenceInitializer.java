@@ -28,6 +28,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = RedhawkCodegenUiActivator.getDefault().getPreferenceStore();
 		store.setDefault(CodegenPreferenceConstants.P_ALWAYS_GENERATE_DEFAULTS, false);
+		store.setDefault(CodegenPreferenceConstants.P_ENABLE_DEPRECATED_CODE_GENERATORS, false);
 	}
 
 }
