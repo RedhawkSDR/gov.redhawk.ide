@@ -59,9 +59,6 @@ public class PropertiesViewerControlFactory extends DefaultXViewerControlFactory
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
 			if (editElement instanceof ViewerProperty< ? >) {
 				final ViewerProperty< ? > prop = (ViewerProperty< ? >) editElement;
-				if (prop.isAssemblyControllerProperty()) {
-					return null;
-				}
 				if (prop.getParent() instanceof ViewerComponent) {
 
 					final Combo combo = new Combo(xv.getTree(), ced.getSwtStyle());
