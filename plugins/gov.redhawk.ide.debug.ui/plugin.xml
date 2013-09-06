@@ -417,5 +417,13 @@
          </enablement>
       </decorator>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="gov.redhawk.ide.debug.internal.ui.LocalWaveformLaunchDelegate"
+            id="gov.redhawk.ide.debug.launchLocalWaveform"
+            name="Launch Local Waveform">
+      </launchConfigurationType>
+   </extension>
        
 </plugin>
