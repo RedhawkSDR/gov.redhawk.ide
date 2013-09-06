@@ -292,6 +292,7 @@ public class CodegenUtil {
 	 *  operation cannot be canceled.
 	 * @throws CoreException A problem occurs adjusting the project description
 	 * @since 7.0
+	 * @deprecated Preserved for 1.8 codegen projects only. Does not apply to 1.9 and future.
 	 */
 	public static void addTopLevelBuildScriptBuilder(final IProject project, final IProgressMonitor progress) throws CoreException {
 		if (project.hasNature(ScaComponentProjectNature.ID)) {

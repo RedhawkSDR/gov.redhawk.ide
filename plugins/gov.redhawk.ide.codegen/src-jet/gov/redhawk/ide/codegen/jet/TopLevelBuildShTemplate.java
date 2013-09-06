@@ -55,6 +55,7 @@ public class TopLevelBuildShTemplate
   {
     final StringBuffer stringBuffer = new StringBuffer();
     
+    /* This entire template is deprecated code. It was used by gov.redhawk.ide.codegen.builders.TopLevelBuildScript. */
     final SoftPkg softPkg = (SoftPkg) argument;
     final String name = softPkg.getName();
     final String version;

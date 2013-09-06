@@ -25,6 +25,7 @@ import gov.redhawk.ide.codegen.ui.internal.GeneratorConsole;
 import gov.redhawk.ide.codegen.ui.preferences.CodegenPreferenceConstants;
 import gov.redhawk.ide.codegen.util.PropertyUtil;
 import gov.redhawk.model.sca.util.ModelUtil;
+import gov.redhawk.sca.util.SubMonitor;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,7 +63,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.command.CompoundCommand;
@@ -307,9 +307,26 @@ public final class GenerateCode {
 				retStatus.add(new Status(ex.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to save CRCs", ex));
 			}
 
-			// Add general builders
+			// Add the top-level build.sh script builder only for projects that are deprecated (i.e. 1.8)
+			// We should remove this section and associated code when we no longer support codegen of 1.8 projects
 			progress.setTaskName("Adding builders");
-			CodegenUtil.addTopLevelBuildScriptBuilder(project, progress.newChild(1));
+			boolean isDeprecated = false;
+			if (waveDev != null) {
+				for (final ImplementationSettings implSettings : waveDev.getImplSettings().values()) {
+					if (implSettings != null) {
+						ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(implSettings.getGeneratorId());
+						if (generator != null && generator.isDeprecated()) {
+							isDeprecated = true;
+							break;
+						}
+					}
+				}
+			}
+			if (isDeprecated) {
+				CodegenUtil.addTopLevelBuildScriptBuilder(project, progress.newChild(1));
+			} else {
+				progress.notWorked(1);
+			}
 
 			// Refresh project after generating code
 			progress.setTaskName("Refreshing project");

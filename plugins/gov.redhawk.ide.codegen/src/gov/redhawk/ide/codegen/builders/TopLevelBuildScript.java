@@ -36,6 +36,8 @@ import org.eclipse.emf.common.util.URI;
  * An incremental builder that adds a top-level build script to components / devices.
  * 
  * @since 4.0
+ * @deprecated This functionality is used by 1.8 projects, and is no longer necessary in 1.9. If you remove this,
+ * remove the template that goes with it as well. 
  */
 public class TopLevelBuildScript extends IncrementalProjectBuilder {
 	
