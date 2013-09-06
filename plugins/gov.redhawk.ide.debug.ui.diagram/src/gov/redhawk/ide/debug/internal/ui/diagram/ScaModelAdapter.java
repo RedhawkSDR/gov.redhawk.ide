@@ -83,7 +83,7 @@ public class ScaModelAdapter extends EContentAdapter {
 					this.modelMap.remove((ScaConnection) notification.getOldValue());
 					break;
 				case Notification.REMOVE_MANY:
-					for (final Object obj : (Collection< ? >) notification.getNewValue()) {
+					for (final Object obj : (Collection< ? >) notification.getOldValue()) {
 						this.modelMap.remove((ScaConnection) obj);
 					}
 					break;
