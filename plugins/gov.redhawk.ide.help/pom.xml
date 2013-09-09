@@ -5,7 +5,7 @@
   <parent>
     <groupId>gov.redhawk.ide</groupId>
     <artifactId>releng</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.8.5-SNAPSHOT</version>
     <relativePath>../../releng/</relativePath>
   </parent>
   <groupId>gov.redhawk.ide</groupId>
@@ -14,29 +14,29 @@
   <packaging>eclipse-plugin</packaging>
 
   <properties>
-  	<gov.redhawk.ide.help.doc.zip>http://download.redhawksdr.org/docs/doc.zip</gov.redhawk.ide.help.doc.zip>
+    <gov.redhawk.ide.help.doc.zip>http://download.redhawksdr.org/docs/doc.zip</gov.redhawk.ide.help.doc.zip>
   </properties>
 
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-			        <version>1.7</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<configuration>
-							<target>
-								<get src="${gov.redhawk.ide.help.doc.zip}" 
-								     dest="doc.zip"/>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+  <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.7</version>
+            <executions>
+                <execution>
+                    <phase>generate-sources</phase>
+                   <configuration>
+                        <target>
+                            <get src="${gov.redhawk.ide.help.doc.zip}" dest="doc.zip"/>
+                        </target>
+                   </configuration>
+                   <goals>
+                       <goal>run</goal>
+                   </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+  </build>
 </project>
