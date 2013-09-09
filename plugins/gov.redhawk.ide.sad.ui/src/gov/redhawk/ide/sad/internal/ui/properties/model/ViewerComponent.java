@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mil.jpeojtrs.sca.prf.AbstractProperty;
+import mil.jpeojtrs.sca.prf.Properties;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
@@ -27,11 +28,18 @@ import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
 
 public class ViewerComponent {
+	
+	private static final EStructuralFeature [] PATH = new EStructuralFeature [] {
+		SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
+		SpdPackage.Literals.PROPERTY_FILE__PROPERTIES,
+	};
 
 	private List<ViewerProperty< ? >> properties = new ArrayList<ViewerProperty< ? >>();
 	private SadComponentInstantiation compInst;
@@ -45,11 +53,14 @@ public class ViewerComponent {
 		if (spd == null) {
 			return;
 		}
-		for (ValueListIterator<Object> i = spd.getPropertyFile().getProperties().getProperties().valueListIterator(); i.hasNext();) {
-			final Object value = i.next();
-			if (value instanceof AbstractProperty) {
-				AbstractProperty def = (AbstractProperty) value;
-				properties.add(createViewerProperty(def));
+		Properties prf = ScaEcoreUtils.getFeature(spd, PATH);
+		if (prf != null) {
+			for (ValueListIterator<Object> i = prf.getProperties().valueListIterator(); i.hasNext();) {
+				final Object value = i.next();
+				if (value instanceof AbstractProperty) {
+					AbstractProperty def = (AbstractProperty) value;
+					properties.add(createViewerProperty(def));
+				}
 			}
 		}
 	}
