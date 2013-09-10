@@ -11,14 +11,10 @@
 
 package gov.redhawk.ide.debug.ui;
 
-import gov.redhawk.ide.debug.internal.ui.LocalScaObjectLocator;
-import gov.redhawk.model.sca.services.IScaObjectLocator;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -30,8 +26,6 @@ public class ScaDebugUiPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static ScaDebugUiPlugin plugin;
-
-	private ServiceRegistration< IScaObjectLocator > reg;
 
 
 	/**
@@ -48,7 +42,6 @@ public class ScaDebugUiPlugin extends AbstractUIPlugin {
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		ScaDebugUiPlugin.plugin = this;
-		this.reg = context.registerService(IScaObjectLocator.class, new LocalScaObjectLocator(), null);
 	}
 
 	/*
@@ -57,10 +50,6 @@ public class ScaDebugUiPlugin extends AbstractUIPlugin {
 	 */
 	@Override
 	public void stop(final BundleContext context) throws Exception {
-		if (this.reg != null) {
-			this.reg.unregister();
-			this.reg = null;
-		}
 		ScaDebugUiPlugin.plugin = null;
 		super.stop(context);
 	}

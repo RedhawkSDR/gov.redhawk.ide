@@ -12,7 +12,6 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  org.eclipse.emf.edit.ui;bundle-version="2.6.0",
  gov.redhawk.ide.debug.edit;bundle-version="1.0.0",
  org.eclipse.emf.transaction.ui;bundle-version="1.4.0",
- gov.redhawk.sca;bundle-version="6.0.0",
  org.eclipse.core.variables;bundle-version="3.2.400",
  org.eclipse.debug.ui;bundle-version="3.6.1";visibility:=reexport,
  gov.redhawk.ide.codegen;bundle-version="9.0.0",
@@ -35,3 +34,4 @@ Export-Package: gov.redhawk.ide.debug.internal;x-internal:=true,
  gov.redhawk.ide.debug.internal.ui;x-internal:=true,
  gov.redhawk.ide.debug.ui,
  gov.redhawk.ide.debug.ui.tabs
+Service-Component: OSGI-INF/locator.xml
