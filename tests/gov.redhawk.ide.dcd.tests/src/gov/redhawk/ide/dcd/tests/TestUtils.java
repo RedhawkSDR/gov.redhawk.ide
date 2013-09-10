@@ -11,6 +11,8 @@
 
 package gov.redhawk.ide.dcd.tests;
 
+import gov.redhawk.sca.efs.ScaFileSystemPlugin;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -30,7 +32,8 @@ public class TestUtils {
 	 * @throws IOException
 	 */
 	public static File createFile(String content, String extension) throws IOException {
-		File file = File.createTempFile(TestUtils.class.getPackage().getName(), extension);
+		File tempDir = ScaFileSystemPlugin.getDefault().getTempDirectory();
+		File file = File.createTempFile(TestUtils.class.getPackage().getName(), extension, tempDir);
 		file.deleteOnExit();
 		FileWriter fileWriter = null;
 		try {

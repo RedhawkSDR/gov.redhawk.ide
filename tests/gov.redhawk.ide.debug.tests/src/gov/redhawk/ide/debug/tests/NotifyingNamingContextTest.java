@@ -14,6 +14,7 @@ package gov.redhawk.ide.debug.tests;
 
 import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugFactory;
+import gov.redhawk.sca.efs.ScaFileSystemPlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -143,7 +144,8 @@ public class NotifyingNamingContextTest extends TestCase {
 	 */
 	public void testGetName__URI() throws IOException {
 		// END GENERATED CODE
-		final File file = File.createTempFile("test", ".sad.xml");
+		File tempDir = ScaFileSystemPlugin.getDefault().getTempDirectory();
+		final File file = File.createTempFile("test", ".sad.xml", tempDir);
 		file.deleteOnExit();
 
 		Assert.assertNotNull(getFixture().getName(URI.createURI(file.toURI().toString())));
@@ -160,7 +162,8 @@ public class NotifyingNamingContextTest extends TestCase {
 	 */
 	public void testGetURI__NameComponent() throws IOException, InvalidName {
 		// END GENERATED CODE
-		final File file = File.createTempFile("test", ".sad.xml");
+		File tempDir = ScaFileSystemPlugin.getDefault().getTempDirectory();
+		final File file = File.createTempFile("test", ".sad.xml", tempDir);
 		file.deleteOnExit();
 
 		final URI expected = URI.createURI(file.toURI().toString());

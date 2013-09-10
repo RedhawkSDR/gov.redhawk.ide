@@ -11,6 +11,8 @@
 
 package gov.redhawk.ide.spd.tests;
 
+import gov.redhawk.sca.efs.ScaFileSystemPlugin;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -30,7 +32,8 @@ public class TestUtils {
 	 * @throws IOException The file can't be written to disk
 	 */
 	public static File createFile(String content, String extension) throws IOException {
-		File xmlFile = File.createTempFile(TestUtils.class.getPackage().getName(), extension);
+		File tempDir = ScaFileSystemPlugin.getDefault().getTempDirectory();
+		File xmlFile = File.createTempFile(TestUtils.class.getPackage().getName(), extension, tempDir);
 		xmlFile.deleteOnExit();
 		FileWriter fileWriter = null;
 		try {
