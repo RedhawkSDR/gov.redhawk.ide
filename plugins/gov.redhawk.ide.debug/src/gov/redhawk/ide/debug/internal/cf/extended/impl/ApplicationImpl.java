@@ -957,11 +957,14 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		throws CoreException {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-		IFileStore store = EFS.getStore(java.net.URI.create(spdURI.toString()));
-		IFileStore unwrappedStore = WrappedFileStore.unwrap(store);
-		if (unwrappedStore != null) {
-			spdURI = URI.createURI(unwrappedStore.toURI().toString());
+		if (!spdURI.isPlatform()) {
+			IFileStore store = EFS.getStore(java.net.URI.create(spdURI.toString()));
+			IFileStore unwrappedStore = WrappedFileStore.unwrap(store);
+			if (unwrappedStore != null) {
+				spdURI = URI.createURI(unwrappedStore.toURI().toString());
+			}
 		}
+
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
 		if (mode == null) {
 			mode = ILaunchManager.RUN_MODE;
