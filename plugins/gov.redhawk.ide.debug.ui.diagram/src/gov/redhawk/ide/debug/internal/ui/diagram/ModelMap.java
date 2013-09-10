@@ -333,9 +333,13 @@ public class ModelMap {
 			targetObj = targetComp.getCorbaObj();
 		} else if (conn.getProvidesPort() != null) {
 			final LocalScaComponent targetComp = get(conn.getProvidesPort().getComponentInstantiationRef().getInstantiation());
-			targetComp.fetchPorts(null);
-			final ScaPort< ? , ? > targetPort = targetComp.getScaPort(conn.getProvidesPort().getProvidesIdentifier());
-			targetObj = targetPort.getCorbaObj();
+			if (targetComp != null) {
+				targetComp.fetchPorts(null);
+				final ScaPort< ? , ? > targetPort = targetComp.getScaPort(conn.getProvidesPort().getProvidesIdentifier());
+				if (targetPort != null) {
+					targetObj = targetPort.getCorbaObj();
+				}
+			}
 		}
 		final String connId = conn.getId();
 
