@@ -14,18 +14,17 @@ import gov.redhawk.diagram.edit.helpers.ComponentPlacementEditHelperAdvice;
 import gov.redhawk.diagram.edit.helpers.ConnectInterfaceEditHelperAdvice;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
-import gov.redhawk.sca.util.MutexRule;
+import gov.redhawk.sca.sad.diagram.edit.parts.SadComponentInstantiationEditPart;
 import gov.redhawk.sca.util.SubMonitor;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +48,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchManager;
@@ -70,14 +68,8 @@ import org.eclipse.gmf.runtime.diagram.ui.requests.CreateViewRequestFactory;
 import org.eclipse.gmf.runtime.diagram.ui.requests.EditCommandRequestWrapper;
 import org.eclipse.gmf.runtime.emf.type.core.requests.DestroyElementRequest;
 import org.eclipse.gmf.runtime.notation.Connector;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import CF.DataType;
-import CF.ErrorNumberType;
-import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.ReleaseError;
 import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
@@ -88,10 +80,55 @@ public class ModelMap {
 		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 	private final LocalScaEditor editor;
 	private final SoftwareAssembly sad;
-	private final Map<EObject, EObject> sadToSca = new HashMap<EObject, EObject>();
-	private final Map<EObject, EObject> scaToSad = new HashMap<EObject, EObject>();
+
+	private static class NodeMap {
+		LocalScaComponent comp;
+		SadComponentInstantiation profile;
+
+		String getKey() {
+			if (comp != null) {
+				return comp.getInstantiationIdentifier();
+			} else if (profile != null) {
+				return profile.getId();
+			}
+			return null;
+		}
+
+		static String getKey(LocalScaComponent obj) {
+			return obj.getInstantiationIdentifier();
+		}
+
+		static String getKey(SadComponentInstantiation obj) {
+			return obj.getId();
+		}
+	}
+
+	private static class ConnectionMap {
+		ScaConnection conn;
+		SadConnectInterface profile;
+
+		String getKey() {
+			if (conn != null) {
+				return conn.getId();
+			} else if (profile != null) {
+				return profile.getId();
+			}
+			return null;
+		}
+
+		static String getKey(ScaConnection obj) {
+			return obj.getId();
+		}
+
+		static String getKey(SadConnectInterface obj) {
+			return obj.getId();
+		}
+	}
+
+	private final Map<String, NodeMap> nodes = Collections.synchronizedMap(new HashMap<String, NodeMap>());
+	private final Map<String, ConnectionMap> connections = Collections.synchronizedMap(new HashMap<String, ConnectionMap>());
+
 	private final LocalScaWaveform waveform;
-	private final MutexRule mapRule = new MutexRule(this);
 
 	public ModelMap(final LocalScaEditor editor, final SoftwareAssembly sad, final LocalScaWaveform waveform) {
 		Assert.isNotNull(waveform, "Sandbox Waveform must not be null");
@@ -103,153 +140,141 @@ public class ModelMap {
 	}
 
 	public void add(final LocalScaComponent comp) {
-		if (get(comp) != null) {
-			return;
+		final NodeMap nodeMap = new NodeMap();
+		nodeMap.comp = comp;
+		synchronized (nodes) {
+			if (nodes.get(nodeMap.getKey()) != null) {
+				return;
+			} else {
+				nodes.put(nodeMap.getKey(), nodeMap);
+			}
 		}
-		final Job job = new Job("Adding component: " + comp.getInstantiationIdentifier()) {
-			@Override
-			public boolean shouldSchedule() {
-				return super.shouldSchedule() && get(comp) == null;
-			}
+		Job job = new Job("Adding component: " + comp.getInstantiationIdentifier()) {
 
 			@Override
-			public boolean shouldRun() {
-				return super.shouldRun() && get(comp) == null;
-			}
-
-			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				SadComponentInstantiation newComp = get(comp);
-				if (newComp != null) {
-					return Status.CANCEL_STATUS;
-				}
-				newComp = create(comp);
-				put(comp, newComp);
-				return Status.OK_STATUS;
-			}
-		};
-		job.setRule(this.mapRule);
-		job.schedule();
-	}
-
-	public void add(final SadComponentInstantiation comp) {
-		if (get(comp) != null) {
-			return;
-		}
-
-		final String implID = ((SadComponentInstantiationImpl) comp).getImplID();
-		final IRunnableWithProgress runnable = new IRunnableWithProgress() {
-
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
+			protected IStatus run(IProgressMonitor monitor) {
+				SubMonitor subMonitor = SubMonitor.convert(monitor, "Adding component: " + comp.getInstantiationIdentifier(), IProgressMonitor.UNKNOWN);
 				try {
-					LocalScaComponent newComp = get(comp);
-					if (newComp != null) {
-						return;
-					}
-					try {
-						newComp = create(comp, implID);
-					} catch (final ExecuteFail e) {
-						throw new InvocationTargetException(e, "Failed to launch: " + comp.getUsageName());
-					}
-					put(newComp, comp);
+					SadComponentInstantiation newComp = create(comp);
+					nodeMap.profile = newComp;
+					return Status.OK_STATUS;
+				} catch (Exception e) {
+					nodes.remove(nodeMap.getKey());
+					return new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add component " + comp.getInstantiationIdentifier(), e);
 				} finally {
 					subMonitor.done();
 				}
 			}
+
 		};
+		job.schedule();
+	}
 
-		final Display display = Display.getCurrent();
-		if (display != null) {
-			ProgressMonitorDialog dialog = new ProgressMonitorDialog(display.getActiveShell());
-
-			try {
-				dialog.run(true, true, runnable);
-			} catch (InvocationTargetException e) {
-				StatusManager.getManager().handle(new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, comp.getUsageName()),
-					StatusManager.LOG | StatusManager.SHOW);
-				throw new OperationCanceledException();
-			} catch (InterruptedException e) {
-				throw new OperationCanceledException();
-			}
-		} else {
-			try {
-				runnable.run(null);
-			} catch (InvocationTargetException e) {
-				StatusManager.getManager().handle(new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, comp.getUsageName()),
-					StatusManager.LOG | StatusManager.SHOW);
-				throw new OperationCanceledException();
-			} catch (InterruptedException e) {
-				throw new OperationCanceledException();
+	public void add(final SadComponentInstantiation comp) {
+		final NodeMap nodeMap = new NodeMap();
+		nodeMap.profile = comp;
+		synchronized (nodes) {
+			if (nodes.get(nodeMap.getKey()) != null) {
+				return;
+			} else {
+				nodes.put(nodeMap.getKey(), nodeMap);
 			}
 		}
+
+		final String implID = ((SadComponentInstantiationImpl) comp).getImplID();
+		Job job = new Job("Launching " + comp.getUsageName()) {
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
+				try {
+					LocalScaComponent newComp = create(comp, implID);
+					nodeMap.comp = newComp;
+					EditPart editPart = editor.getDiagramEditPart().findEditPart(editor.getDiagramEditPart(), comp);
+					if (editPart instanceof SadComponentInstantiationEditPart) {
+						SadComponentInstantiationEditPart ciEp = (SadComponentInstantiationEditPart) editPart;
+						ciEp.addRuntimeListeners();
+					}
+					return Status.OK_STATUS;
+				} catch (final CoreException e) {
+					delete(comp);
+					nodes.remove(nodeMap.getKey());
+					return e.getStatus();
+				} finally {
+					subMonitor.done();
+				}
+			}
+
+		};
+		job.schedule();
 	}
 
 	public void add(final SadConnectInterface conn) {
-		if (get(conn) != null) {
-			return;
+		final ConnectionMap connectionMap = new ConnectionMap();
+		connectionMap.profile = conn;
+		synchronized (connections) {
+			if (connections.get(connectionMap.getKey()) != null) {
+				return;
+			} else {
+				connections.put(connectionMap.getKey(), connectionMap);
+			}
 		}
-		final Job job = new Job("Connecting " + conn.getId()) {
-			@Override
-			public boolean shouldSchedule() {
-				return super.shouldSchedule() && get(conn) == null;
-			}
+		Job job = new Job("Connecting " + conn.getId()) {
 
 			@Override
-			public boolean shouldRun() {
-				return super.shouldRun() && get(conn) == null;
-			}
-
-			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				ScaConnection newConnection = get(conn);
-				if (newConnection != null) {
-					return Status.CANCEL_STATUS;
-				}
+			protected IStatus run(IProgressMonitor monitor) {
+				SubMonitor subMonitor = SubMonitor.convert(monitor, "Connecting " + conn.getId(), IProgressMonitor.UNKNOWN);
 				try {
-					newConnection = create(conn);
-				} catch (final InvalidPort e) {
-					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to connect: " + conn.getId(), e);
-				} catch (final OccupiedPort e) {
-					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to connect: " + conn.getId(), e);
+					try {
+						ScaConnection newConnection = create(conn);
+						connectionMap.conn = newConnection;
+						return Status.OK_STATUS;
+					} catch (final InvalidPort e) {
+						delete(conn);
+						connections.remove(connectionMap.getKey());
+						return new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
+					} catch (final OccupiedPort e) {
+						delete(conn);
+						connections.remove(connectionMap.getKey());
+						return new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
+					}
+				} finally {
+					subMonitor.done();
 				}
-				put(newConnection, conn);
-				return Status.OK_STATUS;
 			}
-		};
-		job.setRule(this.mapRule);
-		job.schedule();
 
+		};
+		job.schedule();
 	}
 
 	public void add(final ScaConnection conn) {
-		if (get(conn) != null) {
-			return;
+		final ConnectionMap connectionMap = new ConnectionMap();
+		connectionMap.conn = conn;
+		synchronized (connections) {
+			if (connections.get(connectionMap.getKey()) != null) {
+				return;
+			} else {
+				connections.put(connectionMap.getKey(), connectionMap);
+			}
 		}
-		final Job job = new Job("Adding connection " + conn.getId()) {
-			@Override
-			public boolean shouldSchedule() {
-				return super.shouldSchedule() && get(conn) == null;
-			}
+		Job job = new Job("Adding connection " + conn.getId()) {
 
 			@Override
-			public boolean shouldRun() {
-				return super.shouldRun() && get(conn) == null;
-			}
-
-			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				SadConnectInterface newSadInterface = get(conn);
-				if (newSadInterface != null) {
-					return Status.CANCEL_STATUS;
+			protected IStatus run(IProgressMonitor monitor) {
+				SubMonitor subMonitor = SubMonitor.convert(monitor, "Adding connection " + conn.getId(), IProgressMonitor.UNKNOWN);
+				try {
+					SadConnectInterface newSadInterface = create(conn);
+					connectionMap.profile = newSadInterface;
+					return Status.OK_STATUS;
+				} catch (Exception e) {
+					connections.remove(connectionMap.getKey());
+					return new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
+				} finally {
+					subMonitor.done();
 				}
-				newSadInterface = create(conn);
-				put(conn, newSadInterface);
-				return Status.OK_STATUS;
 			}
+
 		};
-		job.setRule(this.mapRule);
 		job.schedule();
 	}
 
@@ -272,7 +297,6 @@ public class ModelMap {
 		final URI spdURI = EcoreUtil.getURI(spd);
 		final SadComponentInstantiation retVal = SadFactory.eINSTANCE.createSadComponentInstantiation();
 
-		put(newValue, retVal);
 		map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_SPD_URI, spdURI);
 		map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_INST_ID, newValue.getInstantiationIdentifier());
 		map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_INST_NAME, newValue.getName());
@@ -286,7 +310,7 @@ public class ModelMap {
 		return retVal;
 	}
 
-	private LocalScaComponent create(final SadComponentInstantiation comp, final String implID) throws ExecuteFail {
+	private LocalScaComponent create(final SadComponentInstantiation comp, final String implID) throws CoreException {
 		DataType[] execParams = null;
 		if (comp.getComponentProperties() != null) {
 			final List<DataType> params = new ArrayList<DataType>(comp.getComponentProperties().getProperties().size());
@@ -300,15 +324,10 @@ public class ModelMap {
 		}
 		final SoftPkg spd = ScaEcoreUtils.getFeature(comp, ModelMap.SPD_PATH);
 		if (spd == null) {
-			throw new ExecuteFail("Failed to resolve spd.", ErrorNumberType.CF_EIO, "Failed to resolve spd.");
+			throw new CoreException(new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to resolve SPD.", null));
 		}
 		final URI spdURI = spd.eResource().getURI();
-		try {
-			return this.waveform.launch(comp.getId(), execParams, spdURI, implID, ILaunchManager.RUN_MODE);
-		} catch (final CoreException e) {
-			ScaDebugUiPlugin.getDefault().getLog().log(e.getStatus());
-			throw new ExecuteFail(ErrorNumberType.CF_EFAULT, e.getStatus().getMessage());
-		}
+		return this.waveform.launch(comp.getId(), execParams, spdURI, implID, ILaunchManager.RUN_MODE);
 	}
 
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
@@ -418,14 +437,11 @@ public class ModelMap {
 
 	/**
 	 * @param oldComp
+	 * @throws ReleaseError 
 	 */
-	private void delete(final LocalScaComponent oldComp) {
-		try {
-			if (!oldComp.isDisposed()) {
-				oldComp.releaseObject();
-			}
-		} catch (final ReleaseError e) {
-			// PASS
+	private void delete(final LocalScaComponent oldComp) throws ReleaseError {
+		if (!oldComp.isDisposed()) {
+			oldComp.releaseObject();
 		}
 	}
 
@@ -464,14 +480,11 @@ public class ModelMap {
 
 	/**
 	 * @param oldConnection
+	 * @throws InvalidPort 
 	 */
-	private void delete(final ScaConnection oldConnection) {
-		try {
-			if (oldConnection.getPort() != null && !oldConnection.getPort().isDisposed()) {
-				oldConnection.getPort().disconnectPort(oldConnection);
-			}
-		} catch (final InvalidPort e) {
-			// PASS
+	private void delete(final ScaConnection oldConnection) throws InvalidPort {
+		if (oldConnection.getPort() != null && !oldConnection.getPort().isDisposed()) {
+			oldConnection.getPort().disconnectPort(oldConnection);
 		}
 	}
 
@@ -486,59 +499,51 @@ public class ModelMap {
 	}
 
 	public SadComponentInstantiation get(final LocalScaComponent comp) {
-		return (SadComponentInstantiation) this.scaToSad.get(comp);
+		if (comp == null) {
+			return null;
+		}
+		NodeMap nodeMap = nodes.get(NodeMap.getKey(comp));
+		if (nodeMap != null) {
+			return nodeMap.profile;
+		} else {
+			return null;
+		}
 	}
 
 	public LocalScaComponent get(final SadComponentInstantiation compInst) {
-		return (LocalScaComponent) this.sadToSca.get(getKey(compInst));
-	}
-
-	private SadComponentInstantiation getKey(final SadComponentInstantiation compInst) {
-		// For some reason we are given a different reference object so we need to compare by ID
 		if (compInst == null) {
 			return null;
 		}
-		final String instId = compInst.getId();
-		if (instId == null) {
+		NodeMap nodeMap = nodes.get(NodeMap.getKey(compInst));
+		if (nodeMap != null) {
+			return nodeMap.comp;
+		} else {
 			return null;
 		}
-		for (final EObject e : this.sadToSca.keySet()) {
-			if (e instanceof SadComponentInstantiation) {
-				final SadComponentInstantiation i = (SadComponentInstantiation) e;
-				if (instId.equals(i.getId())) {
-					return i;
-				}
-			}
-		}
-		return compInst;
 	}
 
 	public ScaConnection get(final SadConnectInterface conn) {
-		return (ScaConnection) this.sadToSca.get(getKey(conn));
-	}
-
-	private SadConnectInterface getKey(final SadConnectInterface conn) {
-		// For some reason we are given a different reference object so we need to compare by ID
 		if (conn == null) {
 			return null;
 		}
-		final String id = conn.getId();
-		if (id == null) {
+		ConnectionMap connectionMap = connections.get(ConnectionMap.getKey(conn));
+		if (connectionMap != null) {
+			return connectionMap.conn;
+		} else {
 			return null;
 		}
-		for (final EObject e : this.sadToSca.keySet()) {
-			if (e instanceof SadConnectInterface) {
-				final SadConnectInterface i = (SadConnectInterface) e;
-				if (id.equals(i.getId())) {
-					return i;
-				}
-			}
-		}
-		return conn;
 	}
 
 	public SadConnectInterface get(final ScaConnection conn) {
-		return (SadConnectInterface) this.scaToSad.get(conn);
+		if (conn == null) {
+			return null;
+		}
+		ConnectionMap connectionMap = connections.get(ConnectionMap.getKey(conn));
+		if (connectionMap != null) {
+			return connectionMap.profile;
+		} else {
+			return null;
+		}
 	}
 
 	private IDiagramEditDomain getDiagramEditDomain() {
@@ -553,176 +558,121 @@ public class ModelMap {
 		return this.editor.getDiagramEditor().getEditingDomain();
 	}
 
-	public void put(final LocalScaComponent comp, final SadComponentInstantiation inst) {
-		if (comp == null || inst == null) {
-			return;
-		}
-		Job.getJobManager().beginRule(this.mapRule, null);
-		try {
-			this.scaToSad.put(comp, inst);
-			this.sadToSca.put(inst, comp);
-		} finally {
-			Job.getJobManager().endRule(this.mapRule);
-		}
-	}
-
-	public void put(final ScaConnection scaConnection, final SadConnectInterface conn) {
-		if (scaConnection == null || conn == null) {
-			return;
-		}
-		Job.getJobManager().beginRule(this.mapRule, null);
-		try {
-			this.scaToSad.put(scaConnection, conn);
-			this.sadToSca.put(conn, scaConnection);
-		} finally {
-			Job.getJobManager().endRule(this.mapRule);
-		}
-	}
-
 	public void remove(final LocalScaComponent comp) {
-		if (get(comp) == null) {
+		final NodeMap nodeMap = nodes.remove(NodeMap.getKey(comp));
+		if (nodeMap == null) {
 			return;
 		}
-		final Job job = new Job("Removing " + comp.getInstantiationIdentifier()) {
+		final SadComponentInstantiation oldComp = nodeMap.profile;
+		if (oldComp != null) {
+			Job job = new Job("Removing " + comp.getInstantiationIdentifier()) {
 
-			@Override
-			public boolean shouldSchedule() {
-				return super.shouldSchedule() && get(comp) != null;
-			}
-
-			@Override
-			public boolean shouldRun() {
-				return super.shouldRun() && get(comp) != null;
-			}
-
-			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				final SadComponentInstantiation oldComp = get(comp);
-				if (oldComp == null) {
-					return Status.CANCEL_STATUS;
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					delete(oldComp);
+					return Status.OK_STATUS;
 				}
-				delete(oldComp);
-				removeMap(comp);
-				return Status.OK_STATUS;
-			}
-		};
-		job.setRule(this.mapRule);
-		job.schedule();
+
+			};
+			job.schedule();
+		}
 	}
 
 	public void remove(final SadComponentInstantiation comp) {
-		if (get(comp) == null) {
+		final NodeMap nodeMap = nodes.remove(NodeMap.getKey(comp));
+		if (nodeMap == null) {
 			return;
 		}
-		final Job job = new Job("Releasing " + comp.getUsageName()) {
+		final LocalScaComponent oldComp = nodeMap.comp;
+		if (oldComp != null) {
+			Job job = new Job("Releasing " + comp.getUsageName()) {
 
-			@Override
-			public boolean shouldSchedule() {
-				return super.shouldSchedule() && get(comp) != null;
-			}
-
-			@Override
-			public boolean shouldRun() {
-				return super.shouldRun() && get(comp) != null;
-			}
-
-			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				final LocalScaComponent oldComp = get(comp);
-				if (oldComp == null) {
-					return Status.CANCEL_STATUS;
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					SubMonitor subMonitor = SubMonitor.convert(monitor, "Releasing " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
+					try {
+						delete(oldComp);
+						return Status.OK_STATUS;
+					} catch (ReleaseError e) {
+						return new Status(Status.WARNING, LocalScaDiagramPlugin.PLUGIN_ID, "Problems while removing component " + comp.getId(), e);
+					} finally {
+						subMonitor.done();
+					}
 				}
-				delete(oldComp);
-				removeMap(comp);
-				return Status.OK_STATUS;
-			}
-		};
-		job.setRule(this.mapRule);
-		job.schedule();
+
+			};
+			job.schedule();
+		}
 	}
 
 	public void remove(final SadConnectInterface conn) {
-		if (get(conn) == null) {
+		final ConnectionMap connectionMap = connections.remove(ConnectionMap.getKey(conn));
+		if (connectionMap == null) {
 			return;
 		}
-		final Job job = new Job("Disconnect connection " + conn.getId()) {
+		final ScaConnection oldConnection = connectionMap.conn;
+		if (oldConnection != null) {
+			Job job = new Job("Disconnect connection " + conn.getId()) {
 
-			@Override
-			public boolean shouldSchedule() {
-				return super.shouldSchedule() && get(conn) != null;
-			}
-
-			@Override
-			public boolean shouldRun() {
-				return super.shouldRun() && get(conn) != null;
-			}
-
-			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				final ScaConnection oldConnection = get(conn);
-				if (oldConnection == null) {
-					return Status.CANCEL_STATUS;
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					SubMonitor subMonitor = SubMonitor.convert(monitor, "Disconnect connection " + conn.getId(), IProgressMonitor.UNKNOWN);
+					try {
+						delete(oldConnection);
+						return Status.OK_STATUS;
+					} catch (InvalidPort e) {
+						return new Status(Status.WARNING, LocalScaDiagramPlugin.PLUGIN_ID, "Problems while removing connection " + conn.getId(), e);
+					} finally {
+						subMonitor.done();
+					}
 				}
-				delete(oldConnection);
-				removeMap(conn);
-				return Status.OK_STATUS;
-			}
-		};
-		job.setRule(this.mapRule);
-		job.schedule();
+
+			};
+			job.schedule();
+		}
 	}
 
 	public void remove(final ScaConnection conn) {
-		if (get(conn) == null) {
+		final ConnectionMap connectionMap = connections.remove(ConnectionMap.getKey(conn));
+		if (connectionMap == null) {
 			return;
 		}
-		final Job job = new Job("Removing connection " + conn.getId()) {
+		final SadConnectInterface oldSadInterface = connectionMap.profile;
+		if (oldSadInterface != null) {
+			Job job = new Job("Disconnect connection " + conn.getId()) {
 
-			@Override
-			public boolean shouldSchedule() {
-				return super.shouldSchedule() && get(conn) != null;
-			}
-
-			@Override
-			public boolean shouldRun() {
-				return super.shouldRun() && get(conn) != null;
-			}
-
-			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				synchronized (ModelMap.this) {
-					final SadConnectInterface oldSadInterface = get(conn);
-					if (oldSadInterface == null) {
-						return Status.CANCEL_STATUS;
-					}
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
 					delete(oldSadInterface);
-					removeMap(conn);
+					return Status.OK_STATUS;
 				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.setRule(this.mapRule);
-		job.schedule();
-	}
 
-	private void removeMap(final EObject obj) {
-		EObject value = this.scaToSad.remove(obj);
-		if (value != null) {
-			this.sadToSca.remove(value);
-		} else {
-			value = this.sadToSca.remove(obj);
-			if (value != null) {
-				this.scaToSad.remove(value);
-			}
+			};
+			job.schedule();
 		}
+
 	}
 
-	private void removeMap(final SadComponentInstantiation comp) {
-		removeMap((EObject) getKey(comp));
+	/**
+	 * @param con
+	 * @param sadCon
+	 */
+	public void put(ScaConnection con, SadConnectInterface sadCon) {
+		ConnectionMap connectionMap = new ConnectionMap();
+		connectionMap.conn = con;
+		connectionMap.profile = sadCon;
+		connections.put(connectionMap.getKey(), connectionMap);
 	}
 
-	private void removeMap(final SadConnectInterface conn) {
-		removeMap((EObject) getKey(conn));
+	/**
+	 * @param comp
+	 * @param inst
+	 */
+	public void put(LocalScaComponent comp, SadComponentInstantiation inst) {
+		NodeMap nodeMap = new NodeMap();
+		nodeMap.comp = comp;
+		nodeMap.profile = inst;
+		nodes.put(nodeMap.getKey(), nodeMap);
 	}
 
 }
