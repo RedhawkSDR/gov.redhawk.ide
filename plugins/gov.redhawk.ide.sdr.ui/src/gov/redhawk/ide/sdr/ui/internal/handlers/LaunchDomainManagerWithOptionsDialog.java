@@ -665,8 +665,10 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 				this.arrowCursor.dispose();
 				this.arrowCursor = null;
 			}
-			this.waitCursor.dispose();
-			this.waitCursor = null;
+			if (this.waitCursor != null) {
+				this.waitCursor.dispose();
+				this.waitCursor = null;
+			}
 		}
 	}
 
