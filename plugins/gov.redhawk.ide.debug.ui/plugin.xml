@@ -168,9 +168,6 @@
             <visibleWhen
                   checkEnabled="false">
                <and>
-                  <count
-                        value="1">
-                  </count>
                   <iterate
                         ifEmpty="false"
                         operator="and">
