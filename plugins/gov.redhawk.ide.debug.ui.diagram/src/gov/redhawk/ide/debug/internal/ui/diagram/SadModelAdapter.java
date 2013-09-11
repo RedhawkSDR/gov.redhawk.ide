@@ -10,13 +10,14 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui.diagram;
 
+import java.util.Collection;
+
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EContentAdapter;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 
 public class SadModelAdapter extends EContentAdapter {
 
@@ -29,22 +30,24 @@ public class SadModelAdapter extends EContentAdapter {
 	@Override
 	public void notifyChanged(final Notification notification) {
 		super.notifyChanged(notification);
-
-		if (notification.getEventType() == Notification.ADD && notification.getNewValue() instanceof EObject) {
+		switch (notification.getEventType()) {
+		case Notification.ADD:
 			if (notification.getNewValue() instanceof SadComponentInstantiation) {
 				final SadComponentInstantiation object = (SadComponentInstantiation) notification.getNewValue();
 				this.modelMap.add(object);
 			}
-		} else if (notification.getEventType() == Notification.REMOVE && notification.getOldValue() instanceof EObject) {
-			if (notification.getOldValue() instanceof SadComponentInstantiation) {
-				final SadComponentInstantiation object = (SadComponentInstantiation) notification.getOldValue();
-				this.modelMap.remove(object);
-			} else if (notification.getOldValue() instanceof SadConnectInterface) {
-				final SadConnectInterface object = (SadConnectInterface) notification.getOldValue();
-				final SadConnectInterface copy = EcoreUtil.copy(object);
-				this.modelMap.remove(copy);
+			// Don't listen for sad connection since is isn't complete at this point
+			break;
+		case Notification.ADD_MANY:
+			for (Object obj : ((Collection< ? >) notification.getNewValue())) {
+				if (obj instanceof SadComponentInstantiation) {
+					final SadComponentInstantiation object = (SadComponentInstantiation) obj;
+					this.modelMap.add(object);
+				}
+				// Don't listen for sad connection since is isn't complete at this point
 			}
-		} else if (notification.getEventType() == Notification.SET && notification.getNotifier() instanceof EObject) {
+			break;
+		case Notification.SET:
 			if (notification.getNotifier() instanceof SadConnectInterface) {
 				final SadConnectInterface object = (SadConnectInterface) notification.getNotifier();
 				if (object.getSource() == null || object.getTarget() == null || object.getId() == null) {
@@ -52,6 +55,40 @@ public class SadModelAdapter extends EContentAdapter {
 				}
 				this.modelMap.add(object);
 			}
+			break;
+		case Notification.REMOVE:
+			if (notification.getOldValue() instanceof SadComponentInstantiation) {
+				final SadComponentInstantiation object = (SadComponentInstantiation) notification.getOldValue();
+				this.modelMap.remove(object);
+			} else if (notification.getOldValue() instanceof SadComponentPlacement) {
+				final SadComponentPlacement object = (SadComponentPlacement) notification.getOldValue();
+				for (SadComponentInstantiation i : object.getComponentInstantiation()) {
+					this.modelMap.remove(i);
+				}
+			} else if (notification.getOldValue() instanceof SadConnectInterface) {
+				final SadConnectInterface object = (SadConnectInterface) notification.getOldValue();
+				this.modelMap.remove(object);
+			}
+			break;
+		case Notification.REMOVE_MANY:
+			for (Object obj : ((Collection< ? >) notification.getOldValue())) {
+				if (obj instanceof SadComponentInstantiation) {
+					final SadComponentInstantiation object = (SadComponentInstantiation) obj;
+					this.modelMap.remove(object);
+				} else if (notification.getOldValue() instanceof SadComponentPlacement) {
+					final SadComponentPlacement object = (SadComponentPlacement) notification.getOldValue();
+					for (SadComponentInstantiation i : object.getComponentInstantiation()) {
+						this.modelMap.remove(i);
+					}	
+				} else if (obj instanceof SadConnectInterface) {
+					final SadConnectInterface object = (SadConnectInterface) obj;
+//					final SadConnectInterface copy = EcoreUtil.copy(object);
+					this.modelMap.remove(object);
+				}
+			}
+			break;
+		default:
+			break;
 		}
 	}
 
