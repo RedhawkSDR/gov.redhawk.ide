@@ -1405,7 +1405,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			if (query != null) {
 				String fs = query.get(ScaFileSystemConstants.QUERY_PARAM_FS);
 				if (fs != null) {
-					return fs;
+					return fs + fileURI.devicePath();
 				}
 			}
 		}
