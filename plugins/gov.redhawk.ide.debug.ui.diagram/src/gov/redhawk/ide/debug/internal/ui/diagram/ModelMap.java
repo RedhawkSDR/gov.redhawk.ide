@@ -22,7 +22,9 @@ import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.sca.util.MutexRule;
+import gov.redhawk.sca.util.SubMonitor;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,8 +70,10 @@ import org.eclipse.gmf.runtime.diagram.ui.requests.CreateViewRequestFactory;
 import org.eclipse.gmf.runtime.diagram.ui.requests.EditCommandRequestWrapper;
 import org.eclipse.gmf.runtime.emf.type.core.requests.DestroyElementRequest;
 import org.eclipse.gmf.runtime.notation.Connector;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import CF.DataType;
 import CF.ErrorNumberType;
@@ -80,8 +84,8 @@ import CF.PortPackage.OccupiedPort;
 
 public class ModelMap {
 	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
-	    PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
-	    PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
+		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
+		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 	private final LocalScaEditor editor;
 	private final SoftwareAssembly sad;
 	private final Map<EObject, EObject> sadToSca = new HashMap<EObject, EObject>();
@@ -132,58 +136,53 @@ public class ModelMap {
 		if (get(comp) != null) {
 			return;
 		}
-		final Display display = Display.getCurrent();
+
 		final String implID = ((SadComponentInstantiationImpl) comp).getImplID();
-		final Job job = new Job("Launching component " + comp.getUsageName()) {
+		final IRunnableWithProgress runnable = new IRunnableWithProgress() {
 
 			@Override
-			public boolean shouldRun() {
-				return super.shouldRun() && get(comp) == null;
-			}
-
-			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				monitor.beginTask("Launching " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
-				LocalScaComponent newComp = get(comp);
-				if (newComp != null) {
-					return Status.CANCEL_STATUS;
-				}
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
 				try {
-					newComp = create(comp, implID);
-				} catch (final ExecuteFail e) {
-					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to launch: " + comp.getUsageName(), e);
+					LocalScaComponent newComp = get(comp);
+					if (newComp != null) {
+						return;
+					}
+					try {
+						newComp = create(comp, implID);
+					} catch (final ExecuteFail e) {
+						throw new InvocationTargetException(e, "Failed to launch: " + comp.getUsageName());
+					}
+					put(newComp, comp);
+				} finally {
+					subMonitor.done();
 				}
-				put(newComp, comp);
-				if (display != null) {
-					display.wake();
-				}
-				return Status.OK_STATUS;
 			}
 		};
-		job.setUser(true);
-		job.setRule(this.mapRule);
-		job.schedule();
 
+		final Display display = Display.getCurrent();
 		if (display != null) {
-			final Runnable runnable = new Runnable() {
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(display.getActiveShell());
 
-				public void run() {
-					while (!display.isDisposed() && job.getResult() == null) {
-						if (!display.readAndDispatch()) {
-							display.sleep();
-						}
-					}
-				}
-			};
-			BusyIndicator.showWhile(display, runnable);
+			try {
+				dialog.run(true, true, runnable);
+			} catch (InvocationTargetException e) {
+				StatusManager.getManager().handle(new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, comp.getUsageName()),
+					StatusManager.LOG | StatusManager.SHOW);
+				throw new OperationCanceledException();
+			} catch (InterruptedException e) {
+				throw new OperationCanceledException();
+			}
 		} else {
-			return;
-		}
-
-		if (job.getResult() == null || job.getResult() == Status.CANCEL_STATUS) {
-			throw new OperationCanceledException();
-		} else if (!job.getResult().isOK()) {
-			throw new RuntimeException("Failed to start component", job.getResult().getException());
+			try {
+				runnable.run(null);
+			} catch (InvocationTargetException e) {
+				StatusManager.getManager().handle(new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, comp.getUsageName()),
+					StatusManager.LOG | StatusManager.SHOW);
+				throw new OperationCanceledException();
+			} catch (InterruptedException e) {
+				throw new OperationCanceledException();
+			}
 		}
 	}
 
@@ -261,7 +260,7 @@ public class ModelMap {
 			return null;
 		}
 		final CreateViewRequest createRequest = CreateViewRequestFactory.getCreateShapeRequest(SadElementTypes.SadComponentPlacement_3001,
-		    diagramEditPart.getDiagramPreferencesHint());
+			diagramEditPart.getDiagramPreferencesHint());
 
 		final HashMap<Object, Object> map = new HashMap<Object, Object>();
 		map.putAll(createRequest.getExtendedData());
@@ -313,7 +312,7 @@ public class ModelMap {
 	}
 
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
-	    PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
+		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
 
 	private ScaConnection create(final SadConnectInterface conn) throws InvalidPort, OccupiedPort {
 		SadComponentInstantiation inst = ScaEcoreUtils.getFeature(conn, CONN_INST_PATH);
@@ -393,7 +392,7 @@ public class ModelMap {
 		}
 
 		final CreateConnectionViewRequest ccr = CreateViewRequestFactory.getCreateConnectionRequest(SadElementTypes.SadConnectInterface_4001,
-		    getDiagramEditPart().getDiagramPreferencesHint());
+			getDiagramEditPart().getDiagramPreferencesHint());
 		final HashMap<Object, Object> map = new HashMap<Object, Object>();
 		map.putAll(ccr.getExtendedData());
 		map.put(ConnectInterfaceEditHelperAdvice.CONFIGURE_OPTIONS_ID, newValue.getId());
