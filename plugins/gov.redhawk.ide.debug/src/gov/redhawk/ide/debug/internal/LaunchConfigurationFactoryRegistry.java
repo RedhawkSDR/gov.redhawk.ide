@@ -87,14 +87,13 @@ public enum LaunchConfigurationFactoryRegistry implements ILaunchConfigurationFa
 					}
 				} 
 			}			
-		} else {
-			for (final LaunchConfigurationFactoryDesc desc : this.descriptors) {
-				if (desc.codegenref == null) {
-					if (desc.factory.supports(spd, implID)) {
-						return desc.factory;
-					}
-				} 
-			}
+		}
+		for (final LaunchConfigurationFactoryDesc desc : this.descriptors) {
+			if (desc.codegenref == null) {
+				if (desc.factory.supports(spd, implID)) {
+					return desc.factory;
+				}
+			} 
 		}
 		return null;
 	}
