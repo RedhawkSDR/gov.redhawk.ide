@@ -167,7 +167,6 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <and>
                   <iterate
                         ifEmpty="false"
                         operator="and">
@@ -175,7 +174,6 @@
                            type="gov.redhawk.ide.debug.LocalLaunch">
                      </adapt>
                   </iterate>
-               </and>
             </visibleWhen>
          </command>
       </menuContribution>
