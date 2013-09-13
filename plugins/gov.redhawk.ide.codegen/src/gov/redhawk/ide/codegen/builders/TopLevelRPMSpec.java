@@ -167,6 +167,9 @@ public class TopLevelRPMSpec extends IncrementalProjectBuilder {
 				// Load the SAD
 				final URI sadURI = URI.createPlatformResourceURI(resource.getFullPath().toString(), false);
 				final SoftwareAssembly sad = ModelUtil.loadSoftwareAssembly(sadURI);
+				if (sad == null) {
+					return;
+				}
 
 				// Generate content for the RPM spec file
 				final TopLevelSadRpmSpecTemplate template = new TopLevelSadRpmSpecTemplate();
