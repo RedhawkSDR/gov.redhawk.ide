@@ -11,7 +11,10 @@
 package gov.redhawk.ide.debug.internal.ui;
 
 import gov.redhawk.ide.debug.LocalLaunch;
+import gov.redhawk.ide.debug.LocalScaComponent;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
+import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.util.PluginUtil;
 
@@ -25,6 +28,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -59,15 +63,32 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 
 	private void handleTerminate(final Object obj, final ExecutionEvent event) throws CoreException {
 		final LocalLaunch localLaunch = PluginUtil.adapt(LocalLaunch.class, obj);
-		if (localLaunch != null && localLaunch.getLaunch() != null) {
-			ScaModelCommand.execute(localLaunch, new ScaModelCommand() {
-
-				public void execute() {
-					EcoreUtil.delete(localLaunch);
+		if (localLaunch != null) {
+			if (localLaunch == ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform()) {
+				EList<ScaComponent> components = ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform().getComponents();
+				for (Object c : components.toArray()) {
+					LocalScaComponent lc = (LocalScaComponent) c;
+					terminate(lc);
 				}
-			});
-			final Job job = new Job("Terminating") {
+			} else {
+				terminate(localLaunch);
+			}
+		}
+	}
 
+	/**
+	 * @param localLaunch
+	 */
+	private void terminate(final LocalLaunch localLaunch) {
+		ScaModelCommand.execute(localLaunch, new ScaModelCommand() {
+
+			public void execute() {
+				EcoreUtil.delete(localLaunch);
+			}
+		});
+		if (localLaunch.getLaunch() != null) {
+			final Job job = new Job("Terminating") {
+	
 				@Override
 				protected IStatus run(final IProgressMonitor monitor) {
 					try {
@@ -92,7 +113,7 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 				final IStructuredSelection ss = (IStructuredSelection) sel;
 				for (final Object obj : ss.toList()) {
 					final LocalLaunch ll = PluginUtil.adapt(LocalLaunch.class, obj);
-					if (ll != null && ll.getLaunch() != null) {
+					if (ll != null) {
 						setBaseEnabled(true);
 						return;
 					}

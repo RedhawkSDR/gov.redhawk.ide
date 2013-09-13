@@ -382,6 +382,7 @@
             commandId="org.eclipse.debug.ui.commands.Terminate">
          <activeWhen>
             <iterate
+                  ifEmpty="false"
                   operator="and">
                <adapt
                      type="gov.redhawk.ide.debug.LocalLaunch">
