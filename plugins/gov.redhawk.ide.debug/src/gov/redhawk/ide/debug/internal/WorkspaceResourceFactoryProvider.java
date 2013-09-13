@@ -18,6 +18,8 @@ import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.SpdResourceFactory;
 import gov.redhawk.ide.debug.WorkspaceWaveformFactory;
 import gov.redhawk.ide.natures.ScaProjectNature;
+import gov.redhawk.model.sca.ScaModelPlugin;
+import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.MutexRule;
 
 import java.io.IOException;
@@ -49,6 +51,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
 import CF.ResourceFactoryOperations;
@@ -60,6 +63,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 
 	private static final MutexRule RULE = new MutexRule(WorkspaceResourceFactoryProvider.class);
 	private static final String WORKSPACE_CATEGORY = "Workspace";
+	private static final Debug TRACE_LOGGER = new Debug(ScaModelPlugin.ID, "WorkspaceResourceFactoryProvider");
 	private final IResourceChangeListener listener = new IResourceChangeListener() {
 
 		public void resourceChanged(final IResourceChangeEvent event) {
@@ -202,10 +206,16 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 	}
 
 	private SoftPkg loadSpd(IFile resource) {
-		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-		final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(URI.createPlatformResourceURI(resource.getFullPath().toPortableString(), true),
-		                                                                    true));
-		return spd;
+		try {
+			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+			final SoftPkg spd = SoftPkg.Util.getSoftPkg(resourceSet.getResource(URI.createPlatformResourceURI(resource.getFullPath().toPortableString(), true), true));
+			return spd;
+		} catch (WrappedException we) {
+			if (TRACE_LOGGER.enabled) {
+				TRACE_LOGGER.catching("Unable to load SPD: " + resource, we);
+			}
+			return null;
+		}
 	}
 	
 	private void addSadResource(final IFile resource, final ResourceFactoryOperations resourceFactory) {
@@ -216,6 +226,8 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 			// Already mapped resource
 			return;
 		}
+		
+		// TODO: load Workspace Waveforms
 		
 	}
 
@@ -245,6 +257,9 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 	}
 
 	public static boolean shouldVisit(final IProject project) throws CoreException {
+		if (!project.isOpen()) {
+			return false;
+		}
 		final IProjectDescription desc = project.getDescription();
 		final List<String> natures = Arrays.asList(desc.getNatureIds());
 		return natures.contains(ScaProjectNature.ID) && desc.getName().charAt(0) != '.';

@@ -17,6 +17,7 @@ import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
 import CF.DataType;
@@ -34,10 +35,13 @@ public class WorkspaceWaveformFactory extends AbstractResourceFactory {
 
 	public WorkspaceWaveformFactory(final IFile profile) throws IOException {
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-		final org.eclipse.emf.ecore.resource.Resource resource = resourceSet.getResource(URI.createPlatformResourceURI(profile.getFullPath().toString(), true),
-		        true);
-		resource.load(null);
-		this.sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);
+		try {
+			final org.eclipse.emf.ecore.resource.Resource resource =  resourceSet.getResource(URI.createPlatformResourceURI(profile.getFullPath().toString(), true), true);
+			resource.load(null);
+			this.sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);
+		} catch (WrappedException we) {
+			throw new IOException("Failed to load Waveform: " + profile.getFullPath(), we);
+		}
 		this.profile = profile;
 	}
 
