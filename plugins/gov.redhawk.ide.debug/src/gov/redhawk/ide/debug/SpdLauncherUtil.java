@@ -186,11 +186,12 @@ public final class SpdLauncherUtil {
 	private static LocalAbstractComponent postLaunchComponent(final ILaunch launch) throws CoreException {
 		final String nameBinding = launch.getAttribute(LaunchVariables.NAME_BINDING);
 		final String namingContextIOR = launch.getAttribute(LaunchVariables.NAMING_CONTEXT_IOR);
+		final String compID = launch.getAttribute(LaunchVariables.COMPONENT_IDENTIFIER);
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 
 		if (nameBinding == null || namingContextIOR == null) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID,
-				"No naming context or name binding to locate component with, post launch failed.", null));
+				"No naming context or name binding to locate component with, post launch failed. " + compID, null));
 		}
 
 		final Future<LocalScaComponent> future = SpdLauncherUtil.EXECUTOR.submit(new Callable<LocalScaComponent>() {
@@ -202,7 +203,7 @@ public final class SpdLauncherUtil {
 					while (newComponent == null) {
 						// If this launch was terminated, immediately bail
 						if (launch.isTerminated()) {
-							throw new Exception("Component terminated while waiting to launch.");
+							throw new Exception("Component terminated while waiting to launch. " + compID);
 						}
 
 						NamingContextExt namingContext = null;
@@ -278,12 +279,12 @@ public final class SpdLauncherUtil {
 				return newComponent;
 			}
 		} catch (final InterruptedException e1) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Interrupted waiting for component to start.", e1));
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Interrupted waiting for component to start. " + compID, e1));
 		} catch (final ExecutionException e1) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Error while waiting for component to start.", e1));
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Error while waiting for component to start. " + compID, e1));
 		} catch (final TimeoutException e1) {
 			future.cancel(true);
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Timed out waiting for component to start.", e1));
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Timed out waiting for component to start. " + compID, e1));
 		}
 
 	}
@@ -298,7 +299,7 @@ public final class SpdLauncherUtil {
 				while (retVal == null) {
 					// If this launch was terminated, immediately bail
 					if (launch.isTerminated()) {
-						throw new Exception("Component terminated while waiting to launch.");
+						throw new Exception("Service terminated while waiting to launch. " + name);
 					}
 
 					for (final ScaService service : localSca.getSandboxDeviceManager().getServices()) {
@@ -333,12 +334,12 @@ public final class SpdLauncherUtil {
 				return newComponent;
 			}
 		} catch (final InterruptedException e1) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Interrupted waiting for component to start.", e1));
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Interrupted waiting for service to start. " + name, e1));
 		} catch (final ExecutionException e1) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Error while waiting for component to start.", e1));
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Error while waiting for service to start. " + name, e1));
 		} catch (final TimeoutException e1) {
 			future.cancel(true);
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Timed out waiting for component to start.", e1));
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Timed out waiting for service to start. " + name, e1));
 		}
 	}
 
@@ -352,7 +353,7 @@ public final class SpdLauncherUtil {
 				while (retVal == null) {
 					// If this launch was terminated, immediately bail
 					if (launch.isTerminated()) {
-						throw new Exception("Component terminated while waiting to launch.");
+						throw new Exception("Device terminated while waiting to launch. " + deviceLabel);
 					}
 
 					for (final ScaDevice< ? > device : localSca.getSandboxDeviceManager().getAllDevices()) {
@@ -388,12 +389,12 @@ public final class SpdLauncherUtil {
 				return newComponent;
 			}
 		} catch (final InterruptedException e1) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Interrupted waiting for component to start.", e1));
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Interrupted waiting for device to start. " + deviceLabel, e1));
 		} catch (final ExecutionException e1) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Error while waiting for component to start.", e1));
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Error while waiting for component to start. " + deviceLabel, e1));
 		} catch (final TimeoutException e1) {
 			future.cancel(true);
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Timed out waiting for component to start.", e1));
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Timed out waiting for component to start. " + deviceLabel, e1));
 		}
 
 	}
