@@ -30,13 +30,16 @@ import gov.redhawk.model.sca.impl.CorbaObjWrapperImpl;
 import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SilentJob;
+
 import java.util.Collection;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -52,6 +55,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.jacorb.naming.Name;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NameComponent;
+
 import CF.Application;
 import CF.ApplicationHelper;
 import CF.LifeCyclePackage.InitializeError;
@@ -159,7 +163,13 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		// END GENERATED CODE
 		super();
 		eAdapters().add(new DisposableObjectContainerListener());
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this.launchListener);
+		DebugPlugin dp = DebugPlugin.getDefault();
+		if (dp != null) {
+			ILaunchManager lm = dp.getLaunchManager();
+			if (lm != null) {
+				lm.addLaunchListener(this.launchListener);
+			}
+		}
 		// BEGIN GENERATED CODE
 	}
 
@@ -601,7 +611,10 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	public void dispose() {
 		// END GENERATED CODE
 		super.dispose();
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this.launchListener);
+		DebugPlugin dp = DebugPlugin.getDefault();
+		if (dp != null) {
+			dp.getLaunchManager().removeLaunchListener(this.launchListener);
+		}
 		ScaModelCommand.execute(this, new ScaModelCommand() {
 
 			public void execute() {

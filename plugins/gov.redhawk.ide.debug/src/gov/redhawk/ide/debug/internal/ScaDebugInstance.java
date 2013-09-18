@@ -93,8 +93,11 @@ public enum ScaDebugInstance {
 		if (localSca.getSandbox() != null) {
 			return;
 		}
-		
+
 		final SandboxImpl impl = new SandboxImpl(localSca);
+		if (localSca.getSession() == null) {
+			return;
+		}
 		final POA poa = localSca.getSession().getPOA();
 		final Sandbox sandboxRef = createSandboxRef(poa, impl);
 		final LocalFileManager fileManagerRef = createFileManager(poa);
@@ -124,16 +127,19 @@ public enum ScaDebugInstance {
 
 	private static LocalFileManager createFileManager(final POA poa) throws CoreException {
 		final LocalFileManager tmp = ScaDebugFactory.eINSTANCE.createLocalFileManager();
-		final IFileManager fm = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry().getFileManager();
-		FileManager ref;
-		try {
-			ref = FileManagerHelper.narrow(poa.servant_to_reference(new FileManagerPOATie(fm)));
-		} catch (final ServantNotActive e) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create file manager"));
-		} catch (final WrongPolicy e) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create file manager"));
+		ResourceFactoryPlugin rp = ResourceFactoryPlugin.getDefault();
+		if (rp != null) {
+			final IFileManager fm = rp.getResourceFactoryRegistry().getFileManager();
+			FileManager ref;
+			try {
+				ref = FileManagerHelper.narrow(poa.servant_to_reference(new FileManagerPOATie(fm)));
+			} catch (final ServantNotActive e) {
+				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create file manager"));
+			} catch (final WrongPolicy e) {
+				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create file manager"));
+			}
+			tmp.setCorbaObj(ref);
 		}
-		tmp.setCorbaObj(ref);
 		return tmp;
 	}
 

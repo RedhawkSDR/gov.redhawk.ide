@@ -126,7 +126,10 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 	 * {@inheritDoc}
 	 */
 	public SdrResourceFactoryProvider() {
-		this.root = SdrUiPlugin.getDefault().getTargetSdrRoot();
+		SdrUiPlugin sdrPlugin = SdrUiPlugin.getDefault();
+		if (sdrPlugin != null) {
+			this.root = sdrPlugin.getTargetSdrRoot();
+		}
 		if (this.root != null) {
 			this.componentsListener = new SPDListener();
 			this.devicesListener = new SPDListener();
