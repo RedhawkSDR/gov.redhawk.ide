@@ -159,6 +159,7 @@ public class ImplementationWizardPage extends WizardPage {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void createControl(final Composite parent) {
 		if (getWizard() instanceof NewScaResourceWizard) {
 			this.importing = !(((NewScaResourceWizard) getWizard()).getImportedSettingsMap().isEmpty());
@@ -206,10 +207,12 @@ public class ImplementationWizardPage extends WizardPage {
 		this.codeGeneratorEntryViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 		this.codeGeneratorEntryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				final IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 				handleCodeGenerationSelection(sel);
 				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (getWizard() instanceof ScaImplementationWizard) {
 							((ScaImplementationWizard) getWizard()).generatorChanged(ImplementationWizardPage.this.impl,
@@ -248,10 +251,12 @@ public class ImplementationWizardPage extends WizardPage {
 		this.importSourceCode.setText("Import Source Code");
 
 		this.importSourceCode.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(final SelectionEvent e) {
 				// PASS
 			}
 
+			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final Button button = (Button) e.widget;
 				ImplementationWizardPage.this.shouldImport = button.getSelection();

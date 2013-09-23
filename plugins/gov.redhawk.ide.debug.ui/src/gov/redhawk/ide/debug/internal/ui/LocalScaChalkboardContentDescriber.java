@@ -20,6 +20,7 @@ import org.eclipse.ui.IEditorInput;
 
 public class LocalScaChalkboardContentDescriber implements IScaContentDescriber {
 
+	@Override
 	public int describe(final Object contents) throws IOException {
 		if (contents instanceof LocalScaWaveform) {
 			final LocalScaWaveform waveform = (LocalScaWaveform) contents;
@@ -30,6 +31,7 @@ public class LocalScaChalkboardContentDescriber implements IScaContentDescriber 
 		return IScaContentDescriber.INVALID;
 	}
 
+	@Override
 	public IEditorInput getEditorInput(final Object contents) {
 		if (contents == ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform()) {
 			return LocalScaElementFactory.getLocalScaInput();

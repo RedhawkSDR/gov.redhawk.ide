@@ -102,11 +102,13 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 			public IItemLabelProvider getLabelProvider(final Object thisObject) {
 				return new IItemLabelProvider() {
 
+					@Override
 					public String getText(final Object object) {
 						final IStatus status = (IStatus) object;
 						return status.getMessage();
 					}
 
+					@Override
 					public Object getImage(final Object object) {
 						IStatus status = (IStatus) object;
 						final ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
@@ -205,11 +207,13 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 			public IItemLabelProvider getLabelProvider(final Object thisObject) {
 				return new IItemLabelProvider() {
 					
+					@Override
 					public String getText(Object object) {
 						SdrRoot root = (SdrRoot) thisObject;
 						return QueryParser.parseQuery(root.getDevFileSystemRoot().query()).get(ScaFileSystemConstants.QUERY_PARAM_FS);
 					}
 					
+					@Override
 					public Object getImage(Object object) {
 						return null;
 					}
@@ -244,11 +248,13 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 			public IItemLabelProvider getLabelProvider(final Object thisObject) {
 				return new IItemLabelProvider() {
 					
+					@Override
 					public String getText(Object object) {
 						SdrRoot root = (SdrRoot) thisObject;
 						return QueryParser.parseQuery(root.getDomFileSystemRoot().query()).get(ScaFileSystemConstants.QUERY_PARAM_FS);
 					}
 					
+					@Override
 					public Object getImage(Object object) {
 						return null;
 					}

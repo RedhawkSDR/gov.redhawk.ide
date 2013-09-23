@@ -25,16 +25,20 @@ public class ScaWaveformProjectNature implements IProjectNature {
 	/** The project associated with this nature. */
 	private IProject project;
 
+	@Override
 	public void configure() throws CoreException {
 	}
 
+	@Override
 	public void deconfigure() throws CoreException {
 	}
 
+	@Override
 	public IProject getProject() {
 		return this.project;
 	}
 
+	@Override
 	public void setProject(final IProject project) {
 		this.project = project;
 	}

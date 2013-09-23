@@ -183,6 +183,7 @@ public class OrganizeInterfacesHandler extends AbstractHandler implements IHandl
 		return service;
 	}
 
+	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getSelectionService().getSelection();
 

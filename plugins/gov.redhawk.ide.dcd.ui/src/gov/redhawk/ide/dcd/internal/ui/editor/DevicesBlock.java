@@ -79,6 +79,7 @@ public class DevicesBlock extends SCAMasterDetailsBlock {
 		//		detailsPart.registerPage(Dependency.class, new DependencyDetailsPage(this.fSection));
 		detailsPart.setPageProvider(new IDetailsPageProvider() {
 
+			@Override
 			public Object getPageKey(final Object object) {
 				if (object instanceof DcdComponentPlacement) {
 					return DcdComponentPlacement.class;
@@ -92,6 +93,7 @@ public class DevicesBlock extends SCAMasterDetailsBlock {
 				return null;
 			}
 
+			@Override
 			public IDetailsPage getPage(final Object key) {
 				return null;
 			}

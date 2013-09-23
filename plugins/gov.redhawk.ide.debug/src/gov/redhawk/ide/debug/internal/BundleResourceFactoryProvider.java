@@ -115,6 +115,7 @@ public class BundleResourceFactoryProvider extends AbstractResourceFactoryProvid
 	/* (non-Javadoc)
 	 * @see gov.redhawk.core.resourcefactory.IResourceFactoryProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		for (FactoryDescEntry entry : this.spdBundleFactories) {
 			removeResourceDesc(entry.desc);
@@ -122,6 +123,7 @@ public class BundleResourceFactoryProvider extends AbstractResourceFactoryProvid
 		this.spdBundleFactories.clear();
 	}
 
+	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		for (final IConfigurationElement element : extension.getConfigurationElements()) {
 			FactoryDescEntry descriptor;
@@ -142,6 +144,7 @@ public class BundleResourceFactoryProvider extends AbstractResourceFactoryProvid
 		return entry;
 	}
 
+	@Override
 	public void removeExtension(IExtension extension, Object[] objects) {
 		for (Object obj : objects) {
 			if (obj instanceof FactoryDescEntry) {

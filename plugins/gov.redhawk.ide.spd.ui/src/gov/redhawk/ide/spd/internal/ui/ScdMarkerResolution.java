@@ -80,6 +80,7 @@ public class ScdMarkerResolution extends WorkbenchMarkerResolution {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getDescription() {
 		return "The SCD file contains references to interfaces that are not being used. They should be removed.";
 	}
@@ -87,6 +88,7 @@ public class ScdMarkerResolution extends WorkbenchMarkerResolution {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Image getImage() {
 		// TODO Auto-generated method stub
 		return null;
@@ -95,6 +97,7 @@ public class ScdMarkerResolution extends WorkbenchMarkerResolution {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLabel() {
 		return "Remove the unnecessary interfaces.";
 	}
@@ -102,6 +105,7 @@ public class ScdMarkerResolution extends WorkbenchMarkerResolution {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void run(final IMarker marker) {
 		final String uri = marker.getAttribute(EValidator.URI_ATTRIBUTE, null);
 		if (uri != null) {

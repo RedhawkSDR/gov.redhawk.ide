@@ -66,24 +66,30 @@ public class LaunchDeviceManagerDialog extends CheckedTreeSelectionDialog {
 	private static ITreeContentProvider getContentProvider(final AdapterFactory adapterFactory) {
 		return new ITreeContentProvider() {
 
+			@Override
 			public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 			}
 
+			@Override
 			public void dispose() {
 			}
 
+			@Override
 			public Object[] getElements(final Object inputElement) {
 				return getChildren(inputElement);
 			}
 
+			@Override
 			public boolean hasChildren(final Object element) {
 				return false;
 			}
 
+			@Override
 			public Object getParent(final Object element) {
 				return null;
 			}
 
+			@Override
 			public Object[] getChildren(final Object parentElement) {
 				if (parentElement instanceof SdrRoot) {
 					for (final Object devConfig : ((SdrRoot) parentElement).getNodesContainer().getNodes().toArray()) {
@@ -118,6 +124,7 @@ public class LaunchDeviceManagerDialog extends CheckedTreeSelectionDialog {
 		this.debugViewer.setSelection(new StructuredSelection("Info"));
 		this.debugViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				final IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 				final String choice = (String) sel.getFirstElement();
@@ -130,6 +137,7 @@ public class LaunchDeviceManagerDialog extends CheckedTreeSelectionDialog {
 
 		getTreeViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				final IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 				final DeviceConfiguration choice = (DeviceConfiguration) sel.getFirstElement();

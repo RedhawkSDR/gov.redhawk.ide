@@ -202,6 +202,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<ScaWaveform> getWaveforms() {
 		if (waveforms == null) {
 			waveforms = new EObjectContainmentEList<ScaWaveform>(ScaWaveform.class, this, ScaDebugPackage.LOCAL_SCA__WAVEFORMS);
@@ -214,6 +215,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public LocalScaWaveform getSandboxWaveform() {
 		return sandboxWaveform;
 	}
@@ -257,6 +259,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public LocalScaDeviceManager getSandboxDeviceManager() {
 		return sandboxDeviceManager;
 	}
@@ -300,6 +303,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public NotifyingNamingContext getRootContext() {
 		return rootContext;
 	}
@@ -343,6 +347,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public LocalFileManager getFileManager() {
 		return fileManager;
 	}
@@ -387,6 +392,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SandboxOperations getSandbox() {
 		return sandbox;
 	}
@@ -398,6 +404,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setSandbox(SandboxOperations newSandbox) {
 		SandboxOperations oldSandbox = sandbox;
 		sandbox = newSandbox;
@@ -426,22 +433,27 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 
 	private final ILaunchesListener2 launchListener = new ILaunchesListener2() {
 		
+		@Override
 		public void launchesRemoved(final ILaunch[] launches) {
 			
 		}
 		
+		@Override
 		public void launchesChanged(final ILaunch[] launches) {
 			
 		}
 		
+		@Override
 		public void launchesAdded(final ILaunch[] launches) {
 			
 		}
 		
+		@Override
 		public void launchesTerminated(final ILaunch[] launches) {
 			for (final ILaunch launch : launches) {
 				ScaModelCommand.execute(LocalScaImpl.this, new ScaModelCommand() {
 					
+					@Override
 					public void execute() {
 						final TreeIterator<Object> iterator = EcoreUtil.getAllContents(LocalScaImpl.this, false);
 						while(iterator.hasNext()) {
@@ -542,6 +554,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		} catch (final InitializeError e) {
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 
+				@Override
 				public void execute() {
 					waveform.setStatus(ScaPackage.Literals.SCA_WAVEFORM__DOM_MGR, new Status(IStatus.ERROR, ScaDebugPlugin.ID,
 						"Component failed to initialize", e));
@@ -550,6 +563,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		} catch (final SystemException e) {
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 
+				@Override
 				public void execute() {
 					waveform.setStatus(ScaPackage.Literals.SCA_WAVEFORM__DOM_MGR, new Status(IStatus.ERROR, ScaDebugPlugin.ID,
 						"Component failed to initialize", e));
@@ -559,6 +573,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 
 		ScaModelCommand.execute(this, new ScaModelCommand() {
 
+			@Override
 			public void execute() {
 				getWaveforms().add(waveform);
 			}
@@ -608,6 +623,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public void dispose() {
 		// END GENERATED CODE
 		super.dispose();
@@ -617,6 +633,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		}
 		ScaModelCommand.execute(this, new ScaModelCommand() {
 
+			@Override
 			public void execute() {
 				getWaveforms().clear();
 				setSandboxWaveform(null);

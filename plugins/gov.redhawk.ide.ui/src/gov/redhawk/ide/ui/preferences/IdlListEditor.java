@@ -110,10 +110,12 @@ public class IdlListEditor extends FieldEditor {
 		final Button newButton = createPushButton(box, "New...");
 		newButton.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(final SelectionEvent e) {
 				widgetSelected(e);
 			}
 
+			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final DirectoryDialog fileDialog = new DirectoryDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), SWT.OPEN | SWT.SHEET);
 				if (IdlListEditor.this.startingDirectory != null) {
@@ -138,10 +140,12 @@ public class IdlListEditor extends FieldEditor {
 		this.removeButton.setEnabled(false);
 		this.removeButton.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(final SelectionEvent e) {
 				widgetSelected(e);
 			}
 
+			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final boolean confirmedDelete = MessageDialog.openConfirm(box.getShell(), "Delete IDL path entry?",
 				"Are you sure you want to remove the entry from the IDL locations?");
@@ -159,10 +163,12 @@ public class IdlListEditor extends FieldEditor {
 		this.upButton.setEnabled(false);
 		this.upButton.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(final SelectionEvent e) {
 				widgetSelected(e);
 			}
 
+			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final IStructuredSelection sel = (IStructuredSelection) IdlListEditor.this.list.getSelection();
 
@@ -183,10 +189,12 @@ public class IdlListEditor extends FieldEditor {
 		this.downButton.setEnabled(false);
 		this.downButton.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(final SelectionEvent e) {
 				widgetSelected(e);
 			}
 
+			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final IStructuredSelection sel = (IStructuredSelection) IdlListEditor.this.list.getSelection();
 
@@ -238,6 +246,7 @@ public class IdlListEditor extends FieldEditor {
 		this.list.setLabelProvider(new LabelProvider());
 		this.list.setInput(this.idlLocations);
 		this.list.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				IdlListEditor.this.removeButton.setEnabled(!event.getSelection().isEmpty());
 				IdlListEditor.this.enableButtons();
@@ -340,6 +349,7 @@ public class IdlListEditor extends FieldEditor {
 			this.buttonBox.setLayout(layout);
 			createButtons(this.buttonBox);
 			this.buttonBox.addDisposeListener(new DisposeListener() {
+				@Override
 				public void widgetDisposed(final DisposeEvent event) {
 					IdlListEditor.this.buttonBox = null;
 				}

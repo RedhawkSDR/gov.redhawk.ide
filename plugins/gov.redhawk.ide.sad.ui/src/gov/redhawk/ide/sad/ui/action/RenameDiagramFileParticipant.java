@@ -96,6 +96,7 @@ public class RenameDiagramFileParticipant extends RenameParticipant {
 		if (this.sadFile != null && this.sadFile.exists()) {
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
+				@Override
 				public void run() {
 					RenameDiagramFileParticipant.this.saveConfirmed = IDE.saveAllEditors(new IResource[] {
 						RenameDiagramFileParticipant.this.sadFile
@@ -119,6 +120,7 @@ public class RenameDiagramFileParticipant extends RenameParticipant {
 							if (input.getFile().equals(this.sadFile)) {
 								PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
+									@Override
 									public void run() {
 										formEditor.close(true);
 									}

@@ -44,6 +44,7 @@ public class ExportResourceHandler extends AbstractHandler implements IHandler {
 		this.exporter = new FileStoreExporter(SdrUiPlugin.getDefault().getTargetSdrPath());
 	}
 
+	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
 

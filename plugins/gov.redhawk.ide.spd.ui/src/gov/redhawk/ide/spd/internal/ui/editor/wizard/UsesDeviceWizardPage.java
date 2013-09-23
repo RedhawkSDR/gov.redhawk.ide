@@ -47,6 +47,7 @@ public class UsesDeviceWizardPage extends WizardPage {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void createControl(final Composite parent) {
 		final Composite client = new Composite(parent, SWT.NULL);
 		client.setLayout(new GridLayout(2, false));

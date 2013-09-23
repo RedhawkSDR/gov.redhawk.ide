@@ -273,6 +273,7 @@ public class DefaultGeneratorPropertiesComposite extends BaseGeneratorProperties
 		this.removePropertyButton.setEnabled(!this.propertiesViewer.getSelection().isEmpty());
 		this.propertiesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				DefaultGeneratorPropertiesComposite.this.removePropertyButton.setEnabled(!event.getSelection().isEmpty());
 				DefaultGeneratorPropertiesComposite.this.editPropertyButton.setEnabled(!event.getSelection().isEmpty());

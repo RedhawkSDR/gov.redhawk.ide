@@ -762,6 +762,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 		final EMFUpdateValueStrategy strategy = new EMFUpdateValueStrategy();
 		strategy.setConverter(new Converter(LocalFile.class, String.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (!(fromObject instanceof LocalFile)) {
 					return "";
@@ -781,6 +782,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy();
 		strategy.setConverter(new Converter(String.class, LocalFile.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return null;
@@ -801,6 +803,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 		final EMFUpdateValueStrategy strategy = new EMFUpdateValueStrategy();
 		strategy.setConverter(new Converter(PropertyFile.class, String.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return "";
@@ -824,6 +827,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy();
 		strategy.setConverter(new Converter(String.class, PropertyFile.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return null;
@@ -870,6 +874,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 	 */
 	private void addGeneratorListeners(final IActionBars actionBars) {
 		this.codeGenerationComposite.getOutputDirEntry().getText().addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(final ModifyEvent e) {
 				ImplementationDetailsPage.this.updateCodeEntries(((Text) e.widget).getText());
 			}

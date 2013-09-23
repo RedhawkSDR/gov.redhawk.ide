@@ -59,6 +59,7 @@ public class ScaNodeProjectPropertiesWizardPage extends ScaProjectPropertiesWiza
 		/**
 		 * {@inheritDoc}
 		 */
+		@Override
 		public IStatus validate(final Object value) {
 			// Project names are always stripped of whitespace
 			// (see the Java Project Wizard)
@@ -131,6 +132,7 @@ public class ScaNodeProjectPropertiesWizardPage extends ScaProjectPropertiesWiza
 		this.domainCombo.setItems(domainNames.toArray(new String[domainNames.size()]));
 		GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.CENTER).applyTo(this.domainCombo);
 		this.domainCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validate();
 			}

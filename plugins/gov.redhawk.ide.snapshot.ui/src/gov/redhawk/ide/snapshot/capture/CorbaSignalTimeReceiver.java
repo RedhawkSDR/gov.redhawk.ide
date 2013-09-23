@@ -18,20 +18,24 @@ import BULKIO.StreamSRI;
 public class CorbaSignalTimeReceiver extends CorbaNumSamplesReceiver {
 
 	private double timeInSeconds;
-	
+
 	public void setTimeInSeconds(double timeInSeconds) {
 		this.timeInSeconds = timeInSeconds;
 	}
-	
+
 	public double getTimeInSeconds() {
 		return timeInSeconds;
 	}
-	
+
 	@Override
 	protected void handleStreamSRIChanged(StreamSRI oldSri, StreamSRI newSri) {
 		super.handleStreamSRIChanged(oldSri, newSri);
-		long samples = (long) Math.ceil(timeInSeconds / newSri.xdelta);
-		setSamples(samples);
+		if (newSri != null) {
+			long samples = (long) Math.ceil(timeInSeconds / newSri.xdelta);
+			setSamples(samples);
+		} else {
+			setSamples(0);
+		}
 	}
 
 }

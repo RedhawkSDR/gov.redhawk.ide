@@ -83,6 +83,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void configure(final DataType[] configProperties) throws InvalidConfiguration, PartialConfiguration {
 		throw new InvalidConfiguration();
 	}
@@ -90,6 +91,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void query(final PropertiesHolder configProperties) throws UnknownProperties {
 		// Do nothing
 	}
@@ -97,6 +99,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public org.omg.CORBA.Object getPort(final String name) throws UnknownPort {
 		throw new UnknownPort("No ports");
 	}
@@ -104,6 +107,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String deviceConfigurationProfile() {
 		return this.profile;
 	}
@@ -111,6 +115,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public FileSystem fileSys() {
 		return this.fileSystem;
 	}
@@ -118,6 +123,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String identifier() {
 		return this.identifier;
 	}
@@ -125,6 +131,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String label() {
 		return this.name;
 	}
@@ -132,6 +139,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Device[] registeredDevices() {
 		synchronized (devices) {
 			boolean changed = false;
@@ -157,6 +165,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ServiceType[] registeredServices() {
 		synchronized (services) {
 			boolean changed = false;
@@ -182,6 +191,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void registerDevice(final Device registeringDevice) throws InvalidObjectReference {
 		devices.add(registeringDevice);
 		refreshJob.schedule();
@@ -195,6 +205,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void unregisterDevice(final Device registeredDevice) throws InvalidObjectReference {
 		if (registeredDevice == null) {
 			throw new InvalidObjectReference("Null reference", "Null reference");
@@ -223,6 +234,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void shutdown() {
 		for (ServiceType type : this.services.toArray(new ServiceType[services.size()])) {
 			try {
@@ -243,6 +255,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void registerService(final org.omg.CORBA.Object registeringService, final String name) throws InvalidObjectReference {
 		ServiceType type = new ServiceType(registeringService, name);
 		services.add(type);
@@ -260,6 +273,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void unregisterService(final org.omg.CORBA.Object unregisteringService, final String name) throws InvalidObjectReference {
 		if (name == null) {
 			return;
@@ -289,6 +303,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getComponentImplementationId(final String componentInstantiationId) {
 		// TODO
 		return "";

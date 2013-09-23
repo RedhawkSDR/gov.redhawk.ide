@@ -140,6 +140,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		// Register package validator
 		EValidator.Registry.INSTANCE.put(retVal, new EValidator.Descriptor() {
 			AdvancedEObjectValidator validator = new AdvancedEObjectValidator(CodegenPackageImpl.VALIDATOR);
+			@Override
 			public EValidator getEValidator() {
 				return this.validator;
 			}
@@ -153,6 +154,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getImplementationSettings() {
 		return implementationSettingsEClass;
 	}
@@ -162,6 +164,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getImplementationSettings_Name() {
 		return (EAttribute)implementationSettingsEClass.getEStructuralFeatures().get(0);
 	}
@@ -171,6 +174,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getImplementationSettings_OutputDir() {
 		return (EAttribute)implementationSettingsEClass.getEStructuralFeatures().get(1);
 	}
@@ -180,6 +184,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getImplementationSettings_Template() {
 		return (EAttribute)implementationSettingsEClass.getEStructuralFeatures().get(2);
 	}
@@ -189,6 +194,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getImplementationSettings_Properties() {
 		return (EReference)implementationSettingsEClass.getEStructuralFeatures().get(3);
 	}
@@ -198,6 +204,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getImplementationSettings_GeneratorId() {
 		return (EAttribute)implementationSettingsEClass.getEStructuralFeatures().get(4);
 	}
@@ -207,6 +214,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getImplementationSettings_GeneratedOn() {
 		return (EAttribute)implementationSettingsEClass.getEStructuralFeatures().get(5);
 	}
@@ -216,6 +224,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getImplementationSettings_Id() {
 		return (EAttribute)implementationSettingsEClass.getEStructuralFeatures().get(6);
 	}
@@ -225,6 +234,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getImplementationSettings_GeneratedFileCRCs() {
 		return (EReference)implementationSettingsEClass.getEStructuralFeatures().get(7);
 	}
@@ -234,6 +244,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getImplementationSettings_PortGenerators() {
 		return (EReference)implementationSettingsEClass.getEStructuralFeatures().get(8);
 	}
@@ -243,6 +254,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getImplementationSettings_Primary() {
 		return (EAttribute)implementationSettingsEClass.getEStructuralFeatures().get(9);
 	}
@@ -252,6 +264,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getProperty() {
 		return propertyEClass;
 	}
@@ -261,6 +274,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getProperty_Id() {
 		return (EAttribute)propertyEClass.getEStructuralFeatures().get(0);
 	}
@@ -270,6 +284,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getProperty_Value() {
 		return (EAttribute)propertyEClass.getEStructuralFeatures().get(1);
 	}
@@ -279,6 +294,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getWaveDevSettings() {
 		return waveDevSettingsEClass;
 	}
@@ -288,6 +304,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getWaveDevSettings_ImplSettings() {
 		return (EReference)waveDevSettingsEClass.getEStructuralFeatures().get(0);
 	}
@@ -297,6 +314,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getImplIdToSettingsMap() {
 		return implIdToSettingsMapEClass;
 	}
@@ -306,6 +324,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getImplIdToSettingsMap_Value() {
 		return (EReference)implIdToSettingsMapEClass.getEStructuralFeatures().get(0);
 	}
@@ -315,6 +334,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getImplIdToSettingsMap_Key() {
 		return (EAttribute)implIdToSettingsMapEClass.getEStructuralFeatures().get(1);
 	}
@@ -324,6 +344,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getFileToCRCMap() {
 		return fileToCRCMapEClass;
 	}
@@ -333,6 +354,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getFileToCRCMap_Crc() {
 		return (EAttribute)fileToCRCMapEClass.getEStructuralFeatures().get(0);
 	}
@@ -342,6 +364,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getFileToCRCMap_File() {
 		return (EAttribute)fileToCRCMapEClass.getEStructuralFeatures().get(1);
 	}
@@ -351,6 +374,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getPortRepToGeneratorMap() {
 		return portRepToGeneratorMapEClass;
 	}
@@ -360,6 +384,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getPortRepToGeneratorMap_Generator() {
 		return (EAttribute)portRepToGeneratorMapEClass.getEStructuralFeatures().get(0);
 	}
@@ -369,6 +394,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getPortRepToGeneratorMap_RepId() {
 		return (EAttribute)portRepToGeneratorMapEClass.getEStructuralFeatures().get(1);
 	}
@@ -378,6 +404,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public CodegenFactory getCodegenFactory() {
 		return (CodegenFactory)getEFactoryInstance();
 	}

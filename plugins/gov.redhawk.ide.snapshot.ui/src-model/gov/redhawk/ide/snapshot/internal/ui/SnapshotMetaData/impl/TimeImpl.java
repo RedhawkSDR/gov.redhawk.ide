@@ -118,6 +118,7 @@ public class TimeImpl extends EObjectImpl implements Time {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getStartTime() {
 		return startTime;
 	}
@@ -127,6 +128,7 @@ public class TimeImpl extends EObjectImpl implements Time {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setStartTime(String newStartTime) {
 		String oldStartTime = startTime;
 		startTime = newStartTime;
@@ -141,6 +143,7 @@ public class TimeImpl extends EObjectImpl implements Time {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void unsetStartTime() {
 		String oldStartTime = startTime;
 		boolean oldStartTimeESet = startTimeESet;
@@ -155,6 +158,7 @@ public class TimeImpl extends EObjectImpl implements Time {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isSetStartTime() {
 		return startTimeESet;
 	}
@@ -164,6 +168,7 @@ public class TimeImpl extends EObjectImpl implements Time {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getEndTime() {
 		return endTime;
 	}
@@ -173,6 +178,7 @@ public class TimeImpl extends EObjectImpl implements Time {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setEndTime(String newEndTime) {
 		String oldEndTime = endTime;
 		endTime = newEndTime;
@@ -187,6 +193,7 @@ public class TimeImpl extends EObjectImpl implements Time {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void unsetEndTime() {
 		String oldEndTime = endTime;
 		boolean oldEndTimeESet = endTimeESet;
@@ -201,6 +208,7 @@ public class TimeImpl extends EObjectImpl implements Time {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isSetEndTime() {
 		return endTimeESet;
 	}

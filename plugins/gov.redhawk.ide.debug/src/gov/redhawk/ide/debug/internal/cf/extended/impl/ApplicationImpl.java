@@ -129,6 +129,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		/**
 		 * Compare on the start order as the first priority, if no start order is found, compare on the pointer location.
 		 */
+		@Override
 		public int compare(ScaComponent o1, ScaComponent o2) {
 			if (o1 == o2) {
 				return 0;
@@ -190,6 +191,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			this.connection = currentConnection;
 		}
 
+		@Override
 		public void disconnect() {
 			try {
 				this.connection.getPort().disconnectPort(this.connection);
@@ -198,6 +200,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 		}
 
+		@Override
 		public void reconnect(final ScaWaveform waveform) throws InvalidPort, OccupiedPort {
 			for (final ScaComponent comp : waveform.getComponents()) {
 				if (comp.getInstantiationIdentifier().equals(this.targetCompID)) {
@@ -209,6 +212,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 		}
 
+		@Override
 		public String getConnectionID() {
 			return this.connectionID;
 		}
@@ -230,6 +234,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			this.connection = connection;
 		}
 
+		@Override
 		public void reconnect(final ScaWaveform waveform) throws InvalidPort, OccupiedPort {
 			for (final ScaComponent comp : waveform.getComponents()) {
 				if (comp.getInstantiationIdentifier().equals(this.sourceCompID)) {
@@ -243,6 +248,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 		}
 
+		@Override
 		public void disconnect() {
 			try {
 				this.connection.getPort().disconnectPort(this.connection);
@@ -251,6 +257,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 		}
 
+		@Override
 		public String getConnectionID() {
 			return this.connectionID;
 		}
@@ -298,6 +305,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String identifier() {
 		return this.identifier;
 	}
@@ -305,6 +313,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean started() {
 		if (this.assemblyController != null) {
 			return this.assemblyController.started();
@@ -319,6 +328,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void start() throws StartError {
 		this.streams.getOutStream().println("Starting...");
 
@@ -346,6 +356,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void stop() throws StopError {
 		this.streams.getOutStream().println("Stopping...");
 
@@ -380,6 +391,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void initialize() throws InitializeError {
 		this.streams.getOutStream().println("Initializing application...");
 		if (this.assemblyController == null) {
@@ -406,6 +418,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void releaseObject() throws ReleaseError {
 		if (this.terminated) {
 			return;
@@ -532,6 +545,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void runTest(final int testid, final PropertiesHolder testValues) throws UnknownTest, UnknownProperties {
 		this.streams.getOutStream().println("Runing Test: " + testValues);
 		if (this.assemblyController == null) {
@@ -550,6 +564,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void configure(final DataType[] configProperties) throws InvalidConfiguration, PartialConfiguration {
 		this.streams.getOutStream().println("Configuring application: ");
 		for (DataType t : configProperties) {
@@ -601,6 +616,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void query(final PropertiesHolder configProperties) throws UnknownProperties {
 		Set<String> queryProperties = new HashSet<String>();
 		if (configProperties.value != null) {
@@ -648,6 +664,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public org.omg.CORBA.Object getPort(final String name) throws UnknownPort {
 		getStreamsProxy().getOutStream().println("Get port " + name);
 		try {
@@ -689,6 +706,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ComponentType[] registeredComponents() {
 		final ComponentType[] types = new ComponentType[this.waveform.getComponents().size()];
 		for (int i = 0; i < types.length; i++) {
@@ -705,6 +723,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ComponentElementType[] componentNamingContexts() {
 		final ComponentElementType[] types = new ComponentElementType[this.waveform.getComponents().size()];
 		for (int i = 0; i < types.length; i++) {
@@ -718,6 +737,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ComponentProcessIdType[] componentProcessIds() {
 		return new ComponentProcessIdType[0];
 	}
@@ -725,6 +745,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public DeviceAssignmentType[] componentDevices() {
 		return new DeviceAssignmentType[0];
 	}
@@ -732,6 +753,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ComponentElementType[] componentImplementations() {
 		final ComponentElementType[] types = new ComponentElementType[this.waveform.getComponents().size()];
 		for (int i = 0; i < types.length; i++) {
@@ -754,6 +776,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String profile() {
 		return this.profile;
 	}
@@ -761,18 +784,22 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String name() {
 		return this.name;
 	}
 
+	@Override
 	public boolean canTerminate() {
 		return !this.terminated;
 	}
 
+	@Override
 	public boolean isTerminated() {
 		return this.terminated;
 	}
 
+	@Override
 	public void terminate() throws DebugException {
 		try {
 			releaseObject();
@@ -781,27 +808,33 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 	}
 
+	@Override
 	public String getLabel() {
 		return this.name;
 	}
 
+	@Override
 	public ILaunch getLaunch() {
 		return this.parentLaunch;
 	}
 
+	@Override
 	public ApplicationStreams getStreamsProxy() {
 		return this.streams;
 	}
 
+	@Override
 	public void setAttribute(final String key, final String value) {
 		// No Attributes
 	}
 
+	@Override
 	public String getAttribute(final String key) {
 		// No Attributes
 		return null;
 	}
 
+	@Override
 	public int getExitValue() throws DebugException {
 		if (!this.terminated) {
 			throw new DebugException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Application not terminated", null));
@@ -1075,6 +1108,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return SpdLauncherUtil.createExecParamString(map);
 	}
 
+	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}

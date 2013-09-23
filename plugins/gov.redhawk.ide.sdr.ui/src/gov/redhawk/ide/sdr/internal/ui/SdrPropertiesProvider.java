@@ -30,6 +30,7 @@ public class SdrPropertiesProvider implements IPropertiesProvider {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Category> getCategories() {
 		final List<Category> myList = new ArrayList<Category>();
 		final SdrRoot targetSdr = SdrUiPlugin.getDefault().getTargetSdrRoot();

@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.IFilter;
  */
 public class DataReaderControlPanelPropertyFilter implements IFilter {
 
+	@Override
 	public boolean select(Object toTest) {
 		final Object adapter = Platform.getAdapterManager().getAdapter(toTest, ScaComponent.class);
 		if (adapter instanceof ScaComponent) {

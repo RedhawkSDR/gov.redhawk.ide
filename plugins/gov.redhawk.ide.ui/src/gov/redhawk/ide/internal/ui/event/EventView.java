@@ -79,8 +79,10 @@ public class EventView extends ViewPart {
 	private Combo channelCombo;
 
 	private Action removeAction = new Action("Remove...") {
+		@Override
 		public void run() {
 			ListSelectionDialog dialog = new ListSelectionDialog(getSite().getShell(), channelListeners, new ArrayContentProvider(), new LabelProvider() {
+				@Override
 				public String getText(Object element) {
 					if (element instanceof ChannelListener) {
 						ChannelListener l = (ChannelListener) element;
@@ -120,6 +122,7 @@ public class EventView extends ViewPart {
 
 	private final IContentProposalProvider proposalProvider = new IContentProposalProvider() {
 
+		@Override
 		public IContentProposal[] getProposals(final String contents, final int position) {
 			final List<IContentProposal> list = new ArrayList<IContentProposal>();
 			try {

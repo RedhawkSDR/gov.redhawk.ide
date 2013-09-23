@@ -78,6 +78,7 @@ public class RenameDiagramFileParticipant extends RenameParticipant {
 		if (this.dcdFile != null && this.dcdFile.exists()) {
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
+				@Override
 				public void run() {
 					RenameDiagramFileParticipant.this.saveConfirmed = IDE.saveAllEditors(new IResource[] {
 						RenameDiagramFileParticipant.this.dcdFile
@@ -101,6 +102,7 @@ public class RenameDiagramFileParticipant extends RenameParticipant {
 							if (input.getFile().equals(this.dcdFile)) {
 								PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
+									@Override
 									public void run() {
 										formEditor.close(true);
 									}

@@ -120,6 +120,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void init(final IWorkbench arg0, final IStructuredSelection arg1) {
 
 	}
@@ -229,6 +230,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 	 * 
 	 * @since 1.1
 	 */
+	@Override
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		this.fConfig = config;
 	}

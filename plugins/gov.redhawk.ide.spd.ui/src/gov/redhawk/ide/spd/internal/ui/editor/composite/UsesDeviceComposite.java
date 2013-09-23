@@ -81,6 +81,7 @@ public class UsesDeviceComposite extends Composite implements IScaComposite {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setEditable(boolean canEdit) {
 	    this.idEntry.setEditable(canEdit);
 	    this.typeEntry.setEditable(canEdit);

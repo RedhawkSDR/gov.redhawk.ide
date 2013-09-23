@@ -79,6 +79,7 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SdrRoot getSdrRoot() {
 		if (eContainerFeatureID() != SdrPackage.NODES_CONTAINER__SDR_ROOT) return null;
 		return (SdrRoot)eInternalContainer();
@@ -120,6 +121,7 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<DeviceConfiguration> getNodes() {
 		if (nodes == null) {
 			nodes = new EObjectResolvingEList<DeviceConfiguration>(DeviceConfiguration.class, this, SdrPackage.NODES_CONTAINER__NODES);

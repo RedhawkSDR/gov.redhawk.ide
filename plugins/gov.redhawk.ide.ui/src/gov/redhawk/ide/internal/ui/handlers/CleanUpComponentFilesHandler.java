@@ -49,6 +49,7 @@ public class CleanUpComponentFilesHandler extends AbstractHandler implements IHa
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final WorkbenchJob cleanJob = new WorkbenchJob("Clean unused Component Files") {
 

@@ -160,6 +160,7 @@ public class ImplementationsSection extends TreeSection implements IPropertyChan
 		        .getLabelDecorator()));
 		this.fExtensionTree.addSelectionChangedListener(new ISelectionChangedListener() {
 			//Try selecting the first element if the event's selection is empty.
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				if (event.getSelection().isEmpty()) {
 					ImplementationsSection.this.selectFirstElement();
@@ -177,6 +178,7 @@ public class ImplementationsSection extends TreeSection implements IPropertyChan
 		final Text filterText = this.fFilteredTree.getFilterControl();
 		if (filterText != null) {
 			filterText.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(final ModifyEvent e) {
 					final StructuredViewer viewer = ImplementationsSection.this.getStructuredViewerPart().getViewer();
 					final IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
@@ -284,6 +286,7 @@ public class ImplementationsSection extends TreeSection implements IPropertyChan
 		toolbar.setCursor(handCursor);
 		// Cursor needs to be explicitly disposed
 		toolbar.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(final DisposeEvent e) {
 				if (!handCursor.isDisposed()) {
 					handCursor.dispose();
@@ -520,6 +523,7 @@ public class ImplementationsSection extends TreeSection implements IPropertyChan
 
 			Display.getCurrent().asyncExec(new Runnable() {
 
+				@Override
 				public void run() {
 					ImplementationsSection.this.getTreePart().getTreeViewer().setSelection(new StructuredSelection(impl));
 				}
@@ -570,6 +574,7 @@ public class ImplementationsSection extends TreeSection implements IPropertyChan
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
 		if (this.fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
 			final StructuredViewer viewer = this.getStructuredViewerPart().getViewer();

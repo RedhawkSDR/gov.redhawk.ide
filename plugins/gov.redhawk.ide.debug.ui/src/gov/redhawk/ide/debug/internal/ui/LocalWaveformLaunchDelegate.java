@@ -51,6 +51,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void launch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("Launching waveform...", 2);
 		final boolean start = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);

@@ -36,6 +36,7 @@ public abstract class AbstractLauncherResolver implements ILauncherVariableResol
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final String resolveValue(String arg, final SoftPkg spd, final ILaunch launch, final ILaunchConfiguration config) throws CoreException {
 		String retVal = launch.getAttribute(this.name);
 		if (retVal == null) {
@@ -58,10 +59,12 @@ public abstract class AbstractLauncherResolver implements ILauncherVariableResol
 		return this.name;
 	}
 
+	@Override
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		this.name = config.getAttribute("name");
 	}
 
+	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		throw new CoreException(new Status(Status.ERROR, ScaDebugPlugin.ID, "The variable " + variable.getName()
 		        + " should only be used within component launches."));

@@ -233,6 +233,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void linkActivated(final HyperlinkEvent e) {
 		final Object href = e.getHref();
 		if (ComponentContentSection.PROP_HREF.equals(href)) {
@@ -337,6 +338,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		return this.scdResource;
 	}
 
+	@Override
 	public Viewer getViewer() {
 		return this.fPortsSection.getViewer();
 	}

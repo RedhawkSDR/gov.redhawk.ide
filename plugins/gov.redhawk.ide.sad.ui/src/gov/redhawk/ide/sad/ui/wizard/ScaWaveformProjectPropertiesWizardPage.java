@@ -41,6 +41,7 @@ public class ScaWaveformProjectPropertiesWizardPage extends ScaProjectProperties
 		/**
 		 * {@inheritDoc}
 		 */
+		@Override
 		public IStatus validate(final Object value) {
 			final String s = ((String) value).trim(); // Project names are
 			// always stripped of

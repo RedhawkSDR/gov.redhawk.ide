@@ -158,6 +158,7 @@ public class DcdActionBarContributor extends EditingDomainActionBarContributor i
 		// Force an update because Eclipse hides empty menus now.
 		//
 		submenuManager.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(final IMenuManager menuManager) {
 				menuManager.updateAll(true);
 			}
@@ -198,6 +199,7 @@ public class DcdActionBarContributor extends EditingDomainActionBarContributor i
 	 * handling {@link org.eclipse.jface.viewers.SelectionChangedEvent}s by querying for the children and siblings
 	 * that can be added to the selected object and updating the menus accordingly.
 	 */
+	@Override
 	public void selectionChanged(final SelectionChangedEvent event) {
 		// Remove any menu items for old selection.
 		//

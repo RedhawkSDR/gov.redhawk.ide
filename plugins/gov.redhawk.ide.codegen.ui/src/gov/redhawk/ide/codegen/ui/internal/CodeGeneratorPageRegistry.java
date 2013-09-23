@@ -91,6 +91,7 @@ public class CodeGeneratorPageRegistry implements ICodeGeneratorPageRegistry, IE
 		}
 	}
 
+	@Override
 	public void addExtension(final IExtensionTracker tracker, final IExtension extension) {
 		final IConfigurationElement[] configs = extension.getConfigurationElements();
 		for (final IConfigurationElement element : configs) {
@@ -168,6 +169,7 @@ public class CodeGeneratorPageRegistry implements ICodeGeneratorPageRegistry, IE
 		return factory;
 	}
 
+	@Override
 	public void removeExtension(final IExtension extension, final Object[] objects) {
 		for (final Object obj : objects) {
 			if (obj instanceof ICodegenDisplayFactory) {
@@ -189,10 +191,12 @@ public class CodeGeneratorPageRegistry implements ICodeGeneratorPageRegistry, IE
 		}
 	}
 
+	@Override
 	public ICodegenWizardPage getDefaultPage() {
 		return this.defaultFactory.createPage();
 	}
 
+	@Override
 	public ICodegenWizardPage[] findPageByGeneratorId(final String codegen) {
 		final ArrayList<ICodegenWizardPage> codegens = new ArrayList<ICodegenWizardPage>();
 		final List<ICodegenDisplayFactory> factories = this.codegenToWizardMap.get(codegen);
@@ -213,10 +217,12 @@ public class CodeGeneratorPageRegistry implements ICodeGeneratorPageRegistry, IE
 		return codegens.toArray(new ICodegenWizardPage[codegens.size()]);
 	}
 
+	@Override
 	public ICodegenComposite getDefaultComposite(final Composite parent, final int style, final FormToolkit toolkit) {
 		return this.defaultFactory.createComposite(parent, style, toolkit);
 	}
 
+	@Override
 	public ICodegenComposite[] findCompositeByGeneratorId(final String codegen, final Composite parent, final int style, final FormToolkit toolkit) {
 		final ArrayList<ICodegenComposite> codegens = new ArrayList<ICodegenComposite>();
 		final List<ICodegenDisplayFactory> factories = this.codegenToCompositeMap.get(codegen);

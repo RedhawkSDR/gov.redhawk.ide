@@ -69,6 +69,7 @@ public class ServiceProjectCreator extends ProjectCreator {
 	 * @throws CoreException An error occurs while generating files
 	 * @deprecated This method is deprecated.  Please use the method which takes in the spdName and spdID
 	 */
+	@Deprecated
 	public static IFile createServiceFiles(final IProject project, final String projectID, final String authorName, final String serviceRepId, final IProgressMonitor monitor)
 	        throws CoreException {
 		return createServiceFiles(project, project.getName(), projectID, authorName, serviceRepId, monitor);

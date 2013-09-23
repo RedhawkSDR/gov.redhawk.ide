@@ -175,6 +175,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return launch;
 	}
@@ -185,6 +186,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setLaunch(ILaunch newLaunch) {
 		ILaunch oldLaunch = launch;
 		launch = newLaunch;
@@ -280,6 +282,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public String getMode() {
 		// END GENERATED CODE
 		if (this.launch != null) {
@@ -294,6 +297,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setMode(String newMode) {
 		String oldMode = mode;
 		mode = newMode;
@@ -307,6 +311,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public NotifyingNamingContext getNamingContext() {
 		if (namingContext != null && namingContext.eIsProxy()) {
 			InternalEObject oldNamingContext = (InternalEObject)namingContext;
@@ -335,6 +340,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public void setNamingContext(final NotifyingNamingContext newNamingContext) {
 		if (this.namingContext != null) {
 			this.namingContext.eAdapters().remove(this.adapter);
@@ -363,6 +369,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ApplicationOperations getLocalApp() {
 		return localApp;
 	}
@@ -388,6 +395,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public void setLocalApp(final ApplicationOperations newLocalApp) {
 		setLocalAppGen(newLocalApp);
 		Application ref = null;
@@ -617,6 +625,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public LocalScaComponent launch(final String compID, final DataType[] execParams, final URI spdURI, final String implID, final String mode) throws CoreException {
 		// END GENERATED CODE
 		Assert.isNotNull(spdURI);
@@ -673,6 +682,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			}
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 
+				@Override
 				public void execute() {
 					// TODO Find / create component Instantiation and assign
 					//					DomComponentFile cf = PartitioningFactory.eINSTANCE.createDomComponentFile();
@@ -710,6 +720,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		} catch (final InitializeError e) {
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 
+				@Override
 				public void execute() {
 					component.setStatus(ScaPackage.Literals.SCA_COMPONENT__COMPONENT_INSTANTIATION, new Status(IStatus.ERROR, ScaDebugPlugin.ID,
 						"Component failed to initialize", e));
@@ -718,6 +729,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		} catch (final SystemException e) {
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 
+				@Override
 				public void execute() {
 					component.setStatus(ScaPackage.Literals.SCA_COMPONENT__COMPONENT_INSTANTIATION, new Status(IStatus.ERROR, ScaDebugPlugin.ID,
 						"Component failed to initialize", e));
@@ -738,6 +750,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		if (this == ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform()) {
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 				
+				@Override
 				public void execute() {
 					getComponents().clear();
 				}

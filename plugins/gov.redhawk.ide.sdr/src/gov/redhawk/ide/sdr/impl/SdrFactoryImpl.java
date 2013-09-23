@@ -121,6 +121,7 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SdrRoot createSdrRoot() {
 		SdrRootImpl sdrRoot = new SdrRootImpl();
 		return sdrRoot;
@@ -131,6 +132,7 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ComponentsContainer createComponentsContainer() {
 		ComponentsContainerImpl componentsContainer = new ComponentsContainerImpl();
 		return componentsContainer;
@@ -141,6 +143,7 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public WaveformsContainer createWaveformsContainer() {
 		WaveformsContainerImpl waveformsContainer = new WaveformsContainerImpl();
 		return waveformsContainer;
@@ -151,6 +154,7 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public DevicesContainer createDevicesContainer() {
 		DevicesContainerImpl devicesContainer = new DevicesContainerImpl();
 		return devicesContainer;
@@ -161,6 +165,7 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ServicesContainer createServicesContainer() {
 		ServicesContainerImpl servicesContainer = new ServicesContainerImpl();
 		return servicesContainer;
@@ -171,6 +176,7 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public NodesContainer createNodesContainer() {
 		NodesContainerImpl nodesContainer = new NodesContainerImpl();
 		return nodesContainer;
@@ -211,6 +217,7 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SdrPackage getSdrPackage() {
 		return (SdrPackage)getEPackage();
 	}

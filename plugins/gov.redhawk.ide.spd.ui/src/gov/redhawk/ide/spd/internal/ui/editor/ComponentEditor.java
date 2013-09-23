@@ -433,6 +433,7 @@ public class ComponentEditor extends SCAFormEditor {
 	private void removePrfPage() {
 		if (this.propertiesPage != null || getPrfPageIndex() >= 0) {
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (ComponentEditor.this.propertiesPage.isDisposed()) {
 						return;
@@ -459,6 +460,7 @@ public class ComponentEditor extends SCAFormEditor {
 	private void removeScdPage() {
 		if (getScdPageIndex() >= 0) {
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (ComponentEditor.this.scdEditor != null && getScdPageIndex() >= 0) {
 						removePage(getScdPageIndex());
@@ -670,6 +672,7 @@ public class ComponentEditor extends SCAFormEditor {
 
 		if (resource.equals(getSpdFile())) {
 			display.syncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (isDirty()) {
 						return; // Don't do anything if the editor is in the dirty state
@@ -757,6 +760,7 @@ public class ComponentEditor extends SCAFormEditor {
 			}
 			command.append(SetCommand.create(getEditingDomain(), file, SpdPackage.Literals.LOCAL_FILE__NAME, to.getProjectRelativePath().toString()));
 			display.asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					getEditingDomain().getCommandStack().execute(command);
 				}
@@ -779,6 +783,7 @@ public class ComponentEditor extends SCAFormEditor {
 			}
 			command.append(SetCommand.create(getEditingDomain(), file, SpdPackage.Literals.LOCAL_FILE__NAME, to.getProjectRelativePath().toString()));
 			display.asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					getEditingDomain().getCommandStack().execute(command);
 				}

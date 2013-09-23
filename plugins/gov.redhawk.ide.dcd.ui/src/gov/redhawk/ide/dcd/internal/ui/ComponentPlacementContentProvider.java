@@ -26,13 +26,16 @@ public class ComponentPlacementContentProvider implements ITreeContentProvider {
 		super();
 	}
 
+	@Override
 	public void dispose() {
 	}
 
+	@Override
 	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 		this.elements = (DcdPartitioning) newInput;
 	}
 
+	@Override
 	public Object getParent(final Object element) {
 		if (element instanceof DcdComponentPlacement) {
 			final DcdComponentPlacement node = (DcdComponentPlacement) element;
@@ -48,6 +51,7 @@ public class ComponentPlacementContentProvider implements ITreeContentProvider {
 		return this.elements;
 	}
 
+	@Override
 	public Object[] getChildren(final Object parent) {
 		Object[] element = new ComponentPlacement[0];
 
@@ -86,6 +90,7 @@ public class ComponentPlacementContentProvider implements ITreeContentProvider {
 		return element;
 	}
 
+	@Override
 	public boolean hasChildren(final Object parent) {
 		if (parent instanceof ComponentPlacement) {
 			final DcdComponentPlacement bindingNode = (DcdComponentPlacement) parent;
@@ -108,6 +113,7 @@ public class ComponentPlacementContentProvider implements ITreeContentProvider {
 		return false;
 	}
 
+	@Override
 	public Object[] getElements(final Object inputElement) {
 		Object[] element = new ComponentPlacement[0];
 

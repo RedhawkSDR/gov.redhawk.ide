@@ -75,6 +75,7 @@ public enum LaunchConfigurationFactoryRegistry implements ILaunchConfigurationFa
 		}
 	}
 
+	@Override
 	public ILaunchConfigurationFactory getFactory(final SoftPkg spd, final String implID) {
 		final Implementation impl = spd.getImplementation(implID);
 		final ImplementationSettings settings = CodegenUtil.getImplementationSettings(impl);
@@ -98,6 +99,7 @@ public enum LaunchConfigurationFactoryRegistry implements ILaunchConfigurationFa
 		return null;
 	}
 
+	@Override
 	public void addExtension(final IExtensionTracker tracker, final IExtension extension) {
 		for (final IConfigurationElement element : extension.getConfigurationElements()) {
 			if (element.getName().equals("launchConfigurationFactory")) {
@@ -122,6 +124,7 @@ public enum LaunchConfigurationFactoryRegistry implements ILaunchConfigurationFa
 		return new LaunchConfigurationFactoryDesc(id, codegenref, launchConfigType, factory);
 	}
 
+	@Override
 	public void removeExtension(final IExtension extension, final Object[] objects) {
 		for (final Object obj : objects) {
 			if (obj instanceof LaunchConfigurationFactoryDesc) {

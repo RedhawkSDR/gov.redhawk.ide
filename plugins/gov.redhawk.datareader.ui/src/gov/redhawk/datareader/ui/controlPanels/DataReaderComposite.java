@@ -161,6 +161,7 @@ public class DataReaderComposite extends Composite {
 		inputFileButton.setText("Browse");
 		inputFileButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Shell shell = parent.getShell();
 
@@ -223,6 +224,7 @@ public class DataReaderComposite extends Composite {
 		playButton = new Button(parent, SWT.PUSH);
 		playButton.setText("Play");
 		playButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ScaModelCommand.execute(input, new ScaModelCommand() {
 					@Override

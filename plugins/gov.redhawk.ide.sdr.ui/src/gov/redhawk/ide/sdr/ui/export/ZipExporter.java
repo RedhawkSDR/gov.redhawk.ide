@@ -40,10 +40,12 @@ public class ZipExporter implements IScaExporter {
 		this.zipfilePath = zipFilePath;
 	}
 
+	@Override
 	public void finished() throws IOException {
 		this.zos.close();
 	}
 
+	@Override
 	public void write(final IResource resource, final IPath destinationPath, final IProgressMonitor monitor) throws IOException, CoreException {
 
 		if (resource.getLocation().toFile().isDirectory()) {
@@ -53,6 +55,7 @@ public class ZipExporter implements IScaExporter {
 		}
 	}
 
+	@Override
 	public void mkdir(final IPath destinationPath, final IProgressMonitor monitor) throws IOException, CoreException {
 		// pass
 	}
@@ -121,6 +124,7 @@ public class ZipExporter implements IScaExporter {
 
 	}
 
+	@Override
 	public IPath getExportLocation() {
 		return this.zipfilePath;
 	}

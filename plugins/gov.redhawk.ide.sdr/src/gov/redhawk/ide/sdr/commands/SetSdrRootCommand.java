@@ -48,6 +48,7 @@ public class SetSdrRootCommand extends AbstractCommand {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void execute() {
 		this.sdrRoot.setSdrRoot(uriRoot, domPath, devPath);
 	}
@@ -55,6 +56,7 @@ public class SetSdrRootCommand extends AbstractCommand {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void redo() {
 		// TODO Auto-generated method stub
 

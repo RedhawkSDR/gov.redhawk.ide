@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.annotation.NonNull;
 
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
@@ -46,7 +47,11 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 
 		@Override
 		protected IStatus run(final IProgressMonitor monitor) {
-			BulkIOUtilActivator.getBulkIOPortConnectionManager().disconnect(port.getIor(), getBulkIOType(), DataBuffer.this);
+			BulkIOType type2 = getBulkIOType();
+			String ior2 = port.getIor();
+			if (type2 != null && ior2 != null) {
+				BulkIOUtilActivator.getBulkIOPortConnectionManager().disconnect(ior2, type2, DataBuffer.this);
+			}
 			return Status.OK_STATUS;
 		}
 
@@ -57,7 +62,11 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 		protected IStatus run(final IProgressMonitor monitor) {
 
 			try {
-				BulkIOUtilActivator.getBulkIOPortConnectionManager().connect(port.getIor(), getBulkIOType(), DataBuffer.this);
+				BulkIOType type2 = getBulkIOType();
+				String ior2 = port.getIor();
+				if (type2 != null && ior2 != null) {
+					BulkIOUtilActivator.getBulkIOPortConnectionManager().connect(ior2, type2, DataBuffer.this);
+				}
 			} catch (CoreException e) {
 				return e.getStatus();
 			}
@@ -78,7 +87,7 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 	private CaptureMethod captureMethod;
 	private DataCollectionSettings settings;
 
-	public DataBuffer(ScaUsesPort port, BulkIOType type) {
+	public DataBuffer(@NonNull ScaUsesPort port, @NonNull BulkIOType type) {
 		super(type);
 		this.port = port;
 	}
@@ -162,12 +171,16 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 	public void setDimension(final int dimension) {
 		this.dimension = dimension;
 	}
-
-	public void pushSRI(final StreamSRI sri) {
-		super.pushSRI(sri);
-		if (samples > index) {
+	
+	/*
+	 * @see gov.redhawk.bulkio.util.AbstractBulkIOPort#handleStreamSRIChanged(java.lang.String, BULKIO.StreamSRI, BULKIO.StreamSRI)
+	 */
+	@Override
+	protected void handleStreamSRIChanged(String streamID, StreamSRI oldSri, StreamSRI newSri) {
+		super.handleStreamSRIChanged(streamID, oldSri, newSri);
+		if (samples > index && newSri != null) {
 			if (this.captureMethod == CaptureMethod.SAMPLE_TIME) {
-				this.currentSampleDelta = (sri.xdelta != 0) ? sri.xdelta : 1;
+				this.currentSampleDelta = (newSri.xdelta != 0) ? newSri.xdelta : 1;
 				samples = ((int) (((this.totalTime - this.currentTimeDuration) / currentSampleDelta) + .5)) + this.index;
 			}
 		}

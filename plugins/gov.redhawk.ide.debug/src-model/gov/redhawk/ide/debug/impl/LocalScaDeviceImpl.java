@@ -143,6 +143,7 @@ public class LocalScaDeviceImpl extends ScaDeviceImpl<Device> implements LocalSc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return launch;
 	}
@@ -152,6 +153,7 @@ public class LocalScaDeviceImpl extends ScaDeviceImpl<Device> implements LocalSc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setLaunch(ILaunch newLaunch) {
 		ILaunch oldLaunch = launch;
 		launch = newLaunch;
@@ -164,6 +166,7 @@ public class LocalScaDeviceImpl extends ScaDeviceImpl<Device> implements LocalSc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getMode() {
 		return mode;
 	}
@@ -173,6 +176,7 @@ public class LocalScaDeviceImpl extends ScaDeviceImpl<Device> implements LocalSc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setMode(String newMode) {
 		String oldMode = mode;
 		mode = newMode;
@@ -185,6 +189,7 @@ public class LocalScaDeviceImpl extends ScaDeviceImpl<Device> implements LocalSc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getImplementationID() {
 		return implementationID;
 	}
@@ -194,6 +199,7 @@ public class LocalScaDeviceImpl extends ScaDeviceImpl<Device> implements LocalSc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setImplementationID(String newImplementationID) {
 		String oldImplementationID = implementationID;
 		implementationID = newImplementationID;
@@ -207,6 +213,7 @@ public class LocalScaDeviceImpl extends ScaDeviceImpl<Device> implements LocalSc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getExecParam() {
 		return execParam;
 	}
@@ -217,6 +224,7 @@ public class LocalScaDeviceImpl extends ScaDeviceImpl<Device> implements LocalSc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setExecParam(String newExecParam) {
 		String oldExecParam = execParam;
 		execParam = newExecParam;

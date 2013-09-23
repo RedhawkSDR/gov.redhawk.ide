@@ -269,6 +269,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public IStatus getLoadStatus() {
 		return loadStatus;
 	}
@@ -289,6 +290,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public LoadState getState() {
 		return state;
 	}
@@ -310,6 +312,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ComponentsContainer getComponentsContainer() {
 		return componentsContainer;
 	}
@@ -353,6 +356,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public WaveformsContainer getWaveformsContainer() {
 		return waveformsContainer;
 	}
@@ -396,6 +400,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public DevicesContainer getDevicesContainer() {
 		return devicesContainer;
 	}
@@ -439,6 +444,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ServicesContainer getServicesContainer() {
 		return servicesContainer;
 	}
@@ -482,6 +488,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public NodesContainer getNodesContainer() {
 		return nodesContainer;
 	}
@@ -525,6 +532,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public DomainManagerConfiguration getDomainConfiguration() {
 		if (domainConfiguration != null && domainConfiguration.eIsProxy()) {
 			InternalEObject oldDomainConfiguration = (InternalEObject)domainConfiguration;
@@ -563,6 +571,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public IdlLibrary getIdlLibrary() {
 		return idlLibrary;
 	}
@@ -587,6 +596,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setIdlLibrary(IdlLibrary newIdlLibrary) {
 		if (newIdlLibrary != idlLibrary) {
 			NotificationChain msgs = null;
@@ -606,6 +616,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public URI getDevFileSystemRoot() {
 		return devFileSystemRoot;
 	}
@@ -615,6 +626,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setDevFileSystemRoot(URI newDevFileSystemRoot) {
 		URI oldDevFileSystemRoot = devFileSystemRoot;
 		devFileSystemRoot = newDevFileSystemRoot;
@@ -627,6 +639,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public URI getDomFileSystemRoot() {
 		return domFileSystemRoot;
 	}
@@ -636,6 +649,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setDomFileSystemRoot(URI newDomFileSystemRoot) {
 		URI oldDomFileSystemRoot = domFileSystemRoot;
 		domFileSystemRoot = newDomFileSystemRoot;
@@ -649,6 +663,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @throws CoreException
 	 * @generated NOT
 	 */
+	@Override
 	public synchronized void load(final IProgressMonitor monitor) {
 		// END GENERATED CODE
 		if (getState() == LoadState.LOADED) {
@@ -811,6 +826,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @generated NOT
 	 * 
 	 */
+	@Override
 	public synchronized void unload(IProgressMonitor monitor) {
 		// END GENERATED CODE
 		SubMonitor subMonitor = SubMonitor.convert(monitor, "Unloading...", 2);
@@ -838,6 +854,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		subMonitor.worked(1);
 		editingDomain.getCommandStack().execute(new ScaModelCommand() {
 
+			@Override
 			public void execute() {
 				getNodesContainer().getNodes().clear();
 				getComponentsContainer().getComponents().clear();
@@ -860,6 +877,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public synchronized void reload(IProgressMonitor monitor) {
 		// END GENERATED CODE
 		SubMonitor subMonitor = SubMonitor.convert(monitor, "Reloading SDR...", 3);
@@ -886,6 +904,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public void setSdrRoot(URI sdrRoot, String domPath, String devPath) {
 		// END GENERATED CODE
 		if (sdrRoot != null) {
@@ -922,6 +941,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public Resource getDevResource(String path) {
 		// END GENERATED CODE
 		if (path == null) {
@@ -947,6 +967,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public Resource getDomResource(String path) {
 		// END GENERATED CODE
 		if (path == null) {

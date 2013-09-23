@@ -45,6 +45,7 @@ public class JavaEnvMap extends AbstractEnvMap {
 		return reversePath(classpath);
 	}
 
+	@Override
 	protected boolean addToPath(Set<String> path, Implementation impl) throws CoreException {
 		boolean retVal = super.addToPath(path, impl);
 		if (retVal) {

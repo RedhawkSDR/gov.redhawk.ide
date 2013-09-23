@@ -245,6 +245,7 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ComposeableAdapterFactory getRootAdapterFactory() {
 		return parentAdapterFactory == null ? this : parentAdapterFactory.getRootAdapterFactory();
 	}
@@ -255,6 +256,7 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setParentAdapterFactory(ComposedAdapterFactory parentAdapterFactory) {
 		this.parentAdapterFactory = parentAdapterFactory;
 	}
@@ -303,6 +305,7 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void addListener(INotifyChangedListener notifyChangedListener) {
 		changeNotifier.addListener(notifyChangedListener);
 	}
@@ -313,6 +316,7 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void removeListener(INotifyChangedListener notifyChangedListener) {
 		changeNotifier.removeListener(notifyChangedListener);
 	}
@@ -323,6 +327,7 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void fireNotifyChanged(Notification notification) {
 		changeNotifier.fireNotifyChanged(notification);
 
@@ -337,6 +342,7 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void dispose() {
 		if (sdrRootItemProvider != null) sdrRootItemProvider.dispose();
 		if (componentsContainerItemProvider != null) componentsContainerItemProvider.dispose();

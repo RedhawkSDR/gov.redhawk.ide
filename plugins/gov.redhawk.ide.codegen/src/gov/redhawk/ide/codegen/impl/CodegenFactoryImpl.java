@@ -87,6 +87,7 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ImplementationSettings createImplementationSettings() {
 		ImplementationSettingsImpl implementationSettings = new ImplementationSettingsImpl();
 		return implementationSettings;
@@ -97,6 +98,7 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Property createProperty() {
 		PropertyImpl property = new PropertyImpl();
 		return property;
@@ -107,6 +109,7 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public WaveDevSettings createWaveDevSettings() {
 		WaveDevSettingsImpl waveDevSettings = new WaveDevSettingsImpl();
 		return waveDevSettings;
@@ -127,6 +130,7 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public FileToCRCMap createFileToCRCMap() {
 		FileToCRCMapImpl fileToCRCMap = new FileToCRCMapImpl();
 		return fileToCRCMap;
@@ -137,6 +141,7 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public PortRepToGeneratorMap createPortRepToGeneratorMap() {
 		PortRepToGeneratorMapImpl portRepToGeneratorMap = new PortRepToGeneratorMapImpl();
 		return portRepToGeneratorMap;
@@ -147,6 +152,7 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public CodegenPackage getCodegenPackage() {
 		return (CodegenPackage)getEPackage();
 	}

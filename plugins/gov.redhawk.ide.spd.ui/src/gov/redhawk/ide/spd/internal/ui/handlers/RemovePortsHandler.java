@@ -82,6 +82,7 @@ public class RemovePortsHandler extends AbstractHandler {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getSelectionService().getSelection();
 		final ComponentEditor editor = (ComponentEditor) HandlerUtil.getActiveEditor(event);

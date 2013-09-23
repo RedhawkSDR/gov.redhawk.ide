@@ -239,6 +239,7 @@ public class BooleanGeneratorPropertiesComposite extends BaseGeneratorProperties
 			}
 
 			mySet.addSetChangeListener(new ISetChangeListener() {
+				@Override
 				public void handleSetChange(final SetChangeEvent event) {
 					for (final Object obj : event.diff.getRemovals()) {
 						final Property p = (Property) obj;

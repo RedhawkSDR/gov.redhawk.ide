@@ -25,6 +25,7 @@ public class LocalDeviceManagerIORResolver implements IDynamicVariableResolver {
 
 	public static final String VARIABLE_NAME = "LocalDeviceManagerIOR";
 
+	@Override
 	public String resolveValue(final IDynamicVariable variable, final String argument) throws CoreException {
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 		final String retVal = localSca.getSandboxDeviceManager().getCorbaObj().toString();

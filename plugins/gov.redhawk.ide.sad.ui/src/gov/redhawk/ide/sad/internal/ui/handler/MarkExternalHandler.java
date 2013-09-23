@@ -51,6 +51,7 @@ public class MarkExternalHandler extends AbstractHandler implements IElementUpda
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
 		final IStructuredSelection ss = (IStructuredSelection) selection;
@@ -106,6 +107,7 @@ public class MarkExternalHandler extends AbstractHandler implements IElementUpda
 		return null;
 	}
 
+	@Override
 	public void updateElement(final UIElement element, @SuppressWarnings("rawtypes") final Map parameters) {
 		final Object partSite = parameters.get("org.eclipse.ui.part.IWorkbenchPartSite");
 		if (partSite == null) {

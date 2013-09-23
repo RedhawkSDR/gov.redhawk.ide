@@ -15,6 +15,7 @@ import gov.redhawk.sca.util.SubMonitor;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import BULKIO.PrecisionUTCTime;
+import BULKIO.StreamSRI;
 
 /**
  * 
@@ -25,7 +26,7 @@ public class CorbaNumSamplesReceiver extends CorbaDataReceiver {
 	private long currentSamples;
 
 	private SubMonitor subMonitor;
-	
+
 	public void setSamples(long samples) {
 		this.samples = samples;
 	}
@@ -48,7 +49,6 @@ public class CorbaNumSamplesReceiver extends CorbaDataReceiver {
 		subMonitor.done();
 		subMonitor = null;
 	}
-	
 
 	private void incrementCurrentSamples(int samplesProcessed) {
 		if (this.subMonitor != null) {
@@ -59,13 +59,18 @@ public class CorbaNumSamplesReceiver extends CorbaDataReceiver {
 			}
 		}
 	}
-	
+
 	@Override
 	public int getSamplesToProcess(int length, PrecisionUTCTime time) {
-		int sampleSize = (getStreamSRI().mode == 1) ? 2 : 1;
-		int receivedSamples = length / sampleSize;
-		int samplesToProcess = (int) Math.min(receivedSamples, this.samples - currentSamples);
-		return samplesToProcess * sampleSize;
+		StreamSRI streamSri = getStreamSRI();
+		if (streamSri != null) {
+			int sampleSize = (streamSri.mode == 1) ? 2 : 1;
+			int receivedSamples = length / sampleSize;
+			int samplesToProcess = (int) Math.min(receivedSamples, this.samples - currentSamples);
+			return samplesToProcess * sampleSize;
+		} else {
+			return 0;
+		}
 	}
 
 	@Override

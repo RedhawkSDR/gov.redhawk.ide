@@ -97,6 +97,7 @@ public class PortRepToGeneratorMapImpl extends EObjectImpl implements PortRepToG
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getGenerator() {
 		return generator;
 	}
@@ -106,6 +107,7 @@ public class PortRepToGeneratorMapImpl extends EObjectImpl implements PortRepToG
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setGenerator(String newGenerator) {
 		String oldGenerator = generator;
 		generator = newGenerator;
@@ -118,6 +120,7 @@ public class PortRepToGeneratorMapImpl extends EObjectImpl implements PortRepToG
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getRepId() {
 		return repId;
 	}
@@ -127,6 +130,7 @@ public class PortRepToGeneratorMapImpl extends EObjectImpl implements PortRepToG
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setRepId(String newRepId) {
 		String oldRepId = repId;
 		repId = newRepId;

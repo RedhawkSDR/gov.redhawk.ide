@@ -30,6 +30,7 @@ public class PrimaryImplementationDecorator extends LabelProvider implements ILi
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
 		if (!(element instanceof EObject || element instanceof FeatureMap.Entry || element instanceof IWrapperItemProvider)) {
 			return;

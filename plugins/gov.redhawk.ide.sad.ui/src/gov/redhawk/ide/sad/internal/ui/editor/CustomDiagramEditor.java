@@ -184,6 +184,7 @@ public class CustomDiagramEditor extends SadDiagramEditor implements IFormPage {
 			lws.setContents(this.thumbnail);
 			this.disposeListener = new DisposeListener() {
 
+				@Override
 				public void widgetDisposed(final DisposeEvent e) {
 					if (CustomDiagramOutlinePage.this.thumbnail != null) {
 						CustomDiagramOutlinePage.this.thumbnail.deactivate();
@@ -261,50 +262,62 @@ public class CustomDiagramEditor extends SadDiagramEditor implements IFormPage {
 		return super.getAdapter(type);
 	}
 
+	@Override
 	public boolean canLeaveThePage() {
 		return true;
 	}
 
+	@Override
 	public FormEditor getEditor() {
 		return this.editor;
 	}
 
+	@Override
 	public String getId() {
 		return CustomDiagramEditor.PAGE_ID;
 	}
 
+	@Override
 	public int getIndex() {
 		return this.index;
 	}
 
+	@Override
 	public IManagedForm getManagedForm() {
 		return null;
 	}
 
+	@Override
 	public Control getPartControl() {
 		return super.getGraphicalControl();
 	}
 
+	@Override
 	public void initialize(final FormEditor editor) {
 	}
 
+	@Override
 	public boolean isActive() {
 		return this.active;
 	}
 
+	@Override
 	public boolean isEditor() {
 		return true;
 	}
 
+	@Override
 	public boolean selectReveal(final Object object) {
 		((SadEditor) this.editor).handleContentOutlineSelection(object);
 		return false;
 	}
 
+	@Override
 	public void setActive(final boolean active) {
 		this.active = active;
 	}
 
+	@Override
 	public void setIndex(final int index) {
 		this.index = index;
 	}

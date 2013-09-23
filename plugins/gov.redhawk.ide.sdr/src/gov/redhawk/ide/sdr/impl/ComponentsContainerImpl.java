@@ -61,6 +61,7 @@ public class ComponentsContainerImpl extends SoftPkgRegistryImpl implements Comp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SdrRoot getSdrRoot() {
 		if (eContainerFeatureID() != SdrPackage.COMPONENTS_CONTAINER__SDR_ROOT) return null;
 		return (SdrRoot)eInternalContainer();

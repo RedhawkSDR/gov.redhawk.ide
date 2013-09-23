@@ -25,6 +25,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class RefreshIdlLibraryHandler extends AbstractHandler {
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getCurrentSelection(event);
 		if (selection instanceof IStructuredSelection) {

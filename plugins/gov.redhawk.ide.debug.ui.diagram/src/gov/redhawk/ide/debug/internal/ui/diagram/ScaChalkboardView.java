@@ -43,6 +43,7 @@ public class ScaChalkboardView extends ViewPart {
 	IEditingDomainProvider editingDomainProvider = new IEditingDomainProvider() {
 		ScaTransactionEditingDomainFactory factory = new ScaTransactionEditingDomainFactory();
 
+		@Override
 		public EditingDomain getEditingDomain() {
 			return factory.createEditingDomain();
 		}
@@ -77,6 +78,7 @@ public class ScaChalkboardView extends ViewPart {
 
 	}
 	
+	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (adapter == IEditingDomainProvider.class) {
 			return editingDomainProvider;
@@ -93,13 +95,16 @@ public class ScaChalkboardView extends ViewPart {
 
 		IEditorActionBarContributor nullActionBarContributor = new IEditorActionBarContributor() {
 
+			@Override
 			public void setActiveEditor(IEditorPart targetEditor) {
 			}
 
+			@Override
 			public void init(IActionBars bars, IWorkbenchPage page) {
 				ViewEditorSite.this.bars = bars;
 			}
 
+			@Override
 			public void dispose() {
 			}
 		};
@@ -109,79 +114,98 @@ public class ScaChalkboardView extends ViewPart {
 		}
 
 		// Methods not found in IWorkbenchPartSite
+		@Override
 		public IEditorActionBarContributor getActionBarContributor() {
 			return nullActionBarContributor;
 		}
 
+		@Override
 		public IActionBars getActionBars() {
 			return bars;
 		}
 
 		// Methods found in IWorkbenchPartSite
+		@Override
 		public String getId() {
 			return site.getId();
 		}
 
+		@Override
 		public String getPluginId() {
 			return site.getPluginId();
 		}
 
+		@Override
 		public String getRegisteredName() {
 			return site.getRegisteredName();
 		}
 
+		@Override
 		public void registerContextMenu(String menuId, MenuManager menuManager, ISelectionProvider selectionProvider) {
 			site.registerContextMenu(menuId, menuManager, selectionProvider);
 		}
 
+		@Override
 		public void registerContextMenu(MenuManager menuManager, ISelectionProvider selectionProvider) {
 			site.registerContextMenu(menuManager, selectionProvider);
 		}
 
+		@Override
 		public IKeyBindingService getKeyBindingService() {
 			return site.getKeyBindingService();
 		}
 
+		@Override
 		public IWorkbenchPart getPart() {
 			return site.getPart();
 		}
 
+		@Override
 		public IWorkbenchPage getPage() {
 			return site.getPage();
 		}
 
+		@Override
 		public ISelectionProvider getSelectionProvider() {
 			return site.getSelectionProvider();
 		}
 
+		@Override
 		public Shell getShell() {
 			return site.getShell();
 		}
 
+		@Override
 		public IWorkbenchWindow getWorkbenchWindow() {
 			return site.getWorkbenchWindow();
 		}
 
+		@Override
 		public void setSelectionProvider(ISelectionProvider provider) {
 			site.setSelectionProvider(provider);
 		}
 
+		@Override
 		public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 			return site.getAdapter(adapter);
 		}
 
+		@Override
 		public Object getService(@SuppressWarnings("rawtypes") Class api) {
 			return site.getService(api);
 		}
 
+		@Override
 		public boolean hasService(@SuppressWarnings("rawtypes") Class api) {
 			return site.hasService(api);
 		}
 
+		@Override
 		public void registerContextMenu(MenuManager menuManager, ISelectionProvider selectionProvider, boolean includeEditorInput) {
 			site.registerContextMenu(menuManager, selectionProvider);
 		}
 
+		@Override
 		public void registerContextMenu(String menuId, MenuManager menuManager, ISelectionProvider selectionProvider, boolean includeEditorInput) {
 			site.registerContextMenu(menuId, menuManager, selectionProvider);
 		}

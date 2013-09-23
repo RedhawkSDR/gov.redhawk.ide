@@ -18,10 +18,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  */
 public class BooleanGeneratorDisplayFactory implements ICodegenDisplayFactory {
 
+	@Override
 	public ICodegenComposite createComposite(final Composite parent, final int style, final FormToolkit toolkit) {
 		return new BooleanGeneratorPropertiesComposite(parent, style, toolkit);
 	}
 
+	@Override
 	public ICodegenWizardPage createPage() {
 		return new BooleanGeneratorPropertiesWizardPage();
 	}

@@ -18,10 +18,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  */
 public class DefaultGeneratorDisplayFactory implements ICodegenDisplayFactory {
 
+	@Override
 	public ICodegenComposite createComposite(final Composite parent, final int style, final FormToolkit toolkit) {
 		return new DefaultGeneratorPropertiesComposite(parent, style, toolkit);
 	}
 
+	@Override
 	public ICodegenWizardPage createPage() {
 		return new DefaultGeneratorPropertiesWizardPage();
 	}

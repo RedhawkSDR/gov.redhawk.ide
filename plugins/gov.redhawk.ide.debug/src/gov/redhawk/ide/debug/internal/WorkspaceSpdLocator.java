@@ -39,6 +39,7 @@ public class WorkspaceSpdLocator implements IResourceVisitor {
 		return this.result;
 	}
 
+	@Override
 	public boolean visit(final IResource resource) throws CoreException {
 		if (resource instanceof IFile) {
 			final IFile file = (IFile) resource;

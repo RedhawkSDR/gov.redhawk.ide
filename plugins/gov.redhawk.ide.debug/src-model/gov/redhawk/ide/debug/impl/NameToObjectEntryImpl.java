@@ -235,6 +235,7 @@ public class NameToObjectEntryImpl extends EObjectImpl implements BasicEMap.Entr
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getHash() {
 		if (hash == -1) {
 			Object theKey = getKey();
@@ -248,6 +249,7 @@ public class NameToObjectEntryImpl extends EObjectImpl implements BasicEMap.Entr
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setHash(int hash) {
 		this.hash = hash;
 	}
@@ -257,6 +259,7 @@ public class NameToObjectEntryImpl extends EObjectImpl implements BasicEMap.Entr
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Name getKey() {
 		return getTypedKey();
 	}
@@ -266,6 +269,7 @@ public class NameToObjectEntryImpl extends EObjectImpl implements BasicEMap.Entr
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setKey(Name key) {
 		setTypedKey(key);
 	}
@@ -275,6 +279,7 @@ public class NameToObjectEntryImpl extends EObjectImpl implements BasicEMap.Entr
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public org.omg.CORBA.Object getValue() {
 		return getTypedValue();
 	}
@@ -284,6 +289,7 @@ public class NameToObjectEntryImpl extends EObjectImpl implements BasicEMap.Entr
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public org.omg.CORBA.Object setValue(org.omg.CORBA.Object value) {
 		org.omg.CORBA.Object oldValue = getValue();
 		setTypedValue(value);

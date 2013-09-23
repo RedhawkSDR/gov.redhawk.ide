@@ -92,6 +92,7 @@ public class LocalScaEditor extends SadEditor {
 
 		ScaModelCommand.execute(localSca, new ScaModelCommand() {
 
+			@Override
 			public void execute() {
 				localSca.eAdapters().add(LocalScaEditor.this.scaListener);
 			}
@@ -120,6 +121,7 @@ public class LocalScaEditor extends SadEditor {
 			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 			ScaModelCommand.execute(localSca, new ScaModelCommand() {
 
+				@Override
 				public void execute() {
 					localSca.eAdapters().remove(LocalScaEditor.this.scaListener);
 				}

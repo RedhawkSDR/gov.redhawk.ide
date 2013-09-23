@@ -22,6 +22,7 @@ public class SadMarkerResolutionGenerator implements IMarkerResolutionGenerator 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IMarkerResolution[] getResolutions(final IMarker marker) {
 		final List<IMarkerResolution> retVal = new ArrayList<IMarkerResolution>();
 		if (SadMarkerResolution.canHandle(marker)) {

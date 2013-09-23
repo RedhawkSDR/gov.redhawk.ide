@@ -54,14 +54,17 @@ public class EventViewerLabelProvider extends XViewerLabelProvider {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
 
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		// do nothing
 	}
 
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		// do nothing
 	}
@@ -69,6 +72,7 @@ public class EventViewerLabelProvider extends XViewerLabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
 

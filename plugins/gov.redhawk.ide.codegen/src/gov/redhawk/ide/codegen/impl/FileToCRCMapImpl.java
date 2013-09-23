@@ -95,6 +95,7 @@ public class FileToCRCMapImpl extends EObjectImpl implements FileToCRCMap {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Long getCrc() {
 		return crc;
 	}
@@ -104,6 +105,7 @@ public class FileToCRCMapImpl extends EObjectImpl implements FileToCRCMap {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setCrc(Long newCrc) {
 		Long oldCrc = crc;
 		crc = newCrc;
@@ -116,6 +118,7 @@ public class FileToCRCMapImpl extends EObjectImpl implements FileToCRCMap {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getFile() {
 		return file;
 	}
@@ -125,6 +128,7 @@ public class FileToCRCMapImpl extends EObjectImpl implements FileToCRCMap {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setFile(String newFile) {
 		String oldFile = file;
 		file = newFile;

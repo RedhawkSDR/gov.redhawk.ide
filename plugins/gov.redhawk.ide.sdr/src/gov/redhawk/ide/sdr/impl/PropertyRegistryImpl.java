@@ -74,6 +74,7 @@ public abstract class PropertyRegistryImpl extends EObjectImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EMap<String, AbstractProperty> getProperties() {
 		if (properties == null) {
 			properties = new EcoreEMap<String,AbstractProperty>(SdrPackage.Literals.STRING_TO_ABSTRACT_PROPERTY, StringToAbstractPropertyImpl.class, this, SdrPackage.PROPERTY_REGISTRY__PROPERTIES);

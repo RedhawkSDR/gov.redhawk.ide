@@ -82,6 +82,7 @@ public class ScdModelWizard extends Wizard implements INewWizard {
 	/**
 	 * This just records the information.
 	 */
+	@Override
 	public void init(final IWorkbench workbench, final IStructuredSelection selection) {
 		this.workbench = workbench;
 		this.selection = selection;

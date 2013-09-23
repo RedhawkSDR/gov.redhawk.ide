@@ -39,6 +39,7 @@ import org.eclipse.emf.common.util.URI;
  * @deprecated This functionality is used by 1.8 projects, and is no longer necessary in 1.9. If you remove this,
  * remove the template that goes with it as well. 
  */
+@Deprecated
 public class TopLevelBuildScript extends IncrementalProjectBuilder {
 	
 	/**
@@ -63,6 +64,7 @@ public class TopLevelBuildScript extends IncrementalProjectBuilder {
 			} else if (this.getDelta(getProject()) != null) {
 				generateFlag = false;
 				IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
+					@Override
 					public boolean visit(IResourceDelta delta) throws CoreException {
 						// We can ignore anything that's in a sub-directory
 						if (delta.getResource() instanceof IContainer && delta.getProjectRelativePath().segmentCount() == 1) {

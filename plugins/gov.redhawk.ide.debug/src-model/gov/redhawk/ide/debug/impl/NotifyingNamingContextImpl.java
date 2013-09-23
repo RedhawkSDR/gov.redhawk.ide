@@ -208,6 +208,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isDisposed() {
 		return disposed;
 	}
@@ -217,6 +218,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EMap<Name, org.omg.CORBA.Object> getObjectMap() {
 		if (objectMap == null) {
 			objectMap = new EcoreEMap<Name,org.omg.CORBA.Object>(ScaDebugPackage.Literals.NAME_TO_OBJECT_ENTRY, NameToObjectEntryImpl.class, this, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP);
@@ -229,6 +231,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EMap<Name, NamingContext> getContextMap() {
 		if (contextMap == null) {
 			contextMap = new EcoreEMap<Name,NamingContext>(ScaDebugPackage.Literals.NAME_TO_NAMING_CONTEXT_ENTRY, NameToNamingContextEntryImpl.class, this, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__CONTEXT_MAP);
@@ -241,6 +244,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public NamingContextExt getNamingContext() {
 		return namingContext;
 	}
@@ -262,6 +266,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<NotifyingNamingContext> getSubContexts() {
 		if (subContexts == null) {
 			subContexts = new EObjectContainmentWithInverseEList<NotifyingNamingContext>(NotifyingNamingContext.class, this, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT);
@@ -274,6 +279,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public NotifyingNamingContext getParentContext() {
 		if (eContainerFeatureID() != ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT) return null;
 		return (NotifyingNamingContext)eInternalContainer();
@@ -294,6 +300,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setParentContext(NotifyingNamingContext newParentContext) {
 		if (newParentContext != eInternalContainer() || (eContainerFeatureID() != ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT && newParentContext != null)) {
 			if (EcoreUtil.isAncestor(this, newParentContext))
@@ -315,6 +322,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public POA getPoa() {
 		return poa;
 	}
@@ -367,6 +375,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public void setPoa(final POA newPoa) {
 		setPoaGen(newPoa);
 		if (newPoa == null) {
@@ -399,6 +408,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public String getName() {
 		// END GENERATED CODE
 		if (this.name != null) {
@@ -413,6 +423,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public NameComponent[] getName(final URI uri) {
 		// END GENERATED CODE
 		if (uri == null) {
@@ -435,6 +446,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public URI getURI(final NameComponent[] name) {
 		// END GENERATED CODE
 		for (int i = name.length - 1; i >= 0; i--) {
@@ -459,6 +471,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public String getFullName() {
 		// END GENERATED CODE
 		try {
@@ -477,6 +490,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public NotifyingNamingContext getResourceContext(final URI uri) {
 		// END GENERATED CODE
 		if (uri == null) {
@@ -511,6 +525,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public NotifyingNamingContext findContext(final NamingContext context) {
 		// END GENERATED CODE
 		if (context == null) {
@@ -534,6 +549,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public void dispose() {
 		getObjectMap().clear();
 		getContextMap().clear();
@@ -774,6 +790,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 *  bind a name (an array of name components) to an object
 	 */
 
+	@Override
 	public void bind(final NameComponent[] nc, final org.omg.CORBA.Object obj) throws NotFound, CannotProceed, InvalidName, AlreadyBound {
 		if (this.destroyed) {
 			throw new CannotProceed();
@@ -810,6 +827,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 			final Object putResult = ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<Object>() {
 
+				@Override
 				public void execute() {
 					setResult(getObjectMap().put(n, obj));
 				}
@@ -833,6 +851,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * Bind an object to a name that's already in use, i.e. rebind the name
 	 */
 
+	@Override
 	public void rebind(final NameComponent[] nc, final org.omg.CORBA.Object obj) throws NotFound, CannotProceed, InvalidName {
 		if (this.destroyed) {
 			throw new CannotProceed();
@@ -863,6 +882,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 		final org.omg.CORBA.Object _o = ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<org.omg.CORBA.Object>() {
 
+			@Override
 			public void execute() {
 				setResult(getObjectMap().removeKey(n));
 			}
@@ -873,6 +893,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 
+				@Override
 				public void execute() {
 					getObjectMap().put(n, obj);
 				}
@@ -897,6 +918,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * Bind an context to a name that's already in use, i.e. rebind the name
 	 */
 
+	@Override
 	public void rebind_context(final NameComponent[] nc, final NamingContext obj) throws NotFound, CannotProceed, InvalidName {
 		if (this.destroyed) {
 			throw new CannotProceed();
@@ -927,6 +949,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 		final org.omg.CORBA.Object _o = ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<org.omg.CORBA.Object>() {
 
+			@Override
 			public void execute() {
 				setResult(getContextMap().removeKey(n));
 			}
@@ -935,6 +958,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 		if (ctx == null) {
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 
+				@Override
 				public void execute() {
 					getContextMap().put(n, obj);
 				}
@@ -947,6 +971,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	/**
 	 * Bind a context to a name
 	 */	
+	@Override
 	public void bind_context(final NameComponent[] nc, final NamingContext obj) throws NotFound, CannotProceed, InvalidName, AlreadyBound {
 		bind_context(new Name(nc), obj);
 	}
@@ -979,6 +1004,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 			}
 			final Object putResult = ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<Object>() {
 
+				@Override
 				public void execute() {
 					setResult(getContextMap().put(n, obj));
 				}
@@ -988,6 +1014,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 			}
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 
+				@Override
 				public void execute() {
 					getContextMap().put(n, obj);
 				}
@@ -1003,6 +1030,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 		}
 	}
 
+	@Override
 	public NamingContext bind_new_context(final NameComponent[] nc) throws NotFound, CannotProceed, InvalidName, AlreadyBound {
 		if (this.destroyed) {
 			throw new CannotProceed();
@@ -1019,6 +1047,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 		bind_context(impl.name, ns);
 		ScaModelCommand.execute(this, new ScaModelCommand() {
 			
+			@Override
 			public void execute() {
 				getSubContexts().add(impl);
 			}
@@ -1061,6 +1090,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 		ScaModelCommand.execute(this, new ScaModelCommand() {
 
+			@Override
 			public void execute() {
 				for (final Name name : itemsToRemoveNames) {
 					getObjectMap().removeKey(name);
@@ -1074,9 +1104,11 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 	}
 
+	@Override
 	public void destroy() throws NotEmpty {
 		ScaModelCommand.execute(this, new ScaModelCommand() {
 
+			@Override
 			public void execute() {
 				NotifyingNamingContextImpl.this.dispose();
 			}
@@ -1098,6 +1130,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 *  list all bindings
 	 */
 
+	@Override
 	public void list(final int how_many, final BindingListHolder bl, final BindingIteratorHolder bi) {
 		if (this.destroyed) {
 			return;
@@ -1165,6 +1198,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 		bl.value = result;
 	}
 
+	@Override
 	public NamingContext new_context() {
 		final NotifyingNamingContextImpl impl = new NotifyingNamingContextImpl();
 		impl.setPoa(getPoa());
@@ -1175,6 +1209,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * resolve a name
 	 */
 
+	@Override
 	public org.omg.CORBA.Object resolve(final NameComponent[] nc) throws NotFound, CannotProceed, InvalidName {
 		if (this.destroyed) {
 			throw new CannotProceed();
@@ -1224,6 +1259,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * unbind a name
 	 */
 
+	@Override
 	public void unbind(final NameComponent[] nc) throws NotFound, CannotProceed, InvalidName {
 		if (this.destroyed) {
 			throw new CannotProceed();
@@ -1241,6 +1277,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 			if (getObjectMap().containsKey(n)) {
 				final org.omg.CORBA.Object o = ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<org.omg.CORBA.Object>() {
 
+					@Override
 					public void execute() {
 						setResult(getObjectMap().removeKey(n));
 					}
@@ -1251,6 +1288,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 			} else if (getContextMap().containsKey(n)) {
 				final org.omg.CORBA.Object o = ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<org.omg.CORBA.Object>() {
 
+					@Override
 					public void execute() {
 						setResult(getContextMap().removeKey(n));
 					}
@@ -1278,6 +1316,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * convert a name into its string representation
 	 */
 
+	@Override
 	public String to_string(final NameComponent[] n) throws InvalidName {
 		return Name.toString(n);
 	}
@@ -1287,6 +1326,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * @throws InvalidName
 	 */
 
+	@Override
 	public NameComponent[] to_name(final String sn) throws InvalidName {
 		return Name.toName(sn);
 	}
@@ -1295,6 +1335,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 *
 	 */
 
+	@Override
 	public String to_url(final String addr, final String sn) throws InvalidAddress, InvalidName {
 		throw new UnsupportedOperationException();
 	}
@@ -1303,6 +1344,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 *
 	 */
 
+	@Override
 	public org.omg.CORBA.Object resolve_str(final String n) throws NotFound, CannotProceed, InvalidName {
 		return resolve(to_name(n));
 	}

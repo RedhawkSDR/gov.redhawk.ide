@@ -32,10 +32,12 @@ public class ProcessorType implements IProcessor {
 		this.isDefault = Boolean.valueOf(element.getAttribute(ProcessorType.ATTR_DEFAULT_PROCESSOR));
 	}
 
+	@Override
 	public String getProcessorType() {
 		return this.procType;
 	}
 
+	@Override
 	public boolean isDefault() {
 		return this.isDefault;
 	}

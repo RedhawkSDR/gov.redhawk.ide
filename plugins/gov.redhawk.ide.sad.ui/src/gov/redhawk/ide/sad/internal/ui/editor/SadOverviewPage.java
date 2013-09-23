@@ -148,6 +148,7 @@ public class SadOverviewPage extends AbstractOverviewPage {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void linkActivated(final HyperlinkEvent e) {
 		if (TestingSection.TESTING_HREF_DEBUG.equals(e.getHref())) {
 			launch(ILaunchManager.DEBUG_MODE);

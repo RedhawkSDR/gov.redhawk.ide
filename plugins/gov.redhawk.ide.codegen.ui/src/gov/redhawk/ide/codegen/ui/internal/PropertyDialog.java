@@ -166,6 +166,7 @@ public class PropertyDialog extends Dialog {
 		this.idText = new ComboViewer(composite, getInputTextStyle() | SWT.READ_ONLY);
 		this.idText.getCombo().addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(final ModifyEvent e) {
 				final String key = PropertyDialog.this.idText.getCombo().getText();
 				String v = null;
@@ -212,6 +213,7 @@ public class PropertyDialog extends Dialog {
 		this.valueText.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP).grab(true, false).create());
 		this.valueText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(final ModifyEvent e) {
 				validate();
 			}

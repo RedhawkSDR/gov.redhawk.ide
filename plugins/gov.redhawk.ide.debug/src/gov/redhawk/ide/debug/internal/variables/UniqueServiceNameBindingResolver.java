@@ -28,6 +28,7 @@ public class UniqueServiceNameBindingResolver implements IDynamicVariableResolve
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String resolveValue(final IDynamicVariable variable, String argument) throws CoreException {
 		if (argument == null) {
 			argument = "service";

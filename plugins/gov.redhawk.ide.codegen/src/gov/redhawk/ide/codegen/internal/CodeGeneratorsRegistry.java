@@ -78,6 +78,7 @@ public class CodeGeneratorsRegistry implements ICodeGeneratorsRegistry, IExtensi
 		}
 	}
 
+	@Override
 	public void addExtension(final IExtensionTracker tracker, final IExtension extension) {
 		final IConfigurationElement[] configs = extension.getConfigurationElements();
 		for (final IConfigurationElement element : configs) {
@@ -108,6 +109,7 @@ public class CodeGeneratorsRegistry implements ICodeGeneratorsRegistry, IExtensi
 		return null;
 	}
 
+	@Override
 	public void removeExtension(final IExtension extension, final Object[] objects) {
 		for (final Object obj : objects) {
 			if (obj instanceof ICodeGeneratorDescriptor) {
@@ -122,14 +124,17 @@ public class CodeGeneratorsRegistry implements ICodeGeneratorsRegistry, IExtensi
 		}
 	}
 
+	@Override
 	public ICodeGeneratorDescriptor findCodegen(final String id) {
 		return this.codegenMap.get(id);
 	}
 
+	@Override
 	public ICodeGeneratorDescriptor[] getCodegens() {
 		return this.codegenMap.values().toArray(new ICodeGeneratorDescriptor[this.codegenMap.size()]);
 	}
 
+	@Override
 	public String[] getLanguages() {
 		Set<String> languages = new HashSet<String>(this.langToIdMap.keySet());
 		languages.remove("*");
@@ -138,6 +143,7 @@ public class CodeGeneratorsRegistry implements ICodeGeneratorsRegistry, IExtensi
 		return keys;
 	}
 	
+	@Override
 	public ICodeGeneratorDescriptor[] findCodegenByLanguage(final String language) {
 		return findCodegenByLanguage(language, null);
 	}
@@ -145,6 +151,7 @@ public class CodeGeneratorsRegistry implements ICodeGeneratorsRegistry, IExtensi
 	/**
 	 * @since 9.0
 	 */
+	@Override
 	public ICodeGeneratorDescriptor[] findCodegenByLanguage(final String language, final String componentType) {
 		final Set<String> ids = this.langToIdMap.get(language);
 		if (ids == null) {
@@ -172,6 +179,7 @@ public class CodeGeneratorsRegistry implements ICodeGeneratorsRegistry, IExtensi
 	}
 
 	private static class StringComparator implements Comparator<String> {
+		@Override
 		public int compare(final String o1, final String o2) {
 			if (o1 == null) {
 				return 1;
@@ -192,6 +200,7 @@ public class CodeGeneratorsRegistry implements ICodeGeneratorsRegistry, IExtensi
 			priorityMap.put("low", 2);
 		}
 		
+		@Override
 		public int compare(final ICodeGeneratorDescriptor o1, final ICodeGeneratorDescriptor o2) {
 			if (o1 == null) {
 				return 1;

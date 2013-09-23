@@ -332,6 +332,7 @@ public class SdrRootTest extends TestCase {
 		// END GENERATED CODE
 		ScaModelCommand.execute(getFixture(), new ScaModelCommand() {
 
+			@Override
 			public void execute() {
 				getFixture().setSdrRoot(null, null, null);
 			}

@@ -34,6 +34,7 @@ public class InitIdlLibraryCommand extends AbstractCommand {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void execute() {
 		RedhawkIdePreferenceInitializer.initializeIdlLibraryToDefaults(this.library);
 	}
@@ -46,6 +47,7 @@ public class InitIdlLibraryCommand extends AbstractCommand {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void redo() {
 		// TODO Auto-generated method stub
 

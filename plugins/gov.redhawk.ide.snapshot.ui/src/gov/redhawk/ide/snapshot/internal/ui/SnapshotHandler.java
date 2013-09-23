@@ -68,6 +68,7 @@ public class SnapshotHandler extends AbstractHandler {
 	 * the command has been executed, so extract extract the needed information
 	 * from the application context.
 	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Shell shell = HandlerUtil.getActiveShell(event);
 		ISelection selection = HandlerUtil.getActiveMenuSelection(event);

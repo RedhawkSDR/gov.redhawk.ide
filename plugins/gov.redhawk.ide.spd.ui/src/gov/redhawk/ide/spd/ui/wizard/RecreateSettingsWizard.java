@@ -216,6 +216,7 @@ public class RecreateSettingsWizard extends NewScaResourceWizard {
 		}
 	}
 
+	@Override
 	public void switchingResourcePage() {
 		final ImplementationWizardPage page = (ImplementationWizardPage) getWizPages().get(0);
 		page.setName(ModelUtil.getProject(getSoftPkg()).getName());

@@ -34,6 +34,7 @@ public class LocalWaveformLaunchConfigurationTabGroup extends AbstractLaunchConf
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void createTabs(final ILaunchConfigurationDialog dialog, final String mode) {
 		final LocalWaveformMainTab mainTab = new LocalWaveformMainTab();
 		final WaveformPropertiesTab propTab = new WaveformPropertiesTab();

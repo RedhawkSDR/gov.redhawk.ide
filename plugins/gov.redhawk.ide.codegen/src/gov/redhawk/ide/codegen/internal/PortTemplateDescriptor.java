@@ -87,18 +87,22 @@ public class PortTemplateDescriptor implements IPortTemplateDesc {
 		this.hasSettings = this.propertyDescs.length != 0;
 	}
 
+	@Override
 	public String getDescription() {
 		return this.description;
 	}
 
+	@Override
 	public String getName() {
 		return this.name;
 	}
 
+	@Override
 	public String getContributingBundleID() {
 		return this.bundleId;
 	}
 
+	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		return this.propertyDescs;
 	}
@@ -111,10 +115,12 @@ public class PortTemplateDescriptor implements IPortTemplateDesc {
 		return Boolean.parseBoolean(this.notDefaultable);
 	}
 
+	@Override
 	public String getId() {
 		return this.id;
 	}
 
+	@Override
 	public String getCodegenId() {
 		return this.codegenId;
 	}
@@ -122,12 +128,14 @@ public class PortTemplateDescriptor implements IPortTemplateDesc {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IScaPortCodegenTemplate getTemplate() throws CoreException {
 		IScaPortCodegenTemplate templ = (IScaPortCodegenTemplate) this.element.createExecutableExtension(PortTemplateDescriptor.ATTR_CLASS);
 		templ.setInterfaces(this.interfaces);
 		return templ;
 	}
 
+	@Override
 	public int compareTo(final IPortTemplateDesc o) {
 		if (o == null) {
 			return -1;
@@ -139,19 +147,23 @@ public class PortTemplateDescriptor implements IPortTemplateDesc {
 		return this.name.compareTo(o.getName());
 	}
 
+	@Override
 	public String[] getInterfaces() {
 		return this.interfaces;
 	}
 
+	@Override
 	public String[] getLanguages() {
 		return this.languages;
 	}
 
+	@Override
 	public boolean pullInputData() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Override
 	public String getPriority() {
 		return this.priority;
 	}

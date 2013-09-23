@@ -146,6 +146,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getCFDataType() {
 		return cfDataTypeEClass;
 	}
@@ -155,6 +156,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getCFDataType_Mixed() {
 		return (EAttribute)cfDataTypeEClass.getEStructuralFeatures().get(0);
 	}
@@ -164,6 +166,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getCFDataType_Value() {
 		return (EReference)cfDataTypeEClass.getEStructuralFeatures().get(1);
 	}
@@ -173,6 +176,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getCFDataType_Id() {
 		return (EAttribute)cfDataTypeEClass.getEStructuralFeatures().get(2);
 	}
@@ -182,6 +186,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getKeywordsType() {
 		return keywordsTypeEClass;
 	}
@@ -191,6 +196,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getKeywordsType_Mixed() {
 		return (EAttribute)keywordsTypeEClass.getEStructuralFeatures().get(0);
 	}
@@ -200,6 +206,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getKeywordsType_CFDataType() {
 		return (EReference)keywordsTypeEClass.getEStructuralFeatures().get(1);
 	}
@@ -209,6 +216,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getModel() {
 		return modelEClass;
 	}
@@ -218,6 +226,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModel_Mixed() {
 		return (EAttribute)modelEClass.getEStructuralFeatures().get(0);
 	}
@@ -227,6 +236,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModel_NumberOfSamples() {
 		return (EAttribute)modelEClass.getEStructuralFeatures().get(1);
 	}
@@ -236,6 +246,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getModel_Time() {
 		return (EReference)modelEClass.getEStructuralFeatures().get(3);
 	}
@@ -245,6 +256,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModel_BulkIOType() {
 		return (EAttribute)modelEClass.getEStructuralFeatures().get(4);
 	}
@@ -254,6 +266,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getModel_StreamSRI() {
 		return (EReference)modelEClass.getEStructuralFeatures().get(5);
 	}
@@ -263,6 +276,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModel_DataByteOrder()
 	{
 		return (EAttribute)modelEClass.getEStructuralFeatures().get(2);
@@ -273,6 +287,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getSRI() {
 		return sriEClass;
 	}
@@ -282,6 +297,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSRI_Mixed() {
 		return (EAttribute)sriEClass.getEStructuralFeatures().get(0);
 	}
@@ -291,6 +307,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSRI_Hversion() {
 		return (EAttribute)sriEClass.getEStructuralFeatures().get(1);
 	}
@@ -300,6 +317,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSRI_Xstart() {
 		return (EAttribute)sriEClass.getEStructuralFeatures().get(2);
 	}
@@ -309,6 +327,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSRI_Xdelta() {
 		return (EAttribute)sriEClass.getEStructuralFeatures().get(3);
 	}
@@ -318,6 +337,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSRI_Xunits() {
 		return (EAttribute)sriEClass.getEStructuralFeatures().get(4);
 	}
@@ -327,6 +347,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSRI_Subsize() {
 		return (EAttribute)sriEClass.getEStructuralFeatures().get(5);
 	}
@@ -336,6 +357,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSRI_Ystart() {
 		return (EAttribute)sriEClass.getEStructuralFeatures().get(6);
 	}
@@ -345,6 +367,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSRI_Ydelta() {
 		return (EAttribute)sriEClass.getEStructuralFeatures().get(7);
 	}
@@ -354,6 +377,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSRI_Yunits() {
 		return (EAttribute)sriEClass.getEStructuralFeatures().get(8);
 	}
@@ -363,6 +387,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSRI_Mode() {
 		return (EAttribute)sriEClass.getEStructuralFeatures().get(9);
 	}
@@ -372,6 +397,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSRI_StreamID() {
 		return (EAttribute)sriEClass.getEStructuralFeatures().get(10);
 	}
@@ -381,6 +407,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSRI_Blocking() {
 		return (EAttribute)sriEClass.getEStructuralFeatures().get(11);
 	}
@@ -390,6 +417,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getSRI_Keywords() {
 		return (EReference)sriEClass.getEStructuralFeatures().get(12);
 	}
@@ -399,6 +427,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getTime() {
 		return timeEClass;
 	}
@@ -408,6 +437,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getTime_StartTime() {
 		return (EAttribute)timeEClass.getEStructuralFeatures().get(0);
 	}
@@ -417,6 +447,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getTime_EndTime() {
 		return (EAttribute)timeEClass.getEStructuralFeatures().get(1);
 	}
@@ -426,6 +457,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getValue() {
 		return valueEClass;
 	}
@@ -435,6 +467,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getValue_Mixed() {
 		return (EAttribute)valueEClass.getEStructuralFeatures().get(0);
 	}
@@ -444,6 +477,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getValue_Value() {
 		return (EAttribute)valueEClass.getEStructuralFeatures().get(1);
 	}
@@ -453,6 +487,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getValue_JavaType() {
 		return (EAttribute)valueEClass.getEStructuralFeatures().get(2);
 	}
@@ -462,6 +497,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SnapshotMetadataFactory getSnapshotMetadataFactory() {
 		return (SnapshotMetadataFactory)getEFactoryInstance();
 	}

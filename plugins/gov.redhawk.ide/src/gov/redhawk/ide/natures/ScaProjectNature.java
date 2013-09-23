@@ -32,6 +32,7 @@ public class ScaProjectNature implements IProjectNature {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void configure() throws CoreException {
 		// This code came from the PDE Help
 		final IProjectDescription desc = this.project.getDescription();
@@ -61,12 +62,14 @@ public class ScaProjectNature implements IProjectNature {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void deconfigure() throws CoreException {
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IProject getProject() {
 		return this.project;
 	}
@@ -74,6 +77,7 @@ public class ScaProjectNature implements IProjectNature {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setProject(final IProject project) {
 		this.project = project;
 	}

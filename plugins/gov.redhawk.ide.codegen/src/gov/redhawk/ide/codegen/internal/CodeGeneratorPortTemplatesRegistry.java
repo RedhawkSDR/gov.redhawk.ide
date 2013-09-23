@@ -76,6 +76,7 @@ public class CodeGeneratorPortTemplatesRegistry implements IExtensionChangeHandl
 		}
 	}
 
+	@Override
 	public void addExtension(final IExtensionTracker tracker, final IExtension extension) {
 		final IConfigurationElement[] configs = extension.getConfigurationElements();
 		for (final IConfigurationElement element : configs) {
@@ -111,6 +112,7 @@ public class CodeGeneratorPortTemplatesRegistry implements IExtensionChangeHandl
 		return null;
 	}
 
+	@Override
 	public void removeExtension(final IExtension extension, final Object[] objects) {
 		for (final Object obj : objects) {
 			if (obj instanceof IPortTemplateDesc) {
@@ -131,6 +133,7 @@ public class CodeGeneratorPortTemplatesRegistry implements IExtensionChangeHandl
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IPortTemplateDesc findTemplate(final String id) {
 		return this.templateMap.get(id);
 	}
@@ -138,6 +141,7 @@ public class CodeGeneratorPortTemplatesRegistry implements IExtensionChangeHandl
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IPortTemplateDesc[] getTemplates() {
 		return this.templateMap.values().toArray(new IPortTemplateDesc[this.templateMap.size()]);
 	}
@@ -145,6 +149,7 @@ public class CodeGeneratorPortTemplatesRegistry implements IExtensionChangeHandl
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IPortTemplateDesc[] findTemplatesByRepId(final String repId, final String language) {
 		final ArrayList<IPortTemplateDesc> codegens = new ArrayList<IPortTemplateDesc>();
 

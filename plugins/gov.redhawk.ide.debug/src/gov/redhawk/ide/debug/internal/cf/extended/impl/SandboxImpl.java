@@ -64,14 +64,17 @@ public class SandboxImpl implements SandboxOperations {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public DeviceManager deviceManager() {
 		return this.localSca.getSandboxDeviceManager().getObj();
 	}
 
+	@Override
 	public NamingContext namingContext() {
 		return this.localSca.getSandboxWaveform().getNamingContext().getNamingContext();
 	}
 
+	@Override
 	public String[] availableProfiles() {
 		final IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
 		final ResourceDesc[] resources = registry.getResourceDescriptors();
@@ -83,10 +86,12 @@ public class SandboxImpl implements SandboxOperations {
 		return retVal.toArray(new String[retVal.size()]);
 	}
 
+	@Override
 	public FileManager fileManager() {
 		return this.localSca.getFileManager().getObj();
 	}
 
+	@Override
 	public ExtendedCF.ResourceDesc[] registeredResources() {
 		final List<ExtendedCF.ResourceDesc> retVal = new ArrayList<ExtendedCF.ResourceDesc>(this.localSca.getSandboxWaveform().getComponents().size()
 			+ this.localSca.getWaveforms().size() + this.localSca.getSandboxDeviceManager().getDevices().size());
@@ -113,6 +118,7 @@ public class SandboxImpl implements SandboxOperations {
 		return retVal.toArray(new ExtendedCF.ResourceDesc[retVal.size()]);
 	}
 
+	@Override
 	public ResourceFactory getResourceFactory(final String identifier) {
 		final IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
 		final ResourceDesc desc = registry.getResourceDesc(identifier);
@@ -123,6 +129,7 @@ public class SandboxImpl implements SandboxOperations {
 		}
 	}
 
+	@Override
 	public ResourceFactory getResourceFactoryByProfile(final String profile) {
 		final IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
 		final ResourceDesc desc = registry.getResourceDesc(profile);
@@ -133,9 +140,11 @@ public class SandboxImpl implements SandboxOperations {
 		}
 	}
 
+	@Override
 	public void refresh(final org.omg.CORBA.Object corbaObj, final Depth depth) {
 		final CorbaObjWrapper< ? > wrapper = ScaModelCommandWithResult.execute(this.localSca, new ScaModelCommandWithResult<CorbaObjWrapper< ? >>() {
 
+			@Override
 			public void execute() {
 				final TreeIterator<java.lang.Object> contents = EcoreUtil.getAllContents(SandboxImpl.this.localSca, false);
 				while (contents.hasNext()) {

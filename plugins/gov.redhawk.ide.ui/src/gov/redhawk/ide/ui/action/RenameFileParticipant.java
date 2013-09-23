@@ -147,6 +147,7 @@ public class RenameFileParticipant extends RenameParticipant {
 					if (!resources.isEmpty()) {
 						PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
+							@Override
 							public void run() {
 								RenameFileParticipant.this.saveConfirmed = IDE.saveAllEditors(resources.toArray(new IResource[0]), true);
 								RenameFileParticipant.this.activeEditors = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
@@ -166,6 +167,7 @@ public class RenameFileParticipant extends RenameParticipant {
 										if (this.input.getFile().equals(this.currentSpdFile)) {
 											PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
+												@Override
 												public void run() {
 													formEditor.close(true);
 												}

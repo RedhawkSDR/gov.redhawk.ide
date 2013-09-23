@@ -260,6 +260,7 @@ public class ImplIdToSettingsMapImpl extends EObjectImpl implements BasicEMap.En
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getHash() {
 		if (hash == -1) {
 			Object theKey = getKey();
@@ -273,6 +274,7 @@ public class ImplIdToSettingsMapImpl extends EObjectImpl implements BasicEMap.En
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setHash(int hash) {
 		this.hash = hash;
 	}
@@ -282,6 +284,7 @@ public class ImplIdToSettingsMapImpl extends EObjectImpl implements BasicEMap.En
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getKey() {
 		return getTypedKey();
 	}
@@ -291,6 +294,7 @@ public class ImplIdToSettingsMapImpl extends EObjectImpl implements BasicEMap.En
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setKey(String key) {
 		setTypedKey(key);
 	}
@@ -300,6 +304,7 @@ public class ImplIdToSettingsMapImpl extends EObjectImpl implements BasicEMap.En
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ImplementationSettings getValue() {
 		return getTypedValue();
 	}
@@ -309,6 +314,7 @@ public class ImplIdToSettingsMapImpl extends EObjectImpl implements BasicEMap.En
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ImplementationSettings setValue(ImplementationSettings value) {
 		ImplementationSettings oldValue = getValue();
 		setTypedValue(value);

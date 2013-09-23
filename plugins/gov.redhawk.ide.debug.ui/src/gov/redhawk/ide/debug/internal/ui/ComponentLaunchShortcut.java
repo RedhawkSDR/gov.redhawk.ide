@@ -46,6 +46,7 @@ public class ComponentLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void launch(final ISelection selection, final String mode) {
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection ss = (IStructuredSelection) selection;
@@ -101,6 +102,7 @@ public class ComponentLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void launch(final IEditorPart editor, final String mode) {
 		if (editor instanceof SCAFormEditor) {
 			final SCAFormEditor formEditor = (SCAFormEditor) editor;

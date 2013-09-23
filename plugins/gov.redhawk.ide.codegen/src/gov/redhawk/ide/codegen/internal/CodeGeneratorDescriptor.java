@@ -180,6 +180,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IScaComponentCodegen getGenerator() throws CoreException {
 		return (IScaComponentCodegen) this.element.createExecutableExtension(CodeGeneratorDescriptor.ATTR_CLASS);
 	}
@@ -187,6 +188,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getIconPath() {
 		return this.iconPath;
 	}
@@ -194,6 +196,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getId() {
 		return this.id;
 	}
@@ -201,6 +204,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLanguage() {
 		return this.language;
 	}
@@ -208,6 +212,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getName() {
 		return this.name;
 	}
@@ -234,6 +239,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getCompiler() {
 		return this.compiler;
 	}
@@ -241,6 +247,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getCompilerVersion() {
 		return this.compilerVersion;
 	}
@@ -248,6 +255,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getDescription() {
 		return this.description;
 	}
@@ -255,6 +263,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getHumanLanguage() {
 		return this.humanLanguage;
 	}
@@ -262,6 +271,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLanguageVersion() {
 		return this.languageVersion;
 	}
@@ -269,6 +279,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getRuntime() {
 		return this.runtime;
 	}
@@ -276,6 +287,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getRuntimeVersion() {
 		return this.runtimeVersion;
 	}
@@ -283,10 +295,12 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getContributingBundleId() {
 		return this.bundleId;
 	}
 
+	@Override
 	public int compareTo(final ICodeGeneratorDescriptor o) {
 		if (o == null) {
 			return -1;
@@ -304,6 +318,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean notDefaultableGenerator() {
 		return Boolean.parseBoolean(this.notDefaultable);
 	}
@@ -311,6 +326,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IOperatingSystem[] getOperatingSystems() {
 		return this.operatingSystems;
 	}
@@ -318,6 +334,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IProcessor[] getProcessors() {
 		return this.processors;
 	}
@@ -325,6 +342,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * @since 4.0
 	 */
+	@Override
 	public boolean autoGenerate() {
 		return Boolean.parseBoolean(this.autoGenerate);
 	}
@@ -332,6 +350,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * @since 5.0
 	 */
+	@Override
 	public String getAssociatedPerspectiveId() {
 		return this.associatedPerspectiveId;
 	}
@@ -339,6 +358,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * @since 9.0
 	 */
+	@Override
 	public String getPriority() {
 		return this.priority;
 	}
@@ -346,6 +366,7 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 	/**
 	 * @since 9.0
 	 */
+	@Override
 	public boolean supportsComponentType(String componentType) {
 		final int i = Arrays.binarySearch(this.componentTypes, componentType);
 		return (i >= 0);

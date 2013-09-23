@@ -33,6 +33,7 @@ public abstract class AbstractResourceFactory implements ResourceFactoryOperatio
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Resource createResource(String resourceId, final DataType[] inputQualifiers) throws CreateResourceFailure {
 		if (!resourceId.endsWith(identifier())) {
 			resourceId = resourceId + ":" + identifier();
@@ -73,6 +74,7 @@ public abstract class AbstractResourceFactory implements ResourceFactoryOperatio
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void releaseResource(final String resourceId) throws InvalidResourceId {
 		for (ScaComponent component : ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform().getComponents()) {
 			if (component.getIdentifier().equals(resourceId)) {
@@ -88,6 +90,7 @@ public abstract class AbstractResourceFactory implements ResourceFactoryOperatio
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void shutdown() throws ShutdownFailure {
 		// Do nothing
 

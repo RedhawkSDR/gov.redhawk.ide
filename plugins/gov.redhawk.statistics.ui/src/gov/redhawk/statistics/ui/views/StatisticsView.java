@@ -358,6 +358,7 @@ public class StatisticsView extends ViewPart {
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {
 	}
 

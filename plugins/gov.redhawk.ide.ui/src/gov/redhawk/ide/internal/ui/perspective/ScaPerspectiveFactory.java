@@ -31,6 +31,7 @@ public class ScaPerspectiveFactory implements IPerspectiveFactory {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void createInitialLayout(final IPageLayout layout) {
 		final String editorArea = layout.getEditorArea();
 

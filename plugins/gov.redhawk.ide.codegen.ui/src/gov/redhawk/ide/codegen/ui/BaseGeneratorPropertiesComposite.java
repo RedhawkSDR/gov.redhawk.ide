@@ -145,6 +145,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		this.generatorViewer = new ComboViewer(this, SWT.SINGLE | SWT.READ_ONLY | SWT.DROP_DOWN);
 		this.generatorViewer.getControl().addListener(SWT.MouseVerticalWheel, new Listener() {
 			
+			@Override
 			public void handleEvent(Event event) {
 				event.doit = false;
 			}
@@ -161,6 +162,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		this.generatorViewer.setInput(RedhawkCodegenActivator.getCodeGeneratorsRegistry().getCodegens());
 		this.generatorViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				final ICodeGeneratorDescriptor desc = (ICodeGeneratorDescriptor) ((IStructuredSelection) event.getSelection()).getFirstElement();
 				if (desc == null) {
@@ -200,6 +202,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		this.templateViewer = new ComboViewer(this, SWT.READ_ONLY | SWT.SINGLE | SWT.DROP_DOWN);
 		this.templateViewer.getControl().addListener(SWT.MouseVerticalWheel, new Listener() {
 
+			@Override
 			public void handleEvent(Event event) {
 				event.doit = false;
 			}
@@ -217,6 +220,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		});
 
 		this.templateViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				final ITemplateDesc desc = (ITemplateDesc) ((IStructuredSelection) event.getSelection()).getFirstElement();
 				final EditingDomain dom = BaseGeneratorPropertiesComposite.this.domain;
@@ -290,6 +294,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 			}
 		});
 		this.portMapComposite.getPortMapViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				final boolean enabled = BaseGeneratorPropertiesComposite.this.portMapComposite.isEnabled();
 				BaseGeneratorPropertiesComposite.this.portMapComposite.getRemovePropertyButton().setEnabled(enabled && !event.getSelection().isEmpty());
@@ -306,6 +311,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 	 * @return the outputDirEntry field
 	 * @since 7.0
 	 */
+	@Override
 	public FormEntry getOutputDirEntry() {
 		return this.outputDirEntry;
 	}
@@ -328,6 +334,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		return (ITemplateDesc) ((IStructuredSelection) this.templateViewer.getSelection()).getFirstElement();
 	}
 
+	@Override
 	public void bind(final ArrayList<Binding> bindList, final EditingDomain editingDomain, final DataBindingContext context, final Implementation impl,
 		final ImplementationSettings implSettings) {
 		this.impl = impl;
@@ -370,6 +377,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		final EMFUpdateValueStrategy strategy = new EMFUpdateValueStrategy();
 		strategy.setConverter(new Converter(String.class, ITemplateDesc.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return null;
@@ -390,6 +398,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy();
 		strategy.setConverter(new Converter(ITemplateDesc.class, String.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return null;
@@ -409,6 +418,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy();
 		strategy.setConverter(new Converter(ICodeGeneratorDescriptor.class, String.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return null;
@@ -428,6 +438,7 @@ public abstract class BaseGeneratorPropertiesComposite extends Composite impleme
 		final EMFUpdateValueStrategy strategy = new EMFUpdateValueStrategy();
 		strategy.setConverter(new Converter(String.class, ICodeGeneratorDescriptor.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return null;

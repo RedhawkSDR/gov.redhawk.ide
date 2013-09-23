@@ -29,6 +29,7 @@ public class LocalSadComponentInstantiationEditPartAdapterFactory implements IAd
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object getAdapter(final Object adaptableObject, @SuppressWarnings("rawtypes") final Class adapterType) {
 		if (adapterType == LocalLaunch.class) {
 			if (adaptableObject instanceof SadComponentInstantiationEditPart) {
@@ -44,6 +45,7 @@ public class LocalSadComponentInstantiationEditPartAdapterFactory implements IAd
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Class < ? > [] getAdapterList() {
 		return LocalSadComponentInstantiationEditPartAdapterFactory.CLASS_LIST;
 	}

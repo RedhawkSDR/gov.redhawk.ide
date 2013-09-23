@@ -51,12 +51,14 @@ public class GeneratorArgsBase {
 	/**
 	 * @deprecated 
 	 */
+	@Deprecated
 	public void setSoftPkgFile(final String softPkgFile) {
 		this.setProperty(SOFTPKG_FILE_KEY, softPkgFile);
 	}
 	/**
 	 * @deprecated 
 	 */
+	@Deprecated
 	public String getSoftPkgFile() {
 		return this.getProperty(SOFTPKG_FILE_KEY);
 	}
@@ -64,6 +66,7 @@ public class GeneratorArgsBase {
 	/**
 	 * @deprecated Use setSoftPkgId instead.
 	 */
+	@Deprecated
 	public void setProjectId(final String projectId) {
 		this.setProperty(SOFT_PKG_ID_KEY, projectId);
 	}
@@ -71,6 +74,7 @@ public class GeneratorArgsBase {
 	/**
 	 * @deprecated Use getSoftPkgId instead.
 	 */
+	@Deprecated
 	public String getProjectId() {
 		return this.getProperty(SOFT_PKG_ID_KEY);
 	}

@@ -114,7 +114,11 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 	protected void disconnect(SubMonitor child) {
 		child.beginTask("Disconnecting port...", 1);
 		try {
-			BulkIOUtilActivator.getBulkIOPortConnectionManager().disconnect(port.getIor(), getBulkIOType(), this);
+			BulkIOType type2 = getBulkIOType();
+			String ior2 = port.getIor();
+			if (type2 != null && ior2 != null) {
+				BulkIOUtilActivator.getBulkIOPortConnectionManager().disconnect(ior2, type2, this);
+			}
 		} finally {
 			child.done();
 		}
@@ -146,7 +150,11 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 			throw new IllegalStateException("Port must not be null");
 		}
 		try {
-			BulkIOUtilActivator.getBulkIOPortConnectionManager().connect(port.getIor(), getBulkIOType(), this);
+			BulkIOType type2 = getBulkIOType();
+			String ior2 = port.getIor();
+			if (type2 != null && ior2 != null) {
+				BulkIOUtilActivator.getBulkIOPortConnectionManager().connect(ior2, type2, this);
+			}
 			while (getStreamSRI() == null) {
 				try {
 					Thread.sleep(500);

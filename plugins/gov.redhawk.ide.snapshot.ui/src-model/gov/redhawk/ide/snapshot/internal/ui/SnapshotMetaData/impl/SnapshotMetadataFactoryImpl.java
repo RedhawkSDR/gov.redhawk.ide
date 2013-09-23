@@ -85,6 +85,7 @@ public class SnapshotMetadataFactoryImpl extends EFactoryImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public CFDataType createCFDataType() {
 		CFDataTypeImpl cfDataType = new CFDataTypeImpl();
 		return cfDataType;
@@ -95,6 +96,7 @@ public class SnapshotMetadataFactoryImpl extends EFactoryImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public KeywordsType createKeywordsType() {
 		KeywordsTypeImpl keywordsType = new KeywordsTypeImpl();
 		return keywordsType;
@@ -105,6 +107,7 @@ public class SnapshotMetadataFactoryImpl extends EFactoryImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Model createModel() {
 		ModelImpl model = new ModelImpl();
 		return model;
@@ -115,6 +118,7 @@ public class SnapshotMetadataFactoryImpl extends EFactoryImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SRI createSRI() {
 		SRIImpl sri = new SRIImpl();
 		return sri;
@@ -125,6 +129,7 @@ public class SnapshotMetadataFactoryImpl extends EFactoryImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Time createTime() {
 		TimeImpl time = new TimeImpl();
 		return time;
@@ -135,6 +140,7 @@ public class SnapshotMetadataFactoryImpl extends EFactoryImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Value createValue() {
 		ValueImpl value = new ValueImpl();
 		return value;
@@ -145,6 +151,7 @@ public class SnapshotMetadataFactoryImpl extends EFactoryImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SnapshotMetadataPackage getSnapshotMetadataPackage() {
 		return (SnapshotMetadataPackage)getEPackage();
 	}

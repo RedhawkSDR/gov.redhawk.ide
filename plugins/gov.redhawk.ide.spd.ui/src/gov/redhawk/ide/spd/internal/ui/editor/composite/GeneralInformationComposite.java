@@ -227,6 +227,7 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setEditable(final boolean editable) {
 		this.descriptionEntry.setEditable(editable);
 		this.idEntry.setEditable(editable);

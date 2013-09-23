@@ -68,6 +68,7 @@ public class LocalComponentMainTab extends LocalAbstractMainTab {
 		this.implText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.implText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(final ModifyEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -98,6 +99,7 @@ public class LocalComponentMainTab extends LocalAbstractMainTab {
 		this.levelCombo.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
 		this.levelCombo.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(final ModifyEvent e) {
 				updateLaunchConfigurationDialog();
 			}

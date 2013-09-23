@@ -72,6 +72,7 @@ public class WaveDevSettingsImpl extends EObjectImpl implements WaveDevSettings 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EMap<String, ImplementationSettings> getImplSettings() {
 		if (implSettings == null) {
 			implSettings = new EcoreEMap<String,ImplementationSettings>(CodegenPackage.Literals.IMPL_ID_TO_SETTINGS_MAP, ImplIdToSettingsMapImpl.class, this, CodegenPackage.WAVE_DEV_SETTINGS__IMPL_SETTINGS);

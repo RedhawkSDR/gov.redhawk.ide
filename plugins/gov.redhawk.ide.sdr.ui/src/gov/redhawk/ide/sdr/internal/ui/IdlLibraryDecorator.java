@@ -77,11 +77,13 @@ public class IdlLibraryDecorator extends LabelProvider implements ILightweightLa
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
 		if (element instanceof IdlLibrary) {
 			final IdlLibrary library = (IdlLibrary) element;
 			ScaModelCommand.execute(library, new ScaModelCommand() {
 
+				@Override
 				public void execute() {
 					if (!library.eAdapters().contains(libraryListener)) {
 						library.eAdapters().add(libraryListener);

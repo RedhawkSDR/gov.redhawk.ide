@@ -527,6 +527,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 		final EMFUpdateValueStrategy strategy = new EMFUpdateValueStrategy();
 		strategy.setConverter(new Converter(PropertyFile.class, String.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return "";
@@ -550,6 +551,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy();
 		strategy.setConverter(new Converter(String.class, PropertyFile.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return null;

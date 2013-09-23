@@ -135,6 +135,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public LocalSca createLocalSca() {
 		LocalScaImpl localSca = new LocalScaImpl();
 		return localSca;
@@ -145,6 +146,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public NotifyingNamingContext createNotifyingNamingContext() {
 		NotifyingNamingContextImpl notifyingNamingContext = new NotifyingNamingContextImpl();
 		return notifyingNamingContext;
@@ -175,6 +177,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public LocalFileManager createLocalFileManager() {
 		LocalFileManagerImpl localFileManager = new LocalFileManagerImpl();
 		return localFileManager;
@@ -185,6 +188,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public LocalScaWaveform createLocalScaWaveform() {
 		LocalScaWaveformImpl localScaWaveform = new LocalScaWaveformImpl();
 		return localScaWaveform;
@@ -195,6 +199,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public LocalScaComponent createLocalScaComponent() {
 		LocalScaComponentImpl localScaComponent = new LocalScaComponentImpl();
 		return localScaComponent;
@@ -205,6 +210,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public LocalScaDeviceManager createLocalScaDeviceManager() {
 		LocalScaDeviceManagerImpl localScaDeviceManager = new LocalScaDeviceManagerImpl();
 		return localScaDeviceManager;
@@ -215,6 +221,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public LocalScaExecutableDevice createLocalScaExecutableDevice() {
 		LocalScaExecutableDeviceImpl localScaExecutableDevice = new LocalScaExecutableDeviceImpl();
 		return localScaExecutableDevice;
@@ -225,6 +232,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public LocalScaLoadableDevice createLocalScaLoadableDevice() {
 		LocalScaLoadableDeviceImpl localScaLoadableDevice = new LocalScaLoadableDeviceImpl();
 		return localScaLoadableDevice;
@@ -235,6 +243,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public LocalScaDevice createLocalScaDevice() {
 		LocalScaDeviceImpl localScaDevice = new LocalScaDeviceImpl();
 		return localScaDevice;
@@ -245,6 +254,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public LocalScaService createLocalScaService() {
 		LocalScaServiceImpl localScaService = new LocalScaServiceImpl();
 		return localScaService;
@@ -291,6 +301,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ScaDebugPackage getScaDebugPackage() {
 		return (ScaDebugPackage)getEPackage();
 	}

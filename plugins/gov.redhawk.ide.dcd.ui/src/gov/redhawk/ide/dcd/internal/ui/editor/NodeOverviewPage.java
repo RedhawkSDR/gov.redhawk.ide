@@ -172,6 +172,7 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void linkActivated(final HyperlinkEvent e) {
 		final Object href = e.getHref();
 		if (NodeContentSection.DEVICE_HREF.equals(href)) {

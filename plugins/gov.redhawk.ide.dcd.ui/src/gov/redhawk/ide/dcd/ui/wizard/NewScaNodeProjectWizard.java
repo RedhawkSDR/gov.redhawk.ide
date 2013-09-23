@@ -213,6 +213,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void init(final IWorkbench arg0, final IStructuredSelection arg1) {
 
 	}
@@ -229,6 +230,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 		final SdrRoot sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
 
 		final IRunnableWithProgress waitForLoad = new IRunnableWithProgress() {
+			@Override
 			public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				sdrRoot.load(monitor);
 			}
@@ -249,6 +251,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		this.fConfig = config;
 	}

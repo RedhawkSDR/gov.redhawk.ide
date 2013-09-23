@@ -210,6 +210,7 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 		final Text filterText = this.fFilteredTree.getFilterControl();
 		if (filterText != null) {
 			filterText.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(final ModifyEvent e) {
 					final StructuredViewer viewer = getStructuredViewerPart().getViewer();
 					final IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
@@ -341,6 +342,7 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 		toolbar.setCursor(handCursor);
 		// Cursor needs to be explicitly disposed
 		toolbar.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(final DisposeEvent e) {
 				if (!handCursor.isDisposed()) {
 					handCursor.dispose();
@@ -425,6 +427,7 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 		if (sdrRoot.getState() != LoadState.LOADED) {
 			final IRunnableWithProgress waitForLoad = new IRunnableWithProgress() {
 
+				@Override
 				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					monitor.beginTask("Waiting for SDR Root to load", IProgressMonitor.UNKNOWN);
 					sdrRoot.load(monitor);
@@ -580,6 +583,7 @@ public class DevicesSection extends TreeSection implements IPropertyChangeListen
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
 		if (this.fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
 			final StructuredViewer viewer = getStructuredViewerPart().getViewer();

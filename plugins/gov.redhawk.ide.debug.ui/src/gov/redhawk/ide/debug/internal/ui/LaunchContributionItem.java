@@ -83,6 +83,7 @@ public class LaunchContributionItem extends CompoundContributionItem implements 
 		return items.toArray(new IContributionItem[items.size()]);
 	}
 
+	@Override
 	public void initialize(IServiceLocator serviceLocator) {
 		this.locator = serviceLocator;
 

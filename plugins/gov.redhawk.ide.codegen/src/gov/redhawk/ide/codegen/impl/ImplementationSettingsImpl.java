@@ -222,6 +222,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	@Deprecated
 	public String getName() {
 		return name;
@@ -233,6 +234,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	@Deprecated
 	public void setName(String newName) {
 		String oldName = name;
@@ -246,6 +248,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getOutputDir() {
 		return outputDir;
 	}
@@ -255,6 +258,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOutputDir(String newOutputDir) {
 		String oldOutputDir = outputDir;
 		outputDir = newOutputDir;
@@ -267,6 +271,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getTemplate() {
 		return template;
 	}
@@ -276,6 +281,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setTemplate(String newTemplate) {
 		String oldTemplate = template;
 		template = newTemplate;
@@ -288,6 +294,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<Property> getProperties() {
 		if (properties == null) {
 			properties = new EObjectContainmentEList<Property>(Property.class, this, CodegenPackage.IMPLEMENTATION_SETTINGS__PROPERTIES);
@@ -300,6 +307,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getGeneratorId() {
 		return generatorId;
 	}
@@ -309,6 +317,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setGeneratorId(String newGeneratorId) {
 		String oldGeneratorId = generatorId;
 		generatorId = newGeneratorId;
@@ -321,6 +330,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Date getGeneratedOn() {
 		return generatedOn;
 	}
@@ -330,6 +340,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setGeneratedOn(Date newGeneratedOn) {
 		Date oldGeneratedOn = generatedOn;
 		generatedOn = newGeneratedOn;
@@ -342,6 +353,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * 
 	 * @generated NOT
 	 */
+	@Override
 	public String getId() {
 		// END GENERATED CODE
 		final ImplIdToSettingsMapImpl entry = (ImplIdToSettingsMapImpl) this.eContainer;
@@ -357,6 +369,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<FileToCRCMap> getGeneratedFileCRCs() {
 		if (generatedFileCRCs == null) {
 			generatedFileCRCs = new EObjectContainmentEList<FileToCRCMap>(FileToCRCMap.class, this, CodegenPackage.IMPLEMENTATION_SETTINGS__GENERATED_FILE_CR_CS);
@@ -369,6 +382,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<PortRepToGeneratorMap> getPortGenerators() {
 		if (portGenerators == null) {
 			portGenerators = new EObjectContainmentEList<PortRepToGeneratorMap>(PortRepToGeneratorMap.class, this, CodegenPackage.IMPLEMENTATION_SETTINGS__PORT_GENERATORS);
@@ -381,6 +395,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isPrimary() {
 		return primary;
 	}
@@ -390,6 +405,7 @@ public class ImplementationSettingsImpl extends EObjectImpl implements Implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setPrimary(boolean newPrimary) {
 		boolean oldPrimary = primary;
 		primary = newPrimary;

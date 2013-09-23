@@ -87,6 +87,7 @@ public class AuthorWizardPage extends WizardPage {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void createControl(final Composite parent) {
 		final Composite client = new Composite(parent, SWT.NULL);
 		client.setLayout(new GridLayout(2, false));
@@ -125,16 +126,19 @@ public class AuthorWizardPage extends WizardPage {
 		this.tableViewer = new TableViewer(namesComp, SWT.BORDER);
 		this.tableViewer.setContentProvider(new IStructuredContentProvider() {
 
+			@Override
 			public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 				// TODO Auto-generated method stub
 
 			}
 
+			@Override
 			public void dispose() {
 				// TODO Auto-generated method stub
 
 			}
 
+			@Override
 			public Object[] getElements(final Object inputElement) {
 				return ((Author) inputElement).getName().toArray();
 			}
@@ -162,6 +166,7 @@ public class AuthorWizardPage extends WizardPage {
 		removeButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
 		this.tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				removeButton.setEnabled(!event.getSelection().isEmpty());
 			}
@@ -200,6 +205,7 @@ public class AuthorWizardPage extends WizardPage {
 	protected void handleAddName() {
 		final InputDialog dialog = new InputDialog(getShell(), "New Name", "Name:", "", new IInputValidator() {
 
+			@Override
 			public String isValid(final String newText) {
 				if (newText.length() == 0) {
 					return "Must enter a value.";

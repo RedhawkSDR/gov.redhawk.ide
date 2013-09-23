@@ -32,6 +32,7 @@ public class RedhawkIdeTargetPreferencePage extends FieldEditorPreferencePage im
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void init(final IWorkbench workbench) {
 		setPreferenceStore(RedhawkIDEUiPlugin.getDefault().getRedhawkIdePreferenceStore());
 	}

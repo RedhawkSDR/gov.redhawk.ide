@@ -61,6 +61,7 @@ public class IdlPropertySection extends AbstractModelerPropertySection {
 
 	public static class Filter implements IFilter {
 
+		@Override
 		public boolean select(final Object toTest) {
 			if (toTest instanceof IGraphicalEditPart) {
 				final IGraphicalEditPart part = (IGraphicalEditPart) toTest;

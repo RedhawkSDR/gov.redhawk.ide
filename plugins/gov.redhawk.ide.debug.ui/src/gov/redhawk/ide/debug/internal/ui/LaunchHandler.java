@@ -51,6 +51,7 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		ISelection sel = HandlerUtil.getActiveMenuSelection(event);
 		if (sel == null) {

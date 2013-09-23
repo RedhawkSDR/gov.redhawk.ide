@@ -95,6 +95,7 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public FeatureMap getMixed() {
 		if (mixed == null)
 		{
@@ -108,6 +109,7 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getValue() {
 		return (String)getMixed().get(SnapshotMetadataPackage.Literals.VALUE__VALUE, true);
 	}
@@ -117,6 +119,7 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setValue(String newValue) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.VALUE__VALUE, newValue);
 	}
@@ -126,6 +129,7 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getJavaType() {
 		return (String)getMixed().get(SnapshotMetadataPackage.Literals.VALUE__JAVA_TYPE, true);
 	}
@@ -135,6 +139,7 @@ public class ValueImpl extends EObjectImpl implements Value {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setJavaType(String newJavaType) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.VALUE__JAVA_TYPE, newJavaType);
 	}

@@ -64,6 +64,7 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String identifier() {
 		return this.identifier;
 	}
@@ -78,6 +79,7 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 		try {
 			return ScaModelCommand.runExclusive(getChalkboard(), new RunnableWithResult.Impl<LocalScaComponent>() {
 
+				@Override
 				public void run() {
 					for (final ScaComponent comp : getChalkboard().getComponents()) {
 						if (instantiationID.equals(comp.getInstantiationIdentifier())) {
@@ -98,6 +100,7 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void releaseResource(final String resourceId) throws InvalidResourceId {
 		final LocalScaComponent comp = getComponent(resourceId);
 		if (comp != null) {
@@ -114,6 +117,7 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void shutdown() throws ShutdownFailure {
 		synchronized (this.launched) {
 			for (final LocalScaComponent comp : this.launched) {

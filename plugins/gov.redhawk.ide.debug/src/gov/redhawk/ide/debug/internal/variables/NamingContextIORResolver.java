@@ -38,17 +38,35 @@ public class NamingContextIORResolver extends AbstractLauncherResolver implement
 		switch (type) {
 		case DEVICE:
 		case EVENT_SERVICE:
-		case SERVICE: {
-			final NotifyingNamingContext nc = getDevNamingContext(spd);
-			namingContext = nc.getNamingContext().toString();
+		case SERVICE:
+			namingContext = resolveService(spd);
+			break;
+		default: 
+			namingContext = resolveResource(spd);
 			break;
 		}
-		default: {
-			final NotifyingNamingContext nc = getDomNamingContext(spd);
-			namingContext = nc.getNamingContext().toString();
-			break;
-		}
-		}
+		return namingContext;
+	}
+
+	/**
+	 * @param spd
+	 * @return
+	 */
+	private String resolveResource(final SoftPkg spd) {
+		final String namingContext;
+		final NotifyingNamingContext nc = getDomNamingContext(spd);
+		namingContext = nc.getNamingContext().toString();
+		return namingContext;
+	}
+
+	/**
+	 * @param spd
+	 * @return
+	 */
+	private String resolveService(final SoftPkg spd) {
+		final String namingContext;
+		final NotifyingNamingContext nc = getDevNamingContext(spd);
+		namingContext = nc.getNamingContext().toString();
 		return namingContext;
 	}
 
