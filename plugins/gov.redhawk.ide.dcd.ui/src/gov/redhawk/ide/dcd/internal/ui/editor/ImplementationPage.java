@@ -79,6 +79,7 @@ public class ImplementationPage extends ScaFormPage implements IViewerProvider {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Viewer getViewer() {
 		return this.fBlock.getSection().getStructuredViewerPart().getViewer();
 	}

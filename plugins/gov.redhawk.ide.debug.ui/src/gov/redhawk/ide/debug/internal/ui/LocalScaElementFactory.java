@@ -38,10 +38,12 @@ public class LocalScaElementFactory implements IElementFactory {
 			public IPersistableElement getPersistable() {
 				return new IPersistableElement() {
 
+					@Override
 					public void saveState(final IMemento memento) {
 
 					}
 
+					@Override
 					public String getFactoryId() {
 						return LocalScaElementFactory.ID;
 					}
@@ -53,6 +55,7 @@ public class LocalScaElementFactory implements IElementFactory {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IAdaptable createElement(final IMemento memento) {
 		return LocalScaElementFactory.getLocalScaInput();
 	}

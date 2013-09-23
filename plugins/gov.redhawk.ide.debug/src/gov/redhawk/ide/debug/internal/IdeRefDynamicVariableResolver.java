@@ -20,6 +20,7 @@ import org.eclipse.core.variables.IDynamicVariableResolver;
 import ExtendedCF.Sandbox;
 public class IdeRefDynamicVariableResolver implements IDynamicVariableResolver {
 
+	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		Sandbox sandbox = ScaDebugPlugin.getInstance().getSandbox();
 		if (sandbox != null) {

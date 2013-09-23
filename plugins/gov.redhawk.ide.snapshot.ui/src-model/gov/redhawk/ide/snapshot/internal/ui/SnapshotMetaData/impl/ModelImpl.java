@@ -86,6 +86,7 @@ public class ModelImpl extends EObjectImpl implements Model {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public FeatureMap getMixed() {
 		if (mixed == null)
 		{
@@ -99,6 +100,7 @@ public class ModelImpl extends EObjectImpl implements Model {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public long getNumberOfSamples() {
 		return (Long)getMixed().get(SnapshotMetadataPackage.Literals.MODEL__NUMBER_OF_SAMPLES, true);
 	}
@@ -108,6 +110,7 @@ public class ModelImpl extends EObjectImpl implements Model {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setNumberOfSamples(long newNumberOfSamples) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.MODEL__NUMBER_OF_SAMPLES, newNumberOfSamples);
 	}
@@ -117,6 +120,7 @@ public class ModelImpl extends EObjectImpl implements Model {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void unsetNumberOfSamples() {
 		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.MODEL__NUMBER_OF_SAMPLES);
 	}
@@ -126,6 +130,7 @@ public class ModelImpl extends EObjectImpl implements Model {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isSetNumberOfSamples() {
 		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.MODEL__NUMBER_OF_SAMPLES);
 	}
@@ -135,6 +140,7 @@ public class ModelImpl extends EObjectImpl implements Model {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Time getTime() {
 		return (Time)getMixed().get(SnapshotMetadataPackage.Literals.MODEL__TIME, true);
 	}
@@ -153,6 +159,7 @@ public class ModelImpl extends EObjectImpl implements Model {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setTime(Time newTime) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.MODEL__TIME, newTime);
 	}
@@ -162,6 +169,7 @@ public class ModelImpl extends EObjectImpl implements Model {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getBulkIOType() {
 		return (String)getMixed().get(SnapshotMetadataPackage.Literals.MODEL__BULK_IO_TYPE, true);
 	}
@@ -171,6 +179,7 @@ public class ModelImpl extends EObjectImpl implements Model {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setBulkIOType(String newBulkIOType) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.MODEL__BULK_IO_TYPE, newBulkIOType);
 	}
@@ -180,6 +189,7 @@ public class ModelImpl extends EObjectImpl implements Model {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SRI getStreamSRI() {
 		return (SRI)getMixed().get(SnapshotMetadataPackage.Literals.MODEL__STREAM_SRI, true);
 	}
@@ -198,6 +208,7 @@ public class ModelImpl extends EObjectImpl implements Model {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setStreamSRI(SRI newStreamSRI) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.MODEL__STREAM_SRI, newStreamSRI);
 	}
@@ -207,6 +218,7 @@ public class ModelImpl extends EObjectImpl implements Model {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getDataByteOrder()
 	{
 		return (String)getMixed().get(SnapshotMetadataPackage.Literals.MODEL__DATA_BYTE_ORDER, true);
@@ -217,6 +229,7 @@ public class ModelImpl extends EObjectImpl implements Model {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setDataByteOrder(String newDataByteOrder)
 	{
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.MODEL__DATA_BYTE_ORDER, newDataByteOrder);
@@ -227,6 +240,7 @@ public class ModelImpl extends EObjectImpl implements Model {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void unsetDataByteOrder()
 	{
 		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.MODEL__DATA_BYTE_ORDER);
@@ -237,6 +251,7 @@ public class ModelImpl extends EObjectImpl implements Model {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isSetDataByteOrder()
 	{
 		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.MODEL__DATA_BYTE_ORDER);

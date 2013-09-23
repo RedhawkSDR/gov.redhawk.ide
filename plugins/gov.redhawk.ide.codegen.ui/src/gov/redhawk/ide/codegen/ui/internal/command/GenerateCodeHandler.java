@@ -69,6 +69,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 
+	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 
 		// GenerateCode Class simply takes an object to generate from.  It should be either a list of implementations, an implementation or IFile
@@ -305,6 +306,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 				try {
 					dialog.run(false, true, new IRunnableWithProgress() {
+						@Override
 						public void run(IProgressMonitor monitor) {
 							monitor.beginTask("Saving Resources ...", dirtyPartsSet.size());
 

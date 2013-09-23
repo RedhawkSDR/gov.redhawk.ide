@@ -42,6 +42,7 @@ public class CleanUpGeneratorRunnable implements IWorkspaceRunnable {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void run(final IProgressMonitor monitor) throws CoreException {
 		GeneratorConsole genConsole = null;
 		final IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();

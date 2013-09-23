@@ -50,6 +50,7 @@ public class LibraryContentProvider extends DynamicTransactionalAdapterFactoryCo
 
 	private final IResourceChangeListener resourceListener = new IResourceChangeListener() {
 
+		@Override
 		public void resourceChanged(final IResourceChangeEvent event) {
 			final IResourceDelta delta = event.getDelta();
 			if (delta == null) {

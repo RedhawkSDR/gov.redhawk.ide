@@ -190,6 +190,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getSdrRoot() {
 		return sdrRootEClass;
 	}
@@ -199,6 +200,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSdrRoot_LoadStatus() {
 		return (EAttribute)sdrRootEClass.getEStructuralFeatures().get(0);
 	}
@@ -208,6 +210,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSdrRoot_State() {
 		return (EAttribute)sdrRootEClass.getEStructuralFeatures().get(1);
 	}
@@ -217,6 +220,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getSdrRoot_ComponentsContainer() {
 		return (EReference)sdrRootEClass.getEStructuralFeatures().get(2);
 	}
@@ -226,6 +230,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getSdrRoot_WaveformsContainer() {
 		return (EReference)sdrRootEClass.getEStructuralFeatures().get(3);
 	}
@@ -235,6 +240,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getSdrRoot_DevicesContainer() {
 		return (EReference)sdrRootEClass.getEStructuralFeatures().get(4);
 	}
@@ -244,6 +250,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getSdrRoot_ServicesContainer() {
 		return (EReference)sdrRootEClass.getEStructuralFeatures().get(5);
 	}
@@ -253,6 +260,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getSdrRoot_NodesContainer() {
 		return (EReference)sdrRootEClass.getEStructuralFeatures().get(6);
 	}
@@ -262,6 +270,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getSdrRoot_DomainConfiguration() {
 		return (EReference)sdrRootEClass.getEStructuralFeatures().get(7);
 	}
@@ -271,6 +280,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getSdrRoot_IdlLibrary() {
 		return (EReference)sdrRootEClass.getEStructuralFeatures().get(8);
 	}
@@ -280,6 +290,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSdrRoot_DevFileSystemRoot() {
 		return (EAttribute)sdrRootEClass.getEStructuralFeatures().get(9);
 	}
@@ -289,6 +300,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSdrRoot_DomFileSystemRoot() {
 		return (EAttribute)sdrRootEClass.getEStructuralFeatures().get(10);
 	}
@@ -298,6 +310,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getComponentsContainer() {
 		return componentsContainerEClass;
 	}
@@ -307,6 +320,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getComponentsContainer_SdrRoot() {
 		return (EReference)componentsContainerEClass.getEStructuralFeatures().get(0);
 	}
@@ -316,6 +330,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getWaveformsContainer() {
 		return waveformsContainerEClass;
 	}
@@ -325,6 +340,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getWaveformsContainer_SdrRoot() {
 		return (EReference)waveformsContainerEClass.getEStructuralFeatures().get(0);
 	}
@@ -334,6 +350,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getWaveformsContainer_Waveforms() {
 		return (EReference)waveformsContainerEClass.getEStructuralFeatures().get(1);
 	}
@@ -343,6 +360,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getDevicesContainer() {
 		return devicesContainerEClass;
 	}
@@ -352,6 +370,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getDevicesContainer_SdrRoot() {
 		return (EReference)devicesContainerEClass.getEStructuralFeatures().get(0);
 	}
@@ -361,6 +380,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getServicesContainer() {
 		return servicesContainerEClass;
 	}
@@ -370,6 +390,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getServicesContainer_SdrRoot() {
 		return (EReference)servicesContainerEClass.getEStructuralFeatures().get(0);
 	}
@@ -379,6 +400,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getNodesContainer() {
 		return nodesContainerEClass;
 	}
@@ -388,6 +410,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getNodesContainer_SdrRoot() {
 		return (EReference)nodesContainerEClass.getEStructuralFeatures().get(0);
 	}
@@ -397,6 +420,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getNodesContainer_Nodes() {
 		return (EReference)nodesContainerEClass.getEStructuralFeatures().get(1);
 	}
@@ -406,6 +430,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getStringToAbstractProperty() {
 		return stringToAbstractPropertyEClass;
 	}
@@ -415,6 +440,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getStringToAbstractProperty_Key() {
 		return (EAttribute)stringToAbstractPropertyEClass.getEStructuralFeatures().get(0);
 	}
@@ -424,6 +450,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getStringToAbstractProperty_Value() {
 		return (EReference)stringToAbstractPropertyEClass.getEStructuralFeatures().get(1);
 	}
@@ -433,6 +460,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getPropertyRegistry() {
 		return propertyRegistryEClass;
 	}
@@ -442,6 +470,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getPropertyRegistry_Properties() {
 		return (EReference)propertyRegistryEClass.getEStructuralFeatures().get(0);
 	}
@@ -451,6 +480,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getSoftPkgRegistry() {
 		return softPkgRegistryEClass;
 	}
@@ -460,6 +490,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getSoftPkgRegistry_Components() {
 		return (EReference)softPkgRegistryEClass.getEStructuralFeatures().get(0);
 	}
@@ -469,6 +500,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EEnum getLoadState() {
 		return loadStateEEnum;
 	}
@@ -478,6 +510,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EDataType getIStatus() {
 		return iStatusEDataType;
 	}
@@ -487,6 +520,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SdrFactory getSdrFactory() {
 		return (SdrFactory)getEFactoryInstance();
 	}

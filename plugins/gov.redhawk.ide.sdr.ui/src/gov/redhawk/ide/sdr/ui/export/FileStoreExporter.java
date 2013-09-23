@@ -70,6 +70,7 @@ public class FileStoreExporter implements IScaExporter {
 		this.excludePatterns = new ArrayList<Pattern>(excludePatterns);
 	}
 
+	@Override
 	public void finished() throws IOException {
 		// PASS - nothing needed
 	}
@@ -77,6 +78,7 @@ public class FileStoreExporter implements IScaExporter {
 	private static final int FETCH_WORK = 5;
 	private static final int COPY_WORK = 95;
 
+	@Override
 	public void write(final IResource resource, final IPath destinationPath, final IProgressMonitor monitor) throws IOException, CoreException {
 		final SubMonitor progress = SubMonitor.convert(monitor, FileStoreExporter.FETCH_WORK + FileStoreExporter.FETCH_WORK + FileStoreExporter.COPY_WORK);
 
@@ -145,11 +147,13 @@ public class FileStoreExporter implements IScaExporter {
 		}
 	}
 
+	@Override
 	public void mkdir(final IPath destinationPath, final IProgressMonitor monitor) throws IOException, CoreException {
 		final URI destURI = this.rootURI.resolve(destinationPath.toString());
 		EFS.getStore(destURI).mkdir(EFS.NONE, monitor);
 	}
 
+	@Override
 	public IPath getExportLocation() {
 		return this.rootPath;
 	}

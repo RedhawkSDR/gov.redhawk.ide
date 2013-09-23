@@ -38,6 +38,7 @@ public abstract class AbstractWorkspaceLaunchConfigurationFactory extends Abstra
 		return retVal;
 	}
 
+	@Override
 	public boolean supports(final SoftPkg spd, final String implId) {
 		final URI uri = EcoreUtil.getURI(spd);
 		return uri.isPlatformResource();

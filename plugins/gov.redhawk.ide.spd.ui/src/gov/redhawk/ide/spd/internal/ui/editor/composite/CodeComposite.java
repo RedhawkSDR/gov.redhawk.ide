@@ -145,6 +145,7 @@ public class CodeComposite extends Composite implements IScaComposite {
 		this.codeTypeViewer = new ComboViewer(this, SWT.READ_ONLY | SWT.SINGLE | SWT.DROP_DOWN);
 		this.codeTypeViewer.getCombo().addListener(SWT.MouseVerticalWheel, new Listener() {
 
+			@Override
 			public void handleEvent(Event event) {
 				// Disable Mouse Wheel Combo Box Control
 				event.doit = false;
@@ -230,6 +231,7 @@ public class CodeComposite extends Composite implements IScaComposite {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setEditable(final boolean canEdit) {
 		this.localFile.setEditable(canEdit);
 		this.entryPoint.setEditable(canEdit);

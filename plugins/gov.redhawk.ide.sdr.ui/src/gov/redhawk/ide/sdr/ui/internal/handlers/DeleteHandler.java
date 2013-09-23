@@ -45,10 +45,12 @@ public class DeleteHandler extends AbstractHandler {
 
 	private static class WorkerSchedulingRule implements ISchedulingRule {
 
+		@Override
 		public boolean contains(final ISchedulingRule rule) {
 			return rule == this;
 		}
 
+		@Override
 		public boolean isConflicting(final ISchedulingRule rule) {
 			return contains(rule);
 		}
@@ -57,10 +59,12 @@ public class DeleteHandler extends AbstractHandler {
 
 	private static class LastSchedulingRule implements ISchedulingRule {
 
+		@Override
 		public boolean contains(final ISchedulingRule rule) {
 			return rule == this;
 		}
 
+		@Override
 		public boolean isConflicting(final ISchedulingRule rule) {
 			return contains(rule) || rule instanceof WorkerSchedulingRule;
 		}
@@ -70,6 +74,7 @@ public class DeleteHandler extends AbstractHandler {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getCurrentSelection(event);
 

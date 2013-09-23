@@ -41,6 +41,7 @@ public class ScaResourceProjectPropertiesWizardPage extends ScaProjectProperties
 		/**
 		 * {@inheritDoc}
 		 */
+		@Override
 		public IStatus validate(final Object value) {
 
 			// Project names are always stripped of whitespace

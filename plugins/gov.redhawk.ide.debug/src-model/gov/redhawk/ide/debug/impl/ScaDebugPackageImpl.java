@@ -298,6 +298,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getLocalSca() {
 		return localScaEClass;
 	}
@@ -307,6 +308,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getLocalSca_Waveforms() {
 		return (EReference)localScaEClass.getEStructuralFeatures().get(0);
 	}
@@ -316,6 +318,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getLocalSca_SandboxWaveform() {
 		return (EReference)localScaEClass.getEStructuralFeatures().get(1);
 	}
@@ -325,6 +328,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getLocalSca_SandboxDeviceManager() {
 		return (EReference)localScaEClass.getEStructuralFeatures().get(2);
 	}
@@ -334,6 +338,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getLocalSca_RootContext() {
 		return (EReference)localScaEClass.getEStructuralFeatures().get(3);
 	}
@@ -343,6 +348,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getLocalSca_FileManager() {
 		return (EReference)localScaEClass.getEStructuralFeatures().get(4);
 	}
@@ -352,6 +358,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getLocalSca_Sandbox() {
 		return (EAttribute)localScaEClass.getEStructuralFeatures().get(5);
 	}
@@ -361,6 +368,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getNamingContextExtOperations() {
 		return namingContextExtOperationsEClass;
 	}
@@ -370,6 +378,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getNotifyingNamingContext() {
 		return notifyingNamingContextEClass;
 	}
@@ -379,6 +388,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getNotifyingNamingContext_ObjectMap() {
 		return (EReference)notifyingNamingContextEClass.getEStructuralFeatures().get(0);
 	}
@@ -388,6 +398,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getNotifyingNamingContext_ContextMap() {
 		return (EReference)notifyingNamingContextEClass.getEStructuralFeatures().get(1);
 	}
@@ -397,6 +408,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getNotifyingNamingContext_NamingContext() {
 		return (EAttribute)notifyingNamingContextEClass.getEStructuralFeatures().get(2);
 	}
@@ -406,6 +418,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getNotifyingNamingContext_SubContexts() {
 		return (EReference)notifyingNamingContextEClass.getEStructuralFeatures().get(3);
 	}
@@ -415,6 +428,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getNotifyingNamingContext_ParentContext() {
 		return (EReference)notifyingNamingContextEClass.getEStructuralFeatures().get(4);
 	}
@@ -424,6 +438,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getNotifyingNamingContext_Poa() {
 		return (EAttribute)notifyingNamingContextEClass.getEStructuralFeatures().get(5);
 	}
@@ -433,6 +448,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getNotifyingNamingContext_Name() {
 		return (EAttribute)notifyingNamingContextEClass.getEStructuralFeatures().get(6);
 	}
@@ -442,6 +458,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getNameToObjectEntry() {
 		return nameToObjectEntryEClass;
 	}
@@ -451,6 +468,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getNameToObjectEntry_Key() {
 		return (EAttribute)nameToObjectEntryEClass.getEStructuralFeatures().get(0);
 	}
@@ -460,6 +478,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getNameToObjectEntry_Value() {
 		return (EAttribute)nameToObjectEntryEClass.getEStructuralFeatures().get(1);
 	}
@@ -469,6 +488,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getNameToNamingContextEntry() {
 		return nameToNamingContextEntryEClass;
 	}
@@ -478,6 +498,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getNameToNamingContextEntry_Key() {
 		return (EAttribute)nameToNamingContextEntryEClass.getEStructuralFeatures().get(0);
 	}
@@ -487,6 +508,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getNameToNamingContextEntry_Value() {
 		return (EAttribute)nameToNamingContextEntryEClass.getEStructuralFeatures().get(1);
 	}
@@ -496,6 +518,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getLocalFileManager() {
 		return localFileManagerEClass;
 	}
@@ -505,6 +528,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getLocalLaunch() {
 		return localLaunchEClass;
 	}
@@ -514,6 +538,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getLocalLaunch_Launch() {
 		return (EAttribute)localLaunchEClass.getEStructuralFeatures().get(0);
 	}
@@ -523,6 +548,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getLocalLaunch_Mode() {
 		return (EAttribute)localLaunchEClass.getEStructuralFeatures().get(1);
 	}
@@ -532,6 +558,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getLocalAbstractComponent() {
 		return localAbstractComponentEClass;
 	}
@@ -541,6 +568,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getLocalAbstractComponent_ImplementationID() {
 		return (EAttribute)localAbstractComponentEClass.getEStructuralFeatures().get(0);
 	}
@@ -551,6 +579,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getLocalAbstractComponent_ExecParam() {
 		return (EAttribute)localAbstractComponentEClass.getEStructuralFeatures().get(1);
 	}
@@ -560,6 +589,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getLocalScaWaveform() {
 		return localScaWaveformEClass;
 	}
@@ -569,6 +599,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getLocalScaWaveform_NamingContext() {
 		return (EReference)localScaWaveformEClass.getEStructuralFeatures().get(0);
 	}
@@ -579,6 +610,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getLocalScaWaveform_LocalApp() {
 		return (EAttribute)localScaWaveformEClass.getEStructuralFeatures().get(1);
 	}
@@ -588,6 +620,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getLocalScaComponent() {
 		return localScaComponentEClass;
 	}
@@ -597,6 +630,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getLocalScaDeviceManager() {
 		return localScaDeviceManagerEClass;
 	}
@@ -606,6 +640,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getLocalScaDeviceManager_NamingContext() {
 		return (EReference)localScaDeviceManagerEClass.getEStructuralFeatures().get(0);
 	}
@@ -616,6 +651,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getLocalScaDeviceManager_LocalDeviceManager() {
 		return (EAttribute)localScaDeviceManagerEClass.getEStructuralFeatures().get(1);
 	}
@@ -625,6 +661,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getLocalScaExecutableDevice() {
 		return localScaExecutableDeviceEClass;
 	}
@@ -634,6 +671,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getLocalScaLoadableDevice() {
 		return localScaLoadableDeviceEClass;
 	}
@@ -643,6 +681,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getLocalScaDevice() {
 		return localScaDeviceEClass;
 	}
@@ -652,6 +691,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getLocalScaService() {
 		return localScaServiceEClass;
 	}
@@ -661,6 +701,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EDataType getName_() {
 		return nameEDataType;
 	}
@@ -670,6 +711,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EDataType getNamingContext() {
 		return namingContextEDataType;
 	}
@@ -679,6 +721,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EDataType getILaunch() {
 		return iLaunchEDataType;
 	}
@@ -688,6 +731,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EDataType getNameComponentArray() {
 		return nameComponentArrayEDataType;
 	}
@@ -698,6 +742,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getSandboxOperations() {
 		return sandboxOperationsEClass;
 	}
@@ -708,6 +753,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getSandbox() {
 		return sandboxEClass;
 	}
@@ -717,6 +763,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EDataType getServantNotActive() {
 		return servantNotActiveEDataType;
 	}
@@ -726,6 +773,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EDataType getWrongPolicy() {
 		return wrongPolicyEDataType;
 	}
@@ -735,6 +783,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EDataType getCoreException() {
 		return coreExceptionEDataType;
 	}
@@ -745,6 +794,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EDataType getAttrSandboxOperations() {
 		return attrSandboxOperationsEDataType;
 	}
@@ -755,6 +805,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EDataType getAttrApplicationOperations() {
 		return attrApplicationOperationsEDataType;
 	}
@@ -765,6 +816,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EDataType getAttrDeviceManagerOperations() {
 		return attrDeviceManagerOperationsEDataType;
 	}
@@ -774,6 +826,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ScaDebugFactory getScaDebugFactory() {
 		return (ScaDebugFactory)getEFactoryInstance();
 	}

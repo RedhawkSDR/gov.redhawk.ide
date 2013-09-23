@@ -46,6 +46,7 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 
 	private java.beans.PropertyChangeListener listener = new PropertyChangeListener() {
 
+		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (IResourceFactoryRegistry.PROP_RESOURCES.equals(evt.getPropertyName())) {
 				updatePaletteJob.schedule(500);
@@ -62,6 +63,7 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 			if (root != null) {
 				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
+					@Override
 					public void run() {
 						root.setChildren(tools);
 					}
@@ -163,6 +165,7 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 	private void sort(List<PaletteEntry> entries) {
 		Collections.sort(entries, new Comparator<PaletteEntry>() {
 
+			@Override
 			public int compare(final PaletteEntry o1, final PaletteEntry o2) {
 				final String str1 = o1.getLabel();
 				final String str2 = o2.getLabel();

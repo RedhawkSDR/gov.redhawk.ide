@@ -130,6 +130,7 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 	/**
 	 * @since 7.0
 	 */
+	@Override
 	public void configure(final SoftPkg softPkg, final Implementation impl, final ICodeGeneratorDescriptor desc, final ImplementationSettings implSettings,
 	        final String componentType) {
 		this.softPkg = softPkg;
@@ -228,6 +229,7 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void createControl(final Composite parent) {
 		final Composite client = new Composite(parent, SWT.NULL);
 		client.setLayout(new GridLayout(2, false));
@@ -262,6 +264,7 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 			}
 		});
 		this.templateViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				final ITemplateDesc desc = (ITemplateDesc) ((IStructuredSelection) event.getSelection()).getFirstElement();
 				if (desc != null) {
@@ -450,6 +453,7 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 	 * 
 	 * @return the implSettings
 	 */
+	@Override
 	public ImplementationSettings getSettings() {
 		return this.implSettings;
 	}
@@ -592,6 +596,7 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 			}
 		}
 		mySet.addSetChangeListener(new ISetChangeListener() {
+			@Override
 			public void handleSetChange(final SetChangeEvent event) {
 				final EList<Property> properties = BooleanGeneratorPropertiesWizardPage.this.implSettings.getProperties();
 				for (final Object obj : event.diff.getRemovals()) {
@@ -631,6 +636,7 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 		final EMFUpdateValueStrategy strategy = new EMFUpdateValueStrategy();
 		strategy.setConverter(new Converter(String.class, ITemplateDesc.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return null;
@@ -651,6 +657,7 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy();
 		strategy.setConverter(new Converter(ITemplateDesc.class, String.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return null;
@@ -671,6 +678,7 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 	/**
 	 * @since 3.0
 	 */
+	@Override
 	public boolean canFinish() {
 		return this.canFinish;
 	}
@@ -678,6 +686,7 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 	/**
 	 * @since 3.0
 	 */
+	@Override
 	public void setCanFlipToNextPage(final boolean canFlip) {
 		this.canFlip = canFlip;
 	}
@@ -685,6 +694,7 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 	/**
 	 * @since 3.0
 	 */
+	@Override
 	public void setCanFinish(final boolean canFinish) {
 		this.canFinish = canFinish;
 	}

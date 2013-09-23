@@ -39,6 +39,7 @@ public class BinXMLDataWriter extends BinDataWriter {
 	static final String SNAPSHOT_FILE_EXENSION = ".bin";
 	private static final String METADATA_FILE_EXENSION = "xml";
 
+	@Override
 	protected void saveMetaData() throws IOException {
 		Model metaInfo = SnapshotMetadataFactory.eINSTANCE.createModel();
 		int divisor = (getSRI().mode == 1) ? 2 : 1;
@@ -83,6 +84,7 @@ public class BinXMLDataWriter extends BinDataWriter {
 		return METADATA_FILE_EXENSION;
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public List<File> getOutputFileList() {
 		return Arrays.asList(new File[] {

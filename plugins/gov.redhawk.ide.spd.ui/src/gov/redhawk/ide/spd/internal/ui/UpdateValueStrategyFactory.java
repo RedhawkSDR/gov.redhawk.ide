@@ -38,6 +38,7 @@ public class UpdateValueStrategyFactory {
 		final EMFUpdateValueStrategy strategy = new EMFUpdateValueStrategy();
 		strategy.setConverter(new Converter(PropertyFile.class, String.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return "";
@@ -67,6 +68,7 @@ public class UpdateValueStrategyFactory {
 		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy();
 		strategy.setConverter(new Converter(String.class, PropertyFile.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return null;
@@ -96,6 +98,7 @@ public class UpdateValueStrategyFactory {
 		final EMFUpdateValueStrategy strategy = new EMFUpdateValueStrategy();
 		strategy.setConverter(new Converter(Descriptor.class, String.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return "";
@@ -125,6 +128,7 @@ public class UpdateValueStrategyFactory {
 		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy();
 		strategy.setConverter(new Converter(String.class, Descriptor.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return null;

@@ -34,18 +34,22 @@ public class GeneratorArgs extends GeneratorArgsBase {
 		return this.getProperty(SOFTPKG_NAME_KEY);
 	}
 
+	@Override
 	public void setSoftPkgFile(final String softPkgFile) {
 		this.setProperty(SOFTPKG_FILE_KEY, softPkgFile);
 	}
 
+	@Override
 	public String getSoftPkgFile() {
 		return this.getProperty(SOFTPKG_FILE_KEY);
 	}
 	
+	@Override
 	public void setSoftPkgId(final String softPkgFile) {
 		this.setProperty(SOFTPKG_ID_KEY, softPkgFile);
 	}
 
+	@Override
 	public String getSoftPkgId() {
 		return this.getProperty(SOFTPKG_ID_KEY);
 	}

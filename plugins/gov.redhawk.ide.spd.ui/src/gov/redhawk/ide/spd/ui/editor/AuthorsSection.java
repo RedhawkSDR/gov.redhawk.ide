@@ -108,6 +108,7 @@ public class AuthorsSection extends ScaSection {
 		});
 		this.client.getAuthorsViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				setSelection(event.getSelection());
 			}

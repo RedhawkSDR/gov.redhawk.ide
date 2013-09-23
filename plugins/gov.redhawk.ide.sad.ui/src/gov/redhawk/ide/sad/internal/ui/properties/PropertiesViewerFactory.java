@@ -88,6 +88,7 @@ public class PropertiesViewerFactory extends XViewerFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.nebula.widgets.xviewer.IXViewerFactory#isAdmin()
 	 */
+	@Override
 	public boolean isAdmin() {
 		return false;
 	}

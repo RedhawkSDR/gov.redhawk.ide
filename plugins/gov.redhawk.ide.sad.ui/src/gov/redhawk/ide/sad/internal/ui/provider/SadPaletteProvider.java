@@ -152,6 +152,7 @@ public class SadPaletteProvider extends DefaultPaletteProvider {
 		top.removeAll(childrenToSort);
 		Collections.sort(childrenToSort, new Comparator<PaletteEntry>() {
 
+			@Override
 			public int compare(final PaletteEntry o1, final PaletteEntry o2) {
 				final String str1 = o1.getLabel();
 				final String str2 = o2.getLabel();

@@ -379,6 +379,7 @@ public class ExportUtils {
 
 					final boolean[] shouldExport = { false };
 					Display.getDefault().syncExec(new Runnable() {
+						@Override
 						public void run() {
 							shouldExport[0] = MessageDialog.openQuestion(null, "File does not exist", "The file '" 
 						+ localFileName + "' " + inProjStr + "does not exist, export implementation anyway?");
@@ -394,6 +395,7 @@ public class ExportUtils {
 		} else {
 			final boolean[] shouldExport = { false };
 			Display.getDefault().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					shouldExport[0] = MessageDialog.openQuestion(null, "No Implementations Found", 
 							"No Implementations were found in " + projectName + ", export anyway?");
@@ -538,6 +540,7 @@ public class ExportUtils {
 		if (maxSeverity == IMarker.SEVERITY_ERROR) {
 			final boolean[] continueExport = { true };
 			Display.getDefault().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					continueExport[0] = MessageDialog.openQuestion(null, "Project has errors", "Project '" + proj.getName() + "' has errors. Export anyway?");
 				}

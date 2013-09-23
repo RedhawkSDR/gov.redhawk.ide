@@ -54,6 +54,7 @@ public class ScaWaveformProjectAssemblyControllerWizardPage extends WizardPage {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void createControl(final Composite parent) {
 		// The top-level composite for this page
 		final Composite composite = new Composite(parent, SWT.NONE);
@@ -105,6 +106,7 @@ public class ScaWaveformProjectAssemblyControllerWizardPage extends WizardPage {
 		this.components = new ArrayList<SoftPkg>(components);
 
 		Collections.sort(this.components, new Comparator<SoftPkg>() {
+			@Override
 			public int compare(final SoftPkg o1, final SoftPkg o2) {
 				final String s1 = o1.getName();
 				final String s2 = o2.getName();

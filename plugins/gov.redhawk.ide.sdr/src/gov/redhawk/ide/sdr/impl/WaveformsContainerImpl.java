@@ -79,6 +79,7 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SdrRoot getSdrRoot() {
 		if (eContainerFeatureID() != SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT) return null;
 		return (SdrRoot)eInternalContainer();
@@ -120,6 +121,7 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<SoftwareAssembly> getWaveforms() {
 		if (waveforms == null) {
 			waveforms = new EObjectResolvingEList<SoftwareAssembly>(SoftwareAssembly.class, this, SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS);

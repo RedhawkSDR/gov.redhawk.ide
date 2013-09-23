@@ -73,6 +73,7 @@ public class ContentsGroup {
 		this.fileText.setEnabled(false);
 		this.fileText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(final ModifyEvent e) {
 				page.validate();
 			}

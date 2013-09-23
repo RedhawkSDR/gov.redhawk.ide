@@ -38,6 +38,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public class RecreateSettingsHandler extends AbstractHandler implements IHandler {
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getSelectionService().getSelection();
 

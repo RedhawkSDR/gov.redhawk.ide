@@ -102,6 +102,7 @@ public abstract class AbstractPropertiesTab extends AbstractLaunchConfigurationT
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void createControl(final Composite parent) {
 		final Composite main = new Composite(parent, SWT.None);
 		main.setLayout(new GridLayout());
@@ -129,6 +130,7 @@ public abstract class AbstractPropertiesTab extends AbstractLaunchConfigurationT
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setDefaults(final ILaunchConfigurationWorkingCopy configuration) {
 		if (this.component != null) {
 			for (final ScaAbstractProperty< ? > prop : this.component.getProperties()) {
@@ -140,6 +142,7 @@ public abstract class AbstractPropertiesTab extends AbstractLaunchConfigurationT
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void initializeFrom(final ILaunchConfiguration configuration) {
 		this.configuration = configuration;
 		final SoftPkg spd = loadProfile(configuration);
@@ -151,6 +154,7 @@ public abstract class AbstractPropertiesTab extends AbstractLaunchConfigurationT
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void performApply(final ILaunchConfigurationWorkingCopy configuration) {
 		if (this.component != null) {
 			ScaLaunchConfigurationUtil.saveProperties(configuration, this.component);
@@ -160,6 +164,7 @@ public abstract class AbstractPropertiesTab extends AbstractLaunchConfigurationT
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getName() {
 		return "&Properties";
 	}

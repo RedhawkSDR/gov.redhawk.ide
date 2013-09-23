@@ -42,6 +42,7 @@ import org.eclipse.ui.progress.UIJob;
 
 public class LaunchDeviceManager extends AbstractHandler implements IHandler {
 
+	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
 		final Map<DeviceConfiguration, Integer> domainMap = new HashMap<DeviceConfiguration, Integer>();

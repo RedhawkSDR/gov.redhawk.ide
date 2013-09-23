@@ -37,6 +37,7 @@ public class ContainsTypePropertyTester extends PropertyTester {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (receiver instanceof IFile) {
 			IFile file = (IFile) receiver;

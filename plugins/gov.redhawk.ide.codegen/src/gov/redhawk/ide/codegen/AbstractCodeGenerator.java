@@ -13,13 +13,10 @@ package gov.redhawk.ide.codegen;
 
 import gov.redhawk.model.sca.util.ModelUtil;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +30,6 @@ import mil.jpeojtrs.sca.spd.Code;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
-import org.apache.commons.io.CopyUtils;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -49,16 +45,20 @@ import org.eclipse.core.runtime.Status;
  */
 public abstract class AbstractCodeGenerator implements IScaComponentCodegen {
 
+	@Override
 	public abstract IStatus cleanupSourceFolders(IProject project, IProgressMonitor monitor);
 
+	@Override
 	public abstract IStatus generate(ImplementationSettings implSettings, Implementation impl, PrintStream out, PrintStream err, IProgressMonitor monitor, // SUPPRESS CHECKSTYLE NumParameters
 	        String[] generateFiles, boolean shouldGenerate, List<FileToCRCMap> crcMap);
 
 	/**
 	 * @since 9.0
 	 */
+	@Override
 	public abstract Code getInitialCodeSettings(SoftPkg softPkg, ImplementationSettings settings, Implementation impl);
 
+	@Override
 	public abstract boolean shouldGenerate();
 
 	/**
@@ -158,6 +158,7 @@ public abstract class AbstractCodeGenerator implements IScaComponentCodegen {
 		return project.getFile(new Path(defaultFilename));
 	}
 
+	@Override
 	public IFile getDefaultFile(final Implementation impl, final ImplementationSettings implSettings) {
 		final ITemplateDesc template = CodegenUtil.getTemplate(implSettings.getTemplate(), implSettings.getGeneratorId());
 		IFile file = null;

@@ -226,10 +226,12 @@ public class DevicesDetailsPage extends ScaDetails {
 
 		this.deviceComposite.getParentViewer().getCombo().addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(final SelectionEvent e) {
 				DevicesDetailsPage.this.deviceComposite.getUnsetParentButton().setEnabled(true);
 			}
 
+			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				DevicesDetailsPage.this.deviceComposite.getUnsetParentButton().setEnabled(true);
 			}
@@ -257,6 +259,7 @@ public class DevicesDetailsPage extends ScaDetails {
 
 		strategy.setConverter(new Converter(DcdComponentPlacement.class, CompositePartOfDevice.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject == null) {
 					return null;
@@ -278,6 +281,7 @@ public class DevicesDetailsPage extends ScaDetails {
 		final EMFUpdateValueStrategy strategy = new EMFUpdateValueStrategy();
 		strategy.setConverter(new Converter(CompositePartOfDevice.class, DcdComponentPlacement.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if ((fromObject == null) || (DevicesDetailsPage.this.input == null)) {
 					return null;

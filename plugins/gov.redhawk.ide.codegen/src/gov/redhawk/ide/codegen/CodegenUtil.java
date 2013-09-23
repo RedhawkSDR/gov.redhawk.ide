@@ -294,6 +294,7 @@ public class CodegenUtil {
 	 * @since 7.0
 	 * @deprecated Preserved for 1.8 codegen projects only. Does not apply to 1.9 and future.
 	 */
+	@Deprecated
 	public static void addTopLevelBuildScriptBuilder(final IProject project, final IProgressMonitor progress) throws CoreException {
 		if (project.hasNature(ScaComponentProjectNature.ID)) {
 			final IProjectDescription desc = project.getDescription();

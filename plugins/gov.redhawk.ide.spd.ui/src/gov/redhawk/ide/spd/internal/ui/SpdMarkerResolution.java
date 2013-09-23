@@ -95,6 +95,7 @@ public class SpdMarkerResolution extends WorkbenchMarkerResolution {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getDescription() {
 		return "Missing event port for property events.";
 	}
@@ -102,6 +103,7 @@ public class SpdMarkerResolution extends WorkbenchMarkerResolution {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Image getImage() {
 		// TODO Auto-generated method stub
 		return null;
@@ -110,6 +112,7 @@ public class SpdMarkerResolution extends WorkbenchMarkerResolution {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLabel() {
 		return "Add event port";
 	}
@@ -117,6 +120,7 @@ public class SpdMarkerResolution extends WorkbenchMarkerResolution {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void run(final IMarker marker) {
 		final String uri = marker.getAttribute(EValidator.URI_ATTRIBUTE, null);
 		if (uri != null) {
@@ -177,6 +181,7 @@ public class SpdMarkerResolution extends WorkbenchMarkerResolution {
 			try {
 				final IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 
+					@Override
 					public void run(final IProgressMonitor monitor) throws CoreException {
 						try {
 							resource.save(null);

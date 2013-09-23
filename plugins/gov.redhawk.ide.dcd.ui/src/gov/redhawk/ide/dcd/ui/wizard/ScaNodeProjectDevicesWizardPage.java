@@ -50,6 +50,7 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void createControl(final Composite parent) {
 		// The top-level composite for this page
 		final Composite composite = new Composite(parent, SWT.NONE);
@@ -84,6 +85,7 @@ public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 		});
 		this.tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(final DoubleClickEvent event) {
 				final StructuredSelection ss = (StructuredSelection) event.getSelection();
 				final SoftPkg selected = (SoftPkg) ss.getFirstElement();

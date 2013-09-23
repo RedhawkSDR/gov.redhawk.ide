@@ -154,6 +154,7 @@ public class DependencyWizardPage extends WizardPage {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void createControl(final Composite parent) {
 
 		// Create an adapter factory that yields item providers.
@@ -177,6 +178,7 @@ public class DependencyWizardPage extends WizardPage {
 		});
 		dependencyKindCombo.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(final ModifyEvent e) {
 				if (dependencyKindCombo.getSelectionIndex() == 0) {
 					if (DependencyWizardPage.this.dependency.getPropertyRef() == null) {
@@ -236,6 +238,7 @@ public class DependencyWizardPage extends WizardPage {
 			super(SoftPkgRef.class, EObject.class);
 		}
 
+		@Override
 		public Object convert(final Object fromObject) {
 			if (fromObject instanceof SoftPkgRef) {
 				final SoftPkgRef ref = ((SoftPkgRef) fromObject);
@@ -256,6 +259,7 @@ public class DependencyWizardPage extends WizardPage {
 			super(EObject.class, SoftPkgRef.class);
 		}
 
+		@Override
 		public Object convert(final Object fromObject) {
 			SoftPkgRef ref = null;
 			if (fromObject instanceof Implementation) {
@@ -298,6 +302,7 @@ public class DependencyWizardPage extends WizardPage {
 			private final ImplementationDetailsSectionPropertyRefItemProvider itemPropertyRefItemProvider = new ImplementationDetailsSectionPropertyRefItemProvider(
 				DependencyWizardPage.this.adapterFactory);
 
+			@Override
 			public Object convert(final Object fromObject) {
 				final AbstractProperty prop = this.itemPropertyRefItemProvider.getProperty(DependencyWizardPage.this.dependency.getPropertyRef());
 				if (prop == null) {
@@ -341,6 +346,7 @@ public class DependencyWizardPage extends WizardPage {
 		this.softPkgRefViewer = new TreeViewer(this.softPkgRefGroup, SWT.FULL_SELECTION | SWT.SINGLE);
 		this.softPkgRefViewer.setComparer(new IElementComparer() {
 
+			@Override
 			public int hashCode(final Object element) {
 				if (element instanceof EObject) {
 					final String id = EcoreUtil.getID((EObject) element);
@@ -351,6 +357,7 @@ public class DependencyWizardPage extends WizardPage {
 				return element.hashCode();
 			}
 
+			@Override
 			public boolean equals(final Object a, final Object b) {
 				if (a instanceof EObject && b instanceof EObject) {
 					final String ida = EcoreUtil.getID((EObject) a);

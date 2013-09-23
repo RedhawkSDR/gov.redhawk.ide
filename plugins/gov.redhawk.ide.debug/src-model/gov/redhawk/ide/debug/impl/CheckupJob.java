@@ -73,6 +73,7 @@ public class CheckupJob extends Job {
 		if (!itemsToRemove.isEmpty()) {
 			ScaModelCommand.execute(this.container, new ScaModelCommand() {
 	
+				@Override
 				public void execute() {
 					for (final EObject obj : itemsToRemove) {
 						EcoreUtil.delete(obj);

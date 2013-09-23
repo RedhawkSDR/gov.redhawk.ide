@@ -50,6 +50,7 @@ public class SdrFileSystem extends FileSystem implements IExecutableExtension {
 		return new SdrWrappedFileStore(uri, this.rootStore.getFileStore(new Path(uri.getPath())));
 	}
 
+	@Override
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		final String scheme = config.getAttribute("scheme");
 		IPath path = null;

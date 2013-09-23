@@ -83,6 +83,7 @@ public class ImplementationsBlock extends SCAMasterDetailsBlock {
 		detailsPart.registerPage(SoftPkgRef.class, new SoftPkgRefDetailsPage(this.fSection));
 		detailsPart.setPageProvider(new IDetailsPageProvider() {
 
+			@Override
 			public Object getPageKey(final Object object) {
 				if (object instanceof Implementation) {
 					return Implementation.class;
@@ -98,6 +99,7 @@ public class ImplementationsBlock extends SCAMasterDetailsBlock {
 				return null;
 			}
 
+			@Override
 			public IDetailsPage getPage(final Object key) {
 				return null;
 			}

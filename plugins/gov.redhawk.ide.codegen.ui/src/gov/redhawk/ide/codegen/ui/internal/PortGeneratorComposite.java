@@ -204,6 +204,7 @@ public class PortGeneratorComposite extends Composite implements IScaComposite {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setEditable(final boolean canEdit) {
 		this.portMapViewer.getTable().setEnabled(canEdit);
 	}

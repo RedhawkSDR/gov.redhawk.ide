@@ -257,6 +257,7 @@ public class ImplementationComposite extends Composite implements IScaComposite 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setEditable(final boolean editable) {
 		this.descriptionEntry.setEditable(editable);
 		this.idEntry.setEditable(editable);

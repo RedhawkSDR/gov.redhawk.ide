@@ -158,6 +158,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return launch;
 	}
@@ -167,6 +168,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setLaunch(ILaunch newLaunch) {
 		ILaunch oldLaunch = launch;
 		launch = newLaunch;
@@ -179,6 +181,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getMode() {
 		return mode;
 	}
@@ -188,6 +191,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setMode(String newMode) {
 		String oldMode = mode;
 		mode = newMode;
@@ -200,6 +204,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public NotifyingNamingContext getNamingContext() {
 		if (namingContext != null && namingContext.eIsProxy()) {
 			InternalEObject oldNamingContext = (InternalEObject)namingContext;
@@ -226,6 +231,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setNamingContext(NotifyingNamingContext newNamingContext) {
 		NotifyingNamingContext oldNamingContext = namingContext;
 		namingContext = newNamingContext;
@@ -239,6 +245,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public DeviceManagerOperations getLocalDeviceManager() {
 		return localDeviceManager;
 	}
@@ -282,6 +289,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public void setLocalDeviceManager(final DeviceManagerOperations impl) {
 		// END GENERATED CODE
 		setLocalDeviceManagerGen(impl);
@@ -476,6 +484,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 		if (this == ScaDebugPlugin.getInstance().getLocalSca().getSandboxDeviceManager()) {
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 				
+				@Override
 				public void execute() {
 					getDevices().clear();
 				}

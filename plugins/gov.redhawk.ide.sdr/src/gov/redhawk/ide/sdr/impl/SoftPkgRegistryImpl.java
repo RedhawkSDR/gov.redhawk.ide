@@ -81,6 +81,7 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<SoftPkg> getComponents() {
 		if (components == null) {
 			components = new EObjectResolvingEList<SoftPkg>(SoftPkg.class, this, SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS);
@@ -92,6 +93,7 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 
 	private Adapter mapAdapter = new AdapterImpl() {
 		// END GENERATED CODE
+		@Override
 		public void notifyChanged(org.eclipse.emf.common.notify.Notification msg) {
 			switch (msg.getFeatureID(SoftPkgRegistry.class)) {
 			case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
@@ -193,6 +195,7 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public SoftPkg getSoftPkg(String softPkgId) {
 		// END GENERATED CODE
 		if (softPkgId != null) {

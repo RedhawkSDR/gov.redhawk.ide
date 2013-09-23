@@ -96,6 +96,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public FeatureMap getMixed() {
 		if (mixed == null)
 		{
@@ -109,6 +110,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getHversion() {
 		return (Integer)getMixed().get(SnapshotMetadataPackage.Literals.SRI__HVERSION, true);
 	}
@@ -118,6 +120,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setHversion(int newHversion) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__HVERSION, newHversion);
 	}
@@ -127,6 +130,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void unsetHversion() {
 		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__HVERSION);
 	}
@@ -136,6 +140,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isSetHversion() {
 		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__HVERSION);
 	}
@@ -145,6 +150,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public double getXstart() {
 		return (Double)getMixed().get(SnapshotMetadataPackage.Literals.SRI__XSTART, true);
 	}
@@ -154,6 +160,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setXstart(double newXstart) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__XSTART, newXstart);
 	}
@@ -163,6 +170,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void unsetXstart() {
 		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__XSTART);
 	}
@@ -172,6 +180,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isSetXstart() {
 		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__XSTART);
 	}
@@ -181,6 +190,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public double getXdelta() {
 		return (Double)getMixed().get(SnapshotMetadataPackage.Literals.SRI__XDELTA, true);
 	}
@@ -190,6 +200,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setXdelta(double newXdelta) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__XDELTA, newXdelta);
 	}
@@ -199,6 +210,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void unsetXdelta() {
 		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__XDELTA);
 	}
@@ -208,6 +220,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isSetXdelta() {
 		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__XDELTA);
 	}
@@ -217,6 +230,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public short getXunits() {
 		return (Short)getMixed().get(SnapshotMetadataPackage.Literals.SRI__XUNITS, true);
 	}
@@ -226,6 +240,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setXunits(short newXunits) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__XUNITS, newXunits);
 	}
@@ -235,6 +250,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void unsetXunits() {
 		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__XUNITS);
 	}
@@ -244,6 +260,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isSetXunits() {
 		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__XUNITS);
 	}
@@ -253,6 +270,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public double getSubsize() {
 		return (Double)getMixed().get(SnapshotMetadataPackage.Literals.SRI__SUBSIZE, true);
 	}
@@ -262,6 +280,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setSubsize(double newSubsize) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__SUBSIZE, newSubsize);
 	}
@@ -271,6 +290,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void unsetSubsize() {
 		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__SUBSIZE);
 	}
@@ -280,6 +300,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isSetSubsize() {
 		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__SUBSIZE);
 	}
@@ -289,6 +310,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public double getYstart() {
 		return (Double)getMixed().get(SnapshotMetadataPackage.Literals.SRI__YSTART, true);
 	}
@@ -298,6 +320,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setYstart(double newYstart) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__YSTART, newYstart);
 	}
@@ -307,6 +330,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void unsetYstart() {
 		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__YSTART);
 	}
@@ -316,6 +340,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isSetYstart() {
 		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__YSTART);
 	}
@@ -325,6 +350,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public double getYdelta() {
 		return (Double)getMixed().get(SnapshotMetadataPackage.Literals.SRI__YDELTA, true);
 	}
@@ -334,6 +360,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setYdelta(double newYdelta) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__YDELTA, newYdelta);
 	}
@@ -343,6 +370,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void unsetYdelta() {
 		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__YDELTA);
 	}
@@ -352,6 +380,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isSetYdelta() {
 		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__YDELTA);
 	}
@@ -361,6 +390,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public short getYunits() {
 		return (Short)getMixed().get(SnapshotMetadataPackage.Literals.SRI__YUNITS, true);
 	}
@@ -370,6 +400,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setYunits(short newYunits) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__YUNITS, newYunits);
 	}
@@ -379,6 +410,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void unsetYunits() {
 		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__YUNITS);
 	}
@@ -388,6 +420,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isSetYunits() {
 		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__YUNITS);
 	}
@@ -397,6 +430,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public short getMode() {
 		return (Short)getMixed().get(SnapshotMetadataPackage.Literals.SRI__MODE, true);
 	}
@@ -406,6 +440,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setMode(short newMode) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__MODE, newMode);
 	}
@@ -415,6 +450,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void unsetMode() {
 		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__MODE);
 	}
@@ -424,6 +460,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isSetMode() {
 		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__MODE);
 	}
@@ -433,6 +470,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getStreamID() {
 		return (String)getMixed().get(SnapshotMetadataPackage.Literals.SRI__STREAM_ID, true);
 	}
@@ -442,6 +480,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setStreamID(String newStreamID) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__STREAM_ID, newStreamID);
 	}
@@ -451,6 +490,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isBlocking() {
 		return (Boolean)getMixed().get(SnapshotMetadataPackage.Literals.SRI__BLOCKING, true);
 	}
@@ -460,6 +500,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setBlocking(boolean newBlocking) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__BLOCKING, newBlocking);
 	}
@@ -469,6 +510,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void unsetBlocking() {
 		((FeatureMap.Internal)getMixed()).clear(SnapshotMetadataPackage.Literals.SRI__BLOCKING);
 	}
@@ -478,6 +520,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isSetBlocking() {
 		return !((FeatureMap.Internal)getMixed()).isEmpty(SnapshotMetadataPackage.Literals.SRI__BLOCKING);
 	}
@@ -487,6 +530,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public KeywordsType getKeywords() {
 		return (KeywordsType)getMixed().get(SnapshotMetadataPackage.Literals.SRI__KEYWORDS, true);
 	}
@@ -505,6 +549,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setKeywords(KeywordsType newKeywords) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__KEYWORDS, newKeywords);
 	}

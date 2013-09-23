@@ -70,6 +70,7 @@ public enum ScaDebugInstance {
 		this.localSca = (LocalScaImpl) ScaDebugFactory.eINSTANCE.createLocalSca();
 		editingDomain.getCommandStack().execute(new ScaModelCommand() {
 
+			@Override
 			public void execute() {
 				resource.getContents().add(ScaDebugInstance.this.localSca);
 			}
@@ -104,6 +105,7 @@ public enum ScaDebugInstance {
 
 		editingDomain.getCommandStack().execute(new ScaModelCommand() {
 
+			@Override
 			public void execute() {
 				final NotifyingNamingContext rootContext = createRootContext(poa);
 				final LocalScaWaveform sandboxWaveformRef = createSandboxWaveform(editingDomain.getResourceSet(), rootContext);

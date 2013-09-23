@@ -16,6 +16,7 @@ package gov.redhawk.ide.internal.ui.templates;
  */
 public abstract class BaseControlPanelTemplate extends ScaTemplateSection {
 
+	@Override
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.editors"; //$NON-NLS-1$
 	}

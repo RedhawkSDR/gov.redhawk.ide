@@ -38,6 +38,7 @@ public class SpdCategory implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getName() {
 		return this.softPkg.getName();
 	}
@@ -45,6 +46,7 @@ public class SpdCategory implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Category> getCategories() {
 		return Collections.emptyList();
 	}
@@ -52,6 +54,7 @@ public class SpdCategory implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Properties> getProperties() {
 		Properties properties = ScaEcoreUtils.getFeature(softPkg, PATH);
 		if (properties == null) {
@@ -68,6 +71,7 @@ public class SpdCategory implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean containsProperty(final EObject obj) {
 		Properties properties = ScaEcoreUtils.getFeature(softPkg, PATH);
 		if (properties != null && obj != null) {

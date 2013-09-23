@@ -79,6 +79,7 @@ public abstract class LocalAbstractMainTab extends AbstractLaunchConfigurationTa
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void createControl(final Composite parent) {
 		// create the top level composite for the dialog area
 		final Composite composite = new Composite(parent, SWT.NONE);
@@ -138,6 +139,7 @@ public abstract class LocalAbstractMainTab extends AbstractLaunchConfigurationTa
 		this.profileText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.profileText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(final ModifyEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -164,6 +166,7 @@ public abstract class LocalAbstractMainTab extends AbstractLaunchConfigurationTa
 		try {
 			ResourcesPlugin.getWorkspace().getRoot().accept(new IResourceVisitor() {
 
+				@Override
 				public boolean visit(final IResource resource) throws CoreException {
 					if (resource instanceof IContainer) {
 						return true;
@@ -193,6 +196,7 @@ public abstract class LocalAbstractMainTab extends AbstractLaunchConfigurationTa
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setDefaults(final ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
 		configuration.setAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, (String) null);
@@ -202,6 +206,7 @@ public abstract class LocalAbstractMainTab extends AbstractLaunchConfigurationTa
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void initializeFrom(final ILaunchConfiguration configuration) {
 		updateProfileText(configuration);
 		updateStartButton(configuration);
@@ -242,6 +247,7 @@ public abstract class LocalAbstractMainTab extends AbstractLaunchConfigurationTa
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void performApply(final ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(ScaLaunchConfigurationConstants.ATT_START, this.startButton.getSelection());
 		configuration.setAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, this.profileText.getText());
@@ -282,6 +288,7 @@ public abstract class LocalAbstractMainTab extends AbstractLaunchConfigurationTa
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getName() {
 		return "&Main";
 	}

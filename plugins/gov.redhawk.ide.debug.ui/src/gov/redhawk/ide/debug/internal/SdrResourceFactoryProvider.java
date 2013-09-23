@@ -136,6 +136,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			this.serviceListener = new SPDListener();
 			ScaModelCommand.execute(this.root, new ScaModelCommand() {
 
+				@Override
 				public void execute() {
 					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getComponentsContainer().getComponents()) {
 						addResource(spd, new SpdResourceFactory(spd));
@@ -176,6 +177,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void dispose() {
 		Job.getJobManager().beginRule(RULE, null);
 		try {

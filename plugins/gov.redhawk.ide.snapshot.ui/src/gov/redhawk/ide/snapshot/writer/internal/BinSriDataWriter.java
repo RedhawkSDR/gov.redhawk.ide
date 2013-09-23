@@ -37,6 +37,7 @@ public class BinSriDataWriter extends BinDataWriter {
 	private PrecisionUTCTime endTime;
 	private Date startDate;
 
+	@SuppressWarnings("null")
 	@Override
 	public List<File> getOutputFileList() {
 		return Arrays.asList(new File[] { getFileDestination(), getMetaDataFile() });

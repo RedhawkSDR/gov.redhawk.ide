@@ -181,6 +181,7 @@ public class GeneratorDialog extends Dialog {
 		this.repIdViewer.getCombo().setEnabled(this.value == null);
 		this.repIdViewer.getCombo().addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(final ModifyEvent e) {
 				final String key = GeneratorDialog.this.repIdViewer.getCombo().getText();
 				IPortTemplateDesc gen = null;
@@ -228,10 +229,12 @@ public class GeneratorDialog extends Dialog {
 		this.generatorViewer = new ComboViewer(composite, getInputTextStyle() | SWT.READ_ONLY);
 		this.generatorViewer.getCombo().addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(final SelectionEvent e) {
 				widgetSelected(e);
 			}
 
+			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final IPortTemplateDesc gen = (IPortTemplateDesc) ((IStructuredSelection) GeneratorDialog.this.generatorViewer.getSelection())
 				        .getFirstElement();

@@ -62,6 +62,7 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SdrRoot getSdrRoot() {
 		if (eContainerFeatureID() != SdrPackage.SERVICES_CONTAINER__SDR_ROOT) return null;
 		return (SdrRoot)eInternalContainer();

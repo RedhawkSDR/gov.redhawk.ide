@@ -114,6 +114,7 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectProp
 		context.bindValue(WidgetProperties.selection().observe(aggregateButton), PojoProperties.value("aggregate").observe(this.deviceProjSettings));
 		deviceTypeCombo.addDisposeListener(new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if (context != null) {
 					context.dispose();
@@ -138,6 +139,7 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectProp
 		super.createContentsGroup(parent);
 		getContentsGroup().getImportFileButton().addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (getContentsGroup().getImportFileButton().getSelection()) {
 					deviceGroup.setEnabled(false);
@@ -152,6 +154,7 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectProp
 				}
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
 

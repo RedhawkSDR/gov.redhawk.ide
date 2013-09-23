@@ -48,6 +48,7 @@ public class SCABuilder extends IncrementalProjectBuilder {
 
 		private boolean shouldVisit = false;
 
+		@Override
 		public boolean visit(final IResourceDelta delta) throws CoreException {
 			if (this.shouldVisit) {
 				return false;
@@ -75,6 +76,7 @@ public class SCABuilder extends IncrementalProjectBuilder {
 
 	private class SCABuildVisitor implements IResourceVisitor {
 
+		@Override
 		public boolean visit(final IResource resource) throws CoreException {
 			if (resource instanceof IProject) {
 				return isInterestingProject((IProject) resource);

@@ -43,6 +43,7 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		ISelection sel = HandlerUtil.getActiveMenuSelection(event);
 		if (sel == null) {
@@ -82,6 +83,7 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 	private void terminate(final LocalLaunch localLaunch) {
 		ScaModelCommand.execute(localLaunch, new ScaModelCommand() {
 
+			@Override
 			public void execute() {
 				EcoreUtil.delete(localLaunch);
 			}

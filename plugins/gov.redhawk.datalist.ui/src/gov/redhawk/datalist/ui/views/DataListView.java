@@ -444,11 +444,13 @@ public class DataListView extends ViewPart {
 			this.buffer = null;
 		}
 		try {
-			type = BulkIOType.getType(port.getRepid());
-			this.buffer = new DataBuffer(port, type);
+			BulkIOType newType = BulkIOType.getType(port.getRepid());
+
+			this.buffer = new DataBuffer(port, newType);
 			this.buffer.addDataBufferListener(this.listener);
 
-			this.dataCourier.setType(type);
+			this.type = newType;
+			this.dataCourier.setType(newType);
 			if (this.viewer != null) {
 				this.viewer.setInput(this.buffer);
 			}

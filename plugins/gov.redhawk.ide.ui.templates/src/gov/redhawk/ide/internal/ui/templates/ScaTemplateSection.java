@@ -77,6 +77,7 @@ public abstract class ScaTemplateSection extends OptionTemplateSection {
 	 * 
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
 	 */
+	@Override
 	public String[] getNewFiles() {
 		return EMPTY_STRINGS_ARRAY;
 	}

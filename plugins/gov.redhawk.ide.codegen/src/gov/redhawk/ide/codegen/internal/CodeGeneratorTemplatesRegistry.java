@@ -74,6 +74,7 @@ public class CodeGeneratorTemplatesRegistry implements ICodeGeneratorTemplatesRe
 		}
 	}
 
+	@Override
 	public void addExtension(final IExtensionTracker tracker, final IExtension extension) {
 		final IConfigurationElement[] configs = extension.getConfigurationElements();
 		for (final IConfigurationElement element : configs) {
@@ -104,6 +105,7 @@ public class CodeGeneratorTemplatesRegistry implements ICodeGeneratorTemplatesRe
 		return null;
 	}
 
+	@Override
 	public void removeExtension(final IExtension extension, final Object[] objects) {
 		for (final Object obj : objects) {
 			if (obj instanceof ITemplateDesc) {
@@ -118,14 +120,17 @@ public class CodeGeneratorTemplatesRegistry implements ICodeGeneratorTemplatesRe
 		}
 	}
 
+	@Override
 	public ITemplateDesc findTemplate(final String id) {
 		return this.templateMap.get(id);
 	}
 
+	@Override
 	public ITemplateDesc[] getTemplates() {
 		return this.templateMap.values().toArray(new ITemplateDesc[this.templateMap.size()]);
 	}
 
+	@Override
 	public ITemplateDesc[] findTemplatesByCodegen(final String codeGenId) {
 		return findTemplatesByCodegen(codeGenId, null);
 	}
@@ -133,6 +138,7 @@ public class CodeGeneratorTemplatesRegistry implements ICodeGeneratorTemplatesRe
 	/**
 	 * @since 9.0
 	 */
+	@Override
 	public ITemplateDesc[] findTemplatesByCodegen(String codeGenId, String componentType) {
 		final Set<String> ids = this.codegenToIdMap.get(codeGenId);
 		final ArrayList<ITemplateDesc> codegens = new ArrayList<ITemplateDesc>();

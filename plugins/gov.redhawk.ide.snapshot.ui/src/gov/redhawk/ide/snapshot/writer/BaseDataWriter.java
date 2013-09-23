@@ -26,6 +26,7 @@ public abstract class BaseDataWriter implements IDataWriter {
 
 	private StreamSRI sri;
 
+	@Override
 	public void setSettings(IDataWriterSettings settings) {
 		this.settings = settings;
 	}
@@ -57,6 +58,7 @@ public abstract class BaseDataWriter implements IDataWriter {
 		return settings.getType().isUnsigned();
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public List<File> getOutputFileList() {
 		return Arrays.asList(new File[] { getFileDestination() });

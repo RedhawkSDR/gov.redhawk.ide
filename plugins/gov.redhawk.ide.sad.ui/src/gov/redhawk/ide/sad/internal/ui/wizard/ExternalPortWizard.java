@@ -80,6 +80,7 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 			        + "external port.\n\nOptionally you may also give the external port a description.");
 		}
 
+		@Override
 		public void createControl(final Composite parent) {
 			final Composite main = new Composite(parent, SWT.None);
 			main.setLayout(new GridLayout());
@@ -106,6 +107,7 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 			final Text text = new Text(parent, SWT.MULTI | SWT.BORDER);
 			text.addModifyListener(new ModifyListener() {
 
+				@Override
 				public void modifyText(final ModifyEvent e) {
 					ExternalPortWizardPage.this.portDescription = text.getText();
 				}
@@ -130,16 +132,19 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 			column.setLabelProvider(new AdapterFactoryCellLabelProvider(this.adapterFactory));
 			this.portViewer.setContentProvider(new IStructuredContentProvider() {
 
+				@Override
 				public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 					// TODO Auto-generated method stub
 
 				}
 
+				@Override
 				public void dispose() {
 					// TODO Auto-generated method stub
 
 				}
 
+				@Override
 				public Object[] getElements(final Object inputElement) {
 					final ComponentInstantiation ci = (ComponentInstantiation) inputElement;
 					final List<EObject> retVal = new ArrayList<EObject>();
@@ -150,6 +155,7 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 			});
 			this.portViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+				@Override
 				public void selectionChanged(final SelectionChangedEvent event) {
 					ExternalPortWizardPage.this.portSelection = (EObject) ((IStructuredSelection) event.getSelection()).getFirstElement();
 					updatePageComplete();
@@ -192,16 +198,19 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 			column.setLabelProvider(new AdapterFactoryCellLabelProvider(this.adapterFactory));
 			this.componentViewer.setContentProvider(new IStructuredContentProvider() {
 
+				@Override
 				public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 					// TODO Auto-generated method stub
 
 				}
 
+				@Override
 				public void dispose() {
 					// TODO Auto-generated method stub
 
 				}
 
+				@Override
 				public Object[] getElements(final Object inputElement) {
 					final List<ComponentInstantiation> components = new ArrayList<ComponentInstantiation>();
 					final SadPartitioning partitioning = ((SoftwareAssembly) inputElement).getPartitioning();
@@ -218,6 +227,7 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 			});
 			this.componentViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+				@Override
 				public void selectionChanged(final SelectionChangedEvent event) {
 					ExternalPortWizardPage.this.componentSelection = (SadComponentInstantiation) ((IStructuredSelection) event.getSelection())
 					        .getFirstElement();
@@ -280,6 +290,7 @@ public class ExternalPortWizard extends Wizard implements IWorkbenchWizard {
 		return this.softwareAssembly;
 	}
 
+	@Override
 	public void init(final IWorkbench workbench, final IStructuredSelection selection) {
 		this.workbench = workbench;
 		this.selection = selection;

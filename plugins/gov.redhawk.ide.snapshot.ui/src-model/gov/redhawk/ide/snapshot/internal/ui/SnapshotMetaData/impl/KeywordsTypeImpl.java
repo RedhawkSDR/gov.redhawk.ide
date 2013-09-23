@@ -79,6 +79,7 @@ public class KeywordsTypeImpl extends EObjectImpl implements KeywordsType {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public FeatureMap getMixed() {
 		if (mixed == null)
 		{
@@ -92,6 +93,7 @@ public class KeywordsTypeImpl extends EObjectImpl implements KeywordsType {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<CFDataType> getCFDataType() {
 		return getMixed().list(SnapshotMetadataPackage.Literals.KEYWORDS_TYPE__CF_DATA_TYPE);
 	}

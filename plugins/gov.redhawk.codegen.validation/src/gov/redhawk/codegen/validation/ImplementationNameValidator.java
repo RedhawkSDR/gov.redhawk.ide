@@ -42,6 +42,7 @@ public class ImplementationNameValidator implements IValidator {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IStatus validate(final Object value) {
 		final String s = (String) value;
 		if ((s == null) || (s.length() == 0)) {

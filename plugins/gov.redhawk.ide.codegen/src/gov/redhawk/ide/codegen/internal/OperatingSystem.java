@@ -36,14 +36,17 @@ public class OperatingSystem implements IOperatingSystem {
 		this.isDefault = Boolean.valueOf(element.getAttribute(OperatingSystem.ATTR_IS_DEFAULT_OS));
 	}
 
+	@Override
 	public String getName() {
 		return this.os;
 	}
 
+	@Override
 	public String getVersion() {
 		return this.version;
 	}
 
+	@Override
 	public boolean isDefault() {
 		return this.isDefault;
 	}

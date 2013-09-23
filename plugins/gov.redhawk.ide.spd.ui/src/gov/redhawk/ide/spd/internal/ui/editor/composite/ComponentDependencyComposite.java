@@ -121,6 +121,7 @@ public class ComponentDependencyComposite extends Composite implements IScaCompo
 		this.removeOsButton.setEnabled(!this.osViewer.getSelection().isEmpty());
 		this.osViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				ComponentDependencyComposite.this.removeOsButton.setEnabled(!event.getSelection().isEmpty());
 				ComponentDependencyComposite.this.editOsButton.setEnabled(!event.getSelection().isEmpty());
@@ -219,6 +220,7 @@ public class ComponentDependencyComposite extends Composite implements IScaCompo
 
 		this.processorViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				ComponentDependencyComposite.this.removeProcessorButton.setEnabled(!event.getSelection().isEmpty());
 				ComponentDependencyComposite.this.editProcessorButton.setEnabled(!event.getSelection().isEmpty());
@@ -286,6 +288,7 @@ public class ComponentDependencyComposite extends Composite implements IScaCompo
 		this.removeDependencyButton.setEnabled(!this.dependencyViewer.getSelection().isEmpty());
 		this.dependencyViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				ComponentDependencyComposite.this.removeDependencyButton.setEnabled(!event.getSelection().isEmpty());
 				ComponentDependencyComposite.this.editDependencyButton.setEnabled(!event.getSelection().isEmpty());
@@ -395,6 +398,7 @@ public class ComponentDependencyComposite extends Composite implements IScaCompo
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setEditable(final boolean canEdit) {
 		this.osViewer.getTable().setEnabled(canEdit);
 		this.processorViewer.getTable().setEnabled(canEdit);

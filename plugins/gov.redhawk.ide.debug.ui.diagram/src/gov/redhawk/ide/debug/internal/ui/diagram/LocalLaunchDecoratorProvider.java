@@ -57,10 +57,12 @@ public class LocalLaunchDecoratorProvider extends AbstractProvider implements ID
 			this.toolTip = new Label("Component launched in debug mode.");
 		}
 
+		@Override
 		public void activate() {
 
 		}
 
+		@Override
 		public void refresh() {
 			removeDecoration();
 			final View view = (View) getDecoratorTarget().getAdapter(View.class);
@@ -118,6 +120,7 @@ public class LocalLaunchDecoratorProvider extends AbstractProvider implements ID
 
 	private static final String KEY = "launchMode";
 
+	@Override
 	public boolean provides(final IOperation operation) {
 		if (!(operation instanceof CreateDecoratorsOperation)) {
 			return false;
@@ -127,6 +130,7 @@ public class LocalLaunchDecoratorProvider extends AbstractProvider implements ID
 		return view != null && mil.jpeojtrs.sca.sad.diagram.edit.parts.SadComponentInstantiationEditPart.VISUAL_ID == SadVisualIDRegistry.getVisualID(view);
 	}
 
+	@Override
 	public void createDecorators(final IDecoratorTarget decoratorTarget) {
 		final EditPart editPart = (EditPart) decoratorTarget.getAdapter(EditPart.class);
 		if (editPart instanceof GraphicalEditPart || editPart instanceof AbstractConnectionEditPart) {

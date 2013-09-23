@@ -61,6 +61,7 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SdrRoot getSdrRoot() {
 		if (eContainerFeatureID() != SdrPackage.DEVICES_CONTAINER__SDR_ROOT) return null;
 		return (SdrRoot)eInternalContainer();

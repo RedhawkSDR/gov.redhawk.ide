@@ -68,6 +68,7 @@ public class IDGroup {
 		this.providedIdText.setEnabled(false);
 		this.providedIdText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(final ModifyEvent e) {
 				page.validate();
 			}

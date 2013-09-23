@@ -236,6 +236,7 @@ public class NameToNamingContextEntryImpl extends EObjectImpl implements BasicEM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getHash() {
 		if (hash == -1) {
 			Object theKey = getKey();
@@ -249,6 +250,7 @@ public class NameToNamingContextEntryImpl extends EObjectImpl implements BasicEM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setHash(int hash) {
 		this.hash = hash;
 	}
@@ -258,6 +260,7 @@ public class NameToNamingContextEntryImpl extends EObjectImpl implements BasicEM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Name getKey() {
 		return getTypedKey();
 	}
@@ -267,6 +270,7 @@ public class NameToNamingContextEntryImpl extends EObjectImpl implements BasicEM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setKey(Name key) {
 		setTypedKey(key);
 	}
@@ -276,6 +280,7 @@ public class NameToNamingContextEntryImpl extends EObjectImpl implements BasicEM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public NamingContext getValue() {
 		return getTypedValue();
 	}
@@ -285,6 +290,7 @@ public class NameToNamingContextEntryImpl extends EObjectImpl implements BasicEM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public NamingContext setValue(NamingContext value) {
 		NamingContext oldValue = getValue();
 		setTypedValue(value);

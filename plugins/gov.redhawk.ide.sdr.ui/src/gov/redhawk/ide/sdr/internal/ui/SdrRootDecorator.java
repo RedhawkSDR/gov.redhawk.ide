@@ -85,11 +85,13 @@ public class SdrRootDecorator extends LabelProvider implements ILightweightLabel
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
 		if (element instanceof SdrRoot) {
 			final SdrRoot sdrRoot = (SdrRoot) element;
 			ScaModelCommand.execute(sdrRoot, new ScaModelCommand() {
 
+				@Override
 				public void execute() {
 					if (!sdrRoot.eAdapters().contains(sdrRootListener)) {
 						sdrRoot.eAdapters().add(sdrRootListener);

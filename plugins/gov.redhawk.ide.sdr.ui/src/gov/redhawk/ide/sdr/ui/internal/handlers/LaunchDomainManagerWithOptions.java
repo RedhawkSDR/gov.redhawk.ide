@@ -61,6 +61,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 
 	private HashMap<DeviceConfiguration, Integer> devicesMap = new HashMap<DeviceConfiguration, Integer>();
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
@@ -89,6 +90,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 							LaunchDomainManagerWithOptions.this.newDomainName = dialog.getDomainName();
 							ScaModelCommand.execute(domain, new ScaModelCommand() {
 
+								@Override
 								public void execute() {
 									domain.setName(dialog.getDomainName());
 
@@ -126,6 +128,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 
 				if (connection == null) {
 					ScaModelCommand.execute(ScaPlugin.getDefault().getDomainManagerRegistry(), new ScaModelCommand() {
+						@Override
 						public void execute() {
 							ScaPlugin.getDefault().getDomainManagerRegistry()
 							        .createDomain(LaunchDomainManagerWithOptions.this.newDomainName, false, connectionProperties);

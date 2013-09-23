@@ -176,6 +176,7 @@ public class GeneralInfoSection extends ScaSection {
 		final EMFUpdateValueStrategy retVal = new EMFUpdateValueStrategy();
 		retVal.setConverter(new Converter(AssemblyController.class, ComponentInstantiation.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject instanceof AssemblyController) {
 					final AssemblyController asm = (AssemblyController) fromObject;
@@ -198,6 +199,7 @@ public class GeneralInfoSection extends ScaSection {
 		final EMFEmptyStringToNullUpdateValueStrategy retVal = new EMFEmptyStringToNullUpdateValueStrategy();
 		retVal.setConverter(new Converter(ComponentInstantiation.class, AssemblyController.class) {
 
+			@Override
 			public Object convert(final Object fromObject) {
 				if (fromObject instanceof ComponentInstantiation) {
 					final ComponentInstantiation inst = (ComponentInstantiation) fromObject;

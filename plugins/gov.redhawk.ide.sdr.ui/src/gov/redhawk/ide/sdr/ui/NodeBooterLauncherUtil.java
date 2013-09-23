@@ -44,6 +44,7 @@ public class NodeBooterLauncherUtil {
 
 		PlatformUI.getWorkbench().addWorkbenchListener(new IWorkbenchListener() {
 
+			@Override
 			public boolean preShutdown(final IWorkbench workbench, final boolean forced) {
 				if (launched.canTerminate()) {
 					try {
@@ -56,6 +57,7 @@ public class NodeBooterLauncherUtil {
 				return true;
 			}
 
+			@Override
 			public void postShutdown(final IWorkbench workbench) {
 				// PASS
 			}

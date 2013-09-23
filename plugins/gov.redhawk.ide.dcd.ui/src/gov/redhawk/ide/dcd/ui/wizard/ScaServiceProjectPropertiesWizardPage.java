@@ -40,6 +40,7 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 		/**
 		 * {@inheritDoc}
 		 */
+		@Override
 		public IStatus validate(final Object value) {
 			// Project names are always stripped of whitespace
 			// (see the Java Project Wizard)
@@ -110,6 +111,7 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 		this.serviceIdlText = new Text(serviceGroup, SWT.BORDER | SWT.READ_ONLY);
 		this.serviceIdlText.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
 		this.serviceIdlText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(final ModifyEvent e) {
 				validate();
 				serviceIdl = serviceIdlText.getText();

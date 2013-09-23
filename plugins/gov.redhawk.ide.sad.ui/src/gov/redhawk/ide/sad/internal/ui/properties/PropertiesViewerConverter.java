@@ -58,6 +58,7 @@ public class PropertiesViewerConverter implements XViewerConverter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.nebula.widgets.xviewer.edit.XViewerConverter#setInput(org.eclipse.swt.widgets.Control, org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor, java.lang.Object)
 	 */
+	@Override
 	public void setInput(Control c, CellEditDescriptor ced, Object selObject) {
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId()) && selObject instanceof ViewerProperty< ? >) {
 			ViewerProperty< ? > prop = ((ViewerProperty< ? >) selObject);
@@ -143,6 +144,7 @@ public class PropertiesViewerConverter implements XViewerConverter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.nebula.widgets.xviewer.edit.XViewerConverter#getInput(org.eclipse.swt.widgets.Control, org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor, java.lang.Object)
 	 */
+	@Override
 	public void getInput(Control c, CellEditDescriptor ced, Object selObject) {
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
 			setExternalValue(c, selObject);

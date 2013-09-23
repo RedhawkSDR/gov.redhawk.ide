@@ -35,6 +35,7 @@ class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean visit(final IResourceDelta delta) {
 		if (delta.getResource().getType() == IResource.FILE) {
 			if (delta.getKind() == IResourceDelta.REMOVED || delta.getKind() == IResourceDelta.CHANGED

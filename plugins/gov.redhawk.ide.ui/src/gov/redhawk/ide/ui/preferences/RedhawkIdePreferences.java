@@ -31,6 +31,7 @@ public class RedhawkIdePreferences extends FieldEditorPreferencePage implements 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void init(final IWorkbench workbench) {
 		// TODO Auto-generated method stub
 

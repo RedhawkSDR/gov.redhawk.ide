@@ -55,6 +55,7 @@ public class SdrPreferencePage extends FieldEditorPreferencePage implements IWor
 	 * @see
 	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(final IWorkbench workbench) {
 	}
 

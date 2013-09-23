@@ -36,6 +36,7 @@ public class PropertiesContentProvider implements ITreeContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
 
@@ -44,6 +45,7 @@ public class PropertiesContentProvider implements ITreeContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// TODO Auto-generated method stub
 
@@ -52,6 +54,7 @@ public class PropertiesContentProvider implements ITreeContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getElements(java.lang.Object)
 	 */
+	@Override
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof ViewerModelConverter) {
 			return ((ViewerModelConverter) inputElement).getViewerModel().toArray();
@@ -62,6 +65,7 @@ public class PropertiesContentProvider implements ITreeContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof ViewerStructProperty) {
 			return ((ViewerStructProperty) parentElement).getSimples().toArray();
@@ -77,6 +81,7 @@ public class PropertiesContentProvider implements ITreeContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof ViewerProperty< ? >) {
 			return ((ViewerProperty< ? >) element).getParent();
@@ -87,6 +92,7 @@ public class PropertiesContentProvider implements ITreeContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
+	@Override
 	public boolean hasChildren(Object parentElement) {
 		if (parentElement instanceof ViewerStructProperty) {
 			return !((ViewerStructProperty) parentElement).getSimples().isEmpty();

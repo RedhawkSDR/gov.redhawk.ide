@@ -39,6 +39,7 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
 
 public class SdrNavigatorLabelProvider extends SdrLabelProvider implements IDescriptionProvider, ICommonLabelProvider, ITooltipProvider {
 
+	@Override
 	public String getDescription(final Object anElement) {
 		if (anElement instanceof EObject) {
 			final EObject eObj = (EObject) anElement;
@@ -48,18 +49,22 @@ public class SdrNavigatorLabelProvider extends SdrLabelProvider implements IDesc
 		return null;
 	}
 
+	@Override
 	public void restoreState(final IMemento aMemento) {
 
 	}
 
+	@Override
 	public void saveState(final IMemento aMemento) {
 
 	}
 
+	@Override
 	public void init(final ICommonContentExtensionSite aConfig) {
 
 	}
 
+	@Override
 	public Image getToolTipImage(final Object object) {
 		if (object instanceof SdrRoot) {
 			final SdrRoot root = (SdrRoot) object;
@@ -80,6 +85,7 @@ public class SdrNavigatorLabelProvider extends SdrLabelProvider implements IDesc
 		return null;
 	}
 
+	@Override
 	public String getToolTipText(final Object element) {
 		if (element instanceof SdrRoot) {
 			final SdrRoot root = (SdrRoot) element;
@@ -127,34 +133,42 @@ public class SdrNavigatorLabelProvider extends SdrLabelProvider implements IDesc
 		return null;
 	}
 
+	@Override
 	public Color getToolTipBackgroundColor(final Object object) {
 		return null;
 	}
 
+	@Override
 	public Color getToolTipForegroundColor(final Object object) {
 		return null;
 	}
 
+	@Override
 	public Font getToolTipFont(final Object object) {
 		return null;
 	}
 
+	@Override
 	public Point getToolTipShift(final Object object) {
 		return new Point(5, 5); // SUPPRESS CHECKSTYLE MagicNumber
 	}
 
+	@Override
 	public boolean useNativeToolTip(final Object object) {
 		return false;
 	}
 
+	@Override
 	public int getToolTipTimeDisplayed(final Object object) {
 		return 5000; // SUPPRESS CHECKSTYLE MagicNumber
 	}
 
+	@Override
 	public int getToolTipDisplayDelayTime(final Object object) {
 		return 0;
 	}
 
+	@Override
 	public int getToolTipStyle(final Object object) {
 		return 0;
 	}

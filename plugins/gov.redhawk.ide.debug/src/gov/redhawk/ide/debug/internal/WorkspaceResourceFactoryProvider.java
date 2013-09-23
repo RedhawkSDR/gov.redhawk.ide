@@ -66,6 +66,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 	private static final Debug TRACE_LOGGER = new Debug(ScaModelPlugin.ID, "WorkspaceResourceFactoryProvider");
 	private final IResourceChangeListener listener = new IResourceChangeListener() {
 
+		@Override
 		public void resourceChanged(final IResourceChangeEvent event) {
 			if (disposed) {
 				return;
@@ -152,6 +153,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 		try {
 			ResourcesPlugin.getWorkspace().getRoot().accept(new IResourceVisitor() {
 
+				@Override
 				public boolean visit(final IResource resource) throws CoreException {
 					try {
 						if (resource instanceof IWorkspaceRoot) {
@@ -265,6 +267,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 		return natures.contains(ScaProjectNature.ID) && desc.getName().charAt(0) != '.';
 	}
 
+	@Override
 	public void dispose() {
 		Job.getJobManager().beginRule(RULE, null);
 		try {

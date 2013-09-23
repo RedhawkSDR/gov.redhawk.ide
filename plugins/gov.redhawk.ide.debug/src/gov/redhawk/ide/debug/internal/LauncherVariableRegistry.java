@@ -59,18 +59,22 @@ public enum LauncherVariableRegistry implements ILauncherVariableRegistry, IExte
 		    return this.prependName;
 		}
 
+		@Override
 		public String getName() {
 			return this.name;
 		}
 
+		@Override
 		public String resolveValue(String arg, final SoftPkg spd, final ILaunch launch, final ILaunchConfiguration config) throws CoreException {
 			return this.resolver.resolveValue(arg, spd, launch, config);
 		}
 
+		@Override
 		public String getDescription() {
 			return this.description;
 		}
 
+		@Override
 		public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 	        return this.resolver.resolveValue(variable, argument);
         }
@@ -96,10 +100,12 @@ public enum LauncherVariableRegistry implements ILauncherVariableRegistry, IExte
 		}
 	}
 
+	@Override
 	public ILauncherVariableDesc[] getDescriptors() {
 		return this.descriptors.toArray(new ILauncherVariableDesc[this.descriptors.size()]);
 	}
 
+	@Override
 	public ILauncherVariableDesc getDesc(final String name) {
 		for (final VariableDesc desc : this.descriptors) {
 			if (name.equals(desc.name)) {
@@ -109,6 +115,7 @@ public enum LauncherVariableRegistry implements ILauncherVariableRegistry, IExte
 		return null;
 	}
 
+	@Override
 	public void addExtension(final IExtensionTracker tracker, final IExtension extension) {
 		for (final IConfigurationElement element : extension.getConfigurationElements()) {
 			if (element.getName().equals("variable")) {
@@ -139,6 +146,7 @@ public enum LauncherVariableRegistry implements ILauncherVariableRegistry, IExte
 		return null;
 	}
 
+	@Override
 	public void removeExtension(final IExtension extension, final Object[] objects) {
 		for (final Object obj : objects) {
 			if (obj instanceof VariableDesc) {

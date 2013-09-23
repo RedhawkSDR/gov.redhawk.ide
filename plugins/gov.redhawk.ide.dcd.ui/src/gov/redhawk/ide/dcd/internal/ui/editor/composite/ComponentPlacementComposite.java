@@ -110,6 +110,7 @@ public class ComponentPlacementComposite extends Composite implements IScaCompos
 		this.parentViewer = new ComboViewer(this, SWT.SINGLE | SWT.READ_ONLY | SWT.DROP_DOWN);
 		this.parentViewer.getCombo().addListener(SWT.MouseVerticalWheel, new Listener() {
 
+			@Override
 			public void handleEvent(Event event) {
 				// Disable Mouse Wheel Combo Box Control
 				event.doit = false;
@@ -164,6 +165,7 @@ public class ComponentPlacementComposite extends Composite implements IScaCompos
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setEditable(final boolean canEdit) {
 		this.nameEntry.setEditable(canEdit);
 		this.parentViewer.getCombo().setEnabled(canEdit);

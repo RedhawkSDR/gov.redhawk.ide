@@ -68,6 +68,7 @@ public class IdlInterfaceSelectionDialog extends SelectionStatusDialog {
         filteredTree.setLayoutData(gd);
         filteredTree.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 			
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				StructuredSelection selection = (StructuredSelection) event.getSelection();
 				handleSelected(selection);

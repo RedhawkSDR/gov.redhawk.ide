@@ -40,6 +40,7 @@ public class ComponentCategory implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getName() {
 		return this.name;
 	}
@@ -47,6 +48,7 @@ public class ComponentCategory implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Category> getCategories() {
 		final List<Category> myList = new ArrayList<Category>();
 		for (final SoftPkg softPkg : this.components) {
@@ -58,6 +60,7 @@ public class ComponentCategory implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Properties> getProperties() {
 		return Collections.emptyList();
 	}
@@ -65,6 +68,7 @@ public class ComponentCategory implements Category {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean containsProperty(final EObject obj) {
 		for (final Category category : getCategories()) {
 			if (category.containsProperty(obj)) {

@@ -108,6 +108,7 @@ public class NodeDependencyComposite extends Composite {
 		this.removeOsButton.setEnabled(!this.osViewer.getSelection().isEmpty());
 		this.osViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				NodeDependencyComposite.this.removeOsButton.setEnabled(!event.getSelection().isEmpty());
 				NodeDependencyComposite.this.editOsButton.setEnabled(!event.getSelection().isEmpty());
@@ -203,6 +204,7 @@ public class NodeDependencyComposite extends Composite {
 
 		this.processorViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				NodeDependencyComposite.this.removeProcessorButton.setEnabled(!event.getSelection().isEmpty());
 				NodeDependencyComposite.this.editProcessorButton.setEnabled(!event.getSelection().isEmpty());

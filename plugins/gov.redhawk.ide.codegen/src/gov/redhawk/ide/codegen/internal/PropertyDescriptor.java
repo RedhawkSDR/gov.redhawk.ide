@@ -59,6 +59,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getDescription() {
 		return this.description;
 	}
@@ -66,6 +67,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getKey() {
 		return this.key;
 	}
@@ -73,6 +75,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isRequired() {
 		return this.required;
 	}
@@ -81,10 +84,12 @@ public class PropertyDescriptor implements IPropertyDescriptor {
 	 * {@inheritDoc}
 	 * @since 9.0
 	 */
+	@Override
 	public boolean isDeprecated() {
 		return this.deprecated;
 	}
 
+	@Override
 	public String getDefaultValue() {
 		return this.defaultValue;
 	}
@@ -92,6 +97,7 @@ public class PropertyDescriptor implements IPropertyDescriptor {
 	/**
 	 * @since 6.0
 	 */
+	@Override
 	public String getName() {
 		return this.name;
 	}

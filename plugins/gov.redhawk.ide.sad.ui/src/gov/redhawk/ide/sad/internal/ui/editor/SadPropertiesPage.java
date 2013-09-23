@@ -50,6 +50,7 @@ public class SadPropertiesPage extends ScaFormPage {
 			setToolTipText("Expand All");
 			setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 		}
+		@Override
 		public void run() {
 			viewer.expandAll();
 		}
@@ -60,6 +61,7 @@ public class SadPropertiesPage extends ScaFormPage {
 			setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
 			setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL_DISABLED));
 		}
+		@Override
 		public void run() {
 			viewer.collapseAll();
 		}

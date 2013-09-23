@@ -64,6 +64,7 @@ public class ViewerModelConverter {
 	private List<ViewerComponent> viewerModel = new ArrayList<ViewerComponent>();
 
 	private EContentAdapter sadListener = new EContentAdapter() {
+		@Override
 		public void notifyChanged(org.eclipse.emf.common.notify.Notification notification) {
 			super.notifyChanged(notification);
 			if (notification.isTouch()) {
@@ -223,10 +224,12 @@ public class ViewerModelConverter {
 			setSystem(true);
 		}
 
+		@Override
 		public boolean shouldSchedule() {
 			return super.shouldSchedule() && viewer != null;
 		}
 
+		@Override
 		public boolean shouldRun() {
 			return super.shouldRun() && viewer != null;
 		}

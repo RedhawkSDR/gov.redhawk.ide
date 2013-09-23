@@ -152,6 +152,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	// Load the domains that are on the Naming service already
 	final IRunnableWithProgress scanForTakenDomainNames = new IRunnableWithProgress() {
 
+		@Override
 		public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			monitor.beginTask("Scanning for running domains...", IProgressMonitor.UNKNOWN);
 			LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.clear();
@@ -182,6 +183,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	// Load the domains that are on the Naming service already
 	final IRunnableWithProgress checkDomainName = new IRunnableWithProgress() {
 
+		@Override
 		public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			monitor.beginTask("Checking domain name...", IProgressMonitor.UNKNOWN);
 			final String domainName = LaunchDomainManagerWithOptionsDialog.this.model.domainName;
@@ -231,24 +233,30 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	private static ITreeContentProvider getContentProvider(final AdapterFactory adapterFactory) {
 		return new ITreeContentProvider() {
 
+			@Override
 			public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 			}
 
+			@Override
 			public void dispose() {
 			}
 
+			@Override
 			public Object[] getElements(final Object inputElement) {
 				return getChildren(inputElement);
 			}
 
+			@Override
 			public boolean hasChildren(final Object element) {
 				return false;
 			}
 
+			@Override
 			public Object getParent(final Object element) {
 				return null;
 			}
 
+			@Override
 			public Object[] getChildren(final Object parentElement) {
 				if (parentElement instanceof SdrRoot) {
 					if (!((SdrRoot) parentElement).getNodesContainer().getNodes().isEmpty()) {
@@ -301,6 +309,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		this.text.setText(this.domain.getName());
 		this.text.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(final ModifyEvent e) {
 				updateButtonsEnableState((IStatus) LaunchDomainManagerWithOptionsDialog.this.nameBinding.getValidationStatus().getValue());
 			}
@@ -342,6 +351,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		Dialog.applyDialogFont(composite);
 		
 		getShell().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					LaunchDomainManagerWithOptionsDialog.this.run(true, true, scanForTakenDomainNames);
@@ -465,6 +475,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		this.debugViewer.setSelection(new StructuredSelection("Info"));
 		this.debugViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				final IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 				final String choice = (String) sel.getFirstElement();
@@ -477,6 +488,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 
 		getTreeViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				final IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 				final DeviceConfiguration choice = (DeviceConfiguration) sel.getFirstElement();
@@ -551,6 +563,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 
 		retVal.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(final DoubleClickEvent event) {
 				final IStructuredSelection ss = (IStructuredSelection) event.getSelection();
 				final DeviceConfiguration dc = (DeviceConfiguration) ss.getFirstElement();
@@ -563,6 +576,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 
 	private final IValidator nameValidator = new IValidator() {
 
+		@Override
 		public IStatus validate(final Object value) {
 			// IMPORTANT - DO NOT ISSUE CORBA CALLS HERE BECAUSE THEY CAN HANG POTENTIALLY FOREVER
 			// AND BLOCK THE UI THREAD
@@ -753,6 +767,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			if (this.timeWhenLastJobFinished == -1) {
 				this.timeWhenLastJobFinished = 0;
 				getShell().addTraverseListener(new TraverseListener() {
+					@Override
 					public void keyTraversed(final TraverseEvent e) {
 						if (e.detail == SWT.TRAVERSE_RETURN || (e.detail == SWT.TRAVERSE_MNEMONIC && e.keyCode == 32)) {
 							// We want to ignore the keystroke when we detect that it has been received within the

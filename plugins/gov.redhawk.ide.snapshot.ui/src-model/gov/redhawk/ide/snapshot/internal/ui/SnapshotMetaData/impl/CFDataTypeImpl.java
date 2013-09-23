@@ -98,6 +98,7 @@ public class CFDataTypeImpl extends EObjectImpl implements CFDataType {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public FeatureMap getMixed() {
 		if (mixed == null)
 		{
@@ -111,6 +112,7 @@ public class CFDataTypeImpl extends EObjectImpl implements CFDataType {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EObject getValue() {
 		return (EObject)getMixed().get(SnapshotMetadataPackage.Literals.CF_DATA_TYPE__VALUE, true);
 	}
@@ -129,6 +131,7 @@ public class CFDataTypeImpl extends EObjectImpl implements CFDataType {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setValue(EObject newValue) {
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.CF_DATA_TYPE__VALUE, newValue);
 	}
@@ -138,6 +141,7 @@ public class CFDataTypeImpl extends EObjectImpl implements CFDataType {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -147,6 +151,7 @@ public class CFDataTypeImpl extends EObjectImpl implements CFDataType {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setId(String newId) {
 		String oldId = id;
 		id = newId;

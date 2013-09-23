@@ -25,6 +25,7 @@ public class MarkerResolutionGenerator implements IMarkerResolutionGenerator {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IMarkerResolution[] getResolutions(final IMarker marker) {
 		final List<IMarkerResolution> retVal = new ArrayList<IMarkerResolution>();
 		if (ScdMarkerResolution.canHandle(marker)) {

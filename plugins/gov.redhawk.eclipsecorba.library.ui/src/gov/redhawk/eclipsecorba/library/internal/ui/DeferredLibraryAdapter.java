@@ -45,6 +45,7 @@ public class DeferredLibraryAdapter implements IDeferredWorkbenchAdapter {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void fetchDeferredChildren(final Object object, final IElementCollector collector, final IProgressMonitor monitor) {
 		final IProject project = (IProject) object;
 		final IdlLibrary library = getLibrary(project);
@@ -95,6 +96,7 @@ public class DeferredLibraryAdapter implements IDeferredWorkbenchAdapter {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ISchedulingRule getRule(final Object object) {
 		return null;
 	}
@@ -102,6 +104,7 @@ public class DeferredLibraryAdapter implements IDeferredWorkbenchAdapter {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isContainer() {
 		return true;
 	}
@@ -109,6 +112,7 @@ public class DeferredLibraryAdapter implements IDeferredWorkbenchAdapter {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object[] getChildren(final Object o) {
 		return new Object[] { this.libraryMap.get(o) };
 	}
@@ -116,6 +120,7 @@ public class DeferredLibraryAdapter implements IDeferredWorkbenchAdapter {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(final Object object) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin(LibraryUIPlugin.PLUGIN_ID, "icons/IdlLibrary.gif");
 	}
@@ -123,6 +128,7 @@ public class DeferredLibraryAdapter implements IDeferredWorkbenchAdapter {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLabel(final Object o) {
 		return null; // Handled elsewhere
 	}
@@ -130,6 +136,7 @@ public class DeferredLibraryAdapter implements IDeferredWorkbenchAdapter {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object getParent(final Object o) {
 		return null;
 	}

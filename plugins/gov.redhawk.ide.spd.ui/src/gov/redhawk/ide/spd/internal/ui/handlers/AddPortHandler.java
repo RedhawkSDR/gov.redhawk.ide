@@ -78,6 +78,7 @@ public class AddPortHandler extends AbstractHandler {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		this.editor = (ComponentEditor) HandlerUtil.getActiveEditor(event);
 		this.editingDomain = this.editor.getEditingDomain();

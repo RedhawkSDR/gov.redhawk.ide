@@ -51,6 +51,7 @@ public class ApplicationOutputStream implements IStreamMonitor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void addListener(final IStreamListener listener) {
 		this.listenerList.add(listener);
 	}
@@ -58,6 +59,7 @@ public class ApplicationOutputStream implements IStreamMonitor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getContents() {
 		return this.buffer.toString();
 	}
@@ -65,6 +67,7 @@ public class ApplicationOutputStream implements IStreamMonitor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void removeListener(final IStreamListener listener) {
 		this.listenerList.remove(listener);
 	}

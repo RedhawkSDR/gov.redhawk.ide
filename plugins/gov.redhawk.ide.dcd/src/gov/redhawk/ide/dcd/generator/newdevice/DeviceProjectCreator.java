@@ -74,6 +74,7 @@ public class DeviceProjectCreator extends ProjectCreator {
 	 * @throws CoreException An error occurs while generating files
 	 * @deprecated This method is deprecated.  Please use the method which also takes in the spd name and ID.
 	 */
+	@Deprecated
 	public static IFile createDeviceFiles(final IProject project, final String projectID, final String authorName, final String deviceType,
 	        final boolean aggregateDevice, final IProgressMonitor monitor) throws CoreException {
 		String[] tokens = project.getName().split("\\.");

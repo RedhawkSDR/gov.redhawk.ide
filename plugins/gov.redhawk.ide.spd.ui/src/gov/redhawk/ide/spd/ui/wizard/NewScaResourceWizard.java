@@ -88,6 +88,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 		this.componentType = componentType;
 	}
 
+	@Override
 	public void init(final IWorkbench workbench, final IStructuredSelection selection) {
 		this.firstImplPage = 1;
 	}
@@ -125,6 +126,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 		super.createPageControls(pageContainer);
 	}
 
+	@Override
 	public void generatorChanged(final Implementation impl, final ICodeGeneratorDescriptor codeGeneratorDescriptor) {
 		if (this.initializing) {
 			return;
@@ -242,6 +244,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 		this.getContainer().updateButtons();
 	}
 
+	@Override
 	public boolean hasMoreImplementations(final Implementation curImpl) {
 		// Return true if there are implementations and the current
 		// implementation isn't the last one in the list

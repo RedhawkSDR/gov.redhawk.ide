@@ -62,6 +62,7 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	private RefreshSdrJob reloadSdrJob;
 
 	private final IPropertyChangeListener sdrRootPrefListener = new IPropertyChangeListener() {
+		@Override
 		public void propertyChange(final PropertyChangeEvent event) {
 			if (event.getProperty().equals(SdrUiPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE)
 			        || event.getProperty().equals(SdrUiPreferenceConstants.TARGET_SDR_DEV_PATH)

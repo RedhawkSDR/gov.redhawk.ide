@@ -21,6 +21,7 @@ public abstract class CustomAction extends Action implements IWorkbenchAction {
 		setId(ID);
 	}
 
+	@Override
 	public abstract void run();
 
 	@Override

@@ -57,6 +57,7 @@ public class LaunchDomainManager extends AbstractHandler implements IHandler {
 
 	private int debugLevel;
 
+	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
 		if (selection instanceof IStructuredSelection) {
@@ -101,6 +102,7 @@ public class LaunchDomainManager extends AbstractHandler implements IHandler {
 			final InputDialog renameDialog = new InputDialog(HandlerUtil.getActiveShell(event), "Rename Conflicting Domain", "The " + incomingDomain.getName()
 			        + " already exists, please rename it to continue:", incomingDomain.getName(), new IInputValidator() {
 
+				@Override
 				public String isValid(final String newText) {
 					if (!newText.equals(incomingDomain.getName())) {
 						return null;

@@ -26,6 +26,7 @@ public class LocalLaunchDecorator extends LabelProvider implements ILightweightL
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
 		if (element instanceof LocalLaunch) {
 			final LocalLaunch ll = (LocalLaunch) element;

@@ -99,6 +99,7 @@ public class PortWizardPage extends WizardPage {
 			switch (msg.getFeatureID(IdlLibrary.class)) {
 			case LibraryPackage.IDL_LIBRARY__LOAD_STATUS:
 				PortWizardPage.this.getShell().getDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						PortWizardPage.this.updateTreeSelection();
 					}
@@ -282,6 +283,7 @@ public class PortWizardPage extends WizardPage {
 	private final PortWizardModel model = new PortWizardModel();
 
 	private final IValidator nameValidator = new IValidator() {
+		@Override
 		public IStatus validate(final Object value) {
 			final String s = ((String) value).trim();
 			if ((s == null) || (s.length() == 0)) {
@@ -296,6 +298,7 @@ public class PortWizardPage extends WizardPage {
 	};
 
 	private final IValidator repIDValidator = new IValidator() {
+		@Override
 		public IStatus validate(final Object value) {
 			final String s = (String) value;
 			if ((s == null) || (s.trim().length() == 0)) {
@@ -342,6 +345,7 @@ public class PortWizardPage extends WizardPage {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void createControl(final Composite parent) {
 		final Composite client = new Composite(parent, SWT.NULL);
 		client.setLayout(this.layoutFactory.create());
@@ -431,6 +435,7 @@ public class PortWizardPage extends WizardPage {
 		this.typeViewer.addCheckStateListener(new ICheckStateListener() {
 			private boolean ignore = false;
 
+			@Override
 			public void checkStateChanged(final CheckStateChangedEvent event) {
 				if (this.ignore) {
 					return;
@@ -470,6 +475,7 @@ public class PortWizardPage extends WizardPage {
 
 		this.idlTree.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				final IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				final Object element = selection.getFirstElement();

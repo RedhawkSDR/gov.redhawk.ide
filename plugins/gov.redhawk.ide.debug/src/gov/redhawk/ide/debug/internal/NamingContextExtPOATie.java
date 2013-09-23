@@ -48,58 +48,72 @@ public class NamingContextExtPOATie extends NamingContextExtPOA {
 		}
 	}
 
+	@Override
 	public void bind(final NameComponent[] n, final Object obj) throws NotFound, CannotProceed, InvalidName, AlreadyBound {
 		this.impl.bind(n, obj);
 	}
 
+	@Override
 	public String to_string(final NameComponent[] n) throws InvalidName {
 		return this.impl.to_string(n);
 	}
 
+	@Override
 	public NameComponent[] to_name(final String sn) throws InvalidName {
 		return this.impl.to_name(sn);
 	}
 
+	@Override
 	public String to_url(final String addr, final String sn) throws InvalidAddress, InvalidName {
 		return this.impl.to_url(addr, sn);
 	}
 
+	@Override
 	public void bind_context(final NameComponent[] n, final NamingContext nc) throws NotFound, CannotProceed, InvalidName, AlreadyBound {
 		this.impl.bind_context(n, nc);
 	}
 
+	@Override
 	public Object resolve_str(final String sn) throws NotFound, CannotProceed, InvalidName {
 		return this.impl.resolve_str(sn);
 	}
 
+	@Override
 	public void rebind(final NameComponent[] n, final Object obj) throws NotFound, CannotProceed, InvalidName {
 		this.impl.rebind(n, obj);
 	}
 
+	@Override
 	public void rebind_context(final NameComponent[] n, final NamingContext nc) throws NotFound, CannotProceed, InvalidName {
 		this.impl.rebind_context(n, nc);
 	}
 
+	@Override
 	public Object resolve(final NameComponent[] n) throws NotFound, CannotProceed, InvalidName {
 		return this.impl.resolve(n);
 	}
 
+	@Override
 	public void unbind(final NameComponent[] n) throws NotFound, CannotProceed, InvalidName {
 		this.impl.unbind(n);
 	}
 
+	@Override
 	public void list(final int howMany, final BindingListHolder bl, final BindingIteratorHolder bi) {
 		this.impl.list(howMany, bl, bi);
 	}
 
+	@Override
 	public NamingContext new_context() {
 		return this.impl.new_context();
 	}
 
+	@Override
 	public NamingContext bind_new_context(final NameComponent[] n) throws NotFound, AlreadyBound, CannotProceed, InvalidName {
 		return this.impl.bind_new_context(n);
 	}
 
+	@Override
 	public void destroy() throws NotEmpty {
 		this.impl.destroy();
 	}

@@ -37,6 +37,7 @@ public class ScaDebugContentProvider extends ScaContentProvider {
 	private static final Object[] EMPTY_OBJECTS = new Object[0];
 	private boolean disposed = false;
 	private Adapter listener = new AdapterImpl() {
+		@Override
 		public void notifyChanged(org.eclipse.emf.common.notify.Notification msg) {
 			if (disposed) {
 				if (msg.getNotifier() instanceof Notifier) {

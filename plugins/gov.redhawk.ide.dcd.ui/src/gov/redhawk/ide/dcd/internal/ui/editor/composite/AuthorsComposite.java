@@ -57,6 +57,7 @@ public class AuthorsComposite extends Composite {
 		this.getEditAuthorButton().setEnabled(false);
 		this.authorsPart.getTableViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				getEditAuthorButton().setEnabled(AuthorsComposite.this.authorsPart.isEnabled() && !event.getSelection().isEmpty());
 			}
@@ -65,6 +66,7 @@ public class AuthorsComposite extends Composite {
 		this.getRemoveAuthorButton().setEnabled(false);
 		getAuthorsViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				getRemoveAuthorButton().setEnabled(AuthorsComposite.this.authorsPart.isEnabled() && !event.getSelection().isEmpty());
 			}

@@ -181,6 +181,7 @@ public class InterfaceSection extends ScaSection {
 		this.interfaceViewer.setLabelProvider(new AdapterFactoryLabelProvider(getAdapterFactory()));
 		this.interfaceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				// removeButton.setEnabled(!event.getSelection().isEmpty());
 				// editButton.setEnabled(!event.getSelection().isEmpty());
@@ -193,10 +194,12 @@ public class InterfaceSection extends ScaSection {
 		this.aggregateButton.setVisible(false);
 		this.aggregateButton.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(final SelectionEvent e) {
 				aggregateClicked(InterfaceSection.this.aggregateButton.getSelection());
 			}
 
+			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				aggregateClicked(InterfaceSection.this.aggregateButton.getSelection());
 			}

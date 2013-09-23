@@ -23,6 +23,7 @@ import org.eclipse.core.variables.IDynamicVariableResolver;
  */
 public class OssieHomeResolver implements IDynamicVariableResolver {
 
+	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		return RedhawkIdeActivator.getDefault().getRuntimePath().toOSString();
 	}

@@ -26,6 +26,7 @@ public class ApplicationStreams implements IStreamsProxy2 {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IStreamMonitor getErrorStreamMonitor() {
 		return this.errStream;
 	}
@@ -37,6 +38,7 @@ public class ApplicationStreams implements IStreamsProxy2 {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IStreamMonitor getOutputStreamMonitor() {
 		return this.outStream;
 	}
@@ -48,6 +50,7 @@ public class ApplicationStreams implements IStreamsProxy2 {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void write(final String input) throws IOException {
 		// PASS
 	}
@@ -55,6 +58,7 @@ public class ApplicationStreams implements IStreamsProxy2 {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void closeInputStream() throws IOException {
 		// PASS
 	}

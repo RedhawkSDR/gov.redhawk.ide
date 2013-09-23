@@ -231,6 +231,7 @@ public class GenerateFilesDialog extends Dialog {
 		restore.setText("Defaults");
 		restore.setToolTipText("Clicking this will restore the selection to the default set of files");
 		restore.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(final Event event) {
 				selectDefaults();
 			}
@@ -240,6 +241,7 @@ public class GenerateFilesDialog extends Dialog {
 		selectAll.setText("Select All");
 		selectAll.setToolTipText("Clicking this will select all files");
 		selectAll.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(final Event event) {
 				selectAllFiles();
 			}
@@ -249,6 +251,7 @@ public class GenerateFilesDialog extends Dialog {
 		clear.setText("Clear");
 		clear.setToolTipText("Clicking this will deselect all files");
 		clear.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(final Event event) {
 				GenerateFilesDialog.this.clear();
 			}

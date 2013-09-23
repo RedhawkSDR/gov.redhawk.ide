@@ -61,6 +61,7 @@ public class DependencyComposite extends Composite implements IScaComposite {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setEditable(boolean canEdit) {
 	    // TODO Auto-generated method stub
 	    

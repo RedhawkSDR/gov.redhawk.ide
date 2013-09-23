@@ -38,6 +38,7 @@ public abstract class AbstractLaunchConfigurationFactory implements ILaunchConfi
 	private String launchConfigId;
 	private String id;
 	
+	@Override
 	public ILaunchConfigurationWorkingCopy createLaunchConfiguration(String name, final String implId, final SoftPkg spd) throws CoreException {
 		if (name == null) {
 			name = spd.getName();
@@ -91,6 +92,7 @@ public abstract class AbstractLaunchConfigurationFactory implements ILaunchConfi
 		return spd.eResource().getURI().path();
 	}
 
+	@Override
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		this.launchConfigId = config.getAttribute("launchConfigType");
 		this.id = config.getAttribute("id");

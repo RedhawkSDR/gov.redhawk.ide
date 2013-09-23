@@ -45,6 +45,7 @@ public class LaunchDeviceManagerDialog extends ListDialog {
 		
 		this.debugViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				LaunchDeviceManagerDialog.this.debugLevel = LaunchDeviceManagerDialog.this.debugViewer.getCombo().getSelectionIndex();
 			}

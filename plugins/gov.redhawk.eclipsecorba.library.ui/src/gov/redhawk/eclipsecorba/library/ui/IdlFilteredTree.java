@@ -57,6 +57,7 @@ public class IdlFilteredTree extends FilteredTree {
 		
 		this.getFilterControl().addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(final ModifyEvent e) {
 				getPatternFilter().setPattern(((Text) e.widget).getText());
 			}
@@ -101,6 +102,7 @@ public class IdlFilteredTree extends FilteredTree {
 				 * 
 				 * @see org.eclipse.jface.action.Action#run()
 				 */
+				@Override
 				public void run() {
 					refresh();
 				}

@@ -74,6 +74,7 @@ public class CleanUpComponentFilesAction extends Action {
 							command.append(new DeleteCommand(localEditingDomain, Collections.singleton(cf)));
 							command.append(new ScaModelCommand() {
 
+								@Override
 								public void execute() {
 									spdResource.getResourceSet().getResources().remove(spdResource);
 									if (scdResource != null) {

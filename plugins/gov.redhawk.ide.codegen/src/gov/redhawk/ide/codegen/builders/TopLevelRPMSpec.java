@@ -78,6 +78,7 @@ public class TopLevelRPMSpec extends IncrementalProjectBuilder {
 			} else if (this.getDelta(project) != null) {
 				// Explore the delta to see if we need to generate
 				final IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
+					@Override
 					public boolean visit(final IResourceDelta delta) throws CoreException {
 						// We can ignore anything that's in a sub-directory
 						if (delta.getResource() instanceof IContainer && delta.getProjectRelativePath().segmentCount() == 1) {

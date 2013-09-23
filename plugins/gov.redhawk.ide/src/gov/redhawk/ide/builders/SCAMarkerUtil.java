@@ -203,6 +203,7 @@ public enum SCAMarkerUtil {
 	 */
 	public void createMarkers(final Resource eResource, final Diagnostic diagnostic) throws CoreException {
 		final IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(final IProgressMonitor m) throws CoreException {
 				final IFile file = getFile(eResource);
 				if (file != null) {

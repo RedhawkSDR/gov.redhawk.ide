@@ -162,6 +162,7 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		this.modelMap.put(comp, inst);
 	}
 
+	@Override
 	public void execute() {
 		this.sad.setComponentFiles(PartitioningFactory.eINSTANCE.createComponentFiles());
 		this.sad.setPartitioning(SadFactory.eINSTANCE.createSadPartitioning());
@@ -198,6 +199,7 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		return false;
 	}
 
+	@Override
 	public void redo() {
 		throw new UnsupportedOperationException();
 

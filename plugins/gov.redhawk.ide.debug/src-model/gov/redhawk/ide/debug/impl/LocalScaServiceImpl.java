@@ -139,6 +139,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return launch;
 	}
@@ -148,6 +149,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setLaunch(ILaunch newLaunch) {
 		ILaunch oldLaunch = launch;
 		launch = newLaunch;
@@ -160,6 +162,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getMode() {
 		return mode;
 	}
@@ -169,6 +172,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setMode(String newMode) {
 		String oldMode = mode;
 		mode = newMode;
@@ -181,6 +185,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getImplementationID() {
 		return implementationID;
 	}
@@ -190,6 +195,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setImplementationID(String newImplementationID) {
 		String oldImplementationID = implementationID;
 		implementationID = newImplementationID;
@@ -203,6 +209,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getExecParam() {
 		return execParam;
 	}
@@ -213,6 +220,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setExecParam(String newExecParam) {
 		String oldExecParam = execParam;
 		execParam = newExecParam;

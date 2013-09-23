@@ -148,6 +148,7 @@ public class LocalApplicationFactory {
 			waveform.setLocalApp(app);
 			ScaModelCommand.execute(this.localSca, new ScaModelCommand() {
 
+				@Override
 				public void execute() {
 					LocalApplicationFactory.this.localSca.getWaveforms().add(waveform);
 				}

@@ -99,6 +99,7 @@ public class ImplementationWizard extends Wizard implements ScaImplementationWiz
 		try {
 			this.getContainer().run(true, false, new IRunnableWithProgress() {
 
+				@Override
 				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					// Nothing to do...all of the work is in the editor
 				}
@@ -166,6 +167,7 @@ public class ImplementationWizard extends Wizard implements ScaImplementationWiz
 		return super.getNextPage(page);
 	}
 
+	@Override
 	public void generatorChanged(final Implementation impl, final ICodeGeneratorDescriptor codeGeneratorDescriptor) {
 		final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(codeGeneratorDescriptor.getId());
 		// If the code generator has settings, update the page as needed
@@ -192,6 +194,7 @@ public class ImplementationWizard extends Wizard implements ScaImplementationWiz
 		this.getContainer().updateButtons();
 	}
 
+	@Override
 	public boolean hasMoreImplementations(final Implementation curImpl) {
 		return false;
 	}

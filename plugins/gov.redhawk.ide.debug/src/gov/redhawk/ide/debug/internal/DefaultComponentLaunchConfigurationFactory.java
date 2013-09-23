@@ -38,6 +38,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  */
 public class DefaultComponentLaunchConfigurationFactory extends AbstractLaunchConfigurationFactory {
 
+	@Override
 	public boolean supports(final SoftPkg spd, final String implId) {
 		return true;
 	}
@@ -95,6 +96,7 @@ public class DefaultComponentLaunchConfigurationFactory extends AbstractLaunchCo
 		}
 	}
 
+	@Override
 	public void setProgramArguments(final String progArgs, final ILaunchConfigurationWorkingCopy config) throws CoreException {
 		config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, progArgs);
 	}

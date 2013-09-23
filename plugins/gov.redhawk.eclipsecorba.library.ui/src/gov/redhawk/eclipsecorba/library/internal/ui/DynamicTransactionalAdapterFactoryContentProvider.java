@@ -80,6 +80,7 @@ public class DynamicTransactionalAdapterFactoryContentProvider extends org.eclip
 	@Override
 	protected IPropertySource createPropertySource(final Object object, final IItemPropertySource itemPropertySource) {
 		return wrap(run(getEditingDomain(object), new RunnableWithResult.Impl<IPropertySource>() {
+			@Override
 			public void run() {
 				setResult(DynamicTransactionalAdapterFactoryContentProvider.super.createPropertySource(object, itemPropertySource));
 			}
@@ -96,6 +97,7 @@ public class DynamicTransactionalAdapterFactoryContentProvider extends org.eclip
 	@Override
 	public Object[] getChildren(final Object object) {
 		return run(getEditingDomain(object), new RunnableWithResult.Impl<Object[]>() {
+			@Override
 			public void run() {
 				setResult(DynamicTransactionalAdapterFactoryContentProvider.super.getChildren(object));
 			}
@@ -108,6 +110,7 @@ public class DynamicTransactionalAdapterFactoryContentProvider extends org.eclip
 	@Override
 	public Object[] getElements(final Object object) {
 		return run(getEditingDomain(object), new RunnableWithResult.Impl<Object[]>() {
+			@Override
 			public void run() {
 				setResult(DynamicTransactionalAdapterFactoryContentProvider.super.getElements(object));
 			}
@@ -120,6 +123,7 @@ public class DynamicTransactionalAdapterFactoryContentProvider extends org.eclip
 	@Override
 	public Object getParent(final Object object) {
 		return run(getEditingDomain(object), new RunnableWithResult.Impl<Object>() {
+			@Override
 			public void run() {
 				setResult(DynamicTransactionalAdapterFactoryContentProvider.super.getParent(object));
 			}
@@ -133,6 +137,7 @@ public class DynamicTransactionalAdapterFactoryContentProvider extends org.eclip
 	@Override
 	public IPropertySource getPropertySource(final Object object) {
 		return wrap(run(getEditingDomain(object), new RunnableWithResult.Impl<IPropertySource>() {
+			@Override
 			public void run() {
 				setResult(DynamicTransactionalAdapterFactoryContentProvider.super.getPropertySource(object));
 			}
@@ -145,6 +150,7 @@ public class DynamicTransactionalAdapterFactoryContentProvider extends org.eclip
 	@Override
 	public boolean hasChildren(final Object object) {
 		return run(getEditingDomain(object), new RunnableWithResult.Impl<Boolean>() {
+			@Override
 			public void run() {
 				setResult(DynamicTransactionalAdapterFactoryContentProvider.super.hasChildren(object));
 			}
@@ -157,6 +163,7 @@ public class DynamicTransactionalAdapterFactoryContentProvider extends org.eclip
 	@Override
 	public void inputChanged(final Viewer vwr, final Object oldInput, final Object newInput) {
 		run(getEditingDomain(newInput), new RunnableWithResult.Impl<Object>() {
+			@Override
 			public void run() {
 				DynamicTransactionalAdapterFactoryContentProvider.super.inputChanged(vwr, oldInput, newInput);
 			}

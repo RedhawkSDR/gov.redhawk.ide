@@ -213,6 +213,7 @@ public class NewWaveformFromLocalWizard extends Wizard implements IExecutableExt
 	 * 
 	 * @since 1.1
 	 */
+	@Override
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		this.fConfig = config;
 	}

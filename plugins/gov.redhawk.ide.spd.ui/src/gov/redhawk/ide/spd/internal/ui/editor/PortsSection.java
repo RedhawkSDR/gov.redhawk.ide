@@ -215,12 +215,14 @@ public class PortsSection extends ScaSection {
 		        }
 		});
 		this.portsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				getPage().setSelection(event.getSelection());
 			}
 		});
 
 		this.portsViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(final DoubleClickEvent event) {
 				final EditingDomain editingDomain = getPage().getEditingDomain();
 				final ComponentEditor editor = (ComponentEditor) getPage().getEditor();

@@ -474,6 +474,7 @@ public abstract class ProjectCreator {
 	 * @param monitor
 	 * @deprecated This method will be removed in the future.  Use the updated method which takes in the String spdName.
 	 */
+	@Deprecated
 	public static void addImplementation(final IProject project, final Implementation impl, final ImplementationSettings settings, final IProgressMonitor monitor) 
 		throws CoreException {
 		addImplementation(project, null, impl, settings, monitor);

@@ -48,6 +48,7 @@ public class WorkspaceWaveformFactory extends AbstractResourceFactory {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String identifier() {
 		return this.sad.getId();
 	}

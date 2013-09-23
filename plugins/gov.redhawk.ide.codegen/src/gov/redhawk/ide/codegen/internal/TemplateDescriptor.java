@@ -90,6 +90,7 @@ public class TemplateDescriptor implements ITemplateDesc {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getDescription() {
 		return this.description;
 	}
@@ -97,6 +98,7 @@ public class TemplateDescriptor implements ITemplateDesc {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getName() {
 		return this.name;
 	}
@@ -104,6 +106,7 @@ public class TemplateDescriptor implements ITemplateDesc {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getContributingBundleID() {
 		return this.bundleId;
 	}
@@ -113,6 +116,7 @@ public class TemplateDescriptor implements ITemplateDesc {
 	 * 
 	 * @since 7.0
 	 */
+	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		return this.propertyDescs;
 	}
@@ -122,6 +126,7 @@ public class TemplateDescriptor implements ITemplateDesc {
 	 * 
 	 * @since 7.0
 	 */
+	@Override
 	public boolean hasSettings() {
 		return Boolean.parseBoolean(this.hasSettings);
 	}
@@ -131,6 +136,7 @@ public class TemplateDescriptor implements ITemplateDesc {
 	 * 
 	 * @since 7.0
 	 */
+	@Override
 	public boolean notDefaultableGenerator() {
 		return Boolean.parseBoolean(this.notDefaultable);
 	}
@@ -140,6 +146,7 @@ public class TemplateDescriptor implements ITemplateDesc {
 	 * 
 	 * @since 7.0
 	 */
+	@Override
 	public String getId() {
 		return this.id;
 	}
@@ -147,6 +154,7 @@ public class TemplateDescriptor implements ITemplateDesc {
 	/**
 	 * @since 7.0
 	 */
+	@Override
 	public String getCodegenId() {
 		return this.codegenId;
 	}
@@ -156,6 +164,7 @@ public class TemplateDescriptor implements ITemplateDesc {
 	 * 
 	 * @since 7.0
 	 */
+	@Override
 	public IScaComponentCodegenTemplate getTemplate() throws CoreException {
 		return (IScaComponentCodegenTemplate) this.element.createExecutableExtension(TemplateDescriptor.ATTR_CLASS);
 	}
@@ -163,6 +172,7 @@ public class TemplateDescriptor implements ITemplateDesc {
 	/**
 	 * @since 7.0
 	 */
+	@Override
 	public String getPortGenId() {
 		return this.portCodegenId;
 	}
@@ -170,6 +180,7 @@ public class TemplateDescriptor implements ITemplateDesc {
 	/**
 	 * @since 7.0
 	 */
+	@Override
 	public boolean delegatePortGeneration() {
 		return Boolean.parseBoolean(this.delegatePortGeneration);
 	}
@@ -177,6 +188,7 @@ public class TemplateDescriptor implements ITemplateDesc {
 	/**
 	 * @since 7.0
 	 */
+	@Override
 	public int compareTo(final ITemplateDesc o) {
 		if (o == null) {
 			return -1;
@@ -191,6 +203,7 @@ public class TemplateDescriptor implements ITemplateDesc {
 	/**
 	 * @since 8.0
 	 */
+	@Override
 	public boolean isSelectable() {
 		return Boolean.parseBoolean(this.selectable);
 	}
@@ -198,11 +211,13 @@ public class TemplateDescriptor implements ITemplateDesc {
 	/**
 	 * @since 9.0
 	 */
+	@Override
 	public boolean supportsComponentType(String componentType) {
 		final int i = Arrays.binarySearch(this.componentTypes, componentType);
 		return (i >= 0);
 	}
 
+	@Override
 	public ICodeGeneratorDescriptor getCodegen() {
 		return RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(codegenId);
 	}

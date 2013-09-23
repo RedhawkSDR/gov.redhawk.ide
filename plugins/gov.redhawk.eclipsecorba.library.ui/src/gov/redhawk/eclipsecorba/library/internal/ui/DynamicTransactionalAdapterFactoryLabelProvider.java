@@ -79,6 +79,7 @@ public class DynamicTransactionalAdapterFactoryLabelProvider extends org.eclipse
 	@Override
 	public Image getColumnImage(final Object object, final int columnIndex) {
 		return run(getEditingDomain(object), new RunnableWithResult.Impl<Image>() {
+			@Override
 			public void run() {
 				setResult(DynamicTransactionalAdapterFactoryLabelProvider.super.getColumnImage(object, columnIndex));
 			}
@@ -91,6 +92,7 @@ public class DynamicTransactionalAdapterFactoryLabelProvider extends org.eclipse
 	@Override
 	public String getColumnText(final Object object, final int columnIndex) {
 		return run(getEditingDomain(object), new RunnableWithResult.Impl<String>() {
+			@Override
 			public void run() {
 				setResult(DynamicTransactionalAdapterFactoryLabelProvider.super.getColumnText(object, columnIndex));
 			}
@@ -103,6 +105,7 @@ public class DynamicTransactionalAdapterFactoryLabelProvider extends org.eclipse
 	@Override
 	protected Image getDefaultImage(final Object object) {
 		return run(getEditingDomain(object), new RunnableWithResult.Impl<Image>() {
+			@Override
 			public void run() {
 				setResult(DynamicTransactionalAdapterFactoryLabelProvider.super.getDefaultImage(object));
 			}
@@ -115,6 +118,7 @@ public class DynamicTransactionalAdapterFactoryLabelProvider extends org.eclipse
 	@Override
 	public Image getImage(final Object object) {
 		return run(getEditingDomain(object), new RunnableWithResult.Impl<Image>() {
+			@Override
 			public void run() {
 				setResult(DynamicTransactionalAdapterFactoryLabelProvider.super.getImage(object));
 			}
@@ -127,6 +131,7 @@ public class DynamicTransactionalAdapterFactoryLabelProvider extends org.eclipse
 	@Override
 	protected Image getImageFromObject(final Object object) {
 		return run(getEditingDomain(object), new RunnableWithResult.Impl<Image>() {
+			@Override
 			public void run() {
 				setResult(DynamicTransactionalAdapterFactoryLabelProvider.super.getImageFromObject(object));
 			}
@@ -139,6 +144,7 @@ public class DynamicTransactionalAdapterFactoryLabelProvider extends org.eclipse
 	@Override
 	public String getText(final Object object) {
 		return run(getEditingDomain(object), new RunnableWithResult.Impl<String>() {
+			@Override
 			public void run() {
 				setResult(DynamicTransactionalAdapterFactoryLabelProvider.super.getText(object));
 			}
@@ -151,6 +157,7 @@ public class DynamicTransactionalAdapterFactoryLabelProvider extends org.eclipse
 	@Override
 	public boolean isLabelProperty(final Object object, final String id) {
 		return run(getEditingDomain(object), new RunnableWithResult.Impl<Boolean>() {
+			@Override
 			public void run() {
 				setResult(DynamicTransactionalAdapterFactoryLabelProvider.super.isLabelProperty(object, id));
 			}

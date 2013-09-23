@@ -76,6 +76,7 @@ public class ComponentProjectCreator extends ProjectCreator {
 	 * @throws CoreException An error occurs while generating files
 	 * @deprecated Please use the createComponentFiles method which takes the spdName and spdId.
 	 */
+	@Deprecated
 	public static IFile createComponentFiles(final IProject project, final String projectID, final String authorName, final IProgressMonitor monitor)
 	        throws CoreException {
 		String[] tokens = project.getName().split("\\.");
