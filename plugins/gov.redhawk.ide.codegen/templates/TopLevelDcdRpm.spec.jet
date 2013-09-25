@@ -11,7 +11,11 @@ skeleton="../generator.skeleton"
 %>
 <%
     final DeviceConfiguration devCfg = (DeviceConfiguration) argument;
+    String devMgrName = "";
     final SoftPkg devMgrSoftPkg = devCfg.getDeviceManagerSoftPkg().getSoftPkg();
+    if (devMgrSoftPkg != null) {
+    	devMgrName = devMgrSoftPkg.getName();
+    }
     final List<ComponentFile> componentFiles;
     if (devCfg.getComponentFiles() == null) {
     	componentFiles = Collections.emptyList();
@@ -37,7 +41,7 @@ License: None
 Group: REDHAWK/Nodes
 Source: %{name}-%{version}.tar.gz
 # Require the device manager whose SPD is referenced
-Requires: <%=devMgrSoftPkg.getName()%>
+Requires: <%=devMgrName%>
 # Require each referenced device/service
 Requires:<%
     for (ComponentFile compFile : componentFiles) {
