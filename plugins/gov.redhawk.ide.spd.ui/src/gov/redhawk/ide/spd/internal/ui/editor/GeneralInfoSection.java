@@ -487,7 +487,7 @@ public class GeneralInfoSection extends ScaSection {
 		        null,
 		        null));
 
-		this.client.getTypeEntry().setValue(model.getType().getLiteral());
+		this.client.getTypeEntry().setValue(String.valueOf(model.getType()));
 	}
 
 }
