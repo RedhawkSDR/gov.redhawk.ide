@@ -45,19 +45,29 @@ public class ScaModelAdapter extends EContentAdapter {
 			case ScaDebugPackage.LOCAL_SCA_WAVEFORM__COMPONENTS:
 				switch (notification.getEventType()) {
 				case Notification.ADD:
-					this.modelMap.add((LocalScaComponent) notification.getNewValue());
+					Object newVal = notification.getNewValue();
+					if (newVal != null) {
+						this.modelMap.add((LocalScaComponent) newVal);
+					}
 					break;
 				case Notification.ADD_MANY:
 					for (final Object obj : (Collection< ? >) notification.getNewValue()) {
-						this.modelMap.add((LocalScaComponent) obj);
+						if (obj != null) {
+							this.modelMap.add((LocalScaComponent) obj);
+						}
 					}
 					break;
 				case Notification.REMOVE:
-					this.modelMap.remove((LocalScaComponent) notification.getOldValue());
+					Object oldVal = notification.getOldValue();
+					if (oldVal != null) {
+						this.modelMap.remove((LocalScaComponent) oldVal);
+					}
 					break;
 				case Notification.REMOVE_MANY:
 					for (final Object obj : (Collection< ? >) notification.getOldValue()) {
-						this.modelMap.remove((LocalScaComponent) obj);
+						if (obj != null) {
+							this.modelMap.remove((LocalScaComponent) obj);
+						}
 					}
 					break;
 				default:
@@ -72,19 +82,29 @@ public class ScaModelAdapter extends EContentAdapter {
 			case ScaPackage.SCA_USES_PORT__CONNECTIONS:
 				switch (notification.getEventType()) {
 				case Notification.ADD:
-					this.modelMap.add((ScaConnection) notification.getNewValue());
+					Object newVal = notification.getNewValue();
+					if (newVal != null) {
+						this.modelMap.add((ScaConnection) newVal);
+					}
 					break;
 				case Notification.ADD_MANY:
 					for (final Object obj : (Collection< ? >) notification.getNewValue()) {
-						this.modelMap.add((ScaConnection) obj);
+						if (obj != null) {
+							this.modelMap.add((ScaConnection) obj);
+						}
 					}
 					break;
 				case Notification.REMOVE:
-					this.modelMap.remove((ScaConnection) notification.getOldValue());
+					Object oldVal = notification.getOldValue();
+					if (oldVal != null) {
+						this.modelMap.remove((ScaConnection) oldVal);
+					}
 					break;
 				case Notification.REMOVE_MANY:
 					for (final Object obj : (Collection< ? >) notification.getOldValue()) {
-						this.modelMap.remove((ScaConnection) obj);
+						if (obj != null) {
+							this.modelMap.remove((ScaConnection) obj);
+						}
 					}
 					break;
 				default:
