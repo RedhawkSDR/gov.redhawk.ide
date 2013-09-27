@@ -17,6 +17,7 @@ import gov.redhawk.model.sca.ScaWaveform;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.jdt.annotation.NonNull;
 
 import CF.ApplicationOperations;
 import CF.DataType;
@@ -97,5 +98,5 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 	 * @model exceptions="gov.redhawk.ide.debug.CoreException" execParamsDataType="gov.redhawk.model.sca.DataTypeArray" spdURIDataType="mil.jpeojtrs.sca.spd.URI"
 	 * @generated
 	 */
-	LocalScaComponent launch(String id, DataType[] execParams, URI spdURI, String implID, String mode) throws CoreException;
+	@NonNull LocalScaComponent launch(String id, DataType[] execParams, URI spdURI, String implID, String mode) throws CoreException;
 } // LocalScaWaveform

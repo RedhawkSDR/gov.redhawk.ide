@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="gov.redhawk.ide.snapshot.ui" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="927989779">
+            <message_arguments>
+                <message_argument value="1.0.0"/>
+                <message_argument value="org.eclipse.emf.ecore"/>
+            </message_arguments>
+        </filter>
+        <filter id="927989779">
+            <message_arguments>
+                <message_argument value="1.0.0"/>
+                <message_argument value="org.eclipse.emf.ecore.xmi"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

@@ -57,7 +57,11 @@ public class TopLevelDcdRpmSpecTemplate
     final StringBuffer stringBuffer = new StringBuffer();
     
     final DeviceConfiguration devCfg = (DeviceConfiguration) argument;
+    String devMgrName = "";
     final SoftPkg devMgrSoftPkg = devCfg.getDeviceManagerSoftPkg().getSoftPkg();
+    if (devMgrSoftPkg != null) {
+    	devMgrName = devMgrSoftPkg.getName();
+    }
     final List<ComponentFile> componentFiles;
     if (devCfg.getComponentFiles() == null) {
     	componentFiles = Collections.emptyList();
@@ -73,7 +77,7 @@ public class TopLevelDcdRpmSpecTemplate
     stringBuffer.append(TEXT_3);
     stringBuffer.append(devCfg.getName());
     stringBuffer.append(TEXT_4);
-    stringBuffer.append(devMgrSoftPkg.getName());
+    stringBuffer.append(devMgrName);
     stringBuffer.append(TEXT_5);
     
     for (ComponentFile compFile : componentFiles) {

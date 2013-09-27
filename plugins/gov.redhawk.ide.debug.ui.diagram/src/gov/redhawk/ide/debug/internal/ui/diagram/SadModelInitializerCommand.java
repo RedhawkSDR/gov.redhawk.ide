@@ -39,6 +39,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.emf.common.command.AbstractCommand;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jdt.annotation.NonNull;
 
 import ExtendedCF.UsesConnection;
 
@@ -57,7 +58,7 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		this.sad = sad;
 	}
 
-	private void initConnection(final ScaConnection con) {
+	private void initConnection(final @NonNull ScaConnection con) {
 		final ScaUsesPort uses = con.getPort();
 		final ScaPortContainer container = uses.getPortContainer();
 		if (!(container instanceof ScaComponent)) {
@@ -105,18 +106,21 @@ public class SadModelInitializerCommand extends AbstractCommand {
 				}
 			}
 		}
-
 		// We were unable to find the target side of the connection, so ignore it
 		if (foundTarget) {
 			if (this.sad.getConnections() == null) {
 				this.sad.setConnections(SadFactory.eINSTANCE.createSadConnections());
 			}
 			this.sad.getConnections().getConnectInterface().add(sadCon);
+			if (con == null) {
+				// Should be dead code, but outC block above apparently messes up null analysis
+				return;
+			}
 			this.modelMap.put(con, sadCon);
 		}
 	}
 
-	private void initComponent(final LocalScaComponent comp) {
+	private void initComponent(final @NonNull LocalScaComponent comp) {
 		final SoftPkg spd = comp.fetchProfileObject(null);
 		if (spd == null) {
 			// For some reason we couldn't find the SPD Abort.
@@ -145,6 +149,9 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		partitioning.getComponentPlacement().add(placement);
 
 		final SadComponentInstantiation inst = SadFactory.eINSTANCE.createSadComponentInstantiation();
+		if (inst == null) {
+			return;
+		}
 		inst.setUsageName(comp.getName());
 		final FindComponent findComponent = SadFactory.eINSTANCE.createFindComponent();
 		final NamingService namingService = PartitioningFactory.eINSTANCE.createNamingService();
@@ -171,17 +178,24 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		this.sad.setExternalPorts(null);
 		if (waveform != null) {
 			for (final ScaComponent comp : this.waveform.getComponents()) {
-				initComponent((LocalScaComponent) comp);
+				if (comp != null) {
+					initComponent((LocalScaComponent) comp);
+				}
 			}
 
 			for (final ScaComponent comp : this.waveform.getComponents()) {
+				if (comp == null) {
+					continue;
+				}
 				final EList<ScaPort< ? , ? >> ports = comp.fetchPorts(null);
 				for (final ScaPort< ? , ? > port : ports) {
 					if (port instanceof ScaUsesPort) {
 						final ScaUsesPort uses = (ScaUsesPort) port;
 						final EList<ScaConnection> connections = uses.fetchConnections(null);
 						for (final ScaConnection con : connections) {
-							initConnection(con);
+							if (con != null) {
+								initConnection(con);
+							}
 						}
 					}
 				}

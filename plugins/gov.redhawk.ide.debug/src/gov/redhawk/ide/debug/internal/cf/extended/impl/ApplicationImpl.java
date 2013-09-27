@@ -75,6 +75,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.jdt.annotation.NonNull;
 import org.jacorb.naming.Name;
 import org.jacorb.orb.ORB;
 import org.omg.CORBA.SystemException;
@@ -976,7 +977,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return retVal.getObj();
 	}
 	
-	public LocalScaComponent launch(final String usageName, String compId, final DataType[] execParams, final URI spdURI, final String implId, final String mode)
+	public @NonNull LocalScaComponent launch(final String usageName, String compId, final DataType[] execParams, final URI spdURI, final String implId, final String mode)
 			throws CoreException {
 			return launch(usageName, compId, createExecParamStr(execParams), spdURI, implId, mode);
 		}
@@ -986,7 +987,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return launch(usageName, null, execParams, spdURI, implId, mode);
 	}
 
-	public LocalScaComponent launch(String usageName, final String compId, final String execParams, URI spdURI, final String implId, String mode)
+	public @NonNull LocalScaComponent launch(String usageName, final String compId, final String execParams, URI spdURI, final String implId, String mode)
 		throws CoreException {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="gov.redhawk.ide.debug.ui.diagram" version="2">
+    <resource path="src/gov/redhawk/ide/debug/internal/ui/diagram/ScaChalkboardView.java" type="gov.redhawk.ide.debug.internal.ui.diagram.ScaChalkboardView$ViewEditorSite">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IEditorSite"/>
+                <message_argument value="ViewEditorSite"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
