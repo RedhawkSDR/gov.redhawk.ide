@@ -16,4 +16,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src-model/gov/redhawk/ide/debug/LocalScaLoadableDevice.java" type="gov.redhawk.ide.debug.LocalScaLoadableDevice">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ScaLoadableDevice&lt;L&gt;"/>
+                <message_argument value="LocalScaLoadableDevice"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>
