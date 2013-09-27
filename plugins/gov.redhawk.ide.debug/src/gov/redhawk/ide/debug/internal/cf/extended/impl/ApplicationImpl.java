@@ -977,7 +977,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return retVal.getObj();
 	}
 	
-	public @NonNull LocalScaComponent launch(final String usageName, String compId, final DataType[] execParams, final URI spdURI, final String implId, final String mode)
+	@NonNull
+	public LocalScaComponent launch(final String usageName, String compId, final DataType[] execParams, final URI spdURI, final String implId, final String mode)
 			throws CoreException {
 			return launch(usageName, compId, createExecParamStr(execParams), spdURI, implId, mode);
 		}
@@ -987,7 +988,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return launch(usageName, null, execParams, spdURI, implId, mode);
 	}
 
-	public @NonNull LocalScaComponent launch(String usageName, final String compId, final String execParams, URI spdURI, final String implId, String mode)
+	@NonNull
+	public LocalScaComponent launch(String usageName, final String compId, final String execParams, URI spdURI, final String implId, String mode)
 		throws CoreException {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
