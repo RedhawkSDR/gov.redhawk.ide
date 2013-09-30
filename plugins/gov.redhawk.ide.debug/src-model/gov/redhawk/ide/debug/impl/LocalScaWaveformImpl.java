@@ -627,7 +627,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * @generated NOT
 	 */
 	@Override
-	public @NonNull LocalScaComponent launch(final String compID, final DataType[] execParams, final URI spdURI, final String implID, final String mode) throws CoreException {
+	@NonNull
+	public LocalScaComponent launch(final String compID, final DataType[] execParams, final URI spdURI, final String implID, final String mode) throws CoreException {
 		// END GENERATED CODE
 		Assert.isNotNull(spdURI);
 		Assert.isNotNull(implID);

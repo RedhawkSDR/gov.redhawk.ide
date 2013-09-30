@@ -58,7 +58,7 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		this.sad = sad;
 	}
 
-	private void initConnection(final @NonNull ScaConnection con) {
+	private void initConnection(@NonNull final ScaConnection con) {
 		final ScaUsesPort uses = con.getPort();
 		final ScaPortContainer container = uses.getPortContainer();
 		if (!(container instanceof ScaComponent)) {
@@ -120,7 +120,7 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		}
 	}
 
-	private void initComponent(final @NonNull LocalScaComponent comp) {
+	private void initComponent(@NonNull final LocalScaComponent comp) {
 		final SoftPkg spd = comp.fetchProfileObject(null);
 		if (spd == null) {
 			// For some reason we couldn't find the SPD Abort.
