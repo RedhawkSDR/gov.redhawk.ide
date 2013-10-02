@@ -300,7 +300,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public NamingContextExt getWaveformContext() {
-		return this.waveformContext.getNamingContext();
+  		return this.waveformContext.getNamingContext();
 	}
 
 	/**
@@ -465,17 +465,18 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			ScaDebugPlugin debugInstance = ScaDebugPlugin.getInstance();
 			if (debugInstance != null) {
 				final NamingContextExt context = getWaveformContext();
-
-				try {
-					context.unbind(Name.toName(this.name));
-				} catch (final NotFound e) {
-					this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
-				} catch (final CannotProceed e) {
-					this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
-				} catch (final InvalidName e) {
-					this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
-				} catch (final SystemException e) {
-					this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
+				if (context != null) {
+					try {
+						context.unbind(Name.toName(this.name));
+					} catch (final NotFound e) {
+						this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
+					} catch (final CannotProceed e) {
+						this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
+					} catch (final InvalidName e) {
+						this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
+					} catch (final SystemException e) {
+						this.streams.getErrStream().println("Error while unbinding waveform context:\n" + e);
+					}
 				}
 			}
 		}
@@ -847,7 +848,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		if (compInstId == null) {
 			throw new ReleaseError(new String[] { "Unknown component: " + compInstId });
 		}
-		this.streams.getOutStream().println("Reseting component " + compInstId);
+		this.streams.getOutStream().println("Resetting component " + compInstId);
 
 		LocalScaComponent oldComponent = null;
 		for (final Iterator<ScaComponent> iterator = this.waveform.getComponents().iterator(); iterator.hasNext();) {
@@ -976,12 +977,12 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 		return retVal.getObj();
 	}
-	
+
 	@NonNull
 	public LocalScaComponent launch(final String usageName, String compId, final DataType[] execParams, final URI spdURI, final String implId, final String mode)
-			throws CoreException {
-			return launch(usageName, compId, createExecParamStr(execParams), spdURI, implId, mode);
-		}
+		throws CoreException {
+		return launch(usageName, compId, createExecParamStr(execParams), spdURI, implId, mode);
+	}
 
 	public LocalScaComponent launch(final String usageName, final DataType[] execParams, final URI spdURI, final String implId, final String mode)
 		throws CoreException {
@@ -1042,11 +1043,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create sub context for spd: " + spdContextNameStr, e));
 		}
 		config.setAttribute(LaunchVariables.NAMING_CONTEXT_IOR, spdContext.toString());
-		
+
 		if (usageName == null && compId != null) {
 			usageName = ScaComponentImpl.convertIdentifierToInstantiationID(compId);
 		}
-		
+
 		if (usageName != null) {
 			this.streams.getOutStream().println("\tLaunching with name: " + usageName);
 			config.setAttribute(LaunchVariables.NAME_BINDING, usageName);
@@ -1055,7 +1056,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			this.streams.getOutStream().println("\tLaunching with id: " + compId);
 			config.setAttribute(LaunchVariables.COMPONENT_IDENTIFIER, compId);
 		}
-		
+
 		if (execParams != null && execParams.length() > 0) {
 			this.streams.getOutStream().println("\tExec params: " + execParams);
 			config.setAttribute(LaunchVariables.EXEC_PARAMS, execParams);
