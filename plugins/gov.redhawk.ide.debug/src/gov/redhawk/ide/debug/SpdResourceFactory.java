@@ -35,7 +35,6 @@ import CF.LifeCyclePackage.ReleaseError;
 import CF.ResourceFactoryPackage.CreateResourceFailure;
 import CF.ResourceFactoryPackage.InvalidResourceId;
 import CF.ResourceFactoryPackage.ShutdownFailure;
-import ExtendedCF.Sandbox;
 
 /**
  * @since 4.0
@@ -144,7 +143,7 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 		final List<DataType> params = new ArrayList<DataType>(Arrays.asList(qualifiers));
 		for (final Iterator<DataType> i = params.iterator(); i.hasNext();) {
 			final DataType t = i.next();
-			if (Sandbox.LAUNCH_IMPLEMENTATION_ID.equals(t.id)) {
+			if ("__implementationID".equals(t.id)) {
 				final String value = t.value.extract_string();
 				implementationID = value;
 				i.remove();
