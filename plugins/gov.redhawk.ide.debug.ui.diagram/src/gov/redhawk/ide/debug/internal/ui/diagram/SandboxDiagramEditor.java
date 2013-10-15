@@ -41,7 +41,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
 
 public class SandboxDiagramEditor extends CustomDiagramEditor {
-	
+
 	private static final ImageDescriptor TOOL_ICON = SpdToolEntry.getDefaultIcon();
 
 	private java.beans.PropertyChangeListener listener = new PropertyChangeListener() {
@@ -60,6 +60,9 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 		public IStatus run(IProgressMonitor monitor) {
 			final PaletteRoot root = getEditDomain().getPaletteViewer().getPaletteRoot();
 			final List<PaletteEntry> tools = getWorkspaceComponentTools();
+			
+			// Add the toolbar and filter controls
+			tools.add(0, (PaletteEntry) rootPalette.getChildren().get(0));
 			if (root != null) {
 				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
@@ -69,11 +72,13 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 					}
 
 				});
-				
+
 			}
 			return Status.OK_STATUS;
 		}
 	};
+
+	private PaletteRoot rootPalette;
 
 	public SandboxDiagramEditor(final SCAFormEditor editor) {
 		super(editor);
@@ -86,11 +91,17 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 		registry.removeListener(listener);
 		super.dispose();
 	}
-
+	
 	@Override
 	protected PaletteRoot createPaletteRoot(final PaletteRoot existingPaletteRoot) {
+		this.rootPalette = super.createPaletteRoot(existingPaletteRoot);
 		final PaletteRoot retVal = new PaletteRoot();
-		retVal.setChildren(getWorkspaceComponentTools());
+		List<PaletteEntry> tools = getWorkspaceComponentTools();
+		
+		// Add the toolbar and filter controls
+		tools.add(0, (PaletteEntry) rootPalette.getChildren().get(0));
+		
+		retVal.setChildren(tools);
 
 		IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
 		registry.addListener(listener);
@@ -188,10 +199,12 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 	private List<PaletteEntry> createPaletteEntries(ComponentDesc desc) {
 		List<PaletteEntry> retVal = new ArrayList<PaletteEntry>(desc.getImplementationIds().size());
 		if (desc.getImplementationIds().size() == 1) {
-			retVal.add(new SpdToolEntry(desc.getName(), desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(), desc.getImplementationIds().get(0), TOOL_ICON));
+			retVal.add(new SpdToolEntry(desc.getName(), desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(), desc.getImplementationIds().get(0),
+				TOOL_ICON));
 		} else {
 			for (String implID : desc.getImplementationIds()) {
-				retVal.add(new SpdToolEntry(desc.getName() + " (" + implID + ")", desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(), implID, TOOL_ICON));
+				retVal.add(new SpdToolEntry(desc.getName() + " (" + implID + ")", desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(), implID,
+					TOOL_ICON));
 			}
 		}
 		return retVal;
