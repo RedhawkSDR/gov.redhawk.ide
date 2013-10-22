@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.graphiti.ui.diagramTypeProviders">
+      <diagramTypeProvider
+            class="gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider"
+            id="gov.redhawk.ide.sad.graphiti.ui.FactoryProvider"
+            name="FactoryProvider">
+         <diagramType
+               id="gov.redhawk.ide.sad.graphiti.ui.SADDiagramEditor">
+         </diagramType>
+      </diagramTypeProvider>
+   </extension>
+   <extension
+         point="org.eclipse.graphiti.ui.diagramTypes">
+      <diagramType
+            id="gov.redhawk.ide.sad.graphiti.ui.SADDiagramEditor"
+            name="SAD Diagram"
+            type="SADDiagram">
+      </diagramType>
+   </extension>
+
+</plugin>

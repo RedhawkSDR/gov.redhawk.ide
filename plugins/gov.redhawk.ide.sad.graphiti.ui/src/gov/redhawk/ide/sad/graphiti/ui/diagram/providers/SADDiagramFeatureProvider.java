@@ -1,4 +1,6 @@
-package gov.redhawk.ide.sad.graphiti;
+package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
+
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
@@ -10,15 +12,18 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
+import org.eclipse.graphiti.pattern.DefaultFeatureProviderWithPatterns;
 
 
 
-public class SADDiagramFeatureProvider extends DefaultFeatureProvider {
+public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPatterns {
 
 	
 	public SADDiagramFeatureProvider(IDiagramTypeProvider diagramTypeProvider){
 		super(diagramTypeProvider);
+		
+		//Add Patterns for Domain Objects
+		addPattern(new ComponentPattern());
 
 	}
 	
@@ -41,7 +46,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProvider {
 //		return new ICreateFeature[] { new CreateFeature1(this)};
 		
 		//remove this
-		return null;
+		return super.getCreateFeatures();
 	}
 	
 	@Override

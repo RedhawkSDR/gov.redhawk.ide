@@ -1,12 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: gov.redhawk.ide.sad.ui;singleton:=true
-Bundle-Version: 5.1.0.qualifier
-Bundle-ClassPath: .
-Bundle-Vendor: %providerName
-Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-SymbolicName: gov.redhawk.ide.sad.graphiti.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  org.eclipse.core.resources;bundle-version="3.6.0";visibility:=reexport,
  mil.jpeojtrs.sca.sad.edit;bundle-version="2.2.2";visibility:=reexport,
@@ -49,20 +46,9 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  gov.redhawk.sca.sad.validation;bundle-version="1.1.0",
  org.eclipse.graphiti;bundle-version="0.10.0",
  org.eclipse.graphiti.ui;bundle-version="0.10.0",
- gov.redhawk.ide.sad.graphiti.ui,
- org.eclipse.graphiti.examples.common
+ org.eclipse.graphiti.pattern;bundle-version="0.10.1"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: gov.redhawk.ide.sad.ui.SadUiActivator
-Export-Package: gov.redhawk.ide.sad.internal.ui;x-internal:=true,
- gov.redhawk.ide.sad.internal.ui.composite;x-internal:=true,
- gov.redhawk.ide.sad.internal.ui.editor;x-friends:="gov.redhawk.ide.debug.ui.diagram",
- gov.redhawk.ide.sad.internal.ui.handler;x-internal:=true,
- gov.redhawk.ide.sad.internal.ui.properties;x-internal:=true,
- gov.redhawk.ide.sad.internal.ui.provider;x-internal:=true,
- gov.redhawk.ide.sad.internal.ui.section;x-internal:=true,
- gov.redhawk.ide.sad.internal.ui.wizard;x-internal:=true,
- gov.redhawk.ide.sad.ui,
- gov.redhawk.ide.sad.ui.action,
- gov.redhawk.ide.sad.ui.edit.policies,
- gov.redhawk.ide.sad.ui.providers,
- gov.redhawk.ide.sad.ui.wizard
+Bundle-Vendor: %providerName
+Export-Package: gov.redhawk.ide.sad.graphiti.ui,
+ gov.redhawk.ide.sad.graphiti.ui.diagram.providers
