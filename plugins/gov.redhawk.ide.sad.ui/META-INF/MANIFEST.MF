@@ -47,8 +47,8 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  gov.redhawk.ide.spd.ui;bundle-version="7.0.0",
  org.eclipse.nebula.widgets.xviewer;bundle-version="0.9.9",
  gov.redhawk.sca.sad.validation;bundle-version="1.1.0",
- org.eclipse.graphiti;bundle-version="0.10.0",
- org.eclipse.graphiti.ui;bundle-version="0.10.0",
+ org.eclipse.graphiti,
+ org.eclipse.graphiti.ui,
  gov.redhawk.ide.sad.graphiti.ui,
  org.eclipse.graphiti.examples.common
 Bundle-ActivationPolicy: lazy
