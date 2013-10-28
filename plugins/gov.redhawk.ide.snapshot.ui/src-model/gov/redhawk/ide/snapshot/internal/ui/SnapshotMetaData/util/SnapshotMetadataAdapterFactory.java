@@ -110,6 +110,21 @@ public class SnapshotMetadataAdapterFactory extends AdapterFactoryImpl {
 				return createValueAdapter();
 			}
 			@Override
+			public Adapter caseStructSeq(StructSeq object)
+			{
+				return createStructSeqAdapter();
+			}
+			@Override
+			public Adapter caseStruct(Struct object)
+			{
+				return createStructAdapter();
+			}
+			@Override
+			public Adapter caseSimple(Simple object)
+			{
+				return createSimpleAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object)
 			{
 				return createEObjectAdapter();
@@ -210,6 +225,51 @@ public class SnapshotMetadataAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createValueAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.StructSeq <em>Struct Seq</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.StructSeq
+	 * @generated
+	 */
+	public Adapter createStructSeqAdapter()
+	{
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Struct <em>Struct</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Struct
+	 * @generated
+	 */
+	public Adapter createStructAdapter()
+	{
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Simple <em>Simple</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Simple
+	 * @generated
+	 */
+	public Adapter createSimpleAdapter()
+	{
 		return null;
 	}
 

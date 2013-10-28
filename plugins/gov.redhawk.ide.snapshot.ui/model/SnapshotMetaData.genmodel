@@ -4,6 +4,7 @@
     modelPluginID="gov.redhawk.ide.snapshot.ui" templateDirectory="/gov.redhawk.ide.snapshot.ui/templates"
     dynamicTemplates="true" forceOverwrite="true" modelName="SnapshotMetaData" modelPluginClass=""
     codeFormatting="true" importerID="org.eclipse.xsd.ecore.importer" complianceLevel="6.0"
+     usedGenPackages="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore platform:/plugin/mil.jpeojtrs.sca.prf/model/prf.genmodel#//prf"
     copyrightFields="false" importOrganizing="true">
   <foreignModel>snapshotMetaData.xsd</foreignModel>
   <genPackages prefix="SnapshotMetadata" basePackage="gov.redhawk.ide.snapshot.internal.ui"

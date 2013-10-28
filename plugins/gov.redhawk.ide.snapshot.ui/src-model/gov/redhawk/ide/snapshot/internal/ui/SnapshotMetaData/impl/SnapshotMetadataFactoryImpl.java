@@ -75,6 +75,9 @@ public class SnapshotMetadataFactoryImpl extends EFactoryImpl implements Snapsho
 			case SnapshotMetadataPackage.SRI: return createSRI();
 			case SnapshotMetadataPackage.TIME: return createTime();
 			case SnapshotMetadataPackage.VALUE: return createValue();
+			case SnapshotMetadataPackage.STRUCT_SEQ: return createStructSeq();
+			case SnapshotMetadataPackage.STRUCT: return createStruct();
+			case SnapshotMetadataPackage.SIMPLE: return createSimple();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -144,6 +147,39 @@ public class SnapshotMetadataFactoryImpl extends EFactoryImpl implements Snapsho
 	public Value createValue() {
 		ValueImpl value = new ValueImpl();
 		return value;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public StructSeq createStructSeq()
+	{
+		StructSeqImpl structSeq = new StructSeqImpl();
+		return structSeq;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Struct createStruct()
+	{
+		StructImpl struct = new StructImpl();
+		return struct;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Simple createSimple()
+	{
+		SimpleImpl simple = new SimpleImpl();
+		return simple;
 	}
 
 	/**

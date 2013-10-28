@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.writer.internal;
 
+import gov.redhawk.bulkio.util.StreamSRIUtil;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -20,10 +22,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import nxm.sys.lib.Table;
 import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
-import CF.DataType;
-import nxm.sys.lib.Table;
 
 /**
  * 
@@ -37,7 +38,6 @@ public class BinSriDataWriter extends BinDataWriter {
 	private PrecisionUTCTime endTime;
 	private Date startDate;
 
-	@SuppressWarnings("null")
 	@Override
 	public List<File> getOutputFileList() {
 		return Arrays.asList(new File[] { getFileDestination(), getMetaDataFile() });
@@ -120,8 +120,7 @@ public class BinSriDataWriter extends BinDataWriter {
 
 		StreamSRI sri = getSRI();
 		if (sri != null) {
-			Table sriTable = (Table) rootTable.addTable("SRI");
-			putSriInfo(getSRI(), sriTable);
+			StreamSRIUtil.putSriInfo(getSRI(), rootTable);
 		}
 		if (startTime != null) {
 			Table startTable = (Table) rootTable.addTable("First Packet Time");
@@ -156,31 +155,6 @@ public class BinSriDataWriter extends BinDataWriter {
 		table.put("End Time", format.format(new Date()));
 	}
 
-	private void putSriInfo(StreamSRI sri, Table table) {
-		table.put("hversion", sri.hversion);
-		table.put("xunits", sri.xunits);
-		table.put("xdelta", sri.xdelta);
-		table.put("xstart", sri.xstart);
-		table.put("subsize", sri.subsize);
-		table.put("yunits", sri.yunits);
-		table.put("ydelta", sri.ydelta);
-		table.put("ystart", sri.ystart);
-		table.put("mode", sri.mode);
-		table.put("blocking", sri.blocking);
-		table.put("streamid", sri.streamID);
-		if (sri.keywords != null && sri.keywords.length > 0) {
-			Table keywordsTable = (Table) table.addTable("SRI Keywords");
-			putSriKeywords(sri.keywords, keywordsTable);
-		}
-	}
-
-	private void putSriKeywords(DataType[] keywords, Table table) {
-		for (int i = 0; i < keywords.length; i++) {
-			String[] keyword = DataReceiverUtils.readCorbaAny(keywords[i], null);
-			table.put(keyword[0], keyword[1]);
-		}
-	}
-
 	private void putTime(PrecisionUTCTime time, Table table) {
 		table.put("tcmode", time.tcmode);
 		table.put("tfsec", time.tfsec);
@@ -188,7 +162,7 @@ public class BinSriDataWriter extends BinDataWriter {
 		table.put("tcstatus", time.tcstatus);
 		table.put("toff", time.toff);
 	}
-	
+
 	@Override
 	protected String getMetaDataFileExtension() {
 		return METADATA_FILE_EXENSION;

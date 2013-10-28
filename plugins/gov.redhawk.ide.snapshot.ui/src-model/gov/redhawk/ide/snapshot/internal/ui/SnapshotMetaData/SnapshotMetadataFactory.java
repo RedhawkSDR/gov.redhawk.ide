@@ -85,6 +85,33 @@ public interface SnapshotMetadataFactory extends EFactory {
 	Value createValue();
 
 	/**
+	 * Returns a new object of class '<em>Struct Seq</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Struct Seq</em>'.
+	 * @generated
+	 */
+	StructSeq createStructSeq();
+
+	/**
+	 * Returns a new object of class '<em>Struct</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Struct</em>'.
+	 * @generated
+	 */
+	Struct createStruct();
+
+	/**
+	 * Returns a new object of class '<em>Simple</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Simple</em>'.
+	 * @generated
+	 */
+	Simple createSimple();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

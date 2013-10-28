@@ -11,17 +11,13 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl;
 
-import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.KeywordsType;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SnapshotMetadataPackage;
-
+import mil.jpeojtrs.sca.prf.Properties;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.EObjectImpl;
-
 import org.eclipse.emf.ecore.util.BasicFeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -531,8 +527,8 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * @generated
 	 */
 	@Override
-	public KeywordsType getKeywords() {
-		return (KeywordsType)getMixed().get(SnapshotMetadataPackage.Literals.SRI__KEYWORDS, true);
+	public Properties getKeywords() {
+		return (Properties)getMixed().get(SnapshotMetadataPackage.Literals.SRI__KEYWORDS, true);
 	}
 
 	/**
@@ -540,7 +536,8 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public NotificationChain basicSetKeywords(KeywordsType newKeywords, NotificationChain msgs) {
+	public NotificationChain basicSetKeywords(Properties newKeywords, NotificationChain msgs)
+	{
 		return ((FeatureMap.Internal)getMixed()).basicAdd(SnapshotMetadataPackage.Literals.SRI__KEYWORDS, newKeywords, msgs);
 	}
 
@@ -549,8 +546,8 @@ public class SRIImpl extends EObjectImpl implements SRI {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	public void setKeywords(KeywordsType newKeywords) {
+	public void setKeywords(Properties newKeywords)
+	{
 		((FeatureMap.Internal)getMixed()).set(SnapshotMetadataPackage.Literals.SRI__KEYWORDS, newKeywords);
 	}
 
@@ -657,7 +654,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 				setBlocking((Boolean)newValue);
 				return;
 			case SnapshotMetadataPackage.SRI__KEYWORDS:
-				setKeywords((KeywordsType)newValue);
+				setKeywords((Properties)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -709,7 +706,7 @@ public class SRIImpl extends EObjectImpl implements SRI {
 				unsetBlocking();
 				return;
 			case SnapshotMetadataPackage.SRI__KEYWORDS:
-				setKeywords((KeywordsType)null);
+				setKeywords((Properties)null);
 				return;
 		}
 		super.eUnset(featureID);

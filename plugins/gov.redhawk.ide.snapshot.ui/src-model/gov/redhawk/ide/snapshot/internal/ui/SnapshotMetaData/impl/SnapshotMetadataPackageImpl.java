@@ -14,18 +14,19 @@ package gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.CFDataType;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.KeywordsType;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Model;
+import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Simple;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SnapshotMetadataFactory;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SnapshotMetadataPackage;
+import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Struct;
+import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.StructSeq;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Time;
 import gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Value;
-
+import mil.jpeojtrs.sca.prf.PrfPackage;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-
 import org.eclipse.emf.ecore.impl.EPackageImpl;
-
 import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
 
 /**
@@ -78,6 +79,27 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	private EClass valueEClass = null;
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass structSeqEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass structEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass simpleEClass = null;
+
+	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
 	 * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
 	 * package URI value.
@@ -124,6 +146,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 		isInited = true;
 
 		// Initialize simple dependencies
+		PrfPackage.eINSTANCE.eClass();
 		XMLTypePackage.eINSTANCE.eClass();
 
 		// Create package meta-data objects
@@ -497,6 +520,126 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getStructSeq()
+	{
+		return structSeqEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getStructSeq_Mixed()
+	{
+		return (EAttribute)structSeqEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getStructSeq_Struct()
+	{
+		return (EReference)structSeqEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getStruct()
+	{
+		return structEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getStruct_Id()
+	{
+		return (EAttribute)structEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getStruct_Mixed()
+	{
+		return (EAttribute)structEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getStruct_Simple()
+	{
+		return (EReference)structEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getSimple()
+	{
+		return simpleEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSimple_Mixed()
+	{
+		return (EAttribute)simpleEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSimple_Id()
+	{
+		return (EAttribute)simpleEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSimple_Value()
+	{
+		return (EAttribute)simpleEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSimple_JavaType()
+	{
+		return (EAttribute)simpleEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public SnapshotMetadataFactory getSnapshotMetadataFactory() {
 		return (SnapshotMetadataFactory)getEFactoryInstance();
@@ -561,6 +704,21 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 		createEAttribute(valueEClass, VALUE__MIXED);
 		createEAttribute(valueEClass, VALUE__VALUE);
 		createEAttribute(valueEClass, VALUE__JAVA_TYPE);
+
+		structSeqEClass = createEClass(STRUCT_SEQ);
+		createEAttribute(structSeqEClass, STRUCT_SEQ__MIXED);
+		createEReference(structSeqEClass, STRUCT_SEQ__STRUCT);
+
+		structEClass = createEClass(STRUCT);
+		createEAttribute(structEClass, STRUCT__ID);
+		createEAttribute(structEClass, STRUCT__MIXED);
+		createEReference(structEClass, STRUCT__SIMPLE);
+
+		simpleEClass = createEClass(SIMPLE);
+		createEAttribute(simpleEClass, SIMPLE__MIXED);
+		createEAttribute(simpleEClass, SIMPLE__ID);
+		createEAttribute(simpleEClass, SIMPLE__VALUE);
+		createEAttribute(simpleEClass, SIMPLE__JAVA_TYPE);
 	}
 
 	/**
@@ -588,6 +746,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 
 		// Obtain other dependent packages
 		XMLTypePackage theXMLTypePackage = (XMLTypePackage)EPackage.Registry.INSTANCE.getEPackage(XMLTypePackage.eNS_URI);
+		PrfPackage thePrfPackage = (PrfPackage)EPackage.Registry.INSTANCE.getEPackage(PrfPackage.eNS_URI);
 
 		// Create type parameters
 
@@ -626,7 +785,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 		initEAttribute(getSRI_Mode(), theXMLTypePackage.getShort(), "mode", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getSRI_StreamID(), theXMLTypePackage.getString(), "streamID", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getSRI_Blocking(), theXMLTypePackage.getBoolean(), "blocking", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEReference(getSRI_Keywords(), this.getKeywordsType(), null, "keywords", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEReference(getSRI_Keywords(), thePrfPackage.getProperties(), null, "keywords", null, 1, 1, gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		initEClass(timeEClass, Time.class, "Time", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getTime_StartTime(), theXMLTypePackage.getString(), "startTime", "0", 1, 1, Time.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -636,6 +795,21 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 		initEAttribute(getValue_Mixed(), ecorePackage.getEFeatureMapEntry(), "mixed", null, 0, -1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getValue_Value(), theXMLTypePackage.getString(), "value", null, 1, 1, Value.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getValue_JavaType(), theXMLTypePackage.getString(), "javaType", null, 1, 1, Value.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+
+		initEClass(structSeqEClass, StructSeq.class, "StructSeq", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getStructSeq_Mixed(), ecorePackage.getEFeatureMapEntry(), "mixed", null, 0, -1, StructSeq.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getStructSeq_Struct(), this.getStruct(), null, "struct", null, 0, -1, StructSeq.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+
+		initEClass(structEClass, Struct.class, "Struct", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getStruct_Id(), theXMLTypePackage.getString(), "id", null, 0, 1, Struct.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getStruct_Mixed(), ecorePackage.getEFeatureMapEntry(), "mixed", null, 0, -1, Struct.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getStruct_Simple(), this.getSimple(), null, "simple", null, 0, -1, Struct.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+
+		initEClass(simpleEClass, Simple.class, "Simple", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getSimple_Mixed(), ecorePackage.getEFeatureMapEntry(), "mixed", null, 0, -1, Simple.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSimple_Id(), theXMLTypePackage.getString(), "id", null, 1, 1, Simple.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSimple_Value(), theXMLTypePackage.getString(), "value", null, 1, 1, Simple.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSimple_JavaType(), theXMLTypePackage.getString(), "javaType", null, 1, 1, Simple.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
@@ -661,7 +835,7 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 		   new String[] 
 		   {
 			 "version", "2.0"
-		   });																																				
+		   });																																																
 	}
 
 	/**
@@ -976,6 +1150,108 @@ public class SnapshotMetadataPackageImpl extends EPackageImpl implements Snapsho
 		   });		
 		addAnnotation
 		  (getValue_JavaType(), 
+		   source, 
+		   new String[] 
+		   {
+			 "kind", "element",
+			 "name", "javaType",
+			 "namespace", "##targetNamespace"
+		   });		
+		addAnnotation
+		  (structSeqEClass, 
+		   source, 
+		   new String[] 
+		   {
+			 "name", "StructSeq",
+			 "kind", "mixed"
+		   });		
+		addAnnotation
+		  (getStructSeq_Mixed(), 
+		   source, 
+		   new String[] 
+		   {
+			 "kind", "elementWildcard",
+			 "name", "mixed"
+		   });		
+		addAnnotation
+		  (getStructSeq_Struct(), 
+		   source, 
+		   new String[] 
+		   {
+			 "kind", "element",
+			 "name", "keywordStruct",
+			 "namespace", "##targetNamespace"
+		   });		
+		addAnnotation
+		  (structEClass, 
+		   source, 
+		   new String[] 
+		   {
+			 "name", "Struct",
+			 "kind", "mixed"
+		   });		
+		addAnnotation
+		  (getStruct_Id(), 
+		   source, 
+		   new String[] 
+		   {
+			 "kind", "attribute",
+			 "name", "id",
+			 "namespace", "##targetNamespace"
+		   });		
+		addAnnotation
+		  (getStruct_Mixed(), 
+		   source, 
+		   new String[] 
+		   {
+			 "kind", "elementWildcard",
+			 "name", ":mixed"
+		   });		
+		addAnnotation
+		  (getStruct_Simple(), 
+		   source, 
+		   new String[] 
+		   {
+			 "kind", "element",
+			 "name", "keywordSimple",
+			 "namespace", "##targetNamespace"
+		   });		
+		addAnnotation
+		  (simpleEClass, 
+		   source, 
+		   new String[] 
+		   {
+			 "name", "simple",
+			 "kind", "mixed"
+		   });		
+		addAnnotation
+		  (getSimple_Mixed(), 
+		   source, 
+		   new String[] 
+		   {
+			 "kind", "elementWildcard",
+			 "name", ":mixed"
+		   });		
+		addAnnotation
+		  (getSimple_Id(), 
+		   source, 
+		   new String[] 
+		   {
+			 "kind", "element",
+			 "name", "id",
+			 "namespace", "##targetNamespace"
+		   });		
+		addAnnotation
+		  (getSimple_Value(), 
+		   source, 
+		   new String[] 
+		   {
+			 "kind", "element",
+			 "name", "value",
+			 "namespace", "##targetNamespace"
+		   });		
+		addAnnotation
+		  (getSimple_JavaType(), 
 		   source, 
 		   new String[] 
 		   {

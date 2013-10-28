@@ -265,7 +265,6 @@ public class ComponentEditor extends SCAFormEditor {
 					if (msg.getFeatureID(SoftPkg.class) == SpdPackage.LOCAL_FILE__NAME) {
 						createPrfInput(spd);
 						if (ComponentEditor.this.prfInput == null) {
-							spd.getPropertyFile().eAdapters().remove(this);
 							removePrfPage();
 						} else {
 							replacePrf();
@@ -403,6 +402,8 @@ public class ComponentEditor extends SCAFormEditor {
 		return "gov.redhawk.spd.editingDomainId";
 	}
 
+	/**
+	 */
 	public void replacePrf() {
 		if (this.prfEditor != null) {
 			this.prfEditor.setInput(this.prfInput);
@@ -412,6 +413,8 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 	}
 
+	/**
+	 */
 	public void replaceScd() {
 		if (this.scdEditor != null) {
 			this.scdEditor.setInput(this.scdInput);
@@ -421,6 +424,8 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 	}
 
+	/**
+	 */
 	private void removeControlMessages(Control c) {
 		this.getActivePageInstance().getManagedForm().getMessageManager().removeMessages(c);
 		if (c instanceof Composite) {
@@ -430,6 +435,8 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 	}
 	
+	/**
+	 */
 	private void removePrfPage() {
 		if (this.propertiesPage != null || getPrfPageIndex() >= 0) {
 			Display.getDefault().asyncExec(new Runnable() {
@@ -440,7 +447,9 @@ public class ComponentEditor extends SCAFormEditor {
 					}
 					if (ComponentEditor.this.propertiesPage != null) {
 						// NPE thrown by ControlDecoration if we don't remove page's messages first
-						removeControlMessages(ComponentEditor.this.propertiesPage.getManagedForm().getForm().getBody());
+						if (ComponentEditor.this.propertiesPage.getManagedForm() != null) {
+							removeControlMessages(ComponentEditor.this.propertiesPage.getManagedForm().getForm().getBody());
+						}
 						removePage(ComponentEditor.this.propertiesPage.getIndex());
 						ComponentEditor.this.propertiesPage.dispose();
 						ComponentEditor.this.propertiesPage = null;
@@ -457,6 +466,8 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 	}
 
+	/**
+	 */
 	private void removeScdPage() {
 		if (getScdPageIndex() >= 0) {
 			Display.getDefault().asyncExec(new Runnable() {
@@ -496,6 +507,8 @@ public class ComponentEditor extends SCAFormEditor {
 		return this.getPages().indexOf(this.spdEditor);
 	}
 
+	/**
+	 */
 	private void addPrfPages() {
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(this.getMainResource());
 
@@ -519,6 +532,8 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 	}
 
+	/**
+	 */
 	private void addScdPage() {
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(this.getMainResource());
 
@@ -642,6 +657,8 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 	}
 
+	/**
+	 */
 	private IFile getSpdFile() {
 		IFile spdFile = null;
 		if ((getEditorInput() != null) && (getEditorInput() instanceof IFileEditorInput)) {
@@ -650,6 +667,8 @@ public class ComponentEditor extends SCAFormEditor {
 		return spdFile;
 	}
 
+	/**
+	 */
 	private IFile getScdFile() {
 		IFile scdFile = null;
 		if ((getScdURI() != null) && getScdURI().isPlatformResource()) {
@@ -658,6 +677,8 @@ public class ComponentEditor extends SCAFormEditor {
 		return scdFile;
 	}
 
+	/**
+	 */
 	private IFile getPrfFile() {
 		IFile prfFile = null;
 		if ((getPrfURI() != null) && getPrfURI().isPlatformResource()) {

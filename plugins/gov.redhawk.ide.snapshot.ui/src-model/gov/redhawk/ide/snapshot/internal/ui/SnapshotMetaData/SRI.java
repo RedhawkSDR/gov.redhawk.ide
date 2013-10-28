@@ -11,6 +11,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData;
 
+import mil.jpeojtrs.sca.prf.Properties;
 import org.eclipse.emf.ecore.EObject;
 
 import org.eclipse.emf.ecore.util.FeatureMap;
@@ -637,13 +638,13 @@ public interface SRI extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Keywords</em>' containment reference.
-	 * @see #setKeywords(KeywordsType)
+	 * @see #setKeywords(Properties)
 	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SnapshotMetadataPackage#getSRI_Keywords()
 	 * @model containment="true" required="true" transient="true" volatile="true" derived="true"
 	 *        extendedMetaData="kind='element' name='keywords' namespace='##targetNamespace'"
 	 * @generated
 	 */
-	KeywordsType getKeywords();
+	Properties getKeywords();
 
 	/**
 	 * Sets the value of the '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.SRI#getKeywords <em>Keywords</em>}' containment reference.
@@ -653,6 +654,6 @@ public interface SRI extends EObject {
 	 * @see #getKeywords()
 	 * @generated
 	 */
-	void setKeywords(KeywordsType value);
+	void setKeywords(Properties value);
 
 } // SRI

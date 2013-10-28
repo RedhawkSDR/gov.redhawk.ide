@@ -442,6 +442,144 @@ public interface SnapshotMetadataPackage extends EPackage {
 	int VALUE_FEATURE_COUNT = 3;
 
 	/**
+	 * The meta object id for the '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.StructSeqImpl <em>Struct Seq</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.StructSeqImpl
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.SnapshotMetadataPackageImpl#getStructSeq()
+	 * @generated
+	 */
+	int STRUCT_SEQ = 6;
+
+	/**
+	 * The feature id for the '<em><b>Mixed</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCT_SEQ__MIXED = 0;
+
+	/**
+	 * The feature id for the '<em><b>Struct</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCT_SEQ__STRUCT = 1;
+
+	/**
+	 * The number of structural features of the '<em>Struct Seq</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCT_SEQ_FEATURE_COUNT = 2;
+
+	/**
+	 * The meta object id for the '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.StructImpl <em>Struct</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.StructImpl
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.SnapshotMetadataPackageImpl#getStruct()
+	 * @generated
+	 */
+	int STRUCT = 7;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCT__ID = 0;
+
+	/**
+	 * The feature id for the '<em><b>Mixed</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCT__MIXED = 1;
+
+	/**
+	 * The feature id for the '<em><b>Simple</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCT__SIMPLE = 2;
+
+	/**
+	 * The number of structural features of the '<em>Struct</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCT_FEATURE_COUNT = 3;
+
+	/**
+	 * The meta object id for the '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.SimpleImpl <em>Simple</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.SimpleImpl
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.SnapshotMetadataPackageImpl#getSimple()
+	 * @generated
+	 */
+	int SIMPLE = 8;
+
+	/**
+	 * The feature id for the '<em><b>Mixed</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SIMPLE__MIXED = 0;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SIMPLE__ID = 1;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SIMPLE__VALUE = 2;
+
+	/**
+	 * The feature id for the '<em><b>Java Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SIMPLE__JAVA_TYPE = 3;
+
+	/**
+	 * The number of structural features of the '<em>Simple</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SIMPLE_FEATURE_COUNT = 4;
+
+	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.CFDataType <em>CF Data Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -821,6 +959,135 @@ public interface SnapshotMetadataPackage extends EPackage {
 	EAttribute getValue_JavaType();
 
 	/**
+	 * Returns the meta object for class '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.StructSeq <em>Struct Seq</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Struct Seq</em>'.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.StructSeq
+	 * @generated
+	 */
+	EClass getStructSeq();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.StructSeq#getMixed <em>Mixed</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Mixed</em>'.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.StructSeq#getMixed()
+	 * @see #getStructSeq()
+	 * @generated
+	 */
+	EAttribute getStructSeq_Mixed();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.StructSeq#getStruct <em>Struct</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Struct</em>'.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.StructSeq#getStruct()
+	 * @see #getStructSeq()
+	 * @generated
+	 */
+	EReference getStructSeq_Struct();
+
+	/**
+	 * Returns the meta object for class '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Struct <em>Struct</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Struct</em>'.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Struct
+	 * @generated
+	 */
+	EClass getStruct();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Struct#getId <em>Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id</em>'.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Struct#getId()
+	 * @see #getStruct()
+	 * @generated
+	 */
+	EAttribute getStruct_Id();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Struct#getMixed <em>Mixed</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Mixed</em>'.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Struct#getMixed()
+	 * @see #getStruct()
+	 * @generated
+	 */
+	EAttribute getStruct_Mixed();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Struct#getSimple <em>Simple</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Simple</em>'.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Struct#getSimple()
+	 * @see #getStruct()
+	 * @generated
+	 */
+	EReference getStruct_Simple();
+
+	/**
+	 * Returns the meta object for class '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Simple <em>Simple</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Simple</em>'.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Simple
+	 * @generated
+	 */
+	EClass getSimple();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Simple#getMixed <em>Mixed</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Mixed</em>'.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Simple#getMixed()
+	 * @see #getSimple()
+	 * @generated
+	 */
+	EAttribute getSimple_Mixed();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Simple#getId <em>Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id</em>'.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Simple#getId()
+	 * @see #getSimple()
+	 * @generated
+	 */
+	EAttribute getSimple_Id();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Simple#getValue <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Simple#getValue()
+	 * @see #getSimple()
+	 * @generated
+	 */
+	EAttribute getSimple_Value();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Simple#getJavaType <em>Java Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Java Type</em>'.
+	 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.Simple#getJavaType()
+	 * @see #getSimple()
+	 * @generated
+	 */
+	EAttribute getSimple_JavaType();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1133,6 +1400,108 @@ public interface SnapshotMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute VALUE__JAVA_TYPE = eINSTANCE.getValue_JavaType();
+
+		/**
+		 * The meta object literal for the '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.StructSeqImpl <em>Struct Seq</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.StructSeqImpl
+		 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.SnapshotMetadataPackageImpl#getStructSeq()
+		 * @generated
+		 */
+		EClass STRUCT_SEQ = eINSTANCE.getStructSeq();
+
+		/**
+		 * The meta object literal for the '<em><b>Mixed</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute STRUCT_SEQ__MIXED = eINSTANCE.getStructSeq_Mixed();
+
+		/**
+		 * The meta object literal for the '<em><b>Struct</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference STRUCT_SEQ__STRUCT = eINSTANCE.getStructSeq_Struct();
+
+		/**
+		 * The meta object literal for the '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.StructImpl <em>Struct</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.StructImpl
+		 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.SnapshotMetadataPackageImpl#getStruct()
+		 * @generated
+		 */
+		EClass STRUCT = eINSTANCE.getStruct();
+
+		/**
+		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute STRUCT__ID = eINSTANCE.getStruct_Id();
+
+		/**
+		 * The meta object literal for the '<em><b>Mixed</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute STRUCT__MIXED = eINSTANCE.getStruct_Mixed();
+
+		/**
+		 * The meta object literal for the '<em><b>Simple</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference STRUCT__SIMPLE = eINSTANCE.getStruct_Simple();
+
+		/**
+		 * The meta object literal for the '{@link gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.SimpleImpl <em>Simple</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.SimpleImpl
+		 * @see gov.redhawk.ide.snapshot.internal.ui.SnapshotMetaData.impl.SnapshotMetadataPackageImpl#getSimple()
+		 * @generated
+		 */
+		EClass SIMPLE = eINSTANCE.getSimple();
+
+		/**
+		 * The meta object literal for the '<em><b>Mixed</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SIMPLE__MIXED = eINSTANCE.getSimple_Mixed();
+
+		/**
+		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SIMPLE__ID = eINSTANCE.getSimple_Id();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SIMPLE__VALUE = eINSTANCE.getSimple_Value();
+
+		/**
+		 * The meta object literal for the '<em><b>Java Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SIMPLE__JAVA_TYPE = eINSTANCE.getSimple_JavaType();
 
 	}
 
