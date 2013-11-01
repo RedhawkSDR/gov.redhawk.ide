@@ -392,32 +392,38 @@ public class LocalScaDeviceImpl extends ScaDeviceImpl<Device> implements LocalSc
 
 	@Override
 	public void releaseObject() throws ReleaseError {
+		// END GENERATED CODE
 		final String tmpName = getLabel();
-	    super.releaseObject();
-	    if (this.launch != null) {
-	    	final Job terminateJob = new TerminateJob(this, tmpName);
+		super.releaseObject();
+		if (this.launch != null) {
+			final Job terminateJob = new TerminateJob(this, tmpName);
 			terminateJob.schedule(5000);
-	    }
+		}
+		// BEGIN GENERATED CODE
 	}
 	
 	@Override
 	public void dispose() {
+		// END GENERATED CODE
 		try {
-	        releaseObject();
-        } catch (final ReleaseError e) {
-	        // PASS
-        }
-	    super.dispose();
+			releaseObject();
+		} catch (final ReleaseError e) {
+			// PASS
+		}
+		super.dispose();
+		// BEGIN GENERATED CODE
 	}
 	
 	@Override
 	public void unsetProfileURI() {
-	    
+		// END GENERATED CODE
+		// BEGIN GENERATED CODE
 	}
 	
 	@Override
 	public void unsetProfile() {
-	    
+		// END GENERATED CODE
+		// BEGIN GENERATED CODE
 	}
 
 

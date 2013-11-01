@@ -391,27 +391,50 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 
 	@Override
 	public void dispose() {
+		// END GENERATED CODE
 		try {
-	        releaseObject();
-        } catch (final ReleaseError e) {
-	        // PASS
-        }
-	    super.dispose();
+			releaseObject();
+		} catch (final ReleaseError e) {
+			// PASS
+		}
+		super.dispose();
+		// BEGIN GENERATED CODE
 	}
 	
 	@Override
 	public void releaseObject() throws ReleaseError {
+		// END GENERATED CODE
 		final String tmpName = getName();
-	    super.releaseObject();
-	    if (this.launch != null) {
-	    	final Job terminateJob = new TerminateJob(this, tmpName);
+		super.releaseObject();
+		if (this.launch != null) {
+			final Job terminateJob = new TerminateJob(this, tmpName);
 			terminateJob.schedule(5000);
-	    }
+		}
+		// BEGIN GENERATED CODE
 	}
 	
 	@Override
 	public void unsetProfileURI() {
-	    
+		// END GENERATED CODE
+		// BEGIN GENERATED CODE
+
+	}
+	
+	@Override
+	public void unsetComponentInstantiation() {
+		// END GENERATED CODE
+		// BEGIN GENERATED CODE
+		
+	}
+	
+	/*
+	 * @see gov.redhawk.model.sca.impl.ScaAbstractComponentImpl#unsetIdentifier()
+	 */
+	@Override
+	public void unsetIdentifier() {
+		// END GENERATED CODE
+		// BEGIN GENERATED CODE
+		
 	}
 
 } //LocalScaComponentImpl
