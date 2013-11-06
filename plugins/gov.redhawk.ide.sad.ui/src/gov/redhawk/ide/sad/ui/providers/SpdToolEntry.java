@@ -10,8 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.ui.providers;
 
-import gov.redhawk.diagram.edit.helpers.ComponentPlacementEditHelperAdvice;
 
+import gov.redhawk.diagram.edit.helpers.ComponentPlacementEditHelperAdvice;
 import java.text.MessageFormat;
 import java.util.HashMap;
 

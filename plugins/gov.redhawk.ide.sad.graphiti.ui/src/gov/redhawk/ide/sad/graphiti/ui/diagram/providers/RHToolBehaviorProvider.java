@@ -1,5 +1,6 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.add.CreateComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
@@ -22,8 +23,11 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
+import org.eclipse.graphiti.features.ICreateFeature;
+import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.IToolEntry;
+import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -33,7 +37,18 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	public RHToolBehaviorProvider(final IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
 		
-		//Add a refresh listener job that will refresh the palette every time Target SDR refreshes
+		//sync palette Components with Target SDR Components
+		addComponentContainerRefreshJob(diagramTypeProvider);
+		
+	}
+	
+	/**
+	 * Add a refresh listener job that will refresh the palette of the provided diagramTypeProvider
+	 * every time Target SDR refreshes
+	 * @param diagramTypeProvider
+	 */
+	private void addComponentContainerRefreshJob(final IDiagramTypeProvider diagramTypeProvider){
+		
 		final ComponentsContainer container = SdrUiPlugin.getDefault().getTargetSdrRoot().getComponentsContainer();
 		container.eAdapters().add(new AdapterImpl() {
 			private final WorkbenchJob refreshPalletteJob = new WorkbenchJob("Refresh Pallette") {
@@ -58,37 +73,66 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 				}
 			}
 		});
-				
-		
 	}
 	
 	/**
-	 * Populates the palette entries.  Adds one entry per Component
+	 * Populates the palette entries.
 	 */
 	@Override
 	public IPaletteCompartmentEntry[] getPalette() {
 		
-		/**
-		 * Components
-		 * Find By
-		 * Base Types
-		 */
-		
+		//palette compartments
 		List<IPaletteCompartmentEntry> compartments = new ArrayList<IPaletteCompartmentEntry>();
 		
 		
-		//COMPONENTS
-		
+		//COMPONENT Compartment
 		//get component container
 		final ComponentsContainer container = SdrUiPlugin.getDefault().getTargetSdrRoot().getComponentsContainer();
-		
 		//populate compartment Entry with components from container
 		PaletteCompartmentEntry componentCompartmentEntry = getComponentCompartmentEntry(container);
-		
 		compartments.add(componentCompartmentEntry);
+		
+		//FINDBY Compartment
+		PaletteCompartmentEntry findByCompartmentEntry = getFindByCompartmentEntry();
+		compartments.add(findByCompartmentEntry);		
+		
+		
+		//BASE TYPES Compartment
+//		PaletteCompartmentEntry baseTypesCompartmentEntry = getBaseTypesCompartmentEntry();
+//		compartments.add(baseTypesCompartmentEntry);
+		
+		
+		//return palette compartments
 		return compartments.toArray(new IPaletteCompartmentEntry[compartments.size()]);
 		
 		
+	}
+	
+	/**
+	 * Returns a populated CompartmentEntry containing all the Find By tools
+	 * @return
+	 */
+	private PaletteCompartmentEntry getFindByCompartmentEntry() {
+			
+		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Find By", null);
+//		compartmentEntry.setDescription("Contains Find By tooling.");
+
+		IFeatureProvider featureProvider = getFeatureProvider();
+		ICreateFeature[] createFeatures = featureProvider.getCreateFeatures();
+		for (ICreateFeature cf : createFeatures) {
+			if("FindBy Naming Service".equals(cf.getCreateName())){
+				ObjectCreationToolEntry objectCreationToolEntry = 
+						new ObjectCreationToolEntry(cf.getCreateName(),
+								cf.getCreateDescription(), cf.getCreateImageId(),
+								cf.getCreateLargeImageId(), cf);
+
+				compartmentEntry.addToolEntry(objectCreationToolEntry);
+			}
+		}
+		
+		
+		
+		return compartmentEntry;
 	}
 	
 	/**
@@ -139,7 +183,10 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 				}
 			}
 			if (!foundTool) {
-				final SpdToolEntry entry = new SpdToolEntry(spd);
+				//special way of instantiating create feature
+				//allows us to know which palette tool was used
+				ICreateFeature createComponentFeature = new CreateComponentFeature(getFeatureProvider(), spd);
+				final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature);
 				compartmentEntry.addToolEntry(entry);
 			}
 		}

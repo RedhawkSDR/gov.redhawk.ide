@@ -8,6 +8,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
+import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -32,9 +33,9 @@ public class SpdToolEntry extends ObjectCreationToolEntry{
 	/**
 	 * @since 5.0
 	 */
-	public SpdToolEntry(String label, String description, URI spdURI, String id, String implID, ImageDescriptor icon) {
+	public SpdToolEntry(String label, String description, URI spdURI, String id, String implID, ImageDescriptor icon, ICreateFeature createFeature) {
 		
-		super(label, description, null, null, null);
+		super(label, description, null, null, createFeature);
 		if (description == null) {
 			description = MessageFormat.format("Create a new instance of the component \"{0}\".", label);
 		}
@@ -56,11 +57,11 @@ public class SpdToolEntry extends ObjectCreationToolEntry{
 	 * @since 5.0
 	 */
 	public SpdToolEntry(final SoftPkg spd, ImageDescriptor icon) {
-		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, icon);
+		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, icon, null);
 	}
 	
-	public SpdToolEntry(final SoftPkg spd) {
-		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, getDefaultIcon());
+	public SpdToolEntry(final SoftPkg spd, ICreateFeature createFeature) {
+		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, getDefaultIcon(), createFeature);
 	}
 
 	/**

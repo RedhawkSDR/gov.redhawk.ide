@@ -1,6 +1,7 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByNamingServicePattern;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
@@ -24,6 +25,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		
 		//Add Patterns for Domain Objects
 		addPattern(new ComponentPattern());
+		addPattern(new FindByNamingServicePattern());
 
 	}
 	
@@ -43,10 +45,10 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	@Override
 	public ICreateFeature[] getCreateFeatures(){
 		
-//		return new ICreateFeature[] { new CreateFeature1(this)};
+		ICreateFeature[] defaultCreateFeatures = super.getCreateFeatures();
 		
-		//remove this
-		return super.getCreateFeatures();
+		//features added via pattern
+		return defaultCreateFeatures;
 	}
 	
 	@Override

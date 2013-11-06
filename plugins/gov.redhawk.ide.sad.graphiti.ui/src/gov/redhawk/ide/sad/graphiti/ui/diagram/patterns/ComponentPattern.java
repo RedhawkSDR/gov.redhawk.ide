@@ -1,11 +1,10 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
-import java.awt.Component;
-
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
@@ -28,10 +27,28 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	private static final IColorConstant FOREGROUND = new ColorConstant(98, 131, 167);
 	private static final IColorConstant BACKGROUND = new ColorConstant(187, 218, 247);
 			
+	private URI spdUri = null;
+	
+	public ComponentPattern(){
+		super(null);
+	}
+	
+	public URI getSpdUri() {
+		return spdUri;
+	}
+	public void setSpdUri(URI spdUri){
+		this.spdUri=spdUri;
+	}
+	
+	@Override
+	public String getCreateName(){
+		return "Component";
+	}
+	
 	//THE FOLLOWING THREE METHODS DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
 	@Override
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
-		return mainBusinessObject instanceof Component;
+		return mainBusinessObject instanceof SadComponentInstantiation;
 	}
 	@Override
 	protected boolean isPatternControlled(PictogramElement pictogramElement) {
@@ -49,7 +66,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	
 	@Override
 	public boolean canAdd(IAddContext context) {
-		if (context.getNewObject() instanceof SoftPkg) {
+		if (context.getNewObject() instanceof SadComponentInstantiation) {
 			if (context.getTargetContainer() instanceof Diagram) {
 				return true;
 			}
@@ -58,7 +75,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	}
 	@Override
 	public PictogramElement add(IAddContext context) {
-		SoftPkg component = (SoftPkg) context.getNewObject();
+		SadComponentInstantiation sadComponentInstantiation = (SadComponentInstantiation) context.getNewObject();
 		Diagram targetDiagram = (Diagram) context.getTargetContainer();
 		
 		// CONTAINER SHAPE WITH ROUNDED RECTANGLE
@@ -79,14 +96,9 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 			roundedRectangle.setLineWidth(2);
 			gaService.setLocationAndSize(roundedRectangle, context.getX(), context.getY(), width, height);
 
-			// if added Class has no resource we add it to the resource 
-			// of the diagram
-			// in a real scenario the business model would have its own resource
-			if (component.eResource() == null) {
-				getDiagram().eResource().getContents().add(component);
-			}
+			
 			// create link and wire it
-			link(containerShape, component);
+			link(containerShape, sadComponentInstantiation);
 		}
 
 		// SHAPE WITH LINE
@@ -106,7 +118,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 			Shape shape = peCreateService.createShape(containerShape, false);
 
 			// create and set text graphics algorithm
-			Text text = gaService.createText(shape, component.getName());
+			Text text = gaService.createText(shape, sadComponentInstantiation.getUsageName());
 			text.setForeground(manageColor(TEXT_FOREGROUND));
 			text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER ); 
 			// vertical alignment has as default value "center"
@@ -114,30 +126,13 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 			gaService.setLocationAndSize(text, 0, 0, width, 20);
 
 			// create link and wire it
-			link(shape, component);
+			link(shape, sadComponentInstantiation);
 		}
 
 		return containerShape;
 	}
 	
-	@Override
-	public boolean canCreate(ICreateContext context) {
-		return context.getTargetContainer() instanceof Diagram;
-	}
-	@Override
-	public Object[] create(ICreateContext context) {
-		
-//		DomComponentFile componentFile = SadFactory.eINSTANCE.createComponentFile();
-//		
-//		//we need to add this to our object
-//		
-//		getDiagram().eResource().getContents().add(newClass);
-//		
-//		// do the add
-//		addGraphicalRepresentation(context, newClass);
-		
-		return null;
-	}
+	
 	
 
 }

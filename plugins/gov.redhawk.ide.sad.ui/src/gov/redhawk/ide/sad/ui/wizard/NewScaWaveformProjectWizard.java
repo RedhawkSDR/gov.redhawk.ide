@@ -205,6 +205,10 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 				final SadEditor sadPart = (SadEditor) IDE.openEditor(activePage, this.openEditorOn, true);
 				setCustomPreferences(sadPart);
 				
+				
+				
+				
+				
 				//opens the Graphiti editor
 				//create diagram instance
 				Diagram diagram = Graphiti.getPeCreateService().createDiagram(SADDiagramTypeProvider.DIAGRAM_TYPE_ID, projectName, true);
@@ -238,9 +242,9 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 					return false;
 				}
 				
-				//do we really need this?
-//				IDiagramTypeProvider dtp = GraphitiUi.getExtensionManager().createDiagramTypeProvider(diagram, SADDiagramTypeProvider.PROVIDER_ID);
-//				IFeatureProvider featureProvider = dtp.getFeatureProvider();
+				
+				
+				
 				
 			}
 
