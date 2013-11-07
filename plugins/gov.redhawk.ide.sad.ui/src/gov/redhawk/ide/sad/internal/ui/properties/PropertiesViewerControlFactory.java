@@ -16,7 +16,7 @@ import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSequenceProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSimpleProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceSimpleProperty;
-import gov.redhawk.sca.sad.validation.DuplicateExternalPropertyIDContraint;
+import gov.redhawk.sca.sad.validation.DuplicateExternalPropertyIDConstraint;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -198,7 +198,7 @@ public class PropertiesViewerControlFactory extends DefaultXViewerControlFactory
 	protected boolean isUniqueProperty(String text, SoftwareAssembly sad) {
 		ExternalProperty prop = SadFactory.eINSTANCE.createExternalProperty();
 		prop.setPropID(text);
-		return DuplicateExternalPropertyIDContraint.validateProperty(prop, sad);
+		return DuplicateExternalPropertyIDConstraint.validateProperty(prop, sad);
 	}
 
 }

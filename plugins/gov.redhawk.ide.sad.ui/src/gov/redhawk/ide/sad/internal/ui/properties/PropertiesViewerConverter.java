@@ -21,7 +21,8 @@ import gov.redhawk.model.sca.ScaSimpleProperty;
 import gov.redhawk.model.sca.ScaStructProperty;
 import gov.redhawk.model.sca.ScaStructSequenceProperty;
 import gov.redhawk.sca.internal.ui.properties.SequencePropertyValueWizard;
-import gov.redhawk.sca.sad.validation.DuplicateExternalPropertyIDContraint;
+import gov.redhawk.sca.sad.validation.DuplicateAssemblyExternalPropertyIDConstraint;
+import gov.redhawk.sca.sad.validation.DuplicateExternalPropertyIDConstraint;
 import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
@@ -101,7 +102,10 @@ public class PropertiesViewerConverter implements XViewerConverter {
 		ExternalProperty prop = SadFactory.eINSTANCE.createExternalProperty();
 		prop.setPropID(viewerProp.resolveExternalID());
 		SoftwareAssembly sad = ScaEcoreUtils.getEContainerOfType(viewerProp.getComponentInstantiation(), SoftwareAssembly.class);
-		for (int i = 1; !DuplicateExternalPropertyIDContraint.validateProperty(prop, sad); i++) {
+		for (int i = 1; !DuplicateAssemblyExternalPropertyIDConstraint.validateProperty(prop, sad); i++) {
+			prop.setPropID(viewerProp.getID() + "_" + i);
+		}
+		for (int i = 1; !DuplicateExternalPropertyIDConstraint.validateProperty(prop, sad); i++) {
 			prop.setPropID(viewerProp.getID() + "_" + i);
 		}
 		return prop.getPropID();
