@@ -16,6 +16,7 @@ import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerControlFactory
 import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerConverter;
 import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerLabelProvider;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerModelConverter;
+import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -27,6 +28,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.nebula.widgets.xviewer.edit.XViewerControlFactory;
 import org.eclipse.nebula.widgets.xviewer.edit.XViewerConverter;
 import org.eclipse.nebula.widgets.xviewer.edit.XViewerEditAdapter;
@@ -37,6 +39,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * 
@@ -48,8 +51,12 @@ public class SadPropertiesPage extends ScaFormPage {
 	private IAction expandAllAction = new Action() {
 		{
 			setToolTipText("Expand All");
-			setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
+			final ImageDescriptor expandAllImageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(SadUiActivator.PLUGIN_ID,
+				"icons/full/elcl16/expandall.gif");
+			setImageDescriptor(expandAllImageDescriptor);
+			//			setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 		}
+
 		@Override
 		public void run() {
 			viewer.expandAll();
@@ -61,6 +68,7 @@ public class SadPropertiesPage extends ScaFormPage {
 			setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
 			setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL_DISABLED));
 		}
+
 		@Override
 		public void run() {
 			viewer.collapseAll();
@@ -86,7 +94,7 @@ public class SadPropertiesPage extends ScaFormPage {
 	public SadPropertiesPage(SCAFormEditor editor, String id, String title, boolean newStyleHeader) {
 		super(editor, id, title, newStyleHeader);
 	}
-	
+
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
@@ -113,14 +121,13 @@ public class SadPropertiesPage extends ScaFormPage {
 		viewer.setContentProvider(new PropertiesContentProvider());
 		PropertiesViewerLabelProvider labelProvider = new PropertiesViewerLabelProvider(viewer);
 		viewer.setLabelProvider(labelProvider);
-		
+
 		XViewerControlFactory cFactory = new PropertiesViewerControlFactory();
 		XViewerConverter converter = new PropertiesViewerConverter(labelProvider);
-		viewer.setXViewerEditAdapter(new XViewerEditAdapter(cFactory,
-				converter));
-		
+		viewer.setXViewerEditAdapter(new XViewerEditAdapter(cFactory, converter));
+
 		configureAction = viewer.getCustomizeAction();
-		
+
 		model.setViewer(viewer);
 		viewer.setInput(model);
 		viewer.expandToLevel(2);
@@ -134,14 +141,14 @@ public class SadPropertiesPage extends ScaFormPage {
 		SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);
 		model.setSoftwareAssembly(sad);
 	}
-	
+
 	@Override
 	public void setFocus() {
 		if (viewer != null) {
 			viewer.getControl().setFocus();
 		}
 	}
-	
+
 	@Override
 	protected Control getFocusControl() {
 		if (viewer != null) {
@@ -149,7 +156,5 @@ public class SadPropertiesPage extends ScaFormPage {
 		}
 		return super.getFocusControl();
 	}
-	
-	
 
 }
