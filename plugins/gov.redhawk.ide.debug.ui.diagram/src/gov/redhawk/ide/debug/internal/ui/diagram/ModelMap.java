@@ -21,6 +21,7 @@ import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.sca.sad.diagram.edit.parts.SadComponentInstantiationEditPart;
+import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.SubMonitor;
 
 import java.util.ArrayList;
@@ -88,6 +89,7 @@ public class ModelMap {
 		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 	private final LocalScaEditor editor;
 	private final SoftwareAssembly sad;
+	private static final Debug DEBUG = new Debug(LocalScaDiagramPlugin.PLUGIN_ID, "modelMap");
 
 	private final Map<String, NodeMapEntry> nodes = Collections.synchronizedMap(new HashMap<String, NodeMapEntry>());
 	private final Map<String, ConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, ConnectionMapEntry>());
@@ -250,6 +252,10 @@ public class ModelMap {
 				SadConnectInterface newSadInterface = null;
 				try {
 					newSadInterface = create(conn);
+					if (newSadInterface == null) {
+						connections.remove(connectionMap.getKey());
+						return Status.CANCEL_STATUS;
+					}
 					connectionMap.setProfile(newSadInterface);
 					return Status.OK_STATUS;
 				} catch (CoreException e) {
@@ -360,7 +366,7 @@ public class ModelMap {
 	}
 
 	@SuppressWarnings("unchecked")
-	@NonNull
+	@Nullable
 	private SadConnectInterface create(@NonNull final ScaConnection newValue) throws CoreException {
 		UsesPortStub source = null;
 		final SadComponentInstantiation sourceComponent = get((LocalScaComponent) newValue.getPort().eContainer());
@@ -400,7 +406,10 @@ public class ModelMap {
 		final EditPart sourceEditPart = findEditPart(source);
 		final EditPart targetEditPart = findEditPart(target);
 		if (sourceEditPart == null || targetEditPart == null) {
-			throw new CoreException(new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to edit parts for source and target.", null));
+			if (DEBUG.enabled) {
+				DEBUG.trace("Failed to edit parts for source and target for source={0} and target={1}", source, target);
+			}
+			return null;
 		}
 
 		PreferencesHint hint = null;
