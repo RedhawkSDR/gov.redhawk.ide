@@ -47,7 +47,7 @@ public class ContainsTypePropertyTester extends PropertyTester {
 				for (Object obj : args) {
 					for (Implementation impl : spd.getImplementation()) {
 						ImplementationSettings settings = CodegenUtil.getImplementationSettings(impl);
-						if (settings.getGeneratorId().equals(obj)) {
+						if (settings != null && settings.getGeneratorId() != null && settings.getGeneratorId().equals(obj)) {
 							return true;
 						}
 					}

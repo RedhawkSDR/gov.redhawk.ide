@@ -26,6 +26,8 @@ import org.eclipse.emf.common.notify.impl.AdapterImpl;
 public class ImplementationListener extends AdapterImpl {
 	private SoftPkg spd;
 	private WaveDevSettings waveDev;
+	private String lastLegitEntry;
+	private boolean dupe = false;
 
 	public ImplementationListener(SoftPkg spd) {
 		this.spd = spd;
@@ -47,9 +49,24 @@ public class ImplementationListener extends AdapterImpl {
 			switch (msg.getFeatureID(Implementation.class)) {
 			case SpdPackage.IMPLEMENTATION__ID:
 				if (msg.getEventType() == Notification.SET) {
-					ImplementationSettings settings = this.waveDev.getImplSettings().get(msg.getOldStringValue());
-					this.waveDev.getImplSettings().removeKey(msg.getOldStringValue());
-					this.waveDev.getImplSettings().put(msg.getNewStringValue(), settings);	
+					if (this.waveDev.getImplSettings().containsKey(msg.getNewStringValue())) {
+						// Don't clobber the existing entry's settings in the map!
+						if (!dupe) {
+							lastLegitEntry = msg.getOldStringValue();
+						}
+						dupe = true;
+					} else {
+						String prevKey = msg.getOldStringValue();
+						if (dupe) {
+							prevKey = lastLegitEntry;
+							dupe = false;
+						}
+						// If user has selected another implementation while dupe = true, names 
+						// may get switched, but this at least preserves all implementations.
+						ImplementationSettings settings = this.waveDev.getImplSettings().get(prevKey);
+						this.waveDev.getImplSettings().removeKey(prevKey);
+						this.waveDev.getImplSettings().put(msg.getNewStringValue(), settings);
+					}
 				}
 				break;
 			default:
