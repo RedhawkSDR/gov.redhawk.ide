@@ -2,6 +2,8 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.add.CreateComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.palette.SpdToolEntry;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
@@ -23,10 +25,14 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
+import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.mm.Property;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.IToolEntry;
+import org.eclipse.graphiti.palette.impl.ConnectionCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
@@ -40,6 +46,23 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		//sync palette Components with Target SDR Components
 		addComponentContainerRefreshJob(diagramTypeProvider);
 		
+	}
+	
+	/**
+	 * Disable selection for PictogramElements that contain certain property values
+	 */
+	@Override
+	public PictogramElement getSelection(PictogramElement originalPe, PictogramElement[] oldSelection) {
+		
+		if(DiagramUtil.doesPictogramContainProperty(originalPe, 
+				  new String[] {ComponentPattern.COMPONENT_SHAPE_providesPortsContainerShape,
+									ComponentPattern.COMPONENT_SHAPE_usesPortsContainerShape,
+									ComponentPattern.COMPONENT_SHAPE_providesPortContainerShape,
+									ComponentPattern.COMPONENT_SHAPE_usesPortContainerShape}))
+		{
+			return oldSelection[0];
+		}
+		return null;
 	}
 	
 	/**
@@ -98,8 +121,8 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		
 		
 		//BASE TYPES Compartment
-//		PaletteCompartmentEntry baseTypesCompartmentEntry = getBaseTypesCompartmentEntry();
-//		compartments.add(baseTypesCompartmentEntry);
+		PaletteCompartmentEntry baseTypesCompartmentEntry = getBaseTypesCompartmentEntry();
+		compartments.add(baseTypesCompartmentEntry);
 		
 		
 		//return palette compartments
@@ -107,6 +130,32 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		
 		
 	}
+	
+	/**
+	 * Returns a populated CompartmentEntry containing all the Base Types
+	 * @return
+	 */
+	private PaletteCompartmentEntry getBaseTypesCompartmentEntry() {
+			
+		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Base Types", null);
+
+		IFeatureProvider featureProvider = getFeatureProvider();
+		ICreateConnectionFeature[] createConnectionFeatures = featureProvider.getCreateConnectionFeatures();
+		if (createConnectionFeatures.length > 0) {
+			for (ICreateConnectionFeature ccf : createConnectionFeatures) {
+				if("Connection".equals(ccf.getCreateName())){
+				ConnectionCreationToolEntry ccTool = new ConnectionCreationToolEntry(
+						ccf.getCreateName(), ccf.getCreateDescription(),
+						ccf.getCreateImageId(), ccf.getCreateLargeImageId());
+				ccTool.addCreateConnectionFeature(ccf);
+				compartmentEntry.addToolEntry(ccTool);
+				}
+			}
+
+		}
+		return compartmentEntry;
+	}
+	
 	
 	/**
 	 * Returns a populated CompartmentEntry containing all the Find By tools
@@ -129,8 +178,6 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 				compartmentEntry.addToolEntry(objectCreationToolEntry);
 			}
 		}
-		
-		
 		
 		return compartmentEntry;
 	}

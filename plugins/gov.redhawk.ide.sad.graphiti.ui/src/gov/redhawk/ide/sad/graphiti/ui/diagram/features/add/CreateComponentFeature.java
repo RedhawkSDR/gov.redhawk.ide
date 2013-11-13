@@ -1,6 +1,7 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.add;
 
 import gov.redhawk.diagram.activator.PluginActivator;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
 import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.partitioning.ComponentFileRef;
@@ -44,23 +45,14 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 	@Override
 	public Object[] create(ICreateContext context) {
 		
-		//NOTE to developer
-		//You must use the same transactionalEditingDomain and associated resourceSet if you want save/undo/redo to work
-		//properly.  The Graphiti editor will try saving the resourceSet and therefore we want our model to be in the same resourceSet.
-		//The editingDomain below isn't associated with Graphiti model and so it doesn't save the model when the diagram editor saves.
-		//TransactionalEditingDomain editingDomain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(ScaPlugin.EDITING_DOMAIN_ID);
-		
-		
+		//editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-		ResourceSet resourceSet = editingDomain.getResourceSet();
 		
-		URI uri = getDiagram().eResource().getURI();
-		uri = uri.trimFragment().trimFileExtension().appendFileExtension("sad.xml");
-		
-		final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(uri, true));
+		//get sad from diagram
+		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 		
 		if (spd == null) {
-			//return some kind of error
+			//TODO: return some kind of error
 		}
 		
 		//container for new component instantiation, necessary for reference after command execution
