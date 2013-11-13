@@ -239,6 +239,40 @@
               </iterate>
            </visibleWhen>
         </command>
+        <command
+              commandId="gov.redhawk.ide.sdr.ui.command.ExportToSDR"
+              label="Export to SDR"
+              style="push"
+              tooltip="Export to SDR">
+           <visibleWhen
+                 checkEnabled="false">
+              <iterate>
+                 <instanceof
+                       value="org.eclipse.core.resources.IProject">
+                 </instanceof>
+              </iterate>
+           </visibleWhen>
+        </command>
+     </menuContribution>
+     <menuContribution
+           allPopups="false"
+           locationURI="menu:project?after=additions">
+        <command
+              commandId="gov.redhawk.ide.sdr.ui.command.ExportToSDR"
+              label="Export to SDR"
+              style="push"
+              tooltip="Export to SDR">
+           <visibleWhen
+                 checkEnabled="false">
+              <iterate
+                    ifEmpty="false"
+                    operator="and">
+                 <instanceof
+                       value="org.eclipse.core.resources.IProject">
+                 </instanceof>
+              </iterate>
+           </visibleWhen>
+        </command>
      </menuContribution>
   </extension>
   <extension
@@ -312,6 +346,19 @@
            </iterate>
         </activeWhen>
      </handler>
+     <handler
+           class="gov.redhawk.ide.sdr.ui.internal.handlers.ExportToSDRHandler"
+           commandId="gov.redhawk.ide.sdr.ui.command.ExportToSDR">
+        <activeWhen>
+           <iterate>
+              <or>
+                 <instanceof
+                       value="org.eclipse.core.resources.IProject">
+                 </instanceof>
+              </or>
+           </iterate>
+        </activeWhen>
+     </handler>
   </extension>
   <extension
         point="org.eclipse.ui.commands">
@@ -329,6 +376,11 @@
            id="gov.redhawk.ide.sdr.ui.command.LaunchDomainManagerWithOptions"
            name="%command.name.0">
      </command>
+     <command
+           defaultHandler="gov.redhawk.ide.sdr.ui.internal.handlers.ExportToSDRHandler"
+           id="gov.redhawk.ide.sdr.ui.command.ExportToSDR"
+           name="Export to SDR">
+     </command>
   </extension>
   <extension
          point="org.eclipse.ui.bindings">
@@ -337,6 +389,12 @@
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Ctrl+Alt+Shift+S">
+      </key>
+      <key
+            commandId="gov.redhawk.ide.sdr.ui.command.ExportToSDR"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Ctrl+Alt+Shift+E">
       </key>
   </extension>
   <extension
