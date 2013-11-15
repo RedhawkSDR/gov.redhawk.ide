@@ -3,7 +3,6 @@
  */
 package $packageName$;
 
-import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.sca.util.PluginUtil;
 
 import org.eclipse.jface.viewers.ISelection;
@@ -38,7 +37,7 @@ public class $sectionClassName$ extends AbstractPropertySection {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
 			Object element = ss.getFirstElement();
-			ScaComponent component = PluginUtil.adapt(ScaComponent.class, element);
+			$resourceClassName$ component = PluginUtil.adapt($resourceClassName$.class, element);
 			composite.setInput(component);
 		}
 	}

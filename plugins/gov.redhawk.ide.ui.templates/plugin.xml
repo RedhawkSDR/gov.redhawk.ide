@@ -18,39 +18,6 @@
             name="%category.name">
       </category>
       <wizard
-            availableAsShortcut="true"
-            category="gov.redhawk.ide.ui.templates"
-            icon="icons/etool16/newex_wiz.gif"
-            id="gov.redhawk.ide.ui.templates.wizard.waveform"
-            name="%wizard.name"
-            template="gov.redhawk.ide.ui.templates.controlPanel.waveform">
-         <description>
-            %newExtension.templates.editor.desc
-         </description>
-      </wizard>
-      <wizard
-            availableAsShortcut="true"
-            category="gov.redhawk.ide.ui.templates"
-            icon="icons/etool16/newex_wiz.gif"
-            id="gov.redhawk.ide.ui.templates.wizard.component"
-            name="%wizard.name.1"
-            template="gov.redhawk.ide.ui.templates.controlPanel.component">
-         <description>
-            %newExtension.templates.editor.desc
-         </description>
-      </wizard>
-      <wizard
-            availableAsShortcut="true"
-            category="gov.redhawk.ide.ui.templates"
-            icon="icons/etool16/newex_wiz.gif"
-            id="gov.redhawk.ide.ui.templates.wizard.device"
-            name="%wizard.name.2"
-            template="gov.redhawk.ide.ui.templates.controlPanel.device">
-         <description>
-            %newExtension.templates.editor.desc
-         </description>
-      </wizard>
-      <wizard
             availableAsShortcut="false"
             category="gov.redhawk.ide.ui.templates"
             icon="icons/etool16/newex_wiz.gif"
@@ -61,94 +28,63 @@
             %newExtension.templates.editor.desc
          </description>
       </wizard>
+      <wizard
+            availableAsShortcut="true"
+            category="gov.redhawk.ide.ui.templates"
+            icon="icons/etool16/newex_wiz.gif"
+            id="gov.redhawk.ide.ui.templates.wizard.resource"
+            name="Control Panel"
+            template="gov.redhawk.ide.ui.templates.controlPanel.resource">
+         <description>
+            %newExtension.templates.editor.desc
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.pde.ui.templates">
-      <template
-            class="gov.redhawk.ide.internal.ui.templates.WaveformControlPanelTemplateSection"
-            contributingId="gov.redhawk.sca.ui.scaContentTypes"
-            id="gov.redhawk.ide.ui.templates.controlPanel.waveform"
-            name="%template.name">
-      </template>
-      <template
-            class="gov.redhawk.ide.internal.ui.templates.ComponentControlPanelTemplateSection"
-            contributingId="gov.redhawk.sca.ui.scaContentTypes"
-            id="gov.redhawk.ide.ui.templates.controlPanel.component"
-            name="%template.name.0">
-      </template>
-      <template
-            class="gov.redhawk.ide.internal.ui.templates.DeviceControlPanelTemplateSection"
-            contributingId="gov.redhawk.sca.ui.scaContentTypes"
-            id="gov.redhawk.ide.ui.templates.controlPanel.device"
-            name="%template.name.1">
-      </template>
       <template
             class="gov.redhawk.ide.internal.ui.templates.CorbaControlPanelTemplateSection"
             contributingId="gov.redhawk.sca.ui.scaContentTypes"
             id="gov.redhawk.ide.ui.templates.controlPanel.corba"
             name="%template.name.2">
       </template>
+      <template
+            class="gov.redhawk.ide.internal.ui.templates.ResourceControlPanelTemplateSection"
+            contributingId="gov.redhawk.sca.ui.scaContentTypes"
+            id="gov.redhawk.ide.ui.templates.controlPanel.resource"
+            name="Control Panel Template">
+      </template>
    </extension>
    <extension
          point="org.eclipse.pde.ui.pluginContent">
-      <wizard
-            category="gov.redhawk.ide.ui.templates"
-            class="gov.redhawk.ide.internal.ui.templates.WaveformControlPanelPluginContentWizard"
-            icon="icons/etool16/newexprj_wiz.gif"
-            id="gov.redhawk.ide.ui.pluginContent.waveform"
-            java="true"
-            name="%wizard.name.0"
-            pureOSGi="false"
-            rcp="false"
-            requiresActivator="false"
-            ui-content="true">
-         <description>
-            %wizard.description.0
-         </description>
-      </wizard>
-      <wizard
-            category="gov.redhawk.ide.ui.templates"
-            class="gov.redhawk.ide.internal.ui.templates.ComponentControlPanelPluginContentWizard"
-            icon="icons/etool16/newexprj_wiz.gif"
-            id="gov.redhawk.ide.ui.pluginContent.component"
-            java="true"
-            name="%wizard.name.4"
-            pureOSGi="false"
-            rcp="false"
-            requiresActivator="false"
-            ui-content="true">
-         <description>
-            %wizard.description.1
-         </description>
-      </wizard>
-      <wizard
-            category="gov.redhawk.ide.ui.templates"
-            class="gov.redhawk.ide.internal.ui.templates.DeviceControlPanelPluginContentWizard"
-            icon="icons/etool16/newexprj_wiz.gif"
-            id="gov.redhawk.ide.ui.pluginContent.device"
-            java="true"
-            name="%wizard.name.5"
-            pureOSGi="false"
-            rcp="false"
-            requiresActivator="false"
-            ui-content="true">
-         <description>
-            %wizard.description.2
-         </description>
-      </wizard>
       <wizard
             category="gov.redhawk.ide.ui.templates"
             class="gov.redhawk.ide.internal.ui.templates.CorbaControlPanelPluginContentWizard"
             icon="icons/etool16/newexprj_wiz.gif"
             id="gov.redhawk.ide.ui.pluginContent.corba"
             java="true"
-            name="%wizard.name.6"
+            name="SCA Corba Control Panel"
             pureOSGi="false"
             rcp="false"
             requiresActivator="false"
             ui-content="true">
          <description>
             %wizard.description.3
+         </description>
+      </wizard>
+      <wizard
+            category="gov.redhawk.ide.ui.templates"
+            class="gov.redhawk.ide.internal.ui.templates.ResourceControlPanelWizard"
+            icon="icons/etool16/newexprj_wiz.gif"
+            id="gov.redhawk.ide.ui.pluginContent.component"
+            java="true"
+            name="SCA Control Panel"
+            pureOSGi="false"
+            rcp="false"
+            requiresActivator="false"
+            ui-content="true">
+         <description>
+            %wizard.description.1
          </description>
       </wizard>
    </extension>

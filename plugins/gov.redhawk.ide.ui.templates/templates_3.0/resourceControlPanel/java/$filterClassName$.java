@@ -4,8 +4,6 @@
 package $packageName$;
 
 import gov.redhawk.sca.util.PluginUtil;
-import gov.redhawk.model.sca.ScaComponent;
-
 import org.eclipse.jface.viewers.IFilter;
 
 /**
@@ -14,7 +12,7 @@ import org.eclipse.jface.viewers.IFilter;
 public class $filterClassName$ implements IFilter {
 
 	public boolean select(Object toTest) {
-		ScaComponent component = PluginUtil.adapt(ScaComponent.class, toTest);
+		$resourceClassName$ component = PluginUtil.adapt($resourceClassName$.class, toTest);
 		if (component != null) {
 			return component.getProfileObj().getId().equals("$contentTypeProfileId$");
 		}

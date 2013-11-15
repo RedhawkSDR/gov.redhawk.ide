@@ -55,20 +55,8 @@ public abstract class ScaTemplateSection extends OptionTemplateSection {
 	}
 
 	private String[] getDirectoryCandidates() {
-		final double version = getTargetVersion();
 		final ArrayList<String> result = new ArrayList<String>();
-		if (version >= 3.3) { // SUPPRESS CHECKSTYLE MagicNumber
-			result.add("templates_3.3" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		if (version >= 3.2) { // SUPPRESS CHECKSTYLE MagicNumber
-			result.add("templates_3.2" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		if (version >= 3.1) { // SUPPRESS CHECKSTYLE MagicNumber
-			result.add("templates_3.1" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		if (version >= 3.0) { // SUPPRESS CHECKSTYLE MagicNumber
-			result.add("templates_3.0" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
+		result.add("templates_3.0" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return result.toArray(new String[result.size()]);
 	}
 
@@ -79,7 +67,7 @@ public abstract class ScaTemplateSection extends OptionTemplateSection {
 	 */
 	@Override
 	public String[] getNewFiles() {
-		return EMPTY_STRINGS_ARRAY;
+		return new String[]{"/icons/*"};
 	}
 
 	protected String getFormattedPackageName(final String id) {

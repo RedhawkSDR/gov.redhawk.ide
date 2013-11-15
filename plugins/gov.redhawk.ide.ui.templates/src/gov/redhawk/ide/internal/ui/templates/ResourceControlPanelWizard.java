@@ -16,13 +16,13 @@ import org.eclipse.pde.ui.templates.NewPluginTemplateWizard;
 /**
  * 
  */
-public class WaveformControlPanelPluginContentWizard extends NewPluginTemplateWizard {
+public class ResourceControlPanelWizard extends NewPluginTemplateWizard {
 
 	/**
 	 * 
 	 */
-	public WaveformControlPanelPluginContentWizard() {
-		setWindowTitle("New plug-in project with a waveform control panel");
+	public ResourceControlPanelWizard() {
+		setWindowTitle("New plug-in project with a component control panel");
 	}
 
 	/*
@@ -30,7 +30,7 @@ public class WaveformControlPanelPluginContentWizard extends NewPluginTemplateWi
 	 */
 	@Override
 	public ITemplateSection[] createTemplateSections() {
-		return new ITemplateSection[] { new WaveformControlPanelTemplateSection() };
+		return new ITemplateSection[] { new ResourceControlPanelTemplateSection() };
 	}
 
 }

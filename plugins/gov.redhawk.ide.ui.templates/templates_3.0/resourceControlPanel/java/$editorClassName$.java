@@ -3,7 +3,6 @@
  */
 package $packageName$;
 
-import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.sca.ui.editors.AbstractScaContentEditor;
 
 import org.eclipse.swt.SWT;
@@ -15,7 +14,7 @@ import org.eclipse.ui.PartInitException;
 /**
  * An example showing how to create a control panel.
  */
-public class $editorClassName$ extends AbstractScaContentEditor<ScaComponent> {
+public class $editorClassName$ extends AbstractScaContentEditor<$resourceClassName$> {
 	private $compositeName$ composite;
 	
 	/**
@@ -47,7 +46,7 @@ public class $editorClassName$ extends AbstractScaContentEditor<ScaComponent> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected Class<ScaComponent> getInputType() {
-		return ScaComponent.class;
+	protected Class<$resourceClassName$> getInputType() {
+		return $resourceClassName$.class;
 	}
 }

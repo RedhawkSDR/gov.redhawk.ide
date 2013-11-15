@@ -3,7 +3,6 @@
  */
 package $packageName$;
 
-import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaSimpleProperty;
 import gov.redhawk.model.sca.provider.ScaItemProviderAdapterFactory;
@@ -26,12 +25,20 @@ import org.eclipse.swt.widgets.Text;
 
 public class $compositeName$ extends Composite {
 
+	
+	private $resourceClassName$ input;
+%if viewer 
 	private ScaItemProviderAdapterFactory adapterFactory = new ScaItemProviderAdapterFactory();
-	private ScaComponent input;
 	private TreeViewer viewer;
-	private Text propertyTextField;
-	private Text componentNameField;
+%endif
+
+%if propertyStubs
 	private EMFDataBindingContext context;
+	private class PropertyField {
+$propertyFields$
+	}
+	private PropertyField fields = new PropertyField();
+%endif
 
 	public $compositeName$(Composite parent, int style) {
 		super(parent, style);
@@ -44,43 +51,31 @@ public class $compositeName$ extends Composite {
 	public void createPartControl(final Composite main) {
 		main.setLayout(new GridLayout(2, false));
 
+%if propertyStubs
 		Group controlGroup = new Group(main, SWT.SHADOW_ETCHED_OUT);
-		controlGroup.setLayoutData(GridDataFactory.fillDefaults().grab(false, true).create());
+		controlGroup.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 		controlGroup.setText("Controls");
 		createControlGroup(controlGroup);
+%endif
 
+%if viewer
 		Group viewerGroup = new Group(main, SWT.SHADOW_ETCHED_OUT);
 		viewerGroup.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
 		viewerGroup.setText("Viewer");
 		createViewer(viewerGroup);
-
+%endif
 	}
 
-	/**
-	 * TODO: Add additional controls for other properties
-	 */
+%if propertyStubs
 	private void createControlGroup(Composite parent) {
 		parent.setLayout(new GridLayout(2, false));
-
-		Label label = new Label(parent, SWT.None);
-		label.setText("Component:");
-
-		componentNameField = new Text(parent, SWT.BORDER | SWT.READ_ONLY);
-		componentNameField.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
+		Label label;
 		
-		/**
-		 * <b> SAMPLE CODE</b>
-		 * There is some sample code of how to tie a text field to a property value
-		 */
-		
-		label = new Label(parent, SWT.None);
-		label.setText("Property:");
-		propertyTextField = new Text(parent, SWT.BORDER | SWT.READ_ONLY);
-		propertyTextField.setLayoutData(GridDataFactory.fillDefaults()
-				.grab(true, false).create());
-		
+$controlGroupCode$
 	}
+%endif
 
+%if viewer
 	/**
 	 * TODO: Sample use of Viewer and adapter Factories, safe to delete this method
 	 */
@@ -93,24 +88,33 @@ public class $compositeName$ extends Composite {
 		viewer = new TreeViewer(parent);
 		viewer.setContentProvider(new AdapterFactoryContentProvider(adapterFactory));
 		viewer.setLabelProvider(new AdapterFactoryLabelProvider(adapterFactory));
-		viewer.setInput(getInput());
+		if (getInput() != null) {
+			viewer.setInput(getInput());
+		}
 	}
+%endif
 
-	public TreeViewer getViewer() {
-		return viewer;
-	}
 	
 	@Override
 	public void dispose() {
+%if propertyStubs
 		if (this.context != null) {
 			context.dispose();
 			context = null;
 		}
+%endif
+%if viewer 
+		if (this.adapterFactory != null) {
+			this.adapterFactory.dispose();
+			this.adapterFactory = null;
+		}
+%endif
 		super.dispose();
 	}
 
-	public void setInput(ScaComponent input) {
+	public void setInput($resourceClassName$ input) {
 		this.input = input;
+%if propertyStubs
 		if (this.context != null) {
 			context.dispose();
 			context = null;
@@ -119,26 +123,21 @@ public class $compositeName$ extends Composite {
 			context = new EMFDataBindingContext();
 			addBindings();
 		}
+%endif
+		
+%if viewer
+		viewer.setInput(input);
+% endif
 	}
 
-	/**
-	 * TODO: Add additional control bindings for simple properties
-	 */
+%if propertyStubs
 	private void addBindings() {
-		/**
-		 * EXAMPLE
-		 */
-		context.bindValue(WidgetProperties.text().observe(componentNameField), 
-				EMFProperties.value(ScaPackage.Literals.SCA_COMPONENT__NAME).observe(input));
-		/* 
-		ScaSimpleProperty simpleProp = (ScaSimpleProperty) input.getProperty("propid");
-		context.bindValue(
-			WidgetProperties.text(SWT.Modify).observeDelayed(500, propertyTextField),
-			SCAObservables.observeSimpleProperty(simpleProp));
-		*/
+		ScaSimpleProperty simpleProp;
+$bindingsCode$
 	}
+%endif
 
-	public ScaComponent getInput() {
+	public $resourceClassName$ getInput() {
 		return input;
 	}
 
