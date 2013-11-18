@@ -67,29 +67,27 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	 */
 	@Override
 	public String getStringOption(String name) {
-		switch (name) {
-		case "resourceClassName":
+		if (name.equals("resourceClassName")) {
 			return getResourceClassName();
-		case "contentTypeProfileId":
+		} else if (name.equals("contentTypeProfileId")) {
 			return getProfileId();
-		case "sectionClassName":
+		} else if (name.equals("sectionClassName")) {
 			return getSectionClassName();
-		case "editorClassName":
+		} else if (name.equals("editorClassName")) {
 			return getEditorClassName();
-		case "filterClassName":
+		} else if (name.equals("filterClassName")) {
 			return getFilterClassName();
-		case "compositeName":
+		} else if (name.equals("compositeName")) {
 			return getCompositeClassName();
-		case "bindingsCode":
+		} else if (name.equals("bindingsCode")) {
 			return getPropertyBindingsCode();
-		case "controlGroupCode":
+		} else if (name.equals("controlGroupCode")) {
 			return getControlGroupCode();
-		case "propertyFields":
+		} else if (name.equals("propertyFields")) {
 			return getPropertyFieldsCode();
-		default:
-			break;
+		} else {
+			return super.getStringOption(name);
 		}
-		return super.getStringOption(name);
 	}
 
 	/**
