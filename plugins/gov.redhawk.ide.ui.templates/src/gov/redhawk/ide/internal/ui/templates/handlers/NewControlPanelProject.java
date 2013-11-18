@@ -18,7 +18,12 @@ import gov.redhawk.ui.editor.SCAFormEditor;
 
 import java.lang.reflect.InvocationTargetException;
 
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.dcd.util.DcdResourceImpl;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.sad.util.SadResourceImpl;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.util.SpdResourceImpl;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -29,6 +34,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -68,23 +75,37 @@ public class NewControlPanelProject extends AbstractHandler {
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
 
 		final IEditorPart editor = HandlerUtil.getActiveEditor(event);
-		SoftPkg spd = null;
+		EObject eObj = null;
+		String name = null;
 		if (editor != null) {
 			if (editor instanceof SCAFormEditor) {
 				SCAFormEditor scaEditor = (SCAFormEditor) editor;
-				spd = SoftPkg.Util.getSoftPkg(scaEditor.getMainResource());
+				Resource resource = scaEditor.getMainResource();
+				if (resource instanceof SpdResourceImpl) {
+					SoftPkg spd = SoftPkg.Util.getSoftPkg(resource);
+					name = spd.getName();
+					eObj = spd;
+				} else if (resource instanceof SadResourceImpl) {
+					SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);
+					name = sad.getName();
+					eObj = sad;
+				} else if (resource instanceof DcdResourceImpl) {
+					DeviceConfiguration dcd = DeviceConfiguration.Util.getDeviceConfiguration(resource);
+					name = dcd.getName();
+					eObj = dcd;
+				}
 			}
 		}
-		if (spd == null) {
+		if (eObj == null) {
 			return null;
 		}
-		IProject spdProject = ModelUtil.getProject(spd);
+		IProject spdProject = ModelUtil.getProject(eObj);
 
 		String baseName;
 		if (spdProject != null) {
 			baseName = spdProject.getName();
 		} else {
-			baseName = spd.getName().toLowerCase().replace(" ", ".");
+			baseName = name.replace(" ", ".");
 		}
 		String tmpProjectName = baseName + ".ui";
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(tmpProjectName);
@@ -110,7 +131,7 @@ public class NewControlPanelProject extends AbstractHandler {
 		}
 
 		final String projectName = tmpProjectName;
-		final String pluginName = spd.getName();
+		final String pluginName = name;
 
 		PluginFieldData fPluginData = new PluginFieldData();
 		updateData(fPluginData, pluginName, projectName);
@@ -133,7 +154,7 @@ public class NewControlPanelProject extends AbstractHandler {
 			}
 		};
 		ResourceControlPanelWizard contentWizard = new ResourceControlPanelWizard();
-		contentWizard.setResource(spd);
+		contentWizard.setResource(eObj);
 		try {
 			ResourceControlPanelTemplateSection resourceTemplate = contentWizard.getResourceControlPanelTemplateSection();
 			dialog.run(false, true, new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));

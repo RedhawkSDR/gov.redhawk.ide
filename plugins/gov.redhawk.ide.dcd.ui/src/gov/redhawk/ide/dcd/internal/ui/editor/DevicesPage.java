@@ -16,9 +16,11 @@ import gov.redhawk.ide.dcd.internal.ui.ScaIdeConstants;
 import gov.redhawk.ui.editor.ScaFormPage;
 
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.menus.IMenuService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -28,6 +30,7 @@ public class DevicesPage extends ScaFormPage {
 
 	/** The Constant PAGE_ID. */
 	public static final String PAGE_ID = "devices"; //$NON-NLS-1$
+	private static final String TOOLBAR_ID = "gov.redhawk.ide.dcd.internal.ui.editor.devices.toolbar";
 	private final DevicesBlock fBlock;
 
 	/**
@@ -71,6 +74,12 @@ public class DevicesPage extends ScaFormPage {
 		// refire selection
 		this.fBlock.getSection().fireSelection();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), HelpContextIds.NODE_OVERVIEW);
+		
+		final ToolBarManager manager = (ToolBarManager) form.getToolBarManager();
+		final IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
+		service.populateContributionManager(manager, "toolbar:" + DevicesPage.TOOLBAR_ID);
+		manager.update(true);
+		
 		super.createFormContent(managedForm);
 	}
 

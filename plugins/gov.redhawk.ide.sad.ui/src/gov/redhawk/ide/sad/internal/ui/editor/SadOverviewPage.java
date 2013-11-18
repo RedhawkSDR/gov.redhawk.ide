@@ -31,6 +31,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Composite;
@@ -39,6 +40,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
@@ -47,6 +49,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 public class SadOverviewPage extends AbstractOverviewPage {
 
 	public static final String PAGE_ID = "sadEditorOverviewPage";
+	private static final String TOOLBAR_ID = "gov.redhawk.ide.sad.internal.ui.editor.overview.toolbar";
 	private TestingSection testingSection;
 	private ExportingSection exportingSection;
 	private GeneralInfoSection fInfoSection;
@@ -72,6 +75,11 @@ public class SadOverviewPage extends AbstractOverviewPage {
 		// TODO form.setImage();
 		form.setText("Overview");
 		fillBody(managedForm, toolkit);
+		
+		final ToolBarManager manager = (ToolBarManager) form.getToolBarManager();
+		final IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
+		service.populateContributionManager(manager, "toolbar:" + SadOverviewPage.TOOLBAR_ID);
+		manager.update(true);
 	}
 
 	/**

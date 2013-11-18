@@ -26,6 +26,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -39,6 +40,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -46,6 +48,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class SadPropertiesPage extends ScaFormPage {
 
+	private static final String TOOLBAR_ID = "gov.redhawk.ide.sad.internal.ui.editor.properties.toolbar";
 	private PropertiesViewer viewer;
 	private ViewerModelConverter model = new ViewerModelConverter();
 	private IAction expandAllAction = new Action() {
@@ -103,6 +106,11 @@ public class SadPropertiesPage extends ScaFormPage {
 		addActions(managedForm.getForm().getToolBarManager());
 		viewer.getControl().setFocus();
 		super.createFormContent(managedForm);
+		
+		final ToolBarManager manager = (ToolBarManager) form.getToolBarManager();
+		final IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
+		service.populateContributionManager(manager, "toolbar:" + SadPropertiesPage.TOOLBAR_ID);
+		manager.update(true);
 	}
 
 	private void addActions(IToolBarManager toolBarManager) {

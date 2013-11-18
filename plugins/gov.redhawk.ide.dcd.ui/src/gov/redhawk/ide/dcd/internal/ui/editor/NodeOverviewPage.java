@@ -22,6 +22,7 @@ import mil.jpeojtrs.sca.dcd.DeviceManagerSoftPkg;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -32,6 +33,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.menus.IMenuService;
 
 /**
  * The Class NodeOverviewPage.
@@ -40,6 +42,7 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 
 	/** The Constant PAGE_ID. */
 	public static final String PAGE_ID = "nodeOverview"; //$NON-NLS-1$
+	private static final String TOOLBAR_ID = "gov.redhawk.ide.dcd.internal.ui.editor.overview.toolbar";
 	private GeneralInfoSection fInfoSection;
 	private NodeContentSection nodeContent;
 	private TestingSection testingSection;
@@ -85,6 +88,11 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 		form.setText("Overview");
 		fillBody(managedForm, toolkit);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), HelpContextIds.NODE_OVERVIEW);
+		
+		final ToolBarManager manager = (ToolBarManager) form.getToolBarManager();
+		final IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
+		service.populateContributionManager(manager, "toolbar:" + NodeOverviewPage.TOOLBAR_ID);
+		manager.update(true);
 
 		refresh(this.dcdResource);
 	}
