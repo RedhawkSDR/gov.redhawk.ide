@@ -95,7 +95,7 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	 */
 	private String getPropertyFieldsCode() {
 		StringBuilder builder = new StringBuilder();
-		EObject selection = (EObject) sdrOption.getSelection();
+		EObject selection = getSelection();
 		if (selection instanceof SoftPkg) {
 			SoftPkg spd = (SoftPkg) selection;
 			for (Simple s : spd.getPropertyFile().getProperties().getSimple()) {
@@ -112,7 +112,7 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	 */
 	private String getControlGroupCode() {
 		StringBuilder builder = new StringBuilder();
-		EObject selection = (EObject) sdrOption.getSelection();
+		EObject selection = getSelection();
 		if (selection instanceof SoftPkg) {
 			SoftPkg spd = (SoftPkg) selection;
 			String intend = "		";
@@ -152,7 +152,7 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	 */
 	private String getPropertyBindingsCode() {
 		StringBuilder builder = new StringBuilder();
-		EObject selection = (EObject) sdrOption.getSelection();
+		EObject selection = getSelection();
 		String intend = "		";
 		if (selection instanceof SoftPkg) {
 			SoftPkg spd = (SoftPkg) selection;
@@ -170,24 +170,24 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	/**
 	 * @return
 	 */
-	private String getCompositeClassName() {
+	public String getCompositeClassName() {
 		return getName() + "ControlPanel";
 	}
 
 	/**
 	 * @return
 	 */
-	private String getName() {
-		String name = getStringOption("controlPanelName");
-		EObject selection = (EObject) sdrOption.getSelection();
-		if (name == null) {
-			if (selection instanceof SoftPkg) {
-				name = ((SoftPkg) selection).getName();
-			} else if (selection instanceof SoftwareAssembly) {
-				name = ((SoftwareAssembly) selection).getName();
-			} else if (selection instanceof DeviceConfiguration) {
-				name = ((DeviceConfiguration) selection).getName();
-			}
+	public String getName() {
+		String name;
+		EObject selection = getSelection();
+		if (selection instanceof SoftPkg) {
+			name = ((SoftPkg) selection).getName();
+		} else if (selection instanceof SoftwareAssembly) {
+			name = ((SoftwareAssembly) selection).getName();
+		} else if (selection instanceof DeviceConfiguration) {
+			name = ((DeviceConfiguration) selection).getName();
+		} else {
+			name = "ControlPanel";
 		}
 		return WordUtils.capitalize(name.trim()).replace(" ", "");
 	}
@@ -195,29 +195,29 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	/**
 	 * @return
 	 */
-	private String getFilterClassName() {
+	public String getFilterClassName() {
 		return getName() + "PropertyFilter";
 	}
 
 	/**
 	 * @return
 	 */
-	private String getEditorClassName() {
+	public String getEditorClassName() {
 		return getName() + "Editor";
 	}
 
 	/**
 	 * @return
 	 */
-	private String getSectionClassName() {
+	public String getSectionClassName() {
 		return getName() + "Section";
 	}
 
 	/**
 	 * @return
 	 */
-	private String getResourceClassName() {
-		EObject resource = (EObject) sdrOption.getSelection();
+	public String getResourceClassName() {
+		EObject resource = getSelection();
 		if (resource instanceof SoftwareAssembly) {
 			return "gov.redhawk.model.sca.ScaWaveform";
 		} else if (resource instanceof DeviceConfiguration) {
@@ -268,9 +268,6 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 
 	private void createOptions() {
 		// first page
-		addOption("controlPanelName", //$NON-NLS-1$
-			"&Name:", null, 0);
-
 		addOption(CONTENT_TYPE_PRIORITY, "Priority:",
 			new String[][] { new String[] { "LOW", "LOW" }, new String[] { "NORMAL", "NORMAL" }, new String[] { "HIGH", "HIGH" } }, "NORMAL", 0).setRequired(
 			true);
@@ -383,22 +380,22 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	/**
 	 * @return
 	 */
-	private String getContentTypeID() {
+	public String getContentTypeID() {
 		return getBasePackage() + "." + getName() + ".contentType";
 	}
 
 	/**
 	 * @return
 	 */
-	private String getContentTypeName() {
+	public String getContentTypeName() {
 		return getName();
 	}
 
 	/**
 	 * @return
 	 */
-	private String getProfileId() {
-		EObject selection = (EObject) sdrOption.getSelection();
+	public String getProfileId() {
+		EObject selection = getSelection();
 		String profileId = "ProfileID";
 		if (selection instanceof SoftPkg) {
 			profileId = ((SoftPkg) selection).getId();
@@ -486,6 +483,10 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 		propertySectionElement.add(describerElement);
 	}
 
+	public EObject getSelection() {
+		return (EObject) sdrOption.getSelection();
+	}
+
 	/**
 	 * @param sectionElement
 	 * @param factory
@@ -501,7 +502,7 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 
 		final IPluginElement parameter = factory.createElement(sectionElement);
 		parameter.setName("input");
-		EObject resource = (EObject) sdrOption.getSelection();
+		EObject resource = getSelection();
 		if (resource instanceof SoftwareAssembly) {
 			parameter.setAttribute("type", "gov.redhawk.model.sca.ScaWaveform");
 		} else if (resource instanceof DeviceConfiguration) {
@@ -529,21 +530,28 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	/**
 	 * @return
 	 */
-	private String getBasePackage() {
+	public String getBasePackage() {
 		return getFormattedPackageName(model.getPluginBase().getId());
 	}
 
 	/**
 	 * @return
 	 */
-	private String getPropertyTabID() {
+	public String getPropertyTabID() {
 		return getBasePackage() + "." + getName() + ".tab";
 	}
 
 	/**
 	 * @return
 	 */
-	private String getPropertySectionID() {
+	public String getPropertySectionID() {
 		return getBasePackage() + "." + getName() + ".section";
+	}
+
+	/**
+	 * @param obj
+	 */
+	public void setResource(EObject obj) {
+		sdrOption.setSelection(obj);
 	}
 }

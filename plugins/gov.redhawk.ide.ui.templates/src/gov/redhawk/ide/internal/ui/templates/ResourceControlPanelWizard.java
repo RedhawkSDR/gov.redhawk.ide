@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.internal.ui.templates;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.pde.ui.templates.NewPluginTemplateWizard;
 
@@ -17,6 +18,8 @@ import org.eclipse.pde.ui.templates.NewPluginTemplateWizard;
  * 
  */
 public class ResourceControlPanelWizard extends NewPluginTemplateWizard {
+
+	private ResourceControlPanelTemplateSection resourceTemplate;
 
 	/**
 	 * 
@@ -30,7 +33,18 @@ public class ResourceControlPanelWizard extends NewPluginTemplateWizard {
 	 */
 	@Override
 	public ITemplateSection[] createTemplateSections() {
-		return new ITemplateSection[] { new ResourceControlPanelTemplateSection() };
+		resourceTemplate = new ResourceControlPanelTemplateSection();
+		return new ITemplateSection[] { resourceTemplate };
 	}
 
+	/**
+	 * @param spd
+	 */
+	public void setResource(EObject obj) {
+		resourceTemplate.setResource(obj);
+	}
+	
+	public ResourceControlPanelTemplateSection getResourceControlPanelTemplateSection() {
+		return this.resourceTemplate;
+	}
 }

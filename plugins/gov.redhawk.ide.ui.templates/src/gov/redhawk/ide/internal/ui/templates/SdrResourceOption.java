@@ -22,6 +22,7 @@ import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory;
@@ -44,6 +45,7 @@ public class SdrResourceOption extends TemplateOption {
 
 	private FilteredTree viewer;
 	private SdrRoot root;
+	private EObject selection;
 
 	/**
 	 * Constructor for ComboChoiceOption.
@@ -69,10 +71,9 @@ public class SdrResourceOption extends TemplateOption {
 		group.setLayout(new GridLayout());
 		group.setLayoutData(GridDataFactory.fillDefaults().span(2, 1).hint(SWT.DEFAULT, 300).create());
 		group.setText(getMessageLabel());
-		
-		
+
 		viewer = new FilteredTree(group, SWT.FULL_SELECTION | SWT.SINGLE | SWT.H_SCROLL, new SdrPatternFilter(), true);
-		
+
 		final ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
 
 		adapterFactory.addAdapterFactory(new RepositoryItemProviderAdapterFactory());
@@ -89,13 +90,11 @@ public class SdrResourceOption extends TemplateOption {
 		viewer.getViewer().setContentProvider(new AdapterFactoryContentProvider(adapterFactory));
 		viewer.getViewer().setSorter(new ViewerSorter());
 		viewer.getViewer().addFilter(new ViewerFilter() {
-			
+
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof IdlLibrary 
-						|| parentElement instanceof SoftPkg
-						|| parentElement instanceof SoftwareAssembly
-						|| parentElement instanceof DeviceConfiguration) {
+				if (element instanceof IdlLibrary || parentElement instanceof SoftPkg || parentElement instanceof SoftwareAssembly
+					|| parentElement instanceof DeviceConfiguration) {
 					return false;
 				}
 				return true;
@@ -104,8 +103,23 @@ public class SdrResourceOption extends TemplateOption {
 		viewer.getViewer().setInput(this.root);
 	}
 	
-	public Object getSelection() {
-		return ((IStructuredSelection) viewer.getViewer().getSelection()).getFirstElement();
+	public void setSelection(EObject selection) {
+		this.selection = selection;
+		// TODO Select element in viewer
+	}
+
+	public EObject getSelection() {
+		if (this.selection != null) {
+			return this.selection;
+		}
+		if (viewer.getViewer().getSelection().isEmpty()) {
+			return null;
+		}
+		Object retVal = ((IStructuredSelection) viewer.getViewer().getSelection()).getFirstElement();
+		if (retVal instanceof EObject) {
+			return (EObject) retVal;
+		}
+		return null;
 	}
 
 	/**
@@ -114,13 +128,13 @@ public class SdrResourceOption extends TemplateOption {
 	public FilteredTree getViewer() {
 		return viewer;
 	}
-	
+
 	/*
 	 * @see org.eclipse.pde.ui.templates.TemplateOption#isEmpty()
 	 */
 	@Override
 	public boolean isEmpty() {
-		return viewer.getViewer().getSelection().isEmpty();
+		return getSelection() != null;
 	}
 
 }

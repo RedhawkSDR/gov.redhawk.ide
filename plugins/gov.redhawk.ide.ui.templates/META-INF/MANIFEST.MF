@@ -13,7 +13,11 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  org.eclipse.ui.ide;bundle-version="3.8.2",
  gov.redhawk.eclipsecorba.library.edit,
  org.eclipse.emf.edit.ui,
- org.apache.commons.lang;bundle-version="2.6.0"
+ org.apache.commons.lang;bundle-version="2.6.0",
+ gov.redhawk.ui,
+ gov.redhawk.sca.model,
+ org.eclipse.jdt.launching
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %Bundle-Vendor
+Import-Package: nxm.dsp.prim
