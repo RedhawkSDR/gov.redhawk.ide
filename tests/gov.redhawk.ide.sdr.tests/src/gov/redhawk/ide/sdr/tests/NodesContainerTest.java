@@ -13,7 +13,7 @@ package gov.redhawk.ide.sdr.tests;
 
 import gov.redhawk.ide.sdr.NodesContainer;
 import gov.redhawk.ide.sdr.SdrRoot;
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;

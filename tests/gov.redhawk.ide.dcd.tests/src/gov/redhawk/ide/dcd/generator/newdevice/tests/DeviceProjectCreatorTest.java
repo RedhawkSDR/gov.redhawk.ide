@@ -14,7 +14,7 @@ package gov.redhawk.ide.dcd.generator.newdevice.tests;
 import gov.redhawk.ide.dcd.generator.newdevice.DeviceProjectCreator;
 import gov.redhawk.ide.preferences.RedhawkIdePreferenceConstants;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.scd.Interface;
 import mil.jpeojtrs.sca.scd.ScdPackage;

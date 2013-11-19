@@ -158,7 +158,7 @@ public class RecreateSettingsWizard extends NewScaResourceWizard {
 
 		try {
 			this.waveSettings = CodegenUtil.getWaveDevSettings(CodegenUtil.getWaveDevSettingsURI(fileURI));
-		} catch (final Exception e) {
+		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			this.waveSettings = CodegenFactory.eINSTANCE.createWaveDevSettings();
 		}
 

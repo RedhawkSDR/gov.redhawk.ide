@@ -433,7 +433,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			releaseAll();
 
 			unbind();
-		} catch (Exception e) {
+		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			logException("Problems while releasing.", e);
 		}
 
@@ -501,7 +501,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.streams.getOutStream().println("\tReleasing component " + info.getName());
 		try {
 			info.releaseObject();
-		} catch (final Exception e) {
+		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			logException("Problems while releasing: " + info.getName(), e);
 		}
 	}
@@ -529,7 +529,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				for (final ScaConnection c : connections) {
 					try {
 						up.disconnectPort(c);
-					} catch (final Exception e) {
+					} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 						logException("Problems while disconnecting: " + c.getId(), e);
 					}
 				}

@@ -13,10 +13,11 @@ package gov.redhawk.ide.sdr.tests;
 
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.SdrRoot;
-import junit.framework.Assert;
 import junit.textui.TestRunner;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+
 import org.eclipse.emf.common.util.EList;
+import org.junit.Assert;
 
 /**
  * <!-- begin-user-doc --> A test case for the model object '

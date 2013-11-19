@@ -85,7 +85,7 @@ public class DeferredLibraryAdapter implements IDeferredWorkbenchAdapter {
 			try {
 				final Resource resource = resourceSet.getResource(URI.createPlatformResourceURI(libraryFile.getFullPath().toString(), true), true);
 				library = (IdlLibrary) resource.getEObject("/");
-			} catch (final Exception e) {
+			} catch (final Exception e) { 
 				return null;
 			}
 			this.libraryMap.put(project, library);

@@ -13,7 +13,7 @@ package gov.redhawk.ide.dcd.generator.newnode.tests;
 
 import gov.redhawk.ide.dcd.generator.newnode.NodeProjectCreator;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 

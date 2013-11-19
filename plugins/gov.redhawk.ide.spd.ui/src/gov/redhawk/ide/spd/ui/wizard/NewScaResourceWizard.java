@@ -409,7 +409,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 				WaveDevSettings waveSettings = null;
 				try {
 					waveSettings = CodegenUtil.getWaveDevSettings(CodegenUtil.getWaveDevSettingsURI(fileURI));
-				} catch (final Exception e) {
+				} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 					RedhawkCodegenActivator.logInfo("Unable to find the wavedev settings file, using defaults.");
 					waveSettings = CodegenFactory.eINSTANCE.createWaveDevSettings();
 				}
@@ -531,7 +531,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 						//								}
 						//							}
 						//						}
-					} catch (final Exception e) {
+					} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 						if (project != null) {
 							project.delete(true, progress.newChild(1));
 						}
@@ -539,7 +539,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 					}
 				} catch (final CoreException e) {
 					throw e;
-				} catch (final Exception e) {
+				} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 					throw new CoreException(new Status(IStatus.ERROR, ComponentUiPlugin.PLUGIN_ID, "Error creating project", e));
 				} finally {
 

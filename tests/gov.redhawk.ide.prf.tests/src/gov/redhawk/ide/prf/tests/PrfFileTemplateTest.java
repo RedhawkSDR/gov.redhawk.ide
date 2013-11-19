@@ -16,7 +16,7 @@ import gov.redhawk.ide.prf.generator.PrfFileTemplate;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.Properties;
 

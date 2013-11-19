@@ -13,7 +13,7 @@ package gov.redhawk.ide.spd.tests;
 
 import gov.redhawk.ide.spd.generator.newcomponent.ComponentProjectCreator;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.spd.SoftPkg;

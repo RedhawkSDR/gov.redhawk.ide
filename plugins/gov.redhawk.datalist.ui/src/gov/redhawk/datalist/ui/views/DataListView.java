@@ -454,7 +454,7 @@ public class DataListView extends ViewPart {
 			if (this.viewer != null) {
 				this.viewer.setInput(this.buffer);
 			}
-		} catch (final Exception e) {
+		} catch (final Exception e) {  // SUPPRESS CHECKSTYLE Logged Catch all exception
 			setContentDescription(e.getMessage());
 			if (this.viewer != null) {
 				this.viewer.getControl().setEnabled(false);

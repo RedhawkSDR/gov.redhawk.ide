@@ -79,7 +79,7 @@ public class SadLaunchShortcut implements ILaunchShortcut {
 		try {
 			final Resource resource = resourceSet.getResource(URI.createPlatformResourceURI(element.getFullPath().toString(), true), true);
 			sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);
-		} catch (final Exception e) {
+		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to launch: " + element, e),
 			        StatusManager.SHOW | StatusManager.LOG);
 			return;

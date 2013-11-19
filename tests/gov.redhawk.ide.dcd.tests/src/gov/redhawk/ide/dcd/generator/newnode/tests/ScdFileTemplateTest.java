@@ -17,7 +17,7 @@ import gov.redhawk.ide.dcd.tests.TestUtils;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 

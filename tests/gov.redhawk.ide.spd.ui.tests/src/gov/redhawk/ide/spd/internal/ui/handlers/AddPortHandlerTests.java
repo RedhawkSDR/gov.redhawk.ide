@@ -21,7 +21,7 @@ import gov.redhawk.ide.spd.ui.tests.SpdUiTestUtils;
 
 import java.io.IOException;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import mil.jpeojtrs.sca.scd.Provides;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.scd.Uses;

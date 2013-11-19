@@ -187,7 +187,6 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 		pageSettings.put(BSS_CAPTURE_METHOD, bss.getCaptureMethod().name());
 	}
 	
-	@SuppressWarnings("null")
 	private void restoreWidgetValues(BulkIOSnapshotSettings bss) {
 		IDialogSettings pageSettings = getPageSettingsSection();
 		if (pageSettings != null && bss != null) {

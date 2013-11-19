@@ -91,7 +91,7 @@ public class BundleResourceFactoryProvider extends AbstractResourceFactoryProvid
 				ScaDebugPlugin.logError("Failed to add Factory Descriptor entry: " + entry.bundle + ", " + entry.path, e);
 			} catch (WrongPolicy e) {
 				ScaDebugPlugin.logError("Failed to add Factory Descriptor entry: " + entry.bundle + ", " + entry.path, e);
-			} catch (Exception e) {
+			} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 				ScaDebugPlugin.logError("Failed to add Factory Descriptor entry: " + entry.bundle + ", " + entry.path, e);
 			} 
 		}
@@ -131,7 +131,7 @@ public class BundleResourceFactoryProvider extends AbstractResourceFactoryProvid
 				descriptor = createDescriptor(element);
 				this.spdBundleFactories.add(descriptor);
 				tracker.registerObject(extension, descriptor, IExtensionTracker.REF_SOFT);
-			} catch (Exception e) {
+			} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 				ScaDebugPlugin.getInstance().getLog().log(new Status(Status.ERROR, ScaDebugPlugin.ID, "Failed to create resource factory desc.", e));
 			}
 

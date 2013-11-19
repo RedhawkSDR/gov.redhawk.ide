@@ -11,7 +11,7 @@
 
 package gov.redhawk.ide.sad.generator.newwaveform;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 

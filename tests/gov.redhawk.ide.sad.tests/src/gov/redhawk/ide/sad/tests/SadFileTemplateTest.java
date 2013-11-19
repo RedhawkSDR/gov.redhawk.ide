@@ -17,7 +17,7 @@ import gov.redhawk.ide.sad.generator.newwaveform.SadFileTemplate;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 

@@ -1288,7 +1288,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		SoftPkg softPkg;
 		try {
 			softPkg = (SoftPkg) domain.getResourceSet().getEObject(spdFileUri, true);
-		} catch (Exception e) {
+		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load SPD " + convertFileURI(spdFileUri), e);
 		}
 		if (softPkg == null) {
@@ -1451,7 +1451,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		SoftwareAssembly sad;
 		try {
 			sad = (SoftwareAssembly) eResource().getResourceSet().getEObject(sadFileUri, true);
-		} catch (Exception e) {
+		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load SAD " + convertFileURI(sadFileUri), e);
 		}
 		submonitor.worked(1);
@@ -1487,7 +1487,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		DeviceConfiguration dcd;
 		try {
 			dcd = (DeviceConfiguration) eResource().getResourceSet().getEObject(dcdFileURI, true);
-		} catch (Exception e) {
+		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load DCD " + convertFileURI(dcdFileURI), e);
 		}
 		
@@ -1525,7 +1525,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		try {
 			dmd = (DomainManagerConfiguration) eResource().getResourceSet().getEObject(dmdURI, true);
 			submonitor.worked(1);
-		} catch (Exception e) {
+		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load DMD " + convertFileURI(dmdURI), e);
 		}
 		

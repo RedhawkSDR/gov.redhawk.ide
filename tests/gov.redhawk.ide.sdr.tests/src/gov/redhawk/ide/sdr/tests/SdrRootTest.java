@@ -18,7 +18,7 @@ import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import java.net.URI;
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 import org.eclipse.core.filesystem.EFS;

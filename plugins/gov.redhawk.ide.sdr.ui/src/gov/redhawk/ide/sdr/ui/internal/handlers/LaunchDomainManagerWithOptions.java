@@ -249,7 +249,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 				try {
 					connection.connect(new SubProgressMonitor(monitor, 1), RefreshDepth.SELF);
 					break;
-				} catch (final Exception e) {
+				} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 					monitor.worked(-1);
 					if (tries + 1 < getMaxConnectionAttempts()) {
 						try {

@@ -11,7 +11,6 @@
 package gov.redhawk.spd.validation.tests;
 
 import gov.redhawk.spd.internal.validation.DependencyConstraint;
-import junit.framework.Assert;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.Os;
 import mil.jpeojtrs.sca.spd.SpdFactory;
@@ -20,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.validation.AbstractModelConstraint;
 import org.eclipse.emf.validation.IValidationContext;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

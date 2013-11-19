@@ -44,7 +44,7 @@ public class ComponentPropertiesTab extends AbstractPropertiesTab {
 			}
 		} catch (final CoreException e) {
 			ScaLauncherActivator.log(e);
-		} catch (final Exception e) {
+		} catch (final Exception e) {  // SUPPRESS CHECKSTYLE Logged Catch all exception
 			ScaLauncherActivator.log(e);
 		}
 		return null;

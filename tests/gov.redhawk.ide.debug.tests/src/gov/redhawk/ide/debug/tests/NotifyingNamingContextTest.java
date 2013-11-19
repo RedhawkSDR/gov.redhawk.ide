@@ -19,7 +19,7 @@ import gov.redhawk.sca.efs.ScaFileSystemPlugin;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 

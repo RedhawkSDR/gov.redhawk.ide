@@ -58,7 +58,6 @@ public abstract class BaseDataWriter implements IDataWriter {
 		return settings.getType().isUnsigned();
 	}
 
-	@SuppressWarnings("null")
 	@Override
 	public List<File> getOutputFileList() {
 		return Arrays.asList(new File[] { getFileDestination() });

@@ -11,7 +11,7 @@
 package gov.redhawk.spd.validation.tests;
 
 import gov.redhawk.spd.internal.validation.LocalFileConstraint;
-import junit.framework.Assert;
+import org.junit.Assert;
 import mil.jpeojtrs.sca.spd.Code;
 import mil.jpeojtrs.sca.spd.LocalFile;
 import mil.jpeojtrs.sca.spd.SpdFactory;

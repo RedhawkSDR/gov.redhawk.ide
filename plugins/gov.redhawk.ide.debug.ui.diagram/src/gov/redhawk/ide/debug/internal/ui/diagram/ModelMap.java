@@ -203,7 +203,6 @@ public class ModelMap {
 		}
 		Job job = new Job("Connecting " + conn.getId()) {
 
-			@SuppressWarnings("null")
 			@Override
 			@NonNull
 			protected IStatus run(IProgressMonitor monitor) {
@@ -244,7 +243,6 @@ public class ModelMap {
 		}
 		Job job = new Job("Adding connection " + conn.getId()) {
 
-			@SuppressWarnings("null")
 			@Override
 			@NonNull
 			protected IStatus run(IProgressMonitor monitor) {

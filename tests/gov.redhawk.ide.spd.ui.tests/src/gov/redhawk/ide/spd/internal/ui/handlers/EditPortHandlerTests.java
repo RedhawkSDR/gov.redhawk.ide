@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import mil.jpeojtrs.sca.scd.Provides;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.SoftPkg;

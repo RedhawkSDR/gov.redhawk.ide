@@ -16,7 +16,7 @@ import gov.redhawk.ide.spd.generator.newcomponent.TestFileTemplate;
 
 import java.io.IOException;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 

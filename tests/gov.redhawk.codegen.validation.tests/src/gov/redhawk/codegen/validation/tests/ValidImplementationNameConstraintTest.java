@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;

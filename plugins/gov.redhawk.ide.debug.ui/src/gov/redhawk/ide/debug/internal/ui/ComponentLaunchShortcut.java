@@ -77,7 +77,7 @@ public class ComponentLaunchShortcut implements ILaunchShortcut {
 			final Resource resource = resourceSet.getResource(URI.createPlatformResourceURI(file.getFullPath().toPortableString(), true), true);
 			final SoftPkg spd = SoftPkg.Util.getSoftPkg(resource);
 			launch(spd, mode);
-		} catch (final Exception e) {
+		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			final Status status = new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to load SPD: " + file, e);
 			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
 		}

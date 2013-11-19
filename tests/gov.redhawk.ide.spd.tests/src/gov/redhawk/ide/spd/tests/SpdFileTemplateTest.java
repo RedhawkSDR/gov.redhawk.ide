@@ -17,7 +17,7 @@ import gov.redhawk.ide.spd.generator.newcomponent.SpdFileTemplate;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.spd.SoftPkg;
