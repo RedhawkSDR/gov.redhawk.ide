@@ -334,4 +334,13 @@
               </actionSet>
            </perspectiveExtension>
         </extension>
+        <extension
+              point="org.eclipse.ui.importWizards">
+           <wizard
+                 category="gov.redhawk.ide.ui.import.sca"
+                 class="gov.redhawk.ide.ui.wizard.NonEclipseImportWizard"
+                 id="gov.redhawk.ide.ui.wizard.noneclipsewizard"
+                 name="Redhawk Import Wizard">
+           </wizard>
+        </extension>
 </plugin>
