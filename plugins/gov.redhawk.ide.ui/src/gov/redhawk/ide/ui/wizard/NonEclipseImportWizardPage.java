@@ -258,6 +258,7 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 					}
 				}
 			} catch (CoreException e) {
+				IDEWorkbenchPlugin.log(e.getMessage(), e);
 				return;
 			} catch (IOException e) {
 				return;

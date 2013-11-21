@@ -35,6 +35,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
@@ -220,12 +224,22 @@ public class NonEclipseImportUtil {
 				operation.run(monitor);
 			}
 
-		} catch (CoreException e) {
-			e.printStackTrace();
+		} catch (final CoreException e) {
+			Display.getDefault().syncExec(new Runnable() {
+				
+				@Override
+				public void run() {
+					IDEWorkbenchPlugin.log(e.getMessage());
+					MessageBox errorDialog = new MessageBox(parent.getShell(), SWT.ERROR);
+					errorDialog.setText("Import Failed");
+					errorDialog.setMessage("Import Failed for the following reason: \n" + e.getMessage());
+					errorDialog.open();
+				}
+			});
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		}
 		return null;
 	}
