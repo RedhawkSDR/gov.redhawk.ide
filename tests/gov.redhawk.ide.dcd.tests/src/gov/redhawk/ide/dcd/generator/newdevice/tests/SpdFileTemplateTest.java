@@ -59,7 +59,7 @@ public class SpdFileTemplateTest {
 		final SoftPkg softpkg = SoftPkg.Util.getSoftPkg(resourceSet.getResource(URI.createFileURI(spdFile.toString()), true));
 		Assert.assertEquals(args.getSoftPkgName(), softpkg.getName());
 		Assert.assertEquals(args.getSoftPkgId(), softpkg.getId());
-		Assert.assertEquals(SCAComplianceType.SCA_COMPLIANT, softpkg.getType());
+		Assert.assertEquals(SCAComplianceType.SCA_COMPLIANT.getLiteral(), softpkg.getType());
 		Assert.assertEquals("", softpkg.getTitle());
 		Assert.assertEquals(args.getAuthorName(), softpkg.getAuthor().get(0).getName().get(0));
 		Assert.assertEquals("PRF", softpkg.getPropertyFile().getType());
