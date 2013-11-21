@@ -7,11 +7,5 @@
                 <message_argument value="org.eclipse.emf.ecore"/>
             </message_arguments>
         </filter>
-        <filter id="927989779">
-            <message_arguments>
-                <message_argument value="1.0.0"/>
-                <message_argument value="org.eclipse.emf.ecore.xmi"/>
-            </message_arguments>
-        </filter>
     </resource>
 </component>
