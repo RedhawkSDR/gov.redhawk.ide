@@ -43,6 +43,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -258,6 +260,8 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 			} catch (CoreException e) {
 				return;
 			} catch (IOException e) {
+				return;
+			} catch (XMLStreamException e) {
 				return;
 			}
 		}

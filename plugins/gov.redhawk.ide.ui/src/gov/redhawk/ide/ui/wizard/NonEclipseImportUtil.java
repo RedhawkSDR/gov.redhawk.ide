@@ -16,9 +16,20 @@ import gov.redhawk.ide.spd.generator.newcomponent.ComponentProjectCreator;
 import gov.redhawk.ide.ui.wizard.NonEclipseImportWizardPage.ProjectRecord;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.util.Iterator;
 import java.util.List;
+
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -47,21 +58,47 @@ public class NonEclipseImportUtil {
 	private boolean copyFiles;
 	private NonEclipseImportWizardPage parent;
 
-	public static String getName(IPath path) {
-		if (path.toFile().getName().matches(dcdExtension)) {
-			// TODO properly grab DCD project name, currently returns DeviceManager
+	public static String getName(IPath path) throws IOException,
+			XMLStreamException {
+		// Check for 'name' attribute in XML root
+		String projectName = path.toFile().getName();
 
-			String projectName = path.toFile().getName();
-			return projectName;
-		} else {
-			String projectName = path.toFile().getName();
-			int dotIndex = projectName.indexOf('.');
-			projectName = projectName.substring(0, dotIndex);
-			return projectName;
+		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+		InputStream in = new FileInputStream(path.toFile());
+		XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
+		while (eventReader.hasNext()) {
+			XMLEvent event = eventReader.nextEvent();
+			if (event.isStartElement()) {
+				StartElement startElement = event.asStartElement();
+				String element = startElement.getName().getLocalPart();
+				if (element.equals("deviceconfiguration")
+						|| element.equals("softwareassembly")
+						|| element.equals("softpkg")) {
+					@SuppressWarnings("unchecked")
+					Iterator<Attribute> attributes = startElement
+							.getAttributes();
+					while (attributes.hasNext()) {
+						Attribute attribute = attributes.next();
+						if (attribute.getName().toString().equals("name")) {
+							projectName = attribute.getValue();
+							return projectName;
+						}
+					}
+				}
+			}
 		}
+		// If there is there is no 'name' attribute then use the file name as
+		// the project name
+		projectName = path.toFile().getName();
+		int dotIndex = projectName.indexOf('.');
+		projectName = projectName.substring(0, dotIndex);
+		return projectName;
+
 	}
 
-	public void createMissingFiles(ProjectRecord record, IProgressMonitor monitor, boolean copyFiles, NonEclipseImportWizardPage parent) {
+	public void createMissingFiles(ProjectRecord record,
+			IProgressMonitor monitor, boolean copyFiles,
+			NonEclipseImportWizardPage parent) {
 		this.record = record;
 		this.monitor = monitor;
 		this.projectName = record.projectName;
@@ -137,48 +174,59 @@ public class NonEclipseImportUtil {
 	private File createDotProjectFile(String projectType) {
 		try {
 			IProject project = null;
-			File importSource = new File(record.projectSystemFile.getParentFile().getAbsolutePath());
-			
-			//Build new .project files of the appropriate type
+			File importSource = new File(record.projectSystemFile
+					.getParentFile().getAbsolutePath());
+
+			// Build new .project files of the appropriate type
 			if (projectType.equals("SAD")) {
 				if (!copyFiles) {
-					project = WaveformProjectCreator.createEmptyProject(projectName, projectLocation, monitor);
+					project = WaveformProjectCreator.createEmptyProject(
+							projectName, projectLocation, monitor);
 				} else {
-					project = WaveformProjectCreator.createEmptyProject(projectName, null, monitor);
+					project = WaveformProjectCreator.createEmptyProject(
+							projectName, null, monitor);
 				}
 			}
 			if (projectType.equals("DCD")) {
-				if(!copyFiles) {
-					project = NodeProjectCreator.createEmptyProject(projectName, projectLocation, monitor);
+				if (!copyFiles) {
+					project = NodeProjectCreator.createEmptyProject(
+							projectName, projectLocation, monitor);
 				} else {
-					project = NodeProjectCreator.createEmptyProject(projectName, null, monitor);
+					project = NodeProjectCreator.createEmptyProject(
+							projectName, null, monitor);
 				}
 			}
 			if (projectType.equals("SPD")) {
-				if(!copyFiles) {
-					project = ComponentProjectCreator.createEmptyProject(projectName, projectLocation, monitor);
+				if (!copyFiles) {
+					project = ComponentProjectCreator.createEmptyProject(
+							projectName, projectLocation, monitor);
 				} else {
-					project = ComponentProjectCreator.createEmptyProject(projectName, null, monitor);
+					project = ComponentProjectCreator.createEmptyProject(
+							projectName, null, monitor);
 				}
 			}
-			
-			//If "copy into" box was checked, import files into workspace 
+
+			// If "copy into" box was checked, import files into workspace
 			if (copyFiles) {
-				List<?> filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
-				ImportOperation operation = new ImportOperation(project.getFullPath(), importSource, FileSystemStructureProvider.INSTANCE, parent, filesToImport);
+				List<?> filesToImport = FileSystemStructureProvider.INSTANCE
+						.getChildren(importSource);
+				ImportOperation operation = new ImportOperation(
+						project.getFullPath(), importSource,
+						FileSystemStructureProvider.INSTANCE, parent,
+						filesToImport);
 				operation.setContext(parent.getShell());
 				operation.setOverwriteResources(true);
 				operation.setCreateContainerStructure(false);
 				operation.run(monitor);
 			}
-			
+
 		} catch (CoreException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		} 
+		}
 		return null;
 	}
 }
