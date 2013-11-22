@@ -31,7 +31,9 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  org.eclipse.ui.ide,
  gov.redhawk.ide.spd;bundle-version="2.0.0",
  gov.redhawk.ide.sad;bundle-version="2.1.0",
- gov.redhawk.ide.dcd;bundle-version="2.1.0"
+ gov.redhawk.ide.dcd;bundle-version="2.1.0",
+ gov.redhawk.ide.codegen.java;bundle-version="6.1.0",
+ gov.redhawk.ide.cplusplus.utils;bundle-version="1.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: gov.redhawk.ide.internal.ui.handlers,
@@ -41,5 +43,6 @@ Export-Package: gov.redhawk.ide.internal.ui.handlers,
  gov.redhawk.ide.ui.wizard
 Bundle-Localization: plugin
 Bundle-Vendor: %Bundle-Provider.0
-Import-Package: org.omg.CosEventChannelAdmin,
+Import-Package: gov.redhawk.ide.codegen.manual,
+ org.omg.CosEventChannelAdmin,
  org.omg.CosEventComm

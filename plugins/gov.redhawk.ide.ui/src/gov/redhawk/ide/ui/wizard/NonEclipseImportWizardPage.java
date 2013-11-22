@@ -361,6 +361,8 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 
 	private IProject[] wsProjects;
 
+	private List<IProject> createdProjects;
+
 	// constant from WizardArchiveFileResourceImportPage1
 	private static final String[] FILE_IMPORT_MASK = {
 			"*.jar;*.zip;*.tar;*.tar.gz;*.tgz", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
@@ -422,6 +424,7 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 		setDescription(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
 	}
 
+	// CHECKSTYLE:ON
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -620,10 +623,11 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 		selectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				for (int i = 0; i < selectedProjects.length; i++) {
-					if (selectedProjects[i].hasConflicts)
+					if (selectedProjects[i].hasConflicts) {
 						projectsList.setChecked(selectedProjects[i], false);
-					else
+					} else {
 						projectsList.setChecked(selectedProjects[i], true);
+					}
 				}
 				setPageComplete(projectsList.getCheckedElements().length > 0);
 			}
@@ -1017,7 +1021,7 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 		} catch (InvocationTargetException e) {
 			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		} catch (InterruptedException e) {
-			// Nothing to do if the user interrupts.
+			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		}
 
 		projectsList.refresh(true);
@@ -1129,8 +1133,9 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 				DataTransferMessages.WizardProjectsImportPage_CheckingMessage,
 				directory.getPath()));
 		File[] contents = directory.listFiles();
-		if (contents == null)
+		if (contents == null) {
 			return false;
+		}
 
 		// Initialize recursion guard for recursive symbolic links
 		if (directoriesVisited == null) {
@@ -1367,14 +1372,13 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 		return true;
 	}
 
-	List<IProject> createdProjects;
-
 	private void addToWorkingSets() {
 
 		IWorkingSet[] selectedWorkingSets = workingSetGroup
 				.getSelectedWorkingSets();
-		if (selectedWorkingSets == null || selectedWorkingSets.length == 0)
+		if (selectedWorkingSets == null || selectedWorkingSets.length == 0) {
 			return; // no Working set is selected
+		}
 		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench()
 				.getWorkingSetManager();
 		for (Iterator<IProject> i = createdProjects.iterator(); i.hasNext();) {
@@ -1444,9 +1448,10 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 				// validate the location of the project being copied
 				IStatus result = ResourcesPlugin.getWorkspace()
 						.validateProjectLocationURI(project, locationURI);
-				if (!result.isOK())
+				if (!result.isOK()) {
 					throw new InvocationTargetException(new CoreException(
 							result));
+				}
 				importSource = new File(locationURI);
 				IProjectDescription desc = workspace
 						.newProjectDescription(projectName);
@@ -1482,11 +1487,6 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 			ImportOperation operation = new ImportOperation(
 					project.getFullPath(), importSource,
 					FileSystemStructureProvider.INSTANCE, this, filesToImport);
-			System.out.println("Full Path: " + project.getFullPath());
-			System.out.println("ImportSource: " + importSource);
-			System.out.println("This: " + this);
-			System.out.println("Instance: "
-					+ FileSystemStructureProvider.INSTANCE);
 			operation.setContext(getShell());
 			operation.setOverwriteResources(true); // need to overwrite
 			// .project, .classpath

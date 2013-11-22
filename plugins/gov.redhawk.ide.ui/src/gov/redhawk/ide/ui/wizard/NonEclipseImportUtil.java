@@ -10,6 +10,18 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.wizard;
 
+import gov.redhawk.ide.codegen.CodegenFactory;
+import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
+import gov.redhawk.ide.codegen.IPropertyDescriptor;
+import gov.redhawk.ide.codegen.IScaComponentCodegen;
+import gov.redhawk.ide.codegen.ITemplateDesc;
+import gov.redhawk.ide.codegen.ImplementationSettings;
+import gov.redhawk.ide.codegen.Property;
+import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
+import gov.redhawk.ide.codegen.WaveDevSettings;
+import gov.redhawk.ide.codegen.java.JavaGeneratorUtils;
+import gov.redhawk.ide.codegen.manual.ManualGeneratorPlugin;
+import gov.redhawk.ide.cplusplus.utils.CppGeneratorUtils;
 import gov.redhawk.ide.dcd.generator.newnode.NodeProjectCreator;
 import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
 import gov.redhawk.ide.spd.generator.newcomponent.ComponentProjectCreator;
@@ -31,10 +43,19 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
@@ -51,21 +72,22 @@ public class NonEclipseImportUtil {
 	private static String sadExtension = ".+\\.sad.xml";
 	private static String spdExtension = ".+\\.spd.xml";
 	private static String dcdExtension = ".+\\.dcd.xml";
+
 	private ProjectRecord record;
-	private boolean dotProjectMissing = true;
-	private boolean libraryMissing;
-	private boolean wavedevMissing;
-	private boolean pydevProjectMissing;
 	private IProgressMonitor monitor;
+	private NonEclipseImportWizardPage parent;
 	private URI projectLocation;
 	private String projectName;
+
+	private boolean dotProjectMissing = true;
+	private boolean wavedevMissing;
+	private boolean pydevProjectMissing;
 	private boolean copyFiles;
-	private NonEclipseImportWizardPage parent;
 
 	public static String getName(IPath path) throws IOException,
 			XMLStreamException {
 		// Check for 'name' attribute in XML root
-		String projectName = path.toFile().getName();
+		String projectName;
 
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 		InputStream in = new FileInputStream(path.toFile());
@@ -100,9 +122,7 @@ public class NonEclipseImportUtil {
 
 	}
 
-	public void createMissingFiles(ProjectRecord record,
-			IProgressMonitor monitor, boolean copyFiles,
-			NonEclipseImportWizardPage parent) {
+	public void createMissingFiles(ProjectRecord record, IProgressMonitor monitor, boolean copyFiles, NonEclipseImportWizardPage parent) {
 		this.record = record;
 		this.monitor = monitor;
 		this.projectName = record.projectName;
@@ -111,44 +131,29 @@ public class NonEclipseImportUtil {
 		this.projectLocation = record.projectSystemFile.getParentFile()
 				.getAbsoluteFile().toURI();
 		String type = this.record.projectSystemFile.getName();
-		if (type.matches(sadExtension)) {
-			makeSADFiles();
-		}
-		if (type.matches(dcdExtension)) {
-			makeDCDFiles();
-		}
-		if (type.matches(spdExtension)) {
-			makeSPDFiles();
-		}
-	}
 
-	private void makeSADFiles() {
 		findMissingFiles();
-		if (dotProjectMissing) {
-			createDotProjectFile("SAD");
-		}
-	}
-
-	private void makeDCDFiles() {
-		findMissingFiles();
-		if (dotProjectMissing) {
-			createDotProjectFile("DCD");
-		}
-	}
-
-	private void makeSPDFiles() {
-		findMissingFiles();
-		if (dotProjectMissing) {
-			createDotProjectFile("SPD");
-		}
-		if (libraryMissing) {
-			// TODO create this file
-		}
-		if (wavedevMissing) {
-			// TODO create this file
-		}
-		if (pydevProjectMissing) {
-			// TODO create this file
+		
+		try {
+			if (type.matches(sadExtension) && dotProjectMissing) {
+				createDotProjectFile("SAD");
+			}
+			if (type.matches(dcdExtension) && dotProjectMissing) {
+				createDotProjectFile("DCD");
+			}
+			if (type.matches(spdExtension)) {
+				if (dotProjectMissing) {
+					createDotProjectFile("SPD");
+				}
+				if (wavedevMissing) {
+					createWavDevFile();
+				}
+				if (pydevProjectMissing) {
+					// TODO create this file
+				}
+			}
+		}catch (CoreException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -157,10 +162,6 @@ public class NonEclipseImportUtil {
 		for (File f : contents) {
 			if (f.getName().matches(".+\\.project")) {
 				dotProjectMissing = false;
-				continue;
-			}
-			if (f.getName().matches(".+\\.library")) {
-				libraryMissing = false;
 				continue;
 			}
 			if (f.getName().matches(".+\\.wavedev")) {
@@ -172,42 +173,46 @@ public class NonEclipseImportUtil {
 				continue;
 			}
 		}
-
 	}
 
-	private File createDotProjectFile(String projectType) {
+	private IProject createDotProjectFile(String projectType) {
 		try {
 			IProject project = null;
-			File importSource = new File(record.projectSystemFile
-					.getParentFile().getAbsolutePath());
+			File importSource = new File(record.projectSystemFile.getParentFile().getAbsolutePath());
 
 			// Build new .project files of the appropriate type
 			if (projectType.equals("SAD")) {
 				if (!copyFiles) {
-					project = WaveformProjectCreator.createEmptyProject(
-							projectName, projectLocation, monitor);
+					project = WaveformProjectCreator.createEmptyProject(projectName, projectLocation, monitor);
 				} else {
-					project = WaveformProjectCreator.createEmptyProject(
-							projectName, null, monitor);
+					project = WaveformProjectCreator.createEmptyProject(projectName, null, monitor);
 				}
 			}
 			if (projectType.equals("DCD")) {
 				if (!copyFiles) {
-					project = NodeProjectCreator.createEmptyProject(
-							projectName, projectLocation, monitor);
+					project = NodeProjectCreator.createEmptyProject(projectName, projectLocation, monitor);
 				} else {
-					project = NodeProjectCreator.createEmptyProject(
-							projectName, null, monitor);
+					project = NodeProjectCreator.createEmptyProject(projectName, null, monitor);
 				}
 			}
 			if (projectType.equals("SPD")) {
 				if (!copyFiles) {
-					project = ComponentProjectCreator.createEmptyProject(
-							projectName, projectLocation, monitor);
+					project = ComponentProjectCreator.createEmptyProject(projectName, projectLocation, monitor);
 				} else {
-					project = ComponentProjectCreator.createEmptyProject(
-							projectName, null, monitor);
+					project = ComponentProjectCreator.createEmptyProject(projectName, null, monitor);
 				}
+			}
+			
+			// Add java natures if required
+			if(new File(importSource + "/java").exists()) {
+				JavaGeneratorUtils.addJavaProjectNature(project, monitor);
+			}
+			
+			// Add CPP natures if required
+			if(new File(importSource + "/cpp").exists()) {
+				MultiStatus retStatus = new MultiStatus(ManualGeneratorPlugin.PLUGIN_ID, IStatus.OK, "", null);
+				CppGeneratorUtils.addCandCPPNatures(project, SubMonitor.convert(monitor), retStatus);
+				CppGeneratorUtils.addManagedNature(project, SubMonitor.convert(monitor), retStatus, "/", System.out, true, null);
 			}
 
 			// If "copy into" box was checked, import files into workspace
@@ -223,16 +228,19 @@ public class NonEclipseImportUtil {
 				operation.setCreateContainerStructure(false);
 				operation.run(monitor);
 			}
-
+			return project;
 		} catch (final CoreException e) {
 			Display.getDefault().syncExec(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					IDEWorkbenchPlugin.log(e.getMessage());
-					MessageBox errorDialog = new MessageBox(parent.getShell(), SWT.ERROR);
+					MessageBox errorDialog = new MessageBox(parent.getShell(),
+							SWT.ERROR);
 					errorDialog.setText("Import Failed");
-					errorDialog.setMessage("Import Failed for the following reason: \n" + e.getMessage());
+					errorDialog
+							.setMessage("Import Failed for the following reason: \n"
+									+ e.getMessage());
 					errorDialog.open();
 				}
 			});
@@ -242,5 +250,74 @@ public class NonEclipseImportUtil {
 			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		}
 		return null;
+	}
+
+	private void createWavDevFile() throws CoreException {
+		//creates the missing wavedev file
+		final SoftPkg softPkg = getSoftPkg();
+		WaveDevSettings waveDev = CodegenFactory.eINSTANCE.createWaveDevSettings();
+
+		// Recreate the basic settings for each implementation
+		// This makes assumptions that the defaults are selected for everything
+		for(final Implementation impl : softPkg.getImplementation()) {
+			final ImplementationSettings settings = CodegenFactory.eINSTANCE.createImplementationSettings();
+			final String lang = impl.getProgrammingLanguage().getName();
+			
+			// Find the code generator if specified, otherwise pick the first one returned by the registry
+			ICodeGeneratorDescriptor codeGenDesc = null;
+			final ICodeGeneratorDescriptor[] codeGens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(lang);
+			if(codeGens.length > 0) {
+				codeGenDesc = codeGens[0];
+			}
+			if(codeGenDesc != null) {
+				final IScaComponentCodegen generator = codeGenDesc.getGenerator();
+				
+				// Assume that there is <name>[/].+<other> format for the entrypoint
+				// Pick out <name> for both the output dir and settings name
+				final String lf = impl.getCode().getEntryPoint();
+				final String name = lf.substring(0, lf.indexOf('/'));
+				
+				// Set the generator, settings name and output directory
+				settings.setGeneratorId(generator.getClass().getCanonicalName());
+				settings.setName(name);
+				settings.setOutputDir(lf.substring(0, lf.lastIndexOf('/')));
+				
+				// pick the first selectable and defaultable template returned by the registry
+				ITemplateDesc templateDesc = null;
+				final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry()
+				        .findTemplatesByCodegen(settings.getGeneratorId());
+				for (final ITemplateDesc itd : templates) {
+					if (itd.isSelectable() && !itd.notDefaultableGenerator()) {
+						templateDesc = itd;
+						break;
+					}
+				}
+				// If we found the template, use it
+				if (templateDesc != null) {
+					// Set the properties to their default values
+					for (final IPropertyDescriptor prop : templateDesc.getPropertyDescriptors()) {
+						final Property p = CodegenFactory.eINSTANCE.createProperty();
+						p.setId(prop.getKey());
+						p.setValue(prop.getDefaultValue());
+						settings.getProperties().add(p);
+					}
+					// Set the template
+					settings.setTemplate(templateDesc.getId());
+				} else {
+					System.err.println("Unable to find a valid template!");
+				}
+			} else {
+				System.err.println("Unable to find a valid Code Generator!");
+			}
+			// Save the created settings
+			waveDev.getImplSettings().put(impl.getId(), settings);
+		}
+
+	}
+
+	private SoftPkg getSoftPkg() {
+		final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
+		Resource resource = set.getResource(org.eclipse.emf.common.util.URI.createFileURI(record.projectSystemFile.getAbsolutePath()), true);
+		return SoftPkg.Util.getSoftPkg(resource);
 	}
 }
