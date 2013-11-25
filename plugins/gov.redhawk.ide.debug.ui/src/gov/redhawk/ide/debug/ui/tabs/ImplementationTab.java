@@ -306,7 +306,7 @@ public class ImplementationTab extends AbstractLaunchConfigurationTab {
 		} catch (final CoreException e) {
 			setSoftwareAssembly(null);
 			ScaDebugUiPlugin.log(e);
-		} catch (final Exception e) {
+		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Error
 			setSoftwareAssembly(null);
 			ScaDebugUiPlugin.log(e);
 		}

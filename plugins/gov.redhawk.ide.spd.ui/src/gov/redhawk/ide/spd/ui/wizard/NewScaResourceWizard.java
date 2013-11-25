@@ -288,9 +288,6 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		this.fConfig = config;
 	}

@@ -12,6 +12,7 @@ package gov.redhawk.eclipsecorba.library.internal.ui;
 
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.eclipsecorba.library.ui.LibraryUIPlugin;
+import gov.redhawk.sca.util.Debug;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +37,8 @@ import org.eclipse.ui.progress.IElementCollector;
  * Provides deferred loading ability of the IDL library folder under an {@link IProject}.
  */
 public class DeferredLibraryAdapter implements IDeferredWorkbenchAdapter {
+	
+	private static final Debug DEBUG = new Debug(LibraryUIPlugin.PLUGIN_ID, "deferredLibraryAdapter");
 
 	/**
 	 * A mapping of {@link IProject}s to their associated {@link IdlLibrary}. Entries are populated upon demand load.
@@ -85,7 +88,10 @@ public class DeferredLibraryAdapter implements IDeferredWorkbenchAdapter {
 			try {
 				final Resource resource = resourceSet.getResource(URI.createPlatformResourceURI(libraryFile.getFullPath().toString(), true), true);
 				library = (IdlLibrary) resource.getEObject("/");
-			} catch (final Exception e) { 
+			} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged error in Trace log
+				if (DEBUG.enabled) {
+					DEBUG.catching("Failed to get IDL library resource.", e);
+				}
 				return null;
 			}
 			this.libraryMap.put(project, library);

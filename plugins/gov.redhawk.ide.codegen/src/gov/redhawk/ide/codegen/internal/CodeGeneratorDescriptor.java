@@ -170,9 +170,6 @@ public class CodeGeneratorDescriptor implements ICodeGeneratorDescriptor {
 		this.bundleId = element.getContributor().getName();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public String contributingBundleId() {
 		return this.contributingBundleId;
 	}

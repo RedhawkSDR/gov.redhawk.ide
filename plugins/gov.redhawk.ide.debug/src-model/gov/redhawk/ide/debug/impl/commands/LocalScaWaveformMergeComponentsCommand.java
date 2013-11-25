@@ -25,6 +25,14 @@ import CF.ComponentType;
  */
 public class LocalScaWaveformMergeComponentsCommand extends ScaWaveformMergeComponentsCommand {
 
+	/**
+	 * 
+	 * @param provider
+	 * @param assemblyControlerId
+	 * @param compTypes
+	 * @param componentStatus
+	 * @deprecated
+	 */
 	@Deprecated
 	public LocalScaWaveformMergeComponentsCommand(final ScaWaveform provider, final String assemblyControlerId, final ComponentType[] compTypes,
 	        final IStatus componentStatus) {

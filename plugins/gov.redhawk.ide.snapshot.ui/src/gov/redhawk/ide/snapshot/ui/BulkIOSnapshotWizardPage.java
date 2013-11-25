@@ -44,12 +44,12 @@ import org.eclipse.swt.widgets.Text;
 public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 
 	private static final int UPDATE_DELAY_MS = 200;
-	
+
 	// === BEGIN: dialog page settings storage keys === 
-	private static final String BSS_NUM_SAMPLES    = "numberSamples";
+	private static final String BSS_NUM_SAMPLES = "numberSamples";
 	private static final String BSS_CAPTURE_METHOD = "captureMethod";
 	// === END: dialog page settings storage keys === 
-	
+
 	private BulkIOSnapshotSettings bulkIOsettings = new BulkIOSnapshotSettings();
 	private Text samplesTxt;
 	private Label unitsLabel;
@@ -67,7 +67,7 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 	@Override
 	public void createControl(Composite main) {
 		setupDialogSettingsStorage(); // for saving wizard page settings
-		
+
 		final Composite parent = new Composite(main, SWT.None);
 		parent.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
 
@@ -102,11 +102,11 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 		});
 
 		createOutputControls(parent);
-		
+
 		bulkIOsettings.addPropertyChangeListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (evt.getPropertyName().equals("captureMethod")) {
+				if ("captureMethod".equals(evt.getPropertyName())) {
 					updateControls((CaptureMethod) evt.getNewValue());
 				}
 			}
@@ -115,12 +115,12 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 		setPageComplete(false);
 		setPageSupport(WizardPageSupport.create(this, context));
 		setControl(parent);
-		
+
 		restoreWidgetValues(bulkIOsettings);
 	}
 
 	protected void updateControls(CaptureMethod method) {
-		switch(method) {
+		switch (method) {
 		case INDEFINITELY:
 			samplesTxt.setText("-1");
 			unitsLabel.setText("");
@@ -148,7 +148,7 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 			break;
 		}
 	}
-	
+
 	private UpdateValueStrategy createSamplesValidatorStrategy() {
 		UpdateValueStrategy updateValueStrategy = new UpdateValueStrategy();
 		updateValueStrategy.setBeforeSetValidator(new IValidator() {
@@ -177,16 +177,16 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 				}
 			}
 		});
-		
+
 		return updateValueStrategy;
 	}
-	
+
 	protected void saveWidgetValues(BulkIOSnapshotSettings bss) {
 		IDialogSettings pageSettings = getPageSettingsSection();
-		pageSettings.put(BSS_NUM_SAMPLES,    bss.getSamples());
+		pageSettings.put(BSS_NUM_SAMPLES, bss.getSamples());
 		pageSettings.put(BSS_CAPTURE_METHOD, bss.getCaptureMethod().name());
 	}
-	
+
 	private void restoreWidgetValues(BulkIOSnapshotSettings bss) {
 		IDialogSettings pageSettings = getPageSettingsSection();
 		if (pageSettings != null && bss != null) {
@@ -198,7 +198,7 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 				} catch (NumberFormatException nfe) {
 					// PASS - ignore
 				}
-			} 
+			}
 			tmp = pageSettings.get(BSS_CAPTURE_METHOD);
 			if (tmp != null) {
 				try {

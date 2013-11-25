@@ -35,6 +35,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -46,7 +47,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -111,6 +112,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 	}
 
 	private void prepareDomainManager(final DomainManagerConfiguration incomingDomain, final ExecutionEvent event) {
+		final Display current = Display.getCurrent();
 		final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
 
 		final Map<String, String> connectionProperties = Collections.singletonMap(ScaDomainManager.NAMING_SERVICE_PROP, namingService);
@@ -123,14 +125,14 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 					return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Refusing to launch domain that already exists on name server");
 				}
 
-				final ScaDomainManager connection = ScaPlugin.getDefault().getDomainManagerRegistry()
+				final ScaDomainManager connection = ScaPlugin.getDefault().getDomainManagerRegistry(current)
 				        .findDomain(LaunchDomainManagerWithOptions.this.newDomainName);
 
 				if (connection == null) {
-					ScaModelCommand.execute(ScaPlugin.getDefault().getDomainManagerRegistry(), new ScaModelCommand() {
+					ScaModelCommand.execute(ScaPlugin.getDefault().getDomainManagerRegistry(current), new ScaModelCommand() {
 						@Override
 						public void execute() {
-							ScaPlugin.getDefault().getDomainManagerRegistry()
+							ScaPlugin.getDefault().getDomainManagerRegistry(current)
 							        .createDomain(LaunchDomainManagerWithOptions.this.newDomainName, false, connectionProperties);
 						}
 					});
@@ -140,7 +142,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 					}
 				}
 
-				final ScaDomainManager config = ScaPlugin.getDefault().getDomainManagerRegistry().findDomain(LaunchDomainManagerWithOptions.this.newDomainName);
+				final ScaDomainManager config = ScaPlugin.getDefault().getDomainManagerRegistry(current).findDomain(LaunchDomainManagerWithOptions.this.newDomainName);
 				final String domainName = config.getName();
 				monitor.beginTask("Launching domain " + domainName, 2);
 				try {

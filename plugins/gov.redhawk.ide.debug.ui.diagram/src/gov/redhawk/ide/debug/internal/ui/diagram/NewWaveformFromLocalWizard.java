@@ -92,9 +92,6 @@ public class NewWaveformFromLocalWizard extends Wizard implements IExecutableExt
 		return this.waveformPropertiesPage.isPageComplete();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public void init(final IWorkbench arg0, final IStructuredSelection arg1) {
 
 	}

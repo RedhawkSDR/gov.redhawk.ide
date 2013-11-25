@@ -132,7 +132,7 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 	 */
 	@Override
 	public void configure(final SoftPkg softPkg, final Implementation impl, final ICodeGeneratorDescriptor desc, final ImplementationSettings implSettings,
-	        final String componentType) {
+		final String componentType) {
 		this.softPkg = softPkg;
 		this.implSettings = implSettings;
 		this.codegen = desc;
@@ -250,7 +250,7 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 		this.templateViewer = new ComboViewer(client, SWT.BORDER | SWT.SINGLE | SWT.READ_ONLY | SWT.DROP_DOWN);
 		this.templateViewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 		this.templateViewer.setContentProvider(new ArrayContentProvider());
-		
+
 		this.templateViewer.setLabelProvider(new LabelProvider() {
 			/**
 			 * {@inheritDoc}
@@ -289,7 +289,7 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 
 						// Update the properties displayed
 						BooleanGeneratorPropertiesWizardPage.this.propertiesViewer.setInput(desc.getPropertyDescriptors());
-						
+
 						// Unbind the old properties and bind the new ones
 						if (BooleanGeneratorPropertiesWizardPage.this.propBinding != null) {
 							BooleanGeneratorPropertiesWizardPage.this.bindings.remove(BooleanGeneratorPropertiesWizardPage.this.propBinding);
@@ -331,10 +331,10 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 				}
 				return true;
 			}
-			
+
 		};
 		this.propertiesViewer.setFilters(filters);
-		
+
 		final CellLabelProvider labelProvider = new CellLabelProvider() {
 
 			public String getText(final Object element) {
@@ -412,16 +412,14 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 		initFields();
 
 		this.bindings.add(this.context.bindValue(ViewersObservables.observeSingleSelection(this.templateViewer),
-		        EMFObservables.observeValue(this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__TEMPLATE),
-		        createTemplateTargetToModel(),
-		        createTemplateModelToTarget()));
+			EMFObservables.observeValue(this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__TEMPLATE), createTemplateTargetToModel(),
+			createTemplateModelToTarget()));
 
 		this.bindings.add(this.context.bindValue(SWTObservables.observeText(this.outputDirText, SWT.Modify),
-		        EMFObservables.observeValue(this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR),
-		        new UpdateValueStrategy().setAfterConvertValidator(new OutputDirectoryValidator(this.softPkg)),
-		        null));
+			EMFObservables.observeValue(this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR),
+			new UpdateValueStrategy().setAfterConvertValidator(new OutputDirectoryValidator(this.softPkg)), null));
 
-		if (this.implSettings.getOutputDir() == null || this.implSettings.getOutputDir().trim().equals("")) {
+		if (this.implSettings.getOutputDir() == null || this.implSettings.getOutputDir().trim().isEmpty()) {
 			setDefaults();
 		} else {
 			selectInitialTemplate(false);
@@ -499,13 +497,13 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 	private void initFields() {
 		this.generatorLabel.setText(this.codegen.getName());
 		final ITemplateDesc[] temps = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(this.codegen.getId(),
-		        this.componentType);
+			this.componentType);
 		this.templateViewer.setInput(temps);
 	}
 
 	private void selectInitialTemplate(final boolean setDefault) {
 		final ITemplateDesc[] temps = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(this.codegen.getId(),
-		        this.componentType);
+			this.componentType);
 		final ITemplateDesc[] input = temps;
 		String templateId = this.implSettings.getTemplate();
 		// Use this to select the legacy code generator template
@@ -624,9 +622,7 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 		this.setMap.put(this.implSettings, mySet);
 
 		return this.context.bindSet(ViewersObservables.observeCheckedElements(this.propertiesViewer, IPropertyDescriptor.class),
-		        this.setMap.get(this.implSettings),
-		        null,
-		        null);
+			this.setMap.get(this.implSettings), null, null);
 	}
 
 	/**

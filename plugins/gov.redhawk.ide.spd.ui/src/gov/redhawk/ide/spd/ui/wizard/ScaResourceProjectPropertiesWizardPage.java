@@ -62,7 +62,7 @@ public class ScaResourceProjectPropertiesWizardPage extends ScaProjectProperties
 				if (softPkg == null) {
 					return ValidationStatus.error("Invalid SPD file selected.");
 				}
-			} catch (final Exception e) {
+			} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Error
 				return ValidationStatus.error("Unable to parse SPD file.");
 			}
 

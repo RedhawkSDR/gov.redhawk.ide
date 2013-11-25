@@ -104,9 +104,6 @@ public class LocalApplicationFactory {
 		this.namingContext = this.localSca.getRootContext();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public LocalScaWaveform create(final SoftwareAssembly sad, String name, final IProgressMonitor monitor) throws CoreException {
 		String adjustedName = name;
 		NamingContextExt waveformContext = null;

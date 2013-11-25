@@ -50,7 +50,7 @@ public class ScaFileSystemContributor extends FileSystemContributor {
 		final List<Object> input = new ArrayList<Object>();
 		input.add("< SDR DEV >");
 		input.add("< SDR DOM >");
-		final ScaDomainManagerRegistry registry = ScaPlugin.getDefault().getDomainManagerRegistry();
+		final ScaDomainManagerRegistry registry = ScaPlugin.getDefault().getDomainManagerRegistry(shell.getDisplay());
 		input.addAll(registry.getDomains());
 
 		final ScaItemProviderAdapterFactory adapterFactory = new ScaItemProviderAdapterFactory();

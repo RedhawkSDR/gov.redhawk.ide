@@ -63,7 +63,7 @@ public abstract class AbstractLaunchConfigurationFactory implements ILaunchConfi
 		retVal.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 		retVal.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, envVar);
 		
-		if (Platform.getOS().equals("linux")) {
+		if ("linux".equals(Platform.getOS())) {
 			retVal.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, "gov.redhawk.ide.debug.linux.processFactory");
 		}
 

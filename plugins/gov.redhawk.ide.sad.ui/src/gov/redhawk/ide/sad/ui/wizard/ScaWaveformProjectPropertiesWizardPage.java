@@ -61,7 +61,7 @@ public class ScaWaveformProjectPropertiesWizardPage extends ScaProjectProperties
 				if (sad == null) {
 					return ValidationStatus.error("Invalid SAD file selected.");
 				}
-			} catch (final Exception e) {
+			} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Error
 				return ValidationStatus.error("Unable to parse SAD file.");
 			}
 

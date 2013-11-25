@@ -194,7 +194,7 @@ public class EventView extends ViewPart {
 		factory = new ScaItemProviderAdapterFactory();
 		domainCombo.setContentProvider(new ScaModelAdapterFactoryContentProvider(factory));
 		domainCombo.setLabelProvider(new ScaModelAdapterFactoryLabelProvider(factory));
-		domainCombo.setInput(ScaPlugin.getDefault().getDomainManagerRegistry());
+		domainCombo.setInput(ScaPlugin.getDefault().getDomainManagerRegistry(domainCombo.getControl().getDisplay()));
 
 		Label channelLabel = new Label(parent, SWT.None);
 		channelLabel.setText("Channel:");

@@ -37,6 +37,7 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.progress.UIJob;
 
@@ -65,7 +66,7 @@ public class LaunchDeviceManager extends AbstractHandler implements IHandler {
 				dialog.setLabelProvider(new AdapterFactoryLabelProvider(factory));
 				dialog.setContentProvider(new ArrayContentProvider());
 				final ArrayList<Object> input = new ArrayList<Object>();
-				input.addAll(ScaPlugin.getDefault().getDomainManagerRegistry().getDomains());
+				input.addAll(ScaPlugin.getDefault().getDomainManagerRegistry(Display.getCurrent()).getDomains());
 				final String defaultSelection = "<Default>";
 				input.add(defaultSelection);
 				dialog.setInput(input);

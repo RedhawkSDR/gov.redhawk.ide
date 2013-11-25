@@ -15,6 +15,7 @@ import gov.redhawk.sca.ScaPlugin;
 
 import java.util.Map;
 
+import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -26,7 +27,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * @since 1.1
@@ -83,7 +83,7 @@ public class NodeBooterLauncherUtil {
 
 		final ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, name);
 
-		final Map<String, String> environmentMap = ScaEnvironmentUtil.getLauncherEnvMap();
+		final Map<String, String> environmentMap = ScaEnvironmentUtil.getLauncherEnvMap(null);
 
 		workingCopy.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${OssieHome}/bin/nodeBooter");
 		workingCopy.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, "${SdrRoot}");

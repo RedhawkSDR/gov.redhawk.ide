@@ -32,6 +32,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -46,7 +47,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -128,15 +129,16 @@ public class LaunchDomainManager extends AbstractHandler implements IHandler {
 		}
 
 		final Map<String, String> connectionProperties = Collections.singletonMap(ScaDomainManager.NAMING_SERVICE_PROP, namingService);
+		final Display current = Display.getCurrent();
 
 		final Job launchJob = new Job("Launch Domain: " + incomingDomain.getName()) {
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
-				ScaDomainManager connection = ScaPlugin.getDefault().getDomainManagerRegistry().findDomain(incomingDomain.getName());
+				ScaDomainManager connection = ScaPlugin.getDefault().getDomainManagerRegistry(current).findDomain(incomingDomain.getName());
 
 				if (connection == null) {
-					connection = ScaPlugin.getDefault().getDomainManagerRegistry().createDomain(incomingDomain.getName(), false, connectionProperties);
+					connection = ScaPlugin.getDefault().getDomainManagerRegistry(current).createDomain(incomingDomain.getName(), false, connectionProperties);
 				}
 				final ScaDomainManager config = connection;
 				final String domainName = config.getName();
