@@ -21,7 +21,7 @@ class ConnectionMapEntry {
 	private SadConnectInterface profile;
 
 	private void setKey(String key) {
-		if (key == null) {
+		if (this.key == null) {
 			this.key = key;
 		}
 	}
