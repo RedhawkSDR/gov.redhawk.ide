@@ -74,13 +74,14 @@ public class ScaResourceProjectPropertiesWizardPage extends ScaProjectProperties
 	 * Instantiates a new sca resource project properties wizard page.
 	 * 
 	 * @param pageName the page name
+	 * @since 8.1
 	 */
-	protected ScaResourceProjectPropertiesWizardPage(final String pageName, final String type) {
+	public ScaResourceProjectPropertiesWizardPage(final String pageName, final String type) {
 		super(pageName, type, "SPD");
 		setTitle("Create a SCA " + type + " Project");
 		this.setDescription("Choose to either create a new Component or import an existing one.");
 	}
-
+	
 	@Override
 	public void createControl(final Composite parent) {
 		super.createControl(parent);

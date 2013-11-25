@@ -25,7 +25,6 @@ import gov.redhawk.ide.codegen.util.ImplementationAndSettings;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.ide.ui.wizard.ScaProjectPropertiesWizardPage;
-import gov.redhawk.ide.util.ResourceUtils;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.sca.util.SubMonitor;
 
@@ -38,9 +37,11 @@ import mil.jpeojtrs.sca.spd.Code;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdFactory;
+import mil.jpeojtrs.sca.spd.SpdPackage;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -134,6 +135,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 
 		// If the code generator has settings, update the page as needed
 		if (codeGeneratorDescriptor != null) {
+			// Go through the list of implementations to see if we already have the selected implementation in the list.
 			int implIndex = -1;
 			for (int i = 0; i < this.implList.size(); i++) {
 				if (this.implList.get(i).getImplementation() == impl) {
@@ -141,6 +143,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 					break;
 				}
 			}
+			// This is assuming that the codegen page is the last page since it is the last statically added page.
 			int codegenIndex = this.wizPages.size();
 			IWizardPage oldGenPage = null;
 			ImplementationSettings settings = null;
@@ -515,9 +518,16 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 						} else {
 							setOpenEditorOn(ProjectCreator.importFiles(project, existingResourceLocation, getImplList(), getImportedSettingsMap(), progress.newChild(2), getSoftPkg().getId()));
 						}
+						
+						String spdFileName = project.getName() + SpdPackage.FILE_EXTENSION; //SUPPRESS CHECKSTYLE AvoidInLine
+						final IFile spdFile = project.getFile(spdFileName);
+						
+						// Add Additional behavior with this method
+						modifyResult(project, spdFile,  progress.newChild(1));
+						project.refreshLocal(IResource.DEPTH_INFINITE, progress.newChild(1));
 
 						// Setup the IDL Path
-						ResourceUtils.createIdlLibraryResource(project, progress.newChild(1));
+//						ResourceUtils.createIdlLibraryResource(project, progress.newChild(1));
 
 						// Generate initial code
 						// Disable auto-generate at least for now until we have a better consensus on what state
@@ -583,6 +593,14 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 			return true;
 		}
 
+	}
+
+	/**
+	 * @since 8.1
+	 */
+	protected void modifyResult(IProject project, IFile spdFile, SubMonitor newChild) throws CoreException {
+		// Do nothing by default
+		
 	}
 
 	/**

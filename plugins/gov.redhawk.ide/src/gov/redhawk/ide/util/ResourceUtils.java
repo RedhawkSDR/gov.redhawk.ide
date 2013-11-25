@@ -180,7 +180,9 @@ public final class ResourceUtils {
 
 	/**
 	 * @since 3.0
+	 * @deprecated .library Files are not used any more
 	 */
+	@Deprecated
 	public static void createIdlLibraryResource(final IProject project, final IProgressMonitor m) throws CoreException {
 		ResourceUtils.createIdlLibraryResource(project.getFile(".library"), m);
 	}

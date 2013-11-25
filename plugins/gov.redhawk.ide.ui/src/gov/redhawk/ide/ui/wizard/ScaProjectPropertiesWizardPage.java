@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -24,7 +25,7 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 /**
  * @since 8.0
  */
-public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage implements IValidatableWizardPage {
+public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage implements IValidatableWizardPage, IWizardPage {
 
 	/**
 	 * The string name of the resourceType of resource being created("Component", "Device", "Node", "Service" or "Waveform")

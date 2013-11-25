@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: M-File Parser
+Bundle-SymbolicName: gov.redhawk.mfile.parser
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: gov.redhawk.mfile.parser.MFileActivator
+Require-Bundle: org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: gov.redhawk.mfile.parser,
+ gov.redhawk.mfile.parser.model

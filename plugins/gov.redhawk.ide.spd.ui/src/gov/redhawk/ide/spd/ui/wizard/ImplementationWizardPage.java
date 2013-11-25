@@ -67,6 +67,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * The Class ImplementationWizardPage.
+ * @since 8.1
  */
 public class ImplementationWizardPage extends WizardPage {
 	private static final int NUM_COLUMNS = 2;
@@ -119,7 +120,7 @@ public class ImplementationWizardPage extends WizardPage {
 		this.setPageComplete(false);
 		this.impl.setDescription("The implementation contains descriptive information about the template for a software component.");
 		this.impl.setId("");
-		this.impl.setProgrammingLanguage(this.progLang);
+		this.impl.setProgrammingLanguage(this.getProgLang());
 		this.impl.setHumanLanguage(this.humanLang);
 		this.componenttype = componenttype;
 	}
@@ -132,7 +133,7 @@ public class ImplementationWizardPage extends WizardPage {
 		this.setPageComplete(false);
 		this.impl.setDescription("The implementation contains descriptive information about the template for a software component.");
 		this.impl.setId("");
-		this.impl.setProgrammingLanguage(this.progLang);
+		this.impl.setProgrammingLanguage(this.getProgLang());
 		this.impl.setHumanLanguage(this.humanLang);
 		this.softPkg = softPkg;
 		if (this.softPkg != null) {			
@@ -178,21 +179,21 @@ public class ImplementationWizardPage extends WizardPage {
 		label.setText("Prog. Lang:");
 		label.setLayoutData(labelFactory.create());
 		this.progLangEntryViewer = new Combo(client, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
-		this.progLangEntryViewer.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-		this.progLangEntryViewer.addSelectionListener(new SelectionAdapter() {
+		this.getProgLangEntryViewer().setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
+		this.getProgLangEntryViewer().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent event) {
 				handleProgLangSelection();
 			}
 		});
-		this.progLangEntryViewer.setItems(RedhawkCodegenActivator.getCodeGeneratorsRegistry().getLanguages());
+		this.getProgLangEntryViewer().setItems(RedhawkCodegenActivator.getCodeGeneratorsRegistry().getLanguages());
 
 		label = new Label(client, SWT.NULL);
 		label.setText("Code Generator:");
 		label.setLayoutData(labelFactory.create());
 		this.codeGeneratorEntryViewer = new ComboViewer(client, SWT.READ_ONLY | SWT.SINGLE | SWT.DROP_DOWN | SWT.BORDER);
-		this.codeGeneratorEntryViewer.setContentProvider(new ArrayContentProvider());
-		this.codeGeneratorEntryViewer.setLabelProvider(new LabelProvider() {
+		this.getCodeGeneratorEntryViewer().setContentProvider(new ArrayContentProvider());
+		this.getCodeGeneratorEntryViewer().setLabelProvider(new LabelProvider() {
 			/**
 			 * {@inheritDoc}
 			 */
@@ -204,8 +205,8 @@ public class ImplementationWizardPage extends WizardPage {
 				return super.getText(element);
 			}
 		});
-		this.codeGeneratorEntryViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-		this.codeGeneratorEntryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		this.getCodeGeneratorEntryViewer().getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
+		this.getCodeGeneratorEntryViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
@@ -224,7 +225,7 @@ public class ImplementationWizardPage extends WizardPage {
 
 		});
 		if ((this.codeGenerator != null) && (this.codeGenerator.getDescription() != null)) {
-			this.codeGeneratorEntryViewer.getCombo().setToolTipText(this.codeGenerator.getDescription());
+			this.getCodeGeneratorEntryViewer().getCombo().setToolTipText(this.codeGenerator.getDescription());
 		}
 
 		label = new Label(client, SWT.NULL);
@@ -271,9 +272,9 @@ public class ImplementationWizardPage extends WizardPage {
 		this.bind(this.importing);
 
 		int index = 0;
-		for (final String tempProgLang : this.progLangEntryViewer.getItems()) {
+		for (final String tempProgLang : this.getProgLangEntryViewer().getItems()) {
 			if (tempProgLang.equalsIgnoreCase(this.impl.getProgrammingLanguage().getName())) {
-				this.progLangEntryViewer.select(index);
+				this.getProgLangEntryViewer().select(index);
 				this.handleProgLangSelection();
 				break;
 			}
@@ -317,8 +318,8 @@ public class ImplementationWizardPage extends WizardPage {
 
 		this.humanLang.setName(RedhawkCodegenActivator.ENGLISH);
 
-		if ((this.codeGenerator.getDescription() != null) && (ImplementationWizardPage.this.codeGeneratorEntryViewer != null)) {
-			ImplementationWizardPage.this.codeGeneratorEntryViewer.getCombo().setToolTipText(this.codeGenerator.getDescription());
+		if ((this.codeGenerator.getDescription() != null) && (ImplementationWizardPage.this.getCodeGeneratorEntryViewer() != null)) {
+			ImplementationWizardPage.this.getCodeGeneratorEntryViewer().getCombo().setToolTipText(this.codeGenerator.getDescription());
 		}
 	}
 
@@ -326,18 +327,18 @@ public class ImplementationWizardPage extends WizardPage {
 	 * 
 	 */
 	protected void handleProgLangSelection() {
-		final String temp = ImplementationWizardPage.this.progLangEntryViewer.getText();
-		final ICodeGeneratorDescriptor[] tempCodegens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(temp, this.componenttype);
+		final String temp = ImplementationWizardPage.this.getProgLangEntryViewer().getText();
+		final ICodeGeneratorDescriptor[] tempCodegens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(temp, this.getComponenttype());
 
 		if (!this.manualId || "".equals(this.idText.getText().trim())) {
 			this.idText.setText(this.createUniqueId(temp, this.projectName));
 			this.manualId = false;
 		}
-		ImplementationWizardPage.this.codeGeneratorEntryViewer.setInput(tempCodegens);
+		ImplementationWizardPage.this.getCodeGeneratorEntryViewer().setInput(tempCodegens);
 		if (tempCodegens.length > 0) {
 			for (final ICodeGeneratorDescriptor desc : tempCodegens) {
 				if (!desc.notDefaultableGenerator()) {
-					ImplementationWizardPage.this.codeGeneratorEntryViewer.setSelection(new StructuredSelection(desc));
+					ImplementationWizardPage.this.getCodeGeneratorEntryViewer().setSelection(new StructuredSelection(desc));
 					break;
 				}
 			}
@@ -362,7 +363,7 @@ public class ImplementationWizardPage extends WizardPage {
 	}
 
 	public String getLanguage() {
-		return this.progLangEntryViewer.getText();
+		return this.getProgLangEntryViewer().getText();
 	}
 
 	@Override
@@ -389,14 +390,16 @@ public class ImplementationWizardPage extends WizardPage {
 
 	@Override
 	public boolean isPageComplete() {
-		return super.isPageComplete() && this.getCodeGenerator() != null;
+		boolean retval1 = super.isPageComplete();
+		boolean retval2 = this.getCodeGenerator() != null; 
+		return  retval1 && retval2;
 	}
 
 	public void setName(final String name) {
 		if (!this.manualId && ((this.projectName == null) || !this.projectName.equals(name))) {
 			this.projectName = name;
-			if (this.progLangEntryViewer.getText().trim().length() > 0) {
-				this.idText.setText(this.createUniqueId(this.progLangEntryViewer.getText(), name));
+			if (this.getProgLangEntryViewer().getText().trim().length() > 0) {
+				this.idText.setText(this.createUniqueId(this.getProgLangEntryViewer().getText(), name));
 			} else {
 				this.idText.setText("");
 			}
@@ -559,8 +562,8 @@ public class ImplementationWizardPage extends WizardPage {
 		        new EMFEmptyStringToNullUpdateValueStrategy().setAfterConvertValidator(new ImplementationIdValidator(this.softPkg, importingCode)), null);
 
 		this.context
-		        .bindValue(SWTObservables.observeText(this.progLangEntryViewer),
-		                EMFObservables.observeValue(this.progLang, SpdPackage.Literals.PROGRAMMING_LANGUAGE__NAME),
+		        .bindValue(SWTObservables.observeText(this.getProgLangEntryViewer()),
+		                EMFObservables.observeValue(this.getProgLang(), SpdPackage.Literals.PROGRAMMING_LANGUAGE__NAME),
 		                new EMFEmptyStringToNullUpdateValueStrategy(), null);
 
 		this.context.bindValue(SWTObservables.observeText(this.descriptionText, SWT.Modify),
@@ -582,4 +585,33 @@ public class ImplementationWizardPage extends WizardPage {
 	public boolean shouldImportCode() {
 		return this.shouldImport;
 	}
+
+	/**
+	 * @since 8.1
+	 */
+	protected ProgrammingLanguage getProgLang() {
+		return progLang;
+	}
+
+	/**
+	 * @since 8.1
+	 */
+	protected Combo getProgLangEntryViewer() {
+		return progLangEntryViewer;
+	}
+
+	/**
+	 * @since 8.1
+	 */
+	protected ComboViewer getCodeGeneratorEntryViewer() {
+		return codeGeneratorEntryViewer;
+	}
+
+	/**
+	 * @since 8.1
+	 */
+	public String getComponenttype() {
+		return componenttype;
+	}
+
 }
