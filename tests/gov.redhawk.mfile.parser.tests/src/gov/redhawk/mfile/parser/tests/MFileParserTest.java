@@ -328,6 +328,68 @@ public class MFileParserTest {
 		Assert.assertEquals("n", file.getFunction().getInputs().get(1));
 	}
 
+	@Test
+	public void testExample01() throws IOException, ParseException {
+		MFile file = parseFile("example01.m");
+		Assert.assertNotNull(file);
+		Assert.assertNotNull(file.getFunction());
+		Assert.assertEquals("octaveTestComponent", file.getFunction().getName());
+		Assert.assertEquals(5, file.getFunction().getOutputs().size());
+		Assert.assertEquals("myOutput1", file.getFunction().getOutputs().get(0));
+		Assert.assertEquals("seqProp", file.getFunction().getOutputs().get(1));
+		Assert.assertEquals("myOutput2", file.getFunction().getOutputs().get(2));
+		Assert.assertEquals("stringProp", file.getFunction().getOutputs().get(3));
+		Assert.assertEquals("doubleProp", file.getFunction().getOutputs().get(4));
+		
+		Assert.assertEquals(5, file.getFunction().getInputs().size());
+		Assert.assertEquals("seqProp", file.getFunction().getInputs().get(0));
+		Assert.assertEquals("myInput1", file.getFunction().getInputs().get(1));
+		Assert.assertEquals("stringProp", file.getFunction().getInputs().get(2));
+		Assert.assertEquals("myInput2", file.getFunction().getInputs().get(3));
+		Assert.assertEquals("doubleProp", file.getFunction().getInputs().get(4));
+	}
+	
+	@Test
+	public void testExample02() throws IOException, ParseException {
+		MFile file = parseFile("example02.m");
+		Assert.assertNotNull(file);
+		Assert.assertNotNull(file.getFunction());
+		Assert.assertEquals("octaveTestComponent", file.getFunction().getName());
+		Assert.assertEquals(5, file.getFunction().getOutputs().size());
+		Assert.assertEquals("myOutput1", file.getFunction().getOutputs().get(0));
+		Assert.assertEquals("seqProp", file.getFunction().getOutputs().get(1));
+		Assert.assertEquals("myOutput2", file.getFunction().getOutputs().get(2));
+		Assert.assertEquals("stringProp", file.getFunction().getOutputs().get(3));
+		Assert.assertEquals("doubleProp", file.getFunction().getOutputs().get(4));
+		
+		Assert.assertEquals(5, file.getFunction().getInputs().size());
+		Assert.assertEquals("seqProp", file.getFunction().getInputs().get(0));
+		Assert.assertEquals("myInput1", file.getFunction().getInputs().get(1));
+		Assert.assertEquals("stringProp", file.getFunction().getInputs().get(2));
+		Assert.assertEquals("myInput2", file.getFunction().getInputs().get(3));
+		Assert.assertEquals("doubleProp", file.getFunction().getInputs().get(4));
+	}
+	
+	@Test
+	public void testExample03() throws IOException, ParseException {
+		MFile file = parseFile("example03.m");
+		Assert.assertNotNull(file);
+		Assert.assertNotNull(file.getFunction());
+		Assert.assertEquals("octaveTestComponent", file.getFunction().getName());
+		Assert.assertEquals(0, file.getFunction().getOutputs().size());
+		Assert.assertEquals(0, file.getFunction().getInputs().size());
+	}
+	
+	@Test
+	public void testExample04() throws IOException, ParseException {
+		MFile file = parseFile("example04.m");
+		Assert.assertNotNull(file);
+		Assert.assertNotNull(file.getFunction());
+		Assert.assertEquals("octaveTestComponent", file.getFunction().getName());
+		Assert.assertEquals(0, file.getFunction().getOutputs().size());
+		Assert.assertEquals(0, file.getFunction().getInputs().size());
+	}
+	
 	public MFile parseFile(String name) throws IOException, ParseException {
 		InputStream fileStream = null;
 		try {
