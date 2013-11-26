@@ -82,6 +82,7 @@ import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
 
 public class ModelMap {
+	private static final Debug DEBUG = new Debug(LocalScaDiagramPlugin.PLUGIN_ID, "modelMap");
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
 		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
 	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
@@ -89,7 +90,6 @@ public class ModelMap {
 		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 	private final LocalScaEditor editor;
 	private final SoftwareAssembly sad;
-	private static final Debug DEBUG = new Debug(LocalScaDiagramPlugin.PLUGIN_ID, "modelMap");
 
 	private final Map<String, NodeMapEntry> nodes = Collections.synchronizedMap(new HashMap<String, NodeMapEntry>());
 	private final Map<String, ConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, ConnectionMapEntry>());
