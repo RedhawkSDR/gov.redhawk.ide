@@ -31,20 +31,26 @@ public class MFileParser implements MFileParserConstants {
   }
 
   final public List < String > outputs() throws ParseException {
-  List < String > strList = new ArrayList<String>();
+  List < String > strList = new ArrayList < String > ();
   String id = null;
     switch (jj_nt.kind) {
     case 11:
       jj_consume_token(11);
-      strList = multiPart();
+      switch (jj_nt.kind) {
+      case ID:
+        strList = multiPart();
+        break;
+      default:
+        jj_la1[1] = jj_gen;
+        ;
+      }
       jj_consume_token(12);
       break;
     case ID:
-      id = singlePart();
-      strList.add(id);
+      strList = multiPart();
       break;
     default:
-      jj_la1[1] = jj_gen;
+      jj_la1[2] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -61,14 +67,14 @@ public class MFileParser implements MFileParserConstants {
       strList = outputs();
       jj_consume_token(13);
       jj_consume_token(ID);
-        function.getOutputs().addAll(strList);
+      function.getOutputs().addAll(strList);
     } else {
       switch (jj_nt.kind) {
       case ID:
         jj_consume_token(ID);
         break;
       default:
-        jj_la1[2] = jj_gen;
+        jj_la1[3] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -78,10 +84,10 @@ public class MFileParser implements MFileParserConstants {
     switch (jj_nt.kind) {
     case ID:
       strList = multiPart();
-    function.getInputs().addAll(strList);
+      function.getInputs().addAll(strList);
       break;
     default:
-      jj_la1[3] = jj_gen;
+      jj_la1[4] = jj_gen;
       ;
     }
     jj_consume_token(15);
@@ -90,7 +96,7 @@ public class MFileParser implements MFileParserConstants {
       jj_consume_token(16);
       break;
     default:
-      jj_la1[4] = jj_gen;
+      jj_la1[5] = jj_gen;
       ;
     }
     {if (true) return function;}
@@ -109,7 +115,7 @@ public class MFileParser implements MFileParserConstants {
         ;
         break;
       default:
-        jj_la1[5] = jj_gen;
+        jj_la1[6] = jj_gen;
         break label_1;
       }
       switch (jj_nt.kind) {
@@ -117,7 +123,7 @@ public class MFileParser implements MFileParserConstants {
         jj_consume_token(17);
         break;
       default:
-        jj_la1[6] = jj_gen;
+        jj_la1[7] = jj_gen;
         ;
       }
       jj_consume_token(ID);
@@ -140,6 +146,14 @@ public class MFileParser implements MFileParserConstants {
     finally { jj_save(0, xla); }
   }
 
+  private boolean jj_3R_7() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(17)) jj_scanpos = xsp;
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
   private boolean jj_3R_2() {
     Token xsp;
     xsp = jj_scanpos;
@@ -150,8 +164,9 @@ public class MFileParser implements MFileParserConstants {
     return false;
   }
 
-  private boolean jj_3R_5() {
-    if (jj_scan_token(ID)) return true;
+  private boolean jj_3_1() {
+    if (jj_3R_2()) return true;
+    if (jj_scan_token(13)) return true;
     return false;
   }
 
@@ -162,18 +177,25 @@ public class MFileParser implements MFileParserConstants {
 
   private boolean jj_3R_6() {
     if (jj_scan_token(ID)) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_7()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
   private boolean jj_3R_3() {
     if (jj_scan_token(11)) return true;
-    if (jj_3R_5()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_5()) jj_scanpos = xsp;
+    if (jj_scan_token(12)) return true;
     return false;
   }
 
-  private boolean jj_3_1() {
-    if (jj_3R_2()) return true;
-    if (jj_scan_token(13)) return true;
+  private boolean jj_3R_5() {
+    if (jj_3R_6()) return true;
     return false;
   }
 
@@ -187,13 +209,13 @@ public class MFileParser implements MFileParserConstants {
   private Token jj_scanpos, jj_lastpos;
   private int jj_la;
   private int jj_gen;
-  final private int[] jj_la1 = new int[7];
+  final private int[] jj_la1 = new int[8];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x400,0x40800,0x40000,0x40000,0x10000,0x60000,0x20000,};
+      jj_la1_0 = new int[] {0x400,0x40000,0x40800,0x40000,0x40000,0x10000,0x60000,0x20000,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[1];
   private boolean jj_rescan = false;
@@ -210,7 +232,7 @@ public class MFileParser implements MFileParserConstants {
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 8; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -225,7 +247,7 @@ public class MFileParser implements MFileParserConstants {
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 8; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -236,7 +258,7 @@ public class MFileParser implements MFileParserConstants {
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 8; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -247,7 +269,7 @@ public class MFileParser implements MFileParserConstants {
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 8; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -257,7 +279,7 @@ public class MFileParser implements MFileParserConstants {
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 8; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -267,7 +289,7 @@ public class MFileParser implements MFileParserConstants {
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 8; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -376,7 +398,7 @@ public class MFileParser implements MFileParserConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 8; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
