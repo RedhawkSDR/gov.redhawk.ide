@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -43,7 +43,7 @@ public class ExportToSDRHandler extends AbstractHandler implements IHandler {
 	private IScaExporter exporter;
 
 	@Override
-	public Object execute(@NonNull final ExecutionEvent event)
+	public Object execute(@Nullable final ExecutionEvent event)
 			throws ExecutionException {
 		this.exporter = new FileStoreExporter(SDRROOT);
 		final ISelection sel = HandlerUtil.getCurrentSelection(event);

@@ -101,28 +101,30 @@ public class NewControlPanelProject extends AbstractHandler {
 		}
 		IProject spdProject = ModelUtil.getProject(eObj);
 
-		String baseName;
+		String baseName = null;
 		if (spdProject != null) {
 			baseName = spdProject.getName();
 		} else {
-			baseName = name.replace(" ", ".");
+			if (name != null) {
+				baseName = name.replace(" ", ".");
+			}
 		}
 		String tmpProjectName = baseName + ".ui";
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(tmpProjectName);
 		if (project.exists()) {
 			InputDialog inputDialog = new InputDialog(HandlerUtil.getActiveShell(event), "Name Conflict", "Enter a name for the project:", baseName + "2.ui",
-				new IInputValidator() {
+					new IInputValidator() {
 
-					@Override
-					public String isValid(String newText) {
-						if (newText.trim().isEmpty()) {
-							return "Must enter a value.";
-						} else if (ResourcesPlugin.getWorkspace().getRoot().getProject(newText).exists()) {
-							return "Project '" + newText + "' alread exists.";
-						}
-						return null;
+				@Override
+				public String isValid(String newText) {
+					if (newText.trim().isEmpty()) {
+						return "Must enter a value.";
+					} else if (ResourcesPlugin.getWorkspace().getRoot().getProject(newText).exists()) {
+						return "Project '" + newText + "' alread exists.";
 					}
-				});
+					return null;
+				}
+			});
 			if (inputDialog.open() == Window.OK) {
 				tmpProjectName = inputDialog.getValue();
 			} else {
@@ -159,7 +161,7 @@ public class NewControlPanelProject extends AbstractHandler {
 			ResourceControlPanelTemplateSection resourceTemplate = contentWizard.getResourceControlPanelTemplateSection();
 			dialog.run(false, true, new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
 			final IFile file = project.getFile(new Path("src/" + resourceTemplate.getBasePackage().replace(".", "/") + "/"
-				+ resourceTemplate.getCompositeClassName() + ".java"));
+					+ resourceTemplate.getCompositeClassName() + ".java"));
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					final IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -181,7 +183,7 @@ public class NewControlPanelProject extends AbstractHandler {
 			});
 		} catch (InvocationTargetException e) {
 			StatusManager.getManager().handle(
-				new Status(Status.ERROR, TemplatesActivator.getPluginId(), "Failed to generate Control Panel Project.", e.getCause()));
+					new Status(Status.ERROR, TemplatesActivator.getPluginId(), "Failed to generate Control Panel Project.", e.getCause()));
 		} catch (InterruptedException e) {
 			// PASS
 		}
