@@ -121,7 +121,7 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
  * @since 9.1
  */
 @SuppressWarnings("restriction")
-public class NonEclipseImportWizardPage extends WizardPage implements
+public class RedhawkImportWizardPage1 extends WizardPage implements
 		IOverwriteQuery {
 
 	/**
@@ -179,6 +179,11 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 		boolean hasConflicts;
 
 		boolean missingFiles;
+		
+		/**
+		 *  Field is only instantiated if users use the second page of the REDHAWK import wizard
+		 */
+		String javaImplTemplate, cppImplTemplate, pythonImplTemplate;
 
 		IProjectDescription description;
 
@@ -249,7 +254,7 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 					} else if (nonEclipseProject(path.toFile().getName())) {
 						// If there is no .project file, use the file name as
 						// the project name
-						projectName = NonEclipseImportUtil.getName(path);
+						projectName = RedhawkImportUtil.getName(path);
 						missingFiles = true;
 					} else {
 						description = IDEWorkbenchPlugin.getPluginWorkspace()
@@ -384,8 +389,8 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 	 * Creates a new project creation wizard page.
 	 * 
 	 */
-	public NonEclipseImportWizardPage() {
-		this("nonEclipseImportWizardPage", null, null); //$NON-NLS-1$
+	public RedhawkImportWizardPage1() {
+		this("redhawkImportWizard", null, null); //$NON-NLS-1$
 	}
 
 	public boolean nonEclipseProject(String path) {
@@ -402,7 +407,7 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 	 * 
 	 * @param pageName
 	 */
-	public NonEclipseImportWizardPage(String pageName) {
+	public RedhawkImportWizardPage1(String pageName) {
 		this(pageName, null, null);
 	}
 
@@ -414,7 +419,7 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 	 * @param currentSelection
 	 * @since 3.5
 	 */
-	public NonEclipseImportWizardPage(String pageName, String initialPath,
+	public RedhawkImportWizardPage1(String pageName, String initialPath,
 			IStructuredSelection currentSelection) {
 		super(pageName);
 		this.initialPath = initialPath;
@@ -1035,6 +1040,9 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 				projectsList.setChecked(projects[i], true);
 			}
 		}
+		if (projects != null || projects.length > 0) {
+			setPageComplete(true);
+		}
 
 		if (displayWarning) {
 			setMessage(
@@ -1317,7 +1325,7 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 	 */
 	public boolean createProjects() {
 		saveWidgetValues();
-		final NonEclipseImportWizardPage parent = this;
+		final RedhawkImportWizardPage1 parent = this;
 		final Object[] selected = projectsList.getCheckedElements();
 		createdProjects = new ArrayList<IProject>();
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
@@ -1332,8 +1340,8 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 						// TODO add check for archive files
 						ProjectRecord project = (ProjectRecord) selected[i];
 						if (project.missingFiles) {
-							new NonEclipseImportUtil().createMissingFiles(
-									project, monitor, copyFiles, parent);
+							new RedhawkImportUtil().createMissingFiles(project,
+									monitor, copyFiles, parent);
 						} else {
 							createExistingProject(project,
 									new SubProgressMonitor(monitor, 1));
@@ -1677,6 +1685,7 @@ public class NonEclipseImportWizardPage extends WizardPage implements
 				directoryRadioSelected();
 			}
 		}
+
 		// Third, if we do have an initial path, set the proper
 		// path and radio buttons to the initial value. Move
 		// cursor to the end of the path so user can see the

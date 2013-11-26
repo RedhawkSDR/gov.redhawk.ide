@@ -18,11 +18,12 @@ import org.eclipse.ui.IWorkbench;
 /**
  * @since 9.1
  */
-public class NonEclipseImportWizard extends Wizard implements IImportWizard {
+public class RedhawkImportWizard extends Wizard implements IImportWizard {
 
-	private NonEclipseImportWizardPage importPage = null;
+	private RedhawkImportWizardPage1 importPage = null;
+	private RedhawkImportWizardPage2 detailsPage = null;
 
-	public NonEclipseImportWizard() {
+	public RedhawkImportWizard() {
 		this.setWindowTitle("Import");
 		this.setHelpAvailable(false);
 	}
@@ -35,8 +36,10 @@ public class NonEclipseImportWizard extends Wizard implements IImportWizard {
 	@Override
 	public void addPages() {
 		super.addPages();
-		importPage  = new NonEclipseImportWizardPage("Import Non-Eclipse Based REDHAWK Project");
+		importPage  = new RedhawkImportWizardPage1("Import Non-Eclipse Based REDHAWK Project");
+		detailsPage  = new RedhawkImportWizardPage2("Import Non-Eclipse Based REDHAWK Project");
 		this.addPage(importPage);
+		this.addPage(detailsPage);
 	}
 	
 	@Override

@@ -25,7 +25,7 @@ import gov.redhawk.ide.cplusplus.utils.CppGeneratorUtils;
 import gov.redhawk.ide.dcd.generator.newnode.NodeProjectCreator;
 import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
 import gov.redhawk.ide.spd.generator.newcomponent.ComponentProjectCreator;
-import gov.redhawk.ide.ui.wizard.NonEclipseImportWizardPage.ProjectRecord;
+import gov.redhawk.ide.ui.wizard.RedhawkImportWizardPage1.ProjectRecord;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,7 +35,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -56,7 +55,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.swt.SWT;
@@ -70,7 +68,7 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
  * @since 9.1
  */
 @SuppressWarnings("restriction")
-public class NonEclipseImportUtil {
+public class RedhawkImportUtil {
 	// CHECKSTYLE:OFF
 	private static String sadExtension = ".+\\.sad.xml";
 	private static String spdExtension = ".+\\.spd.xml";
@@ -78,7 +76,7 @@ public class NonEclipseImportUtil {
 
 	private ProjectRecord record;
 	private IProgressMonitor monitor;
-	private NonEclipseImportWizardPage parent;
+	private RedhawkImportWizardPage1 parent;
 	private URI projectLocation;
 	private String projectName;
 
@@ -127,7 +125,7 @@ public class NonEclipseImportUtil {
 
 	public void createMissingFiles(ProjectRecord record,
 			IProgressMonitor monitor, boolean copyFiles,
-			NonEclipseImportWizardPage parent) {
+			RedhawkImportWizardPage1 parent) {
 		this.record = record;
 		this.monitor = monitor;
 		this.projectName = record.projectName;
@@ -269,33 +267,29 @@ public class NonEclipseImportUtil {
 		return null;
 	}
 
+	@SuppressWarnings({ "deprecation"})
 	private void createWavDevFile() throws CoreException {
 		// creates the missing wavedev file
-		final SoftPkg softPkg = getSoftPkg();
-		WaveDevSettings waveDev = CodegenFactory.eINSTANCE
-				.createWaveDevSettings();
+		final SoftPkg softPkg = getSoftPkg(record.projectSystemFile.getAbsolutePath());
+		WaveDevSettings waveDev = CodegenFactory.eINSTANCE.createWaveDevSettings();
 
 		// Recreate the basic settings for each implementation
 		// This makes assumptions that the defaults are selected for everything
 		for (final Implementation impl : softPkg.getImplementation()) {
-			final ImplementationSettings settings = CodegenFactory.eINSTANCE
-					.createImplementationSettings();
+			final ImplementationSettings settings = CodegenFactory.eINSTANCE.createImplementationSettings();
 			final String lang = impl.getProgrammingLanguage().getName();
-
+			System.out.println("Lang: " + lang);
 			// Find the code generator if specified, otherwise pick the first
 			// one returned by the registry
 			ICodeGeneratorDescriptor codeGenDesc = null;
-			final ICodeGeneratorDescriptor[] codeGens = RedhawkCodegenActivator
-					.getCodeGeneratorsRegistry().findCodegenByLanguage(lang);
+			final ICodeGeneratorDescriptor[] codeGens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(lang);
 			if (codeGens.length > 0) {
 				codeGenDesc = codeGens[0];
 			}
 			if (codeGenDesc != null) {
-				final IScaComponentCodegen generator = codeGenDesc
-						.getGenerator();
+				final IScaComponentCodegen generator = codeGenDesc.getGenerator();
 
-				// Assume that there is <name>[/].+<other> format for the
-				// entrypoint
+				// Assume that there is <name>[/].+<other> format for the entrypoint
 				// Pick out <name> for both the output dir and settings name
 				final String lf = impl.getCode().getEntryPoint();
 				final String name = lf.substring(0, lf.indexOf('/'));
@@ -305,12 +299,9 @@ public class NonEclipseImportUtil {
 				settings.setName(name);
 				settings.setOutputDir(lf.substring(0, lf.lastIndexOf('/')));
 
-				// pick the first selectable and defaultable template returned
-				// by the registry
+				// pick the first selectable and defaultable template returned by the registry
 				ITemplateDesc templateDesc = null;
-				final ITemplateDesc[] templates = RedhawkCodegenActivator
-						.getCodeGeneratorTemplatesRegistry()
-						.findTemplatesByCodegen(settings.getGeneratorId());
+				final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(settings.getGeneratorId());
 				for (final ITemplateDesc itd : templates) {
 					if (itd.isSelectable() && !itd.notDefaultableGenerator()) {
 						templateDesc = itd;
@@ -320,16 +311,22 @@ public class NonEclipseImportUtil {
 				// If we found the template, use it
 				if (templateDesc != null) {
 					// Set the properties to their default values
-					for (final IPropertyDescriptor prop : templateDesc
-							.getPropertyDescriptors()) {
-						final Property p = CodegenFactory.eINSTANCE
-								.createProperty();
+					for (final IPropertyDescriptor prop : templateDesc.getPropertyDescriptors()) {
+						final Property p = CodegenFactory.eINSTANCE.createProperty();
 						p.setId(prop.getKey());
 						p.setValue(prop.getDefaultValue());
 						settings.getProperties().add(p);
 					}
 					// Set the template
-					settings.setTemplate(templateDesc.getId());
+					if(lang.equals("C++") && record.cppImplTemplate != null) {
+						settings.setTemplate(record.cppImplTemplate);
+					} else if (lang.equals("Java") && record.javaImplTemplate != null) {
+						settings.setTemplate(record.javaImplTemplate);
+					} else if (lang.equals("Python") && record.pythonImplTemplate != null) {
+						settings.setTemplate(record.pythonImplTemplate);
+					} else {
+						settings.setTemplate(templateDesc.getId());						
+					}
 				} else {
 					System.err.println("Unable to find a valid template!");
 				}
@@ -337,25 +334,39 @@ public class NonEclipseImportUtil {
 				System.err.println("Unable to find a valid Code Generator!");
 			}
 
-			// If a java implementation is found, assume the package name is
-			// 'projectName'.java
-			EList<Property> properties = settings.getProperties();
-			for (Property prop : properties) {
-				if (prop.getId().equals("java_package")) {
-					if (prop.getValue() == null || prop.getValue().isEmpty()) {
-						prop.setValue(projectName + ".java");
+			// If a java implementation is found
+			if(lang.equals("Java")) {
+				boolean hasUseJni = false;
+				EList<Property> properties = settings.getProperties();
+				for (Property prop : properties) {
+					// Validate java_package name and create a default one if necessary
+					if (prop.getId().equals("java_package")) {
+						if (prop.getValue() == null || prop.getValue().isEmpty()) {
+							prop.setValue(projectName + ".java");
+						}
+					}
+					// Check for use_jni and populate if it is found but empty
+					if (prop.getId().equals("use_jni")) {
+						hasUseJni = true;
+						if (prop.getValue() == null || prop.getValue().isEmpty()) {
+							prop.setValue("TRUE");
+						}
 					}
 				}
+				//if use_jni is not found, build it with TRUE as default
+				if(!hasUseJni) {
+					final Property useJni = CodegenFactory.eINSTANCE.createProperty();
+					useJni.setId("use_jni");
+					useJni.setValue("TRUE");
+					settings.getProperties().add(useJni);
+				}
 			}
-
 			// Save the created settings
 			waveDev.getImplSettings().put(impl.getId(), settings);
 		}
 		// Create the URI to the .wavedev file
-		final org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI
-				.createPlatformResourceURI(
-						softPkg.getName() + "/." + softPkg.getName()
-								+ ".wavedev", false);
+		final org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI.createPlatformResourceURI(
+						softPkg.getName() + "/." + softPkg.getName() + ".wavedev", false);
 		final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
 		final Resource res = set.createResource(uri);
 
@@ -369,11 +380,9 @@ public class NonEclipseImportUtil {
 		}
 	}
 
-	private SoftPkg getSoftPkg() {
+	public SoftPkg getSoftPkg(String path) {
 		final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
-		Resource resource = set.getResource(org.eclipse.emf.common.util.URI
-				.createFileURI(record.projectSystemFile.getAbsolutePath()),
-				true);
+		Resource resource = set.getResource(org.eclipse.emf.common.util.URI.createFileURI(path), true);
 		return SoftPkg.Util.getSoftPkg(resource);
 	}
 }
