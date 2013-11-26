@@ -40,7 +40,7 @@ public class MFileParserTest {
 		Assert.assertEquals("T", file.getFunction().getInputs().get(3));
 		Assert.assertEquals("sampleType", file.getFunction().getInputs().get(4));
 	}
-	
+
 	@Test
 	public void testParseAutofam() throws IOException, ParseException {
 		MFile file = parseFile("autofam.m");
@@ -57,7 +57,7 @@ public class MFileParserTest {
 		Assert.assertEquals("df", file.getFunction().getInputs().get(2));
 		Assert.assertEquals("dalpha", file.getFunction().getInputs().get(3));
 	}
-	
+
 	@Test
 	public void testParseBpskData() throws IOException, ParseException {
 		MFile file = parseFile("bpskData.m");
@@ -71,7 +71,7 @@ public class MFileParserTest {
 		Assert.assertEquals("T", file.getFunction().getInputs().get(3));
 		Assert.assertEquals("sampleType", file.getFunction().getInputs().get(4));
 	}
-	
+
 	@Test
 	public void testParseCumulant() throws IOException, ParseException {
 		MFile file = parseFile("Cumulant.m");
@@ -87,7 +87,7 @@ public class MFileParserTest {
 		Assert.assertEquals(1, file.getFunction().getInputs().size());
 		Assert.assertEquals("y", file.getFunction().getInputs().get(0));
 	}
-	
+
 	@Test
 	public void testParseCycloClassifier() throws IOException, ParseException {
 		MFile file = parseFile("CycloClassifier.m");
@@ -99,7 +99,7 @@ public class MFileParserTest {
 		Assert.assertEquals(1, file.getFunction().getInputs().size());
 		Assert.assertEquals("scaledPoints", file.getFunction().getInputs().get(0));
 	}
-	
+
 	@Test
 	public void testParseDetectWithRTL_Cyclo() throws IOException, ParseException {
 		MFile file = parseFile("detectWithRTL_Cyclo.m");
@@ -114,7 +114,7 @@ public class MFileParserTest {
 		Assert.assertEquals("ds", file.getFunction().getInputs().get(1));
 		Assert.assertEquals("BW", file.getFunction().getInputs().get(2));
 	}
-	
+
 	@Test
 	public void testParseDetectWithRTL() throws IOException, ParseException {
 		MFile file = parseFile("detectWithRTL.m");
@@ -127,7 +127,7 @@ public class MFileParserTest {
 		Assert.assertEquals("ds", file.getFunction().getInputs().get(1));
 		Assert.assertEquals("BW", file.getFunction().getInputs().get(2));
 	}
-	
+
 	@Test
 	public void testParseFftAvg() throws IOException, ParseException {
 		MFile file = parseFile("fftAvg.m");
@@ -140,7 +140,7 @@ public class MFileParserTest {
 		Assert.assertEquals("data", file.getFunction().getInputs().get(0));
 		Assert.assertEquals("N", file.getFunction().getInputs().get(1));
 	}
-	
+
 	@Test
 	public void testParseFmData() throws IOException, ParseException {
 		MFile file = parseFile("fmData.m");
@@ -156,7 +156,7 @@ public class MFileParserTest {
 		Assert.assertEquals("T", file.getFunction().getInputs().get(3));
 		Assert.assertEquals("sampleType", file.getFunction().getInputs().get(4));
 	}
-	
+
 	@Test
 	public void testParseFreqShift() throws IOException, ParseException {
 		MFile file = parseFile("freqShift.m");
@@ -170,7 +170,7 @@ public class MFileParserTest {
 		Assert.assertEquals("fo", file.getFunction().getInputs().get(1));
 		Assert.assertEquals("Fs", file.getFunction().getInputs().get(2));
 	}
-	
+
 	@Test
 	public void testParseGenerateTemplates() throws IOException, ParseException {
 		MFile file = parseFile("generateTemplates.m");
@@ -183,7 +183,7 @@ public class MFileParserTest {
 		Assert.assertEquals("BlockSize", file.getFunction().getInputs().get(0));
 		Assert.assertEquals("maxAvg", file.getFunction().getInputs().get(1));
 	}
-	
+
 	@Test
 	public void testParseManipulateCollect() throws IOException, ParseException {
 		MFile file = parseFile("manipulateCollect.m");
@@ -194,7 +194,7 @@ public class MFileParserTest {
 		Assert.assertEquals(1, file.getFunction().getInputs().size());
 		Assert.assertEquals("N", file.getFunction().getInputs().get(0));
 	}
-	
+
 	@Test
 	public void testParseMySxao() throws IOException, ParseException {
 		MFile file = parseFile("mySxa.m");
@@ -212,7 +212,7 @@ public class MFileParserTest {
 		Assert.assertEquals("BlockSize", file.getFunction().getInputs().get(4));
 		Assert.assertEquals("maxAvg", file.getFunction().getInputs().get(5));
 	}
-	
+
 	@Test
 	public void testParseQamData() throws IOException, ParseException {
 		MFile file = parseFile("qamData.m");
@@ -229,7 +229,7 @@ public class MFileParserTest {
 		Assert.assertEquals("T", file.getFunction().getInputs().get(4));
 		Assert.assertEquals("sampleType", file.getFunction().getInputs().get(5));
 	}
-	
+
 	@Test
 	public void testParseSsbMod() throws IOException, ParseException {
 		MFile file = parseFile("ssbmod.m");
@@ -244,7 +244,7 @@ public class MFileParserTest {
 		Assert.assertEquals("Fs", file.getFunction().getInputs().get(2));
 		Assert.assertEquals("varargin", file.getFunction().getInputs().get(3));
 	}
-	
+
 	@Test
 	public void testParseTestCumulant() throws IOException, ParseException {
 		MFile file = parseFile("testCumulant.m");
@@ -261,7 +261,7 @@ public class MFileParserTest {
 		Assert.assertEquals("Fc", file.getFunction().getInputs().get(2));
 		Assert.assertEquals("Fs", file.getFunction().getInputs().get(3));
 	}
-	
+
 	@Test
 	public void testParseTestCumulantMethod() throws IOException, ParseException {
 		MFile file = parseFile("testCumulantMethod.m");
@@ -278,7 +278,7 @@ public class MFileParserTest {
 		Assert.assertEquals("QAM64Out", file.getFunction().getOutputs().get(6));
 		Assert.assertEquals(0, file.getFunction().getInputs().size());
 	}
-	
+
 	@Test
 	public void testParseTestCyclo() throws IOException, ParseException {
 		MFile file = parseFile("testCyclo.m");
@@ -297,7 +297,7 @@ public class MFileParserTest {
 		Assert.assertEquals("BlockSize", file.getFunction().getInputs().get(6));
 		Assert.assertEquals("maxAvg", file.getFunction().getInputs().get(7));
 	}
-	
+
 	@Test
 	public void testParseTestCycloMethod() throws IOException, ParseException {
 		MFile file = parseFile("testCycloMethod.m");
@@ -314,7 +314,7 @@ public class MFileParserTest {
 		Assert.assertEquals("QAM64Out", file.getFunction().getOutputs().get(6));
 		Assert.assertEquals(0, file.getFunction().getInputs().size());
 	}
-	
+
 	@Test
 	public void testParseZeroShift() throws IOException, ParseException {
 		MFile file = parseFile("zeroShift.m");
@@ -327,13 +327,20 @@ public class MFileParserTest {
 		Assert.assertEquals("x", file.getFunction().getInputs().get(0));
 		Assert.assertEquals("n", file.getFunction().getInputs().get(1));
 	}
-	
+
 	public MFile parseFile(String name) throws IOException, ParseException {
-		try (InputStream fileStream = MFileTestActivator.openTestFile(name);)
-		{
+		InputStream fileStream = null;
+		try {
+			fileStream = MFileTestActivator.openTestFile(name);
 			return MFileParser.parse(fileStream, null);
+		} finally {
+			try {
+				fileStream.close();
+			} catch (IOException e) {
+				// PASS
+			}
 		}
-		
+
 	}
 
 }
