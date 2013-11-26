@@ -101,7 +101,7 @@ public class EditPortHandlerTests {
 		for (final Definition def : this.library.getDefinitions()) {
 			if (def instanceof RepositoryModule) {
 				final RepositoryModule module = (RepositoryModule) def;
-				if (module.getName().equals("BULKIO")) {
+				if ("BULKIO".equals(module.getName())) {
 					for (final Definition definition : module.getDefinitions()) {
 						final List<Object> ports = new ArrayList<Object>();
 						if (definition instanceof IdlInterfaceDcl) {

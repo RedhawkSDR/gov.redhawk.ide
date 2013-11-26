@@ -39,8 +39,10 @@ public class SpdFileTemplateTest {
 	 * Tests generating an SPD file
 	 * 
 	 * @throws IOException
+	 * @deprecated Tes deprecated API
 	 */
 	@Test
+	@Deprecated
 	public void test() throws IOException {
 		// Generate XML using the template
 		final SpdFileTemplate spdTemplate = SpdFileTemplate.create(null);

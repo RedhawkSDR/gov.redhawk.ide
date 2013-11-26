@@ -42,6 +42,7 @@ public class ImplementationSectionImplementationItemProvider extends mil.jpeojtr
 	 * {@inheritDoc}
 	 */
 	@Override
+	@SuppressWarnings("deprecation")
 	public String getText(final Object object) {
 		final Implementation impl = (Implementation) object;
 		final ImplementationSettings settings = CodegenUtil.getImplementationSettings(impl);

@@ -31,7 +31,7 @@ public class LocalScaWaveformMergeComponentsCommand extends ScaWaveformMergeComp
 	 * @param assemblyControlerId
 	 * @param compTypes
 	 * @param componentStatus
-	 * @deprecated
+	 * @deprecated Use {@link #LocalScaWaveformMergeComponentsCommand(ScaWaveform, ComponentType[], IStatus)}
 	 */
 	@Deprecated
 	public LocalScaWaveformMergeComponentsCommand(final ScaWaveform provider, final String assemblyControlerId, final ComponentType[] compTypes,

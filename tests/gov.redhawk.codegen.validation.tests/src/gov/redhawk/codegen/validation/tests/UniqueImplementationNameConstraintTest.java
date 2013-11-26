@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Assert;
-
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -51,9 +50,10 @@ public class UniqueImplementationNameConstraintTest {
 	}
 
 	@Test
+	@SuppressWarnings("deprecation")
 	public void testUniqueImplementationNameConstraints() throws Exception {
-		this.waveSettings = (WaveDevSettings) this.resourceSet.getResource(UniqueImplementationNameConstraintTest.getURI("testFiles/component.wavedev"), true)
-		        .getEObject("/");
+		this.waveSettings = (WaveDevSettings) this.resourceSet.getResource(UniqueImplementationNameConstraintTest.getURI("testFiles/component.wavedev"), true).getEObject(
+			"/");
 
 		final Collection<ImplementationSettings> implSettingsColl = this.waveSettings.getImplSettings().values();
 		final List<ImplementationSettings> myList = new ArrayList<ImplementationSettings>();
@@ -71,9 +71,10 @@ public class UniqueImplementationNameConstraintTest {
 	}
 
 	@Test
+	@SuppressWarnings("deprecation")
 	public void testNotUniqueImplementationNameConstraints() throws Exception {
 		this.waveSettings = (WaveDevSettings) this.resourceSet.getResource(
-		        UniqueImplementationNameConstraintTest.getURI("testFiles/notUniqueComponent.wavedev"), true).getEObject("/");
+			UniqueImplementationNameConstraintTest.getURI("testFiles/notUniqueComponent.wavedev"), true).getEObject("/");
 		boolean duplicateName = false;
 
 		final Collection<ImplementationSettings> implSettingsColl = this.waveSettings.getImplSettings().values();

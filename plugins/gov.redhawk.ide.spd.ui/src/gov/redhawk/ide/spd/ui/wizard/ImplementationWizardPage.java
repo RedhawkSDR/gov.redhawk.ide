@@ -406,6 +406,7 @@ public class ImplementationWizardPage extends WizardPage {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private String createUniqueId(final String language, final String projName) {
 		// Make up a unique new name here.
 		final StringBuilder implName = new StringBuilder();
@@ -438,6 +439,7 @@ public class ImplementationWizardPage extends WizardPage {
 	/**
 	 * @since 6.0
 	 */
+	@SuppressWarnings("deprecation")
 	public void importImplementation(final Implementation impl, final ImplementationSettings oldImplSettings) {
 		if (this.context != null) {
 			this.context.dispose();

@@ -559,7 +559,7 @@ public final class SpdLauncherUtil {
 		try {
 			final ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
 			return type;
-		} catch (final Exception e) {
+		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Type doesn't match any known component type so return null
 			return null;
 		}
 

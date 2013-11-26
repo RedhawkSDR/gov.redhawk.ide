@@ -119,7 +119,8 @@ public abstract class LocalAbstractMainTab extends AbstractLaunchConfigurationTa
 		this.timeout = new Spinner(parent, SWT.BORDER);
 		this.timeout.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
 		this.timeout.setMinimum(-1);
-		this.timeout.setToolTipText("Time in seconds to wait for a component to register with the naming context.  A value of -1 will wait forever.\n Note when run in debug mode timeout is always treated as -1.");
+		this.timeout.setToolTipText("Time in seconds to wait for a component to register with the naming context.  "
+			+ "A value of -1 will wait forever.\n Note when run in debug mode timeout is always treated as -1.");
 		this.timeout.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {

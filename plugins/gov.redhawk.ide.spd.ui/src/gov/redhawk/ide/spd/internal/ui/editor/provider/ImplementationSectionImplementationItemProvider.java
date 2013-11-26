@@ -50,6 +50,7 @@ public class ImplementationSectionImplementationItemProvider extends
 	 * {@inheritDoc}
 	 */
 	@Override
+	@SuppressWarnings("deprecation")
 	public String getText(final Object object) {
 		final Implementation impl = (Implementation) object;
 		final ImplementationSettings settings = CodegenUtil.getImplementationSettings(impl);

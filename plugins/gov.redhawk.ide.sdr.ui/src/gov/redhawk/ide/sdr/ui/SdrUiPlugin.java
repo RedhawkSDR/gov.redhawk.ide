@@ -229,7 +229,7 @@ public class SdrUiPlugin extends AbstractUIPlugin {
 	 */
 	public IPath getTargetSdrPath() {
 		String runtimePath = getPreferenceStore().getString(SdrUiPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE).trim();
-		if (runtimePath.equals("")) {
+		if (runtimePath.isEmpty()) {
 			return null;
 		}
 

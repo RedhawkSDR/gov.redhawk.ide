@@ -26,7 +26,7 @@ public final class DataReceiverUtils {
 			valueString[0] = "";
 			valueString[1] = "";
 		}
-		if (!valueString[0].equals("")) {
+		if (!valueString[0].isEmpty()) {
 			valueString[0] += "::";
 		}
 		valueString[0] += keyword.id;

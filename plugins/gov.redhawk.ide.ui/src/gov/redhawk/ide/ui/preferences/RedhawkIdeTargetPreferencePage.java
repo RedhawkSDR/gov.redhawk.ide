@@ -61,7 +61,7 @@ public class RedhawkIdeTargetPreferencePage extends FieldEditorPreferencePage im
 
 		if (build.length > 0) {
 			for (final Job job : build) {
-				if (job.getName().equals("Updating Runtime Path")) {
+				if ("Updating Runtime Path".equals(job.getName())) {
 					return false;
 				}
 			}

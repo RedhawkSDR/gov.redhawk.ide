@@ -53,7 +53,7 @@ public class OpenAssociatedPerspectiveJob extends UIJob {
 	@Override
 	public IStatus runInUIThread(final IProgressMonitor monitor) {
 		final String perspectiveId = this.descriptor.getAssociatedPerspectiveId();
-		if (perspectiveId != null && !perspectiveId.equals("")) {
+		if (perspectiveId != null && !perspectiveId.isEmpty()) {
 			final IPreferenceStore store = ComponentUiPlugin.getDefault().getPreferenceStore();
 			final String pref = store.getString(this.descriptor.getId());
 			if (pref.equals(MessageDialogWithToggle.PROMPT)) {

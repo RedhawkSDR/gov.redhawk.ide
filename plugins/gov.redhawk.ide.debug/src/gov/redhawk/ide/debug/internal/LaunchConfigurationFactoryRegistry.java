@@ -102,7 +102,7 @@ public enum LaunchConfigurationFactoryRegistry implements ILaunchConfigurationFa
 	@Override
 	public void addExtension(final IExtensionTracker tracker, final IExtension extension) {
 		for (final IConfigurationElement element : extension.getConfigurationElements()) {
-			if (element.getName().equals("launchConfigurationFactory")) {
+			if ("launchConfigurationFactory".equals(element.getName())) {
 				LaunchConfigurationFactoryDesc descriptor;
 				try {
 					descriptor = createDescriptor(element);

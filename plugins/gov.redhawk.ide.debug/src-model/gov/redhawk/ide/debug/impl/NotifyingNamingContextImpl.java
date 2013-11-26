@@ -458,7 +458,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 				if (uri.scheme() != null && uri.segmentCount() > 0) {
 					return uri;
 				}
-			} catch (final Exception e) {
+			} catch (final Exception e) { // SUPPRESS CHECKSTYLE Fallback
 				// PASS
 			}
 		}

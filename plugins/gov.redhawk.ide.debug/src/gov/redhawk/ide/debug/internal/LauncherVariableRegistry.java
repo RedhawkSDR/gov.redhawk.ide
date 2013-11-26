@@ -118,7 +118,7 @@ public enum LauncherVariableRegistry implements ILauncherVariableRegistry, IExte
 	@Override
 	public void addExtension(final IExtensionTracker tracker, final IExtension extension) {
 		for (final IConfigurationElement element : extension.getConfigurationElements()) {
-			if (element.getName().equals("variable")) {
+			if ("variable".equals(element.getName())) {
 				VariableDesc descriptor;
 				try {
 					descriptor = createDescriptor(element);

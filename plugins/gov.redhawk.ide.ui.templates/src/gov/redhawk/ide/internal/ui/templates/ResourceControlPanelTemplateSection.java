@@ -67,23 +67,23 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	 */
 	@Override
 	public String getStringOption(String name) {
-		if (name.equals("resourceClassName")) {
+		if ("resourceClassName".equals(name)) {
 			return getResourceClassName();
-		} else if (name.equals("contentTypeProfileId")) {
+		} else if ("contentTypeProfileId".equals(name)) {
 			return getProfileId();
-		} else if (name.equals("sectionClassName")) {
+		} else if ("sectionClassName".equals(name)) {
 			return getSectionClassName();
-		} else if (name.equals("editorClassName")) {
+		} else if ("editorClassName".equals(name)) {
 			return getEditorClassName();
-		} else if (name.equals("filterClassName")) {
+		} else if ("filterClassName".equals(name)) {
 			return getFilterClassName();
-		} else if (name.equals("compositeName")) {
+		} else if ("compositeName".equals(name)) {
 			return getCompositeClassName();
-		} else if (name.equals("bindingsCode")) {
+		} else if ("bindingsCode".equals(name)) {
 			return getPropertyBindingsCode();
-		} else if (name.equals("controlGroupCode")) {
+		} else if ("controlGroupCode".equals(name)) {
 			return getControlGroupCode();
-		} else if (name.equals("propertyFields")) {
+		} else if ("propertyFields".equals(name)) {
 			return getPropertyFieldsCode();
 		} else {
 			return super.getStringOption(name);
@@ -366,7 +366,7 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	 * @throws CoreException
 	 */
 	private void createContentTypeElement(final IPluginElement contentTypeElement, final String priority, final IPluginModelFactory factory)
-			throws CoreException {
+		throws CoreException {
 		contentTypeElement.setName("contentType"); //$NON-NLS-1$
 		contentTypeElement.setAttribute("id", getContentTypeID()); //$NON-NLS-1$
 		contentTypeElement.setAttribute("name", getContentTypeName()); //$NON-NLS-1$ //$NON-NLS-2$

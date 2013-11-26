@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.Assert;
+
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.spd.SCAComplianceType;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -40,6 +41,7 @@ public class SpdFileTemplateTest {
 	 * @throws IOException
 	 */
 	@Test
+	@SuppressWarnings("deprecation")
 	public void test() throws IOException {
 		// Generate XML using the template
 		final SpdFileTemplate spdTemplate = SpdFileTemplate.create(null);

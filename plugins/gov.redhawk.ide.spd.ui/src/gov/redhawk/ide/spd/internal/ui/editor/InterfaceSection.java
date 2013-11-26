@@ -351,7 +351,7 @@ public class InterfaceSection extends ScaSection {
 				}
 			}
 			this.aggregateButton.setSelection(foundAggregate);
-		} catch (final Exception e) {
+		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Fallback
 			// Some problem occurred while trying to set the viewer input,
 			// therefore set to empty
 			this.interfaceViewer.setInput(Collections.EMPTY_LIST);

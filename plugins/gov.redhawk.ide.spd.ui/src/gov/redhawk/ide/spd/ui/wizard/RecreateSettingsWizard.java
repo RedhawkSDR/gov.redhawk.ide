@@ -153,6 +153,7 @@ public class RecreateSettingsWizard extends NewScaResourceWizard {
 		importSelected(getSoftPkg().eResource().getURI());
 	}
 
+	@SuppressWarnings("deprecation")
 	public void importSelected(final URI fileURI) {
 		final SoftPkg softPkg = getSoftPkg();
 
@@ -192,8 +193,8 @@ public class RecreateSettingsWizard extends NewScaResourceWizard {
 				if (templates.length > 0) {
 					// findPageByGeneratorId is always guaranteed to return
 					// at least one page. Add this page to the wizard
-					final ICodegenWizardPage codeGenPage = RedhawkCodegenUiActivator.getCodeGeneratorsRegistry()
-					        .findPageByGeneratorId(settings.getGeneratorId())[0];
+					final ICodegenWizardPage codeGenPage = RedhawkCodegenUiActivator.getCodeGeneratorsRegistry().findPageByGeneratorId(
+						settings.getGeneratorId())[0];
 					addPage(codeGenPage);
 
 					// Enable the canFlip if this isn't the last page in the list
@@ -236,15 +237,15 @@ public class RecreateSettingsWizard extends NewScaResourceWizard {
 	}
 
 	@Override
-    protected IFile createComponentFiles(IProject project, String name, String id, String author, IProgressMonitor monitor) throws CoreException {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
+	protected IFile createComponentFiles(IProject project, String name, String id, String author, IProgressMonitor monitor) throws CoreException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
-    protected IProject createEmptyProject(String projectName, java.net.URI locationURI, IProgressMonitor monitor) throws CoreException {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
+	protected IProject createEmptyProject(String projectName, java.net.URI locationURI, IProgressMonitor monitor) throws CoreException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

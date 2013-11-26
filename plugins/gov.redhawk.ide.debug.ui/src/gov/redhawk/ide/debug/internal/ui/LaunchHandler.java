@@ -151,7 +151,7 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 			} else if (element.getName().endsWith(SadPackage.FILE_EXTENSION)) {
 				return SoftwareAssembly.Util.getSoftwareAssembly(resource);
 			}
-		} catch (final Exception e) {
+		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Fallback
 			// PASS
 		}
 		return element;

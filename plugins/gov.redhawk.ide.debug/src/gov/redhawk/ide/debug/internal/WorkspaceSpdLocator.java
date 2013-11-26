@@ -52,7 +52,7 @@ public class WorkspaceSpdLocator implements IResourceVisitor {
 					} else {
 						this.spd = null;
 					}
-				} catch (final Exception e) {
+				} catch (final Exception e) { // SUPPRESS CHECKSTYLE Fallback
 					// PASS
 				}
 			}

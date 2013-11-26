@@ -163,7 +163,7 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 			String type = compDesc.getComponentType();
 			if (!ComponentType.RESOURCE.getLiteral().equalsIgnoreCase(type)) {
 				return false;
-			} else if (compDesc.getImplementationIds().isEmpty()) {
+			} else if (compDesc.getImplementationIds().isEmpty()) { // SUPPRESS CHECKSTYLE Explicit returns
 				return false;
 			} else {
 				return true;

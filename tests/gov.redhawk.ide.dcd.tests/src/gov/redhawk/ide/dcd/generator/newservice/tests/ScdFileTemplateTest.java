@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.Assert;
+
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
@@ -38,6 +39,7 @@ public class ScdFileTemplateTest {
 	 * 
 	 * @throws IOException
 	 */
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testService() throws IOException {
 		// Generate XML using the template

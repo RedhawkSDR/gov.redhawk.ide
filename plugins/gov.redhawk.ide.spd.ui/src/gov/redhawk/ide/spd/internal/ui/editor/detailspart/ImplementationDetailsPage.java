@@ -886,7 +886,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 				final IProject project = getProject();
 				if (project != null) {
 					IFolder folder = null;
-					if (!entry.getText().getText().equals("")) {
+					if (!entry.getText().getText().isEmpty()) {
 						folder = project.getFolder(entry.getText().getText());
 					}
 					final IFolder newPath = EntryUtil.browseDir(project, folder);

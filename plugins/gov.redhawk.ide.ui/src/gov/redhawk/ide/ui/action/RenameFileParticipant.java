@@ -314,10 +314,10 @@ public class RenameFileParticipant extends RenameParticipant {
 
 		for (final File file : files) {
 			if (file.getFileExtension() != null) {
-				if (file.getFileExtension().equals("xml")) {
+				if ("xml".equals(file.getFileExtension())) {
 					final String scaType = file.getFullPath().toString().split("[.]")[1];
 
-					if (scaType.equals("spd")) {
+					if ("spd".equals(scaType)) {
 						spdFile = file;
 						break;
 					}

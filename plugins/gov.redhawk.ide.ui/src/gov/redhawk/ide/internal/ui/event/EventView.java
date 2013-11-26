@@ -134,7 +134,7 @@ public class EventView extends ViewPart {
 						list.add(new ContentProposal(proposal));
 					}
 				}
-			} catch (Exception e) {
+			} catch (Exception e) { // SUPPRESS CHECKSTYLE Pattern Matcher
 				// PASS
 			}
 			return list.toArray(new IContentProposal[list.size()]);

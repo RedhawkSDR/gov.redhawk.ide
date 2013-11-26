@@ -151,6 +151,7 @@ public class ScaChalkboardView extends ViewPart {
 		}
 
 		@Override
+		@Deprecated
 		public IKeyBindingService getKeyBindingService() {
 			return site.getKeyBindingService();
 		}

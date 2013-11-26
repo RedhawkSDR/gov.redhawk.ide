@@ -24,7 +24,7 @@ public class DataReaderControlPanelPropertyFilter implements IFilter {
 	public boolean select(Object toTest) {
 		final Object adapter = Platform.getAdapterManager().getAdapter(toTest, ScaComponent.class);
 		if (adapter instanceof ScaComponent) {
-			return ((ScaComponent) adapter).getProfileObj().getId().equals("DCE:8c0ccd2b-9645-43b3-a7f7-9762b6278549");
+			return "DCE:8c0ccd2b-9645-43b3-a7f7-9762b6278549".equals(((ScaComponent) adapter).getProfileObj().getId());
 		}
 		return false;
 	}

@@ -263,7 +263,7 @@ public class PortsSection extends ScaSection {
 			if (!getPorts().eAdapters().contains(this.viewerSelector)) {
 				getPorts().eAdapters().add(this.viewerSelector);
 			}
-		} catch (final Exception e) {
+		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Fallback
 			// Some problem occurred while trying to set the viewer input,
 			// therefore set to empty
 			this.portsViewer.setInput(Collections.EMPTY_LIST);
@@ -303,7 +303,7 @@ public class PortsSection extends ScaSection {
 		final SoftwareComponent softwareComponent = SoftwareComponent.Util.getSoftwareComponent(this.resource);
 		if (softwareComponent != null) {
 			for (final SupportsInterface si : softwareComponent.getComponentFeatures().getSupportsInterface()) {
-				if (si.getRepId().equals("IDL:CF/PortSupplier:1.0")) {
+				if ("IDL:CF/PortSupplier:1.0".equals(si.getRepId())) {
 					return true;
 				}
 			}

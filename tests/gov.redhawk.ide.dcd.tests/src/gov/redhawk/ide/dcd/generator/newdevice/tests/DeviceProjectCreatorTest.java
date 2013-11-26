@@ -61,11 +61,8 @@ public class DeviceProjectCreatorTest {
 		Assert.assertNotNull(project);
 		Assert.assertTrue(project.exists());
 		Assert.assertTrue("deviceProjectTest".equals(project.getName()));
-		DeviceProjectCreator.createDeviceFiles(project, "deviceProjectTest", "gov.redhawk.deviceProjectTest",
-		        "Author",
-		        RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE,
-		        false,
-		        new NullProgressMonitor());
+		DeviceProjectCreator.createDeviceFiles(project, "deviceProjectTest", "gov.redhawk.deviceProjectTest", "Author",
+			RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE, false, new NullProgressMonitor());
 
 		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
 		Assert.assertTrue(spdFile.exists());
@@ -82,8 +79,8 @@ public class DeviceProjectCreatorTest {
 		Assert.assertTrue(testFile.exists());
 
 		final ResourceSet resourceSet = new ResourceSetImpl();
-		final SoftPkg dev = SoftPkg.Util.getSoftPkg(resourceSet.getResource(URI.createPlatformResourceURI("/deviceProjectTest/deviceProjectTest.spd.xml", true),
-		        true));
+		final SoftPkg dev = SoftPkg.Util.getSoftPkg(resourceSet.getResource(
+			URI.createPlatformResourceURI("/deviceProjectTest/deviceProjectTest.spd.xml", true), true));
 		Assert.assertEquals(project.getName(), dev.getName());
 		Assert.assertEquals("Author", dev.getAuthor().get(0).getName().get(0));
 		Assert.assertEquals("executabledevice", dev.getDescriptor().getComponent().getComponentType());
@@ -101,11 +98,8 @@ public class DeviceProjectCreatorTest {
 		Assert.assertNotNull(project);
 		Assert.assertTrue(project.exists());
 		Assert.assertTrue("aggDevTest".equals(project.getName()));
-		DeviceProjectCreator.createDeviceFiles(project, "aggDevTest", "gov.redhawk.deviceProjectTest",
-		        "Author",
-		        RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE,
-		        true,
-		        new NullProgressMonitor());
+		DeviceProjectCreator.createDeviceFiles(project, "aggDevTest", "gov.redhawk.deviceProjectTest", "Author",
+			RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE, true, new NullProgressMonitor());
 
 		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
 		Assert.assertTrue(spdFile.exists());
@@ -121,7 +115,7 @@ public class DeviceProjectCreatorTest {
 
 		boolean found = false;
 		for (final SupportsInterface intf : dev.getDescriptor().getComponent().getComponentFeatures().getSupportsInterface()) {
-			if (intf.getRepId().equals("IDL:CF/AggregateDevice:1.0")) {
+			if ("IDL:CF/AggregateDevice:1.0".equals(intf.getRepId())) {
 				found = true;
 				break;
 			}
@@ -130,7 +124,7 @@ public class DeviceProjectCreatorTest {
 
 		found = false;
 		for (final Interface intf : dev.getDescriptor().getComponent().getInterfaces().getInterface()) {
-			if (intf.getRepid().equals("IDL:CF/AggregateDevice:1.0")) {
+			if ("IDL:CF/AggregateDevice:1.0".equals(intf.getRepid())) {
 				found = true;
 				break;
 			}

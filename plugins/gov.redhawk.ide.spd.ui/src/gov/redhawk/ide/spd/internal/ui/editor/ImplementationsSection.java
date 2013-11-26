@@ -381,6 +381,7 @@ public class ImplementationsSection extends TreeSection implements IPropertyChan
 					final WorkspaceJob job = new WorkspaceJob("Removing Implementation Directory") {
 
 						@Override
+						@SuppressWarnings("deprecation")
 						public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
 							final SubMonitor subMonitor = SubMonitor.convert(monitor, "Deleting Implementation " + implSettings.getName(), 90);
 							try {

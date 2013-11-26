@@ -49,14 +49,14 @@ public class GeneratorArgsBase {
 	}
 	
 	/**
-	 * @deprecated 
+	 * @deprecated Use {@link #setProperty(SOFTPKG_FILE_KEY, softPkgFile)}
 	 */
 	@Deprecated
 	public void setSoftPkgFile(final String softPkgFile) {
 		this.setProperty(SOFTPKG_FILE_KEY, softPkgFile);
 	}
 	/**
-	 * @deprecated 
+	 * @deprecated Use {@link #getProperty(SOFTPKG_FILE_KEY)}
 	 */
 	@Deprecated
 	public String getSoftPkgFile() {

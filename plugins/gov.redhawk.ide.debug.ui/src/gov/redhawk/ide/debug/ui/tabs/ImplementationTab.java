@@ -216,7 +216,7 @@ public class ImplementationTab extends AbstractLaunchConfigurationTab {
 				final SadComponentInstantiation ci = (SadComponentInstantiation) element;
 				final SoftPkg spd = ScaEcoreUtils.getFeature(ci, ImplementationTab.SPD_PATH);
 				final ComboBoxViewerCellEditor editor = new ComboBoxViewerCellEditor(ImplementationTab.this.viewer.getTable(), SWT.READ_ONLY);
-				editor.setContenProvider(new ArrayContentProvider());
+				editor.setContentProvider(new ArrayContentProvider());
 				editor.setLabelProvider(new AdapterFactoryLabelProvider(ImplementationTab.this.adapterFactory));
 				if (spd != null) {
 					editor.setInput(spd.getImplementation());

@@ -38,10 +38,9 @@ class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 	@Override
 	public boolean visit(final IResourceDelta delta) {
 		if (delta.getResource().getType() == IResource.FILE) {
-			if (delta.getKind() == IResourceDelta.REMOVED || delta.getKind() == IResourceDelta.CHANGED
-			        || delta.getKind() == IResourceDelta.ADDED
-					&& delta.getFlags() != IResourceDelta.MARKERS) {
-				if (delta.getResource() instanceof IFile && !delta.getResource().getName().equals(".library")) {
+			if (delta.getKind() == IResourceDelta.REMOVED || delta.getKind() == IResourceDelta.CHANGED || delta.getKind() == IResourceDelta.ADDED
+				&& delta.getFlags() != IResourceDelta.MARKERS) {
+				if (delta.getResource() instanceof IFile && !".library".equals(delta.getResource().getName())) {
 					return false;
 				}
 				this.changedResources.add(delta.getResource());

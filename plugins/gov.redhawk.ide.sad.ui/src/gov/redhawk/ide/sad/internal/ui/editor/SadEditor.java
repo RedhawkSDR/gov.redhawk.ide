@@ -772,7 +772,7 @@ public class SadEditor extends SCAFormEditor implements ITabbedPropertySheetPage
 	@Override
 	public void doSave(final IProgressMonitor monitor) {
 		final CleanUpComponentFilesAction cleanAction = new CleanUpComponentFilesAction();
-		cleanAction.setSoftwareAssembly(getSoftwareAssembly());
+		cleanAction.setRoot(getSoftwareAssembly());
 		cleanAction.run();
 
 		super.doSave(monitor);
