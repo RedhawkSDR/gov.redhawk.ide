@@ -10,57 +10,76 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.internal.ui.handlers;
 
+import java.util.ArrayList;
+
+import gov.redhawk.ide.sdr.ui.util.DebugLevel;
+import gov.redhawk.ide.sdr.ui.util.DeviceManagerLaunchConfiguration;
+import gov.redhawk.model.sca.provider.ScaItemProviderAdapterFactory;
+import gov.redhawk.sca.ScaPlugin;
+
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ListDialog;
 
 public class LaunchDeviceManagerDialog extends ListDialog {
-	private static final int DEFAULT_DEBUG_LEVEL = 3;
-	
-	private final String[] debugLevels = new String[] { "Fatal", "Error", "Warn", "Info", "Debug", "Trace" };
-	private Label label;
-	private ComboViewer debugViewer;
-	private int debugLevel;
+	private DeviceManagerLaunchConfiguration configuration = new DeviceManagerLaunchConfiguration();
+	private DataBindingContext context = new DataBindingContext();
+
 	public LaunchDeviceManagerDialog(Shell parent) {
 		super(parent);
+		
+		setTitle("Launch Device Manager");
+		setMessage("Select the Domain on which to launch the device manager(s):");
+		
+		final ScaItemProviderAdapterFactory factory = new ScaItemProviderAdapterFactory();
+		setLabelProvider(new AdapterFactoryLabelProvider(factory));
+		setContentProvider(new ArrayContentProvider());
+		
+		final ArrayList<Object> input = new ArrayList<Object>();
+		input.addAll(ScaPlugin.getDefault().getDomainManagerRegistry(Display.getCurrent()).getDomains());
+		final String defaultSelection = "<Default>";
+		input.add(defaultSelection);
+		super.setInput(input);
 	}
 	
 	@Override
+	public void setInput(Object input) {
+		
+	}
+
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		
-		this.label = new Label(parent, SWT.NULL);
-		this.label.setText("Debug Level: ");
-		this.debugViewer = new ComboViewer(parent, SWT.READ_ONLY | SWT.SINGLE | SWT.DROP_DOWN | SWT.BORDER);
-		this.debugViewer.setContentProvider(new ArrayContentProvider());
-		this.debugViewer.setInput(this.debugLevels);
-		this.debugLevel = DEFAULT_DEBUG_LEVEL;
-		this.debugViewer.setSelection(new StructuredSelection(debugLevels[DEFAULT_DEBUG_LEVEL]));
-		
-		this.debugViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				LaunchDeviceManagerDialog.this.debugLevel = LaunchDeviceManagerDialog.this.debugViewer.getCombo().getSelectionIndex();
-			}
-		});
+		Label label = new Label(parent, SWT.NULL);
+		label.setText("Debug Level: ");
+		ComboViewer debugViewer = new ComboViewer(parent, SWT.READ_ONLY | SWT.SINGLE | SWT.DROP_DOWN | SWT.BORDER);
+		debugViewer.setContentProvider(new ArrayContentProvider());
+		debugViewer.setInput(DebugLevel.values());
+		debugViewer.setSelection(new StructuredSelection(DebugLevel.Info));
+		context.bindValue(ViewersObservables.observeSingleSelection(debugViewer),
+			PojoObservables.observeValue(configuration, DeviceManagerLaunchConfiguration.PROP_DEBUG_LEVEL));
+
+		label = new Label(parent, SWT.NULL);
+		label.setText("Arguments: ");
+		Text text = new Text(parent, SWT.BORDER);
+		context.bindValue(SWTObservables.observeText(text, SWT.Modify),
+			PojoObservables.observeValue(configuration, DeviceManagerLaunchConfiguration.PROP_ARGUMENTS));
 		
 		super.createButtonsForButtonBar(parent);
 	}
-	
-	/**
-	 * Provides the users selection of the debug message level.  The user is given the options
-	 * "Fatal", "Error", "Warn", "Info", "Debug", "Trace" which correspond to a returned value here of
-	 * 0, 1, 2, 3, 4, 5
-	 * @return The selected debug level.
-	 */
-	public int getDebugLevel() {
-		return this.debugLevel;
+
+	public DeviceManagerLaunchConfiguration getConfiguration() {
+		return configuration;
 	}
 }

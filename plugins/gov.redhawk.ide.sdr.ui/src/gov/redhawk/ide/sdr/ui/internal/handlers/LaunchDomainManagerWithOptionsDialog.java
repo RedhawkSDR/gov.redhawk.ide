@@ -12,35 +12,37 @@ package gov.redhawk.ide.sdr.ui.internal.handlers;
 
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.ui.util.DebugLevel;
+import gov.redhawk.ide.sdr.ui.util.DeviceManagerLaunchConfiguration;
+import gov.redhawk.ide.sdr.ui.util.DomainManagerLaunchConfiguration;
 import gov.redhawk.model.sca.ScaDomainManager;
 import gov.redhawk.sca.ScaPlugin;
 import gov.redhawk.sca.preferences.ScaPreferenceConstants;
 import gov.redhawk.sca.ui.ScaUiPlugin;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-import mil.jpeojtrs.sca.dmd.DomainManagerConfiguration;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.observable.set.WritableSet;
+import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.notify.AdapterFactory;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -52,13 +54,9 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
@@ -91,73 +89,41 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	 * @since 3.6
 	 */
 	private static final int RESTORE_ENTER_DELAY = 500;
-
-	public static final int DEFAULT_DEBUG_LEVEL = 3;
-
 	private final Set<String> takenDomainNames = new HashSet<String>();
-	private final DomainManagerConfiguration domain;
-	private Label label;
-	private Text text;
-	private ComboViewer debugViewer;
 	private boolean lockedUI = false;
-	private final String[] debugLevels = new String[] { "Fatal", "Error", "Warn", "Info", "Debug", "Trace" };
-	private static boolean showDevices = true;
-	private static HashMap<DeviceConfiguration, Integer> debugMap = new HashMap<DeviceConfiguration, Integer>();
 
-	private final DomainManagerConfigurationModel model = new DomainManagerConfigurationModel();
+	private WritableSet nodes = new WritableSet();
+	private WritableValue nodeDebugLevel = new WritableValue(DebugLevel.Info, DebugLevel.class);
+	private WritableValue nodeArguments = new WritableValue();
+
+	private final DomainManagerLaunchConfiguration model;
+
 	private final DataBindingContext context = new DataBindingContext();
 	private Binding nameBinding = null;
 	private boolean useCustomProgressMonitorPart;
 	private ProgressMonitorPart progressMonitorPart;
 
-	/**
-	 * <b> NOTE </b> DO NOT REMOVE get/set Methods
-	 * These are needed by the PojoObservable databinding
-	 */
-	private static class DomainManagerConfigurationModel {
-		private String domainName = "";
-		private String debugLevel = "";
-		/**
-		 * @return the domainName
-		 */
-		@SuppressWarnings("unused")
-		public String getDomainName() {
-			return domainName;
+	private int activeRunningOperations;
+	private long timeWhenLastJobFinished;
+	private Cursor waitCursor;
+	private Cursor arrowCursor;
+	private Button cancelButton;
+	private final SelectionListener cancelListener = new SelectionAdapter() {
+		@Override
+		public void widgetSelected(final SelectionEvent e) {
+			cancelPressed();
 		}
-		/**
-		 * @param domainName the domainName to set
-		 */
-		@SuppressWarnings("unused")
-		public void setDomainName(String domainName) {
-			this.domainName = domainName;
-		}
-		/**
-		 * @return the debugLevel
-		 */
-		@SuppressWarnings("unused")
-		public String getDebugLevel() {
-			return debugLevel;
-		}
-		/**
-		 * @param debugLevel the debugLevel to set
-		 */
-		@SuppressWarnings("unused")
-		public void setDebugLevel(String debugLevel) {
-			this.debugLevel = debugLevel;
-		}
-		
-		
-	}
-	
+	};
+
 	// Load the domains that are on the Naming service already
-	final IRunnableWithProgress scanForTakenDomainNames = new IRunnableWithProgress() {
+	private final IRunnableWithProgress scanForTakenDomainNames = new IRunnableWithProgress() {
 
 		@Override
 		public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			monitor.beginTask("Scanning for running domains...", IProgressMonitor.UNKNOWN);
 			LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.clear();
 			LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.addAll(Arrays.asList(ScaPlugin.findDomainNamesOnDefaultNameServer()));
-			
+
 			// We also need to handle the case where the default name server doesn't  have the domain name in use
 			// but we have a domain definition against an alternate name server...in this case you cannot use
 			// the domain name regardless because we cannot alter or remove the connection setting.
@@ -175,19 +141,19 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 					}
 				}
 			}
-			
+
 			LaunchDomainManagerWithOptionsDialog.this.nameBinding.validateTargetToModel();
 		}
 	};
-	
+
 	// Load the domains that are on the Naming service already
-	final IRunnableWithProgress checkDomainName = new IRunnableWithProgress() {
+	private final IRunnableWithProgress checkDomainName = new IRunnableWithProgress() {
 
 		@Override
 		public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			monitor.beginTask("Checking domain name...", IProgressMonitor.UNKNOWN);
-			final String domainName = LaunchDomainManagerWithOptionsDialog.this.model.domainName;
-			
+			final String domainName = LaunchDomainManagerWithOptionsDialog.this.model.getDomainName();
+
 			final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
 			final ScaDomainManager dom = ScaPlugin.getDefault().getDomainManagerRegistry().findDomain(domainName);
 			if (dom != null) {
@@ -195,85 +161,26 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 					LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.add(domainName);
 				}
 			}
-			
+
 			// Check again just in case the domain started up since the last scan.
 			if (ScaPlugin.isDomainOnline(domainName)) {
 				LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.add(domainName);
 			}
-					
+
 			LaunchDomainManagerWithOptionsDialog.this.nameBinding.validateTargetToModel();
 		}
 	};
 
-	public LaunchDomainManagerWithOptionsDialog(final Shell parentShell, final DomainManagerConfiguration domain, final AdapterFactory adapterFactory) {
-		super(parentShell, LaunchDomainManagerWithOptionsDialog.getLabelProvider(adapterFactory), LaunchDomainManagerWithOptionsDialog
-		        .getContentProvider(adapterFactory));
-		this.domain = domain;
+	private SdrRoot sdrRoot;
+
+	public LaunchDomainManagerWithOptionsDialog(final Shell parentShell, final DomainManagerLaunchConfiguration model, SdrRoot root) {
+		super(parentShell, new LaunchDomainManagerDialogLabelProvider(), new LaunchDomainManagerDialogContentProvider());
+		this.model = model;
+		this.sdrRoot = root;
 		this.setTitle("Launch Domain Manager");
 		setComparator(new ViewerComparator());
 		setStatusLineAboveButtons(true);
-	}
-
-	private static ILabelProvider getLabelProvider(final AdapterFactory adapterFactory) {
-		final ILabelProvider labelProvider = new AdapterFactoryLabelProvider(adapterFactory) {
-			@Override
-			public String getText(final Object object) {
-				if (object instanceof DeviceConfiguration) {
-					final DeviceConfiguration dcd = (DeviceConfiguration) object;
-					final URI uri = dcd.eResource().getURI();
-					return dcd.getName() + " (" + uri.path().replace(uri.lastSegment(), "") + ")";
-				}
-				return super.getText(object);
-			}
-		};
-
-		return labelProvider;
-	}
-
-	private static ITreeContentProvider getContentProvider(final AdapterFactory adapterFactory) {
-		return new ITreeContentProvider() {
-
-			@Override
-			public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
-			}
-
-			@Override
-			public void dispose() {
-			}
-
-			@Override
-			public Object[] getElements(final Object inputElement) {
-				return getChildren(inputElement);
-			}
-
-			@Override
-			public boolean hasChildren(final Object element) {
-				return false;
-			}
-
-			@Override
-			public Object getParent(final Object element) {
-				return null;
-			}
-
-			@Override
-			public Object[] getChildren(final Object parentElement) {
-				if (parentElement instanceof SdrRoot) {
-					if (!((SdrRoot) parentElement).getNodesContainer().getNodes().isEmpty()) {
-						LaunchDomainManagerWithOptionsDialog.showDevices = true;
-						for (final Object devConfig : ((SdrRoot) parentElement).getNodesContainer().getNodes().toArray()) {
-							LaunchDomainManagerWithOptionsDialog.debugMap.put((DeviceConfiguration) devConfig,
-							        LaunchDomainManagerWithOptionsDialog.DEFAULT_DEBUG_LEVEL);
-						}
-
-						return ((SdrRoot) parentElement).getNodesContainer().getNodes().toArray();
-					} else {
-						LaunchDomainManagerWithOptionsDialog.showDevices = false;
-					}
-				}
-				return Collections.emptyList().toArray();
-			}
-		};
+		super.setInput(root);
 	}
 
 	@Override
@@ -297,17 +204,16 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		domainManagerGroup.setLayout(gridLayout);
 		domainManagerGroup.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 
-		this.label = new Label(domainManagerGroup, SWT.NULL);
-		this.label.setText("Domain Name: ");
-		this.text = new Text(domainManagerGroup, SWT.BORDER);
+		Label label = new Label(domainManagerGroup, SWT.NULL);
+		label.setText("Domain Name: ");
+		Text text = new Text(domainManagerGroup, SWT.BORDER);
 		data = textFactory.create();
 		data.horizontalSpan = 2;
-		this.text.setLayoutData(data);
-		this.nameBinding = this.context.bindValue(SWTObservables.observeText(this.text, SWT.Modify), PojoObservables.observeValue(this.model, "domainName"),
-		        new UpdateValueStrategy().setAfterConvertValidator(this.nameValidator), null);
-
-		this.text.setText(this.domain.getName());
-		this.text.addModifyListener(new ModifyListener() {
+		text.setLayoutData(data);
+		this.nameBinding = this.context.bindValue(SWTObservables.observeText(text, SWT.Modify),
+			PojoObservables.observeValue(this.model, DomainManagerLaunchConfiguration.PROP_DOMAIN_NAME),
+			new UpdateValueStrategy().setAfterConvertValidator(this.nameValidator), null);
+		text.addModifyListener(new ModifyListener() {
 
 			@Override
 			public void modifyText(final ModifyEvent e) {
@@ -317,26 +223,37 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 
 		ControlDecorationSupport.create(this.nameBinding, SWT.TOP | SWT.LEFT);
 
-		this.label = new Label(domainManagerGroup, SWT.NULL);
-		this.label.setText("Debug Level: ");
-		this.debugViewer = new ComboViewer(domainManagerGroup, SWT.READ_ONLY | SWT.SINGLE | SWT.DROP_DOWN | SWT.BORDER);
-		this.debugViewer.setContentProvider(new ArrayContentProvider());
-		this.debugViewer.setInput(this.debugLevels);
-		this.debugViewer.setSelection(new StructuredSelection("Info"));
-		this.context.bindValue(SWTObservables.observeSelection(this.debugViewer.getControl()), PojoObservables.observeValue(this.model, "debugLevel"), null,
-		        null);
+		label = new Label(domainManagerGroup, SWT.NULL);
+		label.setText("Debug Level: ");
+		ComboViewer debugViewer = new ComboViewer(domainManagerGroup, SWT.READ_ONLY | SWT.SINGLE | SWT.DROP_DOWN | SWT.BORDER);
+		debugViewer.setLabelProvider(new LabelProvider());
+		debugViewer.setContentProvider(new ArrayContentProvider());
+		debugViewer.setInput(DebugLevel.values());
+		debugViewer.getControl().setLayoutData(data);
+		this.context.bindValue(ViewersObservables.observeSingleSelection(debugViewer),
+			PojoObservables.observeValue(this.model, DomainManagerLaunchConfiguration.PROP_DEBUG_LEVEL));
+
+		label = new Label(domainManagerGroup, SWT.NULL);
+		label.setText("Arguments:");
+		text = new Text(domainManagerGroup, SWT.BORDER);
+		text.setLayoutData(data);
+		this.context.bindValue(SWTObservables.observeText(text, SWT.Modify),
+			PojoObservables.observeValue(this.model, DomainManagerLaunchConfiguration.PROP_ARGUMENTS));
 
 		final Group deviceManagerGroup = new Group(composite, SWT.NULL);
 
 		deviceManagerGroup.setText("Device Manager");
 		deviceManagerGroup.setLayout(GridLayoutFactory.fillDefaults().create());
 		deviceManagerGroup.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
-		deviceManagerGroup.setVisible(LaunchDomainManagerWithOptionsDialog.showDevices);
+		deviceManagerGroup.setVisible(!this.sdrRoot.getNodesContainer().getNodes().isEmpty());
 
 		final CheckboxTreeViewer treeViewer = createTreeViewer(deviceManagerGroup);
 		treeViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
+
 		final Control buttonComposite = createSelectionButtons(deviceManagerGroup);
 		buttonComposite.setLayoutData(GridDataFactory.fillDefaults().create());
+
+		context.bindSet(ViewersObservables.observeCheckedElements(treeViewer, DeviceConfiguration.class), nodes);
 
 		// Insert a progress monitor
 		this.progressMonitorPart = createProgressMonitorPart(composite, new GridLayout());
@@ -349,7 +266,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Dialog.applyDialogFont(composite);
-		
+
 		getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -363,7 +280,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 				}
 			}
 		});
-		
+
 		return composite;
 	}
 
@@ -465,40 +382,22 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		final GridLayout gridLayout = new GridLayout(2, false);
 
 		subContainer.setLayout(gridLayout);
+		subContainer.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 
-		this.label = new Label(subContainer, SWT.NULL);
-		this.label.setText("Debug Level: ");
+		Label label = new Label(subContainer, SWT.NULL);
+		label.setText("Debug Level: ");
 
-		this.debugViewer = new ComboViewer(subContainer, SWT.READ_ONLY | SWT.SINGLE | SWT.DROP_DOWN | SWT.BORDER);
-		this.debugViewer.setContentProvider(new ArrayContentProvider());
-		this.debugViewer.setInput(this.debugLevels);
-		this.debugViewer.setSelection(new StructuredSelection("Info"));
-		this.debugViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		final ComboViewer debugViewer = new ComboViewer(subContainer, SWT.READ_ONLY | SWT.SINGLE | SWT.DROP_DOWN | SWT.BORDER);
+		debugViewer.setContentProvider(new ArrayContentProvider());
+		debugViewer.setInput(DebugLevel.values());
+		debugViewer.setSelection(new StructuredSelection("Info"));
+		context.bindValue(ViewersObservables.observeSingleSelection(debugViewer), nodeDebugLevel);
 
-			@Override
-			public void selectionChanged(final SelectionChangedEvent event) {
-				final IStructuredSelection sel = (IStructuredSelection) event.getSelection();
-				final String choice = (String) sel.getFirstElement();
-				final IStructuredSelection treeSelection = (IStructuredSelection) getTreeViewer().getSelection();
-				final DeviceConfiguration device = (DeviceConfiguration) treeSelection.getFirstElement();
-
-				LaunchDomainManagerWithOptionsDialog.debugMap.put(device, Arrays.asList(LaunchDomainManagerWithOptionsDialog.this.debugLevels).indexOf(choice));
-			}
-		});
-
-		getTreeViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(final SelectionChangedEvent event) {
-				final IStructuredSelection sel = (IStructuredSelection) event.getSelection();
-				final DeviceConfiguration choice = (DeviceConfiguration) sel.getFirstElement();
-
-				if (LaunchDomainManagerWithOptionsDialog.debugMap.containsKey(choice)) {
-					LaunchDomainManagerWithOptionsDialog.this.debugViewer.setSelection(new StructuredSelection(
-					        LaunchDomainManagerWithOptionsDialog.this.debugLevels[LaunchDomainManagerWithOptionsDialog.debugMap.get(choice)]));
-				}
-			}
-		});
+		label = new Label(subContainer, SWT.NULL);
+		label.setText("Arguments:");
+		Text text = new Text(subContainer, SWT.BORDER);
+		text.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
+		this.context.bindValue(SWTObservables.observeText(text, SWT.Modify), nodeArguments, null, null);
 
 		return root;
 	}
@@ -512,49 +411,20 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		} catch (final InterruptedException e) {
 			return;
 		}
-		
+
 		this.nameBinding.validateTargetToModel();
 		updateButtonsEnableState(Status.OK_STATUS);
-		
+
 		// If the name isn't valid after the final scan, then abort
 		if (!((IStatus) this.nameBinding.getValidationStatus().getValue()).isOK()) {
 			return;
 		}
-
-		final HashMap<DeviceConfiguration, Integer> tempMap = new HashMap<DeviceConfiguration, Integer>();
-
-		for (final Object obj : getTreeViewer().getCheckedElements()) {
-			final DeviceConfiguration device = (DeviceConfiguration) obj;
-			tempMap.put(device, LaunchDomainManagerWithOptionsDialog.debugMap.get(device));
-		}
-
-		LaunchDomainManagerWithOptionsDialog.debugMap.clear();
-		LaunchDomainManagerWithOptionsDialog.debugMap = tempMap;
-
 		super.okPressed();
-	}
-
-	@Override
-	public Object[] getResult() {
-		return new Object[] { LaunchDomainManagerWithOptionsDialog.debugMap };
 	}
 
 	@Override
 	public void setEmptyListMessage(final String message) {
 		super.setEmptyListMessage("No entries found.");
-	}
-
-	protected int getDebugLevel() {
-		int level = Arrays.asList(LaunchDomainManagerWithOptionsDialog.this.debugLevels).indexOf(this.model.debugLevel);
-		if (level < 0) {
-			return LaunchDomainManagerWithOptionsDialog.DEFAULT_DEBUG_LEVEL;
-		}
-		return level;
-	
-	}
-
-	protected String getDomainName() {
-		return this.model.domainName;
 	}
 
 	@Override
@@ -591,23 +461,12 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			if ((dom != null) && (!namingService.equals(dom.getConnectionProperties().get(ScaDomainManager.NAMING_SERVICE_PROP)))) {
 				return ValidationStatus.error("This name is registered against a non-default name server and cannot be a launched");
 			}
-				
+
 			if (LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.contains(s)) {
 				return ValidationStatus.error("Domain of this name is in use, please select a different name.");
 			}
-			
+
 			return ValidationStatus.ok();
-		}
-	};
-	private int activeRunningOperations;
-	private long timeWhenLastJobFinished;
-	private Cursor waitCursor;
-	private Cursor arrowCursor;
-	private Button cancelButton;
-	private final SelectionListener cancelListener = new SelectionAdapter() {
-		@Override
-		public void widgetSelected(final SelectionEvent e) {
-			cancelPressed();
 		}
 	};
 
@@ -778,7 +637,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 							// after the UI state is restored (which by definition means all jobs are done.
 							// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=287887
 							if (LaunchDomainManagerWithOptionsDialog.this.timeWhenLastJobFinished != 0
-							        && System.currentTimeMillis() - LaunchDomainManagerWithOptionsDialog.this.timeWhenLastJobFinished < LaunchDomainManagerWithOptionsDialog.RESTORE_ENTER_DELAY) {
+								&& System.currentTimeMillis() - LaunchDomainManagerWithOptionsDialog.this.timeWhenLastJobFinished < LaunchDomainManagerWithOptionsDialog.RESTORE_ENTER_DELAY) {
 								e.doit = false;
 								return;
 							}
@@ -836,5 +695,19 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	@Override
 	protected void updateButtonsEnableState(final IStatus status) {
 		super.updateButtonsEnableState((IStatus) this.nameBinding.getValidationStatus().getValue());
+	}
+
+	public List<DeviceManagerLaunchConfiguration> getDeviceManagerLaunchConfigurations() {
+		List<DeviceManagerLaunchConfiguration> retVal = new ArrayList<DeviceManagerLaunchConfiguration>();
+		for (Object o : this.nodes) {
+			DeviceManagerLaunchConfiguration conf = new DeviceManagerLaunchConfiguration(model.getDomainName(), (DeviceConfiguration) o,
+				(DebugLevel) nodeDebugLevel.getValue(), (String) nodeArguments.getValue());
+			retVal.add(conf);
+		}
+		return retVal;
+	}
+
+	public DomainManagerLaunchConfiguration getDomainManagerLaunchConfiguration() {
+		return model;
 	}
 }

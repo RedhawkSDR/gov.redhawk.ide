@@ -14,6 +14,9 @@ import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.NodeBooterLauncherUtil;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
+import gov.redhawk.ide.sdr.ui.util.DebugLevel;
+import gov.redhawk.ide.sdr.ui.util.DeviceManagerLaunchConfiguration;
+import gov.redhawk.ide.sdr.ui.util.DomainManagerLaunchConfiguration;
 import gov.redhawk.ide.sdr.ui.util.LaunchDeviceManagersHelper;
 import gov.redhawk.model.sca.DomainConnectionState;
 import gov.redhawk.model.sca.RefreshDepth;
@@ -23,12 +26,11 @@ import gov.redhawk.sca.ScaPlugin;
 import gov.redhawk.sca.preferences.ScaPreferenceConstants;
 import gov.redhawk.sca.ui.ScaUiPlugin;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-import mil.jpeojtrs.sca.dcd.provider.DcdItemProviderAdapterFactory;
 import mil.jpeojtrs.sca.dmd.DomainManagerConfiguration;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -55,15 +57,10 @@ import org.eclipse.ui.statushandlers.StatusManager;
 public class LaunchDomainManagerWithOptions extends AbstractHandler implements IHandler {
 
 	private static final int LAUNCH_WAIT_TIME = 1000;
-
-	private String newDomainName;
-
-	private int debugLevel;
-
-	private HashMap<DeviceConfiguration, Integer> devicesMap = new HashMap<DeviceConfiguration, Integer>();
+	private List<DeviceManagerLaunchConfiguration> deviceManagers = new ArrayList<DeviceManagerLaunchConfiguration>();
+	private DomainManagerLaunchConfiguration model = new DomainManagerLaunchConfiguration();
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
 		if (selection instanceof IStructuredSelection) {
@@ -76,34 +73,17 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 					final DomainManagerConfiguration domain = sdrRoot.getDomainConfiguration();
 					if (domain == null) {
 						StatusManager.getManager().handle(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "No Domain Configuration available."),
-						        StatusManager.SHOW);
+							StatusManager.SHOW);
 						continue;
 					}
-					final DcdItemProviderAdapterFactory factory = new DcdItemProviderAdapterFactory();
-					final LaunchDomainManagerWithOptionsDialog dialog = new LaunchDomainManagerWithOptionsDialog(HandlerUtil.getActiveShell(event), domain,
-					        factory);
-					dialog.setInput(sdrRoot);
+					model.setDomainName(domain.getName());
+
+					final LaunchDomainManagerWithOptionsDialog dialog = new LaunchDomainManagerWithOptionsDialog(HandlerUtil.getActiveShell(event), model,
+						sdrRoot);
 					if (dialog.open() == IStatus.OK) {
-						final Object[] dialogResult = dialog.getResult();
-						LaunchDomainManagerWithOptions.this.devicesMap = (HashMap<DeviceConfiguration, Integer>) dialogResult[0];
-
-						if (dialog.getDomainName() != null) {
-							LaunchDomainManagerWithOptions.this.newDomainName = dialog.getDomainName();
-							ScaModelCommand.execute(domain, new ScaModelCommand() {
-
-								@Override
-								public void execute() {
-									domain.setName(dialog.getDomainName());
-
-								}
-							});
-
-						}
-						LaunchDomainManagerWithOptions.this.debugLevel = dialog.getDebugLevel();
-
+						deviceManagers = dialog.getDeviceManagerLaunchConfigurations();
 						prepareDomainManager(domain, event);
 					}
-					factory.dispose();
 				}
 			}
 		}
@@ -117,23 +97,21 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 
 		final Map<String, String> connectionProperties = Collections.singletonMap(ScaDomainManager.NAMING_SERVICE_PROP, namingService);
 
-		final Job launchJob = new Job("Launch Domain: " + this.newDomainName) {
+		final Job launchJob = new Job("Launch Domain: " + model.getDomainName()) {
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
-				if (ScaPlugin.isDomainOnline(LaunchDomainManagerWithOptions.this.newDomainName)) {
+				if (ScaPlugin.isDomainOnline(model.getDomainName())) {
 					return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Refusing to launch domain that already exists on name server");
 				}
 
-				final ScaDomainManager connection = ScaPlugin.getDefault().getDomainManagerRegistry(current)
-				        .findDomain(LaunchDomainManagerWithOptions.this.newDomainName);
+				final ScaDomainManager connection = ScaPlugin.getDefault().getDomainManagerRegistry(current).findDomain(model.getDomainName());
 
 				if (connection == null) {
 					ScaModelCommand.execute(ScaPlugin.getDefault().getDomainManagerRegistry(current), new ScaModelCommand() {
 						@Override
 						public void execute() {
-							ScaPlugin.getDefault().getDomainManagerRegistry(current)
-							        .createDomain(LaunchDomainManagerWithOptions.this.newDomainName, false, connectionProperties);
+							ScaPlugin.getDefault().getDomainManagerRegistry(current).createDomain(model.getDomainName(), false, connectionProperties);
 						}
 					});
 				} else {
@@ -142,7 +120,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 					}
 				}
 
-				final ScaDomainManager config = ScaPlugin.getDefault().getDomainManagerRegistry(current).findDomain(LaunchDomainManagerWithOptions.this.newDomainName);
+				final ScaDomainManager config = ScaPlugin.getDefault().getDomainManagerRegistry(current).findDomain(model.getDomainName());
 				final String domainName = config.getName();
 				monitor.beginTask("Launching domain " + domainName, 2);
 				try {
@@ -162,8 +140,10 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 
 												@Override
 												public IStatus runInUIThread(final IProgressMonitor monitor) {
-													return LaunchDeviceManagersHelper.launchDeviceManagersWithDebug(monitor, domainName,
-													        LaunchDomainManagerWithOptions.this.devicesMap);
+													for (DeviceManagerLaunchConfiguration conf : deviceManagers) {
+														conf.setDomainName(domainName);
+													}
+													return LaunchDeviceManagersHelper.launchDeviceManagers(monitor, deviceManagers);
 												}
 
 											};
@@ -208,15 +188,20 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 
 				arguments.append("-D " + domain.getDomainManagerSoftPkg().getLocalFile().getName());
 
-				if (this.newDomainName != null) {
-					arguments.append(" --domainname \"" + this.newDomainName + "\"");
+				if (model.getDomainName() != null) {
+					arguments.append(" --domainname \"" + model.getDomainName() + "\"");
 				}
 
-				if (this.debugLevel != LaunchDomainManagerWithOptionsDialog.DEFAULT_DEBUG_LEVEL) {
-					arguments.append(" -debug " + this.debugLevel);
+				if (model.getDebugLevel() != DebugLevel.Info) {
+					arguments.append(" -debug " + model.getDebugLevel().ordinal());
 				}
 
 				arguments.append(" --nopersist");
+
+				if (model.getArguments() != null && !model.getArguments().trim().isEmpty()) {
+					arguments.append(" ");
+					arguments.append(model.getArguments());
+				}
 
 				config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments.toString());
 				monitor.worked(1);
