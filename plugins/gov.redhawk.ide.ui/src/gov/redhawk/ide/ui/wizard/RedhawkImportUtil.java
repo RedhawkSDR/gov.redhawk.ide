@@ -278,7 +278,6 @@ public class RedhawkImportUtil {
 		for (final Implementation impl : softPkg.getImplementation()) {
 			final ImplementationSettings settings = CodegenFactory.eINSTANCE.createImplementationSettings();
 			final String lang = impl.getProgrammingLanguage().getName();
-			System.out.println("Lang: " + lang);
 			// Find the code generator if specified, otherwise pick the first
 			// one returned by the registry
 			ICodeGeneratorDescriptor codeGenDesc = null;

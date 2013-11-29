@@ -25,19 +25,16 @@ public class ImplWrapper {
 	public ImplWrapper(ProjectRecord project, Implementation impl) {
 		this.setImpl(impl);
 		this.setProject(project);
-		setTemplate();
+		setDefaultTemplate();
 	}
 
-	private void setTemplate() {
+	private void setDefaultTemplate() {
 		if ("python".equals(impl.getId())) {
-			template = "redhawk.codegen.jinja.python.component.pull";
-			project.pythonImplTemplate = template;
+			setTemplate("redhawk.codegen.jinja.python.component.pull");
 		} else if ("cpp".equals(impl.getId())) {
-			template = "redhawk.codegen.jinja.cpp.component.pull";
-			project.cppImplTemplate = template;
+			setTemplate("redhawk.codegen.jinja.cpp.component.pull");
 		} else if ("java".equals(impl.getId())) {
-			template = "redhawk.codegen.jinja.java.component.pull";
-			project.javaImplTemplate = template;
+			setTemplate("redhawk.codegen.jinja.java.component.pull");
 		}
 	}
 
@@ -61,8 +58,17 @@ public class ImplWrapper {
 		return template;
 	}
 
-	public void setTemplate(String template) {
-		this.template = template;
+	public void setTemplate(String newTemplate) {
+		if ("python".equals(impl.getId())) {
+			this.template = newTemplate;
+			project.pythonImplTemplate = newTemplate;
+		} else if ("cpp".equals(impl.getId())) {
+			this.template = newTemplate;
+			project.cppImplTemplate = newTemplate;
+		} else if ("java".equals(impl.getId())) {
+			this.template = newTemplate;
+			project.javaImplTemplate = newTemplate;
+		}
 	}
 
 }
