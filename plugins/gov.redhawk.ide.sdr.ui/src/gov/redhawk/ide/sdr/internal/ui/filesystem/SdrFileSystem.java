@@ -54,10 +54,12 @@ public class SdrFileSystem extends FileSystem implements IExecutableExtension {
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		final String scheme = config.getAttribute("scheme");
 		IPath path = null;
-		if (ScaFileSystemConstants.SCHEME_TARGET_SDR_DEV.equals(scheme)) {
+		if (ScaFileSystemConstants.SCHEME_TARGET_SDR_DEV.equalsIgnoreCase(scheme)) {
 			path = SdrUiPlugin.getDefault().getTargetSdrDevPath();
-		} else if (ScaFileSystemConstants.SCHEME_TARGET_SDR_DOM.equals(scheme)) {
+		} else if (ScaFileSystemConstants.SCHEME_TARGET_SDR_DOM.equalsIgnoreCase(scheme)) {
 			path = SdrUiPlugin.getDefault().getTargetSdrDomPath();
+		} else if (ScaFileSystemConstants.SCHEME_TARGET_SDR.equalsIgnoreCase(scheme)) {
+			path = SdrUiPlugin.getDefault().getTargetSdrPath();
 		} else {
 			throw new CoreException(new Status(IStatus.ERROR, ScaUiPlugin.PLUGIN_ID, "Invalid SDR Filesystem scheme: " + scheme, null));
 		}
