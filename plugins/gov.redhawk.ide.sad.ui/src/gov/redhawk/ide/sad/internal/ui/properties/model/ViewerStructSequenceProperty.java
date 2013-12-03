@@ -23,61 +23,62 @@ import mil.jpeojtrs.sca.prf.StructValue;
  * 
  */
 public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence> {
-	private List<ViewerStructSequenceSimpleProperty> structs = new ArrayList<ViewerStructSequenceSimpleProperty>();
+	private List<ViewerStructSequenceSimpleProperty> simplesArray = new ArrayList<ViewerStructSequenceSimpleProperty>();
 
 	public ViewerStructSequenceProperty(StructSequence def, Object parent) {
 		super(def, parent);
 		for (Simple simple : def.getStruct().getSimple()) {
-			structs.add(new ViewerStructSequenceSimpleProperty(simple, this));
+			simplesArray.add(new ViewerStructSequenceSimpleProperty(simple, this));
 		}
 		setToDefault();
 	}
-	
+
 	@Override
 	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
 		super.addPropertyChangeListener(listener);
-		for (ViewerStructSequenceSimpleProperty p : structs) {
+		for (ViewerStructSequenceSimpleProperty p : simplesArray) {
 			p.addPropertyChangeListener(listener);
 		}
 	}
-	
+
 	@Override
 	public void removePropertyChangeListener(IViewerPropertyChangeListener listener) {
 		super.removePropertyChangeListener(listener);
-		for (ViewerStructSequenceSimpleProperty p : structs) {
+		for (ViewerStructSequenceSimpleProperty p : simplesArray) {
 			p.removePropertyChangeListener(listener);
 		}
 	}
 
 	@Override
 	public void setToDefault() {
-		for (ViewerStructSequenceSimpleProperty v : structs) {
+		for (ViewerStructSequenceSimpleProperty v : simplesArray) {
 			v.setToDefault();
 		}
 	}
 
 	public List<ViewerStructSequenceSimpleProperty> getSimples() {
-		return structs;
+		return simplesArray;
 	}
 
 	public void setValue(StructSequenceRef value) {
 		if (value == null) {
 			setToDefault();
+			firePropertyChangeEvent();
 			return;
 		}
-		for (ViewerStructSequenceSimpleProperty p : structs) {
-			p.setValues(new ArrayList<String>(value.getStructValue().size()));
+
+		for (ViewerStructSequenceSimpleProperty prop : simplesArray) {
+			prop.setValues(new ArrayList<String>(value.getStructValue().size()));
 		}
-		for (StructValue v : value.getStructValue()) {
-			for (SimpleRef ref : v.getSimpleRef()) {
-				for (ViewerStructSequenceSimpleProperty p : structs) {
-					if (ref.getRefID().equals(p.getDefinition().getId())) {
-						p.getValues().add(ref.getValue());
-						break;
-					}
-				}
+
+		for (int i = 0; i < value.getStructValue().size(); i++) {
+			StructValue struct = value.getStructValue().get(i);
+			for (int j = 0; j < struct.getSimpleRef().size(); j++) {
+				SimpleRef simple = struct.getSimpleRef().get(j);
+				simplesArray.get(j).getValues().add(simple.getValue());
 			}
 		}
+
 		firePropertyChangeEvent();
 	}
 }

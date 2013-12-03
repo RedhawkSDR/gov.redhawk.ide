@@ -46,13 +46,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.swt.widgets.Display;
@@ -67,6 +67,10 @@ public class ViewerModelConverter {
 		@Override
 		public void notifyChanged(org.eclipse.emf.common.notify.Notification notification) {
 			super.notifyChanged(notification);
+			if (handlingchange) {
+				return;
+			}
+			handlingchange = true;
 			if (notification.isTouch()) {
 				return;
 			}
@@ -203,13 +207,24 @@ public class ViewerModelConverter {
 				}
 
 			}
+			handlingchange = false;
+			viewer.refresh();
 		}
 	};
 	private IViewerPropertyChangeListener propertyListener = new IViewerPropertyChangeListener() {
 
 		@Override
 		public void valueChanged(ViewerProperty< ? > source) {
-			handleViewerPropValueChanged(source);
+			if (handlingchange) {
+				return;
+			}
+			handlingchange = true;
+			try {
+				handleViewerPropValueChanged(source);
+			} finally {
+				handlingchange = false;
+			}
+			viewer.refresh();
 		}
 
 		@Override
@@ -217,6 +232,7 @@ public class ViewerModelConverter {
 			handleViewerPropExternalIDChanged(source);
 		}
 	};
+	private boolean handlingchange = false;
 	private PropertiesViewer viewer;
 	private WorkbenchJob refreshJob = new WorkbenchJob("Refresh Viewer") {
 		{
@@ -394,37 +410,33 @@ public class ViewerModelConverter {
 				throw new UnsupportedOperationException();
 			}
 		} else if (source instanceof ViewerStructSequenceProperty) {
-			ViewerStructSequenceProperty structSeq = (ViewerStructSequenceProperty) source;
+			final ViewerStructSequenceProperty structSeq = (ViewerStructSequenceProperty) source;
 			Object parent = source.getParent();
 			if (parent instanceof ViewerComponent) {
-				ViewerComponent comp = (ViewerComponent) parent;
-				SadComponentInstantiation inst = comp.getComponentInstantiation();
-				ComponentProperties properties = inst.getComponentProperties();
-				StructSequenceRef ref = (StructSequenceRef) getRef(inst, structSeq);
-				if (ref == null) {
-					ref = createRef(structSeq);
-					if (properties == null) {
-						properties = PartitioningFactory.eINSTANCE.createComponentProperties();
-						properties.getStructSequenceRef().add(ref);
-						command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
-					} else {
-						command = AddCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_SEQUENCE_REF, ref);
-					}
-				} else {
-					if (!structSeq.getSimples().isEmpty() && structSeq.getSimples().get(0).getValues() != null) {
-						ref = createRef(structSeq);
-						CompoundCommand replace = new CompoundCommand();
-						replace.append(RemoveCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF, ref));
-						replace.append(AddCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_SEQUENCE_REF, ref));
-						command = replace;
-					} else {
-						if (properties.getProperties().size() == 1) {
-							command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, null);
-						} else {
-							command = RemoveCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_SEQUENCE_REF, ref);
+				final ViewerComponent comp = (ViewerComponent) parent;
+				final SadComponentInstantiation inst = comp.getComponentInstantiation();
+				final ComponentProperties oldProperties = inst.getComponentProperties();
+				final StructSequenceRef oldRef = (StructSequenceRef) getRef(inst, structSeq);
+				command = new RecordingCommand(domain) {
+
+					@Override
+					protected void doExecute() {
+						if (oldRef != null) {
+							oldProperties.getStructSequenceRef().remove(oldRef);
+						}
+						if (!structSeq.getSimples().isEmpty() && structSeq.getSimples().get(0).getValues() != null) {
+							ComponentProperties properties = oldProperties;
+							if (properties == null) {
+								properties = PartitioningFactory.eINSTANCE.createComponentProperties();
+								inst.setComponentProperties(properties);
+							}
+							StructSequenceRef newRef = createRef(structSeq);
+							properties.getStructSequenceRef().add(newRef);
+						} else if (oldProperties != null && oldProperties.getProperties().isEmpty()) {
+							inst.setComponentProperties(null);
 						}
 					}
-				}
+				};
 			} else {
 				throw new UnsupportedOperationException();
 			}
@@ -433,7 +445,9 @@ public class ViewerModelConverter {
 		}
 
 		if (command != null) {
+			boolean canExecute = command.canExecute();
 			domain.getCommandStack().execute(command);
+			viewer.refresh();
 		}
 	}
 
@@ -617,14 +631,14 @@ public class ViewerModelConverter {
 			return;
 		}
 		if (this.sad != null) {
-//			sadListener.unsetTarget(this.sad);
+			//			sadListener.unsetTarget(this.sad);
 			sad.eAdapters().remove(sadListener);
 		}
 		this.sad = sad;
 		setupModel();
 		if (this.sad != null) {
 			sad.eAdapters().add(sadListener);
-//			sadListener.setTarget(sad);
+			//			sadListener.setTarget(sad);
 		}
 	}
 

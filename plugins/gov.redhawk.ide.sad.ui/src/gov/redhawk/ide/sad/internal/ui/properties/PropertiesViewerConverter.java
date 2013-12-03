@@ -31,6 +31,7 @@ import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.util.AnyUtils;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.jface.window.Window;
@@ -81,6 +82,16 @@ public class PropertiesViewerConverter implements XViewerConverter {
 						property.setDefinition(viewerProp.getDefinition());
 						if (ref != null) {
 							property.fromAny(ref.toAny());
+						}
+						for (int i = 0; i < property.getStructs().size(); i++) {
+							ScaStructProperty struct = property.getStructs().get(i);
+							for (int j = 0; j < struct.getSimples().size(); j++) {
+								ScaSimpleProperty simple = struct.getSimples().get(j);
+								String value = viewerProp.getSimples().get(j).getValues().get(i);
+								Object objValue = AnyUtils.convertString(value, simple.getDefinition().getType().getLiteral(),
+									simple.getDefinition().isComplex());
+								simple.setValue(objValue);
+							}
 						}
 						SequencePropertyValueWizard wizard = new SequencePropertyValueWizard(property);
 						WizardDialog dialog = new WizardDialog(button.getShell(), wizard);
