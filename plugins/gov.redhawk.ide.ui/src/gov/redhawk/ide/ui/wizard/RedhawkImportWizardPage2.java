@@ -14,11 +14,12 @@ import gov.redhawk.ide.codegen.ITemplateDesc;
 import gov.redhawk.ide.codegen.internal.CodeGeneratorTemplatesRegistry;
 import gov.redhawk.ide.ui.wizard.RedhawkImportWizardPage1.ProjectRecord;
 
-import org.eclipse.jface.layout.TreeColumnLayout;
+import java.util.Arrays;
+
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.wizard.WizardPage;
@@ -37,10 +38,8 @@ import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
  */
 @SuppressWarnings("restriction")
 public class RedhawkImportWizardPage2 extends WizardPage {
-	// CHECKSTYLE:OFF
-	TreeViewer viewer;
-	TreeColumnLayout columnLayout;
-	ProjectRecord[] projects = null;
+	private TreeViewer viewer;
+	private ProjectRecord[] projects = null;
 
 	public RedhawkImportWizardPage2() {
 		this("redhawkImportWizard");
@@ -100,10 +99,17 @@ public class RedhawkImportWizardPage2 extends WizardPage {
 				return "";
 			}
 		});
+		
+		// Get a String array of accepted template id's
+		CodeGeneratorTemplatesRegistry reg = new CodeGeneratorTemplatesRegistry();
+		ITemplateDesc[] templateDescriptions = reg.getTemplates();
+		final String[] templates = new String[templateDescriptions.length];
+		for (int i = 0; i < templateDescriptions.length; i++) {
+			templates[i] = templateDescriptions[i].getId(); 
+		}
 
-		final TextCellEditor cellEditor = new TextCellEditor(viewer.getTree());
 		final TreeViewerColumn templateColumn = new TreeViewerColumn(viewer, SWT.NONE);
-		templateColumn.getColumn().setWidth(300);
+		templateColumn.getColumn().setWidth(500);
 		templateColumn.getColumn().setText("Template: ");
 		templateColumn.setLabelProvider(new ColumnLabelProvider() {
 
@@ -126,6 +132,7 @@ public class RedhawkImportWizardPage2 extends WizardPage {
 
 			@Override
 			protected CellEditor getCellEditor(Object element) {
+				ComboBoxCellEditor cellEditor = new ComboBoxCellEditor(viewer.getTree(), templates);
 				return cellEditor;
 			}
 
@@ -133,9 +140,11 @@ public class RedhawkImportWizardPage2 extends WizardPage {
 			protected Object getValue(Object element) {
 				if (element instanceof ImplWrapper) {
 					ImplWrapper implWrapper = (ImplWrapper) element;
-					return implWrapper.getTemplate();
+					String templateID = implWrapper.getTemplate();
+					int index = Arrays.asList(templates).indexOf(templateID);
+					return index;
 				} else {
-					return "";
+					return 0;
 				}
 			}
 
@@ -143,25 +152,17 @@ public class RedhawkImportWizardPage2 extends WizardPage {
 			protected void setValue(Object element, Object value) {
 				if (element instanceof ImplWrapper) {
 					ImplWrapper implWrapper = (ImplWrapper) element;
-					implWrapper.setTemplate(String.valueOf(value));
-					viewer.update(element, null);
-
-					// Compare entered string with available templates
-					CodeGeneratorTemplatesRegistry reg = new CodeGeneratorTemplatesRegistry();
-					ITemplateDesc[] templateDescriptions = reg.getTemplates();
-					boolean isValid = false;
-					for (ITemplateDesc t : templateDescriptions) {
-						if (t.getId().equals(value)) {
-							isValid = true;
-						}
-					}
-					// Lets user know if the entered template is found in the templates registry
-					if (!isValid) {
+					if ((Integer) value == -1) {
 						MessageBox errorMsg = new MessageBox(getShell(), SWT.ICON_ERROR);
-						errorMsg.setMessage("Warning: '" + value + "' does not match any valid template IDs ");
+						errorMsg.setMessage("Entry does not match a valid template ID");
 						errorMsg.setText("Error with template value");
 						errorMsg.open();
+						return;
 					}
+					String template = templates[(Integer) value];
+					implWrapper.setTemplate(template);
+					viewer.update(element, null);
+
 				}
 			}
 		});

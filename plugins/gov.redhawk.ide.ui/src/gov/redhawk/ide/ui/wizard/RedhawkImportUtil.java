@@ -69,7 +69,6 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
  */
 @SuppressWarnings("restriction")
 public class RedhawkImportUtil {
-	// CHECKSTYLE:OFF
 	private static String sadExtension = ".+\\.sad.xml";
 	private static String spdExtension = ".+\\.spd.xml";
 	private static String dcdExtension = ".+\\.dcd.xml";
@@ -82,7 +81,6 @@ public class RedhawkImportUtil {
 
 	private boolean dotProjectMissing = true;
 	private boolean wavedevMissing = true;
-	private boolean pydevProjectMissing = true;
 	private boolean copyFiles;
 
 	public static String getName(IPath path) throws IOException,
@@ -98,15 +96,15 @@ public class RedhawkImportUtil {
 			if (event.isStartElement()) {
 				StartElement startElement = event.asStartElement();
 				String element = startElement.getName().getLocalPart();
-				if (element.equals("deviceconfiguration")
-						|| element.equals("softwareassembly")
-						|| element.equals("softpkg")) {
+				if ("deviceconfiguration".equals(element)
+						|| "softwareassembly".equals(element)
+						|| "softpkg".equals(element)) {
 					@SuppressWarnings("unchecked")
 					Iterator<Attribute> attributes = startElement
 							.getAttributes();
 					while (attributes.hasNext()) {
 						Attribute attribute = attributes.next();
-						if (attribute.getName().toString().equals("name")) {
+						if ("name".equals(attribute.getName().toString())) {
 							projectName = attribute.getValue();
 							return projectName;
 						}
@@ -151,12 +149,9 @@ public class RedhawkImportUtil {
 				if (wavedevMissing) {
 					createWavDevFile();
 				}
-				if (pydevProjectMissing) {
-					// TODO create this file
-				}
 			}
 		} catch (CoreException e) {
-			e.printStackTrace();
+			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		}
 	}
 
@@ -172,10 +167,6 @@ public class RedhawkImportUtil {
 				wavedevMissing = false;
 				continue;
 			}
-			if (f.getName().matches(".+\\.pydevproject")) {
-				pydevProjectMissing = false;
-				continue;
-			}
 		}
 	}
 
@@ -186,7 +177,7 @@ public class RedhawkImportUtil {
 					.getParentFile().getAbsolutePath());
 
 			// Build new .project files of the appropriate type
-			if (projectType.equals("SAD")) {
+			if ("SAD".equals(projectType)) {
 				if (!copyFiles) {
 					project = WaveformProjectCreator.createEmptyProject(
 							projectName, projectLocation, monitor);
@@ -195,7 +186,7 @@ public class RedhawkImportUtil {
 							projectName, null, monitor);
 				}
 			}
-			if (projectType.equals("DCD")) {
+			if ("DCD".equals(projectType)) {
 				if (!copyFiles) {
 					project = NodeProjectCreator.createEmptyProject(
 							projectName, projectLocation, monitor);
@@ -204,7 +195,7 @@ public class RedhawkImportUtil {
 							projectName, null, monitor);
 				}
 			}
-			if (projectType.equals("SPD")) {
+			if ("SPD".equals(projectType)) {
 				if (!copyFiles) {
 					project = ComponentProjectCreator.createEmptyProject(
 							projectName, projectLocation, monitor);
@@ -267,7 +258,7 @@ public class RedhawkImportUtil {
 		return null;
 	}
 
-	@SuppressWarnings({ "deprecation"})
+	@SuppressWarnings({ "deprecation" })
 	private void createWavDevFile() throws CoreException {
 		// creates the missing wavedev file
 		final SoftPkg softPkg = getSoftPkg(record.projectSystemFile.getAbsolutePath());
@@ -317,35 +308,43 @@ public class RedhawkImportUtil {
 						settings.getProperties().add(p);
 					}
 					// Set the template
-					if(lang.equals("C++") && record.cppImplTemplate != null) {
-						settings.setTemplate(record.cppImplTemplate);
-					} else if (lang.equals("Java") && record.javaImplTemplate != null) {
-						settings.setTemplate(record.javaImplTemplate);
-					} else if (lang.equals("Python") && record.pythonImplTemplate != null) {
-						settings.setTemplate(record.pythonImplTemplate);
+					if ("C++".equals(lang)) {
+						if (record.cppImplTemplate != null) {
+							settings.setTemplate(record.cppImplTemplate);
+						} else {
+							settings.setTemplate("redhawk.codegen.jinja.cpp.component.pull");
+						}
+					} else if ("Java".equals(lang)) {
+						if (record.javaImplTemplate != null) {
+							settings.setTemplate(record.javaImplTemplate);
+						} else {
+							settings.setTemplate("redhawk.codegen.jinja.java.component.pull");
+						}
+					} else if ("Python".equals(lang)) {
+						if (record.pythonImplTemplate != null) {
+							settings.setTemplate(record.pythonImplTemplate);							
+						} else {
+							settings.setTemplate("redhawk.codegen.jinja.python.component.pull");
+						}
 					} else {
 						settings.setTemplate(templateDesc.getId());						
 					}
-				} else {
-					System.err.println("Unable to find a valid template!");
-				}
-			} else {
-				System.err.println("Unable to find a valid Code Generator!");
+				} 
 			}
 
 			// If a java implementation is found
-			if(lang.equals("Java")) {
+			if ("Java".equals(lang)) {
 				boolean hasUseJni = false;
 				EList<Property> properties = settings.getProperties();
 				for (Property prop : properties) {
 					// Validate java_package name and create a default one if necessary
-					if (prop.getId().equals("java_package")) {
+					if ("java_package".equals(prop.getId())) {
 						if (prop.getValue() == null || prop.getValue().isEmpty()) {
 							prop.setValue(projectName + ".java");
 						}
 					}
 					// Check for use_jni and populate if it is found but empty
-					if (prop.getId().equals("use_jni")) {
+					if ("use_jni".equals(prop.getId())) {
 						hasUseJni = true;
 						if (prop.getValue() == null || prop.getValue().isEmpty()) {
 							prop.setValue("TRUE");
@@ -353,7 +352,7 @@ public class RedhawkImportUtil {
 					}
 				}
 				//if use_jni is not found, build it with TRUE as default
-				if(!hasUseJni) {
+				if (!hasUseJni) {
 					final Property useJni = CodegenFactory.eINSTANCE.createProperty();
 					useJni.setId("use_jni");
 					useJni.setValue("TRUE");
@@ -375,7 +374,7 @@ public class RedhawkImportUtil {
 		try {
 			res.save(null);
 		} catch (final IOException e) {
-			e.printStackTrace();
+			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		}
 	}
 

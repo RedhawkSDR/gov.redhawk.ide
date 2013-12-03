@@ -26,10 +26,8 @@ import org.eclipse.jface.viewers.Viewer;
  * @since 9.1
  */
 public class RedhawkImportContentProvider implements ITreeContentProvider {
-	//CHECKSTYLE:OFF
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -38,14 +36,14 @@ public class RedhawkImportContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if(inputElement instanceof ProjectRecord[]) {
+		if (inputElement instanceof ProjectRecord[]) {
 			ProjectRecord[] records = (ProjectRecord[]) inputElement;
 			
 			List<ProjectRecord> projects = new ArrayList<ProjectRecord>();
 			
 			// Only grab projects with an spd as projectSystemFile
-			for(ProjectRecord project : records) {
-				if(project.projectSystemFile.getName().matches(".+\\.spd.xml")) {
+			for (ProjectRecord project : records) {
+				if (project.projectSystemFile.getName().matches(".+\\.spd.xml")) {
 					projects.add(project);
 				}
 			}
@@ -56,7 +54,7 @@ public class RedhawkImportContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if(parentElement instanceof ProjectRecord) {
+		if (parentElement instanceof ProjectRecord) {
 			ProjectRecord project = (ProjectRecord) parentElement;
 			SoftPkg softpkg = new RedhawkImportUtil().getSoftPkg(project.projectSystemFile.getAbsolutePath());
 
@@ -73,16 +71,11 @@ public class RedhawkImportContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object getParent(Object element) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean hasChildren(Object element) {
-		if(element instanceof ProjectRecord) {
-			return true;
-		} else {
-			return false;
-		}
+		return element instanceof ProjectRecord;
 	}
 }
