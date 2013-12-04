@@ -47,7 +47,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class SadPropertiesPage extends ScaFormPage {
 
 	private PropertiesViewer viewer;
-	private ViewerModelConverter model = new ViewerModelConverter();
+	private final ViewerModelConverter model = new ViewerModelConverter();
 	private IAction expandAllAction = new Action() {
 		{
 			setToolTipText("Expand All");
@@ -142,6 +142,13 @@ public class SadPropertiesPage extends ScaFormPage {
 		model.setSoftwareAssembly(sad);
 	}
 
+	@Override
+	public void updateFormSelection() {
+		super.updateFormSelection();
+		viewer.refresh();
+		viewer.expandToLevel(2);
+	}
+	
 	@Override
 	public void setFocus() {
 		if (viewer != null) {

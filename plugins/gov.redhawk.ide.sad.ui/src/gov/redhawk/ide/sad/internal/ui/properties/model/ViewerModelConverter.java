@@ -71,144 +71,146 @@ public class ViewerModelConverter {
 				return;
 			}
 			handlingchange = true;
-			if (notification.isTouch()) {
-				return;
-			}
-			if (notification.getNotifier() instanceof SadComponentInstantiation) {
-				switch (notification.getFeatureID(SadComponentInstantiation.class)) {
-				case SadPackage.SAD_COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES:
-					handleComponentInstComponentPropertiesChanged(notification);
-					break;
-				default:
-					break;
+			try {
+				if (notification.isTouch()) {
+					return;
 				}
-			} else if (notification.getNotifier() instanceof ComponentProperties) {
-				switch (notification.getFeatureID(ComponentProperties.class)) {
-				case PartitioningPackage.COMPONENT_PROPERTIES__SIMPLE_REF:
-					handlePropertiesSimpleRefChanged(notification);
-					break;
-				case PartitioningPackage.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF:
-					handlePropertiesSimpleSequenceRefChanged(notification);
-					break;
-				case PartitioningPackage.COMPONENT_PROPERTIES__STRUCT_REF:
-					handlePropertiesStructRefChanged(notification);
-					break;
-				case PartitioningPackage.COMPONENT_PROPERTIES__STRUCT_SEQUENCE_REF:
-					handlePropertiesStructSequenceRefChanged(notification);
-					break;
-				default:
-					break;
-				}
-			} else if (notification.getNotifier() instanceof SimpleRef) {
-				switch (notification.getFeatureID(SimpleRef.class)) {
-				case PrfPackage.SIMPLE_REF__VALUE:
-					handleSimpleRefValueChanged(notification);
-					break;
-				default:
-					break;
-				}
-			} else if (notification.getNotifier() instanceof SimpleSequenceRef) {
-				switch (notification.getFeatureID(SimpleSequenceRef.class)) {
-				case PrfPackage.SIMPLE_SEQUENCE_REF__VALUES:
-					handleSimpleSequenceRefValuesChanged(notification);
-					break;
-				default:
-					break;
-				}
-			} else if (notification.getNotifier() instanceof StructRef) {
-				switch (notification.getFeatureID(StructRef.class)) {
-				case PrfPackage.STRUCT_REF__SIMPLE_REF:
-					handleStructRefSimpleRefChanged(notification);
-					break;
-				default:
-					break;
-				}
-			} else if (notification.getNotifier() instanceof StructSequenceRef) {
-				switch (notification.getFeatureID(StructSequenceRef.class)) {
-				case PrfPackage.STRUCT_SEQUENCE__STRUCT_VALUE:
-					handleStructSeqStructValueChanged(notification);
-					break;
-				default:
-					break;
-				}
+				if (notification.getNotifier() instanceof SadComponentInstantiation) {
+					switch (notification.getFeatureID(SadComponentInstantiation.class)) {
+					case SadPackage.SAD_COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES:
+						handleComponentInstComponentPropertiesChanged(notification);
+						break;
+					default:
+						break;
+					}
+				} else if (notification.getNotifier() instanceof ComponentProperties) {
+					switch (notification.getFeatureID(ComponentProperties.class)) {
+					case PartitioningPackage.COMPONENT_PROPERTIES__SIMPLE_REF:
+						handlePropertiesSimpleRefChanged(notification);
+						break;
+					case PartitioningPackage.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF:
+						handlePropertiesSimpleSequenceRefChanged(notification);
+						break;
+					case PartitioningPackage.COMPONENT_PROPERTIES__STRUCT_REF:
+						handlePropertiesStructRefChanged(notification);
+						break;
+					case PartitioningPackage.COMPONENT_PROPERTIES__STRUCT_SEQUENCE_REF:
+						handlePropertiesStructSequenceRefChanged(notification);
+						break;
+					default:
+						break;
+					}
+				} else if (notification.getNotifier() instanceof SimpleRef) {
+					switch (notification.getFeatureID(SimpleRef.class)) {
+					case PrfPackage.SIMPLE_REF__VALUE:
+						handleSimpleRefValueChanged(notification);
+						break;
+					default:
+						break;
+					}
+				} else if (notification.getNotifier() instanceof SimpleSequenceRef) {
+					switch (notification.getFeatureID(SimpleSequenceRef.class)) {
+					case PrfPackage.SIMPLE_SEQUENCE_REF__VALUES:
+						handleSimpleSequenceRefValuesChanged(notification);
+						break;
+					default:
+						break;
+					}
+				} else if (notification.getNotifier() instanceof StructRef) {
+					switch (notification.getFeatureID(StructRef.class)) {
+					case PrfPackage.STRUCT_REF__SIMPLE_REF:
+						handleStructRefSimpleRefChanged(notification);
+						break;
+					default:
+						break;
+					}
+				} else if (notification.getNotifier() instanceof StructSequenceRef) {
+					switch (notification.getFeatureID(StructSequenceRef.class)) {
+					case PrfPackage.STRUCT_SEQUENCE__STRUCT_VALUE:
+						handleStructSeqStructValueChanged(notification);
+						break;
+					default:
+						break;
+					}
 
-			} else if (notification.getNotifier() instanceof SoftwareAssembly) {
-				switch (notification.getFeatureID(SoftwareAssembly.class)) {
-				case SadPackage.SOFTWARE_ASSEMBLY__EXTERNAL_PROPERTIES:
-					handleSoftwareAssemblyExternalPropertiesChanged(notification);
-					break;
-				case SadPackage.SOFTWARE_ASSEMBLY__PARTITIONING:
-					handleSoftwareAssemblyPartitioningChanged(notification);
-					break;
-				case SadPackage.SOFTWARE_ASSEMBLY__ASSEMBLY_CONTROLLER:
-					handleAssemblyControlerUpdate(notification);
-					break;
-				default:
-					break;
-				}
-			} else if (notification.getNotifier() instanceof AssemblyController) {
-				switch (notification.getFeatureID(AssemblyController.class)) {
-				case SadPackage.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF:
-					handleAssemblyControlerUpdate(notification);
-					break;
-				default:
-					break;
-				}
-			} else if (notification.getNotifier() instanceof SadComponentInstantiationRef) {
-				switch (notification.getFeatureID(SadComponentInstantiationRef.class)) {
-				case SadPackage.SAD_COMPONENT_INSTANTIATION_REF__REFID:
-					handleAssemblyControlerUpdate(notification);
-					break;
-				default:
-					break;
-				}
-			} else if (notification.getNotifier() instanceof SadPartitioning) {
-				switch (notification.getFeatureID(SadPartitioning.class)) {
-				case SadPackage.SAD_PARTITIONING__HOST_COLLOCATION:
-					handlePartitioningHostCollocationChanged(notification);
-					break;
-				case SadPackage.SAD_PARTITIONING__COMPONENT_PLACEMENT:
-					handlePartitioningComponentPlacementChanged(notification);
-					break;
-				default:
-					break;
-				}
-			} else if (notification.getNotifier() instanceof HostCollocation) {
-				switch (notification.getFeatureID(HostCollocation.class)) {
-				case SadPackage.HOST_COLLOCATION__COMPONENT_PLACEMENT:
-					handleHostCollocationComponentPlacementChanged(notification);
-					break;
-				default:
-					break;
-				}
-			} else if (notification.getNotifier() instanceof SadComponentPlacement) {
-				switch (notification.getFeatureID(SadComponentPlacement.class)) {
-				case SadPackage.SAD_COMPONENT_PLACEMENT__COMPONENT_INSTANTIATION:
-					handleComponentPlacementComponentInstantiationChanged(notification);
-					break;
-				default:
-					break;
-				}
-			} else if (notification.getNotifier() instanceof ExternalProperties) {
-				switch (notification.getFeatureID(ExternalProperties.class)) {
-				case SadPackage.EXTERNAL_PROPERTIES__PROPERTIES:
-					handleExternalPropertiesPropertiesChanged(notification);
-					break;
-				default:
-					break;
-				}
-			} else if (notification.getNotifier() instanceof ExternalProperty) {
-				switch (notification.getFeatureID(ExternalProperty.class)) {
-				case SadPackage.EXTERNAL_PROPERTY__EXTERNAL_PROP_ID:
-					handleExternalPropIDChanged(notification);
-					break;
-				default:
-					break;
-				}
+				} else if (notification.getNotifier() instanceof SoftwareAssembly) {
+					switch (notification.getFeatureID(SoftwareAssembly.class)) {
+					case SadPackage.SOFTWARE_ASSEMBLY__EXTERNAL_PROPERTIES:
+						handleSoftwareAssemblyExternalPropertiesChanged(notification);
+						break;
+					case SadPackage.SOFTWARE_ASSEMBLY__PARTITIONING:
+						handleSoftwareAssemblyPartitioningChanged(notification);
+						break;
+					case SadPackage.SOFTWARE_ASSEMBLY__ASSEMBLY_CONTROLLER:
+						handleAssemblyControlerUpdate(notification);
+						break;
+					default:
+						break;
+					}
+				} else if (notification.getNotifier() instanceof AssemblyController) {
+					switch (notification.getFeatureID(AssemblyController.class)) {
+					case SadPackage.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF:
+						handleAssemblyControlerUpdate(notification);
+						break;
+					default:
+						break;
+					}
+				} else if (notification.getNotifier() instanceof SadComponentInstantiationRef) {
+					switch (notification.getFeatureID(SadComponentInstantiationRef.class)) {
+					case SadPackage.SAD_COMPONENT_INSTANTIATION_REF__REFID:
+						handleAssemblyControlerUpdate(notification);
+						break;
+					default:
+						break;
+					}
+				} else if (notification.getNotifier() instanceof SadPartitioning) {
+					switch (notification.getFeatureID(SadPartitioning.class)) {
+					case SadPackage.SAD_PARTITIONING__HOST_COLLOCATION:
+						handlePartitioningHostCollocationChanged(notification);
+						break;
+					case SadPackage.SAD_PARTITIONING__COMPONENT_PLACEMENT:
+						handlePartitioningComponentPlacementChanged(notification);
+						break;
+					default:
+						break;
+					}
+				} else if (notification.getNotifier() instanceof HostCollocation) {
+					switch (notification.getFeatureID(HostCollocation.class)) {
+					case SadPackage.HOST_COLLOCATION__COMPONENT_PLACEMENT:
+						handleHostCollocationComponentPlacementChanged(notification);
+						break;
+					default:
+						break;
+					}
+				} else if (notification.getNotifier() instanceof SadComponentPlacement) {
+					switch (notification.getFeatureID(SadComponentPlacement.class)) {
+					case SadPackage.SAD_COMPONENT_PLACEMENT__COMPONENT_INSTANTIATION:
+						handleComponentPlacementComponentInstantiationChanged(notification);
+						break;
+					default:
+						break;
+					}
+				} else if (notification.getNotifier() instanceof ExternalProperties) {
+					switch (notification.getFeatureID(ExternalProperties.class)) {
+					case SadPackage.EXTERNAL_PROPERTIES__PROPERTIES:
+						handleExternalPropertiesPropertiesChanged(notification);
+						break;
+					default:
+						break;
+					}
+				} else if (notification.getNotifier() instanceof ExternalProperty) {
+					switch (notification.getFeatureID(ExternalProperty.class)) {
+					case SadPackage.EXTERNAL_PROPERTY__EXTERNAL_PROP_ID:
+						handleExternalPropIDChanged(notification);
+						break;
+					default:
+						break;
+					}
 
+				}
+			} finally {
+				handlingchange = false;
 			}
-			handlingchange = false;
-			viewer.refresh();
 		}
 	};
 	private IViewerPropertyChangeListener propertyListener = new IViewerPropertyChangeListener() {
