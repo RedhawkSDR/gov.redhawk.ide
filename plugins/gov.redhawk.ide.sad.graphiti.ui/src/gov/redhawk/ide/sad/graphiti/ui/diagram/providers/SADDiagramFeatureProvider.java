@@ -1,10 +1,13 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.DeleteSADConnectInterface;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByNamingServicePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
+import mil.jpeojtrs.sca.sad.SadConnectInterface;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
@@ -26,6 +29,7 @@ import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.DefaultMoveShapeFeature;
 import org.eclipse.graphiti.features.impl.DefaultRemoveFeature;
 import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
+import org.eclipse.graphiti.features.impl.UpdateNoBoFeature;
 import org.eclipse.graphiti.pattern.DefaultFeatureProviderWithPatterns;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
@@ -86,32 +90,22 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	
 	@Override
 	public IUpdateFeature getUpdateFeature(IUpdateContext context){
-//		PictogramElement pictogramElement = context.getPictorgramElement();
-//		if(pictogramElement instanceof ContainerShape){
-//			Object bo = getBusinessObjectForPictogramElement(pictogramElement);
-//			if(bo instanceof Object1){
-//				return new UpdateObjec1Feature(this);
-//			}
-//		}
-		
-		//TODO: how do we hide these
-//		//Search for shapes that we don't want the user to have remove capability
-//		PictogramElement pe = context.getPictogramElement();
-//		if(pe != null && pe.getProperties() != null){
-//			for(Property p: pe.getProperties()){
-//				if(ComponentPattern.PROVIDES_PORT_TYPE_CONTAINER.equals(p.getKey()) ||
-//						ComponentPattern.USES_PORT_TYPE_CONTAINER.equals(p.getKey()) ||
-//						ComponentPattern.PROVIDES_PORT_TYPE.equals(p.getKey()) ||
-//						ComponentPattern.USES_PORT_TYPE.equals(p.getKey()))
-//				{
-//					return new DefaultUpdateFeature(this) {
-//						public boolean isAvailable(IContext context) {
-//							return false;
-//						}
-//					};
-//				}
-//			}
-//		}
+
+		//hide update icon for some pictogram elements
+		if(DiagramUtil.doesPictogramContainProperty(context, 
+				new String[] {ComponentPattern.COMPONENT_SHAPE_providesPortsContainerShape,
+				ComponentPattern.COMPONENT_SHAPE_usesPortsContainerShape,
+				ComponentPattern.COMPONENT_SHAPE_providesPortContainerShape,
+				ComponentPattern.COMPONENT_SHAPE_usesPortContainerShape,
+				ComponentPattern.COMPONENT_SHAPE_providesPortRectangleShape,
+				ComponentPattern.COMPONENT_SHAPE_usesPortRectangleShape}))
+		{
+			return new UpdateNoBoFeature(this) {
+				public boolean isAvailable(IContext context) {
+					return false;
+				}
+			};
+		}
 		
 		return super.getUpdateFeature(context);
 	}
@@ -135,6 +129,14 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 					return false;
 				}
 			};
+		}
+		//is user deleting a connection
+		if(context != null && context.getPictogramElement() != null && context.getPictogramElement().getLink() != null){
+			for(EObject eObj: context.getPictogramElement().getLink().getBusinessObjects()){
+				if (eObj instanceof SadConnectInterface){
+					return new DeleteSADConnectInterface(this);
+				}
+			}
 		}
 		
 		return super.getDeleteFeature(context);

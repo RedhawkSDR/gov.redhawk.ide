@@ -1,18 +1,33 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentPlacement;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
+import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalCommandStack;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IAreaContext;
+import org.eclipse.graphiti.features.context.IDeleteContext;
+import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.impl.AreaContext;
 import org.eclipse.graphiti.mm.Property;
@@ -22,12 +37,9 @@ import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
-import org.eclipse.graphiti.mm.pictograms.Anchor;
-import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.mm.pictograms.PictogramsFactory;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.AbstractPattern;
 import org.eclipse.graphiti.pattern.IPattern;
@@ -96,6 +108,50 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	@Override
 	public String getCreateName(){
 		return "Component";
+	}
+	
+	public static UpdateValueStrategy floatingPointRangeValidator(final String fieldName, final float minValue, final float maxValue, final boolean allowDefault){
+	    return new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
+
+	    	@Override
+	    	public IStatus validate(Object value){
+	    		if(value != null && value instanceof String){
+	    			
+	    			String s = (String)value;
+	    			
+	    			//empty test
+	    			if(s.trim().length() <=0){
+	    				return ValidationStatus.error(fieldName + "must be non-empty");
+	    			}
+	    				
+	    			//if "default" acceptable, test for it
+	    			if(allowDefault && "default".equals(s)){
+	    				return ValidationStatus.ok();
+	    			}
+	    			
+	    			//float test
+	    			Float fl;
+	    			try{
+	    				fl = Float.parseFloat(s);
+	    			}catch(NumberFormatException nfe){
+	    				return ValidationStatus.error(fieldName + "must be a floating point number");
+	    			}
+	    			
+	    			//min test
+	    			if(fl < minValue){
+	    				return ValidationStatus.error(fieldName + "must be larger than or equal to " + String.valueOf(minValue));
+	    			}
+	    			
+	    			//max test
+	    			if(fl > maxValue){
+	    				return ValidationStatus.error(fieldName + "must be less than or equal to " + String.valueOf(minValue));
+	    			}
+	    				
+	    			return ValidationStatus.ok();
+	    		}
+				return null;
+	    	}
+	    });
 	}
 	
 	//THE FOLLOWING THREE METHODS DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
@@ -290,7 +346,106 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		return outerContainerShape;
 	}
 	
+	@Override
+	public boolean canRemove(IRemoveContext context) {
+		return false;
+	}
+	
+//	@Override
+//	public void remove(IRemoveContext context) {
+//		if (wrappedRemoveFeature == null) {
+//			wrappedRemoveFeature = createRemoveFeature(context);
+//		}
+//		wrappedRemoveFeature.remove(context);
+//	}
+	
+	/**
+	 * Return true if the user has selected a pictogram element that is linked with
+	 * a SADComponentInstantiation instance
+	 */
+	@Override
+	public boolean canDelete(IDeleteContext context) {
 
+		if(context.getPictogramElement() != null && 
+				context.getPictogramElement().getLink() != null && 
+				context.getPictogramElement().getLink().getBusinessObjects() != null)
+		{
+			for(EObject eObject: context.getPictogramElement().getLink().getBusinessObjects()){
+				if(eObject instanceof SadComponentInstantiation){
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+	
+	/**
+	 * Delete the SadComponentInstantiation linked to the PictogramElement.  
+	 */
+	@Override
+	public void delete(IDeleteContext context){
+		
+		//start working here, this doesn't work yet
+		
+		//set componentToDelete
+		SadComponentInstantiation ciNonFinal = null;
+		for(EObject eObject: context.getPictogramElement().getLink().getBusinessObjects()){
+			if(eObject instanceof SadComponentInstantiation){
+				ciNonFinal = (SadComponentInstantiation)eObject;
+				break;
+			}
+		}
+		final SadComponentInstantiation ciToDelete = ciNonFinal; //needs to be "final"
+		
+		//editing domain for our transaction
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		
+		//get sad from diagram
+		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		
+		//Create Component Related objects in SAD model
+		TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain){
+			@Override
+            protected void doExecute() {
+				
+				//assembly controller may reference componentInstantiation
+				//delete reference if applicable
+				if(sad.getAssemblyController() != null &&
+						sad.getAssemblyController().getComponentInstantiationRef() != null &&
+						sad.getAssemblyController().getComponentInstantiationRef().getInstantiation().equals(ciToDelete)){
+					//TODO: how should this be handled? We need to test this out
+					EcoreUtil.delete(sad.getAssemblyController().getComponentInstantiationRef());
+					sad.getAssemblyController().setComponentInstantiationRef(null);
+				}
+				
+				//get placement for instantiation and delete it from sad partitioning after we look at removing the component file ref.
+				SadComponentPlacement placement = (SadComponentPlacement)ciToDelete.getPlacement();
+				
+				
+				//delete component file if applicable
+				//figure out which component file we are using and if no other component placements using it then remove it.
+				ComponentFile componentFileToRemove = placement.getComponentFileRef().getFile();
+				for(SadComponentPlacement p: sad.getPartitioning().getComponentPlacement()){
+					if(p != placement && p.getComponentFileRef().getRefid().equals(placement.getComponentFileRef().getRefid())){
+						componentFileToRemove = null;
+					}
+				}
+				if(componentFileToRemove != null){
+					sad.getComponentFiles().getComponentFile().remove(componentFileToRemove);
+				}
+				
+				//delete component placement
+				sad.getPartitioning().getComponentPlacement().remove(placement);
+            }
+		});
+		
+		//delete the graphical component
+		super.delete(context);
+		
+	}
+	
 	
 	/**
 	 * Resizes component with desired size.  Minimums are enforced.  Ports are kept at sides while inner box grows

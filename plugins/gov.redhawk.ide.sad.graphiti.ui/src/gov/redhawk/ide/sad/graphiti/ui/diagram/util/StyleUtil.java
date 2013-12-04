@@ -37,7 +37,11 @@ public class StyleUtil {
 	
 	private static final IColorConstant EXTERNAL_PORT_BACKGROUND = new ColorConstant(0, 210, 255);
 	
-	private final static String DEFAULT_FONT = "Arial";
+	
+	//FONTS
+	private final static String ARIAL_FONT = "Arial";
+	private final static String SANS_FONT = "Sans";
+	private final static String DEFAULT_FONT = SANS_FONT;
 	
 	//returns component outer rectangle style
 	public static Style getStyleForComponentOuter(Diagram diagram){
