@@ -16,8 +16,7 @@
   </parent>
 
   <properties>
-    <eclipse>http://download.eclipse.org/releases/kepler</eclipse>
-    <eclipse-updates>http://download.eclipse.org/eclipse/updates/4.3</eclipse-updates>
+    <eclipse>http://download.eclipse.org/releases/juno</eclipse>
     <orbit>http://download.eclipse.org/tools/orbit/downloads/drops/R20130118183705/repository</orbit>
     <nebula>http://download.eclipse.org/technology/nebula/snapshot</nebula>
     <nxm>http://nextmidas.techma.com/p2/nxm/updates/stable</nxm>
@@ -29,12 +28,6 @@
   </properties>
 
   <repositories>
-    <repository>
-      <id>eclipse-updates</id>
-      <layout>p2</layout>
-      <url>${eclipse-updates}</url>
-    </repository>
-
     <repository>
       <id>eclipse</id>
       <layout>p2</layout>
@@ -82,7 +75,7 @@
       <layout>p2</layout>
       <url>${jacorb}</url>
     </repository>
-    
+
     <repository>
       <id>nebula</id>
       <layout>p2</layout>
