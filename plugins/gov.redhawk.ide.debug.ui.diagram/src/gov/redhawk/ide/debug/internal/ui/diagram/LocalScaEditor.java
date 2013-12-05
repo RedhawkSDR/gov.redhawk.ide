@@ -83,6 +83,9 @@ public class LocalScaEditor extends SadEditor {
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 		final LocalScaWaveform waveform = localSca.getSandboxWaveform();
 		final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(getMainResource());
+		if (waveform == null || sad == null) {
+			throw new IllegalStateException("Can not initialize the Model Map with null local waveform or SAD");
+		}
 		final ModelMap modelMap = new ModelMap(this, sad, waveform);
 		this.sadlistener = new SadModelAdapter(modelMap);
 		this.scaListener = new ScaModelAdapter(modelMap);
