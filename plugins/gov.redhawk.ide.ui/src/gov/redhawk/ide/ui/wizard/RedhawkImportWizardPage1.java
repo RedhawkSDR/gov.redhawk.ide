@@ -426,7 +426,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		this.currentSelection = currentSelection;
 		setPageComplete(false);
 		setTitle(DataTransferMessages.WizardProjectsImportPage_ImportProjectsTitle);
-		setDescription(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
+		setDescription("Select a directory to search for existing Eclipse projects. Wizard will attempt to generate missing metadata files. Projects missing source files may exhibit unexpected behavior.");
 	}
 
 	// CHECKSTYLE:ON

@@ -336,9 +336,14 @@
         </extension>
         <extension
               point="org.eclipse.ui.importWizards">
+           <category
+                 id="gov.redhawk.ide.ui.import.sca"
+                 name="SCA Development">
+           </category>
            <wizard
                  category="gov.redhawk.ide.ui.import.sca"
                  class="gov.redhawk.ide.ui.wizard.RedhawkImportWizard"
+                 icon="icons/rh_logo_16x16.gif"
                  id="gov.redhawk.ide.ui.wizard.noneclipsewizard"
                  name="Redhawk Import Wizard">
            </wizard>
