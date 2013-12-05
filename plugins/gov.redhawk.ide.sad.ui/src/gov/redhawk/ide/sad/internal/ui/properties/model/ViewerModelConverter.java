@@ -211,8 +211,6 @@ public class ViewerModelConverter {
 			} finally {
 				handlingchange = false;
 			}
-			handlingchange = false;
-			viewer.refresh();
 		}
 	};
 	private IViewerPropertyChangeListener propertyListener = new IViewerPropertyChangeListener() {
