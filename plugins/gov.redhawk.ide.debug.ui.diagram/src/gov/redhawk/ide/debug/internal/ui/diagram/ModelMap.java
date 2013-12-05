@@ -290,6 +290,9 @@ public class ModelMap {
 		}
 		final URI spdURI = EcoreUtil.getURI(spd);
 		final SadComponentInstantiation retVal = SadFactory.eINSTANCE.createSadComponentInstantiation();
+		if (retVal == null) {
+			throw new IllegalStateException();
+		}
 
 		map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_SPD_URI, spdURI);
 		map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_INST_ID, newValue.getInstantiationIdentifier());
@@ -618,7 +621,10 @@ public class ModelMap {
 		}
 	}
 
-	public void remove(@NonNull final SadComponentInstantiation comp) {
+	public void remove(final SadComponentInstantiation comp) {
+		if (comp == null) {
+			return;
+		}
 		final NodeMapEntry nodeMap = nodes.remove(NodeMapEntry.getKey(comp));
 		if (nodeMap == null) {
 			return;

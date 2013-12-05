@@ -137,12 +137,6 @@ public class LocalScaWaveformTest extends TestCase {
 	 * @generated NOT
 	 */
 	public void testLaunch__String_DataType_String_String_String() throws ExecuteFail {
-		try {
-			((ApplicationImpl) getFixture().getLocalApp()).launch(null, (DataType[])null, (String)null, null, null);
-			fail();
-		} catch (AssertionFailedException e) {
-			
-		}
 		// TODO Add more tests
 	}
 

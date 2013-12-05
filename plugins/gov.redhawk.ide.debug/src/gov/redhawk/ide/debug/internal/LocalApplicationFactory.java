@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import mil.jpeojtrs.sca.partitioning.ComponentProperties;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
 import mil.jpeojtrs.sca.prf.SimpleRef;
@@ -42,6 +43,7 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.AnyUtils;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.runtime.CoreException;
@@ -51,8 +53,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
+import org.eclipse.jdt.annotation.Nullable;
 import org.jacorb.naming.Name;
 import org.omg.CORBA.Any;
 import org.omg.CORBA.SystemException;
@@ -215,7 +219,12 @@ public class LocalApplicationFactory {
 
 		app.getStreams().getOutStream().println("Launching components...");
 		for (final SadComponentInstantiation comp : instantiations) {
-			app.launch(comp.getUsageName(), createExecParam(comp), getSpdURI(comp), getImplId(comp), this.mode);
+			URI spdUri = getSpdURI(comp);
+			if (spdUri == null) {
+				app.getStreams().getErrStream().println("Failed to find SPD for component " + comp.getUsageName());
+			} else {
+				app.launch(comp.getUsageName(), createExecParam(comp), spdUri, getImplId(comp), this.mode);
+			}
 			app.getStreams().getOutStream().println("\n");
 		}
 	}
@@ -395,9 +404,20 @@ public class LocalApplicationFactory {
 		return retVal;
 	}
 
-	private URI getSpdURI(final SadComponentInstantiation comp) {
-		final SoftPkg spd = comp.getPlacement().getComponentFileRef().getFile().getSoftPkg();
-		return spd.eResource().getURI();
+	private static final EStructuralFeature [] PATH = new EStructuralFeature [] {
+		PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
+		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF,
+		PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
+		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG
+	};
+	@Nullable
+	private URI getSpdURI(@Nullable final SadComponentInstantiation comp) {
+		final SoftPkg spd = ScaEcoreUtils.getFeature(comp, PATH);
+		if (spd != null && spd.eResource() != null) {
+			return spd.eResource().getURI();
+		} else {
+			return null;
+		}
 	}
 
 	private DataType[] createExecParam(final SadComponentInstantiation comp) {

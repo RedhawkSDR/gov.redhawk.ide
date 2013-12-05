@@ -76,6 +76,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.jacorb.naming.Name;
 import org.jacorb.orb.ORB;
 import org.omg.CORBA.SystemException;
@@ -300,7 +301,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public NamingContextExt getWaveformContext() {
-  		return this.waveformContext.getNamingContext();
+		return this.waveformContext.getNamingContext();
 	}
 
 	/**
@@ -871,6 +872,12 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		String instId = oldComponent.getIdentifier();
 		final String execParams = oldComponent.getExecParam();
 		final URI spdUri = oldComponent.getProfileURI();
+		
+		if (spdUri == null) {
+			this.streams.getErrStream().println("No SPD URI component: " + compInstId);
+			throw new ReleaseError(new String[] { "No SPD URI component: " + compInstId });
+		}
+		
 		final String implId = oldComponent.getImplementationID();
 		final String mode = oldComponent.getMode();
 		final List<ConnectionInfo> oldConnections = getConnectionInfo(oldComponent);
@@ -965,11 +972,16 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return retVal;
 	}
 
-	public Resource launch(final String compId, final DataType[] execParams, final String spdURI, final String implId, final String mode) throws ExecuteFail {
+	public Resource launch(final String compId, final DataType[] execParams, @NonNull final String spdURI, final String implId, final String mode)
+		throws ExecuteFail {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		LocalScaComponent retVal;
 		try {
-			retVal = launch(null, compId, createExecParamStr(execParams), URI.createURI(spdURI), implId, mode);
+			URI uri = URI.createURI(spdURI);
+			if (uri == null) {
+				throw new NullPointerException();
+			}
+			retVal = launch(null, compId, createExecParamStr(execParams), uri, implId, mode);
 		} catch (final CoreException e) {
 			ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
 			logException(e);
@@ -979,26 +991,30 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	@NonNull
-	public LocalScaComponent launch(final String usageName, String compId, final DataType[] execParams, final URI spdURI, final String implId, final String mode)
-		throws CoreException {
+	public LocalScaComponent launch(final String usageName, String compId, final DataType[] execParams, @NonNull final URI spdURI, final String implId,
+		final String mode) throws CoreException {
 		return launch(usageName, compId, createExecParamStr(execParams), spdURI, implId, mode);
 	}
 
-	public LocalScaComponent launch(final String usageName, final DataType[] execParams, final URI spdURI, final String implId, final String mode)
+	public LocalScaComponent launch(final String usageName, final DataType[] execParams, @NonNull final URI spdURI, final String implId, final String mode)
 		throws CoreException {
 		return launch(usageName, null, execParams, spdURI, implId, mode);
 	}
 
 	@NonNull
-	public LocalScaComponent launch(String usageName, final String compId, final String execParams, URI spdURI, final String implId, String mode)
-		throws CoreException {
+	public LocalScaComponent launch(@Nullable String usageName, @Nullable final String compId, @Nullable final String execParams, @NonNull URI spdURI,
+		@Nullable final String implId, @Nullable String mode) throws CoreException {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		if (!spdURI.isPlatform()) {
 			IFileStore store = EFS.getStore(java.net.URI.create(spdURI.toString()));
 			IFileStore unwrappedStore = WrappedFileStore.unwrap(store);
 			if (unwrappedStore != null) {
-				spdURI = URI.createURI(unwrappedStore.toURI().toString());
+				URI tmp = URI.createURI(unwrappedStore.toURI().toString());
+				if (tmp == null) {
+					throw new NullPointerException();
+				}
+				spdURI = tmp;
 			}
 		}
 
