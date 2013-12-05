@@ -23,6 +23,7 @@ import gov.redhawk.model.sca.services.AbstractScaObjectLocator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
@@ -39,14 +40,16 @@ public class LocalScaObjectLocator extends AbstractScaObjectLocator {
 		@Override
 		public EList<ScaComponent> getComponents() {
 			final List<ScaComponent> allDevices = new ArrayList<ScaComponent>();
+			ScaDebugPlugin instance = ScaDebugPlugin.getInstance();
+			if (instance == null) {
+				return ECollections.emptyEList();
+			}
 			LocalSca localsca = ScaDebugPlugin.getInstance().getLocalSca();
 			if (localsca != null && localsca.getSandboxWaveform() != null) {
 				allDevices.addAll(localsca.getSandboxWaveform().getComponents());
 			}
-			return new EcoreEList.UnmodifiableEList<ScaComponent>(this,
-			        ScaPackage.eINSTANCE.getScaWaveform_Components(),
-			        allDevices.size(),
-			        allDevices.toArray());
+			return new EcoreEList.UnmodifiableEList<ScaComponent>(this, ScaPackage.eINSTANCE.getScaWaveform_Components(), allDevices.size(),
+				allDevices.toArray());
 		}
 	};
 
