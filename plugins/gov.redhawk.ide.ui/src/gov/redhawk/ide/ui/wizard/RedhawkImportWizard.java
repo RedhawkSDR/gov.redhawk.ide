@@ -32,32 +32,32 @@ public class RedhawkImportWizard extends Wizard implements IImportWizard {
 	public boolean needsProgressMonitor() {
 		return true;
 	}
-	
+
 	@Override
 	public void addPages() {
 		super.addPages();
-		importPage  = new RedhawkImportWizardPage1("Import Non-Eclipse Based REDHAWK Project");
-		detailsPage  = new RedhawkImportWizardPage2("Import Non-Eclipse Based REDHAWK Project");
+		importPage = new RedhawkImportWizardPage1("Import Non-Eclipse Based REDHAWK Project");
+		detailsPage = new RedhawkImportWizardPage2("Import Non-Eclipse Based REDHAWK Project");
 		this.addPage(importPage);
 		this.addPage(detailsPage);
 	}
-	
+
 	@Override
 	public boolean performFinish() {
 		return importPage.createProjects();
 	}
-	
+
 	@Override
 	public boolean performCancel() {
 		importPage.performCancel();
 		return true;
 	}
-	
+
 	@Override
 	public boolean canFinish() {
 		return super.canFinish();
 	}
-	
+
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 	}

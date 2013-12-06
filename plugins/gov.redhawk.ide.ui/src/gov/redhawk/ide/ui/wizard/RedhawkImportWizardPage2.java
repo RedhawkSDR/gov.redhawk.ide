@@ -89,8 +89,7 @@ public class RedhawkImportWizardPage2 extends WizardPage {
 				if (element instanceof ProjectRecord) {
 					ProjectRecord project = (ProjectRecord) element;
 					String dir = project.projectSystemFile.getParentFile().getAbsolutePath();
-					return NLS
-							.bind(DataTransferMessages.WizardProjectsImportPage_projectLabel, project.getProjectName(), dir);
+					return NLS.bind(DataTransferMessages.WizardProjectsImportPage_projectLabel, project.getProjectName(), dir);
 				}
 				if (element instanceof ImplWrapper) {
 					ImplWrapper implWrapper = (ImplWrapper) element;
@@ -99,13 +98,13 @@ public class RedhawkImportWizardPage2 extends WizardPage {
 				return "";
 			}
 		});
-		
+
 		// Get a String array of accepted template id's
 		CodeGeneratorTemplatesRegistry reg = new CodeGeneratorTemplatesRegistry();
 		ITemplateDesc[] templateDescriptions = reg.getTemplates();
 		final String[] templates = new String[templateDescriptions.length];
 		for (int i = 0; i < templateDescriptions.length; i++) {
-			templates[i] = templateDescriptions[i].getId(); 
+			templates[i] = templateDescriptions[i].getId();
 		}
 
 		final TreeViewerColumn templateColumn = new TreeViewerColumn(viewer, SWT.NONE);

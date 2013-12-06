@@ -84,8 +84,7 @@ public class RedhawkImportUtil {
 	private boolean wavedevMissing = true;
 	private boolean copyFiles;
 
-	public static String getName(IPath path) throws IOException,
-			XMLStreamException {
+	public static String getName(IPath path) throws IOException, XMLStreamException {
 		// Check for 'name' attribute in XML root
 		String projectName;
 
@@ -97,12 +96,9 @@ public class RedhawkImportUtil {
 			if (event.isStartElement()) {
 				StartElement startElement = event.asStartElement();
 				String element = startElement.getName().getLocalPart();
-				if ("deviceconfiguration".equals(element)
-						|| "softwareassembly".equals(element)
-						|| "softpkg".equals(element)) {
+				if ("deviceconfiguration".equals(element) || "softwareassembly".equals(element) || "softpkg".equals(element)) {
 					@SuppressWarnings("unchecked")
-					Iterator<Attribute> attributes = startElement
-							.getAttributes();
+					Iterator<Attribute> attributes = startElement.getAttributes();
 					while (attributes.hasNext()) {
 						Attribute attribute = attributes.next();
 						if ("name".equals(attribute.getName().toString())) {
@@ -122,16 +118,13 @@ public class RedhawkImportUtil {
 
 	}
 
-	public void createMissingFiles(ProjectRecord record,
-			IProgressMonitor monitor, boolean copyFiles,
-			RedhawkImportWizardPage1 parent) {
+	public void createMissingFiles(ProjectRecord record, IProgressMonitor monitor, boolean copyFiles, RedhawkImportWizardPage1 parent) {
 		this.record = record;
 		this.monitor = monitor;
 		this.projectName = record.projectName;
 		this.copyFiles = copyFiles;
 		this.parent = parent;
-		this.projectLocation = record.projectSystemFile.getParentFile()
-				.getAbsoluteFile().toURI();
+		this.projectLocation = record.projectSystemFile.getParentFile().getAbsoluteFile().toURI();
 		String type = this.record.projectSystemFile.getName();
 
 		if (findMissingFiles() == SWT.CANCEL) {
@@ -166,8 +159,7 @@ public class RedhawkImportUtil {
 		for (File f : contents) {
 			String name = f.getName();
 			// check for source directories
-			if ("cpp".equals(name) || "java".equals(name)
-					|| "python".equals(name)) {
+			if ("cpp".equals(name) || "java".equals(name) || "python".equals(name)) {
 				hasSource = true;
 			}
 
@@ -186,16 +178,14 @@ public class RedhawkImportUtil {
 			Display.getDefault().syncExec(new Runnable() {
 				@Override
 				public void run() {
-					MessageBox dialog = new MessageBox(parent.getShell(),
-							SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
+					MessageBox dialog = new MessageBox(parent.getShell(), SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
 					dialog.setText("Error - No Source Directory");
-					dialog.setMessage("Warning: \nNo source files found in the specified location.  "
-							+ "\nImported projects will not function correctly");
+					dialog.setMessage("Warning: \nNo source files found in the specified location.  " + "\nImported projects will not function correctly");
 					result = dialog.open();
 				}
 			});
 		}
-		
+
 		result = SWT.OK;
 		return result;
 	}
@@ -203,35 +193,28 @@ public class RedhawkImportUtil {
 	private IProject createDotProjectFile(String projectType) {
 		try {
 			IProject project = null;
-			File importSource = new File(record.projectSystemFile
-					.getParentFile().getAbsolutePath());
+			File importSource = new File(record.projectSystemFile.getParentFile().getAbsolutePath());
 
 			// Build new .project files of the appropriate type
 			if ("SAD".equals(projectType)) {
 				if (!copyFiles) {
-					project = WaveformProjectCreator.createEmptyProject(
-							projectName, projectLocation, monitor);
+					project = WaveformProjectCreator.createEmptyProject(projectName, projectLocation, monitor);
 				} else {
-					project = WaveformProjectCreator.createEmptyProject(
-							projectName, null, monitor);
+					project = WaveformProjectCreator.createEmptyProject(projectName, null, monitor);
 				}
 			}
 			if ("DCD".equals(projectType)) {
 				if (!copyFiles) {
-					project = NodeProjectCreator.createEmptyProject(
-							projectName, projectLocation, monitor);
+					project = NodeProjectCreator.createEmptyProject(projectName, projectLocation, monitor);
 				} else {
-					project = NodeProjectCreator.createEmptyProject(
-							projectName, null, monitor);
+					project = NodeProjectCreator.createEmptyProject(projectName, null, monitor);
 				}
 			}
 			if ("SPD".equals(projectType)) {
 				if (!copyFiles) {
-					project = ComponentProjectCreator.createEmptyProject(
-							projectName, projectLocation, monitor);
+					project = ComponentProjectCreator.createEmptyProject(projectName, projectLocation, monitor);
 				} else {
-					project = ComponentProjectCreator.createEmptyProject(
-							projectName, null, monitor);
+					project = ComponentProjectCreator.createEmptyProject(projectName, null, monitor);
 				}
 			}
 
@@ -242,23 +225,16 @@ public class RedhawkImportUtil {
 
 			// Add CPP natures if required
 			if (new File(importSource + "/cpp").exists()) {
-				MultiStatus retStatus = new MultiStatus(
-						ManualGeneratorPlugin.PLUGIN_ID, IStatus.OK, "", null);
-				CppGeneratorUtils.addCandCPPNatures(project,
-						SubMonitor.convert(monitor), retStatus);
-				CppGeneratorUtils.addManagedNature(project,
-						SubMonitor.convert(monitor), retStatus, "/",
-						System.out, true, null);
+				MultiStatus retStatus = new MultiStatus(ManualGeneratorPlugin.PLUGIN_ID, IStatus.OK, "", null);
+				CppGeneratorUtils.addCandCPPNatures(project, SubMonitor.convert(monitor), retStatus);
+				CppGeneratorUtils.addManagedNature(project, SubMonitor.convert(monitor), retStatus, "/", System.out, true, null);
 			}
 
 			// If "copy into" box was checked, import files into workspace
 			if (copyFiles) {
-				List<?> filesToImport = FileSystemStructureProvider.INSTANCE
-						.getChildren(importSource);
-				ImportOperation operation = new ImportOperation(
-						project.getFullPath(), importSource,
-						FileSystemStructureProvider.INSTANCE, parent,
-						filesToImport);
+				List< ? > filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
+				ImportOperation operation = new ImportOperation(project.getFullPath(), importSource, FileSystemStructureProvider.INSTANCE, parent,
+					filesToImport);
 				operation.setContext(parent.getShell());
 				operation.setOverwriteResources(true);
 				operation.setCreateContainerStructure(false);
@@ -271,12 +247,9 @@ public class RedhawkImportUtil {
 				@Override
 				public void run() {
 					IDEWorkbenchPlugin.log(e.getMessage());
-					MessageBox errorDialog = new MessageBox(parent.getShell(),
-							SWT.ERROR);
+					MessageBox errorDialog = new MessageBox(parent.getShell(), SWT.ERROR);
 					errorDialog.setText("Import Failed");
-					errorDialog
-							.setMessage("Import Failed for the following reason: \n"
-									+ e.getMessage());
+					errorDialog.setMessage("Import Failed for the following reason: \n" + e.getMessage());
 					errorDialog.open();
 				}
 			});
@@ -291,28 +264,23 @@ public class RedhawkImportUtil {
 	@SuppressWarnings({ "deprecation" })
 	private void createWavDevFile() throws CoreException {
 		// creates the missing wavedev file
-		final SoftPkg softPkg = getSoftPkg(record.projectSystemFile
-				.getAbsolutePath());
-		WaveDevSettings waveDev = CodegenFactory.eINSTANCE
-				.createWaveDevSettings();
+		final SoftPkg softPkg = getSoftPkg(record.projectSystemFile.getAbsolutePath());
+		WaveDevSettings waveDev = CodegenFactory.eINSTANCE.createWaveDevSettings();
 
 		// Recreate the basic settings for each implementation
 		// This makes assumptions that the defaults are selected for everything
 		for (final Implementation impl : softPkg.getImplementation()) {
-			final ImplementationSettings settings = CodegenFactory.eINSTANCE
-					.createImplementationSettings();
+			final ImplementationSettings settings = CodegenFactory.eINSTANCE.createImplementationSettings();
 			final String lang = impl.getProgrammingLanguage().getName();
 			// Find the code generator if specified, otherwise pick the first
 			// one returned by the registry
 			ICodeGeneratorDescriptor codeGenDesc = null;
-			final ICodeGeneratorDescriptor[] codeGens = RedhawkCodegenActivator
-					.getCodeGeneratorsRegistry().findCodegenByLanguage(lang);
+			final ICodeGeneratorDescriptor[] codeGens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(lang);
 			if (codeGens.length > 0) {
 				codeGenDesc = codeGens[0];
 			}
 			if (codeGenDesc != null) {
-				final IScaComponentCodegen generator = codeGenDesc
-						.getGenerator();
+				final IScaComponentCodegen generator = codeGenDesc.getGenerator();
 
 				// Assume that there is <name>[/].+<other> format for the
 				// entrypoint
@@ -328,9 +296,7 @@ public class RedhawkImportUtil {
 				// pick the first selectable and defaultable template returned
 				// by the registry
 				ITemplateDesc templateDesc = null;
-				final ITemplateDesc[] templates = RedhawkCodegenActivator
-						.getCodeGeneratorTemplatesRegistry()
-						.findTemplatesByCodegen(settings.getGeneratorId());
+				final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(settings.getGeneratorId());
 				for (final ITemplateDesc itd : templates) {
 					if (itd.isSelectable() && !itd.notDefaultableGenerator()) {
 						templateDesc = itd;
@@ -340,10 +306,8 @@ public class RedhawkImportUtil {
 				// If we found the template, use it
 				if (templateDesc != null) {
 					// Set the properties to their default values
-					for (final IPropertyDescriptor prop : templateDesc
-							.getPropertyDescriptors()) {
-						final Property p = CodegenFactory.eINSTANCE
-								.createProperty();
+					for (final IPropertyDescriptor prop : templateDesc.getPropertyDescriptors()) {
+						final Property p = CodegenFactory.eINSTANCE.createProperty();
 						p.setId(prop.getKey());
 						p.setValue(prop.getDefaultValue());
 						settings.getProperties().add(p);
@@ -381,24 +345,21 @@ public class RedhawkImportUtil {
 					// Validate java_package name and create a default one if
 					// necessary
 					if ("java_package".equals(prop.getId())) {
-						if (prop.getValue() == null
-								|| prop.getValue().isEmpty()) {
+						if (prop.getValue() == null || prop.getValue().isEmpty()) {
 							prop.setValue(projectName + ".java");
 						}
 					}
 					// Check for use_jni and populate if it is found but empty
 					if ("use_jni".equals(prop.getId())) {
 						hasUseJni = true;
-						if (prop.getValue() == null
-								|| prop.getValue().isEmpty()) {
+						if (prop.getValue() == null || prop.getValue().isEmpty()) {
 							prop.setValue("TRUE");
 						}
 					}
 				}
 				// if use_jni is not found, build it with TRUE as default
 				if (!hasUseJni) {
-					final Property useJni = CodegenFactory.eINSTANCE
-							.createProperty();
+					final Property useJni = CodegenFactory.eINSTANCE.createProperty();
 					useJni.setId("use_jni");
 					useJni.setValue("TRUE");
 					settings.getProperties().add(useJni);
@@ -408,10 +369,8 @@ public class RedhawkImportUtil {
 			waveDev.getImplSettings().put(impl.getId(), settings);
 		}
 		// Create the URI to the .wavedev file
-		final org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI
-				.createPlatformResourceURI(
-						softPkg.getName() + "/." + softPkg.getName()
-								+ ".wavedev", false);
+		final org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI.createPlatformResourceURI(softPkg.getName() + "/." + softPkg.getName()
+			+ ".wavedev", false);
 		final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
 		final Resource res = set.createResource(uri);
 
@@ -427,8 +386,7 @@ public class RedhawkImportUtil {
 
 	public SoftPkg getSoftPkg(String path) {
 		final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
-		Resource resource = set.getResource(
-				org.eclipse.emf.common.util.URI.createFileURI(path), true);
+		Resource resource = set.getResource(org.eclipse.emf.common.util.URI.createFileURI(path), true);
 		return SoftPkg.Util.getSoftPkg(resource);
 	}
 }

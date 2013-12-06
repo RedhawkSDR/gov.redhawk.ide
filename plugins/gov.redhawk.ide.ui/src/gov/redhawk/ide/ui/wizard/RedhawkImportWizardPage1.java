@@ -125,8 +125,7 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
  * @since 9.1
  */
 @SuppressWarnings("restriction")
-public class RedhawkImportWizardPage1 extends WizardPage implements
-		IOverwriteQuery {
+public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQuery {
 
 	/**
 	 * The name of the folder containing metadata information for the workspace.
@@ -144,8 +143,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 	 * @since 3.5
 	 * 
 	 */
-	private final class ProjectLabelProvider extends LabelProvider implements
-			IColorProvider {
+	private final class ProjectLabelProvider extends LabelProvider implements IColorProvider {
 
 		public String getText(Object element) {
 			return ((ProjectRecord) element).getProjectLabel();
@@ -183,7 +181,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		boolean hasConflicts;
 
 		boolean missingFiles;
-		
+
 		/**
 		 *  Field is only instantiated if users use the second page of the REDHAWK import wizard
 		 */
@@ -224,23 +222,20 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		private void setProjectName() {
 			try {
 				if (projectArchiveFile != null) {
-					InputStream stream = structureProvider
-							.getContents(projectArchiveFile);
+					//TODO
+					InputStream stream = structureProvider.getContents(projectArchiveFile);
 
 					// If we can get a description pull the name from there
 					if (stream == null) {
 						if (projectArchiveFile instanceof ZipEntry) {
-							IPath path = new Path(
-									((ZipEntry) projectArchiveFile).getName());
+							IPath path = new Path(((ZipEntry) projectArchiveFile).getName());
 							projectName = path.segment(path.segmentCount() - 2);
 						} else if (projectArchiveFile instanceof TarEntry) {
-							IPath path = new Path(
-									((TarEntry) projectArchiveFile).getName());
+							IPath path = new Path(((TarEntry) projectArchiveFile).getName());
 							projectName = path.segment(path.segmentCount() - 2);
 						}
 					} else {
-						description = IDEWorkbenchPlugin.getPluginWorkspace()
-								.loadProjectDescription(stream);
+						description = IDEWorkbenchPlugin.getPluginWorkspace().loadProjectDescription(stream);
 						stream.close();
 						projectName = description.getName();
 					}
@@ -253,16 +248,14 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 					// name as the project name
 					if (isDefaultLocation(path)) {
 						projectName = path.segment(path.segmentCount() - 2);
-						description = IDEWorkbenchPlugin.getPluginWorkspace()
-								.newProjectDescription(projectName);
+						description = IDEWorkbenchPlugin.getPluginWorkspace().newProjectDescription(projectName);
 					} else if (nonEclipseProject(path.toFile().getName())) {
 						// If there is no .project file, use the file name as
 						// the project name
 						projectName = RedhawkImportUtil.getName(path);
 						missingFiles = true;
 					} else {
-						description = IDEWorkbenchPlugin.getPluginWorkspace()
-								.loadProjectDescription(path);
+						description = IDEWorkbenchPlugin.getPluginWorkspace().loadProjectDescription(path);
 						projectName = description.getName();
 					}
 				}
@@ -290,8 +283,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 			if (path.segmentCount() < 2) {
 				return false;
 			}
-			return path.removeLastSegments(2).toFile()
-					.equals(Platform.getLocation().toFile());
+			return path.removeLastSegments(2).toFile().equals(Platform.getLocation().toFile());
 		}
 
 		/**
@@ -311,12 +303,9 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		 * @since 3.4
 		 */
 		public String getProjectLabel() {
-			String path = projectSystemFile == null ? structureProvider
-					.getLabel(parent) : projectSystemFile.getParent();
+			String path = (projectSystemFile == null) ? structureProvider.getLabel(parent) : projectSystemFile.getParent();
 
-			return NLS.bind(
-					DataTransferMessages.WizardProjectsImportPage_projectLabel,
-					projectName, path);
+			return NLS.bind(DataTransferMessages.WizardProjectsImportPage_projectLabel, projectName, path);
 		}
 
 		/**
@@ -373,8 +362,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 	private List<IProject> createdProjects;
 
 	// constant from WizardArchiveFileResourceImportPage1
-	private static final String[] FILE_IMPORT_MASK = {
-			"*.jar;*.zip;*.tar;*.tar.gz;*.tgz", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] FILE_IMPORT_MASK = { "*.jar;*.zip;*.tar;*.tar.gz;*.tgz", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	// The initial path to set
 	private String initialPath;
@@ -398,8 +386,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 	}
 
 	public boolean nonEclipseProject(String path) {
-		if (path.matches(sadExtension) || path.matches(dcdExtension)
-				|| path.matches(spdExtension)) {
+		if (path.matches(sadExtension) || path.matches(dcdExtension) || path.matches(spdExtension)) {
 			return true;
 		} else {
 			return false;
@@ -423,8 +410,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 	 * @param currentSelection
 	 * @since 3.5
 	 */
-	public RedhawkImportWizardPage1(String pageName, String initialPath,
-			IStructuredSelection currentSelection) {
+	public RedhawkImportWizardPage1(String pageName, String initialPath, IStructuredSelection currentSelection) {
 		super(pageName);
 		this.initialPath = initialPath;
 		this.currentSelection = currentSelection;
@@ -449,8 +435,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		setControl(workArea);
 
 		workArea.setLayout(new GridLayout());
-		workArea.setLayoutData(new GridData(GridData.FILL_BOTH
-				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
+		workArea.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
 
 		createProjectsRoot(workArea);
 		createProjectsList(workArea);
@@ -465,11 +450,9 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 	 * @param workArea
 	 */
 	private void createWorkingSetGroup(Composite workArea) {
-		String[] workingSetIds = new String[] {
-				"org.eclipse.ui.resourceWorkingSetPage", //$NON-NLS-1$
-				"org.eclipse.jdt.ui.JavaWorkingSetPage" }; //$NON-NLS-1$
-		workingSetGroup = new WorkingSetGroup(workArea, currentSelection,
-				workingSetIds);
+		String[] workingSetIds = new String[] { "org.eclipse.ui.resourceWorkingSetPage", //$NON-NLS-1$
+			"org.eclipse.jdt.ui.JavaWorkingSetPage" }; //$NON-NLS-1$
+		workingSetGroup = new WorkingSetGroup(workArea, currentSelection, workingSetIds);
 	}
 
 	/**
@@ -483,8 +466,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		optionsGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		copyCheckbox = new Button(optionsGroup, SWT.CHECK);
-		copyCheckbox
-				.setText(DataTransferMessages.WizardProjectsImportPage_CopyProjectsIntoWorkspace);
+		copyCheckbox.setText(DataTransferMessages.WizardProjectsImportPage_CopyProjectsIntoWorkspace);
 		copyCheckbox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		copyCheckbox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -510,15 +492,12 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		layout.makeColumnsEqualWidth = false;
 		listComposite.setLayout(layout);
 
-		listComposite.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL | GridData.FILL_BOTH));
+		listComposite.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.FILL_BOTH));
 
 		projectsList = new CheckboxTreeViewer(listComposite, SWT.BORDER);
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gridData.widthHint = new PixelConverter(projectsList.getControl())
-				.convertWidthInCharsToPixels(25);
-		gridData.heightHint = new PixelConverter(projectsList.getControl())
-				.convertHeightInCharsToPixels(10);
+		gridData.widthHint = new PixelConverter(projectsList.getControl()).convertWidthInCharsToPixels(25);
+		gridData.heightHint = new PixelConverter(projectsList.getControl()).convertHeightInCharsToPixels(10);
 		projectsList.getControl().setLayoutData(gridData);
 		projectsList.setContentProvider(new ITreeContentProvider() {
 
@@ -582,8 +561,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 			 * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse
 			 * .jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 			 */
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 
 		});
@@ -624,8 +602,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		layout.marginHeight = 0;
 		buttonsComposite.setLayout(layout);
 
-		buttonsComposite.setLayoutData(new GridData(
-				GridData.VERTICAL_ALIGN_BEGINNING));
+		buttonsComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 		Button selectAll = new Button(buttonsComposite, SWT.PUSH);
 		selectAll.setText(DataTransferMessages.DataTransfer_selectAll);
@@ -704,36 +681,29 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 
 		// new project from directory radio button
 		projectFromDirectoryRadio = new Button(projectGroup, SWT.RADIO);
-		projectFromDirectoryRadio
-				.setText(DataTransferMessages.WizardProjectsImportPage_RootSelectTitle);
+		projectFromDirectoryRadio.setText(DataTransferMessages.WizardProjectsImportPage_RootSelectTitle);
 
 		// project location entry field
 		this.directoryPathField = new Text(projectGroup, SWT.BORDER);
 
-		GridData directoryPathData = new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-		directoryPathData.widthHint = new PixelConverter(directoryPathField)
-				.convertWidthInCharsToPixels(25);
+		GridData directoryPathData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		directoryPathData.widthHint = new PixelConverter(directoryPathField).convertWidthInCharsToPixels(25);
 		directoryPathField.setLayoutData(directoryPathData);
 
 		// browse button
 		browseDirectoriesButton = new Button(projectGroup, SWT.PUSH);
-		browseDirectoriesButton
-				.setText(DataTransferMessages.DataTransfer_browse);
+		browseDirectoriesButton.setText(DataTransferMessages.DataTransfer_browse);
 		setButtonLayoutData(browseDirectoriesButton);
 
 		// new project from archive radio button
 		projectFromArchiveRadio = new Button(projectGroup, SWT.RADIO);
-		projectFromArchiveRadio
-				.setText(DataTransferMessages.WizardProjectsImportPage_ArchiveSelectTitle);
+		projectFromArchiveRadio.setText(DataTransferMessages.WizardProjectsImportPage_ArchiveSelectTitle);
 
 		// project location entry field
 		archivePathField = new Text(projectGroup, SWT.BORDER);
 
-		GridData archivePathData = new GridData(GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.GRAB_HORIZONTAL);
-		archivePathData.widthHint = new PixelConverter(archivePathField)
-				.convertWidthInCharsToPixels(25);
+		GridData archivePathData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		archivePathData.widthHint = new PixelConverter(archivePathField).convertWidthInCharsToPixels(25);
 		archivePathField.setLayoutData(archivePathData); // browse button
 		browseArchivesButton = new Button(projectGroup, SWT.PUSH);
 		browseArchivesButton.setText(DataTransferMessages.DataTransfer_browse);
@@ -921,8 +891,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 
 		final File directory = new File(path);
 		long modified = directory.lastModified();
-		if (path.equals(lastPath) && lastModified == modified
-				&& lastCopyFiles == copyFiles) {
+		if (path.equals(lastPath) && lastModified == modified && lastCopyFiles == copyFiles) {
 			// since the file/folder was not modified and the path did not
 			// change, no refreshing is required
 			return;
@@ -934,8 +903,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 
 		// We can't access the radio button from the inner class so get the
 		// status beforehand
-		final boolean dirSelected = this.projectFromDirectoryRadio
-				.getSelection();
+		final boolean dirSelected = this.projectFromDirectoryRadio.getSelection();
 		try {
 			getContainer().run(true, true, new IRunnableWithProgress() {
 
@@ -948,27 +916,22 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 				 */
 				public void run(IProgressMonitor monitor) {
 
-					monitor.beginTask(
-							DataTransferMessages.WizardProjectsImportPage_SearchingMessage,
-							100);
+					monitor.beginTask(DataTransferMessages.WizardProjectsImportPage_SearchingMessage, 100);
 					selectedProjects = new ProjectRecord[0];
 					Collection<Object> files = new ArrayList<Object>();
 					monitor.worked(10);
 					// TODO search tar & zip files for projects that are missing
 					// .project file
-					if (!dirSelected
-							&& ArchiveFileManipulations.isTarFile(path)) {
+					if (!dirSelected && ArchiveFileManipulations.isTarFile(path)) {
 						TarFile sourceTarFile = getSpecifiedTarSourceFile(path);
 						if (sourceTarFile == null) {
 							return;
 						}
 
-						structureProvider = new TarLeveledStructureProvider(
-								sourceTarFile);
+						structureProvider = new TarLeveledStructureProvider(sourceTarFile);
 						Object child = structureProvider.getRoot();
 
-						if (!collectProjectFilesFromProvider(files, child, 0,
-								monitor)) {
+						if (!collectProjectFilesFromProvider(files, child, 0, monitor)) {
 							return;
 						}
 						Iterator<Object> filesIterator = files.iterator();
@@ -977,21 +940,17 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 						monitor.worked(50);
 						monitor.subTask(DataTransferMessages.WizardProjectsImportPage_ProcessingMessage);
 						while (filesIterator.hasNext()) {
-							selectedProjects[index++] = (ProjectRecord) filesIterator
-									.next();
+							selectedProjects[index++] = (ProjectRecord) filesIterator.next();
 						}
-					} else if (!dirSelected
-							&& ArchiveFileManipulations.isZipFile(path)) {
+					} else if (!dirSelected && ArchiveFileManipulations.isZipFile(path)) {
 						ZipFile sourceFile = getSpecifiedZipSourceFile(path);
 						if (sourceFile == null) {
 							return;
 						}
-						structureProvider = new ZipLeveledStructureProvider(
-								sourceFile);
+						structureProvider = new ZipLeveledStructureProvider(sourceFile);
 						Object child = structureProvider.getRoot();
 
-						if (!collectProjectFilesFromProvider(files, child, 0,
-								monitor)) {
+						if (!collectProjectFilesFromProvider(files, child, 0, monitor)) {
 							return;
 						}
 						Iterator<Object> filesIterator = files.iterator();
@@ -1000,14 +959,12 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 						monitor.worked(50);
 						monitor.subTask(DataTransferMessages.WizardProjectsImportPage_ProcessingMessage);
 						while (filesIterator.hasNext()) {
-							selectedProjects[index++] = (ProjectRecord) filesIterator
-									.next();
+							selectedProjects[index++] = (ProjectRecord) filesIterator.next();
 						}
 					} else if (dirSelected && directory.isDirectory()) {
-						// returns false is no .project, spd, sad, or dcd files
+						// returns false if no .project, spd, sad, or dcd files
 						// are found
-						if (!collectProjectFilesFromDirectory(files, directory,
-								null, monitor)) {
+						if (!collectProjectFilesFromDirectory(files, directory, null, monitor)) {
 							return;
 						}
 						Iterator<Object> filesIterator = files.iterator();
@@ -1049,17 +1006,13 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		}
 
 		if (displayWarning) {
-			setMessage(
-					DataTransferMessages.WizardProjectsImportPage_projectsInWorkspace,
-					WARNING);
+			setMessage(DataTransferMessages.WizardProjectsImportPage_projectsInWorkspace, WARNING);
 		} else {
 			setMessage(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
 		}
 		setPageComplete(projectsList.getCheckedElements().length > 0);
 		if (selectedProjects.length == 0) {
-			setMessage(
-					DataTransferMessages.WizardProjectsImportPage_noProjectsToImport,
-					WARNING);
+			setMessage(DataTransferMessages.WizardProjectsImportPage_noProjectsToImport, WARNING);
 		}
 	}
 
@@ -1112,8 +1065,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 	 *            the error message
 	 */
 	protected void displayErrorDialog(String message) {
-		MessageDialog.open(MessageDialog.ERROR, getContainer().getShell(),
-				getErrorDialogTitle(), message, SWT.SHEET);
+		MessageDialog.open(MessageDialog.ERROR, getContainer().getShell(), getErrorDialogTitle(), message, SWT.SHEET);
 	}
 
 	/**
@@ -1134,16 +1086,12 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 	 *            The monitor to report to
 	 * @return boolean <code>true</code> if the operation was completed.
 	 */
-	private boolean collectProjectFilesFromDirectory(Collection<Object> files,
-			File directory, Set<String> directoriesVisited,
-			IProgressMonitor monitor) {
+	private boolean collectProjectFilesFromDirectory(Collection<Object> files, File directory, Set<String> directoriesVisited, IProgressMonitor monitor) {
 
 		if (monitor.isCanceled()) {
 			return false;
 		}
-		monitor.subTask(NLS.bind(
-				DataTransferMessages.WizardProjectsImportPage_CheckingMessage,
-				directory.getPath()));
+		monitor.subTask(NLS.bind(DataTransferMessages.WizardProjectsImportPage_CheckingMessage, directory.getPath()));
 		File[] contents = directory.listFiles();
 		if (contents == null) {
 			return false;
@@ -1155,9 +1103,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 			try {
 				directoriesVisited.add(directory.getCanonicalPath());
 			} catch (IOException exception) {
-				StatusManager.getManager().handle(
-						StatusUtil.newStatus(IStatus.ERROR,
-								exception.getLocalizedMessage(), exception));
+				StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.ERROR, exception.getLocalizedMessage(), exception));
 			}
 		}
 
@@ -1204,14 +1150,10 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 							continue;
 						}
 					} catch (IOException exception) {
-						StatusManager.getManager().handle(
-								StatusUtil.newStatus(IStatus.ERROR,
-										exception.getLocalizedMessage(),
-										exception));
+						StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.ERROR, exception.getLocalizedMessage(), exception));
 
 					}
-					collectProjectFilesFromDirectory(files, contents[i],
-							directoriesVisited, monitor);
+					collectProjectFilesFromDirectory(files, contents[i], directoriesVisited, monitor);
 				}
 			}
 		}
@@ -1226,25 +1168,21 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 	 *            The monitor to report to
 	 * @return boolean <code>true</code> if the operation was completed.
 	 */
-	private boolean collectProjectFilesFromProvider(Collection<Object> files,
-			Object entry, int level, IProgressMonitor monitor) {
+	private boolean collectProjectFilesFromProvider(Collection<Object> files, Object entry, int level, IProgressMonitor monitor) {
 
 		if (monitor.isCanceled()) {
 			return false;
 		}
-		monitor.subTask(NLS.bind(
-				DataTransferMessages.WizardProjectsImportPage_CheckingMessage,
-				structureProvider.getLabel(entry)));
-		List<?> children = structureProvider.getChildren(entry);
+		monitor.subTask(NLS.bind(DataTransferMessages.WizardProjectsImportPage_CheckingMessage, structureProvider.getLabel(entry)));
+		List< ? > children = structureProvider.getChildren(entry);
 		if (children == null) {
 			children = new ArrayList<Object>(1);
 		}
-		Iterator<?> childrenEnum = children.iterator();
+		Iterator< ? > childrenEnum = children.iterator();
 		while (childrenEnum.hasNext()) {
 			Object child = childrenEnum.next();
 			if (structureProvider.isFolder(child)) {
-				collectProjectFilesFromProvider(files, child, level + 1,
-						monitor);
+				collectProjectFilesFromProvider(files, child, level + 1, monitor);
 			}
 			String elementLabel = structureProvider.getLabel(child);
 			if (elementLabel.equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
@@ -1259,8 +1197,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 	 */
 	protected void handleLocationDirectoryButtonPressed() {
 
-		DirectoryDialog dialog = new DirectoryDialog(
-				directoryPathField.getShell(), SWT.SHEET);
+		DirectoryDialog dialog = new DirectoryDialog(directoryPathField.getShell(), SWT.SHEET);
 		dialog.setMessage(DataTransferMessages.WizardProjectsImportPage_SelectDialogTitle);
 
 		String dirName = directoryPathField.getText().trim();
@@ -1269,8 +1206,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		}
 
 		if (dirName.length() == 0) {
-			dialog.setFilterPath(IDEWorkbenchPlugin.getPluginWorkspace()
-					.getRoot().getLocation().toOSString());
+			dialog.setFilterPath(IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getLocation().toOSString());
 		} else {
 			File path = new File(dirName);
 			if (path.exists()) {
@@ -1292,8 +1228,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 	 */
 	protected void handleLocationArchiveButtonPressed() {
 
-		FileDialog dialog = new FileDialog(archivePathField.getShell(),
-				SWT.SHEET);
+		FileDialog dialog = new FileDialog(archivePathField.getShell(), SWT.SHEET);
 		dialog.setFilterExtensions(FILE_IMPORT_MASK);
 		dialog.setText(DataTransferMessages.WizardProjectsImportPage_SelectArchiveDialogTitle);
 
@@ -1303,8 +1238,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		}
 
 		if (fileName.length() == 0) {
-			dialog.setFilterPath(IDEWorkbenchPlugin.getPluginWorkspace()
-					.getRoot().getLocation().toOSString());
+			dialog.setFilterPath(IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getLocation().toOSString());
 		} else {
 			File path = new File(fileName).getParentFile();
 			if (path != null && path.exists()) {
@@ -1333,8 +1267,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		final Object[] selected = projectsList.getCheckedElements();
 		createdProjects = new ArrayList<IProject>();
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-			protected void execute(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
+			protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
 					monitor.beginTask("", selected.length); //$NON-NLS-1$
 					if (monitor.isCanceled()) {
@@ -1344,11 +1277,9 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 						// TODO add check for archive files
 						ProjectRecord project = (ProjectRecord) selected[i];
 						if (project.missingFiles) {
-							new RedhawkImportUtil().createMissingFiles(project,
-									monitor, copyFiles, parent);
+							new RedhawkImportUtil().createMissingFiles(project, monitor, copyFiles, parent);
 						} else {
-							createExistingProject(project,
-									new SubProgressMonitor(monitor, 1));
+							createExistingProject(project, new SubProgressMonitor(monitor, 1));
 						}
 					}
 				} finally {
@@ -1369,14 +1300,12 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 			if (t instanceof CoreException) {
 				status = ((CoreException) t).getStatus();
 			} else {
-				status = new Status(IStatus.ERROR,
-						IDEWorkbenchPlugin.IDE_WORKBENCH, 1, message, t);
+				status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, message, t);
 			}
 			ErrorDialog.openError(getShell(), message, null, status);
 			return false;
 		}
-		ArchiveFileManipulations.closeStructureProvider(structureProvider,
-				getShell());
+		ArchiveFileManipulations.closeStructureProvider(structureProvider, getShell());
 
 		// Adds the projects to the working sets
 		addToWorkingSets();
@@ -1386,13 +1315,11 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 
 	private void addToWorkingSets() {
 
-		IWorkingSet[] selectedWorkingSets = workingSetGroup
-				.getSelectedWorkingSets();
+		IWorkingSet[] selectedWorkingSets = workingSetGroup.getSelectedWorkingSets();
 		if (selectedWorkingSets == null || selectedWorkingSets.length == 0) {
 			return; // no Working set is selected
 		}
-		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench()
-				.getWorkingSetManager();
+		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 		for (Iterator<IProject> i = createdProjects.iterator(); i.hasNext();) {
 			IProject project = (IProject) i.next();
 			workingSetManager.addToWorkingSets(project, selectedWorkingSets);
@@ -1403,8 +1330,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 	 * Performs clean-up if the user cancels the wizard without doing anything
 	 */
 	public void performCancel() {
-		ArchiveFileManipulations.closeStructureProvider(structureProvider,
-				getShell());
+		ArchiveFileManipulations.closeStructureProvider(structureProvider, getShell());
 	}
 
 	/**
@@ -1414,9 +1340,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 	 * @return boolean <code>true</code> if successful
 	 * @throws InterruptedException
 	 */
-	private boolean createExistingProject(final ProjectRecord record,
-			IProgressMonitor monitor) throws InvocationTargetException,
-			InterruptedException {
+	private boolean createExistingProject(final ProjectRecord record, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		String projectName = record.getProjectName();
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProject project = workspace.getRoot().getProject(projectName);
@@ -1424,8 +1348,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		if (record.description == null) {
 			// error case
 			record.description = workspace.newProjectDescription(projectName);
-			IPath locationPath = new Path(
-					record.projectSystemFile.getAbsolutePath());
+			IPath locationPath = new Path(record.projectSystemFile.getAbsolutePath());
 
 			// If it is under the root use the default location
 			if (Platform.getLocation().isPrefixOf(locationPath)) {
@@ -1438,12 +1361,9 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		}
 		if (record.projectArchiveFile != null) {
 			// import from archive
-			List<?> fileSystemObjects = structureProvider
-					.getChildren(record.parent);
+			List< ? > fileSystemObjects = structureProvider.getChildren(record.parent);
 			structureProvider.setStrip(record.level);
-			ImportOperation operation = new ImportOperation(
-					project.getFullPath(), structureProvider.getRoot(),
-					structureProvider, this, fileSystemObjects);
+			ImportOperation operation = new ImportOperation(project.getFullPath(), structureProvider.getRoot(), structureProvider, this, fileSystemObjects);
 			operation.setContext(getShell());
 			operation.run(monitor);
 			return true;
@@ -1458,34 +1378,25 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 			// some error condition occured.
 			if (locationURI != null) {
 				// validate the location of the project being copied
-				IStatus result = ResourcesPlugin.getWorkspace()
-						.validateProjectLocationURI(project, locationURI);
+				IStatus result = ResourcesPlugin.getWorkspace().validateProjectLocationURI(project, locationURI);
 				if (!result.isOK()) {
-					throw new InvocationTargetException(new CoreException(
-							result));
+					throw new InvocationTargetException(new CoreException(result));
 				}
 				importSource = new File(locationURI);
-				IProjectDescription desc = workspace
-						.newProjectDescription(projectName);
+				IProjectDescription desc = workspace.newProjectDescription(projectName);
 				desc.setBuildSpec(record.description.getBuildSpec());
 				desc.setComment(record.description.getComment());
-				desc.setDynamicReferences(record.description
-						.getDynamicReferences());
+				desc.setDynamicReferences(record.description.getDynamicReferences());
 				desc.setNatureIds(record.description.getNatureIds());
-				desc.setReferencedProjects(record.description
-						.getReferencedProjects());
+				desc.setReferencedProjects(record.description.getReferencedProjects());
 				record.description = desc;
 			}
 		}
 
 		try {
-			monitor.beginTask(
-					DataTransferMessages.WizardProjectsImportPage_CreateProjectsTask,
-					100);
-			project.create(record.description, new SubProgressMonitor(monitor,
-					30));
-			project.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(
-					monitor, 70));
+			monitor.beginTask(DataTransferMessages.WizardProjectsImportPage_CreateProjectsTask, 100);
+			project.create(record.description, new SubProgressMonitor(monitor, 30));
+			project.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 70));
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
@@ -1494,11 +1405,8 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 
 		// import operation to import project files if copy checkbox is selected
 		if (copyFiles && importSource != null) {
-			List<?> filesToImport = FileSystemStructureProvider.INSTANCE
-					.getChildren(importSource);
-			ImportOperation operation = new ImportOperation(
-					project.getFullPath(), importSource,
-					FileSystemStructureProvider.INSTANCE, this, filesToImport);
+			List< ? > filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
+			ImportOperation operation = new ImportOperation(project.getFullPath(), importSource, FileSystemStructureProvider.INSTANCE, this, filesToImport);
 			operation.setContext(getShell());
 			operation.setOverwriteResources(true); // need to overwrite
 			// .project, .classpath
@@ -1527,24 +1435,15 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		// Break the message up if there is a file name and a directory
 		// and there are at least 2 segments.
 		if (path.getFileExtension() == null || path.segmentCount() < 2) {
-			messageString = NLS.bind(
-					IDEWorkbenchMessages.WizardDataTransfer_existsQuestion,
-					pathString);
+			messageString = NLS.bind(IDEWorkbenchMessages.WizardDataTransfer_existsQuestion, pathString);
 		} else {
-			messageString = NLS
-					.bind(IDEWorkbenchMessages.WizardDataTransfer_overwriteNameAndPathQuestion,
-							path.lastSegment(), path.removeLastSegments(1)
-									.toOSString());
+			messageString = NLS.bind(IDEWorkbenchMessages.WizardDataTransfer_overwriteNameAndPathQuestion, path.lastSegment(),
+				path.removeLastSegments(1).toOSString());
 		}
 
-		final MessageDialog dialog = new MessageDialog(getContainer()
-				.getShell(), IDEWorkbenchMessages.Question, null,
-				messageString, MessageDialog.QUESTION, new String[] {
-						IDialogConstants.YES_LABEL,
-						IDialogConstants.YES_TO_ALL_LABEL,
-						IDialogConstants.NO_LABEL,
-						IDialogConstants.NO_TO_ALL_LABEL,
-						IDialogConstants.CANCEL_LABEL }, 0) {
+		final MessageDialog dialog = new MessageDialog(getContainer().getShell(), IDEWorkbenchMessages.Question, null, messageString, MessageDialog.QUESTION,
+			new String[] { IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.NO_TO_ALL_LABEL,
+				IDialogConstants.CANCEL_LABEL }, 0) {
 			protected int getShellStyle() {
 				return super.getShellStyle() | SWT.SHEET;
 			}
@@ -1557,8 +1456,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 				dialog.open();
 			}
 		});
-		return dialog.getReturnCode() < 0 ? CANCEL : response[dialog
-				.getReturnCode()];
+		return (dialog.getReturnCode() < 0) ? CANCEL : response[dialog.getReturnCode()];
 	}
 
 	/**
@@ -1586,8 +1484,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 	 */
 	private IProject[] getProjectsInWorkspace() {
 		if (wsProjects == null) {
-			wsProjects = IDEWorkbenchPlugin.getPluginWorkspace().getRoot()
-					.getProjects();
+			wsProjects = IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getProjects();
 		}
 		return wsProjects;
 	}
@@ -1606,15 +1503,12 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 	public ProjectRecord[] getProjectRecords() {
 		List<ProjectRecord> projectRecords = new ArrayList<ProjectRecord>();
 		for (int i = 0; i < selectedProjects.length; i++) {
-			if ((isProjectInWorkspacePath(selectedProjects[i].getProjectName()) && copyFiles)
-					|| isProjectInWorkspace(selectedProjects[i]
-							.getProjectName())) {
+			if ((isProjectInWorkspacePath(selectedProjects[i].getProjectName()) && copyFiles) || isProjectInWorkspace(selectedProjects[i].getProjectName())) {
 				selectedProjects[i].hasConflicts = true;
 			}
 			projectRecords.add(selectedProjects[i]);
 		}
-		return (ProjectRecord[]) projectRecords
-				.toArray(new ProjectRecord[projectRecords.size()]);
+		return (ProjectRecord[]) projectRecords.toArray(new ProjectRecord[projectRecords.size()]);
 	}
 
 	/**
@@ -1679,17 +1573,15 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 
 		if (initialPath == null && settings != null) {
 			// radio selection
-			boolean archiveSelected = settings
-					.getBoolean(STORE_ARCHIVE_SELECTED);
+			boolean archiveSelected = settings.getBoolean(STORE_ARCHIVE_SELECTED);
 			projectFromDirectoryRadio.setSelection(!archiveSelected);
 			projectFromArchiveRadio.setSelection(archiveSelected);
 			if (archiveSelected) {
 				archiveRadioSelected();
 			} else {
 				directoryRadioSelected();
-			} 
+			}
 		}
-	
 
 		// Third, if we do have an initial path, set the proper
 		// path and radio buttons to the initial value. Move
@@ -1724,8 +1616,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 		if (settings != null) {
 			settings.put(STORE_COPY_PROJECT_ID, copyCheckbox.getSelection());
 
-			settings.put(STORE_ARCHIVE_SELECTED,
-					projectFromArchiveRadio.getSelection());
+			settings.put(STORE_ARCHIVE_SELECTED, projectFromArchiveRadio.getSelection());
 		}
 	}
 

@@ -38,9 +38,9 @@ public class RedhawkImportContentProvider implements ITreeContentProvider {
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof ProjectRecord[]) {
 			ProjectRecord[] records = (ProjectRecord[]) inputElement;
-			
+
 			List<ProjectRecord> projects = new ArrayList<ProjectRecord>();
-			
+
 			// Only grab projects with an spd as projectSystemFile
 			for (ProjectRecord project : records) {
 				if (project.projectSystemFile.getName().matches(".+\\.spd.xml")) {
