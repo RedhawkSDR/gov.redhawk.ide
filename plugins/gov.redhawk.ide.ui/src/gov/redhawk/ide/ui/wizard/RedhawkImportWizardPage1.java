@@ -9,6 +9,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 /*******************************************************************************
+ * Much of the code included in this page is based off of the Eclipse "Import Existing Project Wizard"
+ * Please see the attached copyright for more information
+ *******************************************************************************/
+/*******************************************************************************
  * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -1683,8 +1687,9 @@ public class RedhawkImportWizardPage1 extends WizardPage implements
 				archiveRadioSelected();
 			} else {
 				directoryRadioSelected();
-			}
+			} 
 		}
+	
 
 		// Third, if we do have an initial path, set the proper
 		// path and radio buttons to the initial value. Move
