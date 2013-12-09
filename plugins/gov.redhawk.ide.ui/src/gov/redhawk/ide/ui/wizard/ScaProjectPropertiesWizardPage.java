@@ -129,7 +129,7 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 		} else {
 			if (this.getWizard() instanceof IImportWizard) {
 				String path = "";
-				if (!this.contentsGroup.isCreateNewResource()) {
+				if (this.contentsGroup != null && !this.contentsGroup.isCreateNewResource()) {
 					path = this.contentsGroup.getExistingResourcePath().toOSString();
 				}
 				((IImportWizard) this.getWizard()).importSelected(path);

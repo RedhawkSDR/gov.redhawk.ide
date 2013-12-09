@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.spd.ui.wizard;
 
+import gov.redhawk.ide.ui.wizard.ContentsGroup;
 import gov.redhawk.ide.ui.wizard.ScaProjectPropertiesWizardPage;
 import gov.redhawk.model.sca.util.ModelUtil;
 
@@ -85,7 +86,12 @@ public class ScaResourceProjectPropertiesWizardPage extends ScaProjectProperties
 	@Override
 	public void createControl(final Composite parent) {
 		super.createControl(parent);
-		getContentsGroup().setValidator(new SpdFileValidator());
+		ContentsGroup contentsGroup = getContentsGroup();
+		if (contentsGroup != null) {
+			contentsGroup.setValidator(new SpdFileValidator());
+		}
+		
+		
 	}
 
 	@Override
