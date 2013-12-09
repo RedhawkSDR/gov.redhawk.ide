@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="gov.redhawk.ide.ui" version="2">
+    <resource path="src/gov/redhawk/ide/ui/wizard/RedhawkImportArchiveUtil.java" type="gov.redhawk.ide.ui.wizard.RedhawkImportArchiveUtil">
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="ILeveledImportStructureProvider"/>
+                <message_argument value="RedhawkImportArchiveUtil"/>
+                <message_argument value="createMissingFiles(RedhawkImportWizardPage1ProjectRecord, IProgressMonitor, RedhawkImportWizardPage1, ILeveledImportStructureProvider)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

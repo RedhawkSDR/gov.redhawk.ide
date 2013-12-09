@@ -56,7 +56,12 @@ public class RedhawkImportContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof ProjectRecord) {
 			ProjectRecord project = (ProjectRecord) parentElement;
-			SoftPkg softpkg = new RedhawkImportUtil().getSoftPkg(project.projectSystemFile.getAbsolutePath());
+			SoftPkg softpkg;
+			if (project.projectArchiveFile != null) {
+				softpkg = new RedhawkImportArchiveUtil().getSoftPkg(project.projectSystemFile.getAbsolutePath());
+			} else {
+				softpkg = new RedhawkImportFileUtil().getSoftPkg(project.projectSystemFile.getAbsolutePath());
+			}
 
 			List<ImplWrapper> implList = new ArrayList<ImplWrapper>();
 			EList<Implementation> implementations = softpkg.getImplementation();

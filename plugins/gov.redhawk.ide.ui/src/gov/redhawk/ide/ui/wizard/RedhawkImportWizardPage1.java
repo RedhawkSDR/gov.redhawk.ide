@@ -176,11 +176,15 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 
 		Object parent;
 
+		String sourceFile;
+
 		int level;
 
 		boolean hasConflicts;
 
 		boolean missingFiles;
+
+		boolean missingArchiveFiles;
 
 		/**
 		 *  Field is only instantiated if users use the second page of the REDHAWK import wizard
@@ -208,11 +212,13 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 		 *            The parent folder of the .project file
 		 * @param level
 		 *            The number of levels deep in the provider the file is
+		 * @param sourceFile 
 		 */
-		ProjectRecord(Object file, Object parent, int level) {
+		ProjectRecord(Object file, Object parent, int level, String sourceFile) {
 			this.projectArchiveFile = file;
 			this.parent = parent;
 			this.level = level;
+			this.sourceFile = sourceFile;
 			setProjectName();
 		}
 
@@ -222,19 +228,25 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 		private void setProjectName() {
 			try {
 				if (projectArchiveFile != null) {
-					//TODO
 					InputStream stream = structureProvider.getContents(projectArchiveFile);
-
-					// If we can get a description pull the name from there
-					if (stream == null) {
+					IPath path = null;
+					if (projectArchiveFile instanceof TarEntry) {
+						path = new Path(((TarEntry) projectArchiveFile).getName());
+					} else if (projectArchiveFile instanceof ZipEntry) {
+						path = new Path(((ZipEntry) projectArchiveFile).getName());
+					}
+					if (stream == null || nonEclipseProject(path.toFile().getName())) {
+						// If stream is null or .project file is missing use the directory name as the project name 
 						if (projectArchiveFile instanceof ZipEntry) {
-							IPath path = new Path(((ZipEntry) projectArchiveFile).getName());
 							projectName = path.segment(path.segmentCount() - 2);
 						} else if (projectArchiveFile instanceof TarEntry) {
-							IPath path = new Path(((TarEntry) projectArchiveFile).getName());
 							projectName = path.segment(path.segmentCount() - 2);
 						}
+						if (nonEclipseProject(path.toFile().getName())) {
+							missingArchiveFiles = true;
+						}
 					} else {
+						// If we can get a description pull the name from there
 						description = IDEWorkbenchPlugin.getPluginWorkspace().loadProjectDescription(stream);
 						stream.close();
 						projectName = description.getName();
@@ -244,15 +256,13 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 				// If we don't have the project name try again
 				if (projectName == null) {
 					IPath path = new Path(projectSystemFile.getPath());
-					// if the file is in the default location, use the directory
-					// name as the project name
+					// if the file is in the default location, use the directory name as the project name
 					if (isDefaultLocation(path)) {
 						projectName = path.segment(path.segmentCount() - 2);
 						description = IDEWorkbenchPlugin.getPluginWorkspace().newProjectDescription(projectName);
 					} else if (nonEclipseProject(path.toFile().getName())) {
-						// If there is no .project file, use the file name as
-						// the project name
-						projectName = RedhawkImportUtil.getName(path);
+						// If there is no .project file, use the file name as the project name
+						projectName = RedhawkImportFileUtil.getName(path);
 						missingFiles = true;
 					} else {
 						description = IDEWorkbenchPlugin.getPluginWorkspace().loadProjectDescription(path);
@@ -376,6 +386,8 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 	private WorkingSetGroup workingSetGroup;
 
 	private IStructuredSelection currentSelection;
+
+	private boolean archiveSelected;
 
 	/**
 	 * Creates a new project creation wizard page.
@@ -841,6 +853,17 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 			archivePathField.setFocus();
 			copyCheckbox.setSelection(true);
 			copyCheckbox.setEnabled(false);
+			archiveSelected = true;
+			canFlipToNextPage();
+		}
+	}
+
+	@Override
+	public boolean canFlipToNextPage() {
+		if (archiveSelected) {
+			return false;
+		} else {
+			return super.canFlipToNextPage();
 		}
 	}
 
@@ -915,13 +938,10 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 				 * .eclipse.core.runtime.IProgressMonitor)
 				 */
 				public void run(IProgressMonitor monitor) {
-
 					monitor.beginTask(DataTransferMessages.WizardProjectsImportPage_SearchingMessage, 100);
 					selectedProjects = new ProjectRecord[0];
 					Collection<Object> files = new ArrayList<Object>();
 					monitor.worked(10);
-					// TODO search tar & zip files for projects that are missing
-					// .project file
 					if (!dirSelected && ArchiveFileManipulations.isTarFile(path)) {
 						TarFile sourceTarFile = getSpecifiedTarSourceFile(path);
 						if (sourceTarFile == null) {
@@ -931,9 +951,10 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 						structureProvider = new TarLeveledStructureProvider(sourceTarFile);
 						Object child = structureProvider.getRoot();
 
-						if (!collectProjectFilesFromProvider(files, child, 0, monitor)) {
+						if (!collectProjectFilesFromProvider(files, child, 0, monitor, path)) {
 							return;
 						}
+
 						Iterator<Object> filesIterator = files.iterator();
 						selectedProjects = new ProjectRecord[files.size()];
 						int index = 0;
@@ -943,14 +964,14 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 							selectedProjects[index++] = (ProjectRecord) filesIterator.next();
 						}
 					} else if (!dirSelected && ArchiveFileManipulations.isZipFile(path)) {
-						ZipFile sourceFile = getSpecifiedZipSourceFile(path);
-						if (sourceFile == null) {
+						ZipFile sourceZipFile = getSpecifiedZipSourceFile(path);
+						if (sourceZipFile == null) {
 							return;
 						}
-						structureProvider = new ZipLeveledStructureProvider(sourceFile);
+						structureProvider = new ZipLeveledStructureProvider(sourceZipFile);
 						Object child = structureProvider.getRoot();
 
-						if (!collectProjectFilesFromProvider(files, child, 0, monitor)) {
+						if (!collectProjectFilesFromProvider(files, child, 0, monitor, path)) {
 							return;
 						}
 						Iterator<Object> filesIterator = files.iterator();
@@ -962,8 +983,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 							selectedProjects[index++] = (ProjectRecord) filesIterator.next();
 						}
 					} else if (dirSelected && directory.isDirectory()) {
-						// returns false if no .project, spd, sad, or dcd files
-						// are found
+						// returns false if no .project, spd, sad, or dcd files are found
 						if (!collectProjectFilesFromDirectory(files, directory, null, monitor)) {
 							return;
 						}
@@ -1118,8 +1138,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 				return true;
 			}
 		}
-		// if project description files are not found
-		// look for SCA specific file names
+		// if project description files are not found look for SCA specific file names
 		for (int i = 0; i < contents.length; i++) {
 			File file = contents[i];
 			if (file.isFile() && file.getName().matches(sadExtension)) {
@@ -1166,10 +1185,10 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 	 * @param files
 	 * @param monitor
 	 *            The monitor to report to
+	 * @param sourceFile 
 	 * @return boolean <code>true</code> if the operation was completed.
 	 */
-	private boolean collectProjectFilesFromProvider(Collection<Object> files, Object entry, int level, IProgressMonitor monitor) {
-
+	private boolean collectProjectFilesFromProvider(Collection<Object> files, Object entry, int level, IProgressMonitor monitor, String sourceFile) {
 		if (monitor.isCanceled()) {
 			return false;
 		}
@@ -1178,15 +1197,29 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 		if (children == null) {
 			children = new ArrayList<Object>(1);
 		}
+
+		boolean dotProjectFound = false;
 		Iterator< ? > childrenEnum = children.iterator();
 		while (childrenEnum.hasNext()) {
 			Object child = childrenEnum.next();
 			if (structureProvider.isFolder(child)) {
-				collectProjectFilesFromProvider(files, child, level + 1, monitor);
+				collectProjectFilesFromProvider(files, child, level + 1, monitor, sourceFile);
 			}
 			String elementLabel = structureProvider.getLabel(child);
 			if (elementLabel.equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
-				files.add(new ProjectRecord(child, entry, level));
+				files.add(new ProjectRecord(child, entry, level, sourceFile));
+				dotProjectFound = true;
+			}
+		}
+		// If no .project file is found, loop back through looking for a spd, sad, or dcd file to use
+		if (!dotProjectFound) {
+			childrenEnum = children.iterator();
+			while (childrenEnum.hasNext()) {
+				Object child = childrenEnum.next();
+				String elementLabel = structureProvider.getLabel(child);
+				if (elementLabel.matches(sadExtension) || elementLabel.matches(spdExtension) || elementLabel.matches(dcdExtension)) {
+					files.add(new ProjectRecord(child, entry, level, sourceFile));
+				}
 			}
 		}
 		return true;
@@ -1274,10 +1307,11 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 						throw new OperationCanceledException();
 					}
 					for (int i = 0; i < selected.length; i++) {
-						// TODO add check for archive files
 						ProjectRecord project = (ProjectRecord) selected[i];
 						if (project.missingFiles) {
-							new RedhawkImportUtil().createMissingFiles(project, monitor, copyFiles, parent);
+							new RedhawkImportFileUtil().createMissingFiles(project, monitor, copyFiles, parent);
+						} else if (project.missingArchiveFiles) {
+							new RedhawkImportArchiveUtil().createMissingFiles(project, monitor, parent, structureProvider);
 						} else {
 							createExistingProject(project, new SubProgressMonitor(monitor, 1));
 						}
@@ -1573,7 +1607,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 
 		if (initialPath == null && settings != null) {
 			// radio selection
-			boolean archiveSelected = settings.getBoolean(STORE_ARCHIVE_SELECTED);
+			archiveSelected = settings.getBoolean(STORE_ARCHIVE_SELECTED);
 			projectFromDirectoryRadio.setSelection(!archiveSelected);
 			projectFromArchiveRadio.setSelection(archiveSelected);
 			if (archiveSelected) {
