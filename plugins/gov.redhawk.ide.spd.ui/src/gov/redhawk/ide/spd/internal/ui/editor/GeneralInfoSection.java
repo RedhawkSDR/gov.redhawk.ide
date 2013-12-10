@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import mil.jpeojtrs.sca.prf.PrfPackage;
+import mil.jpeojtrs.sca.prf.Properties;
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.Descriptor;
@@ -69,6 +70,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -319,6 +321,12 @@ public class GeneralInfoSection extends ScaSection {
 			if (dialog.open() == Window.OK) {
 				final String value = wizard.getModelFile().getProjectRelativePath().toPortableString();
 				setPrfFileName(value);
+
+				// Allows the editor to add the properties page and the prf.xml tab without having to close and reopen.
+				if (getPage().getEditor() instanceof ComponentEditor) {
+					ComponentEditor scaEditor = (ComponentEditor) getPage().getEditor();
+					scaEditor.newPrfAdded();
+				}
 			}
 		}
 	}

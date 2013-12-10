@@ -292,6 +292,11 @@ public class ComponentEditor extends SCAFormEditor {
 		}
 	}
 
+	public void newPrfAdded() {
+		createPrfInput(getSoftPkg());
+		replacePrf();
+	}
+	
 	protected void createPrfInput(final SoftPkg spd) {
 		this.prfInput = null;
 		URI prfUri = getPrfURI();
