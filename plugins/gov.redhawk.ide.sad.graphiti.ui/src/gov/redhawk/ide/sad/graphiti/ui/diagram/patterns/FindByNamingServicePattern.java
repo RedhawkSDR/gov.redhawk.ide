@@ -1,6 +1,7 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.nonpersistbo.FindByNamingService;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 
 import java.awt.Component;
 
@@ -35,6 +36,16 @@ public class FindByNamingServicePattern extends AbstractPattern implements IPatt
 	@Override
 	public String getCreateName(){
 		return "FindBy Naming Service";
+	}
+	
+	@Override
+	public String getCreateDescription() {
+		return "";
+	}
+	
+	@Override
+	public String getCreateImageId() {
+		return ImageProvider.IMG_FIND_BY_NAMING_SERVICE;
 	}
 	
 	

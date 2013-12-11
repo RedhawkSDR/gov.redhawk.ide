@@ -12,6 +12,7 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
+import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -37,8 +38,11 @@ import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
+import org.eclipse.graphiti.mm.algorithms.styles.Point;
+import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.AbstractPattern;
@@ -59,6 +63,8 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	private final static String COMPONENT_GA_ciText = "ciText";
 	private final static String COMPONENT_GA_providesPortsRectangle = "providesPortsRectangle";
 	private final static String COMPONENT_GA_usesPortsRectangle = "usesPortsRectangle";
+	
+	private final static String COMPONENT_GA_usesPortRectangle = "usesPortRectangle";
 	
 	
 	//Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove etc.)
@@ -109,6 +115,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	public String getCreateName(){
 		return "Component";
 	}
+	
 	
 	public static UpdateValueStrategy floatingPointRangeValidator(final String fieldName, final float minValue, final float maxValue, final boolean allowDefault){
 	    return new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
@@ -183,168 +190,11 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		return false;
 	}
 	
-	/**
-	 * Adds a Component to the diagram.  Immediately calls resize at the end to keep sizing and location in one place.
-	 */
-	@Override
-	public PictogramElement add(IAddContext context) {
-		SadComponentInstantiation sadComponentInstantiation = (SadComponentInstantiation) context.getNewObject();
-		Diagram diagram = (Diagram) context.getTargetContainer();
-		
-		
-		// CONTAINER SHAPE WITH ROUNDED RECTANGLE
-		ICreateService createService = Graphiti.getCreateService();
-		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
-		IPeCreateService peCreateService = Graphiti.getPeCreateService();
-		
-		ContainerShape outerContainerShape = createService.createContainerShape(diagram, true);
-		ContainerShape innerContainerShape;
-		RoundedRectangle outerRoundedRectangle;
-		RoundedRectangle innerRoundedRectangle;
-		Text ciText;
-		Text cText;
-		
-		
-		//OUTER RECTANGLE
-		outerRoundedRectangle = createService.createRoundedRectangle(outerContainerShape, 5, 5);
-		outerRoundedRectangle.setStyle(StyleUtil.getStyleForComponentOuter(diagram));
-		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, COMPONENT_GA_TYPE, COMPONENT_GA_outerRoundedRectangle);
-		cText = createService.createText(outerRoundedRectangle, sadComponentInstantiation.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName());
-		cText.setStyle(StyleUtil.getStyleForComponentText(diagram));
-		Graphiti.getPeService().setPropertyValue(cText, COMPONENT_GA_TYPE, COMPONENT_GA_cText);
-		link(outerContainerShape, sadComponentInstantiation); // link container and business object
-		
+	
+	
+	
+	
 
-		//INNER RECTANGLE
-		innerContainerShape = createService.createContainerShape(outerContainerShape, false);
-		innerRoundedRectangle = createService.createRoundedRectangle(innerContainerShape, 5, 5);
-		innerRoundedRectangle.setStyle(StyleUtil.getStyleForComponentInner(diagram));
-		Graphiti.getPeService().setPropertyValue(innerRoundedRectangle, COMPONENT_GA_TYPE, COMPONENT_GA_innerRoundedRectangle);//ref helps with resize
-		ciText = createService.createText(innerRoundedRectangle, sadComponentInstantiation.getUsageName());
-		ciText.setStyle(StyleUtil.getStyleForComponentText(diagram));
-		Graphiti.getPeService().setPropertyValue(ciText, COMPONENT_GA_TYPE, COMPONENT_GA_ciText);//ref helps with resize
-
-		//provides (input)
-		int providesPortNameLength = getLongestProvidesPortLength(sadComponentInstantiation)*PORT_CHAR_WIDTH;
-		int iter = 0;
-		ContainerShape providesPortsContainerShape = createService.createContainerShape(outerContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(providesPortsContainerShape, COMPONENT_SHAPE_TYPE, COMPONENT_SHAPE_providesPortsContainerShape);//ref prevent selection/deletion/removal
-		Rectangle providesPortsRectangle = createService.createRectangle(providesPortsContainerShape);
-		providesPortsRectangle.setTransparency(1d);
-		Graphiti.getPeService().setPropertyValue(providesPortsRectangle, COMPONENT_GA_TYPE, COMPONENT_GA_providesPortsRectangle);//ref helps with resize
-
-		//iterate over all provides ports
-		for(ProvidesPortStub p: sadComponentInstantiation.getProvides()){
-			ContainerShape providesPortContainerShape = createService.createContainerShape(providesPortsContainerShape, true);
-			Graphiti.getPeService().setPropertyValue(providesPortContainerShape, COMPONENT_SHAPE_TYPE, COMPONENT_SHAPE_providesPortContainerShape);//ref prevent selection/deletion/removal
-			Rectangle providesPortContainerShapeRectangle = createService.createRectangle(providesPortContainerShape);
-			providesPortContainerShapeRectangle.setTransparency(1d);
-			gaLayoutService.setLocationAndSize(providesPortContainerShapeRectangle, 0, iter++*(PORT_SHAPE_LENGTH+5), PORT_SHAPE_LENGTH + providesPortNameLength, PORT_SHAPE_LENGTH);
-			link(providesPortContainerShape, p);
-
-//			BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(providesPortContainerShape);
-//			boxAnchor.setRelativeWidth(1);
-//			boxAnchor.setRelativeHeight(.5);
-//			boxAnchor.setReferencedGraphicsAlgorithm(providesPortContainerShapeRectangle);
-//			Rectangle boxAnchorRectangle = createService.createRectangle(boxAnchor);
-//			boxAnchorRectangle.setStyle(StyleUtil.getStyleForProvidesPort(diagram));
-//			gaLayoutService.setLocationAndSize(boxAnchorRectangle, 0, 0, 50, 50);
-			
-			Shape providesPortRectangleShape  = createService.createShape(providesPortContainerShape, true);
-			Graphiti.getPeService().setPropertyValue(providesPortRectangleShape, COMPONENT_SHAPE_TYPE, COMPONENT_SHAPE_providesPortRectangleShape);//ref prevent move
-			Rectangle providesPortRectangle = createService.createRectangle(providesPortRectangleShape);
-			link(providesPortRectangleShape, p);
-			peCreateService.createChopboxAnchor(providesPortRectangleShape);
-//			Rectangle providesPortRectangle = createService.createRectangle(boxAnchor);
-//			link(boxAnchor, p);
-			
-			//providesPortRectangle.setFilled(true);
-			
-			
-			providesPortRectangle.setStyle(StyleUtil.getStyleForProvidesPort(diagram));
-			gaLayoutService.setLocationAndSize(providesPortRectangle, 0, 0, PORT_SHAPE_LENGTH, PORT_SHAPE_LENGTH);
-
-			Shape providesPortTextShape  = createService.createShape(providesPortContainerShape, false);
-			Text providesPortText = createService.createText(providesPortTextShape, p.getName());
-			providesPortText.setStyle(StyleUtil.getStyleForPortText(diagram));
-			gaLayoutService.setLocationAndSize(providesPortText, PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_LENGTH, 0, p.getName().length()*PORT_CHAR_WIDTH, 20);
-			//anchor
-//			Anchor anchor = PictogramsFactory.eINSTANCE.createChopboxAnchor();
-//			anchor.setParent(providesPortContainerShape);
-			
-		}
-
-
-		//uses (output)
-		int usesPortNameLength = getLongestUsesPortLength(sadComponentInstantiation)*PORT_CHAR_WIDTH;
-		int intPortTextX = outerRoundedRectangle.getWidth() - (usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_LENGTH);
-
-		ContainerShape usesPortsContainerShape = createService.createContainerShape(outerContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(usesPortsContainerShape, COMPONENT_SHAPE_TYPE, COMPONENT_SHAPE_usesPortsContainerShape); //ref prevent selection/deletion/removal
-		Rectangle usesPortsRectangle = createService.createRectangle(usesPortsContainerShape);
-		usesPortsRectangle.setTransparency(1d);
-		Graphiti.getPeService().setPropertyValue(usesPortsRectangle, COMPONENT_GA_TYPE, COMPONENT_GA_usesPortsRectangle);//ref helps with resize
-		gaLayoutService.setLocationAndSize(usesPortsRectangle, intPortTextX, PORTS_CONTAINER_SHAPE_TOP_PADDING, PORT_SHAPE_LENGTH + usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING, sadComponentInstantiation.getUses().size()*(PORT_SHAPE_LENGTH));
-
-
-		//iterate over all uses ports
-		iter = 0;
-		for(UsesPortStub p: sadComponentInstantiation.getUses()){
-			//port container
-			ContainerShape usesPortContainerShape = createService.createContainerShape(usesPortsContainerShape, true);
-			Graphiti.getPeService().setPropertyValue(usesPortContainerShape, COMPONENT_SHAPE_TYPE, COMPONENT_SHAPE_usesPortContainerShape); //ref prevent selection/deletion/removal
-			Rectangle usesPortContainerShapeRectangle = createService.createRectangle(usesPortContainerShape);
-			usesPortContainerShapeRectangle.setTransparency(1d);
-			gaLayoutService.setLocationAndSize(usesPortContainerShapeRectangle, usesPortsRectangle.getWidth()-(PORT_SHAPE_LENGTH + usesPortNameLength), iter++*(PORT_SHAPE_LENGTH+5), PORT_SHAPE_LENGTH + usesPortNameLength, PORT_SHAPE_LENGTH);
-			link(usesPortContainerShape, p);
-			
-			
-//			BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(usesPortContainerShape);
-//			boxAnchor.setRelativeWidth(1);
-//			boxAnchor.setRelativeHeight(.5);
-//			boxAnchor.setReferencedGraphicsAlgorithm(usesPortContainerShapeRectangle);
-//			Rectangle boxAnchorRectangle = createService.createRectangle(boxAnchor);
-//			boxAnchorRectangle.setStyle(StyleUtil.getStyleForProvidesPort(diagram));
-//			gaLayoutService.setLocationAndSize(boxAnchorRectangle, 0, 0, 50, 50);
-			
-			
-			//rectangle
-			Shape usesPortRectangleShape  = createService.createShape(usesPortContainerShape, true);
-			Graphiti.getPeService().setPropertyValue(usesPortRectangleShape, COMPONENT_SHAPE_TYPE, COMPONENT_SHAPE_usesPortRectangleShape);//ref prevent move
-			Rectangle usesPortRectangle = createService.createRectangle(usesPortRectangleShape);
-			link(usesPortRectangleShape, p);
-			peCreateService.createChopboxAnchor(usesPortRectangleShape);
-//			Rectangle usesPortRectangle = createService.createRectangle(boxAnchor);
-//			link(boxAnchor, p);
-			//usesPortRectangle.setFilled(true);
-			
-			usesPortRectangle.setStyle(StyleUtil.getStyleForUsesPort(diagram));
-			gaLayoutService.setLocationAndSize(usesPortRectangle, usesPortNameLength, 0, PORT_SHAPE_LENGTH, PORT_SHAPE_LENGTH);
-			//text
-			Shape usesPortTextShape  = createService.createShape(usesPortContainerShape, false);
-			Text usesPortText = createService.createText(usesPortTextShape, p.getName());
-			usesPortText.setStyle(StyleUtil.getStyleForPortText(diagram));
-			usesPortText.setHorizontalAlignment(Orientation.ALIGNMENT_RIGHT);
-			gaLayoutService.setLocationAndSize(usesPortText, 0, 0, usesPortContainerShapeRectangle.getWidth()-(usesPortRectangle.getWidth() + PORT_NAME_HORIZONTAL_PADDING), 20);
-			//anchor
-//			Anchor anchor = PictogramsFactory.eINSTANCE.createChopboxAnchor();
-//			anchor.setParent(usesPortContainerShape);
-			
-		}
-
-		//Define size and location
-		AreaContext areaContext = new AreaContext();
-		areaContext.setLocation(context.getX(), context.getY());
-		areaContext.setSize(getPreferredWidth(sadComponentInstantiation), getPreferredHeight(sadComponentInstantiation));
-		
-		//Size component (we are doing this so that we don't have to keep sizing/location information in both the add() and resize(), only resize())
-		resizeComponent(areaContext, outerContainerShape);
-		
-		//layout
-		layoutPictogramElement(outerContainerShape);
-
-		return outerContainerShape;
-	}
 	
 	@Override
 	public boolean canRemove(IRemoveContext context) {
@@ -423,6 +273,17 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 				//get placement for instantiation and delete it from sad partitioning after we look at removing the component file ref.
 				SadComponentPlacement placement = (SadComponentPlacement)ciToDelete.getPlacement();
 				
+				//find and remove any attached connections
+				//gather connections
+				List<SadConnectInterface> connectionsToRemove = new ArrayList<SadConnectInterface>();
+				for(SadConnectInterface connectionInterface: sad.getConnections().getConnectInterface()){
+					if(ciToDelete.getId().equals(connectionInterface.getUsesPort().getComponentInstantiationRef().getRefid()) ||
+							ciToDelete.getId().equals(connectionInterface.getProvidesPort().getComponentInstantiationRef().getRefid())){
+						connectionsToRemove.add(connectionInterface);
+					}
+				}
+				//remove gathered connections
+				sad.getConnections().getConnectInterface().removeAll(connectionsToRemove);
 				
 				//delete component file if applicable
 				//figure out which component file we are using and if no other component placements using it then remove it.
@@ -487,6 +348,8 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 				usesPortsRectangle = (Rectangle)pc;
 			}else if(isPropertyElementType(pc, COMPONENT_GA_providesPortsRectangle)){
 				providesPortsRectangle = (Rectangle)pc;
+			}else if(isPropertyElementType(pc, COMPONENT_GA_usesPortRectangle)){
+				String bob = "bob";
 			}
 		}
 		
@@ -794,4 +657,166 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 
 		return (left + right > name ? left + right : name); // SUPPRESS CHECKSTYLE Ternary 
 	}
+	
+	/**
+	 * Adds a Component to the diagram.  Immediately calls resize at the end to keep sizing and location in one place.
+	 */
+	public PictogramElement add(IAddContext context) {
+		SadComponentInstantiation sadComponentInstantiation = (SadComponentInstantiation) context.getNewObject();
+		Diagram diagram = (Diagram) context.getTargetContainer();
+		
+		
+		// CONTAINER SHAPE WITH ROUNDED RECTANGLE
+		ICreateService createService = Graphiti.getCreateService();
+		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
+		IPeCreateService peCreateService = Graphiti.getPeCreateService();
+		
+		ContainerShape outerContainerShape = createService.createContainerShape(diagram, true);
+		ContainerShape innerContainerShape;
+		RoundedRectangle outerRoundedRectangle;
+		RoundedRectangle innerRoundedRectangle;
+		Text ciText;
+		Text cText;
+		
+		
+		//OUTER RECTANGLE
+		outerRoundedRectangle = createService.createRoundedRectangle(outerContainerShape, 5, 5);
+		outerRoundedRectangle.setStyle(StyleUtil.getStyleForComponentOuter(diagram));
+		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, COMPONENT_GA_TYPE, COMPONENT_GA_outerRoundedRectangle);
+		cText = createService.createText(outerRoundedRectangle, sadComponentInstantiation.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName());
+		cText.setStyle(StyleUtil.getStyleForComponentText(diagram));
+		Graphiti.getPeService().setPropertyValue(cText, COMPONENT_GA_TYPE, COMPONENT_GA_cText);
+		link(outerContainerShape, sadComponentInstantiation); // link container and business object
+		
+
+		//INNER RECTANGLE
+		innerContainerShape = createService.createContainerShape(outerContainerShape, false);
+		innerRoundedRectangle = createService.createRoundedRectangle(innerContainerShape, 5, 5);
+		innerRoundedRectangle.setStyle(StyleUtil.getStyleForComponentInner(diagram));
+		Graphiti.getPeService().setPropertyValue(innerRoundedRectangle, COMPONENT_GA_TYPE, COMPONENT_GA_innerRoundedRectangle);//ref helps with resize
+		ciText = createService.createText(innerRoundedRectangle, sadComponentInstantiation.getUsageName());
+		ciText.setStyle(StyleUtil.getStyleForComponentText(diagram));
+		Graphiti.getPeService().setPropertyValue(ciText, COMPONENT_GA_TYPE, COMPONENT_GA_ciText);//ref helps with resize
+
+		//provides (input)
+		int providesPortNameLength = getLongestProvidesPortLength(sadComponentInstantiation)*PORT_CHAR_WIDTH;
+		int iter = 0;
+		ContainerShape providesPortsContainerShape = createService.createContainerShape(outerContainerShape, true);
+		Graphiti.getPeService().setPropertyValue(providesPortsContainerShape, COMPONENT_SHAPE_TYPE, COMPONENT_SHAPE_providesPortsContainerShape);//ref prevent selection/deletion/removal
+		Rectangle providesPortsRectangle = createService.createRectangle(providesPortsContainerShape);
+		providesPortsRectangle.setTransparency(1d);
+		Graphiti.getPeService().setPropertyValue(providesPortsRectangle, COMPONENT_GA_TYPE, COMPONENT_GA_providesPortsRectangle);//ref helps with resize
+
+		//iterate over all provides ports
+		for(ProvidesPortStub p: sadComponentInstantiation.getProvides()){
+			ContainerShape providesPortContainerShape = createService.createContainerShape(providesPortsContainerShape, true);
+			Graphiti.getPeService().setPropertyValue(providesPortContainerShape, COMPONENT_SHAPE_TYPE, COMPONENT_SHAPE_providesPortContainerShape);//ref prevent selection/deletion/removal
+			Rectangle providesPortContainerShapeRectangle = createService.createRectangle(providesPortContainerShape);
+			providesPortContainerShapeRectangle.setTransparency(1d);
+			gaLayoutService.setLocationAndSize(providesPortContainerShapeRectangle, 0, iter++*(PORT_SHAPE_LENGTH+5), PORT_SHAPE_LENGTH + providesPortNameLength, PORT_SHAPE_LENGTH);
+			link(providesPortContainerShape, p);
+
+			//port shape
+			ContainerShape providesPortRectangleShape  = createService.createContainerShape(providesPortContainerShape, true);
+			Graphiti.getPeService().setPropertyValue(providesPortRectangleShape, COMPONENT_SHAPE_TYPE, COMPONENT_SHAPE_providesPortRectangleShape);//ref prevent move
+			Rectangle providesPortRectangle = createService.createRectangle(providesPortRectangleShape);
+			link(providesPortRectangleShape, p);
+			//peCreateService.createChopboxAnchor(providesPortRectangleShape);
+			providesPortRectangle.setStyle(StyleUtil.getStyleForProvidesPort(diagram));
+			gaLayoutService.setLocationAndSize(providesPortRectangle, 0, 0, PORT_SHAPE_LENGTH, PORT_SHAPE_LENGTH);
+
+			//port text
+			Shape providesPortTextShape  = createService.createShape(providesPortContainerShape, false);
+			Text providesPortText = createService.createText(providesPortTextShape, p.getName());
+			providesPortText.setStyle(StyleUtil.getStyleForPortText(diagram));
+			gaLayoutService.setLocationAndSize(providesPortText, PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_LENGTH, 0, p.getName().length()*PORT_CHAR_WIDTH, 20);
+			
+			//fix point anchor
+			FixPointAnchor fixPointAnchor = peCreateService.createFixPointAnchor(providesPortRectangleShape);
+			Point point = StylesFactory.eINSTANCE.createPoint();
+			point.setX(0);
+			point.setY(PORT_SHAPE_LENGTH/2);
+			fixPointAnchor.setLocation(point);
+			link(fixPointAnchor, p);
+			fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
+			fixPointAnchor.setReferencedGraphicsAlgorithm(providesPortRectangle);
+			Rectangle fixPointAnchorRectangle = createService.createRectangle(fixPointAnchor);
+			fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForProvidesPortAnchor(diagram));
+			gaLayoutService.setLocationAndSize(fixPointAnchorRectangle, 0, -PORT_SHAPE_LENGTH/2, PORT_SHAPE_LENGTH, PORT_SHAPE_LENGTH);
+			
+			//anchor
+//			Anchor anchor = PictogramsFactory.eINSTANCE.createChopboxAnchor();
+//			anchor.setParent(providesPortContainerShape);
+			
+		}
+		//uses (output)
+		int usesPortNameLength = getLongestUsesPortLength(sadComponentInstantiation)*PORT_CHAR_WIDTH;
+		int intPortTextX = outerRoundedRectangle.getWidth() - (usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_LENGTH);
+
+		ContainerShape usesPortsContainerShape = createService.createContainerShape(outerContainerShape, true);
+		Graphiti.getPeService().setPropertyValue(usesPortsContainerShape, COMPONENT_SHAPE_TYPE, COMPONENT_SHAPE_usesPortsContainerShape); //ref prevent selection/deletion/removal
+		Rectangle usesPortsRectangle = createService.createRectangle(usesPortsContainerShape);
+		usesPortsRectangle.setTransparency(1d);
+		Graphiti.getPeService().setPropertyValue(usesPortsRectangle, COMPONENT_GA_TYPE, COMPONENT_GA_usesPortsRectangle);//ref helps with resize
+		gaLayoutService.setLocationAndSize(usesPortsRectangle, intPortTextX, PORTS_CONTAINER_SHAPE_TOP_PADDING, PORT_SHAPE_LENGTH + usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING, sadComponentInstantiation.getUses().size()*(PORT_SHAPE_LENGTH));
+
+
+		//iterate over all uses ports
+		iter = 0;
+		for(UsesPortStub p: sadComponentInstantiation.getUses()){
+			//port container
+			ContainerShape usesPortContainerShape = createService.createContainerShape(usesPortsContainerShape, true);
+			Graphiti.getPeService().setPropertyValue(usesPortContainerShape, COMPONENT_SHAPE_TYPE, COMPONENT_SHAPE_usesPortContainerShape); //ref prevent selection/deletion/removal
+			Rectangle usesPortContainerShapeRectangle = createService.createRectangle(usesPortContainerShape);
+			usesPortContainerShapeRectangle.setTransparency(1d);
+			gaLayoutService.setLocationAndSize(usesPortContainerShapeRectangle, usesPortsRectangle.getWidth()-(PORT_SHAPE_LENGTH + usesPortNameLength), iter++*(PORT_SHAPE_LENGTH+5), PORT_SHAPE_LENGTH + usesPortNameLength, PORT_SHAPE_LENGTH);
+			link(usesPortContainerShape, p);
+			
+			
+			//port shape
+			ContainerShape usesPortRectangleShape  = createService.createContainerShape(usesPortContainerShape, true);
+			Graphiti.getPeService().setPropertyValue(usesPortRectangleShape, COMPONENT_SHAPE_TYPE, COMPONENT_SHAPE_usesPortRectangleShape);//ref prevent move
+			Rectangle usesPortRectangle = createService.createRectangle(usesPortRectangleShape);
+			Graphiti.getPeService().setPropertyValue(usesPortRectangle, COMPONENT_GA_TYPE, COMPONENT_GA_usesPortRectangle);//ref helps with resize
+			link(usesPortRectangleShape, p);
+			//peCreateService.createChopboxAnchor(usesPortRectangleShape);
+			usesPortRectangle.setStyle(StyleUtil.getStyleForUsesPort(diagram));
+			gaLayoutService.setLocationAndSize(usesPortRectangle, usesPortNameLength, 0, PORT_SHAPE_LENGTH, PORT_SHAPE_LENGTH);
+			
+			//port text
+			Shape usesPortTextShape  = createService.createShape(usesPortContainerShape, false);
+			Text usesPortText = createService.createText(usesPortTextShape, p.getName());
+			usesPortText.setStyle(StyleUtil.getStyleForPortText(diagram));
+			usesPortText.setHorizontalAlignment(Orientation.ALIGNMENT_RIGHT);
+			gaLayoutService.setLocationAndSize(usesPortText, 0, 0, usesPortContainerShapeRectangle.getWidth()-(usesPortRectangle.getWidth() + PORT_NAME_HORIZONTAL_PADDING), 20);
+
+			//fix point anchor
+			FixPointAnchor fixPointAnchor = peCreateService.createFixPointAnchor(usesPortRectangleShape);
+			Point point = StylesFactory.eINSTANCE.createPoint();
+			point.setX(PORT_SHAPE_LENGTH);
+			point.setY(PORT_SHAPE_LENGTH/2);
+			fixPointAnchor.setLocation(point);
+			link(fixPointAnchor, p);
+			fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
+			fixPointAnchor.setReferencedGraphicsAlgorithm(usesPortRectangle);
+			Rectangle fixPointAnchorRectangle = createService.createRectangle(fixPointAnchor);
+			fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForUsesPortAnchor(diagram));
+			gaLayoutService.setLocationAndSize(fixPointAnchorRectangle, -PORT_SHAPE_LENGTH, -PORT_SHAPE_LENGTH/2, PORT_SHAPE_LENGTH, PORT_SHAPE_LENGTH);
+			
+		}
+
+		//Define size and location
+		AreaContext areaContext = new AreaContext();
+		areaContext.setLocation(context.getX(), context.getY());
+		areaContext.setSize(getPreferredWidth(sadComponentInstantiation), getPreferredHeight(sadComponentInstantiation));
+		
+		//Size component (we are doing this so that we don't have to keep sizing/location information in both the add() and resize(), only resize())
+		resizeComponent(areaContext, outerContainerShape);
+		
+		//layout
+		layoutPictogramElement(outerContainerShape);
+
+		return outerContainerShape;
+	}
+	
 }

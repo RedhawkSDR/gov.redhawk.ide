@@ -1,5 +1,6 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
+import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.util.StringUtil;
@@ -7,35 +8,28 @@ import gov.redhawk.sca.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.IConnectionContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
-import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
-import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.AbstractConnectionPattern;
 import org.eclipse.graphiti.pattern.IConnectionPattern;
@@ -51,6 +45,17 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		return "Connection";
 	}
 	
+	@Override
+	public String getCreateDescription() {
+		return "Create new Connect Interface";
+	}
+	
+	@Override
+	public String getCreateImageId() {
+		return ImageProvider.IMG_CONNECTION;
+	}
+
+	
 	
 	/**
 	 * Return true if use selected 
@@ -60,11 +65,12 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		
 		//get sad from diagram
 		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
-
-		//source and destination targets
-		UsesPortStub source = getUsesPortStub(context.getSourceAnchor());
 		
-		if(sad != null && source != null){
+		//source anchor (allow creating connection by starting from either direction)
+		UsesPortStub source = getUsesPortStub(context);
+		ConnectionTarget target = getConnectionTarget(context);
+		
+		if(sad != null && (source != null || target != null)){
 			return true;
 		}
 
@@ -87,17 +93,25 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	 * Adds the connection to the diagram and associates the source/target port with the line
 	 */
 	@Override
-	public PictogramElement add(IAddContext context) {
+	public PictogramElement add(IAddContext addContext) {
 	    
-		IAddConnectionContext addContext = (IAddConnectionContext)context;
+		IAddConnectionContext context = (IAddConnectionContext)addContext;
 		SadConnectInterface connectInterface = (SadConnectInterface)addContext.getNewObject();
 		IPeCreateService peCreateService = Graphiti.getPeCreateService();
 		
+		//source and target
+		UsesPortStub source = getUsesPortStub(context);
+		ConnectionTarget target = getConnectionTarget(context);
 		
-		//Create connection
+		//Create connection (handle user selecting source or target)
 		Connection connection = peCreateService.createFreeFormConnection(getFeatureProvider().getDiagramTypeProvider().getDiagram());
-		connection.setStart(addContext.getSourceAnchor());
-		connection.setEnd(addContext.getTargetAnchor());
+		if(source == getUsesPortStub(context.getSourceAnchor()) && target == getConnectionTarget(context.getTargetAnchor())){
+			connection.setStart(context.getSourceAnchor());
+			connection.setEnd(context.getTargetAnchor());
+		}else if(source == getUsesPortStub(context.getTargetAnchor()) && target == getConnectionTarget(context.getSourceAnchor())){
+			connection.setStart(context.getTargetAnchor());
+			connection.setEnd(context.getSourceAnchor());
+		}
 		
 		//create line
 		IGaService gaService = Graphiti.getGaService();
@@ -121,9 +135,9 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		//get sad from diagram
 		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 				
-		//source and destination targets
-		UsesPortStub source = getUsesPortStub(context.getSourceAnchor());
-		ConnectionTarget target = getConnectionTarget(context.getTargetAnchor());
+		//source and target
+		UsesPortStub source = getUsesPortStub(context);
+		ConnectionTarget target = getConnectionTarget(context);
 		
 		
 		if(sad == null){
@@ -132,14 +146,10 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		if (source == null && target == null) {
 			return false;
 		}
-		//TODO: What is this about? taken from gov.redhawk.diagram.edit.commands.ConnectInterfaceCreateCommand
-//		if (getSource() == null) {
-//			return true; // link creation is in progress; source is not defined yet
-//		}
+
+		//ensure source is UsesPortStub
 		if (target != null && source instanceof UsesPortStub) {
-			//			Relax constraint on what constitutes a connection			
-			//			TODO: Determine ultimately what defines a valid connection between two end points
-			//			return InterfacesUtil.areCompatible(this.source, this.target);
+			//ensure target is valid
 			return (target instanceof ProvidesPortStub || target instanceof ComponentSupportedInterfaceStub || target instanceof FindByStub);
 		}
 		return true;
@@ -155,8 +165,8 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		Connection newConnection = null;
 
 		//source and destination targets
-		final UsesPortStub source = getUsesPortStub(context.getSourceAnchor());
-		final ConnectionTarget target = getConnectionTarget(context.getTargetAnchor());
+		final UsesPortStub source = getUsesPortStub(context);
+		final ConnectionTarget target = getConnectionTarget(context);
 
 		//TODO: handle bad situations
 		if (source == null || target == null) {
@@ -216,7 +226,23 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		return newConnection;
 	}
 	
+	//Return UsesPortStub from either the source or target anchor.  It could be either depending on how user drew connection
+	private UsesPortStub getUsesPortStub(IConnectionContext context) {
+		UsesPortStub source = getUsesPortStub(context.getSourceAnchor());
+		if (source != null) return source;
+		
+		source = getUsesPortStub(context.getTargetAnchor());
+		return source;
+	}
 	
+	//Return UsesPortStub from either the source or target anchor.  It could be either depending on how user drew connection
+	private ConnectionTarget getConnectionTarget(IConnectionContext context) {
+		ConnectionTarget connectionTarget = getConnectionTarget(context.getSourceAnchor());
+		if (connectionTarget != null) return connectionTarget;
+			
+		connectionTarget = getConnectionTarget(context.getTargetAnchor());
+		return connectionTarget;
+	}
 	
 	private UsesPortStub getUsesPortStub(Anchor anchor) {
 		if (anchor != null) {

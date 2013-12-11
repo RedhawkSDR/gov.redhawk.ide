@@ -1,5 +1,7 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.palette;
 
+import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
+
 import java.text.MessageFormat;
 
 import mil.jpeojtrs.sca.sad.diagram.providers.SadElementTypes;
@@ -23,19 +25,10 @@ public class SpdToolEntry extends ObjectCreationToolEntry{
 
 	private String implID;
 	
-	/**
-	 * @since 5.0
-	 */
-	public static ImageDescriptor getDefaultIcon() {
-		return SadElementTypes.getImageDescriptor(SadElementTypes.SadComponentPlacement_3001);
-	}
-	
-	/**
-	 * @since 5.0
-	 */
-	public SpdToolEntry(String label, String description, URI spdURI, String id, String implID, ImageDescriptor icon, ICreateFeature createFeature) {
+
+	public SpdToolEntry(String label, String description, URI spdURI, String id, String implID, String iconId, ICreateFeature createFeature) {
 		
-		super(label, description, null, null, createFeature);
+		super(label, description, iconId, null, createFeature);
 		if (description == null) {
 			description = MessageFormat.format("Create a new instance of the component \"{0}\".", label);
 		}
@@ -56,12 +49,12 @@ public class SpdToolEntry extends ObjectCreationToolEntry{
 	/**
 	 * @since 5.0
 	 */
-	public SpdToolEntry(final SoftPkg spd, ImageDescriptor icon) {
-		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, icon, null);
+	public SpdToolEntry(final SoftPkg spd, String iconId) {
+		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, iconId, null);
 	}
 	
 	public SpdToolEntry(final SoftPkg spd, ICreateFeature createFeature) {
-		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, getDefaultIcon(), createFeature);
+		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, ImageProvider.IMG_COMPONENT_PLACEMENT, createFeature);
 	}
 
 	/**

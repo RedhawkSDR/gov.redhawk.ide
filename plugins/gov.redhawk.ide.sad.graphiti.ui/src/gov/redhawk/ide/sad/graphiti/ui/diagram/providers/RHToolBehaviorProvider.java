@@ -58,7 +58,10 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 				  new String[] {ComponentPattern.COMPONENT_SHAPE_providesPortsContainerShape,
 									ComponentPattern.COMPONENT_SHAPE_usesPortsContainerShape,
 									ComponentPattern.COMPONENT_SHAPE_providesPortContainerShape,
-									ComponentPattern.COMPONENT_SHAPE_usesPortContainerShape}))
+									ComponentPattern.COMPONENT_SHAPE_usesPortContainerShape,
+									ComponentPattern.COMPONENT_SHAPE_usesPortRectangleShape,
+									ComponentPattern.COMPONENT_SHAPE_providesPortRectangleShape}))
+
 		{
 			return oldSelection[0];
 		}
