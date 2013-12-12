@@ -10,6 +10,5 @@
   </parent>
   <groupId>gov.redhawk.ide</groupId>
   <artifactId>gov.redhawk.ide.feature</artifactId>
-  <version>1.9.1-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
 </project>
