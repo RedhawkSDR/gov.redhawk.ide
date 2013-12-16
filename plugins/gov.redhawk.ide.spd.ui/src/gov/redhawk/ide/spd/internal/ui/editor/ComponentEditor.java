@@ -295,6 +295,25 @@ public class ComponentEditor extends SCAFormEditor {
 	public void newPrfAdded() {
 		createPrfInput(getSoftPkg());
 		replacePrf();
+
+		// Setup the listeners on the new PRF file in the sameway as in the setInput method above
+		final SoftPkg spd = SoftPkg.Util.getSoftPkg(this.getMainResource());
+		
+		spd.getPropertyFile().eAdapters().add(new EContentAdapter() {
+
+			@Override
+			public void notifyChanged(final Notification msg) {
+				if (msg.getFeatureID(SoftPkg.class) == SpdPackage.LOCAL_FILE__NAME) {
+					createPrfInput(spd);
+					if (ComponentEditor.this.prfInput == null) {
+						removePrfPage();
+					} else {
+						replacePrf();
+					}
+				}
+			}
+		});
+	
 	}
 	
 	protected void createPrfInput(final SoftPkg spd) {
