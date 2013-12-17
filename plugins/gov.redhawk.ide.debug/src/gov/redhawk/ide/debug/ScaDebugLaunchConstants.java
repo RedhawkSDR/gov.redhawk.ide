@@ -29,9 +29,9 @@ public interface ScaDebugLaunchConstants extends ScaLaunchConfigurationConstants
 	public static final String ATT_LAUNCH_TIMEOUT = ScaDebugPlugin.ID + ".launchTimeout";
 	public static final boolean DEFAULT_ATT_WORKSPACE_PROFILE = true;
 	/**
-	 * @since 1.2
+	 * @since 6.0
 	 */
-	public static final int DEFAULT_ATT_LAUNCH_TIMEOUT = 5;
+	public static final int DEFAULT_ATT_LAUNCH_TIMEOUT = 15;
 
 	public static final String ARG_NAMING_CONTEXT_IOR = LaunchVariables.NAMING_CONTEXT_IOR;
 	public static final String ARG_NAME_BINDING = LaunchVariables.NAME_BINDING;
