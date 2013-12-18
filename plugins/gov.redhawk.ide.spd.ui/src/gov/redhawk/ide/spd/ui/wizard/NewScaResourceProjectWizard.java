@@ -59,8 +59,6 @@ public class NewScaResourceProjectWizard extends NewScaResourceWizard implements
 
 		this.getImplList().add(new ImplementationAndSettings(getImplPage().getImplementation(), getImplPage().getImplSettings()));
 		
-		this.addPage(new ScaResourceProjectPropertiesWizardPage("Womp womp womp", "Component"));
-		
 		try {
 			final Field field = Wizard.class.getDeclaredField("pages");
 			field.getModifiers();
