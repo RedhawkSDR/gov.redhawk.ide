@@ -11,9 +11,11 @@ public class ImageProvider extends AbstractImageProvider implements IImageProvid
  
     
     public static final String IMG_COMPONENT_PLACEMENT = PREFIX + "componentPlacement";
+    public static final String IMG_COMPONENT_INSTANCE = PREFIX + "componentInstance";
     public static final String IMG_CONNECTION = PREFIX + "connection";
     public static final String IMG_FIND_BY_NAMING_SERVICE = PREFIX + "findByNamingService";
     public static final String IMG_FIND_BY_DOMAIN = PREFIX + "findByDomain";
+    public static final String IMG_FIND_BY = PREFIX + "findBy";
 	
 	public ImageProvider() {
 	}
@@ -22,9 +24,11 @@ public class ImageProvider extends AbstractImageProvider implements IImageProvid
 	@Override
 	protected void addAvailableImages() {
 		addImageFilePath(IMG_COMPONENT_PLACEMENT, "icons/full/obj16/ComponentPlacement.gif");
+		addImageFilePath(IMG_COMPONENT_INSTANCE, "icons/full/obj16/ComponentInstantiation.gif");
         addImageFilePath(IMG_CONNECTION, "icons/full/obj16/ConnectInterface.gif");
         addImageFilePath(IMG_FIND_BY_NAMING_SERVICE, "icons/full/obj16/NamingService.gif");
         addImageFilePath(IMG_FIND_BY_DOMAIN, "icons/full/obj16/DomainFinder.gif");
+        addImageFilePath(IMG_FIND_BY, "icons/full/obj16/FindBy.gif");
 	}
 
 }

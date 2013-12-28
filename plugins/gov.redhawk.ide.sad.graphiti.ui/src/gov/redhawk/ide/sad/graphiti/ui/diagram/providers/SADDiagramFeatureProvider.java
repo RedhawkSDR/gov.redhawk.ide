@@ -1,10 +1,15 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.DeleteSADConnectInterface;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByNamingServicePattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 
 import org.eclipse.emf.ecore.EObject;
@@ -14,18 +19,22 @@ import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeature;
+import org.eclipse.graphiti.features.ILayoutFeature;
 import org.eclipse.graphiti.features.IMoveShapeFeature;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IResizeShapeFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IContext;
+import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
+import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.features.impl.DefaultMoveShapeFeature;
 import org.eclipse.graphiti.features.impl.DefaultRemoveFeature;
 import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
@@ -44,7 +53,8 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		//Add Patterns for Domain Objects
 		addPattern(new ComponentPattern());
 		addConnectionPattern(new SADConnectInterfacePattern());
-		addPattern(new FindByNamingServicePattern());
+		addPattern(new FindByCORBANamePattern());
+		
 
 	}
 	
@@ -62,12 +72,27 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	}
 	
 	@Override
+	public ICustomFeature[] getCustomFeatures(ICustomContext context) {
+		ICustomFeature[] ret = super.getCustomFeatures(context);
+		List<ICustomFeature> retList = new ArrayList<ICustomFeature>();
+		for (int i = 0; i < ret.length; i++) {
+			retList.add(ret[i]);
+		}
+		
+		//add zest layout feature
+		retList.add(new ZestLayoutDiagramFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+		
+		ret = retList.toArray(ret);
+		return ret;
+	}
+	
+	@Override
 	public IMoveShapeFeature getMoveShapeFeature(IMoveShapeContext context) {
 		
 		//Search for shapes that we don't want the user to have remove capability
 		if(DiagramUtil.doesPictogramContainProperty(context, 
-			  new String[] {ComponentPattern.COMPONENT_SHAPE_usesPortRectangleShape,
-								ComponentPattern.COMPONENT_SHAPE_providesPortRectangleShape}))
+			  new String[] {DiagramUtil.SHAPE_usesPortRectangleShape,
+								DiagramUtil.SHAPE_providesPortRectangleShape}))
 		{
 			return new DefaultMoveShapeFeature(this) {
 				public boolean canMove(IContext context) {
@@ -78,6 +103,8 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		
 		return super.getMoveShapeFeature(context);
 	}
+	
+	
 	
 	@Override
 	public ICreateFeature[] getCreateFeatures(){
@@ -93,12 +120,12 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 
 		//hide update icon for some pictogram elements
 		if(DiagramUtil.doesPictogramContainProperty(context, 
-				new String[] {ComponentPattern.COMPONENT_SHAPE_providesPortsContainerShape,
-				ComponentPattern.COMPONENT_SHAPE_usesPortsContainerShape,
-				ComponentPattern.COMPONENT_SHAPE_providesPortContainerShape,
-				ComponentPattern.COMPONENT_SHAPE_usesPortContainerShape,
-				ComponentPattern.COMPONENT_SHAPE_providesPortRectangleShape,
-				ComponentPattern.COMPONENT_SHAPE_usesPortRectangleShape}))
+				new String[] {DiagramUtil.SHAPE_providesPortsContainerShape,
+				DiagramUtil.SHAPE_usesPortsContainerShape,
+				DiagramUtil.SHAPE_providesPortContainerShape,
+				DiagramUtil.SHAPE_usesPortContainerShape,
+				DiagramUtil.SHAPE_providesPortRectangleShape,
+				DiagramUtil.SHAPE_usesPortRectangleShape}))
 		{
 			return new UpdateNoBoFeature(this) {
 				public boolean isAvailable(IContext context) {
@@ -117,12 +144,12 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		
 		//Search for shapes that we don't want the user to have delete capability
 		if(DiagramUtil.doesPictogramContainProperty(context, 
-			  new String[] {ComponentPattern.COMPONENT_SHAPE_providesPortsContainerShape,
-								ComponentPattern.COMPONENT_SHAPE_usesPortsContainerShape,
-								ComponentPattern.COMPONENT_SHAPE_providesPortContainerShape,
-								ComponentPattern.COMPONENT_SHAPE_usesPortContainerShape,
-								ComponentPattern.COMPONENT_SHAPE_providesPortRectangleShape,
-								ComponentPattern.COMPONENT_SHAPE_usesPortRectangleShape}))
+			  new String[] {DiagramUtil.SHAPE_providesPortsContainerShape,
+								DiagramUtil.SHAPE_usesPortsContainerShape,
+								DiagramUtil.SHAPE_providesPortContainerShape,
+								DiagramUtil.SHAPE_usesPortContainerShape,
+								DiagramUtil.SHAPE_providesPortRectangleShape,
+								DiagramUtil.SHAPE_usesPortRectangleShape}))
 		{
 			return new DefaultDeleteFeature(this) {
 				public boolean isAvailable(IContext context) {
@@ -147,12 +174,12 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		
 		//Search for shapes that we don't want the user to have remove capability
 		if(DiagramUtil.doesPictogramContainProperty(context, 
-				  new String[] {ComponentPattern.COMPONENT_SHAPE_providesPortsContainerShape,
-									ComponentPattern.COMPONENT_SHAPE_usesPortsContainerShape,
-									ComponentPattern.COMPONENT_SHAPE_providesPortContainerShape,
-									ComponentPattern.COMPONENT_SHAPE_usesPortContainerShape,
-									ComponentPattern.COMPONENT_SHAPE_providesPortRectangleShape,
-									ComponentPattern.COMPONENT_SHAPE_usesPortRectangleShape}))
+				  new String[] {DiagramUtil.SHAPE_providesPortsContainerShape,
+									DiagramUtil.SHAPE_usesPortsContainerShape,
+									DiagramUtil.SHAPE_providesPortContainerShape,
+									DiagramUtil.SHAPE_usesPortContainerShape,
+									DiagramUtil.SHAPE_providesPortRectangleShape,
+									DiagramUtil.SHAPE_usesPortRectangleShape}))
 			{
 			return new DefaultRemoveFeature(this) {
 				public boolean isAvailable(IContext context) {
@@ -179,8 +206,8 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		
 		//Search for shapes that we don't want the user to have resize capability
 		if(DiagramUtil.doesPictogramContainProperty(context, 
-				new String[] {ComponentPattern.COMPONENT_SHAPE_providesPortRectangleShape,
-				ComponentPattern.COMPONENT_SHAPE_usesPortRectangleShape}))
+				new String[] {DiagramUtil.SHAPE_providesPortRectangleShape,
+				DiagramUtil.SHAPE_usesPortRectangleShape}))
 		{
 			return new DefaultResizeShapeFeature(this) {
 				public boolean canResizeShape(IResizeShapeContext context) {
@@ -190,5 +217,16 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		}
 				
 		return super.getResizeShapeFeature(context);
+	}
+	
+	@Override
+	public ILayoutFeature getLayoutFeature(ILayoutContext context) {
+		
+		
+		if (context == null) {
+			throw new IllegalArgumentException("Argument context must not be null."); //$NON-NLS-1$
+		}
+		
+		return super.getLayoutFeature(context);
 	}
 }

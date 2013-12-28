@@ -2,7 +2,7 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.add.CreateComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.palette.SpdToolEntry;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
@@ -28,7 +28,6 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.IToolEntry;
@@ -55,12 +54,12 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	public PictogramElement getSelection(PictogramElement originalPe, PictogramElement[] oldSelection) {
 		
 		if(DiagramUtil.doesPictogramContainProperty(originalPe, 
-				  new String[] {ComponentPattern.COMPONENT_SHAPE_providesPortsContainerShape,
-									ComponentPattern.COMPONENT_SHAPE_usesPortsContainerShape,
-									ComponentPattern.COMPONENT_SHAPE_providesPortContainerShape,
-									ComponentPattern.COMPONENT_SHAPE_usesPortContainerShape,
-									ComponentPattern.COMPONENT_SHAPE_usesPortRectangleShape,
-									ComponentPattern.COMPONENT_SHAPE_providesPortRectangleShape}))
+				  new String[] {DiagramUtil.SHAPE_providesPortsContainerShape,
+									DiagramUtil.SHAPE_usesPortsContainerShape,
+									DiagramUtil.SHAPE_providesPortContainerShape,
+									DiagramUtil.SHAPE_usesPortContainerShape,
+									DiagramUtil.SHAPE_usesPortRectangleShape,
+									DiagramUtil.SHAPE_providesPortRectangleShape}))
 
 		{
 			return oldSelection[0];
@@ -172,7 +171,7 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		IFeatureProvider featureProvider = getFeatureProvider();
 		ICreateFeature[] createFeatures = featureProvider.getCreateFeatures();
 		for (ICreateFeature cf : createFeatures) {
-			if("FindBy Naming Service".equals(cf.getCreateName())){
+			if(FindByCORBANamePattern.NAME.equals(cf.getCreateName())){
 				ObjectCreationToolEntry objectCreationToolEntry = 
 						new ObjectCreationToolEntry(cf.getCreateName(),
 								cf.getCreateDescription(), cf.getCreateImageId(),

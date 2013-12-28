@@ -14,6 +14,7 @@ import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -105,6 +106,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		
 		//Create connection (handle user selecting source or target)
 		Connection connection = peCreateService.createFreeFormConnection(getFeatureProvider().getDiagramTypeProvider().getDiagram());
+//		Connection connection = peCreateService.createManhattanConnection(getFeatureProvider().getDiagramTypeProvider().getDiagram());
 		if(source == getUsesPortStub(context.getSourceAnchor()) && target == getConnectionTarget(context.getTargetAnchor())){
 			connection.setStart(context.getSourceAnchor());
 			connection.setEnd(context.getTargetAnchor());
@@ -130,22 +132,39 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		return connection;
 	}
 	
+	/**
+	 * Determines whether creation of an interface connection is possible between source and destination anchors.
+	 * user can begin drawing connection from either source->dest, or dest->source.  This method will create the connection in the correct direction.
+	 * Source anchor of connection must be UsesPort. Target Anchor must be ConnectionTarget which is the parent class for a variety of types.
+	 * If ConnectionTarget->ProvidesPortStub is the most simple target in that PictogramElements already link to ProvidesPortStub.  ConnectionTarget->ComponentSupportedInterfaceStub isn't actually 
+	 */
 	@Override
 	public boolean canCreate(ICreateConnectionContext context) {
 		//get sad from diagram
 		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
-				
-		//source and target
+		if(sad == null) return false;
+		
+		//determine source
 		UsesPortStub source = getUsesPortStub(context);
+		if (source == null) return false;
+		
+		//determine destination
+		//getConnectionTarget handles connecting to ports on components, not ports or interfaces on FindBy Shapes
 		ConnectionTarget target = getConnectionTarget(context);
-		
-		
-		if(sad == null){
-			return false;
+		if(target == null){
+			//check if interface on findBy Shape
+			
+			//check if provides port on findBy...not sure how were doing all this??
 		}
+	
+		
+		//null source would indicate an invalid anchor was selected
 		if (source == null && target == null) {
 			return false;
 		}
+		
+		//target will be legitimately null when connecting to component interface (lollipop)
+		if(target == null)
 
 		//ensure source is UsesPortStub
 		if (target != null && source instanceof UsesPortStub) {
@@ -226,7 +245,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		return newConnection;
 	}
 	
-	//Return UsesPortStub from either the source or target anchor.  It could be either depending on how user drew connection
+	//Return UsesPortStub from either the source or target anchor.  Depends on how user drew connection.
 	private UsesPortStub getUsesPortStub(IConnectionContext context) {
 		UsesPortStub source = getUsesPortStub(context.getSourceAnchor());
 		if (source != null) return source;
@@ -235,7 +254,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		return source;
 	}
 	
-	//Return UsesPortStub from either the source or target anchor.  It could be either depending on how user drew connection
+	//Return ConnectionTarget from either the source or target anchor.  Depends on how user drew connection.
 	private ConnectionTarget getConnectionTarget(IConnectionContext context) {
 		ConnectionTarget connectionTarget = getConnectionTarget(context.getSourceAnchor());
 		if (connectionTarget != null) return connectionTarget;
@@ -243,6 +262,18 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		connectionTarget = getConnectionTarget(context.getTargetAnchor());
 		return connectionTarget;
 	}
+	
+	//Return SadComponentInstantiation from either source or target anchor.  Depends on how user drew connection.
+	private SadComponentInstantiation getSadComponentInstantiation(IConnectionContext context) {
+		SadComponentInstantiation target = getSadComponentInstantiation(context.getSourceAnchor());
+		if (target != null) return target;
+			
+		target = getSadComponentInstantiation(context.getTargetAnchor());
+		return target;
+	}
+	
+	
+	
 	
 	private UsesPortStub getUsesPortStub(Anchor anchor) {
 		if (anchor != null) {
@@ -259,6 +290,16 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 			Object object = getBusinessObjectForPictogramElement(anchor.getParent());
 			if (object instanceof ConnectionTarget) {
 				return (ConnectionTarget)object;
+			}
+		}
+		return null;
+	}
+	
+	private SadComponentInstantiation getSadComponentInstantiation(Anchor anchor) {
+		if (anchor != null) {
+			Object object = getBusinessObjectForPictogramElement(anchor.getParent());
+			if (object instanceof SadComponentInstantiation) {
+				return (SadComponentInstantiation)object;
 			}
 		}
 		return null;

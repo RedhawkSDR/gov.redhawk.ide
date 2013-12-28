@@ -233,9 +233,9 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 				
 				DiagramEditorInput editorInput = new DiagramEditorInput(uri, providerId);
 				
-				try{
+				try {
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, DiagramEditor.DIAGRAM_EDITOR_ID);
-				} catch (PartInitException e){
+				} catch (PartInitException e) {
 					String error = "Error while opening SAD diagram editor";
 					IStatus status = new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, error, e);
 					ErrorDialog.openError(getShell(), "An error occured", null, status);
