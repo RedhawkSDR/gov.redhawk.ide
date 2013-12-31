@@ -3,6 +3,10 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.add.CreateComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByFileManagerPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByServicePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
@@ -59,7 +63,9 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 									DiagramUtil.SHAPE_providesPortContainerShape,
 									DiagramUtil.SHAPE_usesPortContainerShape,
 									DiagramUtil.SHAPE_usesPortRectangleShape,
-									DiagramUtil.SHAPE_providesPortRectangleShape}))
+									DiagramUtil.SHAPE_providesPortRectangleShape,
+									DiagramUtil.SHAPE_interfaceContainerShape,
+									DiagramUtil.SHAPE_interfaceEllipseShape}))
 
 		{
 			return oldSelection[0];
@@ -171,7 +177,11 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		IFeatureProvider featureProvider = getFeatureProvider();
 		ICreateFeature[] createFeatures = featureProvider.getCreateFeatures();
 		for (ICreateFeature cf : createFeatures) {
-			if(FindByCORBANamePattern.NAME.equals(cf.getCreateName())){
+			if(FindByCORBANamePattern.NAME.equals(cf.getCreateName()) ||
+					FindByEventChannelPattern.NAME.equals(cf.getCreateName()) ||
+					FindByServicePattern.NAME.equals(cf.getCreateName()) ||
+					FindByFileManagerPattern.NAME.equals(cf.getCreateName()) ||
+					FindByDomainManagerPattern.NAME.equals(cf.getCreateName())){
 				ObjectCreationToolEntry objectCreationToolEntry = 
 						new ObjectCreationToolEntry(cf.getCreateName(),
 								cf.getCreateDescription(), cf.getCreateImageId(),
@@ -192,7 +202,7 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	@SuppressWarnings("unchecked")
 	private PaletteCompartmentEntry getComponentCompartmentEntry(final ComponentsContainer container) {
 		
-		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Compartments", null);
+		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Components", null);
 		
 		//add all palette entries into a entriesToRemove list.
 		final List<SpdToolEntry> entriesToRemove = new ArrayList<SpdToolEntry>();

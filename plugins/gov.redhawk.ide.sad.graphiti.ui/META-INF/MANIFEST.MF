@@ -50,7 +50,8 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  gov.redhawk.sca,
  org.eclipse.zest.layouts;bundle-version="1.1.0",
  org.eclipse.graphiti.examples.common;bundle-version="0.10.1",
- org.eclipse.core.databinding.beans;bundle-version="1.2.200"
+ org.eclipse.core.databinding.beans;bundle-version="1.2.200",
+ gov.redhawk.eclipsecorba.library.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName

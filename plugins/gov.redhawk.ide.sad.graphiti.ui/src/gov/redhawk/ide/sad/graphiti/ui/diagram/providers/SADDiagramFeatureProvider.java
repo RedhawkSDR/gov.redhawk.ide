@@ -4,6 +4,10 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.DeleteSADConnectI
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByFileManagerPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByServicePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
 
@@ -53,6 +57,10 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		//Add Patterns for Domain Objects
 		addPattern(new ComponentPattern());
 		addConnectionPattern(new SADConnectInterfacePattern());
+		addPattern(new FindByDomainManagerPattern());
+		addPattern(new FindByFileManagerPattern());
+		addPattern(new FindByEventChannelPattern());
+		addPattern(new FindByServicePattern());
 		addPattern(new FindByCORBANamePattern());
 		
 
@@ -89,10 +97,11 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	@Override
 	public IMoveShapeFeature getMoveShapeFeature(IMoveShapeContext context) {
 		
-		//Search for shapes that we don't want the user to have remove capability
+		//Search for shapes that we don't want the user to have move capability
 		if(DiagramUtil.doesPictogramContainProperty(context, 
 			  new String[] {DiagramUtil.SHAPE_usesPortRectangleShape,
-								DiagramUtil.SHAPE_providesPortRectangleShape}))
+								DiagramUtil.SHAPE_providesPortRectangleShape,
+								DiagramUtil.SHAPE_interfaceContainerShape}))
 		{
 			return new DefaultMoveShapeFeature(this) {
 				public boolean canMove(IContext context) {
@@ -125,7 +134,9 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 				DiagramUtil.SHAPE_providesPortContainerShape,
 				DiagramUtil.SHAPE_usesPortContainerShape,
 				DiagramUtil.SHAPE_providesPortRectangleShape,
-				DiagramUtil.SHAPE_usesPortRectangleShape}))
+				DiagramUtil.SHAPE_usesPortRectangleShape,
+				DiagramUtil.SHAPE_interfaceContainerShape,
+				DiagramUtil.SHAPE_interfaceEllipseShape}))
 		{
 			return new UpdateNoBoFeature(this) {
 				public boolean isAvailable(IContext context) {
@@ -149,7 +160,9 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 								DiagramUtil.SHAPE_providesPortContainerShape,
 								DiagramUtil.SHAPE_usesPortContainerShape,
 								DiagramUtil.SHAPE_providesPortRectangleShape,
-								DiagramUtil.SHAPE_usesPortRectangleShape}))
+								DiagramUtil.SHAPE_usesPortRectangleShape,
+								DiagramUtil.SHAPE_interfaceContainerShape,
+								DiagramUtil.SHAPE_interfaceEllipseShape}))
 		{
 			return new DefaultDeleteFeature(this) {
 				public boolean isAvailable(IContext context) {
@@ -179,7 +192,9 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 									DiagramUtil.SHAPE_providesPortContainerShape,
 									DiagramUtil.SHAPE_usesPortContainerShape,
 									DiagramUtil.SHAPE_providesPortRectangleShape,
-									DiagramUtil.SHAPE_usesPortRectangleShape}))
+									DiagramUtil.SHAPE_usesPortRectangleShape,
+									DiagramUtil.SHAPE_interfaceContainerShape,
+									DiagramUtil.SHAPE_interfaceEllipseShape}))
 			{
 			return new DefaultRemoveFeature(this) {
 				public boolean isAvailable(IContext context) {
@@ -207,7 +222,8 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		//Search for shapes that we don't want the user to have resize capability
 		if(DiagramUtil.doesPictogramContainProperty(context, 
 				new String[] {DiagramUtil.SHAPE_providesPortRectangleShape,
-				DiagramUtil.SHAPE_usesPortRectangleShape}))
+				DiagramUtil.SHAPE_usesPortRectangleShape,
+				DiagramUtil.SHAPE_interfaceContainerShape}))
 		{
 			return new DefaultResizeShapeFeature(this) {
 				public boolean canResizeShape(IResizeShapeContext context) {

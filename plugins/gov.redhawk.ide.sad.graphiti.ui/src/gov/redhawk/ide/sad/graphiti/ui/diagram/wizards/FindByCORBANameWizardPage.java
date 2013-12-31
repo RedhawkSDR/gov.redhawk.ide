@@ -1,12 +1,8 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.wizards;
 
-import gov.redhawk.ui.editor.SCAFormEditor;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-
-import mil.jpeojtrs.sca.scd.Ports;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;

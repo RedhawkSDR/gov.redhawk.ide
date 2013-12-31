@@ -39,8 +39,14 @@ public class StyleUtil {
 	//private final static String ARIAL_FONT = "Arial";
 	private final static String SANS_FONT = "Sans";
 	private final static String DEFAULT_FONT = SANS_FONT;
-	public final static Font getInnerTextFont(Diagram diagram){
+	public final static Font getOuterTitleFont(Diagram diagram){
+		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, true);
+	}
+	public final static Font getInnerTitleFont(Diagram diagram){
 		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 11, false, false);
+	}
+	public final static Font getPortFont(Diagram diagram){
+		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, false);
 	}
 
 	
@@ -121,7 +127,7 @@ public class StyleUtil {
 		if(style == null){
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(parentStyle, styleId);
-			style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, true));
+			style.setFont(getOuterTitleFont(diagram));
 			style.setLineWidth(2);
 		}
 		return style;
@@ -135,7 +141,7 @@ public class StyleUtil {
 		if(style == null){
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(parentStyle, styleId);
-			style.setFont(getInnerTextFont(diagram));
+			style.setFont(getInnerTitleFont(diagram));
 			style.setLineWidth(2);
 		}
 		return style;
@@ -151,7 +157,7 @@ public class StyleUtil {
 			style = gaService.createStyle(diagram, styleId);
 			style.setForeground(gaService.manageColor(diagram, BLACK));
 			style.setBackground(gaService.manageColor(diagram, WHITE));
-			style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
+			style.setFont(getPortFont(diagram));
 			style.setLineWidth(2);
 			style.setLineVisible(true);
 		}
@@ -169,7 +175,7 @@ public class StyleUtil {
 			style = gaService.createStyle(diagram, styleId);
 			style.setForeground(gaService.manageColor(diagram, BLACK));
 			style.setBackground(gaService.manageColor(diagram, BLACK));
-			style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
+			style.setFont(getPortFont(diagram));
 			style.setLineWidth(2);
 			style.setLineVisible(true);
 		}
@@ -187,7 +193,7 @@ public class StyleUtil {
 			style.setTransparency(100d);
 			style.setForeground(gaService.manageColor(diagram, BLACK));
 			style.setBackground(gaService.manageColor(diagram, BLACK));
-			style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
+			style.setFont(getPortFont(diagram));
 			style.setLineWidth(2);
 			style.setLineVisible(true);
 		}
@@ -205,7 +211,7 @@ public class StyleUtil {
 			style.setTransparency(100d);
 			style.setForeground(gaService.manageColor(diagram, BLACK));
 			style.setBackground(gaService.manageColor(diagram, WHITE));
-			style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
+			style.setFont(getPortFont(diagram));
 			style.setLineWidth(2);
 			style.setLineVisible(true);
 		}
@@ -243,14 +249,14 @@ public class StyleUtil {
 	//returns component text style
 	public static Style getStyleForPortText(Diagram diagram){
 		final String styleId = "ComponentText";
-Style style = findStyle(diagram, styleId);
+		Style style = findStyle(diagram, styleId);
 		
 		if(style == null){
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
 			style.setForeground(gaService.manageColor(diagram, BLACK));
 			style.setBackground(gaService.manageColor(diagram, WHITE));
-			style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
+			style.setFont(getOuterTitleFont(diagram));
 		}
 		return style;
 	}

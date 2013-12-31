@@ -316,7 +316,8 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		//Define size and location
 		AreaContext areaContext = new AreaContext();
 		areaContext.setLocation(context.getX(), context.getY());
-		areaContext.setSize(DiagramUtil.getPreferredWidth(sadComponentInstantiation.getUsageName(), sadComponentInstantiation.getProvides(), sadComponentInstantiation.getUses()), DiagramUtil.getPreferredHeight(sadComponentInstantiation.getProvides(), sadComponentInstantiation.getUses()));
+		areaContext.setSize(DiagramUtil.getMinimumWidth(sadComponentInstantiation.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(),
+				sadComponentInstantiation.getUsageName(), sadComponentInstantiation.getProvides(), sadComponentInstantiation.getUses(), diagram), DiagramUtil.getPreferredHeight(sadComponentInstantiation.getProvides(), sadComponentInstantiation.getUses()));
 		
 		//Size component (we are doing this so that we don't have to keep sizing/location information in both the add() and resize(), only resize())
 		DiagramUtil.resizeOuterContainerShape(areaContext, outerContainerShape, 

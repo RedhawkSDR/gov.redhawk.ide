@@ -64,9 +64,13 @@ public class DiagramUtil {
 	public final static String SHAPE_providesPortContainerShape = "providesPortContainerShape";
 	public final static String SHAPE_usesPortRectangleShape = "usesPortRectangleShape";
 	public final static String SHAPE_providesPortRectangleShape = "providesPortRectangleShape";
+	public final static String SHAPE_interfaceContainerShape = "interfaceContainerShape";
+	public final static String SHAPE_interfaceEllipseShape = "interfaceEllipseShape";
+	public final static int OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING = 10;
 	public final static int INNER_CONTAINER_SHAPE_TOP_PADDING = 20;
 	public final static int INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING = 15;
-	public final static int LEFT_INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING = DiagramUtil.INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING+DiagramUtil.PROVIDES_PORTS_LEFT_PADDING;
+	public final static int INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING = 60;
+	public final static int INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = DiagramUtil.INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING+DiagramUtil.PROVIDES_PORTS_LEFT_PADDING;
 	public final static int PORTS_CONTAINER_SHAPE_TOP_PADDING = 60;
 	public final static int INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING = 8;
 	public final static int INNER_ROUNDED_RECTANGLE_LINE_Y = 28;
@@ -218,6 +222,7 @@ public class DiagramUtil {
 		
 		//interface container lollipop
 		ContainerShape interfaceContainerShape  = Graphiti.getCreateService().createContainerShape(outerContainerShape, true);
+		Graphiti.getPeService().setPropertyValue(interfaceContainerShape, DiagramUtil.GA_TYPE, DiagramUtil.SHAPE_interfaceContainerShape);
 		Rectangle interfaceRectangle = Graphiti.getCreateService().createRectangle(interfaceContainerShape);
 		featureProvider.link(interfaceContainerShape, anchorBusinessObject);
 		interfaceRectangle.setTransparency(.99d);
@@ -225,6 +230,7 @@ public class DiagramUtil {
 		
 		//interface lollipop circle
 		Shape lollipopEllipseShape = Graphiti.getCreateService().createShape(interfaceContainerShape, true);
+		Graphiti.getPeService().setPropertyValue(lollipopEllipseShape, DiagramUtil.GA_TYPE, DiagramUtil.SHAPE_interfaceEllipseShape);
 		Ellipse lollipopEllipse = Graphiti.getCreateService().createEllipse(lollipopEllipseShape);
 		lollipopEllipse.setStyle(StyleUtil.getStyleForLollipopCircle(diagram));
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopEllipse, 0, 0, LOLLIPOP_CIRCLE_RADIUS, LOLLIPOP_CIRCLE_RADIUS);
@@ -260,7 +266,7 @@ public class DiagramUtil {
 	public static void addProvidesPorts(ContainerShape outerContainerShape, Diagram diagram, EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider){
 		
 		//provides (input)
-		int providesPortNameLength = getLongestProvidesPortLength(providesPortStubs)*PORT_CHAR_WIDTH;
+		int providesPortNameLength = getLongestProvidesPortWidth(providesPortStubs, diagram);
 		int iter = 0;
 		ContainerShape providesPortsContainerShape = Graphiti.getCreateService().createContainerShape(outerContainerShape, true);
 		Graphiti.getPeService().setPropertyValue(providesPortsContainerShape, SHAPE_TYPE, SHAPE_providesPortsContainerShape);//ref prevent selection/deletion/removal
@@ -288,7 +294,7 @@ public class DiagramUtil {
 			//port text
 			Shape providesPortTextShape  = Graphiti.getCreateService().createShape(providesPortContainerShape, false);
 			Text providesPortText = Graphiti.getCreateService().createText(providesPortTextShape, p.getName());
-			providesPortText.setStyle(StyleUtil.getStyleForPortText(diagram));
+			providesPortText.setStyle(StyleUtil.getStyleForProvidesPort(diagram));
 			Graphiti.getGaLayoutService().setLocationAndSize(providesPortText, PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_HEIGHT, 0, providesPortNameLength*PORT_CHAR_WIDTH, 20);
 
 			//fix point anchor
@@ -317,7 +323,7 @@ public class DiagramUtil {
 	public static void addUsesPorts(ContainerShape outerContainerShape, Diagram diagram, EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider){
 		
 		//uses (output)
-		int usesPortNameLength = getLongestUsesPortLength(usesPortStubs)*PORT_CHAR_WIDTH;
+		int usesPortNameLength = getLongestUsesPortWidth(usesPortStubs, diagram);
 		int intPortTextX = outerContainerShape.getGraphicsAlgorithm().getWidth() - (usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_WIDTH);
 
 		ContainerShape usesPortsContainerShape = Graphiti.getPeService().createContainerShape(outerContainerShape, true);
@@ -351,7 +357,7 @@ public class DiagramUtil {
 			//port text
 			Shape usesPortTextShape  = Graphiti.getPeService().createShape(usesPortContainerShape, false);
 			Text usesPortText = Graphiti.getCreateService().createText(usesPortTextShape, p.getName());
-			usesPortText.setStyle(StyleUtil.getStyleForPortText(diagram));
+			usesPortText.setStyle(StyleUtil.getStyleForUsesPort(diagram));
 			usesPortText.setHorizontalAlignment(Orientation.ALIGNMENT_RIGHT);
 			Graphiti.getGaLayoutService().setLocationAndSize(usesPortText, 0, 0, usesPortContainerShapeRectangle.getWidth()-(usesPortRectangle.getWidth() + PORT_NAME_HORIZONTAL_PADDING), 20);
 
@@ -432,20 +438,13 @@ public class DiagramUtil {
 		return DiagramUtil.getAdjustedHeight(providesPortStubs, usesPortStubs) * DiagramUtil.PORT_SHAPE_HEIGHT + 100;
 	}
 	
-	/**
-	 * Returns preferred width for component
-	 * @param ci
-	 * @return
-	 */
-	public static int getPreferredWidth(final String name, final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs){
-		return DiagramUtil.getAdjustedWidth(name, providesPortStubs, usesPortStubs) * 7 + 100;
-	}
+
 	/**
 	 * Resizes component with desired size.  Minimums are enforced.  Ports are kept at sides while inner box grows
 	 * @param context
 	 * @param pe
 	 */
-	public static void resizeOuterContainerShape(IAreaContext context, PictogramElement pe, final String labelText, final String name, final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs){
+	public static void resizeOuterContainerShape(IAreaContext context, PictogramElement pe, final String outerTitle, final String innerTitle, final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs){
 		
 		RoundedRectangle outerRoundedRectangle = null;
 		RoundedRectangle innerRoundedRectangle = null;
@@ -456,9 +455,11 @@ public class DiagramUtil {
 		Image innerRoundedRectangleImage = null;
 		Image outerRoundedRectangleImage = null;
 		Polyline innerRoundedRectangleLine = null;
+		
+		Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(pe);
 				
 		//enforce minimum width/height
-		int width = DiagramUtil.getMinimumWidth(labelText, name, providesPortStubs, usesPortStubs);
+		int width = DiagramUtil.getMinimumWidth(outerTitle, innerTitle, providesPortStubs, usesPortStubs, Graphiti.getPeService().getDiagramForPictogramElement(pe));
 		if(context.getWidth() > width){
 			width = context.getWidth();
 		}
@@ -496,57 +497,73 @@ public class DiagramUtil {
 		
 		//outerRoundedRectangle
 		gaLayoutService.setLocationAndSize(outerRoundedRectangle, context.getX(), context.getY(), width, height);
-		gaLayoutService.setLocationAndSize(outerRoundedRectangleText, DiagramUtil.LEFT_INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING+ICON_IMAGE_LENGTH+4, 0, width-(DiagramUtil.LEFT_INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING+ICON_IMAGE_LENGTH+4), 20);
-		gaLayoutService.setLocationAndSize(outerRoundedRectangleImage, DiagramUtil.LEFT_INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING, 0, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
+		gaLayoutService.setLocationAndSize(outerRoundedRectangleText, DiagramUtil.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING+ICON_IMAGE_LENGTH+4, 0, width-(DiagramUtil.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING+ICON_IMAGE_LENGTH+4), 20);
+		gaLayoutService.setLocationAndSize(outerRoundedRectangleImage, DiagramUtil.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
 		
 		
 		//innerRoundedRectangle
 		int innerContainerShapeWidth = width-DiagramUtil.INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING*2 - DiagramUtil.PROVIDES_PORTS_LEFT_PADDING;
 		int innerContainerShapeHeight = height-DiagramUtil.INNER_CONTAINER_SHAPE_TOP_PADDING;
-		gaLayoutService.setLocationAndSize(innerRoundedRectangle, DiagramUtil.LEFT_INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING, DiagramUtil.INNER_CONTAINER_SHAPE_TOP_PADDING, innerContainerShapeWidth, innerContainerShapeHeight);
+		gaLayoutService.setLocationAndSize(innerRoundedRectangle, DiagramUtil.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, DiagramUtil.INNER_CONTAINER_SHAPE_TOP_PADDING, innerContainerShapeWidth, innerContainerShapeHeight);
 //		//left justified
 //		gaLayoutService.setLocationAndSize(innerRoundedRectangleText, ICON_IMAGE_LENGTH+5, 0, innerRoundedRectangle.getWidth()-(ICON_IMAGE_LENGTH+5), 20);
 //		gaLayoutService.setLocationAndSize(innerRoundedRectangleImage, 5, 0, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
-		IDimension innerRoundedRectangleTextSize = GraphitiUi.getUiLayoutService().calculateTextSize(innerRoundedRectangleText.getValue(), StyleUtil.getInnerTextFont(Graphiti.getPeService().getDiagramForPictogramElement(pe)));
+		IDimension innerRoundedRectangleTextSize = GraphitiUi.getUiLayoutService().calculateTextSize(innerRoundedRectangleText.getValue(), StyleUtil.getInnerTitleFont(Graphiti.getPeService().getDiagramForPictogramElement(pe)));
 		int xForImage = (innerRoundedRectangle.getWidth()-(innerRoundedRectangleTextSize.getWidth()+ICON_IMAGE_LENGTH+5))/2;
 		gaLayoutService.setLocationAndSize(innerRoundedRectangleImage, xForImage, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
 		gaLayoutService.setLocationAndSize(innerRoundedRectangleText, xForImage+ICON_IMAGE_LENGTH+5, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING, innerRoundedRectangleTextSize.getWidth()+10, innerRoundedRectangleTextSize.getHeight());
 		innerRoundedRectangleLine.getPoints().get(1).setX(innerContainerShapeWidth);
 		
 		//providesPortsRectangle
-		int providesPortNameLength = DiagramUtil.getLongestProvidesPortLength(providesPortStubs)*DiagramUtil.PORT_CHAR_WIDTH;
-		gaLayoutService.setLocationAndSize(providesPortsRectangle, DiagramUtil.PROVIDES_PORTS_LEFT_PADDING, DiagramUtil.PORTS_CONTAINER_SHAPE_TOP_PADDING, DiagramUtil.PORT_SHAPE_WIDTH + providesPortNameLength, providesPortStubs.size()*(DiagramUtil.PORT_SHAPE_HEIGHT));
+		if(providesPortStubs != null && providesPortsRectangle != null){
+			int providesPortNameLength = DiagramUtil.getLongestProvidesPortWidth(providesPortStubs, diagram);
+			gaLayoutService.setLocationAndSize(providesPortsRectangle, DiagramUtil.PROVIDES_PORTS_LEFT_PADDING, DiagramUtil.PORTS_CONTAINER_SHAPE_TOP_PADDING, DiagramUtil.PORT_SHAPE_WIDTH + providesPortNameLength, providesPortStubs.size()*(DiagramUtil.PORT_SHAPE_HEIGHT));
+		}
 		
-		
-		//usesPortsRectangle		
-		int usesPortNameLength = DiagramUtil.getLongestUsesPortLength(usesPortStubs)*DiagramUtil.PORT_CHAR_WIDTH;
-		int intPortTextX = outerRoundedRectangle.getWidth() - (usesPortNameLength + DiagramUtil.PORT_NAME_HORIZONTAL_PADDING + DiagramUtil.PORT_SHAPE_WIDTH);
-		gaLayoutService.setLocationAndSize(usesPortsRectangle, intPortTextX, DiagramUtil.PORTS_CONTAINER_SHAPE_TOP_PADDING, DiagramUtil.PORT_SHAPE_WIDTH + usesPortNameLength + DiagramUtil.PORT_NAME_HORIZONTAL_PADDING, usesPortStubs.size()*(DiagramUtil.PORT_SHAPE_HEIGHT));
-
+		//usesPortsRectangle
+		if(usesPortStubs != null && usesPortsRectangle != null){
+			int usesPortNameLength = DiagramUtil.getLongestUsesPortWidth(usesPortStubs, diagram); 
+			int intPortTextX = outerRoundedRectangle.getWidth() - (usesPortNameLength + DiagramUtil.PORT_NAME_HORIZONTAL_PADDING + DiagramUtil.PORT_SHAPE_WIDTH);
+			gaLayoutService.setLocationAndSize(usesPortsRectangle, intPortTextX, DiagramUtil.PORTS_CONTAINER_SHAPE_TOP_PADDING, DiagramUtil.PORT_SHAPE_WIDTH + usesPortNameLength + DiagramUtil.PORT_NAME_HORIZONTAL_PADDING, usesPortStubs.size()*(DiagramUtil.PORT_SHAPE_HEIGHT));
+		}
 	}
 	
-	//returns length of longest provides port name
+	//returns width required to support longest provides port name
 	//4 used as minimum, characters cut off otherwise
-	public static int getLongestProvidesPortLength(final EList<ProvidesPortStub> providesPortStubs){
-		int longest = 4;
-		for (final ProvidesPortStub provides : providesPortStubs) {
-			if (provides.getName().length() > longest) {
-				longest = provides.getName().length();
+	public static int getLongestProvidesPortWidth(final EList<ProvidesPortStub> providesPortStubs, Diagram diagram){
+		String longest = "four";
+		if(providesPortStubs != null){
+			for (final ProvidesPortStub provides : providesPortStubs) {
+				if (provides.getName().length() > longest.length()) {
+					longest = provides.getName();
+				}
 			}
 		}
-		return longest;
+		
+		IDimension requiredWidth = GraphitiUi.getUiLayoutService().calculateTextSize(
+				longest, StyleUtil.getPortFont(diagram));
+	
+		
+		return requiredWidth.getWidth();
 	}
 	
-	//returns length of longest uses port name
+	//returns width required to support longest uses port name
 	//4 used as minimum, characters cut off otherwise
-	public static int getLongestUsesPortLength(final EList<UsesPortStub> usesPortsStubs){
-		int longest = 4;
-		for (final UsesPortStub uses : usesPortsStubs) {
-			if (uses.getName().length() > longest) {
-				longest = uses.getName().length();
+	public static int getLongestUsesPortWidth(final EList<UsesPortStub> usesPortsStubs, Diagram diagram){
+		String longest = "four";
+		if(usesPortsStubs != null){
+			for (final UsesPortStub uses : usesPortsStubs) {
+				if (uses.getName().length() > longest.length()) {
+					longest = uses.getName();
+				}
 			}
 		}
-		return longest;
+		
+		IDimension requiredWidth = GraphitiUi.getUiLayoutService().calculateTextSize(
+				longest, StyleUtil.getPortFont(diagram));
+	
+		
+		return requiredWidth.getWidth() + 20;
 	}
 	
 	/**
@@ -564,70 +581,50 @@ public class DiagramUtil {
 		return false;
 	}
 	
-	/**
-	 * Determine the length by which we need to expand by comparing the largest port names against the name and return
-	 * the longer of the two.
-	 * @return int Return the length by which we need to expand the associated Shape
-	 */
-	public static int getAdjustedWidth(final String name, final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs) {
-		int left = 0, right = 0;
-
-		String usageName = name;
-		if (usageName == null) {
-			return 0;
-		}
-
-		final int nameLength = usageName.length();
-
-		for (final UsesPortStub uses : usesPortStubs) {
-			if (uses.getName().length() > left) {
-				left = uses.getName().length();
-			}
-		}
-
-		for (final ProvidesPortStub provides : providesPortStubs) {
-			if (provides.getName().length() > right) {
-				right = provides.getName().length();
-			}
-		}
-
-		return (left + right > nameLength ? left + right : nameLength); // SUPPRESS CHECKSTYLE Ternary 
-	}
 	
 	/**
 	 * Returns minimum width for Shape with provides and uses port stubs and name text
 	 * @param ci
 	 * @return
 	 */
-	public static int getMinimumWidth(final String labelText, final String nameText, final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs){
+	public static int getMinimumWidth(final String outerTitle, final String innerTitle, final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs, Diagram diagram){
 		
 		int portsWidth = 0;
-		int nameTextWidth = 0;
-		int labelTextWidth = 0;
+		int innerTitleWidth = 0;
+		int outerTitleWidth = 0;
 		
 		int usesWidth = DiagramUtil.PORT_SHAPE_WIDTH + 
-				getLongestUsesPortLength(usesPortStubs)*DiagramUtil.PORT_CHAR_WIDTH + 
+				getLongestUsesPortWidth(usesPortStubs, diagram) +
 				DiagramUtil.PORT_NAME_HORIZONTAL_PADDING + 
 				DiagramUtil.PORT_SHAPE_WIDTH;
-		int providesWidth = DiagramUtil.PORT_SHAPE_WIDTH + getLongestProvidesPortLength(providesPortStubs)*DiagramUtil.PORT_CHAR_WIDTH;
+		int providesWidth = DiagramUtil.PORT_SHAPE_WIDTH + getLongestProvidesPortWidth(providesPortStubs, diagram);
 		
 		portsWidth = usesWidth+providesWidth+REQ_PADDING_BETWEEN_PORT_TYPES;
 		
-		nameTextWidth = (nameText.length() * NAME_CHAR_WIDTH) + INTERFACE_SHAPE_WIDTH;
+		//inner title
+		IDimension innerTitleDimension = GraphitiUi.getUiLayoutService().calculateTextSize(
+				innerTitle, StyleUtil.getInnerTitleFont(diagram));
+		innerTitleWidth = innerTitleDimension.getWidth() + INTERFACE_SHAPE_WIDTH + INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING;
 		
-		nameTextWidth = (labelText.length() * LABEL_CHAR_WIDTH) + INTERFACE_SHAPE_WIDTH;
+		//outer title
+		IDimension outerTitleDimension = GraphitiUi.getUiLayoutService().calculateTextSize(
+				outerTitle, StyleUtil.getOuterTitleFont(diagram));
+		outerTitleWidth = INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + 
+				outerTitleDimension.getWidth() + 
+				INTERFACE_SHAPE_WIDTH + OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING;
 		
 		//return the largest
 		int largestWidth = portsWidth;
-		if(largestWidth < nameTextWidth){
-			largestWidth = nameTextWidth;
+		if(largestWidth < innerTitleWidth){
+			largestWidth = innerTitleWidth;
 		}
-		if(largestWidth < labelTextWidth){
-			largestWidth = labelTextWidth;
+		if(largestWidth < outerTitleWidth){
+			largestWidth = outerTitleWidth;
 		}
 		return largestWidth;
 		
-		
 	}
 	
+	
+	//IDimension innerRoundedRectangleTextSize = GraphitiUi.getUiLayoutService().calculateTextSize(innerRoundedRectangleText.getValue(), StyleUtil.getInnerTextFont(Graphiti.getPeService().getDiagramForPictogramElement(pe)));
 }
