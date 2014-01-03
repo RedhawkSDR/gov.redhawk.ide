@@ -8,6 +8,7 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByDomainManagerPatte
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByFileManagerPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByServicePattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
 
@@ -57,6 +58,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		//Add Patterns for Domain Objects
 		addPattern(new ComponentPattern());
 		addConnectionPattern(new SADConnectInterfacePattern());
+		addPattern(new HostCollocationPattern());
 		addPattern(new FindByDomainManagerPattern());
 		addPattern(new FindByFileManagerPattern());
 		addPattern(new FindByEventChannelPattern());

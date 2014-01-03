@@ -19,6 +19,7 @@ public class ImageProvider extends AbstractImageProvider implements IImageProvid
     public static final String IMG_FIND_BY_FILE_MANAGER = PREFIX + "findByFileManager";
     public static final String IMG_FIND_BY_DOMAIN = PREFIX + "findByDomain";
     public static final String IMG_FIND_BY = PREFIX + "findBy";
+    public static final String IMG_HOST_COLLOCATION = "hostCollocation";
 	
 	public ImageProvider() {
 	}
@@ -35,6 +36,7 @@ public class ImageProvider extends AbstractImageProvider implements IImageProvid
         addImageFilePath(IMG_FIND_BY_DOMAIN, "icons/full/obj16/DomainFinder.gif");
         addImageFilePath(IMG_FIND_BY_SERVICE, "icons/full/obj16/DomainFinder.gif");
         addImageFilePath(IMG_FIND_BY, "icons/full/obj16/FindBy.gif");
+        addImageFilePath(IMG_HOST_COLLOCATION, "icons/full/obj16/DomainFinder.gif");
 	}
 
 }

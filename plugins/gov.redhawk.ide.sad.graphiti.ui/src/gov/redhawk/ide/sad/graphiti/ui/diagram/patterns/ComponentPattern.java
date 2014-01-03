@@ -26,6 +26,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
+import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.impl.AreaContext;
@@ -34,6 +35,9 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.AbstractPattern;
 import org.eclipse.graphiti.pattern.IPattern;
+import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.graphiti.ui.internal.GraphitiUIPlugin;
+import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 public class ComponentPattern extends AbstractPattern implements IPattern{
 
@@ -123,18 +127,14 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	@Override
 	public boolean canAdd(IAddContext context) {
 		if (context.getNewObject() instanceof SadComponentInstantiation) {
-			if (context.getTargetContainer() instanceof Diagram) {
+			if(context.getTargetContainer() instanceof Diagram ||
+					DiagramUtil.getHostCollocation(context.getTargetContainer()) != null){
 				return true;
 			}
+			return false;
 		}
 		return false;
 	}
-	
-	
-	
-	
-	
-
 	
 	@Override
 	public boolean canRemove(IRemoveContext context) {
@@ -155,18 +155,10 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	 */
 	@Override
 	public boolean canDelete(IDeleteContext context) {
-
-		if(context.getPictogramElement() != null && 
-				context.getPictogramElement().getLink() != null && 
-				context.getPictogramElement().getLink().getBusinessObjects() != null)
-		{
-			for(EObject eObject: context.getPictogramElement().getLink().getBusinessObjects()){
-				if(eObject instanceof SadComponentInstantiation){
-					return true;
-				}
-			}
+		Object obj = DiagramUtil.getBusinessObject(context.getPictogramElement());
+		if(obj instanceof SadComponentInstantiation){
+			return true;
 		}
-
 		return false;
 	}
 	
@@ -176,17 +168,9 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	@Override
 	public void delete(IDeleteContext context){
 		
-		//start working here, this doesn't work yet
-		
 		//set componentToDelete
-		SadComponentInstantiation ciNonFinal = null;
-		for(EObject eObject: context.getPictogramElement().getLink().getBusinessObjects()){
-			if(eObject instanceof SadComponentInstantiation){
-				ciNonFinal = (SadComponentInstantiation)eObject;
-				break;
-			}
-		}
-		final SadComponentInstantiation ciToDelete = ciNonFinal; //needs to be "final"
+		final SadComponentInstantiation ciToDelete = 
+						(SadComponentInstantiation)DiagramUtil.getBusinessObject(context.getPictogramElement());
 		
 		//editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
@@ -194,59 +178,14 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		//get sad from diagram
 		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 		
-		//Create Component Related objects in SAD model
+		//Perform business object manipulation in a Command
 		TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
 		stack.execute(new RecordingCommand(editingDomain){
 			@Override
             protected void doExecute() {
 				
-				//assembly controller may reference componentInstantiation
-				//delete reference if applicable
-				if(sad.getAssemblyController() != null &&
-						sad.getAssemblyController().getComponentInstantiationRef() != null &&
-						sad.getAssemblyController().getComponentInstantiationRef().getInstantiation().equals(ciToDelete)){
-					//TODO: how should this be handled? We need to test this out
-					EcoreUtil.delete(sad.getAssemblyController().getComponentInstantiationRef());
-					sad.getAssemblyController().setComponentInstantiationRef(null);
-				}
-				
-				//get placement for instantiation and delete it from sad partitioning after we look at removing the component file ref.
-				SadComponentPlacement placement = (SadComponentPlacement)ciToDelete.getPlacement();
-				
-				//find and remove any attached connections
-				//gather connections
-				List<SadConnectInterface> connectionsToRemove = new ArrayList<SadConnectInterface>();
-				if(sad.getConnections() != null){
-					for(SadConnectInterface connectionInterface: sad.getConnections().getConnectInterface()){
-						//we need to do thorough null checks here because of the many connection possibilities.  Firstly a connection requires only a usesPort and either (providesPort || componentSupportedInterface) 
-						//and therefore null checks need to be performed.
-						//FindBy connections don't have ComponentInstantiationRefs and so they can also be null
-						if((connectionInterface.getComponentSupportedInterface() != null && connectionInterface.getComponentSupportedInterface().getComponentInstantiationRef() != null && ciToDelete.getId().equals(connectionInterface.getComponentSupportedInterface().getComponentInstantiationRef().getRefid())) ||
-								(connectionInterface.getUsesPort() != null && connectionInterface.getUsesPort().getComponentInstantiationRef() != null && ciToDelete.getId().equals(connectionInterface.getUsesPort().getComponentInstantiationRef().getRefid())) ||
-								(connectionInterface.getProvidesPort() != null && connectionInterface.getProvidesPort().getComponentInstantiationRef() != null && ciToDelete.getId().equals(connectionInterface.getProvidesPort().getComponentInstantiationRef().getRefid()))){
-							connectionsToRemove.add(connectionInterface);
-						}
-					}
-				}
-				//remove gathered connections
-				if(sad.getConnections() != null){
-					sad.getConnections().getConnectInterface().removeAll(connectionsToRemove);
-				}
-				
-				//delete component file if applicable
-				//figure out which component file we are using and if no other component placements using it then remove it.
-				ComponentFile componentFileToRemove = placement.getComponentFileRef().getFile();
-				for(SadComponentPlacement p: sad.getPartitioning().getComponentPlacement()){
-					if(p != placement && p.getComponentFileRef().getRefid().equals(placement.getComponentFileRef().getRefid())){
-						componentFileToRemove = null;
-					}
-				}
-				if(componentFileToRemove != null){
-					sad.getComponentFiles().getComponentFile().remove(componentFileToRemove);
-				}
-				
-				//delete component placement
-				sad.getPartitioning().getComponentPlacement().remove(placement);
+				//delete component from SoftwareAssembly
+				DiagramUtil.deleteComponentInstantiation(ciToDelete, sad);
             }
 		});
 		
@@ -286,16 +225,17 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	 */
 	public PictogramElement add(IAddContext context) {
 		SadComponentInstantiation sadComponentInstantiation = (SadComponentInstantiation) context.getNewObject();
-		Diagram diagram = (Diagram) context.getTargetContainer();
+		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
+		Diagram diagram = findDiagram(targetContainerShape);
 		
 		//OUTER RECTANGLE
 		ContainerShape outerContainerShape = 
-				DiagramUtil.addOuterRectangle(diagram, 
+				DiagramUtil.addOuterRectangle(targetContainerShape, 
 						sadComponentInstantiation.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(), 
 						sadComponentInstantiation, getFeatureProvider(),
 						ImageProvider.IMG_COMPONENT_PLACEMENT,
-						StyleUtil.getStyleForComponentOuter(diagram));
-
+						StyleUtil.getStyleForComponentOuter(findDiagram(targetContainerShape)));
+		
 		//INNER RECTANGLE
 		DiagramUtil.addInnerRectangle(diagram,
 				outerContainerShape,
@@ -340,4 +280,70 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		return super.layout(context);
 	}
 	
+	public static Diagram findDiagram(ContainerShape containerShape){
+		return Graphiti.getPeService().getDiagramForShape(containerShape);
+	}
+	
+	public boolean canMoveShape(IMoveShapeContext context) {
+
+		SadComponentInstantiation sadComponentInstantiation = 
+				(SadComponentInstantiation)DiagramUtil.getBusinessObject(context.getPictogramElement());
+		if(sadComponentInstantiation == null){
+			return false;
+		}
+		
+		//if moving to HostCollocation to Sad Partitioning
+		if(context.getTargetContainer() instanceof Diagram ||
+				DiagramUtil.getHostCollocation(context.getTargetContainer()) != null){
+			return true;
+		}
+		return false;
+		
+	}
+	
+	/**
+	 * Moves Component shape.
+	 * if moving to HostCollocation or away from one modify underlying model and allow parent class to perform graphical move
+	 * if moving within the same container allow parent class to perform graphical move
+	 */
+	public void moveShape(IMoveShapeContext context) {
+		SadComponentInstantiation sadComponentInstantiation = 
+				(SadComponentInstantiation)DiagramUtil.getBusinessObject(context.getPictogramElement());
+
+		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		
+		//if moving inside the same container
+		if(context.getSourceContainer() == context.getTargetContainer()){
+			super.moveShape(context);
+		}
+		
+		//if moving from HostCollocation to a different HostCollocation
+		if(DiagramUtil.getHostCollocation(context.getSourceContainer()) != null &&
+				DiagramUtil.getHostCollocation(context.getTargetContainer()) != null &&
+				DiagramUtil.getHostCollocation(context.getSourceContainer()) != DiagramUtil.getHostCollocation(context.getTargetContainer())){
+			//swap parents
+			DiagramUtil.getHostCollocation(context.getSourceContainer()).getComponentPlacement().remove((SadComponentPlacement)sadComponentInstantiation.getPlacement());
+			DiagramUtil.getHostCollocation(context.getTargetContainer()).getComponentPlacement().add((SadComponentPlacement)sadComponentInstantiation.getPlacement());
+			super.moveShape(context);
+		}
+		
+		//if moving to HostCollocation to Sad Partitioning
+		if(DiagramUtil.getHostCollocation(context.getTargetContainer()) != null &&
+				context.getSourceContainer() instanceof Diagram){
+			//swap parents
+			sad.getPartitioning().getComponentPlacement().remove(sadComponentInstantiation.getPlacement());
+			DiagramUtil.getHostCollocation(context.getTargetContainer()).getComponentPlacement().add((SadComponentPlacement)sadComponentInstantiation.getPlacement());
+			super.moveShape(context);
+		}
+		
+		//if moving to Sad Partitioning from HostCollocation
+		if(DiagramUtil.getHostCollocation(context.getSourceContainer()) != null &&
+				context.getTargetContainer() instanceof Diagram){
+			//swap parents
+			sad.getPartitioning().getComponentPlacement().add((SadComponentPlacement)sadComponentInstantiation.getPlacement());
+			DiagramUtil.getHostCollocation(context.getSourceContainer()).getComponentPlacement().remove((SadComponentPlacement)sadComponentInstantiation.getPlacement());
+			super.moveShape(context);
+		}
+
+	}
 }

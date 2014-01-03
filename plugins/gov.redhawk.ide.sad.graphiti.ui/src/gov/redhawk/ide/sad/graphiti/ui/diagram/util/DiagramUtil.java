@@ -3,13 +3,20 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.HostCollocation;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentPlacement;
+import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -155,15 +162,15 @@ public class DiagramUtil {
 	
 	/**
 	 * Creates a large rectangle intended to be an outside container and links the provided business object to it.
-	 * @param diagram
+	 * @param targetContainerShape
 	 * @param text
 	 * @param businessObject
 	 * @param featureProvider
 	 * @return
 	 */
-	public static ContainerShape addOuterRectangle(Diagram diagram, String text, Object businessObject, 
+	public static ContainerShape addOuterRectangle(ContainerShape targetContainerShape, String text, Object businessObject, 
 			IFeatureProvider featureProvider, String imageId, Style containerStyle){
-		ContainerShape outerContainerShape = Graphiti.getCreateService().createContainerShape(diagram, true);
+		ContainerShape outerContainerShape = Graphiti.getCreateService().createContainerShape(targetContainerShape, true);
 		RoundedRectangle outerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(outerContainerShape, 5, 5);
 		outerRoundedRectangle.setStyle(containerStyle);
 		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, DiagramUtil.GA_TYPE, DiagramUtil.GA_outerRoundedRectangle);
@@ -172,7 +179,7 @@ public class DiagramUtil {
 		Graphiti.getPeService().setPropertyValue(imgIcon, DiagramUtil.GA_TYPE, DiagramUtil.GA_outerRoundedRectangleImage);//ref helps with resize
 		//text
 		Text cText = Graphiti.getCreateService().createText(outerRoundedRectangle, text);
-		cText.setStyle(StyleUtil.getStyleForOuterText(diagram));
+		cText.setStyle(StyleUtil.getStyleForOuterText(findDiagram(targetContainerShape)));
 		Graphiti.getPeService().setPropertyValue(cText, DiagramUtil.GA_TYPE, DiagramUtil.GA_outerRoundedRectangleText);
 		featureProvider.link(outerContainerShape, businessObject); // link container and business object
 		
@@ -181,7 +188,7 @@ public class DiagramUtil {
 	
 	/**
 	 * Creates a large rectangle intended to be an inside container and links the provided business object to it.
-	 * @param diagram
+	 * @param targetContainerShape
 	 * @param text
 	 * @param businessObject
 	 * @param featureProvider
@@ -440,6 +447,65 @@ public class DiagramUtil {
 	
 
 	/**
+	 * Returns list of Shapes that are contained in selected diagram context area
+	 * @param diagram
+	 * @param context
+	 * @return
+	 */
+	public static List<Shape> getContainersInArea(final Diagram diagram, final IAreaContext context){ 
+		
+		List<Shape> retList = new ArrayList<Shape>();
+		
+		EList<Shape> shapes = diagram.getChildren();
+		for(Shape s: shapes){
+			GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
+			if(context.getX() <= ga.getX() && context.getWidth() >= ga.getWidth() &&
+					context.getY() <= ga.getY() && context.getHeight() >= ga.getHeight()){
+				retList.add(s);
+			}
+		}
+		return retList;
+	}
+	
+	/**
+	 * Returns list of ContainerShape in provided AreaContext with 
+	 * property key DiagramUtil.GA_TYPE and provided propertyValue
+	 * @param diagram
+	 * @param context
+	 * @return
+	 */
+	public static List<Shape> getContainersInArea(final Diagram diagram, final IAreaContext context, String propertyValue){ 
+		
+		List<Shape> retList = new ArrayList<Shape>();
+		
+		EList<Shape> shapes = diagram.getChildren();
+		for(Shape s: shapes){
+			GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
+			if(gaExistInArea(ga, context) && DiagramUtil.isPropertyElementType(ga, propertyValue)){
+				retList.add(s);
+			}
+		}
+		return retList;
+	}
+	
+	/**
+	 * Return true if GraphicsAlgorithm exists within IAreaContext
+	 * @param ga
+	 * @param context
+	 * @return
+	 */
+	public static boolean gaExistInArea(final GraphicsAlgorithm ga, final IAreaContext context){
+		if(context.getX() <= ga.getX() && context.getWidth() >= ga.getWidth() &&
+				context.getY() <= ga.getY() && context.getHeight() >= ga.getHeight()){
+			return true;
+		}
+		return false;
+	}
+		
+	
+	
+	
+	/**
 	 * Resizes component with desired size.  Minimums are enforced.  Ports are kept at sides while inner box grows
 	 * @param context
 	 * @param pe
@@ -567,14 +633,14 @@ public class DiagramUtil {
 	}
 	
 	/**
-	 * Returns true if the property container contains a property with elementType as value
+	 * Returns true if the property container contains a property key DiagramUtil.GA_TYPE and with propertyValue as value
 	 * @param pc
-	 * @param elementType
+	 * @param propertyValue
 	 * @return
 	 */
-	public static boolean isPropertyElementType(PropertyContainer pc, String elementType){
+	public static boolean isPropertyElementType(PropertyContainer pc, String propertyValue){
 		for(Property p: pc.getProperties()){
-			if(GA_TYPE.equals(p.getKey()) && elementType.equals(p.getValue())){
+			if(GA_TYPE.equals(p.getKey()) && propertyValue.equals(p.getValue())){
 				return true;
 			}
 		}
@@ -622,9 +688,89 @@ public class DiagramUtil {
 			largestWidth = outerTitleWidth;
 		}
 		return largestWidth;
-		
 	}
 	
+	/**
+	 * Return true if target is HostCollocation ContainerShape
+	 * @param context
+	 */
+	public static HostCollocation getHostCollocation(final ContainerShape targetContainerShape){
+		if(targetContainerShape instanceof ContainerShape){
+			if(targetContainerShape.getLink() != null && targetContainerShape.getLink().getBusinessObjects() != null){
+				for(EObject obj: targetContainerShape.getLink().getBusinessObjects()){
+					if(obj instanceof HostCollocation){
+						return (HostCollocation)obj;
+					}
+				}
+			}
+		}
+		return null;
+	}
 	
-	//IDimension innerRoundedRectangleTextSize = GraphitiUi.getUiLayoutService().calculateTextSize(innerRoundedRectangleText.getValue(), StyleUtil.getInnerTextFont(Graphiti.getPeService().getDiagramForPictogramElement(pe)));
+	//convenient method for getting diagram for a ContainerShape
+	public static Diagram findDiagram(ContainerShape containerShape){
+		return Graphiti.getPeService().getDiagramForShape(containerShape);
+	}
+	
+	//convenient method for getting business object for PictogramElement
+	public static Object getBusinessObject(PictogramElement pe){
+		return GraphitiUi.getLinkService().getBusinessObjectForLinkedPictogramElement(pe);
+	}
+	
+	/**
+	 * Delete SadComponentInstantiation and corresponding SadComponentPlacement business object from SoftwareAssembly
+	 * This method should be executed within a RecordingCommand.
+	 * @param ciToDelete
+	 * @param diagram
+	 */
+	public static void deleteComponentInstantiation(final SadComponentInstantiation ciToDelete, final SoftwareAssembly sad){
+		
+		//assembly controller may reference componentInstantiation
+		//delete reference if applicable
+		if(sad.getAssemblyController() != null &&
+				sad.getAssemblyController().getComponentInstantiationRef() != null &&
+				sad.getAssemblyController().getComponentInstantiationRef().getInstantiation().equals(ciToDelete)){
+			//TODO: how should this be handled? We need to test this out
+			EcoreUtil.delete(sad.getAssemblyController().getComponentInstantiationRef());
+			sad.getAssemblyController().setComponentInstantiationRef(null);
+		}
+
+		//get placement for instantiation and delete it from sad partitioning after we look at removing the component file ref.
+		SadComponentPlacement placement = (SadComponentPlacement)ciToDelete.getPlacement();
+
+		//find and remove any attached connections
+		//gather connections
+		List<SadConnectInterface> connectionsToRemove = new ArrayList<SadConnectInterface>();
+		if(sad.getConnections() != null){
+			for(SadConnectInterface connectionInterface: sad.getConnections().getConnectInterface()){
+				//we need to do thorough null checks here because of the many connection possibilities.  Firstly a connection requires only a usesPort and either (providesPort || componentSupportedInterface) 
+				//and therefore null checks need to be performed.
+				//FindBy connections don't have ComponentInstantiationRefs and so they can also be null
+				if((connectionInterface.getComponentSupportedInterface() != null && connectionInterface.getComponentSupportedInterface().getComponentInstantiationRef() != null && ciToDelete.getId().equals(connectionInterface.getComponentSupportedInterface().getComponentInstantiationRef().getRefid())) ||
+						(connectionInterface.getUsesPort() != null && connectionInterface.getUsesPort().getComponentInstantiationRef() != null && ciToDelete.getId().equals(connectionInterface.getUsesPort().getComponentInstantiationRef().getRefid())) ||
+						(connectionInterface.getProvidesPort() != null && connectionInterface.getProvidesPort().getComponentInstantiationRef() != null && ciToDelete.getId().equals(connectionInterface.getProvidesPort().getComponentInstantiationRef().getRefid()))){
+					connectionsToRemove.add(connectionInterface);
+				}
+			}
+		}
+		//remove gathered connections
+		if(sad.getConnections() != null){
+			sad.getConnections().getConnectInterface().removeAll(connectionsToRemove);
+		}
+
+		//delete component file if applicable
+		//figure out which component file we are using and if no other component placements using it then remove it.
+		ComponentFile componentFileToRemove = placement.getComponentFileRef().getFile();
+		for(SadComponentPlacement p: sad.getPartitioning().getComponentPlacement()){
+			if(p != placement && p.getComponentFileRef().getRefid().equals(placement.getComponentFileRef().getRefid())){
+				componentFileToRemove = null;
+			}
+		}
+		if(componentFileToRemove != null){
+			sad.getComponentFiles().getComponentFile().remove(componentFileToRemove);
+		}
+
+		//delete component placement
+		sad.getPartitioning().getComponentPlacement().remove(placement);
+	}
 }

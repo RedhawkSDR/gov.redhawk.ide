@@ -6,6 +6,7 @@ import org.eclipse.graphiti.mm.StyleContainer;
 import org.eclipse.graphiti.mm.algorithms.styles.Font;
 import org.eclipse.graphiti.mm.algorithms.styles.LineStyle;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
@@ -97,6 +98,24 @@ public class StyleUtil {
 			style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
 			style.setLineWidth(0);
 			style.setLineVisible(false);
+		}
+		return style;
+	}
+	
+	//returns host collocation rectangle style
+	public static Style getStyleForHostCollocation(Diagram diagram){
+		final String styleId = "HostCollocation";
+		Style style = findStyle(diagram, styleId);
+		
+		if(style == null){
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			style.setForeground(gaService.manageColor(diagram, BLACK));
+			style.setTransparency(.99d);
+			style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
+			style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
+			style.setLineWidth(1);
+			style.setLineVisible(true);
 		}
 		return style;
 	}
@@ -274,4 +293,10 @@ public class StyleUtil {
 		}
 		return null;
 	}
+	
+	private static Diagram findDiagram(ContainerShape containerShape){
+		return Graphiti.getPeService().getDiagramForShape(containerShape);
+	}
+	
+	
 }

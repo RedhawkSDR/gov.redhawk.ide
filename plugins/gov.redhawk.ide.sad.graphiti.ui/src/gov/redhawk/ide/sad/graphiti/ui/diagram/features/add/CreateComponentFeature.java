@@ -9,17 +9,16 @@ import mil.jpeojtrs.sca.partitioning.ComponentFiles;
 import mil.jpeojtrs.sca.partitioning.NamingService;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.sad.FindComponent;
+import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadFactory;
-import mil.jpeojtrs.sca.sad.SadPartitioning;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -38,12 +37,21 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 	    this.spd = spd;
     }
 
+	//diagram and hostCollocation acceptable
 	@Override
 	public boolean canCreate(ICreateContext context) {
-		return context.getTargetContainer() instanceof Diagram;
+		if(context.getTargetContainer() instanceof Diagram ||
+				DiagramUtil.getHostCollocation(context.getTargetContainer()) != null){
+			return true;
+		}
+		return false;
 	}
 	@Override
 	public Object[] create(ICreateContext context) {
+		
+		if (spd == null) {
+			//TODO: return some kind of error
+		}
 		
 		//editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
@@ -51,9 +59,14 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 		//get sad from diagram
 		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 		
-		if (spd == null) {
-			//TODO: return some kind of error
-		}
+		//determine if target is HostCollocation ContainerShape
+		HostCollocation hostCollocation = DiagramUtil.getHostCollocation(context.getTargetContainer());
+		
+		//if HostCollocation was the target use it, otherwise add to sad partitioning
+		final EList<SadComponentPlacement> componentPlacementList = hostCollocation != null ? 
+				hostCollocation.getComponentPlacement() : 
+					sad.getPartitioning().getComponentPlacement();
+
 		
 		//container for new component instantiation, necessary for reference after command execution
 		final SadComponentInstantiation[] componentInstantiations = new SadComponentInstantiation[1];
@@ -66,8 +79,9 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 				//add component file
 				ComponentFile componentFile = createComponentFile(sad, spd);
 				
-				//component placement
-				SadComponentPlacement componentPlacement = createComponentPlacement(sad);
+				//create component placement and add to list
+				final SadComponentPlacement componentPlacement = SadFactory.eINSTANCE.createSadComponentPlacement();
+				componentPlacementList.add(componentPlacement);
 				
 				//component instantiation
 				componentInstantiations[0] = createComponentInstantiation(sad, componentPlacement, spd);
@@ -154,31 +168,6 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 	
 		return sadComponentInstantiation;
 	}
-	
-	/**
-	 * Creates SADComponentPlacement in the SoftwareAssembly.  This needs to also handle Collocation and currently doesn't...see comment in method
-	 * @param sad
-	 * @param spd
-	 * @return
-	 */
-	private SadComponentPlacement createComponentPlacement(final SoftwareAssembly sad){
 
-		final SadComponentPlacement componentPlacement = SadFactory.eINSTANCE.createSadComponentPlacement();
-
-		SadPartitioning sadPartitioning = sad.getPartitioning();
-		if (sadPartitioning == null) {
-			sadPartitioning = SadFactory.eINSTANCE.createSadPartitioning();
-			sad.setPartitioning(sadPartitioning);
-		}
-		sadPartitioning.getComponentPlacement().add(componentPlacement);
-		//TODO: we need to handle Collocation (this involves looking at the AddContext targetContainer
-		//RIght now for simplicity we are just assuming add directly to SAD
-		//		} else if (element instanceof HostCollocation) {
-		//			final HostCollocation owner = (HostCollocation) element;
-		//			owner.getComponentPlacement().add(newElement);
-		//		}
-
-		return componentPlacement;
-	}
 
 }

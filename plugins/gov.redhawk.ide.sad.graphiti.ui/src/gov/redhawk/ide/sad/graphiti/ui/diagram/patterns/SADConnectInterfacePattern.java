@@ -40,10 +40,11 @@ import org.eclipse.graphiti.services.IPeCreateService;
 
 public class SADConnectInterfacePattern extends AbstractConnectionPattern implements IConnectionPattern{
 
+	public static final String NAME = "Connection";
 	
 	@Override
 	public String getCreateName(){
-		return "Connection";
+		return NAME;
 	}
 	
 	@Override

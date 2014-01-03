@@ -7,6 +7,8 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByDomainManagerPatte
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByFileManagerPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByServicePattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.HostCollocationPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
@@ -148,10 +150,11 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Base Types", null);
 
 		IFeatureProvider featureProvider = getFeatureProvider();
+		//connection
 		ICreateConnectionFeature[] createConnectionFeatures = featureProvider.getCreateConnectionFeatures();
 		if (createConnectionFeatures.length > 0) {
 			for (ICreateConnectionFeature ccf : createConnectionFeatures) {
-				if("Connection".equals(ccf.getCreateName())){
+				if(SADConnectInterfacePattern.NAME.equals(ccf.getCreateName())){
 				ConnectionCreationToolEntry ccTool = new ConnectionCreationToolEntry(
 						ccf.getCreateName(), ccf.getCreateDescription(),
 						ccf.getCreateImageId(), ccf.getCreateLargeImageId());
@@ -160,6 +163,18 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 				}
 			}
 
+		}
+		//host collocation
+		ICreateFeature[] createFeatures = featureProvider.getCreateFeatures();
+		for (ICreateFeature cf : createFeatures) {
+			if(HostCollocationPattern.NAME.equals(cf.getCreateName())){
+				ObjectCreationToolEntry objectCreationToolEntry = 
+						new ObjectCreationToolEntry(cf.getCreateName(),
+								cf.getCreateDescription(), cf.getCreateImageId(),
+								cf.getCreateLargeImageId(), cf);
+
+				compartmentEntry.addToolEntry(objectCreationToolEntry);
+			}
 		}
 		return compartmentEntry;
 	}
