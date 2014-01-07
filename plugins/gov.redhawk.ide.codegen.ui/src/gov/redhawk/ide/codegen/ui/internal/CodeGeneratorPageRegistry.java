@@ -12,13 +12,15 @@ package gov.redhawk.ide.codegen.ui.internal;
 
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.ide.codegen.ui.DefaultGeneratorDisplayFactory;
-import gov.redhawk.ide.codegen.ui.ICodeGeneratorPageRegistry;
+import gov.redhawk.ide.codegen.ui.ICodeGeneratorPageRegistry2;
 import gov.redhawk.ide.codegen.ui.ICodegenComposite;
 import gov.redhawk.ide.codegen.ui.ICodegenDisplayFactory;
+import gov.redhawk.ide.codegen.ui.ICodegenDisplayFactory2;
 import gov.redhawk.ide.codegen.ui.ICodegenWizardPage;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +38,7 @@ import org.eclipse.core.runtime.dynamichelpers.IFilter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-public class CodeGeneratorPageRegistry implements ICodeGeneratorPageRegistry, IExtensionChangeHandler {
+public class CodeGeneratorPageRegistry implements ICodeGeneratorPageRegistry2, IExtensionChangeHandler {
 
 	public static final String EP_ID = "codegenPages";
 
@@ -192,8 +194,11 @@ public class CodeGeneratorPageRegistry implements ICodeGeneratorPageRegistry, IE
 	}
 
 	@Override
-	public ICodegenWizardPage getDefaultPage() {
-		return this.defaultFactory.createPage();
+	public ICodegenWizardPage[] getDefaultPages() {
+		List<ICodegenWizardPage> pages = new ArrayList<ICodegenWizardPage>();
+		pages.add(this.defaultFactory.createPage());
+		
+		return pages.toArray(new ICodegenWizardPage[1]); 
 	}
 
 	@Override
@@ -203,15 +208,17 @@ public class CodeGeneratorPageRegistry implements ICodeGeneratorPageRegistry, IE
 
 		if (factories != null) {
 			for (final ICodegenDisplayFactory factory : factories) {
-				final ICodegenWizardPage wizPage = factory.createPage();
-				if (codegen != null) {
-					codegens.add(wizPage);
+				if (factory instanceof ICodegenDisplayFactory2) {
+					final ICodegenWizardPage[] wizPages = ((ICodegenDisplayFactory2) factory).createPages();
+					codegens.addAll(Arrays.asList(wizPages));
+				} else {
+					codegens.add(factory.createPage());
 				}
 			}
 		}
 
 		if (codegens.size() == 0) {
-			codegens.add(this.defaultFactory.createPage());
+			codegens.addAll(Arrays.asList(this.defaultFactory.createPage()));
 		}
 
 		return codegens.toArray(new ICodegenWizardPage[codegens.size()]);
@@ -241,5 +248,21 @@ public class CodeGeneratorPageRegistry implements ICodeGeneratorPageRegistry, IE
 		}
 
 		return codegens.toArray(new ICodegenComposite[codegens.size()]);
+	}
+	
+	/**
+	 * This method should return the same factories that was used to create the Wizard pages & Composites from
+	 * findCompositeByGeneratorId and findPageByGeneratorId since the factories are kept within a map generated
+	 * from the start.
+	 */
+	@Override
+	public List<ICodegenDisplayFactory> findCodegenDisplayFactoriesByGeneratorId(final String codegen) {
+		final List<ICodegenDisplayFactory> factories = this.codegenToWizardMap.get(codegen);
+		return factories;
+	}
+
+	@Override
+	public ICodegenWizardPage getDefaultPage() {
+		return this.defaultFactory.createPage();
 	}
 }

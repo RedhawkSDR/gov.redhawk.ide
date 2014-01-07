@@ -75,7 +75,7 @@ public class ImplementationWizardPage extends WizardPage {
 	/** The Constant TITLE_IMAGE. */
 	private static final ImageDescriptor TITLE_IMAGE = null;
 
-	private Implementation impl = SpdFactory.eINSTANCE.createImplementation();
+	private Implementation impl = null;
 	private final ProgrammingLanguage progLang = SpdFactory.eINSTANCE.createProgrammingLanguage();
 	private final Compiler compiler = SpdFactory.eINSTANCE.createCompiler();
 	private final Runtime runtime = SpdFactory.eINSTANCE.createRuntime();
@@ -113,15 +113,10 @@ public class ImplementationWizardPage extends WizardPage {
 
 	/**
 	 * The Constructor.
-	 * @since 7.0
 	 */
 	public ImplementationWizardPage(final String name, final String componenttype) {
 		super(name, "New Implementation", ImplementationWizardPage.TITLE_IMAGE);
 		this.setPageComplete(false);
-		this.impl.setDescription("The implementation contains descriptive information about the template for a software component.");
-		this.impl.setId("");
-		this.impl.setProgrammingLanguage(this.getProgLang());
-		this.impl.setHumanLanguage(this.humanLang);
 		this.componenttype = componenttype;
 	}
 
@@ -131,10 +126,6 @@ public class ImplementationWizardPage extends WizardPage {
 	public ImplementationWizardPage(final String name, final SoftPkg softPkg) {
 		super(name, "New Implementation", ImplementationWizardPage.TITLE_IMAGE);
 		this.setPageComplete(false);
-		this.impl.setDescription("The implementation contains descriptive information about the template for a software component.");
-		this.impl.setId("");
-		this.impl.setProgrammingLanguage(this.getProgLang());
-		this.impl.setHumanLanguage(this.humanLang);
 		this.softPkg = softPkg;
 		if (this.softPkg != null) {			
 			this.projectName = this.softPkg.getName();
@@ -142,7 +133,14 @@ public class ImplementationWizardPage extends WizardPage {
 		this.setDescription("Choose the initial settings for the new implementation.");
 		this.componenttype = softPkg.getDescriptor().getComponent().getComponentType();
 	}
-
+	
+	/**
+	 * @since 8.1
+	 */
+	public void setImpl(Implementation impl) {
+		this.impl = impl;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -211,13 +209,17 @@ public class ImplementationWizardPage extends WizardPage {
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				final IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+				final String previousCodeGenId = ImplementationWizardPage.this.implSettings.getGeneratorId();
 				handleCodeGenerationSelection(sel);
 				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						if (getWizard() instanceof ScaImplementationWizard) {
+						if (getWizard() instanceof ScaImplementationWizard2) {
+							((ScaImplementationWizard2) getWizard()).generatorChanged(ImplementationWizardPage.this.impl,
+							        ImplementationWizardPage.this.codeGenerator, previousCodeGenId);
+						} else if (getWizard() instanceof ScaImplementationWizard) {
 							((ScaImplementationWizard) getWizard()).generatorChanged(ImplementationWizardPage.this.impl,
-							        ImplementationWizardPage.this.codeGenerator);
+						        ImplementationWizardPage.this.codeGenerator);
 						}
 					}
 				});
@@ -315,8 +317,6 @@ public class ImplementationWizardPage extends WizardPage {
 		} else {
 			this.impl.setRuntime(null);
 		}
-
-		this.humanLang.setName(RedhawkCodegenActivator.ENGLISH);
 
 		if ((this.codeGenerator.getDescription() != null) && (ImplementationWizardPage.this.getCodeGeneratorEntryViewer() != null)) {
 			ImplementationWizardPage.this.getCodeGeneratorEntryViewer().getCombo().setToolTipText(this.codeGenerator.getDescription());
@@ -592,7 +592,7 @@ public class ImplementationWizardPage extends WizardPage {
 	 * @since 8.1
 	 */
 	protected ProgrammingLanguage getProgLang() {
-		return progLang;
+		return this.impl.getProgrammingLanguage();
 	}
 
 	/**

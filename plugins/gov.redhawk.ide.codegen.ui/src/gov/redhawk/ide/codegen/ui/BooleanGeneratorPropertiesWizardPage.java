@@ -58,6 +58,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -668,7 +669,16 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 
 	@Override
 	public boolean canFlipToNextPage() {
-		return this.canFlip && this.isPageComplete();
+		return this.canFlip && this.isPageComplete() && notLastPage();
+	}
+
+	/**
+	 * Checks to see if this Wizard page is the last one in the wizard pages list.
+	 * @return True if this page is not the last page
+	 */
+	private boolean notLastPage() {
+		IWizardPage[] pages = getWizard().getPages();
+		return pages[pages.length - 1] != this;
 	}
 
 	/**

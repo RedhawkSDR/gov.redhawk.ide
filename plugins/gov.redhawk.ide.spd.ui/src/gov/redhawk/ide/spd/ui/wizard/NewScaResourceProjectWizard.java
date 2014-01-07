@@ -26,15 +26,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-
 /**
  * The Class NewScaResourceProjectWizard.
  * 
  * @since 4.0
  */
 public class NewScaResourceProjectWizard extends NewScaResourceWizard implements IImportWizard {
-
-
 
 	/**
 	 * 
@@ -54,6 +51,8 @@ public class NewScaResourceProjectWizard extends NewScaResourceWizard implements
 		setResourcePropertiesPage(new ScaResourceProjectPropertiesWizardPage("", "Component"));
 		this.addPage(getResourcePropertiesPage());
 		setImplPage(new ImplementationWizardPage("", ICodeGeneratorDescriptor.COMPONENT_TYPE_RESOURCE));
+		this.getImplPage().setImpl(this.getImplementation());
+		
 		getImplPage().setDescription("Choose the initial settings for the new implementation.");
 		this.addPage(getImplPage());
 

@@ -11,6 +11,7 @@
 package gov.redhawk.ide.ui.wizard;
 
 import gov.redhawk.ui.validation.ProjectNameValidator;
+import mil.jpeojtrs.sca.util.DceUuidUtil;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -41,6 +42,10 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 
 	private boolean showContentsGroup = true;
 
+	private boolean showComponentIDGroup = true;
+
+	private boolean showWorkingSetGroup = true;
+
 	protected ScaProjectPropertiesWizardPage(final String pageName, final String resourceType, final String resourceExtension) {
 		super(pageName);
 		this.resourceType = resourceType;
@@ -58,6 +63,20 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 	public void setShowContentsGroup(final boolean value) {
 		this.showContentsGroup = value;
 	}
+	
+	/**
+	 * @since 9.1
+	 */
+	public void setShowComponentIDGroup(final boolean value) {
+		this.showComponentIDGroup = value;
+	}
+	
+	/**
+	 * @since 9.1
+	 */
+	public void setShowWorkingSetGroup(final boolean value) {
+		this.showWorkingSetGroup = value;
+	}
 
 	@Override
 	public void createControl(final Composite parent) {
@@ -74,13 +93,17 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 		}
 
 		// ID Group
-		this.idGroup = new IDGroup(dialogArea, SWT.None, this.resourceType, this);
-		this.idGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL));
+		if (this.showComponentIDGroup) {
+			this.idGroup = new IDGroup(dialogArea, SWT.None, this.resourceType, this);
+			this.idGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL));
+		}
 
 		// Working Set group
-		String[] wsTypes = new String[1];
-		wsTypes[0] = "org.eclipse.ui.resourceWorkingSetPage";
-		createWorkingSetGroup(dialogArea, new StructuredSelection(), wsTypes);
+		if (this.showWorkingSetGroup) {
+			String[] wsTypes = new String[1];
+			wsTypes[0] = "org.eclipse.ui.resourceWorkingSetPage";
+			createWorkingSetGroup(dialogArea, new StructuredSelection(), wsTypes);
+		}
 
 		setPageComplete(validatePage());
 		// Show description on opening
@@ -103,9 +126,29 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 	public ContentsGroup getContentsGroup() {
 		return this.contentsGroup;
 	}
-
+	
+	/**
+	 * Returns the ID group which could be null.  
+	 *
+	 * @deprecated use {@link getID()} instead if the ID is needed
+	 */
 	public IDGroup getIdGroup() {
 		return this.idGroup;
+	}
+	
+	/**
+	 * @since 9.1
+	 */
+	public String getID() {
+		String id = null;
+		
+		if (this.showComponentIDGroup) {
+			id = this.idGroup.getId();
+		} else {
+			id = DceUuidUtil.createDceUUID();
+		}
+		
+		return id;
 	}
 
 	@Override
@@ -136,7 +179,11 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 			}
 
 		}
-		status = this.idGroup.validateGroup();
+		
+		if (this.showComponentIDGroup) {
+			status = this.idGroup.validateGroup();
+		}
+		
 		if (!status.isOK()) {
 			setMessage(status);
 			return false;

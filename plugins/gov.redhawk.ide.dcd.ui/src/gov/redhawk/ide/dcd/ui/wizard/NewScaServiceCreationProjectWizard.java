@@ -77,7 +77,7 @@ public class NewScaServiceCreationProjectWizard extends NewScaResourceWizard imp
 
 	@Override
     protected String getID() {
-		return getResourcePropertiesPage().getIdGroup().getId();
+		return getResourcePropertiesPage().getID();
     }
 
 	@Override

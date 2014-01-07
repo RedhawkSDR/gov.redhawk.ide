@@ -110,7 +110,7 @@ public class NewWaveformFromLocalWizard extends Wizard implements IExecutableExt
 			} else {
 				locationURI = this.waveformPropertiesPage.getLocationURI();
 			}
-			final String id = this.waveformPropertiesPage.getIdGroup().getId();
+			final String id = this.waveformPropertiesPage.getID();
 			final String projectName = this.waveformPropertiesPage.getProjectName();
 			final SoftwareAssembly newSad = EcoreUtil.copy(this.sad);
 			updateComponentFiles(newSad);

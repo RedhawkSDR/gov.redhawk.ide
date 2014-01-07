@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdFactory;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -52,7 +53,9 @@ public class ImplementationWizard extends Wizard implements ScaImplementationWiz
 	 */
 	public ImplementationWizard(final EditingDomain editingDomain, final String name, final SoftPkg softPkg) {
 		this.setWindowTitle("New Implementation");
+		Implementation impl = SpdFactory.eINSTANCE.createImplementation();
 		this.implPage = new ImplementationWizardPage(name, softPkg);
+		this.implPage.setImpl(impl);
 		this.setNeedsProgressMonitor(true);
 		this.projectName = name;
 		this.softPkg = softPkg;

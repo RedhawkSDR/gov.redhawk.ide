@@ -139,7 +139,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 			} else {
 				locationURI = this.waveformPropertiesPage.getLocationURI();
 			}
-			final String id = this.waveformPropertiesPage.getIdGroup().getId();
+			final String id = this.waveformPropertiesPage.getID();
 			final boolean isCreateNewResource = this.waveformPropertiesPage.getContentsGroup().isCreateNewResource();
 			final IPath existingSadPath = this.waveformPropertiesPage.getContentsGroup().getExistingResourcePath();
 			final String projectName = this.waveformPropertiesPage.getProjectName();

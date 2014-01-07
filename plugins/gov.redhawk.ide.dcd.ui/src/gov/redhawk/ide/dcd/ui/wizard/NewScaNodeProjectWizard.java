@@ -111,7 +111,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 			} else {
 				locationURI = this.nodePropertiesPage.getLocationURI();
 			}
-			final String id = this.nodePropertiesPage.getIdGroup().getId();
+			final String id = this.nodePropertiesPage.getID();
 			final IPath existingDcdPath = this.nodePropertiesPage.getContentsGroup().getExistingResourcePath();
 
 			final String domainManagerName = this.nodePropertiesPage.getDomain();
