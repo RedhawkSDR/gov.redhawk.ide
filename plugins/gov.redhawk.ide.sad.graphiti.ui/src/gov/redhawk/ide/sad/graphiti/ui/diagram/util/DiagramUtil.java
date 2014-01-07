@@ -1,5 +1,12 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.util;
 
+import gov.redhawk.diagram.IDiagramUtilHelper;
+import gov.redhawk.diagram.editor.URIEditorInputProxy;
+import gov.redhawk.sca.efs.ScaFileSystemPlugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,9 +19,13 @@ import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.ui.URIEditorInput;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -47,6 +58,7 @@ import org.eclipse.graphiti.services.IGaLayoutService;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 import org.eclipse.graphiti.util.IColorConstant;
+import org.eclipse.ui.IEditorInput;
 
 public class DiagramUtil {
 
@@ -772,5 +784,123 @@ public class DiagramUtil {
 
 		//delete component placement
 		sad.getPartitioning().getComponentPlacement().remove(placement);
+	}
+	
+	public static URI getDiagramResourceURI(final IDiagramUtilHelper options, final Resource resource) throws IOException {
+		if (resource != null) {
+			final URI uri = resource.getURI();
+			if (uri.isPlatformResource()) {
+				final IFile file = options.getResource(resource);
+				return DiagramUtil.getRelativeDiagramResourceURI(options, file);
+			} else {
+				return DiagramUtil.getTemporaryDiagramResourceURI(options, uri);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Initialize sad diagram.
+	 * 
+	 * @param b
+	 */
+	private static URI getRelativeDiagramResourceURI(final IDiagramUtilHelper options, final IFile file) {
+		final IFile diagramFile = file.getParent()
+		        .getFile(
+		                new Path(file.getName().substring(0, file.getName().length() - options.getSemanticFileExtension().length())
+		                		+ options.getDiagramFileExtension()));
+		final URI uri = URI.createPlatformResourceURI(diagramFile.getFullPath().toString(), true);
+		return uri;
+	}
+	
+	/**
+	 * Initialize sad diagram.
+	 * 
+	 * @param b
+	 * @throws IOException
+	 */
+	private static URI getTemporaryDiagramResourceURI(final IDiagramUtilHelper options, final URI uri) throws IOException {
+		final String name = uri.lastSegment();
+		String tmpName = "rh_" + name.substring(0, name.length() - options.getSemanticFileExtension().length());
+		File tempDir = ScaFileSystemPlugin.getDefault().getTempDirectory();
+		final File tempFile = File.createTempFile(tmpName, options.getDiagramFileExtension(), tempDir);
+		tempFile.deleteOnExit();
+
+		final URI retVal = URI.createURI(tempFile.toURI().toString());
+
+		return retVal;
+	}
+	
+//	/**
+//	 * 
+//	 */
+//	public static void initializeDiagramResource(final IDiagramUtilHelper options, final URI diagramURI, final Resource sadResource) throws IOException,
+//	        CoreException {
+//		if (diagramURI.isPlatform()) {
+//			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(diagramURI.toPlatformString(true)));
+//			
+//			file.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
+//			
+//			if (!file.exists()) {
+//				final IWorkspaceRunnable operation = new IWorkspaceRunnable() {
+//
+//					@Override
+//					public void run(final IProgressMonitor monitor) throws CoreException {
+//						final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+//						try {
+//							DiagramUtil.populateDiagram(options, diagramURI, sadResource, buffer);
+//						} catch (final IOException e) {
+//							// PASS
+//						}
+//						file.create(new ByteArrayInputStream(buffer.toByteArray()), true, monitor);
+//					}
+//
+//				};
+//				final ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRuleFactory().createRule(file);
+//
+//				ResourcesPlugin.getWorkspace().run(operation, rule, 0, null);
+//			}
+//		} else {
+//			DiagramUtil.populateDiagram(options, diagramURI, sadResource, null);
+//		}
+//	}
+
+//	private static void populateDiagram(final IDiagramUtilHelper options, final URI diagramURI, final Resource resource, final OutputStream buffer)
+//	        throws IOException {
+//		// Create a resource set
+//		//
+//		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+//
+//		// Create a resource for this file.
+//		//
+//		final Resource diagramResource = resourceSet.createResource(diagramURI);
+//
+//		final String diagramName = diagramURI.lastSegment();
+//		final EObject obj = options.getRootDiagramObject(resource);
+//		final Diagram diagram = ViewService.createDiagram(obj, options.getModelId(), options.getDiagramPreferencesHint());
+//		if (diagram != null) {
+//			diagram.setName(diagramName);
+//			diagram.setElement(obj);
+//			diagramResource.getContents().add(diagram);
+//			if (buffer != null) {
+//				diagramResource.save(buffer, options.getSaveOptions());
+//			} else {
+//				diagramResource.save(options.getSaveOptions());
+//			}
+//		}
+//	}
+
+	
+	public static IEditorInput getDiagramWrappedInput(final URI diagramURI, final TransactionalEditingDomain editingDomaing) {
+		return new URIEditorInputProxy(new URIEditorInput(diagramURI), editingDomaing);
+	}
+
+	/**
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	public static boolean isDiagramLocalSandbox(final Resource resource) {
+		return ".LocalSca.sad.xml".equals(resource.getURI().lastSegment());
 	}
 }

@@ -13,9 +13,8 @@ package gov.redhawk.ide.sad.ui.wizard;
 import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
-import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
-import gov.redhawk.ide.sad.internal.ui.editor.SadEditor;
+import gov.redhawk.ide.sad.internal.ui.editor.SadMultiPageEditor;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
@@ -43,19 +42,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.gmf.runtime.diagram.ui.internal.properties.WorkspaceViewerProperties;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramGraphicalViewer;
 import org.eclipse.graphiti.examples.common.FileService;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.ui.editor.DiagramEditor;
-import org.eclipse.graphiti.ui.editor.DiagramEditorInput;
-import org.eclipse.graphiti.ui.services.GraphitiUi;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -201,14 +192,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 			getContainer().run(false, false, op);
 			final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			if ((this.openEditorOn != null) && this.openEditorOn.exists()) {
-				//opens the GEF editor
-				final SadEditor sadPart = (SadEditor) IDE.openEditor(activePage, this.openEditorOn, true);
-				setCustomPreferences(sadPart);
-				
-				
-				
-				
-				
+
 				//opens the Graphiti editor
 				//create diagram instance
 				Diagram diagram = Graphiti.getPeCreateService().createDiagram(SADDiagramTypeProvider.DIAGRAM_TYPE_ID, projectName, true);
@@ -229,20 +213,24 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 				
 				FileService.createEmfFileForDiagram(uri, diagram);
 				
-				String providerId = GraphitiUi.getExtensionManager().getDiagramTypeProviderId(diagram.getDiagramTypeId());
+//				String providerId = GraphitiUi.getExtensionManager().getDiagramTypeProviderId(diagram.getDiagramTypeId());
+//				
+//				DiagramEditorInput editorInput = new DiagramEditorInput(uri, providerId);
+//				
+//				try {
+//					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, DiagramEditor.DIAGRAM_EDITOR_ID);
+//				} catch (PartInitException e) {
+//					String error = "Error while opening SAD diagram editor";
+//					IStatus status = new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, error, e);
+//					ErrorDialog.openError(getShell(), "An error occured", null, status);
+//					return false;
+//				}
 				
-				DiagramEditorInput editorInput = new DiagramEditorInput(uri, providerId);
+				//opens the GEF editor
+				final SadMultiPageEditor sadPart = (SadMultiPageEditor) IDE.openEditor(activePage, this.openEditorOn, true);
 				
-				try {
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, DiagramEditor.DIAGRAM_EDITOR_ID);
-				} catch (PartInitException e) {
-					String error = "Error while opening SAD diagram editor";
-					IStatus status = new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, error, e);
-					ErrorDialog.openError(getShell(), "An error occured", null, status);
-					return false;
-				}
-				
-				
+				//TODO: bwhoff2 we probably need to handle this
+				//setCustomPreferences(sadPart);
 				
 				
 				
@@ -264,25 +252,26 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 		return true;
 	}
 
-	/**
-	 * Set custom viewing properties for the Sad Editor so that we can tell the difference between this editor and the Sad Explorer
-	 * 
-	 * @param sadPart The Sad Editor instance that we shall change the initial diagram style for
-	 */
-	private void setCustomPreferences(final SadEditor sadPart) {
-		if (sadPart == null) {
-			return;
-		}
-		final DiagramGraphicalViewer viewer = (DiagramGraphicalViewer) sadPart.getDiagramGraphicalViewer();
-		final IPreferenceStore store = viewer.getWorkspaceViewerPreferenceStore();
+//	/**
+//	 * Set custom viewing properties for the Sad Editor so that we can tell the difference between this editor and the Sad Explorer
+//	 * 
+//	 * @param sadPart The Sad Editor instance that we shall change the initial diagram style for
+//	 */
+//	private void setCustomPreferences(final SadEditor sadPart) {
+//		if (sadPart == null) {
+//			return;
+//		}
+//		final DiagramGraphicalViewer viewer = (DiagramGraphicalViewer) sadPart.getDiagramGraphicalViewer();
+//		final IPreferenceStore store = viewer.getWorkspaceViewerPreferenceStore();
+//
+//		store.setValue(WorkspaceViewerProperties.VIEWRULERS, true);
+//		store.setValue(WorkspaceViewerProperties.VIEWGRID, true);
+//		store.setValue(WorkspaceViewerProperties.GRIDSPACING, .5); // SUPPRESS CHECKSTYLE MagicNumber
+//		store.setValue(WorkspaceViewerProperties.GRIDORDER, false);
+//		store.setValue(WorkspaceViewerProperties.GRIDLINESTYLE, SWT.LINE_SOLID);
+//		store.setValue(WorkspaceViewerProperties.GRIDLINECOLOR, SWT.COLOR_BLACK);
+//	}
 
-		store.setValue(WorkspaceViewerProperties.VIEWRULERS, true);
-		store.setValue(WorkspaceViewerProperties.VIEWGRID, true);
-		store.setValue(WorkspaceViewerProperties.GRIDSPACING, .5); // SUPPRESS CHECKSTYLE MagicNumber
-		store.setValue(WorkspaceViewerProperties.GRIDORDER, false);
-		store.setValue(WorkspaceViewerProperties.GRIDLINESTYLE, SWT.LINE_SOLID);
-		store.setValue(WorkspaceViewerProperties.GRIDLINECOLOR, SWT.COLOR_BLACK);
-	}
 
 	/**
 	 * {@inheritDoc}

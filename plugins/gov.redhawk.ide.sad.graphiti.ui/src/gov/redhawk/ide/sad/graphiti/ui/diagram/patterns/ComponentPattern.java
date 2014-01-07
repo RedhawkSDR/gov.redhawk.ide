@@ -4,13 +4,13 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.jpeojtrs.sca.partitioning.ComponentFile;
+import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
-import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -18,8 +18,6 @@ import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -36,8 +34,6 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.AbstractPattern;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.ui.internal.GraphitiUIPlugin;
-import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 public class ComponentPattern extends AbstractPattern implements IPattern{
 
@@ -186,6 +182,9 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 				
 				//delete component from SoftwareAssembly
 				DiagramUtil.deleteComponentInstantiation(ciToDelete, sad);
+				
+				//re-organize start order
+				organizeStartOrder(sad);
             }
 		});
 		
@@ -346,4 +345,51 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		}
 
 	}
+	
+	/**
+	 * Return the highest start order for all components in the SAD
+	 * @param sad
+	 * @return
+	 */
+	public static BigInteger determineHighestStartOrder(final SoftwareAssembly sad){
+		BigInteger highestStartOrder = BigInteger.valueOf(0);
+		for(SadComponentInstantiation c: getAllComponents(sad)){
+			if(c.getStartOrder().compareTo(highestStartOrder) > 0){
+				highestStartOrder = c.getStartOrder();
+			}
+		}
+		return highestStartOrder;
+	}
+	
+	/**
+	 * Get all components in sad
+	 * @param sad
+	 * @return
+	 */
+	public static List<SadComponentInstantiation> getAllComponents(final SoftwareAssembly sad) {
+		final List<SadComponentInstantiation> retVal = new ArrayList<SadComponentInstantiation>();
+		if (sad.getPartitioning() != null) {
+			for (final SadComponentPlacement cp : sad.getPartitioning().getComponentPlacement()) {
+				retVal.addAll(cp.getComponentInstantiation());
+			}
+			for (final HostCollocation h : sad.getPartitioning().getHostCollocation()) {
+				for (final SadComponentPlacement cp : h.getComponentPlacement()) {
+					retVal.addAll(cp.getComponentInstantiation());
+				}
+			}
+		}
+
+		return retVal;
+	}
+	
+	//adjust the start order for a component
+	public static void organizeStartOrder(final SoftwareAssembly sad){
+		BigInteger startOrder = BigInteger.ZERO;
+		for(SadComponentInstantiation c: sad.getComponentInstantiationsInStartOrder()){
+			c.setStartOrder(startOrder);
+			startOrder = startOrder.add(BigInteger.ONE);
+		}
+	}
+	
+
 }

@@ -12,8 +12,8 @@ package gov.redhawk.ide.sad.internal.ui.editor;
 
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaMultipageActionBarContributor;
-import mil.jpeojtrs.sca.sad.diagram.part.SadDiagramEditor;
 
+import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.editors.text.TextEditor;
@@ -43,7 +43,7 @@ public class SadMultipageEditorActionBarContributor extends ScaMultipageActionBa
 			return "SAD Editor";
 		} else if (activeEditor instanceof TextEditor) {
 			return "Text Editor";
-		} else if (activeEditor instanceof SadDiagramEditor) {
+		} else if (activeEditor instanceof DiagramEditor) {
 			return "SAD Diagram Editor";
 		} else {
 			try {

@@ -15,6 +15,7 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 
 import org.eclipse.emf.ecore.EObject;
@@ -44,8 +45,15 @@ import org.eclipse.graphiti.features.impl.DefaultMoveShapeFeature;
 import org.eclipse.graphiti.features.impl.DefaultRemoveFeature;
 import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
 import org.eclipse.graphiti.features.impl.UpdateNoBoFeature;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.DefaultFeatureProviderWithPatterns;
+import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.graphiti.ui.editor.IDiagramContainerUI;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
+import org.eclipse.graphiti.util.ILocationInfo;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 
 
 
@@ -64,6 +72,68 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		addPattern(new FindByEventChannelPattern());
 		addPattern(new FindByServicePattern());
 		addPattern(new FindByCORBANamePattern());
+		
+		
+		//would be cool to add a diagram listener and fire off events on hover, not sure how to achieve this
+		//add a diagram listener
+//		final Diagram diagram = diagramTypeProvider.getDiagram();
+//		((IDiagramContainerUI)diagramTypeProvider.getDiagramEditor()).getGraphicalViewer().getControl().addMouseMoveListener(new MouseMoveListener() {
+//			@Override
+//			public void mouseMove(MouseEvent e) {
+//				ILocationInfo info = Graphiti.getPeService().getLocationInfo(diagram, e.x, e.y);
+//				Shape shape = info.getShape();
+//				Object bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape);
+//				if(bo instanceof SadComponentInstantiation){
+//					return;
+//				}
+//			}
+//		});
+			
+//		final Diagram diagram = diagramTypeProvider.getDiagram();
+//		diagramTypeProvider.getNotificationService().
+//		DiagramBehavior vov = (DiagramBehavior)diagramTypeProvider.getDiagramBehavior();
+//		vov.getContentEditPart().addEditPartListener(new EditPartListener(){
+//
+//			@Override
+//            public void childAdded(EditPart child, int index) {
+//	            // TODO Auto-generated method stub
+//	            
+//            }
+//
+//			@Override
+//            public void partActivated(EditPart editpart) {
+//	            // TODO Auto-generated method stub
+//	            
+//            }
+//
+//			@Override
+//            public void partDeactivated(EditPart editpart) {
+//	            // TODO Auto-generated method stub
+//	            
+//            }
+//
+//			@Override
+//            public void removingChild(EditPart child, int index) {
+//	            // TODO Auto-generated method stub
+//	            
+//            }
+//
+//			@Override
+//            public void selectedStateChanged(EditPart editpart) {
+//	            // TODO Auto-generated method stub
+//	            
+//            }
+//		
+//		});
+//		vov.
+//		diagramTypeProvide
+//		diagramTypeProvider.getDiagramEditor().getDiagramTypeProvider()..getGraphicalViewer().getControl().addMouseMoveListener(new MouseMoveListener() {
+//			@Override
+//			public void mouseMove(MouseEvent e) {
+//				ILocationInfo info = Graphiti.getPeService().getLocationInfo(diagram, e.x, e.y);
+//				Shape shape = info.getShape();
+//				Object bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape);
+//			}
 		
 
 	}

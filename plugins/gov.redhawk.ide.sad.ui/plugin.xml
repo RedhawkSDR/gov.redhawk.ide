@@ -55,7 +55,7 @@
     <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="gov.redhawk.ide.sad.internal.ui.editor.SadEditor"
+            class="gov.redhawk.ide.sad.internal.ui.editor.SadMultiPageEditor"
             contributorClass="gov.redhawk.ide.sad.internal.ui.editor.SadMultipageEditorActionBarContributor"
             default="true"
             icon="icons/full/obj16/SadModelFile.gif"

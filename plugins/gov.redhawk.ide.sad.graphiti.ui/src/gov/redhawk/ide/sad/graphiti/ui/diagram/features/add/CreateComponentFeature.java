@@ -1,6 +1,9 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.add;
 
+import java.math.BigInteger;
+
 import gov.redhawk.diagram.activator.PluginActivator;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
 import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
@@ -67,7 +70,6 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 				hostCollocation.getComponentPlacement() : 
 					sad.getPartitioning().getComponentPlacement();
 
-		
 		//container for new component instantiation, necessary for reference after command execution
 		final SadComponentInstantiation[] componentInstantiations = new SadComponentInstantiation[1];
 		
@@ -90,6 +92,9 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 				final ComponentFileRef ref = PartitioningFactory.eINSTANCE.createComponentFileRef();
 				ref.setFile(componentFile);
 				componentPlacement.setComponentFileRef(ref);
+				
+				//determine start order
+				intializeComponentStartOrder(sad, componentInstantiations[0]);
             }
 		});
 
@@ -169,5 +174,27 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 		return sadComponentInstantiation;
 	}
 
+	/**
+	 * Initialize component with appropriate start order in sad (one - up).
+	 * if no other components exist in sad make component assembly controller
+	 * @param sad
+	 * @param component
+	 */
+	public void intializeComponentStartOrder(final SoftwareAssembly sad, final SadComponentInstantiation component){
+		
+		//determine start order for existing components
+		BigInteger highestStartOrder = ComponentPattern.determineHighestStartOrder(sad);
+		
+		//increment start order for new component
+		BigInteger startOrder = null;
+		if(highestStartOrder.compareTo(BigInteger.ZERO) == 0){
+			startOrder = BigInteger.ZERO;
+		}else{
+			startOrder = highestStartOrder.add(BigInteger.ONE);
+		}
+		
+		//set start order
+		component.setStartOrder(startOrder);
+	}
 
 }
