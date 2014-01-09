@@ -39,6 +39,7 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+
 import CF.DataType;
 
 /**
@@ -73,29 +74,20 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		final List<DataType> assemblyExec = new ArrayList<DataType>();
 		if (sad.getAssemblyController() != null) {
 			final ScaComponent assemblyController = ScaFactory.eINSTANCE.createScaComponent();
-			assemblyController.setProfileObj(sad.getAssemblyController()
-			        .getComponentInstantiationRef()
-			        .getInstantiation()
-			        .getPlacement()
-			        .getComponentFileRef()
-			        .getFile()
-			        .getSoftPkg());
+			assemblyController.setProfileObj(sad.getAssemblyController().getComponentInstantiationRef().getInstantiation().getPlacement().getComponentFileRef().getFile().getSoftPkg());
 			for (final ScaAbstractProperty< ? > prop : assemblyController.fetchProperties(null)) {
 				prop.setIgnoreRemoteSet(true);
 			}
 			ScaLaunchConfigurationUtil.loadProperties(configuration, assemblyController);
 			for (final ScaAbstractProperty< ? > prop : assemblyController.getProperties()) {
-				if (!prop.isDefaultValue() && prop.getDefinition().isKind(PropertyConfigurationType.CONFIGURE, PropertyConfigurationType.EXECPARAM)) {
+				if (!prop.isDefaultValue() && prop.getDefinition() != null
+						&& prop.getDefinition().isKind(PropertyConfigurationType.CONFIGURE, PropertyConfigurationType.EXECPARAM)) {
 					assemblyConfig.add(prop.getProperty());
 				}
 			}
 		}
-		final LocalApplicationFactory factory = new LocalApplicationFactory(implMap,
-		        localSca,
-		        mode,
-		        launch,
-		        assemblyExec.toArray(new DataType[assemblyExec.size()]),
-		        assemblyConfig.toArray(new DataType[assemblyConfig.size()]));
+		final LocalApplicationFactory factory = new LocalApplicationFactory(implMap, localSca, mode, launch,
+			assemblyExec.toArray(new DataType[assemblyExec.size()]), assemblyConfig.toArray(new DataType[assemblyConfig.size()]));
 		final LocalScaWaveform app = factory.create(sad, name, monitor);
 		if (start) {
 			final StartJob job = new StartJob(app.getName(), app);

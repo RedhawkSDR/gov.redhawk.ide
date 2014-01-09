@@ -88,9 +88,11 @@ public class PropertiesViewerConverter implements XViewerConverter {
 							for (int j = 0; j < struct.getSimples().size(); j++) {
 								ScaSimpleProperty simple = struct.getSimples().get(j);
 								String value = viewerProp.getSimples().get(j).getValues().get(i);
-								Object objValue = AnyUtils.convertString(value, simple.getDefinition().getType().getLiteral(),
-									simple.getDefinition().isComplex());
-								simple.setValue(objValue);
+								if (simple.getDefinition() != null) {
+									Object objValue = AnyUtils.convertString(value, simple.getDefinition().getType().getLiteral(),
+										simple.getDefinition().isComplex());
+									simple.setValue(objValue);
+								}
 							}
 						}
 						SequencePropertyValueWizard wizard = new SequencePropertyValueWizard(property);
@@ -188,7 +190,7 @@ public class PropertiesViewerConverter implements XViewerConverter {
 		} else if (selObject instanceof ViewerSequenceProperty) {
 			ViewerSequenceProperty seqProp = (ViewerSequenceProperty) selObject;
 			try {
-				String[] newArray = split(newValue);
+				String[] newArray = PropertiesViewerConverter.split(newValue);
 				if (seqProp.checkValues(newArray)) {
 					seqProp.setValues(newArray);
 				}
