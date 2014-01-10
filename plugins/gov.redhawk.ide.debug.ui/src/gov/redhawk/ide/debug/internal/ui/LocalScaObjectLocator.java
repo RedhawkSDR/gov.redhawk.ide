@@ -44,12 +44,12 @@ public class LocalScaObjectLocator extends AbstractScaObjectLocator {
 			if (instance == null) {
 				return ECollections.emptyEList();
 			}
-			LocalSca localsca = ScaDebugPlugin.getInstance().getLocalSca();
+			LocalSca localsca = instance.getLocalSca();
 			if (localsca != null && localsca.getSandboxWaveform() != null) {
 				allDevices.addAll(localsca.getSandboxWaveform().getComponents());
 			}
 			return new EcoreEList.UnmodifiableEList<ScaComponent>(this, ScaPackage.eINSTANCE.getScaWaveform_Components(), allDevices.size(),
-				allDevices.toArray());
+					allDevices.toArray());
 		}
 	};
 
