@@ -119,6 +119,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	protected void initImpl(Implementation implementation) {
 		implementation.setDescription("The implementation contains descriptive information about the template for a software component.");
 		implementation.setId("");
+		this.progLang.setName("");
 		implementation.setProgrammingLanguage(this.progLang);
 		
 		this.humanLang.setName(RedhawkCodegenActivator.ENGLISH);
@@ -287,8 +288,6 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 						}
 						codeGenPages = oldGenPages;
 						oldGenPages = null;
-						// TODO: Still needed?
-//						codeGenPage.setCanFinish(false);
 						
 						createControl = false;
 						
@@ -297,17 +296,11 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 					for (IWizardPage codeGenPage : codeGenPages) {
 						this.wizPages.add(codeGenPage);
 					}
-					// TODO: Needed still?
-					// Disable canFlip since this is the last page in the list
-//					codeGenPage.setCanFlipToNextPage(false);
 				} else {
 					int tmpCodegenIndex = codegenIndex;
 					for (ICodegenWizardPage codeGenPage : codeGenPages) {
 						this.wizPages.add(tmpCodegenIndex, codeGenPage);
 						tmpCodegenIndex++;
-						// TODO: Still needed?
-						// Enable canFlip since this isn't the last page in the list
-						 codeGenPage.setCanFlipToNextPage(true);
 					}
 
 				}

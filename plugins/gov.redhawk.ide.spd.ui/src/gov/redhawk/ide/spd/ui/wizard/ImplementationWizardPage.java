@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import mil.jpeojtrs.sca.spd.Compiler;
-import mil.jpeojtrs.sca.spd.HumanLanguage;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.ProgrammingLanguage;
 import mil.jpeojtrs.sca.spd.Runtime;
@@ -76,10 +75,8 @@ public class ImplementationWizardPage extends WizardPage {
 	private static final ImageDescriptor TITLE_IMAGE = null;
 
 	private Implementation impl = null;
-	private final ProgrammingLanguage progLang = SpdFactory.eINSTANCE.createProgrammingLanguage();
 	private final Compiler compiler = SpdFactory.eINSTANCE.createCompiler();
 	private final Runtime runtime = SpdFactory.eINSTANCE.createRuntime();
-	private final HumanLanguage humanLang = SpdFactory.eINSTANCE.createHumanLanguage();
 	private ImplementationSettings implSettings = CodegenFactory.eINSTANCE.createImplementationSettings();
 
 	private final EMFDataBindingContext context = new EMFDataBindingContext();

@@ -55,6 +55,7 @@ public class NewScaDeviceCreationProjectWizard extends NewScaResourceWizard impl
 		addPage(getResourcePropertiesPage());
 		setImplPage(new ImplementationWizardPage("", ICodeGeneratorDescriptor.COMPONENT_TYPE_DEVICE));
 		getImplPage().setDescription("Choose the initial settings for the new implementation.");
+		getImplPage().setImpl(this.getImplementation());
 		addPage(getImplPage());
 
 		getImplList().add(new ImplementationAndSettings(getImplPage().getImplementation(), getImplPage().getImplSettings()));

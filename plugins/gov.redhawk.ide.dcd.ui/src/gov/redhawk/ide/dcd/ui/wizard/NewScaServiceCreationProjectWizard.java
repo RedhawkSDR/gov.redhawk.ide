@@ -21,8 +21,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
-import mil.jpeojtrs.sca.spd.Implementation;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -48,6 +46,7 @@ public class NewScaServiceCreationProjectWizard extends NewScaResourceWizard imp
 		addPage(getResourcePropertiesPage());
 		setImplPage(new ImplementationWizardPage("", ICodeGeneratorDescriptor.COMPONENT_TYPE_SERVICE));
 		getImplPage().setDescription("Choose the initial settings for the new implementation.");
+		getImplPage().setImpl(this.getImplementation());
 		addPage(getImplPage());
 
 		getImplList().add(new ImplementationAndSettings(getImplPage().getImplementation(), getImplPage().getImplSettings()));
@@ -69,11 +68,6 @@ public class NewScaServiceCreationProjectWizard extends NewScaResourceWizard imp
 			// PASS
 		}
 	}
-
-	@Override
-    protected Implementation getImplementation() {
-	    return getImplPage().getImplementation();
-    }
 
 	@Override
     protected String getID() {
