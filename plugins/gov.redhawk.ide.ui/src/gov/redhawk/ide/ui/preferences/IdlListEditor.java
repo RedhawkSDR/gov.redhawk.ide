@@ -44,6 +44,8 @@ import org.eclipse.ui.PlatformUI;
  * @since 4.1
  */
 public class IdlListEditor extends FieldEditor {
+	private static final int NUM_BUTTONS = 5;
+	
 	/**
 	 * The list widget; <code>null</code> if none (before creation or after
 	 * disposal).
@@ -55,8 +57,6 @@ public class IdlListEditor extends FieldEditor {
 	 * none (before creation or after disposal).
 	 */
 	private Composite buttonBox;
-
-	private static final int NUM_BUTTONS = 5;
 
 	private final List<String> idlLocations = new ArrayList<String>();
 

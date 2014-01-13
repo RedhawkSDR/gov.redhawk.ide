@@ -31,12 +31,12 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  */
 public class PropertyElementSelectorDialog extends ElementListSelectionDialog {
 	private final class ElementHolder {
+		private SoftPkg pkg;
+		private Simple prop;
+
 		private ElementHolder() {
 
 		}
-
-		private SoftPkg pkg;
-		private Simple prop;
 	};
 
 	/**

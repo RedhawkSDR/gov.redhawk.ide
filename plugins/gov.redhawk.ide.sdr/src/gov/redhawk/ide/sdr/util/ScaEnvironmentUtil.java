@@ -28,10 +28,6 @@ import org.eclipse.core.runtime.CoreException;
  * 
  */
 public final class ScaEnvironmentUtil {
-	private ScaEnvironmentUtil() {
-
-	}
-	
 	private static final AbstractEnvMap [] REGISTRY = new AbstractEnvMap []{
 		new CppEnvMap(),
 		new JavaEnvMap(),
@@ -39,6 +35,10 @@ public final class ScaEnvironmentUtil {
 		new PythonEnvMap()
 	};
 
+	private ScaEnvironmentUtil() {
+		
+	}
+	
 	/**
 	 * @deprecated Use {@link #getLauncherEnvMap(Implementation)} instead.
 	 * @return

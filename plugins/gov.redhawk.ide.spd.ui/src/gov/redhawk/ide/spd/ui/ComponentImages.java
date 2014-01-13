@@ -19,12 +19,12 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * 
  */
 public final class ComponentImages {
+	public static final String RUN_EXEC = "icons/obj16/run_exc.gif";
+	public static final String DEBUG_EXEC = "icons/obj16/debug_exc.gif";
+	
 	private ComponentImages() {
 
 	}
-
-	public static final String RUN_EXEC = "icons/obj16/run_exc.gif";
-	public static final String DEBUG_EXEC = "icons/obj16/debug_exc.gif";
 
 	public static ImageDescriptor getImageDesc(final String key) {
 		ImageDescriptor retVal = ComponentUiPlugin.getDefault().getImageRegistry().getDescriptor(key);

@@ -113,11 +113,11 @@ public class PortWizardPage extends WizardPage {
 	}
 
 	public static class PortWizardModel {
-		private static final Pattern REPID_PATTERN = Pattern.compile("IDL:(\\w*/)*(\\w*):\\d.\\d");
 		public static final String PROP_TYPE = "type";
 		public static final String PROP_NAME = "portName";
 		public static final String PROP_REP_ID = "repId";
 		public static final String PROP_PORT_TYPES = "portTypes";
+		private static final Pattern REPID_PATTERN = Pattern.compile("IDL:(\\w*/)*(\\w*):\\d.\\d");
 
 		private AbstractPort port = null;
 
