@@ -1,5 +1,6 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkExternalPortFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.DeleteSADConnectInterface;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
@@ -15,7 +16,8 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 
 import org.eclipse.emf.ecore.EObject;
@@ -46,14 +48,8 @@ import org.eclipse.graphiti.features.impl.DefaultRemoveFeature;
 import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
 import org.eclipse.graphiti.features.impl.UpdateNoBoFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.DefaultFeatureProviderWithPatterns;
-import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.ui.editor.IDiagramContainerUI;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
-import org.eclipse.graphiti.util.ILocationInfo;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
 
 
 
@@ -159,9 +155,19 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 			retList.add(ret[i]);
 		}
 		
-		//add zest layout feature
-		retList.add(new ZestLayoutDiagramFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+		//add zest layout feature if diagram selected
+		if(context.getPictogramElements() != null && context.getPictogramElements().length > 0 && context.getPictogramElements()[0] instanceof Diagram){
+			retList.add(new ZestLayoutDiagramFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+		}
 		
+		//add external port menu item if we clicked on a port
+		if(context.getPictogramElements() != null && context.getPictogramElements().length > 0){
+		    Object obj = DiagramUtil.getBusinessObject(context.getPictogramElements()[0]);
+		    if(obj instanceof ProvidesPortStub || obj instanceof UsesPortStub){
+				retList.add(new MarkExternalPortFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+		    }
+		}
+
 		ret = retList.toArray(ret);
 		return ret;
 	}

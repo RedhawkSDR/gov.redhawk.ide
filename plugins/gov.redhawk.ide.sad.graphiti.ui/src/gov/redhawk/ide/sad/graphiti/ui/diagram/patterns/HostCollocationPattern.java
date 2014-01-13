@@ -23,6 +23,7 @@ import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
+import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
 import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
@@ -110,7 +111,7 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		Image outerRoundedRectangleImage = null;
 		
 		//find all of our diagram elements
-		List<PropertyContainer> children = DiagramUtil.collectChildren(outerContainerShape);
+		List<PropertyContainer> children = DiagramUtil.collectPropertyContainerChildren(outerContainerShape);
 		for(PropertyContainer pc: children){
 			if(DiagramUtil.isPropertyElementType(pc, DiagramUtil.GA_outerRoundedRectangle)){
 				outerRoundedRectangle = (RoundedRectangle)pc;
@@ -225,6 +226,115 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		return true;
 	}
 	
+	
+	/**
+	 * Resize the host collocation shape.  When expanded if area consumes components,
+	 * those components should be added into host collocation.  When reduced those components 
+	 * that are no longer in the area should be moved to the sad partition.
+	 * {@link IResizeShapeContext} . Corresponds to the method
+	 * {@link DefaultResizeShapeFeature#resizeShape(IResizeShapeContext)}.
+	 * 
+	 * @param context
+	 *            The context holding information on the domain object to be
+	 *            resized.
+	 */
+	@Override
+	public void resizeShape(IResizeShapeContext context) {
+		ContainerShape containerShape = (ContainerShape)context.getShape();
+		int x = context.getX();
+		int y = context.getY();
+		int width = context.getWidth();
+		int height = context.getHeight();
+
+		//set hostCollocationToDelete
+		final HostCollocation hostCollocation = 
+				(HostCollocation)DiagramUtil.getBusinessObject(context.getPictogramElement());
+		
+		//editing domain for our transaction
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+				
+		//get sad from diagram
+		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+				
+		//find all components to remove (no longer inside the host collocation box, minimized)
+		List<Shape> shapesToRemoveFromHostCollocation = DiagramUtil.getContainersOutsideArea(containerShape, context, DiagramUtil.GA_outerRoundedRectangle);
+		final List<SadComponentInstantiation> ciToRemove = new ArrayList<SadComponentInstantiation>();
+		for(Shape shape: shapesToRemoveFromHostCollocation){
+			for(EObject obj: shape.getLink().getBusinessObjects()){
+				if(obj instanceof SadComponentInstantiation){
+					ciToRemove.add((SadComponentInstantiation)obj);
+				}
+			}
+		}
+		
+		//find all components to add to add (now inside host collocation, expanded)
+		List<Shape> shapesToAddToHostCollocation = DiagramUtil.getContainersInArea(getDiagram(), context, DiagramUtil.GA_outerRoundedRectangle);
+		final List<SadComponentInstantiation> ciToAdd = new ArrayList<SadComponentInstantiation>();
+		for(Shape shape: shapesToAddToHostCollocation){
+			for(EObject obj: shape.getLink().getBusinessObjects()){
+				if(obj instanceof SadComponentInstantiation){
+					ciToAdd.add((SadComponentInstantiation)obj);
+				}
+			}
+		}
+		
+				
+		//Create Component Related objects in SAD model
+		TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain){
+			@Override
+			protected void doExecute() {
+
+				//move components from host collocation to diagram
+				for(SadComponentInstantiation ci: ciToRemove){
+						sad.getPartitioning().getComponentPlacement().add((SadComponentPlacement)ci.getPlacement());
+						hostCollocation.getComponentPlacement().remove((SadComponentPlacement)ci.getPlacement());
+				}
+				
+				//move components from diagram to host collocation
+				for(SadComponentInstantiation ci: ciToAdd){
+					hostCollocation.getComponentPlacement().add((SadComponentPlacement)ci.getPlacement());
+						sad.getPartitioning().getComponentPlacement().remove((SadComponentPlacement)ci.getPlacement());
+				}
+			}
+		});
+		
+		//move shapes to diagram from host collocation
+		for(Shape s: shapesToRemoveFromHostCollocation){
+			Object obj = DiagramUtil.getBusinessObject(s);
+			if(obj instanceof SadComponentInstantiation){
+				//reparent
+				s.setContainer(getDiagram());
+				//reposition shape outside host shape
+				int newX = s.getGraphicsAlgorithm().getX() + x;
+				int newY = s.getGraphicsAlgorithm().getY() + y;
+				Graphiti.getGaService().setLocation(s.getGraphicsAlgorithm(), 
+						newX, newY);
+			}
+		}
+		
+		//move shapes from host collocation to diagram
+		for(Shape s: shapesToAddToHostCollocation){
+			Object obj = DiagramUtil.getBusinessObject(s);
+			if(obj instanceof SadComponentInstantiation){
+				//reparent
+				s.setContainer(containerShape);
+				//reposition shape outside host shape
+				int newX = s.getGraphicsAlgorithm().getX() - x;
+				int newY = s.getGraphicsAlgorithm().getY() - y;
+				Graphiti.getGaService().setLocation(s.getGraphicsAlgorithm(), 
+						newX, newY);
+			}
+		}
+		
+		if (containerShape.getGraphicsAlgorithm() != null) {
+			Graphiti.getGaService().setLocationAndSize(containerShape.getGraphicsAlgorithm(), x, y, width, height);
+		}
+		
+		layoutPictogramElement(containerShape);
+	}
+	
+	
 	/**
 	 * Never enable remove on its own
 	 */
@@ -252,7 +362,7 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 	@Override
 	public void delete(IDeleteContext context){
 		
-		//set componentToDelete
+		//set hostCollocationToDelete
 		final HostCollocation hostCollocationToDelete = 
 				(HostCollocation)DiagramUtil.getBusinessObject(context.getPictogramElement());
 		

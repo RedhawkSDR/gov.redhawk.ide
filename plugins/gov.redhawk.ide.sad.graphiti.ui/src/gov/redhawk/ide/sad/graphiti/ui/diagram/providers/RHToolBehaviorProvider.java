@@ -34,12 +34,15 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.IToolEntry;
 import org.eclipse.graphiti.palette.impl.ConnectionCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
+import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -59,18 +62,28 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	@Override
 	public PictogramElement getSelection(PictogramElement originalPe, PictogramElement[] oldSelection) {
 		
+		if(originalPe instanceof FixPointAnchor ||
+				DiagramUtil.doesPictogramContainProperty(originalPe, 
+						  new String[] {//DiagramUtil.SHAPE_providesPortsContainerShape,
+											//DiagramUtil.SHAPE_usesPortsContainerShape,
+											DiagramUtil.SHAPE_usesPortRectangleShape,
+											DiagramUtil.SHAPE_providesPortRectangleShape,})){
+			System.out.println("found an anchor");
+			return null;
+		}
+		
+		//Always select outerContainershape instead of its contents
 		if(DiagramUtil.doesPictogramContainProperty(originalPe, 
 				  new String[] {DiagramUtil.SHAPE_providesPortsContainerShape,
 									DiagramUtil.SHAPE_usesPortsContainerShape,
 									DiagramUtil.SHAPE_providesPortContainerShape,
 									DiagramUtil.SHAPE_usesPortContainerShape,
-									DiagramUtil.SHAPE_usesPortRectangleShape,
-									DiagramUtil.SHAPE_providesPortRectangleShape,
 									DiagramUtil.SHAPE_interfaceContainerShape,
 									DiagramUtil.SHAPE_interfaceEllipseShape}))
 
 		{
-			return oldSelection[0];
+			ContainerShape outerContainerShape = DiagramUtil.findContainerShapeParentWithProperty(originalPe, DiagramUtil.SHAPE_outerContainerShape);
+			return outerContainerShape;
 		}
 		return null;
 	}

@@ -27,7 +27,6 @@ import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
-import org.eclipse.graphiti.features.context.impl.AreaContext;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -168,6 +167,8 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		final SadComponentInstantiation ciToDelete = 
 						(SadComponentInstantiation)DiagramUtil.getBusinessObject(context.getPictogramElement());
 		
+		Diagram diagram = DiagramUtil.findDiagram((ContainerShape)context.getPictogramElement());
+		
 		//editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 		
@@ -191,41 +192,23 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		//delete the graphical component
 		super.delete(context);
 		
-	}
-
-	/**
-	 * Resize Component
-	 */
-	@Override
-	public void resizeShape(IResizeShapeContext context) {
-		
-		SadComponentInstantiation sadComponentInstantiation = (SadComponentInstantiation)getFeatureProvider().getBusinessObjectForPictogramElement(context.getPictogramElement());
-		if(sadComponentInstantiation == null){
-			return;
-		}
-		
-		//resize component
-		DiagramUtil.resizeOuterContainerShape(context, context.getPictogramElement(), 
-				sadComponentInstantiation.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(),
-				sadComponentInstantiation.getUsageName(), sadComponentInstantiation.getProvides(), sadComponentInstantiation.getUses());
+		//redraw start order 
+		DiagramUtil.organizeDiagramStartOrder(diagram);
 	}
 	
-	/**
-	 * Resizing a Component shape is always allowed
-	 */
 	@Override
 	public boolean canResizeShape(IResizeShapeContext context){
 		return true;
 	}
 	
-
+	
 	/**
 	 * Adds a Component to the diagram.  Immediately calls resize at the end to keep sizing and location in one place.
 	 */
 	public PictogramElement add(IAddContext context) {
 		SadComponentInstantiation sadComponentInstantiation = (SadComponentInstantiation) context.getNewObject();
 		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
-		Diagram diagram = findDiagram(targetContainerShape);
+		Diagram diagram = DiagramUtil.findDiagram(targetContainerShape);
 		
 		//OUTER RECTANGLE
 		ContainerShape outerContainerShape = 
@@ -233,15 +216,19 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 						sadComponentInstantiation.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(), 
 						sadComponentInstantiation, getFeatureProvider(),
 						ImageProvider.IMG_COMPONENT_PLACEMENT,
-						StyleUtil.getStyleForComponentOuter(findDiagram(targetContainerShape)));
+						StyleUtil.getStyleForComponentOuter(DiagramUtil.findDiagram(targetContainerShape)));
+		Graphiti.getGaLayoutService().setLocation(outerContainerShape.getGraphicsAlgorithm(), 
+				context.getX(), context.getY());
 		
 		//INNER RECTANGLE
-		DiagramUtil.addInnerRectangle(diagram,
+		ContainerShape innerContainerShape = DiagramUtil.addInnerRectangle(diagram,
 				outerContainerShape,
 				sadComponentInstantiation.getUsageName(),
 				getFeatureProvider(),ImageProvider.IMG_COMPONENT_INSTANCE,
 				StyleUtil.getStyleForComponentInner(diagram));
 
+		//add start order ellipse
+		DiagramUtil.addStartOrderEllipse(innerContainerShape, diagram, sadComponentInstantiation);
 
 		//add lollipop interface anchor to component.
 		DiagramUtil.addLollipop(outerContainerShape, diagram, sadComponentInstantiation.getInterfaceStub(), getFeatureProvider());
@@ -252,36 +239,45 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		//add uses ports
 		DiagramUtil.addUsesPorts(outerContainerShape, diagram, sadComponentInstantiation.getUses(), getFeatureProvider());
 
-		//Define size and location
-		AreaContext areaContext = new AreaContext();
-		areaContext.setLocation(context.getX(), context.getY());
-		areaContext.setSize(DiagramUtil.getMinimumWidth(sadComponentInstantiation.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(),
-				sadComponentInstantiation.getUsageName(), sadComponentInstantiation.getProvides(), sadComponentInstantiation.getUses(), diagram), DiagramUtil.getPreferredHeight(sadComponentInstantiation.getProvides(), sadComponentInstantiation.getUses()));
-		
-		//Size component (we are doing this so that we don't have to keep sizing/location information in both the add() and resize(), only resize())
-		DiagramUtil.resizeOuterContainerShape(areaContext, outerContainerShape, 
-				sadComponentInstantiation.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(),
-				sadComponentInstantiation.getUsageName(), sadComponentInstantiation.getProvides(), sadComponentInstantiation.getUses());
-		
 		//layout
 		layoutPictogramElement(outerContainerShape);
 
 		return outerContainerShape;
 	}
 	
+
 	@Override
 	public boolean canLayout(ILayoutContext context){
-		return super.canLayout(context);
+		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
+		Object obj = DiagramUtil.getBusinessObject(containerShape);
+		if(obj instanceof SadComponentInstantiation){
+			return true;
+		}
+		return false;
 	}
 	
+	/**
+	 * Layout children of component
+	 */
 	@Override
 	public boolean layout(ILayoutContext context){
-		return super.layout(context);
+
+		//get shape being laid out
+        ContainerShape outerContainerShape = (ContainerShape) context.getPictogramElement();
+        
+        //get linked component
+		SadComponentInstantiation component = (SadComponentInstantiation)DiagramUtil.getBusinessObject(outerContainerShape);
+
+		//layout outerContainerShape of component
+		DiagramUtil.layoutOuterContainerShape(outerContainerShape, 
+				component.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(),
+				component.getUsageName(), component.getProvides(), component.getUses());
+		
+		//something is always changing.
+        return true;
 	}
 	
-	public static Diagram findDiagram(ContainerShape containerShape){
-		return Graphiti.getPeService().getDiagramForShape(containerShape);
-	}
+
 	
 	public boolean canMoveShape(IMoveShapeContext context) {
 
@@ -326,7 +322,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 			super.moveShape(context);
 		}
 		
-		//if moving to HostCollocation to Sad Partitioning
+		//if moving to HostCollocation from Sad Partitioning
 		if(DiagramUtil.getHostCollocation(context.getTargetContainer()) != null &&
 				context.getSourceContainer() instanceof Diagram){
 			//swap parents
@@ -347,14 +343,15 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	}
 	
 	/**
-	 * Return the highest start order for all components in the SAD
+	 * Return the highest start order for all components in the SAD.
+	 * Returns null if no start order found
 	 * @param sad
 	 * @return
 	 */
 	public static BigInteger determineHighestStartOrder(final SoftwareAssembly sad){
-		BigInteger highestStartOrder = BigInteger.valueOf(0);
+		BigInteger highestStartOrder = null;
 		for(SadComponentInstantiation c: getAllComponents(sad)){
-			if(c.getStartOrder().compareTo(highestStartOrder) > 0){
+			if(c.getStartOrder() != null && c.getStartOrder().compareTo(BigInteger.ZERO) >= 0){
 				highestStartOrder = c.getStartOrder();
 			}
 		}

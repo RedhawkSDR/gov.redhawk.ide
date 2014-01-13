@@ -19,7 +19,9 @@ public class StyleUtil {
 
 	public static final IColorConstant TEXT_FOREGROUND = IColorConstant.BLACK;
 	public static final IColorConstant WHITE = new ColorConstant(255, 255, 255);
+	public static final IColorConstant GOLD = new ColorConstant(255, 218, 105);
 	public static final IColorConstant BLACK = new ColorConstant(0, 0, 0);
+	public static final IColorConstant BLUE = new ColorConstant(0, 0, 194);
 	public static final IColorConstant COMPONENT_FOREGROUND = new ColorConstant(98, 131, 167);
 	public static final IColorConstant COMPONENT_BACKGROUND = new ColorConstant(187, 218, 247);
 	public static final IColorConstant OUTER_CONTAINER_BACKGROUND = new ColorConstant(250, 250, 250);
@@ -45,6 +47,9 @@ public class StyleUtil {
 	}
 	public final static Font getInnerTitleFont(Diagram diagram){
 		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 11, false, false);
+	}
+	public final static Font getStartOrderFont(Diagram diagram){
+		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, false);
 	}
 	public final static Font getPortFont(Diagram diagram){
 		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, false);
@@ -183,6 +188,23 @@ public class StyleUtil {
 		return style;
 	}
 	
+	//returns style for provides port
+	public static Style getStyleForExternalProvidesPort(Diagram diagram){
+		final String styleId = "ExternalProvidesPort";
+		Style style = findStyle(diagram, styleId);
+		
+		if(style == null){
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			style.setForeground(gaService.manageColor(diagram, BLACK));
+			style.setBackground(gaService.manageColor(diagram, BLUE));
+			style.setFont(getPortFont(diagram));
+			style.setLineWidth(2);
+			style.setLineVisible(true);
+		}
+		return style;
+	}
+	
 	
 	//returns style for uses port
 	public static Style getStyleForUsesPort(Diagram diagram){
@@ -194,6 +216,23 @@ public class StyleUtil {
 			style = gaService.createStyle(diagram, styleId);
 			style.setForeground(gaService.manageColor(diagram, BLACK));
 			style.setBackground(gaService.manageColor(diagram, BLACK));
+			style.setFont(getPortFont(diagram));
+			style.setLineWidth(2);
+			style.setLineVisible(true);
+		}
+		return style;
+	}
+	
+	//returns style for uses external port
+	public static Style getStyleForExternalUsesPort(Diagram diagram){
+		final String styleId = "UsesExternalPort";
+		Style style = findStyle(diagram, styleId);
+		
+		if(style == null){
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			style.setForeground(gaService.manageColor(diagram, BLACK));
+			style.setBackground(gaService.manageColor(diagram, BLUE));
 			style.setFont(getPortFont(diagram));
 			style.setLineWidth(2);
 			style.setLineVisible(true);
@@ -237,9 +276,9 @@ public class StyleUtil {
 		return style;
 	}
 
-	//returns style for lollipop circle
-	public static Style getStyleForLollipopCircle(Diagram diagram){
-		final String styleId = "LollipopCircle";
+	//returns style for lollipop ellipse
+	public static Style getStyleForLollipopEllipse(Diagram diagram){
+		final String styleId = "LollipopEllipse";
 		Style style = findStyle(diagram, styleId);
 		
 		if(style == null){
@@ -252,6 +291,8 @@ public class StyleUtil {
 		return style;
 	}
 	
+
+	
 	//returns style for lollipop line
 	public static Style getStyleForLollipopLine(Diagram diagram){
 		final String styleId = "LollipopLine";
@@ -261,6 +302,48 @@ public class StyleUtil {
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
 			style.setBackground(Graphiti.getGaService().manageColor(diagram, BLACK));
+		}
+		return style;
+	}
+	
+	public static Style getStyleForStartOrderAssemblyControllerEllipse(Diagram diagram){
+		final String styleId = "StartOrderAssemblyControllerEllipse";
+		Style style = findStyle(diagram, styleId);
+		
+		if(style == null){
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			style.setLineWidth(1);
+			style.setBackground(Graphiti.getGaService().manageColor(diagram, GOLD));
+			style.setTransparency(.99d);
+		}
+		return style;
+	}
+	
+	public static Style getStyleForStartOrderEllipse(Diagram diagram){
+		final String styleId = "StartOrderEllipse";
+		Style style = findStyle(diagram, styleId);
+		
+		if(style == null){
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			style.setLineWidth(1);
+			style.setBackground(Graphiti.getGaService().manageColor(diagram, WHITE));
+			style.setTransparency(.99d);
+		}
+		return style;
+	}
+	
+	public static Style getStyleForStartOrderText(Diagram diagram){
+		final String styleId = "StartOrderText";
+		Style style = findStyle(diagram, styleId);
+		
+		if(style == null){
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			style.setForeground(gaService.manageColor(diagram, BLACK));
+			style.setBackground(gaService.manageColor(diagram, WHITE));
+			style.setFont(getStartOrderFont(diagram));
 		}
 		return style;
 	}

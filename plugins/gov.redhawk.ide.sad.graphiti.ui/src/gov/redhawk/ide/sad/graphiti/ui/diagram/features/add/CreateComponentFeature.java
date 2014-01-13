@@ -1,19 +1,22 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.add;
 
-import java.math.BigInteger;
-
 import gov.redhawk.diagram.activator.PluginActivator;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
 import gov.redhawk.sca.util.PluginUtil;
+
+import java.math.BigInteger;
+
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.partitioning.ComponentFileRef;
 import mil.jpeojtrs.sca.partitioning.ComponentFiles;
 import mil.jpeojtrs.sca.partitioning.NamingService;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
+import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.FindComponent;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -93,8 +96,18 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 				ref.setFile(componentFile);
 				componentPlacement.setComponentFileRef(ref);
 				
-				//determine start order
+				//determine start order and potentially create assembly controller if zero is zero
 				intializeComponentStartOrder(sad, componentInstantiations[0]);
+				
+				//if start order is zero then set as assembly controller
+				if(componentInstantiations[0].getStartOrder().compareTo(BigInteger.ZERO) == 0){
+					//create assembly controller
+					AssemblyController assemblyController = SadFactory.eINSTANCE.createAssemblyController();
+					SadComponentInstantiationRef sadComponentInstantiationRef = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
+					sadComponentInstantiationRef.setInstantiation(componentInstantiations[0]);
+					assemblyController.setComponentInstantiationRef(sadComponentInstantiationRef);
+					sad.setAssemblyController(assemblyController);
+				}
             }
 		});
 
@@ -187,7 +200,7 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 		
 		//increment start order for new component
 		BigInteger startOrder = null;
-		if(highestStartOrder.compareTo(BigInteger.ZERO) == 0){
+		if(highestStartOrder == null){
 			startOrder = BigInteger.ZERO;
 		}else{
 			startOrder = highestStartOrder.add(BigInteger.ONE);

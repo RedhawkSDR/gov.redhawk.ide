@@ -13,13 +13,14 @@ import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
+import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
-import org.eclipse.graphiti.features.context.impl.AreaContext;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.AbstractPattern;
 import org.eclipse.graphiti.pattern.IPattern;
+import org.eclipse.graphiti.services.Graphiti;
 
 public class FindByDomainManagerPattern extends AbstractPattern implements IPattern{
 
@@ -92,6 +93,8 @@ public class FindByDomainManagerPattern extends AbstractPattern implements IPatt
 						NAME, 
 						findByStub, getFeatureProvider(), ImageProvider.IMG_FIND_BY,
 						StyleUtil.getStyleForFindByOuter(diagram));
+		Graphiti.getGaLayoutService().setLocation(outerContainerShape.getGraphicsAlgorithm(), 
+				context.getX(), context.getY());
 
 		//INNER RECTANGLE
 		DiagramUtil.addInnerRectangle(diagram,
@@ -103,15 +106,7 @@ public class FindByDomainManagerPattern extends AbstractPattern implements IPatt
 
 		//add lollipop interface anchor to shape.
 		DiagramUtil.addLollipop(outerContainerShape, diagram, findByStub.getInterface(), getFeatureProvider());
-	
-		//Define size and location
-		AreaContext areaContext = new AreaContext();
-		areaContext.setLocation(context.getX(), context.getY());
-		areaContext.setSize(DiagramUtil.getMinimumWidth(NAME, SHAPE_TITLE, findByStub.getProvides(), findByStub.getUses(), diagram), DiagramUtil.getPreferredHeight(findByStub.getProvides(), findByStub.getUses()));
-		
-		//Size component (we are doing this so that we don't have to keep sizing/location information in both the add() and resize(), only resize())
-		DiagramUtil.resizeOuterContainerShape(areaContext, outerContainerShape, NAME, SHAPE_TITLE, findByStub.getProvides(), findByStub.getUses());
-		
+
 		//layout
 		layoutPictogramElement(outerContainerShape);
 
@@ -158,30 +153,40 @@ public class FindByDomainManagerPattern extends AbstractPattern implements IPatt
 		return new Object[] { findByStubs[0] };
 	}
 	
-	
-	/**
-	 * Resize Component
-	 */
-	@Override
-	public void resizeShape(IResizeShapeContext context) {
-		
-		FindByStub findByStub = (FindByStub)getFeatureProvider().getBusinessObjectForPictogramElement(context.getPictogramElement());
-		if(findByStub == null){
-			return;
-		}
-		
-		//resize component
-		DiagramUtil.resizeOuterContainerShape(context, context.getPictogramElement(), NAME,
-				SHAPE_TITLE,
-				findByStub.getProvides(), findByStub.getUses());
-	}
-	
-	/**
-	 * Resizing a Component shape is always allowed
-	 */
 	@Override
 	public boolean canResizeShape(IResizeShapeContext context){
 		return true;
+	}
+	
+	@Override
+	public boolean canLayout(ILayoutContext context){
+		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
+		Object obj = DiagramUtil.getBusinessObject(containerShape);
+		if(obj instanceof FindByStub){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Layout children of component
+	 */
+	@Override
+	public boolean layout(ILayoutContext context){
+
+		//get shape being laid out
+        ContainerShape outerContainerShape = (ContainerShape) context.getPictogramElement();
+        
+        //get linked component
+        FindByStub findByStub = (FindByStub)DiagramUtil.getBusinessObject(outerContainerShape);
+
+		//layout outerContainerShape of component
+		DiagramUtil.layoutOuterContainerShape(context.getPictogramElement(), NAME,
+				SHAPE_TITLE,
+				findByStub.getProvides(), findByStub.getUses());
+		
+		//something is always changing.
+        return true;
 	}
 
 }

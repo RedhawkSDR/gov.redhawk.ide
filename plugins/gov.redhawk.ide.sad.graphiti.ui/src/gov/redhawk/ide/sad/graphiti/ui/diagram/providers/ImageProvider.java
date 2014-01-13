@@ -36,7 +36,7 @@ public class ImageProvider extends AbstractImageProvider implements IImageProvid
         addImageFilePath(IMG_FIND_BY_DOMAIN, "icons/full/obj16/DomainFinder.gif");
         addImageFilePath(IMG_FIND_BY_SERVICE, "icons/full/obj16/DomainFinder.gif");
         addImageFilePath(IMG_FIND_BY, "icons/full/obj16/FindBy.gif");
-        addImageFilePath(IMG_HOST_COLLOCATION, "icons/full/obj16/DomainFinder.gif");
+        addImageFilePath(IMG_HOST_COLLOCATION, "icons/full/obj16/HostCollocation.gif");
 	}
 
 }

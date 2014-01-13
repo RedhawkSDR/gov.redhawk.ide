@@ -1,6 +1,7 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.util.StringUtil;
@@ -8,11 +9,8 @@ import gov.redhawk.sca.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
-import mil.jpeojtrs.sca.partitioning.FindByStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
@@ -31,6 +29,7 @@ import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.AbstractConnectionPattern;
 import org.eclipse.graphiti.pattern.IConnectionPattern;
@@ -157,21 +156,30 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 			
 			//check if provides port on findBy...not sure how were doing all this??
 		}
-	
 		
-		//null source would indicate an invalid anchor was selected
-		if (source == null && target == null) {
-			return false;
-		}
-		
-		//target will be legitimately null when connecting to component interface (lollipop)
-		if(target == null)
 
-		//ensure source is UsesPortStub
-		if (target != null && source instanceof UsesPortStub) {
-			//ensure target is valid
-			return (target instanceof ProvidesPortStub || target instanceof ComponentSupportedInterfaceStub || target instanceof FindByStub);
-		}
+		//not currently used but will select the portRectangeShape instead of the anchorRectangle
+//		ContainerShape portRectangleShape = null;
+//		if(target != null){
+//			portRectangleShape = DiagramUtil.findContainerShapeParentWithProperty(
+//					context.getSourcePictogramElement(), DiagramUtil.SHAPE_providesPortRectangleShape);
+//		}
+//		if(source != null){
+//			portRectangleShape = DiagramUtil.findContainerShapeParentWithProperty(
+//					context.getSourcePictogramElement(), DiagramUtil.SHAPE_usesPortRectangleShape);
+//		}
+//		
+//		getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior()
+//		.getDiagramContainer().selectPictogramElements(
+//				new PictogramElement[] {portRectangleShape});
+		
+		//force selection of shape so that we can then right click for contextual options
+		//this is kind of a hack, it would be better if selection happened automatically when its clicked.
+//		getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior()
+//			.getDiagramContainer().selectPictogramElements(
+//					new PictogramElement[] {context.getSourcePictogramElement()});
+
+		
 		return true;
 		
 	}
