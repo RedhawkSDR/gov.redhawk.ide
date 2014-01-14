@@ -78,7 +78,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jacorb.naming.Name;
-import org.jacorb.orb.ORB;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContext;
@@ -638,7 +637,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				List<DataType> propsToQuery = new ArrayList<DataType>();
 				for (ScaAbstractProperty< ? > p : assemblyController.getProperties()) {
 					if (queryProperties.contains(p.getId())) {
-						propsToQuery.add(new DataType(p.getId(), ORB.init().create_any()));
+						propsToQuery.add(new DataType(p.getId(), org.omg.CORBA.ORB.init().create_any()));
 					}
 				}
 				tmpHolder.value = propsToQuery.toArray(new DataType[propsToQuery.size()]);
@@ -651,7 +650,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 				String propId = (prop.getExternalPropID() != null) ? prop.getExternalPropID() : prop.getPropID();
 				if (queryProperties.isEmpty() || queryProperties.contains(propId)) {
 					PropertiesHolder tmpHolder = new PropertiesHolder();
-					tmpHolder.value = new DataType[] { new DataType(prop.getPropID(), ORB.init().create_any()) };
+					tmpHolder.value = new DataType[] { new DataType(prop.getPropID(), org.omg.CORBA.ORB.init().create_any()) };
 					ScaComponent component = waveform.getScaComponent(prop.getCompRefID());
 					if (component != null) {
 						component.query(tmpHolder);
@@ -784,6 +783,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return this.profile;
 	}
 
+	@Override
+	public String softwareProfile() {
+		return profile();
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -872,12 +876,12 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		String instId = oldComponent.getIdentifier();
 		final String execParams = oldComponent.getExecParam();
 		final URI spdUri = oldComponent.getProfileURI();
-		
+
 		if (spdUri == null) {
 			this.streams.getErrStream().println("No SPD URI component: " + compInstId);
 			throw new ReleaseError(new String[] { "No SPD URI component: " + compInstId });
 		}
-		
+
 		final String implId = oldComponent.getImplementationID();
 		final String mode = oldComponent.getMode();
 		final List<ConnectionInfo> oldConnections = getConnectionInfo(oldComponent);
@@ -973,7 +977,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public Resource launch(final String compId, final DataType[] execParams, @NonNull final String spdURI, final String implId, final String mode)
-		throws ExecuteFail {
+			throws ExecuteFail {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		LocalScaComponent retVal;
 		try {
@@ -997,7 +1001,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public LocalScaComponent launch(final String usageName, final DataType[] execParams, @NonNull final URI spdURI, final String implId, final String mode)
-		throws CoreException {
+			throws CoreException {
 		return launch(usageName, null, execParams, spdURI, implId, mode);
 	}
 
