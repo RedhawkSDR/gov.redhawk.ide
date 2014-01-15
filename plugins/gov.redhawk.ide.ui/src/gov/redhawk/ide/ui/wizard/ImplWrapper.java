@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.wizard;
 
+import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
 import gov.redhawk.ide.ui.wizard.RedhawkImportWizardPage1.ProjectRecord;
 import mil.jpeojtrs.sca.spd.Implementation;
 
@@ -29,6 +30,13 @@ public class ImplWrapper {
 	}
 
 	private void setDefaultTemplate() {
+		for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
+			if (assistant.handlesImplId(impl.getId())) {
+				setTemplate(assistant.getDefaultTemplate());
+				break;
+			}
+		}
+		/** TODO
 		if ("python".equals(impl.getId())) {
 			setTemplate("redhawk.codegen.jinja.python.component.pull");
 		} else if ("cpp".equals(impl.getId())) {
@@ -36,6 +44,7 @@ public class ImplWrapper {
 		} else if ("java".equals(impl.getId())) {
 			setTemplate("redhawk.codegen.jinja.java.component.pull");
 		}
+		**/
 	}
 
 	public ProjectRecord getProject() {
@@ -59,16 +68,8 @@ public class ImplWrapper {
 	}
 
 	public void setTemplate(String newTemplate) {
-		if ("python".equals(impl.getId())) {
-			this.template = newTemplate;
-			project.pythonImplTemplate = newTemplate;
-		} else if ("cpp".equals(impl.getId())) {
-			this.template = newTemplate;
-			project.cppImplTemplate = newTemplate;
-		} else if ("java".equals(impl.getId())) {
-			this.template = newTemplate;
-			project.javaImplTemplate = newTemplate;
-		}
+		this.template = newTemplate;
+		project.setTemplate(newTemplate);
 	}
 
 }

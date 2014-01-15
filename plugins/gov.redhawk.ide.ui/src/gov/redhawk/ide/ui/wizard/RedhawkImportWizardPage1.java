@@ -189,7 +189,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 		/**
 		 *  Field is only instantiated if users use the second page of the REDHAWK import wizard
 		 */
-		String javaImplTemplate, cppImplTemplate, pythonImplTemplate;
+		private String template;
 
 		IProjectDescription description;
 
@@ -323,6 +323,14 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 		 */
 		public boolean hasConflicts() {
 			return hasConflicts;
+		}
+
+		public String getTemplate() {
+			return template;
+		}
+
+		public void setTemplate(String template) {
+			this.template = template;
 		}
 	}
 

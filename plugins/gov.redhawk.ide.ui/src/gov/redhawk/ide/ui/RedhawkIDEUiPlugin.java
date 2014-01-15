@@ -11,6 +11,7 @@
 package gov.redhawk.ide.ui;
 
 import gov.redhawk.ide.RedhawkIdeActivator;
+import gov.redhawk.ide.ui.wizard.IRedhawkImportProjectWizardAssist;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -19,6 +20,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -32,6 +34,8 @@ public class RedhawkIDEUiPlugin extends AbstractUIPlugin {
 	private static RedhawkIDEUiPlugin plugin;
 
 	private ScopedPreferenceStore idePreferenceStore;
+
+	private ServiceTracker<IRedhawkImportProjectWizardAssist, IRedhawkImportProjectWizardAssist> redhawkImportWizardAssistServiceTracker;
 
 	/**
 	 * The constructor
@@ -60,6 +64,12 @@ public class RedhawkIDEUiPlugin extends AbstractUIPlugin {
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		RedhawkIDEUiPlugin.plugin = this;
+		redhawkImportWizardAssistServiceTracker = new ServiceTracker<IRedhawkImportProjectWizardAssist, IRedhawkImportProjectWizardAssist>(context, IRedhawkImportProjectWizardAssist.class, null);
+		redhawkImportWizardAssistServiceTracker.open();
+	}
+	
+	public IRedhawkImportProjectWizardAssist [] getRedhawkImportWizardAssistants() {
+		return redhawkImportWizardAssistServiceTracker.getServices(new IRedhawkImportProjectWizardAssist[0]);
 	}
 
 	/*
