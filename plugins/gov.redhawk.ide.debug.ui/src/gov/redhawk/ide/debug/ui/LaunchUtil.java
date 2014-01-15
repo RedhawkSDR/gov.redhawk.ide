@@ -201,6 +201,12 @@ public final class LaunchUtil {
 		}
 	}
 	
+	/**
+	 *
+	 * @param config
+	 * @param mode the mode in which to launch, one of the mode constants
+	 *  defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or <code>DEBUG_MODE</code>.
+	 */
 	public static void launch(final ILaunchConfiguration config, final String mode) {
 		if (config == null || mode == null) {
 			return;

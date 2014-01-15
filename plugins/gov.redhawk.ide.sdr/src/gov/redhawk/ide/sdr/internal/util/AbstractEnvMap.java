@@ -35,6 +35,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -57,6 +58,14 @@ public abstract class AbstractEnvMap {
 			if (d.getSoftPkgRef() != null) {
 				SoftPkgRef spdRef = d.getSoftPkgRef();
 				SoftPkg spd = spdRef.getSoftPkg();
+				// If we can't find a dependency, throw an informative exception
+				if (spd == null) {
+					final String errorMsg = String.format("Unable to load software package refence '%1s' (dependency of software package '%2s', implementation '%3s')",
+							spdRef.getLocalFile().getName(),
+							impl.getSoftPkg().getName(),
+							impl.getId());
+					throw new CoreException(new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, errorMsg));
+				}
 				for (Implementation refImpl : spd.getImplementation()) {
 					addToPath(path, refImpl);
 				}
