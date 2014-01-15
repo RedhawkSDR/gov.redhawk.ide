@@ -36,15 +36,6 @@ public class ImplWrapper {
 				break;
 			}
 		}
-		/** TODO
-		if ("python".equals(impl.getId())) {
-			setTemplate("redhawk.codegen.jinja.python.component.pull");
-		} else if ("cpp".equals(impl.getId())) {
-			setTemplate("redhawk.codegen.jinja.cpp.component.pull");
-		} else if ("java".equals(impl.getId())) {
-			setTemplate("redhawk.codegen.jinja.java.component.pull");
-		}
-		**/
 	}
 
 	public ProjectRecord getProject() {

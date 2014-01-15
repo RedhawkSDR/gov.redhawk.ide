@@ -157,12 +157,6 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 						hasSource = true;
 					}
 				}
-				/** TODO
-				// check for source directories
-				if ("cpp".equals(name) || "java".equals(name) || "python".equals(name)) {
-					hasSource = true;
-				}
-				*/
 
 				// Check for .project and .wavedev files
 				if (name.matches(".+\\.project")) {
@@ -256,18 +250,6 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 		for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
 			assistant.setupNatures(importSource, project, monitor);
 		}
-		/** TODO
-		// Add java natures if required
-		if (new File(importSource + "/java").exists()) {
-			JavaGeneratorUtils.addJavaProjectNature(project, monitor);
-		}
-		// Add CPP natures if required
-		if (new File(importSource + "/cpp").exists()) {
-			MultiStatus retStatus = new MultiStatus(ManualGeneratorPlugin.PLUGIN_ID, IStatus.OK, "", null);
-			CppGeneratorUtils.addCandCPPNatures(project, SubMonitor.convert(monitor), retStatus);
-			CppGeneratorUtils.addManagedNature(project, SubMonitor.convert(monitor), retStatus, "/", System.out, true, null);
-		}
-		*/
 	}
 
 	@SuppressWarnings({ "deprecation" })

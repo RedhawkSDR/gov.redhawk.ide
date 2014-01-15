@@ -125,13 +125,6 @@ public class RedhawkImportArchiveUtil extends RedhawkImportUtil {
 					continue out;
 				}
 			}
-			/** TODO
-			if ("cpp".equals(name) || "java".equals(name) || "python".equals(name)) {
-				hasSource = true;
-				natures.add(name);
-				continue;
-			}
-			*/
 			// Check for .project and .wavedev files
 			if (name.matches(".+\\.project")) {
 				dotProjectMissing = false;
@@ -236,19 +229,6 @@ public class RedhawkImportArchiveUtil extends RedhawkImportUtil {
 		for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
 			assistant.setupNatures(natures, dotProject, monitor);
 		}
-		/** TODO
-		// Add java natures if required
-		if (natures.contains("java")) {
-			JavaGeneratorUtils.addJavaProjectNature(dotProject, monitor);
-		}
-
-		// Add CPP natures if required
-		if (natures.contains("cpp")) {
-			MultiStatus retStatus = new MultiStatus(ManualGeneratorPlugin.PLUGIN_ID, IStatus.OK, "", null);
-			CppGeneratorUtils.addCandCPPNatures(dotProject, SubMonitor.convert(monitor), retStatus);
-			CppGeneratorUtils.addManagedNature(dotProject, SubMonitor.convert(monitor), retStatus, "/", System.out, true, null);
-		}
-		**/
 	}
 
 	@SuppressWarnings("deprecation")
@@ -342,36 +322,6 @@ public class RedhawkImportArchiveUtil extends RedhawkImportUtil {
 				break;
 			}
 		}
-		/** TODO
-		// If a java implementation is found
-		if ("Java".equals(lang)) {
-			boolean hasUseJni = false;
-			EList<Property> properties = settings.getProperties();
-			for (Property prop : properties) {
-				// Validate java_package name and create a default one if
-				// necessary
-				if ("java_package".equals(prop.getId())) {
-					if (prop.getValue() == null || prop.getValue().isEmpty()) {
-						prop.setValue(projectName + ".java");
-					}
-				}
-				// Check for use_jni and populate if it is found but empty
-				if ("use_jni".equals(prop.getId())) {
-					hasUseJni = true;
-					if (prop.getValue() == null || prop.getValue().isEmpty()) {
-						prop.setValue("TRUE");
-					}
-				}
-			}
-			// if use_jni is not found, build it with TRUE as default
-			if (!hasUseJni) {
-				final Property useJni = CodegenFactory.eINSTANCE.createProperty();
-				useJni.setId("use_jni");
-				useJni.setValue("TRUE");
-				settings.getProperties().add(useJni);
-			}
-		}
-		**/
 	}
 
 	private void setTemplate(final ImplementationSettings settings, final String lang, ITemplateDesc templateDesc) throws CoreException {
@@ -382,28 +332,6 @@ public class RedhawkImportArchiveUtil extends RedhawkImportUtil {
 				return;
 			}
 		}
-		/** TODO
-		// Set the template
-		if ("C++".equals(lang)) {
-			if (record.cppImplTemplate != null) {
-				settings.setTemplate(record.cppImplTemplate);
-			} else {
-				settings.setTemplate("redhawk.codegen.jinja.cpp.component.pull");
-			}
-		} else if ("Java".equals(lang)) {
-			if (record.javaImplTemplate != null) {
-				settings.setTemplate(record.javaImplTemplate);
-			} else {
-				settings.setTemplate("redhawk.codegen.jinja.java.component.pull");
-			}
-		} else if ("Python".equals(lang)) {
-			if (record.pythonImplTemplate != null) {
-				settings.setTemplate(record.pythonImplTemplate);
-			} else {
-				settings.setTemplate("redhawk.codegen.jinja.python.component.pull");
-			}
-		}
-		**/
 	}
 
 	@Override
