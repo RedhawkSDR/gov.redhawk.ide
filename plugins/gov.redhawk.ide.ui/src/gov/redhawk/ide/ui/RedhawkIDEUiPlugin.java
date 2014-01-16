@@ -64,11 +64,15 @@ public class RedhawkIDEUiPlugin extends AbstractUIPlugin {
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		RedhawkIDEUiPlugin.plugin = this;
-		redhawkImportWizardAssistServiceTracker = new ServiceTracker<IRedhawkImportProjectWizardAssist, IRedhawkImportProjectWizardAssist>(context, IRedhawkImportProjectWizardAssist.class, null);
+		redhawkImportWizardAssistServiceTracker = new ServiceTracker<IRedhawkImportProjectWizardAssist, IRedhawkImportProjectWizardAssist>(context,
+			IRedhawkImportProjectWizardAssist.class, null);
 		redhawkImportWizardAssistServiceTracker.open();
 	}
-	
-	public IRedhawkImportProjectWizardAssist [] getRedhawkImportWizardAssistants() {
+
+	/**
+	 * @since 9.1
+	 */
+	public IRedhawkImportProjectWizardAssist[] getRedhawkImportWizardAssistants() {
 		return redhawkImportWizardAssistServiceTracker.getServices(new IRedhawkImportProjectWizardAssist[0]);
 	}
 
@@ -96,7 +100,7 @@ public class RedhawkIDEUiPlugin extends AbstractUIPlugin {
 	public static RedhawkIDEUiPlugin getDefault() {
 		return RedhawkIDEUiPlugin.plugin;
 	}
-	
+
 	/**
 	 * Logging functionality
 	 * 

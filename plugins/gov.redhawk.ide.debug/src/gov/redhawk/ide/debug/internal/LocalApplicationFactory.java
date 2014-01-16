@@ -108,29 +108,31 @@ public class LocalApplicationFactory {
 		this.namingContext = this.localSca.getRootContext();
 	}
 
+	public static NotifyingNamingContext createWaveformContext(NotifyingNamingContext parent, String name) throws CoreException {
+		NamingContextExt retVal = null;
+		String adjustedName = name;
+		for (int i = 2; retVal == null; i++) {
+			try {
+				retVal = NamingContextExtHelper.narrow(parent.bind_new_context(Name.toName(adjustedName)));
+			} catch (AlreadyBound e) {
+				adjustedName = name + "_" + i;
+			} catch (NotFound e) {
+				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
+			} catch (CannotProceed e) {
+				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
+			} catch (InvalidName e) {
+				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
+			}
+		}
+		return parent.findContext(retVal);
+	}
+
 	public LocalScaWaveform create(final SoftwareAssembly sad, String name, final IProgressMonitor monitor) throws CoreException {
 		String adjustedName = name;
-		NamingContextExt waveformContext = null;
 
 		// Try and narrow to the given name.  If an already bound exception occurs, append _ + i to the end and try again until 
 		// we've found a good name.
 		try {
-			for (int i = 2; waveformContext == null; i++) {
-				try {
-					waveformContext = NamingContextExtHelper.narrow(this.namingContext.bind_new_context(Name.toName(adjustedName)));
-				} catch (AlreadyBound e) {
-					adjustedName = name + "_" + i;
-				} catch (NotFound e) {
-					throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID,
-						"Failed to create application: " + adjustedName + " " + e.getMessage(), e));
-				} catch (CannotProceed e) {
-					throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID,
-						"Failed to create application: " + adjustedName + " " + e.getMessage(), e));
-				} catch (InvalidName e) {
-					throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID,
-						"Failed to create application: " + adjustedName + " " + e.getMessage(), e));
-				}
-			}
 
 			final String appId = DceUuidUtil.createDceUUID();
 			final String profile = sad.eResource().getURI().path();
@@ -142,7 +144,7 @@ public class LocalApplicationFactory {
 			waveform.setProfileObj(sad);
 			waveform.setLaunch(this.launch);
 			waveform.setMode(this.launch.getLaunchMode());
-			waveform.setNamingContext(this.namingContext.findContext(waveformContext));
+			waveform.setNamingContext(LocalApplicationFactory.createWaveformContext(namingContext, adjustedName));
 
 			final ApplicationImpl app = new ApplicationImpl(waveform, appId, adjustedName);
 			this.launch.addProcess(app);
@@ -161,8 +163,8 @@ public class LocalApplicationFactory {
 
 			createConnections(app, sad);
 
-			bindApp(app);
-			
+			LocalApplicationFactory.bindApp(app);
+
 			try {
 				waveform.refresh(null, RefreshDepth.FULL);
 			} catch (InterruptedException e) {
@@ -229,7 +231,7 @@ public class LocalApplicationFactory {
 		}
 	}
 
-	private void bindApp(final ApplicationImpl app) throws CoreException {
+	public static void bindApp(final ApplicationImpl app) throws CoreException {
 		app.getStreams().getOutStream().println("Binding application...");
 		try {
 			NamingContextExt context = app.getWaveformContext();
@@ -299,7 +301,7 @@ public class LocalApplicationFactory {
 			configuration = this.assemblyConfig;
 		}
 		for (DataType t : configuration) {
-			app.getStreams().getOutStream().println(toString(t));
+			app.getStreams().getOutStream().println(LocalApplicationFactory.toString(t));
 		}
 		comp.configure(configuration);
 		comp.fetchProperties(null);
@@ -311,12 +313,12 @@ public class LocalApplicationFactory {
 			StringBuilder builder = new StringBuilder();
 			builder.append("\t" + t.id + " = {");
 			for (DataType child : (DataType[]) value) {
-				builder.append("\n\t\t" + toString(child));
+				builder.append("\n\t\t" + LocalApplicationFactory.toString(child));
 			}
 			builder.append("\n\t}");
 			return builder.toString();
 		} else if (value instanceof DataType) {
-			return "\t" + t.id + " = {" + toString((DataType) value) + "}";
+			return "\t" + t.id + " = {" + LocalApplicationFactory.toString((DataType) value) + "}";
 		} else if (value instanceof Any[]) {
 			StringBuilder builder = new StringBuilder();
 			builder.append("\t" + t.id + " = [] {");
@@ -326,12 +328,12 @@ public class LocalApplicationFactory {
 				Object childValue = AnyUtils.convertAny(child);
 				String valueStr;
 				if (childValue instanceof DataType) {
-					valueStr = toString((DataType) childValue);
+					valueStr = LocalApplicationFactory.toString((DataType) childValue);
 				} else if (childValue instanceof DataType[]) {
 					StringBuilder valueStrBuilder = new StringBuilder();
 					valueStrBuilder.append("{");
 					for (DataType childType : (DataType[]) childValue) {
-						valueStrBuilder.append("\n\t\t" + toString(childType));
+						valueStrBuilder.append("\n\t\t" + LocalApplicationFactory.toString(childType));
 					}
 					valueStrBuilder.append("\n\t\t}");
 					valueStr = valueStrBuilder.toString();
@@ -404,15 +406,13 @@ public class LocalApplicationFactory {
 		return retVal;
 	}
 
-	private static final EStructuralFeature [] PATH = new EStructuralFeature [] {
-		PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
-		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF,
-		PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
-		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG
-	};
+	private static final EStructuralFeature[] PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
+		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
+		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
+
 	@Nullable
 	private URI getSpdURI(@Nullable final SadComponentInstantiation comp) {
-		final SoftPkg spd = ScaEcoreUtils.getFeature(comp, PATH);
+		final SoftPkg spd = ScaEcoreUtils.getFeature(comp, LocalApplicationFactory.PATH);
 		if (spd != null && spd.eResource() != null) {
 			return spd.eResource().getURI();
 		} else {

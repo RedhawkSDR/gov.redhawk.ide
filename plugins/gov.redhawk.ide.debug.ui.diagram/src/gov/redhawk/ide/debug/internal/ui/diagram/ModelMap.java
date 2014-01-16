@@ -127,7 +127,7 @@ public class ModelMap {
 					return Status.OK_STATUS;
 				} catch (CoreException e) {
 					nodes.remove(nodeMap.getKey());
-					return new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add component " + comp.getInstantiationIdentifier(), e);
+					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add component " + comp.getInstantiationIdentifier(), e);
 				} finally {
 					if (nodes.get(nodeMap.getKey()) == null) {
 						delete(newComp);
@@ -162,7 +162,7 @@ public class ModelMap {
 				try {
 					newComp = create(comp, implID);
 					nodeMap.setLocalScaComponent(newComp);
-					nodeMap.setLocalScaComponent(newComp);
+					//					nodeMap.setLocalScaComponent(newComp);
 					EditPart editPart = editor.getDiagramEditPart().findEditPart(editor.getDiagramEditPart(), comp);
 					if (editPart instanceof SadComponentInstantiationEditPart) {
 						SadComponentInstantiationEditPart ciEp = (SadComponentInstantiationEditPart) editPart;
@@ -214,11 +214,11 @@ public class ModelMap {
 				} catch (final InvalidPort e) {
 					delete(conn);
 					connections.remove(connectionMap.getKey());
-					return new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
+					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
 				} catch (final OccupiedPort e) {
 					delete(conn);
 					connections.remove(connectionMap.getKey());
-					return new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
+					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
 				} finally {
 					if (connections.get(connectionMap.getKey()) == null) {
 						delete(conn);
@@ -258,7 +258,7 @@ public class ModelMap {
 					return Status.OK_STATUS;
 				} catch (CoreException e) {
 					connections.remove(connectionMap.getKey());
-					return new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
+					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
 				} finally {
 					if (connections.get(connectionMap.getKey()) == null) {
 						delete(newSadInterface);
@@ -276,7 +276,7 @@ public class ModelMap {
 	private SadComponentInstantiation create(@NonNull final LocalScaComponent newValue) throws CoreException {
 		final DiagramEditPart diagramEditPart = getDiagramEditPart();
 		if (diagramEditPart == null) {
-			throw new CoreException(new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to find diagram edit part", null));
+			throw new CoreException(new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to find diagram edit part", null));
 		}
 		final CreateViewRequest createRequest = CreateViewRequestFactory.getCreateShapeRequest(SadElementTypes.SadComponentPlacement_3001,
 			diagramEditPart.getDiagramPreferencesHint());
@@ -320,7 +320,7 @@ public class ModelMap {
 		}
 		final SoftPkg spd = ScaEcoreUtils.getFeature(comp, ModelMap.SPD_PATH);
 		if (spd == null) {
-			throw new CoreException(new Status(Status.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to resolve SPD.", null));
+			throw new CoreException(new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to resolve SPD.", null));
 		}
 		final URI spdURI = spd.eResource().getURI();
 		return this.waveform.launch(comp.getId(), execParams, spdURI, implID, ILaunchManager.RUN_MODE);
@@ -328,7 +328,7 @@ public class ModelMap {
 
 	@Nullable
 	private ScaConnection create(@NonNull final SadConnectInterface conn) throws InvalidPort, OccupiedPort {
-		SadComponentInstantiation inst = ScaEcoreUtils.getFeature(conn, CONN_INST_PATH);
+		SadComponentInstantiation inst = ScaEcoreUtils.getFeature(conn, ModelMap.CONN_INST_PATH);
 		final LocalScaComponent sourceComp = get(inst);
 		if (sourceComp == null) {
 			return null;
@@ -407,8 +407,8 @@ public class ModelMap {
 		final EditPart sourceEditPart = findEditPart(source);
 		final EditPart targetEditPart = findEditPart(target);
 		if (sourceEditPart == null || targetEditPart == null) {
-			if (DEBUG.enabled) {
-				DEBUG.trace("Failed to edit parts for source and target for source={0} and target={1}", source, target);
+			if (ModelMap.DEBUG.enabled) {
+				ModelMap.DEBUG.trace("Failed to edit parts for source and target for source={0} and target={1}", source, target);
 			}
 			return null;
 		}
@@ -450,8 +450,13 @@ public class ModelMap {
 
 			@Override
 			public void run() {
-				final Command cmd = targetEditPart.getCommand(request);
-				execute(cmd);
+				try {
+					final Command cmd = targetEditPart.getCommand(request);
+					execute(cmd);
+				} catch (Exception e) {
+					// PASS
+				}
+
 			}
 
 		});
@@ -640,7 +645,7 @@ public class ModelMap {
 						delete(oldComp);
 						return Status.OK_STATUS;
 					} catch (ReleaseError e) {
-						return new Status(Status.WARNING, LocalScaDiagramPlugin.PLUGIN_ID, "Problems while removing component " + comp.getId(), e);
+						return new Status(IStatus.WARNING, LocalScaDiagramPlugin.PLUGIN_ID, "Problems while removing component " + comp.getId(), e);
 					} finally {
 						subMonitor.done();
 					}
@@ -667,7 +672,7 @@ public class ModelMap {
 						delete(oldConnection);
 						return Status.OK_STATUS;
 					} catch (InvalidPort e) {
-						return new Status(Status.WARNING, LocalScaDiagramPlugin.PLUGIN_ID, "Problems while removing connection " + conn.getId(), e);
+						return new Status(IStatus.WARNING, LocalScaDiagramPlugin.PLUGIN_ID, "Problems while removing connection " + conn.getId(), e);
 					} finally {
 						subMonitor.done();
 					}

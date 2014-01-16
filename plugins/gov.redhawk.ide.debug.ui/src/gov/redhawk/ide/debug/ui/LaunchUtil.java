@@ -93,9 +93,8 @@ public final class LaunchUtil {
 			return impls.iterator().next();
 		}
 		final SpdItemProviderAdapterFactory adapterFactory = new SpdItemProviderAdapterFactory();
-		final DecoratingLabelProvider labelProvider = new DecoratingLabelProvider(new AdapterFactoryLabelProvider(adapterFactory), PlatformUI.getWorkbench()
-		        .getDecoratorManager()
-		        .getLabelDecorator());
+		final DecoratingLabelProvider labelProvider = new DecoratingLabelProvider(new AdapterFactoryLabelProvider(adapterFactory),
+			PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());
 		final ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, labelProvider);
 		dialog.setElements(impls.toArray());
 		dialog.setTitle("Select Implementation");
@@ -109,13 +108,12 @@ public final class LaunchUtil {
 		}
 		return null;
 	}
-	
+
 	public static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final SoftwareAssembly softwareAssembly, final Shell shell) throws CoreException {
 		return LaunchUtil.createLaunchConfiguration(softwareAssembly);
 	}
 
-	private static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final SoftwareAssembly softwareAssembly)
-	        throws CoreException {
+	private static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final SoftwareAssembly softwareAssembly) throws CoreException {
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		final String launcherPrefix = softwareAssembly.getName();
 		final String launchConfigName = launchManager.generateLaunchConfigurationName(launcherPrefix);
@@ -123,18 +121,16 @@ public final class LaunchUtil {
 		final ILaunchConfigurationWorkingCopy retVal = configType.newInstance(null, launchConfigName);
 		if (softwareAssembly.eResource().getURI().isPlatform()) {
 			IFile sadFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(softwareAssembly.eResource().getURI().toPlatformString(true)));
-			retVal.setMappedResources(new IResource[] {
-				sadFile.getProject()
-			});
+			retVal.setMappedResources(new IResource[] { sadFile.getProject() });
 			retVal.setAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, softwareAssembly.eResource().getURI().toPlatformString(true));
 		} else {
 			retVal.setAttribute(ScaLaunchConfigurationConstants.ATT_WORKSPACE, false);
 			retVal.setAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, softwareAssembly.eResource().getURI().toString());
 		}
-		
+
 		return retVal;
 	}
-	
+
 	public static ILaunchConfiguration[] findLaunchConfigurations(final ILaunchConfiguration newConfig) throws CoreException {
 		if (newConfig == null) {
 			return null;
@@ -143,7 +139,8 @@ public final class LaunchUtil {
 		final ILaunchConfiguration[] launchers = launchManager.getLaunchConfigurations(newConfig.getType());
 		final List<ILaunchConfiguration> retVal = new ArrayList<ILaunchConfiguration>(1);
 		for (final ILaunchConfiguration config : launchers) {
-			if (config.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, "").equals(newConfig.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, ""))) {
+			if (config.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, "").equals(
+				newConfig.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, ""))) {
 				retVal.add(config);
 			}
 		}
@@ -152,24 +149,24 @@ public final class LaunchUtil {
 		}
 		return retVal.toArray(new ILaunchConfiguration[retVal.size()]);
 	}
-	
+
 	public static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final SoftPkg spd, Shell shell) throws CoreException {
 		if (spd.getImplementation().isEmpty()) {
 			return null;
 		}
 		if (spd.getImplementation().size() == 1) {
 			final Implementation impl = spd.getImplementation().get(0);
-			return createLaunchConfiguration(impl);
+			return LaunchUtil.createLaunchConfiguration(impl);
 		} else {
-			Implementation impl = chooseImplementation(spd.getImplementation(), ILaunchManager.RUN_MODE, shell);
+			Implementation impl = LaunchUtil.chooseImplementation(spd.getImplementation(), ILaunchManager.RUN_MODE, shell);
 			if (impl != null) {
-				return createLaunchConfiguration(impl);
+				return LaunchUtil.createLaunchConfiguration(impl);
 			} else {
 				return null;
 			}
 		}
 	}
-	
+
 	public static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final Implementation impl) throws CoreException {
 		final SoftPkg spd = impl.getSoftPkg();
 		ILaunchConfigurationFactoryRegistry registry = ScaDebugPlugin.getInstance().getLaunchConfigurationFactoryRegistry();
@@ -180,7 +177,7 @@ public final class LaunchUtil {
 		}
 		return config;
 	}
-	
+
 	/**
 	 * @deprecated Use {@link #createLaunchConfiguration(SoftPkg, Shell)} instead
 	 * Doesn't save launch configuration 
@@ -196,8 +193,8 @@ public final class LaunchUtil {
 		}
 		if (file.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
 			SoftPkg spd = ModelUtil.loadSoftPkg(URI.createURI(file.getLocationURI().toString()));
-			ILaunchConfigurationWorkingCopy config = createLaunchConfiguration(spd, shell);
-			launch(config, mode);
+			ILaunchConfigurationWorkingCopy config = LaunchUtil.createLaunchConfiguration(spd, shell);
+			LaunchUtil.launch(config, mode);
 		}
 	}
 	

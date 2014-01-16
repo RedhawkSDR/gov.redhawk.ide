@@ -88,6 +88,7 @@ import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.InvalidName;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
+import CF.Application;
 import CF.ApplicationOperations;
 import CF.ComponentEnumType;
 import CF.ComponentType;
@@ -278,9 +279,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	private final String profile;
 	private final URI profileURI;
 	private boolean started;
+	private final Application delegate;
 
-	public ApplicationImpl(final LocalScaWaveform waveform, final String identifier, final String name) {
-		super();
+	public ApplicationImpl(final LocalScaWaveform waveform, final String identifier, final String name, Application delegate) {
 		this.profileURI = waveform.getProfileURI();
 		this.name = name;
 		this.waveformContext = waveform.getNamingContext();
@@ -289,6 +290,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.profile = waveform.getProfile();
 		this.assemblyID = ApplicationImpl.getAssemblyControllerID(waveform.getProfileObj());
 		this.waveform = waveform;
+		this.delegate = delegate;
+	}
+
+	public ApplicationImpl(final LocalScaWaveform waveform, final String identifier, final String name) {
+		this(waveform, identifier, name, null);
 	}
 
 	public static String getAssemblyControllerID(final SoftwareAssembly profileObj) {
@@ -316,6 +322,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public boolean started() {
+		if (this.delegate != null) {
+			return this.delegate.started();
+		}
 		if (this.assemblyController != null) {
 			return this.assemblyController.started();
 		}
@@ -332,6 +341,14 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	@Override
 	public void start() throws StartError {
 		this.streams.getOutStream().println("Starting...");
+		if (this.delegate != null) {
+			this.streams.getOutStream().println("Invoking delegate start");
+			try {
+				this.delegate.start();
+			} catch (StartError e) {
+				throw logException("Error during delegate start", e);
+			}
+		}
 
 		SortedSet<ScaComponent> sortedSet = new TreeSet<ScaComponent>(new ScaComponentComparator());
 
@@ -342,11 +359,13 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 
 		for (ScaComponent comp : sortedSet) {
-			this.streams.getOutStream().println("\t" + comp.getInstantiationIdentifier());
-			try {
-				comp.start();
-			} catch (final StartError e) {
-				throw logException("Error during start", e);
+			if (comp instanceof LocalScaComponent) {
+				this.streams.getOutStream().println("\t" + comp.getInstantiationIdentifier());
+				try {
+					comp.start();
+				} catch (final StartError e) {
+					throw logException("Error during start", e);
+				}
 			}
 		}
 
@@ -360,31 +379,37 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	@Override
 	public void stop() throws StopError {
 		this.streams.getOutStream().println("Stopping...");
-
-		if (this.assemblyController == null) {
-			TreeSet<ScaComponent> sortedSet = new TreeSet<ScaComponent>(new ScaComponentComparator() {
-				@Override
-				public int compare(ScaComponent o1, ScaComponent o2) {
-					// Reverse the order for stopping
-					return -1 * super.compare(o1, o2);
-				}
-			});
-			for (ScaComponent comp : waveform.getComponents()) {
-				sortedSet.add(comp);
-			}
-
-			for (ScaComponent comp : sortedSet) {
-				this.streams.getOutStream().println("\t" + comp.getInstantiationIdentifier());
-				comp.stop();
-			}
-		} else {
+		if (this.delegate != null) {
+			this.streams.getOutStream().println("Invoking delegate stop");
 			try {
-				this.assemblyController.stop();
-				this.streams.getOutStream().println("Stop succeeded");
-			} catch (final StopError e) {
-				throw logException("Error during stop", e);
+				this.delegate.stop();
+			} catch (StopError e) {
+				throw logException("Error during delegate Stop", e);
 			}
 		}
+
+		TreeSet<ScaComponent> sortedSet = new TreeSet<ScaComponent>(new ScaComponentComparator() {
+			@Override
+			public int compare(ScaComponent o1, ScaComponent o2) {
+				// Reverse the order for stopping
+				return -1 * super.compare(o1, o2);
+			}
+		});
+		for (ScaComponent comp : waveform.getComponents()) {
+			sortedSet.add(comp);
+		}
+
+		for (ScaComponent comp : sortedSet) {
+			if (comp instanceof LocalScaComponent) {
+				this.streams.getOutStream().println("\t" + comp.getInstantiationIdentifier());
+				try {
+					comp.stop();
+				} catch (StopError e) {
+					logException("Error during stop of component", e);
+				}
+			}
+		}
+
 		this.streams.getOutStream().println("Stopped");
 		this.started = false;
 	}
@@ -394,15 +419,25 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public void initialize() throws InitializeError {
-		this.streams.getOutStream().println("Initializing application...");
-		if (this.assemblyController == null) {
-			return;
-		}
-		try {
-			this.assemblyController.initialize();
-			this.streams.getOutStream().println("Initialize succeeded");
-		} catch (final InitializeError e) {
-			throw logException("Error during initialize", e);
+		if (this.delegate != null) {
+			this.streams.getOutStream().println("Delegate Initializing application...");
+			try {
+				this.delegate.initialize();
+				this.streams.getOutStream().println("Delegate Initialize succeeded");
+			} catch (final InitializeError e) {
+				throw logException("Error during delegate initialize", e);
+			}
+		} else {
+			this.streams.getOutStream().println("Initializing application...");
+			if (this.assemblyController == null) {
+				return;
+			}
+			try {
+				this.assemblyController.initialize();
+				this.streams.getOutStream().println("Initialize succeeded");
+			} catch (final InitializeError e) {
+				throw logException("Error during initialize", e);
+			}
 		}
 	}
 
@@ -426,6 +461,15 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 		this.terminated = true;
 		this.streams.getOutStream().println("Releasing Application...");
+		if (this.delegate != null) {
+			try {
+				this.delegate.releaseObject();
+			} catch (ReleaseError e) {
+				logException("Problems while releasing delegate", e);
+			} catch (SystemException e) {
+				logException("Problems while releasing delegate", e);
+			}
+		}
 
 		try {
 			disconnectAll();
@@ -489,7 +533,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.streams.getOutStream().println("Releasing components...");
 		// Shutdown each component
 		for (final ScaComponent info : this.waveform.getComponents().toArray(new ScaComponent[this.waveform.getComponents().size()])) {
-			release(info);
+			if (info instanceof LocalScaComponent) {
+				release(info);
+			}
 		}
 		this.streams.getOutStream().println("Released components");
 	}
@@ -513,7 +559,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.streams.getOutStream().println("Disconnecting connections...");
 		// Disconnect components
 		for (final ScaComponent info : this.waveform.getComponents().toArray(new ScaComponent[waveform.getComponents().size()])) {
-			disconnect(info);
+			if (info instanceof LocalScaComponent) {
+				disconnect(info);
+			}
 		}
 		this.streams.getOutStream().println("Disconnected");
 	}
@@ -549,6 +597,17 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public void runTest(final int testid, final PropertiesHolder testValues) throws UnknownTest, UnknownProperties {
+		if (this.delegate != null) {
+			this.streams.getOutStream().println("Delegate Runing Test: " + testValues);
+			try {
+				delegate.runTest(testid, testValues);
+			} catch (final UnknownTest e) {
+				throw logException("Delegate Errors during Run Test", e);
+			} catch (final UnknownProperties e) {
+				throw logException("Delegate Errors during Run Test", e);
+			}
+			this.streams.getOutStream().println("Delegate Run Test Succeeded");
+		}
 		this.streams.getOutStream().println("Runing Test: " + testValues);
 		if (this.assemblyController == null) {
 			return;
@@ -571,6 +630,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.streams.getOutStream().println("Configuring application: ");
 		for (DataType t : configProperties) {
 			streams.getOutStream().println("\n\t" + LocalApplicationFactory.toString(t));
+		}
+
+		if (this.delegate != null) {
+			this.delegate.configure(configProperties);
+			return;
 		}
 
 		Map<String, List<DataType>> configMap = new HashMap<String, List<DataType>>();
@@ -625,6 +689,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			for (DataType t : configProperties.value) {
 				queryProperties.add(t.id);
 			}
+		}
+		if (this.delegate != null) {
+			this.streams.getOutStream().println("Delegate Query: " + queryProperties);
+			this.delegate.query(configProperties);
+			return;
 		}
 		this.streams.getOutStream().println("Query: " + queryProperties);
 
@@ -710,6 +779,15 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public ComponentType[] registeredComponents() {
+		ComponentType[] delegateValues;
+		if (this.delegate != null) {
+			delegateValues = this.delegate.registeredComponents();
+		} else {
+			delegateValues = new ComponentType[0];
+		}
+		if (waveform.getComponents().isEmpty()) {
+			return delegateValues;
+		}
 		final ComponentType[] types = new ComponentType[this.waveform.getComponents().size()];
 		for (int i = 0; i < types.length; i++) {
 			types[i] = new ComponentType();
@@ -718,6 +796,13 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			types[i].softwareProfile = this.waveform.getComponents().get(i).getProfileObj().eResource().getURI().path();
 			types[i].providesPorts = new PortType[0];
 			types[i].type = ComponentEnumType.APPLICATION_COMPONENT;
+
+			for (ComponentType delegateValue : delegateValues) {
+				if (types[i].identifier.equals(delegateValue.identifier)) {
+					types[i] = delegateValue;
+					break;
+				}
+			}
 		}
 		return types;
 	}
@@ -727,11 +812,26 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public ComponentElementType[] componentNamingContexts() {
+		ComponentElementType[] delegateValues;
+		if (this.delegate != null) {
+			delegateValues = this.delegate.componentNamingContexts();
+		} else {
+			delegateValues = new ComponentElementType[0];
+		}
+		if (waveform.getComponents().isEmpty()) {
+			return delegateValues;
+		}
 		final ComponentElementType[] types = new ComponentElementType[this.waveform.getComponents().size()];
 		for (int i = 0; i < types.length; i++) {
 			types[i] = new ComponentElementType();
 			types[i].componentId = this.waveform.getComponents().get(i).getIdentifier();
 			types[i].elementId = this.name + "/" + this.waveform.getComponents().get(i).getName();
+			for (ComponentElementType delegateValue : delegateValues) {
+				if (delegateValue.componentId.equals(types[i].componentId)) {
+					types[i] = delegateValue;
+					break;
+				}
+			}
 		}
 		return types;
 	}
@@ -741,6 +841,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public ComponentProcessIdType[] componentProcessIds() {
+		if (this.delegate != null) {
+			return this.delegate.componentProcessIds();
+		}
 		return new ComponentProcessIdType[0];
 	}
 
@@ -749,6 +852,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public DeviceAssignmentType[] componentDevices() {
+		if (this.delegate != null) {
+			return this.delegate.componentDevices();
+		}
 		return new DeviceAssignmentType[0];
 	}
 
@@ -757,6 +863,15 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public ComponentElementType[] componentImplementations() {
+		ComponentElementType[] delegateValues;
+		if (this.delegate != null) {
+			delegateValues = this.delegate.componentImplementations();
+		} else {
+			delegateValues = new ComponentElementType[0];
+		}
+		if (waveform.getComponents().isEmpty()) {
+			return delegateValues;
+		}
 		final ComponentElementType[] types = new ComponentElementType[this.waveform.getComponents().size()];
 		for (int i = 0; i < types.length; i++) {
 			final ScaComponent comp = this.waveform.getComponents().get(i);
@@ -770,6 +885,12 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 			if (types[i].elementId == null) {
 				types[i].elementId = "";
+			}
+			for (ComponentElementType delegateValue : delegateValues) {
+				if (types[i].componentId.equals(delegateValue.componentId)) {
+					types[i] = delegateValue;
+					break;
+				}
 			}
 		}
 		return types;

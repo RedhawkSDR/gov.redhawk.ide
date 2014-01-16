@@ -10,6 +10,10 @@
                   isRoot="true"
                   pattern="gov.redhawk.ide.debug.ui.navigatorContent">
             </contentExtension>
+            <contentExtension
+                  isRoot="false"
+                  pattern="gov.redhawk.ide.debug.ui.localReference">
+            </contentExtension>
          </includes>
       </viewerContentBinding>
    </extension>
@@ -62,6 +66,14 @@
             </enablement>
          </actionProvider>
       </navigatorContent>
+      <commonFilter
+            activeByDefault="true"
+            class="gov.redhawk.ide.debug.internal.ui.LocalWaveformReferenceFilter"
+            description="Hides local references to remote waveforms"
+            id="gov.redhawk.ide.debug.ui.localReference"
+            name="Hide Local References"
+            visibleInUI="true">
+      </commonFilter>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -348,7 +360,7 @@
       <contentType
             id="gov.redhawk.ide.debug.ui.contentType.localSca"
             name="Chalkboard"
-            priority="HIGHEST">
+            priority="NORMAL">
          <describer
                class="gov.redhawk.ide.debug.internal.ui.LocalScaChalkboardContentDescriber">
          </describer>
