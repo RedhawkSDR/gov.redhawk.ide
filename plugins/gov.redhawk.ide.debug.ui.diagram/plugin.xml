@@ -6,7 +6,7 @@
       <editor
             class="gov.redhawk.ide.debug.internal.ui.diagram.LocalScaEditor"
             default="false"
-            icon="icons/RedHawk_Logo16x.gif"
+            icon="icons/redhawk16.gif"
             id="gov.redhawk.ide.debug.ui.diagram.editor.localSca"
             name="%editor.name">
       </editor>
@@ -16,7 +16,7 @@
       <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.localSca"
             editorId="gov.redhawk.ide.debug.ui.diagram.editor.localSca"
-            priority="HIGHEST">
+            priority="NORMAL">
       </contentTypeBinding>
    </extension>
    <extension
@@ -34,7 +34,7 @@
       <view
             category="gov.redhawk.ide.ui.category.sca_development"
             class="gov.redhawk.ide.debug.internal.ui.diagram.ScaChalkboardView"
-            icon="icons/RedHawk_Logo16x.gif"
+            icon="icons/redhawk16.gif"
             id="gov.redhawk.ide.debug.ui.diagram.chalkboard.view"
             name="%view.name"
             restorable="true">
