@@ -39,17 +39,19 @@ public class LocalScaObjectLocator extends AbstractScaObjectLocator {
 
 		@Override
 		public EList<ScaComponent> getComponents() {
-			final List<ScaComponent> allDevices = new ArrayList<ScaComponent>();
+			final List<ScaComponent> allComponents = new ArrayList<ScaComponent>();
 			ScaDebugPlugin instance = ScaDebugPlugin.getInstance();
 			if (instance == null) {
 				return ECollections.emptyEList();
 			}
 			LocalSca localsca = instance.getLocalSca();
-			if (localsca != null && localsca.getSandboxWaveform() != null) {
-				allDevices.addAll(localsca.getSandboxWaveform().getComponents());
+			if (localsca != null) {
+				for (ScaWaveform waveform : localsca.getWaveforms()) {
+					allComponents.addAll(waveform.getComponents());
+				}
 			}
-			return new EcoreEList.UnmodifiableEList<ScaComponent>(this, ScaPackage.eINSTANCE.getScaWaveform_Components(), allDevices.size(),
-					allDevices.toArray());
+			return new EcoreEList.UnmodifiableEList<ScaComponent>(this, ScaPackage.eINSTANCE.getScaWaveform_Components(), allComponents.size(),
+					allComponents.toArray());
 		}
 	};
 
