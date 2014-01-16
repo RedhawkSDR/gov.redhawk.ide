@@ -12,16 +12,19 @@ package gov.redhawk.ide.debug.internal.ui;
 
 import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalScaComponent;
+import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.util.PluginUtil;
 
+import java.util.Arrays;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -34,6 +37,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
+
+import CF.LifeCyclePackage.ReleaseError;
 
 /**
  * 
@@ -90,7 +95,7 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 		});
 		if (localLaunch.getLaunch() != null) {
 			final Job job = new Job("Terminating") {
-	
+
 				@Override
 				protected IStatus run(final IProgressMonitor monitor) {
 					try {
@@ -102,14 +107,40 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 				}
 			};
 			job.schedule();
+		} else if (localLaunch instanceof LocalScaWaveform) {
+			final Job job = new Job("Terminating") {
+
+				@Override
+				protected IStatus run(final IProgressMonitor monitor) {
+					LocalScaWaveform localScaWaveform = (LocalScaWaveform) localLaunch;
+					try {
+						for (ScaComponent comp : localScaWaveform.getComponents()) {
+							if (comp instanceof LocalScaComponent) {
+								LocalScaComponent localScaComponent = (LocalScaComponent) comp;
+								if (localScaComponent.getLaunch() != null) {
+									localScaComponent.getLaunch().terminate();
+								}
+							}
+						}
+						localScaWaveform.releaseObject();
+					} catch (final DebugException e) {
+						return e.getStatus();
+					} catch (ReleaseError e) {
+						return new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to terminate: " + localScaWaveform.getName() + " "
+							+ Arrays.toString(e.errorMessages), e);
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule();
 		}
 	}
 
 	@Override
 	public void setEnabled(final Object evaluationContext) {
 		super.setEnabled(evaluationContext);
-		if (evaluationContext instanceof EvaluationContext) {
-			final EvaluationContext context = (EvaluationContext) evaluationContext;
+		if (evaluationContext instanceof IEvaluationContext) {
+			final IEvaluationContext context = (IEvaluationContext) evaluationContext;
 			final Object sel = context.getVariable("selection");
 			if (sel instanceof IStructuredSelection) {
 				final IStructuredSelection ss = (IStructuredSelection) sel;

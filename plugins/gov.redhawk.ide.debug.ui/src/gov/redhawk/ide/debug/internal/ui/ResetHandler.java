@@ -23,7 +23,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -54,8 +54,7 @@ public class ResetHandler extends AbstractHandler implements IHandler {
 		protected IStatus run(final IProgressMonitor monitor) {
 			final ScaWaveform waveform = this.component.getWaveform();
 			monitor.beginTask("Reseting Component " + this.component.getName(), 2);
-			
-				
+
 			if (waveform instanceof LocalScaWaveform) {
 				try {
 					LocalScaWaveform localWaveform = (LocalScaWaveform) waveform;
@@ -63,7 +62,7 @@ public class ResetHandler extends AbstractHandler implements IHandler {
 					monitor.worked(1);
 				} catch (final ReleaseError e) {
 					return new Status(IStatus.ERROR, ScaUiPlugin.PLUGIN_ID, "Failed to reset component: " + this.component.getName() + " "
-					        + Arrays.toString(e.errorMessages), e);
+						+ Arrays.toString(e.errorMessages), e);
 				} catch (final ExecuteFail e) {
 					return new Status(IStatus.ERROR, ScaUiPlugin.PLUGIN_ID, "Failed to reset component: " + this.component.getName() + " " + e.msg, e);
 				} catch (final SystemException e) {
@@ -103,8 +102,8 @@ public class ResetHandler extends AbstractHandler implements IHandler {
 
 	@Override
 	public void setEnabled(final Object evaluationContext) {
-		if (evaluationContext instanceof EvaluationContext) {
-			final EvaluationContext context = (EvaluationContext) evaluationContext;
+		if (evaluationContext instanceof IEvaluationContext) {
+			final IEvaluationContext context = (IEvaluationContext) evaluationContext;
 			final Object sel = context.getVariable("selection");
 			if (sel instanceof IStructuredSelection) {
 				final IStructuredSelection ss = (IStructuredSelection) sel;
