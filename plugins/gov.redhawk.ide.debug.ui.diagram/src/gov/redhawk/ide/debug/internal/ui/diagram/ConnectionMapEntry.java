@@ -10,10 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui.diagram;
 
-import org.eclipse.jdt.annotation.Nullable;
-
-import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import gov.redhawk.model.sca.ScaConnection;
+import mil.jpeojtrs.sca.sad.SadConnectInterface;
+
+import org.eclipse.jdt.annotation.Nullable;
 
 class ConnectionMapEntry {
 	private String key;
@@ -32,7 +32,9 @@ class ConnectionMapEntry {
 
 	public void setScaConnection(ScaConnection conn) {
 		this.conn = conn;
-		setKey(conn.getId());
+		if (conn != null) {
+			setKey(conn.getId());
+		}
 	}
 
 	public SadConnectInterface getProfile() {
@@ -44,7 +46,8 @@ class ConnectionMapEntry {
 		setKey(profile.getId());
 	}
 
-	@Nullable String getKey() {
+	@Nullable
+	String getKey() {
 		return key;
 	}
 
