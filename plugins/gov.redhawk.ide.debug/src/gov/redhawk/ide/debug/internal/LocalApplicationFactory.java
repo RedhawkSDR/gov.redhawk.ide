@@ -223,7 +223,8 @@ public class LocalApplicationFactory {
 		for (final SadComponentInstantiation comp : instantiations) {
 			URI spdUri = getSpdURI(comp);
 			if (spdUri == null) {
-				app.getStreams().getErrStream().println("Failed to find SPD for component " + comp.getUsageName());
+				String errorMsg = String.format("Failed to find SPD for component: %s", comp.getUsageName());
+				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, errorMsg));
 			} else {
 				app.launch(comp.getUsageName(), createExecParam(comp), spdUri, getImplId(comp), this.mode);
 			}
@@ -250,7 +251,7 @@ public class LocalApplicationFactory {
 
 	}
 
-	private void createConnections(final ApplicationImpl app, final SoftwareAssembly sad) {
+	private void createConnections(final ApplicationImpl app, final SoftwareAssembly sad) throws CoreException {
 		if (sad.getConnections() != null) {
 			app.getStreams().getOutStream().println("Making connections...");
 			for (final SadConnectInterface connection : sad.getConnections().getConnectInterface()) {
@@ -260,11 +261,24 @@ public class LocalApplicationFactory {
 					final String providesId = connection.getProvidesPort().getProvidesIdentifier();
 
 					if (connection.getProvidesPort().getComponentInstantiationRef() != null) {
-						target = app.getLocalWaveform().getScaComponent(connection.getProvidesPort().getComponentInstantiationRef().getRefid()).getScaPort(
-							providesId).getCorbaObj();
+						final String componentRefId = connection.getProvidesPort().getComponentInstantiationRef().getRefid();
+						final ScaComponent componentForPort =  app.getLocalWaveform().getScaComponent(componentRefId);
+						if (componentForPort == null) {
+							String errorMsg = String.format("Couldn't find component instance '%s' to make waveform connection '%s'", componentRefId, connection.getId());
+							throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, errorMsg));
+						}
+						target = componentForPort.getScaPort(providesId).getCorbaObj();
 					}
 				} else if (connection.getComponentSupportedInterface() != null) {
-					target = app.getLocalWaveform().getScaComponent(connection.getComponentSupportedInterface().getComponentInstantiationRef().getRefid()).getCorbaObj();
+					final String componentRefId = connection.getComponentSupportedInterface().getComponentInstantiationRef().getRefid();
+					final ScaComponent component = app.getLocalWaveform().getScaComponent(componentRefId);
+					if (component == null) {
+						String errorMsg = String.format("Couldn'd find component instance '%s' to make waveform connection '%s'", componentRefId, connection.getId());
+						throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, errorMsg));
+					}
+					target = component.getCorbaObj();
+				} else {
+					app.getStreams().getErrStream().println("Unsupported target connection type for connection: " + connection.getId());
 				}
 
 				if (target != null) {
