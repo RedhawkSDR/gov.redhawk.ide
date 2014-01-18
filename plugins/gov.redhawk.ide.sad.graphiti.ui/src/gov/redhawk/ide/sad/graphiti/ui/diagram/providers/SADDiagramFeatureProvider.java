@@ -1,5 +1,6 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
+import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkExternalPortFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.DeleteSADConnectInterface;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
@@ -11,7 +12,7 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByFileManagerPattern
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByServicePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.SADConnectInterfacePattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,7 +163,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		
 		//add external port menu item if we clicked on a port
 		if(context.getPictogramElements() != null && context.getPictogramElements().length > 0){
-		    Object obj = DiagramUtil.getBusinessObject(context.getPictogramElements()[0]);
+		    Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 		    if(obj instanceof ProvidesPortStub || obj instanceof UsesPortStub){
 				retList.add(new MarkExternalPortFeature(this.getDiagramTypeProvider().getFeatureProvider()));
 		    }
@@ -176,10 +177,10 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	public IMoveShapeFeature getMoveShapeFeature(IMoveShapeContext context) {
 		
 		//Search for shapes that we don't want the user to have move capability
-		if(DiagramUtil.doesPictogramContainProperty(context, 
-			  new String[] {DiagramUtil.SHAPE_usesPortRectangleShape,
-								DiagramUtil.SHAPE_providesPortRectangleShape,
-								DiagramUtil.SHAPE_interfaceContainerShape}))
+		if(DUtil.doesPictogramContainProperty(context, 
+			  new String[] {RHContainerShapeImpl.SHAPE_usesPortRectangleShape,
+				RHContainerShapeImpl.SHAPE_providesPortRectangleShape,
+				RHContainerShapeImpl.SHAPE_interfaceContainerShape}))
 		{
 			return new DefaultMoveShapeFeature(this) {
 				public boolean canMove(IContext context) {
@@ -206,15 +207,15 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	public IUpdateFeature getUpdateFeature(IUpdateContext context){
 
 		//hide update icon for some pictogram elements
-		if(DiagramUtil.doesPictogramContainProperty(context, 
-				new String[] {DiagramUtil.SHAPE_providesPortsContainerShape,
-				DiagramUtil.SHAPE_usesPortsContainerShape,
-				DiagramUtil.SHAPE_providesPortContainerShape,
-				DiagramUtil.SHAPE_usesPortContainerShape,
-				DiagramUtil.SHAPE_providesPortRectangleShape,
-				DiagramUtil.SHAPE_usesPortRectangleShape,
-				DiagramUtil.SHAPE_interfaceContainerShape,
-				DiagramUtil.SHAPE_interfaceEllipseShape}))
+		if(DUtil.doesPictogramContainProperty(context, 
+				new String[] {RHContainerShapeImpl.SHAPE_providesPortsContainerShape,
+				RHContainerShapeImpl.SHAPE_usesPortsContainerShape,
+				RHContainerShapeImpl.SHAPE_providesPortContainerShape,
+				RHContainerShapeImpl.SHAPE_usesPortContainerShape,
+				RHContainerShapeImpl.SHAPE_providesPortRectangleShape,
+				RHContainerShapeImpl.SHAPE_usesPortRectangleShape,
+				RHContainerShapeImpl.SHAPE_interfaceContainerShape,
+				RHContainerShapeImpl.SHAPE_interfaceEllipseShape}))
 		{
 			return new UpdateNoBoFeature(this) {
 				public boolean isAvailable(IContext context) {
@@ -232,15 +233,15 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	public IDeleteFeature getDeleteFeature(IDeleteContext context){
 		
 		//Search for shapes that we don't want the user to have delete capability
-		if(DiagramUtil.doesPictogramContainProperty(context, 
-			  new String[] {DiagramUtil.SHAPE_providesPortsContainerShape,
-								DiagramUtil.SHAPE_usesPortsContainerShape,
-								DiagramUtil.SHAPE_providesPortContainerShape,
-								DiagramUtil.SHAPE_usesPortContainerShape,
-								DiagramUtil.SHAPE_providesPortRectangleShape,
-								DiagramUtil.SHAPE_usesPortRectangleShape,
-								DiagramUtil.SHAPE_interfaceContainerShape,
-								DiagramUtil.SHAPE_interfaceEllipseShape}))
+		if(DUtil.doesPictogramContainProperty(context, 
+			  new String[] {RHContainerShapeImpl.SHAPE_providesPortsContainerShape,
+				RHContainerShapeImpl.SHAPE_usesPortsContainerShape,
+				RHContainerShapeImpl.SHAPE_providesPortContainerShape,
+				RHContainerShapeImpl.SHAPE_usesPortContainerShape,
+				RHContainerShapeImpl.SHAPE_providesPortRectangleShape,
+				RHContainerShapeImpl.SHAPE_usesPortRectangleShape,
+				RHContainerShapeImpl.SHAPE_interfaceContainerShape,
+				RHContainerShapeImpl.SHAPE_interfaceEllipseShape}))
 		{
 			return new DefaultDeleteFeature(this) {
 				public boolean isAvailable(IContext context) {
@@ -264,15 +265,15 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	public IRemoveFeature getRemoveFeature(IRemoveContext context){
 		
 		//Search for shapes that we don't want the user to have remove capability
-		if(DiagramUtil.doesPictogramContainProperty(context, 
-				  new String[] {DiagramUtil.SHAPE_providesPortsContainerShape,
-									DiagramUtil.SHAPE_usesPortsContainerShape,
-									DiagramUtil.SHAPE_providesPortContainerShape,
-									DiagramUtil.SHAPE_usesPortContainerShape,
-									DiagramUtil.SHAPE_providesPortRectangleShape,
-									DiagramUtil.SHAPE_usesPortRectangleShape,
-									DiagramUtil.SHAPE_interfaceContainerShape,
-									DiagramUtil.SHAPE_interfaceEllipseShape}))
+		if(DUtil.doesPictogramContainProperty(context, 
+				  new String[] {RHContainerShapeImpl.SHAPE_providesPortsContainerShape,
+				RHContainerShapeImpl.SHAPE_usesPortsContainerShape,
+				RHContainerShapeImpl.SHAPE_providesPortContainerShape,
+				RHContainerShapeImpl.SHAPE_usesPortContainerShape,
+				RHContainerShapeImpl.SHAPE_providesPortRectangleShape,
+				RHContainerShapeImpl.SHAPE_usesPortRectangleShape,
+				RHContainerShapeImpl.SHAPE_interfaceContainerShape,
+				RHContainerShapeImpl.SHAPE_interfaceEllipseShape}))
 			{
 			return new DefaultRemoveFeature(this) {
 				public boolean isAvailable(IContext context) {
@@ -298,10 +299,10 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	public IResizeShapeFeature getResizeShapeFeature(IResizeShapeContext context){
 		
 		//Search for shapes that we don't want the user to have resize capability
-		if(DiagramUtil.doesPictogramContainProperty(context, 
-				new String[] {DiagramUtil.SHAPE_providesPortRectangleShape,
-				DiagramUtil.SHAPE_usesPortRectangleShape,
-				DiagramUtil.SHAPE_interfaceContainerShape}))
+		if(DUtil.doesPictogramContainProperty(context, 
+				new String[] {RHContainerShapeImpl.SHAPE_providesPortRectangleShape,
+				RHContainerShapeImpl.SHAPE_usesPortRectangleShape,
+				RHContainerShapeImpl.SHAPE_interfaceContainerShape}))
 		{
 			return new DefaultResizeShapeFeature(this) {
 				public boolean canResizeShape(IResizeShapeContext context) {

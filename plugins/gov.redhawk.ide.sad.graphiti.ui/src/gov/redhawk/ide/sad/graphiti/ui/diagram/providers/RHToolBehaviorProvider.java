@@ -1,5 +1,6 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
+import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.add.CreateComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
@@ -9,7 +10,7 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByFileManagerPattern
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByServicePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.SADConnectInterfacePattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
@@ -42,7 +43,6 @@ import org.eclipse.graphiti.palette.IToolEntry;
 import org.eclipse.graphiti.palette.impl.ConnectionCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
-import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -63,26 +63,28 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	public PictogramElement getSelection(PictogramElement originalPe, PictogramElement[] oldSelection) {
 		
 		if(originalPe instanceof FixPointAnchor ||
-				DiagramUtil.doesPictogramContainProperty(originalPe, 
+				DUtil.doesPictogramContainProperty(originalPe, 
 						  new String[] {//DiagramUtil.SHAPE_providesPortsContainerShape,
 											//DiagramUtil.SHAPE_usesPortsContainerShape,
-											DiagramUtil.SHAPE_usesPortRectangleShape,
-											DiagramUtil.SHAPE_providesPortRectangleShape,})){
+						RHContainerShapeImpl.SHAPE_usesPortRectangleShape,
+						RHContainerShapeImpl.SHAPE_providesPortRectangleShape,})){
 			System.out.println("found an anchor");
 			return null;
 		}
 		
 		//Always select outerContainershape instead of its contents
-		if(DiagramUtil.doesPictogramContainProperty(originalPe, 
-				  new String[] {DiagramUtil.SHAPE_providesPortsContainerShape,
-									DiagramUtil.SHAPE_usesPortsContainerShape,
-									DiagramUtil.SHAPE_providesPortContainerShape,
-									DiagramUtil.SHAPE_usesPortContainerShape,
-									DiagramUtil.SHAPE_interfaceContainerShape,
-									DiagramUtil.SHAPE_interfaceEllipseShape}))
+		if(DUtil.doesPictogramContainProperty(originalPe, 
+				  new String[] {RHContainerShapeImpl.SHAPE_providesPortContainerShape,
+				RHContainerShapeImpl.SHAPE_usesPortContainerShape,
+				RHContainerShapeImpl.SHAPE_providesPortsContainerShape,
+				RHContainerShapeImpl.SHAPE_usesPortsContainerShape,
+				RHContainerShapeImpl.SHAPE_providesPortContainerShape,
+				RHContainerShapeImpl.SHAPE_usesPortContainerShape,
+				RHContainerShapeImpl.SHAPE_interfaceContainerShape,
+				RHContainerShapeImpl.SHAPE_interfaceEllipseShape}))
 
 		{
-			ContainerShape outerContainerShape = DiagramUtil.findContainerShapeParentWithProperty(originalPe, DiagramUtil.SHAPE_outerContainerShape);
+			ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(originalPe, RHContainerShapeImpl.SHAPE_outerContainerShape);
 			return outerContainerShape;
 		}
 		return null;

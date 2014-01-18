@@ -2,7 +2,7 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.util.StringUtil;
 
@@ -65,7 +65,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	public boolean canStartConnection(ICreateConnectionContext context) {
 		
 		//get sad from diagram
-		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 		
 		//source anchor (allow creating connection by starting from either direction)
 		UsesPortStub source = getUsesPortStub(context);
@@ -124,7 +124,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		//add static graphical arrow
 		ConnectionDecorator cd;
 		cd = peCreateService.createConnectionDecorator(connection, false, 1.0, true);
-		DiagramUtil.createArrow(cd, getFeatureProvider(), gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(),  StyleUtil.BLACK));
+		DUtil.createArrow(cd, getFeatureProvider(), gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(),  StyleUtil.BLACK));
 		
 		//link ports to connection
 		getFeatureProvider().link(connection, new Object[] { connectInterface, connectInterface.getSource(), connectInterface.getTarget()});
@@ -141,7 +141,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	@Override
 	public boolean canCreate(ICreateConnectionContext context) {
 		//get sad from diagram
-		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 		if(sad == null) return false;
 		
 		//determine source
@@ -175,9 +175,9 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		
 		//force selection of shape so that we can then right click for contextual options
 		//this is kind of a hack, it would be better if selection happened automatically when its clicked.
-//		getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior()
-//			.getDiagramContainer().selectPictogramElements(
-//					new PictogramElement[] {context.getSourcePictogramElement()});
+		getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior()
+			.getDiagramContainer().selectPictogramElements(
+					new PictogramElement[] {context.getSourcePictogramElement()});
 
 		
 		return true;
@@ -205,7 +205,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 		
 		//get sad from diagram
-		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 		
 		//container for new SadConnectInterface, necessary for reference after command execution
 		final SadConnectInterface[] sadConnectInterfaces = new SadConnectInterface[1];

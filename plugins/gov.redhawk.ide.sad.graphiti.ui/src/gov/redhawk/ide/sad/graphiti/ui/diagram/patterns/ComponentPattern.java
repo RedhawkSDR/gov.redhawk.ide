@@ -1,8 +1,8 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
-import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
+import gov.redhawk.ide.sad.graphiti.ext.RHGxFactory;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -13,20 +13,19 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
-import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.validation.IValidator;
-import org.eclipse.core.databinding.validation.ValidationStatus;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
+import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -56,50 +55,6 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	}
 	
 	
-	public static UpdateValueStrategy floatingPointRangeValidator(final String fieldName, final float minValue, final float maxValue, final boolean allowDefault){
-	    return new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
-
-	    	@Override
-	    	public IStatus validate(Object value){
-	    		if(value != null && value instanceof String){
-	    			
-	    			String s = (String)value;
-	    			
-	    			//empty test
-	    			if(s.trim().length() <=0){
-	    				return ValidationStatus.error(fieldName + "must be non-empty");
-	    			}
-	    				
-	    			//if "default" acceptable, test for it
-	    			if(allowDefault && "default".equals(s)){
-	    				return ValidationStatus.ok();
-	    			}
-	    			
-	    			//float test
-	    			Float fl;
-	    			try{
-	    				fl = Float.parseFloat(s);
-	    			}catch(NumberFormatException nfe){
-	    				return ValidationStatus.error(fieldName + "must be a floating point number");
-	    			}
-	    			
-	    			//min test
-	    			if(fl < minValue){
-	    				return ValidationStatus.error(fieldName + "must be larger than or equal to " + String.valueOf(minValue));
-	    			}
-	    			
-	    			//max test
-	    			if(fl > maxValue){
-	    				return ValidationStatus.error(fieldName + "must be less than or equal to " + String.valueOf(minValue));
-	    			}
-	    				
-	    			return ValidationStatus.ok();
-	    		}
-				return null;
-	    	}
-	    });
-	}
-	
 	//THE FOLLOWING THREE METHODS DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
 	@Override
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
@@ -123,7 +78,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	public boolean canAdd(IAddContext context) {
 		if (context.getNewObject() instanceof SadComponentInstantiation) {
 			if(context.getTargetContainer() instanceof Diagram ||
-					DiagramUtil.getHostCollocation(context.getTargetContainer()) != null){
+					DUtil.getHostCollocation(context.getTargetContainer()) != null){
 				return true;
 			}
 			return false;
@@ -136,13 +91,6 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		return false;
 	}
 	
-//	@Override
-//	public void remove(IRemoveContext context) {
-//		if (wrappedRemoveFeature == null) {
-//			wrappedRemoveFeature = createRemoveFeature(context);
-//		}
-//		wrappedRemoveFeature.remove(context);
-//	}
 	
 	/**
 	 * Return true if the user has selected a pictogram element that is linked with
@@ -150,7 +98,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	 */
 	@Override
 	public boolean canDelete(IDeleteContext context) {
-		Object obj = DiagramUtil.getBusinessObject(context.getPictogramElement());
+		Object obj = DUtil.getBusinessObject(context.getPictogramElement());
 		if(obj instanceof SadComponentInstantiation){
 			return true;
 		}
@@ -165,15 +113,15 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		
 		//set componentToDelete
 		final SadComponentInstantiation ciToDelete = 
-						(SadComponentInstantiation)DiagramUtil.getBusinessObject(context.getPictogramElement());
+						(SadComponentInstantiation)DUtil.getBusinessObject(context.getPictogramElement());
 		
-		Diagram diagram = DiagramUtil.findDiagram((ContainerShape)context.getPictogramElement());
+		Diagram diagram = DUtil.findDiagram((ContainerShape)context.getPictogramElement());
 		
 		//editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 		
 		//get sad from diagram
-		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 		
 		//Perform business object manipulation in a Command
 		TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
@@ -182,7 +130,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
             protected void doExecute() {
 				
 				//delete component from SoftwareAssembly
-				DiagramUtil.deleteComponentInstantiation(ciToDelete, sad);
+				DUtil.deleteComponentInstantiation(ciToDelete, sad);
 				
 				//re-organize start order
 				organizeStartOrder(sad);
@@ -193,7 +141,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		super.delete(context);
 		
 		//redraw start order 
-		DiagramUtil.organizeDiagramStartOrder(diagram);
+		//DUtil.organizeDiagramStartOrder(diagram);
 	}
 	
 	@Override
@@ -206,50 +154,32 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	 * Adds a Component to the diagram.  Immediately calls resize at the end to keep sizing and location in one place.
 	 */
 	public PictogramElement add(IAddContext context) {
+		
 		SadComponentInstantiation sadComponentInstantiation = (SadComponentInstantiation) context.getNewObject();
 		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
-		Diagram diagram = DiagramUtil.findDiagram(targetContainerShape);
 		
-		//OUTER RECTANGLE
-		ContainerShape outerContainerShape = 
-				DiagramUtil.addOuterRectangle(targetContainerShape, 
-						sadComponentInstantiation.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(), 
-						sadComponentInstantiation, getFeatureProvider(),
-						ImageProvider.IMG_COMPONENT_PLACEMENT,
-						StyleUtil.getStyleForComponentOuter(DiagramUtil.findDiagram(targetContainerShape)));
-		Graphiti.getGaLayoutService().setLocation(outerContainerShape.getGraphicsAlgorithm(), 
+		//create shape
+		ComponentShape componentShape = RHGxFactory.eINSTANCE.createComponentShape();
+		
+		//initialize shape contents
+		componentShape.init(targetContainerShape, sadComponentInstantiation, getFeatureProvider());
+		
+		//set shape location to user's selection
+		Graphiti.getGaLayoutService().setLocation(componentShape.getGraphicsAlgorithm(), 
 				context.getX(), context.getY());
 		
-		//INNER RECTANGLE
-		ContainerShape innerContainerShape = DiagramUtil.addInnerRectangle(diagram,
-				outerContainerShape,
-				sadComponentInstantiation.getUsageName(),
-				getFeatureProvider(),ImageProvider.IMG_COMPONENT_INSTANCE,
-				StyleUtil.getStyleForComponentInner(diagram));
-
-		//add start order ellipse
-		DiagramUtil.addStartOrderEllipse(innerContainerShape, diagram, sadComponentInstantiation);
-
-		//add lollipop interface anchor to component.
-		DiagramUtil.addLollipop(outerContainerShape, diagram, sadComponentInstantiation.getInterfaceStub(), getFeatureProvider());
-		
-		//add provides ports
-		DiagramUtil.addProvidesPorts(outerContainerShape, diagram, sadComponentInstantiation.getProvides(), getFeatureProvider());
-
-		//add uses ports
-		DiagramUtil.addUsesPorts(outerContainerShape, diagram, sadComponentInstantiation.getUses(), getFeatureProvider());
-
 		//layout
-		layoutPictogramElement(outerContainerShape);
+		layoutPictogramElement(componentShape);
+		
+		return componentShape;
 
-		return outerContainerShape;
 	}
 	
 
 	@Override
 	public boolean canLayout(ILayoutContext context){
 		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
-		Object obj = DiagramUtil.getBusinessObject(containerShape);
+		Object obj = DUtil.getBusinessObject(containerShape);
 		if(obj instanceof SadComponentInstantiation){
 			return true;
 		}
@@ -262,34 +192,23 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	@Override
 	public boolean layout(ILayoutContext context){
 
-		//get shape being laid out
-        ContainerShape outerContainerShape = (ContainerShape) context.getPictogramElement();
-        
-        //get linked component
-		SadComponentInstantiation component = (SadComponentInstantiation)DiagramUtil.getBusinessObject(outerContainerShape);
-
-		//layout outerContainerShape of component
-		DiagramUtil.layoutOuterContainerShape(outerContainerShape, 
-				component.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(),
-				component.getUsageName(), component.getProvides(), component.getUses());
+		((ComponentShape)context.getPictogramElement()).layout();
 		
 		//something is always changing.
         return true;
 	}
 	
-
-	
 	public boolean canMoveShape(IMoveShapeContext context) {
 
 		SadComponentInstantiation sadComponentInstantiation = 
-				(SadComponentInstantiation)DiagramUtil.getBusinessObject(context.getPictogramElement());
+				(SadComponentInstantiation)DUtil.getBusinessObject(context.getPictogramElement());
 		if(sadComponentInstantiation == null){
 			return false;
 		}
 		
 		//if moving to HostCollocation to Sad Partitioning
 		if(context.getTargetContainer() instanceof Diagram ||
-				DiagramUtil.getHostCollocation(context.getTargetContainer()) != null){
+				DUtil.getHostCollocation(context.getTargetContainer()) != null){
 			return true;
 		}
 		return false;
@@ -302,10 +221,10 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	 * if moving within the same container allow parent class to perform graphical move
 	 */
 	public void moveShape(IMoveShapeContext context) {
-		SadComponentInstantiation sadComponentInstantiation = 
-				(SadComponentInstantiation)DiagramUtil.getBusinessObject(context.getPictogramElement());
+		SadComponentInstantiation ci = 
+				(SadComponentInstantiation)DUtil.getBusinessObject(context.getPictogramElement());
 
-		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 		
 		//if moving inside the same container
 		if(context.getSourceContainer() == context.getTargetContainer()){
@@ -313,30 +232,30 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		}
 		
 		//if moving from HostCollocation to a different HostCollocation
-		if(DiagramUtil.getHostCollocation(context.getSourceContainer()) != null &&
-				DiagramUtil.getHostCollocation(context.getTargetContainer()) != null &&
-				DiagramUtil.getHostCollocation(context.getSourceContainer()) != DiagramUtil.getHostCollocation(context.getTargetContainer())){
+		if(DUtil.getHostCollocation(context.getSourceContainer()) != null &&
+				DUtil.getHostCollocation(context.getTargetContainer()) != null &&
+				DUtil.getHostCollocation(context.getSourceContainer()) != DUtil.getHostCollocation(context.getTargetContainer())){
 			//swap parents
-			DiagramUtil.getHostCollocation(context.getSourceContainer()).getComponentPlacement().remove((SadComponentPlacement)sadComponentInstantiation.getPlacement());
-			DiagramUtil.getHostCollocation(context.getTargetContainer()).getComponentPlacement().add((SadComponentPlacement)sadComponentInstantiation.getPlacement());
+			DUtil.getHostCollocation(context.getSourceContainer()).getComponentPlacement().remove((SadComponentPlacement)ci.getPlacement());
+			DUtil.getHostCollocation(context.getTargetContainer()).getComponentPlacement().add((SadComponentPlacement)ci.getPlacement());
 			super.moveShape(context);
 		}
 		
 		//if moving to HostCollocation from Sad Partitioning
-		if(DiagramUtil.getHostCollocation(context.getTargetContainer()) != null &&
+		if(DUtil.getHostCollocation(context.getTargetContainer()) != null &&
 				context.getSourceContainer() instanceof Diagram){
 			//swap parents
-			sad.getPartitioning().getComponentPlacement().remove(sadComponentInstantiation.getPlacement());
-			DiagramUtil.getHostCollocation(context.getTargetContainer()).getComponentPlacement().add((SadComponentPlacement)sadComponentInstantiation.getPlacement());
+			sad.getPartitioning().getComponentPlacement().remove(ci.getPlacement());
+			DUtil.getHostCollocation(context.getTargetContainer()).getComponentPlacement().add((SadComponentPlacement)ci.getPlacement());
 			super.moveShape(context);
 		}
 		
 		//if moving to Sad Partitioning from HostCollocation
-		if(DiagramUtil.getHostCollocation(context.getSourceContainer()) != null &&
+		if(DUtil.getHostCollocation(context.getSourceContainer()) != null &&
 				context.getTargetContainer() instanceof Diagram){
 			//swap parents
-			sad.getPartitioning().getComponentPlacement().add((SadComponentPlacement)sadComponentInstantiation.getPlacement());
-			DiagramUtil.getHostCollocation(context.getSourceContainer()).getComponentPlacement().remove((SadComponentPlacement)sadComponentInstantiation.getPlacement());
+			sad.getPartitioning().getComponentPlacement().add((SadComponentPlacement)ci.getPlacement());
+			DUtil.getHostCollocation(context.getSourceContainer()).getComponentPlacement().remove((SadComponentPlacement)ci.getPlacement());
 			super.moveShape(context);
 		}
 
@@ -388,5 +307,42 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		}
 	}
 	
+//	@Override
+//	public boolean canUpdate(IUpdateContext context) {
+//		PictogramElement pictogramElement = context.getPictogramElement();
+//		return isPatternControlled(pictogramElement);
+//	}
+
+	@Override
+	public boolean update(IUpdateContext context) {
+		
+		//business object
+		SadComponentInstantiation ci = 
+				(SadComponentInstantiation)DUtil.getBusinessObject(context.getPictogramElement());
+				
+		Reason updated = ((ComponentShape)context.getPictogramElement()).update(ci, getFeatureProvider());
+		
+		//if we updated redraw
+		if(updated.toBoolean()){
+			layoutPictogramElement(context.getPictogramElement());
+		}
+
+		return updated.toBoolean();
+	}
+	
+	/**
+	 * Determines whether we need to update the diagram from the model.  
+	 */
+	@Override
+	public IReason updateNeeded(IUpdateContext context) {
+		
+		//business object
+		SadComponentInstantiation ci = 
+				(SadComponentInstantiation)DUtil.getBusinessObject(context.getPictogramElement());
+				
+		Reason requiresUpdate = ((ComponentShape)context.getPictogramElement()).updateNeeded(ci, getFeatureProvider());
+
+		return requiresUpdate;
+	}
 
 }

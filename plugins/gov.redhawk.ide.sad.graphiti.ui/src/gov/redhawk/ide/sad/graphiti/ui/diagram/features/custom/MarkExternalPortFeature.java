@@ -1,6 +1,7 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom;
 
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
+import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -46,7 +47,7 @@ public class MarkExternalPortFeature extends AbstractCustomFeature{
 	@Override
     public boolean canExecute(ICustomContext context) {
 		if(context.getPictogramElements() != null && context.getPictogramElements().length > 0){
-		    Object obj = DiagramUtil.getBusinessObject(context.getPictogramElements()[0]);
+		    Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 		    if(obj instanceof ProvidesPortStub || obj instanceof UsesPortStub){
 		    	return true;
 		    }
@@ -60,7 +61,7 @@ public class MarkExternalPortFeature extends AbstractCustomFeature{
 	@Override
     public void execute(ICustomContext context) {
 		FixPointAnchor fixPointAnchor = (FixPointAnchor)context.getPictogramElements()[0];
-	    final Object obj = DiagramUtil.getBusinessObject(fixPointAnchor);
+	    final Object obj = DUtil.getBusinessObject(fixPointAnchor);
 	    
 	    ContainerShape providesPortRectangleShape = (ContainerShape)Graphiti.getPeService().getActiveContainerPe(fixPointAnchor);
 	    
@@ -70,11 +71,11 @@ public class MarkExternalPortFeature extends AbstractCustomFeature{
 	    TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 	    //get sad from diagram
-	    final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+	    final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 
 	    //get container outerContainerShape, which will be linked to SadComponentInstantiation
-	    ContainerShape outerContainerShape = DiagramUtil.findContainerShapeParentWithProperty(providesPortRectangleShape, DiagramUtil.SHAPE_outerContainerShape);
-	    final SadComponentInstantiation ci = (SadComponentInstantiation)DiagramUtil.getBusinessObject(outerContainerShape);
+	    ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(providesPortRectangleShape, RHContainerShapeImpl.SHAPE_outerContainerShape);
+	    final SadComponentInstantiation ci = (SadComponentInstantiation)DUtil.getBusinessObject(outerContainerShape);
 	    
 	    //Perform business object manipulation in a Command
 	    TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
@@ -108,7 +109,7 @@ public class MarkExternalPortFeature extends AbstractCustomFeature{
 
 	    //change style of port
 	    Rectangle fixPointAnchorRectangle = (Rectangle)fixPointAnchor.getGraphicsAlgorithm();
-	    fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalUsesPort(DiagramUtil.findDiagram(outerContainerShape)));
+	    fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalUsesPort(DUtil.findDiagram(outerContainerShape)));
 	    updatePictogramElement(fixPointAnchor);
 	    
 	    //we might need to work with the anchor isntad...is that why the box isn't turning blue and because its not selectable when the outerContainerBox isn't selected

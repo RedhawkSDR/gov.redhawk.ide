@@ -1,7 +1,8 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
+import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.examples.common.ExampleUtil;
+import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
@@ -28,6 +30,7 @@ import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -40,6 +43,14 @@ import org.eclipse.graphiti.services.IGaLayoutService;
 public class HostCollocationPattern extends AbstractPattern implements IPattern {
 
 	public static final String NAME = "Host Collocation";
+	
+	//Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove etc.)
+	public final static String SHAPE_outerContainerShape = "outerContainerShape";
+		
+	//These are property key/value pairs that help us resize an existing shape by properly identifying graphicsAlgorithms
+	public final static String GA_outerRoundedRectangle = "outerRoundedRectangle";
+	public final static String GA_outerRoundedRectangleText = "outerRoundedRectangleText";
+	public final static String GA_outerRoundedRectangleImage = "outerRoundedRectangleImage";
 
 	public HostCollocationPattern() {
 		super();
@@ -103,7 +114,7 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
 
 		//OUTER RECTANGLE
-		ContainerShape outerContainerShape = DiagramUtil.addOuterRectangle(diagram, hostCollocation.getName(), hostCollocation, getFeatureProvider(), getCreateImageId(),
+		ContainerShape outerContainerShape = addOuterRectangle(diagram, hostCollocation.getName(), hostCollocation, getFeatureProvider(), getCreateImageId(),
 		        StyleUtil.getStyleForHostCollocation(diagram));
 		
 		RoundedRectangle outerRoundedRectangle = null;
@@ -111,13 +122,13 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		Image outerRoundedRectangleImage = null;
 		
 		//find all of our diagram elements
-		List<PropertyContainer> children = DiagramUtil.collectPropertyContainerChildren(outerContainerShape);
+		List<PropertyContainer> children = DUtil.collectPropertyContainerChildren(outerContainerShape);
 		for(PropertyContainer pc: children){
-			if(DiagramUtil.isPropertyElementType(pc, DiagramUtil.GA_outerRoundedRectangle)){
+			if(DUtil.isPropertyElementType(pc, GA_outerRoundedRectangle)){
 				outerRoundedRectangle = (RoundedRectangle)pc;
-			}else if(DiagramUtil.isPropertyElementType(pc, DiagramUtil.GA_outerRoundedRectangleText)){
+			}else if(DUtil.isPropertyElementType(pc, GA_outerRoundedRectangleText)){
 				outerRoundedRectangleText = (Text)pc;
-			}else if(DiagramUtil.isPropertyElementType(pc, DiagramUtil.GA_outerRoundedRectangleImage)){
+			}else if(DUtil.isPropertyElementType(pc, GA_outerRoundedRectangleImage)){
 				outerRoundedRectangleImage = (Image)pc;
 			}
 		}
@@ -127,12 +138,12 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		int minHeight = context.getHeight() > 300 ? context.getHeight() : 300;
 		//outerRoundedRectangle
 		gaLayoutService.setLocationAndSize(outerRoundedRectangle, context.getX(), context.getY(), minWidth, minHeight);
-		gaLayoutService.setLocationAndSize(outerRoundedRectangleText, DiagramUtil.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING+DiagramUtil.ICON_IMAGE_LENGTH+4, 0, minWidth-(DiagramUtil.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING+DiagramUtil.ICON_IMAGE_LENGTH+4), 20);
-		gaLayoutService.setLocationAndSize(outerRoundedRectangleImage, DiagramUtil.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0, DiagramUtil.ICON_IMAGE_LENGTH, DiagramUtil.ICON_IMAGE_LENGTH);
+		gaLayoutService.setLocationAndSize(outerRoundedRectangleText, RHContainerShapeImpl.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING+RHContainerShapeImpl.ICON_IMAGE_LENGTH+4, 0, minWidth-(RHContainerShapeImpl.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING+RHContainerShapeImpl.ICON_IMAGE_LENGTH+4), 20);
+		gaLayoutService.setLocationAndSize(outerRoundedRectangleImage, RHContainerShapeImpl.INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0, RHContainerShapeImpl.ICON_IMAGE_LENGTH, RHContainerShapeImpl.ICON_IMAGE_LENGTH);
 		
 		//move all SadComponentInstantiation shapes into new HostCollocation shape
 		//find all SadComponentInstantiation shapes
-		List<Shape> containedShapes = DiagramUtil.getContainersInArea(getDiagram(), context, DiagramUtil.GA_outerRoundedRectangle);
+		List<Shape> containedShapes = DUtil.getContainersInArea(getDiagram(), context, GA_outerRoundedRectangle);
 		for(Shape shape: containedShapes){
 			for(EObject obj: shape.getLink().getBusinessObjects()){
 				if(obj instanceof SadComponentInstantiation){
@@ -172,10 +183,10 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		//get sad from diagram
-		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 
 		//find all SadComponentInstantiation
-		List<Shape> containedShapes = DiagramUtil.getContainersInArea(getDiagram(), context, DiagramUtil.GA_outerRoundedRectangle);
+		List<Shape> containedShapes = DUtil.getContainersInArea(getDiagram(), context, GA_outerRoundedRectangle);
 		final List<SadComponentInstantiation> sadComponentInstantiations = new ArrayList<SadComponentInstantiation>();
 		for(Shape shape: containedShapes){
 			for(EObject obj: shape.getLink().getBusinessObjects()){
@@ -248,16 +259,16 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 
 		//set hostCollocationToDelete
 		final HostCollocation hostCollocation = 
-				(HostCollocation)DiagramUtil.getBusinessObject(context.getPictogramElement());
+				(HostCollocation)DUtil.getBusinessObject(context.getPictogramElement());
 		
 		//editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 				
 		//get sad from diagram
-		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 				
 		//find all components to remove (no longer inside the host collocation box, minimized)
-		List<Shape> shapesToRemoveFromHostCollocation = DiagramUtil.getContainersOutsideArea(containerShape, context, DiagramUtil.GA_outerRoundedRectangle);
+		List<Shape> shapesToRemoveFromHostCollocation = DUtil.getContainersOutsideArea(containerShape, context, GA_outerRoundedRectangle);
 		final List<SadComponentInstantiation> ciToRemove = new ArrayList<SadComponentInstantiation>();
 		for(Shape shape: shapesToRemoveFromHostCollocation){
 			for(EObject obj: shape.getLink().getBusinessObjects()){
@@ -268,7 +279,7 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		}
 		
 		//find all components to add to add (now inside host collocation, expanded)
-		List<Shape> shapesToAddToHostCollocation = DiagramUtil.getContainersInArea(getDiagram(), context, DiagramUtil.GA_outerRoundedRectangle);
+		List<Shape> shapesToAddToHostCollocation = DUtil.getContainersInArea(getDiagram(), context, GA_outerRoundedRectangle);
 		final List<SadComponentInstantiation> ciToAdd = new ArrayList<SadComponentInstantiation>();
 		for(Shape shape: shapesToAddToHostCollocation){
 			for(EObject obj: shape.getLink().getBusinessObjects()){
@@ -301,7 +312,7 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		
 		//move shapes to diagram from host collocation
 		for(Shape s: shapesToRemoveFromHostCollocation){
-			Object obj = DiagramUtil.getBusinessObject(s);
+			Object obj = DUtil.getBusinessObject(s);
 			if(obj instanceof SadComponentInstantiation){
 				//reparent
 				s.setContainer(getDiagram());
@@ -315,7 +326,7 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		
 		//move shapes from host collocation to diagram
 		for(Shape s: shapesToAddToHostCollocation){
-			Object obj = DiagramUtil.getBusinessObject(s);
+			Object obj = DUtil.getBusinessObject(s);
 			if(obj instanceof SadComponentInstantiation){
 				//reparent
 				s.setContainer(containerShape);
@@ -349,7 +360,7 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 	 */
 	@Override
 	public boolean canDelete(IDeleteContext context) {
-		Object obj = DiagramUtil.getBusinessObject(context.getPictogramElement());
+		Object obj = DUtil.getBusinessObject(context.getPictogramElement());
 		if(obj instanceof HostCollocation){
 			return true;
 		}
@@ -364,13 +375,13 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		
 		//set hostCollocationToDelete
 		final HostCollocation hostCollocationToDelete = 
-				(HostCollocation)DiagramUtil.getBusinessObject(context.getPictogramElement());
+				(HostCollocation)DUtil.getBusinessObject(context.getPictogramElement());
 		
 		//editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 		
 		//get sad from diagram
-		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 		
 		//Create Component Related objects in SAD model
 		TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
@@ -388,7 +399,7 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 					for(SadComponentPlacement placement: hostCollocationToDelete.getComponentPlacement()){
 						if(placement.getComponentInstantiation() != null){
 							for(SadComponentInstantiation ci: placement.getComponentInstantiation()){
-								DiagramUtil.deleteComponentInstantiation(ci, sad);
+								DUtil.deleteComponentInstantiation(ci, sad);
 							}
 						}
 					}
@@ -406,5 +417,31 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		
 	}
 
+	/**
+	 * Creates a large rectangle intended to be an outside container and links the provided business object to it.
+	 * @param targetContainerShape
+	 * @param text
+	 * @param businessObject
+	 * @param featureProvider
+	 * @return
+	 */
+	private ContainerShape addOuterRectangle(ContainerShape targetContainerShape, String text, Object businessObject, 
+			IFeatureProvider featureProvider, String imageId, Style containerStyle){
+		ContainerShape outerContainerShape = Graphiti.getCreateService().createContainerShape(targetContainerShape, true);
+		Graphiti.getPeService().setPropertyValue(outerContainerShape, DUtil.SHAPE_TYPE, SHAPE_outerContainerShape);
+		RoundedRectangle outerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(outerContainerShape, 5, 5);
+		outerRoundedRectangle.setStyle(containerStyle);
+		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, DUtil.GA_TYPE, GA_outerRoundedRectangle);
+		//image
+		Image imgIcon = Graphiti.getGaCreateService().createImage(outerRoundedRectangle, imageId);
+		Graphiti.getPeService().setPropertyValue(imgIcon, DUtil.GA_TYPE, GA_outerRoundedRectangleImage);//ref helps with resize
+		//text
+		Text cText = Graphiti.getCreateService().createText(outerRoundedRectangle, text);
+		cText.setStyle(StyleUtil.getStyleForOuterText(DUtil.findDiagram(targetContainerShape)));
+		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_outerRoundedRectangleText);
+		featureProvider.link(outerContainerShape, businessObject); // link container and business object
+		
+		return outerContainerShape;
+	}
 
 }

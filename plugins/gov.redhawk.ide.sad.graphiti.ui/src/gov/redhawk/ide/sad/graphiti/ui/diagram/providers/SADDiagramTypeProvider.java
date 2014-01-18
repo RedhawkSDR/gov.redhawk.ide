@@ -36,11 +36,23 @@ public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider implemen
 		}
 	}
 	
+	/**
+	 * Provide a custom Behavior Provider
+	 */
 	@Override
 	public IToolBehaviorProvider[] getAvailableToolBehaviorProviders(){
 		if(toolBehaviorProviders == null){
 			toolBehaviorProviders = new IToolBehaviorProvider[] { new RHToolBehaviorProvider(this) };
 		}
 		return toolBehaviorProviders;
+	}
+	
+	
+	/**
+	 * On startup scan the model and update our diagram using the registered update feature providers
+	 */
+	@Override
+	public boolean isAutoUpdateAtStartup() {
+		return true;
 	}
 }

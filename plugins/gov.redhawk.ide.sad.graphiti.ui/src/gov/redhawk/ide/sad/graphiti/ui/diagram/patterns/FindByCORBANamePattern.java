@@ -1,7 +1,9 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
+import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.sad.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.wizards.FindByCORBANameWizardPage;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
@@ -89,41 +91,30 @@ public class FindByCORBANamePattern extends AbstractPattern implements IPattern{
 	@Override
 	public PictogramElement add(IAddContext context) {
 		FindByStub findByStub = (FindByStub) context.getNewObject();
+		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
 		Diagram diagram = (Diagram) context.getTargetContainer();
 		
 		//corba name
 		String corbaNameText = findByStub.getNamingService().getName();
 		
-		//OUTER RECTANGLE
-		ContainerShape outerContainerShape = 
-				DiagramUtil.addOuterRectangle(diagram, 
-						NAME, 
-						findByStub, getFeatureProvider(), ImageProvider.IMG_FIND_BY,
-						StyleUtil.getStyleForFindByOuter(diagram));
-		Graphiti.getGaLayoutService().setLocation(outerContainerShape.getGraphicsAlgorithm(), 
+		//create shape
+		RHContainerShape rhContainerShape = RHGxFactory.eINSTANCE.createRHContainerShape();
+
+		//initialize shape contents
+		rhContainerShape.init(targetContainerShape, NAME, 
+				findByStub, getFeatureProvider(), ImageProvider.IMG_FIND_BY,
+				StyleUtil.getStyleForFindByOuter(diagram), corbaNameText,
+				getCreateImageId(), StyleUtil.getStyleForFindByInner(diagram), 
+				findByStub.getInterface(), findByStub.getUses(), findByStub.getProvides());
+
+		//set shape location to user's selection
+		Graphiti.getGaLayoutService().setLocation(rhContainerShape.getGraphicsAlgorithm(), 
 				context.getX(), context.getY());
-		
-		//INNER RECTANGLE
-		DiagramUtil.addInnerRectangle(diagram,
-				outerContainerShape,
-				corbaNameText,
-				getFeatureProvider(), getCreateImageId(),
-				StyleUtil.getStyleForFindByInner(diagram));
-		
-
-		//add lollipop interface anchor to shape.
-		DiagramUtil.addLollipop(outerContainerShape, diagram, findByStub.getInterface(), getFeatureProvider());
-		
-		//add provides ports
-		DiagramUtil.addProvidesPorts(outerContainerShape, diagram, findByStub.getProvides(), getFeatureProvider());
-
-		//add uses ports
-		DiagramUtil.addUsesPorts(outerContainerShape, diagram, findByStub.getUses(), getFeatureProvider());
 
 		//layout
-		layoutPictogramElement(outerContainerShape);
+		layoutPictogramElement(rhContainerShape);
 
-		return outerContainerShape;
+		return rhContainerShape;
 	}
 	
 	@Override
@@ -203,7 +194,7 @@ public class FindByCORBANamePattern extends AbstractPattern implements IPattern{
 	@Override
 	public boolean canLayout(ILayoutContext context){
 		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
-		Object obj = DiagramUtil.getBusinessObject(containerShape);
+		Object obj = DUtil.getBusinessObject(containerShape);
 		if(obj instanceof FindByStub){
 			return true;
 		}
@@ -215,17 +206,7 @@ public class FindByCORBANamePattern extends AbstractPattern implements IPattern{
 	 */
 	@Override
 	public boolean layout(ILayoutContext context){
-
-		//get shape being laid out
-        ContainerShape outerContainerShape = (ContainerShape) context.getPictogramElement();
-        
-        //get linked component
-        FindByStub findByStub = (FindByStub)DiagramUtil.getBusinessObject(outerContainerShape);
-
-		//layout outerContainerShape of component
-		DiagramUtil.layoutOuterContainerShape(context.getPictogramElement(), NAME,
-				findByStub.getNamingService().getName(),
-				findByStub.getProvides(), findByStub.getUses());
+		((RHContainerShape)context.getPictogramElement()).layout();
 		
 		//something is always changing.
         return true;

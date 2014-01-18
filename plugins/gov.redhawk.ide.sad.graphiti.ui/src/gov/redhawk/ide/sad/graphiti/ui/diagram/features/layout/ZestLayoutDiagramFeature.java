@@ -1,5 +1,8 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout;
 
+import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -7,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
@@ -62,7 +66,7 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
      */
     @Override
     public String getDescription() {
-        return "Layout diagram with Zest Layouter"; //$NON-NLS-1$
+        return "Apply Horizontal Tree Layout"; //$NON-NLS-1$
     }
 
     /*
@@ -71,7 +75,7 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
      */
     @Override
     public String getName() {
-        return "&Layout with Zest"; //$NON-NLS-1$
+        return "&Apply Horizontal Tree Layout"; //$NON-NLS-1$
     }
 
     /*
@@ -94,14 +98,18 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
     @Override
     public void execute(ICustomContext context) {
         // ask the user for a LayoutAlgorithmn
-        Integer type = askForLayoutType();
+        //Integer type = askForLayoutType();
 
-        if (type != null) {
+        //if (type != null) {
             // get a map of the self connection anchor locations
             final Map<Connection, Point> selves = getSelfConnections();
 
             // get the chosen LayoutAlgorithmn instance
-            LayoutAlgorithm layoutAlgorithm = getLayoutAlgorithmn(type.intValue());
+            //This would be a good idea to let the user choose, I've found that only horizontal tree is worth it.
+            //LayoutAlgorithm layoutAlgorithm = getLayoutAlgorithmn(type.intValue());
+            
+            //Use the Horizontal Tree Layout
+            LayoutAlgorithm layoutAlgorithm = new HorizontalTreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING);
 
             if (layoutAlgorithm != null) {
                 try {
@@ -115,14 +123,15 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
                     // Setup the array of Shape LayoutEntity
                     LayoutEntity[] entities = map.values().toArray(new LayoutEntity[0]);
 
-                    // Get the diagram GraphicsAlgorithmn (we need the graph dimensions)
-                    GraphicsAlgorithm ga = getDiagram().getGraphicsAlgorithm();
+                    //Determine the dimensions required to house all of our shapes
+                    IDimension diagramBounds = DUtil.calculateDiagramBounds(getDiagram());
 
                     // Apply the LayoutAlgorithmn
-                    layoutAlgorithm.applyLayout(entities, connections, 0, 0, ga.getWidth(), ga.getHeight(), false, false);
+//                    layoutAlgorithm.applyLayout(entities, connections, 0, 0, 1000, 1000, false, false);
+                    layoutAlgorithm.applyLayout(entities, connections, 0, 0, diagramBounds.getWidth(), diagramBounds.getHeight()+1000, false, false);
 
                     // Update the Graphiti Shapes and Connections locations
-                    updateGraphCoordinates(entities, connections);
+                    updateGraphCoordinates(((TreeLayoutAlgorithm)layoutAlgorithm).getRoots(), entities, connections);
 
                     // Reposition the self connections bendpoints:
                     adaptSelfBendPoints(selves);
@@ -131,8 +140,40 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
                     e.printStackTrace();
                 }
             }
-        }
+        //}
     }
+    
+//    private IDimension getDiagramSizeRequired(Diagram d){
+//    	
+//    	for(Connection c: d.getConnections()){
+//    		c.get
+//    	}
+//    	
+//    	
+//    	for(Shape s: d.getChildren()){
+//    		
+//    	}
+//    }
+//    
+//    private IDimension getDiagramSizeRequired(LayoutEntity[] entitiesToLayout, LayoutRelationship[] relationshipsToConsider){
+//    	
+//    	
+//    	for(LayoutEntity e: entitiesToLayout){
+//    		
+//    	}
+//    	
+//    	for(LayoutRelationship r: relationshipsToConsider){
+//    		r.
+//    	}
+//    	
+//    	
+////    	for(Shape s: d.getChildren()){
+////    		
+////    	}
+//    }
+    
+    
+    
 
     /**
      * Used to keep track of the initial Connection locations for self connections<br/>
@@ -182,6 +223,45 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
         }
     }
 
+//    private List<SimpleNode> getTreeRootNodes(LayoutEntity[] entities){
+//    	for (LayoutEntity entity : entities) {
+//            SimpleNode node = (SimpleNode) entity;
+//            LinkedList<?> list = (LinkedList<?>)node.getRelatedEntities();
+//            if(list.getFirst().get)
+//    	}
+//    }
+    
+//	/**
+//	 * Computes positions recursively until the leaf nodes are reached.
+//	 */
+//	private void computePositionRecursively(InternalNode layoutEntity, int i, int relativePosition, Set seenAlready, InternalNode[] entities) {
+//		if (seenAlready.contains(layoutEntity)) {
+//			return;
+//		}
+//		seenAlready.add(layoutEntity);
+//
+//		int relativeCount = 0;
+//		List children = childrenLists[i];
+//		//TODO: Slow
+//		for (Iterator iter = children.iterator(); iter.hasNext();) {
+//			InternalNode childEntity = (InternalNode) iter.next();
+//			int childEntityIndex = indexOfInternalNode(entities, childEntity);
+//			computePositionRecursively(childEntity, childEntityIndex, relativePosition + relativeCount, width, height, seenAlready, entities);
+//			relativeCount = relativeCount + getNumberOfLeaves(childEntity, childEntityIndex, entities);
+//		}
+//	}
+//	
+//    IDimension getDiagramDimension(List roots, LayoutEntity[] entities, LayoutRelationship[] connections){
+//    	int rootLength = 0;
+//    	for(Object r: roots){
+//    		SimpleNode node = (SimpleNode) r;
+//    		rootLength += node.getWidth();
+//    		node.getRelationships()
+//    	}
+//    }
+//    
+    
+    
     /**
      * Reposition the Graphiti {@link PictogramElement}s and {@link Connection}s based on the
      * Zest {@link LayoutAlgorithm} computed locations
@@ -189,7 +269,11 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
      * @param entities
      * @param connections
      */
-    private void updateGraphCoordinates(LayoutEntity[] entities, LayoutRelationship[] connections) {
+    private void updateGraphCoordinates(List roots, LayoutEntity[] entities, LayoutRelationship[] connections) {
+    	
+
+    	
+    	
         for (LayoutEntity entity : entities) {
             SimpleNode node = (SimpleNode) entity;
             Shape shape = (Shape) node.getRealObject();
@@ -253,9 +337,9 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 
             //Modified from Spray code to handle the nested nature of the Component Shapes.  Code prior to change looked like: connection.getStart().getParent()
             // get the SimpleNode already created from the map:
-            Shape source = (Shape) connection.getStart().getParent().eContainer().eContainer().eContainer();
+            Shape source = (Shape)RHContainerShapeImpl.findFromChild(connection.getStart());
             SimpleNode sourceEntity = map.get(source);
-            Shape target = (Shape) connection.getEnd().getParent().eContainer().eContainer().eContainer();
+            Shape target = (Shape)RHContainerShapeImpl.findFromChild(connection.getEnd());
             SimpleNode targetEntity = map.get(target);
 
             if (source != target) { // we don't add self relations to avoid Cycle errors
@@ -288,6 +372,7 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
      *
      * @return the chosen algorithmn
      */
+    @SuppressWarnings("unused")
     private Integer askForLayoutType() {
         Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
         /** ZestLayoutAlgorithmnChoiceDialog is a simple Dialog asking for an Integer for now */
@@ -299,6 +384,7 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
      * @param current
      * @return
      */
+    @SuppressWarnings("unused")
     private LayoutAlgorithm getLayoutAlgorithmn(int current) {
         LayoutAlgorithm layout;
         int style = LayoutStyles.NO_LAYOUT_NODE_RESIZING;

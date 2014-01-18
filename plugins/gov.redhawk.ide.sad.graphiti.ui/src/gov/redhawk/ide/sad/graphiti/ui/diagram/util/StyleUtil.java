@@ -61,7 +61,6 @@ public class StyleUtil {
 	public static Style getStyleForComponentOuter(Diagram diagram){
 		final String styleId = "ComponentOuter";
 		Style style = findStyle(diagram, styleId);
-		
 		if(style == null){
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
@@ -78,11 +77,10 @@ public class StyleUtil {
 	//returns component inner rectangle style
 	public static Style getStyleForComponentInner(Diagram diagram){
 		final String styleId = "ComponentInner";
-		Style parentStyle = getStyleForComponentOuter(diagram);
 		Style style = findStyle(diagram, styleId);
 		if(style == null){
 			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(parentStyle, styleId);
+			style = gaService.createStyle(diagram, styleId);
 			gaService.setRenderingStyle(style, PredefinedColoredAreas.getBlueWhiteAdaptions());
 			style.setLineWidth(2);
 		}
@@ -93,7 +91,6 @@ public class StyleUtil {
 	public static Style getStyleForFindByOuter(Diagram diagram){
 		final String styleId = "FindByOuter";
 		Style style = findStyle(diagram, styleId);
-		
 		if(style == null){
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
@@ -111,7 +108,6 @@ public class StyleUtil {
 	public static Style getStyleForHostCollocation(Diagram diagram){
 		final String styleId = "HostCollocation";
 		Style style = findStyle(diagram, styleId);
-		
 		if(style == null){
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
@@ -128,11 +124,10 @@ public class StyleUtil {
 	//returns find by inner rectangle style
 	public static Style getStyleForFindByInner(Diagram diagram){
 		final String styleId = "FindByInner";
-		Style parentStyle = getStyleForComponentOuter(diagram);
 		Style style = findStyle(diagram, styleId);
 		if(style == null){
 			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(parentStyle, styleId);
+			style = gaService.createStyle(diagram, styleId);
 			style.setBackground(gaService.manageColor(diagram, new ColorConstant(255, 0, 0)));
 			style.setLineStyle(LineStyle.DASH);
 			gaService.setRenderingStyle(style, PredefinedColoredAreas.getCopperWhiteGlossAdaptions());
@@ -146,11 +141,11 @@ public class StyleUtil {
 	//returns outer text style
 	public static Style getStyleForOuterText(Diagram diagram){
 		final String styleId = "OuterText";
-		Style parentStyle = getStyleForComponentInner(diagram);
 		Style style = findStyle(diagram, styleId);
 		if(style == null){
 			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(parentStyle, styleId);
+			style = gaService.createStyle(diagram, styleId);
+			style.setForeground(gaService.manageColor(diagram, BLACK));
 			style.setFont(getOuterTitleFont(diagram));
 			style.setLineWidth(2);
 		}
@@ -160,12 +155,12 @@ public class StyleUtil {
 	//returns inner text style
 	public static Style getStyleForInnerText(Diagram diagram){
 		final String styleId = "InnerText";
-		Style parentStyle = getStyleForComponentInner(diagram);
 		Style style = findStyle(diagram, styleId);
 		if(style == null){
 			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(parentStyle, styleId);
+			style = gaService.createStyle(diagram, styleId);
 			style.setFont(getInnerTitleFont(diagram));
+			style.setForeground(gaService.manageColor(diagram, BLACK));
 			style.setLineWidth(2);
 		}
 		return style;
@@ -175,7 +170,6 @@ public class StyleUtil {
 	public static Style getStyleForProvidesPort(Diagram diagram){
 		final String styleId = "ProvidesPort";
 		Style style = findStyle(diagram, styleId);
-		
 		if(style == null){
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
@@ -192,7 +186,6 @@ public class StyleUtil {
 	public static Style getStyleForExternalProvidesPort(Diagram diagram){
 		final String styleId = "ExternalProvidesPort";
 		Style style = findStyle(diagram, styleId);
-		
 		if(style == null){
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
@@ -210,7 +203,6 @@ public class StyleUtil {
 	public static Style getStyleForUsesPort(Diagram diagram){
 		final String styleId = "UsesPort";
 		Style style = findStyle(diagram, styleId);
-		
 		if(style == null){
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
@@ -227,7 +219,6 @@ public class StyleUtil {
 	public static Style getStyleForExternalUsesPort(Diagram diagram){
 		final String styleId = "UsesExternalPort";
 		Style style = findStyle(diagram, styleId);
-		
 		if(style == null){
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
@@ -244,7 +235,6 @@ public class StyleUtil {
 	public static Style getStyleForUsesPortAnchor(Diagram diagram){
 		final String styleId = "UsesPortAnchor";
 		Style style = findStyle(diagram, styleId);
-		
 		if(style == null){
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);

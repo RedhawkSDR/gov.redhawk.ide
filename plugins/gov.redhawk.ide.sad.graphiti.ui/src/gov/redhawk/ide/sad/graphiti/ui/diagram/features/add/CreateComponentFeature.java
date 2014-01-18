@@ -2,7 +2,7 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.features.add;
 
 import gov.redhawk.diagram.activator.PluginActivator;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.sca.util.PluginUtil;
 
 import java.math.BigInteger;
@@ -47,7 +47,7 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 	@Override
 	public boolean canCreate(ICreateContext context) {
 		if(context.getTargetContainer() instanceof Diagram ||
-				DiagramUtil.getHostCollocation(context.getTargetContainer()) != null){
+				DUtil.getHostCollocation(context.getTargetContainer()) != null){
 			return true;
 		}
 		return false;
@@ -63,10 +63,10 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 		
 		//get sad from diagram
-		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 		
 		//determine if target is HostCollocation ContainerShape
-		HostCollocation hostCollocation = DiagramUtil.getHostCollocation(context.getTargetContainer());
+		HostCollocation hostCollocation = DUtil.getHostCollocation(context.getTargetContainer());
 		
 		//if HostCollocation was the target use it, otherwise add to sad partitioning
 		final EList<SadComponentPlacement> componentPlacementList = hostCollocation != null ? 

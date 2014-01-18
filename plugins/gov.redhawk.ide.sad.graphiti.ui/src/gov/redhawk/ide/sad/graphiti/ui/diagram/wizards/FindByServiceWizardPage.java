@@ -456,7 +456,9 @@ public class FindByServiceWizardPage extends WizardPage{
 	
 	//enable/disable enable port buttons
 	public void updateEnablePortsButtons(){
-		if(model.getEnableServiceName() || model.getEnableServiceType() && model.isServiceTypeSupportsPorts()){
+		//TODO: We want to limit ports to service types that extend portSupplier
+//		if(model.getEnableServiceName() || model.getEnableServiceType() && model.isServiceTypeSupportsPorts()){
+		if(model.getEnableServiceName() || model.getEnableServiceType()){
 			providesPortBtn.setEnabled(true);
 			usesPortBtn.setEnabled(true);
 		}else{

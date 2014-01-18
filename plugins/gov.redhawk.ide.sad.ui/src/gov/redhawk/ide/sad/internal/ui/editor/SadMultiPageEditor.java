@@ -14,7 +14,7 @@ import gov.redhawk.diagram.editor.URIEditorInputProxy;
 import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.SadDiagramUtilHelper;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.util.ModelUtil;
@@ -511,7 +511,7 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 
 	protected IEditorInput createDiagramInput(final Resource sadResource) throws IOException, CoreException {
 		
-		final URI diagramURI = DiagramUtil.getDiagramResourceURI(SadDiagramUtilHelper.INSTANCE, sadResource);
+		final URI diagramURI = DUtil.getDiagramResourceURI(SadDiagramUtilHelper.INSTANCE, sadResource);
 		
 		Resource diagramResource = this.getEditingDomain().getResourceSet().getResource(diagramURI, true);
 		

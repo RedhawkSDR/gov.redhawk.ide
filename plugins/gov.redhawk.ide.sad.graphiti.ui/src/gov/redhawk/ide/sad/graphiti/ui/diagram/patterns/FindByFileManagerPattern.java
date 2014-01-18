@@ -1,7 +1,9 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
+import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.sad.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
@@ -85,32 +87,27 @@ public class FindByFileManagerPattern extends AbstractPattern implements IPatter
 	@Override
 	public PictogramElement add(IAddContext context) {
 		FindByStub findByStub = (FindByStub) context.getNewObject();
+		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
 		Diagram diagram = (Diagram) context.getTargetContainer();
 		
-		//OUTER RECTANGLE
-		ContainerShape outerContainerShape = 
-				DiagramUtil.addOuterRectangle(diagram, 
-						NAME, 
-						findByStub, getFeatureProvider(), ImageProvider.IMG_FIND_BY,
-						StyleUtil.getStyleForFindByOuter(diagram));
-		Graphiti.getGaLayoutService().setLocation(outerContainerShape.getGraphicsAlgorithm(), 
+		//create shape
+		RHContainerShape rhContainerShape = RHGxFactory.eINSTANCE.createRHContainerShape();
+
+		//initialize shape contents
+		rhContainerShape.init(targetContainerShape, NAME, 
+				findByStub, getFeatureProvider(), ImageProvider.IMG_FIND_BY,
+				StyleUtil.getStyleForFindByOuter(diagram), SHAPE_TITLE,
+				getCreateImageId(), StyleUtil.getStyleForFindByInner(diagram), 
+				findByStub.getInterface(), findByStub.getUses(), findByStub.getProvides());
+
+		//set shape location to user's selection
+		Graphiti.getGaLayoutService().setLocation(rhContainerShape.getGraphicsAlgorithm(), 
 				context.getX(), context.getY());
 
-		//INNER RECTANGLE
-		DiagramUtil.addInnerRectangle(diagram,
-				outerContainerShape,
-				SHAPE_TITLE,
-				getFeatureProvider(), getCreateImageId(),
-				StyleUtil.getStyleForFindByInner(diagram));
-		
-
-		//add lollipop interface anchor to shape.
-		DiagramUtil.addLollipop(outerContainerShape, diagram, findByStub.getInterface(), getFeatureProvider());
-
 		//layout
-		layoutPictogramElement(outerContainerShape);
+		layoutPictogramElement(rhContainerShape);
 
-		return outerContainerShape;
+		return rhContainerShape;
 	}
 	
 	@Override
@@ -161,7 +158,7 @@ public class FindByFileManagerPattern extends AbstractPattern implements IPatter
 	@Override
 	public boolean canLayout(ILayoutContext context){
 		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
-		Object obj = DiagramUtil.getBusinessObject(containerShape);
+		Object obj = DUtil.getBusinessObject(containerShape);
 		if(obj instanceof FindByStub){
 			return true;
 		}
@@ -173,17 +170,7 @@ public class FindByFileManagerPattern extends AbstractPattern implements IPatter
 	 */
 	@Override
 	public boolean layout(ILayoutContext context){
-
-		//get shape being laid out
-        ContainerShape outerContainerShape = (ContainerShape) context.getPictogramElement();
-        
-        //get linked component
-        FindByStub findByStub = (FindByStub)DiagramUtil.getBusinessObject(outerContainerShape);
-
-		//layout outerContainerShape of component
-		DiagramUtil.layoutOuterContainerShape(context.getPictogramElement(), NAME,
-				SHAPE_TITLE,
-				findByStub.getProvides(), findByStub.getUses());
+		((RHContainerShape)context.getPictogramElement()).layout();
 		
 		//something is always changing.
         return true;

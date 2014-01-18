@@ -1,6 +1,6 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete;
 
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DiagramUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
@@ -48,7 +48,7 @@ public class DeleteSADConnectInterface extends DefaultDeleteFeature{
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		//get sad from diagram
-		final SoftwareAssembly sad = DiagramUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 
 		//Create Component Related objects in SAD model
 		TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
