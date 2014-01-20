@@ -23,6 +23,7 @@ import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.sca.util.SubMonitor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,7 +99,7 @@ public class LocalApplicationFactory {
 	}
 
 	public LocalApplicationFactory(final Map<String, String> implMap, final LocalSca localSca, final String mode, final ILaunch launch,
-		final DataType[] assemblyExec, final DataType[] assemblyConfig) {
+	        final DataType[] assemblyExec, final DataType[] assemblyConfig) {
 		this.implMap = implMap;
 		this.localSca = localSca;
 		this.mode = mode;
@@ -127,13 +128,27 @@ public class LocalApplicationFactory {
 		return parent.findContext(retVal);
 	}
 
+	/**
+	 * Carries out all the steps necessary to launch a waveform in the sandbox, including:
+	 * <ul>
+	 * <li>Launching components</li>
+	 * <li>Configuring components</li>
+	 * <li>Making waveform connections</li>
+	 * </ul>
+	 * @param sad
+	 * @param name
+	 * @param monitor
+	 * @return
+	 * @throws CoreException
+	 */
 	public LocalScaWaveform create(final SoftwareAssembly sad, String name, final IProgressMonitor monitor) throws CoreException {
+		final SubMonitor progress = SubMonitor.convert(monitor, 100);
 		String adjustedName = name;
 
 		// Try and narrow to the given name.  If an already bound exception occurs, append _ + i to the end and try again until 
 		// we've found a good name.
 		try {
-
+			progress.subTask("Create application");
 			final String appId = DceUuidUtil.createDceUUID();
 			final String profile = sad.eResource().getURI().path();
 
@@ -156,22 +171,33 @@ public class LocalApplicationFactory {
 					LocalApplicationFactory.this.localSca.getWaveforms().add(waveform);
 				}
 			});
+			progress.worked(1);
 
-			launchComponents(app, sad);
+			progress.subTask("Launch components");
+			launchComponents(progress.newChild(90), app, sad);
 
+			progress.subTask("Configure components");
 			configureComponents(app, sad, this.assemblyConfig);
+			progress.worked(4);
 
+			progress.subTask("Create connections");
 			createConnections(app, sad);
+			progress.worked(3);
 
+			progress.subTask("Bind application");
 			LocalApplicationFactory.bindApp(app);
+			progress.worked(1);
 
+			progress.subTask("Refresh");
+			SubMonitor subTask = progress.newChild(1);
 			try {
-				waveform.refresh(null, RefreshDepth.FULL);
+				waveform.refresh(subTask, RefreshDepth.FULL);
 			} catch (InterruptedException e) {
 				// PASS
 			}
 
 			app.getStreams().getOutStream().println("Done");
+			progress.done();
 			return waveform;
 		} catch (final SystemException e) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
@@ -190,6 +216,8 @@ public class LocalApplicationFactory {
 	}
 
 	/**
+	 * Performs the initial configure call on each component in the waveform
+	 *
 	 * @param app
 	 * @param sad
 	 * @param assemblyConfig
@@ -211,16 +239,22 @@ public class LocalApplicationFactory {
 	}
 
 	/**
+	 * Launches each component of the waveform
+	 *
+	 * @param monitor
 	 * @param app
 	 * @param sad
 	 * @param config
 	 * @throws CoreException
 	 */
-	protected void launchComponents(final ApplicationImpl app, final SoftwareAssembly sad) throws CoreException {
+	protected void launchComponents(IProgressMonitor monitor, final ApplicationImpl app, final SoftwareAssembly sad) throws CoreException {
 		final List<SadComponentInstantiation> instantiations = getComponentInstantiations(sad);
+		final SubMonitor progress = SubMonitor.convert(monitor, instantiations.size());
 
 		app.getStreams().getOutStream().println("Launching components...");
 		for (final SadComponentInstantiation comp : instantiations) {
+			progress.subTask(String.format("Launch component instance '%s'", comp.getUsageName()));
+
 			URI spdUri = getSpdURI(comp);
 			if (spdUri == null) {
 				String errorMsg = String.format("Failed to find SPD for component: %s", comp.getUsageName());
@@ -228,7 +262,9 @@ public class LocalApplicationFactory {
 			} else {
 				app.launch(comp.getUsageName(), createExecParam(comp), spdUri, getImplId(comp), this.mode);
 			}
+
 			app.getStreams().getOutStream().println("\n");
+			progress.worked(1);
 		}
 	}
 
@@ -262,9 +298,10 @@ public class LocalApplicationFactory {
 
 					if (connection.getProvidesPort().getComponentInstantiationRef() != null) {
 						final String componentRefId = connection.getProvidesPort().getComponentInstantiationRef().getRefid();
-						final ScaComponent componentForPort =  app.getLocalWaveform().getScaComponent(componentRefId);
+						final ScaComponent componentForPort = app.getLocalWaveform().getScaComponent(componentRefId);
 						if (componentForPort == null) {
-							String errorMsg = String.format("Couldn't find component instance '%s' to make waveform connection '%s'", componentRefId, connection.getId());
+							String errorMsg = String.format("Couldn't find component instance '%s' to make waveform connection '%s'", componentRefId,
+							        connection.getId());
 							throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, errorMsg));
 						}
 						target = componentForPort.getScaPort(providesId).getCorbaObj();
@@ -273,7 +310,8 @@ public class LocalApplicationFactory {
 					final String componentRefId = connection.getComponentSupportedInterface().getComponentInstantiationRef().getRefid();
 					final ScaComponent component = app.getLocalWaveform().getScaComponent(componentRefId);
 					if (component == null) {
-						String errorMsg = String.format("Couldn'd find component instance '%s' to make waveform connection '%s'", componentRefId, connection.getId());
+						String errorMsg = String.format("Couldn't find component instance '%s' to make waveform connection '%s'", componentRefId,
+						        connection.getId());
 						throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, errorMsg));
 					}
 					target = component.getCorbaObj();
@@ -421,8 +459,8 @@ public class LocalApplicationFactory {
 	}
 
 	private static final EStructuralFeature[] PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
-		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
-		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
+	        PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
+	        PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 
 	@Nullable
 	private URI getSpdURI(@Nullable final SadComponentInstantiation comp) {
