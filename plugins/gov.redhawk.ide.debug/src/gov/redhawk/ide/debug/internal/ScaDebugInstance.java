@@ -100,17 +100,17 @@ public enum ScaDebugInstance {
 			return;
 		}
 		final POA poa = localSca.getSession().getPOA();
-		final Sandbox sandboxRef = createSandboxRef(poa, impl);
-		final LocalFileManager fileManagerRef = createFileManager(poa);
+		final Sandbox sandboxRef = ScaDebugInstance.createSandboxRef(poa, impl);
+		final LocalFileManager fileManagerRef = ScaDebugInstance.createFileManager(poa);
 
 		editingDomain.getCommandStack().execute(new ScaModelCommand() {
 
 			@Override
 			public void execute() {
-				final NotifyingNamingContext rootContext = createRootContext(poa);
-				final LocalScaWaveform sandboxWaveformRef = createSandboxWaveform(editingDomain.getResourceSet(), rootContext);
-				final LocalScaDeviceManager sandboxDeviceManagerRef = createSandboxDeviceManager(editingDomain.getResourceSet(), fileManagerRef.getObj(),
-					rootContext);
+				final NotifyingNamingContext rootContext = ScaDebugInstance.createRootContext(poa);
+				final LocalScaWaveform sandboxWaveformRef = ScaDebugInstance.createSandboxWaveform(editingDomain.getResourceSet(), rootContext);
+				final LocalScaDeviceManager sandboxDeviceManagerRef = ScaDebugInstance.createSandboxDeviceManager(editingDomain.getResourceSet(),
+					fileManagerRef.getObj(), rootContext);
 				localSca.setSandbox(impl);
 				localSca.init(sandboxRef, fileManagerRef, sandboxWaveformRef, sandboxDeviceManagerRef, rootContext);
 			}
@@ -119,7 +119,7 @@ public enum ScaDebugInstance {
 		try {
 			localSca.refresh(monitor, RefreshDepth.FULL);
 		} catch (InterruptedException e) {
-			throw new CoreException(new Status(Status.ERROR, ScaDebugPlugin.ID, "Failed to refresh local sca.", e));
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to refresh local sca.", e));
 		}
 	}
 
@@ -165,7 +165,7 @@ public enum ScaDebugInstance {
 
 	private static LocalScaDeviceManager createSandboxDeviceManager(final ResourceSet resourceSet, final FileManager fm, final NotifyingNamingContext context) {
 		final LocalScaDeviceManager tmp = ScaDebugFactory.eINSTANCE.createLocalScaDeviceManager();
-		final DeviceConfiguration dcd = createSandboxDeviceConfiguration(resourceSet);
+		final DeviceConfiguration dcd = ScaDebugInstance.createSandboxDeviceConfiguration(resourceSet);
 		final URI uri = dcd.eResource().getURI();
 
 		tmp.setDataProvidersEnabled(false);
@@ -182,6 +182,8 @@ public enum ScaDebugInstance {
 		final URI uri = URI.createURI("mem:///sandboxDeviceManager.dcd.xml");
 		final Resource resource = resourceSet.createResource(uri);
 		final DeviceConfiguration dcd = DcdFactory.eINSTANCE.createDeviceConfiguration();
+		dcd.setId("Chalkboard");
+		dcd.setName("Chalkboard");
 		final DcdDocumentRoot root = DcdFactory.eINSTANCE.createDcdDocumentRoot();
 		root.setDeviceconfiguration(dcd);
 		resource.getContents().add(root);
@@ -190,7 +192,7 @@ public enum ScaDebugInstance {
 
 	private static LocalScaWaveform createSandboxWaveform(final ResourceSet resourceSet, final NotifyingNamingContext context) {
 		final String name = "Chalkboard";
-		final SoftwareAssembly sad = createSandboxSoftwareAssembly(resourceSet);
+		final SoftwareAssembly sad = ScaDebugInstance.createSandboxSoftwareAssembly(resourceSet);
 
 		final LocalScaWaveform waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
 		waveform.setDataProvidersEnabled(false);
@@ -208,6 +210,8 @@ public enum ScaDebugInstance {
 		final URI sadUri = URI.createURI("mem://sandbox.sad.xml");
 
 		final SoftwareAssembly sad = SadFactory.eINSTANCE.createSoftwareAssembly();
+		sad.setName("Chalkboard");
+		sad.setId("Chalkboard");
 		final SadDocumentRoot root = SadFactory.eINSTANCE.createSadDocumentRoot();
 		root.setSoftwareassembly(sad);
 
