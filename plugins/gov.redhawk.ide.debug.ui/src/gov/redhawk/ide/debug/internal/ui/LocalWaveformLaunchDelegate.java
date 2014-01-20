@@ -54,7 +54,6 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 	 */
 	@Override
 	public void launch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("Launching waveform...", 2);
 		final boolean start = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
 		final String path = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, "");
 		boolean platform = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_WORKSPACE, true);
@@ -93,7 +92,6 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 			final StartJob job = new StartJob(app.getName(), app);
 			job.schedule();
 		}
-		monitor.done();
 	}
 
 }
