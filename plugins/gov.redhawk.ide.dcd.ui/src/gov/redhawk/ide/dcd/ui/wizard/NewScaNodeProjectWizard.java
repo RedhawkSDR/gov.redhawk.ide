@@ -65,6 +65,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 /**
  * The Class NewScaDeviceProjectWizard.
+ * @since 1.1
  */
 @SuppressWarnings("restriction")
 public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExecutableExtension {

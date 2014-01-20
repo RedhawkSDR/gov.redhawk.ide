@@ -28,6 +28,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
+/**
+ * @since 1.1
+ */
 public class NewScaServiceCreationProjectWizard extends NewScaResourceWizard implements IImportWizard {
 
 	public NewScaServiceCreationProjectWizard() {

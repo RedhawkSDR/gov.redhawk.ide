@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  * The Class ScaNodeProjectPropertiesWizardPage.
+ * @since 1.1
  */
 public class ScaNodeProjectPropertiesWizardPage extends ScaProjectPropertiesWizardPage {
 

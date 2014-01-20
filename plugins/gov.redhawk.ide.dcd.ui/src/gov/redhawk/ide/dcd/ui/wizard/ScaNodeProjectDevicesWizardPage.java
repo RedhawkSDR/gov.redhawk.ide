@@ -35,6 +35,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * @since 1.1
+ */
 public class ScaNodeProjectDevicesWizardPage extends WizardPage {
 
 	private final SoftPkg[] devices;

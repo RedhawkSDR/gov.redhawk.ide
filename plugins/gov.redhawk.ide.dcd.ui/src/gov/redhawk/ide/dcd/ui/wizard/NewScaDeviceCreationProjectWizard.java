@@ -32,6 +32,7 @@ import org.eclipse.jface.wizard.Wizard;
 
 /**
  * The Class NewScaResourceProjectWizard.
+ * @since 1.1
  */
 public class NewScaDeviceCreationProjectWizard extends NewScaResourceWizard implements IImportWizard {
 
