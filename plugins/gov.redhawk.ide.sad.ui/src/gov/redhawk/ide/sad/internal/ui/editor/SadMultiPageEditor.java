@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.editor;
 
-import gov.redhawk.diagram.editor.URIEditorInputProxy;
 import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.SadDiagramUtilHelper;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
@@ -23,6 +22,7 @@ import gov.redhawk.sca.util.PluginUtil;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,7 +46,6 @@ import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.common.ui.URIEditorInput;
 import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -54,16 +53,18 @@ import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.provider.EcoreItemProviderAdapterFactory;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
+import org.eclipse.emf.edit.provider.AdapterFactoryItemDelegator;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gmf.runtime.diagram.ui.properties.views.PropertiesBrowserPage;
-import org.eclipse.gmf.runtime.diagram.ui.resources.editor.ide.document.FileEditorInputProxy;
+import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.editor.DiagramEditorInput;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -79,7 +80,6 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageSelectionProvider;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
 import CF.Application;
@@ -198,6 +198,7 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 		this.selectionProvider.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
+				setStatusLineManager(event.getSelection());
 			}
 		});
 	}
@@ -220,24 +221,6 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 		}
 	}
 
-	/**
-	 * Lazy initialization of the wrapped editor input.
-	 * 
-	 * @return
-	 */
-	protected IEditorInput getWrappedInput() {
-		if (this.wrappedInput == null) {
-			if (getEditorInput() instanceof IFileEditorInput) {
-				this.wrappedInput = new FileEditorInputProxy((IFileEditorInput) getEditorInput(), (TransactionalEditingDomain) getEditingDomain());
-			} else if (getEditorInput() instanceof URIEditorInput) {
-				this.wrappedInput = new URIEditorInputProxy((URIEditorInput) getEditorInput(), (TransactionalEditingDomain) getEditingDomain());
-			} else {
-				// should not happen, but who knows...
-				this.wrappedInput = getEditorInput();
-			}
-		}
-		return this.wrappedInput;
-	}
 
 	/**
 	 * This sets the selection into whichever viewer is active.
@@ -300,9 +283,19 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 	})
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") final Class key) {
-		if (key.equals(IPropertySheetPage.class)) {
-			return getPropertySheetPage();
-		} else if (key.equals(IGotoMarker.class)) {
+//		if (key.equals(IPropertySheetPage.class)) {
+//			return getPropertySheetPage();
+//		} else if (key.equals(IGotoMarker.class)) {
+//			return this;
+//		} else if (key.equals(ScaWaveform.class)) {
+//			return PluginUtil.adapt(ScaWaveform.class, getSoftwareAssembly());
+//		} else if (key.isAssignableFrom(Application.class)) {
+//			return PluginUtil.adapt(ScaWaveform.class, getSoftwareAssembly());
+//		} else {
+//			return super.getAdapter(key);
+//		}
+		
+		if (key.equals(IGotoMarker.class)) {
 			return this;
 		} else if (key.equals(ScaWaveform.class)) {
 			return PluginUtil.adapt(ScaWaveform.class, getSoftwareAssembly());
@@ -313,12 +306,12 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 		}
 	}
 
-	/**
-	 * This accesses a cached version of the property sheet.
-	 */
-	public IPropertySheetPage getPropertySheetPage() {
-		return new PropertiesBrowserPage(this);
-	}
+//	/**
+//	 * This accesses a cached version of the property sheet.
+//	 */
+//	public IPropertySheetPage getPropertySheetPage() {
+//		return new PropertiesBrowserPage(this);
+//	}
 
 	@Override
 	protected String getPropertyEditorPageKey(final IFileEditorInput input) {
@@ -352,6 +345,31 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 		return AdapterFactoryEditingDomain.getWrapper(eObject, getEditingDomain());
 	}
 
+	public void setStatusLineManager(final ISelection selection) {
+		final IStatusLineManager statusLineManager;
+		
+		statusLineManager = getActionBars().getStatusLineManager();
+
+		if (statusLineManager != null) {
+			if (selection instanceof IStructuredSelection) {
+				final Collection< ? > collection = ((IStructuredSelection) selection).toList();
+				switch (collection.size()) {
+				case 0:
+					statusLineManager.setMessage("Selected Nothing");
+					break;
+				case 1:
+					final String text = new AdapterFactoryItemDelegator(getAdapterFactory()).getText(collection.iterator().next());
+					statusLineManager.setMessage(MessageFormat.format("Selected Object: {0}", text));
+					break;
+				default:
+					statusLineManager.setMessage(MessageFormat.format("Selected {0} Objects", Integer.toString(collection.size())));
+					break;
+				}
+			} else {
+				statusLineManager.setMessage("");
+			}
+		}
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -399,6 +417,62 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 		return this.diagramEditor.getContributorId();
 	}
 
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see
+//	 * org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart#getDiagram
+//	 * ()
+//	 */
+//	@Override
+//	public Diagram getDiagram() {
+//		if (this.diagramEditor == null) {
+//			return null;
+//		}
+//		return this.diagramEditor.getDiagram();
+//	}
+//
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @seeorg.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart#
+//	 * getDiagramEditDomain()
+//	 */
+//	@Override
+//	public IDiagramEditDomain getDiagramEditDomain() {
+//		if (this.diagramEditor == null) {
+//			return null;
+//		}
+//		return this.diagramEditor.getDiagramEditDomain();
+//	}
+//
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @seeorg.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart#
+//	 * getDiagramEditPart()
+//	 */
+//	@Override
+//	public DiagramEditPart getDiagramEditPart() {
+//		if (this.diagramEditor == null) {
+//			return null;
+//		}
+//		return this.diagramEditor.getDiagramEditPart();
+//	}
+//
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @seeorg.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart#
+//	 * getDiagramGraphicalViewer()
+//	 */
+//	@Override
+//	public IDiagramGraphicalViewer getDiagramGraphicalViewer() {
+//		if (this.diagramEditor == null) {
+//			return null;
+//		}
+//		return this.getDiagramEditor().getDiagramBehavior().getDiagramContainer().getGraphicalViewer();
+//	}
 
 	/**
 	 * {@inheritDoc}
@@ -513,11 +587,15 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 		
 		final URI diagramURI = DUtil.getDiagramResourceURI(SadDiagramUtilHelper.INSTANCE, sadResource);
 		
-		Resource diagramResource = this.getEditingDomain().getResourceSet().getResource(diagramURI, true);
+		Resource diagramResource = getEditingDomain().getResourceSet().getResource(diagramURI, true);
 		
 		Diagram diagram = (Diagram) diagramResource.getContents().get(0);
 		
 		return DiagramEditorInput.createEditorInput(diagram, SADDiagramTypeProvider.PROVIDER_ID);
+		//DiagramEditorInput.createEditorInput(diagram, SADDiagramTypeProvider.PROVIDER_ID);
+		
+//		return DiagramUtil.getDiagramWrappedInput(diagramURI, (TransactionalEditingDomain) getEditingDomain());
+		
 		
 	}
 
@@ -542,18 +620,18 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 		this.overviewPage = overviewPage;
 	}
 
-//	/**
-//	 * {@inheritDoc}
-//	 */
-//	@Override
-//	protected void handleDocumentChange(final Resource resource) {
-//		super.handleDocumentChange(resource);
-//		for (final Object part : this.getDiagramEditPart().getChildren()) {
-//			if (part instanceof EditPart) {
-//				((EditPart) part).refresh();
-//			}
-//		}
-//	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void handleDocumentChange(final Resource resource) {
+		super.handleDocumentChange(resource);
+		for (final Object part : this.getDiagramEditor().getDiagramBehavior().getContentEditPart().getChildren()) {
+			if (part instanceof EditPart) {
+				((EditPart) part).refresh();
+			}
+		}
+	}
 
 
 

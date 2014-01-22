@@ -61,7 +61,7 @@ public class DUtil {
 	//Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove etc.)
 	public final static String SHAPE_TYPE = "ShapeType";   //key for Shape types
 	
-	public final static int DIAGRAM_SHAPE_HORIZONTAL_PADDING = 50;
+	public final static int DIAGRAM_SHAPE_HORIZONTAL_PADDING = 100;
 	public final static int DIAGRAM_SHAPE_SIBLING_VERTICAL_PADDING = 50;
 	public final static int DIAGRAM_SHAPE_ROOT_VERTICAL_PADDING = 50;
 	
@@ -418,7 +418,7 @@ public class DUtil {
 		EList<Shape> shapes = containerShape.getChildren();
 		for(Shape s: shapes){
 			GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
-			if(!gaExistInArea(ga, context) && DUtil.isPropertyElementType(ga, propertyValue)){
+			if(!gaFitsInParentGA(ga, context) && DUtil.isPropertyElementType(ga, propertyValue)){
 				retList.add(s);
 			}
 		}
@@ -434,6 +434,20 @@ public class DUtil {
 	public static boolean gaExistInArea(final GraphicsAlgorithm ga, final IAreaContext context){
 		if(context.getX() <= ga.getX() && context.getWidth() >= ga.getWidth() &&
 				context.getY() <= ga.getY() && context.getHeight() >= ga.getHeight()){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Return true if GraphicsAlgorithm fits within parent.  Context represents the parent width/height
+	 * @param ga
+	 * @param context
+	 * @return
+	 */
+	public static boolean gaFitsInParentGA(final GraphicsAlgorithm childGA, final IAreaContext context){
+		if(context.getWidth() >= childGA.getX() &&
+				context.getHeight() >= childGA.getY()){
 			return true;
 		}
 		return false;

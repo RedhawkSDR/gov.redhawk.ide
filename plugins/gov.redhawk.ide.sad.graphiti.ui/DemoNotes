@@ -1,0 +1,37 @@
+Add Components
+
+SigGen DoubleInput HalveInput HardLimit
+
+DataReader DataConverter DataWriter
+
+connect using drag-drop, connect using base types
+
+resize components
+
+Layout
+
+
+host collocation
+Host1 add around two components
+	resize, move in/out
+
+Host2 add solo
+    move components in/out between hosts
+
+
+Move components out
+
+Remove Hosts
+
+Layout
+
+Add All Find By Types
+
+Layout
+
+mark external port
+
+delete assembly controller
+
+zoom in / zoom out
+

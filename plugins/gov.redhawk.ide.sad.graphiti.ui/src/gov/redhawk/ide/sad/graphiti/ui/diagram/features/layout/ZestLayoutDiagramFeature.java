@@ -128,7 +128,7 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 
                     // Apply the LayoutAlgorithmn
 //                    layoutAlgorithm.applyLayout(entities, connections, 0, 0, 1000, 1000, false, false);
-                    layoutAlgorithm.applyLayout(entities, connections, 0, 0, diagramBounds.getWidth(), diagramBounds.getHeight()+1000, false, false);
+                    layoutAlgorithm.applyLayout(entities, connections, 0, 0, diagramBounds.getWidth(), diagramBounds.getHeight(), false, false);
 
                     // Update the Graphiti Shapes and Connections locations
                     updateGraphCoordinates(((TreeLayoutAlgorithm)layoutAlgorithm).getRoots(), entities, connections);
