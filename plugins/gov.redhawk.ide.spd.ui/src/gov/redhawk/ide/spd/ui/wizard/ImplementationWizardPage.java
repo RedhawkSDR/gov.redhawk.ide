@@ -50,6 +50,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -292,6 +293,10 @@ public class ImplementationWizardPage extends WizardPage {
 	 * @param selection the Selection containing the new Code Generator
 	 */
 	protected void handleCodeGenerationSelection(final IStructuredSelection selection) {
+		if (selection.isEmpty()) {
+			return;
+		}
+		
 		final ICodeGeneratorDescriptor tempCodegen = (ICodeGeneratorDescriptor) selection.getFirstElement();
 		this.codeGenerator = tempCodegen;
 		if (!tempCodegen.getId().equals(this.implSettings.getGeneratorId())) {
@@ -333,13 +338,38 @@ public class ImplementationWizardPage extends WizardPage {
 		}
 		ImplementationWizardPage.this.getCodeGeneratorEntryViewer().setInput(tempCodegens);
 		if (tempCodegens.length > 0) {
+			// First try and go through and set it to a default generator that has not been filtered.
 			for (final ICodeGeneratorDescriptor desc : tempCodegens) {
 				if (!desc.notDefaultableGenerator()) {
-					ImplementationWizardPage.this.getCodeGeneratorEntryViewer().setSelection(new StructuredSelection(desc));
-					break;
+					if (!isFiltered(ImplementationWizardPage.this.getCodeGeneratorEntryViewer(), desc)) {
+						ImplementationWizardPage.this.getCodeGeneratorEntryViewer().setSelection(new StructuredSelection(desc));
+						break;
+					}
+				}
+			}
+			// If that does not yield a selection then try and select one that may not be default but is available and not filtered.
+			if (ImplementationWizardPage.this.getCodeGeneratorEntryViewer().getSelection().isEmpty()) {
+				for (final ICodeGeneratorDescriptor desc : tempCodegens) {
+					if (!isFiltered(ImplementationWizardPage.this.getCodeGeneratorEntryViewer(), desc)) {
+						ImplementationWizardPage.this.getCodeGeneratorEntryViewer().setSelection(new StructuredSelection(desc));
+						break;
+					}
 				}
 			}
 		}
+	}
+
+	private boolean isFiltered(ComboViewer viewer, ICodeGeneratorDescriptor desc) {
+		// It's easier to determine if the object is not filtered.  So we determine if it is notFiltered
+		// and then invert that.
+		
+		boolean notFiltered = true;
+		
+		for (ViewerFilter filter : viewer.getFilters()) {
+			notFiltered = notFiltered & filter.select(viewer, null, desc);
+		}
+		
+		return !notFiltered;
 	}
 
 	public ImplementationSettings getImplSettings() {

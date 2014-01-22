@@ -582,7 +582,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	@Override
 	public boolean performFinish() {
 		this.updateEntryPoints();
-		final boolean isCreateNewResource = this.resourcePropertiesPage.getContentsGroup().isCreateNewResource();
+		final boolean isCreateNewResource = this.resourcePropertiesPage.isCreateNewResource();
 		final IWorkingSet[] workingSets = this.resourcePropertiesPage.getSelectedWorkingSets();
 		final String projectName = this.resourcePropertiesPage.getProjectName();
 		final java.net.URI locationURI;
@@ -592,7 +592,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 			locationURI = this.resourcePropertiesPage.getLocationURI();
 		}
 		this.resourcePropertiesPage.getProjectHandle();
-		final IPath existingResourceLocation = this.resourcePropertiesPage.getContentsGroup().getExistingResourcePath();
+		final IPath existingResourceLocation = this.resourcePropertiesPage.getExistingResourcePath();
 
 		// Create the SCA component project
 		final WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {

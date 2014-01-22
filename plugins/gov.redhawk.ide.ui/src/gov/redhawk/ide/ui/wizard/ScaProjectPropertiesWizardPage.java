@@ -13,6 +13,7 @@ package gov.redhawk.ide.ui.wizard;
 import gov.redhawk.ui.validation.ProjectNameValidator;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -67,14 +68,14 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 	/**
 	 * @since 9.1
 	 */
-	public void setShowComponentIDGroup(final boolean value) {
+	protected void setShowComponentIDGroup(final boolean value) {
 		this.showComponentIDGroup = value;
 	}
 	
 	/**
 	 * @since 9.1
 	 */
-	public void setShowWorkingSetGroup(final boolean value) {
+	protected void setShowWorkingSetGroup(final boolean value) {
 		this.showWorkingSetGroup = value;
 	}
 
@@ -123,8 +124,37 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 		return;
 	}
 
+	/**
+	 * Returns the possibly null contents group
+	 * @deprecated use {@link getIsCreateNewResource()} instead if that is needed
+	 * @return
+	 */
 	public ContentsGroup getContentsGroup() {
 		return this.contentsGroup;
+	}
+	
+	/**
+	 * 
+	 * @return If a new resource is being created.
+	 * @since 9.1
+	 */
+	public boolean isCreateNewResource() {
+		if (this.showContentsGroup) {
+			return this.contentsGroup.isCreateNewResource();
+		} else {
+			return true;
+		}
+	}
+	
+	/**
+	 * @since 9.1
+	 */
+	public IPath getExistingResourcePath() {
+		if (this.showContentsGroup) {
+			return this.contentsGroup.getExistingResourcePath();
+		} else {
+			return null;
+		}
 	}
 	
 	/**
