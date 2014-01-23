@@ -70,7 +70,6 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 	private Model model = new Model();
 	
 	private Text serviceIdlText;
-	private String serviceIdl;
 	private ServiceIdlValidator serviceIdlValidator = new ServiceIdlValidator();
 	private DataBindingContext context = new DataBindingContext();
 
@@ -129,7 +128,6 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 			@Override
 			public void modifyText(final ModifyEvent e) {
 				validate();
-				serviceIdl = serviceIdlText.getText();
 			}
 		});
 		context.bindValue(SWTObservables.observeText(this.serviceIdlText, SWT.Modify), PojoObservables.observeValue(this.model, "repID"));
@@ -150,6 +148,6 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 	}
 
 	public String getRepId() {
-		return serviceIdl;
+		return this.model.repID;
 	}
 }
