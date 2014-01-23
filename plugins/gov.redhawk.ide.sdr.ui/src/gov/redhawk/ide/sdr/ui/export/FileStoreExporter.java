@@ -66,7 +66,11 @@ public class FileStoreExporter implements IScaExporter {
 	public FileStoreExporter(final IPath rootPath, final List<Pattern> excludePatterns) {
 		super();
 		this.rootPath = rootPath;
-		this.rootURI = rootPath.toFile().toURI();
+		if (rootPath != null && rootPath.toFile() != null) {
+			this.rootURI = rootPath.toFile().toURI();
+		} else {
+			this.rootURI = null;
+		}
 		this.excludePatterns = new ArrayList<Pattern>(excludePatterns);
 	}
 

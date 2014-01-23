@@ -95,19 +95,19 @@ public class OutputDirectoryValidator extends AbstractModelConstraint implements
 			final String dir = implSettings.getOutputDir();
 			String result = null;
 			// If it is a manual template don't worry about output directory
-			if (!(implSettings.getTemplate().toUpperCase().contains("MANUAL"))) {
+			if (implSettings.getTemplate() != null && !(implSettings.getTemplate().toUpperCase().contains("MANUAL"))) {
 				result = validateDir(dir);
-			}	
+			}
 			if (result != null) {
 				return new EnhancedConstraintStatus((ConstraintStatus) ctx.createFailureStatus(result),
-				        CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR);
+					CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR);
 			}
 			result = validateUnique(dir);
 			if (result != null) {
 				return new EnhancedConstraintStatus((ConstraintStatus) ctx.createFailureStatus(result),
-				        CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR);
+					CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR);
 			}
-		}				
+		}
 		return ctx.createSuccessStatus();
 	}
 
