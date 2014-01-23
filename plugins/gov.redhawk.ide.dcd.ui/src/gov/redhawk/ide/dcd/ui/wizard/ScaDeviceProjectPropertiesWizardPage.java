@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Group;
 
 /**
  * The Class ScaDeviceProjectPropertiesWizardPage.
- * @since 1.0
+ * @since 1.1
  */
 public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectPropertiesWizardPage {
 
