@@ -65,8 +65,7 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 	}
 
 	@Override
-	protected void handleStreamSRIChanged(StreamSRI oldSri, StreamSRI newSri) {
-		super.handleStreamSRIChanged(oldSri, newSri);
+	protected void handleStreamSRIChanged(String streamID, StreamSRI oldSri, StreamSRI newSri) {
 		try {
 			writer.pushSRI(newSri);
 		} catch (IOException e) {
