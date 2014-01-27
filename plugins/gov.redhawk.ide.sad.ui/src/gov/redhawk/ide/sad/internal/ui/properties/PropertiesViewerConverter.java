@@ -162,12 +162,14 @@ public class PropertiesViewerConverter implements XViewerConverter {
 	 * @see org.eclipse.nebula.widgets.xviewer.edit.XViewerConverter#getInput(org.eclipse.swt.widgets.Control, org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor, java.lang.Object)
 	 */
 	@Override
-	public void getInput(Control c, CellEditDescriptor ced, Object selObject) {
+	public Object getInput(Control c, CellEditDescriptor ced, Object selObject) {
+		// TODO Verify return value
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
 			setExternalValue(c, selObject);
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
 			setSadValue(c, selObject);
 		}
+		return selObject;
 	}
 
 	protected void setSadValue(Control c, Object selObject) {
@@ -229,6 +231,12 @@ public class PropertiesViewerConverter implements XViewerConverter {
 		if (selObject instanceof ViewerProperty< ? >) {
 			((ViewerProperty< ? >) selObject).setExternalID(newValue);
 		}
+	}
+
+	@Override
+	public boolean isValid(CellEditDescriptor ced, Object selObject) {
+		// TODO
+		return true;
 	}
 
 }
