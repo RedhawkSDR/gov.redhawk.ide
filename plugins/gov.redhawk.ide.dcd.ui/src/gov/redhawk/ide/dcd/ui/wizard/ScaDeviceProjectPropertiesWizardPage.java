@@ -138,7 +138,7 @@ public class ScaDeviceProjectPropertiesWizardPage extends ScaResourceProjectProp
 	public boolean getAggregateDeviceType() {
 		return deviceProjSettings.isAggregate();
 	}
-	
+
 	public DeviceProjectSettings getProjectSettings() {
 		return this.deviceProjSettings;
 	}
