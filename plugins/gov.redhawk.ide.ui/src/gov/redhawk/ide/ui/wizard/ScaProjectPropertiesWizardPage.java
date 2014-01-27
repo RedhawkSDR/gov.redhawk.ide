@@ -64,18 +64,18 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 	public void setShowContentsGroup(final boolean value) {
 		this.showContentsGroup = value;
 	}
-	
+
 	/**
 	 * @since 9.1
 	 */
-	protected void setShowComponentIDGroup(final boolean value) {
+	public void setShowComponentIDGroup(final boolean value) {
 		this.showComponentIDGroup = value;
 	}
-	
+
 	/**
 	 * @since 9.1
 	 */
-	protected void setShowWorkingSetGroup(final boolean value) {
+	public void setShowWorkingSetGroup(final boolean value) {
 		this.showWorkingSetGroup = value;
 	}
 
@@ -113,12 +113,12 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 	}
 
 	/**
-     * @since 9.0
-     */
+	 * @since 9.0
+	 */
 	protected void createContentsGroup(Composite parent) {
 		this.contentsGroup = new ContentsGroup(parent, SWT.None, this.resourceType, this.resourceExtension, this);
 		this.contentsGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL));
-    }
+	}
 
 	public void customCreateControl(final Composite composite) {
 		return;
@@ -129,10 +129,11 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 	 * @deprecated use {@link getIsCreateNewResource()} instead if that is needed
 	 * @return
 	 */
+	@Deprecated
 	public ContentsGroup getContentsGroup() {
 		return this.contentsGroup;
 	}
-	
+
 	/**
 	 * 
 	 * @return If a new resource is being created.
@@ -145,7 +146,7 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 			return true;
 		}
 	}
-	
+
 	/**
 	 * @since 9.1
 	 */
@@ -156,35 +157,36 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Returns the ID group which could be null.  
 	 *
 	 * @deprecated use {@link getID()} instead if the ID is needed
 	 */
+	@Deprecated
 	public IDGroup getIdGroup() {
 		return this.idGroup;
 	}
-	
+
 	/**
 	 * @since 9.1
 	 */
 	public String getID() {
 		String id = null;
-		
+
 		if (this.showComponentIDGroup) {
 			id = this.idGroup.getId();
 		} else {
 			id = DceUuidUtil.createDceUUID();
 		}
-		
+
 		return id;
 	}
 
 	@Override
 	protected boolean validatePage() {
 		ProjectNameValidator nameValidator = new ProjectNameValidator();
-		
+
 		if (!super.validatePage()) {
 			return false;
 		}
@@ -209,11 +211,11 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 			}
 
 		}
-		
+
 		if (this.showComponentIDGroup) {
 			status = this.idGroup.validateGroup();
 		}
-		
+
 		if (!status.isOK()) {
 			setMessage(status);
 			return false;
