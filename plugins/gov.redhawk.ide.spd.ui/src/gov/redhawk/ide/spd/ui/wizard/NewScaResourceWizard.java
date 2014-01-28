@@ -22,6 +22,7 @@ import gov.redhawk.ide.codegen.ui.ICodeGeneratorPageRegistry;
 import gov.redhawk.ide.codegen.ui.ICodeGeneratorPageRegistry2;
 import gov.redhawk.ide.codegen.ui.ICodegenDisplayFactory;
 import gov.redhawk.ide.codegen.ui.ICodegenDisplayFactory2;
+import gov.redhawk.ide.codegen.ui.ICodegenTemplateDisplayFactory;
 import gov.redhawk.ide.codegen.ui.ICodegenWizardPage;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 import gov.redhawk.ide.codegen.util.CodegenFileHelper;
@@ -645,6 +646,22 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 							}
 							
 						}
+						
+						// Allows for codegenerator templates to add to the project.
+						for (ImplementationAndSettings implAndSettings : getImplList()) {
+							String templateId = implAndSettings.getImplementationSettings().getTemplate();
+							ICodeGeneratorPageRegistry codegenTemplateRegistry = RedhawkCodegenUiActivator.getCodeGeneratorsTemplateRegistry();
+							if (codegenTemplateRegistry instanceof ICodeGeneratorPageRegistry2) {
+								List<ICodegenDisplayFactory> codegenDisplayFactories = ((ICodeGeneratorPageRegistry2) codegenTemplateRegistry).findCodegenDisplayFactoriesByGeneratorId(templateId);
+								
+								for (ICodegenDisplayFactory factory : codegenDisplayFactories) {
+									if (factory instanceof ICodegenTemplateDisplayFactory) {
+										((ICodegenTemplateDisplayFactory) factory).modifyProject(project, spdFile, progress.newChild(1));
+									}
+								}
+							}
+						}
+						
 						project.refreshLocal(IResource.DEPTH_INFINITE, progress.newChild(1));
 
 					} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
@@ -754,6 +771,57 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
      */
 	protected String getType() {
 		return ICodeGeneratorDescriptor.COMPONENT_TYPE_RESOURCE;
+	}
+
+	/**
+	 * Called by ICodegenWizardpages that have been added via the CodeGenerator selection.  The pages added
+	 * are usually added due to a template selection.
+	 * @param pageAddingPages The existing wizard page which wants these pages added after itself.
+	 * @param pagesToAdd The wizard pages to add.
+	 * @since 8.1
+	 */
+	public void addTemplatePages(ICodegenWizardPage pageAddingPages, ICodegenWizardPage[] pagesToAdd) {
+		int addingPageIndex = wizPages.lastIndexOf(pageAddingPages);
+		
+		for (ICodegenWizardPage pageToAdd : pagesToAdd) {
+			addingPageIndex++;
+			this.wizPages.add(addingPageIndex, pageToAdd);
+			pageToAdd.setWizard(this);
+		}
+		
+		if (pagesToAdd.length > 0) {
+			pageAddingPages.setCanFinish(false);
+			pageAddingPages.setCanFlipToNextPage(true);
+		}
+	}
+
+	/**
+	 * @since 8.1
+	 */
+	public void removeTemplatePages(ICodegenWizardPage pageAddingPages, ICodegenWizardPage[] pageTypesToRemove) {
+		// The passed in array of pages is a new instance of the pages which we'd like removed.  We use them just to make sure
+		// the right pages are being removed based on class type.  It's a bit of an assumption.
+		int indexOfAdder = this.wizPages.indexOf(pageAddingPages);
+		List<ICodegenWizardPage> pagesToRemove = new ArrayList<ICodegenWizardPage>();
+		
+		for (ICodegenWizardPage page : pageTypesToRemove) {
+			
+			if (this.wizPages.get(indexOfAdder + 1).getClass() == page.getClass()) {
+				pagesToRemove.add((ICodegenWizardPage) this.wizPages.get(indexOfAdder + 1));
+				indexOfAdder++;
+			}
+			
+		}
+		
+		this.wizPages.removeAll(pagesToRemove);
+
+		for (ICodegenWizardPage page : pagesToRemove) {
+			page.dispose();
+		}
+		
+		pageAddingPages.setCanFinish(true);
+		pageAddingPages.setCanFlipToNextPage(false);
+		this.getContainer().updateButtons();
 	}
 
 }

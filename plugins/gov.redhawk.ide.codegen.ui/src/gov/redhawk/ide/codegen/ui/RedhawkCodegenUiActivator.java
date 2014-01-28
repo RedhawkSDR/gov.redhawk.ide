@@ -12,6 +12,7 @@
 package gov.redhawk.ide.codegen.ui;
 
 import gov.redhawk.ide.codegen.ui.internal.CodeGeneratorPageRegistry;
+import gov.redhawk.ide.codegen.ui.internal.CodeGeneratorTemplatePageRegistry;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,12 +32,14 @@ public class RedhawkCodegenUiActivator extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "gov.redhawk.ide.codegen.ui";
 
 	/**
-	 * Create the Redhawk Codegen Wizard Page Registry
+	 * Create the Redhawk Codegen & Codegen Template Wizard Page Registry
 	 */
 	private static ICodeGeneratorPageRegistry codeGeneratorPageRegistry;
+	private static ICodeGeneratorPageRegistry codeGeneratorTemplatePageRegistry;
 
 	// The shared instance
 	private static RedhawkCodegenUiActivator plugin;
+
 
 	private ServiceTracker<IComponentProjectUpgrader, IComponentProjectUpgrader> upgradeProjectServiceTracker;
 
@@ -131,6 +134,17 @@ public class RedhawkCodegenUiActivator extends AbstractUIPlugin {
 	 */
 	public static final void logError(final String msg, final Throwable e) {
 		RedhawkCodegenUiActivator.getDefault().getLog().log(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, msg, e));
+	}
+
+	/**
+	 * @since 8.1
+	 */
+	public static ICodeGeneratorPageRegistry getCodeGeneratorsTemplateRegistry() {
+		if (RedhawkCodegenUiActivator.codeGeneratorTemplatePageRegistry == null) {
+			RedhawkCodegenUiActivator.codeGeneratorTemplatePageRegistry = new CodeGeneratorTemplatePageRegistry();
+		}
+
+		return RedhawkCodegenUiActivator.codeGeneratorTemplatePageRegistry;
 	}
 
 }

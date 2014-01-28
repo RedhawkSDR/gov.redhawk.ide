@@ -704,5 +704,12 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 	public void setCanFinish(final boolean canFinish) {
 		this.canFinish = canFinish;
 	}
-
+	
+	/**
+	 * @since 8.1
+	 */
+	public ImplementationSettings getImplSettings() {
+		return this.implSettings;
+	}
+	
 }
