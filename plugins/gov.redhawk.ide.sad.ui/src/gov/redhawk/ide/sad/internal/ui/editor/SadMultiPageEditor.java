@@ -11,6 +11,7 @@
 package gov.redhawk.ide.sad.internal.ui.editor;
 
 import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.SadDiagramUtilHelper;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
@@ -35,6 +36,7 @@ import mil.jpeojtrs.sca.sad.provider.SadItemProviderAdapterFactory;
 import mil.jpeojtrs.sca.scd.provider.ScdItemProviderAdapterFactory;
 import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
+import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -52,13 +54,22 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.provider.EcoreItemProviderAdapterFactory;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.provider.AdapterFactoryItemDelegator;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
+import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
+import org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.impl.TransactionalEditingDomainImpl;
+import org.eclipse.emf.workspace.IWorkspaceCommandStack;
+import org.eclipse.emf.workspace.WorkspaceEditingDomainFactory;
 import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.editor.DiagramEditorInput;
+import org.eclipse.graphiti.ui.internal.editor.GFWorkspaceCommandStackImpl;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -153,6 +164,8 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 				this.sadResource.eAdapters().remove(this);
 			}
 		}
+		
+		
 
 		/**
 		 * {@inheritDoc}
@@ -532,8 +545,8 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 
 				final IEditorPart textEditor = createTextEditor();
 				if (textEditor != null) {
-					final int sadSourcePageNum = addPage(textEditor, this.getEditorInput());
-					this.setPageText(sadSourcePageNum, this.getEditorInput().getName());
+					final int sadSourcePageNum = addPage(textEditor, getEditorInput());
+					this.setPageText(sadSourcePageNum, getEditorInput().getName());
 				}
 
 				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
@@ -591,7 +604,10 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 		
 		Diagram diagram = (Diagram) diagramResource.getContents().get(0);
 		
-		return DiagramEditorInput.createEditorInput(diagram, SADDiagramTypeProvider.PROVIDER_ID);
+		DiagramEditorInput diagramEditorInput =  DiagramEditorInput.createEditorInput(diagram, SADDiagramTypeProvider.PROVIDER_ID);
+		
+		return diagramEditorInput;
+		
 		//DiagramEditorInput.createEditorInput(diagram, SADDiagramTypeProvider.PROVIDER_ID);
 		
 //		return DiagramUtil.getDiagramWrappedInput(diagramURI, (TransactionalEditingDomain) getEditingDomain());
@@ -600,7 +616,10 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 	}
 
 	protected DiagramEditor createDiagramEditor() {
-		return new DiagramEditor();
+		RHGraphitiDiagramEditor d = new RHGraphitiDiagramEditor((TransactionalEditingDomain) getEditingDomain());
+//		DiagramEditor d = new DiagramEditor();
+		return d;
+		
 	}
 
 	protected void setDiagramEditor(final DiagramEditor diagramEditor) {
@@ -729,5 +748,31 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
     protected IContentOutlinePage createContentOutline() {
 	    // TODO Auto-generated method stub
 	    return null;
+    }
+	
+	@Override
+	@SuppressWarnings("restriction")
+    protected TransactionalEditingDomain createEditingDomain() {
+		
+	    
+	    final ResourceSet resourceSet = new ResourceSetImpl();
+	    final IWorkspaceCommandStack workspaceCommandStack = new GFWorkspaceCommandStackImpl(new DefaultOperationHistory());
+	    
+	    TransactionalEditingDomain domain = new TransactionalEditingDomainImpl(new ComposedAdapterFactory(
+	    		ComposedAdapterFactory.Descriptor.Registry.INSTANCE), workspaceCommandStack, resourceSet);
+	    WorkspaceEditingDomainFactory.INSTANCE.mapResourceSet((TransactionalEditingDomain) domain);
+	    domain.setID(getEditingDomainId());
+	    
+
+
+	    // Create an adapter factory that yields item providers.
+	    //
+	    final ComposedAdapterFactory localAdapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
+
+	    localAdapterFactory.addAdapterFactory(new ResourceItemProviderAdapterFactory());
+	    localAdapterFactory.addAdapterFactory(getSpecificAdapterFactory());
+	    localAdapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
+	    ((AdapterFactoryEditingDomain) domain).setAdapterFactory(localAdapterFactory);
+	    return domain;
     }
 }
