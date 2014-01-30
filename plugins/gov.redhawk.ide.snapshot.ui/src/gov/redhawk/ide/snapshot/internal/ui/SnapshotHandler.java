@@ -1,11 +1,11 @@
 /*******************************************************************************
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.internal.ui;
@@ -137,12 +137,13 @@ public class SnapshotHandler extends AbstractHandler {
 		return null;
 	}
 
-	private boolean checkPort(ScaUsesPort port) {
+	private boolean isPortSupported(ScaUsesPort port) {
 		final String portRepId = port.getRepid();
-		if (portRepId.equals(dataLongLongHelper.id()) || portRepId.equals(dataUlongLongHelper.id()) || portRepId.equals(dataFloatHelper.id())
-			|| portRepId.equals(dataDoubleHelper.id()) || portRepId.equals(dataShortHelper.id()) || portRepId.equals(dataUshortHelper.id())
-			|| portRepId.equals(dataLongHelper.id()) || portRepId.equals(dataUlongHelper.id()) || portRepId.equals(dataOctetHelper.id())
-			|| portRepId.equals(dataCharHelper.id())) {
+		if (portRepId.equals(dataLongLongHelper.id()) || portRepId.equals(dataUlongLongHelper.id())
+			|| portRepId.equals(dataFloatHelper.id()) || portRepId.equals(dataDoubleHelper.id())
+			|| portRepId.equals(dataShortHelper.id()) || portRepId.equals(dataUshortHelper.id())
+			|| portRepId.equals(dataLongHelper.id())  || portRepId.equals(dataUlongHelper.id())
+			|| portRepId.equals(dataOctetHelper.id()) || portRepId.equals(dataCharHelper.id())) {
 			return true;
 		}
 		return false;
@@ -156,12 +157,12 @@ public class SnapshotHandler extends AbstractHandler {
 			IStructuredSelection ss = (IStructuredSelection) obj;
 			Object element = ss.getFirstElement();
 			if (element instanceof ScaUsesPort) {
-				setBaseEnabled(checkPort((ScaUsesPort) element));
+				setBaseEnabled(isPortSupported((ScaUsesPort) element));
 				return;
 			} else if (element instanceof UsesPortStubEditPart) {
 				//get ScaUsesPort from UsesPortStubEditPart and continue
 				ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, (UsesPortStubEditPart) element);
-				setBaseEnabled(checkPort(port));
+				setBaseEnabled(isPortSupported(port));
 				return;
 			}
 		}

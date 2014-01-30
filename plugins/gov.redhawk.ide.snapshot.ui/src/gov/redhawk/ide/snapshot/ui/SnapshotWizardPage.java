@@ -1,11 +1,11 @@
 /*******************************************************************************
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.ui;
@@ -63,9 +63,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class SnapshotWizardPage extends WizardPage {
 
-	private static final int UPDATE_DELAY_MS = 200;
+	private static final int UPDATE_DELAY_MS = 100;
 	
-	// === BEGIN: dialog page settings storage keys === 
+	// === BEGIN: dialog page settings storage keys ===
 	private static final String SS_FILE_TYPE_ID        = "outFileType_id";
 	private static final String SS_SAVE_TO_WORKSPACE   = "saveToWorkspace";
 	private static final String SS_CONFIRM_OVERWRITE   = "confirmOverwrite";
@@ -122,7 +122,7 @@ public class SnapshotWizardPage extends WizardPage {
 				return ((IDataWriterDesc) element).getName();
 			}
 		});
-		fileTypeCombo.setContentProvider(new ArrayContentProvider());
+		fileTypeCombo.setContentProvider(ArrayContentProvider.getInstance()); // ArrayContentProvider does not store any state, therefore can re-use instances
 		IDataWriterDesc[] input = SnapshotActivator.getDataReceiverRegistry().getRecieverDescs();
 		fileTypeCombo.setInput(input);
 		fileTypeCombo.setSorter(new ViewerSorter()); // sort combo items alphabetically (this selects last item?)
@@ -194,7 +194,7 @@ public class SnapshotWizardPage extends WizardPage {
 						return ValidationStatus.ok();
 					}
 					return ValidationStatus.error(fieldName + " must be specified.");
-				} 
+				}
 				return ValidationStatus.ok();
 			}
 		});
@@ -213,7 +213,7 @@ public class SnapshotWizardPage extends WizardPage {
 		fileNameTxt.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
 
  		UpdateValueStrategy fnameTargetToModelValidator = createFilenameT2MUpdateStrategy("File Name", false);
-		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, fileNameTxt), 
+		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, fileNameTxt),
 			BeansObservables.observeValue(settings, "fileName"), fnameTargetToModelValidator, null);
 		
 		// the browse button
