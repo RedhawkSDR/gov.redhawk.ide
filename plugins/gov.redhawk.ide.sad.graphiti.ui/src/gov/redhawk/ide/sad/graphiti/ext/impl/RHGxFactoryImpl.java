@@ -3,24 +3,20 @@
 package gov.redhawk.ide.sad.graphiti.ext.impl;
 
 import gov.redhawk.ide.sad.graphiti.ext.*;
-
+import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-
+import mil.jpeojtrs.sca.sad.AssemblyController;
+import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-
 import org.eclipse.graphiti.features.IFeatureProvider;
-
 import org.eclipse.graphiti.features.impl.Reason;
 
 /**
@@ -100,8 +96,14 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory
         return createUsesPortStubFromString(eDataType, initialValue);
       case RHGxPackage.PROVIDES_PORT_STUB:
         return createProvidesPortStubFromString(eDataType, initialValue);
+      case RHGxPackage.PORT:
+        return createPortFromString(eDataType, initialValue);
+      case RHGxPackage.ASSEMBLY_CONTROLLER:
+        return createAssemblyControllerFromString(eDataType, initialValue);
       case RHGxPackage.REASON:
         return createReasonFromString(eDataType, initialValue);
+      case RHGxPackage.LIST:
+        return createListFromString(eDataType, initialValue);
       case RHGxPackage.SAD_COMPONENT_INSTANTIATION:
         return createSadComponentInstantiationFromString(eDataType, initialValue);
       default:
@@ -127,8 +129,14 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory
         return convertUsesPortStubToString(eDataType, instanceValue);
       case RHGxPackage.PROVIDES_PORT_STUB:
         return convertProvidesPortStubToString(eDataType, instanceValue);
+      case RHGxPackage.PORT:
+        return convertPortToString(eDataType, instanceValue);
+      case RHGxPackage.ASSEMBLY_CONTROLLER:
+        return convertAssemblyControllerToString(eDataType, instanceValue);
       case RHGxPackage.REASON:
         return convertReasonToString(eDataType, instanceValue);
+      case RHGxPackage.LIST:
+        return convertListToString(eDataType, instanceValue);
       case RHGxPackage.SAD_COMPONENT_INSTANTIATION:
         return convertSadComponentInstantiationToString(eDataType, instanceValue);
       default:
@@ -243,6 +251,46 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public Port createPortFromString(EDataType eDataType, String initialValue)
+  {
+    return (Port)super.createFromString(eDataType, initialValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String convertPortToString(EDataType eDataType, Object instanceValue)
+  {
+    return super.convertToString(eDataType, instanceValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public AssemblyController createAssemblyControllerFromString(EDataType eDataType, String initialValue)
+  {
+    return (AssemblyController)super.createFromString(eDataType, initialValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String convertAssemblyControllerToString(EDataType eDataType, Object instanceValue)
+  {
+    return super.convertToString(eDataType, instanceValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Reason createReasonFromString(EDataType eDataType, String initialValue)
   {
     return (Reason)super.createFromString(eDataType, initialValue);
@@ -256,6 +304,26 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory
   public String convertReasonToString(EDataType eDataType, Object instanceValue)
   {
     return super.convertToString(eDataType, instanceValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public List<?> createListFromString(EDataType eDataType, String initialValue)
+  {
+    return (List<?>)super.createFromString(initialValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String convertListToString(EDataType eDataType, Object instanceValue)
+  {
+    return super.convertToString(instanceValue);
   }
 
   /**

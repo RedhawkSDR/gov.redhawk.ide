@@ -55,4 +55,12 @@ public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider implemen
 	public boolean isAutoUpdateAtStartup() {
 		return true;
 	}
+	@Override
+	public boolean isAutoUpdateAtRuntime(){
+		return true;
+	}
+	@Override
+	public boolean isAutoUpdateAtReset(){
+		return true;
+	}
 }

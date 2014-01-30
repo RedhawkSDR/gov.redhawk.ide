@@ -98,7 +98,7 @@ public class FindByDomainManagerPattern extends AbstractPattern implements IPatt
 				findByStub, getFeatureProvider(), ImageProvider.IMG_FIND_BY,
 				StyleUtil.getStyleForFindByOuter(diagram), SHAPE_TITLE,
 				getCreateImageId(), StyleUtil.getStyleForFindByInner(diagram), 
-				findByStub.getInterface(), findByStub.getUses(), findByStub.getProvides());
+				findByStub.getInterface(), findByStub.getUses(), findByStub.getProvides(), null);
 
 		//set shape location to user's selection
 		Graphiti.getGaLayoutService().setLocation(rhContainerShape.getGraphicsAlgorithm(), 

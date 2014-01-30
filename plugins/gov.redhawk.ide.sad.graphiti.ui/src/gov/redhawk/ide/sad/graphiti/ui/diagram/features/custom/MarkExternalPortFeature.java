@@ -65,8 +65,6 @@ public class MarkExternalPortFeature extends AbstractCustomFeature{
 	    
 	    ContainerShape providesPortRectangleShape = (ContainerShape)Graphiti.getPeService().getActiveContainerPe(fixPointAnchor);
 	    
-	    
-	    	
 	    //editing domain for our transaction
 	    TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 

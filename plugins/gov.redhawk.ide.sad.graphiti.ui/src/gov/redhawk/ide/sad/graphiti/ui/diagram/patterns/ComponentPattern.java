@@ -8,7 +8,9 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.HostCollocation;
+import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -17,6 +19,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
@@ -115,7 +118,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		final SadComponentInstantiation ciToDelete = 
 						(SadComponentInstantiation)DUtil.getBusinessObject(context.getPictogramElement());
 		
-		Diagram diagram = DUtil.findDiagram((ContainerShape)context.getPictogramElement());
+		final Diagram diagram = DUtil.findDiagram((ContainerShape)context.getPictogramElement());
 		
 		//editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
@@ -133,7 +136,8 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 				DUtil.deleteComponentInstantiation(ciToDelete, sad);
 				
 				//re-organize start order
-				organizeStartOrder(sad);
+				organizeStartOrder(sad, diagram, getFeatureProvider());
+				
             }
 		});
 		
@@ -155,14 +159,20 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	 */
 	public PictogramElement add(IAddContext context) {
 		
-		SadComponentInstantiation sadComponentInstantiation = (SadComponentInstantiation) context.getNewObject();
+		SadComponentInstantiation ci = (SadComponentInstantiation) context.getNewObject();
 		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
 		
 		//create shape
 		ComponentShape componentShape = RHGxFactory.eINSTANCE.createComponentShape();
 		
+		//get external ports for ci
+		List<Port> ciExternalPorts = getComponentExternalPorts(ci, getFeatureProvider(), getDiagram());
+			
+		//get waveform assembly controller
+		AssemblyController assemblyController = getAssemblyController(ci, getFeatureProvider(), getDiagram());
+		
 		//initialize shape contents
-		componentShape.init(targetContainerShape, sadComponentInstantiation, getFeatureProvider());
+		componentShape.init(targetContainerShape, ci, getFeatureProvider(), ciExternalPorts, assemblyController);
 		
 		//set shape location to user's selection
 		Graphiti.getGaLayoutService().setLocation(componentShape.getGraphicsAlgorithm(), 
@@ -268,9 +278,15 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	 * @return
 	 */
 	public static BigInteger determineHighestStartOrder(final SoftwareAssembly sad){
+
 		BigInteger highestStartOrder = null;
-		for(SadComponentInstantiation c: getAllComponents(sad)){
-			if(c.getStartOrder() != null && c.getStartOrder().compareTo(BigInteger.ZERO) >= 0){
+		List<SadComponentInstantiation> cis = getAllComponents(sad);
+		if(cis != null && cis.size() > 0){
+			highestStartOrder = cis.get(0).getStartOrder();
+		}
+		for(int i = 1; i < cis.size(); i++){
+			SadComponentInstantiation c = cis.get(i);
+			if(c.getStartOrder() != null && c.getStartOrder().compareTo(highestStartOrder) >= 0){
 				highestStartOrder = c.getStartOrder();
 			}
 		}
@@ -298,12 +314,67 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		return retVal;
 	}
 	
+	//swap start order of provided components.  Change assembly controller if start order zero
+	public static void swapStartOrder(final SoftwareAssembly sad,final Diagram diagram, final IFeatureProvider featureProvider,
+			final SadComponentInstantiation lowerCi, final SadComponentInstantiation higherCi){
+		
+	    //editing domain for our transaction
+	    TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+
+	    //get AssemblyController
+	    final AssemblyController assemblyController = sad.getAssemblyController();
+	   
+	    //Perform business object manipulation in a Command
+	    TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
+	    stack.execute(new RecordingCommand(editingDomain){
+	    	@Override
+	    	protected void doExecute() {
+
+	    		//increment start order
+	    		lowerCi.setStartOrder(higherCi.getStartOrder());
+	    		//Decrement start order
+	    		higherCi.setStartOrder(higherCi.getStartOrder().subtract(BigInteger.ONE));
+	    		
+	    		//set assembly controller if start order is zero
+	    		if(lowerCi.getStartOrder().compareTo(BigInteger.ZERO) == 0){
+		    		assemblyController.getComponentInstantiationRef().setInstantiation(lowerCi);
+	    		}else if(higherCi.getStartOrder().compareTo(BigInteger.ZERO) == 0){
+	    			assemblyController.getComponentInstantiationRef().setInstantiation(higherCi);
+	    		}
+	    	}
+	    });
+	}
+	
+	//returns ci with provided start order
+	public static SadComponentInstantiation getComponentInstantiationViaStartOrder(final SoftwareAssembly sad, final BigInteger startOrder){
+		for(SadComponentInstantiation ci: sad.getAllComponentInstantiations()){
+			if(ci.getStartOrder().compareTo(startOrder) == 0){
+				return ci;
+			}
+		}
+		return null;
+	}
+	
 	//adjust the start order for a component
-	public static void organizeStartOrder(final SoftwareAssembly sad){
+	public static void organizeStartOrder(final SoftwareAssembly sad,final Diagram diagram, final IFeatureProvider featureProvider){
 		BigInteger startOrder = BigInteger.ZERO;
-		for(SadComponentInstantiation c: sad.getComponentInstantiationsInStartOrder()){
-			c.setStartOrder(startOrder);
+		for(SadComponentInstantiation ci: sad.getComponentInstantiationsInStartOrder()){
+			ci.setStartOrder(startOrder);
 			startOrder = startOrder.add(BigInteger.ONE);
+			
+			//get external ports for ci
+			List<Port> ciExternalPorts = getComponentExternalPorts(ci, featureProvider, diagram);
+			
+			//get waveform assembly controller
+			AssemblyController assemblyController = getAssemblyController(ci, featureProvider, diagram);
+					
+			List<PictogramElement> elements = Graphiti.getLinkService().getPictogramElements(diagram, ci);
+			for(PictogramElement e: elements){
+				if(e instanceof ComponentShape){
+					((ComponentShape)e).update(ci, featureProvider, ciExternalPorts, assemblyController);
+				}
+			}
+			
 		}
 	}
 	
@@ -313,14 +384,48 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 //		return isPatternControlled(pictogramElement);
 //	}
 
+	//returns the assembly controller for this waveform if it happens to be the passed in Component
+	private static AssemblyController getAssemblyController(SadComponentInstantiation ci, 
+			IFeatureProvider featureProvider, Diagram diagram){
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
+		if(sad.getAssemblyController() != null &&
+				sad.getAssemblyController().getComponentInstantiationRef() != null &&
+				sad.getAssemblyController().getComponentInstantiationRef().getRefid().equals(ci.getId())){
+			return sad.getAssemblyController();
+		}
+		return null;
+		
+	}
+	
+	//returns all external ports that belong to the provided Component.
+	private static List<Port> getComponentExternalPorts(SadComponentInstantiation ci, 
+			IFeatureProvider featureProvider, Diagram diagram){
+		List<Port> ciExternalPorts = new ArrayList<Port>();
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
+		if(sad.getExternalPorts() != null && sad.getExternalPorts().getPort() != null){
+			for(Port p: sad.getExternalPorts().getPort()){
+					if(p.getComponentInstantiationRef().getRefid().equals(ci.getId())){
+						ciExternalPorts.add(p);
+					}
+			}
+		}
+		return ciExternalPorts;
+	}
+	
 	@Override
 	public boolean update(IUpdateContext context) {
 		
 		//business object
 		SadComponentInstantiation ci = 
 				(SadComponentInstantiation)DUtil.getBusinessObject(context.getPictogramElement());
+		
+		//get external ports for ci
+		List<Port> ciExternalPorts = getComponentExternalPorts(ci, getFeatureProvider(), getDiagram());
+		
+		//get waveform assembly controller
+		AssemblyController assemblyController = getAssemblyController(ci, getFeatureProvider(), getDiagram());
 				
-		Reason updated = ((ComponentShape)context.getPictogramElement()).update(ci, getFeatureProvider());
+		Reason updated = ((ComponentShape)context.getPictogramElement()).update(ci, getFeatureProvider(), ciExternalPorts, assemblyController);
 		
 		//if we updated redraw
 		if(updated.toBoolean()){
@@ -339,8 +444,14 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		//business object
 		SadComponentInstantiation ci = 
 				(SadComponentInstantiation)DUtil.getBusinessObject(context.getPictogramElement());
+		
+		//get external ports for ci
+		List<Port> ciExternalPorts = getComponentExternalPorts(ci, getFeatureProvider(), getDiagram());
+		
+		//get waveform assembly controller
+		AssemblyController assemblyController = getAssemblyController(ci, getFeatureProvider(), getDiagram());
 				
-		Reason requiresUpdate = ((ComponentShape)context.getPictogramElement()).updateNeeded(ci, getFeatureProvider());
+		Reason requiresUpdate = ((ComponentShape)context.getPictogramElement()).updateNeeded(ci, getFeatureProvider(), ciExternalPorts, assemblyController);
 
 		return requiresUpdate;
 	}

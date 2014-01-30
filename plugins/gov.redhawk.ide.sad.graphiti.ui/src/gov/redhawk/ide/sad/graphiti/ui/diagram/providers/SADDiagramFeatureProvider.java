@@ -1,7 +1,10 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.DecrementStartOrderFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.IncrementStartOrderFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkExternalPortFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.DeleteSADConnectInterface;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
@@ -19,6 +22,7 @@ import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 
 import org.eclipse.emf.ecore.EObject;
@@ -167,6 +171,30 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		    if(obj instanceof ProvidesPortStub || obj instanceof UsesPortStub){
 				retList.add(new MarkExternalPortFeature(this.getDiagramTypeProvider().getFeatureProvider()));
 		    }
+		}
+		
+		//add Set As Assembly Controller menu item
+		if(context.getPictogramElements() != null && context.getPictogramElements().length > 0){
+			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
+			if(obj instanceof SadComponentInstantiation){
+				retList.add(new SetAsAssemblyControllerFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+			}
+		}
+		
+		//add Increment Start Order menu item
+		if(context.getPictogramElements() != null && context.getPictogramElements().length > 0){
+			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
+			if(obj instanceof SadComponentInstantiation){
+				retList.add(new IncrementStartOrderFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+			}
+		}
+				
+		//add Decrement Start Order menu item
+		if(context.getPictogramElements() != null && context.getPictogramElements().length > 0){
+			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
+			if(obj instanceof SadComponentInstantiation){
+				retList.add(new DecrementStartOrderFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+			}
 		}
 
 		ret = retList.toArray(ret);

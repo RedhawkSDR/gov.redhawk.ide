@@ -1,6 +1,6 @@
 Add Components
 
-SigGen DoubleInput HalveInput HardLimit
+SigGen DoubleInput HardLimit
 
 DataReader DataConverter DataWriter
 
@@ -25,11 +25,11 @@ Remove Hosts
 
 Layout
 
+mark external port
+
 Add All Find By Types
 
 Layout
-
-mark external port
 
 delete assembly controller
 

@@ -84,17 +84,18 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 				//add component file
 				ComponentFile componentFile = createComponentFile(sad, spd);
 				
+				
 				//create component placement and add to list
 				final SadComponentPlacement componentPlacement = SadFactory.eINSTANCE.createSadComponentPlacement();
 				componentPlacementList.add(componentPlacement);
-				
-				//component instantiation
-				componentInstantiations[0] = createComponentInstantiation(sad, componentPlacement, spd);
 				
 				//create component file ref
 				final ComponentFileRef ref = PartitioningFactory.eINSTANCE.createComponentFileRef();
 				ref.setFile(componentFile);
 				componentPlacement.setComponentFileRef(ref);
+				
+				//component instantiation
+				componentInstantiations[0] = createComponentInstantiation(sad, componentPlacement, spd);
 				
 				//determine start order and potentially create assembly controller if zero is zero
 				intializeComponentStartOrder(sad, componentInstantiations[0]);

@@ -1,3 +1,5 @@
+/**
+ */
 package gov.redhawk.ide.sad.graphiti.ext.impl;
 
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
@@ -5,14 +7,11 @@ import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
-
 import java.math.BigInteger;
-
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import java.util.List;
+import mil.jpeojtrs.sca.sad.AssemblyController;
+import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -24,6 +23,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -51,59 +51,69 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	public final static int START_ORDER_ELLIPSE_RIGHT_PADDING = 5;
 	public final static int START_ORDER_ELLIPSE_TOP_PADDING = 5;
 	
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ComponentShapeImpl()
-	{
-		super();
-	}
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected ComponentShapeImpl()
+  {
+    super();
+  }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	protected EClass eStaticClass()
-	{
-		return RHGxPackage.Literals.COMPONENT_SHAPE;
-	}
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  protected EClass eStaticClass()
+  {
+    return RHGxPackage.Literals.COMPONENT_SHAPE;
+  }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * Creates the inner shapes that make up this container shape
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public void init(ContainerShape targetContainerShape, SadComponentInstantiation ci, 
-			IFeatureProvider featureProvider)
-	{
+  /**
+   * Creates the inner shapes that make up this container shape
+   */
+  public void init(final ContainerShape targetContainerShape, final SadComponentInstantiation ci, final IFeatureProvider featureProvider, final List<Port> ciExternalPorts, final AssemblyController assemblyController)
+  {
 		super.init(targetContainerShape, ci.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(), 
 				ci, featureProvider,
 				ImageProvider.IMG_COMPONENT_PLACEMENT,
 				StyleUtil.getStyleForComponentOuter(DUtil.findDiagram(targetContainerShape)),
 				ci.getUsageName(), ImageProvider.IMG_COMPONENT_INSTANCE, StyleUtil.getStyleForComponentInner(DUtil.findDiagram(targetContainerShape)),
-				ci.getInterfaceStub(), ci.getUses(), ci.getProvides());
+				ci.getInterfaceStub(), ci.getUses(), ci.getProvides(), ciExternalPorts);
 
 		
 		//get inner containershape
 		ContainerShape innerContainerShape = getInnerContainerShape();
 
 		//add start order ellipse
-		addStartOrderEllipse(innerContainerShape, ci);
-	}
+		addStartOrderEllipse(innerContainerShape, ci, assemblyController, featureProvider);
+  }
 
+  /**
+   * Updates the shape's contents using the supplied fields.  Return true if an update occurred, false otherwise.>
+   */
+  public Reason update(final SadComponentInstantiation ci, final IFeatureProvider featureProvider, final List<Port> ciExternalPorts, final AssemblyController assemblyController)
+  {
+	  return internalUpdate(ci, featureProvider, ciExternalPorts, assemblyController, true);
+  }
 
+  /**
+   * Return true (through Reason) if the shape's contents require an update based on the field supplied.
+	 * Also returns a textual reason why an update is needed. Returns false otherwise.
+   */
+  public Reason updateNeeded(final SadComponentInstantiation ci, final IFeatureProvider featureProvider, final List<Port> ciExternalPorts, final AssemblyController assemblyController)
+  {
+	  return internalUpdate(ci, featureProvider, ciExternalPorts, assemblyController, false);
+  }
+  
 	/**
-	 * <!-- begin-user-doc -->
 	 * Add an Ellipse to provided container shape that will contain the start order from sadComponentInstantiation
-	 * <!-- end-user-doc -->
-	 * @generated NOT
 	 */
-	public ContainerShape addStartOrderEllipse(ContainerShape innerContainerShape, SadComponentInstantiation sadComponentInstantiation)
+	public ContainerShape addStartOrderEllipse(ContainerShape innerContainerShape, SadComponentInstantiation sadComponentInstantiation,
+			AssemblyController assemblyController, IFeatureProvider featureProvider)
 	{
 		Diagram diagram= DUtil.findDiagram(innerContainerShape);
 
@@ -112,8 +122,9 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		Graphiti.getPeService().setPropertyValue(startOrderEllipseShape, DUtil.SHAPE_TYPE, SHAPE_startOrderEllipseShape);
 		Ellipse startOrderEllipse = Graphiti.getCreateService().createEllipse(startOrderEllipseShape);
 		//if start order zero (assembly controller), then use special style
-		if(BigInteger.ZERO.compareTo(sadComponentInstantiation.getStartOrder()) == 0){
+		if(assemblyController != null){
 			startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
+			featureProvider.link(startOrderEllipseShape, assemblyController);
 		}else{
 			startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderEllipse(diagram));
 		}
@@ -136,10 +147,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
 	 * Return the startOrderEllipseShape
-	 * <!-- end-user-doc -->
-	 * @generated NOT
 	 */
 	public ContainerShape getStartOrderEllipseShape()
 	{
@@ -147,10 +155,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
 	 * Return the startOrderText
-	 * <!-- end-user-doc -->
-	 * @generated NOT
 	 */
 	public Text getStartOrderText()
 	{
@@ -158,10 +163,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
 	 * performs a layout on the contents of this shape
-	 * <!-- end-user-doc -->
-	 * @generated NOT
 	 */
 	public void layout(){
 
@@ -180,23 +182,24 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * @param performUpdate
 	 * @return
 	 */
-	public Reason internalUpdate(SadComponentInstantiation ci, IFeatureProvider featureProvider, boolean performUpdate){
+	public Reason internalUpdate(SadComponentInstantiation ci, IFeatureProvider featureProvider, List<Port> ciExternalPorts,
+			AssemblyController assemblyController, boolean performUpdate){
 		Diagram diagram = DUtil.findDiagram(this);
 		Reason superReason = null;
 		if(performUpdate){
-			superReason = super.update(this, 
+			superReason = super.update( 
 					ci.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(), 
 					ci, featureProvider, ImageProvider.IMG_COMPONENT_PLACEMENT,
 					StyleUtil.getStyleForComponentOuter(DUtil.findDiagram(this)),
 					ci.getUsageName(), ImageProvider.IMG_COMPONENT_INSTANCE, StyleUtil.getStyleForComponentInner(diagram),
-					ci.getInterfaceStub(), ci.getUses(), ci.getProvides());
+					ci.getInterfaceStub(), ci.getUses(), ci.getProvides(), ciExternalPorts);
 		}else{
-			superReason = super.updateNeeded(this, 
+			superReason = super.updateNeeded( 
 					ci.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(), 
 					ci, featureProvider, ImageProvider.IMG_COMPONENT_PLACEMENT,
 					StyleUtil.getStyleForComponentOuter(DUtil.findDiagram(this)),
 					ci.getUsageName(), ImageProvider.IMG_COMPONENT_INSTANCE, StyleUtil.getStyleForComponentInner(diagram),
-					ci.getInterfaceStub(), ci.getUses(), ci.getProvides());
+					ci.getInterfaceStub(), ci.getUses(), ci.getProvides(), ciExternalPorts);
 		}
 
 		boolean updateStatus;
@@ -221,15 +224,26 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 				int textX = START_ORDER_ELLIPSE_DIAMETER/2 - textDimension.getWidth()/2;
 				Graphiti.getGaLayoutService().setLocationAndSize(startOrderTextGA, textX, START_ORDER_TOP_TEXT_PADDING, 
 						START_ORDER_ELLIPSE_DIAMETER, START_ORDER_ELLIPSE_DIAMETER);
-				
-				//Style
-				Ellipse startOrderEllipse = (Ellipse)getStartOrderEllipseShape().getGraphicsAlgorithm();
-				//if start order zero (assembly controller), then use special style
-				if(BigInteger.ZERO.compareTo(ci.getStartOrder()) == 0){
-					startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
-				}else{
-					startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderEllipse(diagram));
-				}
+			}else{
+				return new Reason(true, "Component start order requires update");
+			}
+		}
+		
+		//assembly controller
+		//Style
+		Ellipse startOrderEllipse = (Ellipse)getStartOrderEllipseShape().getGraphicsAlgorithm();
+		//if start order zero (assembly controller), then use special style
+		if(startOrderEllipse.getStyle() != StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram) && assemblyController != null){
+			if(performUpdate){
+				updateStatus = true;
+				startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
+				featureProvider.link(startOrderEllipse.getPictogramElement(), assemblyController);
+			}else{
+				return new Reason(true, "Component start order requires update");
+			}
+		}else if(startOrderEllipse.getStyle() != StyleUtil.getStyleForStartOrderEllipse(diagram) && assemblyController == null){
+			if(performUpdate){
+				startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderEllipse(diagram));
 			}else{
 				return new Reason(true, "Component start order requires update");
 			}
@@ -242,58 +256,6 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		}
 
 		return new Reason(false, "No updates required");
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-     * Updates the shape's contents using the supplied fields.  Return true if an update occurred, false otherwise.
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public Reason update(SadComponentInstantiation ci, IFeatureProvider featureProvider)
-	{
-		return internalUpdate(ci, featureProvider, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * Return true (through Reason) if the shape's contents require an update based on the field supplied.
-	 * Also returns a textual reason why an update is needed. Returns false otherwise.
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public Reason updateNeeded(SadComponentInstantiation ci, IFeatureProvider featureProvider)
-	{
-		return internalUpdate(ci, featureProvider, false);
-	}
-	
-	/**
-	 * Returns minimum width for Shape with provides and uses port stubs and name text
-	 * @param ci
-	 * @return
-	 */
-	public int getMinimumWidth(final String outerTitle, final String innerTitle, final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs){
-		
-		//determine width of parentshape
-		int rhContainerShapeMinWidth = super.getMinimumWidth(outerTitle, innerTitle, providesPortStubs, usesPortStubs);
-		
-		
-		int innerTitleWidth = 0;
-		Diagram diagram = DUtil.findDiagram(this);
-		
-
-		//inner title (including start order)
-		IDimension innerTitleDimension = GraphitiUi.getUiLayoutService().calculateTextSize(
-				innerTitle, StyleUtil.getInnerTitleFont(diagram));
-		innerTitleWidth = innerTitleDimension.getWidth() + INTERFACE_SHAPE_WIDTH + INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING + ComponentShapeImpl.START_ORDER_ELLIPSE_DIAMETER + ComponentShapeImpl.START_ORDER_ELLIPSE_LEFT_PADDING + ComponentShapeImpl.START_ORDER_ELLIPSE_RIGHT_PADDING;
-		
-		//return the largest width
-		if(rhContainerShapeMinWidth > innerTitleWidth){
-			return rhContainerShapeMinWidth;
-		}else{
-			return innerTitleWidth;
-		}
-
 	}
 
 } //ComponentShapeImpl

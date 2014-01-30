@@ -110,7 +110,7 @@ public class FindByServicePattern extends AbstractPattern implements IPattern{
 				findByStub, getFeatureProvider(), ImageProvider.IMG_FIND_BY,
 				StyleUtil.getStyleForFindByOuter(diagram), displayInnerText,
 				getCreateImageId(), StyleUtil.getStyleForFindByInner(diagram), 
-				findByStub.getInterface(), findByStub.getUses(), findByStub.getProvides());
+				findByStub.getInterface(), findByStub.getUses(), findByStub.getProvides(), null);
 
 		//set shape location to user's selection
 		Graphiti.getGaLayoutService().setLocation(rhContainerShape.getGraphicsAlgorithm(), 

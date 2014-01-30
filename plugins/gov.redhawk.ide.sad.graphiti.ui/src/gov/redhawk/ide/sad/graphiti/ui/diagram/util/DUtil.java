@@ -41,6 +41,8 @@ import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.styles.Color;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -269,6 +271,9 @@ public class DUtil {
 			for(Shape c: cs.getChildren()){
 				children.addAll(collectPropertyContainerChildren(c));
 			}
+			for(Anchor a: cs.getAnchors()){
+				children.addAll(collectPropertyContainerChildren(a));
+			}
 			if(cs.getGraphicsAlgorithm() != null){
 				children.addAll(collectPropertyContainerChildren(cs.getGraphicsAlgorithm()));
 			}
@@ -281,6 +286,14 @@ public class DUtil {
 		}else if(diagramElement instanceof Shape){
 			Shape shape = (Shape)diagramElement;
 			children.add(shape.getGraphicsAlgorithm());
+		}else if(diagramElement instanceof AnchorContainer){
+			AnchorContainer anchorContainer = (AnchorContainer)diagramElement;
+			for(Anchor a: anchorContainer.getAnchors()){
+				children.addAll(collectPropertyContainerChildren(a));
+			}
+		}else if(diagramElement instanceof Anchor){
+			Anchor anchor = (Anchor)diagramElement;
+			children.add(anchor.getGraphicsAlgorithm());
 		}
 		
 		return children;
@@ -638,6 +651,7 @@ public class DUtil {
 
 		return retVal;
 	}
+	
 	
 //	/**
 //	 * 

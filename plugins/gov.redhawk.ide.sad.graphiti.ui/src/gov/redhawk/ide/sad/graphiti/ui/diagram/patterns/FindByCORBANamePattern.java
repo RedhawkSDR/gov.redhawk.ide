@@ -105,7 +105,7 @@ public class FindByCORBANamePattern extends AbstractPattern implements IPattern{
 				findByStub, getFeatureProvider(), ImageProvider.IMG_FIND_BY,
 				StyleUtil.getStyleForFindByOuter(diagram), corbaNameText,
 				getCreateImageId(), StyleUtil.getStyleForFindByInner(diagram), 
-				findByStub.getInterface(), findByStub.getUses(), findByStub.getProvides());
+				findByStub.getInterface(), findByStub.getUses(), findByStub.getProvides(), null);
 
 		//set shape location to user's selection
 		Graphiti.getGaLayoutService().setLocation(rhContainerShape.getGraphicsAlgorithm(), 

@@ -13,6 +13,7 @@ import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.Port;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -32,7 +33,6 @@ import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
-import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
@@ -50,7 +50,7 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  * <p>
  * </p>
  *
- * @generated NOT
+ * @generated
  */
 @SuppressWarnings("restriction")
 public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContainerShape
@@ -66,6 +66,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	public final static String GA_innerRoundedRectangleLine = "innerRoundedRectangleLine";
 	public final static String GA_providesPortsRectangle = "providesPortsRectangle";
 	public final static String GA_providesPortText = "GA_providesPortText";
+	public final static String GA_fixPointAnchorRectangle = "GA_fixPointAnchorRectangle";
 	public final static String GA_usesPortsRectangle = "usesPortsRectangle";
 	public final static String GA_usesPortRectangle = "usesPortRectangle";
 	public final static String GA_usesPortText = "GA_usesPortText";
@@ -107,19 +108,18 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	public final static int ICON_IMAGE_LENGTH = 16;
 	
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated NOT
+   * 
+   * @generated
    */
-  protected RHContainerShapeImpl()
+  @SuppressWarnings("restriction")
+protected RHContainerShapeImpl()
   {
     super();
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated NOT
+   * 
+   * @generated
    */
   @Override
   protected EClass eStaticClass()
@@ -128,18 +128,16 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
   }
 
   /**
-   * <!-- begin-user-doc -->
    * Creates the inner shapes that make up this container shape
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
-public void init(ContainerShape targetContainerShape, String outerText, Object businessObject, IFeatureProvider featureProvider, String outerImageId, Style outerContainerStyle, String innerText, String innerImageId, Style innerContainerStyle, ComponentSupportedInterfaceStub interfaceStub, EList<UsesPortStub> uses, EList<ProvidesPortStub> provides)
+  @SuppressWarnings("restriction")
+public void init(final ContainerShape targetContainerShape, final String outerText, final Object businessObject, final IFeatureProvider featureProvider, final String outerImageId, final Style outerContainerStyle, final String innerText, final String innerImageId, final Style innerContainerStyle, final ComponentSupportedInterfaceStub interfaceStub, final EList<UsesPortStub> uses, final EList<ProvidesPortStub> provides, final List<Port> externalPorts)
   {
-		getProperties().addAll(new ArrayList<Property>(0));
+	    getProperties().addAll(new ArrayList<Property>(0));
 		setVisible(true);
 		setActive(true);
 		setContainer(targetContainerShape);
-		
+			
 		//add property for this shape
 		Graphiti.getPeService().setPropertyValue(this, DUtil.GA_TYPE, SHAPE_outerContainerShape);
 		
@@ -167,17 +165,101 @@ public void init(ContainerShape targetContainerShape, String outerText, Object b
 	    addLollipop(this, interfaceStub, featureProvider);
 	    
 	    //add provides ports
-	    addProvidesPorts(this, provides, featureProvider);
+	    addProvidesPorts(this, provides, featureProvider, externalPorts);
 
 	    //add uses ports
-	    addUsesPorts(this, uses, featureProvider);
+	    addUsesPorts(this, uses, featureProvider, externalPorts);
   }
 
   /**
-   * <!-- begin-user-doc -->
+   * 
+   */
+  public EList<ProvidesPortStub> getProvidesPortStubs()
+  {
+    return getInternalProvidesPortStubs();
+  }
+
+  /**
+   * Performs a layout on the contents of this shape
+   */
+  @SuppressWarnings("restriction")
+public void layout()
+  {
+		//get shape being laid out
+		ContainerShape containerShape = (ContainerShape) this;
+      RoundedRectangle outerRoundedRectangle = (RoundedRectangle)this.getGraphicsAlgorithm();
+		Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(this);
+		EList<ProvidesPortStub> provides = getProvidesPortStubs();
+		EList<UsesPortStub> uses = getUsesPortStubs();
+
+		// height
+		int minimumHeight = getMinimumHeight(provides, uses);
+		if (outerRoundedRectangle.getHeight() < minimumHeight) {
+			outerRoundedRectangle.setHeight(minimumHeight);
+		}
+
+		// width
+		int minimumWidth = getMinimumWidth(getOuterText().getValue(),
+				getInnerText().getValue(), provides, uses);
+		if (outerRoundedRectangle.getWidth() < minimumWidth) {
+			outerRoundedRectangle.setWidth(minimumWidth);
+		}
+
+		int containerWidth = outerRoundedRectangle.getWidth();
+		int containerHeight = outerRoundedRectangle.getHeight();
+
+		//resize all diagram elements
+		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
+
+		//outerRoundedRectangle
+		gaLayoutService.setLocationAndSize(getOuterText(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING+ICON_IMAGE_LENGTH+4, 0, containerWidth-(INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING+ICON_IMAGE_LENGTH+4), 20);
+		gaLayoutService.setLocationAndSize(getOuterImage(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
+
+
+		//innerRoundedRectangle
+		int innerContainerShapeWidth = containerWidth-INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING*2 - PROVIDES_PORTS_LEFT_PADDING;
+		int innerContainerShapeHeight = containerHeight-INNER_CONTAINER_SHAPE_TOP_PADDING;
+		gaLayoutService.setLocationAndSize(getInnerContainerShape().getGraphicsAlgorithm(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, INNER_CONTAINER_SHAPE_TOP_PADDING, innerContainerShapeWidth, innerContainerShapeHeight);
+		IDimension innerRoundedRectangleTextSize = GraphitiUi.getUiLayoutService().calculateTextSize(getInnerText().getValue(), StyleUtil.getInnerTitleFont(Graphiti.getPeService().getDiagramForPictogramElement(containerShape)));
+		int xForImage = (getInnerContainerShape().getGraphicsAlgorithm().getWidth()-(innerRoundedRectangleTextSize.getWidth()+ICON_IMAGE_LENGTH+5))/2;
+		gaLayoutService.setLocationAndSize(getInnerImage(), xForImage, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
+		gaLayoutService.setLocationAndSize(getInnerText(), xForImage+ICON_IMAGE_LENGTH+5, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING, innerRoundedRectangleTextSize.getWidth()+10, innerRoundedRectangleTextSize.getHeight());
+		getInnerPolyline().getPoints().get(1).setX(innerContainerShapeWidth);
+
+		//usesPortsRectangle
+		if(uses != null && getUsesPortsContainerShape() != null){
+			int usesPortNameLength = DUtil.getLongestUsesPortWidth(uses, diagram); 
+			int intPortTextX = outerRoundedRectangle.getWidth() - (usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_WIDTH);
+			gaLayoutService.setLocationAndSize(getUsesPortsContainerShape().getGraphicsAlgorithm(), intPortTextX, PORTS_CONTAINER_SHAPE_TOP_PADDING, PORT_SHAPE_WIDTH + usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING, uses.size()* (PORT_ROW_HEIGHT + PORT_ROW_PADDING_HEIGHT));
+		}
+  }
+
+  /**
+   * Updates the shape's contents using the supplied fields.  Return true if an update occurred, false otherwise.
+   */
+  public Reason update(final String outerText, final Object businessObject, final IFeatureProvider featureProvider, final String outerImageId, final Style outerContainerStyle, final String innerText, final String innerImageId, final Style innerContainerStyle, final ComponentSupportedInterfaceStub interfaceStub, final EList<UsesPortStub> uses, final EList<ProvidesPortStub> provides, final List<Port> externalPorts)
+  {
+	  return internalUpdate(outerText, businessObject, 
+			  featureProvider, outerImageId, outerContainerStyle, 
+			  innerText, innerImageId, innerContainerStyle, 
+			  interfaceStub, uses, provides, externalPorts, true);
+  }
+
+  /**
+   * Return true (through Reason) if the shape's contents require an update based on the field supplied.
+   * Also returns a textual reason why an update is needed. Returns false otherwise.
+   */
+  public Reason updateNeeded(final String outerText, final Object businessObject, final IFeatureProvider featureProvider, final String outerImageId, final Style outerContainerStyle, final String innerText, final String innerImageId, final Style innerContainerStyle, final ComponentSupportedInterfaceStub interfaceStub, final EList<UsesPortStub> uses, final EList<ProvidesPortStub> provides, final List<Port> externalPorts)
+  {
+	  return internalUpdate(outerText, businessObject, 
+			  featureProvider, outerImageId, outerContainerStyle, 
+			  innerText, innerImageId, innerContainerStyle, 
+			  interfaceStub, uses, provides, externalPorts, false);
+  }
+
+
+  /**
    * add inner container
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
   public ContainerShape addInnerContainer(ContainerShape targetContainerShape, String text, IFeatureProvider featureProvider, String imageId, Style containerStyle)
   {
@@ -208,10 +290,7 @@ public void init(ContainerShape targetContainerShape, String outerText, Object b
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * Add lollipop to targetContainerShape.  Lollipop anchor will link to the provided business object.
-   * <!-- end-user-doc -->
-   * @generated NOT
+   * Add lollipop to targetContainerShape.  Lollipop anchor will link to the provided business object.T
    */
   public ContainerShape addLollipop(ContainerShape targetContainerShape, Object anchorBusinessObject, IFeatureProvider featureProvider)
   {
@@ -255,12 +334,10 @@ public void init(ContainerShape targetContainerShape, String outerText, Object b
   }
 
   /**
-   * <!-- begin-user-doc -->
    * Adds a ProvidesPortStub shape to the providesPortsContainerShape
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
-  public void addProvidesPortContainerShape(ProvidesPortStub p, ContainerShape providesPortsContainerShape, int providesPortNameLength, IFeatureProvider featureProvider)
+  public void addProvidesPortContainerShape(ProvidesPortStub p, ContainerShape providesPortsContainerShape, 
+		  int providesPortNameLength, IFeatureProvider featureProvider, Port externalPort)
   {
 		
 		//determine how many uses port are already there.
@@ -305,19 +382,23 @@ public void init(ContainerShape targetContainerShape, String outerText, Object b
 		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
 		fixPointAnchor.setReferencedGraphicsAlgorithm(providesPortRectangle);
 		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
-		fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForProvidesPortAnchor(diagram));
+		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_fixPointAnchorRectangle);
+		if(externalPort != null){
+			fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalProvidesPort(diagram));
+			featureProvider.link(fixPointAnchor, externalPort); //link to externalPort so that update fires when it changes
+		}else{
+			fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForProvidesPortAnchor(diagram));
+		}
 		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, 0, -PORT_SHAPE_HEIGHT/2, PORT_SHAPE_WIDTH, PORT_SHAPE_HEIGHT);
 
   }
   
 
   /**
-   * <!-- begin-user-doc -->
    * Adds provides port container to provided container shape.  Adds a port shape with name and anchor for each providesPortStub.
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
-  public void addProvidesPorts(ContainerShape outerContainerShape, EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider)
+  public void addProvidesPorts(ContainerShape outerContainerShape, EList<ProvidesPortStub> providesPortStubs, 
+		  IFeatureProvider featureProvider, List<Port> externalPorts)
   {
 		
 		//provides (input)
@@ -334,17 +415,15 @@ public void init(ContainerShape targetContainerShape, String outerText, Object b
 		
 		//iterate over all provides ports
 		for(ProvidesPortStub p: providesPortStubs){
-			addProvidesPortContainerShape(p, providesPortsContainerShape, providesPortNameLength, featureProvider);
+			addProvidesPortContainerShape(p, providesPortsContainerShape, providesPortNameLength, featureProvider, findExternalPort(p, externalPorts));
 		}
   }
 
   /**
-   * <!-- begin-user-doc -->
    * Adds a UsesPort shape to the usesPortsContainerShape
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
-  public void addUsesPortContainerShape(UsesPortStub p, ContainerShape usesPortsContainerShape, int usesPortNameLength, IFeatureProvider featureProvider)
+  public void addUsesPortContainerShape(UsesPortStub p, ContainerShape usesPortsContainerShape, int usesPortNameLength, 
+		  IFeatureProvider featureProvider, Port externalPort)
   {
 		//determine how many uses port are already there.
 		int iter = 0;
@@ -392,18 +471,22 @@ public void init(ContainerShape targetContainerShape, String outerText, Object b
 		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
 		fixPointAnchor.setReferencedGraphicsAlgorithm(usesPortRectangle);
 		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
-		fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForUsesPortAnchor(diagram));
+		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_fixPointAnchorRectangle);
+		if(externalPort != null){
+			fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalUsesPort(diagram));
+			featureProvider.link(fixPointAnchor, externalPort); //link to externalPort so that update fires when it changes
+		}else{
+			fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForUsesPortAnchor(diagram));
+		}
 		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, -PORT_SHAPE_WIDTH, -PORT_SHAPE_HEIGHT/2, PORT_SHAPE_WIDTH, PORT_SHAPE_HEIGHT);
 	
   }
 
   /**
-   * <!-- begin-user-doc -->
    * Adds uses port container to provided container shape.  Adds a port shape with name and anchor for each usesPortStub.
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
-  public void addUsesPorts(ContainerShape outerContainerShape, EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider)
+  public void addUsesPorts(ContainerShape outerContainerShape, EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider,
+		  List<Port> externalPorts)
   {
 		//uses (output)
 		int usesPortNameLength = DUtil.getLongestUsesPortWidth(usesPortStubs, DUtil.findDiagram(outerContainerShape));
@@ -417,15 +500,12 @@ public void init(ContainerShape targetContainerShape, String outerText, Object b
 		
 		//add uses ports 
 		for(UsesPortStub p: usesPortStubs){
-			addUsesPortContainerShape(p, usesPortsContainerShape, usesPortNameLength, featureProvider);
+			addUsesPortContainerShape(p, usesPortsContainerShape, usesPortNameLength, featureProvider, findExternalPort(p, externalPorts));
 		}
   }
 
   /**
-   * <!-- begin-user-doc -->
    * Return the usesPortsContainerShape
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
   public ContainerShape getUsesPortsContainerShape()
   {
@@ -433,10 +513,7 @@ public void init(ContainerShape targetContainerShape, String outerText, Object b
   }
 
   /**
-   * <!-- begin-user-doc -->
    * Return the usesPortsContainerShape
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
   public ContainerShape getProvidesPortsContainerShape()
   {
@@ -444,10 +521,7 @@ public void init(ContainerShape targetContainerShape, String outerText, Object b
   }
 
   /**
-   * <!-- begin-user-doc -->
    * Returns usesPortsStubs business object list linked to getUsesPortsContainerShape()
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
   @SuppressWarnings("unchecked")
 public EList<UsesPortStub> getUsesPortStubs()
@@ -456,22 +530,16 @@ public EList<UsesPortStub> getUsesPortStubs()
   }
 
   /**
-   * <!-- begin-user-doc -->
    * Returns providesPortsStubs business object list linked to getProvidesPortsContainerShape()
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
   @SuppressWarnings("unchecked")
-public EList<ProvidesPortStub> getProvidesPortStubs()
+public EList<ProvidesPortStub> getInternalProvidesPortStubs()
   {
 	  return (EList<ProvidesPortStub>)(EList<?>)getProvidesPortsContainerShape().getLink().getBusinessObjects();
   }
 
   /**
-   * <!-- begin-user-doc -->
    * Return the text for outer container
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
   public Text getOuterText()
   {
@@ -479,10 +547,7 @@ public EList<ProvidesPortStub> getProvidesPortStubs()
   }
 
   /**
-   * <!-- begin-user-doc -->
    * Return the image for outer container
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
   public Image getOuterImage()
   {
@@ -490,10 +555,7 @@ public EList<ProvidesPortStub> getProvidesPortStubs()
   }
 
   /**
-   * <!-- begin-user-doc -->
    * Return the text for inner container
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
   public Text getInnerText()
   {
@@ -501,10 +563,7 @@ public EList<ProvidesPortStub> getProvidesPortStubs()
   }
 
   /**
-   * <!-- begin-user-doc -->
    * Return the image for inner container
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
   public Image getInnerImage()
   {
@@ -512,10 +571,7 @@ public EList<ProvidesPortStub> getProvidesPortStubs()
   }
 
   /**
-   * <!-- begin-user-doc -->
    * Return the inner container polyline
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
   public Polyline getInnerPolyline()
   {
@@ -523,79 +579,20 @@ public EList<ProvidesPortStub> getProvidesPortStubs()
   }
 
   /**
-   * <!-- begin-user-doc -->
    * Return the innerContainerShape
-   * <!-- end-user-doc -->
-   * @generated NOT
    */
   public ContainerShape getInnerContainerShape()
   {
 	  return (ContainerShape)DUtil.findFirstPropertyContainer(this, SHAPE_innerContainerShape);
   }
 
-  /**
-   * <!-- begin-user-doc -->
-   * performs a layout on the contents of this shape
-   * <!-- end-user-doc -->
-   * @generated NOT
-   */
-  public void layout()
-  {
-		//get shape being laid out
-		ContainerShape containerShape = (ContainerShape) this;
-        RoundedRectangle outerRoundedRectangle = (RoundedRectangle)this.getGraphicsAlgorithm();
-		Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(this);
-		EList<ProvidesPortStub> provides = getProvidesPortStubs();
-		EList<UsesPortStub> uses = getUsesPortStubs();
-
-		// height
-		int minimumHeight = getMinimumHeight(provides, uses);
-		if (outerRoundedRectangle.getHeight() < minimumHeight) {
-			outerRoundedRectangle.setHeight(minimumHeight);
-		}
-
-		// width
-		int minimumWidth = getMinimumWidth(getOuterText().getValue(),
-				getInnerText().getValue(), provides, uses);
-		if (outerRoundedRectangle.getWidth() < minimumWidth) {
-			outerRoundedRectangle.setWidth(minimumWidth);
-		}
-
-		int containerWidth = outerRoundedRectangle.getWidth();
-		int containerHeight = outerRoundedRectangle.getHeight();
-
-		//resize all diagram elements
-		IGaLayoutService gaLayoutService = Graphiti.getGaLayoutService();
-
-		//outerRoundedRectangle
-		gaLayoutService.setLocationAndSize(getOuterText(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING+ICON_IMAGE_LENGTH+4, 0, containerWidth-(INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING+ICON_IMAGE_LENGTH+4), 20);
-		gaLayoutService.setLocationAndSize(getOuterImage(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, 0, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
-
-
-		//innerRoundedRectangle
-		int innerContainerShapeWidth = containerWidth-INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING*2 - PROVIDES_PORTS_LEFT_PADDING;
-		int innerContainerShapeHeight = containerHeight-INNER_CONTAINER_SHAPE_TOP_PADDING;
-		gaLayoutService.setLocationAndSize(getInnerContainerShape().getGraphicsAlgorithm(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING, INNER_CONTAINER_SHAPE_TOP_PADDING, innerContainerShapeWidth, innerContainerShapeHeight);
-		IDimension innerRoundedRectangleTextSize = GraphitiUi.getUiLayoutService().calculateTextSize(getInnerText().getValue(), StyleUtil.getInnerTitleFont(Graphiti.getPeService().getDiagramForPictogramElement(containerShape)));
-		int xForImage = (getInnerContainerShape().getGraphicsAlgorithm().getWidth()-(innerRoundedRectangleTextSize.getWidth()+ICON_IMAGE_LENGTH+5))/2;
-		gaLayoutService.setLocationAndSize(getInnerImage(), xForImage, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING, ICON_IMAGE_LENGTH, ICON_IMAGE_LENGTH);
-		gaLayoutService.setLocationAndSize(getInnerText(), xForImage+ICON_IMAGE_LENGTH+5, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING, innerRoundedRectangleTextSize.getWidth()+10, innerRoundedRectangleTextSize.getHeight());
-		getInnerPolyline().getPoints().get(1).setX(innerContainerShapeWidth);
-
-		//usesPortsRectangle
-		if(uses != null && getUsesPortsContainerShape() != null){
-			int usesPortNameLength = DUtil.getLongestUsesPortWidth(uses, diagram); 
-			int intPortTextX = outerRoundedRectangle.getWidth() - (usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_WIDTH);
-			gaLayoutService.setLocationAndSize(getUsesPortsContainerShape().getGraphicsAlgorithm(), intPortTextX, PORTS_CONTAINER_SHAPE_TOP_PADDING, PORT_SHAPE_WIDTH + usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING, uses.size()* (PORT_ROW_HEIGHT + PORT_ROW_PADDING_HEIGHT));
-		}
-  }
   
-  public Reason internalUpdate(ContainerShape targetContainerShape, String outerText, 
+  public Reason internalUpdate(String outerText, 
 		  Object businessObject, IFeatureProvider featureProvider, 
 		  String outerImageId, Style outerContainerStyle, 
 		  String innerText, String innerImageId, Style innerContainerStyle, 
-		  ComponentSupportedInterfaceStub interfaceStub, EList<UsesPortStub> uses, EList<ProvidesPortStub> provides,
-		  boolean performUpdate){
+		  ComponentSupportedInterfaceStub interfaceStub, EList<UsesPortStub> uses, EList<ProvidesPortStub> provides, 
+		  List<Port> externalPorts, boolean performUpdate){
 	  
 	  boolean updateStatus = false;
 	  
@@ -630,25 +627,59 @@ public EList<ProvidesPortStub> getProvidesPortStubs()
 		  for(PropertyContainer providesPortContainerShape: DUtil.collectPropertyContainerChildren(providesPortsContainerShape)){
 			  //if its a providesPortContainerShape
 			  if(DUtil.isPropertyElementType(providesPortContainerShape, SHAPE_providesPortContainerShape)){
-				  //find all providesPortText
-				  for(PropertyContainer providesPortText: DUtil.collectPropertyContainerChildren(providesPortContainerShape)){
-					  //compare text
-					  if(DUtil.isPropertyElementType(providesPortText, GA_providesPortText)){
-						  providesPortTexts.add((Text)providesPortText);
+				  //find all providesPortText, and fixPointAnchorRectangle
+				  for(PropertyContainer providesPortChild: DUtil.collectPropertyContainerChildren(providesPortContainerShape)){
+					  //text?
+					  if(DUtil.isPropertyElementType(providesPortChild, GA_providesPortText)){
+						  Text providesPortText = (Text)providesPortChild;
+						  providesPortTexts.add(providesPortText);
 						  //search for text in model
 						  boolean found = false;
 						  for(ProvidesPortStub portStub: provides){
-							  if(portStub.getName().equals(((Text)providesPortText).getValue())){
+							  if(portStub.getName().equals(providesPortText.getValue())){
 								  found = true;
 							  }
 						  }
 						  if(!found){
+							  // wasn't found, deleting this port
 							  if(performUpdate){
 								  updateStatus = true;
 								  //delete shape
 								  EcoreUtil.delete(providesPortContainerShape);
 							  }else{
 								  return new Reason(true, "Provides ports requires update");
+							  }
+						  }
+					  }
+					  if(DUtil.isPropertyElementType(providesPortChild, GA_fixPointAnchorRectangle)){
+						  Rectangle fixPointAnchorRectangle = (Rectangle)providesPortChild;
+						  //get business object linked to fixPointAnchor
+						  Object portObject = DUtil.getBusinessObject(fixPointAnchorRectangle.getPictogramElement());
+						  if(portObject != null){
+							  //ProvidesPortStub
+							  if(isExternalPort(portObject, externalPorts)){
+								  //external port
+								  if(!fixPointAnchorRectangle.getStyle().equals(StyleUtil.getStyleForExternalProvidesPort(DUtil.findDiagram(this)))){
+									  if(performUpdate){
+										  updateStatus = true;
+										  //update style
+										  fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalProvidesPort(DUtil.findDiagram(this)));
+										  featureProvider.link(fixPointAnchorRectangle.getPictogramElement(), findExternalPort(portObject, externalPorts)); //link to externalPort so that update fires when it changes
+									  }else{
+										  return new Reason(true, "Port style requires update");
+									  }
+								  }
+							  }else{
+								  //non-external port
+								  if(!fixPointAnchorRectangle.getStyle().equals(StyleUtil.getStyleForProvidesPort(DUtil.findDiagram(this)))){
+									  if(performUpdate){
+										  updateStatus = true;
+										  //update style
+										  fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForProvidesPort(DUtil.findDiagram(this)));
+									  }else{
+										  return new Reason(true, "Port style requires update");
+									  }
+								  }
 							  }
 						  }
 					  }
@@ -671,7 +702,7 @@ public EList<ProvidesPortStub> getProvidesPortStubs()
 				  if(!found){
 					  if(performUpdate){
 						  updateStatus = true;
-						  addProvidesPortContainerShape(p, providesPortsContainerShape, providesPortNameLength, featureProvider);
+						  addProvidesPortContainerShape(p, providesPortsContainerShape, providesPortNameLength, featureProvider, findExternalPort(p, externalPorts));
 					  }else{
 						  return new Reason(true, "Provides ports requires update");
 					  }
@@ -693,14 +724,15 @@ public EList<ProvidesPortStub> getProvidesPortStubs()
 			  //if its a usesPortContainerShape
 			  if(DUtil.isPropertyElementType(usesPortContainerShape, SHAPE_usesPortContainerShape)){
 				  //find all usesPortText
-				  for(PropertyContainer usesPortText: DUtil.collectPropertyContainerChildren(usesPortContainerShape)){
+				  for(PropertyContainer usesPortChild: DUtil.collectPropertyContainerChildren(usesPortContainerShape)){
 					  //compare text
-					  if(DUtil.isPropertyElementType(usesPortText, GA_usesPortText)){
-						  usesPortTexts.add((Text)usesPortText);
+					  if(DUtil.isPropertyElementType(usesPortChild, GA_usesPortText)){
+						  Text usesPortText = (Text)usesPortChild;
+						  usesPortTexts.add(usesPortText);
 						  //search for text in model
 						  boolean found = false;
 						  for(UsesPortStub portStub: uses){
-							  if(portStub.getName().equals(((Text)usesPortText).getValue())){
+							  if(portStub.getName().equals(usesPortText.getValue())){
 								  found = true;
 							  }
 						  }
@@ -711,6 +743,38 @@ public EList<ProvidesPortStub> getProvidesPortStubs()
 								  EcoreUtil.delete(usesPortContainerShape);
 							  }else{
 								  return new Reason(true, "Uses ports requires update");
+							  }
+						  }
+					  }
+					  if(DUtil.isPropertyElementType(usesPortChild, GA_fixPointAnchorRectangle)){
+						  Rectangle fixPointAnchorRectangle = (Rectangle)usesPortChild;
+						  //get business object linked to fixPointAnchor
+						  Object portObject = DUtil.getBusinessObject(fixPointAnchorRectangle.getPictogramElement());
+						  if(portObject != null){
+							  //usesPortStub
+							  if(isExternalPort(portObject, externalPorts)){
+								  //external port
+								  if(!fixPointAnchorRectangle.getStyle().equals(StyleUtil.getStyleForExternalUsesPort(DUtil.findDiagram(this)))){
+									  if(performUpdate){
+										  updateStatus = true;
+										  //update style
+										  fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalUsesPort(DUtil.findDiagram(this)));
+										  featureProvider.link(fixPointAnchorRectangle.getPictogramElement(), findExternalPort(portObject, externalPorts)); //link to externalPort so that update fires when it changes
+									  }else{
+										  return new Reason(true, "Port style requires update");
+									  }
+								  }
+							  }else{
+								  //non-external port
+								  if(!fixPointAnchorRectangle.getStyle().equals(StyleUtil.getStyleForUsesPort(DUtil.findDiagram(this)))){
+									  if(performUpdate){
+										  updateStatus = true;
+										  //update style
+										  fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForUsesPort(DUtil.findDiagram(this)));
+									  }else{
+										  return new Reason(true, "Port style requires update");
+									  }
+								  }
 							  }
 						  }
 					  }
@@ -733,7 +797,7 @@ public EList<ProvidesPortStub> getProvidesPortStubs()
 				  if(!found){
 					  if(performUpdate){
 						  updateStatus = true;
-						  addUsesPortContainerShape(p, usesPortsContainerShape, usesPortNameLength, featureProvider);
+						  addUsesPortContainerShape(p, usesPortsContainerShape, usesPortNameLength, featureProvider, findExternalPort(p, externalPorts));
 					  }else{
 						  return new Reason(true, "Uses ports requires update");
 					  }
@@ -749,38 +813,49 @@ public EList<ProvidesPortStub> getProvidesPortStubs()
 	  return new Reason(false, "No updates required");
 	  
   }
-
+  
   /**
-   * <!-- begin-user-doc -->
-   * Updates the shape's contents using the supplied fields.  Return true if an update occurred, false otherwise.
-   * <!-- end-user-doc -->
-   * @generated
+   * Returns true if the portObject identifier is listed in the externalPorts list
+   * @param portObject
+   * @param externalPorts
+   * @return
    */
-  public Reason update(ContainerShape targetContainerShape, String outerText, Object businessObject, 
-		  IFeatureProvider featureProvider, String outerImageId, Style outerContainerStyle, 
-		  String innerText, String innerImageId, Style innerContainerStyle, 
-		  ComponentSupportedInterfaceStub interfaceStub, EList<UsesPortStub> uses, EList<ProvidesPortStub> provides)
-  {
-	  return internalUpdate(targetContainerShape, outerText, businessObject, 
-			  featureProvider, outerImageId, outerContainerStyle, 
-			  innerText, innerImageId, innerContainerStyle, 
-			  interfaceStub, uses, provides, true);
+  public static boolean isExternalPort(Object portObject, List<Port> externalPorts){
+	  if(findExternalPort(portObject, externalPorts) != null){
+		  return true;
+	  }else{
+		  return false;
+	  }
+  }
+  
+  /**
+   * Returns external port if the portObject identifier is listed in the externalPorts list
+   * @param portObject
+   * @param externalPorts
+   * @return
+   */
+  public static Port findExternalPort(Object portObject, List<Port> externalPorts){
+	  if(externalPorts != null){
+		  if(portObject instanceof UsesPortStub){
+			  UsesPortStub usesPort = (UsesPortStub)portObject;
+			  for(Port p: externalPorts){
+				  if(p.getUsesIdentifier() != null && p.getUsesIdentifier().equals(usesPort.getName())){
+					  return p;
+				  }
+			  }
+		  }
+		  if(portObject instanceof ProvidesPortStub){
+			  ProvidesPortStub usesPort = (ProvidesPortStub)portObject;
+			  for(Port p: externalPorts){
+				  if(p.getProvidesIndentifier() != null && p.getProvidesIndentifier().equals(usesPort.getName())){
+					  return p;
+				  }
+			  }
+		  }
+	  }
+	  return null;
   }
 
-  /**
-   * <!-- begin-user-doc -->
-   * Return true (through Reason) if the shape's contents require an update based on the field supplied.
-   * Also returns a textual reason why an update is needed. Returns false otherwise.
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Reason updateNeeded(ContainerShape targetContainerShape, String outerText, Object businessObject, IFeatureProvider featureProvider, String outerImageId, Style outerContainerStyle, String innerText, String innerImageId, Style innerContainerStyle, ComponentSupportedInterfaceStub interfaceStub, EList<UsesPortStub> uses, EList<ProvidesPortStub> provides)
-  {
-	  return internalUpdate(targetContainerShape, outerText, businessObject, 
-			  featureProvider, outerImageId, outerContainerStyle, 
-			  innerText, innerImageId, innerContainerStyle, 
-			  interfaceStub, uses, provides, false);
-  }
   
 	/**
 	 * Returns minimum width for Shape with provides and uses port stubs and name text
@@ -829,7 +904,7 @@ public EList<ProvidesPortStub> getProvidesPortStubs()
 	 * Determine the height by which we need to expand by comparing the number of uses and provides ports and return the largest
 	 * @return int Return the length by which we need to expand the height of the associated Shape
 	 */
-	private int getAdjustedHeight(final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs) {;
+	private static int getAdjustedHeight(final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs) {;
 
 		int numPorts = Math.max(providesPortStubs.size(), usesPortStubs.size());
 		
@@ -841,7 +916,7 @@ public EList<ProvidesPortStub> getProvidesPortStubs()
 	 * @param ci
 	 * @return
 	 */
-	private int getMinimumHeight(final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs){
+	private static int getMinimumHeight(final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs){
 		return getAdjustedHeight(providesPortStubs, usesPortStubs) * (PORT_ROW_HEIGHT + PORT_ROW_PADDING_HEIGHT) + PORTS_CONTAINER_SHAPE_TOP_PADDING + 10;
 	}
 	
@@ -857,5 +932,6 @@ public EList<ProvidesPortStub> getProvidesPortStubs()
 		}
 		return null;
 	}
+
 
 } //RHContainerShapeImpl

@@ -20,7 +20,7 @@ Require-Bundle: gov.redhawk.ui;visibility:=reexport;bundle-version="1.0.0",
  org.eclipse.graphiti.pattern,
  gov.redhawk.sca,
  org.eclipse.zest.layouts;bundle-version="1.1.0",
- org.eclipse.graphiti.examples.common;bundle-version="0.10.1",
+ org.eclipse.graphiti.examples.common,
  org.eclipse.core.databinding.beans;bundle-version="1.2.200",
  gov.redhawk.eclipsecorba.library.ui,
  gov.redhawk.sca.efs,
@@ -29,7 +29,7 @@ Require-Bundle: gov.redhawk.ui;visibility:=reexport;bundle-version="1.0.0",
  org.eclipse.xtext.xbase.lib;visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,
  org.eclipse.graphiti.mm;visibility:=reexport,
- org.eclipse.emf.ecore.xcore;bundle-version="1.0.2"
+ org.eclipse.emf.ecore.xcore;visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
@@ -41,3 +41,4 @@ Export-Package: gov.redhawk.ide.sad.graphiti.ui,
  gov.redhawk.ide.sad.graphiti.ext,
  gov.redhawk.ide.sad.graphiti.ext.impl,
  gov.redhawk.ide.sad.graphiti.ext.util
+

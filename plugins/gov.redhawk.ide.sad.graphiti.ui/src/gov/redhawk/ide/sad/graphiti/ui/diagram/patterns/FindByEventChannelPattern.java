@@ -100,7 +100,7 @@ public class FindByEventChannelPattern extends AbstractPattern implements IPatte
 				findByStub, getFeatureProvider(), ImageProvider.IMG_FIND_BY,
 				StyleUtil.getStyleForFindByOuter(diagram), title,
 				getCreateImageId(), StyleUtil.getStyleForFindByInner(diagram), 
-				findByStub.getInterface(), findByStub.getUses(), findByStub.getProvides());
+				findByStub.getInterface(), findByStub.getUses(), findByStub.getProvides(), null);
 
 		//set shape location to user's selection
 		Graphiti.getGaLayoutService().setLocation(rhContainerShape.getGraphicsAlgorithm(), 

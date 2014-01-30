@@ -2,21 +2,23 @@
 @GenModel(prefix="RHGx")
 @GenModel(contentTypeIdentifier="http://www.redhawk.gov/model/rhgext/1.0.0")
 @GenModel(operationReflection="false")
+//prevents custom coding from getting blown away
+@GenModel(modelDirectory="/gov.redhawk.ide.sad.graphiti.ui/src") 
 
 package gov.redhawk.ide.sad.graphiti.ext
 
 import org.eclipse.graphiti.mm.pictograms.ContainerShape
 import org.eclipse.graphiti.features.IFeatureProvider
 import org.eclipse.graphiti.mm.algorithms.styles.Style
-import org.eclipse.graphiti.mm.algorithms.Text
-import org.eclipse.graphiti.mm.algorithms.Image
-import org.eclipse.graphiti.mm.algorithms.Polyline
 import org.eclipse.graphiti.features.impl.Reason
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub
 import mil.jpeojtrs.sca.partitioning.UsesPortStub
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation
+import mil.jpeojtrs.sca.sad.Port
+import mil.jpeojtrs.sca.sad.AssemblyController
 import org.eclipse.emf.ecore.EEList
+import java.util.List
 
 
 
@@ -24,8 +26,12 @@ type ComponentSupportedInterfaceStub wraps ComponentSupportedInterfaceStub
 type IFeatureProvider wraps IFeatureProvider
 type UsesPortStub wraps UsesPortStub
 type ProvidesPortStub wraps ProvidesPortStub
+type Port wraps Port
+type AssemblyController wraps AssemblyController
 type Reason wraps Reason
+type List<Port> wraps List
 type SadComponentInstantiation wraps SadComponentInstantiation
+
 
 interface ContainerShapeImpl wraps ContainerShape {}
 
@@ -37,107 +43,54 @@ class RHContainerShape extends ContainerShape{
 			Style innerContainerStyle,
 			ComponentSupportedInterfaceStub interfaceStub,
 			EEList<UsesPortStub> uses,
-			EEList<ProvidesPortStub> provides)
-			
-	/*Add inner container */
-	op ContainerShape addInnerContainer(ContainerShape targetContainerShape, String text, 
-			IFeatureProvider featureProvider, String imageId, Style containerStyle)
-			
-	/*Add lollipop to targetContainerShape.  Lollipop anchor will link to the provided business object. */
-	op ContainerShape addLollipop(ContainerShape targetContainerShape, 
-			Object anchorBusinessObject, IFeatureProvider featureProvider)
-			
-	/*Adds a ProvidesPortStub shape to the providesPortsContainerShape */
-	op void addProvidesPortContainerShape(ProvidesPortStub p, ContainerShape providesPortsContainerShape, 
-		int providesPortNameLength, IFeatureProvider featureProvider)
-	
-	/*Adds provides port container to provided container shape.  Adds a port shape with name and anchor for each providesPortStub. */
-	op void addProvidesPorts(ContainerShape outerContainerShape, EEList<ProvidesPortStub> providesPortStubs,
-		IFeatureProvider featureProvider)
-	
-	/*Adds a UsesPort shape to the usesPortsContainerShape */
-	op void addUsesPortContainerShape(UsesPortStub p, ContainerShape usesPortsContainerShape,
-		int usesPortNameLength, IFeatureProvider featureProvider)
-	
-	/*Adds uses port container to provided container shape.  Adds a port shape with name and anchor for each usesPortStub. */
-	op void addUsesPorts(ContainerShape outerContainerShape, EEList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider)
-	
-	/*Return the usesPortsContainerShape */
-	op ContainerShape getUsesPortsContainerShape()
-	
-	/*Return the usesPortsContainerShape */
-	op ContainerShape getProvidesPortsContainerShape()
-	
-	/*Returns usesPortsStubs business object list linked to getUsesPortsContainerShape()*/
-	op EEList<UsesPortStub> getUsesPortStubs()
-	
+			EEList<ProvidesPortStub> provides, 
+			List<Port> externalPorts)
+
 	/*Returns providesPortsStubs business object list linked to getProvidesPortsContainerShape()*/
 	op EEList<ProvidesPortStub> getProvidesPortStubs()
-	
-	/*Return the text for outer container */
-	op Text getOuterText()
-	
-	/*Return the image for outer container */
-	op Image getOuterImage()
-	
-	/*Return the text for inner container */
-	op Text getInnerText()
-	
-	/*Return the image for inner container */
-	op Image getInnerImage()
-	
-	/*Return the inner container polyline */
-	op Polyline getInnerPolyline()
-	
-	/*Return the innerContainerShape */
-	op ContainerShape getInnerContainerShape()
+
 	
 	/*performs a layout on the contents of this shape */
 	op void layout()
 	
 	/*Updates the shape with supplied values */
-	op Reason update(ContainerShape targetContainerShape, String outerText, 
+	op Reason update(String outerText, 
 		  Object businessObject, IFeatureProvider featureProvider, 
 		  String outerImageId, Style outerContainerStyle, 
 		  String innerText, String innerImageId, Style innerContainerStyle, 
-		  ComponentSupportedInterfaceStub interfaceStub, EEList<UsesPortStub> uses, EEList<ProvidesPortStub> provides)
+		  ComponentSupportedInterfaceStub interfaceStub, EEList<UsesPortStub> uses, EEList<ProvidesPortStub> provides,
+		  List<Port> externalPorts)
 		  
 	/*Checks if shape requires an update.  
 	 * If update required returns Reason with true
 	 * boolean value and message describing what needs to be updated
 	 */
-	 op Reason updateNeeded(ContainerShape targetContainerShape, String outerText, 
+	op Reason updateNeeded(String outerText, 
 		  Object businessObject, IFeatureProvider featureProvider, 
 		  String outerImageId, Style outerContainerStyle, 
 		  String innerText, String innerImageId, Style innerContainerStyle, 
-		  ComponentSupportedInterfaceStub interfaceStub, EEList<UsesPortStub> uses, EEList<ProvidesPortStub> provides)
-		  
-	/*Returns minimum width of shape */
-	op int getMinimumWidth(String outerTitle, String innerTitle, EEList<ProvidesPortStub> providesPortStubs, EEList<UsesPortStub> usesPortStubs)
-		
+		  ComponentSupportedInterfaceStub interfaceStub, EEList<UsesPortStub> uses, EEList<ProvidesPortStub> provides,
+		  List<Port> externalPorts)
 	
 }
 
 class ComponentShape extends RHContainerShape{
 	
 	op void init(ContainerShape targetContainerShape, SadComponentInstantiation ci, 
-			IFeatureProvider featureProvider)
-			
-	/*Add an Ellipse to provided container shape that will contain the start order from sadComponentInstantiation*/
-	op ContainerShape addStartOrderEllipse(ContainerShape innerContainerShape, SadComponentInstantiation sadComponentInstantiation)
-	
-	/*Return the startOrderEllipseShape */
-	op  ContainerShape getStartOrderEllipseShape()
-	
-	/*Return the startOrderText */
-	op Text getStartOrderText()
+			IFeatureProvider featureProvider, List<Port> ciExternalPorts,
+			AssemblyController assemblyController)
+
+	/*performs a layout on the contents of this shape */
+	op void layout()
 	
 	/*Updates the shape with supplied values */
-	op Reason update(SadComponentInstantiation ci, IFeatureProvider featureProvider)
+	op Reason update(SadComponentInstantiation ci, IFeatureProvider featureProvider, List<Port> ciExternalPorts,
+		AssemblyController assemblyController)
 	
 	/*Checks if shape requires an update.  
 	 * If update required returns Reason with true
 	 * boolean value and message describing what needs to be updated
 	 */
-	 op Reason updateNeeded(SadComponentInstantiation ci, IFeatureProvider featureProvider)
+	 op Reason updateNeeded(SadComponentInstantiation ci, IFeatureProvider featureProvider, List<Port> ciExternalPorts,
+	 	AssemblyController assemblyController)
 }
