@@ -1,11 +1,11 @@
 /*******************************************************************************
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.ui;
@@ -33,22 +33,16 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * 
+ *
  */
 public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 
-	private static final int UPDATE_DELAY_MS = 200;
-
-	// === BEGIN: dialog page settings storage keys === 
-	private static final String BSS_NUM_SAMPLES = "numberSamples";
-	private static final String BSS_CAPTURE_METHOD = "captureMethod";
-	// === END: dialog page settings storage keys === 
+	private static final int UPDATE_DELAY_MS = 100;
 
 	private BulkIOSnapshotSettings bulkIOsettings = new BulkIOSnapshotSettings();
 	private Text samplesTxt;
@@ -57,7 +51,7 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 
 	public BulkIOSnapshotWizardPage(String pageName, ImageDescriptor titleImage) {
 		super(pageName, "Port Snapshot", titleImage);
-		setDescription("Write a stream of samples from the port to the given file.");
+		setDescription("Write a stream of samples from the Port to the given file.");
 	}
 
 	public BulkIOSnapshotSettings getBulkIOsettings() {
@@ -71,27 +65,29 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 		final Composite parent = new Composite(main, SWT.None);
 		parent.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
 
-		DataBindingContext context = getContext();
+		DataBindingContext dataBindingCtx = getContext();
 
-		// Add Combo Box and text field to input how to capture samples
+		// === capture method (how to capture samples) ===
 		final ComboViewer captureCombo = new ComboViewer(parent, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SIMPLE);
 		captureCombo.setLabelProvider(new LabelProvider());
-		captureCombo.setContentProvider(new ArrayContentProvider());
+		captureCombo.setContentProvider(ArrayContentProvider.getInstance()); // ArrayContentProvider does not store any state, therefore can re-use instances
 		captureCombo.setInput(CaptureMethod.values());
-		context.bindValue(ViewerProperties.singleSelection().observe(captureCombo), BeansObservables.observeValue(bulkIOsettings, "captureMethod"));
+		dataBindingCtx.bindValue(
+			ViewerProperties.singleSelection().observe(captureCombo),
+			BeansObservables.observeValue(bulkIOsettings, BulkIOSnapshotSettings.PROP_CAPTURE_METHOD));
 
+		// === number of samples ===
 		samplesTxt = new Text(parent, SWT.BORDER);
 		samplesTxt.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
-		// ensure that invalid number of samples are caught and displayed
-		UpdateValueStrategy validateSamples = createSamplesValidatorStrategy();
-		samplesBinding = context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, samplesTxt),
-			BeansObservables.observeValue(bulkIOsettings, "samples"), validateSamples, null);
+		UpdateValueStrategy validateSamples = createSamplesValidatorStrategy(); // validator to ensure that invalid number of samples are caught and displayed
+		samplesBinding = dataBindingCtx.bindValue(
+			WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, samplesTxt),
+			BeansObservables.observeValue(bulkIOsettings, BulkIOSnapshotSettings.PROP_SAMPLES), validateSamples, null);
 
+		// === units for number samples field ===
 		unitsLabel = new Label(parent, SWT.None);
 		unitsLabel.setText("");
-		GridData unitsLayout = new GridData();
-		unitsLayout.widthHint = 20;
-		unitsLabel.setLayoutData(unitsLayout);
+		unitsLabel.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).hint(20, SWT.DEFAULT).create());
 		// update validator, set text field enable, and units as needed
 		captureCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
@@ -101,19 +97,30 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 			}
 		});
 
+		// === connection ID ==
+		Label label = new Label(parent, SWT.None);
+		label.setText("Connection ID:");
+		Text connectionIDField = new Text(parent, SWT.BORDER);
+		connectionIDField.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
+		connectionIDField.setToolTipText("Custom Port connection ID to use vs a generated one.");
+		dataBindingCtx.bindValue(
+			WidgetProperties.text(SWT.Modify).observe(connectionIDField),
+			BeansObservables.observeValue(bulkIOsettings, BulkIOSnapshotSettings.PROP_CONNECTION_ID));
+
+		// === create output control widgets ==
 		createOutputControls(parent);
 
 		bulkIOsettings.addPropertyChangeListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if ("captureMethod".equals(evt.getPropertyName())) {
+				if (BulkIOSnapshotSettings.PROP_CAPTURE_METHOD.equals(evt.getPropertyName())) {
 					updateControls((CaptureMethod) evt.getNewValue());
 				}
 			}
 		});
 
 		setPageComplete(false);
-		setPageSupport(WizardPageSupport.create(this, context));
+		setPageSupport(WizardPageSupport.create(this, dataBindingCtx));
 		setControl(parent);
 
 		restoreWidgetValues(bulkIOsettings);
@@ -183,15 +190,16 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 
 	protected void saveWidgetValues(BulkIOSnapshotSettings bss) {
 		IDialogSettings pageSettings = getPageSettingsSection();
-		pageSettings.put(BSS_NUM_SAMPLES, bss.getSamples());
-		pageSettings.put(BSS_CAPTURE_METHOD, bss.getCaptureMethod().name());
+		pageSettings.put(BulkIOSnapshotSettings.PROP_SAMPLES, bss.getSamples());
+		pageSettings.put(BulkIOSnapshotSettings.PROP_CAPTURE_METHOD, bss.getCaptureMethod().name());
+		pageSettings.put(BulkIOSnapshotSettings.PROP_CONNECTION_ID, bss.getConnectionID());
 	}
 
 	private void restoreWidgetValues(BulkIOSnapshotSettings bss) {
 		IDialogSettings pageSettings = getPageSettingsSection();
 		if (pageSettings != null && bss != null) {
 			String tmp;
-			tmp = pageSettings.get(BSS_NUM_SAMPLES);
+			tmp = pageSettings.get(BulkIOSnapshotSettings.PROP_SAMPLES);
 			if (tmp != null) {
 				try {
 					bss.setSamples(Double.valueOf(tmp));
@@ -199,13 +207,17 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 					// PASS - ignore
 				}
 			}
-			tmp = pageSettings.get(BSS_CAPTURE_METHOD);
+			tmp = pageSettings.get(BulkIOSnapshotSettings.PROP_CAPTURE_METHOD);
 			if (tmp != null) {
 				try {
 					bss.setCaptureMethod(CaptureMethod.valueOf(tmp));
 				} catch (IllegalArgumentException iae) {
 					// PASS - ignore
 				}
+			}
+			tmp = pageSettings.get(BulkIOSnapshotSettings.PROP_CONNECTION_ID);
+			if (tmp != null) {
+				bss.setConnectionID(tmp);
 			}
 		}
 	}
