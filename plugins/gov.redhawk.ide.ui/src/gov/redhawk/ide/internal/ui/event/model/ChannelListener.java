@@ -10,107 +10,31 @@
  *******************************************************************************/
 package gov.redhawk.ide.internal.ui.event.model;
 
-import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
-import gov.redhawk.model.sca.DomainConnectionException;
-import gov.redhawk.model.sca.ScaDomainManager;
 import gov.redhawk.sca.util.OrbSession;
 
 import java.util.Date;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Status;
 import org.omg.CORBA.Any;
-import org.omg.CORBA.SystemException;
 import org.omg.CosEventComm.Disconnected;
-import org.omg.CosEventComm.PushConsumer;
-import org.omg.CosEventComm.PushConsumerHelper;
 import org.omg.CosEventComm.PushConsumerOperations;
-import org.omg.CosEventComm.PushConsumerPOATie;
-import org.omg.PortableServer.POA;
-import org.omg.PortableServer.POAPackage.ServantNotActive;
-import org.omg.PortableServer.POAPackage.WrongPolicy;
 
-import CF.InvalidObjectReference;
-import CF.DomainManagerPackage.AlreadyConnected;
-import CF.DomainManagerPackage.InvalidEventChannelName;
-import CF.DomainManagerPackage.NotConnected;
-
-public class ChannelListener implements PushConsumerOperations {
+public abstract class ChannelListener implements PushConsumerOperations {
 
 	private IObservableList history;
 	private String channel;
-	private ScaDomainManager domain;
-	private PushConsumer ref;
-	private String registrationId;
 
-	public ChannelListener(IObservableList history, ScaDomainManager domain, String channel) {
+	public ChannelListener(IObservableList history, String channel) {
 		this.history = history;
-		this.domain = domain;
 		this.channel = channel;
 	}
 
-	public void connect(OrbSession session) throws CoreException {
-		if (ref != null) {
-			disconnect();
-			return;
-		}
-		POA poa = session.getPOA();
-		try {
-			ref = PushConsumerHelper.narrow(poa.servant_to_reference(new PushConsumerPOATie(this)));
-			registrationId = "eventViewer_" + System.getProperty("user.name") + "_" + System.currentTimeMillis();
-			domain.registerWithEventChannel(ref, registrationId, channel);
-		} catch (SystemException e) {
-			throw new CoreException(new Status(Status.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + channel + ")", e));
-		} catch (InvalidObjectReference e) {
-			throw new CoreException(new Status(Status.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + channel + ")", e));
-		} catch (InvalidEventChannelName e) {
-			throw new CoreException(new Status(Status.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + channel + ")", e));
-		} catch (AlreadyConnected e) {
-			throw new CoreException(new Status(Status.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + channel + ")", e));
-		} catch (ServantNotActive e) {
-			throw new CoreException(new Status(Status.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + channel + ")", e));
-		} catch (WrongPolicy e) {
-			throw new CoreException(new Status(Status.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + channel + ")", e));
-		}
+	public abstract void connect(OrbSession session) throws CoreException;
 
-	}
+	public abstract void disconnect();
 
-	public void disconnect() {
-		if (ref == null) {
-			return;
-		}
-		if (registrationId != null) {
-			boolean disconnect = false;
-			try {
-				if (!domain.isConnected()) {
-					domain.connect(null);
-					disconnect = true;
-				}
-				domain.unregisterFromEventChannel(registrationId, channel);
-
-			} catch (InvalidEventChannelName e) {
-				// PASS
-			} catch (DomainConnectionException e) {
-				// PASS
-			} catch (NotConnected e) {
-				// PASS
-			} finally {
-				if (disconnect) {
-					domain.disconnect();
-				}
-			}
-			registrationId = null;
-		}
-		ref._release();
-		ref = null;
-	}
+	public abstract String getFullChannelName();
 
 	@Override
 	public void disconnect_push_consumer() {
@@ -129,10 +53,6 @@ public class ChannelListener implements PushConsumerOperations {
 			}
 
 		});
-	}
-
-	public ScaDomainManager getDomain() {
-		return domain;
 	}
 
 	public String getChannel() {

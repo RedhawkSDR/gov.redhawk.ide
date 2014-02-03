@@ -43,12 +43,13 @@
             name="%view.category.name.sca">
       </category>
       <view
+            allowMultiple="true"
             category="gov.redhawk.ide.ui.category.sca_development"
             class="gov.redhawk.ide.internal.ui.event.EventView"
             icon="icons/emblem-documents.png"
             id="gov.redhawk.ide.ui.eventViewer"
             name="Event Viewer"
-            restorable="true">
+            restorable="false">
       </view>
    </extension>
     <extension
@@ -309,6 +310,12 @@
              id="gov.redhawk.ide.ui.command.cleanUpComponentFiles"
              name="%command.name.cleanUpComponentFiles">
        </command>
+       <command
+             categoryId="gov.redhawk.ide.ui.category"
+             defaultHandler="gov.redhawk.ide.internal.ui.handlers.EventChannelListenerHandler"
+             id="gov.redhawk.ide.ui.eventChannelListener"
+             name="Listen to Event Channel">
+       </command>
     </extension>
         <extension
           point="org.eclipse.ltk.core.refactoring.renameParticipants">
@@ -347,5 +354,38 @@
                  id="gov.redhawk.ide.ui.wizard.noneclipsewizard"
                  name="Redhawk Import Wizard">
            </wizard>
+        </extension>
+        <extension
+              point="org.eclipse.ui.menus">
+           <menuContribution
+                 allPopups="true"
+                 locationURI="popup:org.eclipse.ui.popup.any">
+              <command
+                    commandId="gov.redhawk.ide.ui.eventChannelListener"
+                    icon="icons/emblem-documents.png"
+                    style="push">
+                 <visibleWhen
+                       checkEnabled="false">
+                    <iterate
+                          ifEmpty="false"
+                          operator="and">
+                       <or>
+                          <and> 
+	                          <instanceof
+	                              value="gov.redhawk.ui.views.namebrowser.view.BindingNode">
+	                          </instanceof>
+	                          <test
+	                              args="IDL:omg.org/CosEventChannelAdmin/EventChannel:1.0"
+	                              property="gov.redhawk.ui.views.namebrowser.isRepID">
+	                          </test>
+                          </and>
+                          <instanceof
+                                value="gov.redhawk.model.sca.ScaEventChannel">
+                          </instanceof>
+                       </or>
+                    </iterate>
+                 </visibleWhen>
+              </command>
+           </menuContribution>
         </extension>
 </plugin>

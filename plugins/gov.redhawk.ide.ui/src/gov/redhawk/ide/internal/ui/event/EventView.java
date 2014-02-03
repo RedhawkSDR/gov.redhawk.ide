@@ -11,23 +11,17 @@
 package gov.redhawk.ide.internal.ui.event;
 
 import gov.redhawk.ide.internal.ui.event.model.ChannelListener;
+import gov.redhawk.ide.internal.ui.event.model.DomainChannelListener;
+import gov.redhawk.ide.internal.ui.event.model.EventChannelListener;
 import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
 import gov.redhawk.model.sca.DomainConnectionException;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDomainManager;
 import gov.redhawk.model.sca.provider.ScaItemProviderAdapterFactory;
-import gov.redhawk.sca.ScaPlugin;
-import gov.redhawk.sca.ui.ScaModelAdapterFactoryContentProvider;
-import gov.redhawk.sca.ui.ScaModelAdapterFactoryLabelProvider;
 import gov.redhawk.sca.util.OrbSession;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.runtime.CoreException;
@@ -37,31 +31,19 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.fieldassist.ComboContentAdapter;
-import org.eclipse.jface.fieldassist.ContentProposal;
-import org.eclipse.jface.fieldassist.ContentProposalAdapter;
-import org.eclipse.jface.fieldassist.IContentProposal;
-import org.eclipse.jface.fieldassist.IContentProposalProvider;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.nebula.widgets.xviewer.action.TableCustomizationAction;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.statushandlers.StatusManager;
+import org.omg.CosEventChannelAdmin.EventChannel;
 
 /**
  * 
@@ -74,10 +56,6 @@ public class EventView extends ViewPart {
 
 	private EventViewer viewer;
 
-	private ComboViewer domainCombo;
-
-	private Combo channelCombo;
-
 	private Action removeAction = new Action("Remove...") {
 		@Override
 		public void run() {
@@ -86,7 +64,7 @@ public class EventView extends ViewPart {
 				public String getText(Object element) {
 					if (element instanceof ChannelListener) {
 						ChannelListener l = (ChannelListener) element;
-						return l.getChannel() + "@" + l.getDomain().getName();
+						return l.getFullChannelName();
 					}
 					return "";
 				}
@@ -118,29 +96,6 @@ public class EventView extends ViewPart {
 		}
 	};
 
-	private Set<String> channelHistory = new HashSet<String>(Arrays.asList("ODM_Channel", "IDM_Channel"));
-
-	private final IContentProposalProvider proposalProvider = new IContentProposalProvider() {
-
-		@Override
-		public IContentProposal[] getProposals(final String contents, final int position) {
-			final List<IContentProposal> list = new ArrayList<IContentProposal>();
-			try {
-				final String regexp = ".*" + contents.replace("*", ".*") + ".*";
-				final Pattern pattern = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE);
-				for (final String proposal : channelHistory) {
-					final Matcher matcher = pattern.matcher(proposal);
-					if (proposal.length() >= contents.length() && matcher.matches()) {
-						list.add(new ContentProposal(proposal));
-					}
-				}
-			} catch (Exception e) { // SUPPRESS CHECKSTYLE Pattern Matcher
-				// PASS
-			}
-			return list.toArray(new IContentProposal[list.size()]);
-		}
-	};
-
 	private WritableList history = new WritableList();
 
 	private List<ChannelListener> channelListeners = new ArrayList<ChannelListener>();
@@ -162,16 +117,18 @@ public class EventView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		parent.setLayout(GridLayoutFactory.fillDefaults().numColumns(1).create());
 
-		Composite controls = new Composite(parent, SWT.None);
-		createControls(controls);
-		controls.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-
 		Composite viewerComposite = new Composite(parent, SWT.BORDER);
 		createViewer(viewerComposite);
 		viewerComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
 
 		IActionBars actionBars = getViewSite().getActionBars();
 		createMenuItems(actionBars.getMenuManager());
+
+		createToolbarItems(actionBars.getToolBarManager());
+	}
+
+	private void createToolbarItems(IToolBarManager toolBarManager) {
+		toolBarManager.add(new TableCustomizationAction(viewer));
 	}
 
 	private void createViewer(Composite parent) {
@@ -182,43 +139,6 @@ public class EventView extends ViewPart {
 		viewer.setContentProvider(new EventViewerContentProvider());
 		viewer.setLabelProvider(new EventViewerLabelProvider(viewer));
 		viewer.setInput(this.history);
-	}
-
-	private void createControls(Composite parent) {
-		parent.setLayout(GridLayoutFactory.fillDefaults().numColumns(5).create());
-
-		Label domainLabel = new Label(parent, SWT.None);
-		domainLabel.setText("Domain:");
-		domainCombo = new ComboViewer(parent, SWT.READ_ONLY | SWT.BORDER);
-		domainCombo.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-		factory = new ScaItemProviderAdapterFactory();
-		domainCombo.setContentProvider(new ScaModelAdapterFactoryContentProvider(factory));
-		domainCombo.setLabelProvider(new ScaModelAdapterFactoryLabelProvider(factory));
-		domainCombo.setInput(ScaPlugin.getDefault().getDomainManagerRegistry(domainCombo.getControl().getDisplay()));
-
-		Label channelLabel = new Label(parent, SWT.None);
-		channelLabel.setText("Channel:");
-		channelCombo = new Combo(parent, SWT.BORDER);
-		channelCombo.setItems(getChannels());
-		channelCombo.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-		final ComboContentAdapter controlAdapter = new ComboContentAdapter();
-		ContentProposalAdapter contentAdapter = new ContentProposalAdapter(channelCombo, controlAdapter, this.proposalProvider, null, null);
-		contentAdapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
-		channelCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				handleAdd();
-			}
-		});
-
-		Button addButton = new Button(parent, SWT.None);
-		addButton.setText("Add");
-		addButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleAdd();
-			}
-		});
 	}
 
 	private void createMenuItems(IMenuManager menuManager) {
@@ -250,59 +170,40 @@ public class EventView extends ViewPart {
 		disconnectAll.schedule();
 	}
 
-	private String[] getChannels() {
-		String[] retVal = channelHistory.toArray(new String[channelHistory.size()]);
-		Arrays.sort(retVal);
-		return retVal;
-	}
-
-	protected void handleAdd() {
-		if (domainCombo.getSelection().isEmpty()) {
-			StatusManager.getManager().handle(new Status(Status.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Must select a domain first.", null), StatusManager.SHOW);
-			return;
-		}
-		if (channelCombo.getText().trim().isEmpty()) {
-			StatusManager.getManager().handle(new Status(Status.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Must enter a channel first.", null), StatusManager.SHOW);
-		}
-
-		final ScaDomainManager domain = (ScaDomainManager) ((IStructuredSelection) domainCombo.getSelection()).getFirstElement();
-		String channel = channelCombo.getText().trim();
-
-		domainCombo.setSelection(StructuredSelection.EMPTY);
-		channelCombo.setText("");
-
+	public void connect(String channel, final EventChannel eventChannel) throws CoreException {
 		// Don't add duplicate listeners
 		for (ChannelListener l : channelListeners) {
-			if (l.getChannel().equals(channel) && l.getDomain() == domain) {
+			if (l.getChannel().equals(channel) && l instanceof EventChannelListener && ((EventChannelListener) l).getEventChannel() == eventChannel) {
 				return;
 			}
 		}
 
-		final ChannelListener newListener = new ChannelListener(history, domain, channel);
+		final ChannelListener newListener = new EventChannelListener(history, eventChannel, channel);
 		channelListeners.add(newListener);
 
-		Job job = new Job("Connect Channel listener...") {
+		newListener.connect(session);
+	}
 
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				if (!domain.isConnected()) {
-					try {
-						domain.connect(monitor, RefreshDepth.SELF);
-					} catch (DomainConnectionException e) {
-						return new Status(Status.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to domain.", e);
-					}
-				}
-				try {
-					newListener.connect(session);
-				} catch (CoreException e) {
-					return e.getStatus();
-				}
-				return Status.OK_STATUS;
+	public void connect(final ScaDomainManager domain, final String channel) throws CoreException {
+		// Don't add duplicate listeners
+		for (ChannelListener l : channelListeners) {
+			if (l.getChannel().equals(channel) && l instanceof DomainChannelListener && ((DomainChannelListener) l).getDomain() == domain) {
+				return;
 			}
+		}
 
-		};
-		job.setUser(true);
-		job.schedule();
+		final ChannelListener newListener = new DomainChannelListener(history, domain, channel);
+		channelListeners.add(newListener);
+
+		if (!domain.isConnected()) {
+			try {
+				domain.connect(null, RefreshDepth.SELF);
+			} catch (DomainConnectionException e) {
+				throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to domain.", e));
+			}
+		}
+		newListener.connect(session);
+
 	}
 
 	/* (non-Javadoc)
@@ -313,6 +214,16 @@ public class EventView extends ViewPart {
 		if (viewer != null) {
 			viewer.getTree().setFocus();
 		}
+	}
+
+	@Override
+	public void setPartName(String partName) {
+		super.setPartName(partName);
+	}
+
+	@Override
+	public void setTitleToolTip(String toolTip) {
+		super.setTitleToolTip(toolTip);
 	}
 
 }
