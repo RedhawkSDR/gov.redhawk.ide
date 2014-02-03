@@ -20,6 +20,13 @@ import gov.redhawk.model.sca.ScaPortContainer;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.sca.util.PluginUtil;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.partitioning.ComponentFileRef;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterface;
@@ -36,7 +43,10 @@ import mil.jpeojtrs.sca.sad.SadProvidesPort;
 import mil.jpeojtrs.sca.sad.SadUsesPort;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.command.AbstractCommand;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNull;
@@ -187,11 +197,49 @@ public class SadModelInitializerCommand extends AbstractCommand {
 				if (comp == null) {
 					continue;
 				}
-				final EList<ScaPort< ? , ? >> ports = comp.fetchPorts(null);
+				List<ScaPort< ? , ? >> ports = Collections.emptyList();
+				try {
+					ports = ProtectedThreadExecutor.submit(new Callable<EList<ScaPort< ? , ? >>>() {
+
+						@Override
+						public EList<ScaPort< ? , ? >> call() throws Exception {
+							return comp.fetchPorts(null);
+						}
+
+					});
+				} catch (InterruptedException e) {
+					LocalScaDiagramPlugin.getDefault().getLog().log(
+						new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch ports to initialize diagram.", e));
+				} catch (ExecutionException e) {
+					LocalScaDiagramPlugin.getDefault().getLog().log(
+						new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch ports to initialize diagram.", e));
+				} catch (TimeoutException e) {
+					LocalScaDiagramPlugin.getDefault().getLog().log(
+						new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch ports to initialize diagram.", e));
+				}
 				for (final ScaPort< ? , ? > port : ports) {
 					if (port instanceof ScaUsesPort) {
 						final ScaUsesPort uses = (ScaUsesPort) port;
-						final EList<ScaConnection> connections = uses.fetchConnections(null);
+						List<ScaConnection> connections = Collections.emptyList();
+						try {
+							connections = ProtectedThreadExecutor.submit(new Callable<List<ScaConnection>>() {
+
+								@Override
+								public List<ScaConnection> call() throws Exception {
+									return uses.fetchConnections(null);
+								}
+							});
+						} catch (InterruptedException e) {
+							LocalScaDiagramPlugin.getDefault().getLog().log(
+								new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch connections to initialize diagram.", e));
+						} catch (ExecutionException e) {
+							LocalScaDiagramPlugin.getDefault().getLog().log(
+								new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch connections to initialize diagram.", e));
+						} catch (TimeoutException e) {
+							LocalScaDiagramPlugin.getDefault().getLog().log(
+								new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch connections to initialize diagram.", e));
+						}
+
 						for (final ScaConnection con : connections) {
 							if (con != null) {
 								initConnection(con);
