@@ -41,5 +41,6 @@ Export-Package: gov.redhawk.ide.internal.ui.handlers,
  gov.redhawk.ide.ui.wizard
 Bundle-Localization: plugin
 Bundle-Vendor: %Bundle-Provider.0
-Import-Package: org.omg.CosEventChannelAdmin,
+Import-Package: nxm.sys.prim,
+ org.omg.CosEventChannelAdmin,
  org.omg.CosEventComm

@@ -10,10 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.internal.ui.event;
 
+import gov.redhawk.ide.internal.ui.event.model.Event;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import gov.redhawk.ide.internal.ui.event.model.Event;
 import mil.jpeojtrs.sca.util.AnyUtils;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -43,8 +44,9 @@ import StandardEvent.StateChangeType;
  * 
  */
 public class EventViewerLabelProvider extends XViewerLabelProvider {
-	
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm::SSSS");
+
+	private static final DateFormat DATE_FORMAT_MS = new SimpleDateFormat("HH:mm::SSSS");
+	private static final DateFormat DATE_FORMAT_SS = new SimpleDateFormat("HH:mm::ss");
 
 	/**
 	 * @param viewer
@@ -194,8 +196,10 @@ public class EventViewerLabelProvider extends XViewerLabelProvider {
 				} else {
 					return "";
 				}
-			} else if (xCol.equals(EventViewerFactory.TIME_COL)) {
-				return DATE_FORMAT.format(event.getTimestamp());
+			} else if (xCol.equals(EventViewerFactory.TIME_COL_MS)) {
+				return EventViewerLabelProvider.DATE_FORMAT_MS.format(event.getTimestamp());
+			} else if (xCol.equals(EventViewerFactory.TIME_COL_SS)) {
+				return EventViewerLabelProvider.DATE_FORMAT_SS.format(event.getTimestamp());
 			} else if (xCol.equals(EventViewerFactory.TYPE_COL)) {
 				if (event.valueIsType(DomainManagementObjectAddedEventTypeHelper.type())) {
 					return DomainManagementObjectAddedEventTypeHelper.id();
@@ -216,7 +220,7 @@ public class EventViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	private String toString(ResourceStateChangeType stateChangeFrom) {
-		switch(stateChangeFrom.value()) {
+		switch (stateChangeFrom.value()) {
 		case ResourceStateChangeType._STARTED:
 			return "STARTED";
 		case ResourceStateChangeType._STOPPED:
@@ -227,7 +231,7 @@ public class EventViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	private String toString(StateChangeType stateChangeFrom) {
-		switch(stateChangeFrom.value()) {
+		switch (stateChangeFrom.value()) {
 		case StateChangeType._ACTIVE:
 			return "ACTIVE";
 		case StateChangeType._BUSY:
@@ -250,9 +254,9 @@ public class EventViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	private String toString(StateChangeCategoryType stateChangeCategory) {
-		switch(stateChangeCategory.value()) {
+		switch (stateChangeCategory.value()) {
 		case StateChangeCategoryType._ADMINISTRATIVE_STATE_EVENT:
-			return "ADMINISTRATIVE_STATE_EVENT"; 
+			return "ADMINISTRATIVE_STATE_EVENT";
 		case StateChangeCategoryType._OPERATIONAL_STATE_EVENT:
 			return "OPERATIONAL_STATE_EVENT";
 		case StateChangeCategoryType._USAGE_STATE_EVENT:
@@ -263,7 +267,7 @@ public class EventViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	private String toString(SourceCategoryType sourceCategory) {
-		switch(sourceCategory.value()) {
+		switch (sourceCategory.value()) {
 		case SourceCategoryType._APPLICATION:
 			return "APPLICATION";
 		case SourceCategoryType._APPLICATION_FACTORY:
@@ -297,6 +301,21 @@ public class EventViewerLabelProvider extends XViewerLabelProvider {
 			retVal.append("\n");
 		}
 		return retVal.toString();
+	}
+
+	@Override
+	public Object getBackingData(Object element, XViewerColumn xViewerColumn, int columnIndex) throws Exception {
+		// If not shown, don't process any further
+		if (!xViewerColumn.isShow()) {
+			return "";
+		}
+		if (xViewerColumn.getId().equals(EventViewerFactory.TIME_COL_SS.getId()) && element instanceof Event) {
+			return ((Event) element).getTimestamp();
+		}
+		if (xViewerColumn.getId().equals(EventViewerFactory.TIME_COL_MS.getId()) && element instanceof Event) {
+			return ((Event) element).getTimestamp();
+		}
+		return super.getBackingData(element, xViewerColumn, columnIndex);
 	}
 
 }

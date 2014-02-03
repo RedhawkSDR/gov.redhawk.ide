@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -43,6 +44,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.omg.CosEventChannelAdmin.EventChannel;
 
 /**
@@ -55,6 +57,24 @@ public class EventView extends ViewPart {
 	private EventViewerFactory viewerFactory;
 
 	private EventViewer viewer;
+
+	private Action clearAction = new Action("Clear", AbstractUIPlugin.imageDescriptorFromPlugin(RedhawkIDEUiPlugin.PLUGIN_ID, "icons/clear_co.gif")) {
+		@Override
+		public void run() {
+			history.clear();
+		}
+	};
+
+	private Action scrollLockAction = new Action("Scroll Lock", IAction.AS_CHECK_BOX) {
+		{
+			setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(RedhawkIDEUiPlugin.PLUGIN_ID, "icons/lock_co.gif"));
+		}
+
+		@Override
+		public void run() {
+			contentProvider.setScrollLock(!contentProvider.isScrollLock());
+		}
+	};
 
 	private Action removeAction = new Action("Remove...") {
 		@Override
@@ -104,6 +124,8 @@ public class EventView extends ViewPart {
 
 	private ScaItemProviderAdapterFactory factory;
 
+	private EventViewerContentProvider contentProvider;
+
 	/**
 	 * 
 	 */
@@ -128,6 +150,8 @@ public class EventView extends ViewPart {
 	}
 
 	private void createToolbarItems(IToolBarManager toolBarManager) {
+		toolBarManager.add(clearAction);
+		toolBarManager.add(scrollLockAction);
 		toolBarManager.add(new TableCustomizationAction(viewer));
 	}
 
@@ -136,7 +160,8 @@ public class EventView extends ViewPart {
 		viewerFactory = new EventViewerFactory();
 		viewer = new EventViewer(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION, viewerFactory);
 		viewer.getTree().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
-		viewer.setContentProvider(new EventViewerContentProvider());
+		contentProvider = new EventViewerContentProvider();
+		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(new EventViewerLabelProvider(viewer));
 		viewer.setInput(this.history);
 	}

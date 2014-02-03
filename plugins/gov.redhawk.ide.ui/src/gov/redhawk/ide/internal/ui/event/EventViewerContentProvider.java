@@ -11,10 +11,12 @@
 package gov.redhawk.ide.internal.ui.event;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.jface.databinding.viewers.IViewerUpdater;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 
@@ -24,40 +26,75 @@ import org.eclipse.nebula.widgets.xviewer.XViewer;
 public class EventViewerContentProvider implements ITreeContentProvider {
 
 	private IViewerUpdater viewerUpdater = new IViewerUpdater() {
-		
+
 		@Override
 		public void replace(Object oldElement, Object newElement, int position) {
-			viewer.replace(input, position, newElement);
+			if (scrollLock) {
+				viewer.replace(input, position, newElement);
+			} else {
+				refresh();
+			}
 		}
-		
+
 		@Override
 		public void remove(Object element, int position) {
-			viewer.remove(element, position);
+			if (scrollLock) {
+				viewer.remove(element, position);
+			} else {
+				refresh();
+			}
 		}
-		
+
 		@Override
 		public void remove(Object[] elements) {
-			viewer.remove(elements);
+			if (scrollLock) {
+				viewer.remove(elements);
+			} else {
+				refresh();
+			}
 		}
-		
+
+		private void refresh() {
+			viewer.refresh();
+			List< ? > inputList = (List< ? >) input;
+			viewer.setSelection(StructuredSelection.EMPTY);
+			if (!inputList.isEmpty()) {
+				viewer.reveal(inputList.get(inputList.size() - 1));
+			}
+		}
+
 		@Override
 		public void move(Object element, int oldPosition, int newPosition) {
-			viewer.refresh();
+			if (scrollLock) {
+				viewer.refresh();
+			} else {
+				refresh();
+			}
 		}
-		
+
 		@Override
 		public void insert(Object element, int position) {
-			viewer.insert(input, element, position);
+			if (scrollLock) {
+				viewer.insert(input, element, position);
+			} else {
+				refresh();
+			}
 		}
-		
+
 		@Override
 		public void add(Object[] elements) {
-			viewer.add(input, elements);
+			if (scrollLock) {
+				viewer.add(input, elements);
+			} else {
+				refresh();
+			}
 		}
 	};
 	private ObservableListContentProvider contentProvider = new ObservableListContentProvider(viewerUpdater);
 	private XViewer viewer;
 	private Object input;
+	private boolean scrollLock = false;
+
 	/**
 	 * 
 	 */
@@ -71,6 +108,14 @@ public class EventViewerContentProvider implements ITreeContentProvider {
 	@Override
 	public void dispose() {
 		contentProvider.dispose();
+	}
+
+	public void setScrollLock(boolean scrollLock) {
+		this.scrollLock = scrollLock;
+	}
+
+	public boolean isScrollLock() {
+		return scrollLock;
 	}
 
 	/* (non-Javadoc)
