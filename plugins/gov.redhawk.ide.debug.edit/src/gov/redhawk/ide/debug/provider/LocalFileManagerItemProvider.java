@@ -8,10 +8,8 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.provider;
-
 
 import gov.redhawk.model.sca.provider.ScaFileManagerItemProvider;
 import java.util.Collection;
@@ -32,14 +30,8 @@ import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
  * <!-- end-user-doc -->
  * @generated
  */
-public class LocalFileManagerItemProvider
-	extends ScaFileManagerItemProvider
-	implements
-		IEditingDomainItemProvider,
-		IStructuredItemContentProvider,
-		ITreeItemContentProvider,
-		IItemLabelProvider,
-		IItemPropertySource {
+public class LocalFileManagerItemProvider extends ScaFileManagerItemProvider implements IEditingDomainItemProvider, IStructuredItemContentProvider,
+		ITreeItemContentProvider, IItemLabelProvider, IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->

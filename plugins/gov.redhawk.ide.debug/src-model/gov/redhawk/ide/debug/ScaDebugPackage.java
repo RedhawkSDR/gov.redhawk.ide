@@ -8,7 +8,6 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug;
 
@@ -146,7 +145,7 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA__WAVEFORMS = ScaPackage.CORBA_OBJ_WRAPPER_FEATURE_COUNT + 0;
 	/**
-	 * The feature id for the '<em><b>Sandbox Waveform</b></em>' containment reference.
+	 * The feature id for the '<em><b>Sandbox Waveform</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -884,6 +883,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_COMPONENT__STARTED = ScaPackage.SCA_COMPONENT__STARTED;
 	/**
+	 * The feature id for the '<em><b>Profile</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_COMPONENT__PROFILE = ScaPackage.SCA_COMPONENT__PROFILE;
+	/**
 	 * The feature id for the '<em><b>Component Instantiation</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1311,6 +1318,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_EXECUTABLE_DEVICE__STARTED = ScaPackage.SCA_EXECUTABLE_DEVICE__STARTED;
 	/**
+	 * The feature id for the '<em><b>Profile</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_EXECUTABLE_DEVICE__PROFILE = ScaPackage.SCA_EXECUTABLE_DEVICE__PROFILE;
+	/**
 	 * The feature id for the '<em><b>Child Devices</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1366,14 +1381,6 @@ public interface ScaDebugPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOCAL_SCA_EXECUTABLE_DEVICE__DEV_MGR = ScaPackage.SCA_EXECUTABLE_DEVICE__DEV_MGR;
-	/**
-	 * The feature id for the '<em><b>Profile</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA_EXECUTABLE_DEVICE__PROFILE = ScaPackage.SCA_EXECUTABLE_DEVICE__PROFILE;
 	/**
 	 * The feature id for the '<em><b>Launch</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -1537,6 +1544,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_LOADABLE_DEVICE__STARTED = ScaPackage.SCA_LOADABLE_DEVICE__STARTED;
 	/**
+	 * The feature id for the '<em><b>Profile</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_LOADABLE_DEVICE__PROFILE = ScaPackage.SCA_LOADABLE_DEVICE__PROFILE;
+	/**
 	 * The feature id for the '<em><b>Child Devices</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1592,14 +1607,6 @@ public interface ScaDebugPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOCAL_SCA_LOADABLE_DEVICE__DEV_MGR = ScaPackage.SCA_LOADABLE_DEVICE__DEV_MGR;
-	/**
-	 * The feature id for the '<em><b>Profile</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA_LOADABLE_DEVICE__PROFILE = ScaPackage.SCA_LOADABLE_DEVICE__PROFILE;
 	/**
 	 * The feature id for the '<em><b>Launch</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -1763,6 +1770,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_DEVICE__STARTED = ScaPackage.SCA_DEVICE__STARTED;
 	/**
+	 * The feature id for the '<em><b>Profile</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_DEVICE__PROFILE = ScaPackage.SCA_DEVICE__PROFILE;
+	/**
 	 * The feature id for the '<em><b>Child Devices</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1818,14 +1833,6 @@ public interface ScaDebugPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOCAL_SCA_DEVICE__DEV_MGR = ScaPackage.SCA_DEVICE__DEV_MGR;
-	/**
-	 * The feature id for the '<em><b>Profile</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA_DEVICE__PROFILE = ScaPackage.SCA_DEVICE__PROFILE;
 	/**
 	 * The feature id for the '<em><b>Launch</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -2188,10 +2195,10 @@ public interface ScaDebugPackage extends EPackage {
 	EReference getLocalSca_Waveforms();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link gov.redhawk.ide.debug.LocalSca#getSandboxWaveform <em>Sandbox Waveform</em>}'.
+	 * Returns the meta object for the reference '{@link gov.redhawk.ide.debug.LocalSca#getSandboxWaveform <em>Sandbox Waveform</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Sandbox Waveform</em>'.
+	 * @return the meta object for the reference '<em>Sandbox Waveform</em>'.
 	 * @see gov.redhawk.ide.debug.LocalSca#getSandboxWaveform()
 	 * @see #getLocalSca()
 	 * @generated
@@ -2775,7 +2782,7 @@ public interface ScaDebugPackage extends EPackage {
 		 */
 		EReference LOCAL_SCA__WAVEFORMS = eINSTANCE.getLocalSca_Waveforms();
 		/**
-		 * The meta object literal for the '<em><b>Sandbox Waveform</b></em>' containment reference feature.
+		 * The meta object literal for the '<em><b>Sandbox Waveform</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

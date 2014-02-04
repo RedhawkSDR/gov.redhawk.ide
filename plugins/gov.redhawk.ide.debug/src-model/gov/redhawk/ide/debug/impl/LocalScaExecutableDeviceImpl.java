@@ -8,7 +8,6 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
@@ -203,7 +202,8 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 		String oldImplementationID = implementationID;
 		implementationID = newImplementationID;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID, oldImplementationID, implementationID));
+			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID, oldImplementationID,
+				implementationID));
 	}
 
 	/**
@@ -239,14 +239,14 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__LAUNCH:
-				return getLaunch();
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__MODE:
-				return getMode();
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID:
-				return getImplementationID();
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__EXEC_PARAM:
-				return getExecParam();
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__LAUNCH:
+			return getLaunch();
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__MODE:
+			return getMode();
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID:
+			return getImplementationID();
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__EXEC_PARAM:
+			return getExecParam();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -259,18 +259,18 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__LAUNCH:
-				setLaunch((ILaunch)newValue);
-				return;
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__MODE:
-				setMode((String)newValue);
-				return;
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID:
-				setImplementationID((String)newValue);
-				return;
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__EXEC_PARAM:
-				setExecParam((String)newValue);
-				return;
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__LAUNCH:
+			setLaunch((ILaunch) newValue);
+			return;
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__MODE:
+			setMode((String) newValue);
+			return;
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID:
+			setImplementationID((String) newValue);
+			return;
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__EXEC_PARAM:
+			setExecParam((String) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -283,18 +283,18 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__LAUNCH:
-				setLaunch(LAUNCH_EDEFAULT);
-				return;
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__MODE:
-				setMode(MODE_EDEFAULT);
-				return;
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID:
-				setImplementationID(IMPLEMENTATION_ID_EDEFAULT);
-				return;
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__EXEC_PARAM:
-				setExecParam(EXEC_PARAM_EDEFAULT);
-				return;
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__LAUNCH:
+			setLaunch(LAUNCH_EDEFAULT);
+			return;
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__MODE:
+			setMode(MODE_EDEFAULT);
+			return;
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID:
+			setImplementationID(IMPLEMENTATION_ID_EDEFAULT);
+			return;
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__EXEC_PARAM:
+			setExecParam(EXEC_PARAM_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -307,14 +307,14 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__LAUNCH:
-				return LAUNCH_EDEFAULT == null ? launch != null : !LAUNCH_EDEFAULT.equals(launch);
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__MODE:
-				return MODE_EDEFAULT == null ? mode != null : !MODE_EDEFAULT.equals(mode);
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID:
-				return IMPLEMENTATION_ID_EDEFAULT == null ? implementationID != null : !IMPLEMENTATION_ID_EDEFAULT.equals(implementationID);
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__EXEC_PARAM:
-				return EXEC_PARAM_EDEFAULT == null ? execParam != null : !EXEC_PARAM_EDEFAULT.equals(execParam);
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__LAUNCH:
+			return LAUNCH_EDEFAULT == null ? launch != null : !LAUNCH_EDEFAULT.equals(launch);
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__MODE:
+			return MODE_EDEFAULT == null ? mode != null : !MODE_EDEFAULT.equals(mode);
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID:
+			return IMPLEMENTATION_ID_EDEFAULT == null ? implementationID != null : !IMPLEMENTATION_ID_EDEFAULT.equals(implementationID);
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__EXEC_PARAM:
+			return EXEC_PARAM_EDEFAULT == null ? execParam != null : !EXEC_PARAM_EDEFAULT.equals(execParam);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -325,19 +325,25 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 	 * @generated
 	 */
 	@Override
-	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
+	public int eBaseStructuralFeatureID(int derivedFeatureID, Class< ? > baseClass) {
 		if (baseClass == LocalLaunch.class) {
 			switch (derivedFeatureID) {
-				case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__LAUNCH: return ScaDebugPackage.LOCAL_LAUNCH__LAUNCH;
-				case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__MODE: return ScaDebugPackage.LOCAL_LAUNCH__MODE;
-				default: return -1;
+			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__LAUNCH:
+				return ScaDebugPackage.LOCAL_LAUNCH__LAUNCH;
+			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__MODE:
+				return ScaDebugPackage.LOCAL_LAUNCH__MODE;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == LocalAbstractComponent.class) {
 			switch (derivedFeatureID) {
-				case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID: return ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID;
-				case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__EXEC_PARAM: return ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAM;
-				default: return -1;
+			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID:
+				return ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID;
+			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__EXEC_PARAM:
+				return ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAM;
+			default:
+				return -1;
 			}
 		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
@@ -349,19 +355,25 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 	 * @generated
 	 */
 	@Override
-	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
+	public int eDerivedStructuralFeatureID(int baseFeatureID, Class< ? > baseClass) {
 		if (baseClass == LocalLaunch.class) {
 			switch (baseFeatureID) {
-				case ScaDebugPackage.LOCAL_LAUNCH__LAUNCH: return ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__LAUNCH;
-				case ScaDebugPackage.LOCAL_LAUNCH__MODE: return ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__MODE;
-				default: return -1;
+			case ScaDebugPackage.LOCAL_LAUNCH__LAUNCH:
+				return ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__LAUNCH;
+			case ScaDebugPackage.LOCAL_LAUNCH__MODE:
+				return ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__MODE;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == LocalAbstractComponent.class) {
 			switch (baseFeatureID) {
-				case ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID: return ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID;
-				case ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAM: return ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__EXEC_PARAM;
-				default: return -1;
+			case ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID:
+				return ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__IMPLEMENTATION_ID;
+			case ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAM:
+				return ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE__EXEC_PARAM;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
@@ -374,7 +386,8 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (launch: ");
@@ -392,32 +405,31 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 	@Override
 	public void releaseObject() throws ReleaseError {
 		final String tmpName = getLabel();
-	    super.releaseObject();
-	    if (this.launch != null) {
-	    	final Job terminateJob = new TerminateJob(this, tmpName);
+		super.releaseObject();
+		if (this.launch != null) {
+			final Job terminateJob = new TerminateJob(this, tmpName);
 			terminateJob.schedule(5000);
-	    }
+		}
 	}
-	
+
 	@Override
 	public void dispose() {
 		try {
-	        releaseObject();
-        } catch (final ReleaseError e) {
-	        // PASS
-        }
-	    super.dispose();
+			releaseObject();
+		} catch (final ReleaseError e) {
+			// PASS
+		}
+		super.dispose();
 	}
-	
-	
+
 	@Override
 	public void unsetProfileURI() {
-	    
+
 	}
-	
+
 	@Override
 	public void unsetProfile() {
-	    
+
 	}
 
 } //LocalScaExecutableDeviceImpl

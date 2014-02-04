@@ -8,7 +8,6 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
@@ -38,7 +37,7 @@ import org.omg.CosNaming.NamingContext;
  *
  * @generated
  */
-public class NameToNamingContextEntryImpl extends EObjectImpl implements BasicEMap.Entry<Name,NamingContext> {
+public class NameToNamingContextEntryImpl extends EObjectImpl implements BasicEMap.Entry<Name, NamingContext> {
 
 	/**
 	 * The default value of the '{@link #getTypedKey() <em>Key</em>}' attribute.
@@ -146,10 +145,10 @@ public class NameToNamingContextEntryImpl extends EObjectImpl implements BasicEM
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__KEY:
-				return getTypedKey();
-			case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__VALUE:
-				return getTypedValue();
+		case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__KEY:
+			return getTypedKey();
+		case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__VALUE:
+			return getTypedValue();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -162,12 +161,12 @@ public class NameToNamingContextEntryImpl extends EObjectImpl implements BasicEM
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__KEY:
-				setTypedKey((Name)newValue);
-				return;
-			case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__VALUE:
-				setTypedValue((NamingContext)newValue);
-				return;
+		case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__KEY:
+			setTypedKey((Name) newValue);
+			return;
+		case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__VALUE:
+			setTypedValue((NamingContext) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -180,12 +179,12 @@ public class NameToNamingContextEntryImpl extends EObjectImpl implements BasicEM
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__KEY:
-				setTypedKey(KEY_EDEFAULT);
-				return;
-			case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__VALUE:
-				setTypedValue(VALUE_EDEFAULT);
-				return;
+		case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__KEY:
+			setTypedKey(KEY_EDEFAULT);
+			return;
+		case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__VALUE:
+			setTypedValue(VALUE_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -198,10 +197,10 @@ public class NameToNamingContextEntryImpl extends EObjectImpl implements BasicEM
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__KEY:
-				return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
-			case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__VALUE:
-				return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
+		case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__KEY:
+			return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
+		case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY__VALUE:
+			return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -213,7 +212,8 @@ public class NameToNamingContextEntryImpl extends EObjectImpl implements BasicEM
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (key: ");
@@ -305,7 +305,7 @@ public class NameToNamingContextEntryImpl extends EObjectImpl implements BasicEM
 	@SuppressWarnings("unchecked")
 	public EMap<Name, NamingContext> getEMap() {
 		EObject container = eContainer();
-		return container == null ? null : (EMap<Name, NamingContext>)container.eGet(eContainmentFeature());
+		return container == null ? null : (EMap<Name, NamingContext>) container.eGet(eContainmentFeature());
 	}
 
 } //NameToNamingContextEntryImpl

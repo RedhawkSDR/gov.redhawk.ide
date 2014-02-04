@@ -8,7 +8,6 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.provider;
 
@@ -407,7 +406,7 @@ public class ScaDebugItemProviderAdapterFactory extends ScaDebugAdapterFactory i
 	public Object adapt(Object object, Object type) {
 		if (isFactoryForType(type)) {
 			Object adapter = super.adapt(object, type);
-			if (!(type instanceof Class<?>) || (((Class<?>)type).isInstance(adapter))) {
+			if (!(type instanceof Class< ? >) || (((Class< ? >) type).isInstance(adapter))) {
 				return adapter;
 			}
 		}
@@ -460,18 +459,30 @@ public class ScaDebugItemProviderAdapterFactory extends ScaDebugAdapterFactory i
 	 */
 	@Override
 	public void dispose() {
-		if (localScaItemProvider != null) localScaItemProvider.dispose();
-		if (notifyingNamingContextItemProvider != null) notifyingNamingContextItemProvider.dispose();
-		if (nameToObjectEntryItemProvider != null) nameToObjectEntryItemProvider.dispose();
-		if (nameToNamingContextEntryItemProvider != null) nameToNamingContextEntryItemProvider.dispose();
-		if (localFileManagerItemProvider != null) localFileManagerItemProvider.dispose();
-		if (localScaWaveformItemProvider != null) localScaWaveformItemProvider.dispose();
-		if (localScaComponentItemProvider != null) localScaComponentItemProvider.dispose();
-		if (localScaDeviceManagerItemProvider != null) localScaDeviceManagerItemProvider.dispose();
-		if (localScaExecutableDeviceItemProvider != null) localScaExecutableDeviceItemProvider.dispose();
-		if (localScaLoadableDeviceItemProvider != null) localScaLoadableDeviceItemProvider.dispose();
-		if (localScaDeviceItemProvider != null) localScaDeviceItemProvider.dispose();
-		if (localScaServiceItemProvider != null) localScaServiceItemProvider.dispose();
+		if (localScaItemProvider != null)
+			localScaItemProvider.dispose();
+		if (notifyingNamingContextItemProvider != null)
+			notifyingNamingContextItemProvider.dispose();
+		if (nameToObjectEntryItemProvider != null)
+			nameToObjectEntryItemProvider.dispose();
+		if (nameToNamingContextEntryItemProvider != null)
+			nameToNamingContextEntryItemProvider.dispose();
+		if (localFileManagerItemProvider != null)
+			localFileManagerItemProvider.dispose();
+		if (localScaWaveformItemProvider != null)
+			localScaWaveformItemProvider.dispose();
+		if (localScaComponentItemProvider != null)
+			localScaComponentItemProvider.dispose();
+		if (localScaDeviceManagerItemProvider != null)
+			localScaDeviceManagerItemProvider.dispose();
+		if (localScaExecutableDeviceItemProvider != null)
+			localScaExecutableDeviceItemProvider.dispose();
+		if (localScaLoadableDeviceItemProvider != null)
+			localScaLoadableDeviceItemProvider.dispose();
+		if (localScaDeviceItemProvider != null)
+			localScaDeviceItemProvider.dispose();
+		if (localScaServiceItemProvider != null)
+			localScaServiceItemProvider.dispose();
 	}
 
 }

@@ -8,7 +8,6 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.provider;
 
@@ -40,7 +39,7 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * @generated
  */
 public class NotifyingNamingContextItemProvider extends ItemProviderAdapter implements IEditingDomainItemProvider, IStructuredItemContentProvider,
-        ITreeItemContentProvider, IItemLabelProvider, IItemPropertySource {
+		ITreeItemContentProvider, IItemLabelProvider, IItemPropertySource {
 
 	/**
 	 * This constructs an instance from a factory and a notifier.
@@ -75,19 +74,10 @@ public class NotifyingNamingContextItemProvider extends ItemProviderAdapter impl
 	 * @generated
 	 */
 	protected void addNamePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_NotifyingNamingContext_name_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_NotifyingNamingContext_name_feature", "_UI_NotifyingNamingContext_type"),
-				 ScaDebugPackage.Literals.NOTIFYING_NAMING_CONTEXT__NAME,
-				 false,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
+		itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+			getString("_UI_NotifyingNamingContext_name_feature"),
+			getString("_UI_PropertyDescriptor_description", "_UI_NotifyingNamingContext_name_feature", "_UI_NotifyingNamingContext_type"),
+			ScaDebugPackage.Literals.NOTIFYING_NAMING_CONTEXT__NAME, false, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
 	}
 
 	/**
@@ -99,7 +89,7 @@ public class NotifyingNamingContextItemProvider extends ItemProviderAdapter impl
 	 * @generated
 	 */
 	@Override
-	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
+	public Collection< ? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(ScaDebugPackage.Literals.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP);
@@ -140,10 +130,8 @@ public class NotifyingNamingContextItemProvider extends ItemProviderAdapter impl
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((NotifyingNamingContext)object).getName();
-		return label == null || label.length() == 0 ?
-			getString("_UI_NotifyingNamingContext_type") :
-			getString("_UI_NotifyingNamingContext_type") + " " + label;
+		String label = ((NotifyingNamingContext) object).getName();
+		return label == null || label.length() == 0 ? getString("_UI_NotifyingNamingContext_type") : getString("_UI_NotifyingNamingContext_type") + " " + label;
 	}
 
 	/**
@@ -158,13 +146,13 @@ public class NotifyingNamingContextItemProvider extends ItemProviderAdapter impl
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(NotifyingNamingContext.class)) {
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__NAME:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-				return;
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP:
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
-				return;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__NAME:
+			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
+			return;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP:
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
+			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
+			return;
 		}
 		super.notifyChanged(notification);
 	}

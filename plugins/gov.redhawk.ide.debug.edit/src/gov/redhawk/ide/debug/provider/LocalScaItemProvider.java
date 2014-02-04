@@ -8,7 +8,6 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.provider;
 
@@ -35,8 +34,8 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * <!-- end-user-doc -->
  * @generated
  */
-public class LocalScaItemProvider extends CorbaObjWrapperItemProvider implements IEditingDomainItemProvider, IStructuredItemContentProvider, ITreeItemContentProvider,
-        IItemLabelProvider, IItemPropertySource {
+public class LocalScaItemProvider extends CorbaObjWrapperItemProvider implements IEditingDomainItemProvider, IStructuredItemContentProvider,
+		ITreeItemContentProvider, IItemLabelProvider, IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
@@ -71,11 +70,10 @@ public class LocalScaItemProvider extends CorbaObjWrapperItemProvider implements
 	 * @generated
 	 */
 	@Override
-	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
+	public Collection< ? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(ScaDebugPackage.Literals.LOCAL_SCA__WAVEFORMS);
-			childrenFeatures.add(ScaDebugPackage.Literals.LOCAL_SCA__SANDBOX_WAVEFORM);
 			childrenFeatures.add(ScaDebugPackage.Literals.LOCAL_SCA__SANDBOX_DEVICE_MANAGER);
 			childrenFeatures.add(ScaDebugPackage.Literals.LOCAL_SCA__FILE_MANAGER);
 		}
@@ -129,12 +127,11 @@ public class LocalScaItemProvider extends CorbaObjWrapperItemProvider implements
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(LocalSca.class)) {
-			case ScaDebugPackage.LOCAL_SCA__WAVEFORMS:
-			case ScaDebugPackage.LOCAL_SCA__SANDBOX_WAVEFORM:
-			case ScaDebugPackage.LOCAL_SCA__SANDBOX_DEVICE_MANAGER:
-			case ScaDebugPackage.LOCAL_SCA__FILE_MANAGER:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
-				return;
+		case ScaDebugPackage.LOCAL_SCA__WAVEFORMS:
+		case ScaDebugPackage.LOCAL_SCA__SANDBOX_DEVICE_MANAGER:
+		case ScaDebugPackage.LOCAL_SCA__FILE_MANAGER:
+			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
+			return;
 		}
 		super.notifyChanged(notification);
 	}

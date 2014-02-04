@@ -14,6 +14,10 @@
                   isRoot="false"
                   pattern="gov.redhawk.ide.debug.ui.localReference">
             </contentExtension>
+            <contentExtension
+                  isRoot="false"
+                  pattern="gov.redhawk.ide.debug.internal.ui.LocalScaViewerSorter">
+            </contentExtension>
          </includes>
       </viewerContentBinding>
    </extension>
@@ -65,6 +69,10 @@
                </and>
             </enablement>
          </actionProvider>
+         <commonSorter
+               class="gov.redhawk.ide.debug.internal.ui.LocalScaViewerSorter"
+               id="gov.redhawk.ide.debug.internal.ui.LocalScaViewerSorter">
+         </commonSorter>
       </navigatorContent>
       <commonFilter
             activeByDefault="true"

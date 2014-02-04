@@ -8,7 +8,6 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.util;
 
@@ -72,7 +71,6 @@ import CF.TestableObjectOperations;
 import ExtendedCF.Sandbox;
 import ExtendedCF.SandboxOperations;
 
-
 /**
  * <!-- begin-user-doc -->
  * The <b>Adapter Factory</b> for the model.
@@ -117,7 +115,7 @@ public class ScaDebugAdapterFactory extends AdapterFactoryImpl {
 			return true;
 		}
 		if (object instanceof EObject) {
-			return ((EObject)object).eClass().getEPackage() == modelPackage;
+			return ((EObject) object).eClass().getEPackage() == modelPackage;
 		}
 		return false;
 	}
@@ -128,213 +126,262 @@ public class ScaDebugAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ScaDebugSwitch<Adapter> modelSwitch =
-		new ScaDebugSwitch<Adapter>() {
-			@Override
-			public Adapter caseLocalSca(LocalSca object) {
-				return createLocalScaAdapter();
-			}
-			@Override
-			public Adapter caseNamingContextExtOperations(NamingContextExtOperations object) {
-				return createNamingContextExtOperationsAdapter();
-			}
-			@Override
-			public Adapter caseNotifyingNamingContext(NotifyingNamingContext object) {
-				return createNotifyingNamingContextAdapter();
-			}
-			@Override
-			public Adapter caseNameToObjectEntry(Entry<Name, org.omg.CORBA.Object> object) {
-				return createNameToObjectEntryAdapter();
-			}
-			@Override
-			public Adapter caseNameToNamingContextEntry(Entry<Name, NamingContext> object) {
-				return createNameToNamingContextEntryAdapter();
-			}
-			@Override
-			public Adapter caseLocalFileManager(LocalFileManager object) {
-				return createLocalFileManagerAdapter();
-			}
-			@Override
-			public Adapter caseLocalLaunch(LocalLaunch object) {
-				return createLocalLaunchAdapter();
-			}
-			@Override
-			public Adapter caseLocalAbstractComponent(LocalAbstractComponent object) {
-				return createLocalAbstractComponentAdapter();
-			}
-			@Override
-			public Adapter caseLocalScaWaveform(LocalScaWaveform object) {
-				return createLocalScaWaveformAdapter();
-			}
-			@Override
-			public Adapter caseLocalScaComponent(LocalScaComponent object) {
-				return createLocalScaComponentAdapter();
-			}
-			@Override
-			public Adapter caseLocalScaDeviceManager(LocalScaDeviceManager object) {
-				return createLocalScaDeviceManagerAdapter();
-			}
-			@Override
-			public Adapter caseLocalScaExecutableDevice(LocalScaExecutableDevice object) {
-				return createLocalScaExecutableDeviceAdapter();
-			}
-			@Override
-			public Adapter caseLocalScaLoadableDevice(LocalScaLoadableDevice object) {
-				return createLocalScaLoadableDeviceAdapter();
-			}
-			@Override
-			public Adapter caseLocalScaDevice(LocalScaDevice object) {
-				return createLocalScaDeviceAdapter();
-			}
-			@Override
-			public Adapter caseLocalScaService(LocalScaService object) {
-				return createLocalScaServiceAdapter();
-			}
-			@Override
-			public Adapter caseSandboxOperations(SandboxOperations object) {
-				return createSandboxOperationsAdapter();
-			}
-			@Override
-			public Adapter caseSandbox(Sandbox object) {
-				return createSandboxAdapter();
-			}
-			@Override
-			public Adapter caseIStatusProvider(IStatusProvider object) {
-				return createIStatusProviderAdapter();
-			}
-			@Override
-			public Adapter caseIDisposable(IDisposable object) {
-				return createIDisposableAdapter();
-			}
-			@Override
-			public Adapter caseIRefreshable(IRefreshable object) {
-				return createIRefreshableAdapter();
-			}
-			@Override
-			public Adapter caseDataProviderObject(DataProviderObject object) {
-				return createDataProviderObjectAdapter();
-			}
-			@Override
-			public <T extends org.omg.CORBA.Object> Adapter caseCorbaObjWrapper(CorbaObjWrapper<T> object) {
-				return createCorbaObjWrapperAdapter();
-			}
-			@Override
-			public Adapter caseFileSystemOperations(FileSystemOperations object) {
-				return createFileSystemOperationsAdapter();
-			}
-			@Override
-			public Adapter caseScaFileStore(ScaFileStore object) {
-				return createScaFileStoreAdapter();
-			}
-			@Override
-			public <F extends FileSystem> Adapter caseScaFileSystem(ScaFileSystem<F> object) {
-				return createScaFileSystemAdapter();
-			}
-			@Override
-			public Adapter caseFileManagerOperations(FileManagerOperations object) {
-				return createFileManagerOperationsAdapter();
-			}
-			@Override
-			public Adapter caseScaFileManager(ScaFileManager object) {
-				return createScaFileManagerAdapter();
-			}
-			@Override
-			public <O extends Object> Adapter caseProfileObjectWrapper(ProfileObjectWrapper<O> object) {
-				return createProfileObjectWrapperAdapter();
-			}
-			@Override
-			public Adapter casePropertySetOperations(PropertySetOperations object) {
-				return createPropertySetOperationsAdapter();
-			}
-			@Override
-			public <P extends org.omg.CORBA.Object, E extends Object> Adapter caseScaPropertyContainer(ScaPropertyContainer<P, E> object) {
-				return createScaPropertyContainerAdapter();
-			}
-			@Override
-			public Adapter caseLifeCycleOperations(LifeCycleOperations object) {
-				return createLifeCycleOperationsAdapter();
-			}
-			@Override
-			public Adapter caseTestableObjectOperations(TestableObjectOperations object) {
-				return createTestableObjectOperationsAdapter();
-			}
-			@Override
-			public Adapter casePortSupplierOperations(PortSupplierOperations object) {
-				return createPortSupplierOperationsAdapter();
-			}
-			@Override
-			public Adapter caseResourceOperations(ResourceOperations object) {
-				return createResourceOperationsAdapter();
-			}
-			@Override
-			public Adapter caseApplicationOperations(ApplicationOperations object) {
-				return createApplicationOperationsAdapter();
-			}
-			@Override
-			public Adapter caseScaPortContainer(ScaPortContainer object) {
-				return createScaPortContainerAdapter();
-			}
-			@Override
-			public Adapter caseScaWaveform(ScaWaveform object) {
-				return createScaWaveformAdapter();
-			}
-			@Override
-			public <R extends Resource> Adapter caseScaAbstractComponent(ScaAbstractComponent<R> object) {
-				return createScaAbstractComponentAdapter();
-			}
-			@Override
-			public Adapter caseScaComponent(ScaComponent object) {
-				return createScaComponentAdapter();
-			}
-			@Override
-			public Adapter caseDeviceManagerOperations(DeviceManagerOperations object) {
-				return createDeviceManagerOperationsAdapter();
-			}
-			@Override
-			public Adapter caseScaDeviceManager(ScaDeviceManager object) {
-				return createScaDeviceManagerAdapter();
-			}
-			@Override
-			public Adapter caseDeviceOperations(DeviceOperations object) {
-				return createDeviceOperationsAdapter();
-			}
-			@Override
-			public <D extends Device> Adapter caseScaDevice(ScaDevice<D> object) {
-				return createScaDeviceAdapter();
-			}
-			@Override
-			public Adapter caseLoadableDeviceOperations(LoadableDeviceOperations object) {
-				return createLoadableDeviceOperationsAdapter();
-			}
-			@Override
-			public <L extends LoadableDevice> Adapter caseScaLoadableDevice(ScaLoadableDevice<L> object) {
-				return createScaLoadableDeviceAdapter();
-			}
-			@Override
-			public Adapter caseExecutableDeviceOperations(ExecutableDeviceOperations object) {
-				return createExecutableDeviceOperationsAdapter();
-			}
-			@Override
-			public Adapter caseScaExecutableDevice(ScaExecutableDevice object) {
-				return createScaExecutableDeviceAdapter();
-			}
-			@Override
-			public Adapter caseScaService(ScaService object) {
-				return createScaServiceAdapter();
-			}
-			@Override
-			public Adapter caseObject(org.omg.CORBA.Object object) {
-				return createObjectAdapter();
-			}
-			@Override
-			public Adapter caseIDLEntity(IDLEntity object) {
-				return createIDLEntityAdapter();
-			}
-			@Override
-			public Adapter defaultCase(EObject object) {
-				return createEObjectAdapter();
-			}
-		};
+	protected ScaDebugSwitch<Adapter> modelSwitch = new ScaDebugSwitch<Adapter>() {
+		@Override
+		public Adapter caseLocalSca(LocalSca object) {
+			return createLocalScaAdapter();
+		}
+
+		@Override
+		public Adapter caseNamingContextExtOperations(NamingContextExtOperations object) {
+			return createNamingContextExtOperationsAdapter();
+		}
+
+		@Override
+		public Adapter caseNotifyingNamingContext(NotifyingNamingContext object) {
+			return createNotifyingNamingContextAdapter();
+		}
+
+		@Override
+		public Adapter caseNameToObjectEntry(Entry<Name, org.omg.CORBA.Object> object) {
+			return createNameToObjectEntryAdapter();
+		}
+
+		@Override
+		public Adapter caseNameToNamingContextEntry(Entry<Name, NamingContext> object) {
+			return createNameToNamingContextEntryAdapter();
+		}
+
+		@Override
+		public Adapter caseLocalFileManager(LocalFileManager object) {
+			return createLocalFileManagerAdapter();
+		}
+
+		@Override
+		public Adapter caseLocalLaunch(LocalLaunch object) {
+			return createLocalLaunchAdapter();
+		}
+
+		@Override
+		public Adapter caseLocalAbstractComponent(LocalAbstractComponent object) {
+			return createLocalAbstractComponentAdapter();
+		}
+
+		@Override
+		public Adapter caseLocalScaWaveform(LocalScaWaveform object) {
+			return createLocalScaWaveformAdapter();
+		}
+
+		@Override
+		public Adapter caseLocalScaComponent(LocalScaComponent object) {
+			return createLocalScaComponentAdapter();
+		}
+
+		@Override
+		public Adapter caseLocalScaDeviceManager(LocalScaDeviceManager object) {
+			return createLocalScaDeviceManagerAdapter();
+		}
+
+		@Override
+		public Adapter caseLocalScaExecutableDevice(LocalScaExecutableDevice object) {
+			return createLocalScaExecutableDeviceAdapter();
+		}
+
+		@Override
+		public Adapter caseLocalScaLoadableDevice(LocalScaLoadableDevice object) {
+			return createLocalScaLoadableDeviceAdapter();
+		}
+
+		@Override
+		public Adapter caseLocalScaDevice(LocalScaDevice object) {
+			return createLocalScaDeviceAdapter();
+		}
+
+		@Override
+		public Adapter caseLocalScaService(LocalScaService object) {
+			return createLocalScaServiceAdapter();
+		}
+
+		@Override
+		public Adapter caseSandboxOperations(SandboxOperations object) {
+			return createSandboxOperationsAdapter();
+		}
+
+		@Override
+		public Adapter caseSandbox(Sandbox object) {
+			return createSandboxAdapter();
+		}
+
+		@Override
+		public Adapter caseIStatusProvider(IStatusProvider object) {
+			return createIStatusProviderAdapter();
+		}
+
+		@Override
+		public Adapter caseIDisposable(IDisposable object) {
+			return createIDisposableAdapter();
+		}
+
+		@Override
+		public Adapter caseIRefreshable(IRefreshable object) {
+			return createIRefreshableAdapter();
+		}
+
+		@Override
+		public Adapter caseDataProviderObject(DataProviderObject object) {
+			return createDataProviderObjectAdapter();
+		}
+
+		@Override
+		public < T extends org.omg.CORBA.Object > Adapter caseCorbaObjWrapper(CorbaObjWrapper<T> object) {
+			return createCorbaObjWrapperAdapter();
+		}
+
+		@Override
+		public Adapter caseFileSystemOperations(FileSystemOperations object) {
+			return createFileSystemOperationsAdapter();
+		}
+
+		@Override
+		public Adapter caseScaFileStore(ScaFileStore object) {
+			return createScaFileStoreAdapter();
+		}
+
+		@Override
+		public < F extends FileSystem > Adapter caseScaFileSystem(ScaFileSystem<F> object) {
+			return createScaFileSystemAdapter();
+		}
+
+		@Override
+		public Adapter caseFileManagerOperations(FileManagerOperations object) {
+			return createFileManagerOperationsAdapter();
+		}
+
+		@Override
+		public Adapter caseScaFileManager(ScaFileManager object) {
+			return createScaFileManagerAdapter();
+		}
+
+		@Override
+		public < O extends Object > Adapter caseProfileObjectWrapper(ProfileObjectWrapper<O> object) {
+			return createProfileObjectWrapperAdapter();
+		}
+
+		@Override
+		public Adapter casePropertySetOperations(PropertySetOperations object) {
+			return createPropertySetOperationsAdapter();
+		}
+
+		@Override
+		public < P extends org.omg.CORBA.Object, E extends Object > Adapter caseScaPropertyContainer(ScaPropertyContainer<P, E> object) {
+			return createScaPropertyContainerAdapter();
+		}
+
+		@Override
+		public Adapter caseLifeCycleOperations(LifeCycleOperations object) {
+			return createLifeCycleOperationsAdapter();
+		}
+
+		@Override
+		public Adapter caseTestableObjectOperations(TestableObjectOperations object) {
+			return createTestableObjectOperationsAdapter();
+		}
+
+		@Override
+		public Adapter casePortSupplierOperations(PortSupplierOperations object) {
+			return createPortSupplierOperationsAdapter();
+		}
+
+		@Override
+		public Adapter caseResourceOperations(ResourceOperations object) {
+			return createResourceOperationsAdapter();
+		}
+
+		@Override
+		public Adapter caseApplicationOperations(ApplicationOperations object) {
+			return createApplicationOperationsAdapter();
+		}
+
+		@Override
+		public Adapter caseScaPortContainer(ScaPortContainer object) {
+			return createScaPortContainerAdapter();
+		}
+
+		@Override
+		public Adapter caseScaWaveform(ScaWaveform object) {
+			return createScaWaveformAdapter();
+		}
+
+		@Override
+		public < R extends Resource > Adapter caseScaAbstractComponent(ScaAbstractComponent<R> object) {
+			return createScaAbstractComponentAdapter();
+		}
+
+		@Override
+		public Adapter caseScaComponent(ScaComponent object) {
+			return createScaComponentAdapter();
+		}
+
+		@Override
+		public Adapter caseDeviceManagerOperations(DeviceManagerOperations object) {
+			return createDeviceManagerOperationsAdapter();
+		}
+
+		@Override
+		public Adapter caseScaDeviceManager(ScaDeviceManager object) {
+			return createScaDeviceManagerAdapter();
+		}
+
+		@Override
+		public Adapter caseDeviceOperations(DeviceOperations object) {
+			return createDeviceOperationsAdapter();
+		}
+
+		@Override
+		public < D extends Device > Adapter caseScaDevice(ScaDevice<D> object) {
+			return createScaDeviceAdapter();
+		}
+
+		@Override
+		public Adapter caseLoadableDeviceOperations(LoadableDeviceOperations object) {
+			return createLoadableDeviceOperationsAdapter();
+		}
+
+		@Override
+		public < L extends LoadableDevice > Adapter caseScaLoadableDevice(ScaLoadableDevice<L> object) {
+			return createScaLoadableDeviceAdapter();
+		}
+
+		@Override
+		public Adapter caseExecutableDeviceOperations(ExecutableDeviceOperations object) {
+			return createExecutableDeviceOperationsAdapter();
+		}
+
+		@Override
+		public Adapter caseScaExecutableDevice(ScaExecutableDevice object) {
+			return createScaExecutableDeviceAdapter();
+		}
+
+		@Override
+		public Adapter caseScaService(ScaService object) {
+			return createScaServiceAdapter();
+		}
+
+		@Override
+		public Adapter caseObject(org.omg.CORBA.Object object) {
+			return createObjectAdapter();
+		}
+
+		@Override
+		public Adapter caseIDLEntity(IDLEntity object) {
+			return createIDLEntityAdapter();
+		}
+
+		@Override
+		public Adapter defaultCase(EObject object) {
+			return createEObjectAdapter();
+		}
+	};
 
 	/**
 	 * Creates an adapter for the <code>target</code>.
@@ -346,7 +393,7 @@ public class ScaDebugAdapterFactory extends AdapterFactoryImpl {
 	 */
 	@Override
 	public Adapter createAdapter(Notifier target) {
-		return modelSwitch.doSwitch((EObject)target);
+		return modelSwitch.doSwitch((EObject) target);
 	}
 
 	/**

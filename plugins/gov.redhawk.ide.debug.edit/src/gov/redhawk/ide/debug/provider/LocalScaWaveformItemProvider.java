@@ -8,10 +8,8 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.provider;
-
 
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPackage;
@@ -39,14 +37,8 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * <!-- end-user-doc -->
  * @generated
  */
-public class LocalScaWaveformItemProvider
-	extends ScaWaveformItemProvider
-	implements
-		IEditingDomainItemProvider,
-		IStructuredItemContentProvider,
-		ITreeItemContentProvider,
-		IItemLabelProvider,
-		IItemPropertySource {
+public class LocalScaWaveformItemProvider extends ScaWaveformItemProvider implements IEditingDomainItemProvider, IStructuredItemContentProvider,
+		ITreeItemContentProvider, IItemLabelProvider, IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
@@ -81,19 +73,9 @@ public class LocalScaWaveformItemProvider
 	 * @generated
 	 */
 	protected void addModePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_LocalLaunch_mode_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_LocalLaunch_mode_feature", "_UI_LocalLaunch_type"),
-				 ScaDebugPackage.Literals.LOCAL_LAUNCH__MODE,
-				 false,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
+		itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+			getString("_UI_LocalLaunch_mode_feature"), getString("_UI_PropertyDescriptor_description", "_UI_LocalLaunch_mode_feature", "_UI_LocalLaunch_type"),
+			ScaDebugPackage.Literals.LOCAL_LAUNCH__MODE, false, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
 	}
 
 	/**
@@ -103,19 +85,10 @@ public class LocalScaWaveformItemProvider
 	 * @generated
 	 */
 	protected void addNamingContextPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_LocalScaWaveform_namingContext_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_LocalScaWaveform_namingContext_feature", "_UI_LocalScaWaveform_type"),
-				 ScaDebugPackage.Literals.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT,
-				 false,
-				 false,
-				 true,
-				 null,
-				 null,
-				 null));
+		itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+			getString("_UI_LocalScaWaveform_namingContext_feature"),
+			getString("_UI_PropertyDescriptor_description", "_UI_LocalScaWaveform_namingContext_feature", "_UI_LocalScaWaveform_type"),
+			ScaDebugPackage.Literals.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT, false, false, true, null, null, null));
 	}
 
 	/**
@@ -141,9 +114,9 @@ public class LocalScaWaveformItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(LocalScaWaveform.class)) {
-			case ScaDebugPackage.LOCAL_SCA_WAVEFORM__MODE:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-				return;
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__MODE:
+			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
+			return;
 		}
 		super.notifyChanged(notification);
 	}

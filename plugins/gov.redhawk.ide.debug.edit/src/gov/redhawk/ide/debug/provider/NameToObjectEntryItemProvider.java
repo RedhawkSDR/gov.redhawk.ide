@@ -8,7 +8,6 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.provider;
 
@@ -39,7 +38,7 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * @generated
  */
 public class NameToObjectEntryItemProvider extends ItemProviderAdapter implements IEditingDomainItemProvider, IStructuredItemContentProvider,
-        ITreeItemContentProvider, IItemLabelProvider, IItemPropertySource {
+		ITreeItemContentProvider, IItemLabelProvider, IItemPropertySource {
 
 	/**
 	 * This constructs an instance from a factory and a notifier.
@@ -75,19 +74,10 @@ public class NameToObjectEntryItemProvider extends ItemProviderAdapter implement
 	 * @generated
 	 */
 	protected void addKeyPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_NameToObjectEntry_key_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_NameToObjectEntry_key_feature", "_UI_NameToObjectEntry_type"),
-				 ScaDebugPackage.Literals.NAME_TO_OBJECT_ENTRY__KEY,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
+		itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+			getString("_UI_NameToObjectEntry_key_feature"),
+			getString("_UI_PropertyDescriptor_description", "_UI_NameToObjectEntry_key_feature", "_UI_NameToObjectEntry_type"),
+			ScaDebugPackage.Literals.NAME_TO_OBJECT_ENTRY__KEY, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
 	}
 
 	/**
@@ -97,19 +87,10 @@ public class NameToObjectEntryItemProvider extends ItemProviderAdapter implement
 	 * @generated
 	 */
 	protected void addValuePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_NameToObjectEntry_value_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_NameToObjectEntry_value_feature", "_UI_NameToObjectEntry_type"),
-				 ScaDebugPackage.Literals.NAME_TO_OBJECT_ENTRY__VALUE,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
+		itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+			getString("_UI_NameToObjectEntry_value_feature"),
+			getString("_UI_PropertyDescriptor_description", "_UI_NameToObjectEntry_value_feature", "_UI_NameToObjectEntry_type"),
+			ScaDebugPackage.Literals.NAME_TO_OBJECT_ENTRY__VALUE, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
 	}
 
 	/**
@@ -131,7 +112,7 @@ public class NameToObjectEntryItemProvider extends ItemProviderAdapter implement
 	 */
 	@Override
 	public String getText(Object object) {
-		Entry<?, ?> nameToObjectEntry = (Entry<?, ?>)object;
+		Entry< ? , ? > nameToObjectEntry = (Entry< ? , ? >) object;
 		return "" + nameToObjectEntry.getKey() + " -> " + nameToObjectEntry.getValue();
 	}
 
@@ -147,10 +128,10 @@ public class NameToObjectEntryItemProvider extends ItemProviderAdapter implement
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(Entry.class)) {
-			case ScaDebugPackage.NAME_TO_OBJECT_ENTRY__KEY:
-			case ScaDebugPackage.NAME_TO_OBJECT_ENTRY__VALUE:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-				return;
+		case ScaDebugPackage.NAME_TO_OBJECT_ENTRY__KEY:
+		case ScaDebugPackage.NAME_TO_OBJECT_ENTRY__VALUE:
+			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
+			return;
 		}
 		super.notifyChanged(notification);
 	}

@@ -8,7 +8,6 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
@@ -55,7 +54,6 @@ import CF.ApplicationOperations;
 import CF.DeviceManagerOperations;
 import ExtendedCF.Sandbox;
 import ExtendedCF.SandboxOperations;
-
 
 /**
  * <!-- begin-user-doc -->
@@ -268,10 +266,12 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * @generated
 	 */
 	public static ScaDebugPackage init() {
-		if (isInited) return (ScaDebugPackage)EPackage.Registry.INSTANCE.getEPackage(ScaDebugPackage.eNS_URI);
+		if (isInited)
+			return (ScaDebugPackage) EPackage.Registry.INSTANCE.getEPackage(ScaDebugPackage.eNS_URI);
 
 		// Obtain or create and register package
-		ScaDebugPackageImpl theScaDebugPackage = (ScaDebugPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof ScaDebugPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new ScaDebugPackageImpl());
+		ScaDebugPackageImpl theScaDebugPackage = (ScaDebugPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof ScaDebugPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI)
+			: new ScaDebugPackageImpl());
 
 		isInited = true;
 
@@ -287,7 +287,6 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		// Mark meta-data to indicate it can't be changed
 		theScaDebugPackage.freeze();
 
-  
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(ScaDebugPackage.eNS_URI, theScaDebugPackage);
 		return theScaDebugPackage;
@@ -310,7 +309,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EReference getLocalSca_Waveforms() {
-		return (EReference)localScaEClass.getEStructuralFeatures().get(0);
+		return (EReference) localScaEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -320,7 +319,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EReference getLocalSca_SandboxWaveform() {
-		return (EReference)localScaEClass.getEStructuralFeatures().get(1);
+		return (EReference) localScaEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -330,7 +329,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EReference getLocalSca_SandboxDeviceManager() {
-		return (EReference)localScaEClass.getEStructuralFeatures().get(2);
+		return (EReference) localScaEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -340,7 +339,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EReference getLocalSca_RootContext() {
-		return (EReference)localScaEClass.getEStructuralFeatures().get(3);
+		return (EReference) localScaEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -350,7 +349,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EReference getLocalSca_FileManager() {
-		return (EReference)localScaEClass.getEStructuralFeatures().get(4);
+		return (EReference) localScaEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -360,7 +359,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EAttribute getLocalSca_Sandbox() {
-		return (EAttribute)localScaEClass.getEStructuralFeatures().get(5);
+		return (EAttribute) localScaEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -390,7 +389,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EReference getNotifyingNamingContext_ObjectMap() {
-		return (EReference)notifyingNamingContextEClass.getEStructuralFeatures().get(0);
+		return (EReference) notifyingNamingContextEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -400,7 +399,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EReference getNotifyingNamingContext_ContextMap() {
-		return (EReference)notifyingNamingContextEClass.getEStructuralFeatures().get(1);
+		return (EReference) notifyingNamingContextEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -410,7 +409,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EAttribute getNotifyingNamingContext_NamingContext() {
-		return (EAttribute)notifyingNamingContextEClass.getEStructuralFeatures().get(2);
+		return (EAttribute) notifyingNamingContextEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -420,7 +419,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EReference getNotifyingNamingContext_SubContexts() {
-		return (EReference)notifyingNamingContextEClass.getEStructuralFeatures().get(3);
+		return (EReference) notifyingNamingContextEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -430,7 +429,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EReference getNotifyingNamingContext_ParentContext() {
-		return (EReference)notifyingNamingContextEClass.getEStructuralFeatures().get(4);
+		return (EReference) notifyingNamingContextEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -440,7 +439,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EAttribute getNotifyingNamingContext_Poa() {
-		return (EAttribute)notifyingNamingContextEClass.getEStructuralFeatures().get(5);
+		return (EAttribute) notifyingNamingContextEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -450,7 +449,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EAttribute getNotifyingNamingContext_Name() {
-		return (EAttribute)notifyingNamingContextEClass.getEStructuralFeatures().get(6);
+		return (EAttribute) notifyingNamingContextEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -470,7 +469,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EAttribute getNameToObjectEntry_Key() {
-		return (EAttribute)nameToObjectEntryEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) nameToObjectEntryEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -480,7 +479,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EAttribute getNameToObjectEntry_Value() {
-		return (EAttribute)nameToObjectEntryEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) nameToObjectEntryEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -500,7 +499,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EAttribute getNameToNamingContextEntry_Key() {
-		return (EAttribute)nameToNamingContextEntryEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) nameToNamingContextEntryEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -510,7 +509,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EAttribute getNameToNamingContextEntry_Value() {
-		return (EAttribute)nameToNamingContextEntryEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) nameToNamingContextEntryEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -540,7 +539,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EAttribute getLocalLaunch_Launch() {
-		return (EAttribute)localLaunchEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) localLaunchEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -550,7 +549,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EAttribute getLocalLaunch_Mode() {
-		return (EAttribute)localLaunchEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) localLaunchEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -570,7 +569,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EAttribute getLocalAbstractComponent_ImplementationID() {
-		return (EAttribute)localAbstractComponentEClass.getEStructuralFeatures().get(0);
+		return (EAttribute) localAbstractComponentEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -581,7 +580,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EAttribute getLocalAbstractComponent_ExecParam() {
-		return (EAttribute)localAbstractComponentEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) localAbstractComponentEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -601,7 +600,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EReference getLocalScaWaveform_NamingContext() {
-		return (EReference)localScaWaveformEClass.getEStructuralFeatures().get(0);
+		return (EReference) localScaWaveformEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -612,7 +611,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EAttribute getLocalScaWaveform_LocalApp() {
-		return (EAttribute)localScaWaveformEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) localScaWaveformEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -642,7 +641,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EReference getLocalScaDeviceManager_NamingContext() {
-		return (EReference)localScaDeviceManagerEClass.getEStructuralFeatures().get(0);
+		return (EReference) localScaDeviceManagerEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -653,7 +652,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public EAttribute getLocalScaDeviceManager_LocalDeviceManager() {
-		return (EAttribute)localScaDeviceManagerEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) localScaDeviceManagerEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -828,7 +827,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 */
 	@Override
 	public ScaDebugFactory getScaDebugFactory() {
-		return (ScaDebugFactory)getEFactoryInstance();
+		return (ScaDebugFactory) getEFactoryInstance();
 	}
 
 	/**
@@ -846,7 +845,8 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * @generated
 	 */
 	public void createPackageContents() {
-		if (isCreated) return;
+		if (isCreated)
+			return;
 		isCreated = true;
 
 		// Create classes and their features
@@ -937,7 +937,8 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 	 * @generated
 	 */
 	public void initializePackageContents() {
-		if (isInitialized) return;
+		if (isInitialized)
+			return;
 		isInitialized = true;
 
 		// Initialize package
@@ -946,10 +947,10 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
-		ScaPackage theScaPackage = (ScaPackage)EPackage.Registry.INSTANCE.getEPackage(ScaPackage.eNS_URI);
-		CfPackage theCfPackage = (CfPackage)EPackage.Registry.INSTANCE.getEPackage(CfPackage.eNS_URI);
-		EcorePackage theEcorePackage = (EcorePackage)EPackage.Registry.INSTANCE.getEPackage(EcorePackage.eNS_URI);
-		SpdPackage theSpdPackage = (SpdPackage)EPackage.Registry.INSTANCE.getEPackage(SpdPackage.eNS_URI);
+		ScaPackage theScaPackage = (ScaPackage) EPackage.Registry.INSTANCE.getEPackage(ScaPackage.eNS_URI);
+		CfPackage theCfPackage = (CfPackage) EPackage.Registry.INSTANCE.getEPackage(CfPackage.eNS_URI);
+		EcorePackage theEcorePackage = (EcorePackage) EPackage.Registry.INSTANCE.getEPackage(EcorePackage.eNS_URI);
+		SpdPackage theSpdPackage = (SpdPackage) EPackage.Registry.INSTANCE.getEPackage(SpdPackage.eNS_URI);
 
 		// Create type parameters
 
@@ -992,23 +993,41 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(localScaEClass, LocalSca.class, "LocalSca", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getLocalSca_Waveforms(), theScaPackage.getScaWaveform(), null, "waveforms", null, 0, -1, LocalSca.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getLocalSca_SandboxWaveform(), this.getLocalScaWaveform(), null, "sandboxWaveform", null, 1, 1, LocalSca.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getLocalSca_SandboxDeviceManager(), this.getLocalScaDeviceManager(), null, "sandboxDeviceManager", null, 1, 1, LocalSca.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getLocalSca_RootContext(), this.getNotifyingNamingContext(), null, "rootContext", null, 1, 1, LocalSca.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getLocalSca_FileManager(), this.getLocalFileManager(), null, "fileManager", null, 1, 1, LocalSca.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getLocalSca_Sandbox(), this.getAttrSandboxOperations(), "sandbox", null, 0, 1, LocalSca.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEReference(getLocalSca_Waveforms(), theScaPackage.getScaWaveform(), null, "waveforms", null, 0, -1, LocalSca.class, IS_TRANSIENT, !IS_VOLATILE,
+			IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getLocalSca_SandboxWaveform(), this.getLocalScaWaveform(), null, "sandboxWaveform", null, 1, 1, LocalSca.class, IS_TRANSIENT,
+			!IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getLocalSca_SandboxDeviceManager(), this.getLocalScaDeviceManager(), null, "sandboxDeviceManager", null, 1, 1, LocalSca.class,
+			IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getLocalSca_RootContext(), this.getNotifyingNamingContext(), null, "rootContext", null, 1, 1, LocalSca.class, IS_TRANSIENT,
+			!IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getLocalSca_FileManager(), this.getLocalFileManager(), null, "fileManager", null, 1, 1, LocalSca.class, IS_TRANSIENT, !IS_VOLATILE,
+			IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLocalSca_Sandbox(), this.getAttrSandboxOperations(), "sandbox", null, 0, 1, LocalSca.class, IS_TRANSIENT, !IS_VOLATILE,
+			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
-		initEClass(namingContextExtOperationsEClass, NamingContextExtOperations.class, "NamingContextExtOperations", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+		initEClass(namingContextExtOperationsEClass, NamingContextExtOperations.class, "NamingContextExtOperations", IS_ABSTRACT, IS_INTERFACE,
+			!IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(notifyingNamingContextEClass, NotifyingNamingContext.class, "NotifyingNamingContext", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getNotifyingNamingContext_ObjectMap(), this.getNameToObjectEntry(), null, "objectMap", null, 0, -1, NotifyingNamingContext.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getNotifyingNamingContext_ContextMap(), this.getNameToNamingContextEntry(), null, "contextMap", null, 0, -1, NotifyingNamingContext.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getNotifyingNamingContext_NamingContext(), theCfPackage.getNamingContextExt(), "namingContext", null, 1, 1, NotifyingNamingContext.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getNotifyingNamingContext_SubContexts(), this.getNotifyingNamingContext(), this.getNotifyingNamingContext_ParentContext(), "subContexts", null, 0, -1, NotifyingNamingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getNotifyingNamingContext_ParentContext(), this.getNotifyingNamingContext(), this.getNotifyingNamingContext_SubContexts(), "parentContext", null, 0, 1, NotifyingNamingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getNotifyingNamingContext_Poa(), theScaPackage.getPOA(), "poa", null, 1, 1, NotifyingNamingContext.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getNotifyingNamingContext_Name(), theEcorePackage.getEString(), "name", null, 0, 1, NotifyingNamingContext.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEClass(notifyingNamingContextEClass, NotifyingNamingContext.class, "NotifyingNamingContext", !IS_ABSTRACT, !IS_INTERFACE,
+			IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getNotifyingNamingContext_ObjectMap(), this.getNameToObjectEntry(), null, "objectMap", null, 0, -1, NotifyingNamingContext.class,
+			IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getNotifyingNamingContext_ContextMap(), this.getNameToNamingContextEntry(), null, "contextMap", null, 0, -1,
+			NotifyingNamingContext.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED,
+			IS_ORDERED);
+		initEAttribute(getNotifyingNamingContext_NamingContext(), theCfPackage.getNamingContextExt(), "namingContext", null, 1, 1,
+			NotifyingNamingContext.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getNotifyingNamingContext_SubContexts(), this.getNotifyingNamingContext(), this.getNotifyingNamingContext_ParentContext(),
+			"subContexts", null, 0, -1, NotifyingNamingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+			!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getNotifyingNamingContext_ParentContext(), this.getNotifyingNamingContext(), this.getNotifyingNamingContext_SubContexts(),
+			"parentContext", null, 0, 1, NotifyingNamingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+			!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getNotifyingNamingContext_Poa(), theScaPackage.getPOA(), "poa", null, 1, 1, NotifyingNamingContext.class, IS_TRANSIENT, !IS_VOLATILE,
+			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getNotifyingNamingContext_Name(), theEcorePackage.getEString(), "name", null, 0, 1, NotifyingNamingContext.class, IS_TRANSIENT,
+			IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		EOperation op = addEOperation(notifyingNamingContextEClass, this.getNameComponentArray(), "getName", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, theSpdPackage.getURI(), "uri", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -1025,26 +1044,36 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		addEParameter(op, this.getNamingContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(nameToObjectEntryEClass, Entry.class, "NameToObjectEntry", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getNameToObjectEntry_Key(), this.getName_(), "key", null, 0, 1, Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getNameToObjectEntry_Value(), theScaPackage.getObject(), "value", null, 0, 1, Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getNameToObjectEntry_Key(), this.getName_(), "key", null, 0, 1, Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
+			!IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getNameToObjectEntry_Value(), theScaPackage.getObject(), "value", null, 0, 1, Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+			!IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(nameToNamingContextEntryEClass, Entry.class, "NameToNamingContextEntry", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getNameToNamingContextEntry_Key(), this.getName_(), "key", null, 0, 1, Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getNameToNamingContextEntry_Value(), this.getNamingContext(), "value", null, 0, 1, Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getNameToNamingContextEntry_Key(), this.getName_(), "key", null, 0, 1, Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+			!IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getNameToNamingContextEntry_Value(), this.getNamingContext(), "value", null, 0, 1, Entry.class, !IS_TRANSIENT, !IS_VOLATILE,
+			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(localFileManagerEClass, LocalFileManager.class, "LocalFileManager", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(localLaunchEClass, LocalLaunch.class, "LocalLaunch", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getLocalLaunch_Launch(), this.getILaunch(), "launch", null, 0, 1, LocalLaunch.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getLocalLaunch_Mode(), theEcorePackage.getEString(), "mode", null, 0, 1, LocalLaunch.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLocalLaunch_Launch(), this.getILaunch(), "launch", null, 0, 1, LocalLaunch.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+			!IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLocalLaunch_Mode(), theEcorePackage.getEString(), "mode", null, 0, 1, LocalLaunch.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+			!IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(localAbstractComponentEClass, LocalAbstractComponent.class, "LocalAbstractComponent", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getLocalAbstractComponent_ImplementationID(), theEcorePackage.getEString(), "implementationID", null, 0, 1, LocalAbstractComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getLocalAbstractComponent_ExecParam(), theEcorePackage.getEString(), "execParam", "", 0, 1, LocalAbstractComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLocalAbstractComponent_ImplementationID(), theEcorePackage.getEString(), "implementationID", null, 0, 1,
+			LocalAbstractComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLocalAbstractComponent_ExecParam(), theEcorePackage.getEString(), "execParam", "", 0, 1, LocalAbstractComponent.class, !IS_TRANSIENT,
+			!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(localScaWaveformEClass, LocalScaWaveform.class, "LocalScaWaveform", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getLocalScaWaveform_NamingContext(), this.getNotifyingNamingContext(), null, "namingContext", null, 1, 1, LocalScaWaveform.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getLocalScaWaveform_LocalApp(), this.getAttrApplicationOperations(), "localApp", null, 0, 1, LocalScaWaveform.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEReference(getLocalScaWaveform_NamingContext(), this.getNotifyingNamingContext(), null, "namingContext", null, 1, 1, LocalScaWaveform.class,
+			IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLocalScaWaveform_LocalApp(), this.getAttrApplicationOperations(), "localApp", null, 0, 1, LocalScaWaveform.class, IS_TRANSIENT,
+			!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
 		op = addEOperation(localScaWaveformEClass, this.getLocalScaComponent(), "launch", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "id", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -1057,12 +1086,17 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		initEClass(localScaComponentEClass, LocalScaComponent.class, "LocalScaComponent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(localScaDeviceManagerEClass, LocalScaDeviceManager.class, "LocalScaDeviceManager", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getLocalScaDeviceManager_NamingContext(), this.getNotifyingNamingContext(), null, "namingContext", null, 1, 1, LocalScaDeviceManager.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getLocalScaDeviceManager_LocalDeviceManager(), this.getAttrDeviceManagerOperations(), "localDeviceManager", null, 0, 1, LocalScaDeviceManager.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEReference(getLocalScaDeviceManager_NamingContext(), this.getNotifyingNamingContext(), null, "namingContext", null, 1, 1,
+			LocalScaDeviceManager.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED,
+			IS_ORDERED);
+		initEAttribute(getLocalScaDeviceManager_LocalDeviceManager(), this.getAttrDeviceManagerOperations(), "localDeviceManager", null, 0, 1,
+			LocalScaDeviceManager.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
-		initEClass(localScaExecutableDeviceEClass, LocalScaExecutableDevice.class, "LocalScaExecutableDevice", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(localScaExecutableDeviceEClass, LocalScaExecutableDevice.class, "LocalScaExecutableDevice", !IS_ABSTRACT, !IS_INTERFACE,
+			IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(localScaLoadableDeviceEClass, LocalScaLoadableDevice.class, "LocalScaLoadableDevice", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(localScaLoadableDeviceEClass, LocalScaLoadableDevice.class, "LocalScaLoadableDevice", !IS_ABSTRACT, !IS_INTERFACE,
+			IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(localScaDeviceEClass, LocalScaDevice.class, "LocalScaDevice", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -1081,8 +1115,10 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		initEDataType(wrongPolicyEDataType, WrongPolicy.class, "WrongPolicy", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(coreExceptionEDataType, CoreException.class, "CoreException", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(attrSandboxOperationsEDataType, SandboxOperations.class, "AttrSandboxOperations", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(attrApplicationOperationsEDataType, ApplicationOperations.class, "AttrApplicationOperations", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(attrDeviceManagerOperationsEDataType, DeviceManagerOperations.class, "AttrDeviceManagerOperations", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(attrApplicationOperationsEDataType, ApplicationOperations.class, "AttrApplicationOperations", !IS_SERIALIZABLE,
+			!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(attrDeviceManagerOperationsEDataType, DeviceManagerOperations.class, "AttrDeviceManagerOperations", !IS_SERIALIZABLE,
+			!IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

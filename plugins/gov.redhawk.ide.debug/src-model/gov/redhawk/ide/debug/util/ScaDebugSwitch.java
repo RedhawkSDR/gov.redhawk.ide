@@ -8,7 +8,6 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.util;
 
@@ -71,7 +70,6 @@ import CF.TestableObjectOperations;
 import ExtendedCF.Sandbox;
 import ExtendedCF.SandboxOperations;
 
-
 /**
  * <!-- begin-user-doc -->
  * The <b>Switch</b> for the model's inheritance hierarchy.
@@ -131,248 +129,407 @@ public class ScaDebugSwitch< T1 > extends Switch<T1> {
 	@Override
 	protected T1 doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
-			case ScaDebugPackage.LOCAL_SCA: {
-				LocalSca localSca = (LocalSca)theEObject;
-				T1 result = caseLocalSca(localSca);
-				if (result == null) result = caseCorbaObjWrapper(localSca);
-				if (result == null) result = caseDataProviderObject(localSca);
-				if (result == null) result = caseIStatusProvider(localSca);
-				if (result == null) result = caseIDisposable(localSca);
-				if (result == null) result = caseIRefreshable(localSca);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.NAMING_CONTEXT_EXT_OPERATIONS: {
-				NamingContextExtOperations namingContextExtOperations = (NamingContextExtOperations)theEObject;
-				T1 result = caseNamingContextExtOperations(namingContextExtOperations);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT: {
-				NotifyingNamingContext notifyingNamingContext = (NotifyingNamingContext)theEObject;
-				T1 result = caseNotifyingNamingContext(notifyingNamingContext);
-				if (result == null) result = caseNamingContextExtOperations(notifyingNamingContext);
-				if (result == null) result = caseIDisposable(notifyingNamingContext);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.NAME_TO_OBJECT_ENTRY: {
-				@SuppressWarnings("unchecked") Entry<Name, org.omg.CORBA.Object> nameToObjectEntry = (Entry<Name, org.omg.CORBA.Object>)theEObject;
-				T1 result = caseNameToObjectEntry(nameToObjectEntry);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY: {
-				@SuppressWarnings("unchecked") Entry<Name, NamingContext> nameToNamingContextEntry = (Entry<Name, NamingContext>)theEObject;
-				T1 result = caseNameToNamingContextEntry(nameToNamingContextEntry);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.LOCAL_FILE_MANAGER: {
-				LocalFileManager localFileManager = (LocalFileManager)theEObject;
-				T1 result = caseLocalFileManager(localFileManager);
-				if (result == null) result = caseScaFileManager(localFileManager);
-				if (result == null) result = caseScaFileSystem(localFileManager);
-				if (result == null) result = caseFileManagerOperations(localFileManager);
-				if (result == null) result = caseCorbaObjWrapper(localFileManager);
-				if (result == null) result = caseFileSystemOperations(localFileManager);
-				if (result == null) result = caseScaFileStore(localFileManager);
-				if (result == null) result = caseDataProviderObject(localFileManager);
-				if (result == null) result = caseIStatusProvider(localFileManager);
-				if (result == null) result = caseIDisposable(localFileManager);
-				if (result == null) result = caseIRefreshable(localFileManager);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.LOCAL_LAUNCH: {
-				LocalLaunch localLaunch = (LocalLaunch)theEObject;
-				T1 result = caseLocalLaunch(localLaunch);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT: {
-				LocalAbstractComponent localAbstractComponent = (LocalAbstractComponent)theEObject;
-				T1 result = caseLocalAbstractComponent(localAbstractComponent);
-				if (result == null) result = caseLocalLaunch(localAbstractComponent);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.LOCAL_SCA_WAVEFORM: {
-				LocalScaWaveform localScaWaveform = (LocalScaWaveform)theEObject;
-				T1 result = caseLocalScaWaveform(localScaWaveform);
-				if (result == null) result = caseScaWaveform(localScaWaveform);
-				if (result == null) result = caseLocalLaunch(localScaWaveform);
-				if (result == null) result = caseScaPropertyContainer(localScaWaveform);
-				if (result == null) result = caseApplicationOperations(localScaWaveform);
-				if (result == null) result = caseScaPortContainer(localScaWaveform);
-				if (result == null) result = caseCorbaObjWrapper(localScaWaveform);
-				if (result == null) result = caseProfileObjectWrapper(localScaWaveform);
-				if (result == null) result = caseResourceOperations(localScaWaveform);
-				if (result == null) result = caseDataProviderObject(localScaWaveform);
-				if (result == null) result = casePropertySetOperations(localScaWaveform);
-				if (result == null) result = caseLifeCycleOperations(localScaWaveform);
-				if (result == null) result = caseTestableObjectOperations(localScaWaveform);
-				if (result == null) result = casePortSupplierOperations(localScaWaveform);
-				if (result == null) result = caseIStatusProvider(localScaWaveform);
-				if (result == null) result = caseIDisposable(localScaWaveform);
-				if (result == null) result = caseIRefreshable(localScaWaveform);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT: {
-				LocalScaComponent localScaComponent = (LocalScaComponent)theEObject;
-				T1 result = caseLocalScaComponent(localScaComponent);
-				if (result == null) result = caseScaComponent(localScaComponent);
-				if (result == null) result = caseLocalAbstractComponent(localScaComponent);
-				if (result == null) result = caseScaAbstractComponent(localScaComponent);
-				if (result == null) result = caseLocalLaunch(localScaComponent);
-				if (result == null) result = caseScaPropertyContainer(localScaComponent);
-				if (result == null) result = caseResourceOperations(localScaComponent);
-				if (result == null) result = caseScaPortContainer(localScaComponent);
-				if (result == null) result = caseCorbaObjWrapper(localScaComponent);
-				if (result == null) result = caseProfileObjectWrapper(localScaComponent);
-				if (result == null) result = casePropertySetOperations(localScaComponent);
-				if (result == null) result = caseLifeCycleOperations(localScaComponent);
-				if (result == null) result = caseTestableObjectOperations(localScaComponent);
-				if (result == null) result = casePortSupplierOperations(localScaComponent);
-				if (result == null) result = caseDataProviderObject(localScaComponent);
-				if (result == null) result = caseIStatusProvider(localScaComponent);
-				if (result == null) result = caseIDisposable(localScaComponent);
-				if (result == null) result = caseIRefreshable(localScaComponent);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER: {
-				LocalScaDeviceManager localScaDeviceManager = (LocalScaDeviceManager)theEObject;
-				T1 result = caseLocalScaDeviceManager(localScaDeviceManager);
-				if (result == null) result = caseScaDeviceManager(localScaDeviceManager);
-				if (result == null) result = caseLocalLaunch(localScaDeviceManager);
-				if (result == null) result = caseScaPropertyContainer(localScaDeviceManager);
-				if (result == null) result = caseDeviceManagerOperations(localScaDeviceManager);
-				if (result == null) result = caseScaPortContainer(localScaDeviceManager);
-				if (result == null) result = caseCorbaObjWrapper(localScaDeviceManager);
-				if (result == null) result = caseProfileObjectWrapper(localScaDeviceManager);
-				if (result == null) result = casePropertySetOperations(localScaDeviceManager);
-				if (result == null) result = casePortSupplierOperations(localScaDeviceManager);
-				if (result == null) result = caseDataProviderObject(localScaDeviceManager);
-				if (result == null) result = caseIStatusProvider(localScaDeviceManager);
-				if (result == null) result = caseIDisposable(localScaDeviceManager);
-				if (result == null) result = caseIRefreshable(localScaDeviceManager);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE: {
-				LocalScaExecutableDevice localScaExecutableDevice = (LocalScaExecutableDevice)theEObject;
-				T1 result = caseLocalScaExecutableDevice(localScaExecutableDevice);
-				if (result == null) result = caseScaExecutableDevice(localScaExecutableDevice);
-				if (result == null) result = caseLocalAbstractComponent(localScaExecutableDevice);
-				if (result == null) result = caseScaLoadableDevice(localScaExecutableDevice);
-				if (result == null) result = caseExecutableDeviceOperations(localScaExecutableDevice);
-				if (result == null) result = caseLocalLaunch(localScaExecutableDevice);
-				if (result == null) result = caseScaDevice(localScaExecutableDevice);
-				if (result == null) result = caseLoadableDeviceOperations(localScaExecutableDevice);
-				if (result == null) result = caseScaAbstractComponent(localScaExecutableDevice);
-				if (result == null) result = caseDeviceOperations(localScaExecutableDevice);
-				if (result == null) result = caseScaPropertyContainer(localScaExecutableDevice);
-				if (result == null) result = caseResourceOperations(localScaExecutableDevice);
-				if (result == null) result = caseScaPortContainer(localScaExecutableDevice);
-				if (result == null) result = caseCorbaObjWrapper(localScaExecutableDevice);
-				if (result == null) result = caseProfileObjectWrapper(localScaExecutableDevice);
-				if (result == null) result = casePropertySetOperations(localScaExecutableDevice);
-				if (result == null) result = caseLifeCycleOperations(localScaExecutableDevice);
-				if (result == null) result = caseTestableObjectOperations(localScaExecutableDevice);
-				if (result == null) result = casePortSupplierOperations(localScaExecutableDevice);
-				if (result == null) result = caseDataProviderObject(localScaExecutableDevice);
-				if (result == null) result = caseIStatusProvider(localScaExecutableDevice);
-				if (result == null) result = caseIDisposable(localScaExecutableDevice);
-				if (result == null) result = caseIRefreshable(localScaExecutableDevice);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE: {
-				LocalScaLoadableDevice localScaLoadableDevice = (LocalScaLoadableDevice)theEObject;
-				T1 result = caseLocalScaLoadableDevice(localScaLoadableDevice);
-				if (result == null) result = caseScaLoadableDevice(localScaLoadableDevice);
-				if (result == null) result = caseLocalAbstractComponent(localScaLoadableDevice);
-				if (result == null) result = caseScaDevice(localScaLoadableDevice);
-				if (result == null) result = caseLoadableDeviceOperations(localScaLoadableDevice);
-				if (result == null) result = caseLocalLaunch(localScaLoadableDevice);
-				if (result == null) result = caseScaAbstractComponent(localScaLoadableDevice);
-				if (result == null) result = caseDeviceOperations(localScaLoadableDevice);
-				if (result == null) result = caseScaPropertyContainer(localScaLoadableDevice);
-				if (result == null) result = caseResourceOperations(localScaLoadableDevice);
-				if (result == null) result = caseScaPortContainer(localScaLoadableDevice);
-				if (result == null) result = caseCorbaObjWrapper(localScaLoadableDevice);
-				if (result == null) result = caseProfileObjectWrapper(localScaLoadableDevice);
-				if (result == null) result = casePropertySetOperations(localScaLoadableDevice);
-				if (result == null) result = caseLifeCycleOperations(localScaLoadableDevice);
-				if (result == null) result = caseTestableObjectOperations(localScaLoadableDevice);
-				if (result == null) result = casePortSupplierOperations(localScaLoadableDevice);
-				if (result == null) result = caseDataProviderObject(localScaLoadableDevice);
-				if (result == null) result = caseIStatusProvider(localScaLoadableDevice);
-				if (result == null) result = caseIDisposable(localScaLoadableDevice);
-				if (result == null) result = caseIRefreshable(localScaLoadableDevice);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.LOCAL_SCA_DEVICE: {
-				LocalScaDevice localScaDevice = (LocalScaDevice)theEObject;
-				T1 result = caseLocalScaDevice(localScaDevice);
-				if (result == null) result = caseScaDevice(localScaDevice);
-				if (result == null) result = caseLocalAbstractComponent(localScaDevice);
-				if (result == null) result = caseScaAbstractComponent(localScaDevice);
-				if (result == null) result = caseDeviceOperations(localScaDevice);
-				if (result == null) result = caseLocalLaunch(localScaDevice);
-				if (result == null) result = caseScaPropertyContainer(localScaDevice);
-				if (result == null) result = caseResourceOperations(localScaDevice);
-				if (result == null) result = caseScaPortContainer(localScaDevice);
-				if (result == null) result = caseCorbaObjWrapper(localScaDevice);
-				if (result == null) result = caseProfileObjectWrapper(localScaDevice);
-				if (result == null) result = casePropertySetOperations(localScaDevice);
-				if (result == null) result = caseLifeCycleOperations(localScaDevice);
-				if (result == null) result = caseTestableObjectOperations(localScaDevice);
-				if (result == null) result = casePortSupplierOperations(localScaDevice);
-				if (result == null) result = caseDataProviderObject(localScaDevice);
-				if (result == null) result = caseIStatusProvider(localScaDevice);
-				if (result == null) result = caseIDisposable(localScaDevice);
-				if (result == null) result = caseIRefreshable(localScaDevice);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.LOCAL_SCA_SERVICE: {
-				LocalScaService localScaService = (LocalScaService)theEObject;
-				T1 result = caseLocalScaService(localScaService);
-				if (result == null) result = caseScaService(localScaService);
-				if (result == null) result = caseLocalAbstractComponent(localScaService);
-				if (result == null) result = caseScaPropertyContainer(localScaService);
-				if (result == null) result = caseScaPortContainer(localScaService);
-				if (result == null) result = caseLocalLaunch(localScaService);
-				if (result == null) result = caseCorbaObjWrapper(localScaService);
-				if (result == null) result = caseProfileObjectWrapper(localScaService);
-				if (result == null) result = casePropertySetOperations(localScaService);
-				if (result == null) result = caseDataProviderObject(localScaService);
-				if (result == null) result = caseIStatusProvider(localScaService);
-				if (result == null) result = caseIDisposable(localScaService);
-				if (result == null) result = caseIRefreshable(localScaService);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.SANDBOX_OPERATIONS: {
-				SandboxOperations sandboxOperations = (SandboxOperations)theEObject;
-				T1 result = caseSandboxOperations(sandboxOperations);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaDebugPackage.SANDBOX: {
-				Sandbox sandbox = (Sandbox)theEObject;
-				T1 result = caseSandbox(sandbox);
-				if (result == null) result = caseObject(sandbox);
-				if (result == null) result = caseIDLEntity(sandbox);
-				if (result == null) result = caseSandboxOperations(sandbox);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			default: return defaultCase(theEObject);
+		case ScaDebugPackage.LOCAL_SCA: {
+			LocalSca localSca = (LocalSca) theEObject;
+			T1 result = caseLocalSca(localSca);
+			if (result == null)
+				result = caseCorbaObjWrapper(localSca);
+			if (result == null)
+				result = caseDataProviderObject(localSca);
+			if (result == null)
+				result = caseIStatusProvider(localSca);
+			if (result == null)
+				result = caseIDisposable(localSca);
+			if (result == null)
+				result = caseIRefreshable(localSca);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.NAMING_CONTEXT_EXT_OPERATIONS: {
+			NamingContextExtOperations namingContextExtOperations = (NamingContextExtOperations) theEObject;
+			T1 result = caseNamingContextExtOperations(namingContextExtOperations);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT: {
+			NotifyingNamingContext notifyingNamingContext = (NotifyingNamingContext) theEObject;
+			T1 result = caseNotifyingNamingContext(notifyingNamingContext);
+			if (result == null)
+				result = caseNamingContextExtOperations(notifyingNamingContext);
+			if (result == null)
+				result = caseIDisposable(notifyingNamingContext);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.NAME_TO_OBJECT_ENTRY: {
+			@SuppressWarnings("unchecked")
+			Entry<Name, org.omg.CORBA.Object> nameToObjectEntry = (Entry<Name, org.omg.CORBA.Object>) theEObject;
+			T1 result = caseNameToObjectEntry(nameToObjectEntry);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY: {
+			@SuppressWarnings("unchecked")
+			Entry<Name, NamingContext> nameToNamingContextEntry = (Entry<Name, NamingContext>) theEObject;
+			T1 result = caseNameToNamingContextEntry(nameToNamingContextEntry);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.LOCAL_FILE_MANAGER: {
+			LocalFileManager localFileManager = (LocalFileManager) theEObject;
+			T1 result = caseLocalFileManager(localFileManager);
+			if (result == null)
+				result = caseScaFileManager(localFileManager);
+			if (result == null)
+				result = caseScaFileSystem(localFileManager);
+			if (result == null)
+				result = caseFileManagerOperations(localFileManager);
+			if (result == null)
+				result = caseCorbaObjWrapper(localFileManager);
+			if (result == null)
+				result = caseFileSystemOperations(localFileManager);
+			if (result == null)
+				result = caseScaFileStore(localFileManager);
+			if (result == null)
+				result = caseDataProviderObject(localFileManager);
+			if (result == null)
+				result = caseIStatusProvider(localFileManager);
+			if (result == null)
+				result = caseIDisposable(localFileManager);
+			if (result == null)
+				result = caseIRefreshable(localFileManager);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.LOCAL_LAUNCH: {
+			LocalLaunch localLaunch = (LocalLaunch) theEObject;
+			T1 result = caseLocalLaunch(localLaunch);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT: {
+			LocalAbstractComponent localAbstractComponent = (LocalAbstractComponent) theEObject;
+			T1 result = caseLocalAbstractComponent(localAbstractComponent);
+			if (result == null)
+				result = caseLocalLaunch(localAbstractComponent);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM: {
+			LocalScaWaveform localScaWaveform = (LocalScaWaveform) theEObject;
+			T1 result = caseLocalScaWaveform(localScaWaveform);
+			if (result == null)
+				result = caseScaWaveform(localScaWaveform);
+			if (result == null)
+				result = caseLocalLaunch(localScaWaveform);
+			if (result == null)
+				result = caseScaPropertyContainer(localScaWaveform);
+			if (result == null)
+				result = caseApplicationOperations(localScaWaveform);
+			if (result == null)
+				result = caseScaPortContainer(localScaWaveform);
+			if (result == null)
+				result = caseCorbaObjWrapper(localScaWaveform);
+			if (result == null)
+				result = caseProfileObjectWrapper(localScaWaveform);
+			if (result == null)
+				result = caseResourceOperations(localScaWaveform);
+			if (result == null)
+				result = caseDataProviderObject(localScaWaveform);
+			if (result == null)
+				result = casePropertySetOperations(localScaWaveform);
+			if (result == null)
+				result = caseLifeCycleOperations(localScaWaveform);
+			if (result == null)
+				result = caseTestableObjectOperations(localScaWaveform);
+			if (result == null)
+				result = casePortSupplierOperations(localScaWaveform);
+			if (result == null)
+				result = caseIStatusProvider(localScaWaveform);
+			if (result == null)
+				result = caseIDisposable(localScaWaveform);
+			if (result == null)
+				result = caseIRefreshable(localScaWaveform);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT: {
+			LocalScaComponent localScaComponent = (LocalScaComponent) theEObject;
+			T1 result = caseLocalScaComponent(localScaComponent);
+			if (result == null)
+				result = caseScaComponent(localScaComponent);
+			if (result == null)
+				result = caseLocalAbstractComponent(localScaComponent);
+			if (result == null)
+				result = caseScaAbstractComponent(localScaComponent);
+			if (result == null)
+				result = caseLocalLaunch(localScaComponent);
+			if (result == null)
+				result = caseScaPropertyContainer(localScaComponent);
+			if (result == null)
+				result = caseResourceOperations(localScaComponent);
+			if (result == null)
+				result = caseScaPortContainer(localScaComponent);
+			if (result == null)
+				result = caseCorbaObjWrapper(localScaComponent);
+			if (result == null)
+				result = caseProfileObjectWrapper(localScaComponent);
+			if (result == null)
+				result = casePropertySetOperations(localScaComponent);
+			if (result == null)
+				result = caseLifeCycleOperations(localScaComponent);
+			if (result == null)
+				result = caseTestableObjectOperations(localScaComponent);
+			if (result == null)
+				result = casePortSupplierOperations(localScaComponent);
+			if (result == null)
+				result = caseDataProviderObject(localScaComponent);
+			if (result == null)
+				result = caseIStatusProvider(localScaComponent);
+			if (result == null)
+				result = caseIDisposable(localScaComponent);
+			if (result == null)
+				result = caseIRefreshable(localScaComponent);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER: {
+			LocalScaDeviceManager localScaDeviceManager = (LocalScaDeviceManager) theEObject;
+			T1 result = caseLocalScaDeviceManager(localScaDeviceManager);
+			if (result == null)
+				result = caseScaDeviceManager(localScaDeviceManager);
+			if (result == null)
+				result = caseLocalLaunch(localScaDeviceManager);
+			if (result == null)
+				result = caseScaPropertyContainer(localScaDeviceManager);
+			if (result == null)
+				result = caseDeviceManagerOperations(localScaDeviceManager);
+			if (result == null)
+				result = caseScaPortContainer(localScaDeviceManager);
+			if (result == null)
+				result = caseCorbaObjWrapper(localScaDeviceManager);
+			if (result == null)
+				result = caseProfileObjectWrapper(localScaDeviceManager);
+			if (result == null)
+				result = casePropertySetOperations(localScaDeviceManager);
+			if (result == null)
+				result = casePortSupplierOperations(localScaDeviceManager);
+			if (result == null)
+				result = caseDataProviderObject(localScaDeviceManager);
+			if (result == null)
+				result = caseIStatusProvider(localScaDeviceManager);
+			if (result == null)
+				result = caseIDisposable(localScaDeviceManager);
+			if (result == null)
+				result = caseIRefreshable(localScaDeviceManager);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE: {
+			LocalScaExecutableDevice localScaExecutableDevice = (LocalScaExecutableDevice) theEObject;
+			T1 result = caseLocalScaExecutableDevice(localScaExecutableDevice);
+			if (result == null)
+				result = caseScaExecutableDevice(localScaExecutableDevice);
+			if (result == null)
+				result = caseLocalAbstractComponent(localScaExecutableDevice);
+			if (result == null)
+				result = caseScaLoadableDevice(localScaExecutableDevice);
+			if (result == null)
+				result = caseExecutableDeviceOperations(localScaExecutableDevice);
+			if (result == null)
+				result = caseLocalLaunch(localScaExecutableDevice);
+			if (result == null)
+				result = caseScaDevice(localScaExecutableDevice);
+			if (result == null)
+				result = caseLoadableDeviceOperations(localScaExecutableDevice);
+			if (result == null)
+				result = caseScaAbstractComponent(localScaExecutableDevice);
+			if (result == null)
+				result = caseDeviceOperations(localScaExecutableDevice);
+			if (result == null)
+				result = caseScaPropertyContainer(localScaExecutableDevice);
+			if (result == null)
+				result = caseResourceOperations(localScaExecutableDevice);
+			if (result == null)
+				result = caseScaPortContainer(localScaExecutableDevice);
+			if (result == null)
+				result = caseCorbaObjWrapper(localScaExecutableDevice);
+			if (result == null)
+				result = caseProfileObjectWrapper(localScaExecutableDevice);
+			if (result == null)
+				result = casePropertySetOperations(localScaExecutableDevice);
+			if (result == null)
+				result = caseLifeCycleOperations(localScaExecutableDevice);
+			if (result == null)
+				result = caseTestableObjectOperations(localScaExecutableDevice);
+			if (result == null)
+				result = casePortSupplierOperations(localScaExecutableDevice);
+			if (result == null)
+				result = caseDataProviderObject(localScaExecutableDevice);
+			if (result == null)
+				result = caseIStatusProvider(localScaExecutableDevice);
+			if (result == null)
+				result = caseIDisposable(localScaExecutableDevice);
+			if (result == null)
+				result = caseIRefreshable(localScaExecutableDevice);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE: {
+			LocalScaLoadableDevice localScaLoadableDevice = (LocalScaLoadableDevice) theEObject;
+			T1 result = caseLocalScaLoadableDevice(localScaLoadableDevice);
+			if (result == null)
+				result = caseScaLoadableDevice(localScaLoadableDevice);
+			if (result == null)
+				result = caseLocalAbstractComponent(localScaLoadableDevice);
+			if (result == null)
+				result = caseScaDevice(localScaLoadableDevice);
+			if (result == null)
+				result = caseLoadableDeviceOperations(localScaLoadableDevice);
+			if (result == null)
+				result = caseLocalLaunch(localScaLoadableDevice);
+			if (result == null)
+				result = caseScaAbstractComponent(localScaLoadableDevice);
+			if (result == null)
+				result = caseDeviceOperations(localScaLoadableDevice);
+			if (result == null)
+				result = caseScaPropertyContainer(localScaLoadableDevice);
+			if (result == null)
+				result = caseResourceOperations(localScaLoadableDevice);
+			if (result == null)
+				result = caseScaPortContainer(localScaLoadableDevice);
+			if (result == null)
+				result = caseCorbaObjWrapper(localScaLoadableDevice);
+			if (result == null)
+				result = caseProfileObjectWrapper(localScaLoadableDevice);
+			if (result == null)
+				result = casePropertySetOperations(localScaLoadableDevice);
+			if (result == null)
+				result = caseLifeCycleOperations(localScaLoadableDevice);
+			if (result == null)
+				result = caseTestableObjectOperations(localScaLoadableDevice);
+			if (result == null)
+				result = casePortSupplierOperations(localScaLoadableDevice);
+			if (result == null)
+				result = caseDataProviderObject(localScaLoadableDevice);
+			if (result == null)
+				result = caseIStatusProvider(localScaLoadableDevice);
+			if (result == null)
+				result = caseIDisposable(localScaLoadableDevice);
+			if (result == null)
+				result = caseIRefreshable(localScaLoadableDevice);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.LOCAL_SCA_DEVICE: {
+			LocalScaDevice localScaDevice = (LocalScaDevice) theEObject;
+			T1 result = caseLocalScaDevice(localScaDevice);
+			if (result == null)
+				result = caseScaDevice(localScaDevice);
+			if (result == null)
+				result = caseLocalAbstractComponent(localScaDevice);
+			if (result == null)
+				result = caseScaAbstractComponent(localScaDevice);
+			if (result == null)
+				result = caseDeviceOperations(localScaDevice);
+			if (result == null)
+				result = caseLocalLaunch(localScaDevice);
+			if (result == null)
+				result = caseScaPropertyContainer(localScaDevice);
+			if (result == null)
+				result = caseResourceOperations(localScaDevice);
+			if (result == null)
+				result = caseScaPortContainer(localScaDevice);
+			if (result == null)
+				result = caseCorbaObjWrapper(localScaDevice);
+			if (result == null)
+				result = caseProfileObjectWrapper(localScaDevice);
+			if (result == null)
+				result = casePropertySetOperations(localScaDevice);
+			if (result == null)
+				result = caseLifeCycleOperations(localScaDevice);
+			if (result == null)
+				result = caseTestableObjectOperations(localScaDevice);
+			if (result == null)
+				result = casePortSupplierOperations(localScaDevice);
+			if (result == null)
+				result = caseDataProviderObject(localScaDevice);
+			if (result == null)
+				result = caseIStatusProvider(localScaDevice);
+			if (result == null)
+				result = caseIDisposable(localScaDevice);
+			if (result == null)
+				result = caseIRefreshable(localScaDevice);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.LOCAL_SCA_SERVICE: {
+			LocalScaService localScaService = (LocalScaService) theEObject;
+			T1 result = caseLocalScaService(localScaService);
+			if (result == null)
+				result = caseScaService(localScaService);
+			if (result == null)
+				result = caseLocalAbstractComponent(localScaService);
+			if (result == null)
+				result = caseScaPropertyContainer(localScaService);
+			if (result == null)
+				result = caseScaPortContainer(localScaService);
+			if (result == null)
+				result = caseLocalLaunch(localScaService);
+			if (result == null)
+				result = caseCorbaObjWrapper(localScaService);
+			if (result == null)
+				result = caseProfileObjectWrapper(localScaService);
+			if (result == null)
+				result = casePropertySetOperations(localScaService);
+			if (result == null)
+				result = caseDataProviderObject(localScaService);
+			if (result == null)
+				result = caseIStatusProvider(localScaService);
+			if (result == null)
+				result = caseIDisposable(localScaService);
+			if (result == null)
+				result = caseIRefreshable(localScaService);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.SANDBOX_OPERATIONS: {
+			SandboxOperations sandboxOperations = (SandboxOperations) theEObject;
+			T1 result = caseSandboxOperations(sandboxOperations);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case ScaDebugPackage.SANDBOX: {
+			Sandbox sandbox = (Sandbox) theEObject;
+			T1 result = caseSandbox(sandbox);
+			if (result == null)
+				result = caseObject(sandbox);
+			if (result == null)
+				result = caseIDLEntity(sandbox);
+			if (result == null)
+				result = caseSandboxOperations(sandbox);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		default:
+			return defaultCase(theEObject);
 		}
 	}
 
@@ -704,7 +861,7 @@ public class ScaDebugSwitch< T1 > extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <T extends org.omg.CORBA.Object> T1 caseCorbaObjWrapper(CorbaObjWrapper<T> object) {
+	public < T extends org.omg.CORBA.Object > T1 caseCorbaObjWrapper(CorbaObjWrapper<T> object) {
 		return null;
 	}
 
@@ -749,7 +906,7 @@ public class ScaDebugSwitch< T1 > extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <F extends FileSystem> T1 caseScaFileSystem(ScaFileSystem<F> object) {
+	public < F extends FileSystem > T1 caseScaFileSystem(ScaFileSystem<F> object) {
 		return null;
 	}
 
@@ -794,7 +951,7 @@ public class ScaDebugSwitch< T1 > extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <O extends Object> T1 caseProfileObjectWrapper(ProfileObjectWrapper<O> object) {
+	public < O extends Object > T1 caseProfileObjectWrapper(ProfileObjectWrapper<O> object) {
 		return null;
 	}
 
@@ -824,7 +981,7 @@ public class ScaDebugSwitch< T1 > extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <P extends org.omg.CORBA.Object, E extends Object> T1 caseScaPropertyContainer(ScaPropertyContainer<P, E> object) {
+	public < P extends org.omg.CORBA.Object, E extends Object > T1 caseScaPropertyContainer(ScaPropertyContainer<P, E> object) {
 		return null;
 	}
 
@@ -944,7 +1101,7 @@ public class ScaDebugSwitch< T1 > extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <R extends Resource> T1 caseScaAbstractComponent(ScaAbstractComponent<R> object) {
+	public < R extends Resource > T1 caseScaAbstractComponent(ScaAbstractComponent<R> object) {
 		return null;
 	}
 
@@ -1019,7 +1176,7 @@ public class ScaDebugSwitch< T1 > extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <D extends Device> T1 caseScaDevice(ScaDevice<D> object) {
+	public < D extends Device > T1 caseScaDevice(ScaDevice<D> object) {
 		return null;
 	}
 
@@ -1049,7 +1206,7 @@ public class ScaDebugSwitch< T1 > extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <L extends LoadableDevice> T1 caseScaLoadableDevice(ScaLoadableDevice<L> object) {
+	public < L extends LoadableDevice > T1 caseScaLoadableDevice(ScaLoadableDevice<L> object) {
 		return null;
 	}
 

@@ -8,7 +8,6 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
@@ -239,14 +238,14 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__LAUNCH:
-				return getLaunch();
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE:
-				return getMode();
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID:
-				return getImplementationID();
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM:
-				return getExecParam();
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__LAUNCH:
+			return getLaunch();
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE:
+			return getMode();
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID:
+			return getImplementationID();
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM:
+			return getExecParam();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -259,18 +258,18 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__LAUNCH:
-				setLaunch((ILaunch)newValue);
-				return;
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE:
-				setMode((String)newValue);
-				return;
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID:
-				setImplementationID((String)newValue);
-				return;
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM:
-				setExecParam((String)newValue);
-				return;
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__LAUNCH:
+			setLaunch((ILaunch) newValue);
+			return;
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE:
+			setMode((String) newValue);
+			return;
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID:
+			setImplementationID((String) newValue);
+			return;
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM:
+			setExecParam((String) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -283,18 +282,18 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__LAUNCH:
-				setLaunch(LAUNCH_EDEFAULT);
-				return;
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE:
-				setMode(MODE_EDEFAULT);
-				return;
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID:
-				setImplementationID(IMPLEMENTATION_ID_EDEFAULT);
-				return;
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM:
-				setExecParam(EXEC_PARAM_EDEFAULT);
-				return;
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__LAUNCH:
+			setLaunch(LAUNCH_EDEFAULT);
+			return;
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE:
+			setMode(MODE_EDEFAULT);
+			return;
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID:
+			setImplementationID(IMPLEMENTATION_ID_EDEFAULT);
+			return;
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM:
+			setExecParam(EXEC_PARAM_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -307,14 +306,14 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__LAUNCH:
-				return LAUNCH_EDEFAULT == null ? launch != null : !LAUNCH_EDEFAULT.equals(launch);
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE:
-				return MODE_EDEFAULT == null ? mode != null : !MODE_EDEFAULT.equals(mode);
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID:
-				return IMPLEMENTATION_ID_EDEFAULT == null ? implementationID != null : !IMPLEMENTATION_ID_EDEFAULT.equals(implementationID);
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM:
-				return EXEC_PARAM_EDEFAULT == null ? execParam != null : !EXEC_PARAM_EDEFAULT.equals(execParam);
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__LAUNCH:
+			return LAUNCH_EDEFAULT == null ? launch != null : !LAUNCH_EDEFAULT.equals(launch);
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE:
+			return MODE_EDEFAULT == null ? mode != null : !MODE_EDEFAULT.equals(mode);
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID:
+			return IMPLEMENTATION_ID_EDEFAULT == null ? implementationID != null : !IMPLEMENTATION_ID_EDEFAULT.equals(implementationID);
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM:
+			return EXEC_PARAM_EDEFAULT == null ? execParam != null : !EXEC_PARAM_EDEFAULT.equals(execParam);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -325,19 +324,25 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	 * @generated
 	 */
 	@Override
-	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
+	public int eBaseStructuralFeatureID(int derivedFeatureID, Class< ? > baseClass) {
 		if (baseClass == LocalLaunch.class) {
 			switch (derivedFeatureID) {
-				case ScaDebugPackage.LOCAL_SCA_COMPONENT__LAUNCH: return ScaDebugPackage.LOCAL_LAUNCH__LAUNCH;
-				case ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE: return ScaDebugPackage.LOCAL_LAUNCH__MODE;
-				default: return -1;
+			case ScaDebugPackage.LOCAL_SCA_COMPONENT__LAUNCH:
+				return ScaDebugPackage.LOCAL_LAUNCH__LAUNCH;
+			case ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE:
+				return ScaDebugPackage.LOCAL_LAUNCH__MODE;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == LocalAbstractComponent.class) {
 			switch (derivedFeatureID) {
-				case ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID: return ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID;
-				case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM: return ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAM;
-				default: return -1;
+			case ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID:
+				return ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID;
+			case ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM:
+				return ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAM;
+			default:
+				return -1;
 			}
 		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
@@ -349,19 +354,25 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	 * @generated
 	 */
 	@Override
-	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
+	public int eDerivedStructuralFeatureID(int baseFeatureID, Class< ? > baseClass) {
 		if (baseClass == LocalLaunch.class) {
 			switch (baseFeatureID) {
-				case ScaDebugPackage.LOCAL_LAUNCH__LAUNCH: return ScaDebugPackage.LOCAL_SCA_COMPONENT__LAUNCH;
-				case ScaDebugPackage.LOCAL_LAUNCH__MODE: return ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE;
-				default: return -1;
+			case ScaDebugPackage.LOCAL_LAUNCH__LAUNCH:
+				return ScaDebugPackage.LOCAL_SCA_COMPONENT__LAUNCH;
+			case ScaDebugPackage.LOCAL_LAUNCH__MODE:
+				return ScaDebugPackage.LOCAL_SCA_COMPONENT__MODE;
+			default:
+				return -1;
 			}
 		}
 		if (baseClass == LocalAbstractComponent.class) {
 			switch (baseFeatureID) {
-				case ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID: return ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID;
-				case ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAM: return ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM;
-				default: return -1;
+			case ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__IMPLEMENTATION_ID:
+				return ScaDebugPackage.LOCAL_SCA_COMPONENT__IMPLEMENTATION_ID;
+			case ScaDebugPackage.LOCAL_ABSTRACT_COMPONENT__EXEC_PARAM:
+				return ScaDebugPackage.LOCAL_SCA_COMPONENT__EXEC_PARAM;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
@@ -374,7 +385,8 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (launch: ");
@@ -400,7 +412,7 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 		super.dispose();
 		// BEGIN GENERATED CODE
 	}
-	
+
 	@Override
 	public void releaseObject() throws ReleaseError {
 		// END GENERATED CODE
@@ -412,21 +424,21 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 		}
 		// BEGIN GENERATED CODE
 	}
-	
+
 	@Override
 	public void unsetProfileURI() {
 		// END GENERATED CODE
 		// BEGIN GENERATED CODE
 
 	}
-	
+
 	@Override
 	public void unsetComponentInstantiation() {
 		// END GENERATED CODE
 		// BEGIN GENERATED CODE
-		
+
 	}
-	
+
 	/*
 	 * @see gov.redhawk.model.sca.impl.ScaAbstractComponentImpl#unsetIdentifier()
 	 */
@@ -434,7 +446,7 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	public void unsetIdentifier() {
 		// END GENERATED CODE
 		// BEGIN GENERATED CODE
-		
+
 	}
 
 } //LocalScaComponentImpl

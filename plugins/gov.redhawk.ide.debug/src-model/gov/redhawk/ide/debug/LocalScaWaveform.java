@@ -8,10 +8,8 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug;
-
 
 import gov.redhawk.model.sca.ScaWaveform;
 
@@ -98,5 +96,6 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 	 * @model exceptions="gov.redhawk.ide.debug.CoreException" execParamsDataType="gov.redhawk.model.sca.DataTypeArray" spdURIDataType="mil.jpeojtrs.sca.spd.URI"
 	 * @generated
 	 */
-	@NonNull LocalScaComponent launch(String id, DataType[] execParams, URI spdURI, String implID, String mode) throws CoreException;
+	@NonNull
+	LocalScaComponent launch(String id, DataType[] execParams, URI spdURI, String implID, String mode) throws CoreException;
 } // LocalScaWaveform

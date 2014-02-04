@@ -8,10 +8,8 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.provider;
-
 
 import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.ScaDebugPackage;
@@ -37,14 +35,8 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * <!-- end-user-doc -->
  * @generated
  */
-public class LocalScaDeviceManagerItemProvider
-	extends ScaDeviceManagerItemProvider
-	implements
-		IEditingDomainItemProvider,
-		IStructuredItemContentProvider,
-		ITreeItemContentProvider,
-		IItemLabelProvider,
-		IItemPropertySource {
+public class LocalScaDeviceManagerItemProvider extends ScaDeviceManagerItemProvider implements IEditingDomainItemProvider, IStructuredItemContentProvider,
+		ITreeItemContentProvider, IItemLabelProvider, IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
@@ -79,19 +71,9 @@ public class LocalScaDeviceManagerItemProvider
 	 * @generated
 	 */
 	protected void addModePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_LocalLaunch_mode_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_LocalLaunch_mode_feature", "_UI_LocalLaunch_type"),
-				 ScaDebugPackage.Literals.LOCAL_LAUNCH__MODE,
-				 false,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
+		itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+			getString("_UI_LocalLaunch_mode_feature"), getString("_UI_PropertyDescriptor_description", "_UI_LocalLaunch_mode_feature", "_UI_LocalLaunch_type"),
+			ScaDebugPackage.Literals.LOCAL_LAUNCH__MODE, false, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
 	}
 
 	/**
@@ -101,19 +83,10 @@ public class LocalScaDeviceManagerItemProvider
 	 * @generated
 	 */
 	protected void addNamingContextPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_LocalScaDeviceManager_namingContext_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_LocalScaDeviceManager_namingContext_feature", "_UI_LocalScaDeviceManager_type"),
-				 ScaDebugPackage.Literals.LOCAL_SCA_DEVICE_MANAGER__NAMING_CONTEXT,
-				 false,
-				 false,
-				 true,
-				 null,
-				 null,
-				 null));
+		itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+			getString("_UI_LocalScaDeviceManager_namingContext_feature"),
+			getString("_UI_PropertyDescriptor_description", "_UI_LocalScaDeviceManager_namingContext_feature", "_UI_LocalScaDeviceManager_type"),
+			ScaDebugPackage.Literals.LOCAL_SCA_DEVICE_MANAGER__NAMING_CONTEXT, false, false, true, null, null, null));
 	}
 
 	/**
@@ -139,9 +112,9 @@ public class LocalScaDeviceManagerItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(LocalScaDeviceManager.class)) {
-			case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__MODE:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-				return;
+		case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__MODE:
+			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
+			return;
 		}
 		super.notifyChanged(notification);
 	}

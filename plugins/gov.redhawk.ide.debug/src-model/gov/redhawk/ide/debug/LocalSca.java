@@ -8,7 +8,6 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug;
 
@@ -61,16 +60,16 @@ public interface LocalSca extends CorbaObjWrapper<Sandbox> {
 	EList<ScaWaveform> getWaveforms();
 
 	/**
-	 * Returns the value of the '<em><b>Sandbox Waveform</b></em>' containment reference.
+	 * Returns the value of the '<em><b>Sandbox Waveform</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Sandbox Waveform</em>' containment reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Sandbox Waveform</em>' containment reference.
+	 * @return the value of the '<em>Sandbox Waveform</em>' reference.
 	 * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalSca_SandboxWaveform()
-	 * @model containment="true" required="true" transient="true" suppressedSetVisibility="true" suppressedIsSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @model required="true" transient="true" suppressedSetVisibility="true" suppressedIsSetVisibility="true" suppressedUnsetVisibility="true"
 	 * @generated
 	 */
 	LocalScaWaveform getSandboxWaveform();

@@ -26,8 +26,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
+import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.runtime.CoreException;
@@ -37,6 +41,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
@@ -48,6 +53,11 @@ import CF.DataType;
 public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate implements ILaunchConfigurationDelegate2 {
 
 	public static final String ID = "gov.redhawk.ide.debug.ui.launchLocalWaveform";
+
+	private static final EStructuralFeature[] PATH = new EStructuralFeature[] { SadPackage.Literals.SOFTWARE_ASSEMBLY__ASSEMBLY_CONTROLLER,
+		SadPackage.Literals.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION,
+		PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT, PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF,
+		PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE, PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 
 	/**
 	 * {@inheritDoc}
@@ -71,9 +81,10 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		final String name = sad.getName();
 		final List<DataType> assemblyConfig = new ArrayList<DataType>();
 		final List<DataType> assemblyExec = new ArrayList<DataType>();
-		if (sad.getAssemblyController() != null) {
+		SoftPkg assemblySoftPkg = ScaEcoreUtils.getFeature(sad, LocalWaveformLaunchDelegate.PATH);
+		if (assemblySoftPkg != null) {
 			final ScaComponent assemblyController = ScaFactory.eINSTANCE.createScaComponent();
-			assemblyController.setProfileObj(sad.getAssemblyController().getComponentInstantiationRef().getInstantiation().getPlacement().getComponentFileRef().getFile().getSoftPkg());
+			assemblyController.setProfileObj(assemblySoftPkg);
 			for (final ScaAbstractProperty< ? > prop : assemblyController.fetchProperties(null)) {
 				prop.setIgnoreRemoteSet(true);
 			}

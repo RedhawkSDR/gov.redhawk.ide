@@ -8,7 +8,6 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
@@ -50,12 +49,11 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 */
 	public static ScaDebugFactory init() {
 		try {
-			ScaDebugFactory theScaDebugFactory = (ScaDebugFactory)EPackage.Registry.INSTANCE.getEFactory(ScaDebugPackage.eNS_URI);
+			ScaDebugFactory theScaDebugFactory = (ScaDebugFactory) EPackage.Registry.INSTANCE.getEFactory(ScaDebugPackage.eNS_URI);
 			if (theScaDebugFactory != null) {
 				return theScaDebugFactory;
 			}
-		}
-		catch (Exception exception) {
+		} catch (Exception exception) {
 			EcorePlugin.INSTANCE.log(exception);
 		}
 		return new ScaDebugFactoryImpl();
@@ -79,20 +77,32 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case ScaDebugPackage.LOCAL_SCA: return createLocalSca();
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT: return createNotifyingNamingContext();
-			case ScaDebugPackage.NAME_TO_OBJECT_ENTRY: return (EObject)createNameToObjectEntry();
-			case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY: return (EObject)createNameToNamingContextEntry();
-			case ScaDebugPackage.LOCAL_FILE_MANAGER: return createLocalFileManager();
-			case ScaDebugPackage.LOCAL_SCA_WAVEFORM: return createLocalScaWaveform();
-			case ScaDebugPackage.LOCAL_SCA_COMPONENT: return createLocalScaComponent();
-			case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER: return createLocalScaDeviceManager();
-			case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE: return createLocalScaExecutableDevice();
-			case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE: return createLocalScaLoadableDevice();
-			case ScaDebugPackage.LOCAL_SCA_DEVICE: return createLocalScaDevice();
-			case ScaDebugPackage.LOCAL_SCA_SERVICE: return createLocalScaService();
-			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+		case ScaDebugPackage.LOCAL_SCA:
+			return createLocalSca();
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT:
+			return createNotifyingNamingContext();
+		case ScaDebugPackage.NAME_TO_OBJECT_ENTRY:
+			return (EObject) createNameToObjectEntry();
+		case ScaDebugPackage.NAME_TO_NAMING_CONTEXT_ENTRY:
+			return (EObject) createNameToNamingContextEntry();
+		case ScaDebugPackage.LOCAL_FILE_MANAGER:
+			return createLocalFileManager();
+		case ScaDebugPackage.LOCAL_SCA_WAVEFORM:
+			return createLocalScaWaveform();
+		case ScaDebugPackage.LOCAL_SCA_COMPONENT:
+			return createLocalScaComponent();
+		case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER:
+			return createLocalScaDeviceManager();
+		case ScaDebugPackage.LOCAL_SCA_EXECUTABLE_DEVICE:
+			return createLocalScaExecutableDevice();
+		case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE:
+			return createLocalScaLoadableDevice();
+		case ScaDebugPackage.LOCAL_SCA_DEVICE:
+			return createLocalScaDevice();
+		case ScaDebugPackage.LOCAL_SCA_SERVICE:
+			return createLocalScaService();
+		default:
+			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
 	}
 
@@ -104,12 +114,12 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-			case ScaDebugPackage.NAME:
-				return createNameFromString(eDataType, initialValue);
-			case ScaDebugPackage.NAMING_CONTEXT:
-				return createNamingContextFromString(eDataType, initialValue);
-			default:
-				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		case ScaDebugPackage.NAME:
+			return createNameFromString(eDataType, initialValue);
+		case ScaDebugPackage.NAMING_CONTEXT:
+			return createNamingContextFromString(eDataType, initialValue);
+		default:
+			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
 	}
 
@@ -121,12 +131,12 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-			case ScaDebugPackage.NAME:
-				return convertNameToString(eDataType, instanceValue);
-			case ScaDebugPackage.NAMING_CONTEXT:
-				return convertNamingContextToString(eDataType, instanceValue);
-			default:
-				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		case ScaDebugPackage.NAME:
+			return convertNameToString(eDataType, instanceValue);
+		case ScaDebugPackage.NAMING_CONTEXT:
+			return convertNamingContextToString(eDataType, instanceValue);
+		default:
+			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
 	}
 
@@ -266,7 +276,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 * @generated
 	 */
 	public Name createNameFromString(EDataType eDataType, String initialValue) {
-		return (Name)super.createFromString(eDataType, initialValue);
+		return (Name) super.createFromString(eDataType, initialValue);
 	}
 
 	/**
@@ -284,7 +294,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 * @generated
 	 */
 	public NamingContext createNamingContextFromString(EDataType eDataType, String initialValue) {
-		return (NamingContext)super.createFromString(eDataType, initialValue);
+		return (NamingContext) super.createFromString(eDataType, initialValue);
 	}
 
 	/**
@@ -303,7 +313,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 */
 	@Override
 	public ScaDebugPackage getScaDebugPackage() {
-		return (ScaDebugPackage)getEPackage();
+		return (ScaDebugPackage) getEPackage();
 	}
 
 	/**

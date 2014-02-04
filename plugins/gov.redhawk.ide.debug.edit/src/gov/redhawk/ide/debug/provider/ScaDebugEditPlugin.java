@@ -8,7 +8,6 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.provider;
 
@@ -56,20 +55,9 @@ public final class ScaDebugEditPlugin extends EMFPlugin {
 	 * @generated
 	 */
 	public ScaDebugEditPlugin() {
-		super
-		  (new ResourceLocator [] {
-		     CfEditPlugin.INSTANCE,
-		     DcdEditPlugin.INSTANCE,
-		     DmdEditPlugin.INSTANCE,
-		     DpdEditPlugin.INSTANCE,
-		     EcoreEditPlugin.INSTANCE,
-		     PartitioningEditPlugin.INSTANCE,
-		     PrfEditPlugin.INSTANCE,
-		     SadEditPlugin.INSTANCE,
-		     ScaEditPlugin.INSTANCE,
-		     ScdEditPlugin.INSTANCE,
-		     SpdEditPlugin.INSTANCE,
-		   });
+		super(new ResourceLocator[] { CfEditPlugin.INSTANCE, DcdEditPlugin.INSTANCE, DmdEditPlugin.INSTANCE, DpdEditPlugin.INSTANCE, EcoreEditPlugin.INSTANCE,
+			PartitioningEditPlugin.INSTANCE, PrfEditPlugin.INSTANCE, SadEditPlugin.INSTANCE, ScaEditPlugin.INSTANCE, ScdEditPlugin.INSTANCE,
+			SpdEditPlugin.INSTANCE, });
 	}
 
 	/**

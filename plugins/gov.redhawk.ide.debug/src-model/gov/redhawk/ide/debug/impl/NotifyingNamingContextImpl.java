@@ -8,7 +8,6 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
@@ -221,7 +220,8 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	@Override
 	public EMap<Name, org.omg.CORBA.Object> getObjectMap() {
 		if (objectMap == null) {
-			objectMap = new EcoreEMap<Name,org.omg.CORBA.Object>(ScaDebugPackage.Literals.NAME_TO_OBJECT_ENTRY, NameToObjectEntryImpl.class, this, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP);
+			objectMap = new EcoreEMap<Name, org.omg.CORBA.Object>(ScaDebugPackage.Literals.NAME_TO_OBJECT_ENTRY, NameToObjectEntryImpl.class, this,
+				ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP);
 		}
 		return objectMap;
 	}
@@ -234,7 +234,8 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	@Override
 	public EMap<Name, NamingContext> getContextMap() {
 		if (contextMap == null) {
-			contextMap = new EcoreEMap<Name,NamingContext>(ScaDebugPackage.Literals.NAME_TO_NAMING_CONTEXT_ENTRY, NameToNamingContextEntryImpl.class, this, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__CONTEXT_MAP);
+			contextMap = new EcoreEMap<Name, NamingContext>(ScaDebugPackage.Literals.NAME_TO_NAMING_CONTEXT_ENTRY, NameToNamingContextEntryImpl.class, this,
+				ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__CONTEXT_MAP);
 		}
 		return contextMap;
 	}
@@ -269,7 +270,8 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	@Override
 	public EList<NotifyingNamingContext> getSubContexts() {
 		if (subContexts == null) {
-			subContexts = new EObjectContainmentWithInverseEList<NotifyingNamingContext>(NotifyingNamingContext.class, this, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT);
+			subContexts = new EObjectContainmentWithInverseEList<NotifyingNamingContext>(NotifyingNamingContext.class, this,
+				ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT);
 		}
 		return subContexts;
 	}
@@ -281,8 +283,9 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 */
 	@Override
 	public NotifyingNamingContext getParentContext() {
-		if (eContainerFeatureID() != ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT) return null;
-		return (NotifyingNamingContext)eInternalContainer();
+		if (eContainerFeatureID() != ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT)
+			return null;
+		return (NotifyingNamingContext) eInternalContainer();
 	}
 
 	/**
@@ -291,7 +294,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * @generated
 	 */
 	public NotificationChain basicSetParentContext(NotifyingNamingContext newParentContext, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject)newParentContext, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT, msgs);
+		msgs = eBasicSetContainer((InternalEObject) newParentContext, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT, msgs);
 		return msgs;
 	}
 
@@ -302,18 +305,20 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 */
 	@Override
 	public void setParentContext(NotifyingNamingContext newParentContext) {
-		if (newParentContext != eInternalContainer() || (eContainerFeatureID() != ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT && newParentContext != null)) {
+		if (newParentContext != eInternalContainer()
+			|| (eContainerFeatureID() != ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT && newParentContext != null)) {
 			if (EcoreUtil.isAncestor(this, newParentContext))
 				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
 			NotificationChain msgs = null;
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
 			if (newParentContext != null)
-				msgs = ((InternalEObject)newParentContext).eInverseAdd(this, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS, NotifyingNamingContext.class, msgs);
+				msgs = ((InternalEObject) newParentContext).eInverseAdd(this, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS,
+					NotifyingNamingContext.class, msgs);
 			msgs = basicSetParentContext(newParentContext, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT, newParentContext, newParentContext));
 	}
 
@@ -333,11 +338,12 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 		{
 			eAdapters().add(this);
 		}
+
 		@Override
-        public void notifyChanged(final Notification msg) {
-			switch(msg.getFeatureID(NotifyingNamingContext.class)) {
+		public void notifyChanged(final Notification msg) {
+			switch (msg.getFeatureID(NotifyingNamingContext.class)) {
 			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
-				switch(msg.getEventType()) {
+				switch (msg.getEventType()) {
 				case Notification.REMOVE:
 					if (msg.getOldValue() instanceof NotifyingNamingContext) {
 						final NotifyingNamingContext context = (NotifyingNamingContext) msg.getOldValue();
@@ -345,7 +351,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 					}
 					break;
 				case Notification.REMOVE_MANY:
-					for (final Object obj : (Collection<?>)msg.getOldValue()) {
+					for (final Object obj : (Collection< ? >) msg.getOldValue()) {
 						if (obj instanceof NotifyingNamingContext) {
 							final NotifyingNamingContext context = (NotifyingNamingContext) obj;
 							removeReferences((NotifyingNamingContextImpl) context);
@@ -367,9 +373,10 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 */
 	protected void removeReferences(final NotifyingNamingContextImpl context) {
 		getContextMap().remove(context.name);
-    }
+	}
 
 	private Name name;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -383,12 +390,12 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 			return;
 		}
 		try {
-	        setNamingContext(NamingContextExtHelper.narrow(this.poa.servant_to_reference(new NamingContextExtPOATie(this))));
-        } catch (final ServantNotActive e) {
-	        setNamingContext(null);
-        } catch (final WrongPolicy e) {
-        	setNamingContext(null);
-        }
+			setNamingContext(NamingContextExtHelper.narrow(this.poa.servant_to_reference(new NamingContextExtPOATie(this))));
+		} catch (final ServantNotActive e) {
+			setNamingContext(null);
+		} catch (final WrongPolicy e) {
+			setNamingContext(null);
+		}
 	}
 
 	/**
@@ -454,7 +461,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 			try {
 				final String uriStr = URLDecoder.decode(c.id, "UTF-8");
 				final URI uri = URI.createURI(uriStr);
-				
+
 				if (uri.scheme() != null && uri.segmentCount() > 0) {
 					return uri;
 				}
@@ -570,12 +577,12 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getSubContexts()).basicAdd(otherEnd, msgs);
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT:
-				if (eInternalContainer() != null)
-					msgs = eBasicRemoveFromContainer(msgs);
-				return basicSetParentContext((NotifyingNamingContext)otherEnd, msgs);
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
+			return ((InternalEList<InternalEObject>) (InternalEList< ? >) getSubContexts()).basicAdd(otherEnd, msgs);
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT:
+			if (eInternalContainer() != null)
+				msgs = eBasicRemoveFromContainer(msgs);
+			return basicSetParentContext((NotifyingNamingContext) otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -588,14 +595,14 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP:
-				return ((InternalEList<?>)getObjectMap()).basicRemove(otherEnd, msgs);
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__CONTEXT_MAP:
-				return ((InternalEList<?>)getContextMap()).basicRemove(otherEnd, msgs);
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
-				return ((InternalEList<?>)getSubContexts()).basicRemove(otherEnd, msgs);
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT:
-				return basicSetParentContext(null, msgs);
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP:
+			return ((InternalEList< ? >) getObjectMap()).basicRemove(otherEnd, msgs);
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__CONTEXT_MAP:
+			return ((InternalEList< ? >) getContextMap()).basicRemove(otherEnd, msgs);
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
+			return ((InternalEList< ? >) getSubContexts()).basicRemove(otherEnd, msgs);
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT:
+			return basicSetParentContext(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -608,8 +615,8 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	@Override
 	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
 		switch (eContainerFeatureID()) {
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT:
-				return eInternalContainer().eInverseRemove(this, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS, NotifyingNamingContext.class, msgs);
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT:
+			return eInternalContainer().eInverseRemove(this, ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS, NotifyingNamingContext.class, msgs);
 		}
 		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
@@ -622,24 +629,28 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__DISPOSED:
-				return isDisposed();
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP:
-				if (coreType) return getObjectMap();
-				else return getObjectMap().map();
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__CONTEXT_MAP:
-				if (coreType) return getContextMap();
-				else return getContextMap().map();
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__NAMING_CONTEXT:
-				return getNamingContext();
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
-				return getSubContexts();
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT:
-				return getParentContext();
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__POA:
-				return getPoa();
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__NAME:
-				return getName();
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__DISPOSED:
+			return isDisposed();
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP:
+			if (coreType)
+				return getObjectMap();
+			else
+				return getObjectMap().map();
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__CONTEXT_MAP:
+			if (coreType)
+				return getContextMap();
+			else
+				return getContextMap().map();
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__NAMING_CONTEXT:
+			return getNamingContext();
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
+			return getSubContexts();
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT:
+			return getParentContext();
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__POA:
+			return getPoa();
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__NAME:
+			return getName();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -653,25 +664,25 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP:
-				((EStructuralFeature.Setting)getObjectMap()).set(newValue);
-				return;
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__CONTEXT_MAP:
-				((EStructuralFeature.Setting)getContextMap()).set(newValue);
-				return;
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__NAMING_CONTEXT:
-				setNamingContext((NamingContextExt)newValue);
-				return;
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
-				getSubContexts().clear();
-				getSubContexts().addAll((Collection<? extends NotifyingNamingContext>)newValue);
-				return;
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT:
-				setParentContext((NotifyingNamingContext)newValue);
-				return;
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__POA:
-				setPoa((POA)newValue);
-				return;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP:
+			((EStructuralFeature.Setting) getObjectMap()).set(newValue);
+			return;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__CONTEXT_MAP:
+			((EStructuralFeature.Setting) getContextMap()).set(newValue);
+			return;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__NAMING_CONTEXT:
+			setNamingContext((NamingContextExt) newValue);
+			return;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
+			getSubContexts().clear();
+			getSubContexts().addAll((Collection< ? extends NotifyingNamingContext>) newValue);
+			return;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT:
+			setParentContext((NotifyingNamingContext) newValue);
+			return;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__POA:
+			setPoa((POA) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -684,24 +695,24 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP:
-				getObjectMap().clear();
-				return;
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__CONTEXT_MAP:
-				getContextMap().clear();
-				return;
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__NAMING_CONTEXT:
-				setNamingContext(NAMING_CONTEXT_EDEFAULT);
-				return;
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
-				getSubContexts().clear();
-				return;
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT:
-				setParentContext((NotifyingNamingContext)null);
-				return;
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__POA:
-				setPoa(POA_EDEFAULT);
-				return;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP:
+			getObjectMap().clear();
+			return;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__CONTEXT_MAP:
+			getContextMap().clear();
+			return;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__NAMING_CONTEXT:
+			setNamingContext(NAMING_CONTEXT_EDEFAULT);
+			return;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
+			getSubContexts().clear();
+			return;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT:
+			setParentContext((NotifyingNamingContext) null);
+			return;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__POA:
+			setPoa(POA_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -714,22 +725,22 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__DISPOSED:
-				return disposed != DISPOSED_EDEFAULT;
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP:
-				return objectMap != null && !objectMap.isEmpty();
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__CONTEXT_MAP:
-				return contextMap != null && !contextMap.isEmpty();
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__NAMING_CONTEXT:
-				return NAMING_CONTEXT_EDEFAULT == null ? namingContext != null : !NAMING_CONTEXT_EDEFAULT.equals(namingContext);
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
-				return subContexts != null && !subContexts.isEmpty();
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT:
-				return getParentContext() != null;
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__POA:
-				return POA_EDEFAULT == null ? poa != null : !POA_EDEFAULT.equals(poa);
-			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__NAME:
-				return NAME_EDEFAULT == null ? getName() != null : !NAME_EDEFAULT.equals(getName());
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__DISPOSED:
+			return disposed != DISPOSED_EDEFAULT;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__OBJECT_MAP:
+			return objectMap != null && !objectMap.isEmpty();
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__CONTEXT_MAP:
+			return contextMap != null && !contextMap.isEmpty();
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__NAMING_CONTEXT:
+			return NAMING_CONTEXT_EDEFAULT == null ? namingContext != null : !NAMING_CONTEXT_EDEFAULT.equals(namingContext);
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__SUB_CONTEXTS:
+			return subContexts != null && !subContexts.isEmpty();
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__PARENT_CONTEXT:
+			return getParentContext() != null;
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__POA:
+			return POA_EDEFAULT == null ? poa != null : !POA_EDEFAULT.equals(poa);
+		case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__NAME:
+			return NAME_EDEFAULT == null ? getName() != null : !NAME_EDEFAULT.equals(getName());
 		}
 		return super.eIsSet(featureID);
 	}
@@ -740,11 +751,13 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * @generated
 	 */
 	@Override
-	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
+	public int eBaseStructuralFeatureID(int derivedFeatureID, Class< ? > baseClass) {
 		if (baseClass == IDisposable.class) {
 			switch (derivedFeatureID) {
-				case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__DISPOSED: return ScaPackage.IDISPOSABLE__DISPOSED;
-				default: return -1;
+			case ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__DISPOSED:
+				return ScaPackage.IDISPOSABLE__DISPOSED;
+			default:
+				return -1;
 			}
 		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
@@ -756,11 +769,13 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 * @generated
 	 */
 	@Override
-	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
+	public int eDerivedStructuralFeatureID(int baseFeatureID, Class< ? > baseClass) {
 		if (baseClass == IDisposable.class) {
 			switch (baseFeatureID) {
-				case ScaPackage.IDISPOSABLE__DISPOSED: return ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__DISPOSED;
-				default: return -1;
+			case ScaPackage.IDISPOSABLE__DISPOSED:
+				return ScaDebugPackage.NOTIFYING_NAMING_CONTEXT__DISPOSED;
+			default:
+				return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
@@ -773,7 +788,8 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (disposed: ");
@@ -873,9 +889,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 		// the client should have been using rebind_context!
 
 		if (getContextMap().containsKey(n)) {
-			throw new NotFound(NotFoundReason.not_object, new NameComponent[] {
-				nb
-			});
+			throw new NotFound(NotFoundReason.not_object, new NameComponent[] { nb });
 		}
 
 		// try remove an existing binding
@@ -940,9 +954,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 		// the client should have been using rebind() !
 
 		if (getObjectMap().containsKey(n)) {
-			throw new NotFound(NotFoundReason.not_context, new NameComponent[] {
-				nb
-			});
+			throw new NotFound(NotFoundReason.not_context, new NameComponent[] { nb });
 		}
 
 		// try to remove an existing context binding
@@ -968,9 +980,10 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 			}
 		}
 	}
+
 	/**
 	 * Bind a context to a name
-	 */	
+	 */
 	@Override
 	public void bind_context(final NameComponent[] nc, final NamingContext obj) throws NotFound, CannotProceed, InvalidName, AlreadyBound {
 		bind_context(new Name(nc), obj);
@@ -1046,7 +1059,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 		final NamingContextExt ns = NamingContextExtHelper.narrow(impl.getNamingContext());
 		bind_context(impl.name, ns);
 		ScaModelCommand.execute(this, new ScaModelCommand() {
-			
+
 			@Override
 			public void execute() {
 				getSubContexts().add(impl);
