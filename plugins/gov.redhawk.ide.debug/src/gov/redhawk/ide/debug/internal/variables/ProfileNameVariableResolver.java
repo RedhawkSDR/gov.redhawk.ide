@@ -35,7 +35,7 @@ public class ProfileNameVariableResolver extends AbstractLauncherResolver implem
 	 */
 	@Override
 	protected String resolveValue(String arg, final ILaunch launch, final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl)
-			throws CoreException {
+		throws CoreException {
 		SoftwareComponent scd = null;
 		if (spd.getDescriptor() != null) {
 			scd = spd.getDescriptor().getComponent();
@@ -59,9 +59,9 @@ public class ProfileNameVariableResolver extends AbstractLauncherResolver implem
 		URI uri = spd.eResource().getURI();
 		List<String> list = uri.segmentsList();
 		if (list.size() >= 2) {
-			return root + "/" + list.get(list.size() - 2) + "/" + list.get(list.size() - 1);
+			return "/" + root + "/" + list.get(list.size() - 2) + "/" + list.get(list.size() - 1);
 		} else {
-			return root + "/" + list.get(list.size() - 1);
+			return "/" + root + "/" + list.get(list.size() - 1);
 		}
 	}
 }
