@@ -446,6 +446,9 @@ public class ModelMap {
 	 * @return
 	 */
 	private void createCommandAndExecute(final EditPart targetEditPart, final Request request) {
+		if (PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+			return;
+		}
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
 			@Override
