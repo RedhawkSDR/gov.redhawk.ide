@@ -90,7 +90,7 @@ public final class SpdLauncherUtil {
 
 	public static void postLaunch(final SoftPkg spd, final ILaunchConfiguration configuration, final String mode, final ILaunch launch,
 		final IProgressMonitor monitor) throws CoreException {
-		Map< ? , ? > programArgs = configuration.getAttribute(LAUNCH_ATT_PROGRAM_ARGUMENT_MAP, Collections.EMPTY_MAP);
+		Map< ? , ? > programArgs = configuration.getAttribute(SpdLauncherUtil.LAUNCH_ATT_PROGRAM_ARGUMENT_MAP, Collections.EMPTY_MAP);
 
 		LocalAbstractComponent comp = null;
 		try {
@@ -126,6 +126,10 @@ public final class SpdLauncherUtil {
 				newComponent.setImplementationID(implID);
 				newComponent.setMode(launch.getLaunchMode());
 				newComponent.setLaunch(launch);
+				// TODO Should we do this?
+				//				if (newComponent instanceof ScaAbstractComponent< ? >) {
+				//					((ScaAbstractComponent< ? >) newComponent).setProfile(spd.eResource().getURI().path());
+				//				}
 				((ProfileObjectWrapper< ? >) newComponent).setProfileURI(spd.eResource().getURI());
 			}
 		});
@@ -473,6 +477,10 @@ public final class SpdLauncherUtil {
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.NAME_BINDING, null));
 		retVal.append(" ");
+		retVal.append(LaunchVariables.PROFILE_NAME);
+		retVal.append(" ");
+		retVal.append(manager.generateVariableExpression(LaunchVariables.PROFILE_NAME, null));
+		retVal.append(" ");
 		retVal.append(LaunchVariables.COMPONENT_IDENTIFIER);
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.COMPONENT_IDENTIFIER, null));
@@ -493,6 +501,10 @@ public final class SpdLauncherUtil {
 		retVal.append(LaunchVariables.NAME_BINDING);
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.NAME_BINDING, null));
+		retVal.append(" ");
+		retVal.append(LaunchVariables.PROFILE_NAME);
+		retVal.append(" ");
+		retVal.append(manager.generateVariableExpression(LaunchVariables.PROFILE_NAME, null));
 		retVal.append(" ");
 		retVal.append(LaunchVariables.DEVICE_MGR_IOR);
 		retVal.append(" ");
