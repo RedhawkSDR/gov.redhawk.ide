@@ -27,6 +27,11 @@ import gov.redhawk.sca.ui.editors.IScaContentDescriber;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
+import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -114,8 +119,16 @@ public class LocalScaChalkboardContentDescriber implements IScaContentDescriber 
 				});
 
 				try {
-					LocalApplicationFactory.bindApp(app);
-					waveform.refresh(null, RefreshDepth.FULL);
+					final ScaWaveform tmpWaveform = waveform;
+					ProtectedThreadExecutor.submit(new Callable<Object>() {
+
+						@Override
+						public Object call() throws Exception {
+							LocalApplicationFactory.bindApp(app);
+							tmpWaveform.refresh(null, RefreshDepth.FULL);
+							return null;
+						}
+					});
 
 					ScaModelCommand.execute(remoteWaveform, new ScaModelCommand() {
 
@@ -139,8 +152,10 @@ public class LocalScaChalkboardContentDescriber implements IScaContentDescriber 
 					});
 				} catch (InterruptedException e) {
 					ScaDebugPlugin.getInstance().getLog().log(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, "Failed to refresh waveform.", e));
-				} catch (CoreException e) {
-					ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
+				} catch (ExecutionException e) {
+					ScaDebugPlugin.getInstance().getLog().log(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, "Failed to refresh waveform.", e));
+				} catch (TimeoutException e) {
+					ScaDebugPlugin.getInstance().getLog().log(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, "Failed to refresh waveform.", e));
 				}
 			}
 
