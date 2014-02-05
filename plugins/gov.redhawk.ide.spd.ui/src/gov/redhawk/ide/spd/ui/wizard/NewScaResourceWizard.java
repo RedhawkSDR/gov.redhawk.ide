@@ -782,7 +782,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	 * @param pagesToAdd The wizard pages to add.
 	 * @since 8.1
 	 */
-	public void addTemplatePages(ICodegenWizardPage pageAddingPages, ICodegenWizardPage[] pagesToAdd) {
+	public void addTemplatePages(IWizardPage pageAddingPages, ICodegenWizardPage[] pagesToAdd) {
 		int addingPageIndex = wizPages.lastIndexOf(pageAddingPages);
 		
 		for (ICodegenWizardPage pageToAdd : pagesToAdd) {
@@ -791,16 +791,18 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 			pageToAdd.setWizard(this);
 		}
 		
-		if (pagesToAdd.length > 0) {
-			pageAddingPages.setCanFinish(false);
-			pageAddingPages.setCanFlipToNextPage(true);
+		if (pageAddingPages instanceof ICodegenWizardPage) {
+			if (pagesToAdd.length > 0) {
+				((ICodegenWizardPage) pageAddingPages).setCanFinish(false);
+				((ICodegenWizardPage) pageAddingPages).setCanFlipToNextPage(true);
+			}
 		}
 	}
 
 	/**
 	 * @since 8.1
 	 */
-	public void removeTemplatePages(ICodegenWizardPage pageAddingPages, ICodegenWizardPage[] pageTypesToRemove) {
+	public void removeTemplatePages(IWizardPage pageAddingPages, ICodegenWizardPage[] pageTypesToRemove) {
 		// The passed in array of pages is a new instance of the pages which we'd like removed.  We use them just to make sure
 		// the right pages are being removed based on class type.  It's a bit of an assumption.
 		int indexOfAdder = this.wizPages.indexOf(pageAddingPages);
@@ -821,8 +823,11 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 			page.dispose();
 		}
 		
-		pageAddingPages.setCanFinish(true);
-		pageAddingPages.setCanFlipToNextPage(false);
+		if (pageAddingPages instanceof ICodegenWizardPage) {
+			((ICodegenWizardPage) pageAddingPages).setCanFinish(true);
+			((ICodegenWizardPage) pageAddingPages).setCanFlipToNextPage(false);
+		}
+		
 		this.getContainer().updateButtons();
 	}
 
