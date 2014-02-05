@@ -160,15 +160,16 @@ public class PropertiesViewerConverter implements XViewerConverter {
 	 * @see org.eclipse.nebula.widgets.xviewer.edit.XViewerConverter#getInput(org.eclipse.swt.widgets.Control, org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor, java.lang.Object)
 	 */
 	@Override
-	public void getInput(Control c, CellEditDescriptor ced, Object selObject) {
+	public Object getInput(Control c, CellEditDescriptor ced, Object selObject) {
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
-			setExternalValue(c, selObject);
+			return setExternalValue(c, selObject);
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
-			setSadValue(c, selObject);
+			return setSadValue(c, selObject);
 		}
+		return null;
 	}
 
-	protected void setSadValue(Control c, Object selObject) {
+	protected Object setSadValue(Control c, Object selObject) {
 		String newValue = null;
 		if (c instanceof Combo) {
 			Combo combo = (Combo) c;
@@ -177,7 +178,7 @@ public class PropertiesViewerConverter implements XViewerConverter {
 			Text text = (Text) c;
 			newValue = text.getText();
 		} else {
-			return;
+			return null;
 		}
 
 		if (selObject instanceof ViewerSimpleProperty) {
@@ -191,11 +192,14 @@ public class PropertiesViewerConverter implements XViewerConverter {
 				String[] newArray = split(newValue);
 				if (seqProp.checkValues(newArray)) {
 					seqProp.setValues(newArray);
+				} else {
+					return null;
 				}
 			} catch (IllegalArgumentException e) {
-				// PASS
+				return null;
 			}
 		}
+		return selObject;
 	}
 
 	public static String[] split(String seqValue) {
@@ -215,18 +219,20 @@ public class PropertiesViewerConverter implements XViewerConverter {
 		return newArray;
 	}
 
-	protected void setExternalValue(Control c, Object selObject) {
+	protected Object setExternalValue(Control c, Object selObject) {
 		String newValue = null;
 		if (c instanceof Combo) {
 			Combo combo = (Combo) c;
 			newValue = combo.getText();
 		} else {
-			return;
+			return null;
 		}
 
 		if (selObject instanceof ViewerProperty< ? >) {
 			((ViewerProperty< ? >) selObject).setExternalID(newValue);
+			return selObject;
 		}
+		return null;
 	}
 
 }
