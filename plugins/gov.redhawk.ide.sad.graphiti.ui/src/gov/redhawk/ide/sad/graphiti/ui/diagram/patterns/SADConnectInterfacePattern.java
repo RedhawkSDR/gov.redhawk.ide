@@ -175,9 +175,13 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		
 		//force selection of shape so that we can then right click for contextual options
 		//this is kind of a hack, it would be better if selection happened automatically when its clicked.
-		getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior()
-			.getDiagramContainer().selectPictogramElements(
-					new PictogramElement[] {context.getSourcePictogramElement()});
+		
+		getFeatureProvider().getDiagramTypeProvider().getDiagramEditor()
+		.selectPictogramElements(
+				new PictogramElement[] {context.getSourcePictogramElement()});
+//kepler		getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior()
+//			.getDiagramContainer().selectPictogramElements(
+//					new PictogramElement[] {context.getSourcePictogramElement()});
 
 		
 		return true;
@@ -202,7 +206,8 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		}
 		
 		//editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
+//kepler		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 		
 		//get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());

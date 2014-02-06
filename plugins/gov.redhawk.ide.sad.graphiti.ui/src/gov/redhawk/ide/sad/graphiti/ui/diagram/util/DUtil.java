@@ -182,7 +182,8 @@ public class DUtil {
 		//properly.  The Graphiti editor will try saving the resourceSet and therefore we want our model to be in the same resourceSet.
 		//The editingDomain below isn't associated with Graphiti model and so it doesn't save the model when the diagram editor saves.
 		//TransactionalEditingDomain editingDomain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(ScaPlugin.EDITING_DOMAIN_ID);
-		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
+//kepler		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 		ResourceSet resourceSet = editingDomain.getResourceSet();
 		
 		URI uri = diagram.eResource().getURI();
