@@ -7,7 +7,6 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
