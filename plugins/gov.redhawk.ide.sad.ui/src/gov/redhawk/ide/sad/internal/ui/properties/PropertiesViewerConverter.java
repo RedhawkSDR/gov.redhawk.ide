@@ -239,7 +239,6 @@ public class PropertiesViewerConverter implements XViewerConverter {
 
 	@Override
 	public boolean isValid(CellEditDescriptor ced, Object selObject) {
-		// TODO
 		return true;
 	}
 

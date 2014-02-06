@@ -228,7 +228,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 5.0
+	 * @since 6.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */

@@ -888,6 +888,7 @@ public interface ScaDebugPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
+	 * @since 6.0
 	 */
 	int LOCAL_SCA_COMPONENT__PROFILE = ScaPackage.SCA_COMPONENT__PROFILE;
 	/**
