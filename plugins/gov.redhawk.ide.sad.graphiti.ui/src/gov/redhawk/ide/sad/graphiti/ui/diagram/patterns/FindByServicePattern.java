@@ -1,10 +1,6 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
-import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.sad.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.wizards.FindByServiceWizardPage;
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
@@ -16,21 +12,14 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
-import org.eclipse.graphiti.features.context.ILayoutContext;
-import org.eclipse.graphiti.features.context.IResizeShapeContext;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.pattern.AbstractPattern;
+import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.pattern.IPattern;
-import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
 
-public class FindByServicePattern extends AbstractPattern implements IPattern{
+public class FindByServicePattern extends AbstractFindByPattern implements IPattern{
 
 	
 	public static final String NAME = "Service";
@@ -56,7 +45,7 @@ public class FindByServicePattern extends AbstractPattern implements IPattern{
 	}
 	
 	
-	//THE FOLLOWING THREE METHODS DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
+	//THE FOLLOWING METHOD DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
 	@Override
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
 		if(mainBusinessObject instanceof FindByStub){
@@ -69,64 +58,9 @@ public class FindByServicePattern extends AbstractPattern implements IPattern{
 		}
 		return false;
 	}
-	@Override
-	protected boolean isPatternControlled(PictogramElement pictogramElement) {
-		Object domainObject = getBusinessObjectForPictogramElement(pictogramElement);
-		return isMainBusinessObjectApplicable(domainObject);
-	}
-	@Override
-	protected boolean isPatternRoot(PictogramElement pictogramElement) {
-		Object domainObject = getBusinessObjectForPictogramElement(pictogramElement);
-		return isMainBusinessObjectApplicable(domainObject);
-	}
-	
+
 	
 	//DIAGRAM FEATURES
-	@Override
-	public boolean canAdd(IAddContext context) {
-		if (context.getNewObject() instanceof FindByStub) {
-			if (context.getTargetContainer() instanceof Diagram) {
-					return true;
-			}
-		}
-		return false;
-	}
-	
-	@Override
-	public PictogramElement add(IAddContext context) {
-		FindByStub findByStub = (FindByStub) context.getNewObject();
-		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
-		Diagram diagram = (Diagram) context.getTargetContainer();
-		
-		//service name/type
-		String displayInnerText = findByStub.getDomainFinder().getName();
-		String displayOuterText = getOuterText(findByStub);
-		
-		//create shape
-		RHContainerShape rhContainerShape = RHGxFactory.eINSTANCE.createRHContainerShape();
-
-		//initialize shape contents
-		rhContainerShape.init(targetContainerShape, displayOuterText, 
-				findByStub, getFeatureProvider(), ImageProvider.IMG_FIND_BY,
-				StyleUtil.getStyleForFindByOuter(diagram), displayInnerText,
-				getCreateImageId(), StyleUtil.getStyleForFindByInner(diagram), 
-				findByStub.getInterface(), findByStub.getUses(), findByStub.getProvides(), null);
-
-		//set shape location to user's selection
-		Graphiti.getGaLayoutService().setLocation(rhContainerShape.getGraphicsAlgorithm(), 
-				context.getX(), context.getY());
-
-		//layout
-		layoutPictogramElement(rhContainerShape);
-
-		return rhContainerShape;
-
-	}
-	
-	@Override
-	public boolean canCreate(ICreateContext context) {
-		return context.getTargetContainer() instanceof Diagram;
-	}
 	@Override
 	public Object[] create(ICreateContext context) {
 		
@@ -199,34 +133,10 @@ public class FindByServicePattern extends AbstractPattern implements IPattern{
 		
 		return new Object[] { findByStubs[0] };
 	}
+
 	
 	@Override
-	public boolean canResizeShape(IResizeShapeContext context){
-		return true;
-	}
-	
-	@Override
-	public boolean canLayout(ILayoutContext context){
-		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
-		Object obj = DUtil.getBusinessObject(containerShape);
-		if(obj instanceof FindByStub){
-			return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * Layout children of component
-	 */
-	@Override
-	public boolean layout(ILayoutContext context){
-		((RHContainerShape)context.getPictogramElement()).layout();
-		
-		//something is always changing.
-        return true;
-	}
-	
-	private String getOuterText(FindByStub findByStub){
+	public String getOuterTitle(FindByStub findByStub){
 		//service name/type
 		String displayOuterText = "";
 		if(findByStub.getDomainFinder().getType().equals(DomainFinderType.SERVICENAME)){
@@ -236,4 +146,18 @@ public class FindByServicePattern extends AbstractPattern implements IPattern{
 		}
 		return displayOuterText;
 	}
+
+	@Override
+    public String getInnerTitle(FindByStub findByStub) {
+		return findByStub.getDomainFinder().getName();
+    }
+
+	@Override
+    public String checkValueValid(String value, IDirectEditingContext context) {
+	    return null;
+    }
+
+	@Override
+    public void setValue(String value, IDirectEditingContext context) {
+    }
 }

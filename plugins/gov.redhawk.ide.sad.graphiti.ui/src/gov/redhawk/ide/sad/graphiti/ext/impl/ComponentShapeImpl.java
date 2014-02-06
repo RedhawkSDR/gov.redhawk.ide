@@ -7,18 +7,19 @@ import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
-
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
-
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.impl.Reason;
@@ -81,10 +82,19 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
   /**
    * Creates the inner shapes that make up this container shape
    */
-  public void init(final ContainerShape targetContainerShape, final SadComponentInstantiation ci, final IFeatureProvider featureProvider, final List<Port> ciExternalPorts, final AssemblyController assemblyController)
+  public void init(final ContainerShape targetContainerShape, final SadComponentInstantiation ci, final IFeatureProvider featureProvider, 
+		  final List<Port> ciExternalPorts, final AssemblyController assemblyController)
   {
+	  //get sad from diagram, we need to link it to all shapes so the diagram will update when changes occur to assembly controller and external ports
+	  List<EObject> businessObjectsToLink = new ArrayList<EObject>();
+	  final SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, DUtil.findDiagram(targetContainerShape));
+	  //ORDER MATTERS, CI must be first
+	  businessObjectsToLink.add(ci);
+	  businessObjectsToLink.add(sad);
+	  businessObjectsToLink.add(sad.getExternalPorts());
+	  
 		super.init(targetContainerShape, ci.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(), 
-				ci, featureProvider,
+				businessObjectsToLink, featureProvider,
 				ImageProvider.IMG_COMPONENT_PLACEMENT,
 				StyleUtil.getStyleForComponentOuter(DUtil.findDiagram(targetContainerShape)),
 				ci.getUsageName(), ImageProvider.IMG_COMPONENT_INSTANCE, StyleUtil.getStyleForComponentInner(DUtil.findDiagram(targetContainerShape)),
@@ -250,6 +260,8 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		}else if(startOrderEllipse.getStyle() != StyleUtil.getStyleForStartOrderEllipse(diagram) && assemblyController == null){
 			if(performUpdate){
 				startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderEllipse(diagram));
+				//remove assembly controller links
+				EcoreUtil.delete((EObject) startOrderEllipse.getPictogramElement().getLink());
 			}else{
 				return new Reason(true, "Component start order requires update");
 			}

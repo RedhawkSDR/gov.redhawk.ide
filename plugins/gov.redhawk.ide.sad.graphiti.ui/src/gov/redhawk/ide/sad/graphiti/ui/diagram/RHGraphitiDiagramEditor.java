@@ -1,10 +1,16 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram;
 
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.ui.editor.DefaultUpdateBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.PartInitException;
 
 public class RHGraphitiDiagramEditor extends DiagramEditor{
 
@@ -13,6 +19,8 @@ public class RHGraphitiDiagramEditor extends DiagramEditor{
 	public RHGraphitiDiagramEditor(EditingDomain editingDomain){
 		this.editingDomain = editingDomain;
 	}
+	
+
 	
 	@Override
 	protected DiagramBehavior createDiagramBehavior() {

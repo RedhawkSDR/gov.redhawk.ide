@@ -1,11 +1,14 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.graphiti.dt.AbstractDiagramTypeProvider;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
+import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.tb.IToolBehaviorProvider;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -34,6 +37,7 @@ public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider implemen
 		}catch (Exception e) {
 			IStatus status = new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, e.getMessage(), e);
 		}
+
 	}
 	
 	/**

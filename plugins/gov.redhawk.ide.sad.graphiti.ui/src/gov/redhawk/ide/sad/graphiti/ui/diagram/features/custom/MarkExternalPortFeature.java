@@ -42,18 +42,12 @@ public class MarkExternalPortFeature extends AbstractCustomFeature{
 	}
 	
 	/**
-	 * Returns true if linked business object is either ProvidesPortStub or UsesPortStub
+	 * Always return true, we filter this specifically in the FeatureProvider
 	 */
 	@Override
     public boolean canExecute(ICustomContext context) {
-		if(context.getPictogramElements() != null && context.getPictogramElements().length > 0){
-		    Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-		    if(obj instanceof ProvidesPortStub || obj instanceof UsesPortStub){
-		    	return true;
-		    }
-		}
-	    return false;
-    }
+		return true;
+	}
 	
 	/**
 	 * Marks a ProvidesPortStub or UsesPortStub as an external port
@@ -80,12 +74,9 @@ public class MarkExternalPortFeature extends AbstractCustomFeature{
 	    stack.execute(new RecordingCommand(editingDomain){
 	    	@Override
 	    	protected void doExecute() {
-
 	    		
-	    		//create external ports if necessary
-	    		if(sad.getExternalPorts() == null){
-	    			sad.setExternalPorts(SadFactory.eINSTANCE.createExternalPorts());
-	    		}
+	    		//external ports for sad diagram are when a component is added to diagram
+	    		//shouldn't be any reason we have to create it here.
 	    		
 	    		//add external port to model
 	    		Port port = SadFactory.eINSTANCE.createPort();

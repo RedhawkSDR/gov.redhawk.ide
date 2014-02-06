@@ -84,6 +84,11 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 				//add component file
 				ComponentFile componentFile = createComponentFile(sad, spd);
 				
+				//add external ports if not already there.  We do this to always associate the external ports business object
+				//with each component shape so that we can update the shape when external ports changes.
+				if(sad.getExternalPorts() == null){
+					sad.setExternalPorts(SadFactory.eINSTANCE.createExternalPorts());
+				}
 				
 				//create component placement and add to list
 				final SadComponentPlacement componentPlacement = SadFactory.eINSTANCE.createSadComponentPlacement();

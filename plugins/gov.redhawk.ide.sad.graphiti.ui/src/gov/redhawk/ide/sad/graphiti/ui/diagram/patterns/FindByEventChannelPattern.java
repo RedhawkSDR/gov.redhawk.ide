@@ -1,10 +1,9 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.sad.graphiti.ext.RHGxFactory;
+import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
@@ -14,18 +13,13 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.examples.common.ExampleUtil;
-import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
-import org.eclipse.graphiti.features.context.ILayoutContext;
-import org.eclipse.graphiti.features.context.IResizeShapeContext;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.pattern.AbstractPattern;
 import org.eclipse.graphiti.pattern.IPattern;
-import org.eclipse.graphiti.services.Graphiti;
 
-public class FindByEventChannelPattern extends AbstractPattern implements IPattern{
+public class FindByEventChannelPattern extends AbstractFindByPattern implements IPattern{
 
 	
 	public static final String NAME = "Event Channel";
@@ -50,7 +44,7 @@ public class FindByEventChannelPattern extends AbstractPattern implements IPatte
 	}
 	
 	
-	//THE FOLLOWING THREE METHODS DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
+	//THE FOLLOWING METHOD DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
 	@Override
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
 		if(mainBusinessObject instanceof FindByStub){
@@ -61,56 +55,8 @@ public class FindByEventChannelPattern extends AbstractPattern implements IPatte
 		}
 		return false;
 	}
-	@Override
-	protected boolean isPatternControlled(PictogramElement pictogramElement) {
-		Object domainObject = getBusinessObjectForPictogramElement(pictogramElement);
-		return isMainBusinessObjectApplicable(domainObject);
-	}
-	@Override
-	protected boolean isPatternRoot(PictogramElement pictogramElement) {
-		Object domainObject = getBusinessObjectForPictogramElement(pictogramElement);
-		return isMainBusinessObjectApplicable(domainObject);
-	}
-	
 	
 	//DIAGRAM FEATURES
-	@Override
-	public boolean canAdd(IAddContext context) {
-		if (context.getNewObject() instanceof FindByStub) {
-			if (context.getTargetContainer() instanceof Diagram) {
-					return true;
-			}
-		}
-		return false;
-	}
-	
-	@Override
-	public PictogramElement add(IAddContext context) {
-		FindByStub findByStub = (FindByStub) context.getNewObject();
-		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
-		Diagram diagram = (Diagram) context.getTargetContainer();
-		
-		String title = findByStub.getDomainFinder().getName();
-		
-		//create shape
-		RHContainerShape rhContainerShape = RHGxFactory.eINSTANCE.createRHContainerShape();
-
-		//initialize shape contents
-		rhContainerShape.init(targetContainerShape, NAME, 
-				findByStub, getFeatureProvider(), ImageProvider.IMG_FIND_BY,
-				StyleUtil.getStyleForFindByOuter(diagram), title,
-				getCreateImageId(), StyleUtil.getStyleForFindByInner(diagram), 
-				findByStub.getInterface(), findByStub.getUses(), findByStub.getProvides(), null);
-
-		//set shape location to user's selection
-		Graphiti.getGaLayoutService().setLocation(rhContainerShape.getGraphicsAlgorithm(), 
-				context.getX(), context.getY());
-
-		//layout
-		layoutPictogramElement(rhContainerShape);
-
-		return rhContainerShape;
-	}
 	
 	@Override
 	public boolean canCreate(ICreateContext context) {
@@ -154,31 +100,51 @@ public class FindByEventChannelPattern extends AbstractPattern implements IPatte
 		
 		return new Object[] { findByStubs[0] };
 	}
+
+
 	
 	@Override
-	public boolean canResizeShape(IResizeShapeContext context){
-		return true;
-	}
-	
-	@Override
-	public boolean canLayout(ILayoutContext context){
-		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
-		Object obj = DUtil.getBusinessObject(containerShape);
-		if(obj instanceof FindByStub){
-			return true;
+	public String checkValueValid(String value, IDirectEditingContext context){
+		if (value.length() < 1){
+			return "Please enter any text as event channel.";
 		}
-		return false;
+		if (value.contains(" ")){
+			return "Spaces are not allowed in event channels.";
+		}
+		if (value.contains("\n")){
+			return "Line breakes are not allowed in event channels.";
+		}
+		// null means, that the value is valid
+		return null;
 	}
 	
-	/**
-	 * Layout children of component
-	 */
 	@Override
-	public boolean layout(ILayoutContext context){
-		((RHContainerShape)context.getPictogramElement()).layout();
+	public void setValue(final String value, IDirectEditingContext context){
+		PictogramElement pe = context.getPictogramElement();
+		RHContainerShape rhContainerShape = (RHContainerShape)DUtil.findContainerShapeParentWithProperty(
+				pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		final FindByStub findBy = (FindByStub) getBusinessObjectForPictogramElement(rhContainerShape);
 		
-		//something is always changing.
-        return true;
+		//editing domain for our transaction
+	    TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		
+	    //Perform business object manipulation in a Command
+	    TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
+	    stack.execute(new RecordingCommand(editingDomain){
+	    	@Override
+	    	protected void doExecute() {
+	    		//set event name
+	    		findBy.getDomainFinder().setName(value);
+	    	}
+	    });
+	    
+	    //perform update, redraw
+	    updatePictogramElement(rhContainerShape);
 	}
+
+	@Override
+    public String getInnerTitle(FindByStub findByStub) {
+		return findByStub.getDomainFinder().getName();
+    }
 
 }

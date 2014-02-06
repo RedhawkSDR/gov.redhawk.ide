@@ -17,6 +17,7 @@ import mil.jpeojtrs.sca.sad.Port;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -111,7 +112,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
    * 
    * @generated
    */
-  @SuppressWarnings("restriction")
 protected RHContainerShapeImpl()
   {
     super();
@@ -130,8 +130,7 @@ protected RHContainerShapeImpl()
   /**
    * Creates the inner shapes that make up this container shape
    */
-  @SuppressWarnings("restriction")
-public void init(final ContainerShape targetContainerShape, final String outerText, final Object businessObject, final IFeatureProvider featureProvider, final String outerImageId, final Style outerContainerStyle, final String innerText, final String innerImageId, final Style innerContainerStyle, final ComponentSupportedInterfaceStub interfaceStub, final EList<UsesPortStub> uses, final EList<ProvidesPortStub> provides, final List<Port> externalPorts)
+public void init(final ContainerShape targetContainerShape, final String outerText, final List<EObject> businessObjects, final IFeatureProvider featureProvider, final String outerImageId, final Style outerContainerStyle, final String innerText, final String innerImageId, final Style innerContainerStyle, final ComponentSupportedInterfaceStub interfaceStub, final EList<UsesPortStub> uses, final EList<ProvidesPortStub> provides, final List<Port> externalPorts)
   {
 	    getProperties().addAll(new ArrayList<Property>(0));
 		setVisible(true);
@@ -155,8 +154,13 @@ public void init(final ContainerShape targetContainerShape, final String outerTe
 		cText.setStyle(StyleUtil.getStyleForOuterText(DUtil.findDiagram(targetContainerShape)));
 		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_outerRoundedRectangleText);
 		
-		//link object
-		featureProvider.link(this, businessObject);
+		//link objects
+//		for(EObject o: businessObjects){
+//			featureProvider.link(this, o);
+//		}
+		featureProvider.link(this, businessObjects.toArray());
+		
+		//this.getLink().getBusinessObjects().add(e)
 		
 		//inner container
 		addInnerContainer(this, innerText, featureProvider, innerImageId, innerContainerStyle);
@@ -182,7 +186,6 @@ public void init(final ContainerShape targetContainerShape, final String outerTe
   /**
    * Performs a layout on the contents of this shape
    */
-  @SuppressWarnings("restriction")
 public void layout()
   {
 		//get shape being laid out
@@ -237,7 +240,11 @@ public void layout()
   /**
    * Updates the shape's contents using the supplied fields.  Return true if an update occurred, false otherwise.
    */
-  public Reason update(final String outerText, final Object businessObject, final IFeatureProvider featureProvider, final String outerImageId, final Style outerContainerStyle, final String innerText, final String innerImageId, final Style innerContainerStyle, final ComponentSupportedInterfaceStub interfaceStub, final EList<UsesPortStub> uses, final EList<ProvidesPortStub> provides, final List<Port> externalPorts)
+  public Reason update(final String outerText, final Object businessObject, final IFeatureProvider featureProvider, 
+		  final String outerImageId, final Style outerContainerStyle, 
+		  final String innerText, final String innerImageId, final Style innerContainerStyle, 
+		  final ComponentSupportedInterfaceStub interfaceStub, final EList<UsesPortStub> uses, 
+		  final EList<ProvidesPortStub> provides, final List<Port> externalPorts)
   {
 	  return internalUpdate(outerText, businessObject, 
 			  featureProvider, outerImageId, outerContainerStyle, 
@@ -249,7 +256,11 @@ public void layout()
    * Return true (through Reason) if the shape's contents require an update based on the field supplied.
    * Also returns a textual reason why an update is needed. Returns false otherwise.
    */
-  public Reason updateNeeded(final String outerText, final Object businessObject, final IFeatureProvider featureProvider, final String outerImageId, final Style outerContainerStyle, final String innerText, final String innerImageId, final Style innerContainerStyle, final ComponentSupportedInterfaceStub interfaceStub, final EList<UsesPortStub> uses, final EList<ProvidesPortStub> provides, final List<Port> externalPorts)
+  public Reason updateNeeded(final String outerText, final Object businessObject, final IFeatureProvider featureProvider, 
+		  final String outerImageId, final Style outerContainerStyle, 
+		  final String innerText, final String innerImageId, final Style innerContainerStyle, 
+		  final ComponentSupportedInterfaceStub interfaceStub, final EList<UsesPortStub> uses, 
+		  final EList<ProvidesPortStub> provides, final List<Port> externalPorts)
   {
 	  return internalUpdate(outerText, businessObject, 
 			  featureProvider, outerImageId, outerContainerStyle, 
@@ -599,12 +610,12 @@ public EList<ProvidesPortStub> getInternalProvidesPortStubs()
 	  Diagram diagram = DUtil.findDiagram(this);
 	  
 	  //outerText
-	  Text outerTextGA = getInnerText();
+	  Text outerTextGA = getOuterText();
 	  if(outerTextGA != null && !outerTextGA.getValue().equals(outerText)){
 		  if(performUpdate){
 			  outerTextGA.setValue(outerText);
 		  }
-		  updateStatus = true;
+		  return new Reason(true, "Outer title requires update");
 	  }
 	  
 	  //innerText
@@ -613,7 +624,7 @@ public EList<ProvidesPortStub> getInternalProvidesPortStubs()
 		  if(performUpdate){
 			  innerTextGA.setValue(innerText);
 		  }
-		  updateStatus = true;
+		  return new Reason(true, "Inner title requires update");
 	  }
 	  
 	  
@@ -759,7 +770,7 @@ public EList<ProvidesPortStub> getInternalProvidesPortStubs()
 										  updateStatus = true;
 										  //update style
 										  fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalUsesPort(DUtil.findDiagram(this)));
-										  featureProvider.link(fixPointAnchorRectangle.getPictogramElement(), findExternalPort(portObject, externalPorts)); //link to externalPort so that update fires when it changes
+										  fixPointAnchorRectangle.getPictogramElement().getLink().getBusinessObjects().add(findExternalPort(portObject, externalPorts));//link to externalPort so that update fires when it changes
 									  }else{
 										  return new Reason(true, "Port style requires update");
 									  }
@@ -771,6 +782,8 @@ public EList<ProvidesPortStub> getInternalProvidesPortStubs()
 										  updateStatus = true;
 										  //update style
 										  fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForUsesPort(DUtil.findDiagram(this)));
+										  //this line will actually remove existing links (which will include an external port) and simply add the portObject (which already existed)
+										  featureProvider.link(fixPointAnchorRectangle.getPictogramElement(), portObject);
 									  }else{
 										  return new Reason(true, "Port style requires update");
 									  }

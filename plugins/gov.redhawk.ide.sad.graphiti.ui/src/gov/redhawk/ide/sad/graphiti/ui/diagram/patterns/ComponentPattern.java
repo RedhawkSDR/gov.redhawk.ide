@@ -2,7 +2,9 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.RHGxFactory;
+import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -21,14 +23,19 @@ import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
+import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
+import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.impl.Reason;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -141,8 +148,13 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
             }
 		});
 		
-		//delete the graphical component
-		super.delete(context);
+		//delete graphical component
+		IRemoveContext rc = new RemoveContext(context.getPictogramElement());
+		IFeatureProvider featureProvider = getFeatureProvider();
+		IRemoveFeature removeFeature = featureProvider.getRemoveFeature(rc);
+		if (removeFeature != null) {
+			removeFeature.remove(rc);
+		}
 		
 		//redraw start order 
 		//DUtil.organizeDiagramStartOrder(diagram);
@@ -177,6 +189,14 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		//set shape location to user's selection
 		Graphiti.getGaLayoutService().setLocation(componentShape.getGraphicsAlgorithm(), 
 				context.getX(), context.getY());
+		
+		//TODO: should we handle this differently?
+		//pre-add a few styles that will be used for updates.  This is necessary because if the style isn't present during updateNeeded (Not a Transaction)
+		//it will try to create it and an exception will occur
+		StyleUtil.getStyleForExternalUsesPort(getDiagram());
+		StyleUtil.getStyleForExternalProvidesPort(getDiagram());
+		StyleUtil.getStyleForUsesPort(getDiagram());
+		StyleUtil.getStyleForProvidesPort(getDiagram());
 		
 		//layout
 		layoutPictogramElement(componentShape);
@@ -455,5 +475,71 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 
 		return requiresUpdate;
 	}
+	
+	@Override
+	public boolean canDirectEdit(IDirectEditingContext context){
+		PictogramElement pe = context.getPictogramElement();
+		ComponentShape componentShape = (ComponentShape)DUtil.findContainerShapeParentWithProperty(
+				pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		Object obj = getBusinessObjectForPictogramElement(componentShape);
+		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
+		//allow if we've selected Text for the component
+		if (obj instanceof SadComponentInstantiation && ga instanceof Text) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+    public int getEditingType() {
+	    return TYPE_TEXT;
+    }
 
+	@Override
+    public String getInitialValue(IDirectEditingContext context) {
+		PictogramElement pe = context.getPictogramElement();
+		ComponentShape componentShape = (ComponentShape)DUtil.findContainerShapeParentWithProperty(
+				pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		SadComponentInstantiation ci = (SadComponentInstantiation) getBusinessObjectForPictogramElement(componentShape);
+		return ci.getUsageName();
+    }
+	
+	@Override
+	public String checkValueValid(String value, IDirectEditingContext context){
+		if (value.length() < 1){
+			return "Please enter any text as usage name.";
+		}
+		if (value.contains(" ")){
+			return "Spaces are not allowed in usage names.";
+		}
+		if (value.contains("\n")){
+			return "Line breakes are not allowed in usage names.";
+		}
+		// null means, that the value is valid
+		return null;
+	}
+	
+	@Override
+	public void setValue(final String value, IDirectEditingContext context){
+		PictogramElement pe = context.getPictogramElement();
+		ComponentShape componentShape = (ComponentShape)DUtil.findContainerShapeParentWithProperty(
+				pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		final SadComponentInstantiation ci = (SadComponentInstantiation) getBusinessObjectForPictogramElement(componentShape);
+		
+		//editing domain for our transaction
+	    TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		
+	    //Perform business object manipulation in a Command
+	    TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
+	    stack.execute(new RecordingCommand(editingDomain){
+	    	@Override
+	    	protected void doExecute() {
+	    		//set usage name
+	    		ci.setUsageName(value);
+	    	}
+	    });
+	    
+	    //perform update, redraw
+	    updatePictogramElement(componentShape);
+	}
 }

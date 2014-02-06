@@ -81,7 +81,8 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 				RHContainerShapeImpl.SHAPE_providesPortContainerShape,
 				RHContainerShapeImpl.SHAPE_usesPortContainerShape,
 				RHContainerShapeImpl.SHAPE_interfaceContainerShape,
-				RHContainerShapeImpl.SHAPE_interfaceEllipseShape}))
+				RHContainerShapeImpl.SHAPE_interfaceEllipseShape,
+				RHContainerShapeImpl.SHAPE_innerContainerShape}))
 
 		{
 			ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(originalPe, RHContainerShapeImpl.SHAPE_outerContainerShape);

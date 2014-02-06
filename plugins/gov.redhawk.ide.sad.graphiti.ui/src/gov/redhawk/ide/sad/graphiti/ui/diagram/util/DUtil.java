@@ -362,10 +362,14 @@ public class DUtil {
 	
 	/**
 	 * Returns the ancestor (parent chain) of the provided diagramElement with the provided PropertyContainer
+	 * First checks self to see if it is a container with matching property
 	 * @param diagramElement
 	 * @return
 	 */
 	public static ContainerShape findContainerShapeParentWithProperty(PictogramElement pe, String propertyValue){
+		if(pe instanceof ContainerShape && DUtil.isPropertyElementType(pe, propertyValue)){
+			return (ContainerShape)pe;
+		}
 		PictogramElement peContainer = Graphiti.getPeService().getActiveContainerPe(pe);
 		if(peContainer instanceof ContainerShape){
 			ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty((ContainerShape)peContainer, propertyValue);

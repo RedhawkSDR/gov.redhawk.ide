@@ -12,6 +12,7 @@ import mil.jpeojtrs.sca.sad.Port;
 
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
 
 import org.eclipse.graphiti.features.impl.Reason;
@@ -35,10 +36,10 @@ public interface RHContainerShape extends ContainerShape
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @model targetContainerShapeUnique="false" outerTextUnique="false" businessObjectUnique="false" featureProviderDataType="gov.redhawk.ide.sad.graphiti.ext.IFeatureProvider" featureProviderUnique="false" outerImageIdUnique="false" outerContainerStyleUnique="false" innerTextUnique="false" innerImageIdUnique="false" innerContainerStyleUnique="false" interfaceStubDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentSupportedInterfaceStub" interfaceStubUnique="false" usesUnique="false" usesMany="false" providesUnique="false" providesMany="false" externalPortsDataType="gov.redhawk.ide.sad.graphiti.ext.List<gov.redhawk.ide.sad.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
+   * @model targetContainerShapeUnique="false" outerTextUnique="false" businessObjectsDataType="gov.redhawk.ide.sad.graphiti.ext.List<org.eclipse.emf.ecore.EObject>" businessObjectsUnique="false" businessObjectsMany="false" featureProviderDataType="gov.redhawk.ide.sad.graphiti.ext.IFeatureProvider" featureProviderUnique="false" outerImageIdUnique="false" outerContainerStyleUnique="false" innerTextUnique="false" innerImageIdUnique="false" innerContainerStyleUnique="false" interfaceStubDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentSupportedInterfaceStub" interfaceStubUnique="false" usesUnique="false" usesMany="false" providesUnique="false" providesMany="false" externalPortsDataType="gov.redhawk.ide.sad.graphiti.ext.List<gov.redhawk.ide.sad.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
    * @generated
    */
-  void init(ContainerShape targetContainerShape, String outerText, Object businessObject, IFeatureProvider featureProvider, String outerImageId, Style outerContainerStyle, String innerText, String innerImageId, Style innerContainerStyle, ComponentSupportedInterfaceStub interfaceStub, EList<UsesPortStub> uses, EList<ProvidesPortStub> provides, List<Port> externalPorts);
+  void init(ContainerShape targetContainerShape, String outerText, List<EObject> businessObjects, IFeatureProvider featureProvider, String outerImageId, Style outerContainerStyle, String innerText, String innerImageId, Style innerContainerStyle, ComponentSupportedInterfaceStub interfaceStub, EList<UsesPortStub> uses, EList<ProvidesPortStub> provides, List<Port> externalPorts);
 
   /**
    * <!-- begin-user-doc -->

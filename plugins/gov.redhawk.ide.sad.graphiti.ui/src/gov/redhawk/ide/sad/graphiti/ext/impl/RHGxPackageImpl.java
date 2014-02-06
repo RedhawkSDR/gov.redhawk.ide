@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.MmPackage;
+import org.eclipse.graphiti.mm.algorithms.AlgorithmsPackage;
 import org.eclipse.graphiti.mm.algorithms.styles.StylesPackage;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
@@ -168,8 +169,10 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage
     isInited = true;
 
     // Initialize simple dependencies
-    MmPackage.eINSTANCE.eClass();
     EcorePackage.eINSTANCE.eClass();
+    AlgorithmsPackage.eINSTANCE.eClass();
+    PictogramsPackage.eINSTANCE.eClass();
+    MmPackage.eINSTANCE.eClass();
 
     // Create package meta-data objects
     theRHGxPackage.createPackageContents();
@@ -400,7 +403,10 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage
     EOperation op = addEOperation(rhContainerShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, thePictogramsPackage.getContainerShape(), "targetContainerShape", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, theEcorePackage.getEString(), "outerText", 0, 1, !IS_UNIQUE, IS_ORDERED);
-    addEParameter(op, theEcorePackage.getEJavaObject(), "businessObject", 0, 1, !IS_UNIQUE, IS_ORDERED);
+    EGenericType g1 = createEGenericType(this.getList());
+    EGenericType g2 = createEGenericType(theEcorePackage.getEObject());
+    g1.getETypeArguments().add(g2);
+    addEParameter(op, g1, "businessObjects", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, this.getIFeatureProvider(), "featureProvider", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, theEcorePackage.getEString(), "outerImageId", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, theStylesPackage.getStyle(), "outerContainerStyle", 0, 1, !IS_UNIQUE, IS_ORDERED);
@@ -408,8 +414,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage
     addEParameter(op, theEcorePackage.getEString(), "innerImageId", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, theStylesPackage.getStyle(), "innerContainerStyle", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, this.getComponentSupportedInterfaceStub(), "interfaceStub", 0, 1, !IS_UNIQUE, IS_ORDERED);
-    EGenericType g1 = createEGenericType(theEcorePackage.getEEList());
-    EGenericType g2 = createEGenericType(this.getUsesPortStub());
+    g1 = createEGenericType(theEcorePackage.getEEList());
+    g2 = createEGenericType(this.getUsesPortStub());
     g1.getETypeArguments().add(g2);
     addEParameter(op, g1, "uses", 0, 1, !IS_UNIQUE, IS_ORDERED);
     g1 = createEGenericType(theEcorePackage.getEEList());
