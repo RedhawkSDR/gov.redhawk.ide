@@ -10,10 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.internal.ui.navigator;
 
-import gov.redhawk.eclipsecorba.library.IdlLibrary;
-import gov.redhawk.ide.sdr.ComponentsContainer;
-import gov.redhawk.ide.sdr.SdrRoot;
-import gov.redhawk.ide.sdr.WaveformsContainer;
 import gov.redhawk.ide.sdr.ui.SdrContentProvider;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.model.sca.ScaDomainManagerRegistry;
@@ -67,22 +63,7 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 
 	@Override
 	public boolean hasChildren(final Object object) {
-		if (object instanceof IWorkspaceRoot) {
-			return true;
-		} else if (object instanceof SdrRoot) {
-			return true;
-		} else if (object instanceof IdlLibrary) {
-			IdlLibrary library = (IdlLibrary) object;
-			return !library.getDefinitions().isEmpty() || !library.getModuleDefinitions().isEmpty() || !library.getSpecifications().isEmpty();
-		} else if (object instanceof ComponentsContainer) {
-			ComponentsContainer cont = (ComponentsContainer) object;
-			return !cont.getComponents().isEmpty();
-		} else if (object instanceof WaveformsContainer) {
-			WaveformsContainer container = (WaveformsContainer) object;
-			return !container.getWaveforms().isEmpty();
-		} else {
-			return true;
-		}
+		return true;
 	}
 
 	@Override
