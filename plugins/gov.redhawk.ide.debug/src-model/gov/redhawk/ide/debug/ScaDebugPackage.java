@@ -885,7 +885,6 @@ public interface ScaDebugPackage extends EPackage {
 	/**
 	 * The feature id for the '<em><b>Profile</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * @since 5.0
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
