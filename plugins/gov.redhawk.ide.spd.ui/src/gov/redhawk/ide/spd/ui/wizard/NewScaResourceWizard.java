@@ -227,6 +227,11 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 							ICodegenWizardPage[] oldCodeGenPages = RedhawkCodegenUiActivator.getCodeGeneratorsRegistry().findPageByGeneratorId(previousImplId);
 							numOfOldGenPages = oldCodeGenPages.length;
 							
+							// Only used these to determine number of pages, not needed
+							for (ICodegenWizardPage oldCodeGenPage : oldCodeGenPages) {
+								oldCodeGenPage.dispose();
+							}
+							
 							List<IWizardPage> tmpList = new ArrayList<IWizardPage>();
 							for (int ii = 0; ii < numOfOldGenPages; ii++) {
 								tmpList.add(this.wizPages.get(codegenIndex + ii));
@@ -814,7 +819,8 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 				pagesToRemove.add((ICodegenWizardPage) this.wizPages.get(indexOfAdder + 1));
 				indexOfAdder++;
 			}
-			
+			// Dispose the unused page.
+			page.dispose();
 		}
 		
 		this.wizPages.removeAll(pagesToRemove);
@@ -828,7 +834,10 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 			((ICodegenWizardPage) pageAddingPages).setCanFlipToNextPage(false);
 		}
 		
-		this.getContainer().updateButtons();
+		// May be null on dispose of Wizard if user clicks cancel
+		if (this.getContainer() != null) {
+			this.getContainer().updateButtons();
+		}
 	}
 
 }
