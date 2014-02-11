@@ -12,13 +12,12 @@
 package gov.redhawk.datalist.ui.views;
 
 import gov.redhawk.bulkio.util.BulkIOType;
+import gov.redhawk.datalist.ui.DataCollectionSettings;
 import gov.redhawk.datalist.ui.DataListPlugin;
+import gov.redhawk.datalist.ui.Sample;
 import gov.redhawk.datalist.ui.internal.DataBuffer;
-import gov.redhawk.datalist.ui.internal.DataCollectionSettings;
 import gov.redhawk.datalist.ui.internal.DataCourierReceiver;
 import gov.redhawk.datalist.ui.internal.IDataBufferListener;
-import gov.redhawk.datalist.ui.internal.IFullListener;
-import gov.redhawk.datalist.ui.internal.Sample;
 import gov.redhawk.ide.snapshot.ui.SnapshotJob;
 import gov.redhawk.ide.snapshot.ui.SnapshotWizard;
 import gov.redhawk.model.sca.ScaUsesPort;
@@ -53,7 +52,9 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import BULKIO.PrecisionUTCTime;
-
+/**
+ * @since 1.1
+ */
 public class DataListView extends ViewPart {
 	/**
 	 * The ID of the view as specified by the extension.

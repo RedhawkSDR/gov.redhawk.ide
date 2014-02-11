@@ -21,6 +21,7 @@ import BULKIO.PrecisionUTCTime;
 import BULKIO.StreamSRI;
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.datalist.ui.DataListPlugin;
+import gov.redhawk.datalist.ui.Sample;
 import gov.redhawk.datalist.ui.views.DataCourier;
 import gov.redhawk.ide.snapshot.capture.IDataReceiver;
 import gov.redhawk.ide.snapshot.writer.IDataWriter;

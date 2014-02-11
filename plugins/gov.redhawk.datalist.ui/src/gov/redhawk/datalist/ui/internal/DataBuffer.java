@@ -14,6 +14,8 @@ package gov.redhawk.datalist.ui.internal;
 import gov.redhawk.bulkio.util.AbstractUberBulkIOPort;
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.bulkio.util.BulkIOUtilActivator;
+import gov.redhawk.datalist.ui.DataCollectionSettings;
+import gov.redhawk.datalist.ui.Sample;
 import gov.redhawk.datalist.ui.views.OptionsComposite.CaptureMethod;
 import gov.redhawk.model.sca.ScaUsesPort;
 

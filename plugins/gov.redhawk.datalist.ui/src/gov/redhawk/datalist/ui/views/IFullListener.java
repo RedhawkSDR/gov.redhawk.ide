@@ -8,30 +8,15 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.datalist.ui.internal;
+package gov.redhawk.datalist.ui.views;
 
-import BULKIO.PrecisionUTCTime;
 
-public class Sample {
-	private final PrecisionUTCTime time;
-	private final int index;
-	private final Object data;
+/**
+ * @since 1.1
+ */
+public interface IFullListener {
 
-	public Sample(final PrecisionUTCTime time, final int index, final Object data) {
-		this.time = time;
-		this.index = index;
-		this.data = data;
-	}
+	public void fireIsFull(DataCourier courier);
+	
 
-	public PrecisionUTCTime getTime() {
-		return this.time;
-	}
-
-	public int getIndex() {
-		return this.index;
-	}
-
-	public Object getData() {
-		return this.data;
-	}
 }

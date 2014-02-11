@@ -27,6 +27,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+/**
+ * @since 1.1
+ */
 public class DataListHandler extends AbstractHandler {
 	/**
 	 * The constructor.

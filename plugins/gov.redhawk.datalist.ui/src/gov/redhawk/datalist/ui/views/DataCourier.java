@@ -12,8 +12,7 @@ package gov.redhawk.datalist.ui.views;
 
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.datalist.ui.DataListPlugin;
-import gov.redhawk.datalist.ui.internal.IFullListener;
-import gov.redhawk.datalist.ui.internal.Sample;
+import gov.redhawk.datalist.ui.Sample;
 import gov.redhawk.statistics.ui.views.StatisticsView;
 
 import java.util.ArrayList;
@@ -29,6 +28,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * @since 1.1
+ */
 public class DataCourier {
 
 	private int dimensions; 

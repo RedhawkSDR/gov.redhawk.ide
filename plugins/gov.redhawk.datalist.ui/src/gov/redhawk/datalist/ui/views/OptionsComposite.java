@@ -10,8 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.datalist.ui.views;
 
+import gov.redhawk.datalist.ui.DataCollectionSettings;
 import gov.redhawk.datalist.ui.DataListPlugin;
-import gov.redhawk.datalist.ui.internal.DataCollectionSettings;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -31,6 +31,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * @since 1.1
+ */
 public abstract class OptionsComposite {
 
 	private final DataCollectionSettings settings = new DataCollectionSettings(); 

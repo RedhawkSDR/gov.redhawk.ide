@@ -8,9 +8,12 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.datalist.ui.internal;
+package gov.redhawk.datalist.ui;
 
 
+/**
+ * @since 1.1
+ */
 public class DataCollectionSettings {
 	/** number of samples to take*/
     private double samples = 1024;
