@@ -260,7 +260,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		deviceManagerGroup.setLayout(GridLayoutFactory.fillDefaults().create());
 		deviceManagerGroup.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
 		deviceManagerGroup.setVisible(!this.sdrRoot.getNodesContainer().getNodes().isEmpty());
-
+		
 		final CheckboxTreeViewer treeViewer = createTreeViewer(deviceManagerGroup);
 		treeViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
 
@@ -453,6 +453,14 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 				final IStructuredSelection ss = (IStructuredSelection) event.getSelection();
 				final DeviceConfiguration dc = (DeviceConfiguration) ss.getFirstElement();
 				retVal.setChecked(dc, !retVal.getChecked(dc));
+
+				// DataBinding for observeCheckedElements does not pick up on double click events
+				// So manually adding/removing nodes here to compensate
+				if (retVal.getChecked(dc)) {
+					nodes.add(dc);
+				} else {
+					nodes.remove(dc);
+				}
 			}
 		});
 
