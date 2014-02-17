@@ -16,6 +16,7 @@ import gov.redhawk.ide.sdr.ui.util.DebugLevel;
 import gov.redhawk.ide.sdr.ui.util.DeviceManagerLaunchConfiguration;
 import gov.redhawk.ide.sdr.ui.util.DomainManagerLaunchConfiguration;
 import gov.redhawk.model.sca.ScaDomainManager;
+import gov.redhawk.model.sca.ScaDomainManagerRegistry;
 import gov.redhawk.sca.ScaPlugin;
 import gov.redhawk.sca.preferences.ScaPreferenceConstants;
 import gov.redhawk.sca.ui.ScaUiPlugin;
@@ -37,6 +38,7 @@ import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -122,13 +124,19 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			monitor.beginTask("Scanning for running domains...", IProgressMonitor.UNKNOWN);
 			LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.clear();
-			LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.addAll(Arrays.asList(ScaPlugin.findDomainNamesOnDefaultNameServer()));
+			String[] names;
+			try {
+				names = ScaPlugin.findDomainNamesOnDefaultNameServer(monitor);
+			} catch (CoreException e) {
+				throw new InvocationTargetException(e.getStatus().getException());
+			}
+			LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.addAll(Arrays.asList(names));
 
 			// We also need to handle the case where the default name server doesn't  have the domain name in use
 			// but we have a domain definition against an alternate name server...in this case you cannot use
 			// the domain name regardless because we cannot alter or remove the connection setting.
 			final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
-			for (final ScaDomainManager dom : ScaPlugin.getDefault().getDomainManagerRegistry().getDomains()) {
+			for (final ScaDomainManager dom : dmReg.getDomains()) {
 				if (monitor.isCanceled()) {
 					break;
 				}
@@ -155,7 +163,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			final String domainName = LaunchDomainManagerWithOptionsDialog.this.model.getDomainName();
 
 			final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
-			final ScaDomainManager dom = ScaPlugin.getDefault().getDomainManagerRegistry().findDomain(domainName);
+			final ScaDomainManager dom = dmReg.findDomain(domainName);
 			if (dom != null) {
 				if (!namingService.equals(dom.getConnectionProperties().get(ScaDomainManager.NAMING_SERVICE_PROP))) {
 					LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.add(domainName);
@@ -163,8 +171,12 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			}
 
 			// Check again just in case the domain started up since the last scan.
-			if (ScaPlugin.isDomainOnline(domainName)) {
-				LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.add(domainName);
+			try {
+				if (ScaPlugin.isDomainOnline(domainName, monitor)) {
+					LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.add(domainName);
+				}
+			} catch (CoreException e) {
+				throw new InvocationTargetException(e.getStatus().getException());
 			}
 
 			LaunchDomainManagerWithOptionsDialog.this.nameBinding.validateTargetToModel();
@@ -172,11 +184,13 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	};
 
 	private SdrRoot sdrRoot;
+	private final ScaDomainManagerRegistry dmReg;
 
 	public LaunchDomainManagerWithOptionsDialog(final Shell parentShell, final DomainManagerLaunchConfiguration model, SdrRoot root) {
 		super(parentShell, new LaunchDomainManagerDialogLabelProvider(), new LaunchDomainManagerDialogContentProvider());
 		this.model = model;
 		this.sdrRoot = root;
+		this.dmReg = ScaPlugin.getDefault().getDomainManagerRegistry(parentShell.getDisplay());
 		this.setTitle("Launch Domain Manager");
 		setComparator(new ViewerComparator());
 		setStatusLineAboveButtons(true);
@@ -276,7 +290,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 				} catch (final InvocationTargetException e) {
 					SdrUiPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Error scanning for domain names", e));
 				} catch (final InterruptedException e) {
-					// PASS
+					updateButtonsEnableState(Status.OK_STATUS);
 				}
 			}
 		});
@@ -409,6 +423,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		} catch (final InvocationTargetException e) {
 			SdrUiPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Error scanning for domain names", e));
 		} catch (final InterruptedException e) {
+			updateButtonsEnableState(Status.OK_STATUS);
 			return;
 		}
 
@@ -457,7 +472,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			s = s.trim();
 
 			final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
-			final ScaDomainManager dom = ScaPlugin.getDefault().getDomainManagerRegistry().findDomain(s);
+			final ScaDomainManager dom = dmReg.findDomain(s);
 			if ((dom != null) && (!namingService.equals(dom.getConnectionProperties().get(ScaDomainManager.NAMING_SERVICE_PROP)))) {
 				return ValidationStatus.error("This name is registered against a non-default name server and cannot be a launched");
 			}

@@ -21,6 +21,7 @@ import gov.redhawk.ide.sdr.ui.util.LaunchDeviceManagersHelper;
 import gov.redhawk.model.sca.DomainConnectionState;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDomainManager;
+import gov.redhawk.model.sca.ScaDomainManagerRegistry;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.ScaPlugin;
 import gov.redhawk.sca.preferences.ScaPreferenceConstants;
@@ -43,13 +44,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -60,9 +62,15 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 	private List<DeviceManagerLaunchConfiguration> deviceManagers = new ArrayList<DeviceManagerLaunchConfiguration>();
 	private DomainManagerLaunchConfiguration model = new DomainManagerLaunchConfiguration();
 
+	private Shell displayContext;
+
+	private ScaDomainManagerRegistry dmReg;
+
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
+		displayContext = HandlerUtil.getActiveShell(event);
+		dmReg = ScaPlugin.getDefault().getDomainManagerRegistry(displayContext);
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection ss = (IStructuredSelection) selection;
 			for (final Object obj : ss.toArray()) {
@@ -92,7 +100,6 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 	}
 
 	private void prepareDomainManager(final DomainManagerConfiguration incomingDomain, final ExecutionEvent event) {
-		final Display current = Display.getCurrent();
 		final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
 
 		final Map<String, String> connectionProperties = Collections.singletonMap(ScaDomainManager.NAMING_SERVICE_PROP, namingService);
@@ -100,18 +107,25 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 		final Job launchJob = new Job("Launch Domain: " + model.getDomainName()) {
 
 			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				if (ScaPlugin.isDomainOnline(model.getDomainName())) {
-					return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Refusing to launch domain that already exists on name server");
+			protected IStatus run(final IProgressMonitor parentMonitor) {
+				SubMonitor subMonitor = SubMonitor.convert(parentMonitor, "Launching Domain " + model.getDomainName(), 2);
+				try {
+					if (ScaPlugin.isDomainOnline(model.getDomainName(), subMonitor.newChild(1))) {
+						return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Refusing to launch domain that already exists on name server");
+					}
+				} catch (CoreException e) {
+					return e.getStatus();
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
 				}
 
-				final ScaDomainManager connection = ScaPlugin.getDefault().getDomainManagerRegistry(current).findDomain(model.getDomainName());
+				final ScaDomainManager connection = dmReg.findDomain(model.getDomainName());
 
 				if (connection == null) {
-					ScaModelCommand.execute(ScaPlugin.getDefault().getDomainManagerRegistry(current), new ScaModelCommand() {
+					ScaModelCommand.execute(dmReg, new ScaModelCommand() {
 						@Override
 						public void execute() {
-							ScaPlugin.getDefault().getDomainManagerRegistry(current).createDomain(model.getDomainName(), false, connectionProperties);
+							dmReg.createDomain(model.getDomainName(), false, connectionProperties);
 						}
 					});
 				} else {
@@ -120,9 +134,10 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 					}
 				}
 
-				final ScaDomainManager config = ScaPlugin.getDefault().getDomainManagerRegistry(current).findDomain(model.getDomainName());
+				final ScaDomainManager config = dmReg.findDomain(model.getDomainName());
+
 				final String domainName = config.getName();
-				monitor.beginTask("Launching domain " + domainName, 2);
+				subMonitor.newChild(1).beginTask("Launching domain " + domainName, 2);
 				try {
 					final UIJob launcherJob = new UIJob("Domain Launcher") {
 
@@ -165,7 +180,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 					launcherJob.schedule();
 					return Status.OK_STATUS;
 				} finally {
-					monitor.done();
+					subMonitor.done();
 				}
 			}
 		};
