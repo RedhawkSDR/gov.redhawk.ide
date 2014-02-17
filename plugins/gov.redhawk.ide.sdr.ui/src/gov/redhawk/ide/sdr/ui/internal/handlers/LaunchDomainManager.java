@@ -17,10 +17,12 @@ import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
 import gov.redhawk.ide.sdr.ui.util.LaunchDeviceManagersHelper;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDomainManager;
+import gov.redhawk.model.sca.ScaDomainManagerRegistry;
 import gov.redhawk.sca.ScaPlugin;
 import gov.redhawk.sca.preferences.ScaPreferenceConstants;
 import gov.redhawk.sca.ui.ScaUiPlugin;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -44,8 +46,12 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.progress.UIJob;
@@ -57,9 +63,18 @@ public class LaunchDomainManager extends AbstractHandler implements IHandler {
 
 	private int debugLevel;
 
+	private Display display;
+
+	private ScaDomainManagerRegistry dmReg;
+
+	private Shell activeShell;
+
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
+		activeShell = HandlerUtil.getActiveShell(event);
+		display = activeShell.getDisplay();
+		dmReg = ScaPlugin.getDefault().getDomainManagerRegistry(display);
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection ss = (IStructuredSelection) selection;
 			for (final Object obj : ss.toArray()) {
@@ -69,38 +84,33 @@ public class LaunchDomainManager extends AbstractHandler implements IHandler {
 					final DomainManagerConfiguration domain = sdrRoot.getDomainConfiguration();
 					if (domain == null) {
 						StatusManager.getManager().handle(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "No Domain Configuration available."),
-						        StatusManager.SHOW);
+							StatusManager.SHOW);
 						continue;
 					}
 
-					prepareDomainManager(domain, event);
+					try {
+						prepareDomainManager(domain, event);
+					} catch (InvocationTargetException e) {
+						StatusManager.getManager().handle(new Status(Status.ERROR, SdrUiPlugin.PLUGIN_ID,  "Failed to launch domain.", e.getCause()), StatusManager.SHOW | StatusManager.LOG);
+					} catch (InterruptedException e) {
+						// PASS
+					}
 				}
 			}
 		}
 		return null;
 	}
 
-	public void executeWithDomainManagerConfiguration(final DomainManagerConfiguration domain, final ExecutionEvent event, final boolean nameChanged,
-	        final int debugLevel) {
-		if (nameChanged) {
-			this.newDomainName = domain.getName();
-		}
-
-		this.debugLevel = debugLevel;
-
-		prepareDomainManager(domain, event);
-	}
-
-	private void prepareDomainManager(final DomainManagerConfiguration incomingDomain, final ExecutionEvent event) {
+	private void prepareDomainManager(final DomainManagerConfiguration incomingDomain, final ExecutionEvent event) throws InvocationTargetException, InterruptedException {
 		final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
 
-		final boolean domainOnline = LaunchDomainManager.isDomainOnline(incomingDomain.getName(), namingService);
+		final boolean domainOnline = isDomainOnline(incomingDomain.getName(), namingService);
 		if (domainOnline) {
 			final MessageDialog dialog = new MessageDialog(HandlerUtil.getActiveShell(event), "Launch Domain", null,
-			        "An object is already registered with the naming service of the name: \"" + incomingDomain.getName() + "\", would you like to continue?",
-			        0, new String[] { "Yes", "No", "Rename Domain" }, 1);
+				"An object is already registered with the naming service of the name: \"" + incomingDomain.getName() + "\", would you like to continue?", 0,
+				new String[] { "Yes", "No", "Rename Domain" }, 1);
 			final InputDialog renameDialog = new InputDialog(HandlerUtil.getActiveShell(event), "Rename Conflicting Domain", "The " + incomingDomain.getName()
-			        + " already exists, please rename it to continue:", incomingDomain.getName(), new IInputValidator() {
+				+ " already exists, please rename it to continue:", incomingDomain.getName(), new IInputValidator() {
 
 				@Override
 				public String isValid(final String newText) {
@@ -133,10 +143,10 @@ public class LaunchDomainManager extends AbstractHandler implements IHandler {
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
-				ScaDomainManager connection = ScaPlugin.getDefault().getDomainManagerRegistry().findDomain(incomingDomain.getName());
+				ScaDomainManager connection = dmReg.findDomain(incomingDomain.getName());
 
 				if (connection == null) {
-					connection = ScaPlugin.getDefault().getDomainManagerRegistry().createDomain(incomingDomain.getName(), false, connectionProperties);
+					connection = dmReg.createDomain(incomingDomain.getName(), false, connectionProperties);
 				}
 				final ScaDomainManager config = connection;
 				final String domainName = config.getName();
@@ -297,15 +307,20 @@ public class LaunchDomainManager extends AbstractHandler implements IHandler {
 		return SdrUiPlugin.getDefault().getPreferenceStore().getString(SdrUiPreferenceConstants.PREF_DEFAULT_DOMAIN_MANAGER_NAME) + " " + domain.getName();
 	}
 
-	/**
-	 * @deprecated use ScaPlugin.isDomainOnline()
-	 * 
-	 * @param domainName
-	 * @param namingService
-	 * @return
-	 */
-	@Deprecated
-	private static boolean isDomainOnline(final String domainName, final String namingService) {
-		return ScaPlugin.isDomainOnline(domainName, namingService);
+	private boolean isDomainOnline(final String domainName, final String namingService) throws InvocationTargetException, InterruptedException {
+		final boolean[] result = new boolean[] { false };
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(activeShell);
+		dialog.run(true, true, new IRunnableWithProgress() {
+
+			@Override
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				try {
+					result[0] = ScaPlugin.isDomainOnline(domainName, namingService, monitor);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e.getStatus().getException());
+				}
+			}
+		});
+		return result[0];
 	}
 }

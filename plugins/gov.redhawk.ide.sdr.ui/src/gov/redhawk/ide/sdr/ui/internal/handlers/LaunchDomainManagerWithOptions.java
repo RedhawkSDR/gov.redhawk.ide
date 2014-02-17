@@ -18,6 +18,7 @@ import gov.redhawk.ide.sdr.ui.util.LaunchDeviceManagersHelper;
 import gov.redhawk.model.sca.DomainConnectionState;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDomainManager;
+import gov.redhawk.model.sca.ScaDomainManagerRegistry;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.ScaPlugin;
 import gov.redhawk.sca.preferences.ScaPreferenceConstants;
@@ -46,6 +47,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.progress.UIJob;
@@ -61,10 +63,16 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 
 	private HashMap<DeviceConfiguration, Integer> devicesMap = new HashMap<DeviceConfiguration, Integer>();
 
+	private Shell displayContext;
+
+	private ScaDomainManagerRegistry dmReg;
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
+		displayContext = HandlerUtil.getActiveShell(event);
+		dmReg = ScaPlugin.getDefault().getDomainManagerRegistry(displayContext);
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection ss = (IStructuredSelection) selection;
 			for (final Object obj : ss.toArray()) {
@@ -75,12 +83,12 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 					final DomainManagerConfiguration domain = sdrRoot.getDomainConfiguration();
 					if (domain == null) {
 						StatusManager.getManager().handle(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "No Domain Configuration available."),
-						        StatusManager.SHOW);
+							StatusManager.SHOW);
 						continue;
 					}
 					final DcdItemProviderAdapterFactory factory = new DcdItemProviderAdapterFactory();
 					final LaunchDomainManagerWithOptionsDialog dialog = new LaunchDomainManagerWithOptionsDialog(HandlerUtil.getActiveShell(event), domain,
-					        factory);
+						factory);
 					dialog.setInput(sdrRoot);
 					if (dialog.open() == IStatus.OK) {
 						final Object[] dialogResult = dialog.getResult();
@@ -119,19 +127,23 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
-				if (ScaPlugin.isDomainOnline(LaunchDomainManagerWithOptions.this.newDomainName)) {
-					return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Refusing to launch domain that already exists on name server");
+				try {
+					if (ScaPlugin.isDomainOnline(LaunchDomainManagerWithOptions.this.newDomainName, monitor)) {
+						return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Refusing to launch domain that already exists on name server");
+					}
+				} catch (CoreException e) {
+					return e.getStatus();
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
 				}
 
-				final ScaDomainManager connection = ScaPlugin.getDefault().getDomainManagerRegistry()
-				        .findDomain(LaunchDomainManagerWithOptions.this.newDomainName);
+				final ScaDomainManager connection = dmReg.findDomain(LaunchDomainManagerWithOptions.this.newDomainName);
 
 				if (connection == null) {
-					ScaModelCommand.execute(ScaPlugin.getDefault().getDomainManagerRegistry(), new ScaModelCommand() {
+					ScaModelCommand.execute(dmReg, new ScaModelCommand() {
 						@Override
 						public void execute() {
-							ScaPlugin.getDefault().getDomainManagerRegistry()
-							        .createDomain(LaunchDomainManagerWithOptions.this.newDomainName, false, connectionProperties);
+							dmReg.createDomain(LaunchDomainManagerWithOptions.this.newDomainName, false, connectionProperties);
 						}
 					});
 				} else {
@@ -140,7 +152,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 					}
 				}
 
-				final ScaDomainManager config = ScaPlugin.getDefault().getDomainManagerRegistry().findDomain(LaunchDomainManagerWithOptions.this.newDomainName);
+				final ScaDomainManager config = dmReg.findDomain(LaunchDomainManagerWithOptions.this.newDomainName);
 				final String domainName = config.getName();
 				monitor.beginTask("Launching domain " + domainName, 2);
 				try {
@@ -161,7 +173,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 												@Override
 												public IStatus runInUIThread(final IProgressMonitor monitor) {
 													return LaunchDeviceManagersHelper.launchDeviceManagersWithDebug(monitor, domainName,
-													        LaunchDomainManagerWithOptions.this.devicesMap);
+														LaunchDomainManagerWithOptions.this.devicesMap);
 												}
 
 											};
