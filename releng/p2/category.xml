@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/gov.redhawk.ide.all.sdk_1.10.0.qualifier.jar" id="gov.redhawk.ide.all.sdk" version="1.10.0.qualifier">
+   <feature url="features/gov.redhawk.ide.all.sdk_1.11.0.qualifier.jar" id="gov.redhawk.ide.all.sdk" version="1.11.0.qualifier">
       <category name="gov.redhawk.ide"/>
    </feature>
-   <feature url="features/gov.redhawk.ide.feature_1.10.0.qualifier.jar" id="gov.redhawk.ide.feature" version="1.10.0.qualifier">
+   <feature url="features/gov.redhawk.ide.feature_1.11.0.qualifier.jar" id="gov.redhawk.ide.feature" version="1.11.0.qualifier">
       <category name="gov.redhawk.ide"/>
    </feature>
-   <feature url="features/gov.redhawk.ide.sdk_1.10.0.qualifier.jar" id="gov.redhawk.ide.sdk" version="1.10.0.qualifier">
+   <feature url="features/gov.redhawk.ide.sdk_1.11.0.qualifier.jar" id="gov.redhawk.ide.sdk" version="1.11.0.qualifier">
       <category name="gov.redhawk.ide"/>
    </feature>
-   <feature url="features/gov.redhawk.ide.ui.feature_1.10.0.qualifier.jar" id="gov.redhawk.ide.ui.feature" version="1.10.0.qualifier">
+   <feature url="features/gov.redhawk.ide.ui.feature_1.11.0.qualifier.jar" id="gov.redhawk.ide.ui.feature" version="1.11.0.qualifier">
       <category name="gov.redhawk.ide"/>
    </feature>
-   <feature url="features/gov.redhawk.ide.ui.sdk_1.10.0.qualifier.jar" id="gov.redhawk.ide.ui.sdk" version="1.10.0.qualifier">
+   <feature url="features/gov.redhawk.ide.ui.sdk_1.11.0.qualifier.jar" id="gov.redhawk.ide.ui.sdk" version="1.11.0.qualifier">
       <category name="gov.redhawk.ide"/>
    </feature>
-   <feature url="features/gov.redhawk.ide.tools_1.10.0.qualifier.jar" id="gov.redhawk.ide.tools" version="1.10.0.qualifier">
+   <feature url="features/gov.redhawk.ide.tools_1.11.0.qualifier.jar" id="gov.redhawk.ide.tools" version="1.11.0.qualifier">
       <category name="gov.redhawk.ide"/>
    </feature>
    <category-def name="gov.redhawk.ide" label="REDHAWK IDE"/>
