@@ -457,6 +457,27 @@
               type="org.eclipse.ui.views.properties.IPropertySource">
         </adapter>
      </factory>
+     <factory
+           adaptableType="gov.redhawk.ide.sdr.internal.ui.ComponentCategory"
+           class="gov.redhawk.ide.sdr.internal.ui.CategoryAdapterFactory">
+        <adapter
+              type="org.eclipse.ui.model.IWorkbenchAdapter">
+        </adapter>
+     </factory>
+     <factory
+           adaptableType="gov.redhawk.ide.sdr.internal.ui.SpdCategory"
+           class="gov.redhawk.ide.sdr.internal.ui.CategoryAdapterFactory">
+        <adapter
+              type="org.eclipse.ui.model.IWorkbenchAdapter">
+        </adapter>
+     </factory>
+     <factory
+           adaptableType="gov.redhawk.ide.sdr.internal.ui.SdrPropertiesProvider"
+           class="gov.redhawk.ide.sdr.internal.ui.CategoryAdapterFactory">
+        <adapter
+              type="org.eclipse.ui.model.IWorkbenchAdapter">
+        </adapter>
+     </factory>
   </extension>
     <extension
         point="org.eclipse.ui.exportWizards">
