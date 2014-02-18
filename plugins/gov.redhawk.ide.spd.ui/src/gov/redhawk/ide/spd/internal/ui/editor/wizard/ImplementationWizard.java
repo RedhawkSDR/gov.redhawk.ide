@@ -22,7 +22,11 @@ import gov.redhawk.model.sca.util.ModelUtil;
 
 import java.lang.reflect.InvocationTargetException;
 
+import mil.jpeojtrs.sca.spd.Compiler;
+import mil.jpeojtrs.sca.spd.HumanLanguage;
 import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.ProgrammingLanguage;
+import mil.jpeojtrs.sca.spd.Runtime;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdFactory;
 
@@ -54,6 +58,22 @@ public class ImplementationWizard extends Wizard implements ScaImplementationWiz
 	public ImplementationWizard(final EditingDomain editingDomain, final String name, final SoftPkg softPkg) {
 		this.setWindowTitle("New Implementation");
 		Implementation impl = SpdFactory.eINSTANCE.createImplementation();
+		ProgrammingLanguage progLang = SpdFactory.eINSTANCE.createProgrammingLanguage();
+		HumanLanguage humanLang = SpdFactory.eINSTANCE.createHumanLanguage();
+		Compiler compiler = SpdFactory.eINSTANCE.createCompiler();
+		Runtime runtime = SpdFactory.eINSTANCE.createRuntime();
+		
+		impl.setDescription("The implementation contains descriptive information about the template for a software component.");
+		impl.setId("");
+		progLang.setName("");
+		impl.setProgrammingLanguage(progLang);
+		
+		humanLang.setName(RedhawkCodegenActivator.ENGLISH);
+		impl.setHumanLanguage(humanLang);
+		
+		impl.setCompiler(compiler);
+		impl.setRuntime(runtime);
+		
 		this.implPage = new ImplementationWizardPage(name, softPkg);
 		this.implPage.setImpl(impl);
 		this.setNeedsProgressMonitor(true);
