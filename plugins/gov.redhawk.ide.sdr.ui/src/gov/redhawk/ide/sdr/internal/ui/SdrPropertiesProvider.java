@@ -18,6 +18,8 @@ import gov.redhawk.sca.properties.IPropertiesProvider;
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.scd.ComponentType;
+
 /**
  * @since 5.0
  */
@@ -35,8 +37,9 @@ public class SdrPropertiesProvider implements IPropertiesProvider {
 		final List<Category> myList = new ArrayList<Category>();
 		final SdrRoot targetSdr = SdrUiPlugin.getDefault().getTargetSdrRoot();
 		targetSdr.load(null);
-		myList.add(new ComponentCategory(targetSdr.getComponentsContainer().getComponents(), "Components"));
-		myList.add(new ComponentCategory(targetSdr.getDevicesContainer().getComponents(), "Devices"));
+		myList.add(new ComponentCategory(targetSdr.getComponentsContainer().getComponents(), "Components", ComponentType.RESOURCE));
+		myList.add(new ComponentCategory(targetSdr.getDevicesContainer().getComponents(), "Devices", ComponentType.DEVICE));
+		myList.add(new ComponentCategory(targetSdr.getServicesContainer().getComponents(), "Services", ComponentType.SERVICE));
 		return myList;
 	}
 

@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import mil.jpeojtrs.sca.prf.Properties;
+import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.emf.ecore.EObject;
@@ -28,13 +29,19 @@ public class ComponentCategory implements Category {
 
 	private final List<SoftPkg> components;
 	private final String name;
+	private ComponentType type;
 
 	/**
 	 * @since 6.0
 	 */
-	public ComponentCategory(final List<SoftPkg> components, final String name) {
+	public ComponentCategory(final List<SoftPkg> components, final String name, ComponentType type) {
 		this.components = components;
 		this.name = name;
+		this.type = type;
+	}
+
+	public ComponentType getType() {
+		return type;
 	}
 
 	/**
