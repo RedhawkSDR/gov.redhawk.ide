@@ -15,14 +15,14 @@
     </eOperations>
     <eOperations name="setSdrRoot">
       <eParameters name="sdrRoot" eType="ecore:EDataType ../../gov.redhawk.eclipsecorba.library/model/library.ecore#//URI"/>
-      <eParameters name="domPath" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
-      <eParameters name="devPath" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+      <eParameters name="domPath" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="devPath" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eOperations>
-    <eOperations name="getDevResource" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EResource">
-      <eParameters name="path" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eOperations name="getDevResource" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EResource">
+      <eParameters name="path" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eOperations>
-    <eOperations name="getDomResource" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EResource">
-      <eParameters name="path" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eOperations name="getDomResource" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EResource">
+      <eParameters name="path" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="loadStatus" eType="ecore:EDataType ../../gov.redhawk.eclipsecorba.library/model/library.ecore#//IStatus"
         transient="true" derived="true">
