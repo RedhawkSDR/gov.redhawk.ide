@@ -19,10 +19,9 @@ import org.eclipse.core.runtime.CoreException;
  * @since 9.1
  */
 public abstract class RedhawkImportUtil {
-	//CHECKSTYLE:OFF
-	public static String sadExtension = ".+\\.sad.xml";
-	public static String spdExtension = ".+\\.spd.xml";
-	public static String dcdExtension = ".+\\.dcd.xml";
+	private static String sadExtension = ".+\\.sad.xml";
+	private static String spdExtension = ".+\\.spd.xml";
+	private static String dcdExtension = ".+\\.dcd.xml";
 
 	protected abstract int findMissingFiles();
 
@@ -31,4 +30,16 @@ public abstract class RedhawkImportUtil {
 	protected abstract void createWaveDevFile() throws CoreException;
 
 	public abstract SoftPkg getSoftPkg(String path);
+
+	public static String getSadExtension() {
+		return sadExtension;
+	}
+
+	public static String getSpdExtension() {
+		return spdExtension;
+	}
+
+	public static String getDcdExtension() {
+		return dcdExtension;
+	}
 }

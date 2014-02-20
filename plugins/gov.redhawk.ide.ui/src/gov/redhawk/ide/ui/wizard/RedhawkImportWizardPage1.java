@@ -235,14 +235,14 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 					} else if (projectArchiveFile instanceof ZipEntry) {
 						path = new Path(((ZipEntry) projectArchiveFile).getName());
 					}
-					if (stream == null || nonEclipseProject(path.toFile().getName())) {
+					if (stream == null || isNonEclipseProject(path.toFile().getName())) {
 						// If stream is null or .project file is missing use the directory name as the project name 
 						if (projectArchiveFile instanceof ZipEntry) {
 							projectName = path.segment(path.segmentCount() - 2);
 						} else if (projectArchiveFile instanceof TarEntry) {
 							projectName = path.segment(path.segmentCount() - 2);
 						}
-						if (nonEclipseProject(path.toFile().getName())) {
+						if (isNonEclipseProject(path.toFile().getName())) {
 							missingArchiveFiles = true;
 						}
 					} else {
@@ -260,7 +260,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 					if (isDefaultLocation(path)) {
 						projectName = path.segment(path.segmentCount() - 2);
 						description = IDEWorkbenchPlugin.getPluginWorkspace().newProjectDescription(projectName);
-					} else if (nonEclipseProject(path.toFile().getName())) {
+					} else if (isNonEclipseProject(path.toFile().getName())) {
 						// If there is no .project file, use the file name as the project name
 						projectName = RedhawkImportFileUtil.getName(path);
 						missingFiles = true;
@@ -405,7 +405,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 		this("redhawkImportWizard", null, null); //$NON-NLS-1$
 	}
 
-	public boolean nonEclipseProject(String path) {
+	public boolean isNonEclipseProject(String path) {
 		if (path.matches(sadExtension) || path.matches(dcdExtension) || path.matches(spdExtension)) {
 			return true;
 		} else {
@@ -1623,13 +1623,12 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 			} else {
 				directoryRadioSelected();
 			}
-		}
-
+		} else if (initialPath != null) {
 		// Third, if we do have an initial path, set the proper
 		// path and radio buttons to the initial value. Move
 		// cursor to the end of the path so user can see the
 		// most relevant part (directory / archive name)
-		else if (initialPath != null) {
+		
 			boolean dir = new File(initialPath).isDirectory();
 
 			projectFromDirectoryRadio.setSelection(dir);
