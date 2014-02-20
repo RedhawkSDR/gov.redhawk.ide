@@ -125,13 +125,13 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 		}
 
 		try {
-			if (type.matches(sadExtension) && dotProjectMissing) {
+			if (type.matches(getSadExtension()) && dotProjectMissing) {
 				createDotProjectFile("SAD");
 			}
-			if (type.matches(dcdExtension) && dotProjectMissing) {
+			if (type.matches(getDcdExtension()) && dotProjectMissing) {
 				createDotProjectFile("DCD");
 			}
-			if (type.matches(spdExtension)) {
+			if (type.matches(getSpdExtension())) {
 				if (dotProjectMissing) {
 					createDotProjectFile("SPD");
 				}

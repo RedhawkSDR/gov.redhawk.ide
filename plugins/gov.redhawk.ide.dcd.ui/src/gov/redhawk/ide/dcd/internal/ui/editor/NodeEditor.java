@@ -682,7 +682,7 @@ public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPag
 	@Override
 	public void doSave(final IProgressMonitor monitor) {
 		final CleanUpComponentFilesAction cleanAction = new CleanUpComponentFilesAction();
-		cleanAction.setDeviceConfiguration(getDeviceConfiguration());
+		cleanAction.setRoot(getDeviceConfiguration());
 		cleanAction.run();
 
 		super.doSave(monitor);

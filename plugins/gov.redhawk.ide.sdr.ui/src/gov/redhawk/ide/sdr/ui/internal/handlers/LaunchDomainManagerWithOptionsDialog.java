@@ -128,7 +128,8 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			try {
 				names = ScaPlugin.findDomainNamesOnDefaultNameServer(monitor);
 			} catch (CoreException e) {
-				throw new InvocationTargetException(e.getStatus().getException());
+				// Ignore errors
+				names = new String[0];
 			}
 			LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.addAll(Arrays.asList(names));
 
@@ -176,7 +177,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 					LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.add(domainName);
 				}
 			} catch (CoreException e) {
-				throw new InvocationTargetException(e.getStatus().getException());
+				// PASS ignore errors here
 			}
 
 			LaunchDomainManagerWithOptionsDialog.this.nameBinding.validateTargetToModel();

@@ -23,7 +23,6 @@ import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -115,7 +114,6 @@ public class DeviceProjectCreator extends ProjectCreator {
 		final String spdContent = new SpdFileTemplate().generate(args);
 		final String prfContent = new PrfFileTemplate().generate(args);
 		final String scdContent = new ScdFileTemplate().generate(args);
-		final String testContent = new TestFileTemplate().generate(args);
 		progress.worked(1);
 
 		// Check that files/folders don't exist already
@@ -134,12 +132,6 @@ public class DeviceProjectCreator extends ProjectCreator {
 			throw new CoreException(new Status(IStatus.ERROR, IdeDcdPlugin.PLUGIN_ID, "File " + scdFile.getName() + " already exists.", null));
 		}
 
-		final IFolder testFolder = project.getFolder("tests");
-		final IFile testFile = testFolder.getFile("test_" + spdName + ".py");
-		if (testFolder.exists()) {
-			throw new CoreException(new Status(IStatus.ERROR, IdeDcdPlugin.PLUGIN_ID, "Folder " + testFolder.getName() + " already exists.", null));
-		}
-
 		// Write files to disk
 		try {
 			spdFile.create(new ByteArrayInputStream(spdContent.getBytes("UTF-8")), true, progress.newChild(1));
@@ -155,13 +147,6 @@ public class DeviceProjectCreator extends ProjectCreator {
 
 		try {
 			scdFile.create(new ByteArrayInputStream(scdContent.getBytes("UTF-8")), true, progress.newChild(1));
-		} catch (final UnsupportedEncodingException e) {
-			throw new CoreException(new Status(IStatus.ERROR, IdeDcdPlugin.PLUGIN_ID, "Internal Error", e));
-		}
-
-		testFolder.create(true, true, progress.newChild(1));
-		try {
-			testFile.create(new ByteArrayInputStream(testContent.getBytes("UTF-8")), true, progress.newChild(1));
 		} catch (final UnsupportedEncodingException e) {
 			throw new CoreException(new Status(IStatus.ERROR, IdeDcdPlugin.PLUGIN_ID, "Internal Error", e));
 		}

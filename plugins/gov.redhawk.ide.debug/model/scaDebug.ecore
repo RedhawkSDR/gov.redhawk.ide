@@ -52,7 +52,7 @@
     <eOperations name="getURI" eType="ecore:EDataType ../../mil.jpeojtrs.sca.spd/model/spd.ecore#//URI">
       <eParameters name="name" eType="#//NameComponentArray"/>
     </eOperations>
-    <eOperations name="getFullName" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eOperations name="getFullName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eOperations name="getResourceContext" eType="#//NotifyingNamingContext">
       <eParameters name="uri" eType="ecore:EDataType ../../mil.jpeojtrs.sca.spd/model/spd.ecore#//URI"/>
     </eOperations>
@@ -78,7 +78,7 @@
         eOpposite="#//NotifyingNamingContext/subContexts"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="poa" lowerBound="1" eType="ecore:EDataType ../../gov.redhawk.sca.model/model/sca.ecore#//POA"
         transient="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         changeable="false" volatile="true" transient="true" derived="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="NameToObjectEntry" instanceClassName="java.util.Map.Entry">
@@ -95,13 +95,13 @@
   <eClassifiers xsi:type="ecore:EClass" name="LocalLaunch" abstract="true" interface="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="launch" eType="#//ILaunch"
         transient="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="mode" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="mode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         transient="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LocalAbstractComponent" abstract="true"
       interface="true" eSuperTypes="#//LocalLaunch">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="implementationID" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="execParam" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="implementationID" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="execParam" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         defaultValueLiteral=""/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LocalScaWaveform" eSuperTypes="../../gov.redhawk.sca.model/model/sca.ecore#//ScaWaveform #//LocalLaunch">
@@ -109,8 +109,8 @@
       <eParameters name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eParameters name="execParams" eType="ecore:EDataType ../../gov.redhawk.sca.model/model/sca.ecore#//DataTypeArray"/>
       <eParameters name="spdURI" eType="ecore:EDataType ../../mil.jpeojtrs.sca.spd/model/spd.ecore#//URI"/>
-      <eParameters name="implID" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
-      <eParameters name="mode" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+      <eParameters name="implID" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="mode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="namingContext" lowerBound="1"
         eType="#//NotifyingNamingContext" transient="true"/>
