@@ -13,8 +13,6 @@ package gov.redhawk.ide.dcd.generator.newdevice.tests;
 
 import gov.redhawk.ide.dcd.generator.newdevice.DeviceProjectCreator;
 import gov.redhawk.ide.preferences.RedhawkIdePreferenceConstants;
-
-import org.junit.Assert;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.scd.Interface;
 import mil.jpeojtrs.sca.scd.ScdPackage;
@@ -25,11 +23,16 @@ import mil.jpeojtrs.sca.spd.SpdPackage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -37,27 +40,44 @@ import org.junit.Test;
  */
 public class DeviceProjectCreatorTest {
 
+	private static final String AGG_DEV_TEST = "aggDevTest";
+	private static final String PROJECT_NAME = "deviceProjectTest";
+
 	/**
 	 * Tests creating a project
-	 * 
-	 * @throws IOException
 	 */
 	@Test
 	public void testCreateEmptyProject() throws CoreException {
-		final IProject project = DeviceProjectCreator.createEmptyProject("deviceProjectTest", null, new NullProgressMonitor());
+		final IProject project = DeviceProjectCreator.createEmptyProject(DeviceProjectCreatorTest.PROJECT_NAME, null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
 		Assert.assertTrue("deviceProjectTest".equals(project.getName()));
 		project.delete(true, new NullProgressMonitor());
 	}
 
+	@Before
+	public void cleanUp() throws CoreException {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(DeviceProjectCreatorTest.PROJECT_NAME);
+		if (project.exists()) {
+			project.delete(true, true, null);
+		}
+		project = root.getProject(DeviceProjectCreatorTest.AGG_DEV_TEST);
+		if (project.exists()) {
+			project.delete(true, true, null);
+		}
+	}
+
+	@After
+	public void cleanUpAfter() throws CoreException {
+		cleanUp();
+	}
+
 	/**
 	 * Tests creating the device files
-	 * 
-	 * @throws IOException
 	 */
 	@Test
 	public void testCreateDeviceFiles() throws CoreException {
-		final IProject project = DeviceProjectCreator.createEmptyProject("deviceProjectTest", null, new NullProgressMonitor());
+		final IProject project = DeviceProjectCreator.createEmptyProject(DeviceProjectCreatorTest.PROJECT_NAME, null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
 		Assert.assertTrue(project.exists());
 		Assert.assertTrue("deviceProjectTest".equals(project.getName()));
@@ -90,15 +110,14 @@ public class DeviceProjectCreatorTest {
 
 	/**
 	 * Tests that if an aggregate device is requested that it gets created
-	 * @throws CoreException 
 	 */
 	@Test
 	public void testCreateAggregateDevice() throws CoreException {
-		final IProject project = DeviceProjectCreator.createEmptyProject("aggDevTest", null, new NullProgressMonitor());
+		final IProject project = DeviceProjectCreator.createEmptyProject(DeviceProjectCreatorTest.AGG_DEV_TEST, null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
 		Assert.assertTrue(project.exists());
-		Assert.assertTrue("aggDevTest".equals(project.getName()));
-		DeviceProjectCreator.createDeviceFiles(project, "aggDevTest", "gov.redhawk.deviceProjectTest", "Author",
+		Assert.assertTrue(DeviceProjectCreatorTest.AGG_DEV_TEST.equals(project.getName()));
+		DeviceProjectCreator.createDeviceFiles(project, DeviceProjectCreatorTest.AGG_DEV_TEST, "gov.redhawk.deviceProjectTest", "Author",
 			RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE, true, new NullProgressMonitor());
 
 		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
