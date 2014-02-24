@@ -80,8 +80,8 @@ public class DeviceProjectCreatorTest {
 		final IProject project = DeviceProjectCreator.createEmptyProject(DeviceProjectCreatorTest.PROJECT_NAME, null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
 		Assert.assertTrue(project.exists());
-		Assert.assertTrue("deviceProjectTest".equals(project.getName()));
-		DeviceProjectCreator.createDeviceFiles(project, "deviceProjectTest", "gov.redhawk.deviceProjectTest", "Author",
+		Assert.assertTrue(DeviceProjectCreatorTest.PROJECT_NAME.equals(project.getName()));
+		DeviceProjectCreator.createDeviceFiles(project, DeviceProjectCreatorTest.PROJECT_NAME, "gov.redhawk.deviceProjectTest", "Author",
 			RedhawkIdePreferenceConstants.EXECUTABLE_DEVICE, false, new NullProgressMonitor());
 
 		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
@@ -94,11 +94,9 @@ public class DeviceProjectCreatorTest {
 		Assert.assertTrue(scdFile.exists());
 
 		final IFolder testFolder = project.getFolder("tests");
-		// Assert.assertTrue(testFolder.exists());
 		final IFile testFile = testFolder.getFile("test_" + project.getName() + ".py");
 		// Assert.assertTrue(testFile.exists());
-		String msg = "Test folders are now created by the Jinja code generators, folder must not exist.";
-		Assert.assertTrue(msg, testFolder.exists());
+		String msg = "Test files are now created by the Jinja code generators, files must not exist.";
 		Assert.assertFalse(msg, testFile.exists());
 
 		final ResourceSet resourceSet = new ResourceSetImpl();

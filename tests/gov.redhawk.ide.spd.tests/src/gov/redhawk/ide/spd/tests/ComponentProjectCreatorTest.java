@@ -98,11 +98,9 @@ public class ComponentProjectCreatorTest {
 		Assert.assertTrue(scdFile.exists());
 
 		final IFolder testFolder = project.getFolder("tests");
-		// Assert.assertTrue(testFolder.exists());
 		final IFile testFile = testFolder.getFile("test_" + project.getName() + ".py");
 		// Assert.assertTrue(testFile.exists());
-		String msg = "Test folders are now created by the Jinja code generators, folder must not exist.";
-		Assert.assertTrue(msg, testFolder.exists());
+		String msg = "Test files are now created by the Jinja code generators, files must not exist.";
 		Assert.assertFalse(msg, testFile.exists());
 
 		final ResourceSet resourceSet = new ResourceSetImpl();
