@@ -12,8 +12,6 @@
 package gov.redhawk.ide.spd.tests;
 
 import gov.redhawk.ide.spd.generator.newcomponent.ComponentProjectCreator;
-
-import org.junit.Assert;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -23,12 +21,16 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -36,42 +38,55 @@ import org.junit.Test;
  */
 public class ComponentProjectCreatorTest {
 
+	private static final String COMPONENT_PROJECT_TEST = "componentProjectTest";
+
 	/**
 	 * Tests creating a project
-	 * 
-	 * @throws IOException
 	 */
 	@Test
 	public void testCreateEmptyProject() throws CoreException {
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("componentProjectTest");
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(ComponentProjectCreatorTest.COMPONENT_PROJECT_TEST);
 		if (project.exists()) {
 			project.delete(true, new NullProgressMonitor());
 		}
-		project = ComponentProjectCreator.createEmptyProject("componentProjectTest", null, new NullProgressMonitor());
+		project = ComponentProjectCreator.createEmptyProject(ComponentProjectCreatorTest.COMPONENT_PROJECT_TEST, null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
-		Assert.assertTrue("componentProjectTest".equals(project.getName()));
+		Assert.assertTrue(ComponentProjectCreatorTest.COMPONENT_PROJECT_TEST.equals(project.getName()));
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		if (project.exists()) {
 			project.delete(true, new NullProgressMonitor());
 		}
 	}
-	
+
+	@Before
+	public void cleanUp() throws CoreException {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(ComponentProjectCreatorTest.COMPONENT_PROJECT_TEST);
+		if (project.exists()) {
+			project.delete(true, true, null);
+		}
+	}
+
+	@After
+	public void cleanUpAfter() throws CoreException {
+		cleanUp();
+	}
+
 	/**
 	 * Tests creating the device files
-	 * 
-	 * @throws IOException
 	 */
 	@Test
 	public void testCreateDeviceFiles() throws CoreException {
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("componentProjectTest");
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(ComponentProjectCreatorTest.COMPONENT_PROJECT_TEST);
 		if (project.exists()) {
 			project.delete(true, new NullProgressMonitor());
 		}
-		project = ComponentProjectCreator.createEmptyProject("componentProjectTest", null, new NullProgressMonitor());
+		project = ComponentProjectCreator.createEmptyProject(ComponentProjectCreatorTest.COMPONENT_PROJECT_TEST, null, new NullProgressMonitor());
 		Assert.assertNotNull(project);
-		Assert.assertTrue("componentProjectTest".equals(project.getName()));
-		
-		ComponentProjectCreator.createComponentFiles(project, "componentProjectTest", "gov.redhawk.componentProjectTest", "Author", new NullProgressMonitor());
+		Assert.assertTrue(ComponentProjectCreatorTest.COMPONENT_PROJECT_TEST.equals(project.getName()));
+
+		ComponentProjectCreator.createComponentFiles(project, ComponentProjectCreatorTest.COMPONENT_PROJECT_TEST, "gov.redhawk.componentProjectTest", "Author",
+			new NullProgressMonitor());
 
 		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
 		Assert.assertTrue(spdFile.exists());
@@ -83,12 +98,16 @@ public class ComponentProjectCreatorTest {
 		Assert.assertTrue(scdFile.exists());
 
 		final IFolder testFolder = project.getFolder("tests");
-		Assert.assertTrue(testFolder.exists());
+		// Assert.assertTrue(testFolder.exists());
 		final IFile testFile = testFolder.getFile("test_" + project.getName() + ".py");
-		Assert.assertTrue(testFile.exists());
-		
+		// Assert.assertTrue(testFile.exists());
+		String msg = "Test folders are now created by the Jinja code generators, folder must not exist.";
+		Assert.assertTrue(msg, testFolder.exists());
+		Assert.assertFalse(msg, testFile.exists());
+
 		final ResourceSet resourceSet = new ResourceSetImpl();
-		final SoftPkg dev = SoftPkg.Util.getSoftPkg(resourceSet.getResource(URI.createPlatformResourceURI("/componentProjectTest/componentProjectTest.spd.xml", true), true));
+		final SoftPkg dev = SoftPkg.Util.getSoftPkg(resourceSet.getResource(
+			URI.createPlatformResourceURI("/componentProjectTest/componentProjectTest.spd.xml", true), true));
 		Assert.assertEquals(project.getName(), dev.getName());
 		Assert.assertEquals("gov.redhawk.componentProjectTest", dev.getId());
 		Assert.assertEquals("Author", dev.getAuthor().get(0).getName().get(0));

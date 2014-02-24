@@ -94,9 +94,12 @@ public class DeviceProjectCreatorTest {
 		Assert.assertTrue(scdFile.exists());
 
 		final IFolder testFolder = project.getFolder("tests");
-		Assert.assertTrue(testFolder.exists());
+		// Assert.assertTrue(testFolder.exists());
 		final IFile testFile = testFolder.getFile("test_" + project.getName() + ".py");
-		Assert.assertTrue(testFile.exists());
+		// Assert.assertTrue(testFile.exists());
+		String msg = "Test folders are now created by the Jinja code generators, folder must not exist.";
+		Assert.assertTrue(msg, testFolder.exists());
+		Assert.assertFalse(msg, testFile.exists());
 
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final SoftPkg dev = SoftPkg.Util.getSoftPkg(resourceSet.getResource(
