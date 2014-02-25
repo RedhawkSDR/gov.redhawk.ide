@@ -20,6 +20,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
+import mil.jpeojtrs.sca.partitioning.FindByStub;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.spd.Code;
 import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
@@ -31,6 +35,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
@@ -54,6 +60,48 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		//sync palette Components with Target SDR Components
 		addComponentContainerRefreshJob(diagramTypeProvider);
 		
+	}
+	
+	/**
+	 * Returns true if the business objects are equal.  Overriding this because default implementation
+	 * doesn't check the objects container and in some cases when attempting to automatically create connections
+	 * in the diagram they are drawn to the wrong ports.
+	 */
+	@Override
+	public boolean equalsBusinessObjects(Object o1, Object o2) {
+		
+		if(o1 instanceof ProvidesPortStub && o2 instanceof ProvidesPortStub){
+			ProvidesPortStub ps1 = (ProvidesPortStub)o1;
+			ProvidesPortStub ps2 = (ProvidesPortStub)o2;
+			boolean ecoreEqual = EcoreUtil.equals(ps1, ps2);
+			if(ecoreEqual){
+				//ecore says they are equal, but lets verify their containers are the same
+				return this.equalsBusinessObjects(ps1.eContainer(), ps2.eContainer());
+			}
+		}else if(o1 instanceof UsesPortStub && o2 instanceof UsesPortStub){
+			UsesPortStub ps1 = (UsesPortStub)o1;
+			UsesPortStub ps2 = (UsesPortStub)o2;
+			boolean ecoreEqual = EcoreUtil.equals(ps1, ps2);
+			if(ecoreEqual){
+				//ecore says they are equal, but lets verify their containers are the same
+				return this.equalsBusinessObjects(ps1.eContainer(), ps2.eContainer());
+			}
+		}else if(o1 instanceof ComponentSupportedInterfaceStub && o2 instanceof ComponentSupportedInterfaceStub){
+			ComponentSupportedInterfaceStub obj1 = (ComponentSupportedInterfaceStub)o1;
+			ComponentSupportedInterfaceStub obj2 = (ComponentSupportedInterfaceStub)o2;
+			boolean ecoreEqual = EcoreUtil.equals(obj1, obj2);
+			if(ecoreEqual){
+				//ecore says they are equal, but lets verify their containers are the same
+				return this.equalsBusinessObjects(obj1.eContainer(), obj2.eContainer());
+			}
+		}
+		
+		if (o1 instanceof EObject && o2 instanceof EObject) {
+			return EcoreUtil.equals((EObject) o1, (EObject) o2);
+		}
+		// Both BOs have to be EMF objects. Otherwise the IndependenceSolver
+		// does the job.
+		return false;
 	}
 	
 	/**

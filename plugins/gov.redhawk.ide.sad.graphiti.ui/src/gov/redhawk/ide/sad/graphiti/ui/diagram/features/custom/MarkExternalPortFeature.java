@@ -1,6 +1,8 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom;
 
+import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -54,7 +56,7 @@ public class MarkExternalPortFeature extends AbstractCustomFeature{
 	 */
 	@Override
     public void execute(ICustomContext context) {
-		FixPointAnchor fixPointAnchor = (FixPointAnchor)context.getPictogramElements()[0];
+		final FixPointAnchor fixPointAnchor = (FixPointAnchor)context.getPictogramElements()[0];
 	    final Object obj = DUtil.getBusinessObject(fixPointAnchor);
 	    
 	    ContainerShape providesPortRectangleShape = (ContainerShape)Graphiti.getPeService().getActiveContainerPe(fixPointAnchor);
@@ -67,7 +69,7 @@ public class MarkExternalPortFeature extends AbstractCustomFeature{
 	    final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 
 	    //get container outerContainerShape, which will be linked to SadComponentInstantiation
-	    ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(providesPortRectangleShape, RHContainerShapeImpl.SHAPE_outerContainerShape);
+	    final ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(providesPortRectangleShape, RHContainerShapeImpl.SHAPE_outerContainerShape);
 	    final SadComponentInstantiation ci = (SadComponentInstantiation)DUtil.getBusinessObject(outerContainerShape);
 	    
 	    //Perform business object manipulation in a Command
@@ -76,8 +78,14 @@ public class MarkExternalPortFeature extends AbstractCustomFeature{
 	    	@Override
 	    	protected void doExecute() {
 	    		
-	    		//external ports for sad diagram are when a component is added to diagram
-	    		//shouldn't be any reason we have to create it here.
+	    		//initialize external ports if necessary, if we do this we must associate link it to all other components in the diagram
+	    		//this is necessary because the diagram needs to know which shapes to update when the externalPorts object changes in some way.
+				if(sad.getExternalPorts() == null){
+					sad.setExternalPorts(SadFactory.eINSTANCE.createExternalPorts());
+					for(ComponentShape cShape: ComponentPattern.getAllComponentShapes(getDiagram())){
+						cShape.getLink().getBusinessObjects().add(sad.getExternalPorts());
+					}
+				}
 	    		
 	    		//add external port to model
 	    		Port port = SadFactory.eINSTANCE.createPort();
@@ -93,17 +101,15 @@ public class MarkExternalPortFeature extends AbstractCustomFeature{
 	    			port.setUsesIdentifier(((UsesPortStub)obj).getName());
 	    		}
 	    		sad.getExternalPorts().getPort().add(port);
+	    		
+	    		//change style of port
+	    	    Rectangle fixPointAnchorRectangle = (Rectangle)fixPointAnchor.getGraphicsAlgorithm();
+	    	    fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalUsesPort(DUtil.findDiagram(outerContainerShape)));
+	    	    fixPointAnchor.getLink().getBusinessObjects().add(port);
 	    	}
 	    });
 
-
-	    //change style of port
-	    Rectangle fixPointAnchorRectangle = (Rectangle)fixPointAnchor.getGraphicsAlgorithm();
-	    fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalUsesPort(DUtil.findDiagram(outerContainerShape)));
 	    updatePictogramElement(fixPointAnchor);
-	    
-	    //we might need to work with the anchor isntad...is that why the box isn't turning blue and because its not selectable when the outerContainerBox isn't selected
-
     }
 	
 //	/**

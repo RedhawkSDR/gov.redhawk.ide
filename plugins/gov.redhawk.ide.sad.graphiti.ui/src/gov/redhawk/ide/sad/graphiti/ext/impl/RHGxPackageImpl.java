@@ -11,6 +11,7 @@ import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.AssemblyController;
+import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import org.eclipse.emf.ecore.EClass;
@@ -23,7 +24,6 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.MmPackage;
-import org.eclipse.graphiti.mm.algorithms.AlgorithmsPackage;
 import org.eclipse.graphiti.mm.algorithms.styles.StylesPackage;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
@@ -104,6 +104,13 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  private EDataType externalPortsEDataType = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   private EDataType reasonEDataType = null;
 
   /**
@@ -169,11 +176,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage
     isInited = true;
 
     // Initialize simple dependencies
-    StylesPackage.eINSTANCE.eClass();
-    PictogramsPackage.eINSTANCE.eClass();
-    EcorePackage.eINSTANCE.eClass();
-    AlgorithmsPackage.eINSTANCE.eClass();
     MmPackage.eINSTANCE.eClass();
+    EcorePackage.eINSTANCE.eClass();
 
     // Create package meta-data objects
     theRHGxPackage.createPackageContents();
@@ -285,6 +289,16 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EDataType getExternalPorts()
+  {
+    return externalPortsEDataType;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EDataType getReason()
   {
     return reasonEDataType;
@@ -353,6 +367,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage
     providesPortStubEDataType = createEDataType(PROVIDES_PORT_STUB);
     portEDataType = createEDataType(PORT);
     assemblyControllerEDataType = createEDataType(ASSEMBLY_CONTROLLER);
+    externalPortsEDataType = createEDataType(EXTERNAL_PORTS);
     reasonEDataType = createEDataType(REASON);
     listEDataType = createEDataType(LIST);
     sadComponentInstantiationEDataType = createEDataType(SAD_COMPONENT_INSTANTIATION);
@@ -488,10 +503,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage
     addEParameter(op, thePictogramsPackage.getContainerShape(), "targetContainerShape", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, this.getSadComponentInstantiation(), "ci", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, this.getIFeatureProvider(), "featureProvider", 0, 1, !IS_UNIQUE, IS_ORDERED);
-    g1 = createEGenericType(this.getList());
-    g2 = createEGenericType(this.getPort());
-    g1.getETypeArguments().add(g2);
-    addEParameter(op, g1, "ciExternalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
+    addEParameter(op, this.getExternalPorts(), "externalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, this.getAssemblyController(), "assemblyController", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
     addEOperation(componentShapeEClass, null, "layout", 0, 1, !IS_UNIQUE, IS_ORDERED);
@@ -499,19 +511,13 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage
     op = addEOperation(componentShapeEClass, this.getReason(), "update", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, this.getSadComponentInstantiation(), "ci", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, this.getIFeatureProvider(), "featureProvider", 0, 1, !IS_UNIQUE, IS_ORDERED);
-    g1 = createEGenericType(this.getList());
-    g2 = createEGenericType(this.getPort());
-    g1.getETypeArguments().add(g2);
-    addEParameter(op, g1, "ciExternalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
+    addEParameter(op, this.getExternalPorts(), "externalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, this.getAssemblyController(), "assemblyController", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
     op = addEOperation(componentShapeEClass, this.getReason(), "updateNeeded", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, this.getSadComponentInstantiation(), "ci", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, this.getIFeatureProvider(), "featureProvider", 0, 1, !IS_UNIQUE, IS_ORDERED);
-    g1 = createEGenericType(this.getList());
-    g2 = createEGenericType(this.getPort());
-    g1.getETypeArguments().add(g2);
-    addEParameter(op, g1, "ciExternalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
+    addEParameter(op, this.getExternalPorts(), "externalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
     addEParameter(op, this.getAssemblyController(), "assemblyController", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
     // Initialize data types
@@ -521,6 +527,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage
     initEDataType(providesPortStubEDataType, ProvidesPortStub.class, "ProvidesPortStub", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(portEDataType, Port.class, "Port", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(assemblyControllerEDataType, AssemblyController.class, "AssemblyController", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+    initEDataType(externalPortsEDataType, ExternalPorts.class, "ExternalPorts", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(reasonEDataType, Reason.class, "Reason", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(listEDataType, List.class, "List", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(sadComponentInstantiationEDataType, SadComponentInstantiation.class, "SadComponentInstantiation", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

@@ -127,7 +127,8 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		DUtil.createArrow(cd, getFeatureProvider(), gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(),  StyleUtil.BLACK));
 		
 		//link ports to connection
-		getFeatureProvider().link(connection, new Object[] { connectInterface, connectInterface.getSource(), connectInterface.getTarget()});
+//		getFeatureProvider().link(connection, new Object[] { connectInterface, connectInterface.getSource(), connectInterface.getTarget()});
+		getFeatureProvider().link(connection, new Object[] { connectInterface, source, target});
 		
 		return connection;
 	}

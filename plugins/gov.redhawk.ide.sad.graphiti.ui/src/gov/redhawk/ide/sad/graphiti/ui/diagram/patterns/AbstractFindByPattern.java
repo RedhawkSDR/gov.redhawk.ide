@@ -7,11 +7,24 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.DomainFinderType;
+import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.SadProvidesPort;
+import mil.jpeojtrs.sca.sad.SadUsesPort;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalCommandStack;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
@@ -25,6 +38,7 @@ import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.AbstractPattern;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
@@ -222,5 +236,178 @@ public abstract class AbstractFindByPattern extends AbstractPattern implements I
 	
 	@Override
 	public abstract void setValue(final String value, IDirectEditingContext context);
+	
+	/**
+	 * Return all RHContainerShape in Diagram (recursively)
+	 * @param containerShape
+	 * @return
+	 */
+	public static List<RHContainerShape> getAllFindByShapes(ContainerShape containerShape){
+		List<RHContainerShape> children = new ArrayList<RHContainerShape>();
+		if(containerShape instanceof RHContainerShape){
+			Object obj = DUtil.getBusinessObject(containerShape);
+			if(obj != null && obj instanceof FindByStub){
+				children.add((RHContainerShape)containerShape);
+			}
+		}else{
+			for(Shape s: containerShape.getChildren()){
+				if(s instanceof ContainerShape){
+					children.addAll(getAllFindByShapes((ContainerShape)s));
+				}
+			}
+		}
+		return children;
+	}
+	
+	/**
+	 * Create FindByStub in the diagram based on values in findBy
+	 * @param findBy
+	 * @param featureProvider
+	 * @param diagram
+	 * @return
+	 */
+	public static FindByStub createFindByStub(FindBy findBy, IFeatureProvider featureProvider, Diagram diagram){
+		
+		//corba naming servic
+		if(findBy.getNamingService() != null && findBy.getNamingService().getName() != null){
+			return FindByCORBANamePattern.create(findBy.getNamingService().getName(), featureProvider, diagram);
+		}
+		//domain manager
+		else if(findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.DOMAINMANAGER){
+			return FindByDomainManagerPattern.create(featureProvider, diagram);
+		}
+		//file manager
+		else if(findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.FILEMANAGER){
+			return FindByFileManagerPattern.create(featureProvider, diagram);
+		}
+		//event manager
+		else if(findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.EVENTCHANNEL && findBy.getDomainFinder().getName() != null){
+			return FindByEventChannelPattern.create(findBy.getDomainFinder().getName(), featureProvider, diagram);
+		}
+		//service name
+		else if(findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.SERVICENAME && findBy.getDomainFinder().getName() != null){
+			return FindByServicePattern.create(findBy.getDomainFinder().getName(), null, featureProvider, diagram);
+		}
+		//service type
+		else if(findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.SERVICETYPE && findBy.getDomainFinder().getName() != null){
+			return FindByServicePattern.create(null, findBy.getDomainFinder().getName(), featureProvider, diagram);
+		}
+		
+		return null;
+		
+	}
+	
+	/**
+	 * Add UsesPortStub to FindByStub
+	 * @param findByStub
+	 * @param usesPortStub
+	 * @param featureProvider
+	 */
+	public static void addUsesPortStubToFindByStub(final FindByStub findByStub, final SadUsesPort usesPortStub, IFeatureProvider featureProvider) {
+	    
+		final String usesPortName = usesPortStub.getUsesIndentifier();
+		
+		//editing domain for our transaction
+		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
+				
+		//Create Component Related objects in SAD model
+		TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain){
+			@Override
+            protected void doExecute() {
+				
+				//add uses port stub
+				if(usesPortName != null && !usesPortName.isEmpty()){
+					UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
+					usesPortStub.setName(usesPortName);
+					findByStub.getUses().add(usesPortStub);
+				}
+				
+			}
+		});
+    }
+	
+	/**
+	 * Add ProvidesPortStub to FindByStub
+	 * @param findByStub
+	 * @param sadUsesPort
+	 * @param featureProvider
+	 */
+	public static void addProvidesPortStubToFindByStub(final FindByStub findByStub, final SadProvidesPort sadProvidesPort, IFeatureProvider featureProvider) {
+	    
+		final String providesPortName = sadProvidesPort.getProvidesIdentifier();
+		
+		//editing domain for our transaction
+		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
+				
+		//Create Component Related objects in SAD model
+		TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain){
+			@Override
+            protected void doExecute() {
+				
+				//add provides port stub
+				if(providesPortName != null && !providesPortName.isEmpty()){
+					ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
+					providesPortStub.setName(providesPortName);
+					findByStub.getProvides().add(providesPortStub);
+				}
+				
+			}
+		});
+    }
+	
+	/**
+	 * Return true if the FindBy and FindByStub match one another
+	 * @param findBy
+	 * @param findByStub
+	 * @return
+	 */
+	public static boolean doFindByObjectsMatch(FindBy findBy, FindByStub findByStub){
+		
+		//corba naming service
+		  if(findBy.getNamingService() != null && findBy.getNamingService().getName() != null &&
+				  findByStub.getNamingService() != null && findByStub.getNamingService().getName() != null &&
+				  findBy.getNamingService().getName().equals(findByStub.getNamingService().getName()))
+		  {
+			  return true;
+		  }
+		  //domain manager
+		  else if(findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.DOMAINMANAGER &&
+				  findByStub.getDomainFinder() != null && findByStub.getDomainFinder().getType() == DomainFinderType.DOMAINMANAGER)
+		  {
+			  return true;
+		  }  
+		  //file manager
+		  else if(findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.FILEMANAGER &&
+				  findByStub.getDomainFinder() != null && findByStub.getDomainFinder().getType() == DomainFinderType.FILEMANAGER)
+		  {
+			  return true;
+		  }
+		  //event manager
+		  else if(findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.EVENTCHANNEL && findBy.getDomainFinder().getName() != null &&
+				  findByStub.getDomainFinder() != null && findByStub.getDomainFinder().getType() == DomainFinderType.EVENTCHANNEL && findByStub.getDomainFinder().getName() != null &&
+				  findBy.getDomainFinder().getName().equals(findByStub.getDomainFinder().getName()))
+		  {
+			  return true;
+		  }
+		  //service name
+		  else if(findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.SERVICENAME && findBy.getDomainFinder().getName() != null &&
+				  findByStub.getDomainFinder() != null && findByStub.getDomainFinder().getType() == DomainFinderType.SERVICENAME && findByStub.getDomainFinder().getName() != null &&
+				  findBy.getDomainFinder().getName().equals(findByStub.getDomainFinder().getName()))
+		  {
+			  return true;
+		  }
+		  //service type
+		  else if(findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.SERVICETYPE && findBy.getDomainFinder().getName() != null &&
+				  findByStub.getDomainFinder() != null && findByStub.getDomainFinder().getType() == DomainFinderType.SERVICETYPE && findByStub.getDomainFinder().getName() != null &&
+				  findBy.getDomainFinder().getName().equals(findByStub.getDomainFinder().getName()))
+		  {
+			  return true;
+		  }
+		
+		return false;
+	}
+
 
 }

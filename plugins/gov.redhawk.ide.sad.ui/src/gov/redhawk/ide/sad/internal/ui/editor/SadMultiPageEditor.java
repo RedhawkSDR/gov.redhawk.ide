@@ -600,6 +600,8 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 		
 		final URI diagramURI = DUtil.getDiagramResourceURI(SadDiagramUtilHelper.INSTANCE, sadResource);
 		
+		DUtil.initializeDiagramResource(SadDiagramUtilHelper.INSTANCE, diagramURI, sadResource);
+		
 		Resource diagramResource = getEditingDomain().getResourceSet().getResource(diagramURI, true);
 		
 		Diagram diagram = (Diagram) diagramResource.getContents().get(0);

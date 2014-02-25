@@ -328,6 +328,16 @@ public interface RHGxPackage extends EPackage
   int ASSEMBLY_CONTROLLER = 8;
 
   /**
+   * The meta object id for the '<em>External Ports</em>' data type.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see mil.jpeojtrs.sca.sad.ExternalPorts
+   * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getExternalPorts()
+   * @generated
+   */
+  int EXTERNAL_PORTS = 9;
+
+  /**
    * The meta object id for the '<em>Reason</em>' data type.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -335,7 +345,7 @@ public interface RHGxPackage extends EPackage
    * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getReason()
    * @generated
    */
-  int REASON = 9;
+  int REASON = 10;
 
   /**
    * The meta object id for the '<em>List</em>' data type.
@@ -345,7 +355,7 @@ public interface RHGxPackage extends EPackage
    * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getList()
    * @generated
    */
-  int LIST = 10;
+  int LIST = 11;
 
   /**
    * The meta object id for the '<em>Sad Component Instantiation</em>' data type.
@@ -355,7 +365,7 @@ public interface RHGxPackage extends EPackage
    * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getSadComponentInstantiation()
    * @generated
    */
-  int SAD_COMPONENT_INSTANTIATION = 11;
+  int SAD_COMPONENT_INSTANTIATION = 12;
 
   /**
    * Returns the meta object for class '{@link org.eclipse.graphiti.mm.pictograms.ContainerShape <em>Container Shape Impl</em>}'.
@@ -453,6 +463,17 @@ public interface RHGxPackage extends EPackage
    * @generated
    */
   EDataType getAssemblyController();
+
+  /**
+   * Returns the meta object for data type '{@link mil.jpeojtrs.sca.sad.ExternalPorts <em>External Ports</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for data type '<em>External Ports</em>'.
+   * @see mil.jpeojtrs.sca.sad.ExternalPorts
+   * @model instanceClass="mil.jpeojtrs.sca.sad.ExternalPorts"
+   * @generated
+   */
+  EDataType getExternalPorts();
 
   /**
    * Returns the meta object for data type '{@link org.eclipse.graphiti.features.impl.Reason <em>Reason</em>}'.
@@ -599,6 +620,16 @@ public interface RHGxPackage extends EPackage
      * @generated
      */
     EDataType ASSEMBLY_CONTROLLER = eINSTANCE.getAssemblyController();
+
+    /**
+     * The meta object literal for the '<em>External Ports</em>' data type.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see mil.jpeojtrs.sca.sad.ExternalPorts
+     * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getExternalPorts()
+     * @generated
+     */
+    EDataType EXTERNAL_PORTS = eINSTANCE.getExternalPorts();
 
     /**
      * The meta object literal for the '<em>Reason</em>' data type.

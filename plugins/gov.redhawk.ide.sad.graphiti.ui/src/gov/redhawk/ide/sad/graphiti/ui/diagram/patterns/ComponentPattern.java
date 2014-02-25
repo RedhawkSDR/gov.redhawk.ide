@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mil.jpeojtrs.sca.sad.AssemblyController;
+import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -39,6 +40,7 @@ import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.AbstractPattern;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
@@ -178,14 +180,14 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		//create shape
 		ComponentShape componentShape = RHGxFactory.eINSTANCE.createComponentShape();
 		
-		//get external ports for ci
-		List<Port> ciExternalPorts = getComponentExternalPorts(ci, getFeatureProvider(), getDiagram());
+		//get external ports
+		ExternalPorts externalPorts = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram()).getExternalPorts();
 			
 		//get waveform assembly controller
 		AssemblyController assemblyController = getAssemblyController(ci, getFeatureProvider(), getDiagram());
 		
 		//initialize shape contents
-		componentShape.init(targetContainerShape, ci, getFeatureProvider(), ciExternalPorts, assemblyController);
+		componentShape.init(targetContainerShape, ci, getFeatureProvider(), externalPorts, assemblyController);
 		
 		//set shape location to user's selection
 		Graphiti.getGaLayoutService().setLocation(componentShape.getGraphicsAlgorithm(), 
@@ -384,8 +386,8 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 			ci.setStartOrder(startOrder);
 			startOrder = startOrder.add(BigInteger.ONE);
 			
-			//get external ports for ci
-			List<Port> ciExternalPorts = getComponentExternalPorts(ci, featureProvider, diagram);
+			//get external ports
+			ExternalPorts externalPorts = DUtil.getDiagramSAD(featureProvider, diagram).getExternalPorts();
 			
 			//get waveform assembly controller
 			AssemblyController assemblyController = getAssemblyController(ci, featureProvider, diagram);
@@ -393,7 +395,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 			List<PictogramElement> elements = Graphiti.getLinkService().getPictogramElements(diagram, ci);
 			for(PictogramElement e: elements){
 				if(e instanceof ComponentShape){
-					((ComponentShape)e).update(ci, featureProvider, ciExternalPorts, assemblyController);
+					((ComponentShape)e).update(ci, featureProvider, externalPorts, assemblyController);
 				}
 			}
 			
@@ -419,20 +421,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		
 	}
 	
-	//returns all external ports that belong to the provided Component.
-	private static List<Port> getComponentExternalPorts(SadComponentInstantiation ci, 
-			IFeatureProvider featureProvider, Diagram diagram){
-		List<Port> ciExternalPorts = new ArrayList<Port>();
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
-		if(sad.getExternalPorts() != null && sad.getExternalPorts().getPort() != null){
-			for(Port p: sad.getExternalPorts().getPort()){
-					if(p.getComponentInstantiationRef().getRefid().equals(ci.getId())){
-						ciExternalPorts.add(p);
-					}
-			}
-		}
-		return ciExternalPorts;
-	}
+
 	
 	@Override
 	public boolean update(IUpdateContext context) {
@@ -441,13 +430,13 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		SadComponentInstantiation ci = 
 				(SadComponentInstantiation)DUtil.getBusinessObject(context.getPictogramElement());
 		
-		//get external ports for ci
-		List<Port> ciExternalPorts = getComponentExternalPorts(ci, getFeatureProvider(), getDiagram());
+		//get external ports
+		ExternalPorts externalPorts = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram()).getExternalPorts();
 		
 		//get waveform assembly controller
 		AssemblyController assemblyController = getAssemblyController(ci, getFeatureProvider(), getDiagram());
 				
-		Reason updated = ((ComponentShape)context.getPictogramElement()).update(ci, getFeatureProvider(), ciExternalPorts, assemblyController);
+		Reason updated = ((ComponentShape)context.getPictogramElement()).update(ci, getFeatureProvider(), externalPorts, assemblyController);
 		
 		//if we updated redraw
 		if(updated.toBoolean()){
@@ -467,13 +456,13 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		SadComponentInstantiation ci = 
 				(SadComponentInstantiation)DUtil.getBusinessObject(context.getPictogramElement());
 		
-		//get external ports for ci
-		List<Port> ciExternalPorts = getComponentExternalPorts(ci, getFeatureProvider(), getDiagram());
+		//get external ports
+		ExternalPorts externalPorts = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram()).getExternalPorts();
 		
 		//get waveform assembly controller
 		AssemblyController assemblyController = getAssemblyController(ci, getFeatureProvider(), getDiagram());
 				
-		Reason requiresUpdate = ((ComponentShape)context.getPictogramElement()).updateNeeded(ci, getFeatureProvider(), ciExternalPorts, assemblyController);
+		Reason requiresUpdate = ((ComponentShape)context.getPictogramElement()).updateNeeded(ci, getFeatureProvider(), externalPorts, assemblyController);
 
 		return requiresUpdate;
 	}
@@ -544,5 +533,24 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	    
 	    //perform update, redraw
 	    updatePictogramElement(componentShape);
+	}
+	
+	/**
+	 * Return all ComponentShape in Diagram (recursively)
+	 * @param containerShape
+	 * @return
+	 */
+	public static List<ComponentShape> getAllComponentShapes(ContainerShape containerShape){
+		List<ComponentShape> children = new ArrayList<ComponentShape>();
+		if(containerShape instanceof ComponentShape){
+			children.add((ComponentShape)containerShape);
+		}else{
+			for(Shape s: containerShape.getChildren()){
+				if(s instanceof ContainerShape){
+					children.addAll(getAllComponentShapes((ContainerShape)s));
+				}
+			}
+		}
+		return children;
 	}
 }

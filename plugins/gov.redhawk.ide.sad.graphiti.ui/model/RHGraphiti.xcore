@@ -17,6 +17,7 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation
 import mil.jpeojtrs.sca.sad.Port
 import mil.jpeojtrs.sca.sad.AssemblyController
+import mil.jpeojtrs.sca.sad.ExternalPorts
 import org.eclipse.emf.ecore.EEList
 import org.eclipse.emf.ecore.EObject
 import java.util.List
@@ -29,6 +30,7 @@ type UsesPortStub wraps UsesPortStub
 type ProvidesPortStub wraps ProvidesPortStub
 type Port wraps Port
 type AssemblyController wraps AssemblyController
+type ExternalPorts wraps ExternalPorts
 type Reason wraps Reason
 type List<Port> wraps List
 type SadComponentInstantiation wraps SadComponentInstantiation
@@ -78,20 +80,20 @@ class RHContainerShape extends ContainerShape{
 class ComponentShape extends RHContainerShape{
 	
 	op void init(ContainerShape targetContainerShape, SadComponentInstantiation ci, 
-			IFeatureProvider featureProvider, List<Port> ciExternalPorts,
+			IFeatureProvider featureProvider, ExternalPorts externalPorts,
 			AssemblyController assemblyController)
 
 	/*performs a layout on the contents of this shape */
 	op void layout()
 	
 	/*Updates the shape with supplied values */
-	op Reason update(SadComponentInstantiation ci, IFeatureProvider featureProvider, List<Port> ciExternalPorts,
+	op Reason update(SadComponentInstantiation ci, IFeatureProvider featureProvider, ExternalPorts externalPorts,
 		AssemblyController assemblyController)
 	
 	/*Checks if shape requires an update.  
 	 * If update required returns Reason with true
 	 * boolean value and message describing what needs to be updated
 	 */
-	 op Reason updateNeeded(SadComponentInstantiation ci, IFeatureProvider featureProvider, List<Port> ciExternalPorts,
+	 op Reason updateNeeded(SadComponentInstantiation ci, IFeatureProvider featureProvider, ExternalPorts externalPorts,
 	 	AssemblyController assemblyController)
 }

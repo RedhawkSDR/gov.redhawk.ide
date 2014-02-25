@@ -79,7 +79,7 @@
         <propertyTab
                 category="Graphiti"
                 id="property.tab.advanced"
-                label="Advanced">
+                label="Core">
         </propertyTab>
            
          <propertyTab
@@ -110,7 +110,6 @@
          	tab="property.tab.advanced">
          </propertySection>
 
-         
       </propertySections>
    </extension>
    

@@ -9,6 +9,7 @@ import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -52,10 +53,10 @@ public class MarkNonExternalPortFeature extends AbstractCustomFeature{
 	 */
 	@Override
     public void execute(ICustomContext context) {
-		FixPointAnchor fixPointAnchor = (FixPointAnchor)context.getPictogramElements()[0];
+		final FixPointAnchor fixPointAnchor = (FixPointAnchor)context.getPictogramElements()[0];
 	    final Object obj = DUtil.getBusinessObject(fixPointAnchor);
 	    
-	    ContainerShape providesPortRectangleShape = (ContainerShape)Graphiti.getPeService().getActiveContainerPe(fixPointAnchor);
+	    final ContainerShape providesPortRectangleShape = (ContainerShape)Graphiti.getPeService().getActiveContainerPe(fixPointAnchor);
 	    
 	    //editing domain for our transaction
 	    TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
@@ -66,7 +67,7 @@ public class MarkNonExternalPortFeature extends AbstractCustomFeature{
 	    final EList<Port> externalPortList = sad.getExternalPorts().getPort();
 	    
 	    //get container outerContainerShape, which will be linked to SadComponentInstantiation
-	    ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(providesPortRectangleShape, RHContainerShapeImpl.SHAPE_outerContainerShape);
+	    final ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(providesPortRectangleShape, RHContainerShapeImpl.SHAPE_outerContainerShape);
 
 	    //Perform business object manipulation in a Command
 	    TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
@@ -89,18 +90,29 @@ public class MarkNonExternalPortFeature extends AbstractCustomFeature{
 			    		}
 			    	}
 	    		}
+
+	    		//remove link to external port
+	    		fixPointAnchor.getLink().getBusinessObjects().remove(portToRemove);
+	    		
 	    		//remove external port
 	    		externalPortList.remove(portToRemove);
+	    		
+	    		//if there are no more external ports, remove the external ports object
+	    		//and dis-associate external ports object with all component shapes
+	    		if(sad.getExternalPorts().getPort().size() < 1){
+	    			DUtil.removeBusinessObjectFromAllPictogramElements(getDiagram(), sad.getExternalPorts());
+	    			EcoreUtil.delete(sad.getExternalPorts());
+	    			sad.setExternalPorts(null);
+	    		}
+	    		
+	    		
+	    	    //change style of port
+	    	    Rectangle fixPointAnchorRectangle = (Rectangle)fixPointAnchor.getGraphicsAlgorithm();
+	    	    fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForUsesPort(DUtil.findDiagram(outerContainerShape)));
 	    	}
 	    });
 
-
-	    //change style of port
-	    Rectangle fixPointAnchorRectangle = (Rectangle)fixPointAnchor.getGraphicsAlgorithm();
-	    fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForUsesPort(DUtil.findDiagram(outerContainerShape)));
 	    updatePictogramElement(fixPointAnchor);
-	    
-
     }
 	
 }

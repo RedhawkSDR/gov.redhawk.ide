@@ -4,14 +4,23 @@ import gov.redhawk.diagram.IDiagramUtilHelper;
 import gov.redhawk.diagram.editor.URIEditorInputProxy;
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractFindByPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.sca.efs.ScaFileSystemPlugin;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
+import mil.jpeojtrs.sca.partitioning.FindBy;
+import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
@@ -19,9 +28,17 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.emf.common.ui.URIEditorInput;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
@@ -31,9 +48,18 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.datatypes.IDimension;
+import org.eclipse.graphiti.dt.IDiagramTypeProvider;
+import org.eclipse.graphiti.features.IAddFeature;
+import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAreaContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
+import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
+import org.eclipse.graphiti.features.context.impl.AddContext;
+import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
+import org.eclipse.graphiti.features.context.impl.UpdateContext;
+import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.internal.datatypes.impl.DimensionImpl;
 import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.Property;
@@ -47,6 +73,7 @@ import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
@@ -300,6 +327,23 @@ public class DUtil {
 		return children;
 	}
 	
+
+	
+	/**
+	 * Remove Business object from all linked PictogramElement
+	 * @param diagram
+	 * @param eObject
+	 */
+	public static void removeBusinessObjectFromAllPictogramElements(Diagram diagram, EObject eObject){
+		//get pe with link to bo
+		List<PictogramElement> pictogramElements = Graphiti.getLinkService().getPictogramElements(diagram, eObject);
+		
+		//remove link
+		for(PictogramElement pe: pictogramElements){
+			pe.getLink().getBusinessObjects().remove(eObject);
+		}
+	}
+	
 	/**
 	 * Return first matched child with property value
 	 * @param diagramElement
@@ -526,8 +570,623 @@ public class DUtil {
 		return false;
 	}
 	
+	/**
+	 * Returns all ContainerShapes with the provided property value
+	 * @param containerShape
+	 * @param propertyValue
+	 * @return
+	 */
+	public static List<ContainerShape> getAllContainerShapes(ContainerShape containerShape, String propertyValue){
+		List<ContainerShape> children = new ArrayList<ContainerShape>();
+		if(containerShape instanceof ContainerShape && isPropertyElementType(containerShape, propertyValue)){
+			children.add(containerShape);
+		}else{
+			for(Shape s: containerShape.getChildren()){
+				if(s instanceof ContainerShape){
+					children.addAll(getAllContainerShapes((ContainerShape)s, propertyValue));
+				}
+			}
+		}
+		return children;
+	}
+
+	/**
+	 * Returns true if Pictogram Link contains an object of the provided Class
+	 * @param <T>
+	 * @param link
+	 * @param cls
+	 * @return
+	 */
+	public static <T> boolean doesLinkContainObjectTypeInstance(PictogramLink link, Class<T> cls){
+		if(link != null){
+			for(EObject eObj: link.getBusinessObjects()){
+				if(cls.isInstance(eObj)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Add PictogramElement via feature for the provided object.
+	 * Relies on the framework determining which feature should be used and whether it can be added to diagram
+	 * @param featureProvider
+	 * @param object
+	 * @return
+	 */
+	public static PictogramElement addShapeViaFeature(IFeatureProvider featureProvider, Diagram diagram, Object object){
+		AddContext addContext = new AddContext();
+		addContext.setNewObject(object);
+		addContext.setTargetContainer(diagram);
+		addContext.setX(0);
+		addContext.setY(0);
+		IAddFeature addFeature = featureProvider.getAddFeature(addContext);
+		if(addFeature.canAdd(addContext)){
+			return addFeature.add(addContext);
+		}
+		return null;
+	}
+	
+	/**
+	 * Update PictogramElement via feature
+	 * Relies on the framework determining which feature should be used and whether it can be added to diagram
+	 * @param featureProvider
+	 * @param pe
+	 * @return
+	 */
+	public static boolean updateShapeViaFeature(IFeatureProvider featureProvider, Diagram diagram, PictogramElement pe){
+		UpdateContext updateContext = new UpdateContext(pe);
+		IUpdateFeature updateFeature = featureProvider.getUpdateFeature(updateContext);
+		if(updateFeature.canUpdate(updateContext)){
+			return updateFeature.update(updateContext);
+		}
+		return false;
+	}
+	
+	/**
+	 * Add PictogramElement Connection via feature for the provided object and anchors.
+	 * Relies on the framework determining which feature should be used and whether it can be added to diagram
+	 * @param featureProvider
+	 * @param object
+	 * @param sourceAnchor
+	 * @param targetAnchor
+	 * @return
+	 */
+	public static PictogramElement addConnectionViaFeature(IFeatureProvider featureProvider, Object object, Anchor sourceAnchor, Anchor targetAnchor){
+		AddConnectionContext addConnectionContext = new AddConnectionContext(sourceAnchor, targetAnchor);
+		addConnectionContext.setNewObject(object);
+		IAddFeature addFeature = featureProvider.getAddFeature(addConnectionContext);
+		if(addFeature.canAdd(addConnectionContext)){
+			return addFeature.add(addConnectionContext);
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns Business object of specified class type if it exists
+	 * @param pe
+	 * @param cls
+	 * @return
+	 */
+	public static <T> EObject getBusinessObject(PictogramElement pe, Class<T> cls){
+		if(pe != null && pe.getLink() != null){
+			for(EObject eObj: pe.getLink().getBusinessObjects()){
+				if(cls.isInstance(eObj)){
+					return eObj;
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Examines a list of PictogramElements (pes) and ensures there is an associated object in the model (objects).
+	 * If the PictogramElement has an associated object than it is updated (if necessary) otherwise the PictogramElement is removed
+	 * @param pes
+	 * @param objects
+	 * @param objectClass
+	 * @param pictogramLabel
+	 * @param featureProvider
+	 * @param performUpdate
+	 * @return
+	 */
+	public static Reason removeUpdatePictogramElement(List<PictogramElement> pes, List<EObject> objects, Class objectClass, 
+    		String pictogramLabel, IFeatureProvider featureProvider, boolean performUpdate) {
+		
+		boolean updateStatus = false;
+		
+		//update PictogramElements if in model, if not in model remove from diagram
+		for(Iterator<PictogramElement> peIter = pes.iterator(); peIter.hasNext();){
+			//in model?
+			PictogramElement pe = peIter.next();
+			  boolean found = false;
+			  for(Object obj: objects){
+				  if(obj.equals(DUtil.getBusinessObject(pe, objectClass))){
+					  found = true;
+					  //update Shape
+					  featureProvider.updateIfPossible(new UpdateContext(pe));
+				  }
+			  }
+			  if(!found){
+				  // wasn't found, deleting shape
+				  if(performUpdate){
+					  updateStatus = true;
+					  //delete shape
+					  peIter.remove();
+					  EcoreUtil.delete(pe, true);
+				  }else{
+					  return new Reason(true, "A " + pictogramLabel + " in diagram no longer has an associated business object");
+				  }
+			  }
+		}
+		
+		if(updateStatus && performUpdate){
+			return new Reason(true, "Update successful");
+		}
+		  
+		return new Reason(false, "No updates required");
+	}
+	
+	/**
+	 * Examines a list of Shapes and ensures there is an associated object in the model (objects).
+	 * If the Shape has an associated object than it is updated (if necessary) otherwise the Shape is removed
+	 * Next if there are new objects that do not have Shapes, then a new Shape is added using
+	 * the features associated the provided object type.
+	 * @param shapes
+	 * @param objects
+	 * @param pictogramLabel
+	 * @param featureProvider
+	 * @param performUpdate
+	 * @return
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+    public static Reason addRemoveUpdateShapes(List<Shape> shapes, List<EObject> objects, Class objectClass, 
+    		String pictogramLabel, Diagram diagram, IFeatureProvider featureProvider, boolean performUpdate){
+		
+		boolean updateStatus = false;
+		
+		//remove shapes on diagram if no longer in model, update all other shapes if necessary
+		Reason updateShapesReason = removeUpdatePictogramElement((List<PictogramElement>)(List<?>)shapes, objects, objectClass, 
+	    		pictogramLabel, featureProvider, performUpdate);
+		if(!performUpdate && updateShapesReason.toBoolean()){
+			return updateShapesReason;
+		}else if(updateShapesReason.toBoolean() == true){
+			updateStatus = true;
+		}
+		
+		//add Shapes found in model, but not in diagram
+		for(Object obj: objects){
+			//in diagram
+			  boolean found = false;
+			  for(Shape pe: shapes){
+				  if(obj.equals(DUtil.getBusinessObject(pe, objectClass))){
+					  found = true;
+				  }
+			  }
+			  if(!found){
+				  // wasn't found, add shape
+				  if(performUpdate){
+					  updateStatus = true;
+					  //add shape
+					  DUtil.addShapeViaFeature(featureProvider, diagram, obj);
+				  }else{
+					  return new Reason(true, "A " + pictogramLabel + " in model isn't displayed in diagram");
+				  }
+			  }
+		}
+		
+		if(updateStatus && performUpdate){
+			return new Reason(true, "Update successful");
+		}
+		  
+		return new Reason(false, "No updates required");
+	}
+	
+/**
+ * Iterates through all sadConnectInterfaces to look for connections that use findBy tag that are not contained within ComponentInterface or Provides
+ * All FindBy tags without one of the two parents will be contained within a ComponentInterface afterwards.  The purpose of this is to draw connections
+ * to the lollipop port in the diagram as apposed to directly connecting to the FindBy Box.
+ * @param sadConnectInterfaces
+ * @param objectClass
+ * @param pictogramLabel
+ * @param diagram
+ * @param featureProvider
+ * @param performUpdate
+ * @return
+ */
+	public static Reason replaceDirectFindByConnection(List<SadConnectInterface> sadConnectInterfaces, Class objectClass, 
+    		String pictogramLabel, Diagram diagram, IFeatureProvider featureProvider, boolean performUpdate){
+		
+		boolean updateStatus = false;
+		
+		//iterate through all connections
+		for(ListIterator<SadConnectInterface> iter = sadConnectInterfaces.listIterator(); iter.hasNext();){
+			SadConnectInterface sadConnectInterface = iter.next();
+			
+			if(sadConnectInterface.getFindBy() != null &&
+					  sadConnectInterface.getFindBy() instanceof FindBy){
+				  
+				  //The Graphiti SAD diagram doesn't support this type of connection and therefore it will not exist
+				  //in the diagram, it may however exist in the model and we will convert it to use
+				  //ComponentSupportedInterface
+				  
+				  //lookup source anchor
+				  Anchor sourceAnchor = lookupSourceAnchor(sadConnectInterface, diagram);
+				  
+				//if sourceAnchor wasn't found its because the findBy needs to be added to the diagram
+				  if(sourceAnchor == null){
+
+					  //FindBy is always used inside usesPort
+					  if(sadConnectInterface.getUsesPort() != null &&
+							  sadConnectInterface.getUsesPort().getFindBy() != null)
+					  {
+						  if(performUpdate){
+							  updateStatus = true;
+							  FindBy findBy = (FindBy)sadConnectInterface.getUsesPort().getFindBy();
+	
+							  //create FindBy Shape for Source
+							  FindByStub findByStub = AbstractFindByPattern.createFindByStub(findBy, featureProvider, diagram);
+	
+							  //add FindBYShape for Target
+							  if(findByStub != null){
+								  PictogramElement pe = DUtil.addShapeViaFeature(featureProvider, diagram, findByStub);
+							  }
+						  }else{
+							  return new Reason(true, "Add FindBy Shape");
+						  }
+					  }
+				  }
+				  
+				  //The model isn't providing us with an interface for the FindBy.  First step is to modify the model and select an interface
+				  FindBy findBy = (FindBy)sadConnectInterface.getFindBy();
+				 
+				  //create FindBy Shape for Target
+				  FindByStub findByStub = AbstractFindByPattern.createFindByStub(findBy, featureProvider, diagram);
+				  
+				  //add FindBYShape for Target
+				  PictogramElement pe = DUtil.addShapeViaFeature(featureProvider, diagram, findByStub);
+				  
+				  Anchor targetAnchor = null;
+				  if(pe != null && pe instanceof RHContainerShape){
+					//determine lollipop anchor
+					  PictogramElement peAnchor = DUtil.getPictogramElementForBusinessObject(diagram, (EObject)findByStub.getInterface(), Anchor.class);
+					  targetAnchor = (Anchor)pe;
+				  }
+				  
+				  
+				  //create a new connection and remove the connection we are currently analyzing
+				  if(sourceAnchor == null || targetAnchor == null){
+					  //TODO: we need to alert the user somehow
+					  break;
+				  }
+				  
+				  //remove the current connection, and replace it with this new connection
+				  //remove
+				  iter.remove();
+				  
+				  //create
+				  CreateConnectionContext createContext = new CreateConnectionContext();
+				  createContext.setSourceAnchor(sourceAnchor);
+				  createContext.setTargetAnchor(targetAnchor);
+				  for(ICreateConnectionFeature createFeature: featureProvider.getCreateConnectionFeatures()){
+					  if(createFeature.canCreate(createContext)){
+						  featureProvider.getDiagramTypeProvider().getDiagramEditor().executeFeature(createFeature, createContext);
+					  }
+				  }
+			  }
+		}
+		
+		if(updateStatus && performUpdate){
+			return new Reason(true, "Update successful");
+		}
+
+		return new Reason(false, "No updates required");
+	}
+	
+	/**
+	 * Lookup SourceAnchor for connection.  Examines uses ports on Components as well as FindBys
+	 * @param sadConnectInterface
+	 * @param diagram
+	 * @return
+	 */
+	public static Anchor lookupSourceAnchor(SadConnectInterface sadConnectInterface, Diagram diagram){
+		//lookup sourceAnchor
+		PictogramElement sourceAnchorPe = DUtil.getPictogramElementForBusinessObject(diagram, sadConnectInterface.getSource(), Anchor.class);
+		if(sourceAnchorPe != null){
+			return (Anchor)sourceAnchorPe;
+		}else
+		{
+			//All components have been created so source Anchor is likely null because provides findBy <uses><findby>something</findby></uses>
+			//or something is wrong with the xml
+			if(sadConnectInterface.getUsesPort() != null &&
+					sadConnectInterface.getUsesPort().getFindBy() != null)
+			{
+				FindBy findBy = (FindBy)sadConnectInterface.getUsesPort().getFindBy();
+
+				//iterate through all FindByStub objects stored in diagram and set sourceAnchor that matches findBy
+				List<RHContainerShape> findByContainerShapes = AbstractFindByPattern.getAllFindByShapes(diagram);
+				for(RHContainerShape findByShape: findByContainerShapes)
+				{
+					FindByStub findByStub = (FindByStub)DUtil.getBusinessObject(findByShape);
+
+					//determine findBy match
+					if(AbstractFindByPattern.doFindByObjectsMatch(findBy, findByStub))
+					{
+
+						//determine which usesPortStub we are targeting
+						UsesPortStub usesPortStub = null;
+						for(UsesPortStub p: findByStub.getUses()){
+							if(p != null && sadConnectInterface.getUsesPort().getUsesIndentifier() != null &&
+									p.getName().equals(sadConnectInterface.getUsesPort().getUsesIndentifier()))
+							{
+								usesPortStub = p;
+							}
+						}
+
+						//determine port anchor for FindByMatch
+						if(usesPortStub != null){
+							PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, usesPortStub, Anchor.class);
+							return (Anchor)pe;
+						}
+					}
+				}
+
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Search for the FindByStub in the diagram given the findBy object
+	 * @param findBy
+	 * @param diagram
+	 * @return
+	 */
+	public static FindByStub findFindByStub(FindBy findBy, Diagram diagram){
+		  for(RHContainerShape findByShape: AbstractFindByPattern.getAllFindByShapes(diagram)){
+			  FindByStub findByStub = (FindByStub)DUtil.getBusinessObject(findByShape);
+			  //determine findBy match
+			  if(findByStub != null && AbstractFindByPattern.doFindByObjectsMatch(findBy, findByStub)){
+				  //it matches
+				  return findByStub;
+			  }
+		  }	
+		  return null;
+	}
+	
+	/**
+	 * Examines a list of Connections  and ensures there is an associated object in the model (objects).
+	 * If the Connection has an associated object than it is updated (if necessary) otherwise the Connection is removed
+	 * Next if there are new objects that do not have Connections, then a new Connection is added using
+	 * the features associated the provided object type.
+	 * @param connections
+	 * @param sadConnectInterfaces
+	 * @param pictogramLabel
+	 * @param featureProvider
+	 * @param performUpdate
+	 * @return
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+    public static Reason addRemoveUpdateConnections(List<Connection> connections, List<SadConnectInterface> sadConnectInterfaces, Class objectClass, 
+    		String pictogramLabel, Diagram diagram, IFeatureProvider featureProvider, boolean performUpdate){
+		
+		boolean updateStatus = false;
+		
+		//remove Connections on diagram if no longer in model, update all other Connections if necessary
+		Reason updateConnectionsReason = removeUpdatePictogramElement((List<PictogramElement>)(List<?>)connections, (List<EObject>)(List<?>)sadConnectInterfaces, objectClass, 
+	    		pictogramLabel, featureProvider, performUpdate);
+		if(!performUpdate && updateConnectionsReason.toBoolean()){
+			return updateConnectionsReason;
+		}else if(updateConnectionsReason.toBoolean() == true){
+			updateStatus = true;
+		}
+		
+		//correct unfriendly findByConnections
+		updateConnectionsReason = replaceDirectFindByConnection(sadConnectInterfaces, objectClass, pictogramLabel, diagram, featureProvider, performUpdate);
+		if(!performUpdate && updateConnectionsReason.toBoolean()){
+			return updateConnectionsReason;
+		}else if(updateConnectionsReason.toBoolean() == true){
+			updateStatus = true;
+		}
+		
+		//add Connections found in model, but not in diagram
+		for(SadConnectInterface sadConnectInterface: sadConnectInterfaces){
+			//in diagram
+			  boolean found = false;
+			  for(Connection pe: connections){
+				  if(sadConnectInterface.equals(DUtil.getBusinessObject(pe, objectClass))){
+					  found = true;
+				  }
+			  }
+			  if(!found){
+				  // wasn't found, add Connection
+				  if(performUpdate){
+					  updateStatus = true;
+
+					  //lookup sourceAnchor
+					  Anchor sourceAnchor = DUtil.lookupSourceAnchor(sadConnectInterface, diagram);
+
+					  //if sourceAnchor wasn't found its because the findBy needs to be added to the diagram
+					  if(sourceAnchor == null){
+
+						  //FindBy is always used inside usesPort
+						  if(sadConnectInterface.getUsesPort() != null &&
+								  sadConnectInterface.getUsesPort().getFindBy() != null)
+						  {
+
+							  FindBy findBy = (FindBy)sadConnectInterface.getUsesPort().getFindBy();
+							  
+							  //TODO: shouldn't we do a find here first?
+							//TODO: we might want to add the required UsesPortHere if we found it (didn't have to create it)
+							  
+							  if(performUpdate){
+		
+								  //create FindBy Shape for Source
+								  FindByStub findByStub = AbstractFindByPattern.createFindByStub(findBy, featureProvider, diagram);
+		
+								  //add the required usesPort
+								  AbstractFindByPattern.addUsesPortStubToFindByStub(findByStub, sadConnectInterface.getUsesPort(), featureProvider);
+								  
+								  //add FindBYShape for Target
+								  if(findByStub != null){
+									  PictogramElement pe = DUtil.addShapeViaFeature(featureProvider, diagram, findByStub);
+								  }
+							  }else{
+								  return new Reason(true, "Add FindBy Shape");
+							  }
+						  }
+					  }
+						  
+					  //lookup Target Anchor
+					  Anchor targetAnchor = null;
+					  PictogramElement targetAnchorPe = DUtil.getPictogramElementForBusinessObject(diagram, sadConnectInterface.getTarget(), Anchor.class);
+					  if(targetAnchorPe != null){
+						  targetAnchor = (Anchor)targetAnchorPe;
+					  }else{
+						  
+						  //sadConnectInterface.getComponentSupportedInterface().getFindBy()
+						  if(sadConnectInterface.getComponentSupportedInterface() != null &&
+								  sadConnectInterface.getComponentSupportedInterface().getSupportedIdentifier() != null &&
+								  sadConnectInterface.getComponentSupportedInterface().getFindBy() != null){
+
+							  //The model provides us with interface information for the FindBy we are connecting to
+							  FindBy findBy = (FindBy)sadConnectInterface.getComponentSupportedInterface().getFindBy();
+
+							  //iterate through FindByStubs in diagram
+							  FindByStub findByStub = findFindByStub(findBy, diagram);
+
+							  if(findByStub == null){
+								  
+								  //create findByStub
+								  findByStub = AbstractFindByPattern.createFindByStub(findBy, featureProvider, diagram);
+								  
+								  //add shape into diagram
+								  DUtil.addShapeViaFeature(featureProvider, diagram, findByStub);
+
+							  }
+
+							  //determine port anchor for FindByMatch
+							  if(findByStub.getInterface() != null){
+								  PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, findByStub.getInterface(), Anchor.class);
+								  targetAnchor = (Anchor)pe;
+							  }
+
+					      //findBy nested in ProvidesPort
+						  }else if(sadConnectInterface.getProvidesPort() != null &&
+								  sadConnectInterface.getProvidesPort().getFindBy() != null){
+							  
+
+							  FindBy findBy = (FindBy)sadConnectInterface.getProvidesPort().getFindBy();
+
+							  //iterate through FindByStubs in diagram
+							  FindByStub findByStub = findFindByStub(findBy, diagram);
+							  
+							  //does findBy exist in diagram already?
+							  if(findByStub == null){
+								  
+								  //create findByStub
+								  findByStub = AbstractFindByPattern.createFindByStub(findBy, featureProvider, diagram);
+								  
+								  //add the required providesPort
+								  AbstractFindByPattern.addProvidesPortStubToFindByStub(findByStub, sadConnectInterface.getProvidesPort(), featureProvider);
+								  
+								  //add shape into diagram
+								  DUtil.addShapeViaFeature(featureProvider, diagram, findByStub);
+
+							  }else{
+								  //ensure the providesPort exists in FindByStub that already exists in diagram
+								  boolean foundProvidesPortStub = false;
+								  for(ProvidesPortStub p: findByStub.getProvides()){
+									  if(p == sadConnectInterface.getProvidesPort()){
+										  foundProvidesPortStub = true;
+									  }
+								  }
+								  if(!foundProvidesPortStub){
+									  //add the required providesPort
+									  AbstractFindByPattern.addProvidesPortStubToFindByStub(findByStub, sadConnectInterface.getProvidesPort(), featureProvider);
+									  //Update on FindByStub PE
+									  DUtil.updateShapeViaFeature(featureProvider, diagram, 
+											  DUtil.getPictogramElementForBusinessObject(diagram, findByStub, RHContainerShape.class));
+								  }
+							  }
+
+							  //determine which providesPortStub we are targeting
+							  ProvidesPortStub providesPortStub = null;
+							  for(ProvidesPortStub p: findByStub.getProvides()){
+								  if(p != null && sadConnectInterface.getProvidesPort().getProvidesIdentifier() != null &&
+										  p.getName().equals(sadConnectInterface.getProvidesPort().getProvidesIdentifier())){
+									  providesPortStub = p;
+								  }
+							  }
+
+							  //determine port anchor for FindByMatch
+							  if(providesPortStub != null){
+								  PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, (EObject)providesPortStub, Anchor.class);
+								  targetAnchor = (Anchor)pe;
+							  }else{
+								  //TODO: this means the provides port didn't exist in the existing findByStub..we need to add it
+							  }
+						  }
+					  }
+
+					  //add Connection if anchors
+					  if(sourceAnchor != null && targetAnchor != null){
+						  DUtil.addConnectionViaFeature(featureProvider, sadConnectInterface, sourceAnchor, targetAnchor);
+					  }else{
+						  //TODO: how do we handle this?
+					  }
+					  
+				  }else{
+					  return new Reason(true, "A " + pictogramLabel + " in model isn't displayed in diagram");
+				  }
+			  }
+		}
+		
+		if(updateStatus && performUpdate){
+			return new Reason(true, "Update successful");
+		}
+		  
+		return new Reason(false, "No updates required");
+
+	  
+	  /**
+	   * Continue storing FindByStub in diagram.  Here are the scenarios
+	   * 
+	   * State: ComponentSupportedInterface with support id and findby name
+	   * Action: search diagram for FindByStub containing id and findby name
+	   * 
+	   * State: sadConnectInterface provides port, provides identifier, findby Name
+	   * Action: search diagram for FindByStub, contains provides port with matching name
+	   * 
+	   * State: connection with direct FindBy
+	   * Action: change model to use ComponentSupportedInterface.  Look at UsesPort to determine
+	   * what support id should be and alter model.  Re-run update after model change
+	   * 
+	   * 
+	   * 
+	   */
+	}
 	
 
+	/**
+	 * Returns the PictogramElement of class pictogramClass who is linked to business object eObj
+	 * @param diagram
+	 * @param eObj
+	 * @param pictogramClass
+	 * @return
+	 */
+	public static <T> PictogramElement getPictogramElementForBusinessObject(Diagram diagram, EObject eObj, Class<T> pictogramClass){
+		List<PictogramElement> pes = Graphiti.getLinkService().getPictogramElements(diagram, eObj);
+		  if(pes != null && pes.size() > 0){
+			  for(PictogramElement p: pes){
+				  if(pictogramClass.isInstance(p)){
+					  return p;
+				  }
+			  }
+		  }
+		  return null;
+	}
 	
 	/**
 	 * Return true if target is HostCollocation ContainerShape
@@ -658,64 +1317,76 @@ public class DUtil {
 	}
 	
 	
-//	/**
-//	 * 
-//	 */
-//	public static void initializeDiagramResource(final IDiagramUtilHelper options, final URI diagramURI, final Resource sadResource) throws IOException,
-//	        CoreException {
-//		if (diagramURI.isPlatform()) {
-//			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(diagramURI.toPlatformString(true)));
-//			
-//			file.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
-//			
-//			if (!file.exists()) {
-//				final IWorkspaceRunnable operation = new IWorkspaceRunnable() {
-//
-//					@Override
-//					public void run(final IProgressMonitor monitor) throws CoreException {
-//						final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-//						try {
-//							DiagramUtil.populateDiagram(options, diagramURI, sadResource, buffer);
-//						} catch (final IOException e) {
-//							// PASS
-//						}
-//						file.create(new ByteArrayInputStream(buffer.toByteArray()), true, monitor);
-//					}
-//
-//				};
-//				final ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRuleFactory().createRule(file);
-//
-//				ResourcesPlugin.getWorkspace().run(operation, rule, 0, null);
-//			}
-//		} else {
-//			DiagramUtil.populateDiagram(options, diagramURI, sadResource, null);
-//		}
-//	}
+	/**
+	 * 
+	 */
+	public static void initializeDiagramResource(final IDiagramUtilHelper options, final URI diagramURI, final Resource sadResource) throws IOException,
+	        CoreException {
+		if (diagramURI.isPlatform()) {
+			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(diagramURI.toPlatformString(true)));
+			
+			file.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
+			
+			if (!file.exists()) {
+				final IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 
-//	private static void populateDiagram(final IDiagramUtilHelper options, final URI diagramURI, final Resource resource, final OutputStream buffer)
-//	        throws IOException {
-//		// Create a resource set
-//		//
-//		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-//
-//		// Create a resource for this file.
-//		//
-//		final Resource diagramResource = resourceSet.createResource(diagramURI);
-//
-//		final String diagramName = diagramURI.lastSegment();
-//		final EObject obj = options.getRootDiagramObject(resource);
-//		final Diagram diagram = ViewService.createDiagram(obj, options.getModelId(), options.getDiagramPreferencesHint());
-//		if (diagram != null) {
-//			diagram.setName(diagramName);
-//			diagram.setElement(obj);
-//			diagramResource.getContents().add(diagram);
-//			if (buffer != null) {
-//				diagramResource.save(buffer, options.getSaveOptions());
-//			} else {
-//				diagramResource.save(options.getSaveOptions());
-//			}
-//		}
-//	}
+					@Override
+					public void run(final IProgressMonitor monitor) throws CoreException {
+						final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+						try {
+							DUtil.populateDiagram(options, diagramURI, sadResource, buffer);
+						} catch (final IOException e) {
+							// PASS
+						}
+						file.create(new ByteArrayInputStream(buffer.toByteArray()), true, monitor);
+					}
+
+				};
+				final ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRuleFactory().createRule(file);
+
+				ResourcesPlugin.getWorkspace().run(operation, rule, 0, null);
+			}
+		} else {
+			DUtil.populateDiagram(options, diagramURI, sadResource, null);
+		}
+	}
+
+	//creates new diagram from provided model resource
+	private static void populateDiagram(final IDiagramUtilHelper options, final URI diagramURI, final Resource resource, final OutputStream buffer)
+	        throws IOException {
+		
+		// Create a resource set
+		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+
+		// Create a resource for this file.
+		final Resource diagramResource = resourceSet.createResource(diagramURI);
+
+		//extract name for diagram from uri
+		final String diagramName = diagramURI.lastSegment();
+		
+		//create diagram
+		Diagram diagram = Graphiti.getPeCreateService().createDiagram(SADDiagramTypeProvider.DIAGRAM_TYPE_ID, diagramName, true);
+		diagramResource.getContents().add(diagram);
+		
+		
+		//TODO:we will want to move this logic somewhere else
+		IDiagramTypeProvider dtp = GraphitiUi.getExtensionManager()
+				.createDiagramTypeProvider(diagram, SADDiagramTypeProvider.PROVIDER_ID);
+		IFeatureProvider featureProvider = dtp.getFeatureProvider();
+		
+		//iterate over each component, both in an out of host collocations
+		//passing in assembly controller and external ports information
+		
+		//WE WANT OUR UPDATE diagram capabilities to handle things like this though right?
+		
+		
+		
+		if (buffer != null) {
+			diagramResource.save(buffer, options.getSaveOptions());
+		} else {
+			diagramResource.save(options.getSaveOptions());
+		}
+	}
 
 	
 	public static IEditorInput getDiagramWrappedInput(final URI diagramURI, final TransactionalEditingDomain editingDomaing) {

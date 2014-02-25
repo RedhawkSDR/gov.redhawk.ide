@@ -7,15 +7,19 @@ import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.AssemblyController;
+import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -83,7 +87,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
    * Creates the inner shapes that make up this container shape
    */
   public void init(final ContainerShape targetContainerShape, final SadComponentInstantiation ci, final IFeatureProvider featureProvider, 
-		  final List<Port> ciExternalPorts, final AssemblyController assemblyController)
+		  ExternalPorts externalPorts, final AssemblyController assemblyController)
   {
 	  //get sad from diagram, we need to link it to all shapes so the diagram will update when changes occur to assembly controller and external ports
 	  List<EObject> businessObjectsToLink = new ArrayList<EObject>();
@@ -91,7 +95,12 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	  //ORDER MATTERS, CI must be first
 	  businessObjectsToLink.add(ci);
 	  businessObjectsToLink.add(sad);
-	  businessObjectsToLink.add(sad.getExternalPorts());
+	  if(externalPorts != null){
+		  businessObjectsToLink.add(externalPorts);
+	  }
+	  
+	  //get external ports relavent to ci
+	  final List<Port> ciExternalPorts = getComponentExternalPorts(ci, externalPorts);
 	  
 		super.init(targetContainerShape, ci.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(), 
 				businessObjectsToLink, featureProvider,
@@ -111,18 +120,18 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
   /**
    * Updates the shape's contents using the supplied fields.  Return true if an update occurred, false otherwise.>
    */
-  public Reason update(final SadComponentInstantiation ci, final IFeatureProvider featureProvider, final List<Port> ciExternalPorts, final AssemblyController assemblyController)
+  public Reason update(final SadComponentInstantiation ci, final IFeatureProvider featureProvider, ExternalPorts externalPorts, final AssemblyController assemblyController)
   {
-	  return internalUpdate(ci, featureProvider, ciExternalPorts, assemblyController, true);
+	  return internalUpdate(ci, featureProvider, externalPorts, assemblyController, true);
   }
 
   /**
    * Return true (through Reason) if the shape's contents require an update based on the field supplied.
 	 * Also returns a textual reason why an update is needed. Returns false otherwise.
    */
-  public Reason updateNeeded(final SadComponentInstantiation ci, final IFeatureProvider featureProvider, final List<Port> ciExternalPorts, final AssemblyController assemblyController)
+  public Reason updateNeeded(final SadComponentInstantiation ci, final IFeatureProvider featureProvider, ExternalPorts externalPorts, final AssemblyController assemblyController)
   {
-	  return internalUpdate(ci, featureProvider, ciExternalPorts, assemblyController, false);
+	  return internalUpdate(ci, featureProvider, externalPorts, assemblyController, false);
   }
   
 	/**
@@ -198,9 +207,11 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * @param performUpdate
 	 * @return
 	 */
-	public Reason internalUpdate(SadComponentInstantiation ci, IFeatureProvider featureProvider, List<Port> ciExternalPorts,
+	public Reason internalUpdate(SadComponentInstantiation ci, IFeatureProvider featureProvider, ExternalPorts externalPorts,
 			AssemblyController assemblyController, boolean performUpdate){
 		Diagram diagram = DUtil.findDiagram(this);
+		//get external ports relavent to ci
+		final List<Port> ciExternalPorts = getComponentExternalPorts(ci, externalPorts);
 		Reason superReason = null;
 		if(performUpdate){
 			superReason = super.update( 
@@ -267,7 +278,23 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			}
 		}
 
-		
+		//we must make sure externalPorts is linked with this object if its set,
+		//otherwise we need to remove it
+		if(performUpdate){
+			if(externalPorts != null && !this.getLink().getBusinessObjects().contains(externalPorts)){
+				this.getLink().getBusinessObjects().add(externalPorts);
+			}else if(externalPorts == null){
+				EObject objectToRemove = null;
+				for(EObject obj: this.getLink().getBusinessObjects()){
+					if(obj instanceof ExternalPorts){
+						objectToRemove = obj;
+					}
+				}
+				if(objectToRemove != null){
+					this.getLink().getBusinessObjects().remove(objectToRemove);
+				}
+			}
+		}
 
 		if(updateStatus && performUpdate){
 			return new Reason(true, "Update successful");
@@ -303,6 +330,19 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			return innerTitleWidth;
 		}
 
+	}
+	
+	//returns all external ports that belong to the provided Component.
+	private static List<Port> getComponentExternalPorts(SadComponentInstantiation ci, ExternalPorts externalPorts){
+		List<Port> ciExternalPorts = new ArrayList<Port>();
+		if(externalPorts != null && externalPorts.getPort() != null){
+			for(Port p: externalPorts.getPort()){
+					if(p.getComponentInstantiationRef().getRefid().equals(ci.getId())){
+						ciExternalPorts.add(p);
+					}
+			}
+		}
+		return ciExternalPorts;
 	}
 
 } //ComponentShapeImpl

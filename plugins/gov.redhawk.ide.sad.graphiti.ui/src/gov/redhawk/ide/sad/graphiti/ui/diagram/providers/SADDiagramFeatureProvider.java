@@ -8,6 +8,7 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkNonExternalPo
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.DeleteSADConnectInterface;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.update.RHDiagramUpdateFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;
@@ -214,24 +215,30 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		    	
 		    	//get sad from diagram
 			    final SoftwareAssembly sad = DUtil.getDiagramSAD(this.getDiagramTypeProvider().getFeatureProvider(), this.getDiagramTypeProvider().getDiagram());
-			    EList<Port> externalPortList = sad.getExternalPorts().getPort();
-		    	
-		    	//if it's already there disable this feature
-			    if(obj instanceof ProvidesPortStub){
-			    	for(Port p: externalPortList){
-			    		if(p.getProvidesIndentifier().equals(((ProvidesPortStub)obj).getName())){
-			    			mark = false;
-			    		}
-			    	}
+			    
+			    if(sad.getExternalPorts() != null){
+			    
+			    	//get external ports
+				    EList<Port> externalPortList = sad.getExternalPorts().getPort();
 			    	
-			    }
-			    //if it's already there disable this feature
-			    if(obj instanceof UsesPortStub){
-			    	for(Port p: externalPortList){
-			    		if(p.getUsesIdentifier().equals(((UsesPortStub)obj).getName())){
-			    			mark = false;
-			    		}
-			    	}
+			    	//if it's already there disable this feature
+				    if(obj instanceof ProvidesPortStub){
+				    	for(Port p: externalPortList){
+				    		if(p.getProvidesIndentifier().equals(((ProvidesPortStub)obj).getName())){
+				    			mark = false;
+				    		}
+				    	}
+				    	
+				    }
+				    //if it's already there disable this feature
+				    if(obj instanceof UsesPortStub){
+				    	for(Port p: externalPortList){
+				    		if(p.getUsesIdentifier().equals(((UsesPortStub)obj).getName())){
+				    			mark = false;
+				    		}
+				    	}
+				    }
+				
 			    }
 		    	//add the mark feature
 			    if(mark){
@@ -304,6 +311,10 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	@Override
 	public IUpdateFeature getUpdateFeature(IUpdateContext context){
 
+		if (context.getPictogramElement() instanceof Diagram) {
+			return new RHDiagramUpdateFeature(this);
+		}
+		
 		//hide update icon for some pictogram elements
 		if(DUtil.doesPictogramContainProperty(context, 
 				new String[] {RHContainerShapeImpl.SHAPE_providesPortsContainerShape,
@@ -423,4 +434,5 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		
 		return super.getLayoutFeature(context);
 	}
+
 }

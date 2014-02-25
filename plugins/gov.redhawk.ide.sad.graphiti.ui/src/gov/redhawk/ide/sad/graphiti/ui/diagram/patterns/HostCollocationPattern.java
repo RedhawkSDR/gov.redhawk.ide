@@ -20,12 +20,15 @@ import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.examples.common.ExampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
+import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
+import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
@@ -103,6 +106,24 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		return false;
 	}
 
+	/**
+	 * Returns all ContainerShapes associated with HostCollocation
+	 * @param diagram
+	 * @return
+	 */
+	public static List<ContainerShape> getHostCollocationContainerShapes(Diagram diagram){
+		List<ContainerShape> hostCollocationContainerShapes = new ArrayList<ContainerShape>();
+		//get all Shapes linked to a HostCollocation
+		List<ContainerShape> containerShapes =  DUtil.getAllContainerShapes(diagram, SHAPE_outerContainerShape);
+		for(ContainerShape cs: containerShapes){
+			if(DUtil.doesLinkContainObjectTypeInstance(cs.getLink(), HostCollocation.class)){
+				hostCollocationContainerShapes.add(cs);
+			}
+		}
+		return hostCollocationContainerShapes;
+	}
+
+	
 	/**
 	 * Add HostCollocation shape, reparent components (from Diagram ContainerShape to new HostCollocation ContainerShape) 
 	 * if applicable
@@ -445,6 +466,19 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		featureProvider.link(outerContainerShape, businessObject); // link container and business object
 		
 		return outerContainerShape;
+	}
+	
+	@Override
+	public boolean update(IUpdateContext context) {
+		return false;
+	}
+	
+	/**
+	 * Determines whether we need to update the diagram from the model.  
+	 */
+	@Override
+	public IReason updateNeeded(IUpdateContext context) {
+		return new Reason(false);
 	}
 
 }

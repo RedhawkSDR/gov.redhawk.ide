@@ -8,6 +8,7 @@ import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.AssemblyController;
+import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import org.eclipse.emf.ecore.EClass;
@@ -100,6 +101,8 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory
         return createPortFromString(eDataType, initialValue);
       case RHGxPackage.ASSEMBLY_CONTROLLER:
         return createAssemblyControllerFromString(eDataType, initialValue);
+      case RHGxPackage.EXTERNAL_PORTS:
+        return createExternalPortsFromString(eDataType, initialValue);
       case RHGxPackage.REASON:
         return createReasonFromString(eDataType, initialValue);
       case RHGxPackage.LIST:
@@ -133,6 +136,8 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory
         return convertPortToString(eDataType, instanceValue);
       case RHGxPackage.ASSEMBLY_CONTROLLER:
         return convertAssemblyControllerToString(eDataType, instanceValue);
+      case RHGxPackage.EXTERNAL_PORTS:
+        return convertExternalPortsToString(eDataType, instanceValue);
       case RHGxPackage.REASON:
         return convertReasonToString(eDataType, instanceValue);
       case RHGxPackage.LIST:
@@ -282,6 +287,26 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory
    * @generated
    */
   public String convertAssemblyControllerToString(EDataType eDataType, Object instanceValue)
+  {
+    return super.convertToString(eDataType, instanceValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ExternalPorts createExternalPortsFromString(EDataType eDataType, String initialValue)
+  {
+    return (ExternalPorts)super.createFromString(eDataType, initialValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String convertExternalPortsToString(EDataType eDataType, Object instanceValue)
   {
     return super.convertToString(eDataType, instanceValue);
   }
