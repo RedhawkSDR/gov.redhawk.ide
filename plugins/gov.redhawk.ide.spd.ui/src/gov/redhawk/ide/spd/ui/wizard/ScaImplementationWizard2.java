@@ -11,7 +11,10 @@
 
 package gov.redhawk.ide.spd.ui.wizard;
 
+import org.eclipse.jface.wizard.IWizardPage;
+
 import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
+import gov.redhawk.ide.codegen.ui.ICodegenWizardPage;
 import mil.jpeojtrs.sca.spd.Implementation;
 
 /**
@@ -24,5 +27,9 @@ public interface ScaImplementationWizard2 extends ScaImplementationWizard {
 	 * the next/finish buttons.
 	 */
 	public void generatorChanged(Implementation impl, ICodeGeneratorDescriptor codeGeneratorDescriptor, String previousImplId);
+	
+	public void addTemplatePages(IWizardPage pageAddingPages, ICodegenWizardPage[] pagesToAdd);
+	
+	public void removeTemplatePages(IWizardPage pageAddingPages, ICodegenWizardPage[] pageTypesToRemove);
 	
 }
