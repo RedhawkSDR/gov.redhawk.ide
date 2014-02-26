@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="gov.redhawk.ide.sdr.ossieHome">
+   <implementation class="gov.redhawk.ide.sdr.internal.util.OssieHomeEnvMap"/>
+   <service>
+      <provide interface="gov.redhawk.ide.sdr.util.IEnvMap"/>
+   </service>
+</scr:component>

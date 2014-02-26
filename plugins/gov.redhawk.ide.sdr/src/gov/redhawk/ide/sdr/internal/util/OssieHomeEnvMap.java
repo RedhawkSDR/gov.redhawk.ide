@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.internal.util;
 
+import gov.redhawk.ide.sdr.util.AbstractEnvMap;
+
 import java.io.File;
 import java.util.Map;
 
