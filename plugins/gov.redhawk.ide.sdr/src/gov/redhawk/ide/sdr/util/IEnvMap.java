@@ -8,14 +8,22 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
- // BEGIN GENERATED CODE
-package gov.redhawk.ide.sdr.tests;
+package gov.redhawk.ide.sdr.util;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import java.util.Map;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ SdrAllTests.class })
-public class IdeSdrTestSuite {
+import mil.jpeojtrs.sca.spd.Implementation;
+
+import org.eclipse.core.runtime.CoreException;
+
+/**
+ * @since 8.2
+ * 
+ */
+public interface IEnvMap {
+
+	boolean handles(Implementation impl) throws CoreException;
+
+	void initEnv(Implementation impl, Map<String, String> retVal) throws CoreException;
 
 }

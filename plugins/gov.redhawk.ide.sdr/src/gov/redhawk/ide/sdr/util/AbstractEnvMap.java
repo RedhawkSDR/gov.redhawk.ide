@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sdr.internal.util;
+package gov.redhawk.ide.sdr.util;
 
 import gov.redhawk.ide.sdr.IdeSdrActivator;
 
@@ -42,7 +42,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.osgi.framework.Bundle;
 
-public abstract class AbstractEnvMap {
+/**
+ * @since 8.2
+ */
+public abstract class AbstractEnvMap implements IEnvMap {
 
 	public abstract boolean handles(Implementation impl);
 
