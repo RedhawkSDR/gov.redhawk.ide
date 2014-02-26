@@ -207,10 +207,6 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 						// The generator page is going after this one
 						codegenIndex = getWizardPageIndex(page) + 1;
 
-						//TODO: Remove this if the thing above worked.
-//						codegenIndex = i + 1;  // Index of where new codeGenPages should be added.
-						
-
 						// Three scenarios:
 						// - Implementation is the last in the list and it
 						// doesn't have a settings page previously
@@ -269,8 +265,6 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 						for (int i = 0; i < numOfOldGenPages; i++) {
 							if (oldGenPages[i].getClass() != codeGenPages[i].getClass()) {
 								sameSetOfPages = false;
-								//TODO: This still needed?
-//								codeGenPage.setCanFlipToNextPage(oldGenPage.canFlipToNextPage());
 								break;
 							}
 						}
@@ -561,10 +555,6 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 							final ICodegenWizardPage[] codeGenPages = RedhawkCodegenUiActivator.getCodeGeneratorsRegistry().findPageByGeneratorId(settings.getGeneratorId());
 							for (ICodegenWizardPage codeGenPage : codeGenPages) {
 								addPage(codeGenPage);
-								// Enable the canFlip if this isn't the last page in the list
-								// TODO: Determine if the next line is needed.
-								//codeGenPage.setCanFlipToNextPage((getImplList().size() + 1) != getSoftPkg().getImplementation().size());
-								
 								// Configure the wizard page with the current settings
 								codeGenPage.configure(getSoftPkg(), getImplementation(), codeGen, settings, getType());
 							}
