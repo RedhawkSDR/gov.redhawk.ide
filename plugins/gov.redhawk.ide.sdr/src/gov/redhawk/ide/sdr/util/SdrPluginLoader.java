@@ -46,7 +46,6 @@ public class SdrPluginLoader {
 		sdrRoot.setSdrRoot(sdrRootPath, "dom", "dev");
 		editingDomain.getCommandStack().execute(new AddCommand(editingDomain, sdrResource.getContents(), sdrRoot));
 		sdrRoot.load(null);
-		Assert.isTrue(sdrRoot.getLoadStatus().isOK());
 		Assert.isNotNull(sdrRoot.getComponentsContainer(), "Failed to load Components SDR Root for path: " + sdrRootPath);
 		Assert.isNotNull(sdrRoot.getDevicesContainer(), "Failed to load Devices SDR Root for path: " + sdrRootPath);
 		Assert.isNotNull(sdrRoot.getWaveformsContainer(), "Failed to load Waveforms SDR Root for path: " + sdrRootPath);
