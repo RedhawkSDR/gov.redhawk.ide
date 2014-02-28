@@ -123,8 +123,6 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 	 */
 	private final MultiPageSelectionProvider selectionProvider;
 
-	private IEditorInput wrappedInput;
-
 	private ResourceListener nameListener;
 
 	private IFormPage overviewPage;

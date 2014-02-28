@@ -16,6 +16,10 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  org.eclipse.debug.ui;bundle-version="3.6.1",
  gov.redhawk.ide;bundle-version="5.0.0",
  gov.redhawk.core.resourceFactory;bundle-version="2.0.0",
+ gov.redhawk.ide.sad.graphiti.ui;bundle-version="1.0.0",
+ org.eclipse.graphiti.ui,
+ org.eclipse.graphiti;bundle-version="0.9.2",
+ org.eclipse.graphiti.examples.common;bundle-version="0.9.2",
  org.eclipse.jdt.annotation;bundle-version="[1.1.0,2.0.0)";resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

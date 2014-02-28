@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>gov.redhawk.ide</groupId>
+    <artifactId>releng</artifactId>
+    <version>1.11.0-SNAPSHOT</version>
+    <relativePath>../../releng/</relativePath>
+  </parent>
+  <groupId>gov.redhawk.ide</groupId>
+  <artifactId>gov.redhawk.ide.sad.graphiti.ui.tests</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>eclipse-test-plugin</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-surefire-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <configuration>
+          <useUIHarness>true</useUIHarness>
+          <useUIThread>false</useUIThread>
+          <application>org.eclipse.ui.ide.workbench</application>
+          <argLine>-Xmx512m -Djava.net.preferIPv4Stack=true</argLine>
+          <appArgLine>-nl en</appArgLine>
+          <dependencies>
+            <dependency>
+              <type>eclipse-feature</type>
+              <artifactId>gov.redhawk.ide.ui</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-feature</type>
+              <artifactId>org.eclipse.swtbot.forms</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-feature</type>
+              <artifactId>org.eclipse.swtbot.eclipse.gef</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>org.eclipse.swtbot</type>
+              <artifactId>org.eclipse.swtbot</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+          </dependencies>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
