@@ -537,7 +537,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		if (domainConfiguration != null && domainConfiguration.eIsProxy()) {
 			InternalEObject oldDomainConfiguration = (InternalEObject)domainConfiguration;
 			domainConfiguration = (DomainManagerConfiguration)eResolveProxy(oldDomainConfiguration);
-			if (domainConfiguration != oldDomainConfiguration) {
+			if (! domainConfiguration.equals(oldDomainConfiguration)) {
 				if (eNotificationRequired())
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, SdrPackage.SDR_ROOT__DOMAIN_CONFIGURATION, oldDomainConfiguration, domainConfiguration));
 			}
@@ -862,6 +862,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 				getServicesContainer().getComponents().clear();
 				getWaveformsContainer().getWaveforms().clear();
 				setLoadStatus(null);
+				domainConfiguration = null;
 				setState(LoadState.UNLOADED);
 			}
 
