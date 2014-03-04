@@ -1,5 +1,6 @@
 @Ecore(nsURI="http://www.redhawk.gov/model/rhgext/1.0.0")
 @GenModel(prefix="RHGx")
+@GenModel(modelPluginVariables="org.eclipse.xtext.xbase.lib")
 @GenModel(contentTypeIdentifier="http://www.redhawk.gov/model/rhgext/1.0.0")
 @GenModel(operationReflection="false")
 //prevents custom coding from getting blown away

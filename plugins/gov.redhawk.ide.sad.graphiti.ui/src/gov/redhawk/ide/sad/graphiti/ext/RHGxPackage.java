@@ -21,7 +21,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
  * <!-- end-user-doc -->
  * @see gov.redhawk.ide.sad.graphiti.ext.RHGxFactory
  * @model kind="package"
- *        annotation="http://www.eclipse.org/emf/2002/GenModel prefix='RHGx' contentTypeIdentifier='http://www.redhawk.gov/model/rhgext/1.0.0' operationReflection='false' modelDirectory='/gov.redhawk.ide.sad.graphiti.ui/src' basePackage='gov.redhawk.ide.sad.graphiti'"
+ *        annotation="http://www.eclipse.org/emf/2002/GenModel prefix='RHGx' modelPluginVariables='org.eclipse.xtext.xbase.lib' contentTypeIdentifier='http://www.redhawk.gov/model/rhgext/1.0.0' operationReflection='false' modelDirectory='/gov.redhawk.ide.sad.graphiti.ui/src' basePackage='gov.redhawk.ide.sad.graphiti'"
  * @generated
  */
 public interface RHGxPackage extends EPackage
