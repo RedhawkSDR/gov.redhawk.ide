@@ -179,6 +179,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage
     // Initialize simple dependencies
     AlgorithmsPackage.eINSTANCE.eClass();
     EcorePackage.eINSTANCE.eClass();
+    AlgorithmsPackage.eINSTANCE.eClass();
     MmPackage.eINSTANCE.eClass();
 
     // Create package meta-data objects
