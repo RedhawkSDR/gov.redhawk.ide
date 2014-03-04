@@ -53,6 +53,9 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			//get sad from diagram
 			final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 			
+			//TODO: ensure our SAD has an assembly controller
+			//set one if necessary, why bother the user?
+			
 			//HostCollocation update shapes, remove old shapes, add new shapes
 			List<HostCollocation> hostCollocations = new ArrayList<HostCollocation>();
 			if(sad != null && sad.getPartitioning() != null && sad.getPartitioning().getHostCollocation() != null){

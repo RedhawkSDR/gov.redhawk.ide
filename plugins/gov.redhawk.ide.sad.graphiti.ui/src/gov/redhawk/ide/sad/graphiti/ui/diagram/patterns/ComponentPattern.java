@@ -13,11 +13,13 @@ import java.util.List;
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.HostCollocation;
-import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
+import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
@@ -184,7 +186,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		ExternalPorts externalPorts = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram()).getExternalPorts();
 			
 		//get waveform assembly controller
-		AssemblyController assemblyController = getAssemblyController(ci, getFeatureProvider(), getDiagram());
+		AssemblyController assemblyController = getComponentAssemblyController(ci, getFeatureProvider(), getDiagram());
 		
 		//initialize shape contents
 		componentShape.init(targetContainerShape, ci, getFeatureProvider(), externalPorts, assemblyController);
@@ -200,6 +202,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		StyleUtil.getStyleForExternalProvidesPort(getDiagram());
 		StyleUtil.getStyleForUsesPort(getDiagram());
 		StyleUtil.getStyleForProvidesPort(getDiagram());
+		StyleUtil.getStyleForStartOrderEllipse(getDiagram());
 		
 		//layout
 		layoutPictogramElement(componentShape);
@@ -309,6 +312,14 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		}
 		for(int i = 1; i < cis.size(); i++){
 			SadComponentInstantiation c = cis.get(i);
+			
+			//protect against first component's start order being null
+			if(highestStartOrder == null){
+				highestStartOrder = c.getStartOrder();
+				break;
+			}
+			
+			//check for higher start order
 			if(c.getStartOrder() != null && c.getStartOrder().compareTo(highestStartOrder) >= 0){
 				highestStartOrder = c.getStartOrder();
 			}
@@ -382,16 +393,29 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 	//adjust the start order for a component
 	public static void organizeStartOrder(final SoftwareAssembly sad,final Diagram diagram, final IFeatureProvider featureProvider){
 		BigInteger startOrder = BigInteger.ZERO;
-		for(SadComponentInstantiation ci: sad.getComponentInstantiationsInStartOrder()){
+		
+		//get components by start order
+		EList<SadComponentInstantiation> componentInstantiationsInStartOrder = sad.getComponentInstantiationsInStartOrder();
+		
+		//set assembly controller
+		AssemblyController assemblyController = getAssemblyController(featureProvider, diagram);
+		if(assemblyController == null && componentInstantiationsInStartOrder.size() > 0){
+			//assign assembly controller assign to first component
+			assemblyController = SadFactory.eINSTANCE.createAssemblyController();
+			SadComponentInstantiationRef sadComponentInstantiationRef = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
+			sadComponentInstantiationRef.setInstantiation(componentInstantiationsInStartOrder.get(0));
+			assemblyController.setComponentInstantiationRef(sadComponentInstantiationRef);
+			sad.setAssemblyController(assemblyController);
+		}
+		
+		//set start order
+		for(SadComponentInstantiation ci: componentInstantiationsInStartOrder){
 			ci.setStartOrder(startOrder);
 			startOrder = startOrder.add(BigInteger.ONE);
 			
 			//get external ports
 			ExternalPorts externalPorts = DUtil.getDiagramSAD(featureProvider, diagram).getExternalPorts();
 			
-			//get waveform assembly controller
-			AssemblyController assemblyController = getAssemblyController(ci, featureProvider, diagram);
-					
 			List<PictogramElement> elements = Graphiti.getLinkService().getPictogramElements(diagram, ci);
 			for(PictogramElement e: elements){
 				if(e instanceof ComponentShape){
@@ -408,8 +432,25 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 //		return isPatternControlled(pictogramElement);
 //	}
 
+	//returns the assembly controller for this waveform
+	private static AssemblyController getAssemblyController(IFeatureProvider featureProvider, Diagram diagram){
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
+		if(sad.getAssemblyController() != null &&
+				sad.getAssemblyController().getComponentInstantiationRef() != null){
+			return sad.getAssemblyController();
+		}
+		return null;
+		
+	}
+	
+//	@Override
+//	public boolean canUpdate(IUpdateContext context) {
+//		PictogramElement pictogramElement = context.getPictogramElement();
+//		return isPatternControlled(pictogramElement);
+//	}
+
 	//returns the assembly controller for this waveform if it happens to be the passed in Component
-	private static AssemblyController getAssemblyController(SadComponentInstantiation ci, 
+	private static AssemblyController getComponentAssemblyController(SadComponentInstantiation ci, 
 			IFeatureProvider featureProvider, Diagram diagram){
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
 		if(sad.getAssemblyController() != null &&
@@ -434,7 +475,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		ExternalPorts externalPorts = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram()).getExternalPorts();
 		
 		//get waveform assembly controller
-		AssemblyController assemblyController = getAssemblyController(ci, getFeatureProvider(), getDiagram());
+		AssemblyController assemblyController = getComponentAssemblyController(ci, getFeatureProvider(), getDiagram());
 				
 		Reason updated = ((ComponentShape)context.getPictogramElement()).update(ci, getFeatureProvider(), externalPorts, assemblyController);
 		
@@ -460,7 +501,7 @@ public class ComponentPattern extends AbstractPattern implements IPattern{
 		ExternalPorts externalPorts = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram()).getExternalPorts();
 		
 		//get waveform assembly controller
-		AssemblyController assemblyController = getAssemblyController(ci, getFeatureProvider(), getDiagram());
+		AssemblyController assemblyController = getComponentAssemblyController(ci, getFeatureProvider(), getDiagram());
 				
 		Reason requiresUpdate = ((ComponentShape)context.getPictogramElement()).updateNeeded(ci, getFeatureProvider(), externalPorts, assemblyController);
 

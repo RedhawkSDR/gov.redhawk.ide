@@ -23,6 +23,29 @@
       </editor>
    </extension>
    <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="gov.redhawk.ide.debug.internal.ui.diagram.LocalMultiPageScaEditor"
+            default="false"
+            icon="icons/redhawk16.gif"
+            id="gov.redhawk.ide.debug.ui.diagram.editor.localMultiPageSca"
+            name="%editor.name">
+      </editor>
+   </extension>
+   
+   
+   
+   <extension
+         point="gov.redhawk.sca.ui.scaContentTypes">
+      <contentTypeBinding
+            contentTypeId="gov.redhawk.ide.debug.ui.contentType.localSca"
+            editorId="gov.redhawk.ide.debug.ui.diagram.editor.localMultiPageSca"
+            priority="NORMAL">
+      </contentTypeBinding>
+   </extension>
+   
+   <!--
+   <extension
          point="gov.redhawk.sca.ui.scaContentTypes">
       <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.localSca"
@@ -35,6 +58,9 @@
             priority="LOW">
       </contentTypeBinding>
    </extension>
+   -->
+   
+   
    <extension
          point="org.eclipse.core.runtime.adapters">
       <factory

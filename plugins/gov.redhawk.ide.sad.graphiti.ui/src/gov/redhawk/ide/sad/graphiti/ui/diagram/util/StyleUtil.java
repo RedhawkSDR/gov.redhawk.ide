@@ -248,23 +248,23 @@ public class StyleUtil {
 		return style;
 	}
 	
-	//returns style for provides port
-	public static Style getStyleForProvidesPortAnchor(Diagram diagram){
-		final String styleId = "ProvidesPortAnchor";
-		Style style = findStyle(diagram, styleId);
-		
-		if(style == null){
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			style.setTransparency(100d);
-			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, WHITE));
-			style.setFont(getPortFont(diagram));
-			style.setLineWidth(2);
-			style.setLineVisible(true);
-		}
-		return style;
-	}
+//	//returns style for provides port
+//	public static Style getStyleForProvidesPortAnchor(Diagram diagram){
+//		final String styleId = "ProvidesPortAnchor";
+//		Style style = findStyle(diagram, styleId);
+//		
+//		if(style == null){
+//			IGaService gaService = Graphiti.getGaService();
+//			style = gaService.createStyle(diagram, styleId);
+//			style.setTransparency(100d);
+//			style.setForeground(gaService.manageColor(diagram, BLACK));
+//			style.setBackground(gaService.manageColor(diagram, WHITE));
+//			style.setFont(getPortFont(diagram));
+//			style.setLineWidth(2);
+//			style.setLineVisible(true);
+//		}
+//		return style;
+//	}
 
 	//returns style for lollipop ellipse
 	public static Style getStyleForLollipopEllipse(Diagram diagram){

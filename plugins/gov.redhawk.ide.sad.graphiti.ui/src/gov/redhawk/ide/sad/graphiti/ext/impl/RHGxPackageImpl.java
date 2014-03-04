@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.MmPackage;
-import org.eclipse.graphiti.mm.algorithms.AlgorithmsPackage;
 import org.eclipse.graphiti.mm.algorithms.styles.StylesPackage;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
@@ -177,9 +176,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage
     isInited = true;
 
     // Initialize simple dependencies
-    StylesPackage.eINSTANCE.eClass();
     EcorePackage.eINSTANCE.eClass();
-    AlgorithmsPackage.eINSTANCE.eClass();
     MmPackage.eINSTANCE.eClass();
 
     // Create package meta-data objects

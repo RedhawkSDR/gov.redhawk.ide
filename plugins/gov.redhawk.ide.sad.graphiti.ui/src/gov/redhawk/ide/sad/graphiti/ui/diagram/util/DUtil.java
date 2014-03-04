@@ -28,6 +28,7 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.sad.util.SadResourceImpl;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
@@ -204,22 +205,22 @@ public class DUtil {
 	 */
 	public static SoftwareAssembly getDiagramSAD(IFeatureProvider featureProvider, Diagram diagram){
 		
-		//NOTE to developer
-		//You must use the same transactionalEditingDomain and associated resourceSet if you want save/undo/redo to work
-		//properly.  The Graphiti editor will try saving the resourceSet and therefore we want our model to be in the same resourceSet.
-		//The editingDomain below isn't associated with Graphiti model and so it doesn't save the model when the diagram editor saves.
-		//TransactionalEditingDomain editingDomain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(ScaPlugin.EDITING_DOMAIN_ID);
-		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
-//kepler		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-		ResourceSet resourceSet = editingDomain.getResourceSet();
+		return (SoftwareAssembly)DUtil.getBusinessObject(diagram, SoftwareAssembly.class);
 		
-		URI uri = diagram.eResource().getURI();
-		uri = uri.trimFragment().trimFileExtension().appendFileExtension("sad.xml");
-		
-		SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(uri, true));
-		
-		return sad;
+//		//Used to use this, doesn't work for all cases.  Keep around for other potential cases for now.
+//		//You must use the same transactionalEditingDomain and associated resourceSet if you want save/undo/redo to work
+//		//properly.  The Graphiti editor will try saving the resourceSet and therefore we want our model to be in the same resourceSet.
+//		//The editingDomain below isn't associated with Graphiti model and so it doesn't save the model when the diagram editor saves.
+//		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
+////kepler		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+//		ResourceSet resourceSet = editingDomain.getResourceSet();
+//		URI uri = diagram.eResource().getURI();
+//		uri = uri.trimFragment().trimFileExtension().appendFileExtension("sad.xml");
+//		SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(uri, true));
+//		
+//		return sad;
 	}
+	
 
 	public static Polyline createArrow(GraphicsAlgorithmContainer gaContainer, IFeatureProvider featureProvider, Color color){
 		IGaService gaService = Graphiti.getGaService();

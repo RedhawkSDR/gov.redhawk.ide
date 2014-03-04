@@ -61,12 +61,16 @@ import org.eclipse.emf.edit.provider.AdapterFactoryItemDelegator;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory;
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.impl.TransactionalEditingDomainImpl;
 import org.eclipse.emf.workspace.IWorkspaceCommandStack;
 import org.eclipse.emf.workspace.WorkspaceEditingDomainFactory;
 import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.PictogramLink;
+import org.eclipse.graphiti.mm.pictograms.PictogramsFactory;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.editor.DiagramEditorInput;
 import org.eclipse.graphiti.ui.internal.editor.GFWorkspaceCommandStackImpl;
@@ -594,6 +598,14 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 		this.nameListener = new ResourceListener(sadResource);
 	}
 
+	/**
+	 * Given the sad resource (sad.xml) create a Diagram resource, associate it with the sad resource and return
+	 * diagram editor input
+	 * @param sadResource
+	 * @return
+	 * @throws IOException
+	 * @throws CoreException
+	 */
 	protected IEditorInput createDiagramInput(final Resource sadResource) throws IOException, CoreException {
 		
 		final URI diagramURI = DUtil.getDiagramResourceURI(SadDiagramUtilHelper.INSTANCE, sadResource);
@@ -602,22 +614,32 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 		
 		Resource diagramResource = getEditingDomain().getResourceSet().getResource(diagramURI, true);
 		
-		Diagram diagram = (Diagram) diagramResource.getContents().get(0);
+		//load diagram from resource
+		final Diagram diagram = (Diagram) diagramResource.getContents().get(0);
 		
-		DiagramEditorInput diagramEditorInput =  DiagramEditorInput.createEditorInput(diagram, SADDiagramTypeProvider.PROVIDER_ID);
-		
-		return diagramEditorInput;
-		
-		//DiagramEditorInput.createEditorInput(diagram, SADDiagramTypeProvider.PROVIDER_ID);
-		
-//		return DiagramUtil.getDiagramWrappedInput(diagramURI, (TransactionalEditingDomain) getEditingDomain());
-		
+		//load sad from resource
+		final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(sadResource);
+
+		//link diagram with SoftwareAssembly
+		TransactionalCommandStack stack = (TransactionalCommandStack) getEditingDomain().getCommandStack();
+		stack.execute(new RecordingCommand((TransactionalEditingDomain) getEditingDomain()) {
+			@Override
+            protected void doExecute() {
+				
+				PictogramLink link = PictogramsFactory.eINSTANCE.createPictogramLink();
+				link.getBusinessObjects().add(sad);
+				diagram.setLink(link);
+				
+            }
+		});
+
+		//return editor input from diagram with sad diagram type
+		return DiagramEditorInput.createEditorInput(diagram, SADDiagramTypeProvider.PROVIDER_ID);
 		
 	}
 
 	protected DiagramEditor createDiagramEditor() {
 		RHGraphitiDiagramEditor d = new RHGraphitiDiagramEditor((TransactionalEditingDomain) getEditingDomain());
-//		DiagramEditor d = new DiagramEditor();
 		return d;
 		
 	}

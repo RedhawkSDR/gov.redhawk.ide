@@ -116,7 +116,6 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 											//DiagramUtil.SHAPE_usesPortsContainerShape,
 						RHContainerShapeImpl.SHAPE_usesPortRectangleShape,
 						RHContainerShapeImpl.SHAPE_providesPortRectangleShape,})){
-			System.out.println("found an anchor");
 			return null;
 		}
 		

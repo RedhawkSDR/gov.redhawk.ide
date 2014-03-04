@@ -52,6 +52,7 @@ import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.omg.CORBA.SystemException;
 
 import CF.DataType;
 import CF.LifeCyclePackage.ReleaseError;
@@ -135,39 +136,30 @@ public class GraphitiModelMap {
 			@Override
 			@Nullable
 			protected IStatus run(IProgressMonitor monitor) {
-				return null;
-//				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
-//				LocalScaComponent newComp = null;
-//				try {
-//					newComp = create(comp, implID);
-//					nodeMap.setLocalScaComponent(newComp);
-//					
-//					//TODO: commented this out, gmf code
-////					EditPart editPart = editor.getDiagramEditPart().findEditPart(editor.getDiagramEditPart(), comp);
-////					if (editPart instanceof SadComponentInstantiationEditPart) {
-////						SadComponentInstantiationEditPart ciEp = (SadComponentInstantiationEditPart) editPart;
-////						ciEp.addRuntimeListeners();
-////					}
-//					
-//					
-//					
-//					return Status.OK_STATUS;
-//				} catch (final CoreException e) {
-//					delete(comp);
-//					nodes.remove(nodeMap.getKey());
-//					return e.getStatus();
-//				} finally {
-//					if (nodes.get(nodeMap.getKey()) == null) {
-//						try {
-//							delete(newComp);
-//						} catch (ReleaseError e) {
-//							// PASS
-//						} catch (SystemException e) {
-//							// PASS
-//						}
-//					}
-//					subMonitor.done();
-//				}
+				
+				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
+				LocalScaComponent newComp = null;
+				try {
+					newComp = create(comp, implID);
+					nodeMap.setLocalScaComponent(newComp);
+				
+					return Status.OK_STATUS;
+				} catch (final CoreException e) {
+					delete(comp);
+					nodes.remove(nodeMap.getKey());
+					return e.getStatus();
+				} finally {
+					if (nodes.get(nodeMap.getKey()) == null) {
+						try {
+							delete(newComp);
+						} catch (ReleaseError e) {
+							// PASS
+						} catch (SystemException e) {
+							// PASS
+						}
+					}
+					subMonitor.done();
+				}
 			}
 
 		};
@@ -466,20 +458,13 @@ public class GraphitiModelMap {
 		}
 	}
 
-	//TODO: commented out
-//	private void delete(@Nullable final SadComponentInstantiation oldValue) {
-//		if (oldValue == null) {
-//			return;
-//		}
-//		final EditPart editPart = findEditPart(oldValue);
-//		if (editPart == null) {
-//			return;
-//		}
-//		final DestroyElementRequest request = new DestroyElementRequest(getEditingDomain(), false);
-//		request.setElementToDestroy(oldValue);
-//		request.getParameters().clear();
-//		createCommandAndExecute(editPart, new EditCommandRequestWrapper(request));
-//	}
+	private void delete(@Nullable final SadComponentInstantiation oldValue) {
+		if (oldValue == null) {
+			return;
+		}
+		
+		//TODO: execute graphiti delete feature on SadComponentInstantiation
+	}
 
 	private void delete(@Nullable final SadConnectInterface connection) {
 		if (connection == null) {
@@ -528,11 +513,7 @@ public class GraphitiModelMap {
 //		}
 //	}
 
-	//TODO: commented out
-//	@Nullable
-//	private EditPart findEditPart(@Nullable final EObject obj) {
-//		return this.editor.getDiagramEditor().getDiagramEditPart().findEditPart(null, obj);
-//	}
+
 
 	@Nullable
 	public SadComponentInstantiation get(@Nullable final LocalScaComponent comp) {
