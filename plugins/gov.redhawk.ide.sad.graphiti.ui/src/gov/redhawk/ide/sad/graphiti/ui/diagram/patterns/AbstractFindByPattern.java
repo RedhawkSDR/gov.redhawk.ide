@@ -298,19 +298,12 @@ public abstract class AbstractFindByPattern extends AbstractPattern implements I
 	 * @param usesPort
 	 * @param featureProvider
 	 */
-<<<<<<< HEAD
+
 	public static void addUsesPortStubToFindByStub(final FindByStub findByStub, final SadUsesPort usesPortStub, IFeatureProvider featureProvider) {
 
 		final String usesPortName = usesPortStub.getUsesIndentifier();
 
 		// editing domain for our transaction
-=======
-	public static void addUsesPortStubToFindByStub(final FindByStub findByStub, final SadUsesPort usesPort, IFeatureProvider featureProvider) {
-	    
-		final String usesPortName = usesPort.getUsesIndentifier();
-		
-		//editing domain for our transaction
->>>>>>> Draw appropriate FindBy shapes when loading populated SAD model file
 		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
 
 		// Create Component Related objects in SAD model
