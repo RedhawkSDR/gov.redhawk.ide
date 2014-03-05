@@ -165,7 +165,7 @@ public class FindByServiceWizardPage extends WizardPage {
 
 	private Model model;
 	private DataBindingContext dbc;
-	private Button serviceNameBtn, serviceTypeBtn, usesPortBtn, providesPortBtn;
+	private Button serviceNameBtn, serviceTypeBtn, usesPortAddBtn, usesPortDeleteBtn, providesPortAddBtn, providesPortDeleteBtn;
 	private Text serviceNameText, serviceTypeText, usesPortNameText, providesPortNameText;
 
 	public FindByServiceWizardPage() {
@@ -176,7 +176,6 @@ public class FindByServiceWizardPage extends WizardPage {
 		dbc = new DataBindingContext();
 	}
 
-	// TODO add logic to delete ports from lists
 	@Override
 	public void createControl(Composite parent) {
 		WizardPageSupport.create(this, dbc);
@@ -309,56 +308,36 @@ public class FindByServiceWizardPage extends WizardPage {
 		final Composite usesPortComposite = createPortComposite(portOptions);
 		// add uses port name text
 		usesPortNameText = addPortNameText(usesPortComposite);
-		// add uses port button
-		usesPortBtn = new Button(usesPortComposite, SWT.PUSH);
-		usesPortBtn.setText("Add Uses Port");
+		// add uses port "Add" button
+		usesPortAddBtn = new Button(usesPortComposite, SWT.PUSH);
+		usesPortAddBtn.setText("Add Uses Port");
 		// add uses port list
 		final org.eclipse.swt.widgets.List usesPortList = addPortList(usesPortComposite, Model.USES_PORT_NAMES);
-		// add uses port listener
-		usesPortBtn.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String portName = usesPortNameText.getText();
-				if (portName != null && !portName.isEmpty() && !("").equals(portName)) {
-					usesPortList.add(portName);
-					dbc.updateModels();
-					usesPortNameText.setText("");
-				}
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-			}
-		});
+		// add uses port "Delete" button
+		usesPortDeleteBtn = new Button(usesPortComposite, SWT.PUSH);
+		usesPortDeleteBtn.setText("Delete");
+		usesPortDeleteBtn.setEnabled(false);
+		// add uses port listeners
+		usesPortAddBtn.addSelectionListener(getPortAddListener(usesPortList, usesPortNameText, usesPortDeleteBtn));
+		usesPortDeleteBtn.addSelectionListener(getPortDeleteListener(usesPortList, usesPortDeleteBtn));
 
 		// provides port composite
 		final Composite providesPortComposite = createPortComposite(portOptions);
 		// add provides port name text
 		providesPortNameText = addPortNameText(providesPortComposite);
-		// add provides port button
-		providesPortBtn = new Button(providesPortComposite, SWT.PUSH);
-		providesPortBtn.setText("Add Provides Port");
+		// add provides port "Add" button
+		providesPortAddBtn = new Button(providesPortComposite, SWT.PUSH);
+		providesPortAddBtn.setText("Add Provides Port");
 		// add provides port list
 		final org.eclipse.swt.widgets.List providesPortList = addPortList(providesPortComposite, Model.PROVIDES_PORT_NAMES);
-		// add provides port listener
-		providesPortBtn.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String portName = providesPortNameText.getText();
-				if (portName != null && !portName.isEmpty() && !("").equals(portName)) {
-					providesPortList.add(portName);
-					dbc.updateModels();
-					providesPortNameText.setText("");
-				}
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-			}
-		});
-
+		// add provides port "Delete" button
+		providesPortDeleteBtn = new Button(providesPortComposite, SWT.PUSH);
+		providesPortDeleteBtn.setText("Delete");
+		providesPortDeleteBtn.setEnabled(false);
+		// add provides port listeners
+		providesPortAddBtn.addSelectionListener(getPortAddListener(providesPortList, providesPortNameText, providesPortDeleteBtn));
+		providesPortDeleteBtn.addSelectionListener(getPortDeleteListener(providesPortList, providesPortDeleteBtn));
+		
 		setControl(composite);
 
 		dbc.updateModels();
@@ -372,12 +351,12 @@ public class FindByServiceWizardPage extends WizardPage {
 	}
 
 	private Text addPortNameText(Composite portComposite) {
-		Text portNameText = new Text(portComposite, SWT.BORDER);
-		portNameText.setLayoutData(new GridData(200, SWT.DEFAULT));
+		final Text portNameText = new Text(portComposite, SWT.BORDER);
+		portNameText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, true, 1, 1));
 		portNameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				String value = usesPortNameText.getText();
+				String value = portNameText.getText();
 				if (value.contains(" ")) {
 					setErrorMessage("Port Name must not have spaces in the name");
 				} else {
@@ -389,10 +368,55 @@ public class FindByServiceWizardPage extends WizardPage {
 	}
 
 	private org.eclipse.swt.widgets.List addPortList(Composite portComposite, String propertyName) {
-		org.eclipse.swt.widgets.List portList = new org.eclipse.swt.widgets.List(portComposite, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
-		portList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		org.eclipse.swt.widgets.List portList = new org.eclipse.swt.widgets.List(portComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
+		portList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		dbc.bindList(SWTObservables.observeItems(portList), BeansObservables.observeList(model, propertyName));
 		return portList;
+	}
+	
+
+	private SelectionListener getPortAddListener(final org.eclipse.swt.widgets.List portList, final Text portNameText, final Button deleteBtn) {
+		SelectionListener listener = new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String portName = portNameText.getText();
+				if (portName != null && !portName.isEmpty() && !("").equals(portName)) {
+					portList.add(portName);
+					portNameText.setText("");
+					deleteBtn.setEnabled(true);
+					dbc.updateModels();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		};
+		return listener;
+	}
+
+	private SelectionListener getPortDeleteListener(final org.eclipse.swt.widgets.List portList, final Button deleteBtn) {
+		SelectionListener listener = new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String[] selections = portList.getSelection();
+				if (selections != null) {
+					for (String selection : selections) {
+						portList.remove(selection);
+					}
+				}
+				if (portList.getItemCount() <= 0) {
+					deleteBtn.setEnabled(false);
+				}
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		};
+		return listener;
 	}
 
 	/**
@@ -418,14 +442,14 @@ public class FindByServiceWizardPage extends WizardPage {
 		// if(model.getEnableServiceName() || model.getEnableServiceType() && model.isServiceTypeSupportsPorts()){
 		if (model.getEnableServiceName() || model.getEnableServiceType()) {
 			usesPortNameText.setEnabled(true);
-			usesPortBtn.setEnabled(true);
+			usesPortAddBtn.setEnabled(true);
 			providesPortNameText.setEnabled(true);
-			providesPortBtn.setEnabled(true);
+			providesPortAddBtn.setEnabled(true);
 		} else {
 			usesPortNameText.setEnabled(false);
-			usesPortBtn.setEnabled(false);
+			usesPortAddBtn.setEnabled(false);
 			providesPortNameText.setEnabled(false);
-			providesPortBtn.setEnabled(false);
+			providesPortAddBtn.setEnabled(false);
 		}
 
 	}
