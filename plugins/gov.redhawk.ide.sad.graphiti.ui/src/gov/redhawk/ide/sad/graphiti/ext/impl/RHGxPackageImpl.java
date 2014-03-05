@@ -177,10 +177,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage
     isInited = true;
 
     // Initialize simple dependencies
-    PictogramsPackage.eINSTANCE.eClass();
-    StylesPackage.eINSTANCE.eClass();
-    EcorePackage.eINSTANCE.eClass();
     AlgorithmsPackage.eINSTANCE.eClass();
+    EcorePackage.eINSTANCE.eClass();
     MmPackage.eINSTANCE.eClass();
 
     // Create package meta-data objects

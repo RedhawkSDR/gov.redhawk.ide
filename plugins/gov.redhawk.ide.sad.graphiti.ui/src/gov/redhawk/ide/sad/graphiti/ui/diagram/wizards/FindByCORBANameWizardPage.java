@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * This file is protected by Copyright. 
+ * Please refer to the COPYRIGHT file distributed with this source distribution.
+ *
+ * This file is part of REDHAWK IDE.
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under 
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.wizards;
 
 import java.beans.PropertyChangeEvent;
@@ -28,7 +38,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class FindByCORBANameWizardPage extends WizardPage{
+public class FindByCORBANameWizardPage extends WizardPage {
 
 	//inner class model used to store user selections
 	public static class CORBANameModel {
@@ -117,13 +127,13 @@ public class FindByCORBANameWizardPage extends WizardPage{
 		}
 
 		public boolean isComplete() {
-			if(this.enableUsesPort && this.usesPortName.length() == 0){
+			if (this.enableUsesPort && this.usesPortName.length() == 0) {
 				return false;
 			}
-			if(this.enableProvidesPort && this.providesPortName.length() == 0){
+			if (this.enableProvidesPort && this.providesPortName.length() == 0) {
 				return false;
 			}
-			if(this.corbaName.length() == 0){
+			if (this.corbaName.length() == 0) {
 				return false;
 			}
 			return true;
@@ -135,8 +145,8 @@ public class FindByCORBANameWizardPage extends WizardPage{
 	private CORBANameModel model;
 	private DataBindingContext dbc;
 	
-	Button usesPortBtn,providesPortBtn;
-	Text usesPortNameText,providesPortNameText;
+	private Button usesPortBtn, providesPortBtn;
+	private Text usesPortNameText, providesPortNameText;
 	
 	public FindByCORBANameWizardPage() {
 		super("findByCorbaName", "Find By CORBA Name", TITLE_IMAGE);
@@ -153,7 +163,7 @@ public class FindByCORBANameWizardPage extends WizardPage{
 		
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		composite.setLayout(new GridLayout(1,false));
+		composite.setLayout(new GridLayout(1, false));
 		
 		//CORBA Name
 		Label corbaNameLabel = new Label(composite, SWT.NONE);
@@ -162,18 +172,18 @@ public class FindByCORBANameWizardPage extends WizardPage{
 		
 		Text corbaNameText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		corbaNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		corbaNameText.addModifyListener(new ModifyListener(){
+		corbaNameText.addModifyListener(new ModifyListener() {
 			@Override
-			public void modifyText(ModifyEvent e){
+			public void modifyText(ModifyEvent e) {
 				dbc.updateModels();
 			}
 		});
 		dbc.bindValue(SWTObservables.observeText(corbaNameText, SWT.Modify),
 				BeansObservables.observeValue(model, CORBANameModel.CORBA_NAME),
-				new UpdateValueStrategy().setAfterGetValidator(new IValidator(){
+				new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
 					@Override
-					public IStatus validate(Object value){
-						if(((String)value).length() < 1){
+					public IStatus validate(Object value) {
+						if (((String) value).length() < 1) {
 							return ValidationStatus.error("CORBA Name must not be empty");
 						}
 						return ValidationStatus.ok();
@@ -204,27 +214,27 @@ public class FindByCORBANameWizardPage extends WizardPage{
 		
 		usesPortNameText = new Text(portOptions, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		usesPortNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		usesPortNameText.addModifyListener(new ModifyListener(){
+		usesPortNameText.addModifyListener(new ModifyListener() {
 			@Override
-			public void modifyText(ModifyEvent e){
+			public void modifyText(ModifyEvent e) {
 				dbc.updateModels();
 			}
 		});
 		dbc.bindValue(SWTObservables.observeText(usesPortNameText, SWT.Modify),
 				BeansObservables.observeValue(model, CORBANameModel.USES_PORT_NAME),
-				new UpdateValueStrategy().setAfterGetValidator(new IValidator(){
+				new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
 					@Override
-					public IStatus validate(Object value){
-						if(value instanceof String && usesPortBtn.getSelection() && ((String)value).length() < 1){
+					public IStatus validate(Object value) {
+						if (value instanceof String && usesPortBtn.getSelection() && ((String) value).length() < 1) {
 							return ValidationStatus.error("Uses Port Name must not be empty");
 						}
 						return ValidationStatus.ok();
 					}
 				}), null
 		);
-		usesPortBtn.addSelectionListener(new SelectionAdapter(){
+		usesPortBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				usesPortNameText.setEnabled(usesPortBtn.getSelection());
 			}
 		});
@@ -244,27 +254,27 @@ public class FindByCORBANameWizardPage extends WizardPage{
 		
 		providesPortNameText = new Text(portOptions, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		providesPortNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		providesPortNameText.addModifyListener(new ModifyListener(){
+		providesPortNameText.addModifyListener(new ModifyListener() {
 			@Override
-			public void modifyText(ModifyEvent e){
+			public void modifyText(ModifyEvent e) {
 				dbc.updateModels();
 			}
 		});
 		dbc.bindValue(SWTObservables.observeText(providesPortNameText, SWT.Modify),
 				BeansObservables.observeValue(model, CORBANameModel.PROVIDES_PORT_NAME),
-				new UpdateValueStrategy().setAfterGetValidator(new IValidator(){
+				new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
 					@Override
-					public IStatus validate(Object value){
-						if(value instanceof String && providesPortBtn.getSelection() && ((String)value).length() < 1){
+					public IStatus validate(Object value) {
+						if (value instanceof String && providesPortBtn.getSelection() && ((String) value).length() < 1) {
 							return ValidationStatus.error("Provides Port Name must not be empty");
 						}
 						return ValidationStatus.ok();
 					}
 				}), null
 		);
-		providesPortBtn.addSelectionListener(new SelectionAdapter(){
+		providesPortBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				providesPortNameText.setEnabled(providesPortBtn.getSelection());
 			}
 		});
