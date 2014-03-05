@@ -12,7 +12,6 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.wizards;
 
 import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
 import gov.redhawk.eclipsecorba.library.ui.IdlInterfaceSelectionDialog;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.wizards.FindByCORBANameWizardPage.CORBANameModel;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -65,7 +64,6 @@ public class FindByServiceWizardPage extends WizardPage {
 		private String serviceType;
 		private List<String> usesPortNames = new ArrayList<String>();
 		private List<String> providesPortNames = new ArrayList<String>();
-
 
 		private boolean serviceTypeSupportsPorts = false;
 
@@ -127,24 +125,23 @@ public class FindByServiceWizardPage extends WizardPage {
 		public List<String> getUsesPortNames() {
 			return usesPortNames;
 		}
-		
+
 		public void setUsesPortNames(List<String> usesPortNames) {
 			final List<String> oldValue = this.usesPortNames;
 			this.usesPortNames = usesPortNames;
 			this.pcs.firePropertyChange(new PropertyChangeEvent(this, Model.USES_PORT_NAMES, oldValue, usesPortNames));
 		}
-		
+
 		public List<String> getProvidesPortNames() {
 			return providesPortNames;
 		}
-		
+
 		public void setProvidesPortNames(List<String> providesPortNames) {
 			final List<String> oldValue = this.providesPortNames;
 			this.providesPortNames = providesPortNames;
 			this.pcs.firePropertyChange(new PropertyChangeEvent(this, Model.PROVIDES_PORT_NAMES, oldValue, providesPortNames));
 		}
-		
-		
+
 		public void addPropertyChangeListener(final PropertyChangeListener listener) {
 			this.pcs.addPropertyChangeListener(listener);
 		}
@@ -179,7 +176,8 @@ public class FindByServiceWizardPage extends WizardPage {
 		dbc = new DataBindingContext();
 	}
 
-	@Override 
+	// TODO add logic to delete ports from lists
+	@Override
 	public void createControl(Composite parent) {
 		WizardPageSupport.create(this, dbc);
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -283,7 +281,7 @@ public class FindByServiceWizardPage extends WizardPage {
 					// Only enable if Service Type radio button is selected
 					return;
 				}
-				
+
 				IdlInterfaceDcl result = IdlInterfaceSelectionDialog.create(getShell());
 				if (result != null) {
 					serviceTypeText.setText(result.getRepId());
@@ -300,7 +298,7 @@ public class FindByServiceWizardPage extends WizardPage {
 		// disable text boxes when service name/type not enabled
 		serviceNameText.setEnabled(model.getEnableServiceName());
 		serviceTypeText.setEnabled(model.getEnableServiceType());
-		
+
 		// port group
 		final Group portOptions = new Group(composite, SWT.NONE);
 		portOptions.setLayout(new GridLayout(2, true));
@@ -308,96 +306,93 @@ public class FindByServiceWizardPage extends WizardPage {
 		portOptions.setText("Port Options");
 
 		// uses port composite
-		final Composite usesPortComposite = new Composite(portOptions, SWT.None);
-		usesPortComposite.setLayout(new GridLayout(2, false));
-		usesPortComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+		final Composite usesPortComposite = createPortComposite(portOptions);
 		// add uses port name text
-		usesPortNameText = new Text(usesPortComposite, SWT.BORDER);
-		usesPortNameText.setLayoutData(new GridData(200, SWT.DEFAULT));
-		usesPortNameText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				String value = usesPortNameText.getText();
-				if (value.contains(" ")) {
-					setErrorMessage("Uses Port Name must not have spaces in the name");
-				} else {
-					setErrorMessage(null);
-				}
-			}
-		}); 
-		
+		usesPortNameText = addPortNameText(usesPortComposite);
 		// add uses port button
 		usesPortBtn = new Button(usesPortComposite, SWT.PUSH);
 		usesPortBtn.setText("Add Uses Port");
-		
 		// add uses port list
-		final org.eclipse.swt.widgets.List usesPortListNew = new org.eclipse.swt.widgets.List(usesPortComposite, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
-		usesPortListNew.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-		dbc.bindList(SWTObservables.observeItems(usesPortListNew), BeansObservables.observeList(model, Model.USES_PORT_NAMES));
+		final org.eclipse.swt.widgets.List usesPortList = addPortList(usesPortComposite, Model.USES_PORT_NAMES);
+		// add uses port listener
 		usesPortBtn.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String portName = usesPortNameText.getText();
 				if (portName != null && !portName.isEmpty() && !("").equals(portName)) {
-					usesPortListNew.add(portName);
+					usesPortList.add(portName);
 					dbc.updateModels();
 					usesPortNameText.setText("");
 				}
 			}
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 			}
 		});
-		
+
 		// provides port composite
-		final Composite providesPortComposite = new Composite(portOptions, SWT.None);
-		providesPortComposite.setLayout(new GridLayout(2, false));
-		providesPortComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+		final Composite providesPortComposite = createPortComposite(portOptions);
 		// add provides port name text
-		providesPortNameText = new Text(providesPortComposite, SWT.BORDER);
-		providesPortNameText.setLayoutData(new GridData(200, SWT.DEFAULT));
-		providesPortNameText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				String value = providesPortNameText.getText();
-				if (value.contains(" ")) {
-					setErrorMessage("Uses Port Name must not have spaces in the name");
-				} else {
-					setErrorMessage(null);
-				}
-			}
-		}); 
-		
+		providesPortNameText = addPortNameText(providesPortComposite);
 		// add provides port button
 		providesPortBtn = new Button(providesPortComposite, SWT.PUSH);
 		providesPortBtn.setText("Add Provides Port");
-		
 		// add provides port list
-		final org.eclipse.swt.widgets.List providesPortListNew = new org.eclipse.swt.widgets.List(providesPortComposite, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
-		providesPortListNew.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-		dbc.bindList(SWTObservables.observeItems(providesPortListNew), BeansObservables.observeList(model, Model.PROVIDES_PORT_NAMES));
+		final org.eclipse.swt.widgets.List providesPortList = addPortList(providesPortComposite, Model.PROVIDES_PORT_NAMES);
+		// add provides port listener
 		providesPortBtn.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String portName = providesPortNameText.getText();
 				if (portName != null && !portName.isEmpty() && !("").equals(portName)) {
-					providesPortListNew.add(portName);
+					providesPortList.add(portName);
 					dbc.updateModels();
 					providesPortNameText.setText("");
 				}
 			}
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 			}
 		});
-		
+
 		setControl(composite);
 
 		dbc.updateModels();
+	}
+
+	private Composite createPortComposite(Composite portOptions) {
+		final Composite composite = new Composite(portOptions, SWT.None);
+		composite.setLayout(new GridLayout(2, false));
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		return composite;
+	}
+
+	private Text addPortNameText(Composite portComposite) {
+		Text portNameText = new Text(portComposite, SWT.BORDER);
+		portNameText.setLayoutData(new GridData(200, SWT.DEFAULT));
+		portNameText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				String value = usesPortNameText.getText();
+				if (value.contains(" ")) {
+					setErrorMessage("Port Name must not have spaces in the name");
+				} else {
+					setErrorMessage(null);
+				}
+			}
+		});
+		return portNameText;
+	}
+
+	private org.eclipse.swt.widgets.List addPortList(Composite portComposite, String propertyName) {
+		org.eclipse.swt.widgets.List portList = new org.eclipse.swt.widgets.List(portComposite, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
+		portList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		dbc.bindList(SWTObservables.observeItems(portList), BeansObservables.observeList(model, propertyName));
+		return portList;
 	}
 
 	/**
