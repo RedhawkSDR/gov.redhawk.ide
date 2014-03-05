@@ -295,14 +295,22 @@ public abstract class AbstractFindByPattern extends AbstractPattern implements I
 	/**
 	 * Add UsesPortStub to FindByStub
 	 * @param findByStub
-	 * @param usesPortStub
+	 * @param usesPort
 	 * @param featureProvider
 	 */
+<<<<<<< HEAD
 	public static void addUsesPortStubToFindByStub(final FindByStub findByStub, final SadUsesPort usesPortStub, IFeatureProvider featureProvider) {
 
 		final String usesPortName = usesPortStub.getUsesIndentifier();
 
 		// editing domain for our transaction
+=======
+	public static void addUsesPortStubToFindByStub(final FindByStub findByStub, final SadUsesPort usesPort, IFeatureProvider featureProvider) {
+	    
+		final String usesPortName = usesPort.getUsesIndentifier();
+		
+		//editing domain for our transaction
+>>>>>>> Draw appropriate FindBy shapes when loading populated SAD model file
 		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
 
 		// Create Component Related objects in SAD model
@@ -322,6 +330,24 @@ public abstract class AbstractFindByPattern extends AbstractPattern implements I
 		});
 	}
 
+	/**
+	 * Add UsesPortStub to FindByStub
+	 * @param findByStub
+	 * @param usesPort
+	 * @param featureProvider
+	 */
+	public static void addUsesPortStubToFindByStub2(final FindByStub findByStub, final SadUsesPort usesPort, IFeatureProvider featureProvider) {
+	    
+		final String usesPortName = usesPort.getUsesIndentifier();
+		
+		//add uses port stub
+		if(usesPortName != null && !usesPortName.isEmpty()){
+			UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
+			usesPortStub.setName(usesPortName);
+			findByStub.getUses().add(usesPortStub);
+		}
+    }
+	
 	/**
 	 * Add ProvidesPortStub to FindByStub
 	 * @param findByStub

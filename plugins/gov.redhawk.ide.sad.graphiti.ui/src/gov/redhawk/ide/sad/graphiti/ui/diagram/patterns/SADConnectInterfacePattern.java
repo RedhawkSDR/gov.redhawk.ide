@@ -1,7 +1,6 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.util.StringUtil;
@@ -29,13 +28,13 @@ import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.AbstractConnectionPattern;
 import org.eclipse.graphiti.pattern.IConnectionPattern;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
+import org.eclipse.graphiti.ui.editor.DiagramEditor;
 
 public class SADConnectInterfacePattern extends AbstractConnectionPattern implements IConnectionPattern{
 
@@ -174,12 +173,18 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 //		.getDiagramContainer().selectPictogramElements(
 //				new PictogramElement[] {portRectangleShape});
 		
-		//force selection of shape so that we can then right click for contextual options
-		//this is kind of a hack, it would be better if selection happened automatically when its clicked.
 		
-		getFeatureProvider().getDiagramTypeProvider().getDiagramEditor()
-		.selectPictogramElements(
-				new PictogramElement[] {context.getSourcePictogramElement()});
+		
+		//doing the null check because it breaks when loading a findby without a diagram
+		if(((DiagramEditor)getFeatureProvider().getDiagramTypeProvider().getDiagramEditor()).getGraphicalViewer() != null){
+			
+			//force selection of shape so that we can then right click for contextual options
+			//this is kind of a hack, it would be better if selection happened automatically when its clicked.
+			getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().selectPictogramElements(
+					new PictogramElement[] {context.getSourcePictogramElement()});
+		}
+		
+		
 //kepler		getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior()
 //			.getDiagramContainer().selectPictogramElements(
 //					new PictogramElement[] {context.getSourcePictogramElement()});

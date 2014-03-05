@@ -606,7 +606,10 @@ public EList<ProvidesPortStub> getInternalProvidesPortStubs()
 	  return (ContainerShape)DUtil.findFirstPropertyContainer(this, SHAPE_interfaceContainerShape);
   }
 
-  
+  /**
+   * handles both determining whether an update is needed and performing an update for the shape.
+   * @return
+   */
   public Reason internalUpdate(String outerText, 
 		  Object businessObject, IFeatureProvider featureProvider, 
 		  String outerImageId, Style outerContainerStyle, 
