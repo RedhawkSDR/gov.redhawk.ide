@@ -2,6 +2,7 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.features.update;
 
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.HostCollocationPattern;
@@ -151,6 +152,14 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
         try {
 	        reason = internalUpdate(context, true);
 	        reason.toBoolean();
+	        
+	        if(reason.toBoolean()){
+	        	//if we changed something lets layout the diagram
+	        	//TODO: THIS IS NOT THE RIGHT WAY, JUST DO IT TO GET SOMETHING WORKING
+//	        	ZestLayoutDiagramFeature layoutFeature = new ZestLayoutDiagramFeature(getFeatureProvider());
+//	        	layoutFeature.execute(null);
+	        }
+	        
         } catch (CoreException e) {
 	        // TODO Auto-generated catch block
 	        e.printStackTrace();

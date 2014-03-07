@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.graphiti.ui.diagramTypeProviders">
+      <diagramTypeProvider
+            class="gov.redhawk.ide.graphiti.example.diagram.TutorialDiagramTypeProvider"
+            id="gov.redhawk.ide.graphiti.example.FactoryProvider"
+            name="FactoryProvider">
+         <diagramType
+               id="gov.redhawk.ide.graphiti.example.ExampleDiagramEditor">
+         </diagramType>
+      </diagramTypeProvider>
+   </extension>
+   <extension
+         point="org.eclipse.graphiti.ui.diagramTypes">
+      <diagramType
+            id="gov.redhawk.ide.graphiti.example.ExampleDiagramEditor"
+            name="Example Diagram"
+            type="ExampleDiagram">
+      </diagramType>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <command
+               commandId="gov.redhawk.ide.graphiti.example.openDiagramHandler"
+               label="Open Diagram"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="gov.redhawk.ide.graphiti.example.openDiagramHandler"
+            name="Open Diagram">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="gov.redhawk.ide.graphiti.example.handler.OpenDiagramHandler"
+            commandId="gov.redhawk.ide.graphiti.example.openDiagramHandler">
+      </handler>
+   </extension>
+</plugin>
