@@ -29,6 +29,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
@@ -43,6 +46,7 @@ import mil.jpeojtrs.sca.sad.diagram.edit.parts.SadConnectInterfaceEditPart;
 import mil.jpeojtrs.sca.sad.diagram.providers.SadElementTypes;
 import mil.jpeojtrs.sca.sad.impl.SadComponentInstantiationImpl;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.core.runtime.Assert;
@@ -85,6 +89,7 @@ public class ModelMap {
 	private static final Debug DEBUG = new Debug(LocalScaDiagramPlugin.PLUGIN_ID, "modelMap");
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
 		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
+
 	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
 		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
 		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
@@ -466,7 +471,22 @@ public class ModelMap {
 			return;
 		}
 		if (!oldComp.isDisposed()) {
-			oldComp.releaseObject();
+			try {
+				ProtectedThreadExecutor.submit(new Callable<Object>() {
+
+					public Object call() throws Exception {
+						oldComp.releaseObject();
+						return null;
+					}
+
+				});
+			} catch (InterruptedException e) {
+				// PASS
+			} catch (ExecutionException e) {
+				// PASS
+			} catch (TimeoutException e) {
+				// PASS
+			}
 		}
 	}
 
