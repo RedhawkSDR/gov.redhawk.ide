@@ -27,8 +27,21 @@
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <command
                commandId="gov.redhawk.ide.graphiti.example.openDiagramHandler"
-               label="Open Diagram"
+               label="Open newDiagram"
                style="push">
+            <parameter
+                  name="gov.redhawk.ide.graphiti.example.fileName"
+                  value="newDiagram.diagram">
+            </parameter>
+         </command>
+         <command
+               commandId="gov.redhawk.ide.graphiti.example.openDiagramHandler"
+               label="Open multiShapes"
+               style="push">
+            <parameter
+                  name="gov.redhawk.ide.graphiti.example.fileName"
+                  value="multiShapes.diagram">
+            </parameter>
          </command>
       </menuContribution>
    </extension>
@@ -37,6 +50,11 @@
       <command
             id="gov.redhawk.ide.graphiti.example.openDiagramHandler"
             name="Open Diagram">
+         <commandParameter
+               id="gov.redhawk.ide.graphiti.example.fileName"
+               name="File"
+               optional="true">
+         </commandParameter>
       </command>
    </extension>
    <extension

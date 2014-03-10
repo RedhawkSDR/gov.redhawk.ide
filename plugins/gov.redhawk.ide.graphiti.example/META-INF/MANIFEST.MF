@@ -4,11 +4,8 @@ Bundle-Name: Example
 Bundle-SymbolicName: gov.redhawk.ide.graphiti.example;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: gov.redhawk.ide.graphiti.example.Activator
-Require-Bundle: org.eclipse.ui,
- org.eclipse.graphiti.examples.common,
+Require-Bundle: org.eclipse.graphiti.examples.common,
  org.eclipse.graphiti.mm;visibility:=reexport,
- org.eclipse.ui.views.properties.tabbed;bundle-version="3.5.300",
- org.eclipse.gef;bundle-version="3.9.0",
  org.eclipse.core.databinding.property;bundle-version="1.3.0",
  org.eclipse.graphiti,
  org.eclipse.graphiti.ui,
@@ -16,11 +13,14 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.databinding.beans;bundle-version="1.2.200",
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
- org.eclipse.xtext.xbase.lib;visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,
  org.eclipse.graphiti.mm;visibility:=reexport,
- org.eclipse.emf.ecore.xcore;visibility:=reexport,
  org.eclipse.emf.transaction;bundle-version="1.4.0",
- org.eclipse.ui.ide
+ org.eclipse.rap.ui;bundle-version="2.2.0",
+ org.eclipse.rap.ui.views.properties.tabbed;bundle-version="1.5.0",
+ org.eclipse.rap.gef;bundle-version="0.1.0",
+ org.eclipse.rap.ui.forms;bundle-version="2.2.0",
+ org.eclipse.rap.ui.views;bundle-version="2.2.0",
+ gov.redhawk.sca.rap.supplement;bundle-version="1.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy

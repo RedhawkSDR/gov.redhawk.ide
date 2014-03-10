@@ -1,6 +1,9 @@
 package gov.redhawk.ide.graphiti.example.handler;
 
 
+import java.io.IOException;
+import java.net.URL;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -18,6 +21,8 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 public class OpenDiagramHandler extends AbstractHandler implements IHandler {
 
+	private static final String PARAM_FILE_NAME = "gov.redhawk.ide.graphiti.example.fileName";
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -26,8 +31,20 @@ public class OpenDiagramHandler extends AbstractHandler implements IHandler {
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		
 		//get platform uri for diagram file (DIAGRAM FILE MUST EXIST)
-		final URI diagramURI = URI.createPlatformResourceURI("W3/src/diagrams/multiShapes.diagram", true);
+//		final URI diagramURI = URI.createPlatformResourceURI("/home/mal/graphiti/multiShapes.diagram", true);
 //		final URI diagramURI = URI.createPlatformResourceURI("W3/src/diagrams/oneShape.diagram", true);
+		
+		String fileName = event.getParameter(PARAM_FILE_NAME);
+		
+		URL url = null;
+		try {
+			url = new URL("platform:/plugin/gov.redhawk.draw2d.test/diagrams/" + fileName);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.err.println("diagram URL: " + url.toString());
+		final URI diagramURI = URI.createURI(url.toString());
 
 		//create editing domain
 		ResourceSet resourceSet = new ResourceSetImpl();
