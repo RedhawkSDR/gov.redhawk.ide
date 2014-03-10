@@ -27,7 +27,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
@@ -42,6 +45,7 @@ import mil.jpeojtrs.sca.sad.diagram.edit.parts.SadConnectInterfaceEditPart;
 import mil.jpeojtrs.sca.sad.diagram.providers.SadElementTypes;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -72,17 +76,13 @@ import org.eclipse.swt.widgets.Display;
 import CF.DataType;
 import CF.ErrorNumberType;
 import CF.ExecutableDevicePackage.ExecuteFail;
-import CF.LifeCyclePackage.ReleaseError;
 import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
 
 public class ModelMap {
-	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] {
-	        PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
-	        PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF,
-	        PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
-	        PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG
-	};
+	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
+		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
+		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 	private final LocalScaEditor editor;
 	private final SoftwareAssembly sad;
 	private final Map<EObject, EObject> sadToSca = new HashMap<EObject, EObject>();
@@ -270,7 +270,7 @@ public class ModelMap {
 			return null;
 		}
 		final CreateViewRequest createRequest = CreateViewRequestFactory.getCreateShapeRequest(SadElementTypes.SadComponentPlacement_3001,
-		        diagramEditPart.getDiagramPreferencesHint());
+			diagramEditPart.getDiagramPreferencesHint());
 
 		final HashMap<Object, Object> map = new HashMap<Object, Object>();
 		map.putAll(createRequest.getExtendedData());
@@ -316,7 +316,7 @@ public class ModelMap {
 	}
 
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
-	        PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
+		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
 
 	private ScaConnection create(final SadConnectInterface conn) throws InvalidPort, OccupiedPort {
 		SadComponentInstantiation inst = ScaEcoreUtils.getFeature(conn, CONN_INST_PATH);
@@ -328,8 +328,7 @@ public class ModelMap {
 		final ScaUsesPort usesPort = (ScaUsesPort) sourceComp.getScaPort(conn.getUsesPort().getUsesIndentifier());
 		org.omg.CORBA.Object targetObj = null;
 		if (conn.getComponentSupportedInterface() != null) {
-			final LocalScaComponent targetComp = get((SadComponentInstantiation) conn.getComponentSupportedInterface().getComponentInstantiationRef()
-			        .getInstantiation());
+			final LocalScaComponent targetComp = get((SadComponentInstantiation) conn.getComponentSupportedInterface().getComponentInstantiationRef().getInstantiation());
 			targetObj = targetComp.getCorbaObj();
 		} else if (conn.getProvidesPort() != null) {
 			final LocalScaComponent targetComp = get(conn.getProvidesPort().getComponentInstantiationRef().getInstantiation());
@@ -396,7 +395,7 @@ public class ModelMap {
 		}
 
 		final CreateConnectionViewRequest ccr = CreateViewRequestFactory.getCreateConnectionRequest(SadElementTypes.SadConnectInterface_4001,
-		        getDiagramEditPart().getDiagramPreferencesHint());
+			getDiagramEditPart().getDiagramPreferencesHint());
 		final HashMap<Object, Object> map = new HashMap<Object, Object>();
 		map.putAll(ccr.getExtendedData());
 		map.put(ConnectInterfaceEditHelperAdvice.CONFIGURE_OPTIONS_ID, newValue.getId());
@@ -428,12 +427,24 @@ public class ModelMap {
 	 * @param oldComp
 	 */
 	private void delete(final LocalScaComponent oldComp) {
-		try {
-			if (!oldComp.isDisposed()) {
-				oldComp.releaseObject();
+		if (!oldComp.isDisposed()) {
+			try {
+				ProtectedThreadExecutor.submit(new Callable<Object>() {
+
+					public Object call() throws Exception {
+						oldComp.releaseObject();
+						return null;
+					}
+
+				});
+			} catch (InterruptedException e) {
+				// PASS
+			} catch (ExecutionException e) {
+				// PASS
+			} catch (TimeoutException e) {
+				// PASS
 			}
-		} catch (final ReleaseError e) {
-			// PASS
+
 		}
 	}
 

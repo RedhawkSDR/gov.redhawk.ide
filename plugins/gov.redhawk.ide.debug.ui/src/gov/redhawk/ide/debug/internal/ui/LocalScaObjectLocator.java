@@ -14,19 +14,11 @@ import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.model.sca.CorbaObjWrapper;
-import gov.redhawk.model.sca.ScaComponent;
-import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaWaveform;
-import gov.redhawk.model.sca.impl.ScaWaveformImpl;
 import gov.redhawk.model.sca.services.AbstractScaObjectLocator;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
@@ -34,25 +26,16 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  */
 public class LocalScaObjectLocator extends AbstractScaObjectLocator {
 
-	private class LocalWaveform extends ScaWaveformImpl {
-
-		@Override
-		public EList<ScaComponent> getComponents() {
-			final List<ScaComponent> allDevices = new ArrayList<ScaComponent>();
-			allDevices.addAll(ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform().getComponents());
-			return new EcoreEList.UnmodifiableEList<ScaComponent>(this,
-			        ScaPackage.eINSTANCE.getScaWaveform_Components(),
-			        allDevices.size(),
-			        allDevices.toArray());
-		}
-	};
-
-	private final ScaWaveform localStub = new LocalWaveform();
-
 	@Override
 	public < T extends CorbaObjWrapper< ? >> T findEObject(final Class<T> type, final String ior) {
 		if (type == ScaWaveform.class && ior == null) {
-			return type.cast(this.localStub);
+			ScaDebugPlugin instance = ScaDebugPlugin.getInstance();
+			if (instance != null) {
+				LocalSca localsca = instance.getLocalSca();
+				if (localsca != null) {
+					return type.cast(localsca.getSandboxWaveform());
+				}
+			}
 		}
 		return super.findEObject(type, ior);
 	}
