@@ -304,23 +304,6 @@ public class FindByServiceWizardPage extends WizardPage {
 		portOptions.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		portOptions.setText("Port Options");
 
-		// uses port composite
-		final Composite usesPortComposite = createPortComposite(portOptions);
-		// add uses port name text
-		usesPortNameText = addPortNameText(usesPortComposite);
-		// add uses port "Add" button
-		usesPortAddBtn = new Button(usesPortComposite, SWT.PUSH);
-		usesPortAddBtn.setText("Add Uses Port");
-		// add uses port list
-		final org.eclipse.swt.widgets.List usesPortList = addPortList(usesPortComposite, Model.USES_PORT_NAMES);
-		// add uses port "Delete" button
-		usesPortDeleteBtn = new Button(usesPortComposite, SWT.PUSH);
-		usesPortDeleteBtn.setText("Delete");
-		usesPortDeleteBtn.setEnabled(false);
-		// add uses port listeners
-		usesPortAddBtn.addSelectionListener(getPortAddListener(usesPortList, usesPortNameText, usesPortDeleteBtn));
-		usesPortDeleteBtn.addSelectionListener(getPortDeleteListener(usesPortList, usesPortDeleteBtn));
-
 		// provides port composite
 		final Composite providesPortComposite = createPortComposite(portOptions);
 		// add provides port name text
@@ -333,10 +316,31 @@ public class FindByServiceWizardPage extends WizardPage {
 		// add provides port "Delete" button
 		providesPortDeleteBtn = new Button(providesPortComposite, SWT.PUSH);
 		providesPortDeleteBtn.setText("Delete");
-		providesPortDeleteBtn.setEnabled(false);
+		if (providesPortList.getItemCount() <= 0) {
+			providesPortDeleteBtn.setEnabled(false);
+		}
 		// add provides port listeners
 		providesPortAddBtn.addSelectionListener(getPortAddListener(providesPortList, providesPortNameText, providesPortDeleteBtn));
 		providesPortDeleteBtn.addSelectionListener(getPortDeleteListener(providesPortList, providesPortDeleteBtn));
+		
+		// uses port composite
+		final Composite usesPortComposite = createPortComposite(portOptions);
+		// add uses port name text
+		usesPortNameText = addPortNameText(usesPortComposite);
+		// add uses port "Add" button
+		usesPortAddBtn = new Button(usesPortComposite, SWT.PUSH);
+		usesPortAddBtn.setText("Add Uses Port");
+		// add uses port list
+		final org.eclipse.swt.widgets.List usesPortList = addPortList(usesPortComposite, Model.USES_PORT_NAMES);
+		// add uses port "Delete" button
+		usesPortDeleteBtn = new Button(usesPortComposite, SWT.PUSH);
+		usesPortDeleteBtn.setText("Delete");
+		if (usesPortList.getItemCount() <= 0) {
+			usesPortDeleteBtn.setEnabled(false);
+		}
+		// add uses port listeners
+		usesPortAddBtn.addSelectionListener(getPortAddListener(usesPortList, usesPortNameText, usesPortDeleteBtn));
+		usesPortDeleteBtn.addSelectionListener(getPortDeleteListener(usesPortList, usesPortDeleteBtn));
 		
 		setControl(composite);
 
@@ -352,7 +356,10 @@ public class FindByServiceWizardPage extends WizardPage {
 
 	private Text addPortNameText(Composite portComposite) {
 		final Text portNameText = new Text(portComposite, SWT.BORDER);
-		portNameText.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, true, 1, 1));
+		GridData layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, true, 1, 1);
+		layoutData.minimumWidth = 200;
+		portNameText.setLayoutData(layoutData);
+		
 		portNameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -369,7 +376,9 @@ public class FindByServiceWizardPage extends WizardPage {
 
 	private org.eclipse.swt.widgets.List addPortList(Composite portComposite, String propertyName) {
 		org.eclipse.swt.widgets.List portList = new org.eclipse.swt.widgets.List(portComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
-		portList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		GridData listLayout = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		listLayout.heightHint = 80;
+		portList.setLayoutData(listLayout);
 		dbc.bindList(SWTObservables.observeItems(portList), BeansObservables.observeList(model, propertyName));
 		return portList;
 	}
@@ -380,6 +389,9 @@ public class FindByServiceWizardPage extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String portName = portNameText.getText();
+				if (portName.contains(" ")) {
+					return;
+				}
 				if (portName != null && !portName.isEmpty() && !("").equals(portName)) {
 					portList.add(portName);
 					portNameText.setText("");

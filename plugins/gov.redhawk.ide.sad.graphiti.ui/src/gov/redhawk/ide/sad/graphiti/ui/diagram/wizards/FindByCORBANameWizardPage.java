@@ -13,6 +13,8 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.wizards;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -21,15 +23,14 @@ import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -40,23 +41,18 @@ import org.eclipse.swt.widgets.Text;
 
 public class FindByCORBANameWizardPage extends WizardPage {
 
-	//inner class model used to store user selections
+	// inner class model used to store user selections
 	public static class CORBANameModel {
 
 		public static final String CORBA_NAME = "corbaName";
-		public static final String ENABLE_USES_PORT = "enableUsesPort";
-		public static final String USES_PORT_NAME = "usesPortName";
-		public static final String PROVIDES_PORT_NAME = "providesPortName";
-		public static final String ENABLE_PROVIDES_PORT = "enableProvidesPort";
+		public static final String USES_PORT_NAMES = "usesPortNames";
+		public static final String PROVIDES_PORT_NAMES = "providesPortNames";
 
 		private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-		
+
 		private String corbaName;
-		private boolean enableUsesPort;
-		private boolean enableProvidesPort;
-		private String usesPortName;
-		private String providesPortName;
-		
+		private List<String> usesPortNames = new ArrayList<String>();
+		private List<String> providesPortNames = new ArrayList<String>();
 
 		public CORBANameModel() {
 		}
@@ -64,58 +60,31 @@ public class FindByCORBANameWizardPage extends WizardPage {
 		public String getCorbaName() {
 			return corbaName;
 		}
+
 		public void setCorbaName(String corbaName) {
 			final String oldValue = this.corbaName;
 			this.corbaName = corbaName;
 			this.pcs.firePropertyChange(new PropertyChangeEvent(this, CORBANameModel.CORBA_NAME, oldValue, corbaName));
 		}
 
-		public boolean setEnableUsesPort() {
-			return enableUsesPort;
+		public List<String> getUsesPortNames() {
+			return usesPortNames;
 		}
 
-		public boolean getEnableUsesPort() {
-			return enableUsesPort;
+		public void setUsesPortNames(List<String> usesPortNames) {
+			final List<String> oldValue = this.usesPortNames;
+			this.usesPortNames = usesPortNames;
+			this.pcs.firePropertyChange(new PropertyChangeEvent(this, CORBANameModel.USES_PORT_NAMES, oldValue, usesPortNames));
 		}
 
-		public boolean getEnableProvidesPort() {
-			return enableProvidesPort;
+		public List<String> getProvidesPortNames() {
+			return providesPortNames;
 		}
 
-		public void setEnableUsesPort(boolean enableUsesPort) {
-			final boolean oldValue = this.enableUsesPort;
-			this.enableUsesPort = enableUsesPort;
-			this.pcs.firePropertyChange(new PropertyChangeEvent(this, CORBANameModel.ENABLE_USES_PORT, oldValue, enableUsesPort));
-		}
-
-		public boolean setEnableProvidesPort() {
-			return enableProvidesPort;
-		}
-
-		public void setEnableProvidesPort(boolean enableProvidesPort) {
-			final boolean oldValue = this.enableProvidesPort;
-			this.enableProvidesPort = enableProvidesPort;
-			this.pcs.firePropertyChange(new PropertyChangeEvent(this, CORBANameModel.ENABLE_PROVIDES_PORT, oldValue, enableProvidesPort));
-		}
-
-		public String getUsesPortName() {
-			return usesPortName;
-		}
-
-		public void setUsesPortName(String usesPortName) {
-			final String oldValue = this.usesPortName;
-			this.usesPortName = usesPortName;
-			this.pcs.firePropertyChange(new PropertyChangeEvent(this, CORBANameModel.USES_PORT_NAME, oldValue, usesPortName));
-		}
-
-		public String getProvidesPortName() {
-			return providesPortName;
-		}
-
-		public void setProvidesPortName(String providesPortName) {
-			final String oldValue = this.providesPortName;
-			this.providesPortName = providesPortName;
-			this.pcs.firePropertyChange(new PropertyChangeEvent(this, CORBANameModel.PROVIDES_PORT_NAME, oldValue, providesPortName));
+		public void setProvidesPortNames(List<String> providesPortNames) {
+			final List<String> oldValue = this.providesPortNames;
+			this.providesPortNames = providesPortNames;
+			this.pcs.firePropertyChange(new PropertyChangeEvent(this, CORBANameModel.PROVIDES_PORT_NAMES, oldValue, providesPortNames));
 		}
 
 		public void addPropertyChangeListener(final PropertyChangeListener listener) {
@@ -127,49 +96,43 @@ public class FindByCORBANameWizardPage extends WizardPage {
 		}
 
 		public boolean isComplete() {
-			if (this.enableUsesPort && this.usesPortName.length() == 0) {
-				return false;
-			}
-			if (this.enableProvidesPort && this.providesPortName.length() == 0) {
-				return false;
-			}
 			if (this.corbaName.length() == 0) {
 				return false;
 			}
 			return true;
 		}
 	};
-	
+
 	private static final ImageDescriptor TITLE_IMAGE = null;
-	
+
 	private CORBANameModel model;
 	private DataBindingContext dbc;
-	
-	private Button usesPortBtn, providesPortBtn;
+
+	private Button usesPortAddBtn, usesPortDeleteBtn, providesPortAddBtn, providesPortDeleteBtn;
 	private Text usesPortNameText, providesPortNameText;
-	
+
 	public FindByCORBANameWizardPage() {
 		super("findByCorbaName", "Find By CORBA Name", TITLE_IMAGE);
 		this.setDescription("Enter CORBA Name and port information");
-		
+
 		model = new CORBANameModel();
 		dbc = new DataBindingContext();
 	}
 
 	@Override
-    public void createControl(Composite parent) {
-	   
+	public void createControl(Composite parent) {
+
 		WizardPageSupport.create(this, dbc);
-		
+
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new GridLayout(1, false));
-		
-		//CORBA Name
+
+		// CORBA Name
 		Label corbaNameLabel = new Label(composite, SWT.NONE);
 		corbaNameLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		corbaNameLabel.setText("CORBA Name:");
-		
+
 		Text corbaNameText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		corbaNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		corbaNameText.addModifyListener(new ModifyListener() {
@@ -178,120 +141,152 @@ public class FindByCORBANameWizardPage extends WizardPage {
 				dbc.updateModels();
 			}
 		});
-		dbc.bindValue(SWTObservables.observeText(corbaNameText, SWT.Modify),
-				BeansObservables.observeValue(model, CORBANameModel.CORBA_NAME),
-				new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
-					@Override
-					public IStatus validate(Object value) {
-						if (((String) value).length() < 1) {
-							return ValidationStatus.error("CORBA Name must not be empty");
-						}
-						return ValidationStatus.ok();
+		dbc.bindValue(SWTObservables.observeText(corbaNameText, SWT.Modify), BeansObservables.observeValue(model, CORBANameModel.CORBA_NAME),
+			new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
+				@Override
+				public IStatus validate(Object value) {
+					if (((String) value).length() < 1) {
+						return ValidationStatus.error("CORBA Name must not be empty");
 					}
-				}), null
-		);
-		
-		
-		//port group
+					return ValidationStatus.ok();
+				}
+			}), null);
+
+		// port group
 		final Group portOptions = new Group(composite, SWT.NONE);
-		portOptions.setLayout(new GridLayout());
+		portOptions.setLayout(new GridLayout(2, true));
 		portOptions.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		portOptions.setText("Port Options");
-		
-		//uses port checkbox
-		usesPortBtn = new Button(portOptions, SWT.CHECK);
-		usesPortBtn.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		usesPortBtn.setText("Uses Port");
-		usesPortBtn.setSelection(model.getEnableUsesPort());
-		dbc.bindValue(WidgetProperties.selection().observe(usesPortBtn), 
-				BeansObservables.observeValue(model, CORBANameModel.ENABLE_USES_PORT));
-		
-		//uses port name
-		final Label usesPortNameLabel = new Label(portOptions, SWT.NONE);
-		usesPortNameLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		usesPortNameLabel.setText("Uses Port Name:");
-		
-		
-		usesPortNameText = new Text(portOptions, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
-		usesPortNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		usesPortNameText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				dbc.updateModels();
-			}
-		});
-		dbc.bindValue(SWTObservables.observeText(usesPortNameText, SWT.Modify),
-				BeansObservables.observeValue(model, CORBANameModel.USES_PORT_NAME),
-				new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
-					@Override
-					public IStatus validate(Object value) {
-						if (value instanceof String && usesPortBtn.getSelection() && ((String) value).length() < 1) {
-							return ValidationStatus.error("Uses Port Name must not be empty");
-						}
-						return ValidationStatus.ok();
-					}
-				}), null
-		);
-		usesPortBtn.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				usesPortNameText.setEnabled(usesPortBtn.getSelection());
-			}
-		});
-		
-		//provides port checkbox
-		providesPortBtn = new Button(portOptions, SWT.CHECK);
-		providesPortBtn.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		providesPortBtn.setText("Provides Port");
-		providesPortBtn.setSelection(model.getEnableProvidesPort());
-		dbc.bindValue(WidgetProperties.selection().observe(providesPortBtn), 
-				BeansObservables.observeValue(model, CORBANameModel.ENABLE_PROVIDES_PORT));
-		
-		//provides port name
-		final Label providesPortNameLabel = new Label(portOptions, SWT.NONE);
-		providesPortNameLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		providesPortNameLabel.setText("Provides Port Name:");
-		
-		providesPortNameText = new Text(portOptions, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
-		providesPortNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		providesPortNameText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				dbc.updateModels();
-			}
-		});
-		dbc.bindValue(SWTObservables.observeText(providesPortNameText, SWT.Modify),
-				BeansObservables.observeValue(model, CORBANameModel.PROVIDES_PORT_NAME),
-				new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
-					@Override
-					public IStatus validate(Object value) {
-						if (value instanceof String && providesPortBtn.getSelection() && ((String) value).length() < 1) {
-							return ValidationStatus.error("Provides Port Name must not be empty");
-						}
-						return ValidationStatus.ok();
-					}
-				}), null
-		);
-		providesPortBtn.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				providesPortNameText.setEnabled(providesPortBtn.getSelection());
-			}
-		});
-		
-		//disable text boxes when ports not enabled
-		usesPortNameText.setEnabled(model.getEnableUsesPort());
-		providesPortNameText.setEnabled(model.getEnableProvidesPort());
-		
+
+		// provides port composite
+		final Composite providesPortComposite = createPortComposite(portOptions);
+		// add provides port name text
+		providesPortNameText = addPortNameText(providesPortComposite);
+		// add provides port "Add" button
+		providesPortAddBtn = new Button(providesPortComposite, SWT.PUSH);
+		providesPortAddBtn.setText("Add Provides Port");
+		// add provides port list
+		final org.eclipse.swt.widgets.List providesPortList = addPortList(providesPortComposite, CORBANameModel.PROVIDES_PORT_NAMES);
+		// add provides port "Delete" button
+		providesPortDeleteBtn = new Button(providesPortComposite, SWT.PUSH);
+		providesPortDeleteBtn.setText("Delete");
+		if (providesPortList.getItemCount() <= 0) {
+			providesPortDeleteBtn.setEnabled(false);
+		}
+		// add provides port listeners
+		providesPortAddBtn.addSelectionListener(getPortAddListener(providesPortList, providesPortNameText, providesPortDeleteBtn));
+		providesPortDeleteBtn.addSelectionListener(getPortDeleteListener(providesPortList, providesPortDeleteBtn));
+
+		// uses port composite
+		final Composite usesPortComposite = createPortComposite(portOptions);
+		// add uses port name text
+		usesPortNameText = addPortNameText(usesPortComposite);
+		// add uses port "Add" button
+		usesPortAddBtn = new Button(usesPortComposite, SWT.PUSH);
+		usesPortAddBtn.setText("Add Uses Port");
+		// add uses port list
+		final org.eclipse.swt.widgets.List usesPortList = addPortList(usesPortComposite, CORBANameModel.USES_PORT_NAMES);
+		// add uses port "Delete" button
+		usesPortDeleteBtn = new Button(usesPortComposite, SWT.PUSH);
+		usesPortDeleteBtn.setText("Delete");
+		if (usesPortList.getItemCount() <= 0) {
+			usesPortDeleteBtn.setEnabled(false);
+		}
+		// add uses port listeners
+		usesPortAddBtn.addSelectionListener(getPortAddListener(usesPortList, usesPortNameText, usesPortDeleteBtn));
+		usesPortDeleteBtn.addSelectionListener(getPortDeleteListener(usesPortList, usesPortDeleteBtn));
+
 		setControl(composite);
-		
+
 		dbc.updateModels();
-	    
-    }
-	
-	
+
+	}
+
+	private Composite createPortComposite(Composite portOptions) {
+		final Composite composite = new Composite(portOptions, SWT.None);
+		composite.setLayout(new GridLayout(2, false));
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		return composite;
+	}
+
+	private Text addPortNameText(Composite portComposite) {
+		final Text portNameText = new Text(portComposite, SWT.BORDER);
+		GridData layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, true, 1, 1);
+		layoutData.minimumWidth = 200;
+		portNameText.setLayoutData(layoutData);
+
+		portNameText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				String value = portNameText.getText();
+				if (value.contains(" ")) {
+					setErrorMessage("Port Name must not have spaces in the name");
+				} else {
+					setErrorMessage(null);
+				}
+			}
+		});
+		return portNameText;
+	}
+
+	private org.eclipse.swt.widgets.List addPortList(Composite portComposite, String propertyName) {
+		org.eclipse.swt.widgets.List portList = new org.eclipse.swt.widgets.List(portComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
+		GridData listLayout = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		listLayout.heightHint = 80;
+		portList.setLayoutData(listLayout);
+		dbc.bindList(SWTObservables.observeItems(portList), BeansObservables.observeList(model, propertyName));
+		return portList;
+	}
+
+	private SelectionListener getPortAddListener(final org.eclipse.swt.widgets.List portList, final Text portNameText, final Button deleteBtn) {
+		SelectionListener listener = new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String portName = portNameText.getText();
+				if (portName.contains(" ")) {
+					return;
+				}
+				if (portName != null && !portName.isEmpty() && !("").equals(portName)) {
+					portList.add(portName);
+					portNameText.setText("");
+					deleteBtn.setEnabled(true);
+					dbc.updateModels();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		};
+		return listener;
+	}
+
+	private SelectionListener getPortDeleteListener(final org.eclipse.swt.widgets.List portList, final Button deleteBtn) {
+		SelectionListener listener = new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String[] selections = portList.getSelection();
+				if (selections != null) {
+					for (String selection : selections) {
+						portList.remove(selection);
+					}
+				}
+				if (portList.getItemCount() <= 0) {
+					deleteBtn.setEnabled(false);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		};
+		return listener;
+	}
+
 	public CORBANameModel getModel() {
 		return model;
 	}
-	
+
 }
