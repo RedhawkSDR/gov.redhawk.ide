@@ -20,7 +20,6 @@ import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.impl.commands.LocalMergeServicesCommand;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDevice;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.impl.ScaDeviceManagerImpl;
 import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SilentJob;
@@ -57,10 +56,11 @@ import CF.DeviceManagerPackage.ServiceType;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl#getLaunch <em>Launch</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl#getMode <em>Mode</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl#getNamingContext <em>Naming Context</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl#getLocalDeviceManager <em>Local Device Manager</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl#getLaunch <em>Launch</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl#getMode <em>Mode</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl#getNamingContext <em>Naming Context</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl#getLocalDeviceManager <em>Local Device Manager</em>}
+ * </li>
  * </ul>
  * </p>
  *
@@ -84,7 +84,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	 * @generated
 	 * @ordered
 	 */
-	protected ILaunch launch = LAUNCH_EDEFAULT;
+	protected ILaunch launch = LocalScaDeviceManagerImpl.LAUNCH_EDEFAULT;
 	/**
 	 * The default value of the '{@link #getMode() <em>Mode</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -102,7 +102,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	 * @generated
 	 * @ordered
 	 */
-	protected String mode = MODE_EDEFAULT;
+	protected String mode = LocalScaDeviceManagerImpl.MODE_EDEFAULT;
 	/**
 	 * The cached value of the '{@link #getNamingContext() <em>Naming Context</em>}' reference.
 	 * <!-- begin-user-doc -->
@@ -129,7 +129,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	 * @generated
 	 * @ordered
 	 */
-	protected DeviceManagerOperations localDeviceManager = LOCAL_DEVICE_MANAGER_EDEFAULT;
+	protected DeviceManagerOperations localDeviceManager = LocalScaDeviceManagerImpl.LOCAL_DEVICE_MANAGER_EDEFAULT;
 
 	private OrbSession session = OrbSession.createSession();
 
@@ -171,8 +171,9 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	public void setLaunch(ILaunch newLaunch) {
 		ILaunch oldLaunch = launch;
 		launch = newLaunch;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LAUNCH, oldLaunch, launch));
+		}
 	}
 
 	/**
@@ -194,8 +195,9 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	public void setMode(String newMode) {
 		String oldMode = mode;
 		mode = newMode;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__MODE, oldMode, mode));
+		}
 	}
 
 	/**
@@ -209,9 +211,10 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 			InternalEObject oldNamingContext = (InternalEObject) namingContext;
 			namingContext = (NotifyingNamingContext) eResolveProxy(oldNamingContext);
 			if (namingContext != oldNamingContext) {
-				if (eNotificationRequired())
+				if (eNotificationRequired()) {
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__NAMING_CONTEXT, oldNamingContext,
 						namingContext));
+				}
 			}
 		}
 		return namingContext;
@@ -235,8 +238,9 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	public void setNamingContext(NotifyingNamingContext newNamingContext) {
 		NotifyingNamingContext oldNamingContext = namingContext;
 		namingContext = newNamingContext;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__NAMING_CONTEXT, oldNamingContext, namingContext));
+		}
 	}
 
 	/**
@@ -259,9 +263,10 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	public void setLocalDeviceManagerGen(DeviceManagerOperations newLocalDeviceManager) {
 		DeviceManagerOperations oldLocalDeviceManager = localDeviceManager;
 		localDeviceManager = newLocalDeviceManager;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER, oldLocalDeviceManager,
 				localDeviceManager));
+		}
 	}
 
 	private final Job refreshJob = new SilentJob("Refresh") {
@@ -350,8 +355,9 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 		case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__MODE:
 			return getMode();
 		case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__NAMING_CONTEXT:
-			if (resolve)
+			if (resolve) {
 				return getNamingContext();
+			}
 			return basicGetNamingContext();
 		case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER:
 			return getLocalDeviceManager();
@@ -392,16 +398,16 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	public void eUnset(int featureID) {
 		switch (featureID) {
 		case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LAUNCH:
-			setLaunch(LAUNCH_EDEFAULT);
+			setLaunch(LocalScaDeviceManagerImpl.LAUNCH_EDEFAULT);
 			return;
 		case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__MODE:
-			setMode(MODE_EDEFAULT);
+			setMode(LocalScaDeviceManagerImpl.MODE_EDEFAULT);
 			return;
 		case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__NAMING_CONTEXT:
 			setNamingContext((NotifyingNamingContext) null);
 			return;
 		case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER:
-			setLocalDeviceManager(LOCAL_DEVICE_MANAGER_EDEFAULT);
+			setLocalDeviceManager(LocalScaDeviceManagerImpl.LOCAL_DEVICE_MANAGER_EDEFAULT);
 			return;
 		}
 		super.eUnset(featureID);
@@ -416,13 +422,14 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 		case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LAUNCH:
-			return LAUNCH_EDEFAULT == null ? launch != null : !LAUNCH_EDEFAULT.equals(launch);
+			return LocalScaDeviceManagerImpl.LAUNCH_EDEFAULT == null ? launch != null : !LocalScaDeviceManagerImpl.LAUNCH_EDEFAULT.equals(launch);
 		case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__MODE:
-			return MODE_EDEFAULT == null ? mode != null : !MODE_EDEFAULT.equals(mode);
+			return LocalScaDeviceManagerImpl.MODE_EDEFAULT == null ? mode != null : !LocalScaDeviceManagerImpl.MODE_EDEFAULT.equals(mode);
 		case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__NAMING_CONTEXT:
 			return namingContext != null;
 		case ScaDebugPackage.LOCAL_SCA_DEVICE_MANAGER__LOCAL_DEVICE_MANAGER:
-			return LOCAL_DEVICE_MANAGER_EDEFAULT == null ? localDeviceManager != null : !LOCAL_DEVICE_MANAGER_EDEFAULT.equals(localDeviceManager);
+			return LocalScaDeviceManagerImpl.LOCAL_DEVICE_MANAGER_EDEFAULT == null ? localDeviceManager != null
+				: !LocalScaDeviceManagerImpl.LOCAL_DEVICE_MANAGER_EDEFAULT.equals(localDeviceManager);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -474,8 +481,9 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (launch: ");
@@ -490,17 +498,7 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 
 	@Override
 	public void shutdown() {
-		if (this == ScaDebugPlugin.getInstance().getLocalSca().getSandboxDeviceManager()) {
-			ScaModelCommand.execute(this, new ScaModelCommand() {
-
-				@Override
-				public void execute() {
-					getDevices().clear();
-				}
-			});
-		} else {
-			super.shutdown();
-		}
+		getDevices().clear();
 	}
 
 	@Override
@@ -534,4 +532,4 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 		return new LocalMergeServicesCommand(this, newServices);
 	}
 
-} //LocalScaDeviceManagerImpl
+} // LocalScaDeviceManagerImpl

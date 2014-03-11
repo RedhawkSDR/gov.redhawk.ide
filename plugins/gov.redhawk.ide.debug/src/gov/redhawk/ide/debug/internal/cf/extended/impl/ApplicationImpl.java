@@ -78,6 +78,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jacorb.naming.Name;
+import org.omg.CORBA.IntHolder;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContext;
@@ -95,9 +96,11 @@ import CF.ComponentType;
 import CF.DataType;
 import CF.DeviceAssignmentType;
 import CF.ErrorNumberType;
+import CF.LogEvent;
 import CF.PortType;
 import CF.PropertiesHolder;
 import CF.Resource;
+import CF.UnknownIdentifier;
 import CF.UnknownProperties;
 import CF.ApplicationPackage.ComponentElementType;
 import CF.ApplicationPackage.ComponentProcessIdType;
@@ -129,7 +132,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	private class ScaComponentComparator implements Comparator<ScaComponent> {
 
 		/**
-		 * Compare on the start order as the first priority, if no start order is found, compare on the pointer location.
+		 * Compare on the start order as the first priority, if no start order is found, compare on the pointer
+		 * location.
 		 */
 		@Override
 		public int compare(ScaComponent o1, ScaComponent o2) {
@@ -1098,7 +1102,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public Resource launch(final String compId, final DataType[] execParams, @NonNull final String spdURI, final String implId, final String mode)
-			throws ExecuteFail {
+		throws ExecuteFail {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		LocalScaComponent retVal;
 		try {
@@ -1122,7 +1126,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public LocalScaComponent launch(final String usageName, final DataType[] execParams, @NonNull final URI spdURI, final String implId, final String mode)
-			throws CoreException {
+		throws CoreException {
 		return launch(usageName, null, execParams, spdURI, implId, mode);
 	}
 
@@ -1256,6 +1260,60 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
+	}
+
+	@Override
+	public LogEvent[] retrieve_records(IntHolder howMany, int startingRecord) {
+		// TODO Auto-generated method stub
+		return new LogEvent[0];
+	}
+
+	@Override
+	public LogEvent[] retrieve_records_by_date(IntHolder howMany, long toTimeStamp) {
+		// TODO Auto-generated method stub
+		return new LogEvent[0];
+	}
+
+	@Override
+	public LogEvent[] retrieve_records_from_date(IntHolder howMany, long fromTimeStamp) {
+		// TODO Auto-generated method stub
+		return new LogEvent[0];
+	}
+
+	@Override
+	public int log_level() {
+		// TODO Auto-generated method stub
+		return -1;
+	}
+
+	@Override
+	public void log_level(int newLogLevel) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setLogLevel(String loggerId, int newLevel) throws UnknownIdentifier {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getLogConfig() {
+		// TODO Auto-generated method stub
+		return "";
+	}
+
+	@Override
+	public void setLogConfig(String configContents) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setLogConfigURL(String configUrl) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

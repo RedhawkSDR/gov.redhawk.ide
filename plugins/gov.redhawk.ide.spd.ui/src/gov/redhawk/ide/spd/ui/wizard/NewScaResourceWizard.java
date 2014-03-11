@@ -632,10 +632,11 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 							ICodeGeneratorPageRegistry codegenRegistry = RedhawkCodegenUiActivator.getCodeGeneratorsRegistry();
 							if (codegenRegistry instanceof ICodeGeneratorPageRegistry2) {
 								List<ICodegenDisplayFactory> codegenDisplayFactories = ((ICodeGeneratorPageRegistry2) codegenRegistry).findCodegenDisplayFactoriesByGeneratorId(generatorId);
-								
-								for (ICodegenDisplayFactory factory : codegenDisplayFactories) {
-									if (factory instanceof ICodegenDisplayFactory2) {
-										((ICodegenDisplayFactory2) factory).modifyProject(project, spdFile, progress.newChild(1));
+								if (codegenDisplayFactories != null) {
+									for (ICodegenDisplayFactory factory : codegenDisplayFactories) {
+										if (factory instanceof ICodegenDisplayFactory2) {
+											((ICodegenDisplayFactory2) factory).modifyProject(project, spdFile, progress.newChild(1));
+										}
 									}
 								}
 							}
