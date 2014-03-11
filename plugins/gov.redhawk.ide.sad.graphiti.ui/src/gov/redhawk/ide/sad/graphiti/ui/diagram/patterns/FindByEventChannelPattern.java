@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * This file is protected by Copyright. 
+ * Please refer to the COPYRIGHT file distributed with this source distribution.
+ *
+ * This file is part of REDHAWK IDE.
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under 
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
@@ -20,17 +30,17 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.IPattern;
 
-public class FindByEventChannelPattern extends AbstractFindByPattern implements IPattern{
+public class FindByEventChannelPattern extends AbstractFindByPattern implements IPattern {
 
 	
 	public static final String NAME = "Event Channel";
 			
-	public FindByEventChannelPattern(){
+	public FindByEventChannelPattern() {
 		super();
 	}
 	
 	@Override
-	public String getCreateName(){
+	public String getCreateName() {
 		return NAME;
 	}
 	
@@ -48,9 +58,9 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	//THE FOLLOWING METHOD DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
 	@Override
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
-		if(mainBusinessObject instanceof FindByStub){
-			FindByStub findByStub = (FindByStub)mainBusinessObject;
-			if(findByStub.getDomainFinder() != null && findByStub.getDomainFinder().getType().equals(DomainFinderType.EVENTCHANNEL)){
+		if (mainBusinessObject instanceof FindByStub) {
+			FindByStub findByStub = (FindByStub) mainBusinessObject;
+			if (findByStub.getDomainFinder() != null && findByStub.getDomainFinder().getType().equals(DomainFinderType.EVENTCHANNEL)) {
 				return true;
 			}
 		}
@@ -76,8 +86,8 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 //kepler		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 		
 		//Create Component Related objects in SAD model
-		TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain){
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
             protected void doExecute() {
 				
@@ -121,8 +131,8 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 //kepler		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 		
 		//Create Component Related objects in SAD model
-		TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain){
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
             protected void doExecute() {
 				
@@ -147,14 +157,14 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	}
 	
 	@Override
-	public String checkValueValid(String value, IDirectEditingContext context){
-		if (value.length() < 1){
+	public String checkValueValid(String value, IDirectEditingContext context) {
+		if (value.length() < 1) {
 			return "Please enter any text as event channel.";
 		}
-		if (value.contains(" ")){
+		if (value.contains(" ")) {
 			return "Spaces are not allowed in event channels.";
 		}
-		if (value.contains("\n")){
+		if (value.contains("\n")) {
 			return "Line breakes are not allowed in event channels.";
 		}
 		// null means, that the value is valid
@@ -162,9 +172,9 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	}
 	
 	@Override
-	public void setValue(final String value, IDirectEditingContext context){
+	public void setValue(final String value, IDirectEditingContext context) {
 		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape rhContainerShape = (RHContainerShape)DUtil.findContainerShapeParentWithProperty(
+		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(
 				pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
 		final FindByStub findBy = (FindByStub) getBusinessObjectForPictogramElement(rhContainerShape);
 		
@@ -173,8 +183,8 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 //kepler	    TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 		
 	    //Perform business object manipulation in a Command
-	    TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
-	    stack.execute(new RecordingCommand(editingDomain){
+	    TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+	    stack.execute(new RecordingCommand(editingDomain)  {
 	    	@Override
 	    	protected void doExecute() {
 	    		//set event name
