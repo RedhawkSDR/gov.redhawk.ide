@@ -131,7 +131,7 @@ public class RedhawkImportWizardPage2 extends WizardPage {
 
 			@Override
 			protected CellEditor getCellEditor(Object element) {
-				ComboBoxCellEditor cellEditor = new ComboBoxCellEditor(viewer.getTree(), templates);
+				ComboBoxCellEditor cellEditor = new ComboBoxCellEditor(viewer.getTree(), templates, SWT.READ_ONLY);
 				return cellEditor;
 			}
 
@@ -151,13 +151,6 @@ public class RedhawkImportWizardPage2 extends WizardPage {
 			protected void setValue(Object element, Object value) {
 				if (element instanceof ImplWrapper) {
 					ImplWrapper implWrapper = (ImplWrapper) element;
-					if ((Integer) value == -1) {
-						MessageBox errorMsg = new MessageBox(getShell(), SWT.ICON_ERROR);
-						errorMsg.setMessage("Entry does not match a valid template ID");
-						errorMsg.setText("Error with template value");
-						errorMsg.open();
-						return;
-					}
 					String template = templates[(Integer) value];
 					implWrapper.setTemplate(template);
 					viewer.update(element, null);
