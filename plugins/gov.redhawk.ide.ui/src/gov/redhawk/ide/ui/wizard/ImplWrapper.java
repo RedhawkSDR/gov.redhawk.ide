@@ -60,7 +60,7 @@ public class ImplWrapper {
 
 	public void setTemplate(String newTemplate) {
 		this.template = newTemplate;
-		project.setTemplate(newTemplate);
+		project.getTemplate().put(impl.getId(), newTemplate);
 	}
 
 }

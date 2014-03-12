@@ -29,7 +29,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 
@@ -154,7 +153,6 @@ public class RedhawkImportWizardPage2 extends WizardPage {
 					String template = templates[(Integer) value];
 					implWrapper.setTemplate(template);
 					viewer.update(element, null);
-
 				}
 			}
 		});
