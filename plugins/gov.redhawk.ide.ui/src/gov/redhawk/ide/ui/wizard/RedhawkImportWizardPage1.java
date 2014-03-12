@@ -39,9 +39,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -187,9 +189,10 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 		boolean missingArchiveFiles;
 
 		/**
-		 *  Field is only instantiated if users use the second page of the REDHAWK import wizard
+		 * Field is only instantiated if users use the second page of the REDHAWK import wizard
+		 * Map that records the template of each implementation language
 		 */
-		private String template;
+		private Map<String, String> template = new HashMap<String, String>();
 
 		IProjectDescription description;
 
@@ -207,12 +210,12 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 
 		/**
 		 * @param file
-		 *            The Object representing the .project file
+		 * The Object representing the .project file
 		 * @param parent
-		 *            The parent folder of the .project file
+		 * The parent folder of the .project file
 		 * @param level
-		 *            The number of levels deep in the provider the file is
-		 * @param sourceFile 
+		 * The number of levels deep in the provider the file is
+		 * @param sourceFile
 		 */
 		ProjectRecord(Object file, Object parent, int level, String sourceFile) {
 			this.projectArchiveFile = file;
@@ -236,7 +239,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 						path = new Path(((ZipEntry) projectArchiveFile).getName());
 					}
 					if (stream == null || isNonEclipseProject(path.toFile().getName())) {
-						// If stream is null or .project file is missing use the directory name as the project name 
+						// If stream is null or .project file is missing use the directory name as the project name
 						if (projectArchiveFile instanceof ZipEntry) {
 							projectName = path.segment(path.segmentCount() - 2);
 						} else if (projectArchiveFile instanceof TarEntry) {
@@ -284,7 +287,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 		 * default location for a project
 		 * 
 		 * @param path
-		 *            The path to examine
+		 * The path to examine
 		 * @return Whether the given path is the default location for a project
 		 */
 		private boolean isDefaultLocation(IPath path) {
@@ -325,12 +328,8 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 			return hasConflicts;
 		}
 
-		public String getTemplate() {
+		public Map<String, String> getTemplate() {
 			return template;
-		}
-
-		public void setTemplate(String template) {
-			this.template = template;
 		}
 	}
 
@@ -686,7 +685,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 	 * Create the area where you select the root directory for the projects.
 	 * 
 	 * @param workArea
-	 *            Composite
+	 * Composite
 	 */
 	private void createProjectsRoot(Composite workArea) {
 
@@ -1090,7 +1089,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 	 * Display an error dialog with the specified message.
 	 * 
 	 * @param message
-	 *            the error message
+	 * the error message
 	 */
 	protected void displayErrorDialog(String message) {
 		MessageDialog.open(MessageDialog.ERROR, getContainer().getShell(), getErrorDialogTitle(), message, SWT.SHEET);
@@ -1109,9 +1108,9 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 	 * @param files
 	 * @param directory
 	 * @param directoriesVisited
-	 *            Set of canonical paths of directories, used as recursion guard
+	 * Set of canonical paths of directories, used as recursion guard
 	 * @param monitor
-	 *            The monitor to report to
+	 * The monitor to report to
 	 * @return boolean <code>true</code> if the operation was completed.
 	 */
 	private boolean collectProjectFilesFromDirectory(Collection<Object> files, File directory, Set<String> directoriesVisited, IProgressMonitor monitor) {
@@ -1192,8 +1191,8 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 	 * 
 	 * @param files
 	 * @param monitor
-	 *            The monitor to report to
-	 * @param sourceFile 
+	 * The monitor to report to
+	 * @param sourceFile
 	 * @return boolean <code>true</code> if the operation was completed.
 	 */
 	private boolean collectProjectFilesFromProvider(Collection<Object> files, Object entry, int level, IProgressMonitor monitor, String sourceFile) {
@@ -1300,7 +1299,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 	 * Create the selected projects
 	 * 
 	 * @return boolean <code>true</code> if all project creations were
-	 *         successful.
+	 * successful.
 	 */
 	public boolean createProjects() {
 		saveWidgetValues();
@@ -1467,7 +1466,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 	 * 
 	 * @param pathString
 	 * @return the user's reply: one of <code>"YES"</code>, <code>"NO"</code>,
-	 *         <code>"ALL"</code>, or <code>"CANCEL"</code>
+	 * <code>"ALL"</code>, or <code>"CANCEL"</code>
 	 */
 	public String queryOverwrite(String pathString) {
 
@@ -1540,7 +1539,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 	 * Method declared public for test suite.
 	 * 
 	 * @return ProjectRecord[] array of projects that can be imported into the
-	 *         workspace
+	 * workspace
 	 */
 	public ProjectRecord[] getProjectRecords() {
 		List<ProjectRecord> projectRecords = new ArrayList<ProjectRecord>();
@@ -1558,9 +1557,9 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 	 * path.
 	 * 
 	 * @param projectName
-	 *            the name of the project
+	 * the name of the project
 	 * @return true if there is a directory with the same name of the imported
-	 *         project
+	 * project
 	 */
 	private boolean isProjectInWorkspacePath(String projectName) {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -1573,9 +1572,9 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 	 * Determine if the project with the given name is in the current workspace.
 	 * 
 	 * @param projectName
-	 *            String the project name to check
+	 * String the project name to check
 	 * @return boolean true if the project with the given name is in this
-	 *         workspace
+	 * workspace
 	 */
 	private boolean isProjectInWorkspace(String projectName) {
 		if (projectName == null) {
@@ -1624,11 +1623,11 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 				directoryRadioSelected();
 			}
 		} else if (initialPath != null) {
-		// Third, if we do have an initial path, set the proper
-		// path and radio buttons to the initial value. Move
-		// cursor to the end of the path so user can see the
-		// most relevant part (directory / archive name)
-		
+			// Third, if we do have an initial path, set the proper
+			// path and radio buttons to the initial value. Move
+			// cursor to the end of the path so user can see the
+			// most relevant part (directory / archive name)
+
 			boolean dir = new File(initialPath).isDirectory();
 
 			projectFromDirectoryRadio.setSelection(dir);

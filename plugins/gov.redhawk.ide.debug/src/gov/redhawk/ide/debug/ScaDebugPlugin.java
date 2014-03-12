@@ -18,6 +18,7 @@ import gov.redhawk.model.sca.commands.ScaModelCommand;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.jacorb.eclipse.JacorbEclipseActivator;
 import org.osgi.framework.BundleContext;
 
 import ExtendedCF.Sandbox;
@@ -35,6 +36,7 @@ public class ScaDebugPlugin extends Plugin {
 	public void start(final BundleContext context) throws Exception {
 		ScaDebugPlugin.instance = this;
 		super.start(context);
+		JacorbEclipseActivator.getDefault().init();
 	}
 
 	@Override

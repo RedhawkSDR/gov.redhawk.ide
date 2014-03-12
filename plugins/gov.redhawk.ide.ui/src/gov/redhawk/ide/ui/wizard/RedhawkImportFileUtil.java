@@ -309,7 +309,7 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 					// Set the template
 					settings.setTemplate(templateDesc.getId());
 					if (record.getTemplate() != null) {
-						settings.setTemplate(record.getTemplate());
+						settings.setTemplate(record.getTemplate().get(impl.getId()));
 					} else {
 						for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
 							if (assistant.handlesLanguage(lang)) {
@@ -327,7 +327,6 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 					break;
 				}
 			}
-			// Save the created settings
 			waveDev.getImplSettings().put(impl.getId(), settings);
 		}
 
