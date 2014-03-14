@@ -1,20 +1,18 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram;
 
-import gov.redhawk.diagram.IDiagramUtilHelper;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.model.sca.util.ModelUtil;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.sad.diagram.part.SadDiagramEditorPlugin;
-import mil.jpeojtrs.sca.sad.diagram.part.SadDiagramEditorUtil;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 
 public enum SadDiagramUtilHelper implements IDiagramUtilHelper {
 	INSTANCE;
@@ -29,18 +27,22 @@ public enum SadDiagramUtilHelper implements IDiagramUtilHelper {
 
 	@Override
 	public Map< ? , ? > getSaveOptions() {
-		return SadDiagramEditorUtil.getSaveOptions();
+		HashMap<String, Object> saveOptions = new HashMap<String, Object>();
+		saveOptions.put(XMLResource.OPTION_ENCODING, "UTF-8"); //$NON-NLS-1$
+		saveOptions.put(Resource.OPTION_SAVE_ONLY_IF_CHANGED,
+				Resource.OPTION_SAVE_ONLY_IF_CHANGED_MEMORY_BUFFER);
+		return saveOptions;
 	}
-
-	@Override
-	public String getModelId() {
-		return mil.jpeojtrs.sca.sad.diagram.edit.parts.SoftwareAssemblyEditPart.MODEL_ID;
-	}
-
-	@Override
-	public PreferencesHint getDiagramPreferencesHint() {
-		return SadDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT;
-	}
+//
+//	@Override
+//	public String getModelId() {
+//		return mil.jpeojtrs.sca.sad.diagram.edit.parts.SoftwareAssemblyEditPart.MODEL_ID;
+//	}
+//
+//	@Override
+//	public PreferencesHint getDiagramPreferencesHint() {
+//		return SadDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT;
+//	}
 
 	@Override
 	public EObject getRootDiagramObject(final Resource resource) {

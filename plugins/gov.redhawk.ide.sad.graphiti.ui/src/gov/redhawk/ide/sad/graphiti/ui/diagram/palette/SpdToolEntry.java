@@ -4,21 +4,18 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 
 import java.text.MessageFormat;
 
-import mil.jpeojtrs.sca.sad.diagram.providers.SadElementTypes;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
-import org.eclipse.jface.resource.ImageDescriptor;
 
 public class SpdToolEntry extends ObjectCreationToolEntry{
 
 	public static final String TOOL_PREFIX = "spdTool.";
 
-	private final IElementType elementType;
+	//private final IElementType elementType;
 	private final URI spdUri;
 
 	private String spdId;
@@ -33,7 +30,7 @@ public class SpdToolEntry extends ObjectCreationToolEntry{
 			description = MessageFormat.format("Create a new instance of the component \"{0}\".", label);
 		}
 		
-		this.elementType = SadElementTypes.SadComponentPlacement_3001;
+		//this.elementType = SadElementTypes.SadComponentPlacement_3001;
 		this.spdUri = spdURI;
 		
 

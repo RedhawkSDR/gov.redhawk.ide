@@ -1,6 +1,6 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.add;
 
-import gov.redhawk.diagram.activator.PluginActivator;
+import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.sca.util.PluginUtil;
@@ -175,7 +175,7 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 		if (!spd.getImplementation().isEmpty()) { // Panic! Just choose first implementation
 			implId = spd.getImplementation().get(0).getId();
 		} else {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, PluginActivator.ID,
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID,
 					spd.getName() + " Component has no implementation. ID: " + spd.getId()),
 					StatusManager.LOG | StatusManager.SHOW);
 			//return CommandResult.newErrorCommandResult("No SPD implementation available for " + spd.getName());

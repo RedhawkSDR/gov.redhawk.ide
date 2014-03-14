@@ -10,10 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.util;
 
-import gov.redhawk.diagram.IDiagramUtilHelper;
-import gov.redhawk.diagram.editor.URIEditorInputProxy;
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.IDiagramUtilHelper;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.sca.efs.ScaFileSystemPlugin;
@@ -1167,10 +1166,6 @@ public class DUtil {
 		} else {
 			diagramResource.save(options.getSaveOptions());
 		}
-	}
-
-	public static IEditorInput getDiagramWrappedInput(final URI diagramURI, final TransactionalEditingDomain editingDomaing) {
-		return new URIEditorInputProxy(new URIEditorInput(diagramURI), editingDomaing);
 	}
 
 	/**

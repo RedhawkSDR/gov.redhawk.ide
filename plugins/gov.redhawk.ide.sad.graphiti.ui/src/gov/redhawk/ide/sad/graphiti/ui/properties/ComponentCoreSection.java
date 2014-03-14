@@ -1,6 +1,5 @@
 package gov.redhawk.ide.sad.graphiti.ui.properties;
 
-import gov.redhawk.diagram.sheet.properties.ComponentInstantiationPropertyViewerAdapter;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.IDisposable;
