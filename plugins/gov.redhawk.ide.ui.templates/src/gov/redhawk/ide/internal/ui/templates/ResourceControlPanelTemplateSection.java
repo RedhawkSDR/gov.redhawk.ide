@@ -67,7 +67,9 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	 */
 	@Override
 	public String getStringOption(String name) {
-		if ("resourceClassName".equals(name)) {
+		if ("packageName".equals(name)) {
+			return getBasePackage();
+		} else if ("resourceClassName".equals(name)) {
 			return getResourceClassName();
 		} else if ("contentTypeProfileId".equals(name)) {
 			return getProfileId();
