@@ -77,6 +77,9 @@ public class LaunchDeviceManagersHelper {
 				// PASS
 			}
 			if (launch.isTerminated()) {
+				if (launch.getProcesses()[0].getExitValue() == 0) {
+					return Status.CANCEL_STATUS;
+				}
 				return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Device manager failed to launch.  Check console output");
 			}
 			return Status.OK_STATUS;
