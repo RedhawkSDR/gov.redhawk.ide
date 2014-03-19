@@ -18,6 +18,11 @@
             editorId="gov.redhawk.ide.debug.ui.diagram.editor.localSca"
             priority="NORMAL">
       </contentTypeBinding>
+       <contentTypeBinding
+            contentTypeId="gov.redhawk.ide.debug.ui.contentType.sca"
+            editorId="gov.redhawk.ide.debug.ui.diagram.editor.localSca"
+            priority="LOWEST">
+      </contentTypeBinding>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

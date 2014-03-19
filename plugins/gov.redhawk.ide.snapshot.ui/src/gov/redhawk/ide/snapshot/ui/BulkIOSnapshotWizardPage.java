@@ -99,7 +99,7 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 
 		// === connection ID ==
 		Label label = new Label(parent, SWT.None);
-		label.setText("Connection ID:");
+		label.setText("Connection ID (Optional):");
 		Text connectionIDField = new Text(parent, SWT.BORDER);
 		connectionIDField.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
 		connectionIDField.setToolTipText("Custom Port connection ID to use vs a generated one.");

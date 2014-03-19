@@ -12,6 +12,7 @@ package gov.redhawk.ide.internal.ui.templates.handlers;
 
 import gov.redhawk.ide.internal.ui.templates.ResourceControlPanelTemplateSection;
 import gov.redhawk.ide.internal.ui.templates.ResourceControlPanelWizard;
+import gov.redhawk.ide.internal.ui.templates.ScaTemplateSection;
 import gov.redhawk.ide.ui.templates.TemplatesActivator;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.editor.SCAFormEditor;
@@ -30,7 +31,9 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -106,25 +109,25 @@ public class NewControlPanelProject extends AbstractHandler {
 			baseName = spdProject.getName();
 		} else {
 			if (name != null) {
-				baseName = name.replace(" ", ".");
+				baseName = ScaTemplateSection.getFormattedPackageName(name);
 			}
 		}
 		String tmpProjectName = baseName + ".ui";
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(tmpProjectName);
 		if (project.exists()) {
 			InputDialog inputDialog = new InputDialog(HandlerUtil.getActiveShell(event), "Name Conflict", "Enter a name for the project:", baseName + "2.ui",
-					new IInputValidator() {
+				new IInputValidator() {
 
-				@Override
-				public String isValid(String newText) {
-					if (newText.trim().isEmpty()) {
-						return "Must enter a value.";
-					} else if (ResourcesPlugin.getWorkspace().getRoot().getProject(newText).exists()) {
-						return "Project '" + newText + "' alread exists.";
+					@Override
+					public String isValid(String newText) {
+						if (newText.trim().isEmpty()) {
+							return "Must enter a value.";
+						} else if (ResourcesPlugin.getWorkspace().getRoot().getProject(newText).exists()) {
+							return "Project '" + newText + "' alread exists.";
+						}
+						return null;
 					}
-					return null;
-				}
-			});
+				});
 			if (inputDialog.open() == Window.OK) {
 				tmpProjectName = inputDialog.getValue();
 			} else {
@@ -151,7 +154,7 @@ public class NewControlPanelProject extends AbstractHandler {
 
 			@Override
 			public IPath getLocationPath() {
-				// TODO Auto-generated method stub
+				// return null for in workspace
 				return null;
 			}
 		};
@@ -159,31 +162,30 @@ public class NewControlPanelProject extends AbstractHandler {
 		contentWizard.setResource(eObj);
 		try {
 			ResourceControlPanelTemplateSection resourceTemplate = contentWizard.getResourceControlPanelTemplateSection();
-			dialog.run(false, true, new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
+			dialog.run(true, true, new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
 			final IFile file = project.getFile(new Path("src/" + resourceTemplate.getBasePackage().replace(".", "/") + "/"
-					+ resourceTemplate.getCompositeClassName() + ".java"));
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					final IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					final IWorkbenchPage page = ww.getActivePage();
-					if (page == null) {
-						return;
-					}
-					IWorkbenchPart focusPart = page.getActivePart();
-					if (focusPart instanceof ISetSelectionTarget) {
-						ISelection selection = new StructuredSelection(file);
-						((ISetSelectionTarget) focusPart).selectReveal(selection);
-					}
-					try {
-						IDE.openEditor(page, file, true);
-					} catch (PartInitException e) {
-						// PASS
-					}
+				+ resourceTemplate.getCompositeClassName() + ".java"));
+			final IWorkbenchWindow ww = HandlerUtil.getActiveWorkbenchWindow(event);
+			final IWorkbenchPage page = ww.getActivePage();
+			IWorkbenchPart focusPart = page.getActivePart();
+			if (focusPart instanceof ISetSelectionTarget) {
+				ISelection selection = new StructuredSelection(file);
+				((ISetSelectionTarget) focusPart).selectReveal(selection);
+			}
+			try {
+				try {
+					file.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			});
+				IDE.openEditor(page, file, true);
+			} catch (PartInitException e) {
+				// PASS
+			}
 		} catch (InvocationTargetException e) {
 			StatusManager.getManager().handle(
-					new Status(Status.ERROR, TemplatesActivator.getPluginId(), "Failed to generate Control Panel Project.", e.getCause()));
+				new Status(Status.ERROR, TemplatesActivator.getPluginId(), "Failed to generate Control Panel Project.", e.getCause()));
 		} catch (InterruptedException e) {
 			// PASS
 		}
@@ -199,7 +201,8 @@ public class NewControlPanelProject extends AbstractHandler {
 		fData.setOutputFolderName("bin");
 		fData.setLegacy(false);
 
-		// No project structure changes since 3.5, mark as latest version (though using any constant 3.5 or greater is equivalent)
+		// No project structure changes since 3.5, mark as latest version (though using any constant 3.5 or greater is
+		// equivalent)
 		fData.setTargetVersion(ICoreConstants.TARGET_VERSION_LATEST);
 
 		// No longer support 3.0 non-osgi bundles in wizard
@@ -226,7 +229,7 @@ public class NewControlPanelProject extends AbstractHandler {
 	 * 
 	 */
 	private String getDefaultExecutionEnvirornment() {
-		// Gather EEs 
+		// Gather EEs
 		IExecutionEnvironment[] exeEnvs = VMUtil.getExecutionEnvironments();
 
 		// Set default EE based on strict match to default VM

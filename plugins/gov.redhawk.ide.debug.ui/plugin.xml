@@ -373,6 +373,14 @@
                class="gov.redhawk.ide.debug.internal.ui.LocalScaChalkboardContentDescriber">
          </describer>
       </contentType>
+      <contentType
+            id="gov.redhawk.ide.debug.ui.contentType.sca"
+            name="Domain Chalkboard"
+            priority="LOWEST">
+         <describer
+               class="gov.redhawk.ide.debug.internal.ui.ScaChalkboardContentDescriber">
+         </describer>
+      </contentType>
    </extension>
    <extension
          point="gov.redhawk.core.resourceFactory.resourceFactories">

@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -143,6 +144,7 @@ public class ComponentPlacementComposite extends Composite implements IScaCompos
 		final Group group = new Group(this, SWT.SHADOW_ETCHED_IN);
 		group.setText("Properties");
 		group.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(3, 1).hint(SWT.DEFAULT, 300).create());
+		group.setLayout(new FillLayout());
 		this.propertiesViewer = ScaComponentFactory.createPropertyTable(group, SWT.SINGLE | SWT.BORDER, this.adapterFactory);
 		this.adapter.setViewer(this.propertiesViewer);
 	}

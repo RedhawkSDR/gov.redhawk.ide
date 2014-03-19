@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.WordUtils;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.ui.templates.OptionTemplateSection;
 import org.osgi.framework.Bundle;
@@ -69,11 +70,15 @@ public abstract class ScaTemplateSection extends OptionTemplateSection {
 	public String[] getNewFiles() {
 		return new String[]{"/icons/*"};
 	}
+	
+	
 
-	protected String getFormattedPackageName(final String id) {
+	public static String getFormattedPackageName(final String id) {
+
+		String retVal = WordUtils.capitalize(id.trim()).replace(" ", "");
 		final StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < id.length(); i++) {
-			final char ch = id.charAt(i);
+		for (int i = 0; i < retVal.length(); i++) {
+			final char ch = retVal.charAt(i);
 			if (buffer.length() == 0) {
 				if (Character.isJavaIdentifierStart(ch)) {
 					buffer.append(Character.toLowerCase(ch));
@@ -84,7 +89,7 @@ public abstract class ScaTemplateSection extends OptionTemplateSection {
 				}
 			}
 		}
-		return buffer.toString().toLowerCase(Locale.ENGLISH);
+		return buffer.toString();
 	}
 
 }

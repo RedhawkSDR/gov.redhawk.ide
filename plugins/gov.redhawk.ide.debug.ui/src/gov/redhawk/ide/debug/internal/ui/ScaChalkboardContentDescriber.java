@@ -43,7 +43,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.ui.IEditorInput;
 
-public class LocalScaChalkboardContentDescriber implements IScaContentDescriber {
+public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 
 	private static class DelayedEditorInput extends ScaFileStoreEditorInput {
 
@@ -78,12 +78,77 @@ public class LocalScaChalkboardContentDescriber implements IScaContentDescriber 
 		private LocalScaWaveform getLocalScaWaveform(final ScaWaveform remoteWaveform) {
 			// Remote Waveform
 			LocalScaWaveform waveform = null;
-			// Find copy
+			waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
+
 			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
-			for (ScaWaveform localWaveform : localSca.getWaveforms()) {
-				if (localWaveform.getIdentifier().equals(remoteWaveform.getIdentifier())) {
-					waveform = (LocalScaWaveform) localWaveform;
+
+			final NotifyingNamingContext rootContext = localSca.getRootContext();
+
+			final NotifyingNamingContext context;
+			try {
+				context = LocalApplicationFactory.createWaveformContext(rootContext, remoteWaveform.getIdentifier());
+			} catch (CoreException e) {
+				throw new IllegalStateException("Failed to create local Chalkboard naming context", e);
+			}
+
+			waveform.setNamingContext(context);
+			waveform.setIor(remoteWaveform.getIor());
+			waveform.setProfile(remoteWaveform.getProfile());
+			waveform.setProfileURI(remoteWaveform.getProfileURI());
+			waveform.setProfileObj(remoteWaveform.getProfileObj());
+			waveform.setStarted(remoteWaveform.getStarted());
+
+			final ApplicationImpl app = new ApplicationImpl(waveform, remoteWaveform.getIdentifier(), remoteWaveform.getName(), remoteWaveform.getObj());
+			waveform.setLocalApp(app);
+
+			final LocalScaWaveform tmpLocalScaWaveform = waveform;
+			// Create local copy
+			ScaModelCommand.execute(localSca, new ScaModelCommand() {
+
+				@Override
+				public void execute() {
+					localSca.getWaveforms().add(tmpLocalScaWaveform);
 				}
+			});
+
+			try {
+				final ScaWaveform tmpWaveform = waveform;
+				ProtectedThreadExecutor.submit(new Callable<Object>() {
+
+					@Override
+					public Object call() throws Exception {
+						LocalApplicationFactory.bindApp(app);
+						tmpWaveform.refresh(null, RefreshDepth.FULL);
+						return null;
+					}
+				});
+
+				ScaModelCommand.execute(remoteWaveform, new ScaModelCommand() {
+
+					@Override
+					public void execute() {
+						remoteWaveform.eAdapters().add(new AdapterImpl() {
+							@Override
+							public void notifyChanged(Notification msg) {
+								switch (msg.getFeatureID(ScaWaveform.class)) {
+								case ScaPackage.SCA_WAVEFORM__DISPOSED:
+									if (msg.getNewBooleanValue()) {
+										tmpLocalScaWaveform.dispose();
+									}
+									break;
+								default:
+									break;
+								}
+							}
+						});
+					}
+				});
+			} catch (InterruptedException e) {
+				ScaDebugPlugin.getInstance().getLog().log(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, "Failed to refresh waveform.", e));
+			} catch (ExecutionException e) {
+				ScaDebugPlugin.getInstance().getLog().log(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, "Failed to refresh waveform.", e));
+			} catch (TimeoutException e) {
+				ScaDebugPlugin.getInstance().getLog().log(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, "Failed to refresh waveform.", e));
 			}
 			return waveform;
 		}
@@ -92,7 +157,7 @@ public class LocalScaChalkboardContentDescriber implements IScaContentDescriber 
 
 	@Override
 	public int describe(final Object contents) throws IOException {
-		if (contents instanceof LocalScaWaveform) {
+		if (contents instanceof ScaWaveform) {
 			return IScaContentDescriber.VALID;
 		}
 		return IScaContentDescriber.INVALID;

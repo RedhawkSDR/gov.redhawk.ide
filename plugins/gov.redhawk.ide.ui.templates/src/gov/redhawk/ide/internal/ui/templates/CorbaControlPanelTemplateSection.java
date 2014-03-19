@@ -256,9 +256,8 @@ public class CorbaControlPanelTemplateSection extends BaseControlPanelTemplate i
 	 * @seeorg.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#
 	 * formatPackageName(java.lang.String)
 	 */
-	@Override
-	protected String getFormattedPackageName(final String id) {
-		final String packageName = super.getFormattedPackageName(id);
+	public static String getFormattedPackageName(final String id) {
+		final String packageName = ScaTemplateSection.getFormattedPackageName(id);
 		if (packageName.length() != 0) {
 			return packageName + ".controlPanels"; //$NON-NLS-1$
 		}
