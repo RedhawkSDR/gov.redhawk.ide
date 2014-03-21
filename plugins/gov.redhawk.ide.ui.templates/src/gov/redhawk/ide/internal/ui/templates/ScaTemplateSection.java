@@ -16,7 +16,6 @@ import gov.redhawk.ide.ui.templates.TemplatesActivator;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.WordUtils;
