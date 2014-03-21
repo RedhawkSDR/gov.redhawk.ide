@@ -247,12 +247,14 @@ public class LocalScaEditor extends SadEditor {
 
 	@Override
 	public String getTitle() {
-		if (waveform != null && waveform.getName() != null) {
-			return waveform.getName();
+		
+		if (waveform != null) {
+			return super.getTitle();
 		} else {
 			return "Chalkboard";
 		}
 	}
+	
 
 	@Override
 	public String getTitleToolTip() {

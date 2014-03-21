@@ -8,6 +8,7 @@
             default="false"
             icon="icons/redhawk16.gif"
             id="gov.redhawk.ide.debug.ui.diagram.editor.localSca"
+            matchingStrategy="gov.redhawk.ide.debug.internal.ui.diagram.ScaChalkboardMatchingStrategy"
             name="%editor.name">
       </editor>
    </extension>
