@@ -16,9 +16,9 @@ import gov.redhawk.ide.ui.templates.TemplatesActivator;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang.WordUtils;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.ui.templates.OptionTemplateSection;
 import org.osgi.framework.Bundle;
@@ -72,21 +72,34 @@ public abstract class ScaTemplateSection extends OptionTemplateSection {
 	
 	
 
-	public static String getFormattedPackageName(final String id) {
-
-		String retVal = WordUtils.capitalize(id.trim()).replace(" ", "");
+	protected static String getFormattedPackageName(final String id) {
+		return makeNameSafe(id).toLowerCase(Locale.ENGLISH);
+	}
+	
+	public static String makeNameSafe(String name) {
 		final StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < retVal.length(); i++) {
-			final char ch = retVal.charAt(i);
+		for (int i = 0; i < name.length(); i++) {
+			final char ch = name.charAt(i);
 			if (buffer.length() == 0) {
 				if (Character.isJavaIdentifierStart(ch)) {
-					buffer.append(Character.toLowerCase(ch));
-				}
-			} else {
-				if (Character.isJavaIdentifierPart(ch) || ch == '.') {
 					buffer.append(ch);
 				}
+			} else {
+				if (ch == '.') {
+					// No more than one dot in a row
+					if (buffer.charAt(buffer.length() - 1) != '.') {
+						buffer.append(ch);
+					}
+				} else if (Character.isJavaIdentifierPart(ch)) {
+					buffer.append(ch);
+				} else if (ch == '-' || ch == ' ') {
+					buffer.append('_');
+				}
 			}
+		}
+		// Cannot end with a dot
+		if (buffer.charAt(buffer.length() - 1) == '.') {
+			buffer.deleteCharAt(buffer.length() - 1);
 		}
 		return buffer.toString();
 	}
