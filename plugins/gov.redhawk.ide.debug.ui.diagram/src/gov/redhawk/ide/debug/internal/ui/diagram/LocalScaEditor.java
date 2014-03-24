@@ -209,11 +209,12 @@ public class LocalScaEditor extends SadEditor {
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 		final LocalScaWaveform waveform = localSca.getSandboxWaveform();
 		String name = "Chalkboard";
-		if (waveform != null && waveform.getName() != null) {
-			name = waveform.getName();
+		if (waveform != null) {
+			name = super.getTitle(); 
 		}
 		return name;
 	}
+	
 
 	@Override
 	public String getTitleToolTip() {
