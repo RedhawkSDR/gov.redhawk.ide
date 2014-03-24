@@ -12,35 +12,18 @@ package gov.redhawk.ide.debug.internal.ui;
 
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.NotifyingNamingContext;
-import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
-import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
-import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
-import gov.redhawk.model.sca.RefreshDepth;
-import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaWaveform;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 import gov.redhawk.sca.ui.editors.IScaContentDescriber;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
-import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.CommonPlugin;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.ui.IEditorInput;
 
 public class LocalScaChalkboardContentDescriber implements IScaContentDescriber {

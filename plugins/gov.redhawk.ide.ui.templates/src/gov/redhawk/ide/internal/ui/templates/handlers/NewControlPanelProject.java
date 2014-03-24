@@ -18,6 +18,7 @@ import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Locale;
 
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.dcd.util.DcdResourceImpl;
@@ -59,7 +60,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ISetSelectionTarget;
@@ -109,7 +109,7 @@ public class NewControlPanelProject extends AbstractHandler {
 			baseName = spdProject.getName();
 		} else {
 			if (name != null) {
-				baseName = ScaTemplateSection.getFormattedPackageName(name);
+				baseName = ScaTemplateSection.makeNameSafe(name);
 			}
 		}
 		String tmpProjectName = baseName + ".ui";
@@ -123,7 +123,7 @@ public class NewControlPanelProject extends AbstractHandler {
 						if (newText.trim().isEmpty()) {
 							return "Must enter a value.";
 						} else if (ResourcesPlugin.getWorkspace().getRoot().getProject(newText).exists()) {
-							return "Project '" + newText + "' alread exists.";
+							return "Project '" + newText + "' already exists.";
 						}
 						return null;
 					}
@@ -138,8 +138,13 @@ public class NewControlPanelProject extends AbstractHandler {
 		final String projectName = tmpProjectName;
 		final String pluginName = name;
 
+		ResourceControlPanelWizard contentWizard = new ResourceControlPanelWizard();
+		contentWizard.setResource(eObj);
+		ResourceControlPanelTemplateSection resourceTemplate = contentWizard.getResourceControlPanelTemplateSection();
+		String packageName = ScaTemplateSection.makeNameSafe(projectName).toLowerCase(Locale.ENGLISH);
+
 		PluginFieldData fPluginData = new PluginFieldData();
-		updateData(fPluginData, pluginName, projectName);
+		updateData(fPluginData, pluginName, projectName, packageName);
 		IProjectProvider fProjectProvider = new IProjectProvider() {
 
 			@Override
@@ -157,14 +162,12 @@ public class NewControlPanelProject extends AbstractHandler {
 				// return null for in workspace
 				return null;
 			}
+			
 		};
-		ResourceControlPanelWizard contentWizard = new ResourceControlPanelWizard();
-		contentWizard.setResource(eObj);
 		try {
-			ResourceControlPanelTemplateSection resourceTemplate = contentWizard.getResourceControlPanelTemplateSection();
-			dialog.run(true, true, new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
-			final IFile file = project.getFile(new Path("src/" + resourceTemplate.getBasePackage().replace(".", "/") + "/"
-				+ resourceTemplate.getCompositeClassName() + ".java"));
+			dialog.run(false, true, new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
+			final IFile file = project.getFile(new Path("src/" + packageName.replace(".", "/") + "/"
+					+ resourceTemplate.getCompositeClassName() + ".java"));
 			final IWorkbenchWindow ww = HandlerUtil.getActiveWorkbenchWindow(event);
 			final IWorkbenchPage page = ww.getActivePage();
 			IWorkbenchPart focusPart = page.getActivePart();
@@ -177,7 +180,7 @@ public class NewControlPanelProject extends AbstractHandler {
 					file.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
 				} catch (CoreException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					e.printStackTrace(); // SUPPRESS CHECKSTYLE No println
 				}
 				IDE.openEditor(page, file, true);
 			} catch (PartInitException e) {
@@ -195,7 +198,7 @@ public class NewControlPanelProject extends AbstractHandler {
 	/**
 	 * @param fPluginData
 	 */
-	protected void updateData(PluginFieldData fData, String pluginName, String projectName) {
+	protected void updateData(PluginFieldData fData, String pluginName, String projectName, String packageName) {
 		fData.setSimple(false);
 		fData.setSourceFolderName("src");
 		fData.setOutputFolderName("bin");
@@ -216,7 +219,7 @@ public class NewControlPanelProject extends AbstractHandler {
 		fData.setProvider("");
 
 		PluginFieldData data = (PluginFieldData) fData;
-		data.setClassname(projectName + ".Activator");
+		data.setClassname(packageName + ".Activator");
 		data.setUIPlugin(true);
 		data.setDoGenerateClass(true);
 		data.setRCPApplicationPlugin(false);
@@ -243,5 +246,4 @@ public class NewControlPanelProject extends AbstractHandler {
 
 		return null;
 	}
-
 }

@@ -22,7 +22,9 @@ import gov.redhawk.model.sca.util.StartJob;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -98,7 +100,8 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		}
 		final LocalApplicationFactory factory = new LocalApplicationFactory(implMap, localSca, mode, launch,
 			assemblyExec.toArray(new DataType[assemblyExec.size()]), assemblyConfig.toArray(new DataType[assemblyConfig.size()]));
-		final LocalScaWaveform app = factory.create(sad, name, monitor);
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("DDD_HHmmssSSS");
+		final LocalScaWaveform app = factory.create(sad, name + "_" + dateFormat.format(new Date()), monitor);
 		if (start) {
 			final StartJob job = new StartJob(app.getName(), app);
 			job.schedule();

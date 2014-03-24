@@ -100,10 +100,12 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 		EObject selection = getSelection();
 		if (selection instanceof SoftPkg) {
 			SoftPkg spd = (SoftPkg) selection;
-			for (Simple s : spd.getPropertyFile().getProperties().getSimple()) {
-				String field = getField(s, false);
-				field = WordUtils.uncapitalize(field.replace(" ", ""));
-				builder.append("		private Text " + field + ";\n");
+			if (spd.getPropertyFile() != null && spd.getPropertyFile().getProperties() != null) {
+				for (Simple s : spd.getPropertyFile().getProperties().getSimple()) {
+					String field = getField(s, false);
+					field = WordUtils.uncapitalize(field.replace(" ", ""));
+					builder.append("		private Text " + field + ";\n");
+				}
 			}
 		}
 		return builder.toString();
@@ -118,14 +120,16 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 		if (selection instanceof SoftPkg) {
 			SoftPkg spd = (SoftPkg) selection;
 			String intend = "		";
-			for (Simple s : spd.getPropertyFile().getProperties().getSimple()) {
-				String field = getField(s);
-				String name = (s.getName() == null) ? s.getId() : s.getName();
+			if (spd.getPropertyFile() != null && spd.getPropertyFile().getProperties() != null) {
+				for (Simple s : spd.getPropertyFile().getProperties().getSimple()) {
+					String field = getField(s);
+					String name = (s.getName() == null) ? s.getId() : s.getName();
 
-				builder.append(intend + "label = new Label(parent, SWT.None);\n");
-				builder.append(intend + "label.setText(\"" + name + ":\");\n");
-				builder.append(intend + field + " = new Text(parent, SWT.BORDER);\n");
-				builder.append(intend + field + ".setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());\n");
+					builder.append(intend + "label = new Label(parent, SWT.None);\n");
+					builder.append(intend + "label.setText(\"" + name + ":\");\n");
+					builder.append(intend + field + " = new Text(parent, SWT.BORDER);\n");
+					builder.append(intend + field + ".setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());\n");
+				}
 			}
 		}
 		return builder.toString();
@@ -158,12 +162,14 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 		String intend = "		";
 		if (selection instanceof SoftPkg) {
 			SoftPkg spd = (SoftPkg) selection;
-			for (Simple s : spd.getPropertyFile().getProperties().getSimple()) {
-				String field = getField(s);
-				builder.append(intend + "simpleProp = (ScaSimpleProperty) input.getProperty(\"" + s.getId() + "\");\n");
-				builder.append(intend + "context.bindValue(\n");
-				builder.append(intend + "	WidgetProperties.text(SWT.Modify).observeDelayed(500, " + field + "),\n");
-				builder.append(intend + "	SCAObservables.observeSimpleProperty(simpleProp));\n");
+			if (spd.getPropertyFile() != null && spd.getPropertyFile().getProperties() != null) {
+				for (Simple s : spd.getPropertyFile().getProperties().getSimple()) {
+					String field = getField(s);
+					builder.append(intend + "simpleProp = (ScaSimpleProperty) input.getProperty(\"" + s.getId() + "\");\n");
+					builder.append(intend + "context.bindValue(\n");
+					builder.append(intend + "	WidgetProperties.text(SWT.Modify).observeDelayed(500, " + field + "),\n");
+					builder.append(intend + "	SCAObservables.observeSimpleProperty(simpleProp));\n");
+				}
 			}
 		}
 		return builder.toString();
@@ -191,9 +197,9 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 		} else {
 			name = "ControlPanel";
 		}
-		return WordUtils.capitalize(name.trim()).replace(" ", "");
+		return makeNameSafe(WordUtils.capitalize(name.trim()).replace(" ", ""));
 	}
-
+	
 	/**
 	 * @return
 	 */
@@ -226,7 +232,12 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 			return "gov.redhawk.model.sca.ScaDeviceManager";
 		} else if (resource instanceof SoftPkg) {
 			SoftPkg spd = (SoftPkg) resource;
-			ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
+			ComponentType type;
+			if (spd.getDescriptor() == null) {
+				type = ComponentType.RESOURCE;
+			} else {
+				type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
+			}
 			switch (type) {
 			case DEVICE:
 				return "gov.redhawk.model.sca.ScaDevice<?>";
@@ -511,7 +522,12 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 			parameter.setAttribute("type", "gov.redhawk.model.sca.ScaDeviceManager");
 		} else if (resource instanceof SoftPkg) {
 			SoftPkg spd = (SoftPkg) resource;
-			ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
+			ComponentType type;
+			if (spd.getDescriptor() != null) {
+				type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
+			} else {
+				type = ComponentType.RESOURCE;
+			}
 			switch (type) {
 			case DEVICE:
 				parameter.setAttribute("type", "gov.redhawk.model.sca.ScaDevice");
