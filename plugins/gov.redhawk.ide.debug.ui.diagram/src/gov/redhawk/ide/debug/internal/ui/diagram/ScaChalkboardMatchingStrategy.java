@@ -24,22 +24,26 @@ public class ScaChalkboardMatchingStrategy implements IEditorMatchingStrategy {
 	public boolean matches(final IEditorReference editorRef, final IEditorInput input) {
 		if (input instanceof ScaFileStoreEditorInput) {
 			final ScaFileStoreEditorInput inp1 = (ScaFileStoreEditorInput) input;
-			IEditorInput inp;
 			try {
-				inp = editorRef.getEditorInput();
+				final IEditorInput inp = editorRef.getEditorInput();
+				if (inp instanceof ScaFileStoreEditorInput) {
+					final ScaFileStoreEditorInput inp2 = (ScaFileStoreEditorInput) inp;
+					final ScaWaveform sca1 = getWaveformFromEditorInput(inp1);
+					final ScaWaveform sca2 = getWaveformFromEditorInput(inp2);
+					return sca1 == sca2;
+				}
 			} catch (final PartInitException e) {
 				return false;
 			}
-			if (inp instanceof ScaFileStoreEditorInput) {
-				final ScaFileStoreEditorInput inp2 = (ScaFileStoreEditorInput) inp;
-				if (inp1.getScaObject() instanceof ScaWaveform && inp2.getScaObject() instanceof ScaWaveform) {
-					final ScaWaveform sca1 = (ScaWaveform) inp1.getScaObject();
-					final ScaWaveform sca2 = (ScaWaveform) inp2.getScaObject();
-					return sca1 == sca2;
-				}
-			}
 		}
 		return false;
+	}
+
+	private ScaWaveform getWaveformFromEditorInput(final ScaFileStoreEditorInput input) {
+		if (input.getScaObject() instanceof ScaWaveform) {
+			return (ScaWaveform) input.getScaObject();
+		}
+		return null;
 	}
 
 }

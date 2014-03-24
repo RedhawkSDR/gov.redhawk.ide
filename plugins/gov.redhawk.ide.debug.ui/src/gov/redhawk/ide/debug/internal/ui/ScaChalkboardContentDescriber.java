@@ -76,11 +76,19 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 		}
 
 		private LocalScaWaveform getLocalScaWaveform(final ScaWaveform remoteWaveform) {
-			// Remote Waveform
 			LocalScaWaveform waveform = null;
-			waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
-
 			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
+			for (ScaWaveform localWaveform : localSca.getWaveforms()) {
+				if (localWaveform.getIdentifier().equals(remoteWaveform.getIdentifier())) {
+					waveform = (LocalScaWaveform) localWaveform;
+				}
+			}
+			
+			if (waveform != null) {
+				return waveform;
+			}
+			
+			waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
 
 			final NotifyingNamingContext rootContext = localSca.getRootContext();
 
