@@ -308,7 +308,7 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 					}
 					// Set the template
 					settings.setTemplate(templateDesc.getId());
-					if (record.getTemplate() != null) {
+					if (record.getTemplate() != null && !record.getTemplate().isEmpty()) {
 						settings.setTemplate(record.getTemplate().get(impl.getId()));
 					} else {
 						for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
