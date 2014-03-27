@@ -58,9 +58,12 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 
 		@Override
 		public IStatus run(IProgressMonitor monitor) {
+			if (getEditDomain() == null || getEditDomain().getPaletteViewer() == null) {
+				return Status.CANCEL_STATUS;
+			}
 			final PaletteRoot root = getEditDomain().getPaletteViewer().getPaletteRoot();
 			final List<PaletteEntry> tools = getWorkspaceComponentTools();
-			
+
 			// Add the toolbar and filter controls
 			tools.add(0, (PaletteEntry) rootPalette.getChildren().get(0));
 			if (root != null) {
@@ -91,16 +94,16 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 		registry.removeListener(listener);
 		super.dispose();
 	}
-	
+
 	@Override
 	protected PaletteRoot createPaletteRoot(final PaletteRoot existingPaletteRoot) {
 		this.rootPalette = super.createPaletteRoot(existingPaletteRoot);
 		final PaletteRoot retVal = new PaletteRoot();
 		List<PaletteEntry> tools = getWorkspaceComponentTools();
-		
+
 		// Add the toolbar and filter controls
 		tools.add(0, (PaletteEntry) rootPalette.getChildren().get(0));
-		
+
 		retVal.setChildren(tools);
 
 		IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
@@ -200,11 +203,11 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 		List<PaletteEntry> retVal = new ArrayList<PaletteEntry>(desc.getImplementationIds().size());
 		if (desc.getImplementationIds().size() == 1) {
 			retVal.add(new SpdToolEntry(desc.getName(), desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(), desc.getImplementationIds().get(0),
-				TOOL_ICON));
+				SandboxDiagramEditor.TOOL_ICON));
 		} else {
 			for (String implID : desc.getImplementationIds()) {
 				retVal.add(new SpdToolEntry(desc.getName() + " (" + implID + ")", desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(), implID,
-					TOOL_ICON));
+					SandboxDiagramEditor.TOOL_ICON));
 			}
 		}
 		return retVal;

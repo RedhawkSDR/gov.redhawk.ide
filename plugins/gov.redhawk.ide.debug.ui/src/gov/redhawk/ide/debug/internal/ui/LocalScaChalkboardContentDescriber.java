@@ -61,11 +61,20 @@ public class LocalScaChalkboardContentDescriber implements IScaContentDescriber 
 		private LocalScaWaveform getLocalScaWaveform(final ScaWaveform remoteWaveform) {
 			// Remote Waveform
 			LocalScaWaveform waveform = null;
+			
+			if (remoteWaveform == null) {
+				return waveform;
+			}
+			
 			// Find copy
 			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 			for (ScaWaveform localWaveform : localSca.getWaveforms()) {
-				if (localWaveform.getIdentifier().equals(remoteWaveform.getIdentifier())) {
+				
+				if (localWaveform == null || localWaveform.getIdentifier() == null) {
+					continue;
+				} else if (localWaveform.getIdentifier().equals(remoteWaveform.getIdentifier())) {
 					waveform = (LocalScaWaveform) localWaveform;
+					break;
 				}
 			}
 			return waveform;
