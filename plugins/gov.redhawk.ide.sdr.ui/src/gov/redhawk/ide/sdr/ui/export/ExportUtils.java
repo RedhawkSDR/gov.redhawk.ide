@@ -269,6 +269,18 @@ public class ExportUtils {
 			outputFolder = outputFolder.append(proj.getName());
 			exporter.mkdir(outputFolder, progress.newChild(MKDIR_WORK));
 
+			final IPath spdRootPath = spdResource.getFullPath().removeLastSegments(1);
+			
+			// If we were told to include code make sure at least one implementation has generated code.
+			if (includeCode) {
+				 if (!checkProjectImplsForExport(softPkg, spdRootPath)) {
+					 return;
+				 }
+			}
+
+			outputFolder = outputFolder.append(proj.getName());
+			exporter.mkdir(outputFolder, progress.newChild(MKDIR_WORK));
+			
 			// Copy the SPD File
 			IPath outputPath = outputFolder.append(spdResource.getName());
 			exporter.write(spdResource, outputPath, progress.newChild(SPD_WORK));
@@ -325,7 +337,7 @@ public class ExportUtils {
 							exporter.write(srcPath, outputPath, progress.newChild(IMPL_WORK));
 						}
 					}
-
+					
 					if (impl.getPropertyFile() != null) {
 						final IPath prfPath = new Path(impl.getPropertyFile().getLocalFile().getName());
 						if (prfPath.isAbsolute()) {
@@ -343,6 +355,60 @@ public class ExportUtils {
 				}
 			}
 		}
+	}
+
+
+	private static boolean checkProjectImplsForExport(SoftPkg softPkg, IPath spdRootPath) throws CoreException {
+		
+		final String projectName = ModelUtil.getProject(softPkg).getProject().getName();
+		if (softPkg.getImplementation() != null && softPkg.getImplementation().size() != 0) {
+			for (final Implementation impl : softPkg.getImplementation()) {
+				final String localFileName = impl.getCode().getLocalFile().getName();
+				final IPath codeLocalFile;
+				if (localFileName != null) {
+					codeLocalFile = new Path(localFileName);
+				} else {
+					codeLocalFile = null;
+				}
+				if (codeLocalFile != null && codeLocalFile.isAbsolute()) {
+					throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Cannot export absolute path localfile paths"));
+				}
+				
+				final IResource srcPath = ExportUtils.getWorkspaceResource(spdRootPath.append(codeLocalFile));
+				// Check if the path exists, there may be multiple implementations in this, only one needs to be built
+				if ((srcPath == null) || !srcPath.exists()) {
+					final String inProjStr = "in project '" + projectName + "' ";
+
+					final boolean[] shouldExport = { false };
+					Display.getDefault().syncExec(new Runnable() {
+						public void run() {
+							shouldExport[0] = MessageDialog.openQuestion(null, "File does not exist", "The file '" 
+						+ localFileName + "' " + inProjStr + "does not exist, export implementation anyway?");
+						}
+					});
+					if (!shouldExport[0]) {
+						SdrUiPlugin.getDefault().logError(
+						        "Expected file '" + codeLocalFile + "' " + inProjStr + "does not exist, not exporting implementation");
+						return false;
+					}
+				} 
+			}
+		} else {
+			final boolean[] shouldExport = { false };
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					shouldExport[0] = MessageDialog.openQuestion(null, "No Implementations Found", 
+							"No Implementations were found in " + projectName + ", export anyway?");
+				}
+			});
+			if (!shouldExport[0]) {
+				SdrUiPlugin.getDefault().logError(
+				        "No implementations found in " + projectName + ", not exporting project");
+				return false;
+			}
+		}
+	
+		return true;
 	}
 
 	/**
