@@ -9,6 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui.diagram;
+
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 
@@ -16,7 +17,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorMatchingStrategy;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PartInitException;
-
 
 public class ScaChalkboardMatchingStrategy implements IEditorMatchingStrategy {
 
@@ -30,7 +30,7 @@ public class ScaChalkboardMatchingStrategy implements IEditorMatchingStrategy {
 					final ScaFileStoreEditorInput inp2 = (ScaFileStoreEditorInput) inp;
 					final ScaWaveform sca1 = getWaveformFromEditorInput(inp1);
 					final ScaWaveform sca2 = getWaveformFromEditorInput(inp2);
-					return sca1 == sca2;
+					return sca1 != null && sca1 == sca2;
 				}
 			} catch (final PartInitException e) {
 				return false;
@@ -45,5 +45,4 @@ public class ScaChalkboardMatchingStrategy implements IEditorMatchingStrategy {
 		}
 		return null;
 	}
-
 }

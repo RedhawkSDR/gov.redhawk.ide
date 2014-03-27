@@ -268,7 +268,17 @@ public class ExportUtils {
 			
 			outputFolder = outputFolder.append(proj.getName());
 			exporter.mkdir(outputFolder, progress.newChild(MKDIR_WORK));
+			
+			// If we were told to include code make sure at least one implementation has generated code.
+			if (includeCode) {
+				 if (!checkProjectImplsForExport(softPkg, spdRootPath)) {
+					 return;
+				 }
+			}
 
+			outputFolder = outputFolder.append(proj.getName());
+			exporter.mkdir(outputFolder, progress.newChild(MKDIR_WORK));
+			
 			// Copy the SPD File
 			IPath outputPath = outputFolder.append(spdResource.getName());
 			exporter.write(spdResource, outputPath, progress.newChild(SPD_WORK));
@@ -325,7 +335,7 @@ public class ExportUtils {
 							exporter.write(srcPath, outputPath, progress.newChild(IMPL_WORK));
 						}
 					}
-
+					
 					if (impl.getPropertyFile() != null) {
 						final IPath prfPath = new Path(impl.getPropertyFile().getLocalFile().getName());
 						if (prfPath.isAbsolute()) {
@@ -410,7 +420,7 @@ public class ExportUtils {
 		
 		return true;
 	}
-	
+
 	/**
 	 * Exports IDL projects from the specified project using the provided exporter.
 	 * 
