@@ -483,7 +483,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
 			final ScaDomainManager dom = dmReg.findDomain(s);
 			if ((dom != null) && (!namingService.equals(dom.getConnectionProperties().get(ScaDomainManager.NAMING_SERVICE_PROP)))) {
-				return ValidationStatus.error("This name is registered against a non-default name server and cannot be a launched");
+				return ValidationStatus.error("This name is registered against a non-default name server and cannot be launched");
 			}
 
 			if (LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.contains(s)) {
