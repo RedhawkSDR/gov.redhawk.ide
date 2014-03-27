@@ -319,7 +319,7 @@ public class ExportUtils {
 						final IResource srcPath = ExportUtils.getWorkspaceResource(spdRootPath.append(codeLocalFile));
 						
 						// Check if the path exists, there may be multiple implementations in this, only one needs to be built
-						if ((srcPath == null) || !srcPath.exists()) {
+						if ((srcPath != null) && srcPath.exists()) {
 							outputPath = outputFolder.append(codeLocalFile);
 							exporter.write(srcPath, outputPath, progress.newChild(IMPL_WORK));
 						}
