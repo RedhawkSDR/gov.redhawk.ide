@@ -17,7 +17,7 @@
       <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.localSca"
             editorId="gov.redhawk.ide.debug.ui.diagram.editor.localSca"
-            priority="NORMAL">
+            priority="LOW">
       </contentTypeBinding>
        <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.sca"
