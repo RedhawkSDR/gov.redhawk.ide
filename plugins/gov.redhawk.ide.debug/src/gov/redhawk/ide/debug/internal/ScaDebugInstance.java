@@ -203,6 +203,18 @@ public enum ScaDebugInstance {
 
 		final ApplicationImpl app = new ApplicationImpl(waveform, name, name);
 		waveform.setLocalApp(app);
+
+		// Mark the ports and components as set
+		if (!waveform.isSetPorts()) {
+			waveform.getPorts().clear();
+		}
+		if (!waveform.isSetComponents()) {
+			waveform.getComponents().clear();
+		}
+		if (!waveform.isSetProperties()) {
+			waveform.getProperties().clear();
+		}
+
 		return waveform;
 	}
 
