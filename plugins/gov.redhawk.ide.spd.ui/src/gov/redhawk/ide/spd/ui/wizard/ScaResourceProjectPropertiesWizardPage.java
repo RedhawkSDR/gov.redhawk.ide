@@ -79,7 +79,7 @@ public class ScaResourceProjectPropertiesWizardPage extends ScaProjectProperties
 	 */
 	public ScaResourceProjectPropertiesWizardPage(final String pageName, final String type) {
 		super(pageName, type, "SPD");
-		setTitle("Create a SCA " + type + " Project");
+		setTitle("Create an SCA " + type + " Project");
 		this.setDescription("Choose to either create a new Component or import an existing one.");
 	}
 	
