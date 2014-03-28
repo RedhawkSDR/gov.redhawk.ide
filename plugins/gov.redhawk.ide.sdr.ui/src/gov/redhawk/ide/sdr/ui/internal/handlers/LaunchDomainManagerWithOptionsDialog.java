@@ -79,8 +79,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
@@ -187,8 +189,9 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 					}
 				}
 			}
-
-			LaunchDomainManagerWithOptionsDialog.this.nameBinding.validateTargetToModel();
+			if (nameBinding != null) {
+				LaunchDomainManagerWithOptionsDialog.this.nameBinding.validateTargetToModel();
+			}
 		}
 	};
 
@@ -199,7 +202,6 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			monitor.beginTask("Checking domain name...", IProgressMonitor.UNKNOWN);
 			final String domainName = LaunchDomainManagerWithOptionsDialog.this.model.domainName;
-
 			final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
 			final ScaDomainManager dom = dmReg.findDomain(domainName);
 			if (dom != null) {
@@ -214,7 +216,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 					LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.add(domainName);
 				}
 			} catch (CoreException e) {
-				// PASS ignore errors here
+				throw new InvocationTargetException(e);
 			}
 
 			LaunchDomainManagerWithOptionsDialog.this.nameBinding.validateTargetToModel();
@@ -663,7 +665,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		} finally {
 			// explicitly invoke done() on our progress monitor so that its
 			// label does not spill over to the next invocation, see bug 271530
-			if (getProgressMonitor() != null) {
+			if (getProgressMonitor() != null && getReturnCode() != Status.CANCEL) {
 				getProgressMonitor().done();
 			}
 			// Stop if this is the last one
@@ -671,7 +673,9 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			stopped();
 			this.activeRunningOperations--;
 		}
-		getOkButton().setEnabled(true);
+		if (getOkButton() != null) {
+			getOkButton().setEnabled(true);
+		}
 	}
 
 	protected IProgressMonitor getProgressMonitor() {
@@ -684,13 +688,15 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	 * the enable state wizard's buttons and controls.
 	 * 
 	 * @param savedState
-	 *            the saved UI state as returned by <code>aboutToStart</code>
+	 * the saved UI state as returned by <code>aboutToStart</code>
 	 * @see #aboutToStart
 	 */
 	private void stopped() {
 		if (getShell() != null && !getShell().isDisposed()) {
-			this.progressMonitorPart.setVisible(false);
-			this.progressMonitorPart.removeFromCancelComponent(this.cancelButton);
+			if (progressMonitorPart != null) {
+				this.progressMonitorPart.setVisible(false);
+				this.progressMonitorPart.removeFromCancelComponent(this.cancelButton);
+			}
 			setDisplayCursor(null);
 			if (this.useCustomProgressMonitorPart) {
 				this.cancelButton.addSelectionListener(this.cancelListener);
@@ -714,13 +720,25 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	 * </p>
 	 * 
 	 * @param parent
-	 *            the parent composite to contain the buttons
+	 * the parent composite to contain the buttons
 	 */
 	@Override
 	protected void createButtonsForButtonBar(final Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		((GridLayout) parent.getLayout()).makeColumnsEqualWidth = false;
 		this.cancelButton = createCancelButton(parent);
+		
+		// also add cancel operation to the shell
+		getShell().addListener(SWT.Traverse, new Listener() {
+			
+			public void handleEvent(Event event) {
+				switch (event.detail) {
+				case SWT.TRAVERSE_ESCAPE:
+					cancelPressed();
+					break;
+				}
+			}
+		});
 	}
 
 	/**
@@ -730,7 +748,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	 * created specially to give it a removeable listener.
 	 * 
 	 * @param parent
-	 *            the parent button bar
+	 * the parent button bar
 	 * @return the new Cancel button
 	 */
 	private Button createCancelButton(final Composite parent) {
@@ -751,8 +769,8 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	 * controls.
 	 * 
 	 * @param enableCancelButton
-	 *            <code>true</code> if the Cancel button should be enabled,
-	 *            and <code>false</code> if it should be disabled
+	 * <code>true</code> if the Cancel button should be enabled,
+	 * and <code>false</code> if it should be disabled
 	 * @return the saved UI state
 	 */
 	private void aboutToStart(final boolean enableCancelButton) {
@@ -790,10 +808,14 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 					public void keyTraversed(final TraverseEvent e) {
 						if (e.detail == SWT.TRAVERSE_RETURN || (e.detail == SWT.TRAVERSE_MNEMONIC && e.keyCode == 32)) {
 							// We want to ignore the keystroke when we detect that it has been received within the
-							// delay period after the last operation has finished.  This prevents the user from accidentally
-							// hitting "Enter" or "Space", intending to cancel an operation, but having it processed exactly
-							// when the operation finished, thus traversing the wizard.  If there is another operation still
-							// running, the UI is locked anyway so we are not in this code.  This listener should fire only
+							// delay period after the last operation has finished. This prevents the user from
+							// accidentally
+							// hitting "Enter" or "Space", intending to cancel an operation, but having it processed
+							// exactly
+							// when the operation finished, thus traversing the wizard. If there is another operation
+							// still
+							// running, the UI is locked anyway so we are not in this code. This listener should fire
+							// only
 							// after the UI state is restored (which by definition means all jobs are done.
 							// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=287887
 							if (LaunchDomainManagerWithOptionsDialog.this.timeWhenLastJobFinished != 0
@@ -822,7 +844,15 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			setReturnCode(Window.CANCEL);
 			close();
 		} else {
-			this.cancelButton.setEnabled(false);
+			nameBinding.dispose();
+			nameBinding = null;
+			context.dispose();
+			setReturnCode(Window.CANCEL);
+			IProgressMonitor monitor = getProgressMonitor();
+			this.progressMonitorPart = null;
+			monitor.setCanceled(true);
+			stopped();
+			close();
 		}
 	}
 
@@ -831,7 +861,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	 * display.
 	 * 
 	 * @param c
-	 *            the cursor
+	 * the cursor
 	 */
 	private void setDisplayCursor(final Cursor c) {
 		final Shell[] shells = getShell().getDisplay().getShells();
@@ -842,7 +872,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 
 	@Override
 	protected Control createButtonBar(final Composite parent) {
-		//		return createButtonBarTray(parent);
+		// return createButtonBarTray(parent);
 		return super.createButtonBar(parent);
 	}
 
@@ -854,6 +884,8 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	 */
 	@Override
 	protected void updateButtonsEnableState(final IStatus status) {
-		super.updateButtonsEnableState((IStatus) this.nameBinding.getValidationStatus().getValue());
+		if (nameBinding != null) {
+			super.updateButtonsEnableState((IStatus) this.nameBinding.getValidationStatus().getValue());
+		}
 	}
 }
