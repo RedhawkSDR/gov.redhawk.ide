@@ -797,8 +797,6 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			setReturnCode(Window.CANCEL);
 			close();
 		} else {
-//			this.cancelButton.setEnabled(false);
-			// TODO get running operations and interrupt
 			nameBinding.dispose();
 			nameBinding = null;
 			context.dispose();
