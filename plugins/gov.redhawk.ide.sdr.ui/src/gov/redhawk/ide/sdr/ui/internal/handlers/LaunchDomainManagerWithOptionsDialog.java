@@ -33,6 +33,7 @@ import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -77,8 +78,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
@@ -131,7 +134,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			return this.debugLevel;
 		}
 	}
-	
+
 	// Load the domains that are on the Naming service already
 	final IRunnableWithProgress scanForTakenDomainNames = new IRunnableWithProgress() {
 
@@ -139,8 +142,8 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			monitor.beginTask("Scanning for running domains...", IProgressMonitor.UNKNOWN);
 			LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.clear();
 			LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.addAll(Arrays.asList(ScaPlugin.findDomainNamesOnDefaultNameServer()));
-			
-			// We also need to handle the case where the default name server doesn't  have the domain name in use
+
+			// We also need to handle the case where the default name server doesn't have the domain name in use
 			// but we have a domain definition against an alternate name server...in this case you cannot use
 			// the domain name regardless because we cannot alter or remove the connection setting.
 			final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
@@ -157,18 +160,19 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 					}
 				}
 			}
-			
-			LaunchDomainManagerWithOptionsDialog.this.nameBinding.validateTargetToModel();
+			if (nameBinding != null) {
+				LaunchDomainManagerWithOptionsDialog.this.nameBinding.validateTargetToModel();
+			}
 		}
 	};
-	
+
 	// Load the domains that are on the Naming service already
 	final IRunnableWithProgress checkDomainName = new IRunnableWithProgress() {
 
 		public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			monitor.beginTask("Checking domain name...", IProgressMonitor.UNKNOWN);
 			final String domainName = LaunchDomainManagerWithOptionsDialog.this.model.getDomainName();
-			
+
 			final String namingService = ScaUiPlugin.getDefault().getScaPreferenceStore().getString(ScaPreferenceConstants.SCA_DEFAULT_NAMING_SERVICE);
 			final ScaDomainManager dom = ScaPlugin.getDefault().getDomainManagerRegistry().findDomain(domainName);
 			if (dom != null) {
@@ -176,19 +180,23 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 					LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.add(domainName);
 				}
 			}
-			
+
 			// Check again just in case the domain started up since the last scan.
-			if (ScaPlugin.isDomainOnline(domainName)) {
-				LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.add(domainName);
+			try {
+				if (ScaPlugin.isDomainOnline(domainName, monitor)) {
+					LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.add(domainName);
+				}
+			} catch (CoreException e) {
+				throw new InvocationTargetException(e);
 			}
-					
+
 			LaunchDomainManagerWithOptionsDialog.this.nameBinding.validateTargetToModel();
 		}
 	};
 
 	public LaunchDomainManagerWithOptionsDialog(final Shell parentShell, final DomainManagerConfiguration domain, final AdapterFactory adapterFactory) {
-		super(parentShell, LaunchDomainManagerWithOptionsDialog.getLabelProvider(adapterFactory), LaunchDomainManagerWithOptionsDialog
-		        .getContentProvider(adapterFactory));
+		super(parentShell, LaunchDomainManagerWithOptionsDialog.getLabelProvider(adapterFactory),
+			LaunchDomainManagerWithOptionsDialog.getContentProvider(adapterFactory));
 		this.domain = domain;
 		this.setTitle("Launch Domain Manager");
 		setComparator(new ViewerComparator());
@@ -238,7 +246,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 						LaunchDomainManagerWithOptionsDialog.showDevices = true;
 						for (final Object devConfig : ((SdrRoot) parentElement).getNodesContainer().getNodes().toArray()) {
 							LaunchDomainManagerWithOptionsDialog.debugMap.put((DeviceConfiguration) devConfig,
-							        LaunchDomainManagerWithOptionsDialog.DEFAULT_DEBUG_LEVEL);
+								LaunchDomainManagerWithOptionsDialog.DEFAULT_DEBUG_LEVEL);
 						}
 
 						return ((SdrRoot) parentElement).getNodesContainer().getNodes().toArray();
@@ -279,7 +287,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		data.horizontalSpan = 2;
 		this.text.setLayoutData(data);
 		this.nameBinding = this.context.bindValue(SWTObservables.observeText(this.text, SWT.Modify), PojoObservables.observeValue(this.model, "domainName"),
-		        new UpdateValueStrategy().setAfterConvertValidator(this.nameValidator), null);
+			new UpdateValueStrategy().setAfterConvertValidator(this.nameValidator), null);
 
 		this.text.setText(this.domain.getName());
 		this.text.addModifyListener(new ModifyListener() {
@@ -298,7 +306,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		this.debugViewer.setInput(this.debugLevels);
 		this.debugViewer.setSelection(new StructuredSelection("Info"));
 		this.context.bindValue(SWTObservables.observeSelection(this.debugViewer.getControl()), PojoObservables.observeValue(this.model, "debugLevel"), null,
-		        null);
+			null);
 
 		final Group deviceManagerGroup = new Group(composite, SWT.NULL);
 
@@ -323,7 +331,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Dialog.applyDialogFont(composite);
-		
+
 		getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				try {
@@ -336,7 +344,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 				}
 			}
 		});
-		
+
 		return composite;
 	}
 
@@ -466,7 +474,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 
 				if (LaunchDomainManagerWithOptionsDialog.debugMap.containsKey(choice)) {
 					LaunchDomainManagerWithOptionsDialog.this.debugViewer.setSelection(new StructuredSelection(
-					        LaunchDomainManagerWithOptionsDialog.this.debugLevels[LaunchDomainManagerWithOptionsDialog.debugMap.get(choice)]));
+						LaunchDomainManagerWithOptionsDialog.this.debugLevels[LaunchDomainManagerWithOptionsDialog.debugMap.get(choice)]));
 				}
 			}
 		});
@@ -483,10 +491,10 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		} catch (final InterruptedException e) {
 			return;
 		}
-		
+
 		this.nameBinding.validateTargetToModel();
 		updateButtonsEnableState(Status.OK_STATUS);
-		
+
 		// If the name isn't valid after the final scan, then abort
 		if (!((IStatus) this.nameBinding.getValidationStatus().getValue()).isOK()) {
 			return;
@@ -521,7 +529,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			return LaunchDomainManagerWithOptionsDialog.DEFAULT_DEBUG_LEVEL;
 		}
 		return level;
-	
+
 	}
 
 	protected String getDomainName() {
@@ -560,11 +568,11 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			if ((dom != null) && (!namingService.equals(dom.getConnectionProperties().get(ScaDomainManager.NAMING_SERVICE_PROP)))) {
 				return ValidationStatus.error("This name is registered against a non-default name server and cannot be a launched");
 			}
-				
+
 			if (LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.contains(s)) {
 				return ValidationStatus.error("Domain of this name is in use, please select a different name.");
 			}
-			
+
 			return ValidationStatus.ok();
 		}
 	};
@@ -613,7 +621,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		} finally {
 			// explicitly invoke done() on our progress monitor so that its
 			// label does not spill over to the next invocation, see bug 271530
-			if (getProgressMonitor() != null) {
+			if (getProgressMonitor() != null && getReturnCode() != Status.CANCEL) {
 				getProgressMonitor().done();
 			}
 			// Stop if this is the last one
@@ -621,7 +629,9 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			stopped();
 			this.activeRunningOperations--;
 		}
-		getOkButton().setEnabled(true);
+		if (getOkButton() != null) {
+			getOkButton().setEnabled(true);
+		}
 	}
 
 	protected IProgressMonitor getProgressMonitor() {
@@ -634,13 +644,15 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	 * the enable state wizard's buttons and controls.
 	 * 
 	 * @param savedState
-	 *            the saved UI state as returned by <code>aboutToStart</code>
+	 * the saved UI state as returned by <code>aboutToStart</code>
 	 * @see #aboutToStart
 	 */
 	private void stopped() {
 		if (getShell() != null && !getShell().isDisposed()) {
-			this.progressMonitorPart.setVisible(false);
-			this.progressMonitorPart.removeFromCancelComponent(this.cancelButton);
+			if (progressMonitorPart != null) {
+				this.progressMonitorPart.setVisible(false);
+				this.progressMonitorPart.removeFromCancelComponent(this.cancelButton);
+			}
 			setDisplayCursor(null);
 			if (this.useCustomProgressMonitorPart) {
 				this.cancelButton.addSelectionListener(this.cancelListener);
@@ -662,13 +674,25 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	 * </p>
 	 * 
 	 * @param parent
-	 *            the parent composite to contain the buttons
+	 * the parent composite to contain the buttons
 	 */
 	@Override
 	protected void createButtonsForButtonBar(final Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		((GridLayout) parent.getLayout()).makeColumnsEqualWidth = false;
 		this.cancelButton = createCancelButton(parent);
+		
+		// also add cancel operation to the shell
+		getShell().addListener(SWT.Traverse, new Listener() {
+			
+			public void handleEvent(Event event) {
+				switch (event.detail) {
+				case SWT.TRAVERSE_ESCAPE:
+					cancelPressed();
+					break;
+				}
+			}
+		});
 	}
 
 	/**
@@ -678,7 +702,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	 * created specially to give it a removeable listener.
 	 * 
 	 * @param parent
-	 *            the parent button bar
+	 * the parent button bar
 	 * @return the new Cancel button
 	 */
 	private Button createCancelButton(final Composite parent) {
@@ -699,8 +723,8 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	 * controls.
 	 * 
 	 * @param enableCancelButton
-	 *            <code>true</code> if the Cancel button should be enabled,
-	 *            and <code>false</code> if it should be disabled
+	 * <code>true</code> if the Cancel button should be enabled,
+	 * and <code>false</code> if it should be disabled
 	 * @return the saved UI state
 	 */
 	private void aboutToStart(final boolean enableCancelButton) {
@@ -737,14 +761,18 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 					public void keyTraversed(final TraverseEvent e) {
 						if (e.detail == SWT.TRAVERSE_RETURN || (e.detail == SWT.TRAVERSE_MNEMONIC && e.keyCode == 32)) {
 							// We want to ignore the keystroke when we detect that it has been received within the
-							// delay period after the last operation has finished.  This prevents the user from accidentally
-							// hitting "Enter" or "Space", intending to cancel an operation, but having it processed exactly
-							// when the operation finished, thus traversing the wizard.  If there is another operation still
-							// running, the UI is locked anyway so we are not in this code.  This listener should fire only
+							// delay period after the last operation has finished. This prevents the user from
+							// accidentally
+							// hitting "Enter" or "Space", intending to cancel an operation, but having it processed
+							// exactly
+							// when the operation finished, thus traversing the wizard. If there is another operation
+							// still
+							// running, the UI is locked anyway so we are not in this code. This listener should fire
+							// only
 							// after the UI state is restored (which by definition means all jobs are done.
 							// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=287887
 							if (LaunchDomainManagerWithOptionsDialog.this.timeWhenLastJobFinished != 0
-							        && System.currentTimeMillis() - LaunchDomainManagerWithOptionsDialog.this.timeWhenLastJobFinished < LaunchDomainManagerWithOptionsDialog.RESTORE_ENTER_DELAY) {
+								&& System.currentTimeMillis() - LaunchDomainManagerWithOptionsDialog.this.timeWhenLastJobFinished < LaunchDomainManagerWithOptionsDialog.RESTORE_ENTER_DELAY) {
 								e.doit = false;
 								return;
 							}
@@ -769,7 +797,17 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 			setReturnCode(Window.CANCEL);
 			close();
 		} else {
-			this.cancelButton.setEnabled(false);
+//			this.cancelButton.setEnabled(false);
+			// TODO get running operations and interrupt
+			nameBinding.dispose();
+			nameBinding = null;
+			context.dispose();
+			setReturnCode(Window.CANCEL);
+			IProgressMonitor monitor = getProgressMonitor();
+			this.progressMonitorPart = null;
+			monitor.setCanceled(true);
+			stopped();
+			close();
 		}
 	}
 
@@ -778,7 +816,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	 * display.
 	 * 
 	 * @param c
-	 *            the cursor
+	 * the cursor
 	 */
 	private void setDisplayCursor(final Cursor c) {
 		final Shell[] shells = getShell().getDisplay().getShells();
@@ -789,7 +827,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 
 	@Override
 	protected Control createButtonBar(final Composite parent) {
-		//		return createButtonBarTray(parent);
+		// return createButtonBarTray(parent);
 		return super.createButtonBar(parent);
 	}
 
@@ -801,6 +839,8 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 	 */
 	@Override
 	protected void updateButtonsEnableState(final IStatus status) {
-		super.updateButtonsEnableState((IStatus) this.nameBinding.getValidationStatus().getValue());
+		if (nameBinding != null) {
+			super.updateButtonsEnableState((IStatus) this.nameBinding.getValidationStatus().getValue());
+		}
 	}
 }
