@@ -89,7 +89,7 @@ public class ScaNodeProjectPropertiesWizardPage extends ScaProjectPropertiesWiza
 	 */
 	protected ScaNodeProjectPropertiesWizardPage(final String pageName) {
 		super(pageName, "Node", "DCD");
-		setTitle("Create a SCA Node Project");
+		setTitle("Create an SCA Node Project");
 		this.setDescription("Choose to either create a new Node or import an existing one.");
 	}
 
