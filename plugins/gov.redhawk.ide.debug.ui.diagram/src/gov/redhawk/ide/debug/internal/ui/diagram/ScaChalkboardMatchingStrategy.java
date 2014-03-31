@@ -10,9 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui.diagram;
 
+import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 
+import org.eclipse.emf.common.ui.URIEditorInput;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorMatchingStrategy;
 import org.eclipse.ui.IEditorReference;
@@ -34,6 +36,18 @@ public class ScaChalkboardMatchingStrategy implements IEditorMatchingStrategy {
 				}
 			} catch (final PartInitException e) {
 				return false;
+			}
+		} else if (input instanceof URIEditorInput) {
+			//only one instance of Chalkboard should be opened
+			final URIEditorInput inp1 = (URIEditorInput) input;
+			if (("/plugin" +  ScaDebugUiPlugin.CHALKBOARD_EDITOR_URI_PATH).equals(inp1.getURI().path())) {
+				try {
+					if (editorRef.getEditorInput() instanceof URIEditorInput) {
+						return true;
+					}
+				} catch (PartInitException e) {
+					return false;
+				}
 			}
 		}
 		return false;

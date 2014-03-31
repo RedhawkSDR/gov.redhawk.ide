@@ -23,6 +23,8 @@ public class ScaDebugUiPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "gov.redhawk.ide.debug.ui"; //$NON-NLS-1$
+	
+	public static final String CHALKBOARD_EDITOR_URI_PATH = "/" + ScaDebugUiPlugin.PLUGIN_ID + "/data/LocalSca.sad.xml";
 
 	// The shared instance
 	private static ScaDebugUiPlugin plugin;

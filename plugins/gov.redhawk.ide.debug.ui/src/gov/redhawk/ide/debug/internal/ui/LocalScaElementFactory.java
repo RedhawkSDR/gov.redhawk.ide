@@ -26,9 +26,9 @@ import org.eclipse.ui.IPersistableElement;
 public class LocalScaElementFactory implements IElementFactory {
 
 	public static final String ID = "gov.redhawk.ide.debug.ui.localSca.factory";
-
+	
 	public static IEditorInput getLocalScaInput() {
-		return new URIEditorInput(URI.createPlatformPluginURI("/" + ScaDebugUiPlugin.PLUGIN_ID + "/data/LocalSca.sad.xml", true)) {
+		return new URIEditorInput(URI.createPlatformPluginURI(ScaDebugUiPlugin.CHALKBOARD_EDITOR_URI_PATH, true)) {
 			@Override
 			public boolean exists() {
 				return true;
