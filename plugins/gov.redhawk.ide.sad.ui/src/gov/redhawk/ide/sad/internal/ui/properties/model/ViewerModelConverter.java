@@ -293,9 +293,25 @@ public class ViewerModelConverter {
 		return viewer;
 	}
 
-	private void handleViewerPropValueChanged(ViewerProperty< ? > source) {
+	private void handleViewerPropValueChanged(final ViewerProperty< ? > source) {
 		Command command = null;
 		TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(sad);
+		command = new RecordingCommand(domain) {
+
+			@Override
+			protected void doExecute() {
+				doHandlePropertyChange(source);
+			}
+		};
+
+		if (command != null) {
+			boolean canExecute = command.canExecute();
+			domain.getCommandStack().execute(command);
+			viewer.refresh();
+		}
+	}
+
+	private void doHandlePropertyChange(final ViewerProperty< ? > source) {
 		if (source instanceof ViewerSimpleProperty) {
 			ViewerSimpleProperty simpleProp = (ViewerSimpleProperty) source;
 			String newValue = simpleProp.getValue();
@@ -310,18 +326,23 @@ public class ViewerModelConverter {
 					if (properties == null) {
 						properties = PartitioningFactory.eINSTANCE.createComponentProperties();
 						properties.getSimpleRef().add(ref);
-						command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
+						inst.setComponentProperties(properties);
+						//	command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
 					} else {
-						command = AddCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_REF, ref);
+						properties.getSimpleRef().add(ref);
+						//	command = AddCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_REF, ref);
 					}
 				} else {
 					if (newValue != null) {
-						command = SetCommand.create(domain, ref, PrfPackage.Literals.SIMPLE_REF__VALUE, newValue);
+						ref.setValue(newValue);
+						//	command = SetCommand.create(domain, ref, PrfPackage.Literals.SIMPLE_REF__VALUE, newValue);
 					} else {
 						if (properties.getProperties().size() == 1) {
-							command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, null);
+							inst.setComponentProperties(null);
+							//	command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, null);
 						} else {
-							command = RemoveCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_REF, ref);
+							properties.getSimpleRef().remove(ref);
+							//	command = RemoveCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_REF, ref);
 						}
 					}
 				}
@@ -342,22 +363,25 @@ public class ViewerModelConverter {
 						}
 						if (ref == null) {
 							ref = createRef(simpleProp.getDefinition(), newValue);
-							command = AddCommand.create(domain, structRef, PrfPackage.Literals.STRUCT_REF__SIMPLE_REF, ref);
+							structRef.getSimpleRef().add(ref);
+							//	command = AddCommand.create(domain, structRef, PrfPackage.Literals.STRUCT_REF__SIMPLE_REF, ref);
 						} else {
 							if (newValue == null) {
 								if (structRef.getSimpleRef().size() == 1) {
 									if (properties.getProperties().size() == 1) {
-										command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES,
-											null);
+										inst.setComponentProperties(null);
+										//	command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, null);
 									} else {
-										command = RemoveCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_REF,
-											structRef);
+										properties.getStructRef().remove(structRef);
+										//	command = RemoveCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_REF, structRef);
 									}
 								} else {
-									command = RemoveCommand.create(domain, structRef, PrfPackage.Literals.STRUCT_REF__SIMPLE_REF, ref);
+									structRef.getSimpleRef().remove(ref);
+									// command = RemoveCommand.create(domain, structRef, PrfPackage.Literals.STRUCT_REF__SIMPLE_REF, ref);
 								}
 							} else {
-								command = SetCommand.create(domain, ref, PrfPackage.Literals.SIMPLE_REF__VALUE, newValue);
+								ref.setValue(newValue);
+								//	command = SetCommand.create(domain, ref, PrfPackage.Literals.SIMPLE_REF__VALUE, newValue);
 							}
 						}
 					} else {
@@ -366,9 +390,11 @@ public class ViewerModelConverter {
 						if (properties == null) {
 							properties = PartitioningFactory.eINSTANCE.createComponentProperties();
 							properties.getStructRef().add(structRef);
-							command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
+							inst.setComponentProperties(properties);
+							//	command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
 						} else {
-							command = AddCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_REF, structRef);
+							properties.getStructRef().add(structRef);
+							//	command = AddCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_REF, structRef);
 						}
 					}
 				} else {
@@ -391,20 +417,25 @@ public class ViewerModelConverter {
 					if (properties == null) {
 						properties = PartitioningFactory.eINSTANCE.createComponentProperties();
 						properties.getSimpleSequenceRef().add(ref);
-						command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
+						inst.setComponentProperties(properties);
+						//	command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
 					} else {
-						command = AddCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF, ref);
+						properties.getSimpleSequenceRef().add(ref);
+						//	command = AddCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF, ref);
 					}
 				} else {
 					if (newValues != null && !newValues.isEmpty()) {
-						Values values = PrfFactory.eINSTANCE.createValues();
+						final Values values = PrfFactory.eINSTANCE.createValues();
 						values.getValue().addAll(newValues);
-						command = SetCommand.create(domain, ref, PrfPackage.Literals.SIMPLE_SEQUENCE__VALUES, values);
+						ref.setValues(values);
+						//	command = SetCommand.create(domain, ref, PrfPackage.Literals.SIMPLE_SEQUENCE__VALUES, values);
 					} else {
 						if (properties.getProperties().size() == 1) {
-							command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, null);
+							inst.setComponentProperties(null);
+							//	command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, null);
 						} else {
-							command = RemoveCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF, ref);
+							properties.getSimpleSequenceRef().remove(ref);
+							// command = RemoveCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF, ref);
 						}
 					}
 				}
@@ -419,37 +450,25 @@ public class ViewerModelConverter {
 				final SadComponentInstantiation inst = comp.getComponentInstantiation();
 				final ComponentProperties oldProperties = inst.getComponentProperties();
 				final StructSequenceRef oldRef = (StructSequenceRef) getRef(inst, structSeq);
-				command = new RecordingCommand(domain) {
-
-					@Override
-					protected void doExecute() {
-						if (oldRef != null) {
-							oldProperties.getStructSequenceRef().remove(oldRef);
-						}
-						if (!structSeq.getSimples().isEmpty() && structSeq.getSimples().get(0).getValues() != null) {
-							ComponentProperties properties = oldProperties;
-							if (properties == null) {
-								properties = PartitioningFactory.eINSTANCE.createComponentProperties();
-								inst.setComponentProperties(properties);
-							}
-							StructSequenceRef newRef = createRef(structSeq);
-							properties.getStructSequenceRef().add(newRef);
-						} else if (oldProperties != null && oldProperties.getProperties().isEmpty()) {
-							inst.setComponentProperties(null);
-						}
+				if (oldRef != null) {
+					oldProperties.getStructSequenceRef().remove(oldRef);
+				}
+				if (!structSeq.getSimples().isEmpty() && structSeq.getSimples().get(0).getValues() != null) {
+					ComponentProperties properties = oldProperties;
+					if (properties == null) {
+						properties = PartitioningFactory.eINSTANCE.createComponentProperties();
+						inst.setComponentProperties(properties);
 					}
-				};
+					StructSequenceRef newRef = createRef(structSeq);
+					properties.getStructSequenceRef().add(newRef);
+				} else if (oldProperties != null && oldProperties.getProperties().isEmpty()) {
+					inst.setComponentProperties(null);
+				}
 			} else {
 				throw new UnsupportedOperationException();
 			}
 		} else {
 			throw new UnsupportedOperationException();
-		}
-
-		if (command != null) {
-			boolean canExecute = command.canExecute();
-			domain.getCommandStack().execute(command);
-			viewer.refresh();
 		}
 	}
 
@@ -463,7 +482,7 @@ public class ViewerModelConverter {
 		for (int i = 0; i < numStructs; i++) {
 			StructValue value = PrfFactory.eINSTANCE.createStructValue();
 			for (ViewerStructSequenceSimpleProperty simple : structSeq.getSimples()) {
-				if (simple.getValues() != null) {
+				if (simple.getValues() != null && !simple.getValues().get(i).equals(simple.def.getValue())) {
 					SimpleRef simpleRef = PrfFactory.eINSTANCE.createSimpleRef();
 					simpleRef.setRefID(simple.getID());
 					simpleRef.setValue(simple.getValues().get(i));
