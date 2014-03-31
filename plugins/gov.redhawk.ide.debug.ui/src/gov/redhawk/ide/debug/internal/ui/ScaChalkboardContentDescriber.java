@@ -26,19 +26,15 @@ import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 import gov.redhawk.sca.ui.editors.IScaContentDescriber;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.CommonPlugin;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.ui.IEditorInput;
@@ -48,21 +44,7 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 	private static class DelayedEditorInput extends ScaFileStoreEditorInput {
 
 		public DelayedEditorInput(ScaWaveform scaElement) throws CoreException {
-			super(scaElement, DelayedEditorInput.getFileStore(scaElement));
-		}
-
-		private static IFileStore getFileStore(ScaWaveform waveform) throws CoreException {
-			org.eclipse.emf.common.util.URI uri = waveform.getProfileObj().eResource().getURI();
-			final URI resolvedURI;
-			if (uri.isPlatform() || uri.isFile()) {
-				uri = uri.trimQuery();
-			}
-			if (uri.isPlatform()) {
-				resolvedURI = URI.create(CommonPlugin.resolve(uri).toString());
-			} else {
-				resolvedURI = URI.create(uri.toString());
-			}
-			return EFS.getStore(resolvedURI);
+			super(scaElement, LocalScaChalkboardContentDescriber.getFileStore(scaElement));
 		}
 
 		@Override
@@ -83,11 +65,11 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 					waveform = (LocalScaWaveform) localWaveform;
 				}
 			}
-			
+
 			if (waveform != null) {
 				return waveform;
 			}
-			
+
 			waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
 
 			final NotifyingNamingContext rootContext = localSca.getRootContext();
@@ -165,7 +147,9 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 
 	@Override
 	public int describe(final Object contents) throws IOException {
-		if (contents instanceof ScaWaveform) {
+		if (contents instanceof LocalScaWaveform) {
+			return IScaContentDescriber.INVALID;
+		} else if (contents instanceof ScaWaveform) {
 			return IScaContentDescriber.VALID;
 		}
 		return IScaContentDescriber.INVALID;
@@ -175,13 +159,6 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 	public IEditorInput getEditorInput(final Object contents) {
 		if (contents == ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform()) {
 			return LocalScaElementFactory.getLocalScaInput();
-		} else if (contents instanceof LocalScaWaveform) {
-			try {
-				return new DelayedEditorInput((LocalScaWaveform) contents);
-			} catch (CoreException e) {
-				ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
-				return null;
-			}
 		} else if (contents instanceof ScaWaveform) {
 			try {
 				return new DelayedEditorInput((ScaWaveform) contents);

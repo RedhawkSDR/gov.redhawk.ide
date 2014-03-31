@@ -36,6 +36,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
@@ -162,12 +163,11 @@ public class NewControlPanelProject extends AbstractHandler {
 				// return null for in workspace
 				return null;
 			}
-			
+
 		};
 		try {
 			dialog.run(false, true, new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
-			final IFile file = project.getFile(new Path("src/" + packageName.replace(".", "/") + "/"
-					+ resourceTemplate.getCompositeClassName() + ".java"));
+			final IFile file = project.getFile(new Path("src/" + packageName.replace(".", "/") + "/" + resourceTemplate.getCompositeClassName() + ".java"));
 			final IWorkbenchWindow ww = HandlerUtil.getActiveWorkbenchWindow(event);
 			final IWorkbenchPage page = ww.getActivePage();
 			IWorkbenchPart focusPart = page.getActivePart();
@@ -179,16 +179,15 @@ public class NewControlPanelProject extends AbstractHandler {
 				try {
 					file.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
 				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace(); // SUPPRESS CHECKSTYLE No println
+					StatusManager.getManager().handle(e, TemplatesActivator.getPluginId());
 				}
 				IDE.openEditor(page, file, true);
 			} catch (PartInitException e) {
-				// PASS
+				StatusManager.getManager().handle(new Status(IStatus.ERROR, TemplatesActivator.getPluginId(), "Failed to open Control Panel Project editor", e));
 			}
 		} catch (InvocationTargetException e) {
 			StatusManager.getManager().handle(
-				new Status(Status.ERROR, TemplatesActivator.getPluginId(), "Failed to generate Control Panel Project.", e.getCause()));
+				new Status(IStatus.ERROR, TemplatesActivator.getPluginId(), "Failed to generate Control Panel Project.", e.getCause()));
 		} catch (InterruptedException e) {
 			// PASS
 		}
@@ -218,7 +217,7 @@ public class NewControlPanelProject extends AbstractHandler {
 		fData.setName(pluginName);
 		fData.setProvider("");
 
-		PluginFieldData data = (PluginFieldData) fData;
+		PluginFieldData data = fData;
 		data.setClassname(packageName + ".Activator");
 		data.setUIPlugin(true);
 		data.setDoGenerateClass(true);

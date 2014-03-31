@@ -44,7 +44,9 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.AnyUtils;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
+import mil.jpeojtrs.sca.util.QueryParser;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
+import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.runtime.CoreException;
@@ -99,7 +101,7 @@ public class LocalApplicationFactory {
 	}
 
 	public LocalApplicationFactory(final Map<String, String> implMap, final LocalSca localSca, final String mode, final ILaunch launch,
-	        final DataType[] assemblyExec, final DataType[] assemblyConfig) {
+		final DataType[] assemblyExec, final DataType[] assemblyConfig) {
 		this.implMap = implMap;
 		this.localSca = localSca;
 		this.mode = mode;
@@ -155,8 +157,6 @@ public class LocalApplicationFactory {
 			final LocalScaWaveform waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
 			waveform.setDataProvidersEnabled(false);
 			waveform.setProfile(profile);
-			waveform.setProfileURI(sad.eResource().getURI());
-			waveform.setProfileObj(sad);
 			waveform.setLaunch(this.launch);
 			waveform.setMode(this.launch.getLaunchMode());
 			waveform.setNamingContext(LocalApplicationFactory.createWaveformContext(namingContext, adjustedName));
@@ -164,6 +164,15 @@ public class LocalApplicationFactory {
 			final ApplicationImpl app = new ApplicationImpl(waveform, appId, adjustedName);
 			this.launch.addProcess(app);
 			waveform.setLocalApp(app);
+
+			URI uri = sad.eResource().getURI();
+			Map<String, String> query = new HashMap<String, String>(QueryParser.parseQuery(uri.query()));
+			query.put(ScaFileSystemConstants.QUERY_PARAM_WF, waveform.getIor());
+			String queryStr = QueryParser.createQuery(query);
+			URI sadUri = URI.createHierarchicalURI(uri.scheme(), uri.authority(), uri.device(), uri.segments(), queryStr, uri.fragment());
+			waveform.setProfileURI(sadUri);
+			waveform.fetchProfileObject(null);
+
 			ScaModelCommand.execute(this.localSca, new ScaModelCommand() {
 
 				@Override
@@ -171,6 +180,7 @@ public class LocalApplicationFactory {
 					LocalApplicationFactory.this.localSca.getWaveforms().add(waveform);
 				}
 			});
+
 			progress.worked(1);
 
 			progress.subTask("Launch components");
@@ -301,7 +311,7 @@ public class LocalApplicationFactory {
 						final ScaComponent componentForPort = app.getLocalWaveform().getScaComponent(componentRefId);
 						if (componentForPort == null) {
 							String errorMsg = String.format("Couldn't find component instance '%s' to make waveform connection '%s'", componentRefId,
-							        connection.getId());
+								connection.getId());
 							throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, errorMsg));
 						}
 						target = componentForPort.getScaPort(providesId).getCorbaObj();
@@ -311,7 +321,7 @@ public class LocalApplicationFactory {
 					final ScaComponent component = app.getLocalWaveform().getScaComponent(componentRefId);
 					if (component == null) {
 						String errorMsg = String.format("Couldn't find component instance '%s' to make waveform connection '%s'", componentRefId,
-						        connection.getId());
+							connection.getId());
 						throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, errorMsg));
 					}
 					target = component.getCorbaObj();
@@ -459,8 +469,8 @@ public class LocalApplicationFactory {
 	}
 
 	private static final EStructuralFeature[] PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
-	        PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
-	        PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
+		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
+		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 
 	@Nullable
 	private URI getSpdURI(@Nullable final SadComponentInstantiation comp) {

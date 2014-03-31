@@ -77,7 +77,7 @@ public class ScaWaveformProjectPropertiesWizardPage extends ScaProjectProperties
 	 */
 	public ScaWaveformProjectPropertiesWizardPage(final String pageName) {
 		super(pageName, "Waveform", "SAD");
-		setTitle("Create a SCA Waveform Project");
+		setTitle("Create an SCA Waveform Project");
 		setDescription("Choose to either create a Waveform or import an existing one.");
 	}
 

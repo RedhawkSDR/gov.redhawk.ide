@@ -22,7 +22,7 @@
        <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.sca"
             editorId="gov.redhawk.ide.debug.ui.diagram.editor.localSca"
-            priority="LOWEST">
+            priority="LOW">
       </contentTypeBinding>
    </extension>
    <extension

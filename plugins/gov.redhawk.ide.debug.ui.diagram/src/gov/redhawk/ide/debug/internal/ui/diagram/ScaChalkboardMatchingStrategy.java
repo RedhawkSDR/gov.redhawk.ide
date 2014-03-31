@@ -9,14 +9,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui.diagram;
+
+import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 
+import org.eclipse.emf.common.ui.URIEditorInput;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorMatchingStrategy;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PartInitException;
-
 
 public class ScaChalkboardMatchingStrategy implements IEditorMatchingStrategy {
 
@@ -30,10 +32,22 @@ public class ScaChalkboardMatchingStrategy implements IEditorMatchingStrategy {
 					final ScaFileStoreEditorInput inp2 = (ScaFileStoreEditorInput) inp;
 					final ScaWaveform sca1 = getWaveformFromEditorInput(inp1);
 					final ScaWaveform sca2 = getWaveformFromEditorInput(inp2);
-					return sca1 == sca2;
+					return sca1 != null && sca1 == sca2;
 				}
 			} catch (final PartInitException e) {
 				return false;
+			}
+		} else if (input instanceof URIEditorInput) {
+			//only one instance of Chalkboard should be opened
+			final URIEditorInput inp1 = (URIEditorInput) input;
+			if (("/plugin" +  ScaDebugUiPlugin.CHALKBOARD_EDITOR_URI_PATH).equals(inp1.getURI().path())) {
+				try {
+					if (editorRef.getEditorInput() instanceof URIEditorInput) {
+						return true;
+					}
+				} catch (PartInitException e) {
+					return false;
+				}
 			}
 		}
 		return false;
@@ -45,5 +59,4 @@ public class ScaChalkboardMatchingStrategy implements IEditorMatchingStrategy {
 		}
 		return null;
 	}
-
 }

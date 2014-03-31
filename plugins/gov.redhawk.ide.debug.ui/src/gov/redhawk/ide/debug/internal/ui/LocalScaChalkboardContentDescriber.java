@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui;
 
-import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.model.sca.ScaWaveform;
@@ -28,58 +27,18 @@ import org.eclipse.ui.IEditorInput;
 
 public class LocalScaChalkboardContentDescriber implements IScaContentDescriber {
 
-	private static class DelayedEditorInput extends ScaFileStoreEditorInput {
-
-		public DelayedEditorInput(ScaWaveform scaElement) throws CoreException {
-			super(scaElement, DelayedEditorInput.getFileStore(scaElement));
+	public static IFileStore getFileStore(ScaWaveform waveform) throws CoreException {
+		org.eclipse.emf.common.util.URI uri = waveform.getProfileURI();
+		final URI resolvedURI;
+		if (uri.isPlatform() || uri.isFile()) {
+			uri = uri.trimQuery();
 		}
-
-		private static IFileStore getFileStore(ScaWaveform waveform) throws CoreException {
-			org.eclipse.emf.common.util.URI uri = waveform.getProfileObj().eResource().getURI();
-			final URI resolvedURI;
-			if (uri.isPlatform() || uri.isFile()) {
-				uri = uri.trimQuery();
-			}
-			if (uri.isPlatform()) {
-				resolvedURI = URI.create(CommonPlugin.resolve(uri).toString());
-			} else {
-				resolvedURI = URI.create(uri.toString());
-			}
-			return EFS.getStore(resolvedURI);
+		if (uri.isPlatform()) {
+			resolvedURI = URI.create(CommonPlugin.resolve(uri).toString());
+		} else {
+			resolvedURI = URI.create(uri.toString());
 		}
-
-		@Override
-		public LocalScaWaveform getScaObject() {
-			ScaWaveform retVal = (ScaWaveform) super.getScaObject();
-			if (retVal instanceof LocalScaWaveform) {
-				return (LocalScaWaveform) retVal;
-			} else {
-				return getLocalScaWaveform(retVal);
-			}
-		}
-
-		private LocalScaWaveform getLocalScaWaveform(final ScaWaveform remoteWaveform) {
-			// Remote Waveform
-			LocalScaWaveform waveform = null;
-			
-			if (remoteWaveform == null) {
-				return waveform;
-			}
-			
-			// Find copy
-			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
-			for (ScaWaveform localWaveform : localSca.getWaveforms()) {
-				
-				if (localWaveform == null || localWaveform.getIdentifier() == null) {
-					continue;
-				} else if (localWaveform.getIdentifier().equals(remoteWaveform.getIdentifier())) {
-					waveform = (LocalScaWaveform) localWaveform;
-					break;
-				}
-			}
-			return waveform;
-		}
-
+		return EFS.getStore(resolvedURI);
 	}
 
 	@Override
@@ -96,16 +55,8 @@ public class LocalScaChalkboardContentDescriber implements IScaContentDescriber 
 			return LocalScaElementFactory.getLocalScaInput();
 		} else if (contents instanceof LocalScaWaveform) {
 			try {
-				return new DelayedEditorInput((LocalScaWaveform) contents);
+				return new ScaFileStoreEditorInput((LocalScaWaveform) contents, LocalScaChalkboardContentDescriber.getFileStore((LocalScaWaveform) contents));
 			} catch (CoreException e) {
-				ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
-				return null;
-			}
-		} else if (contents instanceof ScaWaveform) {
-			try {
-				return new DelayedEditorInput((ScaWaveform) contents);
-			} catch (CoreException e) {
-				ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
 				return null;
 			}
 		}

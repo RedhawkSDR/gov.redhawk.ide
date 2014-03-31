@@ -67,15 +67,22 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 			return;
 		}
 
+		setToDefault();
+
 		for (ViewerStructSequenceSimpleProperty prop : simplesArray) {
-			prop.setValues(new ArrayList<String>(value.getStructValue().size()));
+			ArrayList<String> newValues = new ArrayList<String>(value.getStructValue().size());
+			String simpleValue = prop.def.getValue();
+			for (int i = 0; i < value.getStructValue().size(); i++) {
+				newValues.add(simpleValue);
+			}
+			prop.setValues(newValues);
 		}
 
 		for (int i = 0; i < value.getStructValue().size(); i++) {
 			StructValue struct = value.getStructValue().get(i);
 			for (int j = 0; j < struct.getSimpleRef().size(); j++) {
 				SimpleRef simple = struct.getSimpleRef().get(j);
-				simplesArray.get(j).getValues().add(simple.getValue());
+				simplesArray.get(j).getValues().set(i, simple.getValue());
 			}
 		}
 

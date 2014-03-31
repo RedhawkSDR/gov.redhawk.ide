@@ -185,7 +185,7 @@ public class LocalScaEditor extends SadEditor {
 		// Only creates the other pages if there is something that can be edited
 		//
 		if (!getEditingDomain().getResourceSet().getResources().isEmpty()
-			&& !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
+				&& !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
 			try {
 				int pageIndex = 0;
 
@@ -247,14 +247,12 @@ public class LocalScaEditor extends SadEditor {
 
 	@Override
 	public String getTitle() {
-		
 		if (waveform != null) {
 			return super.getTitle();
 		} else {
 			return "Chalkboard";
 		}
 	}
-	
 
 	@Override
 	public String getTitleToolTip() {
