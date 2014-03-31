@@ -17,12 +17,12 @@
       <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.localSca"
             editorId="gov.redhawk.ide.debug.ui.diagram.editor.localSca"
-            priority="LOW">
+            priority="NORMAL">
       </contentTypeBinding>
        <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.sca"
             editorId="gov.redhawk.ide.debug.ui.diagram.editor.localSca"
-            priority="LOWEST">
+            priority="LOW">
       </contentTypeBinding>
    </extension>
    <extension
