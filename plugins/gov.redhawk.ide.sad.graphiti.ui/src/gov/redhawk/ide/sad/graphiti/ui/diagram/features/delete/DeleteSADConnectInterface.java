@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * This file is protected by Copyright. 
+ * Please refer to the COPYRIGHT file distributed with this source distribution.
+ *
+ * This file is part of REDHAWK IDE.
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under 
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
@@ -16,57 +26,56 @@ import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
-public class DeleteSADConnectInterface extends DefaultDeleteFeature{
+public class DeleteSADConnectInterface extends DefaultDeleteFeature {
 
 	public DeleteSADConnectInterface(IFeatureProvider fp) {
-	    super(fp);
-    }
-	
+		super(fp);
+	}
+
 	@Override
-	public boolean canDelete(IDeleteContext context){
+	public boolean canDelete(IDeleteContext context) {
 		return true;
 	}
-	
-	@Override 
-	public void delete(IDeleteContext context){
+
+	@Override
+	public void delete(IDeleteContext context) {
 		PictogramElement pe = context.getPictogramElement();
-		
-		
+
 		preDelete(context);
-		
-		//delete business objects
+
+		// delete business objects
 		SadConnectInterface connectInterface = null;
-		for(EObject eObj: pe.getLink().getBusinessObjects()){
-			if(eObj instanceof SadConnectInterface){
-				connectInterface = (SadConnectInterface)eObj;
+		for (EObject eObj : pe.getLink().getBusinessObjects()) {
+			if (eObj instanceof SadConnectInterface) {
+				connectInterface = (SadConnectInterface) eObj;
 				break;
 			}
 		}
 		final SadConnectInterface finalConnectInterface = connectInterface;
 
-		//editing domain for our transaction
+		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
 //kepler		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
-		//get sad from diagram
+		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 
-		//Create Component Related objects in SAD model
-		TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain){
+		// Create Component Related objects in SAD model
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
 
-				//assembly controller may reference componentInstantiation
-				//delete reference if applicable
-				if(sad.getConnections() != null){
+				// assembly controller may reference componentInstantiation
+				// delete reference if applicable
+				if (sad.getConnections() != null) {
 					sad.getConnections().getConnectInterface().remove(finalConnectInterface);
 				}
-				
+
 			}
 		});
-		
-		//remove graphical components
+
+		// remove graphical components
 		IRemoveContext rc = new RemoveContext(pe);
 		IFeatureProvider featureProvider = getFeatureProvider();
 		IRemoveFeature removeFeature = featureProvider.getRemoveFeature(rc);
@@ -74,7 +83,7 @@ public class DeleteSADConnectInterface extends DefaultDeleteFeature{
 			removeFeature.remove(rc);
 			setDoneChanges(true);
 		}
-		
+
 		postDelete(context);
 	}
 

@@ -26,8 +26,10 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
+import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.jface.wizard.Wizard;
@@ -92,16 +94,19 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 		// get user selections
 		final String serviceNameText = page.getModel().getEnableServiceName() ? page.getModel().getServiceName() : null;
 		final String serviceTypeText = page.getModel().getEnableServiceType() ? page.getModel().getServiceType() : null;
-		final List<String> usesPortNames = (page.getModel().getUsesPortNames() != null && !page.getModel().getUsesPortNames().isEmpty()) ? page.getModel().getUsesPortNames() : null;
-		final List<String> providesPortNames = (page.getModel().getProvidesPortNames() != null && !page.getModel().getProvidesPortNames().isEmpty()) ? page.getModel().getProvidesPortNames() : null;
+		final List<String> usesPortNames = (page.getModel().getUsesPortNames() != null && !page.getModel().getUsesPortNames().isEmpty()) ? page.getModel().getUsesPortNames()
+			: null;
+		final List<String> providesPortNames = (page.getModel().getProvidesPortNames() != null && !page.getModel().getProvidesPortNames().isEmpty()) ? page.getModel().getProvidesPortNames()
+			: null;
 
 		// create new business object
 		final FindByStub[] findByStubs = new FindByStub[1];
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
-		//Kepler
-		//TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		// Kepler
+		// TransactionalEditingDomain editingDomain =
+		// getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// Create Component Related objects in SAD model
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
@@ -134,7 +139,7 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 						findByStubs[i].getUses().add(usesPortStub);
 					}
 				}
-				
+
 				// if applicable add provides port stub(s)
 				if (providesPortNames != null) {
 					int i = 0; // counter
@@ -232,5 +237,17 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 
 	@Override
 	public void setValue(String value, IDirectEditingContext context) {
+	}
+
+	@Override
+	public boolean update(IUpdateContext context) {
+		// TODO: Catch calls from the edit context wizard
+		return super.update(context);
+	}
+
+	@Override
+	public IReason updateNeeded(IUpdateContext context) {
+		// TODO: Catch calls from the edit context wizard
+		return super.updateNeeded(context);
 	}
 }

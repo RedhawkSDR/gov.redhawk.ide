@@ -322,7 +322,7 @@ public class FindByServiceWizardPage extends WizardPage {
 		// add provides port listeners
 		providesPortAddBtn.addSelectionListener(getPortAddListener(providesPortList, providesPortNameText, providesPortDeleteBtn));
 		providesPortDeleteBtn.addSelectionListener(getPortDeleteListener(providesPortList, providesPortDeleteBtn));
-		
+
 		// uses port composite
 		final Composite usesPortComposite = createPortComposite(portOptions);
 		// add uses port name text
@@ -341,7 +341,7 @@ public class FindByServiceWizardPage extends WizardPage {
 		// add uses port listeners
 		usesPortAddBtn.addSelectionListener(getPortAddListener(usesPortList, usesPortNameText, usesPortDeleteBtn));
 		usesPortDeleteBtn.addSelectionListener(getPortDeleteListener(usesPortList, usesPortDeleteBtn));
-		
+
 		setControl(composite);
 
 		dbc.updateModels();
@@ -359,7 +359,7 @@ public class FindByServiceWizardPage extends WizardPage {
 		GridData layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, true, 1, 1);
 		layoutData.minimumWidth = 200;
 		portNameText.setLayoutData(layoutData);
-		
+
 		portNameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -382,7 +382,6 @@ public class FindByServiceWizardPage extends WizardPage {
 		dbc.bindList(SWTObservables.observeItems(portList), BeansObservables.observeList(model, propertyName));
 		return portList;
 	}
-	
 
 	private SelectionListener getPortAddListener(final org.eclipse.swt.widgets.List portList, final Text portNameText, final Button deleteBtn) {
 		SelectionListener listener = new SelectionListener() {
@@ -422,7 +421,7 @@ public class FindByServiceWizardPage extends WizardPage {
 					deleteBtn.setEnabled(false);
 				}
 			}
-			
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);

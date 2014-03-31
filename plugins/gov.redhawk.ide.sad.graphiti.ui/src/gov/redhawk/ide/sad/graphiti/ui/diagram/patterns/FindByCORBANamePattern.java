@@ -85,8 +85,10 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IPa
 		}
 
 		final String corbaNameText = page.getModel().getCorbaName();
-		final List<String> usesPortNames = (page.getModel().getUsesPortNames() != null && !page.getModel().getUsesPortNames().isEmpty()) ? page.getModel().getUsesPortNames() : null;
-		final List<String> providesPortNames = (page.getModel().getProvidesPortNames() != null && !page.getModel().getProvidesPortNames().isEmpty()) ? page.getModel().getProvidesPortNames() : null;
+		final List<String> usesPortNames = (page.getModel().getUsesPortNames() != null && !page.getModel().getUsesPortNames().isEmpty()) ? page.getModel().getUsesPortNames()
+			: null;
+		final List<String> providesPortNames = (page.getModel().getProvidesPortNames() != null && !page.getModel().getProvidesPortNames().isEmpty()) ? page.getModel().getProvidesPortNames()
+			: null;
 
 		final FindByStub[] findByStubs = new FindByStub[1];
 

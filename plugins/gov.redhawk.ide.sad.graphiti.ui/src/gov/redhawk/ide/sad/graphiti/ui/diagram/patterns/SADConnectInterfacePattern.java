@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * This file is protected by Copyright. 
+ * Please refer to the COPYRIGHT file distributed with this source distribution.
+ *
+ * This file is part of REDHAWK IDE.
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under 
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
@@ -36,129 +46,131 @@ import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 
-public class SADConnectInterfacePattern extends AbstractConnectionPattern implements IConnectionPattern{
+public class SADConnectInterfacePattern extends AbstractConnectionPattern implements IConnectionPattern {
 
 	public static final String NAME = "Connection";
-	
+
 	@Override
-	public String getCreateName(){
+	public String getCreateName() {
 		return NAME;
 	}
-	
+
 	@Override
 	public String getCreateDescription() {
 		return "Create new Connect Interface";
 	}
-	
+
 	@Override
 	public String getCreateImageId() {
 		return ImageProvider.IMG_CONNECTION;
 	}
 
-	
-	
 	/**
-	 * Return true if use selected 
+	 * Return true if use selected
 	 */
 	@Override
 	public boolean canStartConnection(ICreateConnectionContext context) {
-		
-		//get sad from diagram
+
+		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
-		
-		//source anchor (allow creating connection by starting from either direction)
+
+		// source anchor (allow creating connection by starting from either direction)
 		UsesPortStub source = getUsesPortStub(context);
 		ConnectionTarget target = getConnectionTarget(context);
-		
-		if(sad != null && (source != null || target != null)){
+
+		if (sad != null && (source != null || target != null)) {
 			return true;
 		}
 
 		return false;
 	}
-	
+
 	/**
 	 * Determines if a connection can be made.
 	 */
 	@Override
-    public boolean canAdd(IAddContext context) {
-		
-		if(context instanceof IAddConnectionContext && context.getNewObject() instanceof SadConnectInterface){
+	public boolean canAdd(IAddContext context) {
+
+		if (context instanceof IAddConnectionContext && context.getNewObject() instanceof SadConnectInterface) {
 			return true;
 		}
-	    return false;
-    }
-	
+		return false;
+	}
+
 	/**
 	 * Adds the connection to the diagram and associates the source/target port with the line
 	 */
 	@Override
 	public PictogramElement add(IAddContext addContext) {
-	    
-		IAddConnectionContext context = (IAddConnectionContext)addContext;
-		SadConnectInterface connectInterface = (SadConnectInterface)addContext.getNewObject();
+
+		IAddConnectionContext context = (IAddConnectionContext) addContext;
+		SadConnectInterface connectInterface = (SadConnectInterface) addContext.getNewObject();
 		IPeCreateService peCreateService = Graphiti.getPeCreateService();
-		
-		//source and target
+
+		// source and target
 		UsesPortStub source = getUsesPortStub(context);
 		ConnectionTarget target = getConnectionTarget(context);
-		
-		//Create connection (handle user selecting source or target)
+
+		// Create connection (handle user selecting source or target)
 		Connection connection = peCreateService.createFreeFormConnection(getFeatureProvider().getDiagramTypeProvider().getDiagram());
 //		Connection connection = peCreateService.createManhattanConnection(getFeatureProvider().getDiagramTypeProvider().getDiagram());
-		if(source == getUsesPortStub(context.getSourceAnchor()) && target == getConnectionTarget(context.getTargetAnchor())){
+		if (source == getUsesPortStub(context.getSourceAnchor()) && target == getConnectionTarget(context.getTargetAnchor())) {
 			connection.setStart(context.getSourceAnchor());
 			connection.setEnd(context.getTargetAnchor());
-		}else if(source == getUsesPortStub(context.getTargetAnchor()) && target == getConnectionTarget(context.getSourceAnchor())){
+		} else if (source == getUsesPortStub(context.getTargetAnchor()) && target == getConnectionTarget(context.getSourceAnchor())) {
 			connection.setStart(context.getTargetAnchor());
 			connection.setEnd(context.getSourceAnchor());
 		}
-		
-		//create line
+
+		// create line
 		IGaService gaService = Graphiti.getGaService();
 		Polyline line = gaService.createPolyline(connection);
 		line.setLineWidth(2);
-		line.setForeground(gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(),  StyleUtil.BLACK));
-		
-		//add static graphical arrow
+		line.setForeground(gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(), StyleUtil.BLACK));
+
+		// add static graphical arrow
 		ConnectionDecorator cd;
 		cd = peCreateService.createConnectionDecorator(connection, false, 1.0, true);
-		DUtil.createArrow(cd, getFeatureProvider(), gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(),  StyleUtil.BLACK));
-		
-		//link ports to connection
+		DUtil.createArrow(cd, getFeatureProvider(), gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(), StyleUtil.BLACK));
+
+		// link ports to connection
 //		getFeatureProvider().link(connection, new Object[] { connectInterface, connectInterface.getSource(), connectInterface.getTarget()});
-		getFeatureProvider().link(connection, new Object[] { connectInterface, source, target});
-		
+		getFeatureProvider().link(connection, new Object[] { connectInterface, source, target });
+
 		return connection;
 	}
-	
+
 	/**
 	 * Determines whether creation of an interface connection is possible between source and destination anchors.
-	 * user can begin drawing connection from either source->dest, or dest->source.  This method will create the connection in the correct direction.
-	 * Source anchor of connection must be UsesPort. Target Anchor must be ConnectionTarget which is the parent class for a variety of types.
-	 * If ConnectionTarget->ProvidesPortStub is the most simple target in that PictogramElements already link to ProvidesPortStub.  ConnectionTarget->ComponentSupportedInterfaceStub isn't actually 
+	 * user can begin drawing connection from either source->dest, or dest->source. This method will create the
+	 * connection in the correct direction.
+	 * Source anchor of connection must be UsesPort. Target Anchor must be ConnectionTarget which is the parent class
+	 * for a variety of types.
+	 * If ConnectionTarget->ProvidesPortStub is the most simple target in that PictogramElements already link to
+	 * ProvidesPortStub. ConnectionTarget->ComponentSupportedInterfaceStub isn't actually
 	 */
 	@Override
 	public boolean canCreate(ICreateConnectionContext context) {
-		//get sad from diagram
+		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
-		if(sad == null) return false;
-		
-		//determine source
-		UsesPortStub source = getUsesPortStub(context);
-		if (source == null) return false;
-		
-		//determine destination
-		//getConnectionTarget handles connecting to ports on components, not ports or interfaces on FindBy Shapes
-		ConnectionTarget target = getConnectionTarget(context);
-		if(target == null){
-			//check if interface on findBy Shape
-			
-			//check if provides port on findBy...not sure how were doing all this??
-		}
-		
+		if (sad == null)
+			return false;
 
-		//not currently used but will select the portRectangeShape instead of the anchorRectangle
+		// determine source
+		UsesPortStub source = getUsesPortStub(context);
+		if (source == null)
+			return false;
+
+		// determine destination
+		// getConnectionTarget handles connecting to ports on components, not ports or interfaces on FindBy Shapes
+		ConnectionTarget target = getConnectionTarget(context);
+		if (target == null) {
+			// check if interface on findBy Shape
+
+			// check if provides port on findBy...not sure how were doing all this??
+		}
+
+		// not currently used but will select the portRectangeShape instead of the anchorRectangle
 //		ContainerShape portRectangleShape = null;
 //		if(target != null){
 //			portRectangleShape = DiagramUtil.findContainerShapeParentWithProperty(
@@ -172,26 +184,22 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 //		getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior()
 //		.getDiagramContainer().selectPictogramElements(
 //				new PictogramElement[] {portRectangleShape});
-		
-		
-		
-		//doing the null check because it breaks when loading a findby without a diagram
-		if(((DiagramEditor)getFeatureProvider().getDiagramTypeProvider().getDiagramEditor()).getGraphicalViewer() != null){
-			
-			//force selection of shape so that we can then right click for contextual options
-			//this is kind of a hack, it would be better if selection happened automatically when its clicked.
+
+		// doing the null check because it breaks when loading a findby without a diagram
+		if (((DiagramEditor) getFeatureProvider().getDiagramTypeProvider().getDiagramEditor()).getGraphicalViewer() != null) {
+
+			// force selection of shape so that we can then right click for contextual options
+			// this is kind of a hack, it would be better if selection happened automatically when its clicked.
 			getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().selectPictogramElements(
-					new PictogramElement[] {context.getSourcePictogramElement()});
+				new PictogramElement[] { context.getSourcePictogramElement() });
 		}
-		
-		
+
 //kepler		getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior()
 //			.getDiagramContainer().selectPictogramElements(
 //					new PictogramElement[] {context.getSourcePictogramElement()});
 
-		
 		return true;
-		
+
 	}
 
 	/**
@@ -199,132 +207,129 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	 */
 	@Override
 	public Connection create(ICreateConnectionContext context) {
-		
+
 		Connection newConnection = null;
 
-		//source and destination targets
+		// source and destination targets
 		final UsesPortStub source = getUsesPortStub(context);
 		final ConnectionTarget target = getConnectionTarget(context);
 
-		//TODO: handle bad situations
+		// TODO: handle bad situations
 		if (source == null || target == null) {
 			return null;
 		}
-		
-		//editing domain for our transaction
+
+		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
 //kepler		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-		
-		//get sad from diagram
+
+		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
-		
-		//container for new SadConnectInterface, necessary for reference after command execution
+
+		// container for new SadConnectInterface, necessary for reference after command execution
 		final SadConnectInterface[] sadConnectInterfaces = new SadConnectInterface[1];
-		
-		//Create Connect Interface & related objects
-		TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain){
+
+		// Create Connect Interface & related objects
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
-            protected void doExecute() {
-				
-				//create connections if necessary
-				if(sad.getConnections() == null){
+			protected void doExecute() {
+
+				// create connections if necessary
+				if (sad.getConnections() == null) {
 					sad.setConnections(SadFactory.eINSTANCE.createSadConnections());
 				}
-				
-				//create connect interface
+
+				// create connect interface
 				sadConnectInterfaces[0] = SadFactory.eINSTANCE.createSadConnectInterface();
-				
-				//add to connections
+
+				// add to connections
 				sad.getConnections().getConnectInterface().add(sadConnectInterfaces[0]);
-				
-				//set connection id
+
+				// set connection id
 				sadConnectInterfaces[0].setId(createConnectionId(sad));
-				//source
+				// source
 				sadConnectInterfaces[0].setSource(source);
-				//target
+				// target
 				sadConnectInterfaces[0].setTarget(target);
-				
-				//TODO: evaluate when and where these should be set
+
+				// TODO: evaluate when and where these should be set
 //				sadConnectInterfaces[0].setProvidesPort(value);
 //				sadConnectInterfaces[0].setTarget(value);
 //				sadConnectInterfaces[0].setFindBy(value);
 //				sadConnectInterfaces[0].setComponentSupportedInterface(value);
-				
 
-				
-				
-            }
+			}
 		});
-		
+
 		// add connection for business object
 		AddConnectionContext addContext = new AddConnectionContext(context.getSourceAnchor(), context.getTargetAnchor());
 		addContext.setNewObject(sadConnectInterfaces[0]);
 		newConnection = (Connection) getFeatureProvider().addIfPossible(addContext);
-		
+
 		return newConnection;
 	}
-	
-	//Return UsesPortStub from either the source or target anchor.  Depends on how user drew connection.
+
+	// Return UsesPortStub from either the source or target anchor. Depends on how user drew connection.
 	private UsesPortStub getUsesPortStub(IConnectionContext context) {
 		UsesPortStub source = getUsesPortStub(context.getSourceAnchor());
-		if (source != null) return source;
-		
+		if (source != null)
+			return source;
+
 		source = getUsesPortStub(context.getTargetAnchor());
 		return source;
 	}
-	
-	//Return ConnectionTarget from either the source or target anchor.  Depends on how user drew connection.
+
+	// Return ConnectionTarget from either the source or target anchor. Depends on how user drew connection.
 	private ConnectionTarget getConnectionTarget(IConnectionContext context) {
 		ConnectionTarget connectionTarget = getConnectionTarget(context.getSourceAnchor());
-		if (connectionTarget != null) return connectionTarget;
-			
+		if (connectionTarget != null)
+			return connectionTarget;
+
 		connectionTarget = getConnectionTarget(context.getTargetAnchor());
 		return connectionTarget;
 	}
-	
-	//Return SadComponentInstantiation from either source or target anchor.  Depends on how user drew connection.
+
+	// Return SadComponentInstantiation from either source or target anchor. Depends on how user drew connection.
 	private SadComponentInstantiation getSadComponentInstantiation(IConnectionContext context) {
 		SadComponentInstantiation target = getSadComponentInstantiation(context.getSourceAnchor());
-		if (target != null) return target;
-			
+		if (target != null)
+			return target;
+
 		target = getSadComponentInstantiation(context.getTargetAnchor());
 		return target;
 	}
-	
-	
-	
-	
+
 	private UsesPortStub getUsesPortStub(Anchor anchor) {
 		if (anchor != null) {
 			Object object = getBusinessObjectForPictogramElement(anchor.getParent());
-			if(object instanceof UsesPortStub){
-				return (UsesPortStub)object;
+			if (object instanceof UsesPortStub) {
+				return (UsesPortStub) object;
 			}
 		}
 		return null;
 	}
-	
+
 	private ConnectionTarget getConnectionTarget(Anchor anchor) {
 		if (anchor != null) {
 			Object object = getBusinessObjectForPictogramElement(anchor.getParent());
 			if (object instanceof ConnectionTarget) {
-				return (ConnectionTarget)object;
+				return (ConnectionTarget) object;
 			}
 		}
 		return null;
 	}
-	
+
 	private SadComponentInstantiation getSadComponentInstantiation(Anchor anchor) {
 		if (anchor != null) {
 			Object object = getBusinessObjectForPictogramElement(anchor.getParent());
 			if (object instanceof SadComponentInstantiation) {
-				return (SadComponentInstantiation)object;
+				return (SadComponentInstantiation) object;
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the next available connection id
 	 * @param sad

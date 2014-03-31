@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * This file is protected by Copyright. 
+ * Please refer to the COPYRIGHT file distributed with this source distribution.
+ *
+ * This file is part of REDHAWK IDE.
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under 
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.properties;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
@@ -21,13 +31,13 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
-public class ComponentPropertiesSection extends GFPropertySection implements ITabbedPropertyConstants, IEditingDomainProvider{
+public class ComponentPropertiesSection extends GFPropertySection implements ITabbedPropertyConstants, IEditingDomainProvider {
 	private AdapterFactory adapterFactory;
 	private final ComponentInstantiationPropertyViewerAdapter adapter = new ComponentInstantiationPropertyViewerAdapter(this);
 
 	public ComponentPropertiesSection() {
 	}
-	
+
 	protected AdapterFactory createAdapterFactory() {
 		return new ScaPropertiesAdapterFactory();
 	}
@@ -36,15 +46,15 @@ public class ComponentPropertiesSection extends GFPropertySection implements ITa
 	public final void createControls(final Composite parent, final TabbedPropertySheetPage tabbedPropertySheetPage) {
 		super.createControls(parent, tabbedPropertySheetPage);
 		this.adapterFactory = createAdapterFactory();
-		
+
 		final TreeViewer viewer = createTreeViewer(parent);
 		this.adapter.setViewer(viewer);
 	}
-	
+
 	public TreeViewer getViewer() {
 		return adapter.getViewer();
 	}
-	
+
 	public AdapterFactory getAdapterFactory() {
 		return adapterFactory;
 	}
@@ -62,8 +72,7 @@ public class ComponentPropertiesSection extends GFPropertySection implements ITa
 	public final void setInput(final IWorkbenchPart part, final ISelection selection) {
 		super.setInput(part, selection);
 		PictogramElement pe = getSelectedPictogramElement();
-		ContainerShape containerShape = (ContainerShape)DUtil.findContainerShapeParentWithProperty(
-				pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		ContainerShape containerShape = (ContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
 		Object obj = DUtil.getBusinessObject(containerShape);
 		if (obj instanceof ComponentInstantiation) {
 			final ComponentInstantiation newInput = (ComponentInstantiation) obj;
@@ -85,8 +94,7 @@ public class ComponentPropertiesSection extends GFPropertySection implements ITa
 		super.dispose();
 	}
 
-	
-	//TODO: delete this two methods
+	// TODO: delete this two methods
 	@Override
 	public final boolean shouldUseExtraSpace() {
 		return true;

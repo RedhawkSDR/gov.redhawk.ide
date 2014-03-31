@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * This file is protected by Copyright. 
+ * Please refer to the COPYRIGHT file distributed with this source distribution.
+ *
+ * This file is part of REDHAWK IDE.
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under 
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.properties;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
@@ -12,34 +22,34 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class GraphitiEditPartToIPropertySourceAdapterFactory implements IAdapterFactory{
-	
-    public GraphitiEditPartToIPropertySourceAdapterFactory() {
-        super();
-}
+public class GraphitiEditPartToIPropertySourceAdapterFactory implements IAdapterFactory {
 
-    public Object getAdapter(Object adaptableObject, @SuppressWarnings("rawtypes") Class adapterType) {
-    	if (IPropertySource.class.equals(adapterType)) {
-    		if (adaptableObject instanceof GraphitiShapeEditPart) {
-    			GraphitiShapeEditPart editPart = (GraphitiShapeEditPart) adaptableObject;
-    			PictogramElement pictogramElement = editPart.getPictogramElement();
-    			ContainerShape containerShape = (ContainerShape)DUtil.findContainerShapeParentWithProperty(
-    					pictogramElement, RHContainerShapeImpl.SHAPE_outerContainerShape);
-    			Object obj = DUtil.getBusinessObject(containerShape);
-    			if(containerShape != null && obj != null && obj instanceof SadComponentInstantiation){
-    				
-    				//get sca property source
-    				final SadItemProviderAdapterFactory factory = new SadItemProviderAdapterFactory();
-    				IItemPropertySource obj2 = (IItemPropertySource) factory.adapt(obj, IItemPropertySource.class);
-    				return new gov.redhawk.sca.ui.RedhawkUiAdapterFactory.ScaPropertySource(obj, obj2);
-    			}
-    		}
-    	}
-    	return null;
-    }
+	public GraphitiEditPartToIPropertySourceAdapterFactory() {
+		super();
+	}
 
-    @SuppressWarnings("rawtypes")
-    public Class[] getAdapterList() {
-    	return new Class[] { IPropertySource.class };
-    }
+	public Object getAdapter(Object adaptableObject, @SuppressWarnings("rawtypes") Class adapterType) {
+		if (IPropertySource.class.equals(adapterType)) {
+			if (adaptableObject instanceof GraphitiShapeEditPart) {
+				GraphitiShapeEditPart editPart = (GraphitiShapeEditPart) adaptableObject;
+				PictogramElement pictogramElement = editPart.getPictogramElement();
+				ContainerShape containerShape = (ContainerShape) DUtil.findContainerShapeParentWithProperty(pictogramElement,
+					RHContainerShapeImpl.SHAPE_outerContainerShape);
+				Object obj = DUtil.getBusinessObject(containerShape);
+				if (containerShape != null && obj != null && obj instanceof SadComponentInstantiation) {
+
+					// get sca property source
+					final SadItemProviderAdapterFactory factory = new SadItemProviderAdapterFactory();
+					IItemPropertySource obj2 = (IItemPropertySource) factory.adapt(obj, IItemPropertySource.class);
+					return new gov.redhawk.sca.ui.RedhawkUiAdapterFactory.ScaPropertySource(obj, obj2);
+				}
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public Class[] getAdapterList() {
+		return new Class[] { IPropertySource.class };
+	}
 }

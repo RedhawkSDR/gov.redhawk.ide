@@ -148,7 +148,7 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 				adaptSelfBendPoints(selves);
 
 			} catch (InvalidLayoutConfiguration e) {
-				e.printStackTrace();  // SUPPRESS CHECKSTYLE handle exception 
+				e.printStackTrace(); // SUPPRESS CHECKSTYLE handle exception
 			}
 		}
 		// }

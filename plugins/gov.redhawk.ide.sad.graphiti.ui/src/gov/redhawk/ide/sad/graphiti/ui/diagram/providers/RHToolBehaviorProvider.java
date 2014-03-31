@@ -130,8 +130,7 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 			RHContainerShapeImpl.SHAPE_usesPortContainerShape, RHContainerShapeImpl.SHAPE_providesPortsContainerShape,
 			RHContainerShapeImpl.SHAPE_usesPortsContainerShape, RHContainerShapeImpl.SHAPE_providesPortContainerShape,
 			RHContainerShapeImpl.SHAPE_usesPortContainerShape, RHContainerShapeImpl.SHAPE_interfaceContainerShape,
-			RHContainerShapeImpl.SHAPE_interfaceEllipseShape, RHContainerShapeImpl.SHAPE_innerContainerShape }))
-		{
+			RHContainerShapeImpl.SHAPE_interfaceEllipseShape, RHContainerShapeImpl.SHAPE_innerContainerShape })) {
 			ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(originalPe, RHContainerShapeImpl.SHAPE_outerContainerShape);
 			return outerContainerShape;
 		}

@@ -71,7 +71,7 @@ public class ComponentInstantiationPropertyViewerAdapter {
 			this.viewer.setInput(component);
 		}
 	}
-	
+
 	/**
 	 * @since 6.0
 	 */
@@ -100,7 +100,7 @@ public class ComponentInstantiationPropertyViewerAdapter {
 
 		if (!EcoreUtil.equals(cp, input.getComponentProperties()) && getEditingDomain() != null && getEditingDomain().getCommandStack() != null) {
 			getEditingDomain().getCommandStack().execute(
-			        SetCommand.create(getEditingDomain(), input, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, cp));
+				SetCommand.create(getEditingDomain(), input, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, cp));
 		}
 	}
 

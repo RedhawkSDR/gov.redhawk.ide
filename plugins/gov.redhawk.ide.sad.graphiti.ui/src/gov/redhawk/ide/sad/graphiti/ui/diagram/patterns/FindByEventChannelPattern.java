@@ -32,30 +32,28 @@ import org.eclipse.graphiti.pattern.IPattern;
 
 public class FindByEventChannelPattern extends AbstractFindByPattern implements IPattern {
 
-	
 	public static final String NAME = "Event Channel";
-			
+
 	public FindByEventChannelPattern() {
 		super();
 	}
-	
+
 	@Override
 	public String getCreateName() {
 		return NAME;
 	}
-	
+
 	@Override
 	public String getCreateDescription() {
 		return "";
 	}
-	
+
 	@Override
 	public String getCreateImageId() {
 		return ImageProvider.IMG_FIND_BY_DOMAIN_MANAGER;
 	}
-	
-	
-	//THE FOLLOWING METHOD DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
+
+	// THE FOLLOWING METHOD DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
 	@Override
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
 		if (mainBusinessObject instanceof FindByStub) {
@@ -66,56 +64,58 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 		}
 		return false;
 	}
-	
-	//DIAGRAM FEATURES
-	
+
+	// DIAGRAM FEATURES
+
 	@Override
 	public boolean canCreate(ICreateContext context) {
 		return context.getTargetContainer() instanceof Diagram;
 	}
+
 	@Override
 	public Object[] create(ICreateContext context) {
-		
-		//prompt user for Event Channel
+
+		// prompt user for Event Channel
 		final String eventChannel = ExampleUtil.askString("Find By Event Channel", "Enter Event Channel", "");
-		
+
 		final FindByStub[] findByStubs = new FindByStub[1];
-		
-		//editing domain for our transaction
+
+		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
 //kepler		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-		
-		//Create Component Related objects in SAD model
+
+		// Create Component Related objects in SAD model
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
-            protected void doExecute() {
-				
+			protected void doExecute() {
+
 				findByStubs[0] = PartitioningFactory.eINSTANCE.createFindByStub();
-				
-				//interface stub (lollipop)
+
+				// interface stub (lollipop)
 				findByStubs[0].setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
-				
-				//domain finder service of type domain manager
+
+				// domain finder service of type domain manager
 				DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
 				domainFinder.setType(DomainFinderType.EVENTCHANNEL);
 				domainFinder.setName(eventChannel);
 				findByStubs[0].setDomainFinder(domainFinder);
-				
-				//add to diagram resource file
+
+				// add to diagram resource file
 				getDiagram().eResource().getContents().add(findByStubs[0]);
-				
+
 			}
 		});
-		
+
 		addGraphicalRepresentation(context, findByStubs[0]);
-		
+
 		return new Object[] { findByStubs[0] };
 	}
 
 	/**
 	 * Creates the FindByStub in the diagram with the provided eventChannel
-	 * Has no real purpose in this class except that it's logic is extremely similar to the above create method. It's purpose
+	 * Has no real purpose in this class except that it's logic is extremely similar to the above create method. It's
+	 * purpose
 	 * is to create a FindByStub using information in the model sad.xml file when no diagram file is available
 	 * @param namingServiceText
 	 * @param featureProvider
@@ -123,39 +123,39 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	 * @return
 	 */
 	public static FindByStub create(final String eventChannel, final IFeatureProvider featureProvider, final Diagram diagram) {
-		
+
 		final FindByStub[] findByStubs = new FindByStub[1];
-		
-		//editing domain for our transaction
+
+		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
 //kepler		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-		
-		//Create Component Related objects in SAD model
+
+		// Create Component Related objects in SAD model
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
-            protected void doExecute() {
-				
+			protected void doExecute() {
+
 				findByStubs[0] = PartitioningFactory.eINSTANCE.createFindByStub();
-				
-				//interface stub (lollipop)
+
+				// interface stub (lollipop)
 				findByStubs[0].setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
-				
-				//domain finder service of type domain manager
+
+				// domain finder service of type domain manager
 				DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
 				domainFinder.setType(DomainFinderType.EVENTCHANNEL);
 				domainFinder.setName(eventChannel);
 				findByStubs[0].setDomainFinder(domainFinder);
-				
-				//add to diagram resource file
+
+				// add to diagram resource file
 				diagram.eResource().getContents().add(findByStubs[0]);
-				
+
 			}
 		});
-		
+
 		return findByStubs[0];
 	}
-	
+
 	@Override
 	public String checkValueValid(String value, IDirectEditingContext context) {
 		if (value.length() < 1) {
@@ -170,35 +170,34 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 		// null means, that the value is valid
 		return null;
 	}
-	
+
 	@Override
 	public void setValue(final String value, IDirectEditingContext context) {
 		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(
-				pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
 		final FindByStub findBy = (FindByStub) getBusinessObjectForPictogramElement(rhContainerShape);
-		
-		//editing domain for our transaction
+
+		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
 //kepler	    TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-		
-	    //Perform business object manipulation in a Command
-	    TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-	    stack.execute(new RecordingCommand(editingDomain)  {
-	    	@Override
-	    	protected void doExecute() {
-	    		//set event name
-	    		findBy.getDomainFinder().setName(value);
-	    	}
-	    });
-	    
-	    //perform update, redraw
-	    updatePictogramElement(rhContainerShape);
+
+		// Perform business object manipulation in a Command
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+				// set event name
+				findBy.getDomainFinder().setName(value);
+			}
+		});
+
+		// perform update, redraw
+		updatePictogramElement(rhContainerShape);
 	}
 
 	@Override
-    public String getInnerTitle(FindByStub findByStub) {
+	public String getInnerTitle(FindByStub findByStub) {
 		return findByStub.getDomainFinder().getName();
-    }
+	}
 
 }

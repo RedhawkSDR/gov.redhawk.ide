@@ -330,17 +330,17 @@ public abstract class AbstractFindByPattern extends AbstractPattern implements I
 	 * @param featureProvider
 	 */
 	public static void addUsesPortStubToFindByStub2(final FindByStub findByStub, final SadUsesPort usesPort, IFeatureProvider featureProvider) {
-	    
+
 		final String usesPortName = usesPort.getUsesIndentifier();
-		
-		//add uses port stub
-		if(usesPortName != null && !usesPortName.isEmpty()){
+
+		// add uses port stub
+		if (usesPortName != null && !usesPortName.isEmpty()) {
 			UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
 			usesPortStub.setName(usesPortName);
 			findByStub.getUses().add(usesPortStub);
 		}
-    }
-	
+	}
+
 	/**
 	 * Add ProvidesPortStub to FindByStub
 	 * @param findByStub

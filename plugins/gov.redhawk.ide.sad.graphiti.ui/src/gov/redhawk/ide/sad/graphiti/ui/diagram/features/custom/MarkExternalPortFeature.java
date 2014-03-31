@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * This file is protected by Copyright. 
+ * Please refer to the COPYRIGHT file distributed with this source distribution.
+ *
+ * This file is part of REDHAWK IDE.
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under 
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom;
 
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
@@ -24,94 +34,97 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.services.Graphiti;
 
-public class MarkExternalPortFeature extends AbstractCustomFeature{
+public class MarkExternalPortFeature extends AbstractCustomFeature {
 
 	public MarkExternalPortFeature(IFeatureProvider fp) {
-	    super(fp);
-    }
+		super(fp);
+	}
 
-	public final static String NAME = "Mark External Port";
-	public final static String DESCRIPTION = "Mark this port external to waveform";
-	
+	public static final String NAME = "Mark External Port";
+	public static final String DESCRIPTION = "Mark this port external to waveform";
+
 	@Override
-	public String getName(){
+	public String getName() {
 		return NAME;
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return DESCRIPTION;
 	}
-	
+
 	/**
 	 * Always return true, we filter this specifically in the FeatureProvider
 	 */
 	@Override
-    public boolean canExecute(ICustomContext context) {
+	public boolean canExecute(ICustomContext context) {
 		return true;
 	}
-	
+
 	/**
 	 * Marks a ProvidesPortStub or UsesPortStub as an external port
 	 */
 	@Override
-    public void execute(ICustomContext context) {
-		final FixPointAnchor fixPointAnchor = (FixPointAnchor)context.getPictogramElements()[0];
-	    final Object obj = DUtil.getBusinessObject(fixPointAnchor);
-	    
-	    ContainerShape providesPortRectangleShape = (ContainerShape)Graphiti.getPeService().getActiveContainerPe(fixPointAnchor);
-	    
-	    //editing domain for our transaction
-	    TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
+	public void execute(ICustomContext context) {
+		final FixPointAnchor fixPointAnchor = (FixPointAnchor) context.getPictogramElements()[0];
+		final Object obj = DUtil.getBusinessObject(fixPointAnchor);
+
+		ContainerShape providesPortRectangleShape = (ContainerShape) Graphiti.getPeService().getActiveContainerPe(fixPointAnchor);
+
+		// editing domain for our transaction
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
 //kepler	    TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
-	    //get sad from diagram
-	    final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		// get sad from diagram
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 
-	    //get container outerContainerShape, which will be linked to SadComponentInstantiation
-	    final ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(providesPortRectangleShape, RHContainerShapeImpl.SHAPE_outerContainerShape);
-	    final SadComponentInstantiation ci = (SadComponentInstantiation)DUtil.getBusinessObject(outerContainerShape);
-	    
-	    //Perform business object manipulation in a Command
-	    TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
-	    stack.execute(new RecordingCommand(editingDomain){
-	    	@Override
-	    	protected void doExecute() {
-	    		
-	    		//initialize external ports if necessary, if we do this we must associate link it to all other components in the diagram
-	    		//this is necessary because the diagram needs to know which shapes to update when the externalPorts object changes in some way.
-				if(sad.getExternalPorts() == null){
+		// get container outerContainerShape, which will be linked to SadComponentInstantiation
+		final ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(providesPortRectangleShape,
+			RHContainerShapeImpl.SHAPE_outerContainerShape);
+		final SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(outerContainerShape);
+
+		// Perform business object manipulation in a Command
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+
+				// initialize external ports if necessary, if we do this we must associate link it to all other
+				// components in the diagram
+				// this is necessary because the diagram needs to know which shapes to update when the externalPorts
+				// object changes in some way.
+				if (sad.getExternalPorts() == null) {
 					sad.setExternalPorts(SadFactory.eINSTANCE.createExternalPorts());
-					for(ComponentShape cShape: ComponentPattern.getAllComponentShapes(getDiagram())){
+					for (ComponentShape cShape : ComponentPattern.getAllComponentShapes(getDiagram())) {
 						cShape.getLink().getBusinessObjects().add(sad.getExternalPorts());
 					}
 				}
-	    		
-	    		//add external port to model
-	    		Port port = SadFactory.eINSTANCE.createPort();
-	    		//set port sciref
-	    		SadComponentInstantiationRef sciRef = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
-	    		sciRef.setInstantiation(ci);
-	    		port.setComponentInstantiationRef(sciRef);
-	    		
-	    		//set port identifier
-	    		if(obj instanceof ProvidesPortStub){
-	    			port.setProvidesIndentifier(((ProvidesPortStub)obj).getName());
-	    		}else if(obj instanceof UsesPortStub){
-	    			port.setUsesIdentifier(((UsesPortStub)obj).getName());
-	    		}
-	    		sad.getExternalPorts().getPort().add(port);
-	    		
-	    		//change style of port
-	    	    Rectangle fixPointAnchorRectangle = (Rectangle)fixPointAnchor.getGraphicsAlgorithm();
-	    	    fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalUsesPort(DUtil.findDiagram(outerContainerShape)));
-	    	    fixPointAnchor.getLink().getBusinessObjects().add(port);
-	    	}
-	    });
 
-	    updatePictogramElement(fixPointAnchor);
-    }
-	
+				// add external port to model
+				Port port = SadFactory.eINSTANCE.createPort();
+				// set port sciref
+				SadComponentInstantiationRef sciRef = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
+				sciRef.setInstantiation(ci);
+				port.setComponentInstantiationRef(sciRef);
+
+				// set port identifier
+				if (obj instanceof ProvidesPortStub) {
+					port.setProvidesIndentifier(((ProvidesPortStub) obj).getName());
+				} else if (obj instanceof UsesPortStub) {
+					port.setUsesIdentifier(((UsesPortStub) obj).getName());
+				}
+				sad.getExternalPorts().getPort().add(port);
+
+				// change style of port
+				Rectangle fixPointAnchorRectangle = (Rectangle) fixPointAnchor.getGraphicsAlgorithm();
+				fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalUsesPort(DUtil.findDiagram(outerContainerShape)));
+				fixPointAnchor.getLink().getBusinessObjects().add(port);
+			}
+		});
+
+		updatePictogramElement(fixPointAnchor);
+	}
+
 //	/**
 //	 * Marks a ProvidesPortStub or UsesPortStub as an external port
 //	 */

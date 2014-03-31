@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * This file is protected by Copyright. 
+ * Please refer to the COPYRIGHT file distributed with this source distribution.
+ *
+ * This file is part of REDHAWK IDE.
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under 
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.directedit;
 
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
@@ -15,79 +25,76 @@ import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
-public class ComponentDirectEditUsageNameFeature extends AbstractDirectEditingFeature{
+public class ComponentDirectEditUsageNameFeature extends AbstractDirectEditingFeature {
 
 	public ComponentDirectEditUsageNameFeature(IFeatureProvider fp) {
-	    super(fp);
-    }
+		super(fp);
+	}
 
 	@Override
-	public boolean canDirectEdit(IDirectEditingContext context){
+	public boolean canDirectEdit(IDirectEditingContext context) {
 		PictogramElement pe = context.getPictogramElement();
-		ComponentShape componentShape = (ComponentShape)DUtil.findContainerShapeParentWithProperty(
-				pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
 		Object obj = getBusinessObjectForPictogramElement(componentShape);
 		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
-		//allow if we've selected Text for the component
+		// allow if we've selected Text for the component
 		if (obj instanceof SadComponentInstantiation && ga instanceof Text) {
 			return true;
 		}
 		return false;
 	}
-	
-	@Override
-    public int getEditingType() {
-	    return TYPE_TEXT;
-    }
 
 	@Override
-    public String getInitialValue(IDirectEditingContext context) {
+	public int getEditingType() {
+		return TYPE_TEXT;
+	}
+
+	@Override
+	public String getInitialValue(IDirectEditingContext context) {
 		PictogramElement pe = context.getPictogramElement();
-		ComponentShape componentShape = (ComponentShape)DUtil.findContainerShapeParentWithProperty(
-				pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
 		SadComponentInstantiation ci = (SadComponentInstantiation) getBusinessObjectForPictogramElement(componentShape);
 		return ci.getUsageName();
-    }
-	
+	}
+
 	@Override
-	public String checkValueValid(String value, IDirectEditingContext context){
-		if (value.length() < 1){
+	public String checkValueValid(String value, IDirectEditingContext context) {
+		if (value.length() < 1) {
 			return "Please enter any text as class name.";
 		}
-		if (value.contains(" ")){
+		if (value.contains(" ")) {
 			return "Spaces are not allowed in class names.";
 		}
-		if (value.contains("\n")){
+		if (value.contains("\n")) {
 			return "Line breakes are not allowed in class names.";
 		}
 		// null means, that the value is valid
 		return null;
 	}
-	
+
 	@Override
-	public void setValue(final String value, IDirectEditingContext context){
+	public void setValue(final String value, IDirectEditingContext context) {
 		PictogramElement pe = context.getPictogramElement();
-		ComponentShape componentShape = (ComponentShape)DUtil.findContainerShapeParentWithProperty(
-				pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
 		final SadComponentInstantiation ci = (SadComponentInstantiation) getBusinessObjectForPictogramElement(componentShape);
-		
-		//editing domain for our transaction
-	    TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
+
+		// editing domain for our transaction
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
 //kepler	    TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-		
-	    //Perform business object manipulation in a Command
-	    TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
-	    stack.execute(new RecordingCommand(editingDomain){
-	    	@Override
-	    	protected void doExecute() {
-	    		//set usage name
-	    		ci.setUsageName(value);
-	    	}
-	    });
-	    
-	    //perform update, redraw
-	    updatePictogramElement(componentShape);
-	    
+
+		// Perform business object manipulation in a Command
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+				// set usage name
+				ci.setUsageName(value);
+			}
+		});
+
+		// perform update, redraw
+		updatePictogramElement(componentShape);
+
 	}
 
 }

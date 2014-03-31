@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * This file is protected by Copyright. 
+ * Please refer to the COPYRIGHT file distributed with this source distribution.
+ *
+ * This file is part of REDHAWK IDE.
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under 
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.add;
 
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
@@ -34,109 +44,104 @@ import org.eclipse.graphiti.features.impl.AbstractCreateFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-public class CreateComponentFeature extends AbstractCreateFeature{
+public class CreateComponentFeature extends AbstractCreateFeature {
 
 	private SoftPkg spd = null;
-	
-	public CreateComponentFeature(IFeatureProvider fp, final SoftPkg spd) {
-	    super(fp, spd.getName(), spd.getDescription());
-	    this.spd = spd;
-    }
 
-	//diagram and hostCollocation acceptable
+	public CreateComponentFeature(IFeatureProvider fp, final SoftPkg spd) {
+		super(fp, spd.getName(), spd.getDescription());
+		this.spd = spd;
+	}
+
+	// diagram and hostCollocation acceptable
 	@Override
 	public boolean canCreate(ICreateContext context) {
-		if(context.getTargetContainer() instanceof Diagram ||
-				DUtil.getHostCollocation(context.getTargetContainer()) != null){
+		if (context.getTargetContainer() instanceof Diagram || DUtil.getHostCollocation(context.getTargetContainer()) != null) {
 			return true;
 		}
 		return false;
 	}
+
 	@Override
 	public Object[] create(ICreateContext context) {
-		
+
 		if (spd == null) {
-			//TODO: return some kind of error
+			// TODO: return some kind of error
 		}
-		
-		//editing domain for our transaction
+
+		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
 //kepler		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-		
-		//get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
-		
-		//determine if target is HostCollocation ContainerShape
-		HostCollocation hostCollocation = DUtil.getHostCollocation(context.getTargetContainer());
-		
-		//if HostCollocation was the target use it, otherwise add to sad partitioning
-		final EList<SadComponentPlacement> componentPlacementList = hostCollocation != null ? 
-				hostCollocation.getComponentPlacement() : 
-					sad.getPartitioning().getComponentPlacement();
 
-		//container for new component instantiation, necessary for reference after command execution
+		// get sad from diagram
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+
+		// determine if target is HostCollocation ContainerShape
+		HostCollocation hostCollocation = DUtil.getHostCollocation(context.getTargetContainer());
+
+		// if HostCollocation was the target use it, otherwise add to sad partitioning
+		final EList<SadComponentPlacement> componentPlacementList = hostCollocation != null ? hostCollocation.getComponentPlacement()
+			: sad.getPartitioning().getComponentPlacement();
+
+		// container for new component instantiation, necessary for reference after command execution
 		final SadComponentInstantiation[] componentInstantiations = new SadComponentInstantiation[1];
-		
-		//Create Component Related objects in SAD model
-		TransactionalCommandStack stack = (TransactionalCommandStack)editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain){
+
+		// Create Component Related objects in SAD model
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
-            protected void doExecute() {
-				//add component file
+			protected void doExecute() {
+				// add component file
 				ComponentFile componentFile = createComponentFile(sad, spd);
-				
-				//create component placement and add to list
+
+				// create component placement and add to list
 				final SadComponentPlacement componentPlacement = SadFactory.eINSTANCE.createSadComponentPlacement();
 				componentPlacementList.add(componentPlacement);
-				
-				//create component file ref
+
+				// create component file ref
 				final ComponentFileRef ref = PartitioningFactory.eINSTANCE.createComponentFileRef();
 				ref.setFile(componentFile);
 				componentPlacement.setComponentFileRef(ref);
-				
-				//component instantiation
+
+				// component instantiation
 				componentInstantiations[0] = createComponentInstantiation(sad, componentPlacement, spd);
-				
-				//determine start order and potentially create assembly controller if zero is zero
+
+				// determine start order and potentially create assembly controller if zero is zero
 				intializeComponentStartOrder(sad, componentInstantiations[0]);
-				
-				//if start order is zero then set as assembly controller
-				if(componentInstantiations[0].getStartOrder().compareTo(BigInteger.ZERO) == 0){
-					//create assembly controller
+
+				// if start order is zero then set as assembly controller
+				if (componentInstantiations[0].getStartOrder().compareTo(BigInteger.ZERO) == 0) {
+					// create assembly controller
 					AssemblyController assemblyController = SadFactory.eINSTANCE.createAssemblyController();
 					SadComponentInstantiationRef sadComponentInstantiationRef = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
 					sadComponentInstantiationRef.setInstantiation(componentInstantiations[0]);
 					assemblyController.setComponentInstantiationRef(sadComponentInstantiationRef);
 					sad.setAssemblyController(assemblyController);
 				}
-            }
+			}
 		});
 
-		//call add feature
+		// call add feature
 		addGraphicalRepresentation(context, componentInstantiations[0]);
-		
-		return new Object[] { componentInstantiations[0]};
+
+		return new Object[] { componentInstantiations[0] };
 	}
-	
-	
-	
-	
-	
-	//adds corresponding component file to sad if not already present
+
+	// adds corresponding component file to sad if not already present
 	private ComponentFile createComponentFile(final SoftwareAssembly sad, final SoftPkg spd) {
 
 		// See if we have to add a new <componentfile>
 		ComponentFile file = null;
-		//set component files is not already set
+		// set component files is not already set
 		ComponentFiles cFiles = sad.getComponentFiles();
-		if(cFiles == null){
+		if (cFiles == null) {
 			cFiles = PartitioningFactory.eINSTANCE.createComponentFiles();
 			sad.setComponentFiles(cFiles);
 		}
-		//search for existing compatible component file for spd
+		// search for existing compatible component file for spd
 		for (final ComponentFile f : cFiles.getComponentFile()) {
 			if (f == null) {
-				continue;  //TODO: why would this happen
+				continue; // TODO: why would this happen
 			}
 			final SoftPkg fSpd = f.getSoftPkg();
 			if (fSpd != null && PluginUtil.equals(spd.getId(), fSpd.getId())) {
@@ -144,7 +149,7 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 				break;
 			}
 		}
-		//add new component file if not found above
+		// add new component file if not found above
 		if (file == null) {
 			file = SadFactory.eINSTANCE.createComponentFile();
 			cFiles.getComponentFile().add(file);
@@ -153,38 +158,38 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 
 		return file;
 	}
-	
-	//create ComponentInstantiation 
+
+	// create ComponentInstantiation
 	private SadComponentInstantiation createComponentInstantiation(final SoftwareAssembly sad, final SadComponentPlacement componentPlacement, final SoftPkg spd) {
-		
+
 		SadComponentInstantiation sadComponentInstantiation = SadFactory.eINSTANCE.createSadComponentInstantiation();
-	
+
 		String compName = SoftwareAssembly.Util.createComponentUsageName(sad, spd.getName());
 		String id = SoftwareAssembly.Util.createComponentIdentifier(sad, compName);
-		
+
 		sadComponentInstantiation.setUsageName(compName);
 		sadComponentInstantiation.setId(id);
-		
+
 		final FindComponent findComponent = SadFactory.eINSTANCE.createFindComponent();
 		final NamingService namingService = PartitioningFactory.eINSTANCE.createNamingService();
 		namingService.setName(compName);
 		findComponent.setNamingService(namingService);
 		sadComponentInstantiation.setFindComponent(findComponent);
-		
+
 		String implId = null;
 		if (!spd.getImplementation().isEmpty()) { // Panic! Just choose first implementation
 			implId = spd.getImplementation().get(0).getId();
 		} else {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID,
-					spd.getName() + " Component has no implementation. ID: " + spd.getId()),
-					StatusManager.LOG | StatusManager.SHOW);
-			//return CommandResult.newErrorCommandResult("No SPD implementation available for " + spd.getName());
+			StatusManager.getManager().handle(
+				new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, spd.getName() + " Component has no implementation. ID: " + spd.getId()),
+				StatusManager.LOG | StatusManager.SHOW);
+			// return CommandResult.newErrorCommandResult("No SPD implementation available for " + spd.getName());
 		}
 		sadComponentInstantiation.setImplID(implId);
-		
-		//add to placement
+
+		// add to placement
 		componentPlacement.getComponentInstantiation().add(sadComponentInstantiation);
-	
+
 		return sadComponentInstantiation;
 	}
 
@@ -194,20 +199,20 @@ public class CreateComponentFeature extends AbstractCreateFeature{
 	 * @param sad
 	 * @param component
 	 */
-	public void intializeComponentStartOrder(final SoftwareAssembly sad, final SadComponentInstantiation component){
-		
-		//determine start order for existing components
+	public void intializeComponentStartOrder(final SoftwareAssembly sad, final SadComponentInstantiation component) {
+
+		// determine start order for existing components
 		BigInteger highestStartOrder = ComponentPattern.determineHighestStartOrder(sad);
-		
-		//increment start order for new component
+
+		// increment start order for new component
 		BigInteger startOrder = null;
-		if(highestStartOrder == null){
+		if (highestStartOrder == null) {
 			startOrder = BigInteger.ZERO;
-		}else{
+		} else {
 			startOrder = highestStartOrder.add(BigInteger.ONE);
 		}
-		
-		//set start order
+
+		// set start order
 		component.setStartOrder(startOrder);
 	}
 
