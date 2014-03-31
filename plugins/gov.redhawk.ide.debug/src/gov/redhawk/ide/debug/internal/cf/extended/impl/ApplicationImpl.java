@@ -276,23 +276,19 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	private final ApplicationStreams streams = new ApplicationStreams();
 	private boolean terminated;
 	private final ILaunch parentLaunch;
-	private final String assemblyID;
 	private LocalScaWaveform waveform;
 	private final String name;
 	private final String identifier;
 	private final String profile;
-	private final URI profileURI;
 	private boolean started;
 	private final Application delegate;
 
 	public ApplicationImpl(final LocalScaWaveform waveform, final String identifier, final String name, Application delegate) {
-		this.profileURI = waveform.getProfileURI();
 		this.name = name;
 		this.waveformContext = waveform.getNamingContext();
 		this.identifier = identifier;
 		this.parentLaunch = waveform.getLaunch();
 		this.profile = waveform.getProfile();
-		this.assemblyID = ApplicationImpl.getAssemblyControllerID(waveform.getProfileObj());
 		this.waveform = waveform;
 		this.delegate = delegate;
 	}
@@ -704,18 +700,19 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		ExternalProperties externalProperties = this.waveform.getProfileObj().getExternalProperties();
 		List<DataType> retVal = new ArrayList<DataType>();
 
-		if (this.assemblyController != null) {
+		LocalScaComponent localController = this.assemblyController;
+		if (localController != null) {
 			PropertiesHolder tmpHolder = new PropertiesHolder();
 			if (!queryProperties.isEmpty()) {
 				List<DataType> propsToQuery = new ArrayList<DataType>();
-				for (ScaAbstractProperty< ? > p : assemblyController.getProperties()) {
+				for (ScaAbstractProperty< ? > p : localController.getProperties()) {
 					if (queryProperties.contains(p.getId())) {
 						propsToQuery.add(new DataType(p.getId(), org.omg.CORBA.ORB.init().create_any()));
 					}
 				}
 				tmpHolder.value = propsToQuery.toArray(new DataType[propsToQuery.size()]);
 			}
-			this.assemblyController.query(tmpHolder);
+			localController.query(tmpHolder);
 			retVal.addAll(Arrays.asList(tmpHolder.value));
 		}
 		if (externalProperties != null) {
@@ -1102,7 +1099,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public Resource launch(final String compId, final DataType[] execParams, @NonNull final String spdURI, final String implId, final String mode)
-		throws ExecuteFail {
+			throws ExecuteFail {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		LocalScaComponent retVal;
 		try {
@@ -1126,7 +1123,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public LocalScaComponent launch(final String usageName, final DataType[] execParams, @NonNull final URI spdURI, final String implId, final String mode)
-		throws CoreException {
+			throws CoreException {
 		return launch(usageName, null, execParams, spdURI, implId, mode);
 	}
 
@@ -1240,7 +1237,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 		}
 
-		if (this.assemblyID != null && this.assemblyID.equals(newCompId)) {
+		String assemblyID = ApplicationImpl.getAssemblyControllerID(waveform.getProfileObj());
+		if (assemblyID != null && assemblyID.equals(newCompId)) {
 			this.assemblyController = newComponent;
 		}
 		return newComponent;
