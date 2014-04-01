@@ -24,6 +24,7 @@ import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 import gov.redhawk.sca.ui.editors.IScaContentDescriber;
+import gov.redhawk.sca.ui.editors.ScaObjectWrapperContentDescriber;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -32,19 +33,23 @@ import java.util.concurrent.TimeoutException;
 
 import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.ui.IEditorInput;
 
 public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 
 	private static class DelayedEditorInput extends ScaFileStoreEditorInput {
 
+		private LocalScaWaveform proxy;
+
 		public DelayedEditorInput(ScaWaveform scaElement) throws CoreException {
-			super(scaElement, LocalScaChalkboardContentDescriber.getFileStore(scaElement));
+			super(scaElement, ScaObjectWrapperContentDescriber.getFileStore(scaElement));
 		}
 
 		@Override
@@ -57,17 +62,29 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 			}
 		}
 
+		@Override
+		public java.net.URI getURI() {
+			LocalScaWaveform scaObject = getScaObject();
+			try {
+				IFileStore store = ScaObjectWrapperContentDescriber.getFileStore(scaObject);
+				return store.toURI();
+			} catch (CoreException e) {
+				// PASS
+			}
+			return super.getURI();
+		}
+
 		private LocalScaWaveform getLocalScaWaveform(final ScaWaveform remoteWaveform) {
+			if (proxy != null) {
+				return proxy;
+			}
 			LocalScaWaveform waveform = null;
 			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 			for (ScaWaveform localWaveform : localSca.getWaveforms()) {
-				if (localWaveform.getIdentifier().equals(remoteWaveform.getIdentifier())) {
-					waveform = (LocalScaWaveform) localWaveform;
+				if (localWaveform.getIdentifier().equals(remoteWaveform.getIdentifier()) && localWaveform instanceof LocalScaWaveform) {
+					proxy = (LocalScaWaveform) localWaveform;
+					return proxy;
 				}
-			}
-
-			if (waveform != null) {
-				return waveform;
 			}
 
 			waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
@@ -78,18 +95,21 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 			try {
 				context = LocalApplicationFactory.createWaveformContext(rootContext, remoteWaveform.getIdentifier());
 			} catch (CoreException e) {
-				throw new IllegalStateException("Failed to create local Chalkboard naming context", e);
+				throw new IllegalStateException("Failed to create waveform naming context", e);
 			}
 
 			waveform.setNamingContext(context);
-			waveform.setIor(remoteWaveform.getIor());
 			waveform.setProfile(remoteWaveform.getProfile());
-			waveform.setProfileURI(remoteWaveform.getProfileURI());
-			waveform.setProfileObj(remoteWaveform.getProfileObj());
-			waveform.setStarted(remoteWaveform.getStarted());
-
 			final ApplicationImpl app = new ApplicationImpl(waveform, remoteWaveform.getIdentifier(), remoteWaveform.getName(), remoteWaveform.getObj());
 			waveform.setLocalApp(app);
+			waveform.setProfileURI(remoteWaveform.getProfileURI());
+			try {
+				// Set the profile to the new URI generated with the new proxy local application object
+				IFileStore store = ScaObjectWrapperContentDescriber.getFileStore(waveform);
+				waveform.setProfileURI(URI.createURI(store.toURI().toString()));
+			} catch (CoreException e) {
+				throw new IllegalStateException("Failed to create waveform uri", e);
+			}
 
 			final LocalScaWaveform tmpLocalScaWaveform = waveform;
 			// Create local copy
@@ -140,6 +160,7 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 			} catch (TimeoutException e) {
 				ScaDebugPlugin.getInstance().getLog().log(new Status(IStatus.WARNING, ScaDebugUiPlugin.PLUGIN_ID, "Failed to refresh waveform.", e));
 			}
+			proxy = waveform;
 			return waveform;
 		}
 

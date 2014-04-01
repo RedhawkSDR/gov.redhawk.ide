@@ -12,34 +12,16 @@ package gov.redhawk.ide.debug.internal.ui;
 
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 import gov.redhawk.sca.ui.editors.IScaContentDescriber;
+import gov.redhawk.sca.ui.editors.ScaObjectWrapperContentDescriber;
 
 import java.io.IOException;
-import java.net.URI;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.emf.common.CommonPlugin;
 import org.eclipse.ui.IEditorInput;
 
 public class LocalScaChalkboardContentDescriber implements IScaContentDescriber {
-
-	public static IFileStore getFileStore(ScaWaveform waveform) throws CoreException {
-		org.eclipse.emf.common.util.URI uri = waveform.getProfileURI();
-		final URI resolvedURI;
-		if (uri.isPlatform() || uri.isFile()) {
-			uri = uri.trimQuery();
-		}
-		if (uri.isPlatform()) {
-			resolvedURI = URI.create(CommonPlugin.resolve(uri).toString());
-		} else {
-			resolvedURI = URI.create(uri.toString());
-		}
-		return EFS.getStore(resolvedURI);
-	}
 
 	@Override
 	public int describe(final Object contents) throws IOException {
@@ -55,7 +37,7 @@ public class LocalScaChalkboardContentDescriber implements IScaContentDescriber 
 			return LocalScaElementFactory.getLocalScaInput();
 		} else if (contents instanceof LocalScaWaveform) {
 			try {
-				return new ScaFileStoreEditorInput((LocalScaWaveform) contents, LocalScaChalkboardContentDescriber.getFileStore((LocalScaWaveform) contents));
+				return new ScaFileStoreEditorInput((LocalScaWaveform) contents, ScaObjectWrapperContentDescriber.getFileStore((LocalScaWaveform) contents));
 			} catch (CoreException e) {
 				return null;
 			}
