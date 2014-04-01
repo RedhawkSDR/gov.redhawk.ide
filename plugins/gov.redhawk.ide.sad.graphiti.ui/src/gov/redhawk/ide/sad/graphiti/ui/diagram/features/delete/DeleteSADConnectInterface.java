@@ -54,7 +54,7 @@ public class DeleteSADConnectInterface extends DefaultDeleteFeature {
 		final SadConnectInterface finalConnectInterface = connectInterface;
 
 		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 //kepler		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// get sad from diagram

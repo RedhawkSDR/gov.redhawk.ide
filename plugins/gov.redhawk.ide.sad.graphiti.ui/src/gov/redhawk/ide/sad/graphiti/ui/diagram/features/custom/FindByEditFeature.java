@@ -208,7 +208,7 @@ public class FindByEditFeature extends AbstractCustomFeature {
 					: null;
 
 				// editing domain for our transaction
-				TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
+				TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 				// Create Component Related objects in SAD model
 				TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 				stack.execute(new RecordingCommand(editingDomain) {

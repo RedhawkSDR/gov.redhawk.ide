@@ -64,8 +64,7 @@ public class ComponentCoreSection extends GFPropertySection implements ITabbedPr
 	}
 
 	public TransactionalEditingDomain getEditingDomain() {
-		return super.getDiagramEditor().getEditingDomain();
-//kepler		return super.getDiagramContainer().getDiagramBehavior().getEditingDomain();
+		return super.getDiagramContainer().getDiagramBehavior().getEditingDomain();
 	}
 
 	@Override

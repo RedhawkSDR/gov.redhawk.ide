@@ -151,8 +151,7 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 				@Override
 				public IStatus runInUIThread(final IProgressMonitor monitor) {
 					// refresh pallete which will call RHToolBehaviorProvider.getPalette()
-					diagramTypeProvider.getDiagramEditor().refreshPalette();
-//kepler					diagramTypeProvider.getDiagramBehavior().refreshPalette();
+					diagramTypeProvider.getDiagramBehavior().refreshPalette();
 					return Status.OK_STATUS;
 				}
 

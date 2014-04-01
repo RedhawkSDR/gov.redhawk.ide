@@ -75,9 +75,8 @@ public class SaveUtil {
 				return null;
 			}
 			createResource.setTrackingModification(true);
-		}
-		// load the .sad.xml resource
-		else {
+		} else {
+			// load the .sad.xml resource
 			// if the result set already knows about the software assembly file, simply return that
 			// NOTE: this section is required, simply using loadConfigViaEMF() does not seem to work properly even
 			// though

@@ -868,7 +868,7 @@ public class DUtil {
 				createContext.setTargetAnchor(targetAnchor);
 				for (ICreateConnectionFeature createFeature : featureProvider.getCreateConnectionFeatures()) {
 					if (createFeature.canCreate(createContext)) {
-						featureProvider.getDiagramTypeProvider().getDiagramEditor().executeFeature(createFeature, createContext);
+						featureProvider.getDiagramTypeProvider().getDiagramBehavior().executeFeature(createFeature, createContext);
 					}
 				}
 			}

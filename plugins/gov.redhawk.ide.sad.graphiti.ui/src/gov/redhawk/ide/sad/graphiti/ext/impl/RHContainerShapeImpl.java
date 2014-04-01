@@ -58,7 +58,7 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  * <!-- end-user-doc -->
  * <p>
  * </p>
- * 
+ *
  * @generated
  */
 @SuppressWarnings("restriction")
@@ -121,8 +121,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @generated
 	 */
 	protected RHContainerShapeImpl() {
-		super();
-	}
+    super();
+  }
 
 	/**
 	 * 
@@ -130,8 +130,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RHGxPackage.Literals.RH_CONTAINER_SHAPE;
-	}
+    return RHGxPackage.Literals.RH_CONTAINER_SHAPE;
+  }
 
 	/**
 	 * Creates the inner shapes that make up this container shape

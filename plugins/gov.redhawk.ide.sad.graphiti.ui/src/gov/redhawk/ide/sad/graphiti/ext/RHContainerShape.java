@@ -39,52 +39,55 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
  * @model
  * @generated
  */
-public interface RHContainerShape extends ContainerShape
-{
-  /**
+public interface RHContainerShape extends ContainerShape {
+	/**
    * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+	 * <!-- end-user-doc -->
    * @model targetContainerShapeUnique="false" outerTextUnique="false" businessObjectsDataType="gov.redhawk.ide.sad.graphiti.ext.List<org.eclipse.emf.ecore.EObject>" businessObjectsUnique="false" businessObjectsMany="false" featureProviderDataType="gov.redhawk.ide.sad.graphiti.ext.IFeatureProvider" featureProviderUnique="false" outerImageIdUnique="false" outerContainerStyleUnique="false" innerTextUnique="false" innerImageIdUnique="false" innerContainerStyleUnique="false" interfaceStubDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentSupportedInterfaceStub" interfaceStubUnique="false" usesUnique="false" usesMany="false" providesUnique="false" providesMany="false" externalPortsDataType="gov.redhawk.ide.sad.graphiti.ext.List<gov.redhawk.ide.sad.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
    * @generated
    */
-  void init(ContainerShape targetContainerShape, String outerText, List<EObject> businessObjects, IFeatureProvider featureProvider, String outerImageId, Style outerContainerStyle, String innerText, String innerImageId, Style innerContainerStyle, ComponentSupportedInterfaceStub interfaceStub, EList<UsesPortStub> uses, EList<ProvidesPortStub> provides, List<Port> externalPorts);
+	void init(ContainerShape targetContainerShape, String outerText, List<EObject> businessObjects, IFeatureProvider featureProvider, String outerImageId,
+		Style outerContainerStyle, String innerText, String innerImageId, Style innerContainerStyle, ComponentSupportedInterfaceStub interfaceStub,
+		EList<UsesPortStub> uses, EList<ProvidesPortStub> provides, List<Port> externalPorts);
 
-  /**
+	/**
    * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+	 * <!-- end-user-doc -->
    * <!-- begin-model-doc -->
    * Returns providesPortsStubs business object list linked to getProvidesPortsContainerShape()
    * <!-- end-model-doc -->
    * @model kind="operation" unique="false" many="false"
    * @generated
    */
-  EList<ProvidesPortStub> getProvidesPortStubs();
+	EList<ProvidesPortStub> getProvidesPortStubs();
 
-  /**
+	/**
    * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+	 * <!-- end-user-doc -->
    * <!-- begin-model-doc -->
    * performs a layout on the contents of this shape
    * <!-- end-model-doc -->
    * @model
    * @generated
    */
-  void layout();
+	void layout();
 
-  /**
+	/**
    * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+	 * <!-- end-user-doc -->
    * <!-- begin-model-doc -->
    * Updates the shape with supplied values
    * <!-- end-model-doc -->
    * @model dataType="gov.redhawk.ide.sad.graphiti.ext.Reason" unique="false" outerTextUnique="false" businessObjectUnique="false" featureProviderDataType="gov.redhawk.ide.sad.graphiti.ext.IFeatureProvider" featureProviderUnique="false" outerImageIdUnique="false" outerContainerStyleUnique="false" innerTextUnique="false" innerImageIdUnique="false" innerContainerStyleUnique="false" interfaceStubDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentSupportedInterfaceStub" interfaceStubUnique="false" usesUnique="false" usesMany="false" providesUnique="false" providesMany="false" externalPortsDataType="gov.redhawk.ide.sad.graphiti.ext.List<gov.redhawk.ide.sad.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
    * @generated
    */
-  Reason update(String outerText, Object businessObject, IFeatureProvider featureProvider, String outerImageId, Style outerContainerStyle, String innerText, String innerImageId, Style innerContainerStyle, ComponentSupportedInterfaceStub interfaceStub, EList<UsesPortStub> uses, EList<ProvidesPortStub> provides, List<Port> externalPorts);
+	Reason update(String outerText, Object businessObject, IFeatureProvider featureProvider, String outerImageId, Style outerContainerStyle, String innerText,
+		String innerImageId, Style innerContainerStyle, ComponentSupportedInterfaceStub interfaceStub, EList<UsesPortStub> uses,
+		EList<ProvidesPortStub> provides, List<Port> externalPorts);
 
-  /**
+	/**
    * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+	 * <!-- end-user-doc -->
    * <!-- begin-model-doc -->
    * Checks if shape requires an update.
    * If update required returns Reason with true
@@ -93,6 +96,8 @@ public interface RHContainerShape extends ContainerShape
    * @model dataType="gov.redhawk.ide.sad.graphiti.ext.Reason" unique="false" outerTextUnique="false" businessObjectUnique="false" featureProviderDataType="gov.redhawk.ide.sad.graphiti.ext.IFeatureProvider" featureProviderUnique="false" outerImageIdUnique="false" outerContainerStyleUnique="false" innerTextUnique="false" innerImageIdUnique="false" innerContainerStyleUnique="false" interfaceStubDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentSupportedInterfaceStub" interfaceStubUnique="false" usesUnique="false" usesMany="false" providesUnique="false" providesMany="false" externalPortsDataType="gov.redhawk.ide.sad.graphiti.ext.List<gov.redhawk.ide.sad.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
    * @generated
    */
-  Reason updateNeeded(String outerText, Object businessObject, IFeatureProvider featureProvider, String outerImageId, Style outerContainerStyle, String innerText, String innerImageId, Style innerContainerStyle, ComponentSupportedInterfaceStub interfaceStub, EList<UsesPortStub> uses, EList<ProvidesPortStub> provides, List<Port> externalPorts);
+	Reason updateNeeded(String outerText, Object businessObject, IFeatureProvider featureProvider, String outerImageId, Style outerContainerStyle,
+		String innerText, String innerImageId, Style innerContainerStyle, ComponentSupportedInterfaceStub interfaceStub, EList<UsesPortStub> uses,
+		EList<ProvidesPortStub> provides, List<Port> externalPorts);
 
 } // RHContainerShape

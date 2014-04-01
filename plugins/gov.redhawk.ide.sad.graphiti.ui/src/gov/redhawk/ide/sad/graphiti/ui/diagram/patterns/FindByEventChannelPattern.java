@@ -81,8 +81,7 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 		final FindByStub[] findByStubs = new FindByStub[1];
 
 		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
-//kepler		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// Create Component Related objects in SAD model
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
@@ -127,8 +126,7 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 		final FindByStub[] findByStubs = new FindByStub[1];
 
 		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
-//kepler		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// Create Component Related objects in SAD model
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
@@ -178,8 +176,7 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 		final FindByStub findBy = (FindByStub) getBusinessObjectForPictogramElement(rhContainerShape);
 
 		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
-//kepler	    TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// Perform business object manipulation in a Command
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();

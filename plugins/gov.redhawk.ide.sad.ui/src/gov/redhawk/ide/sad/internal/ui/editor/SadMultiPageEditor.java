@@ -667,8 +667,7 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 	@Override
 	protected void handleDocumentChange(final Resource resource) {
 		super.handleDocumentChange(resource);
-//kepler		for (final Object part : this.getDiagramEditor().getDiagramBehavior().getContentEditPart().getChildren()) {
-		for (final Object part : this.getDiagramEditor().getContentEditPart().getChildren()) {
+		for (final Object part : this.getDiagramEditor().getDiagramBehavior().getContentEditPart().getChildren()) {
 			if (part instanceof EditPart) {
 				((EditPart) part).refresh();
 			}

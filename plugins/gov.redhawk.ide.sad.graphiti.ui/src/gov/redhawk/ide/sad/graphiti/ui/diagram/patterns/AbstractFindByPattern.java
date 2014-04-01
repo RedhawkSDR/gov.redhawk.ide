@@ -304,7 +304,7 @@ public abstract class AbstractFindByPattern extends AbstractPattern implements I
 		final String usesPortName = usesPortStub.getUsesIndentifier();
 
 		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
+		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// Create Component Related objects in SAD model
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
@@ -352,7 +352,7 @@ public abstract class AbstractFindByPattern extends AbstractPattern implements I
 		final String providesPortName = sadProvidesPort.getProvidesIdentifier();
 
 		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
+		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// Create Component Related objects in SAD model
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();

@@ -153,14 +153,14 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	public boolean canCreate(ICreateConnectionContext context) {
 		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
-		if (sad == null)
+		if (sad == null) {
 			return false;
-
+		}
 		// determine source
 		UsesPortStub source = getUsesPortStub(context);
-		if (source == null)
+		if (source == null) {
 			return false;
-
+		}
 		// determine destination
 		// getConnectionTarget handles connecting to ports on components, not ports or interfaces on FindBy Shapes
 		ConnectionTarget target = getConnectionTarget(context);
@@ -186,18 +186,13 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 //				new PictogramElement[] {portRectangleShape});
 
 		// doing the null check because it breaks when loading a findby without a diagram
-		if (((DiagramEditor) getFeatureProvider().getDiagramTypeProvider().getDiagramEditor()).getGraphicalViewer() != null) {
+		if (((DiagramEditor) getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior()).getGraphicalViewer() != null) {
 
 			// force selection of shape so that we can then right click for contextual options
 			// this is kind of a hack, it would be better if selection happened automatically when its clicked.
-			getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().selectPictogramElements(
+			getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer().selectPictogramElements(
 				new PictogramElement[] { context.getSourcePictogramElement() });
 		}
-
-//kepler		getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior()
-//			.getDiagramContainer().selectPictogramElements(
-//					new PictogramElement[] {context.getSourcePictogramElement()});
-
 		return true;
 
 	}
@@ -220,8 +215,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		}
 
 		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramEditor().getEditingDomain();
-//kepler		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
@@ -273,9 +267,9 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	// Return UsesPortStub from either the source or target anchor. Depends on how user drew connection.
 	private UsesPortStub getUsesPortStub(IConnectionContext context) {
 		UsesPortStub source = getUsesPortStub(context.getSourceAnchor());
-		if (source != null)
+		if (source != null) {
 			return source;
-
+		}
 		source = getUsesPortStub(context.getTargetAnchor());
 		return source;
 	}
@@ -283,9 +277,9 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	// Return ConnectionTarget from either the source or target anchor. Depends on how user drew connection.
 	private ConnectionTarget getConnectionTarget(IConnectionContext context) {
 		ConnectionTarget connectionTarget = getConnectionTarget(context.getSourceAnchor());
-		if (connectionTarget != null)
+		if (connectionTarget != null) {
 			return connectionTarget;
-
+		}
 		connectionTarget = getConnectionTarget(context.getTargetAnchor());
 		return connectionTarget;
 	}
@@ -293,9 +287,9 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	// Return SadComponentInstantiation from either source or target anchor. Depends on how user drew connection.
 	private SadComponentInstantiation getSadComponentInstantiation(IConnectionContext context) {
 		SadComponentInstantiation target = getSadComponentInstantiation(context.getSourceAnchor());
-		if (target != null)
+		if (target != null) {
 			return target;
-
+		}
 		target = getSadComponentInstantiation(context.getTargetAnchor());
 		return target;
 	}
