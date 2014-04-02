@@ -15,6 +15,10 @@ import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
 import gov.redhawk.model.sca.ScaDomainManager;
 import gov.redhawk.model.sca.ScaEventChannel;
 import gov.redhawk.ui.views.namebrowser.view.BindingNode;
+
+import java.util.concurrent.Callable;
+
+import mil.jpeojtrs.sca.util.CorbaUtils;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -44,7 +48,9 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
  */
 public class EventChannelListenerHandler extends AbstractHandler {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override
@@ -58,7 +64,7 @@ public class EventChannelListenerHandler extends AbstractHandler {
 		if (selection instanceof IStructuredSelection) {
 			EventView view = null;
 			boolean isMany = ((IStructuredSelection) selection).size() > 1;
-			for (Object obj : ((IStructuredSelection) selection).toList()) {
+			for (final Object obj : ((IStructuredSelection) selection).toList()) {
 				if (obj instanceof BindingNode) {
 					final BindingNode node = (BindingNode) obj;
 					final String name = node.getPath();
@@ -69,22 +75,40 @@ public class EventChannelListenerHandler extends AbstractHandler {
 							@Override
 							protected IStatus run(IProgressMonitor monitor) {
 								try {
-									org.omg.CORBA.Object ref = node.getNamingContext().resolve_str(node.getPath());
-									EventChannel channel = EventChannelHelper.narrow(ref);
-									finalView.connect(name, channel);
-									return Status.OK_STATUS;
-								} catch (NotFound e) {
-									return new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel", e);
-								} catch (CannotProceed e) {
-									return new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel", e);
-								} catch (InvalidName e) {
-									return new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel", e);
-								} catch (CoreException e) {
-									return e.getStatus();
+									CorbaUtils.invoke(new Callable<Object>() {
+
+										@Override
+										public Object call() throws Exception {
+											try {
+												org.omg.CORBA.Object ref = node.getNamingContext().resolve_str(node.getPath());
+												EventChannel channel = EventChannelHelper.narrow(ref);
+												finalView.connect(name, channel);
+											} catch (NotFound e) {
+												throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID,
+													"Failed to connect to event channel", e));
+											} catch (CannotProceed e) {
+												throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID,
+													"Failed to connect to event channel", e));
+											} catch (InvalidName e) {
+												throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID,
+													"Failed to connect to event channel", e));
+											}
+											return null;
+										}
+
+									}, monitor);
+									return Status.CANCEL_STATUS;
+								} catch (CoreException e1) {
+									return e1.getStatus();
+								} catch (InterruptedException e1) {
+									return Status.CANCEL_STATUS;
 								}
+
 							}
 
 						};
+						connectJob.setUser(true);
+						connectJob.setSystem(false);
 						connectJob.schedule();
 					} catch (PartInitException e) {
 						StatusManager.getManager().handle(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to open event view.", e),
@@ -104,14 +128,27 @@ public class EventChannelListenerHandler extends AbstractHandler {
 								@Override
 								protected IStatus run(IProgressMonitor monitor) {
 									try {
-										finalView.connect(domMgr, channel.getName());
+										CorbaUtils.invoke(new Callable<Object>() {
+
+											@Override
+											public Object call() throws Exception {
+												finalView.connect(domMgr, channel.getName());
+												return null;
+											}
+
+										}, monitor);
 										return Status.OK_STATUS;
-									} catch (CoreException e) {
-										return e.getStatus();
+									} catch (CoreException e1) {
+										return e1.getStatus();
+									} catch (InterruptedException e1) {
+										return Status.CANCEL_STATUS;
 									}
+
 								}
 
 							};
+							connectJob.setUser(true);
+							connectJob.setSystem(false);
 							connectJob.schedule();
 
 						} catch (PartInitException e) {
