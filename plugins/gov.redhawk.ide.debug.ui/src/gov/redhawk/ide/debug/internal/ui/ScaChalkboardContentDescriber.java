@@ -17,7 +17,6 @@ import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
 import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
-import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -135,7 +134,6 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 									@Override
 									public Object call() throws Exception {
 										LocalApplicationFactory.bindApp(app);
-										tmpWaveform.refresh(monitor, RefreshDepth.FULL);
 										return null;
 									}
 
@@ -154,11 +152,8 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 			} else {
 				try {
 					LocalApplicationFactory.bindApp(app);
-					tmpWaveform.refresh(null, RefreshDepth.FULL);
 				} catch (CoreException e) {
 					throw new IllegalStateException("Failed to bind waveform", e);
-				} catch (InterruptedException e) {
-					// PASS
 				}
 			}
 
