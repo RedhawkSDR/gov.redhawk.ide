@@ -98,7 +98,7 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 		super(editor);
 		editorResource = editor.getMainResource();
 	}
-	
+
 	@Override
 	protected void initializeGraphicalViewerContents() {
 		super.initializeGraphicalViewerContents();
@@ -111,27 +111,26 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 	}
 
 	private void setEditMode(Object obj) {
-		if (obj instanceof ComponentPlacementEditPart 
-				|| obj instanceof SadComponentPlacementCompartmentEditPart
-				|| obj instanceof SadComponentInstantiationEditPart) {
+		if (obj instanceof ComponentPlacementEditPart || obj instanceof SadComponentPlacementCompartmentEditPart
+			|| obj instanceof SadComponentInstantiationEditPart) {
 			AbstractEditPart part = (AbstractEditPart) obj;
 			IEditableEditPart iPart = (IEditableEditPart) obj;
 			iPart.disableEditMode();
-			for (Object obj2: part.getChildren()) {
+			for (Object obj2 : part.getChildren()) {
 				setEditMode(obj2);
 			}
 		}
 		if (obj instanceof ProvidesPortStubEditPart) {
 			ProvidesPortStubEditPart thePart = (ProvidesPortStubEditPart) obj;
 			thePart.enableEditMode();
-			for (Object obj2: thePart.getTargetConnections()) {
+			for (Object obj2 : thePart.getTargetConnections()) {
 				setEditMode(obj2);
 			}
 		}
 		if (obj instanceof UsesPortStubEditPart) {
 			UsesPortStubEditPart thePart = (UsesPortStubEditPart) obj;
 			thePart.enableEditMode();
-			for (Object obj2: thePart.getSourceConnections()) {
+			for (Object obj2 : thePart.getSourceConnections()) {
 				setEditMode(obj2);
 			}
 		}
@@ -140,7 +139,7 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 			thePart.disableEditMode();
 		}
 	}
-	
+
 	@Override
 	public void dispose() {
 		IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
@@ -255,12 +254,16 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 	private List<PaletteEntry> createPaletteEntries(ComponentDesc desc) {
 		List<PaletteEntry> retVal = new ArrayList<PaletteEntry>(desc.getImplementationIds().size());
 		if (desc.getImplementationIds().size() == 1) {
-			retVal.add(new SpdToolEntry(desc.getName(), desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(), desc.getImplementationIds().get(0),
-				SandboxDiagramEditor.TOOL_ICON));
+			SpdToolEntry entry = new SpdToolEntry(desc.getName(), desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(),
+				desc.getImplementationIds().get(0), SandboxDiagramEditor.TOOL_ICON);
+			entry.setAlwaysCreateComplonentFile(true);
+			retVal.add(entry);
 		} else {
 			for (String implID : desc.getImplementationIds()) {
-				retVal.add(new SpdToolEntry(desc.getName() + " (" + implID + ")", desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(), implID,
-					SandboxDiagramEditor.TOOL_ICON));
+				SpdToolEntry entry = new SpdToolEntry(desc.getName() + " (" + implID + ")", desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(),
+					implID, SandboxDiagramEditor.TOOL_ICON);
+				entry.setAlwaysCreateComplonentFile(true);
+				retVal.add(entry);
 			}
 		}
 		return retVal;

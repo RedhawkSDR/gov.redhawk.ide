@@ -40,7 +40,9 @@ public class SpdToolEntry extends PaletteToolEntry {
 	private String spdId;
 
 	private String implID;
-	
+
+	private boolean alwaysCreateCpFile;
+
 	/**
 	 * @since 5.0
 	 */
@@ -60,7 +62,7 @@ public class SpdToolEntry extends PaletteToolEntry {
 		this.elementType = SadElementTypes.SadComponentPlacement_3001;
 		this.spdUri = spdURI;
 		setSmallIcon(icon);
-		
+
 		setLargeIcon(getSmallIcon());
 
 		this.spdId = id;
@@ -78,9 +80,9 @@ public class SpdToolEntry extends PaletteToolEntry {
 	public SpdToolEntry(final SoftPkg spd, ImageDescriptor icon) {
 		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, icon);
 	}
-	
+
 	public SpdToolEntry(final SoftPkg spd) {
-		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, getDefaultIcon());
+		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, SpdToolEntry.getDefaultIcon());
 	}
 
 	@Override
@@ -93,6 +95,7 @@ public class SpdToolEntry extends PaletteToolEntry {
 				final HashMap<Object, Object> map = new HashMap<Object, Object>();
 				map.putAll(retVal.getExtendedData());
 				map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_SPD_URI, SpdToolEntry.this.spdUri);
+				map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_ALWAYS_CP_CREATE_FILE, SpdToolEntry.this.alwaysCreateCpFile);
 				if (implID != null) {
 					map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_IMPL_ID, SpdToolEntry.this.implID);
 				}
@@ -116,5 +119,19 @@ public class SpdToolEntry extends PaletteToolEntry {
 	 */
 	public String getSpdID() {
 		return spdId;
+	}
+
+	/**
+	 * @since 5.1
+	 */
+	public boolean isAlwaysCreateComplonentFile() {
+		return alwaysCreateCpFile;
+	}
+
+	/**
+	 * @since 5.1
+	 */
+	public void setAlwaysCreateComplonentFile(boolean alwaysCreateComplonentFile) {
+		this.alwaysCreateCpFile = alwaysCreateComplonentFile;
 	}
 }

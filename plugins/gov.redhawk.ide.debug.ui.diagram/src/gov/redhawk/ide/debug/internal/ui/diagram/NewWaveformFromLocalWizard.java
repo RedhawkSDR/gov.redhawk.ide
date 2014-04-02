@@ -20,9 +20,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
+import mil.jpeojtrs.sca.partitioning.ComponentFileRef;
+import mil.jpeojtrs.sca.partitioning.ComponentPlacement;
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.util.DceUuidUtil;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.resources.IFile;
@@ -34,6 +41,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -140,10 +148,8 @@ public class NewWaveformFromLocalWizard extends Wizard implements IExecutableExt
 						} catch (final IOException e) {
 							// PASS
 						}
-						NewWaveformFromLocalWizard.this.openEditorOn.setContents(new ByteArrayInputStream(buffer.toByteArray()),
-						        true,
-						        false,
-						        progress.newChild(1));
+						NewWaveformFromLocalWizard.this.openEditorOn.setContents(new ByteArrayInputStream(buffer.toByteArray()), true, false,
+							progress.newChild(1));
 
 						// Setup automatic RPM spec file generation
 						CodegenUtil.addTopLevelRPMSpecBuilder(project, progress.newChild(1));
@@ -162,7 +168,7 @@ public class NewWaveformFromLocalWizard extends Wizard implements IExecutableExt
 			BasicNewProjectResourceWizard.updatePerspective(this.fConfig);
 		} catch (final InvocationTargetException x) {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, x.getCause().getMessage(), x.getCause()),
-			        StatusManager.SHOW | StatusManager.LOG);
+				StatusManager.SHOW | StatusManager.LOG);
 			return false;
 		} catch (final InterruptedException x) {
 			return false;
@@ -174,22 +180,50 @@ public class NewWaveformFromLocalWizard extends Wizard implements IExecutableExt
 	}
 
 	private void updateComponentFiles(final SoftwareAssembly newSad) {
-		if (newSad.getComponentFiles() != null) {
-			for (final ComponentFile file : newSad.getComponentFiles().getComponentFile()) {
-				final URI uri = URI.createURI(file.getLocalFile().getName());
-				if (uri.scheme() != null) {
-					final String fileName = uri.lastSegment();
-					final int index = fileName.indexOf('.');
-					final String folderName = fileName.substring(0, index);
-					file.getLocalFile().setName("/components/" + folderName + "/" + fileName);
+		Map<String, ComponentFile> fileMap = new HashMap<String, ComponentFile>();
+		EList<SadComponentInstantiation> sadInstantiations = newSad.getAllComponentInstantiations();
+		for (SadComponentInstantiation inst : sadInstantiations) {
+			ComponentPlacement< ? > placement = inst.getPlacement();
+			ComponentFileRef fileRef = placement.getComponentFileRef();
+			ComponentFile oldFile = null;
+			for (ComponentFile f : newSad.getComponentFiles().getComponentFile()) {
+				if (f.getId().equals(fileRef.getRefid())) {
+					oldFile = f;
+					break;
 				}
 			}
+			if (oldFile == null) {
+				continue;
+			}
+			String name;
+			final URI uri = URI.createURI(oldFile.getLocalFile().getName());
+			if (uri.scheme() != null) {
+				final String fileName = uri.lastSegment();
+				final int index = fileName.indexOf('.');
+				final String folderName = fileName.substring(0, index);
+				name = "/components/" + folderName + "/" + fileName;
+			} else {
+				name = oldFile.getLocalFile().getName();
+			}
+			ComponentFile file = fileMap.get(name);
+			if (file == null) {
+				file = PartitioningFactory.eINSTANCE.createDomComponentFile();
+				file.setId(DceUuidUtil.createDceUUID());
+				file.setType("SPD");
+				file.setLocalFile(PartitioningFactory.eINSTANCE.createLocalFile());
+				file.getLocalFile().setName(name);
+				fileMap.put(name, file);
+			}
+			placement.getComponentFileRef().setFile(file);
 		}
 
+		newSad.getComponentFiles().getComponentFile().clear();
+		newSad.getComponentFiles().getComponentFile().addAll(fileMap.values());
 	}
 
 	/**
-	 * Set custom viewing properties for the Sad Editor so that we can tell the difference between this editor and the Sad Explorer
+	 * Set custom viewing properties for the Sad Editor so that we can tell the difference between this editor and the
+	 * Sad Explorer
 	 * 
 	 * @param sadPart The Sad Editor instance that we shall change the initial diagram style for
 	 */
