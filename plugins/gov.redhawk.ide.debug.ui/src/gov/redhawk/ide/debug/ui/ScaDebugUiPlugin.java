@@ -23,12 +23,14 @@ public class ScaDebugUiPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "gov.redhawk.ide.debug.ui"; //$NON-NLS-1$
-	
+
+	/**
+	 * @since 2.1
+	 */
 	public static final String CHALKBOARD_EDITOR_URI_PATH = "/" + ScaDebugUiPlugin.PLUGIN_ID + "/data/LocalSca.sad.xml";
 
 	// The shared instance
 	private static ScaDebugUiPlugin plugin;
-
 
 	/**
 	 * The constructor
@@ -38,6 +40,7 @@ public class ScaDebugUiPlugin extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
@@ -48,6 +51,7 @@ public class ScaDebugUiPlugin extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
@@ -69,7 +73,7 @@ public class ScaDebugUiPlugin extends AbstractUIPlugin {
 	 * Logs the specified status with this plug-in's log.
 	 * 
 	 * @param status
-	 *            status to log
+	 * status to log
 	 */
 	public static void log(final IStatus status) {
 		ScaDebugUiPlugin.getDefault().getLog().log(status);
@@ -79,7 +83,7 @@ public class ScaDebugUiPlugin extends AbstractUIPlugin {
 	 * Logs an internal error with the specified message.
 	 * 
 	 * @param message
-	 *            the error message to log
+	 * the error message to log
 	 */
 	public static void logErrorMessage(final String message) {
 		ScaDebugUiPlugin.log(new Status(IStatus.ERROR, ScaDebugUiPlugin.getUniqueIdentifier(), IStatus.ERROR, message, null));
@@ -89,7 +93,7 @@ public class ScaDebugUiPlugin extends AbstractUIPlugin {
 	 * Logs an internal error with the specified throwable
 	 * 
 	 * @param e
-	 *            the exception to be logged
+	 * the exception to be logged
 	 */
 	public static void log(final Throwable e) {
 		ScaDebugUiPlugin.log(new Status(IStatus.ERROR, ScaDebugUiPlugin.getUniqueIdentifier(), IStatus.ERROR, e.getMessage(), e));
