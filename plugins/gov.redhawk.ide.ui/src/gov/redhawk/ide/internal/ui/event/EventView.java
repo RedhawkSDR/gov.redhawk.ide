@@ -62,6 +62,7 @@ public class EventView extends ViewPart {
 		@Override
 		public void run() {
 			history.clear();
+			viewer.refresh(true);
 		}
 	};
 
@@ -132,7 +133,9 @@ public class EventView extends ViewPart {
 	public EventView() {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -231,7 +234,9 @@ public class EventView extends ViewPart {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	@Override
