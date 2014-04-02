@@ -461,15 +461,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 		this.terminated = true;
 		this.streams.getOutStream().println("Releasing Application...");
-		if (this.delegate != null) {
-			try {
-				this.delegate.releaseObject();
-			} catch (ReleaseError e) {
-				logException("Problems while releasing delegate", e);
-			} catch (SystemException e) {
-				logException("Problems while releasing delegate", e);
-			}
-		}
 
 		try {
 			disconnectAll();
@@ -1099,7 +1090,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public Resource launch(final String compId, final DataType[] execParams, @NonNull final String spdURI, final String implId, final String mode)
-			throws ExecuteFail {
+		throws ExecuteFail {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		LocalScaComponent retVal;
 		try {
@@ -1123,7 +1114,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public LocalScaComponent launch(final String usageName, final DataType[] execParams, @NonNull final URI spdURI, final String implId, final String mode)
-			throws CoreException {
+		throws CoreException {
 		return launch(usageName, null, execParams, spdURI, implId, mode);
 	}
 
@@ -1312,6 +1303,10 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	public void setLogConfigURL(String configUrl) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public boolean isDelegate() {
+		return this.delegate != null;
 	}
 
 }
