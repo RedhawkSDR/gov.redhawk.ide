@@ -43,45 +43,33 @@ public class ExportToSDRHandler extends AbstractHandler implements IHandler {
 	private IScaExporter exporter;
 
 	@Override
-	public Object execute(@Nullable final ExecutionEvent event)
-			throws ExecutionException {
+	public Object execute(@Nullable final ExecutionEvent event) throws ExecutionException {
 		this.exporter = new FileStoreExporter(SDRROOT);
 		final ISelection sel = HandlerUtil.getCurrentSelection(event);
 		Job exportJob = new Job("Exporting Project to SDR") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				final SubMonitor subMonitor = SubMonitor.convert(monitor,
-						"Exporting...", 5);
+				final SubMonitor subMonitor = SubMonitor.convert(monitor, "Exporting...", 5);
 				if (sel instanceof IStructuredSelection) {
 					Object obj = ((IStructuredSelection) sel).getFirstElement();
 					if (obj instanceof IProject) {
 						IProject project = (IProject) obj;
 						try {
 							if (project.hasNature(ScaNodeProjectNature.ID)) {
-								ExportUtils.exportNode(project, exporter,
-										subMonitor.newChild(1));
-							} else if (project
-									.hasNature(ScaWaveformProjectNature.ID)) {
-								ExportUtils.exportWaveform(project, exporter,
-										subMonitor.newChild(1));
-							} else if (project
-									.hasNature(ScaComponentProjectNature.ID)) {
-								ExportUtils.exportComponent(project, exporter,
-										subMonitor.newChild(1));
+								ExportUtils.exportNode(project, exporter, subMonitor.newChild(1));
+							} else if (project.hasNature(ScaWaveformProjectNature.ID)) {
+								ExportUtils.exportWaveform(project, exporter, subMonitor.newChild(1));
+							} else if (project.hasNature(ScaComponentProjectNature.ID)) {
+								ExportUtils.exportComponent(project, exporter, subMonitor.newChild(1));
 							}
 						} catch (CoreException e) {
-							return new Status(IStatus.CANCEL,
-									SdrUiPlugin.PLUGIN_ID,
-									"Export unsuccessful", e);
+							return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Error exporting project to SDR root", e);
 						} catch (IOException e) {
-							return new Status(IStatus.CANCEL,
-									SdrUiPlugin.PLUGIN_ID,
-									"Export unsuccessful", e);
+							return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Error exporting project to SDR root", e);
 						}
 
 						// Refresh Target SDR
-						SdrUiPlugin.getDefault().getTargetSdrRoot()
-								.reload(subMonitor.newChild(1));
+						SdrUiPlugin.getDefault().getTargetSdrRoot().reload(subMonitor.newChild(1));
 					}
 				}
 				return Status.OK_STATUS;

@@ -22,12 +22,16 @@ import gov.redhawk.sca.util.OrbSession;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+
+import mil.jpeojtrs.sca.util.CorbaUtils;
 
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -62,6 +66,7 @@ public class EventView extends ViewPart {
 		@Override
 		public void run() {
 			history.clear();
+			viewer.refresh(true);
 		}
 	};
 
@@ -100,11 +105,27 @@ public class EventView extends ViewPart {
 
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
+						SubMonitor subMonitor = SubMonitor.convert(monitor, "Disconnecting channels...", IProgressMonitor.UNKNOWN);
 						for (Object obj : result) {
 							if (obj instanceof ChannelListener) {
-								ChannelListener l = (ChannelListener) obj;
-								l.disconnect();
+								final ChannelListener listener = (ChannelListener) obj;
+								try {
+									CorbaUtils.invoke(new Callable<Object>() {
+
+										@Override
+										public Object call() throws Exception {
+											listener.disconnect();
+											return null;
+										}
+
+									}, subMonitor.newChild(1));
+								} catch (CoreException e) {
+									// PASS
+								} catch (InterruptedException e) {
+									// PASS
+								}
 							}
+
 						}
 						return Status.OK_STATUS;
 					}
@@ -132,7 +153,9 @@ public class EventView extends ViewPart {
 	public EventView() {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -182,11 +205,29 @@ public class EventView extends ViewPart {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				for (ChannelListener listener : channelListeners) {
-					listener.disconnect();
+				synchronized (EventView.this) {
+					SubMonitor subMonitor = SubMonitor.convert(monitor, "Disconnecting all channels...", IProgressMonitor.UNKNOWN);
+					for (final ChannelListener listener : channelListeners) {
+						try {
+							CorbaUtils.invoke(new Callable<Object>() {
+
+								@Override
+								public Object call() throws Exception {
+									listener.disconnect();
+									return null;
+								}
+
+							}, subMonitor.newChild(1));
+						} catch (CoreException e) {
+							// PASS
+						} catch (InterruptedException e) {
+							// PASS
+						}
+
+					}
+					channelListeners.clear();
+					session.dispose();
 				}
-				channelListeners.clear();
-				session.dispose();
 				return Status.OK_STATUS;
 			}
 
@@ -195,30 +236,29 @@ public class EventView extends ViewPart {
 		disconnectAll.schedule();
 	}
 
-	public void connect(String channel, final EventChannel eventChannel) throws CoreException {
+	public synchronized void connect(String channel, final EventChannel eventChannel) throws CoreException {
 		// Don't add duplicate listeners
 		for (ChannelListener l : channelListeners) {
-			if (l.getChannel().equals(channel) && l instanceof EventChannelListener && ((EventChannelListener) l).getEventChannel() == eventChannel) {
+			if (l.getFullChannelName().equals(channel)) {
 				return;
 			}
 		}
 
 		final ChannelListener newListener = new EventChannelListener(history, eventChannel, channel);
-		channelListeners.add(newListener);
 
 		newListener.connect(session);
+		channelListeners.add(newListener);
 	}
 
-	public void connect(final ScaDomainManager domain, final String channel) throws CoreException {
+	public synchronized void connect(final ScaDomainManager domain, final String channel) throws CoreException {
 		// Don't add duplicate listeners
 		for (ChannelListener l : channelListeners) {
-			if (l.getChannel().equals(channel) && l instanceof DomainChannelListener && ((DomainChannelListener) l).getDomain() == domain) {
+			if (l.getFullChannelName().equals(domain.getName() + "/" + channel)) {
 				return;
 			}
 		}
 
 		final ChannelListener newListener = new DomainChannelListener(history, domain, channel);
-		channelListeners.add(newListener);
 
 		if (!domain.isConnected()) {
 			try {
@@ -228,10 +268,12 @@ public class EventView extends ViewPart {
 			}
 		}
 		newListener.connect(session);
-
+		channelListeners.add(newListener);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	@Override

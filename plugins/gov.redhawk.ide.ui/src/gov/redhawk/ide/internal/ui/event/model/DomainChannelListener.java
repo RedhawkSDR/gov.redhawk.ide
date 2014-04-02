@@ -13,7 +13,10 @@ package gov.redhawk.ide.internal.ui.event.model;
 import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
 import gov.redhawk.model.sca.DomainConnectionException;
 import gov.redhawk.model.sca.ScaDomainManager;
+import gov.redhawk.sca.ui.ConnectPortWizard;
 import gov.redhawk.sca.util.OrbSession;
+
+import java.util.UUID;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.runtime.CoreException;
@@ -52,7 +55,7 @@ public class DomainChannelListener extends ChannelListener {
 		POA poa = session.getPOA();
 		try {
 			ref = PushConsumerHelper.narrow(poa.servant_to_reference(new PushConsumerPOATie(this)));
-			registrationId = "eventViewer_" + System.getProperty("user.name") + "_" + System.currentTimeMillis();
+			registrationId = "eventViewer_" + UUID.randomUUID() + "_" + ConnectPortWizard.generateDefaultConnectionID();
 			domain.registerWithEventChannel(ref, registrationId, getChannel());
 		} catch (SystemException e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
