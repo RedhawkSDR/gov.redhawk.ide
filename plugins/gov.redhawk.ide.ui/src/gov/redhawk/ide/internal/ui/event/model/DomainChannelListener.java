@@ -13,6 +13,7 @@ package gov.redhawk.ide.internal.ui.event.model;
 import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
 import gov.redhawk.model.sca.DomainConnectionException;
 import gov.redhawk.model.sca.ScaDomainManager;
+import gov.redhawk.sca.ui.ConnectPortWizard;
 import gov.redhawk.sca.util.OrbSession;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -52,26 +53,26 @@ public class DomainChannelListener extends ChannelListener {
 		POA poa = session.getPOA();
 		try {
 			ref = PushConsumerHelper.narrow(poa.servant_to_reference(new PushConsumerPOATie(this)));
-			registrationId = "eventViewer_" + System.getProperty("user.name") + "_" + System.currentTimeMillis();
+			registrationId = "eventViewer_" + ConnectPortWizard.generateDefaultConnectionID();
 			domain.registerWithEventChannel(ref, registrationId, getChannel());
 		} catch (SystemException e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + getChannel() + ")", e));
+					+ domain.getName() + "(" + getChannel() + ")", e));
 		} catch (InvalidObjectReference e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + getChannel() + ")", e));
+					+ domain.getName() + "(" + getChannel() + ")", e));
 		} catch (InvalidEventChannelName e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + getChannel() + ")", e));
+					+ domain.getName() + "(" + getChannel() + ")", e));
 		} catch (AlreadyConnected e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + getChannel() + ")", e));
+					+ domain.getName() + "(" + getChannel() + ")", e));
 		} catch (ServantNotActive e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + getChannel() + ")", e));
+					+ domain.getName() + "(" + getChannel() + ")", e));
 		} catch (WrongPolicy e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + getChannel() + ")", e));
+					+ domain.getName() + "(" + getChannel() + ")", e));
 		}
 
 	}
