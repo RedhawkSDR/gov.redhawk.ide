@@ -259,14 +259,14 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 				// If we don't have the project name try again
 				if (projectName == null) {
 					IPath path = new Path(projectSystemFile.getPath());
-					// if the file is in the default location, use the directory name as the project name
-					if (isDefaultLocation(path)) {
-						projectName = path.segment(path.segmentCount() - 2);
-						description = IDEWorkbenchPlugin.getPluginWorkspace().newProjectDescription(projectName);
-					} else if (isNonEclipseProject(path.toFile().getName())) {
+					if (isNonEclipseProject(path.toFile().getName())) {
 						// If there is no .project file, use the file name as the project name
 						projectName = RedhawkImportFileUtil.getName(path);
 						missingFiles = true;
+					} else if (isDefaultLocation(path)) {
+						// if the file is in the default location, use the directory name as the project name
+						projectName = path.segment(path.segmentCount() - 2);
+						description = IDEWorkbenchPlugin.getPluginWorkspace().newProjectDescription(projectName);
 					} else {
 						description = IDEWorkbenchPlugin.getPluginWorkspace().loadProjectDescription(path);
 						projectName = description.getName();
@@ -331,9 +331,8 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 		public Map<String, String> getTemplate() {
 			return template;
 		}
-	}
+	} // End of inner class ProjectRecord
 
-	// CHECKSTYLE:OFF
 	// dialog store id constants
 	private static final String STORE_COPY_PROJECT_ID = "WizardProjectsImportPage.STORE_COPY_PROJECT_ID"; //$NON-NLS-1$
 
@@ -405,11 +404,10 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 	}
 
 	public boolean isNonEclipseProject(String path) {
-		if (path.matches(sadExtension) || path.matches(dcdExtension) || path.matches(spdExtension)) {
+		if (path.matches(sadExtension) || path.matches(dcdExtension) || path.matches(spdExtension)) { 
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	/**
@@ -435,10 +433,10 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 		this.currentSelection = currentSelection;
 		setPageComplete(false);
 		setTitle(DataTransferMessages.WizardProjectsImportPage_ImportProjectsTitle);
-		setDescription("Select a directory to search for existing Eclipse projects. Wizard will attempt to generate missing metadata files. Projects missing source files may exhibit unexpected behavior.");
+		setDescription("Select a directory to search for existing Eclipse projects. "
+			+ "Wizard will attempt to generate missing metadata files. Projects missing source files may exhibit unexpected behavior.");
 	}
 
-	// CHECKSTYLE:ON
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -723,7 +721,9 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 
 		GridData archivePathData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		archivePathData.widthHint = new PixelConverter(archivePathField).convertWidthInCharsToPixels(25);
-		archivePathField.setLayoutData(archivePathData); // browse button
+		archivePathField.setLayoutData(archivePathData); 
+		
+		// browse button
 		browseArchivesButton = new Button(projectGroup, SWT.PUSH);
 		browseArchivesButton.setText(DataTransferMessages.DataTransfer_browse);
 		setButtonLayoutData(browseArchivesButton);

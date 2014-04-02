@@ -50,6 +50,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.swt.SWT;
@@ -190,23 +191,31 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 			IProject project = null;
 			File importSource = new File(record.projectSystemFile.getParentFile().getAbsolutePath());
 
+			// Check to see whether project is being imported from within the workspace directory hierarchy
+			boolean isDefaultLocation = false;
+			String defaultLocation = Platform.getLocation().toFile() + ".+";
+			String source = importSource.toString();
+			if (source.matches(defaultLocation)) {
+				isDefaultLocation = true;
+			}
+
 			// Build new .project files of the appropriate type
 			if ("SAD".equals(projectType)) {
-				if (!copyFiles) {
+				if (!copyFiles && !isDefaultLocation) {
 					project = WaveformProjectCreator.createEmptyProject(projectName, projectLocation, monitor);
 				} else {
 					project = WaveformProjectCreator.createEmptyProject(projectName, null, monitor);
 				}
 			}
 			if ("DCD".equals(projectType)) {
-				if (!copyFiles) {
+				if (!copyFiles && !isDefaultLocation) {
 					project = NodeProjectCreator.createEmptyProject(projectName, projectLocation, monitor);
 				} else {
 					project = NodeProjectCreator.createEmptyProject(projectName, null, monitor);
 				}
 			}
 			if ("SPD".equals(projectType)) {
-				if (!copyFiles) {
+				if (!copyFiles && !isDefaultLocation) {
 					project = ComponentProjectCreator.createEmptyProject(projectName, projectLocation, monitor);
 				} else {
 					project = ComponentProjectCreator.createEmptyProject(projectName, null, monitor);
