@@ -99,6 +99,7 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 
 			waveform.setNamingContext(context);
 			waveform.setProfile(remoteWaveform.getProfile());
+			@SuppressWarnings("restriction")
 			final ApplicationImpl app = new ApplicationImpl(waveform, remoteWaveform.getIdentifier(), remoteWaveform.getName(), remoteWaveform.getObj());
 			waveform.setLocalApp(app);
 			waveform.setProfileURI(remoteWaveform.getProfileURI());
@@ -120,7 +121,6 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 				}
 			});
 
-			final ScaWaveform tmpWaveform = waveform;
 			if (Display.getCurrent() != null) {
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
 				try {
