@@ -55,22 +55,26 @@ public class DefaultComponentLaunchConfigurationFactory extends AbstractLaunchCo
 		retVal.setAttribute(ScaDebugLaunchConstants.ATT_WORKSPACE_PROFILE, false);
 
 		final Implementation impl = spd.getImplementation(implId);
-       if (impl == null) {
-    	   throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "No implementation of ID: " + implId + " for spd file " + file, null));
-       }
-       Code code = impl.getCode();
-       if (code == null) {
-    	   throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "No Code entry for " + file + " and implementation " + implId, null));
-       }
-       CodeFileType type = code.getType();
-       if (type != CodeFileType.EXECUTABLE) {
-    	   throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Code not executable for " + file + " and implementation " + implId, null));
-       }
-       String entryPoint = code.getEntryPoint();
-       if (entryPoint  == null) {
-    	   throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "No entry point for implementation " + implId + " in file " + file, null));
-       }
-       final String location = new File(file.getParent(), entryPoint).toString();
+		if (impl == null) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "No implementation of ID: " + implId + " for spd file " + file, null));
+		}
+		Code code = impl.getCode();
+		if (code == null) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "No Code entry for " + file + " and implementation " + implId, null));
+		}
+		CodeFileType type = code.getType();
+		if (type != CodeFileType.EXECUTABLE) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Code not executable for " + file + " and implementation " + implId, null));
+		}
+		String entryPoint = code.getEntryPoint();
+		if (entryPoint == null) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "No entry point for implementation " + implId + " in file " + file, null));
+		}
+		File exec = new File(file.getParent(), entryPoint);
+		if (!exec.canExecute()) {
+			exec.setExecutable(true);
+		}
+		final String location = exec.toString();
 
 		final String wd = file.getParent();
 		retVal.setAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, false);
@@ -100,6 +104,5 @@ public class DefaultComponentLaunchConfigurationFactory extends AbstractLaunchCo
 	public void setProgramArguments(final String progArgs, final ILaunchConfigurationWorkingCopy config) throws CoreException {
 		config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, progArgs);
 	}
-
 
 }

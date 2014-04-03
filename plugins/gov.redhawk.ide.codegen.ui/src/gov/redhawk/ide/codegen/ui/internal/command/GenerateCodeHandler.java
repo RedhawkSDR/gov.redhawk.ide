@@ -10,19 +10,27 @@
  *******************************************************************************/
 package gov.redhawk.ide.codegen.ui.internal.command;
 
+import gov.redhawk.ide.codegen.CodegenFactory;
 import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
+import gov.redhawk.ide.codegen.IPropertyDescriptor;
+import gov.redhawk.ide.codegen.IScaComponentCodegen;
+import gov.redhawk.ide.codegen.ITemplateDesc;
 import gov.redhawk.ide.codegen.ImplementationSettings;
+import gov.redhawk.ide.codegen.Property;
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.ide.codegen.ui.GenerateCode;
 import gov.redhawk.ide.codegen.ui.IComponentProjectUpgrader;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 import gov.redhawk.ide.codegen.ui.preferences.CodegenPreferenceConstants;
+import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
+import gov.redhawk.ide.ui.wizard.IRedhawkImportProjectWizardAssist;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.RedhawkUiActivator;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,6 +41,7 @@ import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
+import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -49,6 +58,8 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -64,6 +75,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -72,7 +84,8 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 
-		// GenerateCode Class simply takes an object to generate from.  It should be either a list of implementations, an implementation or IFile
+		// GenerateCode Class simply takes an object to generate from. It should be either a list of implementations, an
+		// implementation or IFile
 
 		// If the user used a context menu, generate code on the selection(s)
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
@@ -83,7 +96,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 		// We need to get the project so we can save related resources.
 		// Fom the IFile its easy, from the implementation we need to get the EMF Resource and get the IFile from there
 
-		// If the menu selection is empty then Generate button was pressed within the editor 
+		// If the menu selection is empty then Generate button was pressed within the editor
 		if (selection == null || selection.isEmpty()) {
 			final IEditorPart editor = HandlerUtil.getActiveEditor(event);
 			if (editor != null) {
@@ -116,7 +129,8 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 					}
 				}
 			}
-		} else { // The selection was made either via the right click menu from the Project Explorer, or in the Implementations tab.
+		} else { // The selection was made either via the right click menu from the Project Explorer, or in the
+					// Implementations tab.
 			if (selection instanceof IStructuredSelection) {
 				final IStructuredSelection ss = (IStructuredSelection) selection;
 
@@ -153,13 +167,14 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	}
 
 	/**
-	 * Attempts to save the project associated with the object to generate if there are unsaved changes.  The object to generate 
+	 * Attempts to save the project associated with the object to generate if there are unsaved changes. The object to
+	 * generate
 	 * is then passed into the GenerateCode class for code generation.
 	 * @param objectToGenerate The object which will be passed into the GenerateCode's generate method.
 	 * @param parentProject The IProject which contains the objectToGenerate resource
-	 * @param shell A shell used for dialog generation 
+	 * @param shell A shell used for dialog generation
 	 * @return True if code generation has been attempted.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	private boolean saveAndGenerate(Object objectToGenerate, IProject parentProject, Shell shell) throws CoreException {
 		if (relatedResourcesSaved(shell, parentProject)) {
@@ -176,7 +191,8 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 
 	@SuppressWarnings("unchecked")
 	private void checkDeprecated(Object selectedObj, Shell parent) throws CoreException {
-		boolean enableDeprecated = RedhawkCodegenUiActivator.getDefault().getPreferenceStore().getBoolean(CodegenPreferenceConstants.P_ENABLE_DEPRECATED_CODE_GENERATORS);
+		boolean enableDeprecated = RedhawkCodegenUiActivator.getDefault().getPreferenceStore().getBoolean(
+			CodegenPreferenceConstants.P_ENABLE_DEPRECATED_CODE_GENERATORS);
 		// Skip check since the user has asked to enable deprecated generators
 		if (enableDeprecated) {
 			return;
@@ -254,6 +270,9 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 
 	private boolean isDeprecated(Implementation impl, WaveDevSettings waveDev) throws CoreException {
 		if (waveDev == null) {
+			waveDev = generateWaveDev(impl.getSoftPkg());
+		}
+		if (waveDev == null) {
 			throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID, "GENERATE FAILED: Failed to find implementation settings in "
 				+ impl.getSoftPkg().getName() + ".wavedev file", null));
 		}
@@ -267,9 +286,104 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 				return true;
 			}
 		} else {
-			throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID,
-				"GENERATE FAILED: Failed to find implementation settings for implementation: " + impl.getId(), null));
+			// try to auto-generate implementation settings
+			ImplementationSettings generatedImplSettings = generateWaveDev(impl.getSoftPkg()).getImplSettings().get(impl.getId());
+			if (generatedImplSettings != null) {
+				ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(generatedImplSettings.getGeneratorId());
+				if (generator != null) {
+					return generator.isDeprecated();
+				} else {
+					// Can't find generator assume then deprecated
+					return true;
+				}
+			} else {
+				throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID,
+					"GENERATE FAILED: Failed to find implementation settings for implementation: " + impl.getId(), null));
+			}
 		}
+	}
+
+	private WaveDevSettings generateWaveDev(SoftPkg softPkg) throws CoreException {
+
+		WaveDevSettings waveDev = CodegenFactory.eINSTANCE.createWaveDevSettings();
+
+		// Recreate the basic settings for each implementation
+		// This makes assumptions that the defaults are selected for everything
+		for (final Implementation impl : softPkg.getImplementation()) {
+			final ImplementationSettings settings = CodegenFactory.eINSTANCE.createImplementationSettings();
+			final String lang = impl.getProgrammingLanguage().getName();
+			// Find the code generator if specified, otherwise pick the first
+			// one returned by the registry
+			ICodeGeneratorDescriptor codeGenDesc = null;
+			final ICodeGeneratorDescriptor[] codeGens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(lang);
+			if (codeGens.length > 0) {
+				codeGenDesc = codeGens[0];
+			}
+
+			if (codeGenDesc != null) {
+				final IScaComponentCodegen generator = codeGenDesc.getGenerator();
+
+				// Assume that there is <name>[/].+<other> format for the entry point
+				// Pick out <name> for both the output directory and settings name
+				final String lf = impl.getCode().getEntryPoint();
+
+				// Set the generator, settings name and output directory
+				settings.setGeneratorId(generator.getClass().getCanonicalName());
+				settings.setOutputDir(lf.substring(0, lf.lastIndexOf('/')));
+
+				// pick the first selectable and defaultable template returned by the registry
+				ITemplateDesc templateDesc = null;
+				final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(settings.getGeneratorId());
+				for (final ITemplateDesc itd : templates) {
+					if (itd.isSelectable() && !itd.notDefaultableGenerator()) {
+						templateDesc = itd;
+						break;
+					}
+				}
+				// If we found the template, use it
+				if (templateDesc != null) {
+					// Set the properties to their default values
+					for (final IPropertyDescriptor prop : templateDesc.getPropertyDescriptors()) {
+						final Property p = CodegenFactory.eINSTANCE.createProperty();
+						p.setId(prop.getKey());
+						p.setValue(prop.getDefaultValue());
+						settings.getProperties().add(p);
+					}
+					// Set the template
+					settings.setTemplate(templateDesc.getId());
+					for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
+						if (assistant.handlesLanguage(lang)) {
+							settings.setTemplate(assistant.getDefaultTemplate());
+							break;
+						}
+					}
+				}
+			}
+
+			for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
+				if (assistant.handlesLanguage(lang)) {
+					assistant.setupWaveDev(softPkg.getName(), settings);
+					break;
+				}
+			}
+			waveDev.getImplSettings().put(impl.getId(), settings);
+		}
+
+		// Create the URI to the .wavedev file
+		final org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI.createPlatformResourceURI(softPkg.getName() + "/." + softPkg.getName()
+			+ ".wavedev", false);
+		final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
+		final Resource res = set.createResource(uri);
+
+		// Add the WaveDevSettings to the resource and save to disk to persist the newly created WaveDevSettings
+		res.getContents().add(waveDev);
+		try {
+			res.save(null);
+		} catch (final IOException e) {
+			IDEWorkbenchPlugin.log(e.getMessage(), e);
+		}
+
+		return waveDev;
 	}
 
 	private boolean shouldUpgrade(Shell parent, String name) throws CoreException {
@@ -285,12 +399,13 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	}
 
 	/**
-	 * Tries to save the resources which are in the same project as the editorFile provided.  The user is prompted to save
-	 * if any related unsaved resources are present.  
+	 * Tries to save the resources which are in the same project as the editorFile provided. The user is prompted to
+	 * save
+	 * if any related unsaved resources are present.
 	 * @param event Handler event
 	 * @param editorFile File who's project we are using to find related editor pages.
-	 * @return True if everything saved correctly.  False otherwise.
-	 * @throws CoreException 
+	 * @return True if everything saved correctly. False otherwise.
+	 * @throws CoreException
 	 */
 	private boolean relatedResourcesSaved(final Shell shell, final IProject parentProject) throws CoreException {
 
@@ -338,7 +453,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 			return false;
 		}
 
-		// Resources don't need to be saved 
+		// Resources don't need to be saved
 		return true;
 	}
 
@@ -352,7 +467,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 
 		// Go through each of the workbench windows pages
 		for (IWorkbenchPage page : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages()) {
-			// If the page contains at least one dirty editor 
+			// If the page contains at least one dirty editor
 			if (page.getDirtyEditors().length != 0) {
 				// Go through each of the dirty editor parts and see if they belong to the referenced project.
 				for (IWorkbenchPart dirtyPart : page.getDirtyEditors()) {
@@ -371,7 +486,8 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	}
 
 	/**
-	 * Checks the file extension to see if it ends with the SpdPackage extension of ".spd.xml".  Returns false if file is null.  
+	 * Checks the file extension to see if it ends with the SpdPackage extension of ".spd.xml". Returns false if file is
+	 * null.
 	 * @param file The file under test
 	 * @return True if filename ends with .spd.xml false otherwise or if null.
 	 */
@@ -395,7 +511,8 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 		// 1.) If the user has right clicked on an item that is appropriate
 		// 2.) If not then we check the open active editor.
 
-		// The highest priority check is the right click action.  If they have right clicked on something that object is the proper context
+		// The highest priority check is the right click action. If they have right clicked on something that object is
+		// the proper context
 		// so we check that first.
 		if (context.getVariable("activeMenuSelection") != null && context.getVariable("activeMenuSelection") instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) context.getVariable("activeMenuSelection");
@@ -421,7 +538,8 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 			setBaseEnabled(true);
 			return;
 		} else if (window.getActivePage() != null) {
-			// If we've gotten this far we know they have not right clicked on anything so all we need to check is the open active editor
+			// If we've gotten this far we know they have not right clicked on anything so all we need to check is the
+			// open active editor
 			IWorkbenchPage activePage = window.getActivePage();
 			IEditorPart activeEditor = activePage.getActiveEditor();
 			if (activeEditor != null) {

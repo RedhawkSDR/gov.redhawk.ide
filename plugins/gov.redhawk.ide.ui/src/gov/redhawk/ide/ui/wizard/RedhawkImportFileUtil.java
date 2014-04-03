@@ -261,7 +261,6 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 		}
 	}
 
-	@SuppressWarnings({ "deprecation" })
 	@Override
 	protected void createWaveDevFile() throws CoreException {
 		SoftPkg softPkg = null;
@@ -289,11 +288,9 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 				// entrypoint
 				// Pick out <name> for both the output dir and settings name
 				final String lf = impl.getCode().getEntryPoint();
-				final String name = lf.substring(0, lf.indexOf('/'));
 
 				// Set the generator, settings name and output directory
 				settings.setGeneratorId(generator.getClass().getCanonicalName());
-				settings.setName(name);
 				settings.setOutputDir(lf.substring(0, lf.lastIndexOf('/')));
 
 				// pick the first selectable and defaultable template returned
