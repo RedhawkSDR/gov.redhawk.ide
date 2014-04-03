@@ -14,6 +14,7 @@ import gov.redhawk.core.resourcefactory.ComponentDesc;
 import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
 import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
+import gov.redhawk.diagram.DiagramUtil;
 import gov.redhawk.ide.sad.internal.ui.editor.CustomDiagramEditor;
 import gov.redhawk.ide.sad.ui.providers.SpdToolEntry;
 import gov.redhawk.sca.sad.diagram.edit.parts.ProvidesPortStubEditPart;
@@ -102,7 +103,7 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 	@Override
 	protected void initializeGraphicalViewerContents() {
 		super.initializeGraphicalViewerContents();
-		if (editorResource instanceof SadResourceImpl) {
+		if (editorResource instanceof SadResourceImpl && !DiagramUtil.isDiagramLocalSandbox(editorResource)) {
 			getDiagramEditPart().enableEditMode();
 			for (final Object obj : getDiagramEditPart().getChildren()) {
 				setEditMode(obj);
