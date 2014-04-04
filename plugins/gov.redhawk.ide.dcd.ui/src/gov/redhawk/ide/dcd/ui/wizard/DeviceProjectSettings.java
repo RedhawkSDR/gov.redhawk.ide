@@ -11,9 +11,9 @@
 package gov.redhawk.ide.dcd.ui.wizard;
 
 import gov.redhawk.ide.preferences.RedhawkIdePreferenceConstants;
+import gov.redhawk.sca.util.PropertyChangeSupport;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
 /**
  * @since 1.1

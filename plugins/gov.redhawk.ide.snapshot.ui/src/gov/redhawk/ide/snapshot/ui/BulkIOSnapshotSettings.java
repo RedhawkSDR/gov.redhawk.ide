@@ -10,11 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.ui;
 
+import gov.redhawk.sca.util.PropertyChangeSupport;
+
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
 import org.eclipse.jdt.annotation.NonNull;
-
 
 /**
  *
@@ -23,10 +23,10 @@ public class BulkIOSnapshotSettings {
 	/** @since 1.1 */
 	public static final String PROP_CAPTURE_METHOD = "captureMethod";
 	/** @since 1.1 */
-	public static final String PROP_CONNECTION_ID  = "connectionID";
+	public static final String PROP_CONNECTION_ID = "connectionID";
 	/** @since 1.1 */
-	public static final String PROP_SAMPLES        = "samples";
-	
+	public static final String PROP_SAMPLES = "samples";
+
 	/** number of samples to take/capture. */
 	private double samples = 1024;
 	/** How the samples are to be captured. */
@@ -44,19 +44,19 @@ public class BulkIOSnapshotSettings {
 		if (this.samples != samples) {
 			double oldValue = this.samples;
 			this.samples = samples;
-			pcs.firePropertyChange(PROP_SAMPLES, oldValue, samples);
+			pcs.firePropertyChange(BulkIOSnapshotSettings.PROP_SAMPLES, oldValue, samples);
 		}
 	}
-	
+
 	public CaptureMethod getCaptureMethod() {
 		return captureMethod;
 	}
-	
+
 	public void setCaptureMethod(@NonNull CaptureMethod captureMethod) {
 		if (this.captureMethod != captureMethod) {
 			CaptureMethod oldValue = this.captureMethod;
 			this.captureMethod = captureMethod;
-			pcs.firePropertyChange(PROP_CAPTURE_METHOD, oldValue, captureMethod);
+			pcs.firePropertyChange(BulkIOSnapshotSettings.PROP_CAPTURE_METHOD, oldValue, captureMethod);
 		}
 	}
 
@@ -74,7 +74,7 @@ public class BulkIOSnapshotSettings {
 		if ((this.connectionID == null && connectionID != null) || !this.connectionID.equals(connectionID)) {
 			String oldValue = this.connectionID;
 			this.connectionID = connectionID;
-			pcs.firePropertyChange(PROP_CONNECTION_ID, oldValue, connectionID);
+			pcs.firePropertyChange(BulkIOSnapshotSettings.PROP_CONNECTION_ID, oldValue, connectionID);
 		}
 	}
 
