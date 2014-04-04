@@ -162,14 +162,15 @@ public class LocalScaEditor extends SadEditor {
 			this.sadlistener = null;
 		}
 		if (this.scaListener != null) {
-			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
-			ScaModelCommand.execute(localSca, new ScaModelCommand() {
-
-				@Override
-				public void execute() {
-					localSca.eAdapters().remove(LocalScaEditor.this.scaListener);
-				}
-			});
+			waveform.eAdapters().remove(this.scaListener);
+//			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
+//			ScaModelCommand.execute(localSca, new ScaModelCommand() {
+//
+//				@Override
+//				public void execute() {
+//					localSca.eAdapters().remove(LocalScaEditor.this.scaListener);
+//				}
+//			});
 			this.scaListener = null;
 		}
 		super.dispose();
