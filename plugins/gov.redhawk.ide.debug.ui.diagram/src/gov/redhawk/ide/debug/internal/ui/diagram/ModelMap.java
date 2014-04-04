@@ -300,6 +300,7 @@ public class ModelMap {
 		}
 
 		map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_SPD_URI, spdURI);
+		map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_ALWAYS_CP_CREATE_FILE, true);
 		map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_INST_ID, newValue.getInstantiationIdentifier());
 		map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_OPTIONS_INST_NAME, newValue.getName());
 		map.put(ComponentPlacementEditHelperAdvice.CONFIGURE_COMPONENT_INSTANTIATION, retVal);
@@ -472,7 +473,7 @@ public class ModelMap {
 
 	/**
 	 * @param oldComp
-	 * @throws ReleaseError 
+	 * @throws ReleaseError
 	 */
 	private void delete(@Nullable final LocalScaComponent oldComp) throws ReleaseError {
 		if (oldComp == null) {
@@ -482,6 +483,7 @@ public class ModelMap {
 			try {
 				ProtectedThreadExecutor.submit(new Callable<Object>() {
 
+					@Override
 					public Object call() throws Exception {
 						oldComp.releaseObject();
 						return null;
@@ -537,7 +539,7 @@ public class ModelMap {
 
 	/**
 	 * @param oldConnection
-	 * @throws InvalidPort 
+	 * @throws InvalidPort
 	 */
 	private void delete(@Nullable final ScaConnection oldConnection) throws InvalidPort {
 		if (oldConnection == null) {
