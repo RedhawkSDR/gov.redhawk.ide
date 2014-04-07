@@ -52,6 +52,7 @@ public class CheckupJob extends Job {
 	 */
 	@Override
 	protected IStatus run(final IProgressMonitor monitor) {
+		final List<CorbaObjWrapper< ? >> itemsToCheck = new ArrayList<CorbaObjWrapper< ? >>();
 		final List<EObject> itemsToRemove = new ArrayList<EObject>();
 		try {
 			ScaModelCommand.runExclusive(this.container, new RunnableWithResult.Impl<Object>() {
@@ -65,9 +66,7 @@ public class CheckupJob extends Job {
 						}
 						if (obj instanceof CorbaObjWrapper< ? >) {
 							final CorbaObjWrapper< ? > wrapper = (CorbaObjWrapper< ? >) obj;
-							if (!wrapper.exists()) {
-								itemsToRemove.add(wrapper);
-							}
+							itemsToCheck.add(wrapper);
 						}
 						if (obj instanceof LocalFileManager) {
 							iterator.prune();
@@ -79,6 +78,12 @@ public class CheckupJob extends Job {
 			});
 		} catch (InterruptedException e) {
 			return Status.CANCEL_STATUS;
+		}
+
+		for (CorbaObjWrapper< ? > obj : itemsToCheck) {
+			if (!obj.exists()) {
+				itemsToRemove.add(obj);
+			}
 		}
 
 		if (!itemsToRemove.isEmpty()) {
