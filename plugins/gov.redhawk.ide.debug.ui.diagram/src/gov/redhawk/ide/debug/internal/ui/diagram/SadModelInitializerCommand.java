@@ -13,6 +13,7 @@ package gov.redhawk.ide.debug.internal.ui.diagram;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
+import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
@@ -21,6 +22,7 @@ import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.sca.util.PluginUtil;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -43,13 +45,16 @@ import mil.jpeojtrs.sca.sad.SadProvidesPort;
 import mil.jpeojtrs.sca.sad.SadUsesPort;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.CorbaUtils;
 import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.command.AbstractCommand;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
 
 import ExtendedCF.UsesConnection;
 
@@ -91,8 +96,44 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		boolean foundTarget = false;
 		final UsesConnection conData = con.getData();
 		final org.omg.CORBA.Object target = conData.port;
+		if (!waveform.isSetComponents()) {
+			if (Display.getCurrent() != null) {
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
+				try {
+					dialog.run(true, true, new IRunnableWithProgress() {
+
+						@Override
+						public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {
+								CorbaUtils.invoke(new Callable<Object>() {
+
+									@Override
+									public Object call() throws Exception {
+										waveform.refresh(monitor, RefreshDepth.FULL);
+										return null;
+									}
+
+								}, monitor);
+							} catch (CoreException e) {
+								throw new InvocationTargetException(e);
+							}
+						}
+					});
+				} catch (InvocationTargetException e) {
+					// PASS
+				} catch (InterruptedException e) {
+					// PASS
+				}
+			} else {
+				try {
+					waveform.refresh(null, RefreshDepth.FULL);
+				} catch (InterruptedException e) {
+					// PASS
+				}
+			}
+		}
 		outC: for (final ScaComponent c : this.waveform.getComponents()) {
-			if (target._is_equivalent(c.getObj())) {
+			if (is_equivalent(target, c.getObj())) {
 				final ComponentSupportedInterface csi = PartitioningFactory.eINSTANCE.createComponentSupportedInterface();
 				final SadComponentInstantiationRef ref = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
 				ref.setInstantiation(this.modelMap.get((LocalScaComponent) c));
@@ -102,8 +143,8 @@ public class SadModelInitializerCommand extends AbstractCommand {
 				foundTarget = true;
 				break outC;
 			} else {
-				for (final ScaPort< ? , ? > cPort : c.fetchPorts(null)) {
-					if (cPort instanceof ScaProvidesPort && target._is_equivalent(cPort.getObj())) {
+				for (final ScaPort< ? , ? > cPort : c.getPorts()) {
+					if (cPort instanceof ScaProvidesPort && is_equivalent(target, cPort.getObj())) {
 						final SadProvidesPort sadProvidesPort = SadFactory.eINSTANCE.createSadProvidesPort();
 						final SadComponentInstantiationRef ref = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
 						ref.setInstantiation(this.modelMap.get((LocalScaComponent) c));
@@ -130,8 +171,34 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		}
 	}
 
+	private boolean is_equivalent(final org.omg.CORBA.Object obj1, final org.omg.CORBA.Object obj2) {
+		if (obj1 == null || obj2 == null) {
+			return false;
+		}
+		if (obj1 == obj2) {
+			return true;
+		}
+		try {
+			return ProtectedThreadExecutor.submit(new Callable<Boolean>() {
+
+				@Override
+				public Boolean call() throws Exception {
+					return obj1._is_equivalent(obj2);
+				}
+
+			});
+		} catch (InterruptedException e) {
+			return false;
+		} catch (ExecutionException e) {
+			return false;
+		} catch (TimeoutException e) {
+			return false;
+		}
+
+	}
+
 	private void initComponent(@NonNull final LocalScaComponent comp) {
-		final SoftPkg spd = comp.fetchProfileObject(null);
+		final SoftPkg spd = comp.getProfileObj();
 		if (spd == null) {
 			// For some reason we couldn't find the SPD Abort.
 			PluginUtil.logError(LocalScaDiagramPlugin.getDefault(), "Failed to find Soft Pkg for comp: " + comp.getInstantiationIdentifier(), null);
@@ -198,47 +265,12 @@ public class SadModelInitializerCommand extends AbstractCommand {
 					continue;
 				}
 				List<ScaPort< ? , ? >> ports = Collections.emptyList();
-				try {
-					ports = ProtectedThreadExecutor.submit(new Callable<EList<ScaPort< ? , ? >>>() {
-
-						@Override
-						public EList<ScaPort< ? , ? >> call() throws Exception {
-							return comp.fetchPorts(null);
-						}
-
-					});
-				} catch (InterruptedException e) {
-					LocalScaDiagramPlugin.getDefault().getLog().log(
-						new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch ports to initialize diagram.", e));
-				} catch (ExecutionException e) {
-					LocalScaDiagramPlugin.getDefault().getLog().log(
-						new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch ports to initialize diagram.", e));
-				} catch (TimeoutException e) {
-					LocalScaDiagramPlugin.getDefault().getLog().log(
-						new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch ports to initialize diagram.", e));
-				}
+				ports = comp.getPorts();
 				for (final ScaPort< ? , ? > port : ports) {
 					if (port instanceof ScaUsesPort) {
 						final ScaUsesPort uses = (ScaUsesPort) port;
 						List<ScaConnection> connections = Collections.emptyList();
-						try {
-							connections = ProtectedThreadExecutor.submit(new Callable<List<ScaConnection>>() {
-
-								@Override
-								public List<ScaConnection> call() throws Exception {
-									return uses.fetchConnections(null);
-								}
-							});
-						} catch (InterruptedException e) {
-							LocalScaDiagramPlugin.getDefault().getLog().log(
-								new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch connections to initialize diagram.", e));
-						} catch (ExecutionException e) {
-							LocalScaDiagramPlugin.getDefault().getLog().log(
-								new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch connections to initialize diagram.", e));
-						} catch (TimeoutException e) {
-							LocalScaDiagramPlugin.getDefault().getLog().log(
-								new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch connections to initialize diagram.", e));
-						}
+						connections = uses.getConnections();
 
 						for (final ScaConnection con : connections) {
 							if (con != null) {
