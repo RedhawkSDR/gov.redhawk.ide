@@ -13,16 +13,15 @@ package gov.redhawk.ide.debug.internal.ui.diagram;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
-import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaPortContainer;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
+import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.PluginUtil;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -45,16 +44,10 @@ import mil.jpeojtrs.sca.sad.SadProvidesPort;
 import mil.jpeojtrs.sca.sad.SadUsesPort;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.CorbaUtils;
 import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.command.AbstractCommand;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Display;
 
 import ExtendedCF.UsesConnection;
 
@@ -62,6 +55,7 @@ import ExtendedCF.UsesConnection;
  * 
  */
 public class SadModelInitializerCommand extends AbstractCommand {
+	private static final Debug DEBUG = new Debug(LocalScaDiagramPlugin.PLUGIN_ID, "init");
 
 	private final ModelMap modelMap;
 	private final LocalScaWaveform waveform;
@@ -96,42 +90,6 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		boolean foundTarget = false;
 		final UsesConnection conData = con.getData();
 		final org.omg.CORBA.Object target = conData.port;
-		if (!waveform.isSetComponents()) {
-			if (Display.getCurrent() != null) {
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
-				try {
-					dialog.run(true, true, new IRunnableWithProgress() {
-
-						@Override
-						public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							try {
-								CorbaUtils.invoke(new Callable<Object>() {
-
-									@Override
-									public Object call() throws Exception {
-										waveform.refresh(monitor, RefreshDepth.FULL);
-										return null;
-									}
-
-								}, monitor);
-							} catch (CoreException e) {
-								throw new InvocationTargetException(e);
-							}
-						}
-					});
-				} catch (InvocationTargetException e) {
-					// PASS
-				} catch (InterruptedException e) {
-					// PASS
-				}
-			} else {
-				try {
-					waveform.refresh(null, RefreshDepth.FULL);
-				} catch (InterruptedException e) {
-					// PASS
-				}
-			}
-		}
 		outC: for (final ScaComponent c : this.waveform.getComponents()) {
 			if (is_equivalent(target, c.getObj())) {
 				final ComponentSupportedInterface csi = PartitioningFactory.eINSTANCE.createComponentSupportedInterface();
@@ -163,11 +121,11 @@ public class SadModelInitializerCommand extends AbstractCommand {
 				this.sad.setConnections(SadFactory.eINSTANCE.createSadConnections());
 			}
 			this.sad.getConnections().getConnectInterface().add(sadCon);
-			if (con == null) {
-				// Should be dead code, but outC block above apparently messes up null analysis
-				return;
-			}
 			this.modelMap.put(con, sadCon);
+		} else {
+			if (SadModelInitializerCommand.DEBUG.enabled) {
+				SadModelInitializerCommand.DEBUG.trace("Failed to initialize connection " + con.getId());
+			}
 		}
 	}
 
