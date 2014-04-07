@@ -561,6 +561,11 @@ public class ModelMap {
 
 	@Nullable
 	private EditPart findEditPart(@Nullable final EObject obj) {
+		if (editor == null || editor.getDiagramEditor() == null || editor.getDiagramEditor().getDiagramGraphicalViewer() == null
+				|| editor.getDiagramEditor().getDiagramEditPart() == null) {
+			return null;
+		}
+		editor.getDiagramEditor().getDiagramGraphicalViewer();
 		return this.editor.getDiagramEditor().getDiagramEditPart().findEditPart(null, obj);
 	}
 
