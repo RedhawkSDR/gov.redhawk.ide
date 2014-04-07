@@ -52,7 +52,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import ExtendedCF.UsesConnection;
 
 /**
- * 
+ * @deprecated Use {@link #ModelMapInitializerCommand} instead
  */
 public class SadModelInitializerCommand extends AbstractCommand {
 	private static final Debug DEBUG = new Debug(LocalScaDiagramPlugin.PLUGIN_ID, "init");
