@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
+import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
@@ -44,7 +45,6 @@ import org.eclipse.graphiti.pattern.IConnectionPattern;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
-import org.eclipse.graphiti.ui.editor.DiagramEditor;
 
 public class SADConnectInterfacePattern extends AbstractConnectionPattern implements IConnectionPattern {
 
@@ -186,7 +186,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 //				new PictogramElement[] {portRectangleShape});
 
 		// doing the null check because it breaks when loading a findby without a diagram
-		if (((DiagramEditor) getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior()).getGraphicalViewer() != null) {
+		if (((RHGraphitiDiagramEditor) getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer()).getGraphicalViewer() != null) {
 
 			// force selection of shape so that we can then right click for contextual options
 			// this is kind of a hack, it would be better if selection happened automatically when its clicked.
