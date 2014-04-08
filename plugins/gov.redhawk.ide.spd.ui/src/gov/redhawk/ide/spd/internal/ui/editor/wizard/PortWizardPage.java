@@ -17,12 +17,12 @@ import gov.redhawk.eclipsecorba.library.LibraryPackage;
 import gov.redhawk.eclipsecorba.library.ui.IdlFilteredTree;
 import gov.redhawk.eclipsecorba.library.ui.IdlPatternFilter;
 import gov.redhawk.sca.util.PluginUtil;
+import gov.redhawk.sca.util.PropertyChangeSupport;
 import gov.redhawk.sca.util.StringUtil;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -78,7 +78,9 @@ import org.eclipse.ui.dialogs.PatternFilter;
 public class PortWizardPage extends WizardPage {
 
 	public static enum WizardPortType {
-		PROVIDES("in <provides>"), USES("out <uses>"), BIDIR("bidir <uses/provides>");
+		PROVIDES("in <provides>"),
+		USES("out <uses>"),
+		BIDIR("bidir <uses/provides>");
 
 		private String label;
 
@@ -367,16 +369,12 @@ public class PortWizardPage extends WizardPage {
 
 	private void bind() {
 		final IObservableValue nameObservable = new WritableValue(null, new String());
-		this.context.bindValue(SWTObservables.observeText(this.name, SWT.Modify),
-		        nameObservable,
-		        new UpdateValueStrategy().setAfterConvertValidator(this.nameValidator),
-		        null);
+		this.context.bindValue(SWTObservables.observeText(this.name, SWT.Modify), nameObservable,
+			new UpdateValueStrategy().setAfterConvertValidator(this.nameValidator), null);
 
 		final IObservableValue repIdObservable = new WritableValue(null, new String());
-		this.context.bindValue(SWTObservables.observeText(this.repid, SWT.Modify),
-		        repIdObservable,
-		        new UpdateValueStrategy().setAfterConvertValidator(this.repIDValidator),
-		        null);
+		this.context.bindValue(SWTObservables.observeText(this.repid, SWT.Modify), repIdObservable,
+			new UpdateValueStrategy().setAfterConvertValidator(this.repIDValidator), null);
 
 		final IObservableValue portDirectionObservable = new WritableValue(null, WizardPortType.USES);
 		this.context.bindValue(ViewersObservables.observeSingleSelection(this.portViewer), portDirectionObservable, new UpdateValueStrategy(), null);
@@ -397,8 +395,8 @@ public class PortWizardPage extends WizardPage {
 					for (final FeatureMap.Entry entry : PortWizardPage.this.model.ports.getGroup()) {
 						final AbstractPort existingPort = (AbstractPort) entry.getValue();
 						if (existingPort != PortWizardPage.this.model.getPort()
-						        && (existingPort.getSibling() == null || existingPort.getSibling() != PortWizardPage.this.model.getPort())
-						        && portName.equals(existingPort.getName())) {
+							&& (existingPort.getSibling() == null || existingPort.getSibling() != PortWizardPage.this.model.getPort())
+							&& portName.equals(existingPort.getName())) {
 							return ValidationStatus.error("A port with the name \"" + portName + "\" is already defined.");
 						}
 					}
@@ -419,9 +417,9 @@ public class PortWizardPage extends WizardPage {
 		};
 		this.context.addValidationStatusProvider(constraintValidation);
 		this.context.bindValue(constraintValidation.observeValidatedValue(repIdObservable),
-		        BeansObservables.observeValue(this.model, PortWizardModel.PROP_REP_ID));
+			BeansObservables.observeValue(this.model, PortWizardModel.PROP_REP_ID));
 		this.context.bindValue(constraintValidation.observeValidatedValue(portDirectionObservable),
-		        BeansObservables.observeValue(this.model, PortWizardModel.PROP_TYPE));
+			BeansObservables.observeValue(this.model, PortWizardModel.PROP_TYPE));
 		this.context.bindValue(constraintValidation.observeValidatedValue(nameObservable), BeansObservables.observeValue(this.model, PortWizardModel.PROP_NAME));
 
 		if (this.model.portTypes.isEmpty()) {
@@ -525,7 +523,7 @@ public class PortWizardPage extends WizardPage {
 	 * Creates the port entry.
 	 * 
 	 * @param parent
-	 *            the parent Composite
+	 * the parent Composite
 	 */
 	private Composite createPortEntry(final Composite parent) {
 		final Composite client = new Composite(parent, SWT.NULL);

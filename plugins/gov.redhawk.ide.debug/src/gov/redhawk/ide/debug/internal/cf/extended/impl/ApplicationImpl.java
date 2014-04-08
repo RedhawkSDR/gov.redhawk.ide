@@ -463,10 +463,10 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		this.streams.getOutStream().println("Releasing Application...");
 
 		try {
-			disconnectAll();
-
-			releaseAll();
-
+			if (delegate == null) {
+				disconnectAll();
+				releaseAll();
+			}
 			unbind();
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			logException("Problems while releasing.", e);
@@ -1090,7 +1090,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public Resource launch(final String compId, final DataType[] execParams, @NonNull final String spdURI, final String implId, final String mode)
-		throws ExecuteFail {
+			throws ExecuteFail {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		LocalScaComponent retVal;
 		try {
@@ -1114,7 +1114,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public LocalScaComponent launch(final String usageName, final DataType[] execParams, @NonNull final URI spdURI, final String implId, final String mode)
-		throws CoreException {
+			throws CoreException {
 		return launch(usageName, null, execParams, spdURI, implId, mode);
 	}
 

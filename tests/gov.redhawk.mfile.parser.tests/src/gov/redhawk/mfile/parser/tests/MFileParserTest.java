@@ -26,6 +26,41 @@ import org.junit.Test;
 public class MFileParserTest {
 
 	@Test
+	public void testParseComments() throws IOException, ParseException {
+		MFile file = parseFile("comments.m");
+		Assert.assertNotNull(file);
+		Assert.assertNotNull(file.getFunction());
+	}
+
+	@Test
+	public void testParseFunctionDef01() throws IOException, ParseException {
+		MFile file = parseFile("functionDef01.m");
+		Assert.assertNotNull(file);
+		Assert.assertNotNull(file.getFunction());
+	}
+
+	@Test
+	public void testParseFunctionDef02() throws IOException, ParseException {
+		MFile file = parseFile("functionDef02.m");
+		Assert.assertNotNull(file);
+		Assert.assertNotNull(file.getFunction());
+	}
+
+	@Test
+	public void testParseFunctionDef03() throws IOException, ParseException {
+		MFile file = parseFile("functionDef03.m");
+		Assert.assertNotNull(file);
+		Assert.assertNotNull(file.getFunction());
+	}
+
+	@Test
+	public void testParseFunctionDef04() throws IOException, ParseException {
+		MFile file = parseFile("functionDef04.m");
+		Assert.assertNotNull(file);
+		Assert.assertNotNull(file.getFunction());
+	}
+
+	@Test
 	public void testParseAmData() throws IOException, ParseException {
 		MFile file = parseFile("amData.m");
 		Assert.assertNotNull(file);
@@ -340,7 +375,7 @@ public class MFileParserTest {
 		Assert.assertEquals("myOutput2", file.getFunction().getOutputs().get(2));
 		Assert.assertEquals("stringProp", file.getFunction().getOutputs().get(3));
 		Assert.assertEquals("doubleProp", file.getFunction().getOutputs().get(4));
-		
+
 		Assert.assertEquals(5, file.getFunction().getInputs().size());
 		Assert.assertEquals("seqProp", file.getFunction().getInputs().get(0));
 		Assert.assertEquals("myInput1", file.getFunction().getInputs().get(1));
@@ -348,7 +383,7 @@ public class MFileParserTest {
 		Assert.assertEquals("myInput2", file.getFunction().getInputs().get(3));
 		Assert.assertEquals("doubleProp", file.getFunction().getInputs().get(4));
 	}
-	
+
 	@Test
 	public void testExample02() throws IOException, ParseException {
 		MFile file = parseFile("example02.m");
@@ -361,7 +396,7 @@ public class MFileParserTest {
 		Assert.assertEquals("myOutput2", file.getFunction().getOutputs().get(2));
 		Assert.assertEquals("stringProp", file.getFunction().getOutputs().get(3));
 		Assert.assertEquals("doubleProp", file.getFunction().getOutputs().get(4));
-		
+
 		Assert.assertEquals(5, file.getFunction().getInputs().size());
 		Assert.assertEquals("seqProp", file.getFunction().getInputs().get(0));
 		Assert.assertEquals("myInput1", file.getFunction().getInputs().get(1));
@@ -369,7 +404,7 @@ public class MFileParserTest {
 		Assert.assertEquals("myInput2", file.getFunction().getInputs().get(3));
 		Assert.assertEquals("doubleProp", file.getFunction().getInputs().get(4));
 	}
-	
+
 	@Test
 	public void testExample03() throws IOException, ParseException {
 		MFile file = parseFile("example03.m");
@@ -379,7 +414,7 @@ public class MFileParserTest {
 		Assert.assertEquals(0, file.getFunction().getOutputs().size());
 		Assert.assertEquals(0, file.getFunction().getInputs().size());
 	}
-	
+
 	@Test
 	public void testExample04() throws IOException, ParseException {
 		MFile file = parseFile("example04.m");
@@ -389,7 +424,7 @@ public class MFileParserTest {
 		Assert.assertEquals(0, file.getFunction().getOutputs().size());
 		Assert.assertEquals(0, file.getFunction().getInputs().size());
 	}
-	
+
 	public MFile parseFile(String name) throws IOException, ParseException {
 		InputStream fileStream = null;
 		try {

@@ -11,9 +11,9 @@
 package gov.redhawk.ide.snapshot.ui;
 
 import gov.redhawk.ide.snapshot.writer.IDataWriterDesc;
+import gov.redhawk.sca.util.PropertyChangeSupport;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.File;
 
 import org.eclipse.core.resources.IContainer;

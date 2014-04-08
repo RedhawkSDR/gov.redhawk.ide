@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.internal.ui;
 
+import gov.redhawk.sca.util.PluginUtil;
+
 import java.util.ArrayList;
 
 import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
@@ -99,7 +101,7 @@ public class ComponentPlacementContentProvider implements ITreeContentProvider {
 
 			for (final Object comp : this.elements.getComponentPlacement()) {
 				final DcdComponentPlacement place = (DcdComponentPlacement) comp;
-				if ((place.getCompositePartOfDevice() != null) && place.getCompositePartOfDevice().getRefID().equals(id)) {
+				if (place != null && (place.getCompositePartOfDevice() != null) && PluginUtil.equals(place.getCompositePartOfDevice().getRefID(), id)) {
 					comps.add(place);
 				}
 			}

@@ -17,6 +17,7 @@ import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
 import gov.redhawk.ide.sad.internal.ui.editor.SadEditor;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
+import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.sad.diagram.part.SadDiagramEditor;
@@ -24,10 +25,13 @@ import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 import gov.redhawk.sca.util.Debug;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.util.CorbaUtils;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,7 +42,10 @@ import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.ui.URIEditorInput;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -98,8 +105,8 @@ public class LocalScaEditor extends SadEditor {
 				final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 				this.waveform = localSca.getSandboxWaveform();
 			}
-
 		}
+
 		super.setInput(input);
 	}
 
@@ -108,7 +115,49 @@ public class LocalScaEditor extends SadEditor {
 		if (waveform == null || sad == null) {
 			throw new IllegalStateException("Can not initialize the Model Map with null local waveform or SAD");
 		}
+
+		if (!waveform.isSetComponents()) {
+			if (Display.getCurrent() != null) {
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
+				try {
+					dialog.run(true, true, new IRunnableWithProgress() {
+
+						@Override
+						public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {
+								CorbaUtils.invoke(new Callable<Object>() {
+
+									@Override
+									public Object call() throws Exception {
+										waveform.refresh(monitor, RefreshDepth.FULL);
+										return null;
+									}
+
+								}, monitor);
+							} catch (CoreException e) {
+								throw new InvocationTargetException(e);
+							}
+						}
+					});
+				} catch (InvocationTargetException e) {
+					// PASS
+				} catch (InterruptedException e) {
+					// PASS
+				}
+			} else {
+				try {
+					waveform.refresh(null, RefreshDepth.FULL);
+				} catch (InterruptedException e) {
+					// PASS
+				}
+			}
+		}
+
 		final ModelMap modelMap = new ModelMap(this, sad, waveform);
+//		getEditingDomain().getCommandStack().execute(new SadModelInitializerCommand(modelMap, sad, waveform));
+		getEditingDomain().getCommandStack().execute(new ModelMapInitializerCommand(modelMap, sad, waveform));
+		getEditingDomain().getCommandStack().flush();
+
 		this.sadlistener = new SadModelAdapter(modelMap);
 		this.scaListener = new ScaModelAdapter(modelMap) {
 			@Override
@@ -130,9 +179,6 @@ public class LocalScaEditor extends SadEditor {
 				}
 			}
 		};
-
-		getEditingDomain().getCommandStack().execute(new SadModelInitializerCommand(modelMap, sad, waveform));
-		getEditingDomain().getCommandStack().flush();
 
 		ScaModelCommand.execute(this.waveform, new ScaModelCommand() {
 
@@ -162,14 +208,15 @@ public class LocalScaEditor extends SadEditor {
 			this.sadlistener = null;
 		}
 		if (this.scaListener != null) {
-			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
-			ScaModelCommand.execute(localSca, new ScaModelCommand() {
-
-				@Override
-				public void execute() {
-					localSca.eAdapters().remove(LocalScaEditor.this.scaListener);
-				}
-			});
+			waveform.eAdapters().remove(this.scaListener);
+//			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
+//			ScaModelCommand.execute(localSca, new ScaModelCommand() {
+//
+//				@Override
+//				public void execute() {
+//					localSca.eAdapters().remove(LocalScaEditor.this.scaListener);
+//				}
+//			});
 			this.scaListener = null;
 		}
 		super.dispose();
@@ -185,7 +232,7 @@ public class LocalScaEditor extends SadEditor {
 		// Only creates the other pages if there is something that can be edited
 		//
 		if (!getEditingDomain().getResourceSet().getResources().isEmpty()
-				&& !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
+			&& !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
 			try {
 				int pageIndex = 0;
 

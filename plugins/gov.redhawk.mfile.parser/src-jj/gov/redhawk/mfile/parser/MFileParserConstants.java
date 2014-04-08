@@ -11,55 +11,65 @@ public interface MFileParserConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int SINGLE_LINE_COMMENT = 6;
+  int SINGLE_LINE_COMMENT = 3;
   /** RegularExpression Id. */
-  int MULTI_LINE_COMMENT = 8;
+  int SINGLE_LINE_COMMENT_2 = 4;
   /** RegularExpression Id. */
-  int FUNCTION = 10;
+  int MULTI_LINE_COMMENT = 6;
   /** RegularExpression Id. */
-  int ID = 18;
+  int MULTI_LINE_COMMENT_2 = 9;
   /** RegularExpression Id. */
-  int OCTALINT = 19;
+  int FUNCTION = 11;
   /** RegularExpression Id. */
-  int DECIMALINT = 20;
+  int NL = 19;
   /** RegularExpression Id. */
-  int FIXED_PT = 21;
+  int ID = 20;
   /** RegularExpression Id. */
-  int HEXADECIMALINT = 22;
+  int OCTALINT = 21;
   /** RegularExpression Id. */
-  int FLOATONE = 23;
+  int DECIMALINT = 22;
   /** RegularExpression Id. */
-  int FLOATTWO = 24;
+  int FIXED_PT = 23;
   /** RegularExpression Id. */
-  int CHARACTER = 25;
+  int HEXADECIMALINT = 24;
   /** RegularExpression Id. */
-  int STRING = 26;
+  int FLOATONE = 25;
+  /** RegularExpression Id. */
+  int FLOATTWO = 26;
+  /** RegularExpression Id. */
+  int CHARACTER = 27;
+  /** RegularExpression Id. */
+  int STRING = 28;
 
   /** Lexical state. */
   int DEFAULT = 0;
   /** Lexical state. */
   int IN_MULTI_LINE_COMMENT = 1;
+  /** Lexical state. */
+  int IN_MULTI_LINE_COMMENT_2 = 2;
 
   /** Literal token values. */
   String[] tokenImage = {
     "<EOF>",
     "\" \"",
     "\"\\t\"",
-    "\"\\n\"",
-    "\"\\r\"",
-    "\"\\f\"",
     "<SINGLE_LINE_COMMENT>",
+    "<SINGLE_LINE_COMMENT_2>",
     "\"%{\"",
     "\"%}\"",
-    "<token of kind 9>",
+    "<token of kind 7>",
+    "\"#{\"",
+    "\"#}\"",
+    "<token of kind 10>",
     "\"function\"",
     "\"[\"",
     "\"]\"",
     "\"=\"",
     "\"(\"",
+    "\",\"",
     "\")\"",
     "\";\"",
-    "\",\"",
+    "<NL>",
     "<ID>",
     "<OCTALINT>",
     "<DECIMALINT>",

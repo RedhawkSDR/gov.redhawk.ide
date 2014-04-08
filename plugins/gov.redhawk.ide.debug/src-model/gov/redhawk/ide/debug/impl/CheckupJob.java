@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
 import gov.redhawk.ide.debug.LocalFileManager;
@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.transaction.RunnableWithResult;
 
 /**
  * 
@@ -51,28 +52,43 @@ public class CheckupJob extends Job {
 	 */
 	@Override
 	protected IStatus run(final IProgressMonitor monitor) {
+		final List<CorbaObjWrapper< ? >> itemsToCheck = new ArrayList<CorbaObjWrapper< ? >>();
 		final List<EObject> itemsToRemove = new ArrayList<EObject>();
-		for (final TreeIterator<EObject> iterator = this.container.eAllContents(); iterator.hasNext();) {
-			final EObject obj = iterator.next();
-			if (obj == this.container) {
-				continue;
-			}
-			if (obj instanceof CorbaObjWrapper< ? >) {
-				final CorbaObjWrapper< ? > wrapper = (CorbaObjWrapper< ? >) obj;
-				if (!wrapper.exists()) {
-					itemsToRemove.add(wrapper);
+		try {
+			ScaModelCommand.runExclusive(this.container, new RunnableWithResult.Impl<Object>() {
+
+				@Override
+				public void run() {
+					for (final TreeIterator<EObject> iterator = container.eAllContents(); iterator.hasNext();) {
+						final EObject obj = iterator.next();
+						if (obj == container) {
+							continue;
+						}
+						if (obj instanceof CorbaObjWrapper< ? >) {
+							final CorbaObjWrapper< ? > wrapper = (CorbaObjWrapper< ? >) obj;
+							itemsToCheck.add(wrapper);
+						}
+						if (obj instanceof LocalFileManager) {
+							iterator.prune();
+						} else if (obj instanceof ScaComponent) {
+							iterator.prune();
+						}
+					}
 				}
-			}
-			if (obj instanceof LocalFileManager) {
-				iterator.prune();
-			} else if (obj instanceof ScaComponent) {
-				iterator.prune();
+			});
+		} catch (InterruptedException e) {
+			return Status.CANCEL_STATUS;
+		}
+
+		for (CorbaObjWrapper< ? > obj : itemsToCheck) {
+			if (!obj.exists()) {
+				itemsToRemove.add(obj);
 			}
 		}
 
 		if (!itemsToRemove.isEmpty()) {
 			ScaModelCommand.execute(this.container, new ScaModelCommand() {
-	
+
 				@Override
 				public void execute() {
 					for (final EObject obj : itemsToRemove) {
