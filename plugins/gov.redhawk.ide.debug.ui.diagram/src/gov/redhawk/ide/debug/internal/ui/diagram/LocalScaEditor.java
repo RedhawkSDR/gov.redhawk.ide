@@ -101,10 +101,13 @@ public class LocalScaEditor extends SadEditor {
 		} else if (input instanceof URIEditorInput) {
 			URIEditorInput uriInput = (URIEditorInput) input;
 			if (uriInput.getURI().equals(URI.createPlatformPluginURI("gov.redhawk.ide.debug.ui/data/LocalSca.sad.xml", false))) {
-				isLocalSca = true;
 				final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 				this.waveform = localSca.getSandboxWaveform();
 			}
+		}
+		
+		if (ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform() == waveform) {
+			isLocalSca = true;
 		}
 
 		super.setInput(input);
@@ -154,7 +157,7 @@ public class LocalScaEditor extends SadEditor {
 		}
 
 		final ModelMap modelMap = new ModelMap(this, sad, waveform);
-		if (ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform() == waveform) {
+		if (isLocalSca) {
 			// Use the SCA Model are source to build the SAD when we are in the chalkboard since the SAD file isn't modified
 			getEditingDomain().getCommandStack().execute(new SadModelInitializerCommand(modelMap, sad, waveform));
 		} else {
@@ -190,7 +193,7 @@ public class LocalScaEditor extends SadEditor {
 
 			@Override
 			public void execute() {
-				waveform.eAdapters().add(LocalScaEditor.this.scaListener);
+				scaListener.addAdapter(waveform);
 			}
 		});
 		sad.eAdapters().add(this.sadlistener);
@@ -214,15 +217,13 @@ public class LocalScaEditor extends SadEditor {
 			this.sadlistener = null;
 		}
 		if (this.scaListener != null) {
-			waveform.eAdapters().remove(this.scaListener);
-//			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
-//			ScaModelCommand.execute(localSca, new ScaModelCommand() {
-//
-//				@Override
-//				public void execute() {
-//					localSca.eAdapters().remove(LocalScaEditor.this.scaListener);
-//				}
-//			});
+			ScaModelCommand.execute(waveform, new ScaModelCommand() {
+
+				@Override
+				public void execute() {
+					waveform.eAdapters().remove(LocalScaEditor.this.scaListener);
+				}
+			});
 			this.scaListener = null;
 		}
 		super.dispose();
