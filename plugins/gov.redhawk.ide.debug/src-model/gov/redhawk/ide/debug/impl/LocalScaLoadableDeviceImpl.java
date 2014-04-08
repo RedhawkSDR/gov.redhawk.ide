@@ -33,10 +33,10 @@ import CF.LifeCyclePackage.ReleaseError;
  * <p>
  * The following features are implemented:
  * <ul>
- * <li>{@link gov.redhawk.ide.debug.impl.LocalScaLoadableDeviceImpl#getLaunch <em>Launch</em>}</li>
- * <li>{@link gov.redhawk.ide.debug.impl.LocalScaLoadableDeviceImpl#getMode <em>Mode</em>}</li>
- * <li>{@link gov.redhawk.ide.debug.impl.LocalScaLoadableDeviceImpl#getImplementationID <em>Implementation ID</em>}</li>
- * <li>{@link gov.redhawk.ide.debug.impl.LocalScaLoadableDeviceImpl#getExecParam <em>Exec Param</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaLoadableDeviceImpl#getLaunch <em>Launch</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaLoadableDeviceImpl#getMode <em>Mode</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaLoadableDeviceImpl#getImplementationID <em>Implementation ID</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaLoadableDeviceImpl#getExecParam <em>Exec Param</em>}</li>
  * </ul>
  * </p>
  *
@@ -60,7 +60,7 @@ public class LocalScaLoadableDeviceImpl extends ScaLoadableDeviceImpl<LoadableDe
 	 * @generated
 	 * @ordered
 	 */
-	protected ILaunch launch = LocalScaLoadableDeviceImpl.LAUNCH_EDEFAULT;
+	protected ILaunch launch = LAUNCH_EDEFAULT;
 	/**
 	 * The default value of the '{@link #getMode() <em>Mode</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -78,7 +78,7 @@ public class LocalScaLoadableDeviceImpl extends ScaLoadableDeviceImpl<LoadableDe
 	 * @generated
 	 * @ordered
 	 */
-	protected String mode = LocalScaLoadableDeviceImpl.MODE_EDEFAULT;
+	protected String mode = MODE_EDEFAULT;
 	/**
 	 * The default value of the '{@link #getImplementationID() <em>Implementation ID</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -96,7 +96,7 @@ public class LocalScaLoadableDeviceImpl extends ScaLoadableDeviceImpl<LoadableDe
 	 * @generated
 	 * @ordered
 	 */
-	protected String implementationID = LocalScaLoadableDeviceImpl.IMPLEMENTATION_ID_EDEFAULT;
+	protected String implementationID = IMPLEMENTATION_ID_EDEFAULT;
 	/**
 	 * The default value of the '{@link #getExecParam() <em>Exec Param</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -116,7 +116,7 @@ public class LocalScaLoadableDeviceImpl extends ScaLoadableDeviceImpl<LoadableDe
 	 * @generated
 	 * @ordered
 	 */
-	protected String execParam = LocalScaLoadableDeviceImpl.EXEC_PARAM_EDEFAULT;
+	protected String execParam = EXEC_PARAM_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -156,9 +156,8 @@ public class LocalScaLoadableDeviceImpl extends ScaLoadableDeviceImpl<LoadableDe
 	public void setLaunch(ILaunch newLaunch) {
 		ILaunch oldLaunch = launch;
 		launch = newLaunch;
-		if (eNotificationRequired()) {
+		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__LAUNCH, oldLaunch, launch));
-		}
 	}
 
 	/**
@@ -180,9 +179,8 @@ public class LocalScaLoadableDeviceImpl extends ScaLoadableDeviceImpl<LoadableDe
 	public void setMode(String newMode) {
 		String oldMode = mode;
 		mode = newMode;
-		if (eNotificationRequired()) {
+		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__MODE, oldMode, mode));
-		}
 	}
 
 	/**
@@ -204,10 +202,9 @@ public class LocalScaLoadableDeviceImpl extends ScaLoadableDeviceImpl<LoadableDe
 	public void setImplementationID(String newImplementationID) {
 		String oldImplementationID = implementationID;
 		implementationID = newImplementationID;
-		if (eNotificationRequired()) {
+		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__IMPLEMENTATION_ID, oldImplementationID,
 				implementationID));
-		}
 	}
 
 	/**
@@ -231,9 +228,8 @@ public class LocalScaLoadableDeviceImpl extends ScaLoadableDeviceImpl<LoadableDe
 	public void setExecParam(String newExecParam) {
 		String oldExecParam = execParam;
 		execParam = newExecParam;
-		if (eNotificationRequired()) {
+		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__EXEC_PARAM, oldExecParam, execParam));
-		}
 	}
 
 	/**
@@ -289,16 +285,16 @@ public class LocalScaLoadableDeviceImpl extends ScaLoadableDeviceImpl<LoadableDe
 	public void eUnset(int featureID) {
 		switch (featureID) {
 		case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__LAUNCH:
-			setLaunch(LocalScaLoadableDeviceImpl.LAUNCH_EDEFAULT);
+			setLaunch(LAUNCH_EDEFAULT);
 			return;
 		case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__MODE:
-			setMode(LocalScaLoadableDeviceImpl.MODE_EDEFAULT);
+			setMode(MODE_EDEFAULT);
 			return;
 		case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__IMPLEMENTATION_ID:
-			setImplementationID(LocalScaLoadableDeviceImpl.IMPLEMENTATION_ID_EDEFAULT);
+			setImplementationID(IMPLEMENTATION_ID_EDEFAULT);
 			return;
 		case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__EXEC_PARAM:
-			setExecParam(LocalScaLoadableDeviceImpl.EXEC_PARAM_EDEFAULT);
+			setExecParam(EXEC_PARAM_EDEFAULT);
 			return;
 		}
 		super.eUnset(featureID);
@@ -313,15 +309,13 @@ public class LocalScaLoadableDeviceImpl extends ScaLoadableDeviceImpl<LoadableDe
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 		case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__LAUNCH:
-			return LocalScaLoadableDeviceImpl.LAUNCH_EDEFAULT == null ? launch != null : !LocalScaLoadableDeviceImpl.LAUNCH_EDEFAULT.equals(launch);
+			return LAUNCH_EDEFAULT == null ? launch != null : !LAUNCH_EDEFAULT.equals(launch);
 		case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__MODE:
-			return LocalScaLoadableDeviceImpl.MODE_EDEFAULT == null ? mode != null : !LocalScaLoadableDeviceImpl.MODE_EDEFAULT.equals(mode);
+			return MODE_EDEFAULT == null ? mode != null : !MODE_EDEFAULT.equals(mode);
 		case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__IMPLEMENTATION_ID:
-			return LocalScaLoadableDeviceImpl.IMPLEMENTATION_ID_EDEFAULT == null ? implementationID != null
-				: !LocalScaLoadableDeviceImpl.IMPLEMENTATION_ID_EDEFAULT.equals(implementationID);
+			return IMPLEMENTATION_ID_EDEFAULT == null ? implementationID != null : !IMPLEMENTATION_ID_EDEFAULT.equals(implementationID);
 		case ScaDebugPackage.LOCAL_SCA_LOADABLE_DEVICE__EXEC_PARAM:
-			return LocalScaLoadableDeviceImpl.EXEC_PARAM_EDEFAULT == null ? execParam != null
-				: !LocalScaLoadableDeviceImpl.EXEC_PARAM_EDEFAULT.equals(execParam);
+			return EXEC_PARAM_EDEFAULT == null ? execParam != null : !EXEC_PARAM_EDEFAULT.equals(execParam);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -393,9 +387,8 @@ public class LocalScaLoadableDeviceImpl extends ScaLoadableDeviceImpl<LoadableDe
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) {
+		if (eIsProxy())
 			return super.toString();
-		}
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (launch: ");
@@ -438,13 +431,6 @@ public class LocalScaLoadableDeviceImpl extends ScaLoadableDeviceImpl<LoadableDe
 	@Override
 	public void unsetProfile() {
 
-	}
-
-	@Override
-	public boolean isSetPorts() {
-		// Always return false for is set ports.  
-		// This allows the user to call initialize more than once while developing
-		return false;
 	}
 
 } //LocalScaLoadableDeviceImpl

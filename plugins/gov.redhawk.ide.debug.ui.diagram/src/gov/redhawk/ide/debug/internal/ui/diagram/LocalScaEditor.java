@@ -154,8 +154,14 @@ public class LocalScaEditor extends SadEditor {
 		}
 
 		final ModelMap modelMap = new ModelMap(this, sad, waveform);
-//		getEditingDomain().getCommandStack().execute(new SadModelInitializerCommand(modelMap, sad, waveform));
-		getEditingDomain().getCommandStack().execute(new ModelMapInitializerCommand(modelMap, sad, waveform));
+		if (ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform() == waveform) {
+			// Use the SCA Model are source to build the SAD when we are in the chalkboard since the SAD file isn't modified
+			getEditingDomain().getCommandStack().execute(new SadModelInitializerCommand(modelMap, sad, waveform));
+		} else {
+			// Use the existing SAD file as a template when initializing the modeling map
+			getEditingDomain().getCommandStack().execute(new ModelMapInitializerCommand(modelMap, sad, waveform));
+		}
+		
 		getEditingDomain().getCommandStack().flush();
 
 		this.sadlistener = new SadModelAdapter(modelMap);
