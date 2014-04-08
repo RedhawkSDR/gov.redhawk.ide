@@ -102,11 +102,38 @@ public class LocalScaEditor extends SadEditor {
 			URIEditorInput uriInput = (URIEditorInput) input;
 			if (uriInput.getURI().equals(URI.createPlatformPluginURI("gov.redhawk.ide.debug.ui/data/LocalSca.sad.xml", false))) {
 				final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
+				try {
+					dialog.run(true, true, new IRunnableWithProgress() {
+
+						@Override
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							monitor.beginTask("Starting Chalkboard...", IProgressMonitor.UNKNOWN);
+							while (localSca.getSandbox() == null || localSca.getSandboxWaveform() == null) {
+								try {
+									Thread.sleep(500);
+								} catch (InterruptedException e) {
+									// PASS
+								}
+								if (monitor.isCanceled()) {
+									break;
+								}
+							}
+							monitor.done();
+						}
+						
+					});
+				} catch (InvocationTargetException e1) {
+					// PASS
+				} catch (InterruptedException e1) {
+					// PASS
+				}
+				
 				this.waveform = localSca.getSandboxWaveform();
 			}
 		}
 		
-		if (ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform() == waveform) {
+		if (ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform() == waveform || this.waveform == null) {
 			isLocalSca = true;
 		}
 
