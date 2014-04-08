@@ -29,10 +29,10 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaServiceImpl#getLaunch <em>Launch</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaServiceImpl#getMode <em>Mode</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaServiceImpl#getImplementationID <em>Implementation ID</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaServiceImpl#getExecParam <em>Exec Param</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.LocalScaServiceImpl#getLaunch <em>Launch</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.LocalScaServiceImpl#getMode <em>Mode</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.LocalScaServiceImpl#getImplementationID <em>Implementation ID</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.LocalScaServiceImpl#getExecParam <em>Exec Param</em>}</li>
  * </ul>
  * </p>
  *
@@ -56,7 +56,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	 * @generated
 	 * @ordered
 	 */
-	protected ILaunch launch = LAUNCH_EDEFAULT;
+	protected ILaunch launch = LocalScaServiceImpl.LAUNCH_EDEFAULT;
 	/**
 	 * The default value of the '{@link #getMode() <em>Mode</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -74,7 +74,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	 * @generated
 	 * @ordered
 	 */
-	protected String mode = MODE_EDEFAULT;
+	protected String mode = LocalScaServiceImpl.MODE_EDEFAULT;
 	/**
 	 * The default value of the '{@link #getImplementationID() <em>Implementation ID</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -92,7 +92,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	 * @generated
 	 * @ordered
 	 */
-	protected String implementationID = IMPLEMENTATION_ID_EDEFAULT;
+	protected String implementationID = LocalScaServiceImpl.IMPLEMENTATION_ID_EDEFAULT;
 	/**
 	 * The default value of the '{@link #getExecParam() <em>Exec Param</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -112,7 +112,7 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	 * @generated
 	 * @ordered
 	 */
-	protected String execParam = EXEC_PARAM_EDEFAULT;
+	protected String execParam = LocalScaServiceImpl.EXEC_PARAM_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -152,8 +152,9 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	public void setLaunch(ILaunch newLaunch) {
 		ILaunch oldLaunch = launch;
 		launch = newLaunch;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_SERVICE__LAUNCH, oldLaunch, launch));
+		}
 	}
 
 	/**
@@ -175,8 +176,9 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	public void setMode(String newMode) {
 		String oldMode = mode;
 		mode = newMode;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_SERVICE__MODE, oldMode, mode));
+		}
 	}
 
 	/**
@@ -198,8 +200,9 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	public void setImplementationID(String newImplementationID) {
 		String oldImplementationID = implementationID;
 		implementationID = newImplementationID;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_SERVICE__IMPLEMENTATION_ID, oldImplementationID, implementationID));
+		}
 	}
 
 	/**
@@ -223,8 +226,9 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	public void setExecParam(String newExecParam) {
 		String oldExecParam = execParam;
 		execParam = newExecParam;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_SERVICE__EXEC_PARAM, oldExecParam, execParam));
+		}
 	}
 
 	/**
@@ -280,16 +284,16 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	public void eUnset(int featureID) {
 		switch (featureID) {
 		case ScaDebugPackage.LOCAL_SCA_SERVICE__LAUNCH:
-			setLaunch(LAUNCH_EDEFAULT);
+			setLaunch(LocalScaServiceImpl.LAUNCH_EDEFAULT);
 			return;
 		case ScaDebugPackage.LOCAL_SCA_SERVICE__MODE:
-			setMode(MODE_EDEFAULT);
+			setMode(LocalScaServiceImpl.MODE_EDEFAULT);
 			return;
 		case ScaDebugPackage.LOCAL_SCA_SERVICE__IMPLEMENTATION_ID:
-			setImplementationID(IMPLEMENTATION_ID_EDEFAULT);
+			setImplementationID(LocalScaServiceImpl.IMPLEMENTATION_ID_EDEFAULT);
 			return;
 		case ScaDebugPackage.LOCAL_SCA_SERVICE__EXEC_PARAM:
-			setExecParam(EXEC_PARAM_EDEFAULT);
+			setExecParam(LocalScaServiceImpl.EXEC_PARAM_EDEFAULT);
 			return;
 		}
 		super.eUnset(featureID);
@@ -304,13 +308,14 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 		case ScaDebugPackage.LOCAL_SCA_SERVICE__LAUNCH:
-			return LAUNCH_EDEFAULT == null ? launch != null : !LAUNCH_EDEFAULT.equals(launch);
+			return LocalScaServiceImpl.LAUNCH_EDEFAULT == null ? launch != null : !LocalScaServiceImpl.LAUNCH_EDEFAULT.equals(launch);
 		case ScaDebugPackage.LOCAL_SCA_SERVICE__MODE:
-			return MODE_EDEFAULT == null ? mode != null : !MODE_EDEFAULT.equals(mode);
+			return LocalScaServiceImpl.MODE_EDEFAULT == null ? mode != null : !LocalScaServiceImpl.MODE_EDEFAULT.equals(mode);
 		case ScaDebugPackage.LOCAL_SCA_SERVICE__IMPLEMENTATION_ID:
-			return IMPLEMENTATION_ID_EDEFAULT == null ? implementationID != null : !IMPLEMENTATION_ID_EDEFAULT.equals(implementationID);
+			return LocalScaServiceImpl.IMPLEMENTATION_ID_EDEFAULT == null ? implementationID != null
+				: !LocalScaServiceImpl.IMPLEMENTATION_ID_EDEFAULT.equals(implementationID);
 		case ScaDebugPackage.LOCAL_SCA_SERVICE__EXEC_PARAM:
-			return EXEC_PARAM_EDEFAULT == null ? execParam != null : !EXEC_PARAM_EDEFAULT.equals(execParam);
+			return LocalScaServiceImpl.EXEC_PARAM_EDEFAULT == null ? execParam != null : !LocalScaServiceImpl.EXEC_PARAM_EDEFAULT.equals(execParam);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -382,8 +387,9 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (launch: ");
@@ -410,6 +416,13 @@ public class LocalScaServiceImpl extends ScaServiceImpl implements LocalScaServi
 	@Override
 	public void unsetProfileURI() {
 
+	}
+
+	@Override
+	public boolean isSetPorts() {
+		// Always return false for is set ports.  
+		// This allows the user to call initialize more than once while developing
+		return false;
 	}
 
 } //LocalScaServiceImpl
