@@ -16,6 +16,7 @@ import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.util.PluginUtil;
 
@@ -73,8 +74,16 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 			if (localLaunch == ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform()) {
 				EList<ScaComponent> components = ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform().getComponents();
 				for (Object c : components.toArray()) {
-					LocalScaComponent lc = (LocalScaComponent) c;
-					terminate(lc);
+					if (c instanceof LocalLaunch) {
+						terminate((LocalLaunch) c);
+					}
+				}
+			} else if (localLaunch == ScaDebugPlugin.getInstance().getLocalSca().getSandboxDeviceManager()) {
+				EList<ScaDevice< ? >> devices = ScaDebugPlugin.getInstance().getLocalSca().getSandboxDeviceManager().getAllDevices();
+				for (ScaDevice< ? > c : devices) {
+					if (c instanceof LocalLaunch) {
+						terminate((LocalLaunch) c);
+					}
 				}
 			} else {
 				terminate(localLaunch);

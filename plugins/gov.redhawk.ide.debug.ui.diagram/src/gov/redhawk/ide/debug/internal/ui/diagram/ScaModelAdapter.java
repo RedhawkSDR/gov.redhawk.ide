@@ -122,6 +122,5 @@ public class ScaModelAdapter extends EContentAdapter {
 		if (notifier instanceof ScaWaveform || notifier instanceof ScaComponent || notifier instanceof ScaUsesPort) {
 			super.addAdapter(notifier);
 		}
-
 	}
 }
