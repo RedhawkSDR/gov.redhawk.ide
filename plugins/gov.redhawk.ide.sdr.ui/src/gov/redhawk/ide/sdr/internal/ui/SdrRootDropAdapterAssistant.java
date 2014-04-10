@@ -25,6 +25,10 @@ import gov.redhawk.sca.util.PluginUtil;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -34,11 +38,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.util.LocalSelectionTransfer;
@@ -69,8 +74,7 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 						return new Status(IStatus.CANCEL, SdrUiPlugin.PLUGIN_ID, "Only projects can be exported");
 					}
 					try {
-						if (!proj.hasNature(ScaNodeProjectNature.ID) 
-							&& !proj.hasNature(ScaComponentProjectNature.ID)
+						if (!proj.hasNature(ScaNodeProjectNature.ID) && !proj.hasNature(ScaComponentProjectNature.ID)
 							&& !proj.hasNature(ScaWaveformProjectNature.ID)) {
 							return new Status(IStatus.CANCEL, SdrUiPlugin.PLUGIN_ID, "Project is not an SCA Waveform, Node, Component, or Device");
 						}
@@ -86,32 +90,50 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 	@Override
 	public IStatus handleDrop(final CommonDropAdapter aDropAdapter, final DropTargetEvent aDropTargetEvent, final Object aTarget) {
-		final MultiStatus status = new MultiStatus(SdrUiPlugin.PLUGIN_ID, IStatus.OK, "", null);
 		final Object data = LocalSelectionTransfer.getTransfer().getSelection();
 		if (data instanceof TreeSelection) {
 			final TreeSelection sel = (TreeSelection) data;
+			if (!PlatformUI.getWorkbench().getActiveWorkbenchWindow().getWorkbench().saveAllEditors(true)) {
+				return Status.CANCEL_STATUS;
+			}
+			final List<Job> exportJobs = new ArrayList<Job>();
 			for (final Object item : sel.toArray()) {
 				final IProject proj = PluginUtil.adapt(IProject.class, item);
-				if (proj != null) {
+				if (proj != null && proj.exists() && proj.isOpen()) {
 					if (aTarget instanceof SdrRoot) {
-						status.add(handleProjectDrop((SdrRoot) aTarget, proj));
+						exportJobs.add(handleProjectDrop((SdrRoot) aTarget, proj));
 					} else if (aTarget instanceof EObject) {
-						status.add(handleProjectDrop(((SdrRoot) ((EObject) aTarget).eContainer()), proj));
+						SdrRoot root = ScaEcoreUtils.getEContainerOfType((EObject) aTarget, SdrRoot.class);
+						if (root != null) {
+							exportJobs.add(handleProjectDrop(root, proj));
+						}
 					}
 				}
 			}
+
+			JobChangeAdapter listener = new JobChangeAdapter() {
+				private int numDone;
+
+				@Override
+				public void done(IJobChangeEvent event) {
+					numDone++;
+					if (numDone == exportJobs.size()) {
+						RefreshSdrJob refresh = new RefreshSdrJob();
+						refresh.schedule();
+					}
+				}
+			};
+
+			for (Job j : exportJobs) {
+				j.addJobChangeListener(listener);
+				j.schedule();
+			}
 		}
 
-		return status;
+		return Status.OK_STATUS;
 	}
 
-	private IStatus handleProjectDrop(final SdrRoot root, final IProject proj) {
-		if (!PlatformUI.getWorkbench().getActiveWorkbenchWindow().getWorkbench().saveAllEditors(true)) {
-			return Status.OK_STATUS;
-		}
-		if (!proj.isOpen()) {
-			return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Cannot export a closed project.");
-		}
+	private Job handleProjectDrop(final SdrRoot root, final IProject proj) {
 
 		final WorkspaceJob job = new WorkspaceJob("Exporting " + proj) {
 
@@ -133,7 +155,7 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 					if (!store.fetchInfo(EFS.NONE, progress.newChild(FETCH_INFO_WORK)).exists()) {
 						return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID,
-						        "The defined SDR root path does not exist.  Check the SDRROOT environment variable and your preference settings.");
+							"The defined SDR root path does not exist.  Check the SDRROOT environment variable and your preference settings.");
 					}
 
 					// Currently we only support local target SDR roots, although in the future
@@ -169,9 +191,6 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 					exporter.finished();
 
-					final RefreshSdrJob refreshJob = new RefreshSdrJob(root);
-					refreshJob.schedule();
-
 				} catch (final CoreException e) {
 					return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Error exporting project to SDR root", e);
 				} catch (final URISyntaxException e) {
@@ -189,8 +208,7 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 		job.setUser(true);
 		job.setRule(proj);
 		job.setPriority(Job.LONG);
-		job.schedule();
 
-		return Status.OK_STATUS;
+		return job;
 	}
 }

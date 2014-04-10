@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui.internal.handlers;
 
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.util.RefreshSdrJob;
 
 import java.util.ArrayList;
@@ -103,8 +102,7 @@ public class DeleteHandler extends AbstractHandler {
 					j.schedule();
 				}
 
-				final SdrUiPlugin activator = SdrUiPlugin.getDefault();
-				final RefreshSdrJob refreshJob = new RefreshSdrJob(activator.getTargetSdrRoot());
+				final RefreshSdrJob refreshJob = new RefreshSdrJob();
 				final ISchedulingRule rule = MultiRule.combine(refreshJob.getRule(), new LastSchedulingRule());
 				refreshJob.setRule(rule);
 				refreshJob.setUser(false);
