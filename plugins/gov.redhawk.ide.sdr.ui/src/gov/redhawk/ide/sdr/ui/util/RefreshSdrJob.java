@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class RefreshSdrJob extends Job {
 
-	private final SdrRoot sdrRoot;
+	private SdrRoot sdrRoot;
 
 	public RefreshSdrJob(final SdrRoot sdrRoot) {
 		super("Refreshing SDR Root");
@@ -42,15 +42,11 @@ public class RefreshSdrJob extends Job {
 	}
 
 	@Override
-	public boolean shouldSchedule() {
-		return this.sdrRoot != null;
-	}
-
-	@Override
 	protected IStatus run(final IProgressMonitor monitor) {
 		if (this.sdrRoot == null) {
-			SdrUiPlugin.getDefault().getTargetSdrRoot().reload(monitor);
-		} else {
+			this.sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
+		}
+		if (this.sdrRoot != null) {
 			this.sdrRoot.reload(monitor);
 		}
 		return Status.OK_STATUS;
