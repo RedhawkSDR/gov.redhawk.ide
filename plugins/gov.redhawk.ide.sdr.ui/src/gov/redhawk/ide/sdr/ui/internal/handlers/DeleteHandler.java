@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui.internal.handlers;
 
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.util.RefreshSdrJob;
 
 import java.util.ArrayList;
@@ -88,7 +89,7 @@ public class DeleteHandler extends AbstractHandler {
 					job = createDeleteSoftwareAssemblyJob((SoftwareAssembly) obj, event);
 				} else if (obj instanceof DeviceConfiguration) {
 					job = createDeleteDeviceConfigurationJob((DeviceConfiguration) obj, event);
-				}
+				} 
 
 				if (job != null) {
 					jobs.add(job);
@@ -102,7 +103,7 @@ public class DeleteHandler extends AbstractHandler {
 					j.schedule();
 				}
 
-				final RefreshSdrJob refreshJob = new RefreshSdrJob();
+				final RefreshSdrJob refreshJob = new RefreshSdrJob(SdrUiPlugin.getDefault().getTargetSdrRoot());
 				final ISchedulingRule rule = MultiRule.combine(refreshJob.getRule(), new LastSchedulingRule());
 				refreshJob.setRule(rule);
 				refreshJob.setUser(false);

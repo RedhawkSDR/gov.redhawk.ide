@@ -97,13 +97,15 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 				return Status.CANCEL_STATUS;
 			}
 			final List<Job> exportJobs = new ArrayList<Job>();
+			SdrRoot root = null;
 			for (final Object item : sel.toArray()) {
 				final IProject proj = PluginUtil.adapt(IProject.class, item);
 				if (proj != null && proj.exists() && proj.isOpen()) {
 					if (aTarget instanceof SdrRoot) {
-						exportJobs.add(handleProjectDrop((SdrRoot) aTarget, proj));
+						root = (SdrRoot) aTarget;
+						exportJobs.add(handleProjectDrop(root, proj));
 					} else if (aTarget instanceof EObject) {
-						SdrRoot root = ScaEcoreUtils.getEContainerOfType((EObject) aTarget, SdrRoot.class);
+						root = ScaEcoreUtils.getEContainerOfType((EObject) aTarget, SdrRoot.class);
 						if (root != null) {
 							exportJobs.add(handleProjectDrop(root, proj));
 						}
@@ -111,6 +113,7 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 				}
 			}
 
+			final SdrRoot sdrRoot = root;
 			JobChangeAdapter listener = new JobChangeAdapter() {
 				private int numDone;
 
@@ -118,7 +121,7 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 				public void done(IJobChangeEvent event) {
 					numDone++;
 					if (numDone == exportJobs.size()) {
-						RefreshSdrJob refresh = new RefreshSdrJob();
+						RefreshSdrJob refresh = new RefreshSdrJob(sdrRoot);
 						refresh.schedule();
 					}
 				}
@@ -208,7 +211,7 @@ public class SdrRootDropAdapterAssistant extends CommonDropAdapterAssistant {
 		job.setUser(true);
 		job.setRule(proj);
 		job.setPriority(Job.LONG);
-
+		
 		return job;
 	}
 }
