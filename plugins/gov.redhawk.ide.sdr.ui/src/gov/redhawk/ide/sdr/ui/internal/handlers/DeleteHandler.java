@@ -102,6 +102,7 @@ public class DeleteHandler extends AbstractHandler {
 					j.setProgressGroup(progressGroupMonitor, 1);
 					j.schedule();
 				}
+				progressGroupMonitor.done();
 
 				final RefreshSdrJob refreshJob = new RefreshSdrJob(SdrUiPlugin.getDefault().getTargetSdrRoot());
 				final ISchedulingRule rule = MultiRule.combine(refreshJob.getRule(), new LastSchedulingRule());
