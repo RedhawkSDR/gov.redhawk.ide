@@ -92,6 +92,7 @@ public class LocalScaEditor extends SadEditor {
 
 	}
 
+	@SuppressWarnings("restriction")
 	@Override
 	protected void setInput(IEditorInput input) {
 		if (input instanceof ScaFileStoreEditorInput) {
@@ -103,35 +104,35 @@ public class LocalScaEditor extends SadEditor {
 			URIEditorInput uriInput = (URIEditorInput) input;
 			if (uriInput.getURI().equals(URI.createPlatformPluginURI("gov.redhawk.ide.debug.ui/data/LocalSca.sad.xml", false))) {
 				final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
-				try {
-					dialog.run(true, true, new IRunnableWithProgress() {
+				if (!ScaDebugInstance.INSTANCE.isInit()) {
+					ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
+					try {
+						dialog.run(true, true, new IRunnableWithProgress() {
 
-						@SuppressWarnings("restriction")
-						@Override
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							monitor.beginTask("Starting Chalkboard...", IProgressMonitor.UNKNOWN);
-							while (localSca.getSandbox() == null || localSca.getSandboxWaveform() == null) {
+							@Override
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								monitor.beginTask("Starting Chalkboard...", IProgressMonitor.UNKNOWN);
 								try {
 									ScaDebugInstance.INSTANCE.init(monitor);
 								} catch (CoreException e) {
 									throw new InvocationTargetException(e);
 								}
+								monitor.done();
 							}
-							monitor.done();
-						}
-						
-					});
-				} catch (InvocationTargetException e1) {
-					StatusManager.getManager().handle(new Status(Status.ERROR, ScaDebugPlugin.ID, "Failed to initialize sandbox.", e1), StatusManager.SHOW | StatusManager.LOG);
-				} catch (InterruptedException e1) {
-					// PASS
+
+						});
+					} catch (InvocationTargetException e1) {
+						StatusManager.getManager().handle(new Status(Status.ERROR, ScaDebugPlugin.ID, "Failed to initialize sandbox.", e1),
+							StatusManager.SHOW | StatusManager.LOG);
+					} catch (InterruptedException e1) {
+						// PASS
+					}
 				}
-				
+
 				this.waveform = localSca.getSandboxWaveform();
 			}
 		}
-		
+
 		if (ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform() == waveform || this.waveform == null) {
 			isLocalSca = true;
 		}
@@ -190,7 +191,7 @@ public class LocalScaEditor extends SadEditor {
 			// Use the existing SAD file as a template when initializing the modeling map
 			getEditingDomain().getCommandStack().execute(new ModelMapInitializerCommand(modelMap, sad, waveform));
 		}
-		
+
 		getEditingDomain().getCommandStack().flush();
 
 		this.sadlistener = new SadModelAdapter(modelMap);

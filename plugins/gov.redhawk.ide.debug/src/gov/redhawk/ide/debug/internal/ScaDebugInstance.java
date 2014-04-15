@@ -89,9 +89,13 @@ public enum ScaDebugInstance {
 		};
 		job.schedule();
 	}
+	
+	public boolean isInit() {
+		return localSca.getSandbox() != null;
+	}
 
 	public synchronized void init(IProgressMonitor monitor) throws CoreException {
-		if (localSca.getSandbox() != null) {
+		if (isInit()) {
 			return;
 		}
 
