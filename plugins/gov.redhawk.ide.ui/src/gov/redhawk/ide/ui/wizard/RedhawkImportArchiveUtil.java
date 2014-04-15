@@ -86,20 +86,26 @@ public class RedhawkImportArchiveUtil extends RedhawkImportUtil {
 		}
 
 		try {
+			WaveDevSettings waveDev = null;
 			if (type.matches(getSadExtension()) && dotProjectMissing) {
-				createDotProjectFile("SAD");
+				project = createDotProjectFile("SAD");
 			}
 			if (type.matches(getDcdExtension()) && dotProjectMissing) {
-				createDotProjectFile("DCD");
+				project = createDotProjectFile("DCD");
 			}
 			if (type.matches(getSpdExtension())) {
 				if (dotProjectMissing) {
 					project = createDotProjectFile("SPD");
 				}
 				if (wavedevMissing) {
-					createWaveDevFile();
+					waveDev = createWaveDevFile();
+				}
+			
+				if (dotProjectMissing || wavedevMissing) {
+					generateFiles(monitor, null, project, waveDev);
 				}
 			}
+			
 		} catch (CoreException e) {
 			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		}
@@ -233,7 +239,7 @@ public class RedhawkImportArchiveUtil extends RedhawkImportUtil {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	protected void createWaveDevFile() throws CoreException {
+	protected WaveDevSettings createWaveDevFile() throws CoreException {
 		// Locate the SCA file that was just imported into workspace via the createDotProjectFile() method
 		String relativePath = structureProvider.getFullPath(record.projectArchiveFile);
 		IFile file = project.getFile(relativePath);
@@ -313,6 +319,8 @@ public class RedhawkImportArchiveUtil extends RedhawkImportUtil {
 		} catch (final IOException e) {
 			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		}
+		
+		return waveDev;
 	}
 
 	private void setupWaveDev(final ImplementationSettings settings, final String lang) {

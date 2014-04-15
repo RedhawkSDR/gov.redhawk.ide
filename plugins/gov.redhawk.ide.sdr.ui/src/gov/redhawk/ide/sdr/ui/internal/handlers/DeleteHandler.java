@@ -89,7 +89,7 @@ public class DeleteHandler extends AbstractHandler {
 					job = createDeleteSoftwareAssemblyJob((SoftwareAssembly) obj, event);
 				} else if (obj instanceof DeviceConfiguration) {
 					job = createDeleteDeviceConfigurationJob((DeviceConfiguration) obj, event);
-				}
+				} 
 
 				if (job != null) {
 					jobs.add(job);
@@ -102,9 +102,9 @@ public class DeleteHandler extends AbstractHandler {
 					j.setProgressGroup(progressGroupMonitor, 1);
 					j.schedule();
 				}
+				progressGroupMonitor.done();
 
-				final SdrUiPlugin activator = SdrUiPlugin.getDefault();
-				final RefreshSdrJob refreshJob = new RefreshSdrJob(activator.getTargetSdrRoot());
+				final RefreshSdrJob refreshJob = new RefreshSdrJob(SdrUiPlugin.getDefault().getTargetSdrRoot());
 				final ISchedulingRule rule = MultiRule.combine(refreshJob.getRule(), new LastSchedulingRule());
 				refreshJob.setRule(rule);
 				refreshJob.setUser(false);

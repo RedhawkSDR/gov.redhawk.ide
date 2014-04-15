@@ -102,8 +102,7 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 				}
 			}
 		}
-		// If there is there is no 'name' attribute then use the file name as
-		// the project name
+		// If there is there is no 'name' attribute then use the file name as the project name
 		projectName = path.toFile().getName();
 		int dotIndex = projectName.indexOf('.');
 		projectName = projectName.substring(0, dotIndex);
@@ -126,19 +125,40 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 		}
 
 		try {
+			IProject project = null;
+			WaveDevSettings waveDev = null;
 			if (type.matches(getSadExtension()) && dotProjectMissing) {
-				createDotProjectFile("SAD");
+				project = createDotProjectFile("SAD");
 			}
 			if (type.matches(getDcdExtension()) && dotProjectMissing) {
-				createDotProjectFile("DCD");
+				project = createDotProjectFile("DCD");
 			}
 			if (type.matches(getSpdExtension())) {
 				if (dotProjectMissing) {
-					createDotProjectFile("SPD");
+					project = createDotProjectFile("SPD");
 				}
 				if (wavedevMissing) {
-					createWaveDevFile();
+					waveDev = createWaveDevFile();
+				} else {
+					File waveDevFile = null;
+					File[] contents = record.projectSystemFile.getParentFile().listFiles();
+					for (File file : contents) {
+						String name = file.getName();
+						if (name.matches(".+\\.wavedev")) {
+							waveDevFile = file;
+						}
+					}
+					if (waveDevFile != null) {
+						final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
+						org.eclipse.emf.common.util.URI waveDevUri = org.eclipse.emf.common.util.URI.createPlatformResourceURI(waveDevFile.getPath(), true);
+						waveDev = (WaveDevSettings) set.getResource(waveDevUri, true).getEObject("/");
+					}
 				}
+
+				if (dotProjectMissing || wavedevMissing) {
+					generateFiles(monitor, projectLocation.toString(), project, waveDev);
+				}
+
 			}
 		} catch (CoreException e) {
 			IDEWorkbenchPlugin.log(e.getMessage(), e);
@@ -150,8 +170,8 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 
 		File[] contents = record.projectSystemFile.getParentFile().listFiles();
 		if (contents != null) {
-			for (File f : contents) {
-				String name = f.getName();
+			for (File file : contents) {
+				String name = file.getName();
 
 				for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
 					if (assistant.handlesNature(name)) {
@@ -262,9 +282,8 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 	}
 
 	@Override
-	protected void createWaveDevFile() throws CoreException {
-		SoftPkg softPkg = null;
-		softPkg = getSoftPkg(record.projectSystemFile.getAbsolutePath());
+	protected WaveDevSettings createWaveDevFile() throws CoreException {
+		SoftPkg softPkg = getSoftPkg(record.projectSystemFile.getAbsolutePath());
 
 		WaveDevSettings waveDev = CodegenFactory.eINSTANCE.createWaveDevSettings();
 
@@ -273,8 +292,7 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 		for (final Implementation impl : softPkg.getImplementation()) {
 			final ImplementationSettings settings = CodegenFactory.eINSTANCE.createImplementationSettings();
 			final String lang = impl.getProgrammingLanguage().getName();
-			// Find the code generator if specified, otherwise pick the first
-			// one returned by the registry
+			// Find the code generator if specified, otherwise pick the first one returned by the registry
 			ICodeGeneratorDescriptor codeGenDesc = null;
 			final ICodeGeneratorDescriptor[] codeGens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(lang);
 			if (codeGens.length > 0) {
@@ -284,8 +302,7 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 			if (codeGenDesc != null) {
 				final IScaComponentCodegen generator = codeGenDesc.getGenerator();
 
-				// Assume that there is <name>[/].+<other> format for the
-				// entrypoint
+				// Assume that there is <name>[/].+<other> format for the entrypoint
 				// Pick out <name> for both the output dir and settings name
 				final String lf = impl.getCode().getEntryPoint();
 
@@ -293,8 +310,7 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 				settings.setGeneratorId(generator.getClass().getCanonicalName());
 				settings.setOutputDir(lf.substring(0, lf.lastIndexOf('/')));
 
-				// pick the first selectable and defaultable template returned
-				// by the registry
+				// pick the first selectable and defaultable template returned by the registry
 				ITemplateDesc templateDesc = null;
 				final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(settings.getGeneratorId());
 				for (final ITemplateDesc itd : templates) {
@@ -342,14 +358,15 @@ public class RedhawkImportFileUtil extends RedhawkImportUtil {
 		final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
 		final Resource res = set.createResource(uri);
 
-		// Add the WaveDevSettings to the resource and save to disk to persist
-		// the newly created WaveDevSettings
+		// Add the WaveDevSettings to the resource and save to disk to persist the newly created WaveDevSettings
 		res.getContents().add(waveDev);
 		try {
 			res.save(null);
 		} catch (final IOException e) {
 			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		}
+
+		return waveDev;
 	}
 
 	public SoftPkg getSoftPkg(String path) {

@@ -11,6 +11,7 @@
 package gov.redhawk.ide.sdr.ui.util;
 
 import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -23,7 +24,7 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class RefreshSdrJob extends Job {
 
-	private final SdrRoot sdrRoot;
+	private SdrRoot sdrRoot;
 
 	public RefreshSdrJob(final SdrRoot sdrRoot) {
 		super("Refreshing SDR Root");
@@ -31,15 +32,23 @@ public class RefreshSdrJob extends Job {
 		setUser(true);
 		this.sdrRoot = sdrRoot;
 	}
-
-	@Override
-	public boolean shouldSchedule() {
-		return this.sdrRoot != null;
+	
+	/**
+	 * Refreshes the Target SDR
+	 * @since 3.3
+	 */
+	public RefreshSdrJob() {
+		this(null);
 	}
 
 	@Override
 	protected IStatus run(final IProgressMonitor monitor) {
-		this.sdrRoot.reload(monitor);
+		if (this.sdrRoot == null) {
+			this.sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
+		}
+		if (this.sdrRoot != null) {
+			this.sdrRoot.reload(monitor);
+		}
 		return Status.OK_STATUS;
 	}
 

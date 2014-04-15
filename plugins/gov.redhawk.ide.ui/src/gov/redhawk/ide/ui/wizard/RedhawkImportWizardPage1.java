@@ -404,7 +404,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 	}
 
 	public boolean isNonEclipseProject(String path) {
-		if (path.matches(sadExtension) || path.matches(dcdExtension) || path.matches(spdExtension)) { 
+		if (path.matches(sadExtension) || path.matches(dcdExtension) || path.matches(spdExtension)) {
 			return true;
 		}
 		return false;
@@ -721,8 +721,8 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 
 		GridData archivePathData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		archivePathData.widthHint = new PixelConverter(archivePathField).convertWidthInCharsToPixels(25);
-		archivePathField.setLayoutData(archivePathData); 
-		
+		archivePathField.setLayoutData(archivePathData);
+
 		// browse button
 		browseArchivesButton = new Button(projectGroup, SWT.PUSH);
 		browseArchivesButton.setText(DataTransferMessages.DataTransfer_browse);
