@@ -16,4 +16,21 @@
     <kind kindtype="allocation"/>
     <action type="eq"/>
   </simple>
+  <% if ("Executable".equals(((GeneratorArgs)argument).getDeviceType())) { %>
+  <simple id="DCE:9B445600-6C7F-11d4-A226-0050DA314CD6" mode="readonly" name="processor_name" type="string">
+    <description>SCA required property describing the CPU type</description>
+    <kind kindtype="allocation"/>
+    <action type="eq"/>
+  </simple>
+  <simple id="DCE:80BF17F0-6C7F-11d4-A226-0050DA314CD6" mode="readonly" name="os_name" type="string">
+    <description>SCA required property describing the Operating System Name</description>
+    <kind kindtype="allocation"/>
+    <action type="eq"/>
+  </simple>
+  <simple id="DCE:0f3a9a37-a342-43d8-9b7f-78dc6da74192" mode="readonly" name="os_version" type="string">
+    <description>SCA required property describing the Operating System Version</description>
+    <kind kindtype="allocation"/>
+    <action type="eq"/>
+  </simple>
+  <% } %>
 </properties>
