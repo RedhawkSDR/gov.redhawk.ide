@@ -14,6 +14,7 @@ import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
 import gov.redhawk.ide.sad.internal.ui.editor.SadEditor;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
@@ -106,17 +107,15 @@ public class LocalScaEditor extends SadEditor {
 				try {
 					dialog.run(true, true, new IRunnableWithProgress() {
 
+						@SuppressWarnings("restriction")
 						@Override
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							monitor.beginTask("Starting Chalkboard...", IProgressMonitor.UNKNOWN);
 							while (localSca.getSandbox() == null || localSca.getSandboxWaveform() == null) {
 								try {
-									Thread.sleep(500);
-								} catch (InterruptedException e) {
-									// PASS
-								}
-								if (monitor.isCanceled()) {
-									break;
+									ScaDebugInstance.INSTANCE.init(monitor);
+								} catch (CoreException e) {
+									throw new InvocationTargetException(e);
 								}
 							}
 							monitor.done();
@@ -124,7 +123,7 @@ public class LocalScaEditor extends SadEditor {
 						
 					});
 				} catch (InvocationTargetException e1) {
-					// PASS
+					StatusManager.getManager().handle(new Status(Status.ERROR, ScaDebugPlugin.ID, "Failed to initialize sandbox.", e1), StatusManager.SHOW | StatusManager.LOG);
 				} catch (InterruptedException e1) {
 					// PASS
 				}
