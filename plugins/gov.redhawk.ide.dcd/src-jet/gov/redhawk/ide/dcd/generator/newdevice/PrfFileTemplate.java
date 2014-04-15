@@ -35,7 +35,7 @@ public class PrfFileTemplate
   {
     final StringBuffer stringBuffer = new StringBuffer();
     stringBuffer.append(TEXT_1);
-     if ("Executable".equals(((GeneratorArgs)argument).getDeviceType())) { 
+     if (argument != null && "Executable".equals(((GeneratorArgs)argument).getDeviceType())) { 
     stringBuffer.append(TEXT_2);
      } 
     stringBuffer.append(TEXT_3);

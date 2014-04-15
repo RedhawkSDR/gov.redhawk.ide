@@ -16,7 +16,7 @@
     <kind kindtype="allocation"/>
     <action type="eq"/>
   </simple>
-  <% if ("Executable".equals(((GeneratorArgs)argument).getDeviceType())) { %>
+  <% if (argument != null && "Executable".equals(((GeneratorArgs)argument).getDeviceType())) { %>
   <simple id="DCE:9B445600-6C7F-11d4-A226-0050DA314CD6" mode="readonly" name="processor_name" type="string">
     <description>SCA required property describing the CPU type</description>
     <kind kindtype="allocation"/>
