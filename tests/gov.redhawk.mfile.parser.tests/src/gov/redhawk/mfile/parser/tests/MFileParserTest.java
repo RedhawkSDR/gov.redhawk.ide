@@ -24,6 +24,56 @@ import org.junit.Test;
  * 
  */
 public class MFileParserTest {
+	
+	@Test
+	public void testParseAmmod() throws IOException, ParseException {
+		MFile file = parseFile("ammod.m");
+		Assert.assertNotNull(file);
+		Assert.assertNotNull(file.getFunction());
+		Assert.assertEquals("ammod", file.getFunction().getName());
+		Assert.assertEquals(2, file.getFunction().getOutputs().size());
+		Assert.assertEquals("y", file.getFunction().getOutputs().get(0));
+		Assert.assertEquals("t0", file.getFunction().getOutputs().get(1));
+		Assert.assertEquals(4, file.getFunction().getInputs().size());
+		Assert.assertEquals("x", file.getFunction().getInputs().get(0));
+		Assert.assertEquals("fc", file.getFunction().getInputs().get(1));
+		Assert.assertEquals("sampleRate", file.getFunction().getInputs().get(2));
+		Assert.assertEquals("t0", file.getFunction().getInputs().get(3));
+	}
+	
+	@Test
+	public void testParseCompand() throws IOException, ParseException {
+		MFile file = parseFile("compand.m");
+		Assert.assertNotNull(file);
+		Assert.assertNotNull(file.getFunction());
+		Assert.assertEquals("compand", file.getFunction().getName());
+		Assert.assertEquals(1, file.getFunction().getOutputs().size());
+		Assert.assertEquals("y", file.getFunction().getOutputs().get(0));
+		Assert.assertEquals(4, file.getFunction().getInputs().size());
+		Assert.assertEquals("x", file.getFunction().getInputs().get(0));
+		Assert.assertEquals("mu", file.getFunction().getInputs().get(1));
+		Assert.assertEquals("V", file.getFunction().getInputs().get(2));
+		Assert.assertEquals("stype", file.getFunction().getInputs().get(3));
+	}
+	
+	@Test
+	public void testParseFmmod() throws IOException, ParseException {
+		MFile file = parseFile("fmmod.m");
+		Assert.assertNotNull(file);
+		Assert.assertNotNull(file.getFunction());
+		Assert.assertEquals("fmmod", file.getFunction().getName());
+		Assert.assertEquals(3, file.getFunction().getOutputs().size());
+		Assert.assertEquals("s", file.getFunction().getOutputs().get(0));
+		Assert.assertEquals("t0", file.getFunction().getOutputs().get(1));
+		Assert.assertEquals("integral0", file.getFunction().getOutputs().get(2));
+		Assert.assertEquals(6, file.getFunction().getInputs().size());
+		Assert.assertEquals("m", file.getFunction().getInputs().get(0));
+		Assert.assertEquals("fc", file.getFunction().getInputs().get(1));
+		Assert.assertEquals("sampleRate", file.getFunction().getInputs().get(2));
+		Assert.assertEquals("freqdev", file.getFunction().getInputs().get(3));
+		Assert.assertEquals("t0", file.getFunction().getInputs().get(4));
+		Assert.assertEquals("integral0", file.getFunction().getInputs().get(5));
+	}
 
 	@Test
 	public void testParseComments() throws IOException, ParseException {
