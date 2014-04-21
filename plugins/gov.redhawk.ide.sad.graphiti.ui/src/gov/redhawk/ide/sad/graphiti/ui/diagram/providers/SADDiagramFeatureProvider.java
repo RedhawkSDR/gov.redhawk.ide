@@ -19,6 +19,7 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.SetAsAssemblyCont
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.DeleteSADConnectInterface;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.update.RHDiagramUpdateFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.update.SADConnectionInterfaceUpdateFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;
@@ -67,6 +68,7 @@ import org.eclipse.graphiti.features.impl.DefaultMoveShapeFeature;
 import org.eclipse.graphiti.features.impl.DefaultRemoveFeature;
 import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
 import org.eclipse.graphiti.features.impl.UpdateNoBoFeature;
+import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.pattern.DefaultFeatureProviderWithPatterns;
 import org.eclipse.graphiti.pattern.DirectEditingFeatureForPattern;
@@ -319,6 +321,8 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 
 		if (context.getPictogramElement() instanceof Diagram) {
 			return new RHDiagramUpdateFeature(this);
+		}else if(context.getPictogramElement() instanceof Connection) {
+			return new SADConnectionInterfaceUpdateFeature(this);
 		}
 
 		// hide update icon for some pictogram elements

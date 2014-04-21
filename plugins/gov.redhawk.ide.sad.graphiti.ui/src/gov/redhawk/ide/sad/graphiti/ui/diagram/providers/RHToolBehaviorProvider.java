@@ -50,6 +50,7 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -58,7 +59,10 @@ import org.eclipse.graphiti.palette.IToolEntry;
 import org.eclipse.graphiti.palette.impl.ConnectionCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
+import org.eclipse.graphiti.platform.IPlatformImageConstants;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
+import org.eclipse.graphiti.tb.IDecorator;
+import org.eclipse.graphiti.tb.ImageDecorator;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
@@ -354,5 +358,22 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
 		return compartmentEntry;
 	}
+	
+	
+	//ATTEMPT at ERROR decorator on Connections
+//	public IDecorator[] getDecorators(PictogramElement pe) {
+//		IFeatureProvider featureProvider = getFeatureProvider();
+//		//if(pe instanceof Connection) {
+////			IDecorator imageRenderingDecorator = new ImageDecorator(IPlatformImageConstants.IMG_ECLIPSE_WARNING_TSK);
+////			imageRenderingDecorator.setMessage("You should fix this");
+//			IDecorator imageRenderingDecorator = new ImageDecorator(IPlatformImageConstants.IMG_ECLIPSE_ERROR_TSK);
+//			imageRenderingDecorator.setMessage("You should fix this");
+//			
+//			return new IDecorator[] { imageRenderingDecorator };
+//		//}
+//		
+//		//return super.getDecorators(pe);
+//		
+//	}
 
 }

@@ -31,6 +31,7 @@ public class StyleUtil {
 	public static final IColorConstant WHITE = new ColorConstant(255, 255, 255);
 	public static final IColorConstant GOLD = new ColorConstant(255, 218, 105);
 	public static final IColorConstant BLACK = new ColorConstant(0, 0, 0);
+	public static final IColorConstant RED = new ColorConstant(255, 0, 0);
 	public static final IColorConstant BLUE = new ColorConstant(0, 0, 194);
 	public static final IColorConstant COMPONENT_FOREGROUND = new ColorConstant(98, 131, 167);
 	public static final IColorConstant COMPONENT_BACKGROUND = new ColorConstant(187, 218, 247);
@@ -64,6 +65,10 @@ public class StyleUtil {
 
 	public static final Font getInnerTitleFont(Diagram diagram) {
 		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 11, false, false);
+	}
+	
+	public static final Font getErrorConnectionFont(Diagram diagram) {
+		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, false);
 	}
 
 	public static final Font getStartOrderFont(Diagram diagram) {
@@ -176,6 +181,21 @@ public class StyleUtil {
 			style = gaService.createStyle(diagram, styleId);
 			style.setFont(getInnerTitleFont(diagram));
 			style.setForeground(gaService.manageColor(diagram, BLACK));
+			style.setLineWidth(2);
+		}
+		return style;
+	}
+	
+	// returns error message font for improper connections
+	public static Style getStyleForErrorTextConnections(Diagram diagram) {
+		final String styleId = "ErrorTextConnections";
+		Style style = findStyle(diagram, styleId);
+		if (style == null) {
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			style.setFont(getErrorConnectionFont(diagram));
+			style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
+			style.setForeground(gaService.manageColor(diagram, RED));
 			style.setLineWidth(2);
 		}
 		return style;

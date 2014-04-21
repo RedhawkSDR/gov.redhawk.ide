@@ -10,10 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
+import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
 import gov.redhawk.sca.util.StringUtil;
 
 import java.util.ArrayList;
@@ -35,13 +37,17 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IConnectionContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
+import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
+import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.AbstractConnectionPattern;
 import org.eclipse.graphiti.pattern.IConnectionPattern;
+import org.eclipse.graphiti.platform.IPlatformImageConstants;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
@@ -49,6 +55,8 @@ import org.eclipse.graphiti.services.IPeCreateService;
 public class SADConnectInterfacePattern extends AbstractConnectionPattern implements IConnectionPattern {
 
 	public static final String NAME = "Connection";
+	public static final String SHAPE_imgConnectionDecorator = "imgConnectionDecorator";
+	public static final String SHAPE_textConnectionDecorator = "textConnectionDecorator";
 
 	@Override
 	public String getCreateName() {
@@ -102,43 +110,100 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	 */
 	@Override
 	public PictogramElement add(IAddContext addContext) {
-
+		
+		IGaService gaService = Graphiti.getGaService();
+		IPeCreateService peCreateService = Graphiti.getPeCreateService();
 		IAddConnectionContext context = (IAddConnectionContext) addContext;
 		SadConnectInterface connectInterface = (SadConnectInterface) addContext.getNewObject();
-		IPeCreateService peCreateService = Graphiti.getPeCreateService();
+		
 
 		// source and target
 		UsesPortStub source = getUsesPortStub(context);
 		ConnectionTarget target = getConnectionTarget(context);
 
 		// Create connection (handle user selecting source or target)
-		Connection connection = peCreateService.createFreeFormConnection(getFeatureProvider().getDiagramTypeProvider().getDiagram());
+		Connection connectionPE = peCreateService.createFreeFormConnection(getFeatureProvider().getDiagramTypeProvider().getDiagram());
 //		Connection connection = peCreateService.createManhattanConnection(getFeatureProvider().getDiagramTypeProvider().getDiagram());
 		if (source == getUsesPortStub(context.getSourceAnchor()) && target == getConnectionTarget(context.getTargetAnchor())) {
-			connection.setStart(context.getSourceAnchor());
-			connection.setEnd(context.getTargetAnchor());
+			connectionPE.setStart(context.getSourceAnchor());
+			connectionPE.setEnd(context.getTargetAnchor());
 		} else if (source == getUsesPortStub(context.getTargetAnchor()) && target == getConnectionTarget(context.getSourceAnchor())) {
-			connection.setStart(context.getTargetAnchor());
-			connection.setEnd(context.getSourceAnchor());
+			connectionPE.setStart(context.getTargetAnchor());
+			connectionPE.setEnd(context.getSourceAnchor());
 		}
 
+		//decorate Connection with errors
+		decorateConnection(connectionPE, connectInterface, getDiagram());
+		
 		// create line
-		IGaService gaService = Graphiti.getGaService();
-		Polyline line = gaService.createPolyline(connection);
+		Polyline line = gaService.createPolyline(connectionPE);
 		line.setLineWidth(2);
 		line.setForeground(gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(), StyleUtil.BLACK));
 
+
 		// add static graphical arrow
 		ConnectionDecorator cd;
-		cd = peCreateService.createConnectionDecorator(connection, false, 1.0, true);
+		cd = peCreateService.createConnectionDecorator(connectionPE, false, 1.0, true);
 		DUtil.createArrow(cd, getFeatureProvider(), gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(), StyleUtil.BLACK));
 
+		
 		// link ports to connection
 //		getFeatureProvider().link(connection, new Object[] { connectInterface, connectInterface.getSource(), connectInterface.getTarget()});
-		getFeatureProvider().link(connection, new Object[] { connectInterface, source, target });
+		getFeatureProvider().link(connectionPE, new Object[] { connectInterface, source, target });
 
-		return connection;
+		return connectionPE;
 	}
+	
+	/**
+	 * Add error/warning decorators to connection if applicable
+	 * Note: Unfortunately Graphiti doesn't support ConnectionDecorators with tooltips like it does with Shape Decorators (see RHToolBehaviorProvider)
+	 * @param connectionPE
+	 */
+	public static void decorateConnection(Connection connectionPE, SadConnectInterface connectInterface, Diagram diagram){
+		IGaService gaService = Graphiti.getGaService();
+		IPeCreateService peCreateService = Graphiti.getPeCreateService();
+		
+		//if not compatible draw error/warning decorator
+		if (connectInterface.getSource() != null && connectInterface.getTarget() != null) {
+			//connection validation
+			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
+			boolean compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
+			if(!compatibleConnection || !uniqueConnection){
+			
+				//set decorator image/text
+				String decoratorMessage = "";
+				String decoratorImageId = "";
+				if (!compatibleConnection) {
+					decoratorMessage = "Incompatible Connection";
+					decoratorImageId = IPlatformImageConstants.IMG_ECLIPSE_ERROR_TSK;
+				}else if(!uniqueConnection){
+					decoratorMessage = "Redundant connection";
+					decoratorImageId = IPlatformImageConstants.IMG_ECLIPSE_WARNING_TSK;
+				}
+				
+				//image
+				ConnectionDecorator imgConnectionDecorator;
+				imgConnectionDecorator = peCreateService.createConnectionDecorator(connectionPE, true, 0.5, true); //must be active in order to display
+				Graphiti.getPeService().setPropertyValue(imgConnectionDecorator, DUtil.SHAPE_TYPE, SHAPE_imgConnectionDecorator);
+				Image errorImage = gaService.createImage(imgConnectionDecorator, decoratorImageId);
+				errorImage.setHeight(20);
+				errorImage.setWidth(20);
+				gaService.setLocation(errorImage, -60,  -18);
+				//text
+				ConnectionDecorator textConnectionDecorator = peCreateService.createConnectionDecorator(connectionPE, true, 0.5, true); //must be active in order to display
+				Graphiti.getPeService().setPropertyValue(imgConnectionDecorator, DUtil.SHAPE_TYPE, SHAPE_textConnectionDecorator);
+				Text text = gaService.createPlainText(textConnectionDecorator);
+				text.setValue(decoratorMessage);
+				text.setStyle(StyleUtil.getStyleForErrorTextConnections((diagram)));
+				gaService.setLocation(text, -40,  -15);
+				//this unfortunately hides the connection line
+//				Graphiti.getPeService().sendToFront(imgDecorator);
+//				Graphiti.getPeService().sendToFront(textDecorator);
+			}
+		}
+	}
+	
+	
 
 	/**
 	 * Determines whether creation of an interface connection is possible between source and destination anchors.
@@ -337,4 +402,5 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		}
 		return StringUtil.defaultCreateUniqueString("connection_1", ids);
 	}
+
 }
