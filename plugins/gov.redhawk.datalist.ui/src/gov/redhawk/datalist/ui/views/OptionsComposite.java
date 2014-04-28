@@ -166,23 +166,15 @@ public abstract class OptionsComposite {
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				if (isIndefinite()) {
-					buttonsEnable(isRunning);
-					if (isRunning) {
-						isRunning = !isRunning;
-						stopAcquire();
-					} else {
-						setSettings(columnsCombo.getText(), 
-								Double.valueOf(samplesTxt.getText()), 
-								captureCombo.getText());
-						startAcquire();
-					}
+
+				buttonsEnable(isRunning);
+				if (isRunning) {
+					isRunning = !isRunning;
+					stopAcquire();
 				} else {
-					isRunning = true;
-					buttonsEnable(isRunning);
 					setSettings(columnsCombo.getText(), 
-							Double.valueOf(samplesTxt.getText()), 
-							captureCombo.getText());
+						Double.valueOf(samplesTxt.getText()), 
+						captureCombo.getText());
 					startAcquire();
 				}
 			}
@@ -205,7 +197,7 @@ public abstract class OptionsComposite {
 						double val = Double.valueOf(value);
 						if (val > Integer.MAX_VALUE) {
 							showDecoration(dec, settings.getProcessType() 
-									+ " must be less than or equal to " + Integer.MAX_VALUE + ".");
+								+ " must be less than or equal to " + Integer.MAX_VALUE + ".");
 						} else if ((val - (int) val) > 0) {
 							showDecoration(dec, settings.getProcessType() + " must be a positive integer.");
 						} else if ((val > 1000000)) {
@@ -288,19 +280,15 @@ public abstract class OptionsComposite {
 
 	public void buttonsEnable(boolean running) {
 		isRunning = running;
-		if (isIndefinite()) {
-			if (running) {
-				button.setImage(getImage("icons/stop.gif"));
-				button.setToolTipText("Stop Acquire");
-			} else {
-				button.setImage(getImage("icons/start.gif"));
-				button.setToolTipText("Start Acquire");
-			}
-			button.setData(!running);
-			button.setEnabled(true);
+		if (running) {
+			button.setImage(getImage("icons/stop.gif"));
+			button.setToolTipText("Stop Acquire");
 		} else {
-			button.setEnabled(!running);
+			button.setImage(getImage("icons/start.gif"));
+			button.setToolTipText("Start Acquire");
 		}
+		button.setData(!running);
+		button.setEnabled(true);
 	}
 
 	private void setSettings(String dims, Double samples, String method) {
@@ -328,7 +316,7 @@ public abstract class OptionsComposite {
 
 	public boolean isIndefinite() {
 		return CaptureMethod.stringToValue(
-				settings.getProcessType()).equals(CaptureMethod.INDEFINITELY);
+			settings.getProcessType()).equals(CaptureMethod.INDEFINITELY);
 	}
 
 	public DataCollectionSettings getSettings() {
