@@ -18,6 +18,10 @@
                   isRoot="false"
                   pattern="gov.redhawk.ide.debug.internal.ui.LocalScaViewerSorter">
             </contentExtension>
+            <contentExtension
+                  isRoot="true"
+                  pattern="gov.redhawk.ide.debug.ui.navigatorContent.components">
+            </contentExtension>
          </includes>
       </viewerContentBinding>
    </extension>
@@ -82,6 +86,40 @@
             name="Hide Local References"
             visibleInUI="true">
       </commonFilter>
+      <navigatorContent
+            activeByDefault="true"
+            contentProvider="gov.redhawk.ide.debug.internal.ui.LocalComponentContentProvider"
+            icon="icons/obj16/RedHawk_Logo16x.gif"
+            id="gov.redhawk.ide.debug.ui.navigatorContent.components"
+            labelProvider="gov.redhawk.ide.debug.internal.ui.ScaDebugLabelProvider"
+            name="Local Components"
+            priority="lower"
+            providesSaveables="false"
+            sortOnly="false">
+         <triggerPoints>
+            <and>
+               <not>
+                  <instanceof
+                        value="gov.redhawk.ide.debug.LocalScaWaveform">
+                  </instanceof></not>
+               <instanceof
+                     value="gov.redhawk.model.sca.ScaWaveform">
+               </instanceof>
+            </and>
+         </triggerPoints>
+         <possibleChildren>
+            <and>
+               <instanceof
+                     value="org.eclipse.emf.ecore.EObject">
+               </instanceof>
+               <test
+                     forcePluginActivation="true"
+                     property="org.eclipse.emf.ecore.namespace"
+                     value="http://redhawk.gov/sca/debug">
+               </test>
+            </and>
+         </possibleChildren>
+      </navigatorContent>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
