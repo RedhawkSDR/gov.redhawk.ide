@@ -19,6 +19,7 @@ import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaPortContainer;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
+import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.PluginUtil;
 
@@ -51,11 +52,6 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import ExtendedCF.UsesConnection;
 
-/**
- * 
- * 
- */
-
 public class SadModelInitializerCommand extends AbstractCommand {
 	private static final Debug DEBUG = new Debug(LocalScaDiagramPlugin.PLUGIN_ID, "init");
 
@@ -69,7 +65,7 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		this.sad = sad;
 	}
 
-	private void initConnection(@NonNull final ScaConnection con) {
+	public static void initConnection(@NonNull final ScaConnection con, SoftwareAssembly sad, ScaWaveform waveform, ModelMap modelMap) {
 		final ScaUsesPort uses = con.getPort();
 		final ScaPortContainer container = uses.getPortContainer();
 		if (!(container instanceof ScaComponent)) {
@@ -82,7 +78,7 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		final SadConnectInterface sadCon = SadFactory.eINSTANCE.createSadConnectInterface();
 		final SadUsesPort usesPort = SadFactory.eINSTANCE.createSadUsesPort();
 		final SadComponentInstantiationRef usesCompRef = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
-		usesCompRef.setInstantiation(this.modelMap.get(comp));
+		usesCompRef.setInstantiation(modelMap.get(comp));
 		usesPort.setComponentInstantiationRef(usesCompRef);
 		usesPort.setUsesIndentifier(uses.getName());
 		sadCon.setUsesPort(usesPort);
@@ -92,11 +88,11 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		boolean foundTarget = false;
 		final UsesConnection conData = con.getData();
 		final org.omg.CORBA.Object target = conData.port;
-		outC: for (final ScaComponent c : this.waveform.getComponents()) {
+		outC: for (final ScaComponent c : waveform.getComponents()) {
 			if (is_equivalent(target, c.getObj())) {
 				final ComponentSupportedInterface csi = PartitioningFactory.eINSTANCE.createComponentSupportedInterface();
 				final SadComponentInstantiationRef ref = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
-				ref.setInstantiation(this.modelMap.get((LocalScaComponent) c));
+				ref.setInstantiation(modelMap.get((LocalScaComponent) c));
 				csi.setComponentInstantiationRef(ref);
 				csi.setSupportedIdentifier(uses.getProfileObj().getRepID());
 				sadCon.setComponentSupportedInterface(csi);
@@ -107,7 +103,7 @@ public class SadModelInitializerCommand extends AbstractCommand {
 					if (cPort instanceof ScaProvidesPort && is_equivalent(target, cPort.getObj())) {
 						final SadProvidesPort sadProvidesPort = SadFactory.eINSTANCE.createSadProvidesPort();
 						final SadComponentInstantiationRef ref = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
-						ref.setInstantiation(this.modelMap.get((LocalScaComponent) c));
+						ref.setInstantiation(modelMap.get((LocalScaComponent) c));
 						sadProvidesPort.setComponentInstantiationRef(ref);
 						sadProvidesPort.setProvidesIdentifier(cPort.getName());
 						sadCon.setProvidesPort(sadProvidesPort);
@@ -119,11 +115,11 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		}
 		// We were unable to find the target side of the connection, so ignore it
 		if (foundTarget) {
-			if (this.sad.getConnections() == null) {
-				this.sad.setConnections(SadFactory.eINSTANCE.createSadConnections());
+			if (sad.getConnections() == null) {
+				sad.setConnections(SadFactory.eINSTANCE.createSadConnections());
 			}
-			this.sad.getConnections().getConnectInterface().add(sadCon);
-			this.modelMap.put(con, sadCon);
+			sad.getConnections().getConnectInterface().add(sadCon);
+			modelMap.put(con, sadCon);
 		} else {
 			if (SadModelInitializerCommand.DEBUG.enabled) {
 				SadModelInitializerCommand.DEBUG.trace("Failed to initialize connection " + con.getId());
@@ -131,7 +127,7 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		}
 	}
 
-	private boolean is_equivalent(final org.omg.CORBA.Object obj1, final org.omg.CORBA.Object obj2) {
+	private static boolean is_equivalent(final org.omg.CORBA.Object obj1, final org.omg.CORBA.Object obj2) {
 		if (obj1 == null || obj2 == null) {
 			return false;
 		}
@@ -157,7 +153,7 @@ public class SadModelInitializerCommand extends AbstractCommand {
 
 	}
 
-	private void initComponent(@NonNull final LocalScaComponent comp) {
+	public static void initComponent(@NonNull final LocalScaComponent comp, SoftwareAssembly sad, ModelMap modelMap) {
 		final SoftPkg spd = comp.getProfileObj();
 		if (spd == null) {
 			// For some reason we couldn't find the SPD Abort.
@@ -166,7 +162,7 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		}
 
 		ComponentFile spdFile = null;
-		for (final ComponentFile file : this.sad.getComponentFiles().getComponentFile()) {
+		for (final ComponentFile file : sad.getComponentFiles().getComponentFile()) {
 			if (file.getSoftPkg() != null) {
 				if (PluginUtil.equals(file.getSoftPkg().getId(), spd.getId())) {
 					spdFile = file;
@@ -177,10 +173,10 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		if (spdFile == null) {
 			spdFile = SadFactory.eINSTANCE.createComponentFile();
 			spdFile.setSoftPkg(spd);
-			this.sad.getComponentFiles().getComponentFile().add(spdFile);
+			sad.getComponentFiles().getComponentFile().add(spdFile);
 		}
 
-		final SadPartitioning partitioning = this.sad.getPartitioning();
+		final SadPartitioning partitioning = sad.getPartitioning();
 
 		final SadComponentPlacement placement = SadFactory.eINSTANCE.createSadComponentPlacement();
 		partitioning.getComponentPlacement().add(placement);
@@ -203,7 +199,7 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		inst.setPlacement(placement);
 		placement.setComponentFileRef(fileRef);
 
-		this.modelMap.put(comp, inst);
+		modelMap.put(comp, inst);
 	}
 
 	@Override
@@ -216,7 +212,7 @@ public class SadModelInitializerCommand extends AbstractCommand {
 		if (waveform != null) {
 			for (final ScaComponent comp : this.waveform.getComponents()) {
 				if (comp != null) {
-					initComponent((LocalScaComponent) comp);
+					initComponent((LocalScaComponent) comp, sad, modelMap);
 				}
 			}
 
@@ -234,7 +230,7 @@ public class SadModelInitializerCommand extends AbstractCommand {
 
 						for (final ScaConnection con : connections) {
 							if (con != null) {
-								initConnection(con);
+								initConnection(con, sad, waveform, modelMap);
 							}
 						}
 					}
