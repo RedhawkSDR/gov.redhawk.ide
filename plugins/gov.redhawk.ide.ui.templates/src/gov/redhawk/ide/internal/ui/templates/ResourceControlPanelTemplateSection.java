@@ -208,7 +208,7 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 		} else {
 			name = "ControlPanel";
 		}
-		return makeNameSafe(WordUtils.capitalize(name.trim()).replace(" ", ""));
+		return makeNameSafe(WordUtils.capitalize(name.trim()).replace(" ", "").replaceAll("[^a-zA-Z0-9]", "_").replaceAll("_*_", "_"));
 	}
 
 	/**
