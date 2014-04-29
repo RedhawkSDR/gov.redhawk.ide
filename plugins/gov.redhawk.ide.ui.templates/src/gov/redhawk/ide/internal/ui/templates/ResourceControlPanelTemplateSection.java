@@ -146,7 +146,16 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	 * @return
 	 */
 	private String getField(Simple s, boolean prepend) {
-		String field = s.getName() + "_Text";
+		String field;
+		if (s.getName() != null) {
+			field = s.getName() + "_Text";
+			field = field.replaceAll("[^a-zA-Z0-9]", "_");
+			field = field.replaceAll("_*_", "_");
+		} else {
+			field = s.getId();
+			field = field.replaceAll("[^a-zA-Z0-9]", "_");
+			field = field.replaceAll("_*_", "_");
+		} 
 		field = WordUtils.uncapitalize(field.replace(" ", ""));
 		if (prepend) {
 			return "fields." + field;
