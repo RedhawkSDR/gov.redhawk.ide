@@ -70,7 +70,9 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 		if ("packageName".equals(name)) {
 			return getBasePackage();
 		} else if ("resourceClassName".equals(name)) {
-			return getResourceClassName();
+			return getResourceClassName(true);
+		} else if ("resourceClassNameNoGeneric".equals(name)) {
+			return getResourceClassName(false);
 		} else if ("contentTypeProfileId".equals(name)) {
 			return getProfileId();
 		} else if ("sectionClassName".equals(name)) {
@@ -144,7 +146,7 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	 * @return
 	 */
 	private String getField(Simple s, boolean prepend) {
-		String field = s.getId();
+		String field = s.getName() + "_Text";
 		field = WordUtils.uncapitalize(field.replace(" ", ""));
 		if (prepend) {
 			return "fields." + field;
@@ -199,7 +201,7 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 		}
 		return makeNameSafe(WordUtils.capitalize(name.trim()).replace(" ", ""));
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -224,7 +226,7 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	/**
 	 * @return
 	 */
-	public String getResourceClassName() {
+	public String getResourceClassName(boolean hasGeneric) {
 		EObject resource = getSelection();
 		if (resource instanceof SoftwareAssembly) {
 			return "gov.redhawk.model.sca.ScaWaveform";
@@ -240,7 +242,11 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 			}
 			switch (type) {
 			case DEVICE:
-				return "gov.redhawk.model.sca.ScaDevice<?>";
+				if (hasGeneric) {
+					return "gov.redhawk.model.sca.ScaDevice<?>";
+				} else {
+					return "gov.redhawk.model.sca.ScaDevice";
+				}
 			case SERVICE:
 				return "gov.redhawk.model.sca.ScaService";
 			default:
