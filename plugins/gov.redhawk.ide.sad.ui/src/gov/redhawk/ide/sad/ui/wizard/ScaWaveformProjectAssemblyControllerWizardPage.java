@@ -126,7 +126,12 @@ public class ScaWaveformProjectAssemblyControllerWizardPage extends WizardPage {
 		});
 
 		if (this.tableViewer != null) {
-			this.tableViewer.setInput(this.components);
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					tableViewer.setInput(ScaWaveformProjectAssemblyControllerWizardPage.this.components);
+				}
+			});
 		}
 	}
 }

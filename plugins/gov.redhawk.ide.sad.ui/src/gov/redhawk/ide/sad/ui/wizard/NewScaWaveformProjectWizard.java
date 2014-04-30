@@ -214,6 +214,9 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 	 * @param sadPart The Sad Editor instance that we shall change the initial diagram style for
 	 */
 	private void setCustomPreferences(final SadEditor sadPart) {
+		if (sadPart == null) {
+			return;
+		}
 		final DiagramGraphicalViewer viewer = (DiagramGraphicalViewer) sadPart.getDiagramGraphicalViewer();
 		final IPreferenceStore store = viewer.getWorkspaceViewerPreferenceStore();
 
