@@ -330,14 +330,25 @@ public class ImplementationWizardPage extends WizardPage {
 	 */
 	protected void handleProgLangSelection() {
 		final String temp = ImplementationWizardPage.this.getProgLangEntryViewer().getText();
-		final ICodeGeneratorDescriptor[] tempCodegens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(temp, this.getComponenttype());
+		final ICodeGeneratorDescriptor[] availableCodegens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(temp,
+			this.getComponenttype());
+
+		// As of 1.10, JET generators are to be filtered out of the project creation wizard
+		List<ICodeGeneratorDescriptor> tempCodegens = new ArrayList<ICodeGeneratorDescriptor>();
+		for (int i = 0; i < availableCodegens.length; i++) {
+			if (availableCodegens[i].getName().matches(".*JET.*")) {
+				continue;
+			} else {
+				tempCodegens.add(availableCodegens[i]);
+			}
+		}
 
 		if (!this.manualId || "".equals(this.idText.getText().trim())) {
 			this.idText.setText(this.createUniqueId(temp, this.projectName));
 			this.manualId = false;
 		}
 		ImplementationWizardPage.this.getCodeGeneratorEntryViewer().setInput(tempCodegens);
-		if (tempCodegens.length > 0) {
+		if (tempCodegens.size() > 0) {
 			// First try and go through and set it to a default generator that has not been filtered.
 			for (final ICodeGeneratorDescriptor desc : tempCodegens) {
 				if (!desc.notDefaultableGenerator()) {
