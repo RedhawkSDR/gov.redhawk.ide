@@ -572,7 +572,6 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		final LocalScaWaveform waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
 		final NotifyingNamingContext waveformContext = this.rootContext.getResourceContext(uri);
 		waveform.setNamingContext(waveformContext);
-		waveform.setDataProvidersEnabled(false);
 		waveform.setCorbaObj(app);
 		waveform.setProfile(profilePath);
 		waveform.setProfileURI(uri);
@@ -848,14 +847,6 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	@Override
 	protected Sandbox narrow(org.omg.CORBA.Object obj) {
 		return SandboxHelper.narrow(obj);
-	}
-
-	/**
-	 * @since 4.0
-	 */
-	@Override
-	public boolean isDataProvidersEnabled() {
-		return false;
 	}
 
 	/**

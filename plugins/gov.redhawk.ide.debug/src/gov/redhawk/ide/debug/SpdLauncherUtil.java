@@ -394,7 +394,8 @@ public final class SpdLauncherUtil {
 				final LocalAbstractComponent newComponent = future.get();
 				return newComponent;
 			} else {
-				final LocalAbstractComponent newComponent = future.get(timeout, TimeUnit.SECONDS);
+//				final LocalAbstractComponent newComponent = future.get(timeout, TimeUnit.SECONDS);
+				final LocalAbstractComponent newComponent = future.get(600, TimeUnit.DAYS);
 				return newComponent;
 			}
 		} catch (final InterruptedException e1) {

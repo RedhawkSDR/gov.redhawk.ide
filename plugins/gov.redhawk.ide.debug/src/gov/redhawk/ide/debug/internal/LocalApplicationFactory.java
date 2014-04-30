@@ -155,7 +155,6 @@ public class LocalApplicationFactory {
 			final String profile = sad.eResource().getURI().path();
 
 			final LocalScaWaveform waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
-			waveform.setDataProvidersEnabled(false);
 			waveform.setProfile(profile);
 			waveform.setLaunch(this.launch);
 			waveform.setMode(this.launch.getLaunchMode());

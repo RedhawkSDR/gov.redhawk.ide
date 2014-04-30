@@ -98,6 +98,9 @@ public class ScaDebugContentProvider extends ScaContentProvider {
 
 					@Override
 					public void run() {
+						if (viewer == null) {
+							return;
+						}
 						if (obj instanceof Collection< ? >) {
 							for (Object o : ((Collection< ? >) obj)) {
 								((TreeViewer) viewer).reveal(o);

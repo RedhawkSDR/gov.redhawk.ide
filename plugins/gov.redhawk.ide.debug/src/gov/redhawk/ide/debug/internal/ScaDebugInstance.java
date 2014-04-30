@@ -172,7 +172,6 @@ public enum ScaDebugInstance {
 		final DeviceConfiguration dcd = ScaDebugInstance.createSandboxDeviceConfiguration(resourceSet);
 		final URI uri = dcd.eResource().getURI();
 
-		tmp.setDataProvidersEnabled(false);
 		tmp.setProfileURI(uri);
 		tmp.setProfile(uri.path());
 		tmp.setProfileObj(dcd);
@@ -199,7 +198,6 @@ public enum ScaDebugInstance {
 		final SoftwareAssembly sad = ScaDebugInstance.createSandboxSoftwareAssembly(resourceSet);
 
 		final LocalScaWaveform waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
-		waveform.setDataProvidersEnabled(false);
 		waveform.setProfile(sad.eResource().getURI().path());
 		waveform.setProfileURI(sad.eResource().getURI());
 		waveform.setProfileObj(sad);
