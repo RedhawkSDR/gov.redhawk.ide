@@ -178,13 +178,111 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	 */
 	private boolean saveAndGenerate(Object objectToGenerate, IProject parentProject, Shell shell) throws CoreException {
 		if (relatedResourcesSaved(shell, parentProject)) {
+			boolean shouldGenerate = true;
 			try {
 				checkDeprecated(objectToGenerate, shell);
+				shouldGenerate = checkManualGenerator(objectToGenerate, shell);
 			} catch (OperationCanceledException e) {
 				return false;
 			}
-			GenerateCode.generate(shell, objectToGenerate);
+			if (shouldGenerate) {
+				GenerateCode.generate(shell, objectToGenerate);
+			}
 			return true;
+		}
+		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean checkManualGenerator(Object selectedObj, Shell parent) throws CoreException {
+		boolean shouldGenerate = true;
+		if (selectedObj instanceof SoftPkg) {
+			shouldGenerate = checkManualGeneratorImpls(parent, ((SoftPkg) selectedObj).getImplementation());
+		} else if (selectedObj instanceof EList) {
+			shouldGenerate = checkManualGeneratorImpls(parent, (List<Implementation>) selectedObj);
+		} else if (selectedObj instanceof Implementation) {
+			final List<Implementation> impls = new ArrayList<Implementation>();
+			impls.add((Implementation) selectedObj);
+			shouldGenerate = checkManualGeneratorImpls(parent, impls);
+		} else if (selectedObj instanceof IFile) {
+			// The selected object should be an IFile for the SPD
+			final IFile file = (IFile) selectedObj;
+			final URI spdURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
+			final SoftPkg softpkg = ModelUtil.loadSoftPkg(spdURI);
+			shouldGenerate = checkManualGeneratorImpls(parent, softpkg.getImplementation());
+		}
+		return shouldGenerate;
+	}
+
+	/**
+	 * Check to see if any implementation is configured using the Manual Code Generator option
+	 * @param parent
+	 * @param impls
+	 * @throws CoreException
+	 */
+	private boolean checkManualGeneratorImpls(Shell parent, List<Implementation> impls) throws CoreException {
+		if (impls == null || impls.isEmpty()) {
+			throw new OperationCanceledException();
+		}
+		boolean shouldGenerate = true;
+		final SoftPkg softPkg = (SoftPkg) impls.get(0).eContainer();
+		final WaveDevSettings waveDev = CodegenUtil.loadWaveDevSettings(softPkg);
+		boolean hasManualGenerator = false;
+		int manualImpls = 0;
+		for (final Implementation impl : impls) {
+			hasManualGenerator = isManualGenerator(impl, waveDev);
+			if (hasManualGenerator) {
+				manualImpls++;
+			}
+		}
+		if (manualImpls > 0) {
+			String name = softPkg.getName();
+			String message = "Some implementations in " + name + " require manual code generation.\n\n"
+				+ "Automatic Code Generation is only available for implementations using supported code generators.";
+			MessageDialog dialog = new MessageDialog(parent, "Manaul Code Generation Required", null, message, MessageDialog.INFORMATION,
+				new String[] { "OK" }, 0);
+			dialog.open();
+		}
+		// If all implementations require manual code generation, then do not start the generation process
+		if (manualImpls == impls.size()) {
+			shouldGenerate = false;
+		}
+		return shouldGenerate;
+	}
+
+	/**
+	 * 
+	 * @param impl
+	 * @param waveDev
+	 * @return true if the implementation relies on Manual Code generation
+	 * @throws CoreException
+	 */
+	private boolean isManualGenerator(Implementation impl, WaveDevSettings waveDev) throws CoreException {
+		if (waveDev == null) {
+			waveDev = generateWaveDev(impl.getSoftPkg());
+		}
+		if (waveDev == null) {
+			throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID, "GENERATE FAILED: Failed to find implementation settings in "
+				+ impl.getSoftPkg().getName() + ".wavedev file", null));
+		}
+		final ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
+		if (implSettings != null) {
+			ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(implSettings.getGeneratorId());
+			if (generator != null && generator.getName().matches(".*Manual Generator.*")) {
+				return true;
+			}
+		} else {
+			// try to auto-generate implementation settings
+			ImplementationSettings generatedImplSettings = generateWaveDev(impl.getSoftPkg()).getImplSettings().get(impl.getId());
+			if (generatedImplSettings != null) {
+				ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(generatedImplSettings.getGeneratorId());
+				if (generator != null && generator.getName().matches(".*Manual Generator.*")) {
+					return true;
+				}
+			} else {
+				throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID,
+					"GENERATE FAILED: Failed to find implementation settings for implementation: " + impl.getId(), null));
+			}
 		}
 		return false;
 	}
