@@ -239,7 +239,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 			String name = softPkg.getName();
 			String message = "Some implementations in " + name + " require manual code generation.\n\n"
 				+ "Automatic Code Generation is only available for implementations using supported code generators.";
-			MessageDialog dialog = new MessageDialog(parent, "Manaul Code Generation Required", null, message, MessageDialog.INFORMATION,
+			MessageDialog dialog = new MessageDialog(parent, "Manual Code Generation Required", null, message, MessageDialog.INFORMATION,
 				new String[] { "OK" }, 0);
 			dialog.open();
 		}
