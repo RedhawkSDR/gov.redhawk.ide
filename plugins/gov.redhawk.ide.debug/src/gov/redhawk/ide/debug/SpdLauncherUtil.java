@@ -25,6 +25,7 @@ import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 import gov.redhawk.sca.util.Debug;
+import gov.redhawk.sca.util.ORBUtil;
 import gov.redhawk.sca.util.OrbSession;
 
 import java.util.Collections;
@@ -249,11 +250,11 @@ public final class SpdLauncherUtil {
 							// PASS
 						} finally {
 							if (namingContext != null) {
-								namingContext._release();
+								ORBUtil.release(namingContext);
 								namingContext = null;
 							}
 							if (ref != null) {
-								ref._release();
+								ORBUtil.release(ref);
 								ref = null;
 							}
 						}

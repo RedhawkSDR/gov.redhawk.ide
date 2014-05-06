@@ -14,6 +14,7 @@ import gov.redhawk.ide.debug.ILauncherVariableDesc;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.variables.AbstractLauncherResolver;
 import gov.redhawk.ide.debug.variables.LaunchVariables;
+import gov.redhawk.sca.util.ORBUtil;
 import gov.redhawk.sca.util.OrbSession;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -61,14 +62,14 @@ public class NameBindingResolver extends AbstractLauncherResolver {
 					throw new IllegalStateException(e);
 				} finally {
 					if (ref != null) {
-						ref._release();
+						ORBUtil.release(ref);
 						ref = null;
 					}
 				}
 			}
 		} finally {
 			if (namingContext != null) {
-				namingContext._release();
+				ORBUtil.release(namingContext);
 				namingContext = null;
 			}
 			session.dispose();
