@@ -133,15 +133,13 @@ public class SnapshotWizardPage extends WizardPage {
 				return ((IDataWriterDesc) element).getName();
 			}
 		});
-		fileTypeCombo.setContentProvider(ArrayContentProvider.getInstance()); // ArrayContentProvider does not store any
-																				// state, therefore can re-use instances
+		fileTypeCombo.setContentProvider(ArrayContentProvider.getInstance()); // ArrayContentProvider does not store any state, therefore can re-use instances
 		IDataWriterDesc[] input = SnapshotActivator.getDataReceiverRegistry().getRecieverDescs();
 		fileTypeCombo.setInput(input);
 		fileTypeCombo.setSorter(new ViewerSorter()); // sort combo items alphabetically (this selects last item?)
 		context.bindValue(ViewerProperties.singleSelection().observe(fileTypeCombo), BeansObservables.observeValue(settings, "dataWriter"));
 		if (input.length > 0) {
-			fileTypeCombo.setSelection(new StructuredSelection(fileTypeCombo.getElementAt(0))); // select first sorted
-																								// element
+			fileTypeCombo.setSelection(new StructuredSelection(fileTypeCombo.getElementAt(0))); // select first sorted element
 		}
 
 		// add check box to see if the user wants to save to their workspace
@@ -169,8 +167,7 @@ public class SnapshotWizardPage extends WizardPage {
 		searchWorkbench.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(3, 2).create());
 
 		// This binding must be defined after all controls have been configured, because its update strategy
-		// implementation
-		// calls setSaveLocation(), which depends on the controls being already configured
+		// implementation calls setSaveLocation(), which depends on the controls being already configured
 		context.bindValue(WidgetProperties.selection().observe(workspaceCheck), BeansObservables.observeValue(settings, "saveToWorkspace"),
 			createWsCheckUpdateStrategy(), createWsCheckUpdateStrategy());
 
