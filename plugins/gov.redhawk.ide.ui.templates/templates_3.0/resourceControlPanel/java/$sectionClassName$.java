@@ -37,7 +37,7 @@ public class $sectionClassName$ extends AbstractPropertySection {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
 			Object element = ss.getFirstElement();
-			$resourceClassName$ component = PluginUtil.adapt($resourceClassName$.class, element);
+			$resourceClassName$ component = PluginUtil.adapt($resourceClassNameNoGeneric$.class, element);
 			composite.setInput(component);
 		}
 	}

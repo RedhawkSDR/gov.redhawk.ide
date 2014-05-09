@@ -62,7 +62,7 @@ public class SadLaunchShortcut implements ILaunchShortcut {
 				final IFile file = project.getFile(new Path(project.getName() + SadPackage.FILE_EXTENSION));
 				if (file.exists()) {
 					try {
-						launch((IFile) element, mode);
+						launch((IFile) file, mode);
 					} catch (final CoreException e) {
 						final Status status = new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException());
 						StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);

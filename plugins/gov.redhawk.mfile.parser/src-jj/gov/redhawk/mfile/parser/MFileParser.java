@@ -206,14 +206,6 @@ public class MFileParser implements MFileParserConstants {
     finally { jj_save(0, xla); }
   }
 
-  private boolean jj_3R_11() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(16)) jj_scanpos = xsp;
-    if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
   private boolean jj_3R_8() {
     if (jj_3R_10()) return true;
     return false;
@@ -256,6 +248,14 @@ public class MFileParser implements MFileParserConstants {
   private boolean jj_3_1() {
     if (jj_3R_6()) return true;
     if (jj_scan_token(14)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_11() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(16)) jj_scanpos = xsp;
+    if (jj_scan_token(ID)) return true;
     return false;
   }
 

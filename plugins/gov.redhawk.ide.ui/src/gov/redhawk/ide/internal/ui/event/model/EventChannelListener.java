@@ -11,6 +11,7 @@
 package gov.redhawk.ide.internal.ui.event.model;
 
 import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
+import gov.redhawk.sca.util.ORBUtil;
 import gov.redhawk.sca.util.OrbSession;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -82,7 +83,9 @@ public class EventChannelListener extends ChannelListener {
 				// PASS
 			}
 		}
-		ref._release();
+		if (ref != null) {
+			ORBUtil.release(ref);
+		}
 		ref = null;
 	}
 

@@ -85,7 +85,7 @@ public class SnapshotHandler extends AbstractHandler {
 					final ResourceOperations lf = (ResourceOperations) port.eContainer();
 					if (!lf.started()) {
 						MessageDialog dialog = new MessageDialog(HandlerUtil.getActiveShell(event), "Start Resource", null,
-							"The ports container is not started would you like to start it now?", MessageDialog.QUESTION, new String[] { "Yes", "No" }, 0);
+							"The ports container is not started.  Would you like to start it now?", MessageDialog.QUESTION, new String[] { "Yes", "No" }, 0);
 						if (dialog.open() == Window.OK) {
 							Job job = new Job("Starting...") {
 

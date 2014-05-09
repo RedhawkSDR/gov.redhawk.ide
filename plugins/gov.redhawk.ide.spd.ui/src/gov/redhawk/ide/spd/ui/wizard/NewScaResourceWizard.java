@@ -64,6 +64,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
@@ -94,13 +95,13 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	/** The component properties page. */
 	private ScaProjectPropertiesWizardPage resourcePropertiesPage;
 	private ImplementationWizardPage implPage;
-	
+
 	private Implementation impl = SpdFactory.eINSTANCE.createImplementation();
 	private final ProgrammingLanguage progLang = SpdFactory.eINSTANCE.createProgrammingLanguage();
 	private final HumanLanguage humanLang = SpdFactory.eINSTANCE.createHumanLanguage();
 	private final Compiler compiler = SpdFactory.eINSTANCE.createCompiler();
 	private final Runtime runtime = SpdFactory.eINSTANCE.createRuntime();
-	
+
 	public NewScaResourceWizard(final String componentType) {
 		super();
 		this.componentType = componentType;
@@ -111,9 +112,9 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	public void init(final IWorkbench workbench, final IStructuredSelection selection) {
 		this.firstImplPage = 1;
 	}
-	
+
 	/**
-	 * Creates a default implementation object.  Override with specific implementation if needed.
+	 * Creates a default implementation object. Override with specific implementation if needed.
 	 * @param implementation
 	 * @since 8.1
 	 */
@@ -122,41 +123,41 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 		implementation.setId("");
 		this.progLang.setName("");
 		implementation.setProgrammingLanguage(this.progLang);
-		
+
 		this.humanLang.setName(RedhawkCodegenActivator.ENGLISH);
 		implementation.setHumanLanguage(this.humanLang);
-		
+
 		implementation.setCompiler(this.compiler);
 		implementation.setRuntime(this.runtime);
 	}
-	
+
 	/**
-     * @since 8.0
-     */
+	 * @since 8.0
+	 */
 	protected void setResourcePropertiesPage(ScaProjectPropertiesWizardPage resourcePropertiesPage) {
-	    this.resourcePropertiesPage = resourcePropertiesPage;
-    }
-	
+		this.resourcePropertiesPage = resourcePropertiesPage;
+	}
+
 	/**
-     * @since 8.0
-     */
+	 * @since 8.0
+	 */
 	protected ScaProjectPropertiesWizardPage getResourcePropertiesPage() {
-	    return resourcePropertiesPage;
-    }
-	
+		return resourcePropertiesPage;
+	}
+
 	/**
-     * @since 8.0
-     */
+	 * @since 8.0
+	 */
 	protected void setImplPage(ImplementationWizardPage implPage) {
-	    this.implPage = implPage;
-    }
-	
+		this.implPage = implPage;
+	}
+
 	/**
-     * @since 8.0
-     */
+	 * @since 8.0
+	 */
 	public ImplementationWizardPage getImplPage() {
-	    return implPage;
-    }
+		return implPage;
+	}
 
 	@Override
 	public void createPageControls(final Composite pageContainer) {
@@ -167,7 +168,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	public void generatorChanged(final Implementation impl, final ICodeGeneratorDescriptor codeGeneratorDescriptor) {
 		generatorChanged(impl, codeGeneratorDescriptor, null);
 	}
-	
+
 	/**
 	 * @since 8.1
 	 */
@@ -187,11 +188,11 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 					break;
 				}
 			}
-			
+
 			// This is assuming that the codegen page is the last page since it is the last statically added page.
-			// TODO: Can we remove this now?  Or is it needed down the line where its not going to be properly set?
+			// TODO: Can we remove this now? Or is it needed down the line where its not going to be properly set?
 			int codegenIndex = this.wizPages.size();
-			ICodegenWizardPage oldGenPages[] = null;
+			ICodegenWizardPage[] oldGenPages = null;
 			ImplementationSettings settings = null;
 			int numOfOldGenPages = -1;
 			// Figure out where the codegen page to replace is, based on the
@@ -216,23 +217,23 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 						// page, replace it
 						// Store the generator page if it's next, otherwise
 						// we'll be inserting one
-						
+
 						// If the wizard has an old codeGen page we need to snatch up then the wizards size will be greater or equal than codeGen index + 1.
 						// If the wizard has an old codeGen page we need to snatch up then the old codeGen page will be of type ICodegenWizardPage
-						if (codegenIndex + 1 <= this.wizPages.size()  && (this.wizPages.get(codegenIndex) instanceof ICodegenWizardPage)) {
+						if (codegenIndex + 1 <= this.wizPages.size() && (this.wizPages.get(codegenIndex) instanceof ICodegenWizardPage)) {
 							ICodegenWizardPage[] oldCodeGenPages = RedhawkCodegenUiActivator.getCodeGeneratorsRegistry().findPageByGeneratorId(previousImplId);
 							numOfOldGenPages = oldCodeGenPages.length;
-							
+
 							// Only used these to determine number of pages, not needed
 							for (ICodegenWizardPage oldCodeGenPage : oldCodeGenPages) {
 								oldCodeGenPage.dispose();
 							}
-							
+
 							List<IWizardPage> tmpList = new ArrayList<IWizardPage>();
 							for (int ii = 0; ii < numOfOldGenPages; ii++) {
 								tmpList.add(this.wizPages.get(codegenIndex + ii));
 							}
-							
+
 							oldGenPages = tmpList.toArray(new ICodegenWizardPage[tmpList.size()]);
 						}
 						break;
@@ -247,10 +248,10 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 				this.getContainer().updateButtons();
 				return;
 			}
-			ICodegenWizardPage codeGenPages[] = null;
+			ICodegenWizardPage[] codeGenPages = null;
 			boolean createControl = true;
-			final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(codeGeneratorDescriptor.getId(),
-			        this.componentType);
+			final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(
+				codeGeneratorDescriptor.getId(), this.componentType);
 
 			// Add the new page first
 			if (settings != null && templates.length > 0) {
@@ -259,7 +260,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 				codeGenPages = RedhawkCodegenUiActivator.getCodeGeneratorsRegistry().findPageByGeneratorId(settings.getGeneratorId());
 
 				if (oldGenPages != null) {
-					// Determine if this is the same set of codegen Pages as the previous selection. 
+					// Determine if this is the same set of codegen Pages as the previous selection.
 					boolean sameSetOfPages = true;
 					if (numOfOldGenPages == codeGenPages.length) {
 						for (int i = 0; i < numOfOldGenPages; i++) {
@@ -271,7 +272,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 					} else {
 						sameSetOfPages = false;
 					}
-					
+
 					// If the generator pages are different, add the new ones
 					if (!sameSetOfPages) {
 						int tmpCodegenIndex = codegenIndex;
@@ -288,9 +289,9 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 						}
 						codeGenPages = oldGenPages;
 						oldGenPages = null;
-						
+
 						createControl = false;
-						
+
 					}
 				} else if (codegenIndex == this.wizPages.size()) {
 					for (IWizardPage codeGenPage : codeGenPages) {
@@ -315,19 +316,19 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 
 			// Initialize the settings page
 			if (codeGenPages != null && settings != null && templates.length > 0) {
-				
+
 				settings.setOutputDir(null); // let the page pick the outputdir
-				
-					for (ICodegenWizardPage codeGenPage : codeGenPages) {
-						if (createControl) {
-							codeGenPage.setWizard(this);
-							codeGenPage.setCanFinish(true);
-							codeGenPage.setCanFlipToNextPage(true);
-						}
-						// Configure the wizard page with the current settings
-						codeGenPage.configure(this.getSoftPkg(), impl, codeGeneratorDescriptor, settings, this.componentType);
+
+				for (ICodegenWizardPage codeGenPage : codeGenPages) {
+					if (createControl) {
+						codeGenPage.setWizard(this);
+						codeGenPage.setCanFinish(true);
+						codeGenPage.setCanFlipToNextPage(true);
 					}
-				
+					// Configure the wizard page with the current settings
+					codeGenPage.configure(this.getSoftPkg(), impl, codeGeneratorDescriptor, settings, this.componentType);
+				}
+
 			}
 		}
 
@@ -343,10 +344,10 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	 */
 	private int getWizardPageIndex(IWizardPage page) {
 		IWizard pageWizard = page.getWizard();
-		
+
 		IWizardPage[] allPages = pageWizard.getPages();
 		List<IWizardPage> arrayOfPages = Arrays.asList(allPages);
-		
+
 		return arrayOfPages.indexOf(page);
 	}
 
@@ -383,7 +384,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 
 							pairImpl.setCode(code);
 						} catch (final CoreException e) {
-							//PASS
+							// PASS
 						}
 					}
 				}
@@ -548,18 +549,25 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 						// Configure the settings page if there is one for this
 						// implementation
 						final ICodeGeneratorDescriptor codeGen = page.getCodeGenerator();
-						final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(codeGen.getId(), getType());
+						final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(codeGen.getId(),
+							getType());
 						if (templates.length > 0) {
 							// findPageByGeneratorId is always guaranteed to return
 							// at least one page. Add this page to the wizard
-							final ICodegenWizardPage[] codeGenPages = RedhawkCodegenUiActivator.getCodeGeneratorsRegistry().findPageByGeneratorId(settings.getGeneratorId());
+							final ICodegenWizardPage[] codeGenPages = RedhawkCodegenUiActivator.getCodeGeneratorsRegistry().findPageByGeneratorId(
+								settings.getGeneratorId());
 							for (ICodegenWizardPage codeGenPage : codeGenPages) {
 								addPage(codeGenPage);
 								// Configure the wizard page with the current settings
 								codeGenPage.configure(getSoftPkg(), getImplementation(), codeGen, settings, getType());
+								// Mark codeGenPage as complete to allow wizard Finish button to enable 
+								((WizardPage) codeGenPage).setPageComplete(true);
 							}
 
 						}
+
+						// Mark implementation page as complete to allow wizard Finish button to enable
+						page.setPageComplete(true);
 
 						// Save the settings
 						getImplList().add(new ImplementationAndSettings(pkgImpl, settings));
@@ -596,7 +604,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 			@Override
 			protected void execute(final IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 				try {
-					final SubMonitor progress = SubMonitor.convert(monitor, "Creating project...", 4 + getImplList().size()); // SUPPRESS CHECKSTYLE MagicNumber 
+					final SubMonitor progress = SubMonitor.convert(monitor, "Creating project...", 4 + getImplList().size()); // SUPPRESS CHECKSTYLE MagicNumber
 
 					// Create an empty project
 					final IProject project = createEmptyProject(projectName, locationURI, progress.newChild(1));
@@ -617,15 +625,16 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 							final ImplementationSettings settings = page.getImplSettings();
 							ProjectCreator.addImplementation(project, projectName, pageImpl, settings, progress.newChild(1));
 						} else {
-							setOpenEditorOn(ProjectCreator.importFiles(project, existingResourceLocation, getImplList(), getImportedSettingsMap(), progress.newChild(2), getSoftPkg().getId()));
+							setOpenEditorOn(ProjectCreator.importFiles(project, existingResourceLocation, getImplList(), getImportedSettingsMap(),
+								progress.newChild(2), getSoftPkg().getId()));
 						}
-						
-						String spdFileName = project.getName() + SpdPackage.FILE_EXTENSION; //SUPPRESS CHECKSTYLE AvoidInLine
+
+						String spdFileName = project.getName() + SpdPackage.FILE_EXTENSION; // SUPPRESS CHECKSTYLE AvoidInLine
 						final IFile spdFile = project.getFile(spdFileName);
-						
+
 						// Allows for subclasses to modify the project
-						modifyResult(project, spdFile,  progress.newChild(1));
-						
+						modifyResult(project, spdFile, progress.newChild(1));
+
 						// Allows for codegenerators to add to the project.
 						for (ImplementationAndSettings implAndSettings : getImplList()) {
 							String generatorId = implAndSettings.getImplementationSettings().getGeneratorId();
@@ -640,16 +649,16 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 									}
 								}
 							}
-							
+
 						}
-						
+
 						// Allows for codegenerator templates to add to the project.
 						for (ImplementationAndSettings implAndSettings : getImplList()) {
 							String templateId = implAndSettings.getImplementationSettings().getTemplate();
 							ICodeGeneratorPageRegistry codegenTemplateRegistry = RedhawkCodegenUiActivator.getCodeGeneratorsTemplateRegistry();
 							if (codegenTemplateRegistry instanceof ICodeGeneratorPageRegistry2) {
 								List<ICodegenDisplayFactory> codegenDisplayFactories = ((ICodeGeneratorPageRegistry2) codegenTemplateRegistry).findCodegenDisplayFactoriesByGeneratorId(templateId);
-								
+
 								if (codegenDisplayFactories != null) {
 									for (ICodegenDisplayFactory factory : codegenDisplayFactories) {
 										if (factory instanceof ICodegenTemplateDisplayFactory) {
@@ -659,7 +668,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 								}
 							}
 						}
-						
+
 						project.refreshLocal(IResource.DEPTH_INFINITE, progress.newChild(1));
 
 					} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
@@ -700,7 +709,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 		} catch (final InvocationTargetException e1) {
 			if (e1.getCause() instanceof CoreException) {
 				ComponentUiPlugin.logException(e1);
-				//StatusManager.getManager().handle(((CoreException) e1.getCause()).getStatus(), StatusManager.SHOW);
+				// StatusManager.getManager().handle(((CoreException) e1.getCause()).getStatus(), StatusManager.SHOW);
 			}
 			return false;
 		} catch (final InterruptedException e1) {
@@ -710,22 +719,22 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	}
 
 	/**
-	 * Called before the Wizard is finished to allow classes extending this class to add additional behavior. 
+	 * Called before the Wizard is finished to allow classes extending this class to add additional behavior.
 	 * @since 8.1
 	 */
 	protected void modifyResult(IProject project, IFile spdFile, SubMonitor newChild) throws CoreException {
 		// Do nothing by default
-		
+
 	}
 
 	/**
-     * @since 8.0
-     */
+	 * @since 8.0
+	 */
 	protected abstract IFile createComponentFiles(IProject project, String spdName, String id, String author, IProgressMonitor monitor) throws CoreException;
 
 	/**
-     * @since 8.0
-     */
+	 * @since 8.0
+	 */
 	protected abstract IProject createEmptyProject(String projectName, java.net.URI locationURI, IProgressMonitor monitor) throws CoreException;
 
 	/**
@@ -743,36 +752,36 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	}
 
 	/**
-     * @since 8.0
-     */
+	 * @since 8.0
+	 */
 	protected Implementation getImplementation() {
 		return this.impl;
 	}
 
 	/**
-     * @since 8.0
-     */
+	 * @since 8.0
+	 */
 	protected String getID() {
-		// Figure out the ID we'll use 
+		// Figure out the ID we'll use
 		return this.resourcePropertiesPage.getID();
 	}
 
 	/**
-     * @since 8.0
-     */
+	 * @since 8.0
+	 */
 	protected String getProjectName() {
 		return resourcePropertiesPage.getProjectName();
 	}
 
 	/**
-     * @since 8.0
-     */
+	 * @since 8.0
+	 */
 	protected String getType() {
 		return ICodeGeneratorDescriptor.COMPONENT_TYPE_RESOURCE;
 	}
 
 	/**
-	 * Called by ICodegenWizardpages that have been added via the CodeGenerator selection.  The pages added
+	 * Called by ICodegenWizardpages that have been added via the CodeGenerator selection. The pages added
 	 * are usually added due to a template selection.
 	 * @param pageAddingPages The existing wizard page which wants these pages added after itself.
 	 * @param pagesToAdd The wizard pages to add.
@@ -780,13 +789,13 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	 */
 	public void addTemplatePages(IWizardPage pageAddingPages, ICodegenWizardPage[] pagesToAdd) {
 		int addingPageIndex = wizPages.lastIndexOf(pageAddingPages);
-		
+
 		for (ICodegenWizardPage pageToAdd : pagesToAdd) {
 			addingPageIndex++;
 			this.wizPages.add(addingPageIndex, pageToAdd);
 			pageToAdd.setWizard(this);
 		}
-		
+
 		if (pageAddingPages instanceof ICodegenWizardPage) {
 			if (pagesToAdd.length > 0) {
 				((ICodegenWizardPage) pageAddingPages).setCanFinish(false);
@@ -799,13 +808,13 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	 * @since 8.1
 	 */
 	public void removeTemplatePages(IWizardPage pageAddingPages, ICodegenWizardPage[] pageTypesToRemove) {
-		// The passed in array of pages is a new instance of the pages which we'd like removed.  We use them just to make sure
-		// the right pages are being removed based on class type.  It's a bit of an assumption.
+		// The passed in array of pages is a new instance of the pages which we'd like removed. We use them just to make
+		// sure the right pages are being removed based on class type. It's a bit of an assumption.
 		int indexOfAdder = this.wizPages.indexOf(pageAddingPages);
 		List<ICodegenWizardPage> pagesToRemove = new ArrayList<ICodegenWizardPage>();
-		
+
 		for (ICodegenWizardPage page : pageTypesToRemove) {
-			
+
 			if (this.wizPages.get(indexOfAdder + 1).getClass() == page.getClass()) {
 				pagesToRemove.add((ICodegenWizardPage) this.wizPages.get(indexOfAdder + 1));
 				indexOfAdder++;
@@ -813,18 +822,18 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 			// Dispose the unused page.
 			page.dispose();
 		}
-		
+
 		this.wizPages.removeAll(pagesToRemove);
 
 		for (ICodegenWizardPage page : pagesToRemove) {
 			page.dispose();
 		}
-		
+
 		if (pageAddingPages instanceof ICodegenWizardPage) {
 			((ICodegenWizardPage) pageAddingPages).setCanFinish(true);
 			((ICodegenWizardPage) pageAddingPages).setCanFlipToNextPage(false);
 		}
-		
+
 		// May be null on dispose of Wizard if user clicks cancel
 		if (this.getContainer() != null) {
 			this.getContainer().updateButtons();

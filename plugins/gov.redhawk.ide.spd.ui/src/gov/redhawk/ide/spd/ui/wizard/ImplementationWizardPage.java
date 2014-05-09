@@ -123,22 +123,31 @@ public class ImplementationWizardPage extends WizardPage {
 	 */
 	public ImplementationWizardPage(final String name, final SoftPkg softPkg) {
 		super(name, "New Implementation", ImplementationWizardPage.TITLE_IMAGE);
+		String tmpComponentType = "";
+		
 		this.setPageComplete(false);
 		this.softPkg = softPkg;
-		if (this.softPkg != null) {			
+		if (this.softPkg != null) {
 			this.projectName = this.softPkg.getName();
+			
+			// If this is a soft package there is not a descriptor or component type.
+			if (softPkg.getDescriptor() != null) {
+				tmpComponentType = softPkg.getDescriptor().getComponent().getComponentType();
+			}
 		}
+		
+		this.componenttype = tmpComponentType;
 		this.setDescription("Choose the initial settings for the new implementation.");
-		this.componenttype = softPkg.getDescriptor().getComponent().getComponentType();
+
 	}
-	
+
 	/**
 	 * @since 8.1
 	 */
 	public void setImpl(Implementation impl) {
 		this.impl = impl;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -214,10 +223,10 @@ public class ImplementationWizardPage extends WizardPage {
 					public void run() {
 						if (getWizard() instanceof ScaImplementationWizard2) {
 							((ScaImplementationWizard2) getWizard()).generatorChanged(ImplementationWizardPage.this.impl,
-							        ImplementationWizardPage.this.codeGenerator, previousCodeGenId);
+								ImplementationWizardPage.this.codeGenerator, previousCodeGenId);
 						} else if (getWizard() instanceof ScaImplementationWizard) {
 							((ScaImplementationWizard) getWizard()).generatorChanged(ImplementationWizardPage.this.impl,
-						        ImplementationWizardPage.this.codeGenerator);
+								ImplementationWizardPage.this.codeGenerator);
 						}
 					}
 				});
@@ -296,7 +305,7 @@ public class ImplementationWizardPage extends WizardPage {
 		if (selection.isEmpty()) {
 			return;
 		}
-		
+
 		final ICodeGeneratorDescriptor tempCodegen = (ICodeGeneratorDescriptor) selection.getFirstElement();
 		this.codeGenerator = tempCodegen;
 		if (!tempCodegen.getId().equals(this.implSettings.getGeneratorId())) {
@@ -330,14 +339,25 @@ public class ImplementationWizardPage extends WizardPage {
 	 */
 	protected void handleProgLangSelection() {
 		final String temp = ImplementationWizardPage.this.getProgLangEntryViewer().getText();
-		final ICodeGeneratorDescriptor[] tempCodegens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(temp, this.getComponenttype());
+		final ICodeGeneratorDescriptor[] availableCodegens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(temp,
+			this.getComponenttype());
+
+		// As of 1.10, JET generators are to be filtered out of the project creation wizard
+		List<ICodeGeneratorDescriptor> tempCodegens = new ArrayList<ICodeGeneratorDescriptor>();
+		for (int i = 0; i < availableCodegens.length; i++) {
+			if (availableCodegens[i].getName().matches(".*JET.*")) {
+				continue;
+			} else {
+				tempCodegens.add(availableCodegens[i]);
+			}
+		}
 
 		if (!this.manualId || "".equals(this.idText.getText().trim())) {
 			this.idText.setText(this.createUniqueId(temp, this.projectName));
 			this.manualId = false;
 		}
 		ImplementationWizardPage.this.getCodeGeneratorEntryViewer().setInput(tempCodegens);
-		if (tempCodegens.length > 0) {
+		if (tempCodegens.size() > 0) {
 			// First try and go through and set it to a default generator that has not been filtered.
 			for (final ICodeGeneratorDescriptor desc : tempCodegens) {
 				if (!desc.notDefaultableGenerator()) {
@@ -347,7 +367,8 @@ public class ImplementationWizardPage extends WizardPage {
 					}
 				}
 			}
-			// If that does not yield a selection then try and select one that may not be default but is available and not filtered.
+			// If that does not yield a selection then try and select one that may not be default but is available and
+			// not filtered.
 			if (ImplementationWizardPage.this.getCodeGeneratorEntryViewer().getSelection().isEmpty()) {
 				for (final ICodeGeneratorDescriptor desc : tempCodegens) {
 					if (!isFiltered(ImplementationWizardPage.this.getCodeGeneratorEntryViewer(), desc)) {
@@ -360,15 +381,15 @@ public class ImplementationWizardPage extends WizardPage {
 	}
 
 	private boolean isFiltered(ComboViewer viewer, ICodeGeneratorDescriptor desc) {
-		// It's easier to determine if the object is not filtered.  So we determine if it is notFiltered
+		// It's easier to determine if the object is not filtered. So we determine if it is notFiltered
 		// and then invert that.
-		
+
 		boolean notFiltered = true;
-		
+
 		for (ViewerFilter filter : viewer.getFilters()) {
 			notFiltered = notFiltered & filter.select(viewer, null, desc);
 		}
-		
+
 		return !notFiltered;
 	}
 
@@ -418,14 +439,17 @@ public class ImplementationWizardPage extends WizardPage {
 	@Override
 	public boolean isPageComplete() {
 		boolean retval1 = super.isPageComplete();
-		boolean retval2 = this.getCodeGenerator() != null; 
-		return  retval1 && retval2;
+		boolean retval2 = this.getCodeGenerator() != null;
+		return retval1 && retval2;
 	}
 
 	public void setName(final String name) {
+		if (idText == null) {
+			return;
+		}
 		if (!this.manualId && ((this.projectName == null) || !this.projectName.equals(name))) {
 			this.projectName = name;
-			if (this.getProgLangEntryViewer().getText().trim().length() > 0) {
+			if (this.getProgLangEntryViewer() != null && this.getProgLangEntryViewer().getText().trim().length() > 0) {
 				this.idText.setText(this.createUniqueId(this.getProgLangEntryViewer().getText(), name));
 			} else {
 				this.idText.setText("");
@@ -587,16 +611,15 @@ public class ImplementationWizardPage extends WizardPage {
 
 	private void bind(boolean importingCode) {
 		this.context.bindValue(SWTObservables.observeText(this.idText, SWT.Modify),
-		        EMFObservables.observeValue(this.impl, SpdPackage.Literals.IMPLEMENTATION__ID),
-		        new EMFEmptyStringToNullUpdateValueStrategy().setAfterConvertValidator(new ImplementationIdValidator(this.softPkg, importingCode)), null);
+			EMFObservables.observeValue(this.impl, SpdPackage.Literals.IMPLEMENTATION__ID),
+			new EMFEmptyStringToNullUpdateValueStrategy().setAfterConvertValidator(new ImplementationIdValidator(this.softPkg, importingCode)), null);
 
-		this.context
-		        .bindValue(SWTObservables.observeText(this.getProgLangEntryViewer()),
-		                EMFObservables.observeValue(this.getProgLang(), SpdPackage.Literals.PROGRAMMING_LANGUAGE__NAME),
-		                new EMFEmptyStringToNullUpdateValueStrategy(), null);
+		this.context.bindValue(SWTObservables.observeText(this.getProgLangEntryViewer()),
+			EMFObservables.observeValue(this.getProgLang(), SpdPackage.Literals.PROGRAMMING_LANGUAGE__NAME), new EMFEmptyStringToNullUpdateValueStrategy(),
+			null);
 
 		this.context.bindValue(SWTObservables.observeText(this.descriptionText, SWT.Modify),
-		        EMFObservables.observeValue(this.impl, SpdPackage.Literals.IMPLEMENTATION__DESCRIPTION), new EMFEmptyStringToNullUpdateValueStrategy(), null);
+			EMFObservables.observeValue(this.impl, SpdPackage.Literals.IMPLEMENTATION__DESCRIPTION), new EMFEmptyStringToNullUpdateValueStrategy(), null);
 
 		this.pageSupport = WizardPageSupport.create(this, this.context);
 	}

@@ -70,7 +70,9 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 		if ("packageName".equals(name)) {
 			return getBasePackage();
 		} else if ("resourceClassName".equals(name)) {
-			return getResourceClassName();
+			return getResourceClassName(true);
+		} else if ("resourceClassNameNoGeneric".equals(name)) {
+			return getResourceClassName(false);
 		} else if ("contentTypeProfileId".equals(name)) {
 			return getProfileId();
 		} else if ("sectionClassName".equals(name)) {
@@ -144,7 +146,16 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	 * @return
 	 */
 	private String getField(Simple s, boolean prepend) {
-		String field = s.getId();
+		String field;
+		if (s.getName() != null) {
+			field = s.getName() + "_Text";
+			field = field.replaceAll("[^a-zA-Z0-9]", "_");
+			field = field.replaceAll("_*_", "_");
+		} else {
+			field = s.getId();
+			field = field.replaceAll("[^a-zA-Z0-9]", "_");
+			field = field.replaceAll("_*_", "_");
+		} 
 		field = WordUtils.uncapitalize(field.replace(" ", ""));
 		if (prepend) {
 			return "fields." + field;
@@ -197,9 +208,9 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 		} else {
 			name = "ControlPanel";
 		}
-		return makeNameSafe(WordUtils.capitalize(name.trim()).replace(" ", ""));
+		return makeNameSafe(WordUtils.capitalize(name.trim()).replace(" ", "").replaceAll("[^a-zA-Z0-9]", "_").replaceAll("_*_", "_"));
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -224,7 +235,7 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 	/**
 	 * @return
 	 */
-	public String getResourceClassName() {
+	public String getResourceClassName(boolean hasGeneric) {
 		EObject resource = getSelection();
 		if (resource instanceof SoftwareAssembly) {
 			return "gov.redhawk.model.sca.ScaWaveform";
@@ -240,7 +251,11 @@ public class ResourceControlPanelTemplateSection extends BaseControlPanelTemplat
 			}
 			switch (type) {
 			case DEVICE:
-				return "gov.redhawk.model.sca.ScaDevice<?>";
+				if (hasGeneric) {
+					return "gov.redhawk.model.sca.ScaDevice<?>";
+				} else {
+					return "gov.redhawk.model.sca.ScaDevice";
+				}
 			case SERVICE:
 				return "gov.redhawk.model.sca.ScaService";
 			default:

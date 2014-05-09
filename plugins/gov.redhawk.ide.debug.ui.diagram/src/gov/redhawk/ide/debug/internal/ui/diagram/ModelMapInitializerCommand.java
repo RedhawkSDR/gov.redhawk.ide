@@ -10,6 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui.diagram;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.model.sca.ScaComponent;
@@ -42,16 +45,23 @@ public class ModelMapInitializerCommand extends AbstractCommand {
 	public void execute() {
 		if (waveform != null) {
 			EList<SadComponentInstantiation> allInsts = sad.getAllComponentInstantiations();
-			for (SadComponentInstantiation inst : allInsts) {
-				for (ScaComponent comp : waveform.getComponents()) {
+			List<ScaComponent> nonMatchedComponents = new ArrayList<ScaComponent>();
+			out : for (ScaComponent comp : waveform.getComponents()) {
+				boolean found = false;
+				for (SadComponentInstantiation inst : allInsts) {
 					if (PluginUtil.equals(comp.getInstantiationIdentifier(), inst.getId())) {
 						modelMap.put((LocalScaComponent) comp, inst);
+						found = true;
+						continue out;
 					}
+				}
+				if (!found) {
+					nonMatchedComponents.add(comp);
 				}
 			}
 
 			if (sad.getConnections() != null) {
-				for (SadConnectInterface con : sad.getConnections().getConnectInterface()) {
+				out : for (SadConnectInterface con : sad.getConnections().getConnectInterface()) {
 					for (ScaComponent comp : waveform.getComponents()) {
 						for (ScaPort< ? , ? > port : comp.getPorts()) {
 							if (port instanceof ScaUsesPort) {
@@ -59,6 +69,7 @@ public class ModelMapInitializerCommand extends AbstractCommand {
 								for (ScaConnection scaCon : uses.getConnections()) {
 									if (PluginUtil.equals(scaCon.getId(), con.getId())) {
 										modelMap.put(scaCon, con);
+										continue out;
 									}
 								}
 							}
@@ -66,6 +77,25 @@ public class ModelMapInitializerCommand extends AbstractCommand {
 					}
 				}
 			}
+			
+			for (ScaComponent comp : nonMatchedComponents) {
+				if (comp instanceof LocalScaComponent) {
+					SadModelInitializerCommand.initComponent((LocalScaComponent) comp, sad, modelMap);
+				}
+			}
+			
+			for (ScaComponent comp : nonMatchedComponents) {
+				if (comp instanceof LocalScaComponent) {
+					for (ScaPort<?, ?> port : comp.getPorts()) {
+						if (port instanceof ScaUsesPort) {
+							for (ScaConnection conn : ((ScaUsesPort) port).getConnections()) {
+								SadModelInitializerCommand.initConnection(conn, sad, waveform, modelMap);
+							}
+						}
+					}
+				}
+			}
+			
 		}
 	}
 

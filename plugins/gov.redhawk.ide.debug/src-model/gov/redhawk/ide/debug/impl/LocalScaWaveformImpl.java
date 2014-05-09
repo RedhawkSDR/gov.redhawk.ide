@@ -652,7 +652,6 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	private void addComponent(final Name name, final Resource resource) {
 		// END GENERATED CODE
 		final LocalScaComponent component = ScaDebugFactory.eINSTANCE.createLocalScaComponent();
-		component.setDataProvidersEnabled(false);
 		component.setCorbaObj(resource);
 		String compName = null;
 		final NameComponent[] nameComponents = name.components();

@@ -11,13 +11,13 @@ public interface MFileParserConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int SINGLE_LINE_COMMENT = 3;
+  int MULTI_LINE_COMMENT = 4;
   /** RegularExpression Id. */
-  int SINGLE_LINE_COMMENT_2 = 4;
+  int MULTI_LINE_COMMENT_2 = 7;
   /** RegularExpression Id. */
-  int MULTI_LINE_COMMENT = 6;
+  int SINGLE_LINE_COMMENT = 9;
   /** RegularExpression Id. */
-  int MULTI_LINE_COMMENT_2 = 9;
+  int SINGLE_LINE_COMMENT_2 = 10;
   /** RegularExpression Id. */
   int FUNCTION = 11;
   /** RegularExpression Id. */
@@ -53,14 +53,14 @@ public interface MFileParserConstants {
     "<EOF>",
     "\" \"",
     "\"\\t\"",
+    "<token of kind 3>",
+    "\"%}\"",
+    "<token of kind 5>",
+    "<token of kind 6>",
+    "\"#}\"",
+    "<token of kind 8>",
     "<SINGLE_LINE_COMMENT>",
     "<SINGLE_LINE_COMMENT_2>",
-    "\"%{\"",
-    "\"%}\"",
-    "<token of kind 7>",
-    "\"#{\"",
-    "\"#}\"",
-    "<token of kind 10>",
     "\"function\"",
     "\"[\"",
     "\"]\"",

@@ -33,6 +33,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -64,19 +65,29 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class SnapshotWizardPage extends WizardPage {
 
 	private static final int UPDATE_DELAY_MS = 100;
-	
+
 	// === BEGIN: dialog page settings storage keys ===
-	private static final String SS_FILE_TYPE_ID        = "outFileType_id";
-	private static final String SS_SAVE_TO_WORKSPACE   = "saveToWorkspace";
-	private static final String SS_CONFIRM_OVERWRITE   = "confirmOverwrite";
+	private static final String SS_FILE_TYPE_ID = "outFileType_id";
+	private static final String SS_SAVE_TO_WORKSPACE = "saveToWorkspace";
+	private static final String SS_CONFIRM_OVERWRITE = "confirmOverwrite";
 	private static final String SS_FILESYSTEM_FILENAME = "filename";
-	private static final String SS_WORKSPACE_FILENAME  = "workspaceFilename";
+	private static final String SS_WORKSPACE_FILENAME = "workspaceFilename";
 	// === END: dialog page settings storage keys ===
-	
+
 	private final SnapshotSettings settings = new SnapshotSettings();
 	private DataBindingContext context;
 	private WizardPageSupport support;
 	private IDialogSettings pageSettings;
+
+	private StackLayout fileFinderLayout;
+
+	private Composite searchWorkbench;
+
+	private Composite searchFileSystem;
+
+	private Group fileFinder;
+
+	private Button workspaceCheck;
 
 	public SnapshotWizardPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
@@ -90,7 +101,7 @@ public class SnapshotWizardPage extends WizardPage {
 	@Override
 	public void createControl(Composite main) {
 		setupDialogSettingsStorage(); // for saving wizard page settings
-		
+
 		final Composite parent = new Composite(main, SWT.None);
 		parent.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
 
@@ -111,7 +122,7 @@ public class SnapshotWizardPage extends WizardPage {
 
 	protected void createOutputControls(final Composite parent) {
 		Label label;
-		//Add Label and combo box to select file type
+		// Add Label and combo box to select file type
 		label = new Label(parent, SWT.None);
 		label.setText("File Type:");
 		ComboViewer fileTypeCombo = new ComboViewer(parent, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SIMPLE);
@@ -131,56 +142,60 @@ public class SnapshotWizardPage extends WizardPage {
 			fileTypeCombo.setSelection(new StructuredSelection(fileTypeCombo.getElementAt(0))); // select first sorted element
 		}
 
-		//add check box to see if the user wants to save to their workspace
-		final Button workspaceCheck = new Button(parent, SWT.CHECK);
+		// add check box to see if the user wants to save to their workspace
+		workspaceCheck = new Button(parent, SWT.CHECK);
 		workspaceCheck.setText("Save to Workspace");
-		context.bindValue(WidgetProperties.selection().observe(workspaceCheck), BeansObservables.observeValue(settings, "saveToWorkspace"));
 
 		// add check box to see if user wants to confirm overwrite of existing file(s)
 		final Button confirmOverwrite = new Button(parent, SWT.CHECK);
 		confirmOverwrite.setText("Confirm overwrite");
 		context.bindValue(WidgetProperties.selection().observe(confirmOverwrite), BeansObservables.observeValue(settings, "confirmOverwrite"));
-	
-		//region to hold the different pages for saving to the workspace or the file system
-		final Group fileFinder = new Group(parent, SWT.SHADOW_ETCHED_IN);
+
+		// region to hold the different pages for saving to the workspace or the file system
+		fileFinder = new Group(parent, SWT.SHADOW_ETCHED_IN);
 		fileFinder.setText("Save to");
 		fileFinder.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(3, 2).create());
-		final StackLayout fileFinderLayout = new StackLayout();
+		fileFinderLayout = new StackLayout();
 		fileFinderLayout.marginHeight = 5;
 		fileFinderLayout.marginWidth = 5;
 		fileFinder.setLayout(fileFinderLayout);
 
 		// the different pages: search file system, search workspace
-		final Composite searchFileSystem = makeFileSystemSave(fileFinder);
+		searchFileSystem = makeFileSystemSave(fileFinder);
 		searchFileSystem.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(3, 2).create());
-		final Composite searchWorkbench = makeWorkbenchTree(fileFinder);
+		searchWorkbench = makeWorkbenchTree(fileFinder);
 		searchWorkbench.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(3, 2).create());
 
-		//determining which page starts on top
-		if (workspaceCheck.getSelection()) {
+		// This binding must be defined after all controls have been configured, because its update strategy
+		// implementation calls setSaveLocation(), which depends on the controls being already configured
+		context.bindValue(WidgetProperties.selection().observe(workspaceCheck), BeansObservables.observeValue(settings, "saveToWorkspace"),
+			createWsCheckUpdateStrategy(), createWsCheckUpdateStrategy());
+
+		// determining which page starts on top
+		setSaveLocationComposite(workspaceCheck.getSelection(), true);
+
+		// switching pages
+		workspaceCheck.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setSaveLocationComposite(workspaceCheck.getSelection(), true);
+			}
+		});
+
+		restoreWidgetValues(settings);
+	}
+
+	private void setSaveLocationComposite(final boolean workspace, final boolean updateModel) {
+		if (workspace) {
 			fileFinderLayout.topControl = searchWorkbench;
 			fileFinder.layout();
 		} else {
 			fileFinderLayout.topControl = searchFileSystem;
 			fileFinder.layout();
 		}
-
-		//switching pages
-		workspaceCheck.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (workspaceCheck.getSelection()) {
-					fileFinderLayout.topControl = searchWorkbench;
-					fileFinder.layout();
-				} else {
-					fileFinderLayout.topControl = searchFileSystem;
-					fileFinder.layout();
-				}
-				context.updateModels(); // <-- this will update filename validators
-			}
-		});
-		
-		restoreWidgetValues(settings);
+		if (updateModel) {
+			context.updateModels(); // <-- this will update filename validators
+		}
 	}
 
 	private UpdateValueStrategy createFilenameT2MUpdateStrategy(final String fieldName, final boolean onWorkspace) {
@@ -198,26 +213,60 @@ public class SnapshotWizardPage extends WizardPage {
 				return ValidationStatus.ok();
 			}
 		});
-		
+
 		return updateValueStrategy;
 	}
-	
-	private Composite makeFileSystemSave(Composite parent) {
-		Composite searchFileSystem = new Composite(parent, SWT.None);
-		searchFileSystem.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
 
-		//the label and text field for files from the file system
-		Label fileNameLbl = new Label(searchFileSystem, SWT.None);
+	private UpdateValueStrategy createWsCheckUpdateStrategy() {
+		UpdateValueStrategy updateValueStrategy = new UpdateValueStrategy() {
+			@Override
+			public Object convert(Object value) {
+				if (value instanceof Boolean) {
+					setSaveLocationComposite((Boolean) value, false);
+				}
+				return super.convert(value);
+			}
+		};
+		return updateValueStrategy;
+	}
+
+	private UpdateValueStrategy createWorkspaceTreeT2MUpdateStrategy(final TreeViewer viewer) {
+		UpdateValueStrategy updateValueStrategy = new UpdateValueStrategy();
+		updateValueStrategy.setAfterConvertValidator(new IValidator() {
+			@Override
+			public IStatus validate(Object value) {
+				// Only do this validation if the workspaceCheck button returns true
+				if (workspaceCheck.getSelection()) {
+					if (((WorkbenchContentProvider) viewer.getContentProvider()).getElements(ResourcesPlugin.getWorkspace().getRoot()).length == 0) {
+						return ValidationStatus.error("A workspace project must be created.");
+					}
+					if (((IStructuredSelection) viewer.getSelection()).isEmpty()) {
+						return ValidationStatus.error("A workspace project must be selected.");
+					}
+				}
+				return ValidationStatus.ok();
+			}
+		});
+
+		return updateValueStrategy;
+	}
+
+	private Composite makeFileSystemSave(Composite parent) {
+		Composite comp = new Composite(parent, SWT.None);
+		comp.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
+
+		// the label and text field for files from the file system
+		Label fileNameLbl = new Label(comp, SWT.None);
 		fileNameLbl.setText("File Name:");
-		final Text fileNameTxt = new Text(searchFileSystem, SWT.BORDER);
+		final Text fileNameTxt = new Text(comp, SWT.BORDER);
 		fileNameTxt.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
 
- 		UpdateValueStrategy fnameTargetToModelValidator = createFilenameT2MUpdateStrategy("File Name", false);
-		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, fileNameTxt),
-			BeansObservables.observeValue(settings, "fileName"), fnameTargetToModelValidator, null);
-		
+		UpdateValueStrategy fnameTargetToModelValidator = createFilenameT2MUpdateStrategy("File Name", false);
+		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, fileNameTxt), BeansObservables.observeValue(settings, "fileName"),
+			fnameTargetToModelValidator, null);
+
 		// the browse button
-		Button button = new Button(searchFileSystem, SWT.PUSH);
+		Button button = new Button(comp, SWT.PUSH);
 		button.setText("Browse");
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -229,26 +278,26 @@ public class SnapshotWizardPage extends WizardPage {
 				}
 			}
 		});
-		return searchFileSystem;
+		return comp;
 	}
 
 	private Composite makeWorkbenchTree(Composite parent) {
-		Composite searchWorkbench = new Composite(parent, SWT.None);
-		searchWorkbench.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
+		Composite comp = new Composite(parent, SWT.None);
+		comp.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).create());
 
-		//create label and text field for inputing the file name
-		Label fileNameLbl = new Label(searchWorkbench, SWT.None);
+		// create label and text field for inputing the file name
+		Label fileNameLbl = new Label(comp, SWT.None);
 		fileNameLbl.setText("Workspace File Name:");
-		final Text fileNameTxt = new Text(searchWorkbench, SWT.BORDER);
-		
- 		UpdateValueStrategy wkspFnameTargetToModelValidator = createFilenameT2MUpdateStrategy("Workspace File Name", true);
- 		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, fileNameTxt),
- 			BeansObservables.observeValue(settings, "path"), wkspFnameTargetToModelValidator, null);
-		
+		final Text fileNameTxt = new Text(comp, SWT.BORDER);
+
+		UpdateValueStrategy wkspFnameTargetToModelValidator = createFilenameT2MUpdateStrategy("Workspace File Name", true);
+		context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(UPDATE_DELAY_MS, fileNameTxt), BeansObservables.observeValue(settings, "path"),
+			wkspFnameTargetToModelValidator, null);
+
 		fileNameTxt.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
 
-		//create tree with which to navigate the workbench file system
-		final TreeViewer workbenchTree = new TreeViewer(searchWorkbench, SWT.BORDER | SWT.V_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION);
+		// create tree with which to navigate the workbench file system
+		final TreeViewer workbenchTree = new TreeViewer(comp, SWT.BORDER | SWT.V_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION);
 		WorkbenchContentProvider contentProvider = new WorkbenchContentProvider();
 		workbenchTree.setContentProvider(contentProvider);
 		final WorkbenchLabelProvider labels = new WorkbenchLabelProvider();
@@ -256,14 +305,16 @@ public class SnapshotWizardPage extends WizardPage {
 		workbenchTree.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		workbenchTree.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(3, 1).hint(SWT.DEFAULT, 150).create());
 
-		context.bindValue(ViewerProperties.singleSelection().observe(workbenchTree), BeansObservables.observeValue(settings, "resource"));
+		UpdateValueStrategy wkspTreeTargetToModelValidator = createWorkspaceTreeT2MUpdateStrategy(workbenchTree);
+		context.bindValue(ViewerProperties.singleSelection().observe(workbenchTree), BeansObservables.observeValue(settings, "resource"),
+			wkspTreeTargetToModelValidator, null);
 		Object[] elements = contentProvider.getElements(ResourcesPlugin.getWorkspace().getRoot());
 		if (elements.length > 0) {
 			workbenchTree.setSelection(new StructuredSelection(elements[0]));
 		}
-		
+
 		workbenchTree.addFilter(new ViewerFilter() {
-			
+
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof IResource) {
@@ -293,7 +344,7 @@ public class SnapshotWizardPage extends WizardPage {
 		workbenchTree.addSelectionChangedListener(refreshAction);
 		workbenchTree.addSelectionChangedListener(renamAction);
 
-		//the menu for the tree items
+		// the menu for the tree items
 		MenuManager contextMenuManager = new MenuManager();
 		contextMenuManager.setRemoveAllWhenShown(true);
 		contextMenuManager.addMenuListener(new IMenuListener() {
@@ -310,7 +361,7 @@ public class SnapshotWizardPage extends WizardPage {
 		Menu menu = contextMenuManager.createContextMenu(workbenchTree.getControl());
 		workbenchTree.getControl().setMenu(menu);
 
-		return searchWorkbench;
+		return comp;
 	}
 
 	@Override
@@ -336,19 +387,19 @@ public class SnapshotWizardPage extends WizardPage {
 			pageSettings = getDialogSettings().addNewSection(getName());
 		}
 	}
-	
+
 	protected IDialogSettings getPageSettingsSection() {
 		return pageSettings;
 	}
-	
+
 	protected void saveWidgetValues(SnapshotSettings ss) {
-		pageSettings.put(SS_FILE_TYPE_ID,        ss.getDataWriter().getID());
-		pageSettings.put(SS_SAVE_TO_WORKSPACE,   ss.isSaveToWorkspace());
-		pageSettings.put(SS_CONFIRM_OVERWRITE,   ss.isConfirmOverwrite());
+		pageSettings.put(SS_FILE_TYPE_ID, ss.getDataWriter().getID());
+		pageSettings.put(SS_SAVE_TO_WORKSPACE, ss.isSaveToWorkspace());
+		pageSettings.put(SS_CONFIRM_OVERWRITE, ss.isConfirmOverwrite());
 		pageSettings.put(SS_FILESYSTEM_FILENAME, ss.getFileName());
-		pageSettings.put(SS_WORKSPACE_FILENAME,  ss.getPath());
+		pageSettings.put(SS_WORKSPACE_FILENAME, ss.getPath());
 	}
-	
+
 	private void restoreWidgetValues(SnapshotSettings sss) {
 		String tmp;
 		tmp = pageSettings.get(SS_FILE_TYPE_ID);

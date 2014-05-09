@@ -159,8 +159,8 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 	}
 
 	/**
-	 * Returns the ID group which could be null.  
-	 *
+	 * Returns the ID group which could be null.
+	 * 
 	 * @deprecated use {@link getID()} instead if the ID is needed
 	 */
 	@Deprecated
@@ -244,6 +244,15 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 			break;
 		}
 		setMessage(status.getMessage(), severity);
+	}
+
+	@Override
+	public boolean canFlipToNextPage() {
+		if (isCreateNewResource()) {
+			return super.canFlipToNextPage();
+		} else {
+			return false;
+		}
 	}
 
 	@Override

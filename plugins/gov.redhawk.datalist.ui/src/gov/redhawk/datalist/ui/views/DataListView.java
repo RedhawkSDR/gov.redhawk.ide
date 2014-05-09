@@ -52,6 +52,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import BULKIO.PrecisionUTCTime;
+
 /**
  * @since 1.1
  */
@@ -329,7 +330,7 @@ public class DataListView extends ViewPart {
 			dataColumn.getColumn().setResizable(true);
 			dataColumn.getColumn().setMoveable(false);
 			dataColumn.getColumn().setWidth(75);
-			dataColumn.getColumn().setData(i); // i is the dimension of the data w/in this column 
+			dataColumn.getColumn().setData(i); // i is the dimension of the data w/in this column
 
 			if (numColumns == 2) {
 				if (i == 0) {
@@ -384,12 +385,12 @@ public class DataListView extends ViewPart {
 		case NUMBER:
 			dataCourier.setProperties(columns, (int) samples);
 			this.viewer.getTable().setItemCount((int) samples);
-			this.viewer.getTable().setData(false); //sample-number dependent
+			this.viewer.getTable().setData(false); // sample-number dependent
 			break;
 		default:
 			dataCourier.setProperties(columns, 0);
 			this.viewer.getTable().setItemCount(1);
-			this.viewer.getTable().setData(true); //not sample-number dependent; increment when adding
+			this.viewer.getTable().setData(true); // not sample-number dependent; increment when adding
 			break;
 		}
 
@@ -403,7 +404,7 @@ public class DataListView extends ViewPart {
 		this.tableComposite.setSize(size.x + 1, size.y + 1);
 		this.tableComposite.setSize(size);
 
-		setButtons(true); //is running
+		setButtons(true); // is running
 		refreshJob.schedule();
 	}
 
@@ -455,7 +456,7 @@ public class DataListView extends ViewPart {
 			if (this.viewer != null) {
 				this.viewer.setInput(this.buffer);
 			}
-		} catch (final Exception e) {  // SUPPRESS CHECKSTYLE Logged Catch all exception
+		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			setContentDescription(e.getMessage());
 			if (this.viewer != null) {
 				this.viewer.getControl().setEnabled(false);

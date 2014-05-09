@@ -14,6 +14,7 @@ import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
 import gov.redhawk.model.sca.DomainConnectionException;
 import gov.redhawk.model.sca.ScaDomainManager;
 import gov.redhawk.sca.ui.ConnectPortWizard;
+import gov.redhawk.sca.util.ORBUtil;
 import gov.redhawk.sca.util.OrbSession;
 
 import java.util.UUID;
@@ -106,8 +107,10 @@ public class DomainChannelListener extends ChannelListener {
 			}
 			registrationId = null;
 		}
-		ref._release();
-		ref = null;
+		if (ref != null) {
+			ORBUtil.release(ref);
+			ref = null;
+		}
 	}
 
 	public ScaDomainManager getDomain() {

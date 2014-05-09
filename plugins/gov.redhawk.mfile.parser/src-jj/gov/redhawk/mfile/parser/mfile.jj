@@ -3,7 +3,29 @@
  *
  * Identification: $Revision: 8500 $
  */options{  LOOKAHEAD= 1;  JDK_VERSION = "1.5";  STATIC = false;  CACHE_TOKENS = true;  ERROR_REPORTING = true;  JAVA_UNICODE_ESCAPE = true;  DEBUG_PARSER = false;  DEBUG_LOOKAHEAD = false;  DEBUG_TOKEN_MANAGER = false;}PARSER_BEGIN(MFileParser)package gov.redhawk.mfile.parser;import java.io.*;import java.util.*;import gov.redhawk.mfile.parser.model.*;public class MFileParser{  public static MFile parse(InputStream in, String encoding) throws ParseException  {    MFileParser parser = new MFileParser(in, encoding);    return parser.mFile();  }}PARSER_END(MFileParser)/* WHITE SPACE */SKIP :{  " "| "\t"}/**SKIP :{  " "| "\t"| "\n"| "\r"| "\f"}
-*/SPECIAL_TOKEN :{  < SINGLE_LINE_COMMENT :    "%" (~[ "{", "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    )? >}SPECIAL_TOKEN :{  < SINGLE_LINE_COMMENT_2 :    "#" (~[ "{", "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    )? >}MORE :{  < "%{" > : IN_MULTI_LINE_COMMENT}< IN_MULTI_LINE_COMMENT >SPECIAL_TOKEN :{  < MULTI_LINE_COMMENT : "%}" > : DEFAULT}< IN_MULTI_LINE_COMMENT >MORE :{  < ~[ ] >}MORE :{  < "#{" > : IN_MULTI_LINE_COMMENT_2}< IN_MULTI_LINE_COMMENT_2 >SPECIAL_TOKEN :{  < MULTI_LINE_COMMENT_2 : "#}" > : DEFAULT}< IN_MULTI_LINE_COMMENT_2 >MORE :{  < ~[ ] >}TOKEN :{  < FUNCTION : "function" >}MFile mFile() :{  MFile retVal = new MFile();  Function function;}{  (< NL >)*  [    function = function()    {      retVal.setFunction(function);      // TODO: Shortcut return MFile function definition
+*/MORE :{  < "%{" (" ")* "\n" > : IN_MULTI_LINE_COMMENT}< IN_MULTI_LINE_COMMENT >SPECIAL_TOKEN :{  < MULTI_LINE_COMMENT : "%}" > : DEFAULT}< IN_MULTI_LINE_COMMENT >MORE :{  < ~[ ] >}MORE :{  < "#{" (" ")* "\n" > : IN_MULTI_LINE_COMMENT_2}< IN_MULTI_LINE_COMMENT_2 >SPECIAL_TOKEN :{  < MULTI_LINE_COMMENT_2 : "#}" > : DEFAULT}< IN_MULTI_LINE_COMMENT_2 >MORE :{  < ~[ ] >}
+
+SPECIAL_TOKEN :
+{
+  < SINGLE_LINE_COMMENT :
+    "%" (~[ "\n", "\r" ])*
+    (
+      "\n"
+    | "\r"
+    | "\r\n"
+    )? >
+}
+
+SPECIAL_TOKEN :
+{
+  < SINGLE_LINE_COMMENT_2 :
+    "#" (~[ "\n", "\r" ])*
+    (
+      "\n"
+    | "\r"
+    | "\r\n"
+    )? >
+}TOKEN :{  < FUNCTION : "function" >}MFile mFile() :{  MFile retVal = new MFile();  Function function;}{  (< NL >)*  [    function = function()    {      retVal.setFunction(function);      // TODO: Shortcut return MFile function definition
       return retVal;    }  ]  < EOF >  {    return retVal;  }}List < String > outputs() :{  List < String > strList = new ArrayList < String > ();  String id = null;}{  (    (      "[" [ strList = multiPart() ] "]"    )  | strList = multiPart()  )  {    return strList;  }}Function function() :{  Function function = new Function();  List < String > strList = null;  String id = null;}{  < FUNCTION >  (    LOOKAHEAD(2)    strList = outputs() "=" < ID >    {      function.getOutputs().addAll(strList);    }  | < ID >  )  {    function.setName(token.image);  }  [ functionArgs(function, strList) ] < NL >  {    return function;  }}void functionArgs(Function function, List < String > strList) :{}{  "(" (< NL >)*  (    < ID >    {      function.getInputs().add(token.image);    }    [ "," ] (< NL >)*  )*  (")" [ ";" ])}List < String > multiPart() :
 {
   List < String > retVal = new ArrayList < String > ();

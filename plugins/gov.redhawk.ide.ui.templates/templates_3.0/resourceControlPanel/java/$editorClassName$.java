@@ -14,7 +14,7 @@ import org.eclipse.ui.PartInitException;
 /**
  * An example showing how to create a control panel.
  */
-public class $editorClassName$ extends AbstractScaContentEditor<$resourceClassName$> {
+public class $editorClassName$ extends AbstractScaContentEditor<$resourceClassNameNoGeneric$> {
 	private $compositeName$ composite;
 	
 	/**
@@ -46,7 +46,7 @@ public class $editorClassName$ extends AbstractScaContentEditor<$resourceClassNa
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected Class<$resourceClassName$> getInputType() {
-		return $resourceClassName$.class;
+	protected Class<$resourceClassNameNoGeneric$> getInputType() {
+		return $resourceClassNameNoGeneric$.class;
 	}
 }
