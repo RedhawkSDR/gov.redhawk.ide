@@ -123,13 +123,22 @@ public class ImplementationWizardPage extends WizardPage {
 	 */
 	public ImplementationWizardPage(final String name, final SoftPkg softPkg) {
 		super(name, "New Implementation", ImplementationWizardPage.TITLE_IMAGE);
+		String tmpComponentType = "";
+		
 		this.setPageComplete(false);
 		this.softPkg = softPkg;
 		if (this.softPkg != null) {
 			this.projectName = this.softPkg.getName();
+			
+			// If this is a soft package there is not a descriptor or component type.
+			if (softPkg.getDescriptor() != null) {
+				tmpComponentType = softPkg.getDescriptor().getComponent().getComponentType();
+			}
 		}
+		
+		this.componenttype = tmpComponentType;
 		this.setDescription("Choose the initial settings for the new implementation.");
-		this.componenttype = softPkg.getDescriptor().getComponent().getComponentType();
+
 	}
 
 	/**
