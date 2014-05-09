@@ -62,7 +62,7 @@ public class DataListView extends ViewPart {
 	 */
 	public static final String ID = "gov.redhawk.datalist.ui.views.DataListView";
 
-	public static final String REAL = "Real", IMAGINARY = "Imaginary", COMPLEX = "Complex";
+	public static final String REAL = "Real Value", IMAGINARY = "Imaginary Value", COMPLEX = "Complex";
 
 	private final DataCourier dataCourier;
 
@@ -244,7 +244,7 @@ public class DataListView extends ViewPart {
 		this.tableComposite = new Composite(parent, SWT.None);
 		this.tableComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
 
-		createTable(0);
+		createTable(1);
 
 		Composite bottom = new Composite(parent, SWT.None);
 		bottom.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
@@ -303,6 +303,7 @@ public class DataListView extends ViewPart {
 		ColumnViewerToolTipSupport.enableFor(this.viewer);
 
 		final TableViewerColumn indexColumn = new TableViewerColumn(this.viewer, SWT.CENTER);
+		indexColumn.getColumn().setText("Sample ID");
 		indexColumn.getColumn().setResizable(true);
 		indexColumn.getColumn().setMoveable(false);
 		indexColumn.getColumn().setWidth(50);
@@ -323,10 +324,11 @@ public class DataListView extends ViewPart {
 		});
 
 		indexColumn.setLabelProvider(new IndexColumnLabelProvider());
-		layout.setColumnData(indexColumn.getColumn(), new ColumnPixelData(50, true));
+		layout.setColumnData(indexColumn.getColumn(), new ColumnPixelData(100, true));
 
 		for (int i = 0; i < numColumns; i++) {
 			final TableViewerColumn dataColumn = new TableViewerColumn(this.viewer, SWT.CENTER);
+			dataColumn.getColumn().setText("Value");
 			dataColumn.getColumn().setResizable(true);
 			dataColumn.getColumn().setMoveable(false);
 			dataColumn.getColumn().setWidth(75);
