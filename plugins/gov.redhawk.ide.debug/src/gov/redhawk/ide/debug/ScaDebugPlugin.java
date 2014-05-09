@@ -16,6 +16,7 @@ import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.jacorb.JacorbActivator;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -30,6 +31,7 @@ public class ScaDebugPlugin extends Plugin {
 	public void start(final BundleContext context) throws Exception {
 		ScaDebugPlugin.instance = this;
 		super.start(context);
+		JacorbActivator.getDefault().init();
 	}
 
 	@Override
