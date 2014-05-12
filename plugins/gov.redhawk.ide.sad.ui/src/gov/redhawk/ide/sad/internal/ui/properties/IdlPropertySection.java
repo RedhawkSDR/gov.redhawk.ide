@@ -168,7 +168,10 @@ public class IdlPropertySection extends AbstractModelerPropertySection {
 			final List<Identifiable> input = new ArrayList<Identifiable>();
 			if (!repIds.isEmpty()) {
 				for (final String repId : repIds) {
-					input.add(SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary().find(repId));
+					Identifiable item = SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary().find(repId);
+					if (item != null) {
+						input.add(item);
+					}
 				}
 				this.label.setText(repIds.toString());
 			}

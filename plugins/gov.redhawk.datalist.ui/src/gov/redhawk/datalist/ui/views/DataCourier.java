@@ -187,6 +187,9 @@ public class DataCourier {
 	}
 
 	public void setSelectedIndex(int i) {
+		if (sView == null) {
+			return;
+		}
 		if (i < dimensions) {
 			currentIndex = i;
 			sView.setIndex(currentIndex);
