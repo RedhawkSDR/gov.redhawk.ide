@@ -206,6 +206,10 @@
                   </enumeration>
                   <enumeration value="service">
                   </enumeration>
+                  <enumeration value="loadabledevice">
+                  </enumeration>
+                  <enumeration value="executabledevice">
+                  </enumeration>
                </restriction>
             </simpleType>
          </attribute>
