@@ -64,7 +64,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
@@ -560,14 +559,10 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 								addPage(codeGenPage);
 								// Configure the wizard page with the current settings
 								codeGenPage.configure(getSoftPkg(), getImplementation(), codeGen, settings, getType());
-								// Mark codeGenPage as complete to allow wizard Finish button to enable 
-								((WizardPage) codeGenPage).setPageComplete(true);
+								codeGenPage.setCanFlipToNextPage(true);
 							}
 
 						}
-
-						// Mark implementation page as complete to allow wizard Finish button to enable
-						page.setPageComplete(true);
 
 						// Save the settings
 						getImplList().add(new ImplementationAndSettings(pkgImpl, settings));
