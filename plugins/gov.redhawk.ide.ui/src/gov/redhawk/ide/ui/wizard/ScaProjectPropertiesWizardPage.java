@@ -247,15 +247,6 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 	}
 
 	@Override
-	public boolean canFlipToNextPage() {
-		if (isCreateNewResource()) {
-			return super.canFlipToNextPage();
-		} else {
-			return false;
-		}
-	}
-
-	@Override
 	public void validate() {
 		final boolean ok = validatePage();
 		if (ok) {
