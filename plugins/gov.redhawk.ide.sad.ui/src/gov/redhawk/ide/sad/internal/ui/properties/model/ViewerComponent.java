@@ -13,6 +13,7 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.Properties;
 import mil.jpeojtrs.sca.prf.Simple;
@@ -49,9 +50,14 @@ public class ViewerComponent {
 	public ViewerComponent(SadComponentInstantiation compInst) {
 		this.compInst = compInst;
 		this.sad = ScaEcoreUtils.getEContainerOfType(compInst, SoftwareAssembly.class);
-		spd = compInst.getPlacement().getComponentFileRef().getFile().getSoftPkg();
-		if (spd == null) {
+		
+		ComponentFile theCompFile = compInst.getPlacement().getComponentFileRef().getFile();
+		
+		// The component file can be null if the component file reference does not map back to any SPD (likely due to a copy paste error on the users part)
+		if (theCompFile == null || theCompFile.getSoftPkg() == null) {
 			return;
+		} else {
+			spd = theCompFile.getSoftPkg();
 		}
 		Properties prf = ScaEcoreUtils.getFeature(spd, PATH);
 		if (prf != null) {
