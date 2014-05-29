@@ -66,7 +66,7 @@ public class StyleUtil {
 	public static final Font getInnerTitleFont(Diagram diagram) {
 		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 11, false, false);
 	}
-	
+
 	public static final Font getErrorConnectionFont(Diagram diagram) {
 		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, false);
 	}
@@ -185,7 +185,7 @@ public class StyleUtil {
 		}
 		return style;
 	}
-	
+
 	// returns error message font for improper connections
 	public static Style getStyleForErrorTextConnections(Diagram diagram) {
 		final String styleId = "ErrorTextConnections";

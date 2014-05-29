@@ -358,9 +358,8 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
 		return compartmentEntry;
 	}
-	
-	
-	//ATTEMPT at ERROR decorator on Connections
+
+	// ATTEMPT at ERROR decorator on Connections
 //	public IDecorator[] getDecorators(PictogramElement pe) {
 //		IFeatureProvider featureProvider = getFeatureProvider();
 //		//if(pe instanceof Connection) {

@@ -18,6 +18,9 @@ import org.eclipse.debug.core.model.IProcess;
 
 public class PosixProcessFactory implements IProcessFactory {
 
+	/**
+	 * @since 2.0
+	 */
 	@Override
 	public IProcess newProcess(ILaunch launch, Process process, String name, @SuppressWarnings("rawtypes") Map attributes) {
 		return new PosixRuntimeProcess(launch, process, name, attributes);

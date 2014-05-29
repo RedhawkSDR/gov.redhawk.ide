@@ -71,23 +71,23 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	public static final int START_ORDER_ELLIPSE_TOP_PADDING = 5;
 
 	/**
-   * <!-- begin-user-doc -->
+	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-   * @generated
-   */
+	 * @generated
+	 */
 	protected ComponentShapeImpl() {
-    super();
-  }
+		super();
+	}
 
 	/**
-   * <!-- begin-user-doc -->
+	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-   * @generated
-   */
+	 * @generated
+	 */
 	@Override
 	protected EClass eStaticClass() {
-    return RHGxPackage.Literals.COMPONENT_SHAPE;
-  }
+		return RHGxPackage.Literals.COMPONENT_SHAPE;
+	}
 
 	/**
 	 * Creates the inner shapes that make up this container shape

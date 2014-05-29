@@ -321,7 +321,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 
 		if (context.getPictogramElement() instanceof Diagram) {
 			return new RHDiagramUpdateFeature(this);
-		}else if(context.getPictogramElement() instanceof Connection) {
+		} else if (context.getPictogramElement() instanceof Connection) {
 			return new SADConnectionInterfaceUpdateFeature(this);
 		}
 

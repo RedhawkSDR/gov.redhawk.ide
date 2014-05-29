@@ -42,23 +42,23 @@ public class RHGraphitiDiagramEditor extends DiagramEditor {
 //kepler
 	@Override
 	protected DiagramBehavior createDiagramBehavior() {
-	    return new DiagramBehavior(this) {
-	    	
-	    	@Override
-	    	protected DefaultUpdateBehavior createUpdateBehavior() {
-	    		return new DefaultUpdateBehavior(this) {
+		return new DiagramBehavior(this) {
 
-	    			//we need to provide our own editing domain so that all editors are working on the 
-	    			//same resource.  In order to work with a Graphiti diagram our form creates an editing domain
-	    			//with the Graphiti supplied Command stack.
-	    			@Override
-	    			protected void createEditingDomain() {
-	    				initializeEditingDomain((TransactionalEditingDomain) editingDomain);
-	    			}
-	    		};
-	    	}
-	    	
-	    };
+			@Override
+			protected DefaultUpdateBehavior createUpdateBehavior() {
+				return new DefaultUpdateBehavior(this) {
+
+					// we need to provide our own editing domain so that all editors are working on the
+					// same resource. In order to work with a Graphiti diagram our form creates an editing domain
+					// with the Graphiti supplied Command stack.
+					@Override
+					protected void createEditingDomain() {
+						initializeEditingDomain((TransactionalEditingDomain) editingDomain);
+					}
+				};
+			}
+
+		};
 	}
 
 }

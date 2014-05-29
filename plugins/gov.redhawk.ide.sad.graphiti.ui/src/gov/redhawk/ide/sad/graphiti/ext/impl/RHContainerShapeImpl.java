@@ -121,8 +121,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @generated
 	 */
 	protected RHContainerShapeImpl() {
-    super();
-  }
+		super();
+	}
 
 	/**
 	 * 
@@ -130,8 +130,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@Override
 	protected EClass eStaticClass() {
-    return RHGxPackage.Literals.RH_CONTAINER_SHAPE;
-  }
+		return RHGxPackage.Literals.RH_CONTAINER_SHAPE;
+	}
 
 	/**
 	 * Creates the inner shapes that make up this container shape
@@ -179,8 +179,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	/**
-   * 
-   */
+	 * 
+	 */
 	public EList<ProvidesPortStub> getProvidesPortStubs() {
 		return getInternalProvidesPortStubs();
 	}
@@ -252,7 +252,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			interfaceStub, uses, provides, externalPorts, true);
 	}
 
-//CHECKSTYLE:OFF
+	//CHECKSTYLE:OFF
 	/**
 	 * Return true (through Reason) if the shape's contents require an update based on the field supplied.
 	 * Also returns a textual reason why an update is needed. Returns false otherwise.

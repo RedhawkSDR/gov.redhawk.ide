@@ -28,6 +28,7 @@ public class PosixRuntimeProcess extends RuntimeProcess {
 	 * @param process
 	 * @param name
 	 * @param attributes
+	 * @since 2.0
 	 */
 	public PosixRuntimeProcess(ILaunch launch, Process process, String name, @SuppressWarnings("rawtypes") Map attributes) {
 		super(launch, process, name, attributes);
