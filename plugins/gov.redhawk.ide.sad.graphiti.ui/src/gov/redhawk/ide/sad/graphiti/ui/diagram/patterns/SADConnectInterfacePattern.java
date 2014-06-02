@@ -55,8 +55,8 @@ import org.eclipse.graphiti.services.IPeCreateService;
 public class SADConnectInterfacePattern extends AbstractConnectionPattern implements IConnectionPattern {
 
 	public static final String NAME = "Connection";
-	public static final String SHAPE_imgConnectionDecorator = "imgConnectionDecorator";
-	public static final String SHAPE_textConnectionDecorator = "textConnectionDecorator";
+	public static final String SHAPE_IMG_CONNECTION_DECORATOR = "imgConnectionDecorator";
+	public static final String SHAPE_TEXT_CONNECTION_DECORATOR = "textConnectionDecorator";
 
 	@Override
 	public String getCreateName() {
@@ -188,7 +188,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 																													// order
 																													// to
 																													// display
-				Graphiti.getPeService().setPropertyValue(imgConnectionDecorator, DUtil.SHAPE_TYPE, SHAPE_imgConnectionDecorator);
+				Graphiti.getPeService().setPropertyValue(imgConnectionDecorator, DUtil.SHAPE_TYPE, SHAPE_IMG_CONNECTION_DECORATOR);
 				Image errorImage = gaService.createImage(imgConnectionDecorator, decoratorImageId);
 				errorImage.setHeight(20);
 				errorImage.setWidth(20);
@@ -201,7 +201,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 																																		// order
 																																		// to
 																																		// display
-				Graphiti.getPeService().setPropertyValue(imgConnectionDecorator, DUtil.SHAPE_TYPE, SHAPE_textConnectionDecorator);
+				Graphiti.getPeService().setPropertyValue(imgConnectionDecorator, DUtil.SHAPE_TYPE, SHAPE_TEXT_CONNECTION_DECORATOR);
 				Text text = gaService.createPlainText(textConnectionDecorator);
 				text.setValue(decoratorMessage);
 				text.setStyle(StyleUtil.getStyleForErrorTextConnections((diagram)));
@@ -238,9 +238,9 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		// getConnectionTarget handles connecting to ports on components, not ports or interfaces on FindBy Shapes
 		ConnectionTarget target = getConnectionTarget(context);
 		if (target == null) {
-			// check if interface on findBy Shape
+			// TODO: check if interface on findBy Shape
 
-			// check if provides port on findBy...not sure how were doing all this??
+			// TODO: check if provides port on findBy...not sure how were doing all this??
 		}
 
 		// not currently used but will select the portRectangeShape instead of the anchorRectangle

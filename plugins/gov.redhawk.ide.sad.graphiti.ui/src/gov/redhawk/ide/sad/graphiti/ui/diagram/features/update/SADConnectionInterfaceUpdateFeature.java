@@ -69,10 +69,10 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 
 		// imgConnectionDecorator
 		ConnectionDecorator imgConnectionDecorator = (ConnectionDecorator) DUtil.findFirstPropertyContainer(connectionPE,
-			SADConnectInterfacePattern.SHAPE_imgConnectionDecorator);
+			SADConnectInterfacePattern.SHAPE_IMG_CONNECTION_DECORATOR);
 		// textConnectionDecorator
 		ConnectionDecorator textConnectionDecorator = (ConnectionDecorator) DUtil.findFirstPropertyContainer(connectionPE,
-			SADConnectInterfacePattern.SHAPE_textConnectionDecorator);
+			SADConnectInterfacePattern.SHAPE_TEXT_CONNECTION_DECORATOR);
 
 		// if not compatible draw error/warning decorator
 		if (connectInterface.getSource() != null && connectInterface.getTarget() != null) {
