@@ -87,7 +87,7 @@ import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 import org.eclipse.graphiti.util.IColorConstant;
 
-public class DUtil {
+public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 
 	// These are property key/value pairs that help us resize an existing shape by properly identifying
 	// graphicsAlgorithms

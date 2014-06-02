@@ -15,6 +15,7 @@ import gov.redhawk.sca.ScaPlugin;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -37,7 +38,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Display;
 
-public class SaveUtil {
+public class SaveUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	/**
 	 * Returns the SoftwareAssembly model for the diagram. Each diagram should be accompanied by a .sad.xml file
@@ -137,7 +138,9 @@ public class SaveUtil {
 		} finally {
 			try {
 				out.close();
-			} catch (Throwable t) {
+			} catch (FileNotFoundException e) {
+				// PASS
+				// TODO: catch exception
 			}
 		}
 

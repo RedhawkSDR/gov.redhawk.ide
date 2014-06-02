@@ -25,7 +25,7 @@ import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.graphiti.util.PredefinedColoredAreas;
 import org.eclipse.swt.graphics.Color;
 
-public class StyleUtil {
+public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 
 	public static final IColorConstant TEXT_FOREGROUND = IColorConstant.BLACK;
 	public static final IColorConstant WHITE = new ColorConstant(255, 255, 255);

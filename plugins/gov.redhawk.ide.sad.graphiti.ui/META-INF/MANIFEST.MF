@@ -36,11 +36,11 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: gov.redhawk.ide.sad.graphiti.ui,
+Export-Package: gov.redhawk.ide.sad.graphiti.ext,
+ gov.redhawk.ide.sad.graphiti.ext.impl,
+ gov.redhawk.ide.sad.graphiti.ext.util,
+ gov.redhawk.ide.sad.graphiti.ui,
  gov.redhawk.ide.sad.graphiti.ui.diagram,
  gov.redhawk.ide.sad.graphiti.ui.diagram.providers,
- gov.redhawk.ide.sad.graphiti.ui.diagram.util,
- gov.redhawk.ide.sad.graphiti.ext,
- gov.redhawk.ide.sad.graphiti.ext.impl,
- gov.redhawk.ide.sad.graphiti.ext.util
+ gov.redhawk.ide.sad.graphiti.ui.diagram.util
 

@@ -239,8 +239,8 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		ConnectionTarget target = getConnectionTarget(context);
 		if (target == null) {
 			// TODO: check if interface on findBy Shape
-
 			// TODO: check if provides port on findBy...not sure how were doing all this??
+			return false;
 		}
 
 		// not currently used but will select the portRectangeShape instead of the anchorRectangle

@@ -67,6 +67,7 @@ public class CreateComponentFeature extends AbstractCreateFeature {
 
 		if (spd == null) {
 			// TODO: return some kind of error
+			return null;
 		}
 
 		// editing domain for our transaction

@@ -13,7 +13,7 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.util;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 
-public class PropertyUtil {
+public class PropertyUtil { //SUPPRESS CHECKSTYLE INLINE
 
 	public static final String SHAPE_TYPE_KEY = "shapeType";
 	public static final String COMPONENT_SHAPE_TYPE = "component";

@@ -138,8 +138,8 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		try {
 			return internalUpdate(context, false);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// PASS
+			// TODO: catch exception
 		}
 		return null;
 	}
@@ -151,16 +151,16 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			reason = internalUpdate(context, true);
 			reason.toBoolean();
 
-			if (reason.toBoolean()) {
-				// if we changed something lets layout the diagram
-				// TODO: THIS IS NOT THE RIGHT WAY, JUST DO IT TO GET SOMETHING WORKING
+			// TODO: THIS IS NOT THE RIGHT WAY, JUST DO IT TO GET SOMETHING WORKING
+			// if we changed something lets layout the diagram
+//			if (reason.toBoolean()) {
 //	        	ZestLayoutDiagramFeature layoutFeature = new ZestLayoutDiagramFeature(getFeatureProvider());
 //	        	layoutFeature.execute(null);
-			}
+//			}
 
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// PASS
+			// TODO: catch exception
 		}
 
 		return false;
@@ -412,7 +412,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 								PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, (EObject) usesPortStub, Anchor.class);
 								sourceAnchor = (Anchor) pe;
 							} else {
-								System.out.println("our source port is not getting set");
+								System.out.println("our source port is not getting set"); // SUPPRESS CHECKSTYLE INLINE
 								// TODO: this means the provides port didn't exist in the existing findByStub..we need
 								// to add it
 							}
@@ -494,6 +494,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 								PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, (EObject) providesPortStub, Anchor.class);
 								targetAnchor = (Anchor) pe;
 							} else {
+								// PASS
 								// TODO: this means the provides port didn't exist in the existing findByStub..we need
 								// to add it
 							}
@@ -504,6 +505,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 					if (sourceAnchor != null && targetAnchor != null) {
 						DUtil.addConnectionViaFeature(featureProvider, sadConnectInterface, sourceAnchor, targetAnchor);
 					} else {
+						// PASS
 						// TODO: how do we handle this?
 					}
 

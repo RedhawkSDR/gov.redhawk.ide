@@ -258,6 +258,7 @@ public class FindByEditFeature extends AbstractCustomFeature {
 			}
 			if (DomainFinderType.EVENTCHANNEL.equals(type)) { // Find By Event Channel
 				// TODO: Handle Find by Event Channel editor
+				return;
 			}
 		}
 
