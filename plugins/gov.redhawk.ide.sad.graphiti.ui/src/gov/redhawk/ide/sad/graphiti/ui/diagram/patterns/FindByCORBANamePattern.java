@@ -189,9 +189,9 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IPa
 		return findByStub.getNamingService().getName();
 	}
 
-	@Override
-	public String checkValueValid(String value, IDirectEditingContext context) {
-		return null;
+	@Override 
+	public String getCheckValueValidName() {
+		return "CORBA";
 	}
 
 	@Override

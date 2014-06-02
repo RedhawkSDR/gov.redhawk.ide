@@ -11,6 +11,7 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
@@ -28,7 +29,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.graphiti.examples.common.ExampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -36,8 +36,7 @@ import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
-import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
+import org.eclipse.graphiti.features.context.IUpdateContext; 
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.Image;
@@ -48,24 +47,23 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.pattern.AbstractPattern;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaLayoutService;
 
-public class HostCollocationPattern extends AbstractPattern implements IPattern {
+public class HostCollocationPattern extends AbstractNamedElementPattern implements IPattern {
 
 	public static final String NAME = "Host Collocation";
 
 	// Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove
 	// etc.)
-	public static final String SHAPE_outerContainerShape = "outerContainerShape";
+	public static final String SHAPE_OUTER_CONTAINER = "outerContainerShape";
 
 	// These are property key/value pairs that help us resize an existing shape by properly identifying
 	// graphicsAlgorithms
-	public static final String GA_outerRoundedRectangle = "outerRoundedRectangle";
-	public static final String GA_outerRoundedRectangleText = "outerRoundedRectangleText";
-	public static final String GA_outerRoundedRectangleImage = "outerRoundedRectangleImage";
+	public static final String GA_OUTER_ROUNDED_RECTANGLE = "outerRoundedRectangle";
+	public static final String GA_OUTER_ROUNDED_RECTANGLE_TEXT = "outerRoundedRectangleText";
+	public static final String GA_OUTER_ROUNDED_RECTANGLE_IMAGE = "outerRoundedRectangleImage";
 
 	public HostCollocationPattern() {
 		super(null);
@@ -126,7 +124,7 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 	public static List<ContainerShape> getHostCollocationContainerShapes(Diagram diagram) {
 		List<ContainerShape> hostCollocationContainerShapes = new ArrayList<ContainerShape>();
 		// get all Shapes linked to a HostCollocation
-		List<ContainerShape> containerShapes = DUtil.getAllContainerShapes(diagram, SHAPE_outerContainerShape);
+		List<ContainerShape> containerShapes = DUtil.getAllContainerShapes(diagram, SHAPE_OUTER_CONTAINER);
 		for (ContainerShape cs : containerShapes) {
 			if (DUtil.doesLinkContainObjectTypeInstance(cs.getLink(), HostCollocation.class)) {
 				hostCollocationContainerShapes.add(cs);
@@ -157,11 +155,11 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		// find all of our diagram elements
 		List<PropertyContainer> children = DUtil.collectPropertyContainerChildren(outerContainerShape);
 		for (PropertyContainer pc : children) {
-			if (DUtil.isPropertyElementType(pc, GA_outerRoundedRectangle)) {
+			if (DUtil.isPropertyElementType(pc, GA_OUTER_ROUNDED_RECTANGLE)) {
 				outerRoundedRectangle = (RoundedRectangle) pc;
-			} else if (DUtil.isPropertyElementType(pc, GA_outerRoundedRectangleText)) {
+			} else if (DUtil.isPropertyElementType(pc, GA_OUTER_ROUNDED_RECTANGLE_TEXT)) {
 				outerRoundedRectangleText = (Text) pc;
-			} else if (DUtil.isPropertyElementType(pc, GA_outerRoundedRectangleImage)) {
+			} else if (DUtil.isPropertyElementType(pc, GA_OUTER_ROUNDED_RECTANGLE_IMAGE)) {
 				outerRoundedRectangleImage = (Image) pc;
 			}
 		}
@@ -179,7 +177,7 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 
 		// move all SadComponentInstantiation shapes into new HostCollocation shape
 		// find all SadComponentInstantiation shapes
-		List<Shape> containedShapes = DUtil.getContainersInArea(getDiagram(), context, GA_outerRoundedRectangle);
+		List<Shape> containedShapes = DUtil.getContainersInArea(getDiagram(), context, GA_OUTER_ROUNDED_RECTANGLE);
 		for (Shape shape : containedShapes) {
 			for (EObject obj : shape.getLink().getBusinessObjects()) {
 				if (obj instanceof SadComponentInstantiation) {
@@ -211,6 +209,10 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 	 */
 	@Override
 	public Object[] create(ICreateContext context) {
+		final String hostCollocationName = getUserInput();
+		if (hostCollocationName == null) {
+			return null;
+		}
 
 		final HostCollocation[] hostCollocations = new HostCollocation[1];
 
@@ -221,7 +223,7 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 
 		// find all SadComponentInstantiation
-		List<Shape> containedShapes = DUtil.getContainersInArea(getDiagram(), context, GA_outerRoundedRectangle);
+		List<Shape> containedShapes = DUtil.getContainersInArea(getDiagram(), context, GA_OUTER_ROUNDED_RECTANGLE);
 		final List<SadComponentInstantiation> sadComponentInstantiations = new ArrayList<SadComponentInstantiation>();
 		for (Shape shape : containedShapes) {
 			for (EObject obj : shape.getLink().getBusinessObjects()) {
@@ -236,10 +238,6 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-
-				// prompt user host collocation name
-				final String hostCollocationName = ExampleUtil.askString("Host Collocation", "Enter Name", "");
-
 				// create hostCollocation
 				hostCollocations[0] = SadFactory.eINSTANCE.createHostCollocation();
 				hostCollocations[0].setName(hostCollocationName);
@@ -254,13 +252,12 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 
 				// add to sad partitioning
 				sad.getPartitioning().getHostCollocation().add(hostCollocations[0]);
-
 			}
 		});
 
 		addGraphicalRepresentation(context, hostCollocations[0]);
 
-		return new Object[] { hostCollocations[0] };
+		return new Object[] { hostCollocations[0] }; 
 	}
 
 	/**
@@ -299,7 +296,7 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 
 		// find all components to remove (no longer inside the host collocation box, minimized)
-		List<Shape> shapesToRemoveFromHostCollocation = DUtil.getContainersOutsideArea(containerShape, context, GA_outerRoundedRectangle);
+		List<Shape> shapesToRemoveFromHostCollocation = DUtil.getContainersOutsideArea(containerShape, context, GA_OUTER_ROUNDED_RECTANGLE);
 		final List<SadComponentInstantiation> ciToRemove = new ArrayList<SadComponentInstantiation>();
 		for (Shape shape : shapesToRemoveFromHostCollocation) {
 			for (EObject obj : shape.getLink().getBusinessObjects()) {
@@ -310,7 +307,7 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 		}
 
 		// find all components to add to add (now inside host collocation, expanded)
-		List<Shape> shapesToAddToHostCollocation = DUtil.getContainersInArea(getDiagram(), context, GA_outerRoundedRectangle);
+		List<Shape> shapesToAddToHostCollocation = DUtil.getContainersInArea(getDiagram(), context, GA_OUTER_ROUNDED_RECTANGLE);
 		final List<SadComponentInstantiation> ciToAdd = new ArrayList<SadComponentInstantiation>();
 		for (Shape shape : shapesToAddToHostCollocation) {
 			for (EObject obj : shape.getLink().getBusinessObjects()) {
@@ -440,7 +437,6 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 
 		// delete the graphical component
 		super.delete(context);
-
 	}
 
 	/**
@@ -454,19 +450,19 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 	private ContainerShape addOuterRectangle(ContainerShape targetContainerShape, String text, Object businessObject, IFeatureProvider featureProvider,
 		String imageId, Style containerStyle) {
 		ContainerShape outerContainerShape = Graphiti.getCreateService().createContainerShape(targetContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(outerContainerShape, DUtil.SHAPE_TYPE, SHAPE_outerContainerShape);
+		Graphiti.getPeService().setPropertyValue(outerContainerShape, DUtil.SHAPE_TYPE, SHAPE_OUTER_CONTAINER);
 		RoundedRectangle outerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(outerContainerShape, 5, 5);
 		outerRoundedRectangle.setStyle(containerStyle);
-		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, DUtil.GA_TYPE, GA_outerRoundedRectangle);
+		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE);
 		// image
 		Image imgIcon = Graphiti.getGaCreateService().createImage(outerRoundedRectangle, imageId);
-		Graphiti.getPeService().setPropertyValue(imgIcon, DUtil.GA_TYPE, GA_outerRoundedRectangleImage); // ref helps
-																											// with
-																											// resize
+		Graphiti.getPeService().setPropertyValue(imgIcon, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_IMAGE); // ref helps
+		// with
+		// resize
 		// text
 		Text cText = Graphiti.getCreateService().createText(outerRoundedRectangle, text);
 		cText.setStyle(StyleUtil.getStyleForOuterText(DUtil.findDiagram(targetContainerShape)));
-		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_outerRoundedRectangleText);
+		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 		featureProvider.link(outerContainerShape, businessObject); // link container and business object
 
 		return outerContainerShape;
@@ -484,5 +480,22 @@ public class HostCollocationPattern extends AbstractPattern implements IPattern 
 	public IReason updateNeeded(IUpdateContext context) {
 		return new Reason(false);
 	}
-
+	
+	/**
+	 * Creates a dialog which prompts the user for an event channel name.
+	 * Will return <code>null</code> if the user terminates the dialog via
+	 * 'Cancel' or otherwise.
+	 * @return host collocation name
+	 */
+	private String getUserInput() {
+		// prompt user for Host Collocation name
+		AbstractInputValidationDialog dialog = new AbstractInputValidationDialog(
+			NAME, "Enter " + NAME + " name", NAME) {
+			@Override
+			public String inputValidity(String value) {
+				return checkValueValid(value, null);
+			}
+		};
+		return dialog.getInput();
+	}
 }

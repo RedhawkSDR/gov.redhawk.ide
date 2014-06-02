@@ -53,11 +53,10 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.pattern.AbstractPattern;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
 
-public class ComponentPattern extends AbstractPattern implements IPattern {
+public class ComponentPattern extends AbstractNamedElementPattern implements IPattern {
 
 	private URI spdUri = null;
 
@@ -522,21 +521,6 @@ public class ComponentPattern extends AbstractPattern implements IPattern {
 		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
 		SadComponentInstantiation ci = (SadComponentInstantiation) getBusinessObjectForPictogramElement(componentShape);
 		return ci.getUsageName();
-	}
-
-	@Override
-	public String checkValueValid(String value, IDirectEditingContext context) {
-		if (value.length() < 1) {
-			return "Please enter any text as usage name.";
-		}
-		if (value.contains(" ")) {
-			return "Spaces are not allowed in usage names.";
-		}
-		if (value.contains("\n")) {
-			return "Line breakes are not allowed in usage names.";
-		}
-		// null means, that the value is valid
-		return null;
 	}
 
 	@Override

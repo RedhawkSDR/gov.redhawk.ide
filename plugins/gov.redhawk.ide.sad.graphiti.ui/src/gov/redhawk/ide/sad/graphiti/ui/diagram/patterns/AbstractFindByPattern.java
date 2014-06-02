@@ -49,11 +49,10 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.pattern.AbstractPattern;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
 
-public abstract class AbstractFindByPattern extends AbstractPattern implements IPattern {
+public abstract class AbstractFindByPattern extends AbstractNamedElementPattern implements IPattern {
 
 	public AbstractFindByPattern() {
 		super(null);
@@ -229,7 +228,9 @@ public abstract class AbstractFindByPattern extends AbstractPattern implements I
 	}
 
 	@Override
-	public abstract String checkValueValid(String value, IDirectEditingContext context);
+	public String checkValueValid(String value, IDirectEditingContext context) {
+		return super.checkValueValid(value, context);
+	}
 
 	@Override
 	public abstract void setValue(final String value, IDirectEditingContext context);

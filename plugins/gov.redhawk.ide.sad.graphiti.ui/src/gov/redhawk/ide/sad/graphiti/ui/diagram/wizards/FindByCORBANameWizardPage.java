@@ -109,7 +109,7 @@ public class FindByCORBANameWizardPage extends WizardPage {
 	private DataBindingContext dbc;
 
 	private Button usesPortAddBtn, usesPortDeleteBtn, providesPortAddBtn, providesPortDeleteBtn;
-	private Text usesPortNameText, providesPortNameText;
+	private Text usesPortNameText, providesPortNameText, corbaNameText;
 
 	public FindByCORBANameWizardPage() {
 		super("findByCorbaName", "Find By CORBA Name", TITLE_IMAGE);
@@ -133,7 +133,7 @@ public class FindByCORBANameWizardPage extends WizardPage {
 		corbaNameLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		corbaNameLabel.setText("CORBA Name:");
 
-		Text corbaNameText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
+		corbaNameText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		corbaNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		corbaNameText.addModifyListener(new ModifyListener() {
 			@Override
@@ -147,6 +147,8 @@ public class FindByCORBANameWizardPage extends WizardPage {
 				public IStatus validate(Object value) {
 					if (((String) value).length() < 1) {
 						return ValidationStatus.error("CORBA Name must not be empty");
+					} else if (((String) value).contains(" ")) {
+						return ValidationStatus.error("CORBA Name must not include spaces");
 					}
 					return ValidationStatus.ok();
 				}
@@ -220,7 +222,7 @@ public class FindByCORBANameWizardPage extends WizardPage {
 			public void modifyText(ModifyEvent e) {
 				String value = portNameText.getText();
 				if (value.contains(" ")) {
-					setErrorMessage("Port Name must not have spaces in the name");
+					setErrorMessage("Port Name must not include spaces");
 				} else {
 					setErrorMessage(null);
 				}

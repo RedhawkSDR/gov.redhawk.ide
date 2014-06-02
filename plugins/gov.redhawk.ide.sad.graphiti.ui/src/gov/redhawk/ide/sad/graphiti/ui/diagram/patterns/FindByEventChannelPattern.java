@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
@@ -22,7 +23,6 @@ import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.graphiti.examples.common.ExampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
@@ -74,9 +74,10 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 
 	@Override
 	public Object[] create(ICreateContext context) {
-
-		// prompt user for Event Channel
-		final String eventChannel = ExampleUtil.askString("Find By Event Channel", "Enter Event Channel", "");
+		final String eventChannelName = getUserInput();
+		if (eventChannelName == null) {
+			return null;
+		}
 
 		final FindByStub[] findByStubs = new FindByStub[1];
 
@@ -97,7 +98,7 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 				// domain finder service of type domain manager
 				DomainFinder domainFinder = PartitioningFactory.eINSTANCE.createDomainFinder();
 				domainFinder.setType(DomainFinderType.EVENTCHANNEL);
-				domainFinder.setName(eventChannel);
+				domainFinder.setName(eventChannelName);
 				findByStubs[0].setDomainFinder(domainFinder);
 
 				// add to diagram resource file
@@ -155,21 +156,6 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	}
 
 	@Override
-	public String checkValueValid(String value, IDirectEditingContext context) {
-		if (value.length() < 1) {
-			return "Please enter any text as event channel.";
-		}
-		if (value.contains(" ")) {
-			return "Spaces are not allowed in event channels.";
-		}
-		if (value.contains("\n")) {
-			return "Line breakes are not allowed in event channels.";
-		}
-		// null means, that the value is valid
-		return null;
-	}
-
-	@Override
 	public void setValue(final String value, IDirectEditingContext context) {
 		PictogramElement pe = context.getPictogramElement();
 		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
@@ -195,6 +181,24 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	@Override
 	public String getInnerTitle(FindByStub findByStub) {
 		return findByStub.getDomainFinder().getName();
+	}
+
+	/**
+	 * Creates a dialog which prompts the user for an event channel name.
+	 * Will return <code>null</code> if the user terminates the dialog via
+	 * 'Cancel' or otherwise.
+	 * @return event channel name
+	 */
+	private String getUserInput() {
+		// prompt user for Host Collocation name
+		AbstractInputValidationDialog dialog = new AbstractInputValidationDialog(
+			NAME, "Enter " + NAME + " name", NAME) {
+			@Override
+			public String inputValidity(String value) {
+				return checkValueValid(value, null);
+			}
+		};
+		return dialog.getInput();
 	}
 
 }

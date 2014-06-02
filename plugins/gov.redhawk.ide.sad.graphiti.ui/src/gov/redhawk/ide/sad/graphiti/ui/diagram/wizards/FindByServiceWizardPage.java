@@ -211,7 +211,7 @@ public class FindByServiceWizardPage extends WizardPage {
 						return ValidationStatus.error("Service Name must not be empty");
 					}
 					if (value instanceof String && serviceNameBtn.getSelection() && ((String) value).contains(" ")) {
-						return ValidationStatus.error("Service Name must not have spaces in the name");
+						return ValidationStatus.error("Service Name must not include spaces");
 					}
 					return ValidationStatus.ok();
 				}
@@ -257,7 +257,7 @@ public class FindByServiceWizardPage extends WizardPage {
 						return ValidationStatus.error("Service Type must not be empty");
 					}
 					if (value instanceof String && serviceTypeBtn.getSelection() && ((String) value).contains(" ")) {
-						return ValidationStatus.error("Service Type must not have spaces in the name");
+						return ValidationStatus.error("Service Type must not include spaces");
 					}
 					return ValidationStatus.ok();
 				}
@@ -365,7 +365,7 @@ public class FindByServiceWizardPage extends WizardPage {
 			public void modifyText(ModifyEvent e) {
 				String value = portNameText.getText();
 				if (value.contains(" ")) {
-					setErrorMessage("Port Name must not have spaces in the name");
+					setErrorMessage("Port Name must not include spaces");
 				} else {
 					setErrorMessage(null);
 				}

@@ -60,13 +60,13 @@ public class ComponentDirectEditUsageNameFeature extends AbstractDirectEditingFe
 	@Override
 	public String checkValueValid(String value, IDirectEditingContext context) {
 		if (value.length() < 1) {
-			return "Please enter any text as class name.";
+			return "Please enter a class name.";
 		}
 		if (value.contains(" ")) {
 			return "Spaces are not allowed in class names.";
 		}
 		if (value.contains("\n")) {
-			return "Line breakes are not allowed in class names.";
+			return "Line breaks are not allowed in class names.";
 		}
 		// null means, that the value is valid
 		return null;
