@@ -246,7 +246,8 @@
               tooltip="Export to SDR">
            <visibleWhen
                  checkEnabled="false">
-              <iterate>
+              <iterate
+                    ifEmpty="false">
                  <instanceof
                        value="org.eclipse.core.resources.IProject">
                  </instanceof>
