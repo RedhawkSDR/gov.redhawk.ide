@@ -428,6 +428,11 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	
 	@Override
 	public IReconnectionFeature getReconnectionFeature(IReconnectionContext context) {
-		return new  SADReconnectFeature(this);
+		// Call the SADReconnectFeature if the original anchor is a uses or provides port
+		Object businessObject = getBusinessObjectForPictogramElement(context.getOldAnchor());
+		if (businessObject instanceof UsesPortStub || businessObject instanceof ProvidesPortStub) {
+			return new SADReconnectFeature(this);
+		}
+		return super.getReconnectionFeature(context);
 	}
 }
