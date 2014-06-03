@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.wizards;
 
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -141,14 +143,16 @@ public class FindByCORBANameWizardPage extends WizardPage {
 				dbc.updateModels();
 			}
 		});
-		dbc.bindValue(SWTObservables.observeText(corbaNameText, SWT.Modify), BeansObservables.observeValue(model, CORBANameModel.CORBA_NAME),
+		dbc.bindValue(SWTObservables.observeText(corbaNameText, SWT.Modify), 
+			BeansObservables.observeValue(model, CORBANameModel.CORBA_NAME),
 			new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
 				@Override
 				public IStatus validate(Object value) {
-					if (((String) value).length() < 1) {
-						return ValidationStatus.error("CORBA Name must not be empty");
-					} else if (((String) value).contains(" ")) {
-						return ValidationStatus.error("CORBA Name must not include spaces");
+					String err = FindByCORBANamePattern.validate("CORBA", (String) value);
+					if (err != null) {
+						return ValidationStatus.error(err);
+					} else if (validateText() != null) {
+						return ValidationStatus.error(validateText());
 					}
 					return ValidationStatus.ok();
 				}
@@ -220,11 +224,10 @@ public class FindByCORBANameWizardPage extends WizardPage {
 		portNameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				String value = portNameText.getText();
-				if (value.contains(" ")) {
-					setErrorMessage("Port Name must not include spaces");
+				if (portNameText.getText().contains(" ")) {
+					setErrorMessage("Port name must not include spaces");
 				} else {
-					setErrorMessage(null);
+					setErrorMessage(validateText());
 				}
 			}
 		});
@@ -285,6 +288,17 @@ public class FindByCORBANameWizardPage extends WizardPage {
 			}
 		};
 		return listener;
+	}
+	
+	private String validateText() {
+		String errCORBA = FindByCORBANamePattern.validate("CORBA", corbaNameText.getText());
+		if (errCORBA != null) {
+			return errCORBA;
+		} else if (usesPortNameText.getText().contains(" ") 
+				|| providesPortNameText.getText().contains(" ")) {
+			return "Port name must not include spaces";
+		}
+		return null;
 	}
 
 	public CORBANameModel getModel() {

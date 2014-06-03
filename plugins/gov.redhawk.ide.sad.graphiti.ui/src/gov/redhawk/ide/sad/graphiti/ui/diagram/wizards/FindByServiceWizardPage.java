@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.wizards;
 
 import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
 import gov.redhawk.eclipsecorba.library.ui.IdlInterfaceSelectionDialog;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -207,11 +208,13 @@ public class FindByServiceWizardPage extends WizardPage {
 			new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
 				@Override
 				public IStatus validate(Object value) {
-					if (value instanceof String && serviceNameBtn.getSelection() && ((String) value).length() < 1) {
-						return ValidationStatus.error("Service Name must not be empty");
-					}
-					if (value instanceof String && serviceNameBtn.getSelection() && ((String) value).contains(" ")) {
-						return ValidationStatus.error("Service Name must not include spaces");
+					String err = validService("Service Name", (String) value, serviceNameBtn);
+					if (err != null) {
+						return ValidationStatus.error(err);
+					} 
+					err = validateAll();
+					if (err != null) {
+						return ValidationStatus.error(err);
 					}
 					return ValidationStatus.ok();
 				}
@@ -253,11 +256,13 @@ public class FindByServiceWizardPage extends WizardPage {
 			new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
 				@Override
 				public IStatus validate(Object value) {
-					if (value instanceof String && serviceTypeBtn.getSelection() && ((String) value).length() < 1) {
-						return ValidationStatus.error("Service Type must not be empty");
-					}
-					if (value instanceof String && serviceTypeBtn.getSelection() && ((String) value).contains(" ")) {
-						return ValidationStatus.error("Service Type must not include spaces");
+					String err = validService("Service Type", (String) value, serviceTypeBtn);
+					if (err != null) {
+						return ValidationStatus.error(err);
+					} 
+					err = validateAll();
+					if (err != null) {
+						return ValidationStatus.error(err);
 					}
 					return ValidationStatus.ok();
 				}
@@ -363,15 +368,54 @@ public class FindByServiceWizardPage extends WizardPage {
 		portNameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				String value = portNameText.getText();
-				if (value.contains(" ")) {
-					setErrorMessage("Port Name must not include spaces");
+				String err = validText("Port", portNameText.getText());
+				if (err != null) {
+					setErrorMessage(err);
 				} else {
-					setErrorMessage(null);
+					setErrorMessage(validateAll());
 				}
 			}
 		});
 		return portNameText;
+	}
+	
+	private String validateAll() {
+		String err = validService("Service Name", serviceNameText.getText(), serviceNameBtn);
+		if (err != null) {
+			return err;
+		}
+		err = validService("Service Type", serviceTypeText.getText(), serviceTypeBtn);
+		if (err != null) {
+			return err;
+		}
+		err = validText("Port", usesPortNameText.getText());
+		if (err != null) {
+			return err;
+		}
+		return validText("Port", providesPortNameText.getText());
+	}
+	
+	private static String validService(String valueType, String value, Button btn) {
+		if (btn.getSelection()) {
+			if (value.length() < 1) {
+				return valueType + " must not be empty";
+			}
+			return validText(valueType, value);
+		}
+		return null;
+	}
+	
+	/**
+	 * If returns null, that means the value is valid/has no spaces.
+	 * @param valueType
+	 * @param value
+	 * @return
+	 */
+	public static String validText(String valueType, String value) {
+		if (value.contains(" ")) {
+			return valueType + " must not include spaces";
+		}
+		return null;
 	}
 
 	private org.eclipse.swt.widgets.List addPortList(Composite portComposite, String propertyName) {
