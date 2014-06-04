@@ -110,10 +110,6 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 			connectionPE.setEnd(context.getSourceAnchor());
 		}
 
-		// decorate Connection with errors
-		//TODO: This is redundant, gets taken care of in the SADConnectionInterfaceUpdateFeature
-//		decorateConnection(connectionPE, connectInterface, getDiagram());
-
 		// create line
 		Polyline line = gaService.createPolyline(connectionPE);
 		line.setLineWidth(2);
