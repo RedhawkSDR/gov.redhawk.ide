@@ -12,7 +12,6 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.wizards;
 
 import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
 import gov.redhawk.eclipsecorba.library.ui.IdlInterfaceSelectionDialog;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
