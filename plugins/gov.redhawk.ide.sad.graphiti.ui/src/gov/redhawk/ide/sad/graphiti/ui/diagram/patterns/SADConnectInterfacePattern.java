@@ -24,11 +24,11 @@ import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -74,26 +74,6 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	}
 
 	/**
-	 * Return true if use selected
-	 */
-	@Override
-	public boolean canStartConnection(ICreateConnectionContext context) {
-
-		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
-
-		// source anchor (allow creating connection by starting from either direction)
-		UsesPortStub source = getUsesPortStub(context);
-		ConnectionTarget target = getConnectionTarget(context);
-
-		if (sad != null && (source != null || target != null)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
 	 * Determines if a connection can be made.
 	 */
 	@Override
@@ -122,7 +102,6 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 
 		// Create connection (handle user selecting source or target)
 		Connection connectionPE = peCreateService.createFreeFormConnection(getFeatureProvider().getDiagramTypeProvider().getDiagram());
-//		Connection connection = peCreateService.createManhattanConnection(getFeatureProvider().getDiagramTypeProvider().getDiagram());
 		if (source == getUsesPortStub(context.getSourceAnchor()) && target == getConnectionTarget(context.getTargetAnchor())) {
 			connectionPE.setStart(context.getSourceAnchor());
 			connectionPE.setEnd(context.getTargetAnchor());
@@ -132,7 +111,8 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		}
 
 		// decorate Connection with errors
-		decorateConnection(connectionPE, connectInterface, getDiagram());
+		//TODO: This is redundant, gets taken care of in the SADConnectionInterfaceUpdateFeature
+//		decorateConnection(connectionPE, connectInterface, getDiagram());
 
 		// create line
 		Polyline line = gaService.createPolyline(connectionPE);
@@ -145,7 +125,6 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		DUtil.createArrow(cd, getFeatureProvider(), gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(), StyleUtil.BLACK));
 
 		// link ports to connection
-//		getFeatureProvider().link(connection, new Object[] { connectInterface, connectInterface.getSource(), connectInterface.getTarget()});
 		getFeatureProvider().link(connectionPE, new Object[] { connectInterface, source, target });
 
 		return connectionPE;
@@ -153,8 +132,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 
 	/**
 	 * Add error/warning decorators to connection if applicable
-	 * Note: Unfortunately Graphiti doesn't support ConnectionDecorators with tooltips like it does with Shape
-	 * Decorators (see RHToolBehaviorProvider)
+	 * Note: Unfortunately Graphiti doesn't support ConnectionDecorators with tooltips like it does with Shape Decorators (see RHToolBehaviorProvider)
 	 * @param connectionPE
 	 */
 	public static void decorateConnection(Connection connectionPE, SadConnectInterface connectInterface, Diagram diagram) {
@@ -181,46 +159,53 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 
 				// image
 				ConnectionDecorator imgConnectionDecorator;
-				imgConnectionDecorator = peCreateService.createConnectionDecorator(connectionPE, true, 0.5, true); // must
-																													// be
-																													// active
-																													// in
-																													// order
-																													// to
-																													// display
+				imgConnectionDecorator = peCreateService.createConnectionDecorator(connectionPE, true, 0.5, true); // must be active in order to display
 				Graphiti.getPeService().setPropertyValue(imgConnectionDecorator, DUtil.SHAPE_TYPE, SHAPE_IMG_CONNECTION_DECORATOR);
 				Image errorImage = gaService.createImage(imgConnectionDecorator, decoratorImageId);
 				errorImage.setHeight(20);
 				errorImage.setWidth(20);
 				gaService.setLocation(errorImage, -60, -18);
+				
 				// text
-				ConnectionDecorator textConnectionDecorator = peCreateService.createConnectionDecorator(connectionPE, true, 0.5, true); // must
-																																		// be
-																																		// active
-																																		// in
-																																		// order
-																																		// to
-																																		// display
+				ConnectionDecorator textConnectionDecorator = peCreateService.createConnectionDecorator(connectionPE, true, 0.5, true); // must be active in order to display
 				Graphiti.getPeService().setPropertyValue(imgConnectionDecorator, DUtil.SHAPE_TYPE, SHAPE_TEXT_CONNECTION_DECORATOR);
 				Text text = gaService.createPlainText(textConnectionDecorator);
 				text.setValue(decoratorMessage);
 				text.setStyle(StyleUtil.getStyleForErrorTextConnections((diagram)));
 				gaService.setLocation(text, -40, -15);
-				// this unfortunately hides the connection line
-//				Graphiti.getPeService().sendToFront(imgDecorator);
-//				Graphiti.getPeService().sendToFront(textDecorator);
+				
+				// this unfortunately hides the connection line. TODO: Try setting transparency for text and then sending to front
+				// Graphiti.getPeService().sendToFront(imgDecorator);
+				// Graphiti.getPeService().sendToFront(textDecorator);
 			}
 		}
 	}
 
 	/**
+	 * Return true if use selected
+	 */
+	@Override
+	public boolean canStartConnection(ICreateConnectionContext context) {
+
+		// get sad from diagram
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+
+		// source anchor (allow creating connection by starting from either direction)
+		UsesPortStub source = getUsesPortStub(context);
+		ConnectionTarget target = getConnectionTarget(context);
+
+		if (sad != null && (source != null || target != null)) {
+			return true;
+		}
+
+		return false;
+	}
+	
+	/**
 	 * Determines whether creation of an interface connection is possible between source and destination anchors.
-	 * user can begin drawing connection from either source->dest, or dest->source. This method will create the
-	 * connection in the correct direction.
-	 * Source anchor of connection must be UsesPort. Target Anchor must be ConnectionTarget which is the parent class
-	 * for a variety of types.
-	 * If ConnectionTarget->ProvidesPortStub is the most simple target in that PictogramElements already link to
-	 * ProvidesPortStub. ConnectionTarget->ComponentSupportedInterfaceStub isn't actually
+	 * User can begin drawing connection from either direction.
+	 * Source anchor of connection must be UsesPort. 
+	 * Target Anchor must be ConnectionTarget which is the parent class for a variety of types.
 	 */
 	@Override
 	public boolean canCreate(ICreateConnectionContext context) {
@@ -229,38 +214,51 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		if (sad == null) {
 			return false;
 		}
+		
+		// Do not allow a component to connect to itself  
+		if (context.getSourceAnchor() != null && context.getTargetAnchor() != null) {
+			EObject sourceObject = (EObject) getBusinessObjectForPictogramElement(context.getSourceAnchor());
+			EObject targetObject = (EObject) getBusinessObjectForPictogramElement(context.getTargetAnchor());
+			if (sourceObject.eContainer().equals(targetObject.eContainer())) {
+				return false;
+			}
+		}
+		
 		// determine source
 		UsesPortStub source = getUsesPortStub(context);
 		if (source == null) {
 			return false;
 		}
+
 		// determine destination
 		// getConnectionTarget handles connecting to ports on components, not ports or interfaces on FindBy Shapes
 		ConnectionTarget target = getConnectionTarget(context);
 		if (target == null) {
+			// PASS
 			// TODO: check if interface on findBy Shape
 			// TODO: check if provides port on findBy...not sure how were doing all this??
-			return false;
 		}
 
 		// not currently used but will select the portRectangeShape instead of the anchorRectangle
-//		ContainerShape portRectangleShape = null;
-//		if(target != null){
-//			portRectangleShape = DiagramUtil.findContainerShapeParentWithProperty(
-//					context.getSourcePictogramElement(), DiagramUtil.SHAPE_providesPortRectangleShape);
-//		}
-//		if(source != null){
-//			portRectangleShape = DiagramUtil.findContainerShapeParentWithProperty(
-//					context.getSourcePictogramElement(), DiagramUtil.SHAPE_usesPortRectangleShape);
-//		}
-//		
-//		getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior()
-//		.getDiagramContainer().selectPictogramElements(
-//				new PictogramElement[] {portRectangleShape});
+		/*
+			ContainerShape portRectangleShape = null;
+			if(target != null){
+				portRectangleShape = DiagramUtil.findContainerShapeParentWithProperty(
+						context.getSourcePictogramElement(), DiagramUtil.SHAPE_providesPortRectangleShape);
+			}
+			if(source != null){
+				portRectangleShape = DiagramUtil.findContainerShapeParentWithProperty(
+						context.getSourcePictogramElement(), DiagramUtil.SHAPE_usesPortRectangleShape);
+			}
+			
+			getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior()
+			.getDiagramContainer().selectPictogramElements(
+					new PictogramElement[] {portRectangleShape});
+		 */
+ 
 
 		// doing the null check because it breaks when loading a findby without a diagram
 		if (((RHGraphitiDiagramEditor) getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer()).getGraphicalViewer() != null) {
-
 			// force selection of shape so that we can then right click for contextual options
 			// this is kind of a hack, it would be better if selection happened automatically when its clicked.
 			getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer().selectPictogramElements(
@@ -321,10 +319,9 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 				sadConnectInterfaces[0].setTarget(target);
 
 				// TODO: evaluate when and where these should be set
-//				sadConnectInterfaces[0].setProvidesPort(value);
-//				sadConnectInterfaces[0].setTarget(value);
-//				sadConnectInterfaces[0].setFindBy(value);
-//				sadConnectInterfaces[0].setComponentSupportedInterface(value);
+				// sadConnectInterfaces[0].setProvidesPort(value);
+				// sadConnectInterfaces[0].setFindBy(value);
+				// sadConnectInterfaces[0].setComponentSupportedInterface(value);
 
 			}
 		});
@@ -346,6 +343,16 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		source = getUsesPortStub(context.getTargetAnchor());
 		return source;
 	}
+	
+	private UsesPortStub getUsesPortStub(Anchor anchor) {
+		if (anchor != null) {
+			Object object = getBusinessObjectForPictogramElement(anchor.getParent());
+			if (object instanceof UsesPortStub) {
+				return (UsesPortStub) object;
+			}
+		}
+		return null;
+	}
 
 	// Return ConnectionTarget from either the source or target anchor. Depends on how user drew connection.
 	private ConnectionTarget getConnectionTarget(IConnectionContext context) {
@@ -355,26 +362,6 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		}
 		connectionTarget = getConnectionTarget(context.getTargetAnchor());
 		return connectionTarget;
-	}
-
-	// Return SadComponentInstantiation from either source or target anchor. Depends on how user drew connection.
-	private SadComponentInstantiation getSadComponentInstantiation(IConnectionContext context) {
-		SadComponentInstantiation target = getSadComponentInstantiation(context.getSourceAnchor());
-		if (target != null) {
-			return target;
-		}
-		target = getSadComponentInstantiation(context.getTargetAnchor());
-		return target;
-	}
-
-	private UsesPortStub getUsesPortStub(Anchor anchor) {
-		if (anchor != null) {
-			Object object = getBusinessObjectForPictogramElement(anchor.getParent());
-			if (object instanceof UsesPortStub) {
-				return (UsesPortStub) object;
-			}
-		}
-		return null;
 	}
 
 	private ConnectionTarget getConnectionTarget(Anchor anchor) {
@@ -387,20 +374,9 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		return null;
 	}
 
-	private SadComponentInstantiation getSadComponentInstantiation(Anchor anchor) {
-		if (anchor != null) {
-			Object object = getBusinessObjectForPictogramElement(anchor.getParent());
-			if (object instanceof SadComponentInstantiation) {
-				return (SadComponentInstantiation) object;
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * Returns the next available connection id
-	 * @param sad
-	 * @return
+	 * @param sad SoftwareAssembly
 	 */
 	private String createConnectionId(SoftwareAssembly sad) {
 		final List<String> ids = new ArrayList<String>();
