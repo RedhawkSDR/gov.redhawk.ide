@@ -49,7 +49,7 @@ public class RHGxAdapterFactory extends AdapterFactoryImpl {
 	 */
 	public RHGxAdapterFactory() {
 		if (modelPackage == null) {
-			modelPackage = RHGxPackage.E_INSTANCE;
+			modelPackage = RHGxPackage.eINSTANCE;
 		}
 	}
 

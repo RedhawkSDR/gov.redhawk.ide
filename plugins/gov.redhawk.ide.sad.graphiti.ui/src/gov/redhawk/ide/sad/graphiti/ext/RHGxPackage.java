@@ -29,12 +29,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
  * <!-- end-user-doc -->
  * @see gov.redhawk.ide.sad.graphiti.ext.RHGxFactory
  * @model kind="package"
- *        annotation="http://www.eclipse.org/emf/2002/GenModel 
- *        	prefix='RHGx' 
- *        	codeFormatting='true' modelPluginVariables='org.eclipse.xtext.xbase.lib' 
- *        	contentTypeIdentifier='http://www.redhawk.gov/model/rhgext/1.0.0' 
- *        	operationReflection='false' modelDirectory='/gov.redhawk.ide.sad.graphiti.ui/src' 
- *        	basePackage='gov.redhawk.ide.sad.graphiti'"
+ *        annotation="http://www.eclipse.org/emf/2002/GenModel prefix='RHGx' codeFormatting='true' modelPluginVariables='org.eclipse.xtext.xbase.lib' contentTypeIdentifier='http://www.redhawk.gov/model/rhgext/1.0.0' operationReflection='false' modelDirectory='/gov.redhawk.ide.sad.graphiti.ui/src' basePackage='gov.redhawk.ide.sad.graphiti'"
  * @generated
  */
 public interface RHGxPackage extends EPackage {
@@ -44,7 +39,7 @@ public interface RHGxPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String E_NAME = "ext";
+	String eNAME = "ext";
 
 	/**
 	 * The package namespace URI.
@@ -52,7 +47,7 @@ public interface RHGxPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String E_NS_URI = "http://www.redhawk.gov/model/rhgext/1.0.0";
+	String eNS_URI = "http://www.redhawk.gov/model/rhgext/1.0.0";
 
 	/**
 	 * The package namespace name.
@@ -60,7 +55,7 @@ public interface RHGxPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String E_NS_PREFIX = "ext";
+	String eNS_PREFIX = "ext";
 
 	/**
 	 * The package content type ID.
@@ -68,7 +63,7 @@ public interface RHGxPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String E_CONTENT_TYPE = "http://www.redhawk.gov/model/rhgext/1.0.0";
+	String eCONTENT_TYPE = "http://www.redhawk.gov/model/rhgext/1.0.0";
 
 	/**
 	 * The singleton instance of the package.
@@ -76,7 +71,7 @@ public interface RHGxPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	RHGxPackage E_INSTANCE = gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl.init();
+	RHGxPackage eINSTANCE = gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl.init();
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.graphiti.mm.pictograms.ContainerShape <em>Container Shape Impl</em>}' class.
@@ -114,7 +109,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE_PROPERTIES = PictogramsPackage.CONTAINER_SHAPE__PROPERTIES;
+	int RH_CONTAINER_SHAPE__PROPERTIES = PictogramsPackage.CONTAINER_SHAPE__PROPERTIES;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -123,7 +118,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE_VISIBLE = PictogramsPackage.CONTAINER_SHAPE__VISIBLE;
+	int RH_CONTAINER_SHAPE__VISIBLE = PictogramsPackage.CONTAINER_SHAPE__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Graphics Algorithm</b></em>' containment reference.
@@ -132,7 +127,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE_GRAPHICS_ALGORITHM = PictogramsPackage.CONTAINER_SHAPE__GRAPHICS_ALGORITHM;
+	int RH_CONTAINER_SHAPE__GRAPHICS_ALGORITHM = PictogramsPackage.CONTAINER_SHAPE__GRAPHICS_ALGORITHM;
 
 	/**
 	 * The feature id for the '<em><b>Active</b></em>' attribute.
@@ -141,7 +136,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE_ACTIVE = PictogramsPackage.CONTAINER_SHAPE__ACTIVE;
+	int RH_CONTAINER_SHAPE__ACTIVE = PictogramsPackage.CONTAINER_SHAPE__ACTIVE;
 
 	/**
 	 * The feature id for the '<em><b>Link</b></em>' containment reference.
@@ -150,7 +145,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE_LINK = PictogramsPackage.CONTAINER_SHAPE__LINK;
+	int RH_CONTAINER_SHAPE__LINK = PictogramsPackage.CONTAINER_SHAPE__LINK;
 
 	/**
 	 * The feature id for the '<em><b>Anchors</b></em>' containment reference list.
@@ -159,7 +154,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE_ANCHORS = PictogramsPackage.CONTAINER_SHAPE__ANCHORS;
+	int RH_CONTAINER_SHAPE__ANCHORS = PictogramsPackage.CONTAINER_SHAPE__ANCHORS;
 
 	/**
 	 * The feature id for the '<em><b>Container</b></em>' container reference.
@@ -168,7 +163,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE_CONTAINER = PictogramsPackage.CONTAINER_SHAPE__CONTAINER;
+	int RH_CONTAINER_SHAPE__CONTAINER = PictogramsPackage.CONTAINER_SHAPE__CONTAINER;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -177,7 +172,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE_CHILDREN = PictogramsPackage.CONTAINER_SHAPE__CHILDREN;
+	int RH_CONTAINER_SHAPE__CHILDREN = PictogramsPackage.CONTAINER_SHAPE__CHILDREN;
 
 	/**
 	 * The number of structural features of the '<em>RH Container Shape</em>' class.
@@ -205,7 +200,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_SHAPE_PROPERTIES = RH_CONTAINER_SHAPE_PROPERTIES;
+	int COMPONENT_SHAPE__PROPERTIES = RH_CONTAINER_SHAPE__PROPERTIES;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -214,7 +209,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_SHAPE_VISIBLE = RH_CONTAINER_SHAPE_VISIBLE;
+	int COMPONENT_SHAPE__VISIBLE = RH_CONTAINER_SHAPE__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Graphics Algorithm</b></em>' containment reference.
@@ -223,7 +218,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_SHAPE_GRAPHICS_ALGORITHM = RH_CONTAINER_SHAPE_GRAPHICS_ALGORITHM;
+	int COMPONENT_SHAPE__GRAPHICS_ALGORITHM = RH_CONTAINER_SHAPE__GRAPHICS_ALGORITHM;
 
 	/**
 	 * The feature id for the '<em><b>Active</b></em>' attribute.
@@ -232,7 +227,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_SHAPE_ACTIVE = RH_CONTAINER_SHAPE_ACTIVE;
+	int COMPONENT_SHAPE__ACTIVE = RH_CONTAINER_SHAPE__ACTIVE;
 
 	/**
 	 * The feature id for the '<em><b>Link</b></em>' containment reference.
@@ -241,7 +236,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_SHAPE_LINK = RH_CONTAINER_SHAPE_LINK;
+	int COMPONENT_SHAPE__LINK = RH_CONTAINER_SHAPE__LINK;
 
 	/**
 	 * The feature id for the '<em><b>Anchors</b></em>' containment reference list.
@@ -250,7 +245,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_SHAPE_ANCHORS = RH_CONTAINER_SHAPE_ANCHORS;
+	int COMPONENT_SHAPE__ANCHORS = RH_CONTAINER_SHAPE__ANCHORS;
 
 	/**
 	 * The feature id for the '<em><b>Container</b></em>' container reference.
@@ -259,7 +254,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_SHAPE_CONTAINER = RH_CONTAINER_SHAPE_CONTAINER;
+	int COMPONENT_SHAPE__CONTAINER = RH_CONTAINER_SHAPE__CONTAINER;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -268,7 +263,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_SHAPE_CHILDREN = RH_CONTAINER_SHAPE_CHILDREN;
+	int COMPONENT_SHAPE__CHILDREN = RH_CONTAINER_SHAPE__CHILDREN;
 
 	/**
 	 * The number of structural features of the '<em>Component Shape</em>' class.
@@ -550,7 +545,7 @@ public interface RHGxPackage extends EPackage {
 		 * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getContainerShapeImpl()
 		 * @generated
 		 */
-		EClass CONTAINER_SHAPE_IMPL = E_INSTANCE.getContainerShapeImpl();
+		EClass CONTAINER_SHAPE_IMPL = eINSTANCE.getContainerShapeImpl();
 
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl <em>RH Container Shape</em>}' class.
@@ -560,7 +555,7 @@ public interface RHGxPackage extends EPackage {
 		 * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getRHContainerShape()
 		 * @generated
 		 */
-		EClass RH_CONTAINER_SHAPE = E_INSTANCE.getRHContainerShape();
+		EClass RH_CONTAINER_SHAPE = eINSTANCE.getRHContainerShape();
 
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl <em>Component Shape</em>}' class.
@@ -570,7 +565,7 @@ public interface RHGxPackage extends EPackage {
 		 * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getComponentShape()
 		 * @generated
 		 */
-		EClass COMPONENT_SHAPE = E_INSTANCE.getComponentShape();
+		EClass COMPONENT_SHAPE = eINSTANCE.getComponentShape();
 
 		/**
 		 * The meta object literal for the '<em>Component Supported Interface Stub</em>' data type.
@@ -580,7 +575,7 @@ public interface RHGxPackage extends EPackage {
 		 * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getComponentSupportedInterfaceStub()
 		 * @generated
 		 */
-		EDataType COMPONENT_SUPPORTED_INTERFACE_STUB = E_INSTANCE.getComponentSupportedInterfaceStub();
+		EDataType COMPONENT_SUPPORTED_INTERFACE_STUB = eINSTANCE.getComponentSupportedInterfaceStub();
 
 		/**
 		 * The meta object literal for the '<em>IFeature Provider</em>' data type.
@@ -590,7 +585,7 @@ public interface RHGxPackage extends EPackage {
 		 * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getIFeatureProvider()
 		 * @generated
 		 */
-		EDataType IFEATURE_PROVIDER = E_INSTANCE.getIFeatureProvider();
+		EDataType IFEATURE_PROVIDER = eINSTANCE.getIFeatureProvider();
 
 		/**
 		 * The meta object literal for the '<em>Uses Port Stub</em>' data type.
@@ -600,7 +595,7 @@ public interface RHGxPackage extends EPackage {
 		 * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getUsesPortStub()
 		 * @generated
 		 */
-		EDataType USES_PORT_STUB = E_INSTANCE.getUsesPortStub();
+		EDataType USES_PORT_STUB = eINSTANCE.getUsesPortStub();
 
 		/**
 		 * The meta object literal for the '<em>Provides Port Stub</em>' data type.
@@ -610,7 +605,7 @@ public interface RHGxPackage extends EPackage {
 		 * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getProvidesPortStub()
 		 * @generated
 		 */
-		EDataType PROVIDES_PORT_STUB = E_INSTANCE.getProvidesPortStub();
+		EDataType PROVIDES_PORT_STUB = eINSTANCE.getProvidesPortStub();
 
 		/**
 		 * The meta object literal for the '<em>Port</em>' data type.
@@ -620,7 +615,7 @@ public interface RHGxPackage extends EPackage {
 		 * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getPort()
 		 * @generated
 		 */
-		EDataType PORT = E_INSTANCE.getPort();
+		EDataType PORT = eINSTANCE.getPort();
 
 		/**
 		 * The meta object literal for the '<em>Assembly Controller</em>' data type.
@@ -630,7 +625,7 @@ public interface RHGxPackage extends EPackage {
 		 * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getAssemblyController()
 		 * @generated
 		 */
-		EDataType ASSEMBLY_CONTROLLER = E_INSTANCE.getAssemblyController();
+		EDataType ASSEMBLY_CONTROLLER = eINSTANCE.getAssemblyController();
 
 		/**
 		 * The meta object literal for the '<em>External Ports</em>' data type.
@@ -640,7 +635,7 @@ public interface RHGxPackage extends EPackage {
 		 * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getExternalPorts()
 		 * @generated
 		 */
-		EDataType EXTERNAL_PORTS = E_INSTANCE.getExternalPorts();
+		EDataType EXTERNAL_PORTS = eINSTANCE.getExternalPorts();
 
 		/**
 		 * The meta object literal for the '<em>Reason</em>' data type.
@@ -650,7 +645,7 @@ public interface RHGxPackage extends EPackage {
 		 * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getReason()
 		 * @generated
 		 */
-		EDataType REASON = E_INSTANCE.getReason();
+		EDataType REASON = eINSTANCE.getReason();
 
 		/**
 		 * The meta object literal for the '<em>List</em>' data type.
@@ -660,7 +655,7 @@ public interface RHGxPackage extends EPackage {
 		 * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getList()
 		 * @generated
 		 */
-		EDataType LIST = E_INSTANCE.getList();
+		EDataType LIST = eINSTANCE.getList();
 
 		/**
 		 * The meta object literal for the '<em>Sad Component Instantiation</em>' data type.
@@ -670,7 +665,7 @@ public interface RHGxPackage extends EPackage {
 		 * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHGxPackageImpl#getSadComponentInstantiation()
 		 * @generated
 		 */
-		EDataType SAD_COMPONENT_INSTANTIATION = E_INSTANCE.getSadComponentInstantiation();
+		EDataType SAD_COMPONENT_INSTANTIATION = eINSTANCE.getSadComponentInstantiation();
 
 	}
 
