@@ -65,56 +65,59 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
 public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContainerShape {
 	// These are property key/value pairs that help us resize an existing shape by properly identifying
 	// graphicsAlgorithms
-	public static final String GA_outerRoundedRectangle = "outerRoundedRectangle";
-	public static final String GA_innerRoundedRectangle = "innerRoundedRectangle";
-	public static final String GA_outerRoundedRectangleText = "outerRoundedRectangleText";
-	public static final String GA_innerRoundedRectangleText = "innerRoundedRectangleText";
-	public static final String GA_outerRoundedRectangleImage = "outerRoundedRectangleImage";
-	public static final String GA_innerRoundedRectangleImage = "innerRoundedRectangleImage";
-	public static final String GA_innerRoundedRectangleLine = "innerRoundedRectangleLine";
-	public static final String GA_providesPortsRectangle = "providesPortsRectangle";
-	public static final String GA_providesPortText = "GA_providesPortText";
-	public static final String GA_fixPointAnchorRectangle = "GA_fixPointAnchorRectangle";
-	public static final String GA_usesPortsRectangle = "usesPortsRectangle";
-	public static final String GA_usesPortRectangle = "usesPortRectangle";
-	public static final String GA_usesPortText = "GA_usesPortText";
+	public static final String 
+	GA_OUTER_ROUNDED_RECTANGLE = "outerRoundedRectangle",
+	GA_INNER_ROUNDED_RECTANGLE = "innerRoundedRectangle",
+	GA_OUTER_ROUNDED_RECTANGLE_TEXT = "outerRoundedRectangleText",
+	GA_INNER_ROUNDED_RECTANGLE_TEXT = "innerRoundedRectangleText",
+	GA_OUTER_ROUNDED_RECTANGLE_IMAGE = "outerRoundedRectangleImage",
+	GA_INNER_ROUNDED_RECTANGLE_IMAGE = "innerRoundedRectangleImage",
+	GA_INNER_ROUNDED_RECTANGLE_LINE = "innerRoundedRectangleLine",
+	GA_PROVIDES_PORT_RECTANGLE = "providesPortsRectangle",
+	GA_PROVIDES_PORT_TEXT = "GA_PROVIDES_PORT_TEXT",
+	GA_FIX_POINT_ANCHOR_RECTANGLE = "GA_FIX_POINT_ANCHOR_RECTANGLE",
+	GA_USES_PORTS_RECTANGLE = "usesPortsRectangle",
+	GA_USES_PORT_RECTANGLE = "usesPortRectangle",
+	GA_USES_PORT_TEXT = "GA_USES_PORT_TEXT";
 
-	// Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove
-	// etc.)
-	public static final String SHAPE_outerContainerShape = "outerContainerShape";
-	public static final String SHAPE_innerContainerShape = "innerContainerShape";
-	public static final String SHAPE_usesPortsContainerShape = "usesPortsContainerShape";
-	public static final String SHAPE_providesPortsContainerShape = "providesPortsContainerShape";
-	public static final String SHAPE_usesPortContainerShape = "usesPortContainerShape";
-	public static final String SHAPE_providesPortContainerShape = "providesPortContainerShape";
-	public static final String SHAPE_usesPortRectangleShape = "usesPortRectangleShape";
-	public static final String SHAPE_providesPortRectangleShape = "providesPortRectangleShape";
-	public static final String SHAPE_interfaceContainerShape = "interfaceContainerShape";
-	public static final String SHAPE_interfaceEllipseShape = "interfaceEllipseShape";
+	// Property key/value pairs help us identify Shapes to enable/disable user actions 
+	// (move, resize, delete, remove, etc.)
+	public static final String 
+	SHAPE_OUTER_CONTAINER = "outerContainerShape",
+	SHAPE_INNER_CONTAINER = "innerContainerShape",
+	SHAPE_USES_PORTS_CONTAINER = "usesPortsContainerShape",
+	SHAPE_PROVIDES_PORTS_CONTAINER = "providesPortsContainerShape",
+	SHAPE_USES_PORT_CONTAINER = "usesPortContainerShape",
+	SHAPE_PROVIDES_PORT_CONTAINER = "providesPortContainerShape",
+	SHAPE_USES_PORT_RECTANGLE = "usesPortRectangleShape",
+	SHAPE_PROVIDES_PORT_RECTANGLE = "providesPortRectangleShape",
+	SHAPE_INTERFACE_CONTAINER = "interfaceContainerShape",
+	SHAPE_INTERFACE_ELLIPSE = "interfaceEllipseShape";
 
 	// Shape size constants
-	public static final int OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING = 10;
-	public static final int INNER_CONTAINER_SHAPE_TOP_PADDING = 20;
-	public static final int INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING = 15;
-	public static final int INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING = 60;
-	public static final int PROVIDES_PORTS_LEFT_PADDING = 5;
-	public static final int INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING;
-	public static final int PORTS_CONTAINER_SHAPE_TOP_PADDING = 60;
-	public static final int INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING = 8;
-	public static final int INNER_ROUNDED_RECTANGLE_LINE_Y = 28;
-	public static final int NAME_CHAR_WIDTH = 7;
-	public static final int LABEL_CHAR_WIDTH = 7;
-	public static final int PORT_NAME_HORIZONTAL_PADDING = 5;
-	public static final int PORT_ROW_HEIGHT = 15;
-	public static final int PORT_ROW_PADDING_HEIGHT = 5;
-	public static final int PORT_SHAPE_HEIGHT = 15;
-	public static final int PORT_SHAPE_WIDTH = 15;
-	public static final int PORT_CHAR_WIDTH = 7;
-	public static final int LOLLIPOP_ELLIPSE_DIAMETER = 10;
-	public static final int INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING;
-	public static final int INTERFACE_SHAPE_HEIGHT = 10;
-	public static final int REQ_PADDING_BETWEEN_PORT_TYPES = 0;
-	public static final int ICON_IMAGE_LENGTH = 16;
+	public static final int 
+	OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING = 10,
+	INNER_CONTAINER_SHAPE_TOP_PADDING = 20,
+	INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING = 15,
+	INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING = 60,
+	PROVIDES_PORTS_LEFT_PADDING = 5,
+	INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
+	PORTS_CONTAINER_SHAPE_TOP_PADDING = 60,
+	INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING = 8,
+	INNER_ROUNDED_RECTANGLE_LINE_Y = 28,
+	NAME_CHAR_WIDTH = 7,
+	LABEL_CHAR_WIDTH = 7,
+	PORT_NAME_HORIZONTAL_PADDING = 5,
+	PORT_ROW_HEIGHT = 15,
+	PORT_ROW_PADDING_HEIGHT = 5,
+	PORT_SHAPE_HEIGHT = 15,
+	PORT_SHAPE_WIDTH = 15,
+	PORT_CHAR_WIDTH = 7,
+	LOLLIPOP_ELLIPSE_DIAMETER = 10,
+	INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
+	INTERFACE_SHAPE_HEIGHT = 10,
+	REQ_PADDING_BETWEEN_PORT_TYPES = 0,
+	ICON_IMAGE_LENGTH = 16;
 
 	/**
 	 * 
@@ -146,21 +149,21 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		setContainer(targetContainerShape);
 
 		// add property for this shape
-		Graphiti.getPeService().setPropertyValue(this, DUtil.GA_TYPE, SHAPE_outerContainerShape);
+		Graphiti.getPeService().setPropertyValue(this, DUtil.GA_TYPE, SHAPE_OUTER_CONTAINER);
 
 		// graphic
 		RoundedRectangle outerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(this, 5, 5);
-		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, DUtil.GA_TYPE, GA_outerRoundedRectangle);
+		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE);
 		outerRoundedRectangle.setStyle(outerContainerStyle);
 
 		// image
 		Image imgIcon = Graphiti.getGaCreateService().createImage(outerRoundedRectangle, outerImageId);
-		Graphiti.getPeService().setPropertyValue(imgIcon, DUtil.GA_TYPE, GA_outerRoundedRectangleImage);
+		Graphiti.getPeService().setPropertyValue(imgIcon, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_IMAGE);
 
 		// text
 		Text cText = Graphiti.getCreateService().createText(outerRoundedRectangle, outerText);
 		cText.setStyle(StyleUtil.getStyleForOuterText(DUtil.findDiagram(targetContainerShape)));
-		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_outerRoundedRectangleText);
+		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 
 		// link objects
 		featureProvider.link(this, businessObjects.toArray());
@@ -271,19 +274,19 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	public ContainerShape addInnerContainer(ContainerShape targetContainerShape, String text, IFeatureProvider featureProvider, String imageId,
 		Style containerStyle) {
 		ContainerShape innerContainerShape = Graphiti.getCreateService().createContainerShape(targetContainerShape, false);
-		Graphiti.getPeService().setPropertyValue(innerContainerShape, DUtil.GA_TYPE, SHAPE_innerContainerShape);
+		Graphiti.getPeService().setPropertyValue(innerContainerShape, DUtil.GA_TYPE, SHAPE_INNER_CONTAINER);
 		RoundedRectangle innerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(innerContainerShape, 5, 5);
 		innerRoundedRectangle.setStyle(containerStyle);
-		Graphiti.getPeService().setPropertyValue(innerRoundedRectangle, DUtil.GA_TYPE, GA_innerRoundedRectangle);
+		Graphiti.getPeService().setPropertyValue(innerRoundedRectangle, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE);
 
 		// image
 		Image imgIcon = Graphiti.getGaCreateService().createImage(innerRoundedRectangle, imageId);
-		Graphiti.getPeService().setPropertyValue(imgIcon, DUtil.GA_TYPE, GA_innerRoundedRectangleImage);
+		Graphiti.getPeService().setPropertyValue(imgIcon, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_IMAGE);
 
 		// text
 		Text ciText = Graphiti.getCreateService().createText(innerRoundedRectangle, text);
 		ciText.setStyle(StyleUtil.getStyleForInnerText(DUtil.findDiagram(targetContainerShape)));
-		Graphiti.getPeService().setPropertyValue(ciText, DUtil.GA_TYPE, GA_innerRoundedRectangleText);
+		Graphiti.getPeService().setPropertyValue(ciText, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_TEXT);
 
 		// line
 		Polyline polyline = Graphiti.getGaCreateService().createPolyline(innerRoundedRectangle,
@@ -291,7 +294,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		polyline.setLineWidth(1);
 		polyline.setBackground(Graphiti.getGaService().manageColor(DUtil.findDiagram(targetContainerShape), StyleUtil.BLACK));
 		polyline.setForeground(Graphiti.getGaService().manageColor(DUtil.findDiagram(targetContainerShape), StyleUtil.BLACK));
-		Graphiti.getPeService().setPropertyValue(polyline, DUtil.GA_TYPE, GA_innerRoundedRectangleLine);
+		Graphiti.getPeService().setPropertyValue(polyline, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_LINE);
 
 		return innerContainerShape;
 	}
@@ -303,7 +306,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// interface container lollipop
 		ContainerShape interfaceContainerShape = Graphiti.getCreateService().createContainerShape(targetContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(interfaceContainerShape, DUtil.GA_TYPE, SHAPE_interfaceContainerShape);
+		Graphiti.getPeService().setPropertyValue(interfaceContainerShape, DUtil.GA_TYPE, SHAPE_INTERFACE_CONTAINER);
 		Rectangle interfaceRectangle = Graphiti.getCreateService().createRectangle(interfaceContainerShape);
 		featureProvider.link(interfaceContainerShape, anchorBusinessObject);
 		interfaceRectangle.setTransparency(.99d);
@@ -311,7 +314,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// interface lollipop ellipse
 		Shape lollipopEllipseShape = Graphiti.getCreateService().createShape(interfaceContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(lollipopEllipseShape, DUtil.GA_TYPE, SHAPE_interfaceEllipseShape);
+		Graphiti.getPeService().setPropertyValue(lollipopEllipseShape, DUtil.GA_TYPE, SHAPE_INTERFACE_ELLIPSE);
 		Ellipse lollipopEllipse = Graphiti.getCreateService().createEllipse(lollipopEllipseShape);
 		lollipopEllipse.setStyle(StyleUtil.getStyleForLollipopEllipse(DUtil.findDiagram(targetContainerShape)));
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopEllipse, 0, 0, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER);
@@ -351,7 +354,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// determine how many uses port are already there.
 		int iter = 0;
 		for (PropertyContainer child : DUtil.collectPropertyContainerChildren(providesPortsContainerShape)) {
-			if (DUtil.isPropertyElementType(child, SHAPE_providesPortContainerShape)) {
+			if (DUtil.isPropertyElementType(child, SHAPE_PROVIDES_PORT_CONTAINER)) {
 				iter++;
 			}
 		}
@@ -359,9 +362,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Diagram diagram = DUtil.findDiagram(providesPortsContainerShape);
 
 		ContainerShape providesPortContainerShape = Graphiti.getCreateService().createContainerShape(providesPortsContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(providesPortContainerShape, DUtil.SHAPE_TYPE, SHAPE_providesPortContainerShape);// ref
-																																	// prevent
-																																	// selection/deletion/removal
+		Graphiti.getPeService().setPropertyValue(providesPortContainerShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORT_CONTAINER);// ref
+		// prevent
+		// selection/deletion/removal
 		Rectangle providesPortContainerShapeRectangle = Graphiti.getCreateService().createRectangle(providesPortContainerShape);
 		providesPortContainerShapeRectangle.setTransparency(1d);
 		Graphiti.getGaLayoutService().setLocationAndSize(providesPortContainerShapeRectangle, 0, iter++ * (PORT_SHAPE_HEIGHT + 5),
@@ -370,9 +373,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// port shape
 		ContainerShape providesPortRectangleShape = Graphiti.getCreateService().createContainerShape(providesPortContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(providesPortRectangleShape, DUtil.SHAPE_TYPE, SHAPE_providesPortRectangleShape);// ref
-																																	// prevent
-																																	// move
+		Graphiti.getPeService().setPropertyValue(providesPortRectangleShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORT_RECTANGLE);// ref
+		// prevent
+		// move
 		Rectangle providesPortRectangle = Graphiti.getCreateService().createRectangle(providesPortRectangleShape);
 		featureProvider.link(providesPortRectangleShape, p);
 		providesPortRectangle.setStyle(StyleUtil.getStyleForProvidesPort(diagram));
@@ -382,7 +385,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Shape providesPortTextShape = Graphiti.getCreateService().createShape(providesPortContainerShape, false);
 		Text providesPortText = Graphiti.getCreateService().createText(providesPortTextShape, p.getName());
 		providesPortText.setStyle(StyleUtil.getStyleForProvidesPort(diagram));
-		Graphiti.getPeService().setPropertyValue(providesPortText, DUtil.GA_TYPE, GA_providesPortText);
+		Graphiti.getPeService().setPropertyValue(providesPortText, DUtil.GA_TYPE, GA_PROVIDES_PORT_TEXT);
 		Graphiti.getGaLayoutService().setLocationAndSize(providesPortText, PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_HEIGHT, 0,
 			providesPortNameLength * PORT_CHAR_WIDTH, 20);
 
@@ -396,11 +399,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
 		fixPointAnchor.setReferencedGraphicsAlgorithm(providesPortRectangle);
 		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
-		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_fixPointAnchorRectangle);
+		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
 		if (externalPort != null) {
 			fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalProvidesPort(diagram));
 			featureProvider.link(fixPointAnchor, externalPort); // link to externalPort so that update fires when it
-																// changes
+			// changes
 		} else {
 			fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForProvidesPort(diagram));
 		}
@@ -418,10 +421,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// provides (input)
 		int providesPortNameLength = DUtil.getLongestProvidesPortWidth(providesPortStubs, DUtil.findDiagram(outerContainerShape));
 		ContainerShape providesPortsContainerShape = Graphiti.getCreateService().createContainerShape(outerContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(providesPortsContainerShape, DUtil.SHAPE_TYPE, SHAPE_providesPortsContainerShape);
+		Graphiti.getPeService().setPropertyValue(providesPortsContainerShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORTS_CONTAINER);
 		Rectangle providesPortsRectangle = Graphiti.getCreateService().createRectangle(providesPortsContainerShape);
 		providesPortsRectangle.setTransparency(1d);
-		Graphiti.getPeService().setPropertyValue(providesPortsRectangle, DUtil.GA_TYPE, GA_providesPortsRectangle);
+		Graphiti.getPeService().setPropertyValue(providesPortsRectangle, DUtil.GA_TYPE, GA_PROVIDES_PORT_RECTANGLE);
 		Graphiti.getGaLayoutService().setLocationAndSize(providesPortsRectangle, PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING,
 			PORT_SHAPE_WIDTH + providesPortNameLength, providesPortStubs.size() * (PORT_ROW_HEIGHT + PORT_ROW_PADDING_HEIGHT));
 		featureProvider.link(providesPortsContainerShape, providesPortStubs.toArray());
@@ -440,7 +443,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// determine how many uses port are already there.
 		int iter = 0;
 		for (PropertyContainer child : DUtil.collectPropertyContainerChildren(usesPortsContainerShape)) {
-			if (DUtil.isPropertyElementType(child, SHAPE_usesPortContainerShape)) {
+			if (DUtil.isPropertyElementType(child, SHAPE_USES_PORT_CONTAINER)) {
 				iter++;
 			}
 		}
@@ -449,7 +452,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// port container
 		ContainerShape usesPortContainerShape = Graphiti.getPeService().createContainerShape(usesPortsContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(usesPortContainerShape, DUtil.SHAPE_TYPE, SHAPE_usesPortContainerShape);
+		Graphiti.getPeService().setPropertyValue(usesPortContainerShape, DUtil.SHAPE_TYPE, SHAPE_USES_PORT_CONTAINER);
 		Rectangle usesPortContainerShapeRectangle = Graphiti.getCreateService().createRectangle(usesPortContainerShape);
 		usesPortContainerShapeRectangle.setTransparency(1d);
 		Graphiti.getGaLayoutService().setLocationAndSize(usesPortContainerShapeRectangle,
@@ -459,9 +462,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// port shape
 		ContainerShape usesPortRectangleShape = Graphiti.getPeService().createContainerShape(usesPortContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(usesPortRectangleShape, DUtil.SHAPE_TYPE, SHAPE_usesPortRectangleShape);
+		Graphiti.getPeService().setPropertyValue(usesPortRectangleShape, DUtil.SHAPE_TYPE, SHAPE_USES_PORT_RECTANGLE);
 		Rectangle usesPortRectangle = Graphiti.getCreateService().createRectangle(usesPortRectangleShape);
-		Graphiti.getPeService().setPropertyValue(usesPortRectangle, DUtil.GA_TYPE, GA_usesPortRectangle);
+		Graphiti.getPeService().setPropertyValue(usesPortRectangle, DUtil.GA_TYPE, GA_USES_PORT_RECTANGLE);
 		featureProvider.link(usesPortRectangleShape, p);
 		usesPortRectangle.setStyle(StyleUtil.getStyleForUsesPort(diagram));
 		Graphiti.getGaLayoutService().setLocationAndSize(usesPortRectangle, usesPortNameLength, 0, PORT_SHAPE_WIDTH, PORT_SHAPE_HEIGHT);
@@ -471,7 +474,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Text usesPortText = Graphiti.getCreateService().createText(usesPortTextShape, p.getName());
 		usesPortText.setStyle(StyleUtil.getStyleForUsesPort(diagram));
 		usesPortText.setHorizontalAlignment(Orientation.ALIGNMENT_RIGHT);
-		Graphiti.getPeService().setPropertyValue(usesPortText, DUtil.GA_TYPE, GA_usesPortText);
+		Graphiti.getPeService().setPropertyValue(usesPortText, DUtil.GA_TYPE, GA_USES_PORT_TEXT);
 		Graphiti.getGaLayoutService().setLocationAndSize(usesPortText, 0, 0,
 			usesPortContainerShapeRectangle.getWidth() - (usesPortRectangle.getWidth() + PORT_NAME_HORIZONTAL_PADDING), 20);
 
@@ -485,11 +488,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
 		fixPointAnchor.setReferencedGraphicsAlgorithm(usesPortRectangle);
 		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
-		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_fixPointAnchorRectangle);
+		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
 		if (externalPort != null) {
 			fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalUsesPort(diagram));
 			featureProvider.link(fixPointAnchor, externalPort); // link to externalPort so that update fires when it
-																// changes
+			// changes
 		} else {
 			fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForUsesPort(diagram));
 		}
@@ -506,10 +509,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// uses (output)
 		int usesPortNameLength = DUtil.getLongestUsesPortWidth(usesPortStubs, DUtil.findDiagram(outerContainerShape));
 		ContainerShape usesPortsContainerShape = Graphiti.getPeService().createContainerShape(outerContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(usesPortsContainerShape, DUtil.SHAPE_TYPE, SHAPE_usesPortsContainerShape);
+		Graphiti.getPeService().setPropertyValue(usesPortsContainerShape, DUtil.SHAPE_TYPE, SHAPE_USES_PORTS_CONTAINER);
 		Rectangle usesPortsRectangle = Graphiti.getCreateService().createRectangle(usesPortsContainerShape);
 		usesPortsRectangle.setTransparency(1d);
-		Graphiti.getPeService().setPropertyValue(usesPortsRectangle, DUtil.GA_TYPE, GA_usesPortsRectangle);
+		Graphiti.getPeService().setPropertyValue(usesPortsRectangle, DUtil.GA_TYPE, GA_USES_PORTS_RECTANGLE);
 		Graphiti.getGaLayoutService().setSize(usesPortsRectangle, PORT_SHAPE_WIDTH + usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING,
 			usesPortStubs.size() * (PORT_SHAPE_HEIGHT));
 		featureProvider.link(usesPortsContainerShape, usesPortStubs.toArray());
@@ -524,14 +527,14 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * Return the usesPortsContainerShape
 	 */
 	public ContainerShape getUsesPortsContainerShape() {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_usesPortsContainerShape);
+		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_USES_PORTS_CONTAINER);
 	}
 
 	/**
 	 * Return the usesPortsContainerShape
 	 */
 	public ContainerShape getProvidesPortsContainerShape() {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_providesPortsContainerShape);
+		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_PROVIDES_PORTS_CONTAINER);
 	}
 
 	/**
@@ -554,42 +557,42 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * Return the text for outer container
 	 */
 	public Text getOuterText() {
-		return (Text) DUtil.findFirstPropertyContainer(this, GA_outerRoundedRectangleText);
+		return (Text) DUtil.findFirstPropertyContainer(this, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 	}
 
 	/**
 	 * Return the image for outer container
 	 */
 	public Image getOuterImage() {
-		return (Image) DUtil.findFirstPropertyContainer(this, GA_outerRoundedRectangleImage);
+		return (Image) DUtil.findFirstPropertyContainer(this, GA_OUTER_ROUNDED_RECTANGLE_IMAGE);
 	}
 
 	/**
 	 * Return the text for inner container
 	 */
 	public Text getInnerText() {
-		return (Text) DUtil.findFirstPropertyContainer(this, GA_innerRoundedRectangleText);
+		return (Text) DUtil.findFirstPropertyContainer(this, GA_INNER_ROUNDED_RECTANGLE_TEXT);
 	}
 
 	/**
 	 * Return the image for inner container
 	 */
 	public Image getInnerImage() {
-		return (Image) DUtil.findFirstPropertyContainer(this, GA_innerRoundedRectangleImage);
+		return (Image) DUtil.findFirstPropertyContainer(this, GA_INNER_ROUNDED_RECTANGLE_IMAGE);
 	}
 
 	/**
 	 * Return the inner container polyline
 	 */
 	public Polyline getInnerPolyline() {
-		return (Polyline) DUtil.findFirstPropertyContainer(this, GA_innerRoundedRectangleLine);
+		return (Polyline) DUtil.findFirstPropertyContainer(this, GA_INNER_ROUNDED_RECTANGLE_LINE);
 	}
 
 	/**
 	 * Return the innerContainerShape
 	 */
 	public ContainerShape getInnerContainerShape() {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_innerContainerShape);
+		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_INNER_CONTAINER);
 	}
 
 	/**
@@ -597,7 +600,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @return
 	 */
 	public ContainerShape getLollipop() {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_interfaceContainerShape);
+		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_INTERFACE_CONTAINER);
 	}
 
 	/**
@@ -639,11 +642,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			// capture all providesPortText values
 			for (PropertyContainer providesPortContainerShape : DUtil.collectPropertyContainerChildren(providesPortsContainerShape)) {
 				// if its a providesPortContainerShape
-				if (DUtil.isPropertyElementType(providesPortContainerShape, SHAPE_providesPortContainerShape)) {
+				if (DUtil.isPropertyElementType(providesPortContainerShape, SHAPE_PROVIDES_PORT_CONTAINER)) {
 					// find all providesPortText, and fixPointAnchorRectangle
 					for (PropertyContainer providesPortChild : DUtil.collectPropertyContainerChildren(providesPortContainerShape)) {
 						// text?
-						if (DUtil.isPropertyElementType(providesPortChild, GA_providesPortText)) {
+						if (DUtil.isPropertyElementType(providesPortChild, GA_PROVIDES_PORT_TEXT)) {
 							Text providesPortText = (Text) providesPortChild;
 							providesPortTexts.add(providesPortText);
 							// search for text in model
@@ -664,7 +667,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 								}
 							}
 						}
-						if (DUtil.isPropertyElementType(providesPortChild, GA_fixPointAnchorRectangle)) {
+						if (DUtil.isPropertyElementType(providesPortChild, GA_FIX_POINT_ANCHOR_RECTANGLE)) {
 							Rectangle fixPointAnchorRectangle = (Rectangle) providesPortChild;
 							// get business object linked to fixPointAnchor
 							Object portObject = DUtil.getBusinessObject(fixPointAnchorRectangle.getPictogramElement());
@@ -678,15 +681,15 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 											// update style
 											fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalProvidesPort(DUtil.findDiagram(this)));
 											featureProvider.link(fixPointAnchorRectangle.getPictogramElement(), findExternalPort(portObject, externalPorts)); // link
-																																								// to
-																																								// externalPort
-																																								// so
-																																								// that
-																																								// update
-																																								// fires
-																																								// when
-																																								// it
-																																								// changes
+											// to
+											// externalPort
+											// so
+											// that
+											// update
+											// fires
+											// when
+											// it
+											// changes
 										} else {
 											return new Reason(true, "Port style requires update");
 										}
@@ -744,11 +747,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			// find THE usesPortContainerShape
 			for (PropertyContainer usesPortContainerShape : DUtil.collectPropertyContainerChildren(usesPortsContainerShape)) {
 				// if its a usesPortContainerShape
-				if (DUtil.isPropertyElementType(usesPortContainerShape, SHAPE_usesPortContainerShape)) {
+				if (DUtil.isPropertyElementType(usesPortContainerShape, SHAPE_USES_PORT_CONTAINER)) {
 					// find all usesPortText
 					for (PropertyContainer usesPortChild : DUtil.collectPropertyContainerChildren(usesPortContainerShape)) {
 						// compare text
-						if (DUtil.isPropertyElementType(usesPortChild, GA_usesPortText)) {
+						if (DUtil.isPropertyElementType(usesPortChild, GA_USES_PORT_TEXT)) {
 							Text usesPortText = (Text) usesPortChild;
 							usesPortTexts.add(usesPortText);
 							// search for text in model
@@ -768,7 +771,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 								}
 							}
 						}
-						if (DUtil.isPropertyElementType(usesPortChild, GA_fixPointAnchorRectangle)) {
+						if (DUtil.isPropertyElementType(usesPortChild, GA_FIX_POINT_ANCHOR_RECTANGLE)) {
 							Rectangle fixPointAnchorRectangle = (Rectangle) usesPortChild;
 							// get business object linked to fixPointAnchor
 							Object portObject = DUtil.getBusinessObject(fixPointAnchorRectangle.getPictogramElement());
@@ -783,8 +786,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 											fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalUsesPort(DUtil.findDiagram(this)));
 											fixPointAnchorRectangle.getPictogramElement().getLink().getBusinessObjects().add(
 												findExternalPort(portObject, externalPorts));// link to externalPort so
-																								// that update fires
-																								// when it changes
+											// that update fires
+											// when it changes
 										} else {
 											return new Reason(true, "Port style requires update");
 										}
@@ -909,7 +912,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// outer title
 		IDimension outerTitleDimension = GraphitiUi.getUiLayoutService().calculateTextSize(outerTitle, StyleUtil.getOuterTitleFont(diagram));
 		outerTitleWidth = INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + outerTitleDimension.getWidth() + INTERFACE_SHAPE_WIDTH
-			+ OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING;
+				+ OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING;
 
 		// return the largest
 		int largestWidth = portsWidth;
@@ -950,7 +953,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @return
 	 */
 	public static RHContainerShape findFromChild(PictogramElement pe) {
-		ContainerShape cs = DUtil.findContainerShapeParentWithProperty(pe, SHAPE_outerContainerShape);
+		ContainerShape cs = DUtil.findContainerShapeParentWithProperty(pe, SHAPE_OUTER_CONTAINER);
 		if (cs instanceof RHContainerShape) {
 			return (RHContainerShape) cs;
 		}

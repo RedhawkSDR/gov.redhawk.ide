@@ -165,7 +165,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		IDirectEditingFeature ret = null;
 		for (IPattern pattern : getPatterns()) {
 			if (checkPattern(pattern, getBusinessObjectForPictogramElement(DUtil.findContainerShapeParentWithProperty(context.getPictogramElement(),
-				RHContainerShapeImpl.SHAPE_outerContainerShape)))) {
+				RHContainerShapeImpl.SHAPE_OUTER_CONTAINER)))) {
 				IPattern choosenPattern = null;
 				IDirectEditingFeature f = new DirectEditingFeatureForPattern(this, pattern);
 				if (checkFeatureAndContext(f, context)) {
@@ -191,7 +191,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 //		
 //		PictogramElement pe = context.getPictogramElement();
 //		ComponentShape componentShape = (ComponentShape)DUtil.findContainerShapeParentWithProperty(
-//				pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+//				pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 //		if(componentShape != null && getBusinessObjectForPictogramElement(componentShape) instanceof SadComponentInstantiation){
 //			return new ComponentDirectEditUsageNameFeature(getDiagramTypeProvider().getFeatureProvider());
 //		}
@@ -298,8 +298,8 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	public IMoveShapeFeature getMoveShapeFeature(IMoveShapeContext context) {
 
 		// Search for shapes that we don't want the user to have move capability
-		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_usesPortRectangleShape,
-			RHContainerShapeImpl.SHAPE_providesPortRectangleShape, RHContainerShapeImpl.SHAPE_interfaceContainerShape })) {
+		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE,
+			RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER })) {
 			return new DefaultMoveShapeFeature(this) {
 				public boolean canMove(IContext context) {
 					return false;
@@ -329,11 +329,11 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		}
 
 		// hide update icon for some pictogram elements
-		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_providesPortsContainerShape,
-			RHContainerShapeImpl.SHAPE_usesPortsContainerShape, RHContainerShapeImpl.SHAPE_providesPortContainerShape,
-			RHContainerShapeImpl.SHAPE_usesPortContainerShape, RHContainerShapeImpl.SHAPE_providesPortRectangleShape,
-			RHContainerShapeImpl.SHAPE_usesPortRectangleShape, RHContainerShapeImpl.SHAPE_interfaceContainerShape,
-			RHContainerShapeImpl.SHAPE_interfaceEllipseShape })) {
+		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
+			RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
+			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE,
+			RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
+			RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE })) {
 			return new UpdateNoBoFeature(this) {
 				public boolean isAvailable(IContext context) {
 					return false;
@@ -348,11 +348,11 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	public IDeleteFeature getDeleteFeature(IDeleteContext context) {
 
 		// Search for shapes that we don't want the user to have delete capability
-		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_providesPortsContainerShape,
-			RHContainerShapeImpl.SHAPE_usesPortsContainerShape, RHContainerShapeImpl.SHAPE_providesPortContainerShape,
-			RHContainerShapeImpl.SHAPE_usesPortContainerShape, RHContainerShapeImpl.SHAPE_providesPortRectangleShape,
-			RHContainerShapeImpl.SHAPE_usesPortRectangleShape, RHContainerShapeImpl.SHAPE_interfaceContainerShape,
-			RHContainerShapeImpl.SHAPE_interfaceEllipseShape })) {
+		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
+			RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
+			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE,
+			RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
+			RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE })) {
 			return new DefaultDeleteFeature(this) {
 				public boolean isAvailable(IContext context) {
 					return false;
@@ -375,11 +375,11 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	public IRemoveFeature getRemoveFeature(IRemoveContext context) {
 
 		// Search for shapes that we don't want the user to have remove capability
-		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_providesPortsContainerShape,
-			RHContainerShapeImpl.SHAPE_usesPortsContainerShape, RHContainerShapeImpl.SHAPE_providesPortContainerShape,
-			RHContainerShapeImpl.SHAPE_usesPortContainerShape, RHContainerShapeImpl.SHAPE_providesPortRectangleShape,
-			RHContainerShapeImpl.SHAPE_usesPortRectangleShape, RHContainerShapeImpl.SHAPE_interfaceContainerShape,
-			RHContainerShapeImpl.SHAPE_interfaceEllipseShape, RHContainerShapeImpl.SHAPE_outerContainerShape })) {
+		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
+			RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
+			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE,
+			RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
+			RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER })) {
 			return new DefaultRemoveFeature(this) {
 				public boolean isAvailable(IContext context) {
 					return false;
@@ -403,8 +403,8 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	public IResizeShapeFeature getResizeShapeFeature(IResizeShapeContext context) {
 
 		// Search for shapes that we don't want the user to have resize capability
-		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_providesPortRectangleShape,
-			RHContainerShapeImpl.SHAPE_usesPortRectangleShape, RHContainerShapeImpl.SHAPE_interfaceContainerShape })) {
+		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE,
+			RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER })) {
 			return new DefaultResizeShapeFeature(this) {
 				public boolean canResizeShape(IResizeShapeContext context) {
 					return false;

@@ -110,7 +110,7 @@ public abstract class AbstractFindByPattern extends AbstractNamedElementPattern 
 		String innerTitle = getInnerTitle(findByStub);
 
 		// create shape
-		RHContainerShape rhContainerShape = RHGxFactory.eINSTANCE.createRHContainerShape();
+		RHContainerShape rhContainerShape = RHGxFactory.E_INSTANCE.createRHContainerShape();
 
 		// initialize shape contents
 		rhContainerShape.init(targetContainerShape, outerTitle, Arrays.asList((EObject) findByStub), getFeatureProvider(), ImageProvider.IMG_FIND_BY,
@@ -204,7 +204,7 @@ public abstract class AbstractFindByPattern extends AbstractNamedElementPattern 
 	@Override
 	public boolean canDirectEdit(IDirectEditingContext context) {
 		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 		Object obj = getBusinessObjectForPictogramElement(rhContainerShape);
 		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
 		// allow if we've selected Text for the FindByStub
@@ -222,7 +222,7 @@ public abstract class AbstractFindByPattern extends AbstractNamedElementPattern 
 	@Override
 	public String getInitialValue(IDirectEditingContext context) {
 		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 		FindByStub findBy = (FindByStub) getBusinessObjectForPictogramElement(rhContainerShape);
 		return getInnerTitle(findBy);
 	}

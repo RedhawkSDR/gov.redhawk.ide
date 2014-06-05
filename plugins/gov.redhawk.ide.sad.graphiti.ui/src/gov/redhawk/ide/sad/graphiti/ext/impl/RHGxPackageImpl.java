@@ -32,7 +32,6 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.MmPackage;
-import org.eclipse.graphiti.mm.algorithms.AlgorithmsPackage;
 import org.eclipse.graphiti.mm.algorithms.styles.StylesPackage;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
@@ -146,12 +145,12 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.emf.ecore.EPackage.Registry
-	 * @see gov.redhawk.ide.sad.graphiti.ext.RHGxPackage#eNS_URI
+	 * @see gov.redhawk.ide.sad.graphiti.ext.RHGxPackage#E_NS_URI
 	 * @see #init()
 	 * @generated
 	 */
 	private RHGxPackageImpl() {
-		super(eNS_URI, RHGxFactory.eINSTANCE);
+		super(E_NS_URI, RHGxFactory.E_INSTANCE);
 	}
 
 	/**
@@ -164,21 +163,21 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
 	 * 
-	 * <p>This method is used to initialize {@link RHGxPackage#eINSTANCE} when that field is accessed.
+	 * <p>This method is used to initialize {@link RHGxPackage#E_INSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #eNS_URI
+	 * @see #E_NS_URI
 	 * @see #createPackageContents()
 	 * @see #initializePackageContents()
 	 * @generated
 	 */
 	public static RHGxPackage init() {
 		if (isInited)
-			return (RHGxPackage) EPackage.Registry.INSTANCE.getEPackage(RHGxPackage.eNS_URI);
+			return (RHGxPackage) EPackage.Registry.INSTANCE.getEPackage(RHGxPackage.E_NS_URI);
 
 		// Obtain or create and register package
-		RHGxPackageImpl theRHGxPackage = (RHGxPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof RHGxPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI)
+		RHGxPackageImpl theRHGxPackage = (RHGxPackageImpl) (EPackage.Registry.INSTANCE.get(E_NS_URI) instanceof RHGxPackageImpl ? EPackage.Registry.INSTANCE.get(E_NS_URI)
 			: new RHGxPackageImpl());
 
 		isInited = true;
@@ -186,7 +185,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		// Initialize simple dependencies
 		StylesPackage.eINSTANCE.eClass();
 		PictogramsPackage.eINSTANCE.eClass();
-		AlgorithmsPackage.eINSTANCE.eClass();
 		EcorePackage.eINSTANCE.eClass();
 		MmPackage.eINSTANCE.eClass();
 
@@ -200,7 +198,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		theRHGxPackage.freeze();
 
 		// Update the registry and return the package
-		EPackage.Registry.INSTANCE.put(RHGxPackage.eNS_URI, theRHGxPackage);
+		EPackage.Registry.INSTANCE.put(RHGxPackage.E_NS_URI, theRHGxPackage);
 		return theRHGxPackage;
 	}
 
@@ -389,9 +387,9 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		isInitialized = true;
 
 		// Initialize package
-		setName(eNAME);
-		setNsPrefix(eNS_PREFIX);
-		setNsURI(eNS_URI);
+		setName(E_NAME);
+		setNsPrefix(E_NS_PREFIX);
+		setNsURI(E_NS_URI);
 
 		// Obtain other dependent packages
 		PictogramsPackage thePictogramsPackage = (PictogramsPackage) EPackage.Registry.INSTANCE.getEPackage(PictogramsPackage.eNS_URI);
@@ -531,7 +529,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 			!IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
-		createResource(eNS_URI);
+		createResource(E_NS_URI);
 	}
 
 } // RHGxPackageImpl

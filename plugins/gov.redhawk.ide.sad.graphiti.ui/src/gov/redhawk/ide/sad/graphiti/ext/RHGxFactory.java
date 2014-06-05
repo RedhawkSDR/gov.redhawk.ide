@@ -27,7 +27,7 @@ public interface RHGxFactory extends EFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	RHGxFactory eINSTANCE = gov.redhawk.ide.sad.graphiti.ext.impl.RHGxFactoryImpl.init();
+	RHGxFactory E_INSTANCE = gov.redhawk.ide.sad.graphiti.ext.impl.RHGxFactoryImpl.init();
 
 	/**
 	 * Returns a new object of class '<em>RH Container Shape</em>'.

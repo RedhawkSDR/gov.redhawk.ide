@@ -34,7 +34,7 @@ public class GraphitiEditPartToIPropertySourceAdapterFactory implements IAdapter
 				GraphitiShapeEditPart editPart = (GraphitiShapeEditPart) adaptableObject;
 				PictogramElement pictogramElement = editPart.getPictogramElement();
 				ContainerShape containerShape = (ContainerShape) DUtil.findContainerShapeParentWithProperty(pictogramElement,
-					RHContainerShapeImpl.SHAPE_outerContainerShape);
+					RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 				Object obj = DUtil.getBusinessObject(containerShape);
 				if (containerShape != null && obj != null && obj instanceof SadComponentInstantiation) {
 

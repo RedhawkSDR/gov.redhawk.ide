@@ -53,7 +53,7 @@ public class RHGxSwitch< T > extends Switch<T> {
 	 */
 	public RHGxSwitch() {
 		if (modelPackage == null) {
-			modelPackage = RHGxPackage.eINSTANCE;
+			modelPackage = RHGxPackage.E_INSTANCE;
 		}
 	}
 

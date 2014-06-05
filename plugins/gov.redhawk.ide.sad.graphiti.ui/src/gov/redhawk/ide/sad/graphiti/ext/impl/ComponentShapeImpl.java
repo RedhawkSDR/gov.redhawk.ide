@@ -56,12 +56,12 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 
 	// These are property key/value pairs that help us resize an existing shape by properly identifying
 	// graphicsAlgorithms
-	public static final String GA_startOrderEllipse = "startOrderEllipse";
-	public static final String GA_startOrderText = "startOrderText";
+	public static final String GA_START_ORDER_ELLIPSE = "startOrderEllipse";
+	public static final String GA_START_ORDER_TEXT = "startOrderText";
 
 	// Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove
 	// etc.)
-	public static final String SHAPE_startOrderEllipseShape = "startOrderEllipseShape";
+	public static final String SHAPE_START_ORDER_ELLIPSE = "startOrderEllipseShape";
 
 	// Shape size constants
 	public static final int START_ORDER_ELLIPSE_DIAMETER = 17;
@@ -146,7 +146,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 
 		// start order ellipse
 		ContainerShape startOrderEllipseShape = Graphiti.getCreateService().createContainerShape(innerContainerShape, false);
-		Graphiti.getPeService().setPropertyValue(startOrderEllipseShape, DUtil.SHAPE_TYPE, SHAPE_startOrderEllipseShape);
+		Graphiti.getPeService().setPropertyValue(startOrderEllipseShape, DUtil.SHAPE_TYPE, SHAPE_START_ORDER_ELLIPSE);
 		Ellipse startOrderEllipse = Graphiti.getCreateService().createEllipse(startOrderEllipseShape);
 		// if start order zero (assembly controller), then use special style
 		if (assemblyController != null) {
@@ -155,13 +155,13 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		} else {
 			startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderEllipse(diagram));
 		}
-		Graphiti.getPeService().setPropertyValue(startOrderEllipse, DUtil.GA_TYPE, GA_startOrderEllipse);
+		Graphiti.getPeService().setPropertyValue(startOrderEllipse, DUtil.GA_TYPE, GA_START_ORDER_ELLIPSE);
 		Graphiti.getGaLayoutService().setSize(startOrderEllipse, START_ORDER_ELLIPSE_DIAMETER, START_ORDER_ELLIPSE_DIAMETER);
 
 		// port text
 		Shape startOrderTextShape = Graphiti.getCreateService().createShape(startOrderEllipseShape, false);
 		Text startOrderText = Graphiti.getCreateService().createText(startOrderTextShape, sadComponentInstantiation.getStartOrder().toString());
-		Graphiti.getPeService().setPropertyValue(startOrderText, DUtil.GA_TYPE, GA_startOrderText);
+		Graphiti.getPeService().setPropertyValue(startOrderText, DUtil.GA_TYPE, GA_START_ORDER_TEXT);
 		startOrderText.setStyle(StyleUtil.getStyleForStartOrderText(diagram));
 		// TODO: bwhoff2 we need to handle the x for the text inside the shape
 		IDimension textDimension = GraphitiUi.getUiLayoutService().calculateTextSize(sadComponentInstantiation.getStartOrder().toString(),
@@ -177,14 +177,14 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * Return the startOrderEllipseShape
 	 */
 	public ContainerShape getStartOrderEllipseShape() {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_startOrderEllipseShape);
+		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_START_ORDER_ELLIPSE);
 	}
 
 	/**
 	 * Return the startOrderText
 	 */
 	public Text getStartOrderText() {
-		return (Text) DUtil.findFirstPropertyContainer(getStartOrderEllipseShape(), GA_startOrderText);
+		return (Text) DUtil.findFirstPropertyContainer(getStartOrderEllipseShape(), GA_START_ORDER_TEXT);
 	}
 
 	/**

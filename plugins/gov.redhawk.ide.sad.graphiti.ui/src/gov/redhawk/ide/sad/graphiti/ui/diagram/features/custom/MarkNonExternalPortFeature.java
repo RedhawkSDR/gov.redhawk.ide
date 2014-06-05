@@ -78,7 +78,7 @@ public class MarkNonExternalPortFeature extends AbstractCustomFeature {
 
 		// get container outerContainerShape, which will be linked to SadComponentInstantiation
 		final ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(providesPortRectangleShape,
-			RHContainerShapeImpl.SHAPE_outerContainerShape);
+			RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 
 		// Perform business object manipulation in a Command
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();

@@ -23,7 +23,7 @@ public class ComponentFilter extends AbstractPropertySectionFilter {
 	@Override
 	protected boolean accept(PictogramElement pictogramElement) {
 		ContainerShape containerShape = (ContainerShape) DUtil.findContainerShapeParentWithProperty(pictogramElement,
-			RHContainerShapeImpl.SHAPE_outerContainerShape);
+			RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 		Object obj = DUtil.getBusinessObject(containerShape);
 		if (containerShape != null && obj != null && obj instanceof SadComponentInstantiation) {
 			return true;

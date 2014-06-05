@@ -46,7 +46,7 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 */
 	public static RHGxFactory init() {
 		try {
-			RHGxFactory theRHGxFactory = (RHGxFactory) EPackage.Registry.INSTANCE.getEFactory(RHGxPackage.eNS_URI);
+			RHGxFactory theRHGxFactory = (RHGxFactory) EPackage.Registry.INSTANCE.getEFactory(RHGxPackage.E_NS_URI);
 			if (theRHGxFactory != null) {
 				return theRHGxFactory;
 			}
@@ -366,7 +366,7 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 */
 	@Deprecated
 	public static RHGxPackage getPackage() {
-		return RHGxPackage.eINSTANCE;
+		return RHGxPackage.E_INSTANCE;
 	}
 
 } // RHGxFactoryImpl

@@ -158,7 +158,7 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	@Override
 	public void setValue(final String value, IDirectEditingContext context) {
 		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 		final FindByStub findBy = (FindByStub) getBusinessObjectForPictogramElement(rhContainerShape);
 
 		// editing domain for our transaction

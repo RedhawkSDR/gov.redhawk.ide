@@ -184,7 +184,7 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
 
 		// create shape
-		ComponentShape componentShape = RHGxFactory.eINSTANCE.createComponentShape();
+		ComponentShape componentShape = RHGxFactory.E_INSTANCE.createComponentShape();
 
 		// get external ports
 		ExternalPorts externalPorts = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram()).getExternalPorts();
@@ -500,7 +500,7 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 	@Override
 	public boolean canDirectEdit(IDirectEditingContext context) {
 		PictogramElement pe = context.getPictogramElement();
-		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 		Object obj = getBusinessObjectForPictogramElement(componentShape);
 		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
 		// allow if we've selected Text for the component
@@ -518,7 +518,7 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 	@Override
 	public String getInitialValue(IDirectEditingContext context) {
 		PictogramElement pe = context.getPictogramElement();
-		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 		SadComponentInstantiation ci = (SadComponentInstantiation) getBusinessObjectForPictogramElement(componentShape);
 		return ci.getUsageName();
 	}
@@ -526,7 +526,7 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 	@Override
 	public void setValue(final String value, IDirectEditingContext context) {
 		PictogramElement pe = context.getPictogramElement();
-		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 		final SadComponentInstantiation ci = (SadComponentInstantiation) getBusinessObjectForPictogramElement(componentShape);
 
 		// editing domain for our transaction

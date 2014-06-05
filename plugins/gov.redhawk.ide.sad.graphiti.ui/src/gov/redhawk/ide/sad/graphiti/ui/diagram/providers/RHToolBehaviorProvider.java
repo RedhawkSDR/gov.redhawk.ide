@@ -121,17 +121,17 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
 		if (originalPe instanceof FixPointAnchor || DUtil.doesPictogramContainProperty(originalPe, new String[] {// DiagramUtil.SHAPE_providesPortsContainerShape,
 																													// DiagramUtil.SHAPE_usesPortsContainerShape,
-				RHContainerShapeImpl.SHAPE_usesPortRectangleShape, RHContainerShapeImpl.SHAPE_providesPortRectangleShape, })) {
+				RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE, })) {
 			return null;
 		}
 
 		// Always select outerContainershape instead of its contents
-		if (DUtil.doesPictogramContainProperty(originalPe, new String[] { RHContainerShapeImpl.SHAPE_providesPortContainerShape,
-			RHContainerShapeImpl.SHAPE_usesPortContainerShape, RHContainerShapeImpl.SHAPE_providesPortsContainerShape,
-			RHContainerShapeImpl.SHAPE_usesPortsContainerShape, RHContainerShapeImpl.SHAPE_providesPortContainerShape,
-			RHContainerShapeImpl.SHAPE_usesPortContainerShape, RHContainerShapeImpl.SHAPE_interfaceContainerShape,
-			RHContainerShapeImpl.SHAPE_interfaceEllipseShape, RHContainerShapeImpl.SHAPE_innerContainerShape })) {
-			ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(originalPe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		if (DUtil.doesPictogramContainProperty(originalPe, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
+			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
+			RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
+			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
+			RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE, RHContainerShapeImpl.SHAPE_INNER_CONTAINER })) {
+			ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(originalPe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 			return outerContainerShape;
 		}
 		return null;

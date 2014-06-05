@@ -71,7 +71,7 @@ public class ComponentCoreSection extends GFPropertySection implements ITabbedPr
 	public final void setInput(final IWorkbenchPart part, final ISelection selection) {
 		super.setInput(part, selection);
 		PictogramElement pe = getSelectedPictogramElement();
-		ContainerShape containerShape = (ContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_outerContainerShape);
+		ContainerShape containerShape = (ContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 		Object obj = DUtil.getBusinessObject(containerShape);
 		if (obj instanceof ComponentInstantiation) {
 			final ComponentInstantiation newInput = (ComponentInstantiation) obj;
