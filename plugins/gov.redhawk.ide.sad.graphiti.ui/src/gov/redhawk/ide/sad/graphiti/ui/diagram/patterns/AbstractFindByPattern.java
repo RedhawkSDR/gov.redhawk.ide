@@ -110,7 +110,7 @@ public abstract class AbstractFindByPattern extends AbstractNamedElementPattern 
 		String innerTitle = getInnerTitle(findByStub);
 
 		// create shape
-		RHContainerShape rhContainerShape = RHGxFactory.E_INSTANCE.createRHContainerShape();
+		RHContainerShape rhContainerShape = RHGxFactory.eINSTANCE.createRHContainerShape();
 
 		// initialize shape contents
 		rhContainerShape.init(targetContainerShape, outerTitle, Arrays.asList((EObject) findByStub), getFeatureProvider(), ImageProvider.IMG_FIND_BY,

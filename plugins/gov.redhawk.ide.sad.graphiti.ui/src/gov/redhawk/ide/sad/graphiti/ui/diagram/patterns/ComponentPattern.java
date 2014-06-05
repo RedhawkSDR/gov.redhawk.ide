@@ -184,7 +184,7 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
 
 		// create shape
-		ComponentShape componentShape = RHGxFactory.E_INSTANCE.createComponentShape();
+		ComponentShape componentShape = RHGxFactory.eINSTANCE.createComponentShape();
 
 		// get external ports
 		ExternalPorts externalPorts = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram()).getExternalPorts();
