@@ -146,11 +146,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 
 		// start order ellipse
 		ContainerShape startOrderEllipseShape = Graphiti.getCreateService().createContainerShape(innerContainerShape, false);
-<<<<<<< HEAD
-		Graphiti.getPeService().setPropertyValue(startOrderEllipseShape, DUtil.SHAPE_TYPE, SHAPE_START_ORDER_ELLIPSE);
-=======
 		Graphiti.getPeService().setPropertyValue(startOrderEllipseShape, DUtil.SHAPE_TYPE, SHAPE_START_ORDER_ELLIPSE_SHAPE);
->>>>>>> Checkstyle and commenting edits
 		Ellipse startOrderEllipse = Graphiti.getCreateService().createEllipse(startOrderEllipseShape);
 		// if start order zero (assembly controller), then use special style
 		if (assemblyController != null) {
@@ -181,11 +177,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * Return the startOrderEllipseShape
 	 */
 	public ContainerShape getStartOrderEllipseShape() {
-<<<<<<< HEAD
-		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_START_ORDER_ELLIPSE);
-=======
 		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_START_ORDER_ELLIPSE_SHAPE);
->>>>>>> Checkstyle and commenting edits
 	}
 
 	/**
