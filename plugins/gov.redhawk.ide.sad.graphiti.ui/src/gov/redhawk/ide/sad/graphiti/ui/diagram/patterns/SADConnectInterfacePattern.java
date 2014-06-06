@@ -51,6 +51,7 @@ import org.eclipse.graphiti.platform.IPlatformImageConstants;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
+import org.eclipse.graphiti.util.IColorConstant;
 
 public class SADConnectInterfacePattern extends AbstractConnectionPattern implements IConnectionPattern {
 
@@ -115,31 +116,33 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		line.setLineWidth(2);
 		line.setForeground(gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(), StyleUtil.BLACK));
 
-		// add static graphical arrow
-		ConnectionDecorator cd;
-		cd = peCreateService.createConnectionDecorator(connectionPE, false, 1.0, true);
-		DUtil.createArrow(cd, getFeatureProvider(), gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(), StyleUtil.BLACK));
+		// add any decorators
+		decorateConnection(connectionPE, connectInterface, getDiagram());
 
 		// link ports to connection
 		getFeatureProvider().link(connectionPE, new Object[] { connectInterface, source, target });
-
+		
 		return connectionPE;
 	}
 
 	/**
-	 * Add error/warning decorators to connection if applicable
+	 * Add decorators to connection if applicable
 	 * Note: Unfortunately Graphiti doesn't support ConnectionDecorators with tooltips like it does with Shape Decorators (see RHToolBehaviorProvider)
 	 * @param connectionPE
 	 */
 	public static void decorateConnection(Connection connectionPE, SadConnectInterface connectInterface, Diagram diagram) {
+		// Clear any existing connection decorators
+		connectionPE.getConnectionDecorators().clear();
+		
 		IGaService gaService = Graphiti.getGaService();
 		IPeCreateService peCreateService = Graphiti.getPeCreateService();
 
-		// if not compatible draw error/warning decorator
 		if (connectInterface.getSource() != null && connectInterface.getTarget() != null) {
-			// connection validation
+			// Connection validation
 			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
 			boolean compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
+			
+			// Add error decorators and text if necessary
 			if (!compatibleConnection || !uniqueConnection) {
 
 				// set decorator image/text
@@ -174,6 +177,18 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 				// Graphiti.getPeService().sendToFront(imgDecorator);
 				// Graphiti.getPeService().sendToFront(textDecorator);
 			}
+
+			// add graphical arrow to end of the connection
+			IColorConstant arrowColor;
+			if (!compatibleConnection || !uniqueConnection) {
+				arrowColor = IColorConstant.RED;
+			} else {
+				arrowColor = IColorConstant.BLACK;
+			}			
+			ConnectionDecorator arrowDecorator = peCreateService.createConnectionDecorator(connectionPE, false, 1.0, true);
+			Polyline polyline = gaService.createPolyline(arrowDecorator, new int[] { -15, 10, 0, 0, -15, -10 });
+			polyline.setForeground(gaService.manageColor(diagram, arrowColor));
+			polyline.setLineWidth(2);
 		}
 	}
 

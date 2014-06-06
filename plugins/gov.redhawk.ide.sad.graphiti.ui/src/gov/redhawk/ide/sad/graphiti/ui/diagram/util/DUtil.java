@@ -68,12 +68,9 @@ import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.internal.datatypes.impl.DimensionImpl;
-import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Polyline;
-import org.eclipse.graphiti.mm.algorithms.styles.Color;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.Connection;
@@ -83,9 +80,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
-import org.eclipse.graphiti.util.IColorConstant;
 
 public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 
@@ -223,15 +218,6 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 //		SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(uri, true));
 //		
 //		return sad;
-	}
-
-	public static Polyline createArrow(GraphicsAlgorithmContainer gaContainer, IFeatureProvider featureProvider, Color color) {
-		IGaService gaService = Graphiti.getGaService();
-		Polyline polyline = gaService.createPolyline(gaContainer, new int[] { -15, 10, 0, 0, -15, -10 });
-		polyline.setForeground(Graphiti.getGaService().manageColor(featureProvider.getDiagramTypeProvider().getDiagram(), IColorConstant.BLACK));
-		polyline.setLineWidth(2);
-		polyline.setForeground(color);
-		return polyline;
 	}
 
 	/**

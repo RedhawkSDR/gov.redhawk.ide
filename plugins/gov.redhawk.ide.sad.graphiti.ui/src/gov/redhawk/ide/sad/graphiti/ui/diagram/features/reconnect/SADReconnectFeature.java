@@ -10,14 +10,19 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.reconnect;
 
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.SADConnectInterfacePattern;
+import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.SadConnectInterface;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.IContext;
 import org.eclipse.graphiti.features.context.IReconnectionContext;
 import org.eclipse.graphiti.features.impl.DefaultReconnectionFeature;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.Connection;
 
 public class SADReconnectFeature extends DefaultReconnectionFeature {
 
@@ -60,6 +65,35 @@ public class SADReconnectFeature extends DefaultReconnectionFeature {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void execute(IContext context) {
+		if (context instanceof IReconnectionContext) {
+			IReconnectionContext reconnectContext = (IReconnectionContext) context;
+			Connection connectionPE = reconnectContext.getConnection();
+			SadConnectInterface connectInterface = (SadConnectInterface) getBusinessObjectForPictogramElement(connectionPE);
+			Object connectionStartBusinessObject = getBusinessObjectForPictogramElement(connectionPE.getStart());
+			Object oldAnchorBusinesObject = getBusinessObjectForPictogramElement(reconnectContext.getOldAnchor());
+			Object newAnchorBusinesObject = getBusinessObjectForPictogramElement(reconnectContext.getNewAnchor());
+
+			if (oldAnchorBusinesObject.equals(connectionStartBusinessObject)) {
+				// Update model with new source
+				UsesPortStub source = (UsesPortStub) newAnchorBusinesObject;
+				connectInterface.setSource(source);
+				// Update diagram with new start anchor
+				connectionPE.setStart(reconnectContext.getNewAnchor());
+			} else {
+				// Update model with new target
+				ConnectionTarget target = (ConnectionTarget) newAnchorBusinesObject;
+				connectInterface.setTarget(target);
+				// Update diagram with new end anchor
+				connectionPE.setEnd(reconnectContext.getNewAnchor());
+			}
+
+			// Update connection decorators
+			SADConnectInterfacePattern.decorateConnection(connectionPE, connectInterface, getDiagram());
+		}
 	}
 
 }

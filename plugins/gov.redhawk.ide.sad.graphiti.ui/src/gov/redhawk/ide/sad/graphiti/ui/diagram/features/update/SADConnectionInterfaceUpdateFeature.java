@@ -93,7 +93,7 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 			if ((!compatibleConnection || !uniqueConnection) && (imgConnectionDecorator == null || textConnectionDecorator == null)) {
 				if (performUpdate) {
 					updateStatus = true;
-					// incompatible connection without an error decorator! We need to add an error decorator
+					// Incompatible connection without an error decorator! We need to add an error decorator
 					SADConnectInterfacePattern.decorateConnection(connectionPE, connectInterface, getDiagram());
 				} else {
 					return new Reason(true, "Connection requires Error Decorator");
@@ -101,8 +101,7 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 			} else if ((compatibleConnection || uniqueConnection) && (imgConnectionDecorator != null || textConnectionDecorator != null)) {
 				if (performUpdate) {
 					updateStatus = true;
-					// Compatible connection an inappropriate error decorator! We need to remove the error decorator
-					// remove graphical components
+					// Compatible connection with an inappropriate error decorator! We need to remove the error decorator
 					IRemoveContext rc = new RemoveContext(imgConnectionDecorator);
 					IRemoveFeature removeFeature = featureProvider.getRemoveFeature(rc);
 					if (removeFeature != null) {
