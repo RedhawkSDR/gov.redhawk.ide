@@ -28,7 +28,6 @@ import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -224,15 +223,6 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 		if (sad == null) {
 			return false;
-		}
-		
-		// Do not allow a component to connect to itself  
-		if (context.getSourceAnchor() != null && context.getTargetAnchor() != null) {
-			EObject sourceObject = (EObject) getBusinessObjectForPictogramElement(context.getSourceAnchor());
-			EObject targetObject = (EObject) getBusinessObjectForPictogramElement(context.getTargetAnchor());
-			if (sourceObject.eContainer().equals(targetObject.eContainer())) {
-				return false;
-			}
 		}
 		
 		// determine source

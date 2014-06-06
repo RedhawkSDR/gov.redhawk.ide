@@ -44,21 +44,11 @@ public class SADReconnectFeature extends DefaultReconnectionFeature {
 		EObject newAnchorObject = (EObject) getBusinessObjectForPictogramElement(newAnchor);
 		// Determine the direction of the new connection, and then validate
 		if (oldAnchorObject instanceof UsesPortStub) {
-			// Make sure component is not connecting to itself
-			EObject connectionTarget = (EObject) getBusinessObjectForPictogramElement(context.getConnection().getEnd());
-			if (newAnchorObject.eContainer().equals(connectionTarget.eContainer())) {
-				return false;
-			}
 			// Make sure connection is made to a valid port
 			if (newAnchorObject instanceof UsesPortStub) {
 				return true;
 			}
 		} else {
-			// Make sure component is not connecting to itself
-			EObject connectionSource = (EObject) getBusinessObjectForPictogramElement(context.getConnection().getStart());
-			if (newAnchorObject.eContainer().equals(connectionSource.eContainer())) {
-				return false;
-			}
 			// Make sure connection is made to a valid port
 			if (newAnchorObject instanceof ProvidesPortStub) {
 				return true;
