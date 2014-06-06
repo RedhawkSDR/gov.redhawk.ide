@@ -61,7 +61,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 
 	// Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove
 	// etc.)
-	public static final String SHAPE_START_ORDER_ELLIPSE = "startOrderEllipseShape";
+	public static final String SHAPE_START_ORDER_ELLIPSE_SHAPE = "startOrderEllipseShape";
 
 	// Shape size constants
 	public static final int START_ORDER_ELLIPSE_DIAMETER = 17;
@@ -105,7 +105,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			businessObjectsToLink.add(externalPorts);
 		}
 
-		// get external ports relavent to ci
+		// get external ports relevant to component instantiation
 		final List<Port> ciExternalPorts = getComponentExternalPorts(ci, externalPorts);
 
 		super.init(targetContainerShape, ci.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(), businessObjectsToLink, featureProvider,
@@ -113,7 +113,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			ImageProvider.IMG_COMPONENT_INSTANCE, StyleUtil.getStyleForComponentInner(DUtil.findDiagram(targetContainerShape)), ci.getInterfaceStub(),
 			ci.getUses(), ci.getProvides(), ciExternalPorts);
 
-		// get inner containershape
+		// get inner ContainerShape
 		ContainerShape innerContainerShape = getInnerContainerShape();
 
 		// add start order ellipse
@@ -146,7 +146,11 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 
 		// start order ellipse
 		ContainerShape startOrderEllipseShape = Graphiti.getCreateService().createContainerShape(innerContainerShape, false);
+<<<<<<< HEAD
 		Graphiti.getPeService().setPropertyValue(startOrderEllipseShape, DUtil.SHAPE_TYPE, SHAPE_START_ORDER_ELLIPSE);
+=======
+		Graphiti.getPeService().setPropertyValue(startOrderEllipseShape, DUtil.SHAPE_TYPE, SHAPE_START_ORDER_ELLIPSE_SHAPE);
+>>>>>>> Checkstyle and commenting edits
 		Ellipse startOrderEllipse = Graphiti.getCreateService().createEllipse(startOrderEllipseShape);
 		// if start order zero (assembly controller), then use special style
 		if (assemblyController != null) {
@@ -177,7 +181,11 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * Return the startOrderEllipseShape
 	 */
 	public ContainerShape getStartOrderEllipseShape() {
+<<<<<<< HEAD
 		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_START_ORDER_ELLIPSE);
+=======
+		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_START_ORDER_ELLIPSE_SHAPE);
+>>>>>>> Checkstyle and commenting edits
 	}
 
 	/**
