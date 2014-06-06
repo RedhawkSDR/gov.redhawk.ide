@@ -16,7 +16,9 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.IncrementStartOrd
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkExternalPortFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkNonExternalPortFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.DeleteSADConnectInterface;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.SADConnectionInterfaceDeleteFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.SADDefaultDeleteFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.SADDeleteFeatureForPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.reconnect.SADReconnectFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.update.RHDiagramUpdateFeature;
@@ -38,11 +40,9 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
@@ -66,6 +66,7 @@ import org.eclipse.graphiti.features.context.IReconnectionContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.features.context.impl.DeleteContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.features.impl.DefaultMoveShapeFeature;
 import org.eclipse.graphiti.features.impl.DefaultRemoveFeature;
@@ -73,6 +74,7 @@ import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
 import org.eclipse.graphiti.features.impl.UpdateNoBoFeature;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.DefaultFeatureProviderWithPatterns;
 import org.eclipse.graphiti.pattern.DirectEditingFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
@@ -95,64 +97,64 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 
 		// would be cool to add a diagram listener and fire off events on hover, not sure how to achieve this
 		// add a diagram listener
-//		final Diagram diagram = diagramTypeProvider.getDiagram();
-//		((IDiagramContainerUI)diagramTypeProvider.getDiagramEditor()).getGraphicalViewer().getControl().addMouseMoveListener(new MouseMoveListener() {
-//			@Override
-//			public void mouseMove(MouseEvent e) {
-//				ILocationInfo info = Graphiti.getPeService().getLocationInfo(diagram, e.x, e.y);
-//				Shape shape = info.getShape();
-//				Object bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape);
-//				if(bo instanceof SadComponentInstantiation){
-//					return;
-//				}
-//			}
-//		});
+		//		final Diagram diagram = diagramTypeProvider.getDiagram();
+		//		((IDiagramContainerUI)diagramTypeProvider.getDiagramEditor()).getGraphicalViewer().getControl().addMouseMoveListener(new MouseMoveListener() {
+		//			@Override
+		//			public void mouseMove(MouseEvent e) {
+		//				ILocationInfo info = Graphiti.getPeService().getLocationInfo(diagram, e.x, e.y);
+		//				Shape shape = info.getShape();
+		//				Object bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape);
+		//				if(bo instanceof SadComponentInstantiation){
+		//					return;
+		//				}
+		//			}
+		//		});
 
-//		final Diagram diagram = diagramTypeProvider.getDiagram();
-//		diagramTypeProvider.getNotificationService().
-//		DiagramBehavior vov = (DiagramBehavior)diagramTypeProvider.getDiagramBehavior();
-//		vov.getContentEditPart().addEditPartListener(new EditPartListener(){
-//
-//			@Override
-//            public void childAdded(EditPart child, int index) {
-//	            // TODO Auto-generated method stub
-//	            
-//            }
-//
-//			@Override
-//            public void partActivated(EditPart editpart) {
-//	            // TODO Auto-generated method stub
-//	            
-//            }
-//
-//			@Override
-//            public void partDeactivated(EditPart editpart) {
-//	            // TODO Auto-generated method stub
-//	            
-//            }
-//
-//			@Override
-//            public void removingChild(EditPart child, int index) {
-//	            // TODO Auto-generated method stub
-//	            
-//            }
-//
-//			@Override
-//            public void selectedStateChanged(EditPart editpart) {
-//	            // TODO Auto-generated method stub
-//	            
-//            }
-//		
-//		});
-//		vov.
-//		diagramTypeProvide
-//		diagramTypeProvider.getDiagramEditor().getDiagramTypeProvider()..getGraphicalViewer().getControl().addMouseMoveListener(new MouseMoveListener() {
-//			@Override
-//			public void mouseMove(MouseEvent e) {
-//				ILocationInfo info = Graphiti.getPeService().getLocationInfo(diagram, e.x, e.y);
-//				Shape shape = info.getShape();
-//				Object bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape);
-//			}
+		//		final Diagram diagram = diagramTypeProvider.getDiagram();
+		//		diagramTypeProvider.getNotificationService().
+		//		DiagramBehavior vov = (DiagramBehavior)diagramTypeProvider.getDiagramBehavior();
+		//		vov.getContentEditPart().addEditPartListener(new EditPartListener(){
+		//
+		//			@Override
+		//            public void childAdded(EditPart child, int index) {
+		//	            // TODO Auto-generated method stub
+		//	            
+		//            }
+		//
+		//			@Override
+		//            public void partActivated(EditPart editpart) {
+		//	            // TODO Auto-generated method stub
+		//	            
+		//            }
+		//
+		//			@Override
+		//            public void partDeactivated(EditPart editpart) {
+		//	            // TODO Auto-generated method stub
+		//	            
+		//            }
+		//
+		//			@Override
+		//            public void removingChild(EditPart child, int index) {
+		//	            // TODO Auto-generated method stub
+		//	            
+		//            }
+		//
+		//			@Override
+		//            public void selectedStateChanged(EditPart editpart) {
+		//	            // TODO Auto-generated method stub
+		//	            
+		//            }
+		//		
+		//		});
+		//		vov.
+		//		diagramTypeProvide
+		//		diagramTypeProvider.getDiagramEditor().getDiagramTypeProvider()..getGraphicalViewer().getControl().addMouseMoveListener(new MouseMoveListener() {
+		//			@Override
+		//			public void mouseMove(MouseEvent e) {
+		//				ILocationInfo info = Graphiti.getPeService().getLocationInfo(diagram, e.x, e.y);
+		//				Shape shape = info.getShape();
+		//				Object bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape);
+		//			}
 
 	}
 
@@ -163,7 +165,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 			throw new IllegalArgumentException("Argument context must not be null."); //$NON-NLS-1$
 		}
 		IDirectEditingFeature ret = null;
-		for (IPattern pattern : getPatterns()) {
+		for (IPattern pattern : this.getPatterns()) {
 			if (checkPattern(pattern, getBusinessObjectForPictogramElement(DUtil.findContainerShapeParentWithProperty(context.getPictogramElement(),
 				RHContainerShapeImpl.SHAPE_OUTER_CONTAINER)))) {
 				IPattern choosenPattern = null;
@@ -186,19 +188,19 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		return ret;
 	}
 
-//	@Override
-//	protected IDirectEditingFeature getDirectEditingFeatureAdditional(IDirectEditingContext context) {
-//		
-//		PictogramElement pe = context.getPictogramElement();
-//		ComponentShape componentShape = (ComponentShape)DUtil.findContainerShapeParentWithProperty(
-//				pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-//		if(componentShape != null && getBusinessObjectForPictogramElement(componentShape) instanceof SadComponentInstantiation){
-//			return new ComponentDirectEditUsageNameFeature(getDiagramTypeProvider().getFeatureProvider());
-//		}
-//		
-//		return null;
-//		
-//	}
+	//	@Override
+	//	protected IDirectEditingFeature getDirectEditingFeatureAdditional(IDirectEditingContext context) {
+	//		
+	//		PictogramElement pe = context.getPictogramElement();
+	//		ComponentShape componentShape = (ComponentShape)DUtil.findContainerShapeParentWithProperty(
+	//				pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+	//		if(componentShape != null && getBusinessObjectForPictogramElement(componentShape) instanceof SadComponentInstantiation){
+	//			return new ComponentDirectEditUsageNameFeature(getDiagramTypeProvider().getFeatureProvider());
+	//		}
+	//		
+	//		return null;
+	//		
+	//	}
 
 	@Override
 	public ICustomFeature[] getCustomFeatures(ICustomContext context) {
@@ -209,17 +211,19 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		}
 
 		// add zest layout feature if diagram selected
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0 && context.getPictogramElements()[0] instanceof Diagram) {
+		if (context.getPictogramElements() != null 
+				&& context.getPictogramElements().length > 0 
+				&& context.getPictogramElements()[0] instanceof Diagram) {
 			retList.add(new ZestLayoutDiagramFeature(this.getDiagramTypeProvider().getFeatureProvider()));
 		}
 
-//		// add findBy edit feature if findByStub selected
-//		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
-//			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-//			if (obj instanceof FindByStub) {
-//				retList.add(new FindByEditFeature(this.getDiagramTypeProvider().getFeatureProvider()));
-//			}
-//		}
+		//		// add findBy edit feature if findByStub selected
+		//		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
+		//			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
+		//			if (obj instanceof FindByStub) {
+		//				retList.add(new FindByEditFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+		//			}
+		//		}
 
 		// add external port menu item if we clicked on a port
 		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
@@ -327,7 +331,6 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		} else if (context.getPictogramElement() instanceof Connection) {
 			return new SADConnectionInterfaceUpdateFeature(this);
 		}
-
 		// hide update icon for some pictogram elements
 		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
 			RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
@@ -345,50 +348,59 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	}
 
 	@Override
-	public IDeleteFeature getDeleteFeature(IDeleteContext context) {
+	public IDeleteFeature getDeleteFeature(IDeleteContext context) { 
+		IDeleteContext mContext = getProperDeleteContext(context, 
+			getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer().getSelectedPictogramElements());
 
-		// Search for shapes that we don't want the user to have delete capability
-		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
-			RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
-			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE,
-			RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
-			RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE })) {
+		// Search for shapes for which we don't want the user to have 
+		// the delete capability, including the diagram as a whole
+		if (mContext.getPictogramElement() instanceof Diagram 
+				|| DUtil.doesPictogramContainProperty(context, new String[] { 
+					RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, 
+					RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, 
+					RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, 
+					RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE })) {
 			return new DefaultDeleteFeature(this) {
+				@Override
+				public boolean canDelete(IDeleteContext context) {
+					return false;
+				}
+				@Override
 				public boolean isAvailable(IContext context) {
 					return false;
 				}
 			};
 		}
-		// is user deleting a connection
-		if (context != null && context.getPictogramElement() != null && context.getPictogramElement().getLink() != null) {
-			for (EObject eObj : context.getPictogramElement().getLink().getBusinessObjects()) {
-				if (eObj instanceof SadConnectInterface) {
-					return new DeleteSADConnectInterface(this);
-				}
-			}
+
+		// If the element to be deleted is a connection, return the proper feature
+		if (mContext.getPictogramElement() instanceof Connection) {
+			return new SADConnectionInterfaceDeleteFeature(this);
 		}
 
-		return super.getDeleteFeature(context);
+		return getDeleteFeatureAdditional(mContext);
 	}
 
 	@Override
-	public IRemoveFeature getRemoveFeature(IRemoveContext context) {
-
-		// Search for shapes that we don't want the user to have remove capability
-		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
-			RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
-			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE,
-			RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
-			RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER })) {
-			return new DefaultRemoveFeature(this) {
-				public boolean isAvailable(IContext context) {
-					return false;
-				}
-			};
+	protected IDeleteFeature getDeleteFeatureAdditional(IDeleteContext context) {
+		if (context == null) {
+			throw new IllegalArgumentException("Argument context must not be null."); //$NON-NLS-1$
 		}
+		for (IPattern pattern : getPatterns()) {
+			if (checkPattern(pattern, getBusinessObjectForPictogramElement(context.getPictogramElement()))) {
+				return new SADDeleteFeatureForPattern(this, pattern);
+			}
+		}
+		return new SADDefaultDeleteFeature(this);
+	}
 
-		return super.getRemoveFeature(context);
 
+	@Override
+	public IRemoveFeature getRemoveFeature(IRemoveContext context) {
+		return new DefaultRemoveFeature(this) {
+			public boolean isAvailable(IContext context) {
+				return false;
+			} 
+		};
 	}
 
 	@Override
@@ -425,7 +437,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		return super.getLayoutFeature(context);
 	}
 
-	
+
 	@Override
 	public IReconnectionFeature getReconnectionFeature(IReconnectionContext context) {
 		// Call the SADReconnectFeature if the original anchor is a uses or provides port
@@ -435,4 +447,23 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		}
 		return super.getReconnectionFeature(context);
 	}
+
+	/**
+	 * Determines the proper PictogramElement for which the delete feature is being requested
+	 * 
+	 * @param pe
+	 * @param selectedElements
+	 * @return proper IDeleteContext
+	 */
+	public static IDeleteContext getProperDeleteContext(IDeleteContext context, 
+		PictogramElement[] selectedElements) {
+		PictogramElement pe = context.getPictogramElement();
+		if (selectedElements.length != 1 
+				|| selectedElements[0] instanceof Diagram
+				|| (pe.isActive() && pe.equals(selectedElements[0]))) {
+			return context;
+		}
+		return new DeleteContext(selectedElements[0]);
+	}
+
 }

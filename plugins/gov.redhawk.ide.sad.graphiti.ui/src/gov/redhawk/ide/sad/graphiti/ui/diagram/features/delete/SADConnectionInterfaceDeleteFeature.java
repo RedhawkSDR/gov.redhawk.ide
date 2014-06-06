@@ -24,14 +24,13 @@ import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
-public class DeleteSADConnectInterface extends DefaultDeleteFeature {
+public class SADConnectionInterfaceDeleteFeature extends SADDefaultDeleteFeature {
 
-	public DeleteSADConnectInterface(IFeatureProvider fp) {
+	public SADConnectionInterfaceDeleteFeature(IFeatureProvider fp) {
 		super(fp);
 	}
-
+	
 	@Override
 	public boolean canDelete(IDeleteContext context) {
 		return true;
@@ -39,9 +38,12 @@ public class DeleteSADConnectInterface extends DefaultDeleteFeature {
 
 	@Override
 	public void delete(IDeleteContext context) {
-		PictogramElement pe = context.getPictogramElement();
+		setDoneChanges(false);
 
-		preDelete(context);
+		IDeleteContext mContext = getProperDeleteContext(context);
+		PictogramElement pe = mContext.getPictogramElement();
+		
+		preDelete(mContext);
 
 		// delete business objects
 		SadConnectInterface connectInterface = null;
@@ -55,7 +57,7 @@ public class DeleteSADConnectInterface extends DefaultDeleteFeature {
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-//kepler		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		//kepler		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
@@ -84,7 +86,7 @@ public class DeleteSADConnectInterface extends DefaultDeleteFeature {
 			setDoneChanges(true);
 		}
 
-		postDelete(context);
+		postDelete(mContext);
 	}
 
 }
