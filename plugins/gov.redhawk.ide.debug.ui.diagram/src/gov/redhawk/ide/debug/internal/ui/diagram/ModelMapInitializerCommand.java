@@ -46,47 +46,50 @@ public class ModelMapInitializerCommand extends AbstractCommand {
 		if (waveform != null) {
 			EList<SadComponentInstantiation> allInsts = sad.getAllComponentInstantiations();
 			List<ScaComponent> nonMatchedComponents = new ArrayList<ScaComponent>();
-			out : for (ScaComponent comp : waveform.getComponents()) {
-				boolean found = false;
+
+			out: for (ScaComponent comp : waveform.getComponents()) {
 				for (SadComponentInstantiation inst : allInsts) {
 					if (PluginUtil.equals(comp.getInstantiationIdentifier(), inst.getId())) {
 						modelMap.put((LocalScaComponent) comp, inst);
-						found = true;
 						continue out;
 					}
 				}
-				if (!found) {
-					nonMatchedComponents.add(comp);
-				}
+				nonMatchedComponents.add(comp);
 			}
 
-			if (sad.getConnections() != null) {
-				out : for (SadConnectInterface con : sad.getConnections().getConnectInterface()) {
-					for (ScaComponent comp : waveform.getComponents()) {
-						for (ScaPort< ? , ? > port : comp.getPorts()) {
-							if (port instanceof ScaUsesPort) {
-								ScaUsesPort uses = (ScaUsesPort) port;
-								for (ScaConnection scaCon : uses.getConnections()) {
+			List<ScaConnection> nonMatchedConnections = new ArrayList<ScaConnection>();
+
+			out: for (ScaComponent comp : waveform.getComponents()) {
+				if (nonMatchedComponents.contains(comp)) {
+					continue;
+				}
+				for (ScaPort< ? , ? > port : comp.getPorts()) {
+					if (port instanceof ScaUsesPort) {
+						ScaUsesPort uses = (ScaUsesPort) port;
+						for (ScaConnection scaCon : uses.getConnections()) {
+							if (sad.getConnections() != null) {
+								for (SadConnectInterface con : sad.getConnections().getConnectInterface()) {
 									if (PluginUtil.equals(scaCon.getId(), con.getId())) {
 										modelMap.put(scaCon, con);
 										continue out;
 									}
 								}
 							}
+							nonMatchedConnections.add(scaCon);
 						}
 					}
 				}
 			}
-			
+
 			for (ScaComponent comp : nonMatchedComponents) {
 				if (comp instanceof LocalScaComponent) {
 					SadModelInitializerCommand.initComponent((LocalScaComponent) comp, sad, modelMap);
 				}
 			}
-			
+
 			for (ScaComponent comp : nonMatchedComponents) {
 				if (comp instanceof LocalScaComponent) {
-					for (ScaPort<?, ?> port : comp.getPorts()) {
+					for (ScaPort< ? , ? > port : comp.getPorts()) {
 						if (port instanceof ScaUsesPort) {
 							for (ScaConnection conn : ((ScaUsesPort) port).getConnections()) {
 								SadModelInitializerCommand.initConnection(conn, sad, waveform, modelMap);
@@ -95,7 +98,11 @@ public class ModelMapInitializerCommand extends AbstractCommand {
 					}
 				}
 			}
-			
+
+			for (ScaConnection conn : nonMatchedConnections) {
+				SadModelInitializerCommand.initConnection(conn, sad, waveform, modelMap);
+			}
+
 		}
 	}
 
