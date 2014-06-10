@@ -58,8 +58,10 @@ public class DecrementStartOrderFeature extends AbstractCustomFeature {
 				SadComponentInstantiation ci = (SadComponentInstantiation) obj;
 
 				// start order NOT zero
-				if (ci.getStartOrder().compareTo(BigInteger.ZERO) != 0) {
-					return true;
+				if (ci.getStartOrder() != null) {
+					if (ci.getStartOrder().compareTo(BigInteger.ZERO) != 0) {
+						return true;
+					}
 				}
 			}
 		}

@@ -32,6 +32,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.validation.internal.service.GetBatchConstraintsOperation;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.impl.Reason;
@@ -158,6 +159,11 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		Graphiti.getPeService().setPropertyValue(startOrderEllipse, DUtil.GA_TYPE, GA_START_ORDER_ELLIPSE);
 		Graphiti.getGaLayoutService().setSize(startOrderEllipse, START_ORDER_ELLIPSE_DIAMETER, START_ORDER_ELLIPSE_DIAMETER);
 
+		// if start order is null (possible in legacy waveforms), then return without setting text
+		if (sadComponentInstantiation.getStartOrder() == null) {
+			return startOrderEllipseShape;
+		}
+		
 		// port text
 		Shape startOrderTextShape = Graphiti.getCreateService().createShape(startOrderEllipseShape, false);
 		Text startOrderText = Graphiti.getCreateService().createText(startOrderTextShape, sadComponentInstantiation.getStartOrder().toString());
