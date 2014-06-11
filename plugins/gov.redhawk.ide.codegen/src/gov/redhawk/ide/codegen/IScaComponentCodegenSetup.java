@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Allows a code generator to perform system tests during project creation to ensure the
  * system will support development of the component type in question.
- * @since 10.0
+ * @since 10.1
  */
 public interface IScaComponentCodegenSetup extends IScaComponentCodegen {
 
