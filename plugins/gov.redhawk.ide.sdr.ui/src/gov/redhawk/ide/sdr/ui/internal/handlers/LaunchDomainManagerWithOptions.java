@@ -1,11 +1,11 @@
 /*******************************************************************************
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui.internal.handlers;
@@ -193,7 +193,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 		final String launchConfigName;
 		launchConfigName = getLaunchConfigName(domain);
 
-		monitor.beginTask("Launching NodeBooter Process", 2);
+		monitor.beginTask("Launching NodeBooter (DomainManager) Process", 2);
 		try {
 			try {
 				final StringBuilder arguments = new StringBuilder();
@@ -201,21 +201,20 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 				monitor.subTask("Seting up launch configuration...");
 				final ILaunchConfigurationWorkingCopy config = NodeBooterLauncherUtil.createNodeBooterLaunchConfig(launchConfigName);
 
-				arguments.append("-D " + domain.getDomainManagerSoftPkg().getLocalFile().getName());
+				arguments.append("-D ").append(domain.getDomainManagerSoftPkg().getLocalFile().getName());
 
 				if (model.getDomainName() != null) {
 					arguments.append(" --domainname \"" + model.getDomainName() + "\"");
 				}
 
 				if (model.getDebugLevel() != DebugLevel.Info) {
-					arguments.append(" -debug " + model.getDebugLevel().ordinal());
+					arguments.append(" -debug ").append(model.getDebugLevel().ordinal());
 				}
 
 				arguments.append(" --nopersist");
 
 				if (model.getArguments() != null && !model.getArguments().trim().isEmpty()) {
-					arguments.append(" ");
-					arguments.append(model.getArguments());
+					arguments.append(" ").append(model.getArguments().trim());
 				}
 
 				config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments.toString());
@@ -230,10 +229,11 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 					// PASS
 				}
 				if (launched.isTerminated()) {
-					if (launched.getProcesses()[0].getExitValue() == 0) {
-						return Status.CANCEL_STATUS;
+					int exitValue = launched.getProcesses()[0].getExitValue();
+					if (exitValue != 0) {
+						return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID,
+							"Domain Manager failed to launch. Check console output. Exit status = " + exitValue);
 					}
-					return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Domain manager failed to launch.  Check console output");
 				}
 				monitor.worked(1);
 			} catch (final CoreException e) {
