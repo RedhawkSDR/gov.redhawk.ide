@@ -17,10 +17,6 @@ import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
 import gov.redhawk.diagram.DiagramUtil;
 import gov.redhawk.ide.sad.internal.ui.editor.CustomDiagramEditor;
 import gov.redhawk.ide.sad.ui.providers.SpdToolEntry;
-import gov.redhawk.sca.sad.diagram.edit.parts.ProvidesPortStubEditPart;
-import gov.redhawk.sca.sad.diagram.edit.parts.SadComponentInstantiationEditPart;
-import gov.redhawk.sca.sad.diagram.edit.parts.SadComponentPlacementCompartmentEditPart;
-import gov.redhawk.sca.sad.diagram.edit.parts.UsesPortStubEditPart;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
 import java.beans.PropertyChangeEvent;
@@ -32,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import mil.jpeojtrs.sca.sad.diagram.edit.parts.ComponentPlacementEditPart;
 import mil.jpeojtrs.sca.sad.util.SadResourceImpl;
 import mil.jpeojtrs.sca.scd.ComponentType;
 
@@ -41,13 +36,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.gef.editparts.AbstractEditPart;
 import org.eclipse.gef.palette.PaletteDrawer;
 import org.eclipse.gef.palette.PaletteEntry;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.palette.PaletteStack;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.IEditableEditPart;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
 
@@ -105,41 +97,57 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 		super.initializeGraphicalViewerContents();
 		if (editorResource instanceof SadResourceImpl && !DiagramUtil.isDiagramLocalSandbox(editorResource)) {
 			getDiagramEditPart().enableEditMode();
-			for (final Object obj : getDiagramEditPart().getChildren()) {
-				setEditMode(obj);
+			// Don't allow removal of existing parts from waveform running on domain
+			String resourceURI = ((SadResourceImpl) editorResource).getURI().toString();
+			if (resourceURI.contains(".sad.xml?fs=file")) {
+				// Running locally, we can do whatever we want to it
+				return;
 			}
+//			for (final Object obj : getDiagramEditPart().getChildren()) {
+//				setEditMode(obj);
+//			}
 		}
 	}
 
-	private void setEditMode(Object obj) {
-		if (obj instanceof ComponentPlacementEditPart || obj instanceof SadComponentPlacementCompartmentEditPart
-			|| obj instanceof SadComponentInstantiationEditPart) {
-			AbstractEditPart part = (AbstractEditPart) obj;
-			IEditableEditPart iPart = (IEditableEditPart) obj;
-			iPart.disableEditMode();
-			for (Object obj2 : part.getChildren()) {
-				setEditMode(obj2);
-			}
-		}
-		if (obj instanceof ProvidesPortStubEditPart) {
-			ProvidesPortStubEditPart thePart = (ProvidesPortStubEditPart) obj;
-			thePart.enableEditMode();
-			for (Object obj2 : thePart.getTargetConnections()) {
-				setEditMode(obj2);
-			}
-		}
-		if (obj instanceof UsesPortStubEditPart) {
-			UsesPortStubEditPart thePart = (UsesPortStubEditPart) obj;
-			thePart.enableEditMode();
-			for (Object obj2 : thePart.getSourceConnections()) {
-				setEditMode(obj2);
-			}
-		}
-		if (obj instanceof ConnectionEditPart) {
-			ConnectionEditPart thePart = (ConnectionEditPart) obj;
-			thePart.disableEditMode();
-		}
-	}
+//	private void setEditMode(Object obj) {
+//		if (obj instanceof ComponentPlacementEditPart || obj instanceof SadComponentPlacementCompartmentEditPart
+//			|| obj instanceof SadComponentInstantiationEditPart) {
+//			if (obj instanceof ComponentPlacementEditPart) {
+//				Object model = ((GraphicalEditPart) obj).getModel();
+//				ShapeImpl shape = (ShapeImpl) model;
+//				SadComponentPlacementImpl compPlace = (SadComponentPlacementImpl) shape.getElement();
+//				LocalFile localFile = compPlace.getComponentFileRef().getFile().getLocalFile();
+//				String compId = compPlace.getComponentInstantiation().get(0).getId();
+//				String implID = compPlace.getComponentInstantiation().get(0).getImplID();
+//				ComponentInstantiationImpl instImpl = (ComponentInstantiationImpl) compPlace.getComponentInstantiation().get(0);
+//				
+//			}
+//			AbstractEditPart part = (AbstractEditPart) obj;
+//			IEditableEditPart iPart = (IEditableEditPart) obj;
+//			iPart.disableEditMode();
+//			for (Object obj2 : part.getChildren()) {
+//				setEditMode(obj2);
+//			}
+//		}
+//		if (obj instanceof ProvidesPortStubEditPart) {
+//			ProvidesPortStubEditPart thePart = (ProvidesPortStubEditPart) obj;
+//			thePart.enableEditMode();
+//			for (Object obj2 : thePart.getTargetConnections()) {
+//				setEditMode(obj2);
+//			}
+//		}
+//		if (obj instanceof UsesPortStubEditPart) {
+//			UsesPortStubEditPart thePart = (UsesPortStubEditPart) obj;
+//			thePart.enableEditMode();
+//			for (Object obj2 : thePart.getSourceConnections()) {
+//				setEditMode(obj2);
+//			}
+//		}
+//		if (obj instanceof ConnectionEditPart) {
+//			ConnectionEditPart thePart = (ConnectionEditPart) obj;
+//			thePart.disableEditMode();
+//		}
+//	}
 
 	@Override
 	public void dispose() {

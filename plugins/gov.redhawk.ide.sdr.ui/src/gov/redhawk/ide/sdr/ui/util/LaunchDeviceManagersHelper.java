@@ -1,11 +1,11 @@
 /*******************************************************************************
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.sdr.ui.util;
@@ -77,10 +77,11 @@ public class LaunchDeviceManagersHelper {
 				// PASS
 			}
 			if (launch.isTerminated()) {
-				if (launch.getProcesses()[0].getExitValue() == 0) {
-					return Status.CANCEL_STATUS;
+				int exitValue = launch.getProcesses()[0].getExitValue();
+				if (exitValue != 0) {
+					return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID,
+						"Device Manager failed to launch. Check console output. Exit status = " + exitValue);
 				}
-				return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Device manager failed to launch.  Check console output");
 			}
 			return Status.OK_STATUS;
 		} catch (final CoreException e) {
