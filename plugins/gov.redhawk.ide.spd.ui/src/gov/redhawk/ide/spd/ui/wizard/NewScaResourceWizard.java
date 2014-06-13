@@ -30,13 +30,13 @@ import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 import gov.redhawk.ide.codegen.util.CodegenFileHelper;
 import gov.redhawk.ide.codegen.util.ImplementationAndSettings;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
+import gov.redhawk.ide.spd.internal.ui.InternalErrorDialog;
 import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.ide.ui.wizard.ScaProjectPropertiesWizardPage;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.sca.util.SubMonitor;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -64,8 +64,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -629,13 +627,9 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 								@Override
 								public void run() {
 									String title = "System Check Failed";
-									String msg = "Errors occured while checking system dependencies for {0}:{1}.\n\nDo you wish to continue?\n\n{2}";
-									String formatedMsg = MessageFormat.format(msg, implAndSettings.getImplementationSettings().getGeneratorId(),
-										implAndSettings.getImplementationSettings().getTemplate(), e.getMessage());
-									MessageDialog dialog = new MessageDialog(Display.getCurrent().getActiveShell(), title, null, formatedMsg,
-										MessageDialog.WARNING, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 1);
-									dialog.open();
-									retVal[0] = dialog.getReturnCode() == 0;
+
+									retVal[0] = InternalErrorDialog.openError(Display.getCurrent().getActiveShell(), title, e.getMessage()
+										+ "\n\nDo you wish to continue?", e.getStatus()) == InternalErrorDialog.OK;
 								}
 
 							});
