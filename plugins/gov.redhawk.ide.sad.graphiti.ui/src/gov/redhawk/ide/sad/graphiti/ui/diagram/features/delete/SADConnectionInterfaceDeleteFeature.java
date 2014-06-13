@@ -24,8 +24,9 @@ import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
-public class SADConnectionInterfaceDeleteFeature extends SADDefaultDeleteFeature {
+public class SADConnectionInterfaceDeleteFeature extends DefaultDeleteFeature {
 
 	public SADConnectionInterfaceDeleteFeature(IFeatureProvider fp) {
 		super(fp);
@@ -40,10 +41,9 @@ public class SADConnectionInterfaceDeleteFeature extends SADDefaultDeleteFeature
 	public void delete(IDeleteContext context) {
 		setDoneChanges(false);
 
-		IDeleteContext mContext = getProperDeleteContext(context);
-		PictogramElement pe = mContext.getPictogramElement();
+		PictogramElement pe = context.getPictogramElement();
 		
-		preDelete(mContext);
+		preDelete(context);
 
 		// delete business objects
 		SadConnectInterface connectInterface = null;
@@ -86,7 +86,7 @@ public class SADConnectionInterfaceDeleteFeature extends SADDefaultDeleteFeature
 			setDoneChanges(true);
 		}
 
-		postDelete(mContext);
+		postDelete(context);
 	}
 
 }

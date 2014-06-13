@@ -17,8 +17,6 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkExternalPortF
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkNonExternalPortFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.SADConnectionInterfaceDeleteFeature;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.SADDefaultDeleteFeature;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.SADDeleteFeatureForPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.reconnect.SADReconnectFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.update.RHDiagramUpdateFeature;
@@ -66,7 +64,6 @@ import org.eclipse.graphiti.features.context.IReconnectionContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.context.impl.DeleteContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.features.impl.DefaultMoveShapeFeature;
 import org.eclipse.graphiti.features.impl.DefaultRemoveFeature;
@@ -74,7 +71,6 @@ import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
 import org.eclipse.graphiti.features.impl.UpdateNoBoFeature;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.DefaultFeatureProviderWithPatterns;
 import org.eclipse.graphiti.pattern.DirectEditingFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
@@ -349,12 +345,12 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 
 	@Override
 	public IDeleteFeature getDeleteFeature(IDeleteContext context) { 
-		IDeleteContext mContext = getProperDeleteContext(context, 
-			getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer().getSelectedPictogramElements());
+//		IDeleteContext mContext = getProperDeleteContext(context, 
+//			getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer().getSelectedPictogramElements());
 
 		// Search for shapes for which we don't want the user to have 
 		// the delete capability, including the diagram as a whole
-		if (mContext.getPictogramElement() instanceof Diagram 
+		if (context.getPictogramElement() instanceof Diagram 
 				|| DUtil.doesPictogramContainProperty(context, new String[] { 
 					RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, 
 					RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, 
@@ -373,26 +369,12 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		}
 
 		// If the element to be deleted is a connection, return the proper feature
-		if (mContext.getPictogramElement() instanceof Connection) {
+		if (context.getPictogramElement() instanceof Connection) {
 			return new SADConnectionInterfaceDeleteFeature(this);
 		}
 
-		return getDeleteFeatureAdditional(mContext);
+		return super.getDeleteFeature(context);
 	}
-
-	@Override
-	protected IDeleteFeature getDeleteFeatureAdditional(IDeleteContext context) {
-		if (context == null) {
-			throw new IllegalArgumentException("Argument context must not be null."); //$NON-NLS-1$
-		}
-		for (IPattern pattern : getPatterns()) {
-			if (checkPattern(pattern, getBusinessObjectForPictogramElement(context.getPictogramElement()))) {
-				return new SADDeleteFeatureForPattern(this, pattern);
-			}
-		}
-		return new SADDefaultDeleteFeature(this);
-	}
-
 
 	@Override
 	public IRemoveFeature getRemoveFeature(IRemoveContext context) {
@@ -447,23 +429,4 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		}
 		return super.getReconnectionFeature(context);
 	}
-
-	/**
-	 * Determines the proper PictogramElement for which the delete feature is being requested
-	 * 
-	 * @param pe
-	 * @param selectedElements
-	 * @return proper IDeleteContext
-	 */
-	public static IDeleteContext getProperDeleteContext(IDeleteContext context, 
-		PictogramElement[] selectedElements) {
-		PictogramElement pe = context.getPictogramElement();
-		if (selectedElements.length != 1 
-				|| selectedElements[0] instanceof Diagram
-				|| (pe.isActive() && pe.equals(selectedElements[0]))) {
-			return context;
-		}
-		return new DeleteContext(selectedElements[0]);
-	}
-
 }
