@@ -106,6 +106,7 @@ public class MFileParser implements MFileParserConstants {
   }
 
   final public void functionArgs(Function function, List < String > strList) throws ParseException {
+  String param;
     jj_consume_token(15);
     label_2:
     while (true) {
@@ -130,11 +131,12 @@ public class MFileParser implements MFileParserConstants {
         break label_3;
       }
       jj_consume_token(ID);
-      function.getInputs().add(token.image);
+      param = token.image;
+      function.getInputs().add(param);
       switch (jj_nt.kind) {
       case 14:
         jj_consume_token(14);
-        number();
+        number(function, param);
         break;
       default:
         jj_la1[8] = jj_gen;
@@ -172,25 +174,31 @@ public class MFileParser implements MFileParserConstants {
     }
   }
 
-  final public void number() throws ParseException {
+  final public void number(Function function, String input) throws ParseException {
     switch (jj_nt.kind) {
     case OCTALINT:
       jj_consume_token(OCTALINT);
+  function.getInputDefaultValues().put(input, Integer.valueOf(token.image.substring(1), 8));
       break;
     case DECIMALINT:
       jj_consume_token(DECIMALINT);
+  function.getInputDefaultValues().put(input, Integer.valueOf(token.image));
       break;
     case FIXED_PT:
       jj_consume_token(FIXED_PT);
+ function.getInputDefaultValues().put(input, Integer.valueOf(token.image));
       break;
     case HEXADECIMALINT:
       jj_consume_token(HEXADECIMALINT);
+function.getInputDefaultValues().put(input, Integer.valueOf(token.image.substring(2), 16));
       break;
     case FLOATONE:
       jj_consume_token(FLOATONE);
+function.getInputDefaultValues().put(input, Double.valueOf(token.image));
       break;
     case FLOATTWO:
       jj_consume_token(FLOATTWO);
+function.getInputDefaultValues().put(input, Double.valueOf(token.image));
       break;
     default:
       jj_la1[12] = jj_gen;
@@ -271,14 +279,6 @@ public class MFileParser implements MFileParserConstants {
     return false;
   }
 
-  private boolean jj_3R_11() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(16)) jj_scanpos = xsp;
-    if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
   private boolean jj_3R_6() {
     Token xsp;
     xsp = jj_scanpos;
@@ -292,6 +292,14 @@ public class MFileParser implements MFileParserConstants {
   private boolean jj_3_1() {
     if (jj_3R_6()) return true;
     if (jj_scan_token(14)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_11() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(16)) jj_scanpos = xsp;
+    if (jj_scan_token(ID)) return true;
     return false;
   }
 

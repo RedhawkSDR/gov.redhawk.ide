@@ -11,13 +11,16 @@
 package gov.redhawk.mfile.parser.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 
  */
 public class Function {
 	private List<String> inputs = new ArrayList<String>();
+	private Map<String, Number> inputDefaultValues = new HashMap<String, Number>();
 	private List<String> outputs = new ArrayList<String>();
 	private String name;
 	
@@ -35,5 +38,9 @@ public class Function {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public Map<String, Number> getInputDefaultValues() {
+		return inputDefaultValues;
 	}
 }
