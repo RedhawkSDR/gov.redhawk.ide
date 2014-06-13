@@ -26,6 +26,20 @@ import org.junit.Test;
 public class MFileParserTest {
 	
 	@Test
+	public void testParseDefaultValues() throws IOException, ParseException {
+		MFile file = parseFile("defaultValues.m");
+		Assert.assertNotNull(file);
+		Assert.assertNotNull(file.getFunction());
+		Assert.assertEquals("test", file.getFunction().getName());
+		Assert.assertEquals(1, file.getFunction().getOutputs().size());
+		Assert.assertEquals("myOutput", file.getFunction().getOutputs().get(0));
+		Assert.assertEquals(2, file.getFunction().getInputs().size());
+		Assert.assertEquals("myInput", file.getFunction().getInputs().get(0));
+		Assert.assertEquals("someProp", file.getFunction().getInputs().get(1));
+	}
+	
+	
+	@Test
 	public void testParseAmmod() throws IOException, ParseException {
 		MFile file = parseFile("ammod.m");
 		Assert.assertNotNull(file);

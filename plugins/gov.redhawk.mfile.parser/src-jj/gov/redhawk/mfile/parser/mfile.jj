@@ -26,7 +26,19 @@ SPECIAL_TOKEN :
     | "\r\n"
     )? >
 }TOKEN :{  < FUNCTION : "function" >}MFile mFile() :{  MFile retVal = new MFile();  Function function;}{  (< NL >)*  [    function = function()    {      retVal.setFunction(function);      // TODO: Shortcut return MFile function definition
-      return retVal;    }  ]  < EOF >  {    return retVal;  }}List < String > outputs() :{  List < String > strList = new ArrayList < String > ();  String id = null;}{  (    (      "[" [ strList = multiPart() ] "]"    )  | strList = multiPart()  )  {    return strList;  }}Function function() :{  Function function = new Function();  List < String > strList = null;  String id = null;}{  < FUNCTION >  (    LOOKAHEAD(2)    strList = outputs() "=" < ID >    {      function.getOutputs().addAll(strList);    }  | < ID >  )  {    function.setName(token.image);  }  [ functionArgs(function, strList) ] < NL >  {    return function;  }}void functionArgs(Function function, List < String > strList) :{}{  "(" (< NL >)*  (    < ID >    {      function.getInputs().add(token.image);    }    [ "," ] (< NL >)*  )*  (")" [ ";" ])}List < String > multiPart() :
+      return retVal;    }  ]  < EOF >  {    return retVal;  }}List < String > outputs() :{  List < String > strList = new ArrayList < String > ();  String id = null;}{  (    (      "[" [ strList = multiPart() ] "]"    )  | strList = multiPart()  )  {    return strList;  }}Function function() :{  Function function = new Function();  List < String > strList = null;  String id = null;}{  < FUNCTION >  (    LOOKAHEAD(2)    strList = outputs() "=" < ID >    {      function.getOutputs().addAll(strList);    }  | < ID >  )  {    function.setName(token.image);  }  [ functionArgs(function, strList) ] < NL >  {    return function;  }}void functionArgs(Function function, List < String > strList) :{}{  "(" (< NL >)*  (    < ID >    {      function.getInputs().add(token.image);    }
+    (      "=" number()
+    )?    [ "," ] (< NL >)*  )*  (")" [ ";" ])}
+
+void number() :
+{}
+{	< OCTALINT >
+|  < DECIMALINT >
+|  < FIXED_PT >
+|  < HEXADECIMALINT >
+|  < FLOATONE >
+|  < FLOATTWO >
+}List < String > multiPart() :
 {
   List < String > retVal = new ArrayList < String > ();
 }
