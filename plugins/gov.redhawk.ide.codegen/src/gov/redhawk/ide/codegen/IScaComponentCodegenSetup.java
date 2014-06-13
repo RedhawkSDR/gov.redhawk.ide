@@ -24,6 +24,7 @@ public interface IScaComponentCodegenSetup extends IScaComponentCodegen {
 	 * 
 	 * For example test could include, checking for header files, architecture, cross platform support etc.
 	 * @param templateId The template to check for
+	 * @param monitor Monitor to report progress to
 	 * @throws CoreException If the system does not support requested template or other errors occur during testing 
 	 */
 	public void checkSystem(IProgressMonitor monitor, String templateId) throws CoreException;
