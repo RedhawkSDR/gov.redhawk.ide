@@ -18,6 +18,7 @@ import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.impl.commands.LocalMergeServicesCommand;
+import gov.redhawk.ide.debug.internal.cf.impl.DeviceManagerImpl;
 import gov.redhawk.model.sca.DataProviderObject;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDevice;
@@ -41,9 +42,11 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.jdt.annotation.NonNull;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
+import CF.DataType;
 import CF.Device;
 import CF.DeviceManager;
 import CF.DeviceManagerHelper;
@@ -51,7 +54,9 @@ import CF.DeviceManagerOperations;
 import CF.DeviceManagerPOATie;
 import CF.ExecutableDeviceHelper;
 import CF.LoadableDeviceHelper;
+import CF.Resource;
 import CF.DeviceManagerPackage.ServiceType;
+import CF.ExecutableDevicePackage.ExecuteFail;
 
 /**
  * <!-- begin-user-doc -->
@@ -534,6 +539,14 @@ public class LocalScaDeviceManagerImpl extends ScaDeviceManagerImpl implements L
 	@Override
 	protected Command createMergeServicesCommand(Map<String, ServiceType> newServices) {
 		return new LocalMergeServicesCommand(this, newServices);
+	}
+	
+	/**
+	 * @since 6.0
+	 */
+	public Resource launch(final String compId, final DataType[] execParams, @NonNull final String spdURI, final String implId, final String mode)
+			throws ExecuteFail {
+		return ((DeviceManagerImpl)getLocalDeviceManager()).launch(compId, execParams, spdURI, implId, mode);
 	}
 
 } // LocalScaDeviceManagerImpl

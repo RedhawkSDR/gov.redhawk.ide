@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug;
 
+import gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 
@@ -19,6 +20,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import mil.jpeojtrs.sca.scd.ComponentType;
+import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
@@ -31,6 +34,7 @@ import org.eclipse.emf.transaction.RunnableWithResult;
 
 import CF.DataType;
 import CF.ErrorNumberType;
+import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.ReleaseError;
 import CF.ResourceFactoryPackage.CreateResourceFailure;
 import CF.ResourceFactoryPackage.InvalidResourceId;
@@ -160,11 +164,25 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 			}
 		}
 
+		ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
+		switch (type) {
+		case DEVICE:
+		case SERVICE:
+			LocalScaDeviceManager devMgr = ScaDebugPlugin.getInstance().getLocalSca().getSandboxDeviceManager();
+			try {
+				return ((LocalScaDeviceManagerImpl) devMgr).launch(compID, qualifiers, spdURI.toString(), implementationID, launchMode);
+			} catch (ExecuteFail e) {
+				throw new CreateResourceFailure(ErrorNumberType.CF_EFAULT, "Failed to launch: " + identifier() + " " + e.getMessage());
+			}
+		default:
+			break;
+		}
+
 		try {
 			final LocalScaComponent component = getChalkboard().launch(compID, params.toArray(new DataType[params.size()]), spdURI.trimFragment(),
 				implementationID, launchMode);
 			this.launched.add(component);
-			return component.getObj();
+			return component.fetchNarrowedObject(null);
 		} catch (final CoreException e) {
 			ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
 			throw new CreateResourceFailure(ErrorNumberType.CF_EFAULT, "Failed to launch: " + identifier() + " " + e.getMessage());
