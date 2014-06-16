@@ -49,18 +49,22 @@ public class PosixRuntimeProcess extends RuntimeProcess {
 			pidField.setAccessible(true);
 			int pid = pidField.getInt(p);
 			tree.killAll(String.valueOf(pid));
+			super.terminate();
 		} catch (SecurityException e) {
-			throw new DebugException(new Status(Status.ERROR, "gov.redhawk.ide.debug.linux", "Failed to clean up process ", e));
+			super.terminate();
+			throw new DebugException(new Status(Status.ERROR, "gov.redhawk.ide.debug.linux", "gov.redhawk.ide.debug.linux", e));
 		} catch (NoSuchFieldException e) {
+			super.terminate();
 			throw new DebugException(new Status(Status.ERROR, "gov.redhawk.ide.debug.linux", "Failed to clean up process ", e));
 		} catch (IllegalArgumentException e) {
+			super.terminate();
 			throw new DebugException(new Status(Status.ERROR, "gov.redhawk.ide.debug.linux", "Failed to clean up process ", e));
 		} catch (IllegalAccessException e) {
+			super.terminate();
 			throw new DebugException(new Status(Status.ERROR, "gov.redhawk.ide.debug.linux", "Failed to clean up process ", e));
 		} catch (IOException e) {
-			throw new DebugException(new Status(Status.ERROR, "gov.redhawk.ide.debug.linux", "Failed to clean up process ", e));
-		} finally {
 			super.terminate();
+			throw new DebugException(new Status(Status.ERROR, "gov.redhawk.ide.debug.linux", "Failed to clean up process ", e));
 		}
 		
 	}
