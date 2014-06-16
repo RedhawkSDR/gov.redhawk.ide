@@ -110,6 +110,9 @@ public class SandboxImpl implements SandboxOperations {
 			retVal.add(desc);
 		}
 		for (final ScaWaveform cp : this.localSca.getWaveforms()) {
+			if (cp == localSca.getSandboxWaveform()) {
+				continue;
+			}
 			final ExtendedCF.ResourceDesc desc = new ExtendedCF.ResourceDesc();
 			desc.profile = cp.getProfileObj().eResource().getURI().path();
 			desc.resource = cp.getObj();
