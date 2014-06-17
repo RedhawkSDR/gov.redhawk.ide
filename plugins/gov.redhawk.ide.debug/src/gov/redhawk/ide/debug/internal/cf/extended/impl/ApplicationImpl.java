@@ -688,7 +688,12 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 		this.streams.getOutStream().println("Query: " + queryProperties);
 
-		ExternalProperties externalProperties = this.waveform.getProfileObj().getExternalProperties();
+		SoftwareAssembly profileObj = this.waveform.fetchProfileObject(null);
+		ExternalProperties externalProperties = null;
+		if (profileObj != null) {
+			externalProperties = this.waveform.getProfileObj().getExternalProperties();
+		}
+
 		List<DataType> retVal = new ArrayList<DataType>();
 
 		LocalScaComponent localController = this.assemblyController;
@@ -1090,7 +1095,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public Resource launch(final String compId, final DataType[] execParams, @NonNull final String spdURI, final String implId, final String mode)
-			throws ExecuteFail {
+		throws ExecuteFail {
 		Assert.isNotNull(spdURI, "SPD URI must not be null");
 		LocalScaComponent retVal;
 		try {
@@ -1114,7 +1119,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	}
 
 	public LocalScaComponent launch(final String usageName, final DataType[] execParams, @NonNull final URI spdURI, final String implId, final String mode)
-			throws CoreException {
+		throws CoreException {
 		return launch(usageName, null, execParams, spdURI, implId, mode);
 	}
 
@@ -1217,7 +1222,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		if (newComponent == null) {
 			subLaunch.terminate();
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to find component after launch", null));
-		} 
+		}
 
 		// Add Child processes
 		for (final IProcess process : subLaunch.getProcesses()) {
