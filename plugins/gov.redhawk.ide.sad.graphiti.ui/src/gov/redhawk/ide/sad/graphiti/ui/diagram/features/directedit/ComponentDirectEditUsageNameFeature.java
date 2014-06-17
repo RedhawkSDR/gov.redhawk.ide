@@ -80,7 +80,6 @@ public class ComponentDirectEditUsageNameFeature extends AbstractDirectEditingFe
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-//kepler	    TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// Perform business object manipulation in a Command
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();

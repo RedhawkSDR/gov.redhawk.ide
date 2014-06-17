@@ -47,6 +47,7 @@ import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.impl.Reason;
+import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -526,9 +527,15 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 		Object obj = getBusinessObjectForPictogramElement(componentShape);
 		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
-		// allow if we've selected Text for the component
+
+		// allow if we've selected the inner Text for the component
 		if (obj instanceof SadComponentInstantiation && ga instanceof Text) {
-			return true;
+			Text text = (Text) ga;
+			for (Property prop : text.getProperties()) {
+				if (prop.getValue().equals(RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT)) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}

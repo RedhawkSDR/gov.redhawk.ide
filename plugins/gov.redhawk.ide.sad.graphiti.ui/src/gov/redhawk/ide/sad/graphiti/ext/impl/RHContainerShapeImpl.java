@@ -225,7 +225,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			interfaceStub, uses, provides, externalPorts, true);
 	}
 
-	//CHECKSTYLE:OFF
 	/**
 	 * Return true (through Reason) if the shape's contents require an update based on the field supplied.
 	 * Also returns a textual reason why an update is needed. Returns false otherwise.
