@@ -290,7 +290,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopEllipse, 0, 0, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER);
 
 		// interface lollipop line
-		Shape lollipopLineShape = Graphiti.getCreateService().createContainerShape(interfaceContainerShape, true);
+		Shape lollipopLineShape = Graphiti.getCreateService().createContainerShape(interfaceContainerShape, false);
 		Rectangle lollipopLine = Graphiti.getCreateService().createRectangle(lollipopLineShape);
 		lollipopLine.setStyle(StyleUtil.getStyleForLollipopLine(DUtil.findDiagram(targetContainerShape)));
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopLine, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER / 2,
@@ -651,15 +651,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 											// update style
 											fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalProvidesPort(DUtil.findDiagram(this)));
 											featureProvider.link(fixPointAnchorRectangle.getPictogramElement(), findExternalPort(portObject, externalPorts)); // link
-											// to
-											// externalPort
-											// so
-											// that
-											// update
-											// fires
-											// when
-											// it
-											// changes
+											// to externalPort so that update fires when it changes
 										} else {
 											return new Reason(true, "Port style requires update");
 										}

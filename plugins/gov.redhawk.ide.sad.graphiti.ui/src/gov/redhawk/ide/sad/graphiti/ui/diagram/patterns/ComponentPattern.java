@@ -297,7 +297,7 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 
 	/**
 	 * Return the highest start order for all components in the SAD.
-	 * Returns null if no start order found
+	 * Returns null if no components are found
 	 * @param sad
 	 * @return
 	 */
@@ -307,14 +307,15 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 		List<SadComponentInstantiation> cis = getAllComponents(sad);
 		if (cis != null && cis.size() > 0) {
 			highestStartOrder = cis.get(0).getStartOrder();
+
 		}
 		for (int i = 1; i < cis.size(); i++) {
 			SadComponentInstantiation c = cis.get(i);
-
-			// protect against first component's start order being null
+			
+			// If a component is found, and it's start order is null, assume it is the assembly controller
+			// Assembly controllers should always be at the beginning of the start order, so mark highest start order as zero
 			if (highestStartOrder == null) {
-				highestStartOrder = c.getStartOrder();
-				break;
+				highestStartOrder = BigInteger.ZERO;
 			}
 
 			// check for higher start order
@@ -322,6 +323,8 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 				highestStartOrder = c.getStartOrder();
 			}
 		}
+		
+		// If there are no components, highestStartOrder will be null
 		return highestStartOrder;
 	}
 
@@ -346,9 +349,14 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 		return retVal;
 	}
 
-	// swap start order of provided components. Change assembly controller if start order zero
-	public static void swapStartOrder(final SoftwareAssembly sad, final Diagram diagram, final IFeatureProvider featureProvider,
-		final SadComponentInstantiation lowerCi, final SadComponentInstantiation higherCi) {
+	/**
+	 *  swap start order of provided components. Change assembly controller if start order zero
+	 * @param sad
+	 * @param featureProvider
+	 * @param lowerCi - The component that currently has the lower start order
+	 * @param higherCi - The component that currently has the higher start order
+	 */
+	public static void swapStartOrder(SoftwareAssembly sad, IFeatureProvider featureProvider, final SadComponentInstantiation lowerCi, final SadComponentInstantiation higherCi) {
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
@@ -362,7 +370,7 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 			@Override
 			protected void doExecute() {
 
-				// increment start order
+				// Increment start order
 				lowerCi.setStartOrder(higherCi.getStartOrder());
 				// Decrement start order
 				higherCi.setStartOrder(higherCi.getStartOrder().subtract(BigInteger.ONE));
@@ -377,10 +385,12 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 		});
 	}
 
-	// returns ci with provided start order
+	/*
+	 *  returns component instantiation with provided start order
+	 */
 	public static SadComponentInstantiation getComponentInstantiationViaStartOrder(final SoftwareAssembly sad, final BigInteger startOrder) {
 		for (SadComponentInstantiation ci : sad.getAllComponentInstantiations()) {
-			if (ci.getStartOrder().compareTo(startOrder) == 0) {
+			if (ci.getStartOrder() != null && ci.getStartOrder().compareTo(startOrder) == 0) {
 				return ci;
 			}
 		}
@@ -394,32 +404,45 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 		// get components by start order
 		EList<SadComponentInstantiation> componentInstantiationsInStartOrder = sad.getComponentInstantiationsInStartOrder();
 
-		// set assembly controller
+		// if assembly controller was deleted, set a new assembly controller
 		AssemblyController assemblyController = getAssemblyController(featureProvider, diagram);
 		if (assemblyController == null && componentInstantiationsInStartOrder.size() > 0) {
 			// assign assembly controller assign to first component
 			assemblyController = SadFactory.eINSTANCE.createAssemblyController();
+			SadComponentInstantiation ci = componentInstantiationsInStartOrder.get(0);
 			SadComponentInstantiationRef sadComponentInstantiationRef = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
-			sadComponentInstantiationRef.setInstantiation(componentInstantiationsInStartOrder.get(0));
+			sadComponentInstantiationRef.setInstantiation(ci);
 			assemblyController.setComponentInstantiationRef(sadComponentInstantiationRef);
 			sad.setAssemblyController(assemblyController);
-		}
-
-		// set start order
-		for (SadComponentInstantiation ci : componentInstantiationsInStartOrder) {
-			ci.setStartOrder(startOrder);
-			startOrder = startOrder.add(BigInteger.ONE);
-
-			// get external ports
-			ExternalPorts externalPorts = DUtil.getDiagramSAD(featureProvider, diagram).getExternalPorts();
-
-			List<PictogramElement> elements = Graphiti.getLinkService().getPictogramElements(diagram, ci);
-			for (PictogramElement e : elements) {
-				if (e instanceof ComponentShape) {
-					((ComponentShape) e).update(ci, featureProvider, externalPorts, assemblyController);
-				}
+			
+			// If the component has a start order defined, update it to run first
+			if (ci.getStartOrder() != null) {
+				ci.setStartOrder(BigInteger.ZERO);
 			}
 
+		}
+
+		// remove assembly controller from list, it has already been updated
+		componentInstantiationsInStartOrder.remove(assemblyController.getComponentInstantiationRef().getInstantiation());
+		
+		// set start order
+		for (SadComponentInstantiation ci : componentInstantiationsInStartOrder) { 
+			// Don't update start order if it has not already been declared for this component
+			if (ci.getStartOrder() != null) {
+				startOrder = startOrder.add(BigInteger.ONE);
+				ci.setStartOrder(startOrder);
+			} 
+
+			// get external ports
+			// TODO: This breaks the assembly update logic, can end up changing start order ellipse style for non-assembly controllers
+//			ExternalPorts externalPorts = DUtil.getDiagramSAD(featureProvider, diagram).getExternalPorts();
+//
+//			List<PictogramElement> elements = Graphiti.getLinkService().getPictogramElements(diagram, ci);
+//			for (PictogramElement e : elements) {
+//				if (e instanceof ComponentShape) {
+//					((ComponentShape) e).update(ci, featureProvider, externalPorts, assemblyController);
+//				}
+//			}
 		}
 	}
 

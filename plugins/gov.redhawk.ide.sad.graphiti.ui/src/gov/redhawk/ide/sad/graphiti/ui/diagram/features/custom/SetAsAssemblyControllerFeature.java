@@ -104,10 +104,10 @@ public class SetAsAssemblyControllerFeature extends AbstractCustomFeature {
 				// set new assembly controller
 				assemblyController.getComponentInstantiationRef().setInstantiation(newAssemblyCI);
 
-				// set start order to -1....no worries, this will become zero via the organize method below.
-				newAssemblyCI.setStartOrder(BigInteger.ONE.negate());
-
-				// re-organize start order
+				// if new assembly controller has a start order declared, change it to zero and update all other component start orders
+				if (newAssemblyCI.getStartOrder() != null) {
+					newAssemblyCI.setStartOrder(BigInteger.ZERO);
+				}
 				ComponentPattern.organizeStartOrder(sad, getDiagram(), getFeatureProvider());
 			}
 		});

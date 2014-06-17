@@ -15,8 +15,6 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -25,8 +23,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.services.Graphiti;
 
 public class IncrementStartOrderFeature extends AbstractCustomFeature {
 
@@ -62,8 +58,19 @@ public class IncrementStartOrderFeature extends AbstractCustomFeature {
 				// get sad from diagram
 				final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 
-				// don't allow increment if its already the highest
+				// don't allow increment if there is not already a start order assigned
+				if (ci.getStartOrder() == null) {
+					return false;
+				}
+
+				// don't allow increment if its already the highest (components with start orders of null are removed from this assessment)
 				EList<SadComponentInstantiation> sortedComponents = sad.getComponentInstantiationsInStartOrder();
+				for (int i = 0; i < sortedComponents.size(); i++) {
+					if (sortedComponents.get(i).getStartOrder() == null) {
+						sortedComponents.remove(i);
+						i--;
+					}
+				}
 				if (sortedComponents.get(sortedComponents.size() - 1).equals(ci)) {
 					return false;
 				}
@@ -87,16 +94,7 @@ public class IncrementStartOrderFeature extends AbstractCustomFeature {
 		final SadComponentInstantiation swapCI = ComponentPattern.getComponentInstantiationViaStartOrder(sad, ci.getStartOrder().add(BigInteger.ONE));
 
 		// swap start orders, also handle assembly controller changes
-		ComponentPattern.swapStartOrder(sad, getDiagram(), getFeatureProvider(), ci, swapCI);
-
-		// update CI shapes associated with AssemblyController changes
-		List<PictogramElement> elementsToUpdate = new ArrayList<PictogramElement>();
-		elementsToUpdate.addAll(Graphiti.getLinkService().getPictogramElements(getDiagram(), swapCI));
-		elementsToUpdate.addAll(Graphiti.getLinkService().getPictogramElements(getDiagram(), ci));
-		for (PictogramElement pe : elementsToUpdate) {
-			updatePictogramElement(pe);
-		}
-
+		ComponentPattern.swapStartOrder(sad, getFeatureProvider(), ci, swapCI);
 	}
 
 }

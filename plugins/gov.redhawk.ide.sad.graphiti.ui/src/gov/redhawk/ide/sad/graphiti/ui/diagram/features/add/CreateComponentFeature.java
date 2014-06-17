@@ -72,7 +72,6 @@ public class CreateComponentFeature extends AbstractCreateFeature {
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-//kepler		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
@@ -131,7 +130,7 @@ public class CreateComponentFeature extends AbstractCreateFeature {
 	// adds corresponding component file to sad if not already present
 	private ComponentFile createComponentFile(final SoftwareAssembly sad, final SoftPkg spd) {
 
-		// See if we have to add a new <componentfile>
+		// See if we have to add a new component file
 		ComponentFile file = null;
 		// set component files is not already set
 		ComponentFiles cFiles = sad.getComponentFiles();
@@ -142,7 +141,7 @@ public class CreateComponentFeature extends AbstractCreateFeature {
 		// search for existing compatible component file for spd
 		for (final ComponentFile f : cFiles.getComponentFile()) {
 			if (f == null) {
-				continue; // TODO: why would this happen
+				continue;
 			}
 			final SoftPkg fSpd = f.getSoftPkg();
 			if (fSpd != null && PluginUtil.equals(spd.getId(), fSpd.getId())) {
@@ -184,7 +183,6 @@ public class CreateComponentFeature extends AbstractCreateFeature {
 			StatusManager.getManager().handle(
 				new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, spd.getName() + " Component has no implementation. ID: " + spd.getId()),
 				StatusManager.LOG | StatusManager.SHOW);
-			// return CommandResult.newErrorCommandResult("No SPD implementation available for " + spd.getName());
 		}
 		sadComponentInstantiation.setImplID(implId);
 
@@ -204,10 +202,12 @@ public class CreateComponentFeature extends AbstractCreateFeature {
 
 		// determine start order for existing components
 		BigInteger highestStartOrder = ComponentPattern.determineHighestStartOrder(sad);
-
+		
 		// increment start order for new component
 		BigInteger startOrder = null;
 		if (highestStartOrder == null) {
+			// Should only get here if no other components exist
+			// Assume assembly controller and assign start order of 0
 			startOrder = BigInteger.ZERO;
 		} else {
 			startOrder = highestStartOrder.add(BigInteger.ONE);

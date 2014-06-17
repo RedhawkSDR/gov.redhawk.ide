@@ -54,13 +54,11 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  */
 public class ComponentShapeImpl extends RHContainerShapeImpl implements ComponentShape {
 
-	// These are property key/value pairs that help us resize an existing shape by properly identifying
-	// graphicsAlgorithms
+	// These are property key/value pairs that help us resize an existing shape by properly identifying graphicsAlgorithms
 	public static final String GA_START_ORDER_ELLIPSE = "startOrderEllipse";
 	public static final String GA_START_ORDER_TEXT = "startOrderText";
 
-	// Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove
-	// etc.)
+	// Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove etc.)
 	public static final String SHAPE_START_ORDER_ELLIPSE_SHAPE = "startOrderEllipseShape";
 
 	// Shape size constants
@@ -69,6 +67,9 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	public static final int START_ORDER_ELLIPSE_LEFT_PADDING = 20;
 	public static final int START_ORDER_ELLIPSE_RIGHT_PADDING = 5;
 	public static final int START_ORDER_ELLIPSE_TOP_PADDING = 5;
+
+	// Default start order text value for components that do not have a start order declared
+	private final String NO_START_ORDER_STRING = "*";
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -113,11 +114,8 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			ImageProvider.IMG_COMPONENT_INSTANCE, StyleUtil.getStyleForComponentInner(DUtil.findDiagram(targetContainerShape)), ci.getInterfaceStub(),
 			ci.getUses(), ci.getProvides(), ciExternalPorts);
 
-		// get inner ContainerShape
-		ContainerShape innerContainerShape = getInnerContainerShape();
-
 		// add start order ellipse
-		addStartOrderEllipse(innerContainerShape, ci, assemblyController, featureProvider);
+		addStartOrderEllipse(ci, assemblyController, featureProvider);
 	}
 
 	/**
@@ -140,16 +138,17 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	/**
 	 * Add an Ellipse to provided container shape that will contain the start order from sadComponentInstantiation
 	 */
-	public ContainerShape addStartOrderEllipse(ContainerShape innerContainerShape, SadComponentInstantiation sadComponentInstantiation,
-		AssemblyController assemblyController, IFeatureProvider featureProvider) {
-		Diagram diagram = DUtil.findDiagram(innerContainerShape);
+	public ContainerShape addStartOrderEllipse(SadComponentInstantiation sadComponentInstantiation, AssemblyController assemblyController,
+		IFeatureProvider featureProvider) {
+		Diagram diagram = DUtil.findDiagram(getInnerContainerShape());
 
-		// start order ellipse
-		ContainerShape startOrderEllipseShape = Graphiti.getCreateService().createContainerShape(innerContainerShape, false);
+		// Create ellipse shape to display component start order
+		ContainerShape startOrderEllipseShape = Graphiti.getCreateService().createContainerShape(getInnerContainerShape(), false);
 		Graphiti.getPeService().setPropertyValue(startOrderEllipseShape, DUtil.SHAPE_TYPE, SHAPE_START_ORDER_ELLIPSE_SHAPE);
 		Ellipse startOrderEllipse = Graphiti.getCreateService().createEllipse(startOrderEllipseShape);
-		// if start order zero (assembly controller), then use special style
+
 		if (assemblyController != null) {
+			// If component is assembly controller, then set background to a different color
 			startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
 			featureProvider.link(startOrderEllipseShape, assemblyController);
 		} else {
@@ -158,19 +157,22 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		Graphiti.getPeService().setPropertyValue(startOrderEllipse, DUtil.GA_TYPE, GA_START_ORDER_ELLIPSE);
 		Graphiti.getGaLayoutService().setSize(startOrderEllipse, START_ORDER_ELLIPSE_DIAMETER, START_ORDER_ELLIPSE_DIAMETER);
 
-		// if start order is null (possible in legacy waveforms), then return without setting text
+		// Set start order value for pictogram element
+		String startOrder;
 		if (sadComponentInstantiation.getStartOrder() == null) {
-			return startOrderEllipseShape;
+			// if business object start order is null (possible in legacy waveforms), then set text to asterisk (*)
+			startOrder = NO_START_ORDER_STRING;
+		} else {
+			// if business object start order != null, then set text to that value
+			startOrder = sadComponentInstantiation.getStartOrder().toString();
 		}
-		
-		// port text
-		Shape startOrderTextShape = Graphiti.getCreateService().createShape(startOrderEllipseShape, false);
-		Text startOrderText = Graphiti.getCreateService().createText(startOrderTextShape, sadComponentInstantiation.getStartOrder().toString());
+
+		// Create text shape to display start order
+		Shape startOrderTextShape = Graphiti.getPeCreateService().createShape(startOrderEllipseShape, false);
+		Text startOrderText = Graphiti.getCreateService().createText(startOrderTextShape, startOrder);
 		Graphiti.getPeService().setPropertyValue(startOrderText, DUtil.GA_TYPE, GA_START_ORDER_TEXT);
 		startOrderText.setStyle(StyleUtil.getStyleForStartOrderText(diagram));
-		// TODO: bwhoff2 we need to handle the x for the text inside the shape
-		IDimension textDimension = GraphitiUi.getUiLayoutService().calculateTextSize(sadComponentInstantiation.getStartOrder().toString(),
-			StyleUtil.getStartOrderFont(diagram));
+		IDimension textDimension = GraphitiUi.getUiLayoutService().calculateTextSize(startOrder, StyleUtil.getStartOrderFont(diagram));
 		int textX = START_ORDER_ELLIPSE_DIAMETER / 2 - textDimension.getWidth() / 2;
 		Graphiti.getGaLayoutService().setLocationAndSize(startOrderText, textX, START_ORDER_TOP_TEXT_PADDING, START_ORDER_ELLIPSE_DIAMETER,
 			START_ORDER_ELLIPSE_DIAMETER);
@@ -196,28 +198,26 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * performs a layout on the contents of this shape
 	 */
 	public void layout() {
-
 		super.layout();
 
-		// start order ellipse
+		// Set the layout for the start order ellipse
 		Graphiti.getGaLayoutService().setLocation(getStartOrderEllipseShape().getGraphicsAlgorithm(),
 			getInnerContainerShape().getGraphicsAlgorithm().getWidth() - (START_ORDER_ELLIPSE_DIAMETER + START_ORDER_ELLIPSE_RIGHT_PADDING),
 			START_ORDER_ELLIPSE_TOP_PADDING);
-
 	}
 
 	/**
 	 * Performs either an update or a check to determine if update is required.
 	 * if performUpdate flag is true it will update the shape,
 	 * otherwise it will return reason why update is required.
-	 * @param ci
+	 * @param component instantiation
 	 * @param performUpdate
 	 * @return
 	 */
 	public Reason internalUpdate(SadComponentInstantiation ci, IFeatureProvider featureProvider, ExternalPorts externalPorts,
 		AssemblyController assemblyController, boolean performUpdate) {
 		Diagram diagram = DUtil.findDiagram(this);
-		// get external ports relavent to ci
+		// get external ports relevant to component instantiation
 		final List<Port> ciExternalPorts = getComponentExternalPorts(ci, externalPorts);
 		Reason superReason = null;
 		if (performUpdate) {
@@ -241,28 +241,39 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			updateStatus = superReason.toBoolean();
 		}
 
-		// startOrderText
+		// update startOrderText
 		Text startOrderTextGA = getStartOrderText();
-		if (startOrderTextGA != null && ci.getStartOrder().compareTo(new BigInteger(startOrderTextGA.getValue())) != 0) {
+		if (ci.getStartOrder() == null && !startOrderTextGA.getValue().equals(NO_START_ORDER_STRING)) {
+			// Start order was removed from component business object that previously had one.
+			if (performUpdate) {
+				updateStatus = true;
+				startOrderTextGA.setValue(NO_START_ORDER_STRING);
+			} else {
+				return new Reason(true, "Component start order removed, update required");
+			}
+		} else if (ci.getStartOrder() != null && startOrderTextGA.getValue().equals(NO_START_ORDER_STRING)) {
+			// Start order was add to component business object that previously DID NOT have one
 			if (performUpdate) {
 				updateStatus = true;
 				startOrderTextGA.setValue(ci.getStartOrder().toString());
-				// adjust for startOrderText size
-				IDimension textDimension = GraphitiUi.getUiLayoutService().calculateTextSize(ci.getStartOrder().toString(),
-					StyleUtil.getStartOrderFont(diagram));
-				int textX = START_ORDER_ELLIPSE_DIAMETER / 2 - textDimension.getWidth() / 2;
-				Graphiti.getGaLayoutService().setLocationAndSize(startOrderTextGA, textX, START_ORDER_TOP_TEXT_PADDING, START_ORDER_ELLIPSE_DIAMETER,
-					START_ORDER_ELLIPSE_DIAMETER);
 			} else {
-				return new Reason(true, "Component start order requires update");
+				return new Reason(true, "Component has been assigned a start order, update required");
+			}
+		} else if (ci.getStartOrder() != null && !startOrderTextGA.getValue().equals(NO_START_ORDER_STRING)
+			&& ci.getStartOrder().compareTo(new BigInteger(startOrderTextGA.getValue())) != 0) {
+			// Handle all other start order changes
+			if (performUpdate) {
+				updateStatus = true;
+				startOrderTextGA.setValue(ci.getStartOrder().toString());
+			} else {
+				return new Reason(true, "Component start order changed, update required");
 			}
 		}
 
-		// assembly controller
-		// Style
+		// update assembly controller styling
 		Ellipse startOrderEllipse = (Ellipse) getStartOrderEllipseShape().getGraphicsAlgorithm();
-		// if start order zero (assembly controller), then use special style
 		if (startOrderEllipse.getStyle() != StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram) && assemblyController != null) {
+			// if assembly controller, then use special style
 			if (performUpdate) {
 				updateStatus = true;
 				startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
@@ -280,8 +291,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			}
 		}
 
-		// we must make sure externalPorts is linked with this object if its set,
-		// otherwise we need to remove it
+		// we must make sure externalPorts is linked with this object if its set, otherwise we need to remove it
 		if (performUpdate) {
 			if (externalPorts != null && !this.getLink().getBusinessObjects().contains(externalPorts)) {
 				this.getLink().getBusinessObjects().add(externalPorts);
@@ -307,13 +317,11 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 
 	/**
 	 * Returns minimum width for Shape with provides and uses port stubs and name text
-	 * @param ci
-	 * @return
 	 */
 	public int getMinimumWidth(final String outerTitle, final String innerTitle, final EList<ProvidesPortStub> providesPortStubs,
 		final EList<UsesPortStub> usesPortStubs) {
 
-		// determine width of parentshape
+		// determine width of parent shape
 		int rhContainerShapeMinWidth = super.getMinimumWidth(outerTitle, innerTitle, providesPortStubs, usesPortStubs);
 
 		int innerTitleWidth = 0;
