@@ -69,7 +69,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	public static final int START_ORDER_ELLIPSE_TOP_PADDING = 5;
 
 	// Default start order text value for components that do not have a start order declared
-	private final String NO_START_ORDER_STRING = "*";
+	private static final String NO_START_ORDER_STRING = "*";
 
 	/**
 	 * <!-- begin-user-doc -->
