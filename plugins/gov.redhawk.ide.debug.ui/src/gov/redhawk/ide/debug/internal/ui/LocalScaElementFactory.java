@@ -10,11 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui;
 
-import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
+import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.ui.URIEditorInput;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
@@ -28,7 +27,7 @@ public class LocalScaElementFactory implements IElementFactory {
 	public static final String ID = "gov.redhawk.ide.debug.ui.localSca.factory";
 	
 	public static IEditorInput getLocalScaInput() {
-		return new URIEditorInput(URI.createPlatformPluginURI(ScaDebugUiPlugin.CHALKBOARD_EDITOR_URI_PATH, true)) {
+		return new URIEditorInput(ScaDebugInstance.getLocalSandboxWaveformURI()) {
 			@Override
 			public boolean exists() {
 				return true;
