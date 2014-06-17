@@ -218,6 +218,8 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	public Reason internalUpdate(SadComponentInstantiation ci, IFeatureProvider featureProvider, ExternalPorts externalPorts,
 		AssemblyController assemblyController, boolean performUpdate) {
 		Diagram diagram = DUtil.findDiagram(this);
+		SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
+
 		// get external ports relevant to component instantiation
 		final List<Port> ciExternalPorts = getComponentExternalPorts(ci, externalPorts);
 		Reason superReason = null;
@@ -281,11 +283,9 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 				if (ci.getStartOrder() != null && ci.getStartOrder().compareTo(BigInteger.ZERO) != 0) {
 					// Make sure start order is set to zero for assembly controller, if the update occurred from elsewhere in the model
 					ci.setStartOrder(BigInteger.ZERO);
-					SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
 					ComponentPattern.organizeStartOrder(sad, diagram, featureProvider);
 				} else {
 					// Organization check to make sure start order sequence is correct, if the update occurred from elsewhere in the model
-					SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
 					ComponentPattern.organizeStartOrder(sad, diagram, featureProvider);
 				}
 				featureProvider.link(startOrderEllipse.getPictogramElement(), assemblyController);
