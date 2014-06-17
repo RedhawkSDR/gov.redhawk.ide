@@ -10,23 +10,16 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ext;
 
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import java.util.List;
-
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-
 import mil.jpeojtrs.sca.sad.Port;
-
 import org.eclipse.emf.common.util.EList;
-
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.graphiti.features.IFeatureProvider;
-
+import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
-
-import org.eclipse.graphiti.mm.algorithms.styles.Style;
-
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 
 /**
@@ -43,12 +36,18 @@ public interface RHContainerShape extends ContainerShape {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model targetContainerShapeUnique="false" outerTextUnique="false" businessObjectsDataType="gov.redhawk.ide.sad.graphiti.ext.List<org.eclipse.emf.ecore.EObject>" businessObjectsUnique="false" businessObjectsMany="false" featureProviderDataType="gov.redhawk.ide.sad.graphiti.ext.IFeatureProvider" featureProviderUnique="false" outerImageIdUnique="false" outerContainerStyleUnique="false" innerTextUnique="false" innerImageIdUnique="false" innerContainerStyleUnique="false" interfaceStubDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentSupportedInterfaceStub" interfaceStubUnique="false" usesUnique="false" usesMany="false" providesUnique="false" providesMany="false" externalPortsDataType="gov.redhawk.ide.sad.graphiti.ext.List<gov.redhawk.ide.sad.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
+	 * @model contextDataType="gov.redhawk.ide.sad.graphiti.ext.IAddContext" contextUnique="false" patternDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentPattern" patternUnique="false"
 	 * @generated
 	 */
-	void init(ContainerShape targetContainerShape, String outerText, List<EObject> businessObjects, IFeatureProvider featureProvider, String outerImageId,
-		Style outerContainerStyle, String innerText, String innerImageId, Style innerContainerStyle, ComponentSupportedInterfaceStub interfaceStub,
-		EList<UsesPortStub> uses, EList<ProvidesPortStub> provides, List<Port> externalPorts);
+	void init(IAddContext context, ComponentPattern pattern);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model contextDataType="gov.redhawk.ide.sad.graphiti.ext.IAddContext" contextUnique="false" patternDataType="gov.redhawk.ide.sad.graphiti.ext.AbstractContainerPattern" patternUnique="false" externalPortsDataType="gov.redhawk.ide.sad.graphiti.ext.List<gov.redhawk.ide.sad.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
+	 * @generated
+	 */
+	void init(IAddContext context, AbstractContainerPattern pattern, List<Port> externalPorts);
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -78,12 +77,21 @@ public interface RHContainerShape extends ContainerShape {
 	 * <!-- begin-model-doc -->
 	 * Updates the shape with supplied values
 	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.sad.graphiti.ext.Reason" unique="false" outerTextUnique="false" businessObjectUnique="false" featureProviderDataType="gov.redhawk.ide.sad.graphiti.ext.IFeatureProvider" featureProviderUnique="false" outerImageIdUnique="false" outerContainerStyleUnique="false" innerTextUnique="false" innerImageIdUnique="false" innerContainerStyleUnique="false" interfaceStubDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentSupportedInterfaceStub" interfaceStubUnique="false" usesUnique="false" usesMany="false" providesUnique="false" providesMany="false" externalPortsDataType="gov.redhawk.ide.sad.graphiti.ext.List<gov.redhawk.ide.sad.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
+	 * @model dataType="gov.redhawk.ide.sad.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.sad.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.sad.graphiti.ext.AbstractContainerPattern" patternUnique="false" externalPortsDataType="gov.redhawk.ide.sad.graphiti.ext.List<gov.redhawk.ide.sad.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
 	 * @generated
 	 */
-	Reason update(String outerText, Object businessObject, IFeatureProvider featureProvider, String outerImageId, Style outerContainerStyle, String innerText,
-		String innerImageId, Style innerContainerStyle, ComponentSupportedInterfaceStub interfaceStub, EList<UsesPortStub> uses,
-		EList<ProvidesPortStub> provides, List<Port> externalPorts);
+	Reason update(IUpdateContext context, AbstractContainerPattern pattern, List<Port> externalPorts);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Updates the shape with supplied values
+	 * <!-- end-model-doc -->
+	 * @model dataType="gov.redhawk.ide.sad.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.sad.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.sad.graphiti.ext.AbstractContainerPattern" patternUnique="false"
+	 * @generated
+	 */
+	Reason update(IUpdateContext context, AbstractContainerPattern pattern);
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -93,11 +101,26 @@ public interface RHContainerShape extends ContainerShape {
 	 * If update required returns Reason with true
 	 * boolean value and message describing what needs to be updated
 	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.sad.graphiti.ext.Reason" unique="false" outerTextUnique="false" businessObjectUnique="false" featureProviderDataType="gov.redhawk.ide.sad.graphiti.ext.IFeatureProvider" featureProviderUnique="false" outerImageIdUnique="false" outerContainerStyleUnique="false" innerTextUnique="false" innerImageIdUnique="false" innerContainerStyleUnique="false" interfaceStubDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentSupportedInterfaceStub" interfaceStubUnique="false" usesUnique="false" usesMany="false" providesUnique="false" providesMany="false" externalPortsDataType="gov.redhawk.ide.sad.graphiti.ext.List<gov.redhawk.ide.sad.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
+	 * @model dataType="gov.redhawk.ide.sad.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.sad.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.sad.graphiti.ext.AbstractContainerPattern" patternUnique="false" externalPortsDataType="gov.redhawk.ide.sad.graphiti.ext.List<gov.redhawk.ide.sad.graphiti.ext.Port>" externalPortsUnique="false" externalPortsMany="false"
 	 * @generated
 	 */
-	Reason updateNeeded(String outerText, Object businessObject, IFeatureProvider featureProvider, String outerImageId, Style outerContainerStyle,
-		String innerText, String innerImageId, Style innerContainerStyle, ComponentSupportedInterfaceStub interfaceStub, EList<UsesPortStub> uses,
-		EList<ProvidesPortStub> provides, List<Port> externalPorts);
+	Reason updateNeeded(IUpdateContext context, AbstractContainerPattern pattern, List<Port> externalPorts);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Checks if shape requires an update.
+	 * If update required returns Reason with true
+	 * boolean value and message describing what needs to be updated
+	 * <!-- end-model-doc -->
+	 * @model dataType="gov.redhawk.ide.sad.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.sad.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.sad.graphiti.ext.AbstractContainerPattern" patternUnique="false"
+	 * @generated
+	 */
+	Reason updateNeeded(IUpdateContext context, AbstractContainerPattern pattern);
+
+	Reason update(IUpdateContext context, AbstractFindByPattern abstractFindByPattern);
+
+	void init(IAddContext context, AbstractFindByPattern abstractFindByPattern);
 
 } // RHContainerShape

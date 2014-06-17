@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ext.impl;
 
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ext.RHGxFactory;
@@ -29,6 +31,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 
 /**
@@ -111,6 +115,14 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return createListFromString(eDataType, initialValue);
 		case RHGxPackage.SAD_COMPONENT_INSTANTIATION:
 			return createSadComponentInstantiationFromString(eDataType, initialValue);
+		case RHGxPackage.IADD_CONTEXT:
+			return createIAddContextFromString(eDataType, initialValue);
+		case RHGxPackage.ABSTRACT_CONTAINER_PATTERN:
+			return createAbstractContainerPatternFromString(eDataType, initialValue);
+		case RHGxPackage.COMPONENT_PATTERN:
+			return createComponentPatternFromString(eDataType, initialValue);
+		case RHGxPackage.IUPDATE_CONTEXT:
+			return createIUpdateContextFromString(eDataType, initialValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -144,6 +156,14 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return convertListToString(eDataType, instanceValue);
 		case RHGxPackage.SAD_COMPONENT_INSTANTIATION:
 			return convertSadComponentInstantiationToString(eDataType, instanceValue);
+		case RHGxPackage.IADD_CONTEXT:
+			return convertIAddContextToString(eDataType, instanceValue);
+		case RHGxPackage.ABSTRACT_CONTAINER_PATTERN:
+			return convertAbstractContainerPatternToString(eDataType, instanceValue);
+		case RHGxPackage.COMPONENT_PATTERN:
+			return convertComponentPatternToString(eDataType, instanceValue);
+		case RHGxPackage.IUPDATE_CONTEXT:
+			return convertIUpdateContextToString(eDataType, instanceValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -346,6 +366,78 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * @generated
 	 */
 	public String convertSadComponentInstantiationToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public IAddContext createIAddContextFromString(EDataType eDataType, String initialValue) {
+		return (IAddContext) super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertIAddContextToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public AbstractContainerPattern createAbstractContainerPatternFromString(EDataType eDataType, String initialValue) {
+		return (AbstractContainerPattern) super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertAbstractContainerPatternToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ComponentPattern createComponentPatternFromString(EDataType eDataType, String initialValue) {
+		return (ComponentPattern) super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertComponentPatternToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public IUpdateContext createIUpdateContextFromString(EDataType eDataType, String initialValue) {
+		return (IUpdateContext) super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertIUpdateContextToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

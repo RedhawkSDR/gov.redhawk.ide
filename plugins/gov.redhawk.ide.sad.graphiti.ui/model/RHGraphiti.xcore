@@ -8,22 +8,22 @@
 
 package gov.redhawk.ide.sad.graphiti.ext
 
-import org.eclipse.graphiti.mm.pictograms.ContainerShape
-import org.eclipse.graphiti.features.IFeatureProvider
-import org.eclipse.graphiti.mm.algorithms.styles.Style
-import org.eclipse.graphiti.features.impl.Reason
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractContainerPattern
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern
+import java.util.List
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub
 import mil.jpeojtrs.sca.partitioning.UsesPortStub
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation
-import mil.jpeojtrs.sca.sad.Port
 import mil.jpeojtrs.sca.sad.AssemblyController
 import mil.jpeojtrs.sca.sad.ExternalPorts
+import mil.jpeojtrs.sca.sad.Port
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation
 import org.eclipse.emf.ecore.EEList
-import org.eclipse.emf.ecore.EObject
-import java.util.List
-
-
+import org.eclipse.graphiti.features.IFeatureProvider
+import org.eclipse.graphiti.features.context.IAddContext
+import org.eclipse.graphiti.features.context.IUpdateContext
+import org.eclipse.graphiti.features.impl.Reason
+import org.eclipse.graphiti.mm.pictograms.ContainerShape
 
 type ComponentSupportedInterfaceStub wraps ComponentSupportedInterfaceStub
 type IFeatureProvider wraps IFeatureProvider
@@ -35,21 +35,19 @@ type ExternalPorts wraps ExternalPorts
 type Reason wraps Reason
 type List<Port> wraps List
 type SadComponentInstantiation wraps SadComponentInstantiation
-
+type IAddContext wraps IAddContext
+type AbstractContainerPattern wraps AbstractContainerPattern
+type ComponentPattern wraps ComponentPattern
+type IUpdateContext wraps IUpdateContext
 
 interface ContainerShapeImpl wraps ContainerShape {}
 
 
 class RHContainerShape extends ContainerShape{
 	
-	op void init(ContainerShape targetContainerShape, String outerText, List<EObject> businessObjects, 
-			IFeatureProvider featureProvider, String outerImageId, Style outerContainerStyle, String innerText, String innerImageId,
-			Style innerContainerStyle,
-			ComponentSupportedInterfaceStub interfaceStub,
-			EEList<UsesPortStub> uses,
-			EEList<ProvidesPortStub> provides, 
-			List<Port> externalPorts)
-
+	op void init(IAddContext context, ComponentPattern pattern) 
+	op void init(IAddContext context, AbstractContainerPattern pattern, List<Port> externalPorts)
+	
 	/*Returns providesPortsStubs business object list linked to getProvidesPortsContainerShape()*/
 	op EEList<ProvidesPortStub> getProvidesPortStubs()
 
@@ -58,43 +56,39 @@ class RHContainerShape extends ContainerShape{
 	op void layout()
 	
 	/*Updates the shape with supplied values */
-	op Reason update(String outerText, 
-		  Object businessObject, IFeatureProvider featureProvider, 
-		  String outerImageId, Style outerContainerStyle, 
-		  String innerText, String innerImageId, Style innerContainerStyle, 
-		  ComponentSupportedInterfaceStub interfaceStub, EEList<UsesPortStub> uses, EEList<ProvidesPortStub> provides,
-		  List<Port> externalPorts)
+	op Reason update(IUpdateContext context, AbstractContainerPattern pattern, List<Port> externalPorts) 
+	
+	
+	/*Updates the shape with supplied values */
+	op Reason update(IUpdateContext context, AbstractContainerPattern pattern) 
 		  
 	/*Checks if shape requires an update.  
 	 * If update required returns Reason with true
 	 * boolean value and message describing what needs to be updated
 	 */
-	op Reason updateNeeded(String outerText, 
-		  Object businessObject, IFeatureProvider featureProvider, 
-		  String outerImageId, Style outerContainerStyle, 
-		  String innerText, String innerImageId, Style innerContainerStyle, 
-		  ComponentSupportedInterfaceStub interfaceStub, EEList<UsesPortStub> uses, EEList<ProvidesPortStub> provides,
-		  List<Port> externalPorts)
+	op Reason updateNeeded(IUpdateContext context, AbstractContainerPattern pattern, List<Port> externalPorts)
+		  
+	/*Checks if shape requires an update.  
+	 * If update required returns Reason with true
+	 * boolean value and message describing what needs to be updated
+	 */
+	op Reason updateNeeded(IUpdateContext context, AbstractContainerPattern pattern)
 	
 }
 
 class ComponentShape extends RHContainerShape{
 	
-	op void init(ContainerShape targetContainerShape, SadComponentInstantiation ci, 
-			IFeatureProvider featureProvider, ExternalPorts externalPorts,
-			AssemblyController assemblyController)
+	op void init(IAddContext context, ComponentPattern pattern) 
 
 	/*performs a layout on the contents of this shape */
 	op void layout()
 	
 	/*Updates the shape with supplied values */
-	op Reason update(SadComponentInstantiation ci, IFeatureProvider featureProvider, ExternalPorts externalPorts,
-		AssemblyController assemblyController)
+	op Reason update(IUpdateContext context, ComponentPattern pattern) 
 	
 	/*Checks if shape requires an update.  
 	 * If update required returns Reason with true
 	 * boolean value and message describing what needs to be updated
 	 */
-	 op Reason updateNeeded(SadComponentInstantiation ci, IFeatureProvider featureProvider, ExternalPorts externalPorts,
-	 	AssemblyController assemblyController)
+	 op Reason updateNeeded(IUpdateContext context, ComponentPattern pattern)
 }

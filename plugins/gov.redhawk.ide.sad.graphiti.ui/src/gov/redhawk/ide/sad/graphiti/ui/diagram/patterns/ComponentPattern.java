@@ -13,6 +13,7 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 
@@ -20,8 +21,10 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.AssemblyController;
-import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
@@ -31,6 +34,7 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -50,6 +54,7 @@ import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -57,7 +62,7 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
 
-public class ComponentPattern extends AbstractNamedElementPattern implements IPattern {
+public class ComponentPattern extends AbstractContainerPattern implements IPattern {
 
 	private URI spdUri = null;
 
@@ -181,21 +186,9 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 	 */
 	public PictogramElement add(IAddContext context) {
 
-		SadComponentInstantiation ci = (SadComponentInstantiation) context.getNewObject();
-		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
-
 		// create shape
 		ComponentShape componentShape = RHGxFactory.eINSTANCE.createComponentShape();
-
-		// get external ports
-		ExternalPorts externalPorts = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram()).getExternalPorts();
-
-		// get waveform assembly controller
-		AssemblyController assemblyController = getComponentAssemblyController(ci, getFeatureProvider(), getDiagram());
-
-		// initialize shape contents
-		componentShape.init(targetContainerShape, ci, getFeatureProvider(), externalPorts, assemblyController);
-
+		componentShape.init(context, this);
 		// set shape location to user's selection
 		Graphiti.getGaLayoutService().setLocation(componentShape.getGraphicsAlgorithm(), context.getX(), context.getY());
 
@@ -470,8 +463,8 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 //	}
 
 	// returns the assembly controller for this waveform if it happens to be the passed in Component
-	private static AssemblyController getComponentAssemblyController(SadComponentInstantiation ci, IFeatureProvider featureProvider, Diagram diagram) {
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
+	public AssemblyController getComponentAssemblyController(SadComponentInstantiation ci) {
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 		if (sad.getAssemblyController() != null && sad.getAssemblyController().getComponentInstantiationRef() != null
 			&& sad.getAssemblyController().getComponentInstantiationRef().getRefid().equals(ci.getId())) {
 			return sad.getAssemblyController();
@@ -482,16 +475,7 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 
 	@Override
 	public boolean update(IUpdateContext context) {
-		// business object
-		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());
-
-		// get external ports
-		ExternalPorts externalPorts = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram()).getExternalPorts();
-
-		// get waveform assembly controller
-		AssemblyController assemblyController = getComponentAssemblyController(ci, getFeatureProvider(), getDiagram());
-
-		Reason updated = ((ComponentShape) context.getPictogramElement()).update(ci, getFeatureProvider(), externalPorts, assemblyController);
+		Reason updated = ((ComponentShape) context.getPictogramElement()).update(context, this);
 
 		// if we updated redraw
 		if (updated.toBoolean()) {
@@ -506,19 +490,7 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 	 */
 	@Override
 	public IReason updateNeeded(IUpdateContext context) {
-
-		// business object
-		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());
-
-		// get external ports
-		ExternalPorts externalPorts = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram()).getExternalPorts();
-
-		// get waveform assembly controller
-		AssemblyController assemblyController = getComponentAssemblyController(ci, getFeatureProvider(), getDiagram());
-
-		Reason requiresUpdate = ((ComponentShape) context.getPictogramElement()).updateNeeded(ci, getFeatureProvider(), externalPorts, assemblyController);
-
-		return requiresUpdate;
+		return ((ComponentShape) context.getPictogramElement()).updateNeeded(context, this);
 	}
 
 	@Override
@@ -593,5 +565,84 @@ public class ComponentPattern extends AbstractNamedElementPattern implements IPa
 			}
 		}
 		return children;
+	}
+
+	
+	@Override
+	public String getOuterTitle(EObject obj) {
+		if (obj instanceof SadComponentInstantiation) {
+			return getOuterTitle((SadComponentInstantiation) obj);
+		}
+		return null;
+	}
+
+	@Override
+	public String getInnerTitle(EObject obj) {
+		if (obj instanceof SadComponentInstantiation) {
+			return getInnerTitle((SadComponentInstantiation) obj);
+		}
+		return null;
+	}
+	
+	/**
+	 * Provides the title of the outer shape
+	 * @param ci
+	 * @return
+	 */
+	public String getOuterTitle(SadComponentInstantiation ci) {
+		return ci.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName();
+	}
+	
+	/**
+	 * Provides the title of the inner shape
+	 * @param ci
+	 * @return
+	 */
+	public String getInnerTitle(SadComponentInstantiation ci) {
+		return ci.getUsageName();
+	}
+
+	@Override
+	public EList<UsesPortStub> getUses(EObject obj) {
+		if (obj instanceof SadComponentInstantiation) {
+			return ((SadComponentInstantiation) obj).getUses();
+		}
+		return null;
+	}
+
+	@Override
+	public EList<ProvidesPortStub> getProvides(EObject obj) {
+		if (obj instanceof SadComponentInstantiation) {
+			return ((SadComponentInstantiation) obj).getProvides();
+		}
+		return null;
+	}
+
+	@Override
+	public ComponentSupportedInterfaceStub getInterface(EObject obj) {
+		if (obj instanceof SadComponentInstantiation) {
+			return ((SadComponentInstantiation) obj).getInterfaceStub();
+		}
+		return null;
+	}
+
+	@Override
+	public String getOuterImageId() {
+		return ImageProvider.IMG_COMPONENT_PLACEMENT;
+	}
+
+	@Override
+	public String getInnerImageId() {
+		return ImageProvider.IMG_COMPONENT_INSTANCE;
+	}
+
+	@Override
+	public Style getStyleForOuter() {
+		return StyleUtil.getStyleForComponentOuter(getDiagram());
+	}
+
+	@Override
+	public Style getStyleForInner() {
+		return StyleUtil.getStyleForComponentInner(getDiagram());
 	}
 }

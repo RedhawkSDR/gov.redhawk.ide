@@ -13,14 +13,11 @@ package gov.redhawk.ide.sad.graphiti.ext.impl;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.AssemblyController;
@@ -28,13 +25,14 @@ import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.Text;
@@ -50,7 +48,7 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  * <!-- end-user-doc -->
  * <p>
  * </p>
- * 
+ *
  * @generated
  */
 public class ComponentShapeImpl extends RHContainerShapeImpl implements ComponentShape {
@@ -94,12 +92,19 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	/**
 	 * Creates the inner shapes that make up this container shape
 	 */
-	public void init(final ContainerShape targetContainerShape, final SadComponentInstantiation ci, final IFeatureProvider featureProvider,
-		ExternalPorts externalPorts, final AssemblyController assemblyController) {
+	public void init(IAddContext context, ComponentPattern pattern) {
+		SadComponentInstantiation ci = (SadComponentInstantiation) context.getNewObject();
+		IFeatureProvider featureProvider = pattern.getFeatureProvider();
+		Diagram diagram = featureProvider.getDiagramTypeProvider().getDiagram();
+		AssemblyController assemblyController = pattern.getComponentAssemblyController(ci);
+
+		// get external ports
+		ExternalPorts externalPorts = DUtil.getDiagramSAD(featureProvider, diagram).getExternalPorts();
+
 		// get sad from diagram, we need to link it to all shapes so the diagram will update when changes occur to
 		// assembly controller and external ports
 		List<EObject> businessObjectsToLink = new ArrayList<EObject>();
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, DUtil.findDiagram(targetContainerShape));
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(pattern.getFeatureProvider(), DUtil.findDiagram(context.getTargetContainer()));
 		// ORDER MATTERS, CI must be first
 		businessObjectsToLink.add(ci);
 		businessObjectsToLink.add(sad);
@@ -110,10 +115,8 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		// get external ports relevant to component instantiation
 		final List<Port> ciExternalPorts = getComponentExternalPorts(ci, externalPorts);
 
-		super.init(targetContainerShape, ci.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(), businessObjectsToLink, featureProvider,
-			ImageProvider.IMG_COMPONENT_PLACEMENT, StyleUtil.getStyleForComponentOuter(DUtil.findDiagram(targetContainerShape)), ci.getUsageName(),
-			ImageProvider.IMG_COMPONENT_INSTANCE, StyleUtil.getStyleForComponentInner(DUtil.findDiagram(targetContainerShape)), ci.getInterfaceStub(),
-			ci.getUses(), ci.getProvides(), ciExternalPorts);
+		// create graphical representation
+		super.init(context, pattern, ciExternalPorts);
 
 		// add start order ellipse
 		addStartOrderEllipse(ci, assemblyController, featureProvider);
@@ -122,18 +125,18 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	/**
 	 * Updates the shape's contents using the supplied fields. Return true if an update occurred, false otherwise.>
 	 */
-	public Reason update(final SadComponentInstantiation ci, final IFeatureProvider featureProvider, ExternalPorts externalPorts,
-		final AssemblyController assemblyController) {
-		return internalUpdate(ci, featureProvider, externalPorts, assemblyController, true);
+	public Reason update(final IUpdateContext context, ComponentPattern pattern) {
+		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());
+		return this.internalUpdate(pattern, ci, true);
 	}
 
 	/**
 	 * Return true (through Reason) if the shape's contents require an update based on the field supplied.
 	 * Also returns a textual reason why an update is needed. Returns false otherwise.
 	 */
-	public Reason updateNeeded(final SadComponentInstantiation ci, final IFeatureProvider featureProvider, ExternalPorts externalPorts,
-		final AssemblyController assemblyController) {
-		return internalUpdate(ci, featureProvider, externalPorts, assemblyController, false);
+	public Reason updateNeeded(final IUpdateContext context, ComponentPattern pattern) {
+		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());
+		return this.internalUpdate(pattern, ci, false);
 	}
 
 	/**
@@ -215,25 +218,16 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * @param performUpdate
 	 * @return
 	 */
-	public Reason internalUpdate(SadComponentInstantiation ci, IFeatureProvider featureProvider, ExternalPorts externalPorts,
-		AssemblyController assemblyController, boolean performUpdate) {
+	public Reason internalUpdate(ComponentPattern pattern, SadComponentInstantiation ci, boolean performUpdate) {
 		Diagram diagram = DUtil.findDiagram(this);
+		IFeatureProvider featureProvider = pattern.getFeatureProvider();
 		SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
+		ExternalPorts externalPorts = DUtil.getDiagramSAD(featureProvider, diagram).getExternalPorts();
+		AssemblyController assemblyController = pattern.getComponentAssemblyController(ci);
 
 		// get external ports relevant to component instantiation
 		final List<Port> ciExternalPorts = getComponentExternalPorts(ci, externalPorts);
-		Reason superReason = null;
-		if (performUpdate) {
-			superReason = super.update(ci.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(), ci, featureProvider,
-				ImageProvider.IMG_COMPONENT_PLACEMENT, StyleUtil.getStyleForComponentOuter(DUtil.findDiagram(this)), ci.getUsageName(),
-				ImageProvider.IMG_COMPONENT_INSTANCE, StyleUtil.getStyleForComponentInner(diagram), ci.getInterfaceStub(), ci.getUses(), ci.getProvides(),
-				ciExternalPorts);
-		} else {
-			superReason = super.updateNeeded(ci.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName(), ci, featureProvider,
-				ImageProvider.IMG_COMPONENT_PLACEMENT, StyleUtil.getStyleForComponentOuter(DUtil.findDiagram(this)), ci.getUsageName(),
-				ImageProvider.IMG_COMPONENT_INSTANCE, StyleUtil.getStyleForComponentInner(diagram), ci.getInterfaceStub(), ci.getUses(), ci.getProvides(),
-				ciExternalPorts);
-		}
+		Reason superReason = super.internalUpdate(pattern, ci, ciExternalPorts, performUpdate);
 
 		boolean updateStatus;
 

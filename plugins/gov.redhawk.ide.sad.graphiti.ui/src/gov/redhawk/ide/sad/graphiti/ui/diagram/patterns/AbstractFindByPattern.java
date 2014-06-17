@@ -18,9 +18,9 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
 import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
@@ -30,6 +30,7 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadProvidesPort;
 import mil.jpeojtrs.sca.sad.SadUsesPort;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
@@ -45,6 +46,7 @@ import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -52,7 +54,7 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
 
-public abstract class AbstractFindByPattern extends AbstractNamedElementPattern implements IPattern {
+public abstract class AbstractFindByPattern extends AbstractContainerPattern implements IPattern {
 
 	public AbstractFindByPattern() {
 		super(null);
@@ -84,6 +86,11 @@ public abstract class AbstractFindByPattern extends AbstractNamedElementPattern 
 		return false;
 	}
 
+	@Override
+	public String getOuterTitle(EObject obj) {
+		return getOuterTitle((FindByStub) obj);
+	}
+	
 	/**
 	 * Provides the title of the outer shape
 	 * @param findByStub
@@ -91,6 +98,14 @@ public abstract class AbstractFindByPattern extends AbstractNamedElementPattern 
 	 */
 	public String getOuterTitle(FindByStub findByStub) {
 		return getCreateName();
+	}
+	
+	@Override
+	public String getInnerTitle(EObject obj) {
+		if (obj instanceof FindByStub) {
+			return getInnerTitle((FindByStub) obj);
+		}
+		return null;
 	}
 
 	/**
@@ -102,21 +117,11 @@ public abstract class AbstractFindByPattern extends AbstractNamedElementPattern 
 
 	@Override
 	public PictogramElement add(IAddContext context) {
-		FindByStub findByStub = (FindByStub) context.getNewObject();
-		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
-		Diagram diagram = (Diagram) context.getTargetContainer();
-
-		String outerTitle = getOuterTitle(findByStub);
-		String innerTitle = getInnerTitle(findByStub);
-
 		// create shape
 		RHContainerShape rhContainerShape = RHGxFactory.eINSTANCE.createRHContainerShape();
 
 		// initialize shape contents
-		rhContainerShape.init(targetContainerShape, outerTitle, Arrays.asList((EObject) findByStub), getFeatureProvider(), ImageProvider.IMG_FIND_BY,
-//				(EObject)findByStub, getFeatureProvider(), ImageProvider.IMG_FIND_BY,
-			StyleUtil.getStyleForFindByOuter(diagram), innerTitle, getCreateImageId(), StyleUtil.getStyleForFindByInner(diagram), findByStub.getInterface(),
-			findByStub.getUses(), findByStub.getProvides(), null);
+		rhContainerShape.init(context, this);
 
 		// set shape location to user's selection
 		Graphiti.getGaLayoutService().setLocation(rhContainerShape.getGraphicsAlgorithm(), context.getX(), context.getY());
@@ -163,22 +168,13 @@ public abstract class AbstractFindByPattern extends AbstractNamedElementPattern 
 
 	@Override
 	public boolean update(IUpdateContext context) {
-
-		// business object
-		FindByStub findByStub = (FindByStub) DUtil.getBusinessObject(context.getPictogramElement());
-
-		String outerTitle = getOuterTitle(findByStub);
-		String innerTitle = getInnerTitle(findByStub);
-
-		Reason updated = ((RHContainerShape) context.getPictogramElement()).update(outerTitle, findByStub, getFeatureProvider(), ImageProvider.IMG_FIND_BY,
-			StyleUtil.getStyleForFindByOuter(getDiagram()), innerTitle, getCreateImageId(), StyleUtil.getStyleForFindByInner(getDiagram()),
-			findByStub.getInterface(), findByStub.getUses(), findByStub.getProvides(), null);
+		Reason updated = ((RHContainerShape) context.getPictogramElement()).update(context, this);
 
 		// if we updated redraw
 		if (updated.toBoolean()) {
 			layoutPictogramElement(context.getPictogramElement());
 		}
-
+		
 		return updated.toBoolean();
 	}
 
@@ -187,18 +183,7 @@ public abstract class AbstractFindByPattern extends AbstractNamedElementPattern 
 	 */
 	@Override
 	public IReason updateNeeded(IUpdateContext context) {
-
-		// business object
-		FindByStub findByStub = (FindByStub) DUtil.getBusinessObject(context.getPictogramElement());
-
-		String outerTitle = getOuterTitle(findByStub);
-		String innerTitle = getInnerTitle(findByStub);
-
-		Reason requiresUpdate = ((RHContainerShape) context.getPictogramElement()).updateNeeded(outerTitle, findByStub, getFeatureProvider(),
-			ImageProvider.IMG_FIND_BY, StyleUtil.getStyleForFindByOuter(getDiagram()), innerTitle, getCreateImageId(),
-			StyleUtil.getStyleForFindByInner(getDiagram()), findByStub.getInterface(), findByStub.getUses(), findByStub.getProvides(), null);
-
-		return requiresUpdate;
+		return ((RHContainerShape) context.getPictogramElement()).updateNeeded(context, this);
 	}
 
 	@Override
@@ -414,5 +399,58 @@ public abstract class AbstractFindByPattern extends AbstractNamedElementPattern 
 
 		return false;
 	}
+	
+	/**
+	 * Returns the {@link Diagram} this pattern lives for.
+	 * 
+	 * @return The diagram
+	 */
+	public Diagram getDiagram() {
+		return getFeatureProvider().getDiagramTypeProvider().getDiagram();
+	}
+	
+	@Override
+	public EList<UsesPortStub> getUses(EObject obj) {
+		if (obj instanceof FindByStub) {
+			return ((FindByStub) obj).getUses();
+		}
+		return null;
+	}
 
+	@Override
+	public EList<ProvidesPortStub> getProvides(EObject obj) {
+		if (obj instanceof FindByStub) {
+			return ((FindByStub) obj).getProvides();
+		}
+		return null;
+	}
+
+	@Override
+	public ComponentSupportedInterfaceStub getInterface(EObject obj) {
+		if (obj instanceof FindByStub) {
+			return ((FindByStub) obj).getInterface();
+		}
+		return null;
+	}
+	
+
+	@Override
+	public String getOuterImageId() {
+		return ImageProvider.IMG_FIND_BY;
+	}
+
+	@Override
+	public String getInnerImageId() {
+		return getCreateImageId();
+	}
+	
+	@Override
+	public Style getStyleForOuter() {
+		return StyleUtil.getStyleForFindByOuter(getDiagram());
+	}
+
+	@Override
+	public Style getStyleForInner() {
+		return StyleUtil.getStyleForFindByInner(getDiagram());
+	}
 }

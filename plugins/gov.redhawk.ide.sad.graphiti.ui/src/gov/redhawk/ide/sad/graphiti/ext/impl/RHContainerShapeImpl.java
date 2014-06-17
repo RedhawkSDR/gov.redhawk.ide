@@ -12,13 +12,17 @@ package gov.redhawk.ide.sad.graphiti.ext.impl;
 
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractFindByPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
+import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
@@ -29,6 +33,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.PropertyContainer;
@@ -107,12 +113,21 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void init(IAddContext context, ComponentPattern pattern) {
+		init(context, pattern, null);
+	}
+
+	/**
 	 * Creates the inner shapes that make up this container shape
 	 */
-	public void init(final ContainerShape targetContainerShape, final String outerText, final List<EObject> businessObjects,
-		final IFeatureProvider featureProvider, final String outerImageId, final Style outerContainerStyle, final String innerText, final String innerImageId,
-		final Style innerContainerStyle, final ComponentSupportedInterfaceStub interfaceStub, final EList<UsesPortStub> uses,
-		final EList<ProvidesPortStub> provides, final List<Port> externalPorts) {
+	public void init(final IAddContext context, AbstractContainerPattern pattern, List<Port> externalPorts) {
+		EObject newObject = (EObject) context.getNewObject();
+		ContainerShape targetContainerShape = (ContainerShape) context.getTargetContainer();
+
 		getProperties().addAll(new ArrayList<Property>(0));
 		setVisible(true);
 		setActive(true);
@@ -124,33 +139,28 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// graphic
 		RoundedRectangle outerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(this, 5, 5);
 		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE);
-		outerRoundedRectangle.setStyle(outerContainerStyle);
+		outerRoundedRectangle.setStyle(pattern.getStyleForOuter());
 
 		// image
-		Image imgIcon = Graphiti.getGaCreateService().createImage(outerRoundedRectangle, outerImageId);
+		Image imgIcon = Graphiti.getGaCreateService().createImage(outerRoundedRectangle, pattern.getOuterImageId());
 		Graphiti.getPeService().setPropertyValue(imgIcon, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_IMAGE);
 
 		// text
-		Text cText = Graphiti.getCreateService().createText(outerRoundedRectangle, outerText);
+		Text cText = Graphiti.getCreateService().createText(outerRoundedRectangle, pattern.getOuterTitle(newObject));
 		cText.setStyle(StyleUtil.getStyleForOuterText(DUtil.findDiagram(targetContainerShape)));
 		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 
+		IFeatureProvider featureProvider = pattern.getFeatureProvider();
+
 		// link objects
-		featureProvider.link(this, businessObjects.toArray());
+		featureProvider.link(this, Arrays.asList(newObject).toArray());
 
-		// inner container
-		addInnerContainer(this, innerText, featureProvider, innerImageId, innerContainerStyle);
-
-		// add lollipop
-		addLollipop(this, interfaceStub, featureProvider);
-
-		// add provides ports
-		addProvidesPorts(this, provides, featureProvider, externalPorts);
-
-		// add uses ports
-		addUsesPorts(this, uses, featureProvider, externalPorts);
+		addInnerContainer(pattern.getInnerTitle(newObject), pattern.getInnerImageId(), pattern.getStyleForInner());
+		addLollipop(pattern.getInterface(newObject), featureProvider);
+		addProvidesPorts(pattern.getProvides(newObject), featureProvider, externalPorts);
+		addUsesPorts(pattern.getUses(newObject), featureProvider, externalPorts);
 	}
-
+	
 	/**
 	 * 
 	 */
@@ -217,32 +227,39 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * Updates the shape's contents using the supplied fields. Return true if an update occurred, false otherwise.
 	 */
-	public Reason update(final String outerText, final Object businessObject, final IFeatureProvider featureProvider, final String outerImageId,
-		final Style outerContainerStyle, final String innerText, final String innerImageId, final Style innerContainerStyle,
-		final ComponentSupportedInterfaceStub interfaceStub, final EList<UsesPortStub> uses, final EList<ProvidesPortStub> provides,
-		final List<Port> externalPorts) {
-		return internalUpdate(outerText, businessObject, featureProvider, outerImageId, outerContainerStyle, innerText, innerImageId, innerContainerStyle,
-			interfaceStub, uses, provides, externalPorts, true);
+	public Reason update(final IUpdateContext context, AbstractContainerPattern pattern, final List<Port> externalPorts) {
+		return internalUpdate(pattern, (EObject) DUtil.getBusinessObject(context.getPictogramElement()), externalPorts, false);
+	}
+
+	/**
+	 * Updates the shape's contents using the supplied fields. Return true if an update occurred, false otherwise.
+	 */
+	public Reason update(IUpdateContext context, AbstractContainerPattern pattern) {
+		return update(context, pattern, null);
+	}
+
+	//CHECKSTYLE:OFF
+	/**
+	 * Return true (through Reason) if the shape's contents require an update based on the field supplied.
+	 * Also returns a textual reason why an update is needed. Returns false otherwise.
+	 */
+	public Reason updateNeeded(final IUpdateContext context, final AbstractContainerPattern pattern, final List<Port> externalPorts) {
+		return internalUpdate(pattern, (EObject) DUtil.getBusinessObject(context.getPictogramElement()), externalPorts, false);
 	}
 
 	/**
 	 * Return true (through Reason) if the shape's contents require an update based on the field supplied.
 	 * Also returns a textual reason why an update is needed. Returns false otherwise.
 	 */
-	public Reason updateNeeded(final String outerText, final Object businessObject, final IFeatureProvider featureProvider, final String outerImageId,
-		final Style outerContainerStyle, final String innerText, final String innerImageId, final Style innerContainerStyle,
-		final ComponentSupportedInterfaceStub interfaceStub, final EList<UsesPortStub> uses, final EList<ProvidesPortStub> provides,
-		final List<Port> externalPorts) {
-		return internalUpdate(outerText, businessObject, featureProvider, outerImageId, outerContainerStyle, innerText, innerImageId, innerContainerStyle,
-			interfaceStub, uses, provides, externalPorts, false);
+	public Reason updateNeeded(final IUpdateContext context, AbstractContainerPattern pattern) {
+		return updateNeeded(context, pattern, null);
 	}
 
 	/**
 	 * add inner container
 	 */
-	public ContainerShape addInnerContainer(ContainerShape targetContainerShape, String text, IFeatureProvider featureProvider, String imageId,
-		Style containerStyle) {
-		ContainerShape innerContainerShape = Graphiti.getCreateService().createContainerShape(targetContainerShape, false);
+	public ContainerShape addInnerContainer(String text, String imageId, Style containerStyle) {
+		ContainerShape innerContainerShape = Graphiti.getCreateService().createContainerShape(this, false);
 		Graphiti.getPeService().setPropertyValue(innerContainerShape, DUtil.GA_TYPE, SHAPE_INNER_CONTAINER);
 		RoundedRectangle innerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(innerContainerShape, 5, 5);
 		innerRoundedRectangle.setStyle(containerStyle);
@@ -254,15 +271,15 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// text
 		Text ciText = Graphiti.getCreateService().createText(innerRoundedRectangle, text);
-		ciText.setStyle(StyleUtil.getStyleForInnerText(DUtil.findDiagram(targetContainerShape)));
+		ciText.setStyle(StyleUtil.getStyleForInnerText(DUtil.findDiagram(this)));
 		Graphiti.getPeService().setPropertyValue(ciText, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_TEXT);
 
 		// line
 		Polyline polyline = Graphiti.getGaCreateService().createPolyline(innerRoundedRectangle,
 			new int[] { 0, INNER_ROUNDED_RECTANGLE_LINE_Y, innerRoundedRectangle.getWidth(), INNER_ROUNDED_RECTANGLE_LINE_Y });
 		polyline.setLineWidth(1);
-		polyline.setBackground(Graphiti.getGaService().manageColor(DUtil.findDiagram(targetContainerShape), StyleUtil.BLACK));
-		polyline.setForeground(Graphiti.getGaService().manageColor(DUtil.findDiagram(targetContainerShape), StyleUtil.BLACK));
+		polyline.setBackground(Graphiti.getGaService().manageColor(DUtil.findDiagram(this), StyleUtil.BLACK));
+		polyline.setForeground(Graphiti.getGaService().manageColor(DUtil.findDiagram(this), StyleUtil.BLACK));
 		Graphiti.getPeService().setPropertyValue(polyline, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_LINE);
 
 		return innerContainerShape;
@@ -271,10 +288,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * Add lollipop to targetContainerShape. Lollipop anchor will link to the provided business object.T
 	 */
-	public ContainerShape addLollipop(ContainerShape targetContainerShape, Object anchorBusinessObject, IFeatureProvider featureProvider) {
+	public ContainerShape addLollipop(Object anchorBusinessObject, IFeatureProvider featureProvider) {
 
 		// interface container lollipop
-		ContainerShape interfaceContainerShape = Graphiti.getCreateService().createContainerShape(targetContainerShape, true);
+		ContainerShape interfaceContainerShape = Graphiti.getCreateService().createContainerShape(this, true);
 		Graphiti.getPeService().setPropertyValue(interfaceContainerShape, DUtil.GA_TYPE, SHAPE_INTERFACE_CONTAINER);
 		Rectangle interfaceRectangle = Graphiti.getCreateService().createRectangle(interfaceContainerShape);
 		featureProvider.link(interfaceContainerShape, anchorBusinessObject);
@@ -285,13 +302,13 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Shape lollipopEllipseShape = Graphiti.getCreateService().createShape(interfaceContainerShape, true);
 		Graphiti.getPeService().setPropertyValue(lollipopEllipseShape, DUtil.GA_TYPE, SHAPE_INTERFACE_ELLIPSE);
 		Ellipse lollipopEllipse = Graphiti.getCreateService().createEllipse(lollipopEllipseShape);
-		lollipopEllipse.setStyle(StyleUtil.getStyleForLollipopEllipse(DUtil.findDiagram(targetContainerShape)));
+		lollipopEllipse.setStyle(StyleUtil.getStyleForLollipopEllipse(DUtil.findDiagram(this)));
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopEllipse, 0, 0, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER);
 
 		// interface lollipop line
 		Shape lollipopLineShape = Graphiti.getCreateService().createContainerShape(interfaceContainerShape, false);
 		Rectangle lollipopLine = Graphiti.getCreateService().createRectangle(lollipopLineShape);
-		lollipopLine.setStyle(StyleUtil.getStyleForLollipopLine(DUtil.findDiagram(targetContainerShape)));
+		lollipopLine.setStyle(StyleUtil.getStyleForLollipopLine(DUtil.findDiagram(this)));
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopLine, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER / 2,
 			INTERFACE_SHAPE_WIDTH - LOLLIPOP_ELLIPSE_DIAMETER, 1);
 
@@ -384,12 +401,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * Adds provides port container to provided container shape. Adds a port shape with name and anchor for each
 	 * providesPortStub.
 	 */
-	public void addProvidesPorts(ContainerShape outerContainerShape, EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider,
-		List<Port> externalPorts) {
+	public void addProvidesPorts(EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
 
 		// provides (input)
-		int providesPortNameLength = DUtil.getLongestProvidesPortWidth(providesPortStubs, DUtil.findDiagram(outerContainerShape));
-		ContainerShape providesPortsContainerShape = Graphiti.getCreateService().createContainerShape(outerContainerShape, true);
+		int providesPortNameLength = DUtil.getLongestProvidesPortWidth(providesPortStubs, DUtil.findDiagram(this));
+		ContainerShape providesPortsContainerShape = Graphiti.getCreateService().createContainerShape(this, true);
 		Graphiti.getPeService().setPropertyValue(providesPortsContainerShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORTS_CONTAINER);
 		Rectangle providesPortsRectangle = Graphiti.getCreateService().createRectangle(providesPortsContainerShape);
 		providesPortsRectangle.setTransparency(1d);
@@ -474,10 +490,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * Adds uses port container to provided container shape. Adds a port shape with name and anchor for each
 	 * usesPortStub.
 	 */
-	public void addUsesPorts(ContainerShape outerContainerShape, EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
+	public void addUsesPorts(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
 		// uses (output)
-		int usesPortNameLength = DUtil.getLongestUsesPortWidth(usesPortStubs, DUtil.findDiagram(outerContainerShape));
-		ContainerShape usesPortsContainerShape = Graphiti.getPeService().createContainerShape(outerContainerShape, true);
+		int usesPortNameLength = DUtil.getLongestUsesPortWidth(usesPortStubs, DUtil.findDiagram(this));
+		ContainerShape usesPortsContainerShape = Graphiti.getPeService().createContainerShape(this, true);
 		Graphiti.getPeService().setPropertyValue(usesPortsContainerShape, DUtil.SHAPE_TYPE, SHAPE_USES_PORTS_CONTAINER);
 		Rectangle usesPortsRectangle = Graphiti.getCreateService().createRectangle(usesPortsContainerShape);
 		usesPortsRectangle.setTransparency(1d);
@@ -500,7 +516,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	/**
-	 * Return the usesPortsContainerShape
+	 * Return the providesPortsContainerShape
 	 */
 	public ContainerShape getProvidesPortsContainerShape() {
 		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SHAPE_PROVIDES_PORTS_CONTAINER);
@@ -576,16 +592,19 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * handles both determining whether an update is needed and performing an update for the shape.
 	 * @return
 	 */
-	public Reason internalUpdate(String outerText, Object businessObject, IFeatureProvider featureProvider, String outerImageId, Style outerContainerStyle,
-		String innerText, String innerImageId, Style innerContainerStyle, ComponentSupportedInterfaceStub interfaceStub, EList<UsesPortStub> uses,
-		EList<ProvidesPortStub> provides, List<Port> externalPorts, boolean performUpdate) {
+	public Reason internalUpdate(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts, boolean performUpdate) {
 
 		boolean updateStatus = false;
 
+		IFeatureProvider featureProvider = pattern.getFeatureProvider();
 		Diagram diagram = DUtil.findDiagram(this);
+
+		EList<ProvidesPortStub> provides = pattern.getProvides(businessObject);
+		EList<UsesPortStub> uses = pattern.getUses(businessObject);
 
 		// outerText
 		Text outerTextGA = getOuterText();
+		String outerText = pattern.getOuterTitle(businessObject);
 		if (outerTextGA != null && !outerTextGA.getValue().equals(outerText)) {
 			if (performUpdate) {
 				outerTextGA.setValue(outerText);
@@ -595,6 +614,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// innerText
 		Text innerTextGA = getInnerText();
+		String innerText = pattern.getInnerTitle(businessObject);
 		if (innerTextGA != null && innerTextGA.getValue() != null && !innerTextGA.getValue().equals(innerText)) {
 			if (performUpdate) {
 				innerTextGA.setValue(innerText);
@@ -919,6 +939,18 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return (RHContainerShape) cs;
 		}
 		return null;
+	}
+
+	@Override
+	public Reason update(IUpdateContext context, AbstractFindByPattern abstractFindByPattern) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void init(IAddContext context, AbstractFindByPattern abstractFindByPattern) {
+		// TODO Auto-generated method stub
+		
 	}
 
 } // RHContainerShapeImpl

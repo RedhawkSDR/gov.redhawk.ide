@@ -14,6 +14,8 @@ import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -30,9 +32,10 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.MmPackage;
-import org.eclipse.graphiti.mm.algorithms.AlgorithmsPackage;
 import org.eclipse.graphiti.mm.algorithms.styles.StylesPackage;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
@@ -136,6 +139,34 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	private EDataType sadComponentInstantiationEDataType = null;
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType iAddContextEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType abstractContainerPatternEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType componentPatternEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType iUpdateContextEDataType = null;
+
+	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
 	 * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
 	 * package URI value.
@@ -184,11 +215,11 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		isInited = true;
 
 		// Initialize simple dependencies
-		StylesPackage.eINSTANCE.eClass();
-		PictogramsPackage.eINSTANCE.eClass();
-		AlgorithmsPackage.eINSTANCE.eClass();
 		EcorePackage.eINSTANCE.eClass();
+		PictogramsPackage.eINSTANCE.eClass();
+		StylesPackage.eINSTANCE.eClass();
 		MmPackage.eINSTANCE.eClass();
+		EcorePackage.eINSTANCE.eClass();
 
 		// Create package meta-data objects
 		theRHGxPackage.createPackageContents();
@@ -326,6 +357,42 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EDataType getIAddContext() {
+		return iAddContextEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getAbstractContainerPattern() {
+		return abstractContainerPatternEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getComponentPattern() {
+		return componentPatternEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getIUpdateContext() {
+		return iUpdateContextEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public RHGxFactory getRHGxFactory() {
 		return (RHGxFactory) getEFactoryInstance();
 	}
@@ -367,6 +434,10 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		reasonEDataType = createEDataType(REASON);
 		listEDataType = createEDataType(LIST);
 		sadComponentInstantiationEDataType = createEDataType(SAD_COMPONENT_INSTANTIATION);
+		iAddContextEDataType = createEDataType(IADD_CONTEXT);
+		abstractContainerPatternEDataType = createEDataType(ABSTRACT_CONTAINER_PATTERN);
+		componentPatternEDataType = createEDataType(COMPONENT_PATTERN);
+		iUpdateContextEDataType = createEDataType(IUPDATE_CONTEXT);
 	}
 
 	/**
@@ -396,7 +467,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		// Obtain other dependent packages
 		PictogramsPackage thePictogramsPackage = (PictogramsPackage) EPackage.Registry.INSTANCE.getEPackage(PictogramsPackage.eNS_URI);
 		EcorePackage theEcorePackage = (EcorePackage) EPackage.Registry.INSTANCE.getEPackage(EcorePackage.eNS_URI);
-		StylesPackage theStylesPackage = (StylesPackage) EPackage.Registry.INSTANCE.getEPackage(StylesPackage.eNS_URI);
 
 		// Create type parameters
 		addETypeParameter(listEDataType, "Port");
@@ -413,29 +483,14 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		initEClass(rhContainerShapeEClass, RHContainerShape.class, "RHContainerShape", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		EOperation op = addEOperation(rhContainerShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, thePictogramsPackage.getContainerShape(), "targetContainerShape", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "outerText", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIAddContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getComponentPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
+
+		op = addEOperation(rhContainerShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIAddContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		EGenericType g1 = createEGenericType(this.getList());
-		EGenericType g2 = createEGenericType(theEcorePackage.getEObject());
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "businessObjects", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIFeatureProvider(), "featureProvider", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "outerImageId", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theStylesPackage.getStyle(), "outerContainerStyle", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "innerText", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "innerImageId", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theStylesPackage.getStyle(), "innerContainerStyle", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getComponentSupportedInterfaceStub(), "interfaceStub", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(theEcorePackage.getEEList());
-		g2 = createEGenericType(this.getUsesPortStub());
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "uses", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(theEcorePackage.getEEList());
-		g2 = createEGenericType(this.getProvidesPortStub());
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "provides", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(this.getList());
-		g2 = createEGenericType(this.getPort());
+		EGenericType g2 = createEGenericType(this.getPort());
 		g1.getETypeArguments().add(g2);
 		addEParameter(op, g1, "externalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
@@ -448,73 +503,44 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		addEOperation(rhContainerShapeEClass, null, "layout", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		op = addEOperation(rhContainerShapeEClass, this.getReason(), "update", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "outerText", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEJavaObject(), "businessObject", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIFeatureProvider(), "featureProvider", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "outerImageId", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theStylesPackage.getStyle(), "outerContainerStyle", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "innerText", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "innerImageId", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theStylesPackage.getStyle(), "innerContainerStyle", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getComponentSupportedInterfaceStub(), "interfaceStub", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(theEcorePackage.getEEList());
-		g2 = createEGenericType(this.getUsesPortStub());
+		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(this.getList());
+		g2 = createEGenericType(this.getPort());
 		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "uses", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(theEcorePackage.getEEList());
-		g2 = createEGenericType(this.getProvidesPortStub());
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "provides", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, g1, "externalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
+
+		op = addEOperation(rhContainerShapeEClass, this.getReason(), "update", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
+
+		op = addEOperation(rhContainerShapeEClass, this.getReason(), "updateNeeded", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(this.getList());
 		g2 = createEGenericType(this.getPort());
 		g1.getETypeArguments().add(g2);
 		addEParameter(op, g1, "externalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		op = addEOperation(rhContainerShapeEClass, this.getReason(), "updateNeeded", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "outerText", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEJavaObject(), "businessObject", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIFeatureProvider(), "featureProvider", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "outerImageId", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theStylesPackage.getStyle(), "outerContainerStyle", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "innerText", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "innerImageId", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theStylesPackage.getStyle(), "innerContainerStyle", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getComponentSupportedInterfaceStub(), "interfaceStub", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(theEcorePackage.getEEList());
-		g2 = createEGenericType(this.getUsesPortStub());
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "uses", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(theEcorePackage.getEEList());
-		g2 = createEGenericType(this.getProvidesPortStub());
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "provides", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(this.getList());
-		g2 = createEGenericType(this.getPort());
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "externalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		initEClass(componentShapeEClass, ComponentShape.class, "ComponentShape", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		op = addEOperation(componentShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, thePictogramsPackage.getContainerShape(), "targetContainerShape", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getSadComponentInstantiation(), "ci", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIFeatureProvider(), "featureProvider", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getExternalPorts(), "externalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAssemblyController(), "assemblyController", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIAddContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getComponentPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		addEOperation(componentShapeEClass, null, "layout", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		op = addEOperation(componentShapeEClass, this.getReason(), "update", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getSadComponentInstantiation(), "ci", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIFeatureProvider(), "featureProvider", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getExternalPorts(), "externalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAssemblyController(), "assemblyController", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getComponentPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		op = addEOperation(componentShapeEClass, this.getReason(), "updateNeeded", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getSadComponentInstantiation(), "ci", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIFeatureProvider(), "featureProvider", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getExternalPorts(), "externalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAssemblyController(), "assemblyController", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getComponentPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(componentSupportedInterfaceStubEDataType, ComponentSupportedInterfaceStub.class, "ComponentSupportedInterfaceStub", IS_SERIALIZABLE,
@@ -529,6 +555,11 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		initEDataType(listEDataType, List.class, "List", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(sadComponentInstantiationEDataType, SadComponentInstantiation.class, "SadComponentInstantiation", IS_SERIALIZABLE,
 			!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iAddContextEDataType, IAddContext.class, "IAddContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(abstractContainerPatternEDataType, AbstractContainerPattern.class, "AbstractContainerPattern", IS_SERIALIZABLE,
+			!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(componentPatternEDataType, ComponentPattern.class, "ComponentPattern", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iUpdateContextEDataType, IUpdateContext.class, "IUpdateContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

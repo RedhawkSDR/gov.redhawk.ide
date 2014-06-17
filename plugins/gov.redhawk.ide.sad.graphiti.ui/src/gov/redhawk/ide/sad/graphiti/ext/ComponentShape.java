@@ -10,12 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ext;
 
-import mil.jpeojtrs.sca.sad.AssemblyController;
-import mil.jpeojtrs.sca.sad.ExternalPorts;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import org.eclipse.graphiti.features.IFeatureProvider;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
+import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 
 /**
  * <!-- begin-user-doc -->
@@ -31,11 +29,10 @@ public interface ComponentShape extends RHContainerShape {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model targetContainerShapeUnique="false" ciDataType="gov.redhawk.ide.sad.graphiti.ext.SadComponentInstantiation" ciUnique="false" featureProviderDataType="gov.redhawk.ide.sad.graphiti.ext.IFeatureProvider" featureProviderUnique="false" externalPortsDataType="gov.redhawk.ide.sad.graphiti.ext.ExternalPorts" externalPortsUnique="false" assemblyControllerDataType="gov.redhawk.ide.sad.graphiti.ext.AssemblyController" assemblyControllerUnique="false"
+	 * @model contextDataType="gov.redhawk.ide.sad.graphiti.ext.IAddContext" contextUnique="false" patternDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentPattern" patternUnique="false"
 	 * @generated
 	 */
-	void init(ContainerShape targetContainerShape, SadComponentInstantiation ci, IFeatureProvider featureProvider, ExternalPorts externalPorts,
-		AssemblyController assemblyController);
+	void init(IAddContext context, ComponentPattern pattern);
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -54,10 +51,10 @@ public interface ComponentShape extends RHContainerShape {
 	 * <!-- begin-model-doc -->
 	 * Updates the shape with supplied values
 	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.sad.graphiti.ext.Reason" unique="false" ciDataType="gov.redhawk.ide.sad.graphiti.ext.SadComponentInstantiation" ciUnique="false" featureProviderDataType="gov.redhawk.ide.sad.graphiti.ext.IFeatureProvider" featureProviderUnique="false" externalPortsDataType="gov.redhawk.ide.sad.graphiti.ext.ExternalPorts" externalPortsUnique="false" assemblyControllerDataType="gov.redhawk.ide.sad.graphiti.ext.AssemblyController" assemblyControllerUnique="false"
+	 * @model dataType="gov.redhawk.ide.sad.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.sad.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentPattern" patternUnique="false"
 	 * @generated
 	 */
-	Reason update(SadComponentInstantiation ci, IFeatureProvider featureProvider, ExternalPorts externalPorts, AssemblyController assemblyController);
+	Reason update(IUpdateContext context, ComponentPattern pattern);
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -67,9 +64,9 @@ public interface ComponentShape extends RHContainerShape {
 	 * If update required returns Reason with true
 	 * boolean value and message describing what needs to be updated
 	 * <!-- end-model-doc -->
-	 * @model dataType="gov.redhawk.ide.sad.graphiti.ext.Reason" unique="false" ciDataType="gov.redhawk.ide.sad.graphiti.ext.SadComponentInstantiation" ciUnique="false" featureProviderDataType="gov.redhawk.ide.sad.graphiti.ext.IFeatureProvider" featureProviderUnique="false" externalPortsDataType="gov.redhawk.ide.sad.graphiti.ext.ExternalPorts" externalPortsUnique="false" assemblyControllerDataType="gov.redhawk.ide.sad.graphiti.ext.AssemblyController" assemblyControllerUnique="false"
+	 * @model dataType="gov.redhawk.ide.sad.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.sad.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentPattern" patternUnique="false"
 	 * @generated
 	 */
-	Reason updateNeeded(SadComponentInstantiation ci, IFeatureProvider featureProvider, ExternalPorts externalPorts, AssemblyController assemblyController);
+	Reason updateNeeded(IUpdateContext context, ComponentPattern pattern);
 
 } // ComponentShape
