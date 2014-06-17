@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.CorbaUtils;
 
@@ -41,7 +42,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.ui.URIEditorInput;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -61,10 +61,25 @@ public class LocalScaEditor extends SadEditor {
 	private SadModelAdapter sadlistener;
 	private LocalScaWaveform waveform;
 	private boolean isLocalSca;
+	private Resource mainResource;
+	private SoftwareAssembly sad;
 
 	@Override
 	protected void createModel() {
-		super.createModel();
+		if (isLocalSca) {
+			mainResource = getEditingDomain().getResourceSet().createResource(ScaDebugInstance.getLocalSandboxWaveformURI());
+			sad = SadFactory.eINSTANCE.createSoftwareAssembly();
+			getEditingDomain().getCommandStack().execute(new ScaModelCommand() {
+
+				@Override
+				public void execute() {
+					mainResource.getContents().add(sad);
+				}
+			});
+		} else {
+			super.createModel();
+			sad = SoftwareAssembly.Util.getSoftwareAssembly(super.getMainResource());
+		}
 
 		if (waveform == null && isLocalSca) {
 			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
@@ -99,10 +114,12 @@ public class LocalScaEditor extends SadEditor {
 			ScaFileStoreEditorInput scaInput = (ScaFileStoreEditorInput) input;
 			if (scaInput.getScaObject() instanceof LocalScaWaveform) {
 				this.waveform = (LocalScaWaveform) scaInput.getScaObject();
+			} else {
+				throw new IllegalStateException("Sandbox Editor opened on invalid sca input " + scaInput.getScaObject());
 			}
 		} else if (input instanceof URIEditorInput) {
 			URIEditorInput uriInput = (URIEditorInput) input;
-			if (uriInput.getURI().equals(URI.createPlatformPluginURI("gov.redhawk.ide.debug.ui/data/LocalSca.sad.xml", false))) {
+			if (uriInput.getURI().equals(ScaDebugInstance.getLocalSandboxWaveformURI())) {
 				final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 				if (!ScaDebugInstance.INSTANCE.isInit()) {
 					ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
@@ -131,6 +148,8 @@ public class LocalScaEditor extends SadEditor {
 
 				this.waveform = localSca.getSandboxWaveform();
 			}
+		} else {
+			throw new IllegalStateException("Sandbox Editor opened on invalid input " + input);
 		}
 
 		if (ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform() == waveform || this.waveform == null) {
@@ -140,10 +159,20 @@ public class LocalScaEditor extends SadEditor {
 		super.setInput(input);
 	}
 
+	@Override
+	public Resource getMainResource() {
+		if (mainResource == null) {
+			return super.getMainResource();
+		}
+		return mainResource;
+	}
+
 	private void initModelMap() {
-		final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(getMainResource());
-		if (waveform == null || sad == null) {
-			throw new IllegalStateException("Can not initialize the Model Map with null local waveform or SAD");
+		if (waveform == null) {
+			throw new IllegalStateException("Can not initialize the Model Map with null local waveform");
+		}
+		if (sad == null) {
+			throw new IllegalStateException("Can not initialize the Model Map with null sad");
 		}
 
 		if (!waveform.isSetComponents()) {
@@ -185,7 +214,8 @@ public class LocalScaEditor extends SadEditor {
 
 		final ModelMap modelMap = new ModelMap(this, sad, waveform);
 		if (isLocalSca) {
-			// Use the SCA Model are source to build the SAD when we are in the chalkboard since the SAD file isn't modified
+			// Use the SCA Model are source to build the SAD when we are in the chalkboard since the SAD file isn't
+			// modified
 			getEditingDomain().getCommandStack().execute(new SadModelInitializerCommand(modelMap, sad, waveform));
 		} else {
 			// Use the existing SAD file as a template when initializing the modeling map
@@ -237,7 +267,6 @@ public class LocalScaEditor extends SadEditor {
 	@Override
 	public void dispose() {
 		if (this.sadlistener != null) {
-			final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(getMainResource());
 			if (sad != null) {
 				sad.eAdapters().remove(this.sadlistener);
 			}
@@ -305,7 +334,7 @@ public class LocalScaEditor extends SadEditor {
 
 	@Override
 	public void doSaveAs() {
-		final NewWaveformFromLocalWizard wizard = new NewWaveformFromLocalWizard(SoftwareAssembly.Util.getSoftwareAssembly(getMainResource()));
+		final NewWaveformFromLocalWizard wizard = new NewWaveformFromLocalWizard(sad);
 		final WizardDialog dialog = new WizardDialog(getSite().getShell(), wizard);
 		dialog.open();
 

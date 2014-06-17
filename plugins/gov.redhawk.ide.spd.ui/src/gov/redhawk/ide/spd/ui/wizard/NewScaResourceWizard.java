@@ -13,7 +13,9 @@ package gov.redhawk.ide.spd.ui.wizard;
 import gov.redhawk.ide.codegen.CodegenFactory;
 import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
+import gov.redhawk.ide.codegen.ICodeGeneratorsRegistry;
 import gov.redhawk.ide.codegen.IScaComponentCodegen;
+import gov.redhawk.ide.codegen.IScaComponentCodegenSetup;
 import gov.redhawk.ide.codegen.ITemplateDesc;
 import gov.redhawk.ide.codegen.ImplementationSettings;
 import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
@@ -28,6 +30,7 @@ import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 import gov.redhawk.ide.codegen.util.CodegenFileHelper;
 import gov.redhawk.ide.codegen.util.ImplementationAndSettings;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
+import gov.redhawk.ide.spd.internal.ui.InternalErrorDialog;
 import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.ide.ui.wizard.ScaProjectPropertiesWizardPage;
 import gov.redhawk.model.sca.util.ModelUtil;
@@ -58,6 +61,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -65,6 +69,7 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -217,8 +222,10 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 						// Store the generator page if it's next, otherwise
 						// we'll be inserting one
 
-						// If the wizard has an old codeGen page we need to snatch up then the wizards size will be greater or equal than codeGen index + 1.
-						// If the wizard has an old codeGen page we need to snatch up then the old codeGen page will be of type ICodegenWizardPage
+						// If the wizard has an old codeGen page we need to snatch up then the wizards size will be
+						// greater or equal than codeGen index + 1.
+						// If the wizard has an old codeGen page we need to snatch up then the old codeGen page will be
+						// of type ICodegenWizardPage
 						if (codegenIndex + 1 <= this.wizPages.size() && (this.wizPages.get(codegenIndex) instanceof ICodegenWizardPage)) {
 							ICodegenWizardPage[] oldCodeGenPages = RedhawkCodegenUiActivator.getCodeGeneratorsRegistry().findPageByGeneratorId(previousImplId);
 							numOfOldGenPages = oldCodeGenPages.length;
@@ -580,6 +587,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	 */
 	@Override
 	public boolean performFinish() {
+
 		this.updateEntryPoints();
 		final boolean isCreateNewResource = this.resourcePropertiesPage.isCreateNewResource();
 		final IWorkingSet[] workingSets = this.resourcePropertiesPage.getSelectedWorkingSets();
@@ -599,7 +607,37 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 			@Override
 			protected void execute(final IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 				try {
-					final SubMonitor progress = SubMonitor.convert(monitor, "Creating project...", 4 + getImplList().size()); // SUPPRESS CHECKSTYLE MagicNumber
+					final SubMonitor progress = SubMonitor.convert(monitor, "Creating project...", 5 + getImplList().size()); // SUPPRESS
+																																// CHECKSTYLE
+																																// MagicNumber
+					// Create the implementation
+					final ImplementationWizardPage page = (ImplementationWizardPage) getWizPages().get(1);
+					final Implementation pageImpl = page.getImplementation();
+					final ImplementationSettings settings = page.getImplSettings();
+
+					SubMonitor checkMonitor = progress.newChild(1);
+					checkMonitor.beginTask("Checking System dependencies...", getImplList().size());
+					for (final ImplementationAndSettings implAndSettings : getImplList()) {
+						try {
+							checkSettings(checkMonitor.newChild(1), implAndSettings);
+						} catch (final CoreException e) {
+							final boolean[] retVal = { false };
+							PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+
+								@Override
+								public void run() {
+									String title = "System Check Failed";
+
+									retVal[0] = InternalErrorDialog.openError(Display.getCurrent().getActiveShell(), title, e.getMessage()
+										+ "\n\nDo you wish to continue?", e.getStatus()) == InternalErrorDialog.OK;
+								}
+
+							});
+							if (!retVal[0]) {
+								throw new OperationCanceledException();
+							}
+						}
+					}
 
 					// Create an empty project
 					final IProject project = createEmptyProject(projectName, locationURI, progress.newChild(1));
@@ -614,17 +652,14 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 							// Create the SCA XML files
 							setOpenEditorOn(createComponentFiles(project, projectName, getSoftPkg().getId(), null, progress.newChild(1)));
 
-							// Create the implementation
-							final ImplementationWizardPage page = (ImplementationWizardPage) getWizPages().get(1);
-							final Implementation pageImpl = page.getImplementation();
-							final ImplementationSettings settings = page.getImplSettings();
 							ProjectCreator.addImplementation(project, projectName, pageImpl, settings, progress.newChild(1));
 						} else {
 							setOpenEditorOn(ProjectCreator.importFiles(project, existingResourceLocation, getImplList(), getImportedSettingsMap(),
 								progress.newChild(2), getSoftPkg().getId()));
 						}
 
-						String spdFileName = project.getName() + SpdPackage.FILE_EXTENSION; // SUPPRESS CHECKSTYLE AvoidInLine
+						String spdFileName = project.getName() + SpdPackage.FILE_EXTENSION; // SUPPRESS CHECKSTYLE
+																							// AvoidInLine
 						final IFile spdFile = project.getFile(spdFileName);
 
 						// Allows for subclasses to modify the project
@@ -674,6 +709,12 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 					}
 				} catch (final CoreException e) {
 					throw e;
+				} catch (InterruptedException e) {
+					throw e;
+				} catch (OperationCanceledException e) {
+					throw e;
+				} catch (InvocationTargetException e) {
+					throw e;
 				} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 					throw new CoreException(new Status(IStatus.ERROR, ComponentUiPlugin.PLUGIN_ID, "Error creating project", e));
 				} finally {
@@ -681,6 +722,17 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 					if (monitor != null) {
 						monitor.done();
 					}
+				}
+			}
+
+			private void checkSettings(IProgressMonitor monitor, final ImplementationAndSettings implAndSettings) throws CoreException {
+				ICodeGeneratorsRegistry registry = RedhawkCodegenActivator.getCodeGeneratorsRegistry();
+				ICodeGeneratorDescriptor desc = registry.findCodegen(implAndSettings.getImplementationSettings().getGeneratorId());
+				IScaComponentCodegen gen;
+				gen = desc.getGenerator();
+				if (gen instanceof IScaComponentCodegenSetup) {
+					IScaComponentCodegenSetup setup = (IScaComponentCodegenSetup) gen;
+					setup.checkSystem(monitor, implAndSettings.getImplementationSettings().getTemplate());
 				}
 			}
 
@@ -708,7 +760,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 			}
 			return false;
 		} catch (final InterruptedException e1) {
-			return true;
+			return false;
 		}
 
 	}

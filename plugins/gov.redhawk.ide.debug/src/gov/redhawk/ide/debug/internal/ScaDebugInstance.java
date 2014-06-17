@@ -26,6 +26,10 @@ import gov.redhawk.ide.debug.internal.cf.impl.DeviceManagerImpl;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.ScaPlugin;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import mil.jpeojtrs.sca.dcd.DcdDocumentRoot;
 import mil.jpeojtrs.sca.dcd.DcdFactory;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
@@ -33,6 +37,8 @@ import mil.jpeojtrs.sca.sad.SadDocumentRoot;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
+import mil.jpeojtrs.sca.util.QueryParser;
+import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -89,7 +95,7 @@ public enum ScaDebugInstance {
 		};
 		job.schedule();
 	}
-	
+
 	public boolean isInit() {
 		return localSca.getSandbox() != null;
 	}
@@ -176,13 +182,14 @@ public enum ScaDebugInstance {
 		tmp.setProfile(uri.path());
 		tmp.setProfileObj(dcd);
 		tmp.setNamingContext(context.getResourceContext(dcd.eResource().getURI()));
-		final DeviceManagerImpl impl = new DeviceManagerImpl(uri.path(), DceUuidUtil.createDceUUID(), "Device Manager", tmp, fm);
+		final DeviceManagerImpl impl = new DeviceManagerImpl(uri.path(), DceUuidUtil.createDceUUID(), "Device Manager", tmp, fm, tmp);
 		tmp.setLocalDeviceManager(impl);
 		return tmp;
 	}
 
 	private static DeviceConfiguration createSandboxDeviceConfiguration(final ResourceSet resourceSet) {
-		final URI uri = URI.createURI("mem:///sandboxDeviceManager.dcd.xml");
+		URI uri = getLocalSandboxDeviceManagerURI();
+
 		final Resource resource = resourceSet.createResource(uri);
 		final DeviceConfiguration dcd = DcdFactory.eINSTANCE.createDeviceConfiguration();
 		dcd.setId("Chalkboard");
@@ -221,7 +228,7 @@ public enum ScaDebugInstance {
 	}
 
 	private static SoftwareAssembly createSandboxSoftwareAssembly(final ResourceSet resourceSet) {
-		final URI sadUri = URI.createURI("mem://sandbox.sad.xml");
+		URI sadUri = getLocalSandboxWaveformURI();
 
 		final SoftwareAssembly sad = SadFactory.eINSTANCE.createSoftwareAssembly();
 		sad.setName("Chalkboard");
@@ -234,6 +241,23 @@ public enum ScaDebugInstance {
 			resource.getContents().add(root);
 		}
 		return sad;
+	}
+
+	public static final String SANDBOX_WF_REF = "SANDBOX";
+
+	public static URI getLocalSandboxDeviceManagerURI() {
+		URI retVal = URI.createURI("mem:///sandboxDeviceManager.dcd.xml");
+		return retVal;
+	}
+
+	public static URI getLocalSandboxWaveformURI() {
+		URI retVal = URI.createURI("mem:///LocalSca.sad.xml");
+		Map<String, String> queryMap = new HashMap<String, String>();
+		queryMap.put(ScaFileSystemConstants.QUERY_PARAM_WF, SANDBOX_WF_REF);
+		queryMap.put(ScaFileSystemConstants.QUERY_PARAM_NAME, "Chalkboard");
+		String query = QueryParser.createQuery(queryMap);
+		retVal = retVal.appendQuery(query);
+		return retVal;
 	}
 
 }

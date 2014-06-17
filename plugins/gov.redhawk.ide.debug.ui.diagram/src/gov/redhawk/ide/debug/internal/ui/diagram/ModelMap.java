@@ -167,7 +167,7 @@ public class ModelMap {
 				try {
 					newComp = create(comp, implID);
 					nodeMap.setLocalScaComponent(newComp);
-					//					nodeMap.setLocalScaComponent(newComp);
+					// nodeMap.setLocalScaComponent(newComp);
 					EditPart editPart = editor.getDiagramEditPart().findEditPart(editor.getDiagramEditPart(), comp);
 					if (editPart instanceof SadComponentInstantiationEditPart) {
 						SadComponentInstantiationEditPart ciEp = (SadComponentInstantiationEditPart) editPart;
@@ -214,8 +214,15 @@ public class ModelMap {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Connecting " + conn.getId(), IProgressMonitor.UNKNOWN);
 				try {
 					ScaConnection newConnection = create(conn);
-					connectionMap.setScaConnection(newConnection);
-					return Status.OK_STATUS;
+					if (newConnection == null) {
+						delete(conn);
+						connections.remove(connectionMap.getKey());
+						return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID,
+							"Failed to add connection, source or target component may not have finished launching. " + conn.getId(), null);
+					} else {
+						connectionMap.setScaConnection(newConnection);
+						return Status.OK_STATUS;
+					}
 				} catch (final InvalidPort e) {
 					delete(conn);
 					connections.remove(connectionMap.getKey());
@@ -428,8 +435,8 @@ public class ModelMap {
 		final HashMap<Object, Object> map = new HashMap<Object, Object>();
 		map.putAll(ccr.getExtendedData());
 		map.put(ConnectInterfaceEditHelperAdvice.CONFIGURE_OPTIONS_ID, newValue.getId());
-		//			map.put(ConnectInterfaceEditHelperAdvice.CONFIGURE_OPTIONS_SOURCE, source);
-		//			map.put(ConnectInterfaceEditHelperAdvice.CONFIGURE_OPTIONS_TARGET, target);
+		// map.put(ConnectInterfaceEditHelperAdvice.CONFIGURE_OPTIONS_SOURCE, source);
+		// map.put(ConnectInterfaceEditHelperAdvice.CONFIGURE_OPTIONS_TARGET, target);
 		ccr.setExtendedData(map);
 		ccr.setType(org.eclipse.gef.RequestConstants.REQ_CONNECTION_START);
 		ccr.setSourceEditPart(sourceEditPart);
@@ -519,12 +526,26 @@ public class ModelMap {
 			return;
 		}
 		EditPart editPart = null;
-		for (final Object obj : this.editor.getDiagramEditPart().getConnections()) {
-			if (obj instanceof SadConnectInterfaceEditPart) {
-				final SadConnectInterfaceEditPart part = (SadConnectInterfaceEditPart) obj;
-				if (part.getAdapter(SadConnectInterface.class) == connection) {
-					editPart = part;
-					break;
+		int tries = 0;
+		while (editPart == null) {
+			for (final Object obj : this.editor.getDiagramEditPart().getConnections()) {
+				if (obj instanceof SadConnectInterfaceEditPart) {
+					final SadConnectInterfaceEditPart part = (SadConnectInterfaceEditPart) obj;
+					if (part.getAdapter(SadConnectInterface.class) == connection) {
+						editPart = part;
+						break;
+					}
+				}
+			}
+			tries++;
+			if (tries > 4) {
+				// TODO Log unable to find ?
+				return;
+			} else {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// PASS
 				}
 			}
 		}
@@ -555,6 +576,7 @@ public class ModelMap {
 			IDiagramEditDomain domain = getDiagramEditDomain();
 			if (domain != null) {
 				domain.getDiagramCommandStack().execute(command);
+				domain.getDiagramCommandStack().flush();
 			}
 		}
 	}
@@ -562,7 +584,7 @@ public class ModelMap {
 	@Nullable
 	private EditPart findEditPart(@Nullable final EObject obj) {
 		if (editor == null || editor.getDiagramEditor() == null || editor.getDiagramEditor().getDiagramGraphicalViewer() == null
-				|| editor.getDiagramEditor().getDiagramEditPart() == null) {
+			|| editor.getDiagramEditor().getDiagramEditPart() == null) {
 			return null;
 		}
 		editor.getDiagramEditor().getDiagramGraphicalViewer();

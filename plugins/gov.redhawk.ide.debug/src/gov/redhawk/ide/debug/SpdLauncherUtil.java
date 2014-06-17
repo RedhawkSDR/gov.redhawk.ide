@@ -496,18 +496,22 @@ public final class SpdLauncherUtil {
 		final StringBuilder retVal = new StringBuilder();
 		retVal.append(manager.generateVariableExpression(LaunchVariables.EXEC_PARAMS, null));
 		retVal.append(" ");
-		retVal.append(LaunchVariables.NAMING_CONTEXT_IOR);
-		retVal.append(" ");
-		retVal.append(manager.generateVariableExpression(LaunchVariables.NAMING_CONTEXT_IOR, null));
-		retVal.append(" ");
-		retVal.append(LaunchVariables.NAME_BINDING);
-		retVal.append(" ");
-		retVal.append(manager.generateVariableExpression(LaunchVariables.NAME_BINDING, null));
-		retVal.append(" ");
-		retVal.append(LaunchVariables.PROFILE_NAME);
-		retVal.append(" ");
-		retVal.append(manager.generateVariableExpression(LaunchVariables.PROFILE_NAME, null));
-		retVal.append(" ");
+//		
+//		retVal.append(LaunchVariables.NAMING_CONTEXT_IOR);
+//		retVal.append(" ");
+//		retVal.append(manager.generateVariableExpression(LaunchVariables.NAMING_CONTEXT_IOR, null));
+//		retVal.append(" ");
+		
+//		retVal.append(LaunchVariables.NAME_BINDING);
+//		retVal.append(" ");
+//		retVal.append(manager.generateVariableExpression(LaunchVariables.NAME_BINDING, null));
+//		retVal.append(" ");
+		
+//		retVal.append(LaunchVariables.PROFILE_NAME);
+//		retVal.append(" ");
+//		retVal.append(manager.generateVariableExpression(LaunchVariables.PROFILE_NAME, null));
+//		retVal.append(" ");
+		
 		retVal.append(LaunchVariables.DEVICE_MGR_IOR);
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.DEVICE_MGR_IOR, null));
@@ -529,18 +533,22 @@ public final class SpdLauncherUtil {
 		final StringBuilder retVal = new StringBuilder();
 		retVal.append(manager.generateVariableExpression(LaunchVariables.EXEC_PARAMS, null));
 		retVal.append(" ");
-		retVal.append(LaunchVariables.NAMING_CONTEXT_IOR);
-		retVal.append(" ");
-		retVal.append(manager.generateVariableExpression(LaunchVariables.NAMING_CONTEXT_IOR, null));
-		retVal.append(" ");
+		
+//		retVal.append(LaunchVariables.NAMING_CONTEXT_IOR);
+//		retVal.append(" ");
+//		retVal.append(manager.generateVariableExpression(LaunchVariables.NAMING_CONTEXT_IOR, null));
+//		retVal.append(" ");
+		
 		retVal.append(LaunchVariables.DEVICE_MGR_IOR);
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.DEVICE_MGR_IOR, null));
 		retVal.append(" ");
+		
 		retVal.append(LaunchVariables.PROFILE_NAME);
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.PROFILE_NAME, null));
 		retVal.append(" ");
+		
 		retVal.append(LaunchVariables.DEVICE_ID);
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.DEVICE_ID, null));

@@ -171,6 +171,8 @@ public class SnapshotWizardPage extends WizardPage {
 		context.bindValue(WidgetProperties.selection().observe(workspaceCheck), BeansObservables.observeValue(settings, "saveToWorkspace"),
 			createWsCheckUpdateStrategy(), createWsCheckUpdateStrategy());
 
+		restoreWidgetValues(settings);
+		
 		// determining which page starts on top
 		setSaveLocationComposite(workspaceCheck.getSelection(), true);
 
@@ -182,7 +184,6 @@ public class SnapshotWizardPage extends WizardPage {
 			}
 		});
 
-		restoreWidgetValues(settings);
 	}
 
 	private void setSaveLocationComposite(final boolean workspace, final boolean updateModel) {
