@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.graphiti.ext.impl;
 
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
@@ -49,7 +50,7 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  * <!-- end-user-doc -->
  * <p>
  * </p>
- *
+ * 
  * @generated
  */
 public class ComponentShapeImpl extends RHContainerShapeImpl implements ComponentShape {
@@ -277,6 +278,16 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			if (performUpdate) {
 				updateStatus = true;
 				startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
+				if (ci.getStartOrder() != null && ci.getStartOrder().compareTo(BigInteger.ZERO) != 0) {
+					// Make sure start order is set to zero for assembly controller, if the update occurred from elsewhere in the model
+					ci.setStartOrder(BigInteger.ZERO);
+					SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
+					ComponentPattern.organizeStartOrder(sad, diagram, featureProvider);
+				} else {
+					// Organization check to make sure start order sequence is correct, if the update occurred from elsewhere in the model
+					SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
+					ComponentPattern.organizeStartOrder(sad, diagram, featureProvider);
+				}
 				featureProvider.link(startOrderEllipse.getPictogramElement(), assemblyController);
 			} else {
 				return new Reason(true, "Component start order requires update");
