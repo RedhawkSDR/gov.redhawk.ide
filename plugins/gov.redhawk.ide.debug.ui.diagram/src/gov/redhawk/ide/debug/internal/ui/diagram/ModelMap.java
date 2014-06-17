@@ -539,8 +539,7 @@ public class ModelMap {
 			}
 			tries++;
 			if (tries > 4) {
-				// TODO Log unable to find ?
-				return;
+				break;
 			} else {
 				try {
 					Thread.sleep(500);
@@ -555,6 +554,8 @@ public class ModelMap {
 			request.setElementToDestroy(connection);
 			request.getParameters().clear();
 			createCommandAndExecute(editPart, new EditCommandRequestWrapper(request));
+		} else {
+			// PASS TODO Log unable to find ?
 		}
 	}
 
