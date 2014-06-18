@@ -84,7 +84,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				Collections.addAll(hostCollocations, (HostCollocation[]) sad.getPartitioning().getHostCollocation().toArray(new HostCollocation[0]));
 			}
 			Reason updateShapesReason = DUtil.addRemoveUpdateShapes((List<Shape>) (List< ? >) HostCollocationPattern.getHostCollocationContainerShapes(d),
-				(List<EObject>) (List< ? >) hostCollocations, (Class) HostCollocation.class, "Host", getDiagram(), getFeatureProvider(), performUpdate);
+				(List<EObject>) (List< ? >) hostCollocations, HostCollocation.class, "Host", getDiagram(), getFeatureProvider(), performUpdate);
 			if (!performUpdate && updateShapesReason.toBoolean()) {
 				return updateShapesReason;
 			} else if (updateShapesReason.toBoolean() == true) {
@@ -100,7 +100,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				}
 			}
 			updateShapesReason = DUtil.addRemoveUpdateShapes((List<Shape>) (List< ? >) ComponentPattern.getAllComponentShapes(d), componentInstatiations,
-				(Class) ComponentInstantiation.class, "Host", getDiagram(), getFeatureProvider(), performUpdate);
+				ComponentInstantiation.class, "Host", getDiagram(), getFeatureProvider(), performUpdate);
 			if (!performUpdate && updateShapesReason.toBoolean()) {
 				return updateShapesReason;
 			} else if (updateShapesReason.toBoolean() == true) {
@@ -116,7 +116,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			// diagram connections EList->List
 			List<Connection> connections = new ArrayList<Connection>();
 			Collections.addAll(connections, (Connection[]) d.getConnections().toArray(new Connection[0]));
-			updateShapesReason = addRemoveUpdateConnections(connections, sadConnectInterfaces, (Class) SadConnectInterface.class, "Connection", getDiagram(),
+			updateShapesReason = addRemoveUpdateConnections(connections, sadConnectInterfaces, SadConnectInterface.class, "Connection", getDiagram(),
 				getFeatureProvider(), performUpdate);
 			if (!performUpdate) {
 				return updateShapesReason;

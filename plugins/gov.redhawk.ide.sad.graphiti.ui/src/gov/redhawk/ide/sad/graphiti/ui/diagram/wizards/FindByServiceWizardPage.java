@@ -367,7 +367,7 @@ public class FindByServiceWizardPage extends WizardPage {
 		portNameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				String err = validText("Port", portNameText.getText());
+				String err = validText("Port", portNameText);
 				if (err != null) {
 					setErrorMessage(err);
 				} else {
@@ -377,39 +377,61 @@ public class FindByServiceWizardPage extends WizardPage {
 		});
 		return portNameText;
 	}
-	
+
 	private String validateAll() {
-		String err = validService("Service Name", serviceNameText.getText(), serviceNameBtn);
+		String err = validService("Service Name", serviceNameText, serviceNameBtn);
 		if (err != null) {
 			return err;
 		}
-		err = validService("Service Type", serviceTypeText.getText(), serviceTypeBtn);
+		err = validService("Service Type", serviceTypeText, serviceTypeBtn);
 		if (err != null) {
 			return err;
 		}
-		err = validText("Port", usesPortNameText.getText());
-		if (err != null) {
-			return err;
+		if (usesPortNameText != null) {
+			err = validText("Port", usesPortNameText);
+			if (err != null) {
+				return err;
+			}
 		}
-		return validText("Port", providesPortNameText.getText());
+		if (providesPortNameText != null) {
+			return validText("Port", providesPortNameText);
+		}
+		return null;
+	}
+
+	private static String validService(String valueType, Text valueText, Button btn) {
+		if (btn != null && btn.getSelection()) {
+			if (valueText == null || valueText.getText().length() < 1) {
+				return valueType + " must not be empty";
+			}
+			return validText(valueType, valueText);
+		}
+		return null;
 	}
 	
 	private static String validService(String valueType, String value, Button btn) {
-		if (btn.getSelection()) {
-			if (value.length() < 1) {
+		if (btn != null && btn.getSelection()) {
+			if (value == null || value.length() < 1) {
 				return valueType + " must not be empty";
 			}
 			return validText(valueType, value);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * If returns null, that means the value is valid/has no spaces.
 	 * @param valueType
 	 * @param value
 	 * @return
 	 */
+	public static String validText(String valueType, Text valueText) {
+		if (valueText != null && valueText.getText().contains(" ")) {
+			return valueType + " must not include spaces";
+		}
+		return null;
+	}
+	
 	public static String validText(String valueType, String value) {
 		if (value.contains(" ")) {
 			return valueType + " must not include spaces";

@@ -276,6 +276,7 @@ public class FindByCORBANameWizardPage extends WizardPage {
 					for (String selection : selections) {
 						portList.remove(selection);
 					}
+					dbc.updateModels();
 				}
 				if (portList.getItemCount() <= 0) {
 					deleteBtn.setEnabled(false);
@@ -294,8 +295,8 @@ public class FindByCORBANameWizardPage extends WizardPage {
 		String errCORBA = FindByCORBANamePattern.validate("CORBA", corbaNameText.getText());
 		if (errCORBA != null) {
 			return errCORBA;
-		} else if (usesPortNameText.getText().contains(" ") 
-				|| providesPortNameText.getText().contains(" ")) {
+		} else if ((usesPortNameText != null && usesPortNameText.getText().contains(" ")) 
+				|| (providesPortNameText != null && providesPortNameText.getText().contains(" "))) {
 			return "Port name must not include spaces";
 		}
 		return null;
