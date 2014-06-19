@@ -190,15 +190,18 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	 * @return event channel name
 	 */
 	private String getUserInput() {
-		// prompt user for Host Collocation name
-		AbstractInputValidationDialog dialog = new AbstractInputValidationDialog(
+		// prompt user for FindBy Event Channel name
+		return getDialog().getInput();
+	}
+	
+	public AbstractInputValidationDialog getDialog() {
+		return new AbstractInputValidationDialog(
 			NAME, "Enter " + NAME + " name", NAME) {
 			@Override
 			public String inputValidity(String value) {
 				return checkValueValid(value, null);
 			}
 		};
-		return dialog.getInput();
 	}
 
 }

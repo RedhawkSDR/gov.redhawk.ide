@@ -21,6 +21,7 @@ import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -72,15 +73,8 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IPa
 	@Override
 	public Object[] create(ICreateContext context) {
 		// prompt user for CORBA Name
-		Wizard myWizard = new Wizard() {
-			public boolean performFinish() {
-				return true;
-			}
-		};
-		FindByCORBANameWizardPage page = new FindByCORBANameWizardPage();
-		myWizard.addPage(page);
-		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), myWizard);
-		if (dialog.open() == WizardDialog.CANCEL) {
+		FindByCORBANameWizardPage page = openWizard();
+		if (page == null) {
 			return null;
 		}
 
@@ -196,5 +190,46 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IPa
 
 	@Override
 	public void setValue(String value, IDirectEditingContext context) {
+	}
+
+	protected static FindByCORBANameWizardPage openWizard() {
+		return openWizard(null, new Wizard() {
+			public boolean performFinish() {
+				return true;
+			}
+		});
+	}
+
+	public static FindByCORBANameWizardPage openWizard(FindByStub existingFindByStub, Wizard wizard) {
+		FindByCORBANameWizardPage page = new FindByCORBANameWizardPage();
+		wizard.addPage(page);
+		if (existingFindByStub != null) {
+			fillWizardFieldsWithExistingProperties(page, existingFindByStub);
+		}
+		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+		if (dialog.open() == WizardDialog.CANCEL) {
+			return null;
+		}
+		return page;
+	}
+
+	private static void fillWizardFieldsWithExistingProperties(FindByCORBANameWizardPage page, FindByStub findByStub) {
+		// Grab existing properties from findByStub
+		String corbaName = findByStub.getNamingService().getName();
+		EList<UsesPortStub> usesPorts = findByStub.getUses();
+		EList<ProvidesPortStub> providesPorts = findByStub.getProvides();
+
+		// Fill wizard fields with existing properties
+		page.getModel().setCorbaName(corbaName);
+		if (usesPorts != null && !usesPorts.isEmpty()) {
+			for (UsesPortStub port : usesPorts) {
+				page.getModel().getUsesPortNames().add(port.getName());
+			}
+		}
+		if (providesPorts != null && !providesPorts.isEmpty()) {
+			for (ProvidesPortStub port : providesPorts) {
+				page.getModel().getProvidesPortNames().add(port.getName());
+			}
+		}
 	}
 }

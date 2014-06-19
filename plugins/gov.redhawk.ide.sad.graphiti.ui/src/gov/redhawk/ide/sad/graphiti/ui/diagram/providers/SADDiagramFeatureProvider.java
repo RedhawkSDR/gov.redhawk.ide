@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.DecrementStartOrderFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.FindByEditFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.IncrementStartOrderFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkExternalPortFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkNonExternalPortFeature;
@@ -34,6 +35,7 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
@@ -201,13 +203,13 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 			retList.add(new ZestLayoutDiagramFeature(this.getDiagramTypeProvider().getFeatureProvider()));
 		}
 
-		// // add findBy edit feature if findByStub selected
-		// if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
-		// Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-		// if (obj instanceof FindByStub) {
-		// retList.add(new FindByEditFeature(this.getDiagramTypeProvider().getFeatureProvider()));
-		// }
-		// }
+		// add findBy edit feature if findByStub selected
+		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
+			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
+			if (obj instanceof FindByStub) {
+				retList.add(new FindByEditFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+			}
+		}
 
 		// add external port menu item if we clicked on a port
 		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {

@@ -22,6 +22,7 @@ import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -66,8 +67,8 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 		if (mainBusinessObject instanceof FindByStub) {
 			FindByStub findByStub = (FindByStub) mainBusinessObject;
 			if (findByStub.getDomainFinder() != null
-				&& (findByStub.getDomainFinder().getType().equals(DomainFinderType.SERVICENAME) || findByStub.getDomainFinder().getType().equals(
-					DomainFinderType.SERVICETYPE))) {
+					&& (findByStub.getDomainFinder().getType().equals(DomainFinderType.SERVICENAME) || findByStub.getDomainFinder().getType().equals(
+						DomainFinderType.SERVICETYPE))) {
 				return true;
 			}
 		}
@@ -79,15 +80,8 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 	public Object[] create(ICreateContext context) {
 
 		// prompt user for Service information
-		Wizard myWizard = new Wizard() {
-			public boolean performFinish() {
-				return true;
-			}
-		};
-		FindByServiceWizardPage page = new FindByServiceWizardPage();
-		myWizard.addPage(page);
-		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), myWizard);
-		if (dialog.open() == WizardDialog.CANCEL) {
+		FindByServiceWizardPage page = getWizardPage();
+		if (page == null) {
 			return null;
 		}
 
@@ -207,6 +201,54 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 
 		return findByStubs[0];
 
+	}
+
+	protected static FindByServiceWizardPage getWizardPage() {
+		return getWizardPage(null, new Wizard() {
+			public boolean performFinish() {
+				return true;
+			}
+		});
+	}
+
+	public static FindByServiceWizardPage getWizardPage(FindByStub existingFindByStub, Wizard wizard) {
+		FindByServiceWizardPage page = new FindByServiceWizardPage();
+		wizard.addPage(page);
+		if (existingFindByStub != null) {
+			fillWizardFieldsWithExistingProperties(page, existingFindByStub);
+		}
+		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+		if (dialog.open() == WizardDialog.CANCEL) {
+			return null;
+		}
+		return page;
+	}
+
+	private static void fillWizardFieldsWithExistingProperties(FindByServiceWizardPage page, FindByStub findByStub) {
+		DomainFinderType type = findByStub.getDomainFinder().getType();
+		final String serviceName = findByStub.getDomainFinder().getName();
+		EList<UsesPortStub> usesPorts = findByStub.getUses();
+		EList<ProvidesPortStub> providesPorts = findByStub.getProvides();
+
+		if (type.equals(DomainFinderType.SERVICENAME)) {
+			page.getModel().setServiceName(serviceName);
+			page.getModel().setEnableServiceName(true);
+			page.getModel().setEnableServiceType(false);
+		} else {
+			page.getModel().setServiceType(serviceName);
+			page.getModel().setEnableServiceType(true);
+			page.getModel().setEnableServiceName(false);
+		}
+		if (usesPorts != null && !usesPorts.isEmpty()) {
+			for (UsesPortStub port : usesPorts) {
+				page.getModel().getUsesPortNames().add(port.getName());
+			}
+		}
+		if (providesPorts != null && !providesPorts.isEmpty()) {
+			for (ProvidesPortStub port : providesPorts) {
+				page.getModel().getProvidesPortNames().add(port.getName());
+			}
+		}
 	}
 
 	@Override

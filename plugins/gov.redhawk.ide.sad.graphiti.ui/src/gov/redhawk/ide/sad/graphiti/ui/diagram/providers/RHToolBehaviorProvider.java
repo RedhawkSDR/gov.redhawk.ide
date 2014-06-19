@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.add.CreateComponentFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.FindByEditFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;
@@ -50,6 +51,8 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.IDoubleClickContext;
+import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -354,6 +357,20 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
 		return compartmentEntry;
 	}
+	
+
+
+    @Override
+    public ICustomFeature getDoubleClickFeature(IDoubleClickContext context) {
+        ICustomFeature customFeature =
+            new FindByEditFeature(getFeatureProvider());
+        if (customFeature.canExecute(context)) {
+            return customFeature;
+        }
+ 
+        return super.getDoubleClickFeature(context);
+    }
+
 
 	// ATTEMPT at ERROR decorator on Connections
 //	public IDecorator[] getDecorators(PictogramElement pe) {

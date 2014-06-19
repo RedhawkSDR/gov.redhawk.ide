@@ -105,6 +105,15 @@ public abstract class AbstractInputValidationDialog extends TitleAreaDialog {
 		saveInput();
 		super.okPressed();
 	}
+	
+	public String getInput(String placeholderText) {
+		create();
+		inputText.setText(placeholderText);
+		if (open() != Window.OK) {
+			return null;
+		} 
+		return inputString;
+	}
 
 	public String getInput() {
 		create();
