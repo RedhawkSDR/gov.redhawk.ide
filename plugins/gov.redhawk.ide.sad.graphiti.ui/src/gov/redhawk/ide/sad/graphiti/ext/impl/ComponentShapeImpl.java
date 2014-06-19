@@ -93,6 +93,9 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * Creates the inner shapes that make up this container shape
 	 */
 	public void init(IAddContext context, ComponentPattern pattern) {
+		if (!(context.getNewObject() instanceof SadComponentInstantiation)) {
+			return;
+		}
 		SadComponentInstantiation ci = (SadComponentInstantiation) context.getNewObject();
 		IFeatureProvider featureProvider = pattern.getFeatureProvider();
 		Diagram diagram = featureProvider.getDiagramTypeProvider().getDiagram();
@@ -104,7 +107,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		// get sad from diagram, we need to link it to all shapes so the diagram will update when changes occur to
 		// assembly controller and external ports
 		List<EObject> businessObjectsToLink = new ArrayList<EObject>();
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(pattern.getFeatureProvider(), DUtil.findDiagram(context.getTargetContainer()));
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
 		// ORDER MATTERS, CI must be first
 		businessObjectsToLink.add(ci);
 		businessObjectsToLink.add(sad);

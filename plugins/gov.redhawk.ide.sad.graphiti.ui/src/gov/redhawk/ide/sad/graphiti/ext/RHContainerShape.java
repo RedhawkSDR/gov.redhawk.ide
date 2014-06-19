@@ -11,8 +11,6 @@
 package gov.redhawk.ide.sad.graphiti.ext;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractContainerPattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
@@ -36,10 +34,10 @@ public interface RHContainerShape extends ContainerShape {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model contextDataType="gov.redhawk.ide.sad.graphiti.ext.IAddContext" contextUnique="false" patternDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentPattern" patternUnique="false"
+	 * @model contextDataType="gov.redhawk.ide.sad.graphiti.ext.IAddContext" contextUnique="false" patternDataType="gov.redhawk.ide.sad.graphiti.ext.AbstractContainerPattern" patternUnique="false"
 	 * @generated
 	 */
-	void init(IAddContext context, ComponentPattern pattern);
+	void init(IAddContext context, AbstractContainerPattern pattern);
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -118,9 +116,5 @@ public interface RHContainerShape extends ContainerShape {
 	 * @generated
 	 */
 	Reason updateNeeded(IUpdateContext context, AbstractContainerPattern pattern);
-
-	Reason update(IUpdateContext context, AbstractFindByPattern abstractFindByPattern);
-
-	void init(IAddContext context, AbstractFindByPattern abstractFindByPattern);
 
 } // RHContainerShape

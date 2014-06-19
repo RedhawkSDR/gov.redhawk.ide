@@ -45,7 +45,7 @@ interface ContainerShapeImpl wraps ContainerShape {}
 
 class RHContainerShape extends ContainerShape{
 	
-	op void init(IAddContext context, ComponentPattern pattern) 
+	op void init(IAddContext context, AbstractContainerPattern pattern) 
 	op void init(IAddContext context, AbstractContainerPattern pattern, List<Port> externalPorts)
 	
 	/*Returns providesPortsStubs business object list linked to getProvidesPortsContainerShape()*/

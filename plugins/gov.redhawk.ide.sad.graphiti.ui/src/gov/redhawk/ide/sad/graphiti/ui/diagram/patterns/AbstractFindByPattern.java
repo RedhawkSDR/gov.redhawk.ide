@@ -88,7 +88,10 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 
 	@Override
 	public String getOuterTitle(EObject obj) {
-		return getOuterTitle((FindByStub) obj);
+		if (obj instanceof FindByStub) {
+			return getOuterTitle((FindByStub) obj);
+		}
+		return null;
 	}
 	
 	/**

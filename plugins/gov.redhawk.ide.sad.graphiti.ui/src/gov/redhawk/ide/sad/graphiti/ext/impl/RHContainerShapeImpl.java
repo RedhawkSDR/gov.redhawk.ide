@@ -13,20 +13,14 @@ package gov.redhawk.ide.sad.graphiti.ext.impl;
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractContainerPattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractFindByPattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -117,8 +111,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void init(IAddContext context, ComponentPattern pattern) {
-		init(context, pattern, null);
+	public void init(IAddContext context, AbstractContainerPattern pattern) {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -160,7 +156,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		addProvidesPorts(pattern.getProvides(newObject), featureProvider, externalPorts);
 		addUsesPorts(pattern.getUses(newObject), featureProvider, externalPorts);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -939,18 +935,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return (RHContainerShape) cs;
 		}
 		return null;
-	}
-
-	@Override
-	public Reason update(IUpdateContext context, AbstractFindByPattern abstractFindByPattern) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void init(IAddContext context, AbstractFindByPattern abstractFindByPattern) {
-		// TODO Auto-generated method stub
-		
 	}
 
 } // RHContainerShapeImpl

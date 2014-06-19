@@ -215,8 +215,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		isInited = true;
 
 		// Initialize simple dependencies
-		EcorePackage.eINSTANCE.eClass();
-		PictogramsPackage.eINSTANCE.eClass();
 		StylesPackage.eINSTANCE.eClass();
 		MmPackage.eINSTANCE.eClass();
 		EcorePackage.eINSTANCE.eClass();
@@ -484,7 +482,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 
 		EOperation op = addEOperation(rhContainerShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIAddContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getComponentPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		op = addEOperation(rhContainerShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIAddContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
