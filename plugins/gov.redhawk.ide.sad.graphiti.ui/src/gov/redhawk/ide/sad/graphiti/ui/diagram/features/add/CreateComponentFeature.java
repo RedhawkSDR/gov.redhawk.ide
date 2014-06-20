@@ -48,6 +48,12 @@ public class CreateComponentFeature extends AbstractCreateFeature {
 
 	private SoftPkg spd = null;
 
+	@Override
+	public String getDescription() {
+		// TODO Auto-generated method stub
+		return "Add Component from Palette";
+	}
+	
 	public CreateComponentFeature(IFeatureProvider fp, final SoftPkg spd) {
 		super(fp, spd.getName(), spd.getDescription());
 		this.spd = spd;
