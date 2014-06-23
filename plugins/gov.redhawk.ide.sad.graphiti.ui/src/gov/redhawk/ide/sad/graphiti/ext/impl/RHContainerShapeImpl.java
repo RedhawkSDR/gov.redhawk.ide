@@ -221,7 +221,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * Updates the shape's contents using the supplied fields. Return true if an update occurred, false otherwise.
 	 */
 	public Reason update(final IUpdateContext context, AbstractContainerPattern pattern, final List<Port> externalPorts) {
-		return internalUpdate(pattern, (EObject) DUtil.getBusinessObject(context.getPictogramElement()), externalPorts, false);
+		return internalUpdate(pattern, (EObject) DUtil.getBusinessObject(context.getPictogramElement()), externalPorts, true);
 	}
 
 	/**

@@ -156,14 +156,14 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		for (IPattern pattern : this.getPatterns()) {
 			if (checkPattern(pattern, getBusinessObjectForPictogramElement(DUtil.findContainerShapeParentWithProperty(context.getPictogramElement(),
 				RHContainerShapeImpl.SHAPE_OUTER_CONTAINER)))) {
-				IPattern choosenPattern = null;
+				IPattern chosenPattern = null;
 				IDirectEditingFeature f = new DirectEditingFeatureForPattern(this, pattern);
 				if (checkFeatureAndContext(f, context)) {
 					if (ret == null) {
 						ret = f;
-						choosenPattern = pattern;
+						chosenPattern = pattern;
 					} else {
-						traceWarning("getDirectEditingFeature", pattern, choosenPattern); //$NON-NLS-1$
+						traceWarning("getDirectEditingFeature", pattern, chosenPattern); //$NON-NLS-1$
 					}
 				}
 			}
@@ -176,19 +176,17 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		return ret;
 	}
 
-	// @Override
-	// protected IDirectEditingFeature getDirectEditingFeatureAdditional(IDirectEditingContext context) {
-	//
-	// PictogramElement pe = context.getPictogramElement();
-	// ComponentShape componentShape = (ComponentShape)DUtil.findContainerShapeParentWithProperty(
-	// pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-	// if(componentShape != null && getBusinessObjectForPictogramElement(componentShape) instanceof SadComponentInstantiation){
-	// return new ComponentDirectEditUsageNameFeature(getDiagramTypeProvider().getFeatureProvider());
-	// }
-	//
-	// return null;
-	//
-	// }
+//	@Override
+//	protected IDirectEditingFeature getDirectEditingFeatureAdditional(IDirectEditingContext context) {
+//
+//		PictogramElement pe = context.getPictogramElement();
+//		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(
+//			pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+//		if (componentShape != null && getBusinessObjectForPictogramElement(componentShape) instanceof SadComponentInstantiation) {
+//			return new ComponentDirectEditUsageNameFeature(getDiagramTypeProvider().getFeatureProvider());
+//		}
+//		return null;
+//	}
 
 	@Override
 	public ICustomFeature[] getCustomFeatures(ICustomContext context) {
@@ -331,10 +329,10 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		// Search for shapes for which we don't want the user to have
 		// the delete capability, including the diagram as a whole
 		if (context.getPictogramElement() instanceof Diagram
-			|| DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
-				RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
-				RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE,
-				RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE })) {
+				|| DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
+					RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
+					RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE,
+					RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE })) {
 			return new DefaultDeleteFeature(this) {
 				@Override
 				public boolean canDelete(IDeleteContext context) {

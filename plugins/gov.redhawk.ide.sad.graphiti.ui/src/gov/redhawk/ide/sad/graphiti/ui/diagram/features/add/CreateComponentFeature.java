@@ -50,7 +50,7 @@ public class CreateComponentFeature extends AbstractCreateFeature {
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
+		// Provides the context menu Undo/Redo description
 		return "Add Component from Palette";
 	}
 	

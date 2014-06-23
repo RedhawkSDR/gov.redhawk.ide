@@ -151,8 +151,4 @@ public class FindByFileManagerPattern extends AbstractFindByPattern implements I
 	public String checkValueValid(String value, IDirectEditingContext context) {
 		return null;
 	}
-
-	@Override
-	public void setValue(String value, IDirectEditingContext context) {
-	}
 }

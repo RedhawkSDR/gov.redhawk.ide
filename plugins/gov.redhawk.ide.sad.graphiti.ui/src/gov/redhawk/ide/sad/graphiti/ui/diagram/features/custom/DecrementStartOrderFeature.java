@@ -31,7 +31,7 @@ public class DecrementStartOrderFeature extends AbstractCustomFeature {
 	}
 
 	public static final String NAME = "Move Start Order Earlier";
-	public static final String DESCRIPTION = "Descrement the start order by 1";
+	public static final String DESCRIPTION = "Decrement the start order by 1";
 
 	@Override
 	public String getName() {

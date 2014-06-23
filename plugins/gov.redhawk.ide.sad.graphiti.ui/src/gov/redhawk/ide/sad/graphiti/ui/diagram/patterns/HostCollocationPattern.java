@@ -34,11 +34,14 @@ import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
+import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
+import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.PropertyContainer;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
@@ -471,6 +474,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 	@Override
 	public boolean update(IUpdateContext context) {
 		return false;
+		// TODO
 	}
 
 	/**
@@ -479,6 +483,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 	@Override
 	public IReason updateNeeded(IUpdateContext context) {
 		return new Reason(false);
+		// TODO
 	}
 	
 	/**
@@ -497,5 +502,59 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 			}
 		};
 		return dialog.getInput();
+	}
+
+	@Override
+	public String getInnerTitle(EObject obj) {
+		if (obj instanceof HostCollocation) {
+			return ((HostCollocation) obj).getName();
+		}
+		return null;
+	}
+
+
+
+	@Override
+	public boolean canDirectEdit(IDirectEditingContext context) {
+		Object obj = DUtil.getBusinessObject(context.getPictogramElement());
+		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
+
+		// allow if we've selected the inner Text for the component
+		if (obj instanceof HostCollocation && ga instanceof Text) {
+			Text text = (Text) ga;
+			for (Property prop : text.getProperties()) {
+				if (prop.getValue().equals(GA_OUTER_ROUNDED_RECTANGLE_TEXT)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public String getInitialValue(IDirectEditingContext context) {
+		EObject hc = (EObject) DUtil.getBusinessObject(context.getPictogramElement());
+		return getInnerTitle(hc);
+	}
+
+	@Override
+	public void setValue(final String value, IDirectEditingContext context) {
+		final HostCollocation hc = (HostCollocation) DUtil.getBusinessObject(context.getPictogramElement());
+
+		// editing domain for our transaction
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+
+		// Perform business object manipulation in a Command
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+				// set usage name
+				hc.setName(value);
+			}
+		});
+
+		// perform update, redraw
+		updatePictogramElement(context.getPictogramElement());
 	}
 }

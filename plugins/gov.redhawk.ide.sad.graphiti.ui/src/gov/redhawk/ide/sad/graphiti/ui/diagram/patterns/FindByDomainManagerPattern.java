@@ -149,10 +149,6 @@ public class FindByDomainManagerPattern extends AbstractFindByPattern implements
 	}
 
 	@Override
-	public void setValue(String value, IDirectEditingContext context) {
-	}
-
-	@Override
 	public String getInnerTitle(FindByStub findByStub) {
 		return SHAPE_TITLE;
 	}

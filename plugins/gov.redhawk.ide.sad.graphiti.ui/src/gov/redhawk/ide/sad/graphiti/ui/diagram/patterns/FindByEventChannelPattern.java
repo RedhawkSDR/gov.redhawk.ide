@@ -26,6 +26,9 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
+import org.eclipse.graphiti.mm.Property;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.IPattern;
@@ -156,31 +159,13 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	}
 
 	@Override
-	public void setValue(final String value, IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		final FindByStub findBy = (FindByStub) getBusinessObjectForPictogramElement(rhContainerShape);
-
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
-		// Perform business object manipulation in a Command
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-				// set event name
-				findBy.getDomainFinder().setName(value);
-			}
-		});
-
-		// perform update, redraw
-		updatePictogramElement(rhContainerShape);
-	}
-
-	@Override
 	public String getInnerTitle(FindByStub findByStub) {
 		return findByStub.getDomainFinder().getName();
+	}
+	
+	@Override
+	public void setInnerTitle(FindByStub findByStub, String value) {
+		findByStub.getDomainFinder().setName(value);
 	}
 
 	/**
@@ -192,6 +177,25 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	private String getUserInput() {
 		// prompt user for FindBy Event Channel name
 		return getDialog().getInput();
+	}
+	
+	@Override
+	public boolean canDirectEdit(IDirectEditingContext context) {
+		PictogramElement pe = context.getPictogramElement();
+		RHContainerShape containerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		Object obj = getBusinessObjectForPictogramElement(containerShape);
+		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
+
+		// allow if we've selected the inner Text for the component
+		if (obj instanceof FindByStub && ga instanceof Text) {
+			Text text = (Text) ga;
+			for (Property prop : text.getProperties()) {
+				if (prop.getValue().equals(RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	public AbstractInputValidationDialog getDialog() {

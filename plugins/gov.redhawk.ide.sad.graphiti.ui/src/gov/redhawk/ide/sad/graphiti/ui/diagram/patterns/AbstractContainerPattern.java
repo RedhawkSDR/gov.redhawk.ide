@@ -44,6 +44,9 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 		return getCreateName();
 	}
 	
+	@Override
+	public abstract void setValue(final String value, IDirectEditingContext context);
+	
 	/**
 	 * Checks to see if the given String <code>value</code> is valid. Returns an error
 	 * message if invalid and <code>null</code> if valid. 
@@ -79,9 +82,7 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 	 * @param findByStub
 	 * @return
 	 */
-	public String getInnerTitle(EObject obj) {
-		return null;
-	}
+	public abstract String getInnerTitle(EObject obj);
 
 	/**
 	 * Provides list of UsesPortStubs (if applicable)

@@ -44,8 +44,6 @@ import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -117,6 +115,14 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	 * @return
 	 */
 	public abstract String getInnerTitle(FindByStub findByStub);
+	
+	/**
+	 * Sets the title of the inner shape
+	 * @param findByStub
+	 * @return
+	 */
+	public void setInnerTitle(FindByStub findByStub, String value) {
+	}
 
 	@Override
 	public PictogramElement add(IAddContext context) {
@@ -190,21 +196,13 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	@Override
-	public boolean canDirectEdit(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		Object obj = getBusinessObjectForPictogramElement(rhContainerShape);
-		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
-		// allow if we've selected Text for the FindByStub
-		if (obj instanceof FindByStub && ga instanceof Text) {
-			return true;
-		}
-		return false;
+	public int getEditingType() {
+		return TYPE_TEXT;
 	}
 
 	@Override
-	public int getEditingType() {
-		return TYPE_TEXT;
+	public String checkValueValid(String value, IDirectEditingContext context) {
+		return super.checkValueValid(value, context);
 	}
 
 	@Override
@@ -216,12 +214,27 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	@Override
-	public String checkValueValid(String value, IDirectEditingContext context) {
-		return super.checkValueValid(value, context);
-	}
+	public void setValue(final String value, IDirectEditingContext context) {
+		PictogramElement pe = context.getPictogramElement();
+		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		final FindByStub findByStub = (FindByStub) getBusinessObjectForPictogramElement(rhContainerShape);
 
-	@Override
-	public abstract void setValue(final String value, IDirectEditingContext context);
+		// editing domain for our transaction
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+
+		// Perform business object manipulation in a Command
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+				// set usage name
+				setInnerTitle(findByStub, value);
+			}
+		});
+
+		// perform update, redraw
+		updatePictogramElement(rhContainerShape);
+	}
 
 	/**
 	 * Return all RHContainerShape in Diagram (recursively)
