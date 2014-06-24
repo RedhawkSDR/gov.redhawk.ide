@@ -69,7 +69,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		final boolean start = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
 		final String path = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, "");
 		boolean platform = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_WORKSPACE, true);
-		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
+		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(monitor);
 		final Map<String, String> implMap = SadLauncherUtil.getImplementationMap(configuration);
 
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();

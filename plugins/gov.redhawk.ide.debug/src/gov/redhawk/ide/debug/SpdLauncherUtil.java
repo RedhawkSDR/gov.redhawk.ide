@@ -60,7 +60,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.transaction.RunnableWithResult;
-import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
@@ -194,7 +193,7 @@ public final class SpdLauncherUtil {
 		final String nameBinding = launch.getAttribute(LaunchVariables.NAME_BINDING);
 		final String namingContextIOR = launch.getAttribute(LaunchVariables.NAMING_CONTEXT_IOR);
 		final String compID = launch.getAttribute(LaunchVariables.COMPONENT_IDENTIFIER);
-		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
+		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
 
 		if (nameBinding == null || namingContextIOR == null) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID,
@@ -240,8 +239,7 @@ public final class SpdLauncherUtil {
 									}
 								}
 							};
-							newComponent = TransactionUtil.runExclusive(TransactionUtil.getEditingDomain(localSca), runnable);
-
+							newComponent = ScaModelCommand.runExclusive(localSca, runnable);
 						} catch (final NotFound e) {
 							// PASS
 						} catch (final CannotProceed e) {
@@ -299,7 +297,7 @@ public final class SpdLauncherUtil {
 
 	private static LocalAbstractComponent postLaunchService(final ILaunch launch) throws CoreException {
 		final String name = launch.getAttribute(LaunchVariables.SERVICE_NAME);
-		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
+		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
 
 		final Future<LocalAbstractComponent> future = SpdLauncherUtil.EXECUTOR.submit(new Callable<LocalAbstractComponent>() {
 			@Override
@@ -354,7 +352,7 @@ public final class SpdLauncherUtil {
 
 	private static LocalAbstractComponent postLaunchDevice(final ILaunch launch) throws CoreException {
 		final String deviceLabel = launch.getAttribute(LaunchVariables.DEVICE_LABEL);
-		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
+		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
 
 		final Future<LocalAbstractComponent> future = SpdLauncherUtil.EXECUTOR.submit(new Callable<LocalAbstractComponent>() {
 			@Override

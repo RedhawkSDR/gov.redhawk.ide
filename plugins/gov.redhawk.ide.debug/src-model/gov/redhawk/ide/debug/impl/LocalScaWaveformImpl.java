@@ -12,6 +12,7 @@
 package gov.redhawk.ide.debug.impl;
 
 import gov.redhawk.ide.debug.LocalLaunch;
+import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
@@ -741,7 +742,14 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	@Override
 	public void releaseObject() throws ReleaseError {
-		if (this == ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform()) {
+		LocalSca localSca;
+		try {
+			localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
+		} catch (CoreException e) {
+			throw new ReleaseError(new String[]{"Failed to find local sandbox."});
+		}
+		
+		if (this == localSca.getSandboxWaveform()) {
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 
 				@Override

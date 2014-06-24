@@ -27,6 +27,7 @@ import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -60,8 +61,11 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 		this.identifier = identifier;
 	}
 
-	public LocalScaWaveform getChalkboard() {
-		return ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform();
+	/**
+	 * @since 6.0
+	 */
+	public LocalScaWaveform getChalkboard(IProgressMonitor monitor) throws CoreException {
+		return ScaDebugPlugin.getInstance().getLocalSca(monitor).getSandboxWaveform();
 	}
 
 	/**
@@ -78,13 +82,14 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 		return SoftPkg.Util.getSoftPkg(spdResource);
 	}
 
-	protected LocalScaComponent getComponent(final String instantiationID) {
+	protected LocalScaComponent getComponent(final String instantiationID) throws CoreException {
+		final LocalScaWaveform chalkboard = getChalkboard(null);
 		try {
-			return ScaModelCommand.runExclusive(getChalkboard(), new RunnableWithResult.Impl<LocalScaComponent>() {
+			return ScaModelCommand.runExclusive(chalkboard, new RunnableWithResult.Impl<LocalScaComponent>() {
 
 				@Override
 				public void run() {
-					for (final ScaComponent comp : getChalkboard().getComponents()) {
+					for (final ScaComponent comp : chalkboard.getComponents()) {
 						if (instantiationID.equals(comp.getInstantiationIdentifier())) {
 							setResult((LocalScaComponent) comp);
 							return;
@@ -105,7 +110,12 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 	 */
 	@Override
 	public void releaseResource(final String resourceId) throws InvalidResourceId {
-		final LocalScaComponent comp = getComponent(resourceId);
+		LocalScaComponent comp;
+		try {
+			comp = getComponent(resourceId);
+		} catch (CoreException e1) {
+			throw new InvalidResourceId("Failed to find component or sandbox.");
+		}
 		if (comp != null) {
 			try {
 				comp.releaseObject();
@@ -139,7 +149,12 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 
 	@Override
 	protected CF.Resource createInstance(final String compID, final DataType[] qualifiers, final String launchMode) throws CreateResourceFailure {
-		final LocalScaComponent comp = getComponent(compID);
+		LocalScaComponent comp;
+		try {
+			comp = getComponent(compID);
+		} catch (CoreException e2) {
+			throw new CreateResourceFailure(ErrorNumberType.CF_ENODEV, "Failed to find component.");
+		}
 		if (comp != null) {
 			return comp.getObj();
 		}
@@ -168,7 +183,14 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 		switch (type) {
 		case DEVICE:
 		case SERVICE:
-			LocalScaDeviceManager devMgr = ScaDebugPlugin.getInstance().getLocalSca().getSandboxDeviceManager();
+			LocalSca sandbox;
+			try {
+				sandbox = ScaDebugPlugin.getInstance().getLocalSca(null);
+			} catch (CoreException e1) {
+				throw new CreateResourceFailure(ErrorNumberType.CF_ENODEV, "Failed to get sandbox.");
+			}
+			
+			LocalScaDeviceManager devMgr = sandbox.getSandboxDeviceManager();
 			try {
 				return ((LocalScaDeviceManagerImpl) devMgr).launch(compID, qualifiers, spdURI.toString(), implementationID, launchMode);
 			} catch (ExecuteFail e) {
@@ -179,7 +201,8 @@ public class SpdResourceFactory extends AbstractResourceFactory {
 		}
 
 		try {
-			final LocalScaComponent component = getChalkboard().launch(compID, params.toArray(new DataType[params.size()]), spdURI.trimFragment(),
+			LocalScaWaveform chalkboard = getChalkboard(null);
+			final LocalScaComponent component = chalkboard.launch(compID, params.toArray(new DataType[params.size()]), spdURI.trimFragment(),
 				implementationID, launchMode);
 			this.launched.add(component);
 			return component.fetchNarrowedObject(null);

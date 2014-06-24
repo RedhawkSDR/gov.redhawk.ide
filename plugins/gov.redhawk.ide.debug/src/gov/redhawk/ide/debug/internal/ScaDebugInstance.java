@@ -66,21 +66,24 @@ import ExtendedCF.SandboxPOATie;
  */
 public enum ScaDebugInstance {
 	INSTANCE;
-	private LocalScaImpl localSca;
-	private TransactionalEditingDomain editingDomain;
-	private Resource resource;
-
-	private ScaDebugInstance() {
-		this.editingDomain = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(ScaPlugin.EDITING_DOMAIN_ID);
-		resource = editingDomain.getResourceSet().createResource(URI.createURI("virtual://localSca.scaDebug"));
-		this.localSca = (LocalScaImpl) ScaDebugFactory.eINSTANCE.createLocalSca();
-		editingDomain.getCommandStack().execute(new ScaModelCommand() {
+	private static final LocalScaImpl SANDBOX = (LocalScaImpl) ScaDebugFactory.eINSTANCE.createLocalSca();
+	private static final TransactionalEditingDomain SANDBOX_DOMAIN;
+	private static final Resource SANDBOX_RESOURCE;
+	static {
+		SANDBOX_DOMAIN = TransactionalEditingDomain.Registry.INSTANCE.getEditingDomain(ScaPlugin.EDITING_DOMAIN_ID);
+		SANDBOX_RESOURCE = SANDBOX_DOMAIN.getResourceSet().createResource(URI.createURI("virtual://localSca.scaDebug"));
+		SANDBOX_DOMAIN.getCommandStack().execute(new ScaModelCommand() {
 
 			@Override
 			public void execute() {
-				resource.getContents().add(ScaDebugInstance.this.localSca);
+				SANDBOX_RESOURCE.getContents().add(SANDBOX);
 			}
 		});
+	}
+	
+	
+
+	private ScaDebugInstance() {
 		Job job = new Job("Init Local SCA") {
 
 			@Override
@@ -97,44 +100,47 @@ public enum ScaDebugInstance {
 	}
 
 	public boolean isInit() {
-		return localSca.getSandbox() != null;
+		return SANDBOX.getSandbox() != null;
 	}
 
 	public synchronized void init(IProgressMonitor monitor) throws CoreException {
+		if (SANDBOX.isDisposed()) {
+			throw new CoreException(new Status(Status.ERROR, ScaDebugPlugin.ID, "Sandbox is disposed.", null));
+		}
 		if (isInit()) {
 			return;
 		}
 
-		final SandboxImpl impl = new SandboxImpl(localSca);
-		if (localSca.getSession() == null) {
+		final SandboxImpl impl = new SandboxImpl(SANDBOX);
+		if (SANDBOX.getSession() == null) {
 			return;
 		}
-		final POA poa = localSca.getSession().getPOA();
+		final POA poa = SANDBOX.getSession().getPOA();
 		final Sandbox sandboxRef = ScaDebugInstance.createSandboxRef(poa, impl);
 		final LocalFileManager fileManagerRef = ScaDebugInstance.createFileManager(poa);
 
-		editingDomain.getCommandStack().execute(new ScaModelCommand() {
+		SANDBOX_DOMAIN.getCommandStack().execute(new ScaModelCommand() {
 
 			@Override
 			public void execute() {
 				final NotifyingNamingContext rootContext = ScaDebugInstance.createRootContext(poa);
-				final LocalScaWaveform sandboxWaveformRef = ScaDebugInstance.createSandboxWaveform(editingDomain.getResourceSet(), rootContext);
-				final LocalScaDeviceManager sandboxDeviceManagerRef = ScaDebugInstance.createSandboxDeviceManager(editingDomain.getResourceSet(),
+				final LocalScaWaveform sandboxWaveformRef = ScaDebugInstance.createSandboxWaveform(SANDBOX_DOMAIN.getResourceSet(), rootContext);
+				final LocalScaDeviceManager sandboxDeviceManagerRef = ScaDebugInstance.createSandboxDeviceManager(SANDBOX_DOMAIN.getResourceSet(),
 					fileManagerRef.getObj(), rootContext);
-				localSca.setSandbox(impl);
-				localSca.init(sandboxRef, fileManagerRef, sandboxWaveformRef, sandboxDeviceManagerRef, rootContext);
+				SANDBOX.setSandbox(impl);
+				SANDBOX.init(sandboxRef, fileManagerRef, sandboxWaveformRef, sandboxDeviceManagerRef, rootContext);
 			}
 		});
 
 		try {
-			localSca.refresh(monitor, RefreshDepth.FULL);
+			SANDBOX.refresh(monitor, RefreshDepth.FULL);
 		} catch (InterruptedException e) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to refresh local sca.", e));
 		}
 	}
 
 	public LocalSca getLocalSca() {
-		return this.localSca;
+		return SANDBOX;
 	}
 
 	private static LocalFileManager createFileManager(final POA poa) throws CoreException {

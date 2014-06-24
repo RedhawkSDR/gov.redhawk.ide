@@ -15,9 +15,12 @@ import gov.redhawk.ide.debug.internal.LauncherVariableRegistry;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.annotation.Nullable;
 import org.jacorb.JacorbActivator;
 import org.osgi.framework.BundleContext;
 
@@ -56,13 +59,34 @@ public class ScaDebugPlugin extends Plugin {
 		return ScaDebugInstance.INSTANCE.getLocalSca();
 	}
 	
+	/**
+	 * Get the instance of the Local SCA tool.  This method block until the tool is available.
+	 * @since 6.0
+	 */
+	public LocalSca getLocalSca(IProgressMonitor monitor) throws CoreException {
+		ScaDebugInstance.INSTANCE.init(null);
+		return ScaDebugInstance.INSTANCE.getLocalSca();
+	}
+	
 
 	/**
+	 * Return the sandbox object.  It is recommend to use {@link #getSandbox(IProgressMonitor)} instead. Since this may return null.
 	 * @since 4.0
+	 * @return Sandbox may be null if the sandbox is not yet initialized
 	 */
+	@Nullable
 	public Sandbox getSandbox() {
 		return getLocalSca().getObj();
 	}
+	
+	/**
+	 * @since 6.0
+	 * @return Sandbox may be null if the sandbox is not yet initialized
+	 */
+	public Sandbox getSandbox(IProgressMonitor monitor) throws CoreException {
+		return getLocalSca(monitor).getObj();
+	}
+	
 
 	public static ScaDebugPlugin getInstance() {
 		return ScaDebugPlugin.instance;
