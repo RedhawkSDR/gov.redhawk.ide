@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.ui;
 
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.snapshot.writer.IDataWriter;
 import gov.redhawk.ide.snapshot.writer.IDataWriterDesc;
 import gov.redhawk.ide.snapshot.writer.IDataWriterSettings;
