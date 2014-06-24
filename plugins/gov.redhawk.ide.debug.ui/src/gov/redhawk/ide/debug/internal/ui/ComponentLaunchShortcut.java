@@ -94,7 +94,7 @@ public class ComponentLaunchShortcut implements ILaunchShortcut {
 			
 			DebugUITools.launch(config, mode);
 		} catch (final CoreException e) {
-			final Status status = new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException());
+			final Status status = new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e.getStatus().getMessage(), e);
 			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
 		}
 	}

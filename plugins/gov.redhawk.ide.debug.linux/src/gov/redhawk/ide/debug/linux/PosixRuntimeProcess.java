@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.linux;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -39,6 +38,7 @@ public class PosixRuntimeProcess extends RuntimeProcess {
 		if (isTerminated()) {
 			return;
 		}
+		Exception error = null;
 		try {
 			ProcessTree tree = new ProcessTree();
 			Process p = getSystemProcess();
@@ -49,22 +49,12 @@ public class PosixRuntimeProcess extends RuntimeProcess {
 			pidField.setAccessible(true);
 			int pid = pidField.getInt(p);
 			tree.killAll(String.valueOf(pid));
-			super.terminate();
-		} catch (SecurityException e) {
-			super.terminate();
-			throw new DebugException(new Status(Status.ERROR, "gov.redhawk.ide.debug.linux", "gov.redhawk.ide.debug.linux", e));
-		} catch (NoSuchFieldException e) {
-			super.terminate();
-			throw new DebugException(new Status(Status.ERROR, "gov.redhawk.ide.debug.linux", "Failed to clean up process ", e));
-		} catch (IllegalArgumentException e) {
-			super.terminate();
-			throw new DebugException(new Status(Status.ERROR, "gov.redhawk.ide.debug.linux", "Failed to clean up process ", e));
-		} catch (IllegalAccessException e) {
-			super.terminate();
-			throw new DebugException(new Status(Status.ERROR, "gov.redhawk.ide.debug.linux", "Failed to clean up process ", e));
-		} catch (IOException e) {
-			super.terminate();
-			throw new DebugException(new Status(Status.ERROR, "gov.redhawk.ide.debug.linux", "Failed to clean up process ", e));
+		} catch (Exception e) { // SUPPRESS CHECKSTYLE Catch system errors
+			error = e;
+		} 
+		super.terminate();
+		if (error != null) {
+			throw new DebugException(new Status(Status.ERROR, "gov.redhawk.ide.debug.linux", "Failed to terminate all sub processes", error));
 		}
 		
 	}

@@ -12,6 +12,7 @@
 package gov.redhawk.ide.debug.impl;
 
 import gov.redhawk.ide.debug.LocalLaunch;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -45,7 +46,7 @@ public class TerminateJob extends Job {
 			try {
 				this.launch.getLaunch().terminate();
 			} catch (final DebugException e) {
-				return e.getStatus();
+				return new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to terminate.", e);
 			}
 		}
 		return Status.OK_STATUS;

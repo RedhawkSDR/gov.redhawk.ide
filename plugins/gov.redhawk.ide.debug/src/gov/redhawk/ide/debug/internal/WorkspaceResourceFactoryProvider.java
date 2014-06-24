@@ -173,7 +173,7 @@ public class WorkspaceResourceFactoryProvider extends AbstractResourceFactoryPro
 				}
 			});
 		} catch (final CoreException e) {
-			ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
+			ScaDebugPlugin.getInstance().getLog().log(new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Error while to creating WorkspaceResourceFactoryProvider", e));
 		}
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this.listener,
 		                                                         IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE

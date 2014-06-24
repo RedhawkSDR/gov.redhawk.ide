@@ -12,14 +12,12 @@ package gov.redhawk.ide.debug.internal.ui.diagram;
 
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
 import gov.redhawk.ide.sad.internal.ui.editor.SadEditor;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.model.sca.RefreshDepth;
-import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.sad.diagram.part.SadDiagramEditor;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
@@ -40,7 +38,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.ui.URIEditorInput;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -81,30 +78,7 @@ public class LocalScaEditor extends SadEditor {
 			sad = SoftwareAssembly.Util.getSoftwareAssembly(super.getMainResource());
 		}
 
-		if (waveform == null && isLocalSca) {
-			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
-			localSca.eAdapters().add(new AdapterImpl() {
-				@Override
-				public void notifyChanged(Notification msg) {
-					switch (msg.getFeatureID(LocalSca.class)) {
-					case ScaDebugPackage.LOCAL_SCA__SANDBOX_WAVEFORM:
-						if (msg.getNewValue() instanceof ScaWaveform) {
-							waveform = ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform();
-							initModelMap();
-							localSca.eAdapters().remove(this);
-						}
-						break;
-					default:
-						break;
-					}
-
-				}
-
-			});
-		} else {
-			initModelMap();
-		}
-
+		initModelMap();
 	}
 
 	@SuppressWarnings("restriction")
@@ -147,6 +121,32 @@ public class LocalScaEditor extends SadEditor {
 				}
 
 				this.waveform = localSca.getSandboxWaveform();
+				if (waveform == null) {
+					ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
+					try {
+						dialog.run(true, true, new IRunnableWithProgress() {
+							
+							@Override
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								monitor.beginTask("Starting Sandbox...", IProgressMonitor.UNKNOWN);
+								try {
+									ScaDebugPlugin.getInstance().getLocalSca(monitor);
+								} catch (CoreException e) {
+									throw new InvocationTargetException(e);
+								}
+								
+							}
+						});
+					} catch (InvocationTargetException e) {
+						throw new IllegalStateException("Failed to setup sandbox", e);
+					} catch (InterruptedException e) {
+						throw new IllegalStateException("Sandbox setup canceled, can not load editor.");
+					}
+					this.waveform = localSca.getSandboxWaveform();
+					if (waveform == null) {
+						throw new IllegalStateException("Failed to setup sandbox, null waveform.", null);
+					}
+				}
 			}
 		} else {
 			throw new IllegalStateException("Sandbox Editor opened on invalid input " + input);

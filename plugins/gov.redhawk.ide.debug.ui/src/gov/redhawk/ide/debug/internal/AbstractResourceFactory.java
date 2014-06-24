@@ -10,11 +10,14 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
+import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.model.sca.ScaComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.eclipse.core.runtime.CoreException;
 
 import CF.DataType;
 import CF.ErrorNumberType;
@@ -39,8 +42,14 @@ public abstract class AbstractResourceFactory implements ResourceFactoryOperatio
 		if (!resourceId.endsWith(identifier())) {
 			resourceId = resourceId + ":" + identifier();
 		}
+		LocalSca localSca;
+		try {
+			localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
+		} catch (CoreException e) {
+			throw new CreateResourceFailure(ErrorNumberType.CF_ENODEV, "Failed to find sandbox.");
+		}
 
-		for (ScaComponent component : ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform().getComponents()) {
+		for (ScaComponent component : localSca.getSandboxWaveform().getComponents()) {
 			if (component.getIdentifier().equals(resourceId)) {
 				return component.getObj();
 			}
@@ -77,7 +86,14 @@ public abstract class AbstractResourceFactory implements ResourceFactoryOperatio
 	 */
 	@Override
 	public void releaseResource(final String resourceId) throws InvalidResourceId {
-		for (ScaComponent component : ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform().getComponents()) {
+		LocalSca sandbox;
+		try {
+			sandbox = ScaDebugPlugin.getInstance().getLocalSca(null);
+		} catch (CoreException e1) {
+			throw new InvalidResourceId();
+		}
+		
+		for (ScaComponent component : sandbox.getSandboxWaveform().getComponents()) {
 			if (component.getIdentifier().equals(resourceId)) {
 				try {
 					component.releaseObject();

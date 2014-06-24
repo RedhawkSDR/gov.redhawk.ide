@@ -94,7 +94,7 @@ public class SnapshotWizard extends Wizard {
 				}
 			}
 		} catch (CoreException e) {
-			IStatus status = e.getStatus();
+			IStatus status = new Status(e.getStatus().getSeverity(), SnapshotActivator.PLUGIN_ID, e.getLocalizedMessage(), e);
 			StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
 			return false;
 		}

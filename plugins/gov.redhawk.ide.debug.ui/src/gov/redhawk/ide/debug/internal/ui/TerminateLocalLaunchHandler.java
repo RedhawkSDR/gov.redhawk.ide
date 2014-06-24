@@ -110,7 +110,7 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 					try {
 						localLaunch.getLaunch().terminate();
 					} catch (final DebugException e) {
-						return e.getStatus();
+						return new Status(e.getStatus().getSeverity(), ScaDebugUiPlugin.PLUGIN_ID, "Failed to terminate.", e);
 					}
 					return Status.OK_STATUS;
 				}
@@ -133,7 +133,7 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 						}
 						localScaWaveform.releaseObject();
 					} catch (final DebugException e) {
-						return e.getStatus();
+						return new Status(e.getStatus().getSeverity(), ScaDebugUiPlugin.PLUGIN_ID, "Failed to terminate " + localScaWaveform.getName(), e);
 					} catch (ReleaseError e) {
 						return new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to terminate: " + localScaWaveform.getName() + " "
 							+ Arrays.toString(e.errorMessages), e);

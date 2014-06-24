@@ -1339,7 +1339,7 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 			String message = DataTransferMessages.WizardExternalProjectImportPage_errorMessage;
 			IStatus status;
 			if (t instanceof CoreException) {
-				status = ((CoreException) t).getStatus();
+				status = new Status(((CoreException) t).getStatus().getSeverity(), IDEWorkbenchPlugin.IDE_WORKBENCH, t.getLocalizedMessage(), t);
 			} else {
 				status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, message, t);
 			}

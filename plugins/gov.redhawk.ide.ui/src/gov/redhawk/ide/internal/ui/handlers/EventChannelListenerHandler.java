@@ -99,7 +99,7 @@ public class EventChannelListenerHandler extends AbstractHandler {
 									}, monitor);
 									return Status.CANCEL_STATUS;
 								} catch (CoreException e1) {
-									return e1.getStatus();
+									return new Status(e1.getStatus().getSeverity(), RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to : " + name, e1);
 								} catch (InterruptedException e1) {
 									return Status.CANCEL_STATUS;
 								}
@@ -120,7 +120,7 @@ public class EventChannelListenerHandler extends AbstractHandler {
 					final ScaDomainManager domMgr = ScaEcoreUtils.getEContainerOfType(channel, ScaDomainManager.class);
 
 					if (domMgr != null) {
-						String secondaryId = domMgr.getName() + "/" + channel.getName();
+						final String secondaryId = domMgr.getName() + "/" + channel.getName();
 						try {
 							final EventView finalView = showView(page, view, isMany, secondaryId);
 							Job connectJob = new Job("Connecting to : " + secondaryId) {
@@ -139,7 +139,7 @@ public class EventChannelListenerHandler extends AbstractHandler {
 										}, monitor);
 										return Status.OK_STATUS;
 									} catch (CoreException e1) {
-										return e1.getStatus();
+										return new Status(e1.getStatus().getSeverity(), RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to : " + secondaryId, e1);
 									} catch (InterruptedException e1) {
 										return Status.CANCEL_STATUS;
 									}

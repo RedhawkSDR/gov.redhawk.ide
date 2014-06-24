@@ -145,7 +145,7 @@ public class DeleteHandler extends AbstractHandler {
 					final IFileStore parent = efsStore.getParent();
 					parent.delete(EFS.NONE, monitor);
 				} catch (final CoreException e) {
-					return e.getStatus();
+					return new Status(e.getStatus().getSeverity(), SdrUiPlugin.PLUGIN_ID, "Failed to delete " + name, e);
 				}
 				return Status.OK_STATUS;
 			}

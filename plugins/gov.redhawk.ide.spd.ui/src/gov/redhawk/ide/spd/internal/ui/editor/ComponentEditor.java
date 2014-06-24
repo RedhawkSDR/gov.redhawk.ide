@@ -759,7 +759,7 @@ public class ComponentEditor extends SCAFormEditor {
 										}
 									}
 								} catch (final CoreException e) {
-									return e.getStatus();
+									return new Status(e.getStatus().getSeverity(), ComponentUiPlugin.PLUGIN_ID, "Failed to delete referenced files.", e);
 								}
 
 								return Status.OK_STATUS;

@@ -15,6 +15,7 @@ import gov.redhawk.bulkio.util.AbstractUberBulkIOPort;
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.bulkio.util.BulkIOUtilActivator;
 import gov.redhawk.datalist.ui.DataCollectionSettings;
+import gov.redhawk.datalist.ui.DataListPlugin;
 import gov.redhawk.datalist.ui.Sample;
 import gov.redhawk.datalist.ui.views.OptionsComposite.CaptureMethod;
 import gov.redhawk.model.sca.ScaUsesPort;
@@ -70,7 +71,7 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 					BulkIOUtilActivator.getBulkIOPortConnectionManager().connect(ior2, type2, DataBuffer.this);
 				}
 			} catch (CoreException e) {
-				return e.getStatus();
+				return new Status(e.getStatus().getSeverity(), DataListPlugin.PLUGIN_ID, "Failed to connect port.", e);
 			}
 
 			// converting to seconds (double)

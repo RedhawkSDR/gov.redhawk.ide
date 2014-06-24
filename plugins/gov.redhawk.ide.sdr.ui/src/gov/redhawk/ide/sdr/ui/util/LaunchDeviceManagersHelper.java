@@ -85,7 +85,7 @@ public class LaunchDeviceManagersHelper {
 			}
 			return Status.OK_STATUS;
 		} catch (final CoreException e) {
-			return e.getStatus();
+			return new Status(e.getStatus().getSeverity(), SdrUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e);
 		}
 	}
 

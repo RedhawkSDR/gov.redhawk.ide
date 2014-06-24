@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -109,7 +110,7 @@ public enum LaunchConfigurationFactoryRegistry implements ILaunchConfigurationFa
 					this.descriptors.add(descriptor);
 					tracker.registerObject(extension, descriptor, IExtensionTracker.REF_SOFT);
 				} catch (final CoreException e) {
-					ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
+					ScaDebugPlugin.getInstance().getLog().log(new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to add extension.", e));
 				}
 
 			}
