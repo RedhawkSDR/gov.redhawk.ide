@@ -74,9 +74,8 @@ public class ScaWaveformProjectAssemblyControllerWizardPage extends WizardPage {
 		factory.addAdapterFactory(new SpdItemProviderAdapterFactory());
 
 		this.tableViewer.setContentProvider(new ArrayContentProvider());
-		this.tableViewer.setLabelProvider(new DecoratingLabelProvider(new AdapterFactoryLabelProvider(factory), PlatformUI.getWorkbench()
-		        .getDecoratorManager()
-		        .getLabelDecorator()) {
+		this.tableViewer.setLabelProvider(new DecoratingLabelProvider(new AdapterFactoryLabelProvider(factory),
+			PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()) {
 
 			@Override
 			public String getText(final Object element) {
@@ -129,7 +128,9 @@ public class ScaWaveformProjectAssemblyControllerWizardPage extends WizardPage {
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				@Override
 				public void run() {
-					tableViewer.setInput(ScaWaveformProjectAssemblyControllerWizardPage.this.components);
+					if (!tableViewer.getControl().isDisposed()) {
+						tableViewer.setInput(ScaWaveformProjectAssemblyControllerWizardPage.this.components);
+					}
 				}
 			});
 		}
