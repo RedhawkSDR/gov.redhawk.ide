@@ -36,6 +36,7 @@ public class WaveformComponentTests {
 	@Test
 	public void checkComponentPictogram() {
 		CreateNewWaveform.createNewWaveform(bot, "IDE-726-Test");
+//		CreateNewWaveform.createNewWaveformWithAssemblyController(bot, "IDE-726-Test", null);
 		// TODO call static method to open SAD editor
 		// TODO call static method to add component from palette
 		// TODO select all of the expected components for make sure they were created
