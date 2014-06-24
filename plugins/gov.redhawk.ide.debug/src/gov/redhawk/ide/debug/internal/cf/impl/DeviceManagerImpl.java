@@ -372,7 +372,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 			}
 			retVal = launch(null, compId, createExecParamStr(execParams), uri, implId, mode);
 		} catch (final CoreException e) {
-			ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
+			ScaDebugPlugin.getInstance().getLog().log(new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to launch device.", e));
 			throw new ExecuteFail(ErrorNumberType.CF_EFAULT, e.getStatus().getMessage());
 		}
 		return retVal;

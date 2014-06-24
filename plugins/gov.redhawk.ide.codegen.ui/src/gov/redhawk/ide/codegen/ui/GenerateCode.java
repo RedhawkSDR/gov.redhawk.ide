@@ -148,7 +148,7 @@ public final class GenerateCode {
 						Set<FileStatus> resultSet = getFilesToGenerate(monitor, impl);
 						implMap.put(impl, resultSet);
 					} catch (CoreException e) {
-						return e.getStatus();
+						return new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to calculate files to generate", e);
 					}
 				}
 				WorkbenchJob checkFilesJob = new WorkbenchJob("Check files") {

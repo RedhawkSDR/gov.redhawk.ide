@@ -17,6 +17,7 @@ import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
 import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
+import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -33,6 +34,7 @@ import mil.jpeojtrs.sca.util.CorbaUtils;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.URI;
@@ -201,7 +203,7 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 			try {
 				return new DelayedEditorInput((ScaWaveform) contents);
 			} catch (CoreException e) {
-				ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
+				ScaDebugUiPlugin.getDefault().getLog().log(new Status(e.getStatus().getSeverity(), ScaDebugUiPlugin.PLUGIN_ID, "Failed to get Editor Input for " + contents, e));
 				return null;
 			}
 		}

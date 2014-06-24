@@ -191,7 +191,7 @@ public class SadOverviewPage extends AbstractOverviewPage {
 				LaunchUtil.launch(newConfig, mode);
 			}
 		} catch (final CoreException e) {
-			final Status status = new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, e.getStatus().getMessage(), e.getStatus().getException());
+			final Status status = new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e);
 			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
 		}
 	}

@@ -98,7 +98,7 @@ public class CorbaDataReceiver extends AbstractUberBulkIOPort implements IDataRe
 		try {
 			connect(child);
 		} catch (CoreException e) {
-			return e.getStatus();
+			return new Status(e.getStatus().getSeverity(), SnapshotActivator.PLUGIN_ID, e.getLocalizedMessage(), e);
 		}
 
 		child = subMonitor.newChild(5);

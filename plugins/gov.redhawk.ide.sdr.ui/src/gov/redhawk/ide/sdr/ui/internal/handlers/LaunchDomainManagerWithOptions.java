@@ -114,7 +114,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 						return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Refusing to launch domain that already exists on name server");
 					}
 				} catch (CoreException e) {
-					return e.getStatus();
+					return new Status(e.getStatus().getSeverity(), SdrUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e);
 				} catch (InterruptedException e) {
 					return Status.CANCEL_STATUS;
 				}

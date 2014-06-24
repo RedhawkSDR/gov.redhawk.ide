@@ -91,7 +91,7 @@ public enum ScaDebugInstance {
 				try {
 					init(monitor);
 				} catch (CoreException e) {
-					return e.getStatus();
+					return new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed in initialize Sandbox.", e);
 				}
 				return Status.OK_STATUS;
 			}

@@ -714,7 +714,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			}
 			return Status.OK_STATUS;
 		} catch (final CoreException e) {
-			return e.getStatus();
+			return new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, "Failed to load IDL Library", e);
 		}
 		// BEGIN GENERATED CODE
 	}
@@ -726,7 +726,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			try {
 				devRoot = EFS.getStore(java.net.URI.create(getDevFileSystemRoot().toString()));
 			} catch (CoreException e) {
-				return e.getStatus();
+				return new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, "Failed to load dev file system " + getDevFileSystemRoot(), e);
 			}
 			if (!devRoot.fetchInfo().exists()) {
 				// This isn't necessarily an error, since the SDR doesn't have to contain a dev file system
@@ -752,7 +752,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 					return processStore(editingDomain, domRoot, monitor);
 				}
 			} catch (CoreException e) {
-				return e.getStatus();
+				return new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, "Failed to load dom file system " + getDomFileSystemRoot(), e);
 			}
 		} else {
 			return new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, "SDR Domain Root is 'null'", null);
@@ -775,7 +775,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 				return Status.OK_STATUS;
 			}
 		} catch (CoreException e) {
-			return e.getStatus();
+			return new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, "Failed to process resource " + resource, e);
 		}
 		// BEGIN GENERATED CODE
 	}
@@ -786,7 +786,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		try {
 			children = resource.members();
 		} catch (CoreException e) {
-			return e.getStatus();
+			return new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, "Failed to process resource " + resource, e);
 		}
 		monitor.beginTask("Processing directory " + resource.getName(), children.length);
 		CustomMultiStatus status = new CustomMultiStatus(IdeSdrActivator.PLUGIN_ID, Status.OK, "Failed to process resource : " + resource.getName(), null);
@@ -892,7 +892,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			try {
 				getIdlLibrary().load(subMonitor.newChild(1));
 			} catch (CoreException e) {
-				IdeSdrActivator.getDefault().getLog().log(e.getStatus());
+				IdeSdrActivator.getDefault().getLog().log(new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, "Failed to reload sdr", e));
 			}
 		}
 		subMonitor.done();
@@ -1230,7 +1230,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		try {
 			childStores = parent.childStores(EFS.NONE, subMonitor.newChild(10)); // SUPPRESS CHECKSTYLE MAGIC NUMBER
 		} catch (CoreException e) {
-			return e.getStatus();
+			return new Status(e.getStatus().getSeverity(), IdeSdrActivator.PLUGIN_ID, "Failed to process directory " + parent, e);
 		}
 
 		final SubMonitor loopProgress = subMonitor.newChild(90).setWorkRemaining(childStores.length); // SUPPRESS CHECKSTYLE MAGIC NUMBER

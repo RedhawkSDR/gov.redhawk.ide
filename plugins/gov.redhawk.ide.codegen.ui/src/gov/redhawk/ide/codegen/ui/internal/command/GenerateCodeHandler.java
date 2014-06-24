@@ -54,6 +54,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
@@ -108,7 +109,9 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 						try {
 							saveAndGenerate(spd, project, HandlerUtil.getActiveShell(event));
 						} catch (CoreException e) {
-							StatusManager.getManager().handle(e.getStatus(), StatusManager.SHOW | StatusManager.LOG);
+							StatusManager.getManager().handle(
+								new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
+								StatusManager.SHOW | StatusManager.LOG);
 							return null;
 						}
 						return null;
@@ -121,7 +124,9 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 							try {
 								saveAndGenerate(f, f.getProject(), HandlerUtil.getActiveShell(event));
 							} catch (CoreException e) {
-								StatusManager.getManager().handle(e.getStatus(), StatusManager.SHOW | StatusManager.LOG);
+								StatusManager.getManager().handle(
+									new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
+									StatusManager.SHOW | StatusManager.LOG);
 								return null;
 							}
 							return null;
@@ -139,7 +144,9 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 						try {
 							saveAndGenerate(obj, ((IFile) obj).getProject(), HandlerUtil.getActiveShell(event));
 						} catch (CoreException e) {
-							StatusManager.getManager().handle(e.getStatus(), StatusManager.SHOW | StatusManager.LOG);
+							StatusManager.getManager().handle(
+								new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
+								StatusManager.SHOW | StatusManager.LOG);
 							return null;
 						}
 					} else if (obj instanceof Implementation) {
@@ -151,7 +158,9 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 							try {
 								saveAndGenerate(impl, ((IFile) spdFile).getProject(), HandlerUtil.getActiveShell(event));
 							} catch (CoreException e) {
-								StatusManager.getManager().handle(e.getStatus(), StatusManager.SHOW | StatusManager.LOG);
+								StatusManager.getManager().handle(
+									new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
+									StatusManager.SHOW | StatusManager.LOG);
 								return null;
 							}
 						}

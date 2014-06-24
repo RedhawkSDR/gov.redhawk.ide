@@ -177,7 +177,7 @@ public class ModelMap {
 				} catch (final CoreException e) {
 					delete(comp);
 					nodes.remove(nodeMap.getKey());
-					return e.getStatus();
+					return new Status(e.getStatus().getSeverity(), LocalScaDiagramPlugin.PLUGIN_ID, "Failed to launch " + comp.getUsageName(), e);
 				} finally {
 					if (nodes.get(nodeMap.getKey()) == null) {
 						try {

@@ -1027,7 +1027,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			this.streams.getOutStream().println("Done resetting component " + oldComponent.getName());
 			return retVal.getObj();
 		} catch (final CoreException e) {
-			ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
+			ScaDebugPlugin.getInstance().getLog().log(new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to reset resource.", e));
 			logException(e);
 			throw new ExecuteFail(ErrorNumberType.CF_EFAULT, e.getStatus().getMessage());
 		}
@@ -1105,7 +1105,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 			retVal = launch(null, compId, createExecParamStr(execParams), uri, implId, mode);
 		} catch (final CoreException e) {
-			ScaDebugPlugin.getInstance().getLog().log(e.getStatus());
+			ScaDebugPlugin.getInstance().getLog().log(new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to launch resource.", e));
 			logException(e);
 			throw new ExecuteFail(ErrorNumberType.CF_EFAULT, e.getStatus().getMessage());
 		}

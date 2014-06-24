@@ -215,7 +215,7 @@ public final class LaunchUtil {
 				try {
 					config.launch(mode, monitor, false);
 				} catch (final CoreException e) {
-					return e.getStatus();
+					return new Status(e.getStatus().getSeverity(), ScaDebugUiPlugin.PLUGIN_ID, "Failed to launch " + config.getName(), e);
 				}
 				return Status.OK_STATUS;
 			}

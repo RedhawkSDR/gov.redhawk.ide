@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.codegen.util;
 
 import gov.redhawk.ide.RedhawkIdeActivator;
@@ -84,13 +84,13 @@ public abstract class ProjectCreator {
 	 * @param projectLocation the location on disk to create the project
 	 * @param additionalNatureIDs The nature ID(s) (if any) to add to the project besides the {@link ScaProjectNature}
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * to call done() on the given monitor. Accepts null, indicating that no progress should be
+	 * reported and that the operation cannot be canceled.
 	 * @return The newly created project
 	 * @throws CoreException A problem occurs while creating the project
 	 */
-	protected static IProject createEmptyProject(final String projectName, final java.net.URI projectLocation, final String[] additionalNatureIDs, final IProgressMonitor monitor)
-	        throws CoreException {
+	protected static IProject createEmptyProject(final String projectName, final java.net.URI projectLocation, final String[] additionalNatureIDs,
+		final IProgressMonitor monitor) throws CoreException {
 		final SubMonitor progress = SubMonitor.convert(monitor, "Creating SCA Project", 3);
 
 		Set<String> natureIds = new HashSet<String>();
@@ -105,7 +105,7 @@ public abstract class ProjectCreator {
 
 		// Create an empty project description
 		final IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(project.getName());
-		
+
 		if (projectLocation != null) {
 			description.setLocationURI(projectLocation);
 		}
@@ -129,7 +129,7 @@ public abstract class ProjectCreator {
 	 * @param localfilename name of the file to find
 	 * @param filters filter for file types matching the desired file
 	 * @return Path for the file found, specified in a dialog or null if no file
-	 *         was found
+	 * was found
 	 * @since 10.0
 	 */
 	public static IPath findLocalFile(final IPath spdFile, final IPath localfilename, final String[] filters) {
@@ -144,17 +144,17 @@ public abstract class ProjectCreator {
 			return localFile;
 		}
 
-		//		Disable UI code
-		//		// Now ask the user to locate it for us
-		//		final FileDialog dialog = new FileDialog(this.getShell(), SWT.OPEN);
-		//		dialog.setFilterExtensions(filters);
-		//		dialog.setFileName(localfilename.lastSegment());
-		//		dialog.setText("Locate missing file " + localfilename.lastSegment());
-		//		final String selection = dialog.open();
+		// Disable UI code
+		// // Now ask the user to locate it for us
+		// final FileDialog dialog = new FileDialog(this.getShell(), SWT.OPEN);
+		// dialog.setFilterExtensions(filters);
+		// dialog.setFileName(localfilename.lastSegment());
+		// dialog.setText("Locate missing file " + localfilename.lastSegment());
+		// final String selection = dialog.open();
 		//
-		//		if (selection != null) {
-		//			return new Path(selection);
-		//		}
+		// if (selection != null) {
+		// return new Path(selection);
+		// }
 
 		return null;
 	}
@@ -166,12 +166,13 @@ public abstract class ProjectCreator {
 	 * @param project The project to generate files in
 	 * @param existingFilePath The existing file's path
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
+	 * to call done() on the given monitor. Accepts null, indicating that no progress should be
+	 * reported and that the operation cannot be canceled.
 	 * @return The newly created SCA file
 	 * @throws CoreException An error occurs while generating files
 	 */
-	public static IFile importFile(final IProject project, IFile destination, final IPath existingFilePath, final IProgressMonitor monitor) throws CoreException {
+	public static IFile importFile(final IProject project, IFile destination, final IPath existingFilePath, final IProgressMonitor monitor)
+		throws CoreException {
 		final SubMonitor progress = SubMonitor.convert(monitor, "Importing SCA file", 2);
 
 		final File existingFile = existingFilePath.toFile();
@@ -194,7 +195,7 @@ public abstract class ProjectCreator {
 
 		return destination;
 	}
-	
+
 	/**
 	 * 
 	 * Copies existing SPD, PRF and SCD files into an empty SCA resource project. Should be invoked in the
@@ -205,12 +206,12 @@ public abstract class ProjectCreator {
 	 * @param implList List of implementations
 	 * @param importedSettingsMap Mapping of imported implementations to their settings
 	 * @param monitor The progress monitor
-	 * @param id 
+	 * @param id
 	 * @return spdFile Returns a copy of the locally imported SPD file
 	 * @throws CoreException
 	 */
 	public static IFile importFiles(final IProject project, final IPath existingSpdFile, final List<ImplementationAndSettings> implList,
-	        final HashMap<String, Boolean> importedSettingsMap, final IProgressMonitor monitor) throws CoreException {
+		final HashMap<String, Boolean> importedSettingsMap, final IProgressMonitor monitor) throws CoreException {
 		return importFiles(project, existingSpdFile, implList, importedSettingsMap, monitor, null);
 	}
 
@@ -230,9 +231,10 @@ public abstract class ProjectCreator {
 	 * @since 9.1
 	 */
 	public static IFile importFiles(final IProject project, final IPath existingSpdFile, final List<ImplementationAndSettings> implList,
-	        final HashMap<String, Boolean> importedSettingsMap, final IProgressMonitor monitor, String id) throws CoreException {
-		final SubMonitor subMonitor = SubMonitor.convert(monitor, "Importing SCA XML", 7); // SUPPRESS CHECKSTYLE MagicNumber
-		
+		final HashMap<String, Boolean> importedSettingsMap, final IProgressMonitor monitor, String id) throws CoreException {
+		final SubMonitor subMonitor = SubMonitor.convert(monitor, "Importing SCA XML", 7); // SUPPRESS CHECKSTYLE
+																							// MagicNumber
+
 		// Copy the SPD file into the project
 		final IFile spdFile = project.getFile(project.getName() + SpdPackage.FILE_EXTENSION);
 		try {
@@ -270,11 +272,10 @@ public abstract class ProjectCreator {
 					prfFile.create(new FileInputStream(propertyFile.toFile()), true, subMonitor.newChild(1));
 				} catch (final FileNotFoundException e) {
 					throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Referenced PRF File " + propertyFilePath
-					        + " does not exist"));
+						+ " does not exist"));
 				}
 			}
-		}
-		else {
+		} else {
 			subMonitor.notWorked(1);
 		}
 
@@ -293,7 +294,7 @@ public abstract class ProjectCreator {
 					scdFile.create(new FileInputStream(descriptorFile.toFile()), true, subMonitor.newChild(1));
 				} catch (final FileNotFoundException e) {
 					throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Referenced SCD File " + descriptorFilePath
-					        + " does not exist"));
+						+ " does not exist"));
 				}
 			}
 		} else {
@@ -331,7 +332,7 @@ public abstract class ProjectCreator {
 					loopProgress.notWorked(1);
 					continue;
 				}
-				
+
 				loopProgress.setTaskName("Saving " + resource.getURI().lastSegment());
 				resource.save(null);
 				loopProgress.worked(1);
@@ -353,7 +354,7 @@ public abstract class ProjectCreator {
 						break;
 					}
 				}
-				
+
 				final SubMonitor loopProgress2 = loopProgress.newChild(1).setWorkRemaining(3);
 
 				// Add the appropriate nature to the project via the generate
@@ -364,7 +365,8 @@ public abstract class ProjectCreator {
 				CodegenFileHelper.copySourceFiles(existingSpdFile, project, settingsId, loopProgress2.newChild(1));
 
 				// Refresh the output folder
-				project.getFolder(wavedevSettings.getImplSettings().get(settingsId).getOutputDir()).refreshLocal(IResource.DEPTH_INFINITE, loopProgress2.newChild(1));
+				project.getFolder(wavedevSettings.getImplSettings().get(settingsId).getOutputDir()).refreshLocal(IResource.DEPTH_INFINITE,
+					loopProgress2.newChild(1));
 			} else {
 				loopProgress.notWorked(1);
 			}
@@ -379,13 +381,13 @@ public abstract class ProjectCreator {
 	/**
 	 * Makes sure that a project has been cleaned out.
 	 * @param project
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public static void resetProject(final IProject project, final IProgressMonitor monitor) throws CoreException {
 		final SubMonitor progress = SubMonitor.convert(monitor, 1);
-		
+
 		String[] tokens = project.getName().split("\\.");
-		
+
 		final IFile spdFile = project.getFile(tokens[tokens.length - 1] + SpdPackage.FILE_EXTENSION);
 		final URI spdUri = URI.createPlatformResourceURI(spdFile.getFullPath().toString(), true).appendFragment(SoftPkg.EOBJECT_PATH);
 		final IFile waveDevFile = project.getFile(CodegenUtil.getWaveDevSettingsURI(spdUri).lastSegment());
@@ -394,13 +396,13 @@ public abstract class ProjectCreator {
 		} else {
 			progress.setWorkRemaining(1);
 		}
-		
+
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		final Resource waveResource = resourceSet.createResource(URI.createPlatformResourceURI(waveDevFile.getFullPath().toString(), true));
 		final WaveDevSettings wavedevSettings = CodegenFactory.eINSTANCE.createWaveDevSettings();
 		waveResource.getContents().add(wavedevSettings);
-		
-		// Save EMF resources 
+
+		// Save EMF resources
 		try {
 			final SubMonitor loopProgress = progress.newChild(1).setWorkRemaining(resourceSet.getResources().size());
 			for (final Resource resource : resourceSet.getResources()) {
@@ -412,7 +414,7 @@ public abstract class ProjectCreator {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Internal Error", e));
 		}
 	}
-	
+
 	/**
 	 * Establishes initial implementation parameters based on the selected code generator.
 	 * 
@@ -422,7 +424,7 @@ public abstract class ProjectCreator {
 	 */
 	public static void setupImplementation(final SoftPkg softPkg, final Implementation impl, final ImplementationSettings settings) {
 		final ICodeGeneratorDescriptor codeGenDesc = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(settings.getGeneratorId());
-		
+
 		if (codeGenDesc != null) {
 			IScaComponentCodegen generator;
 			try {
@@ -430,10 +432,10 @@ public abstract class ProjectCreator {
 				final Code codeSettings = generator.getInitialCodeSettings(softPkg, settings, impl);
 				impl.setCode(codeSettings);
 			} catch (CoreException e) {
-				RedhawkCodegenActivator.getDefault().getLog().log(e.getStatus());
+				RedhawkCodegenActivator.getDefault().getLog().log(
+					new Status(Status.WARNING, RedhawkCodegenActivator.PLUGIN_ID, "Errors wihle initializing code settings.", e));
 			}
-			
-			
+
 			if (impl.getOs().size() == 0) {
 				for (final IOperatingSystem tempOs : codeGenDesc.getOperatingSystems()) {
 					if (tempOs.isDefault()) {
@@ -459,78 +461,81 @@ public abstract class ProjectCreator {
 			}
 		}
 	}
-	
+
 	/**
 	 * Directly adds an implementation to a {@link SoftPkg}.
 	 * 
-     * The {@link Implementation} will have its {@link Code} entry filled in
+	 * The {@link Implementation} will have its {@link Code} entry filled in
 	 * based on the code generator template specified in {@link ImplementationSettings}.
 	 * <p />
-	 * This should be invoked in the context of a
-	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}. 
+	 * This should be invoked in the context of a {@link org.eclipse.ui.actions.WorkspaceModifyOperation
+	 * WorkspaceModifyOperation}.
 	 * @param project
 	 * @param impl
 	 * @param settings
 	 * @param monitor
-	 * @deprecated This method will be removed in the future.  Use the updated method which takes in the String spdName.
+	 * @deprecated This method will be removed in the future. Use the updated method which takes in the String spdName.
 	 */
 	@Deprecated
-	public static void addImplementation(final IProject project, final Implementation impl, final ImplementationSettings settings, final IProgressMonitor monitor) 
-		throws CoreException {
+	public static void addImplementation(final IProject project, final Implementation impl, final ImplementationSettings settings,
+		final IProgressMonitor monitor) throws CoreException {
 		addImplementation(project, null, impl, settings, monitor);
 	}
-	
+
 	/**
 	 * Directly adds an implementation to a {@link SoftPkg}.
 	 * 
-     * The {@link Implementation} will have its {@link Code} entry filled in
+	 * The {@link Implementation} will have its {@link Code} entry filled in
 	 * based on the code generator template specified in {@link ImplementationSettings}.
 	 * <p />
-	 * This should be invoked in the context of a
-	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
+	 * This should be invoked in the context of a {@link org.eclipse.ui.actions.WorkspaceModifyOperation
+	 * WorkspaceModifyOperation}.
 	 * 
 	 * @param project
 	 * @param impl
 	 * @param command null if the implementation isn't being added within an editor context
 	 * @since 10.0
 	 */
-	public static void addImplementation(final IProject project, final String spdName, final Implementation impl, final ImplementationSettings settings, final IProgressMonitor monitor) 
-	throws CoreException {
-		
-		String spdFileName = (spdName == null) ? project.getName() + SpdPackage.FILE_EXTENSION : spdName + SpdPackage.FILE_EXTENSION; //SUPPRESS CHECKSTYLE AvoidInLine
+	public static void addImplementation(final IProject project, final String spdName, final Implementation impl, final ImplementationSettings settings,
+		final IProgressMonitor monitor) throws CoreException {
+
+		String spdFileName = (spdName == null) ? project.getName() + SpdPackage.FILE_EXTENSION : spdName + SpdPackage.FILE_EXTENSION; // SUPPRESS
+																																		// CHECKSTYLE
+																																		// AvoidInLine
 		final SubMonitor progress = SubMonitor.convert(monitor, 2);
-		
+
 		final IFile spdFile = project.getFile(spdFileName);
 		final URI spdUri = URI.createPlatformResourceURI(spdFile.getFullPath().toString(), true).appendFragment(SoftPkg.EOBJECT_PATH);
 		final IFile waveDevFile = project.getFile(CodegenUtil.getWaveDevSettingsURI(spdUri).lastSegment());
 		final URI waveDevUri = URI.createPlatformResourceURI(waveDevFile.getFullPath().toString(), true);
-		
+
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 
 		Assert.isTrue(waveDevFile.exists());
 		Assert.isTrue(spdFile.exists());
-		// Fill in the implementation's code settings (i.e. localfile, entrypoint, etc) using the code generator specified in the implementation settings
+		// Fill in the implementation's code settings (i.e. localfile, entrypoint, etc) using the code generator
+		// specified in the implementation settings
 		final SoftPkg eSpd = (SoftPkg) resourceSet.getEObject(spdUri, true);
 		final WaveDevSettings wavedevSettings = (WaveDevSettings) resourceSet.getResource(waveDevUri, true).getEObject("/");
 		Assert.isNotNull(eSpd);
 		Assert.isNotNull(wavedevSettings);
-		
+
 		// Add the implementation to the SPD
 		if (!eSpd.getImplementation().contains(impl)) {
 			eSpd.getImplementation().add(impl);
 		}
 		Assert.isTrue(impl.eContainer().equals(eSpd));
-		
+
 		// Create WaveDevSettings and add them to the WaveDev file
 		wavedevSettings.getImplSettings().put(impl.getId(), settings);
 
 		ProjectCreator.setupImplementation(eSpd, impl, settings);
-		
+
 		final ICodeGeneratorDescriptor codeGenDesc = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(settings.getGeneratorId());
 		final IScaComponentCodegen generator = codeGenDesc.getGenerator();
 		final Code codeSettings = generator.getInitialCodeSettings(eSpd, settings, impl);
 		impl.setCode(codeSettings);
-		
+
 		if (CodegenUtil.canPrimary(impl.getProgrammingLanguage().getName())) {
 			final EMap<String, ImplementationSettings> settingsMap = wavedevSettings.getImplSettings();
 			boolean primary = true;
@@ -538,14 +543,15 @@ public abstract class ProjectCreator {
 				if (tmpImpl.getProgrammingLanguage().getName().equals(impl.getProgrammingLanguage().getName())) {
 					final ImplementationSettings set = settingsMap.get(tmpImpl.getId());
 					if (set.isPrimary()) {
-						primary = false; // Don't change the primary if another implementation of the same language is primary
+						primary = false; // Don't change the primary if another implementation of the same language is
+											// primary
 					}
 				}
 			}
 			settings.setPrimary(primary);
 		}
-		
-		// Save EMF resources 
+
+		// Save EMF resources
 		try {
 			final SubMonitor loopProgress = progress.newChild(1).setWorkRemaining(resourceSet.getResources().size());
 			for (final Resource resource : resourceSet.getResources()) {

@@ -69,7 +69,7 @@ public class SpdMarkerResolution extends WorkbenchMarkerResolution {
 		final String sourceId = marker.getAttribute(IMarker.SOURCE_ID, "");
 
 		if (marker.getResource().getName().endsWith(SpdPackage.FILE_EXTENSION) && code == EventPortConstraint.STATUS_CODE
-		        && sourceId.equals(EventPortConstraint.SOURCE_ID)) {
+			&& sourceId.equals(EventPortConstraint.SOURCE_ID)) {
 			return true;
 		}
 		return false;
@@ -132,7 +132,8 @@ public class SpdMarkerResolution extends WorkbenchMarkerResolution {
 				try {
 					addEventPort(spd);
 				} catch (final CoreException e) {
-					StatusManager.getManager().handle(e.getStatus(), StatusManager.SHOW | StatusManager.LOG);
+					StatusManager.getManager().handle(new Status(e.getStatus().getSeverity(), ComponentUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e),
+						StatusManager.SHOW | StatusManager.LOG);
 					return;
 				}
 				save(editedResources, null);
@@ -152,7 +153,9 @@ public class SpdMarkerResolution extends WorkbenchMarkerResolution {
 		final Collection<Resource> editedResources = new HashSet<Resource>();
 		final SubMonitor subMonitor = SubMonitor.convert(monitor, "Adding event port.", 100);
 		try {
-			final SubMonitor markerLoopMonitor = subMonitor.newChild(70).setWorkRemaining(markers.length); // SUPPRESS CHECKSTYLE MagicNumber
+			final SubMonitor markerLoopMonitor = subMonitor.newChild(70).setWorkRemaining(markers.length); // SUPPRESS
+																											// CHECKSTYLE
+																											// MagicNumber
 			for (final IMarker marker : markers) {
 				final String uri = marker.getAttribute(EValidator.URI_ATTRIBUTE, null);
 				if (uri != null) {
@@ -162,7 +165,8 @@ public class SpdMarkerResolution extends WorkbenchMarkerResolution {
 						try {
 							editedResources.addAll(addEventPort(spd));
 						} catch (final CoreException e) {
-							StatusManager.getManager().handle(e.getStatus(), StatusManager.SHOW | StatusManager.LOG);
+							StatusManager.getManager().handle(new Status(e.getStatus().getSeverity(), ComponentUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e),
+								StatusManager.SHOW | StatusManager.LOG);
 							return;
 						}
 					}
@@ -176,7 +180,9 @@ public class SpdMarkerResolution extends WorkbenchMarkerResolution {
 	}
 
 	private void save(final Collection<Resource> resources, final IProgressMonitor monitor) {
-		final SubMonitor resourceLoopMonitor = SubMonitor.convert(monitor, "Saving resources", resources.size()); // SUPPRESS CHECKSTYLE MagicNumber
+		final SubMonitor resourceLoopMonitor = SubMonitor.convert(monitor, "Saving resources", resources.size()); // SUPPRESS
+																													// CHECKSTYLE
+																													// MagicNumber
 		for (final Resource resource : resources) {
 			try {
 				final IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
@@ -186,16 +192,15 @@ public class SpdMarkerResolution extends WorkbenchMarkerResolution {
 						try {
 							resource.save(null);
 						} catch (final IOException e) {
-							throw new CoreException(new Status(IStatus.ERROR,
-							        ComponentUiPlugin.PLUGIN_ID,
-							        "Failed to save Quick Fix for " + resource.getURI(),
-							        e));
+							throw new CoreException(new Status(IStatus.ERROR, ComponentUiPlugin.PLUGIN_ID, "Failed to save Quick Fix for " + resource.getURI(),
+								e));
 						}
 					}
 				};
 				ResourcesPlugin.getWorkspace().run(runnable, WorkspaceSynchronizer.getFile(resource), 0, resourceLoopMonitor.newChild(1));
 			} catch (final CoreException e) {
-				StatusManager.getManager().handle(e.getStatus(), StatusManager.SHOW | StatusManager.LOG);
+				StatusManager.getManager().handle(new Status(e.getStatus().getSeverity(), ComponentUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e),
+					StatusManager.SHOW | StatusManager.LOG);
 			}
 		}
 	}
@@ -247,7 +252,7 @@ public class SpdMarkerResolution extends WorkbenchMarkerResolution {
 			return Collections.singletonList(scd.eResource());
 		} else {
 			throw new CoreException(new Status(IStatus.ERROR, ComponentUiPlugin.PLUGIN_ID, "No descriptor, quick fix failed for "
-			        + spd.eResource().getURI().path(), null));
+				+ spd.eResource().getURI().path(), null));
 		}
 
 	}
