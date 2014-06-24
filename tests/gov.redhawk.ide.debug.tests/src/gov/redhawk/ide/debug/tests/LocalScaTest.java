@@ -14,12 +14,16 @@ package gov.redhawk.ide.debug.tests;
 
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.ScaDebugFactory;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.transaction.util.TransactionUtil;
+import org.junit.Assert;
 
 /**
  * <!-- begin-user-doc -->
@@ -114,6 +118,13 @@ public class LocalScaTest extends TestCase {
 		// END GENERATED CODE
 		getFixture().dispose();
 		// BEGIN GENERATED CODE
+	}
+	
+	public void testPlugin() throws CoreException {
+		LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
+		Assert.assertNotNull(localSca);
+		Assert.assertNotNull(localSca.getSandbox());
+		Assert.assertNotNull(TransactionUtil.getEditingDomain(localSca));
 	}
 
 } //LocalScaTest
