@@ -21,8 +21,8 @@ public class CreateNewWaveform {
 
 		// Enter the name for the new waveform
 		bot.textWithLabel("Project name:").setText(waveformName);
-
-		// 
+		
+		// Close wizard
 		SWTBotButton finishButton = bot.button("Finish");
 		finishButton.click();
 	}
