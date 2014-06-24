@@ -1,12 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tests
-Bundle-SymbolicName: gov.redhawk.ide.swtbot.tests
+Bundle-SymbolicName: gov.redhawk.ide.swtbot.tests;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: gov.redhawk.ide.swtbot.tests.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.swtbot.go;bundle-version="2.2.1",
  gov.redhawk.sca;bundle-version="7.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-ActivationPolicy: lazy
+Export-Package: gov.redhawk.ide.swtbot.tests.waveform
