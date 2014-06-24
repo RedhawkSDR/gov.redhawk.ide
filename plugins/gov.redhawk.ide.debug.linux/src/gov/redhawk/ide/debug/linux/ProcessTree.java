@@ -150,20 +150,25 @@ public class ProcessTree {
 
 			while (true) {
 				if (!sigKill[0]) {
-					PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+					Display display = PlatformUI.getWorkbench().getDisplay();
+					if (display.isDisposed()) {
+						sigKill[0] = true;
+					} else {
+						display.syncExec(new Runnable() {
 
-						@Override
-						public void run() {
-							Shell parent = Display.getCurrent().getActiveShell();
-							MessageDialog dialog = new MessageDialog(parent, "Process Unresponding", null, "The process (" + child
-								+ ") is not responding to requests to terminate.\n\nDo you wish to kill (SIGKILL)?", MessageDialog.WARNING, new String[] {
-								"Yes", "No" }, 1);
-							if (dialog.open() == 0) {
-								sigKill[0] = true;
+							@Override
+							public void run() {
+								Shell parent = Display.getCurrent().getActiveShell();
+								MessageDialog dialog = new MessageDialog(parent, "Process Unresponding", null, "The process (" + child
+									+ ") is not responding to requests to terminate.\n\nDo you wish to kill (SIGKILL)?", MessageDialog.WARNING, new String[] {
+									"Yes", "No" }, 1);
+								if (dialog.open() == 0) {
+									sigKill[0] = true;
+								}
 							}
-						}
 
-					});
+						});
+					}
 				}
 
 				if (sigKill[0]) {
