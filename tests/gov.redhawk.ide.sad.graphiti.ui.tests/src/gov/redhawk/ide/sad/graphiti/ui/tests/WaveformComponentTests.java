@@ -58,14 +58,14 @@ public class WaveformComponentTests {
 
 		// Grab the associated business object and confirm it is a SadComponentInstantiation
 		Object bo = DUtil.getBusinessObject(componentShape);
-		Assert.assertTrue(bo instanceof SadComponentInstantiation);
+		Assert.assertTrue("business object should be of type SadComponentInstantiation", bo instanceof SadComponentInstantiation);
 		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
 
 		// Run assertions on expected properties
-		Assert.assertEquals(COMPONENT_NAME, componentShape.getOuterText().getValue()); // assert outer text matches component type
-		Assert.assertEquals(ci.getUsageName(), componentShape.getInnerText().getValue()); // assert inner text matches component usage name
-		Assert.assertNotNull(componentShape.getLollipop()); // assert component supported interface graphic was added
-		Assert.assertNotNull(componentShape.getStartOrderText()); // assert that start order shape was created
+		Assert.assertEquals("outer text should match component type", COMPONENT_NAME, componentShape.getOuterText().getValue());  
+		Assert.assertEquals("inner text should match component usage name", ci.getUsageName(), componentShape.getInnerText().getValue());
+		Assert.assertNotNull("component supported interface graphic should not be null", componentShape.getLollipop());
+		Assert.assertNotNull("start order shape/text should not be null", componentShape.getStartOrderText());
 
 		// HardLimit only has the two ports
 		Assert.assertTrue(componentShape.getUsesPortStubs().size() == 1 && componentShape.getProvidesPortStubs().size() == 1);
