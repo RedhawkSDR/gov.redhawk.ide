@@ -17,6 +17,20 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class EditorUtils { // SUPPRESS CHECKSTYLE INLINE - this utility method is intended to be public
 
+
+	/**
+	 * Drag a component onto the SAD diagram editor from the Palette.
+	 * Position is determined relative to the last item dropped on the diagram.
+	 * @param editor - SWTBotGefEditor
+	 * @param componentName - Component to grab from palette
+	 * @param xTargetPosition - x coordinate for drop location
+	 * @param yTargetPosition - y coordinate for drop location
+	 */
+	public static void dragFromPaletteToDiagram(SWTBotGefEditor editor, String componentName, int xTargetPosition, int yTargetPosition) {
+		editor.activateTool(componentName);
+		editor.drag(xTargetPosition, yTargetPosition, xTargetPosition, yTargetPosition);
+	}
+	
 	/**
 	 * Open the diagram editor from an existing sad.xml in the Project Explorer
 	 * @param waveformName - name of waveform that will be opened
@@ -38,18 +52,4 @@ public class EditorUtils { // SUPPRESS CHECKSTYLE INLINE - this utility method i
 			}
 		}
 	}
-
-	/**
-	 * Drag a component onto the SAD diagram editor from the Palette.
-	 * Position is determined relative to the last item dropped on the diagram.
-	 * @param editor - SWTBotGefEditor
-	 * @param componentName - Component to grab from palette
-	 * @param xTargetPosition - x coordinate for drop location
-	 * @param yTargetPosition - y coordinate for drop location
-	 */
-	public static void dragFromPaletteToDiagram(SWTBotGefEditor editor, String componentName, int xTargetPosition, int yTargetPosition) {
-		editor.activateTool(componentName);
-		editor.drag(xTargetPosition, yTargetPosition, xTargetPosition, yTargetPosition);
-	}
-
 }

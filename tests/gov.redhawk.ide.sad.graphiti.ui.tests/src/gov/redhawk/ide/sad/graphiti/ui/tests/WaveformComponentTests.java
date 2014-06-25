@@ -16,10 +16,10 @@ import gov.redhawk.ide.swtbot.tests.editor.EditorUtils;
 import gov.redhawk.ide.swtbot.tests.waveform.CreateNewWaveform;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
-import org.eclipse.graphiti.ui.internal.parts.ContainerShapeEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class WaveformComponentTests {
 	 * start order icon, and component supported interface.
 	 */
 	@Test
-	public void checkComponentPictogram() {
+	public void checkComponentPictogramElements() {
 		// Create an empty waveform project
 		CreateNewWaveform.createNewWaveform(bot, WAVEFORM_NAME);
 
@@ -52,9 +52,8 @@ public class WaveformComponentTests {
 		EditorUtils.dragFromPaletteToDiagram(editor, COMPONENT_NAME, 0, 0);
 
 		// Drill down to graphiti component shape
-		SWTBotGefEditPart editPart = editor.getEditPart(COMPONENT_NAME);
-		ContainerShapeEditPart part = (ContainerShapeEditPart) editPart.part();
-		ComponentShapeImpl componentShape = (ComponentShapeImpl) part.getPictogramElement();
+		SWTBotGefEditPart gefEditPart = editor.getEditPart(COMPONENT_NAME);
+		ComponentShapeImpl componentShape = (ComponentShapeImpl) gefEditPart.part().getModel();
 
 		// Grab the associated business object and confirm it is a SadComponentInstantiation
 		Object bo = DUtil.getBusinessObject(componentShape);
@@ -72,6 +71,11 @@ public class WaveformComponentTests {
 		// Both ports are of type dataDouble
 		Assert.assertEquals(componentShape.getUsesPortStubs().get(0).getUses().getInterface().getName(), "dataDouble");
 		Assert.assertEquals(componentShape.getProvidesPortStubs().get(0).getProvides().getInterface().getName(), "dataDouble");
+	}
+	
+	@AfterClass
+	public static void cleanUp() {
+		bot.sleep(5000);
 	}
 
 }
