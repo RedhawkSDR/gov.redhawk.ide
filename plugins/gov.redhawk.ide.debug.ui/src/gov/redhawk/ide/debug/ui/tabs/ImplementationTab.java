@@ -260,7 +260,7 @@ public class ImplementationTab extends AbstractLaunchConfigurationTab {
 	 */
 	@Override
 	public void setDefaults(final ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(ScaDebugLaunchConstants.ATT_LW_IMPLS, Collections.emptyMap());
+		configuration.setAttribute(ScaDebugLaunchConstants.ATT_LW_IMPLS, (Map<String, String>) Collections.EMPTY_MAP);
 		if (this.viewer != null) {
 			this.viewer.refresh();
 		}
@@ -316,7 +316,7 @@ public class ImplementationTab extends AbstractLaunchConfigurationTab {
 	private void updateImplementations(final ILaunchConfiguration configuration) {
 		this.implMap.clear();
 		try {
-			this.implMap.putAll(configuration.getAttribute(ScaDebugLaunchConstants.ATT_LW_IMPLS, Collections.emptyMap()));
+			this.implMap.putAll(configuration.getAttribute(ScaDebugLaunchConstants.ATT_LW_IMPLS, (Map<String, String>) Collections.EMPTY_MAP));
 		} catch (final CoreException e) {
 			ScaDebugUiPlugin.log(e);
 		}

@@ -29,6 +29,6 @@ public final class SadLauncherUtil {
 		if (config == null) {
 			return Collections.emptyMap();
 		}
-		return config.getAttribute(ScaDebugLaunchConstants.ATT_LW_IMPLS, Collections.emptyMap());
+		return config.getAttribute(ScaDebugLaunchConstants.ATT_LW_IMPLS, (Map<String, String>) Collections.EMPTY_MAP);
 	}
 }

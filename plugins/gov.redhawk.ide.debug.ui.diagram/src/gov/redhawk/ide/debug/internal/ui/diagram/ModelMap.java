@@ -127,7 +127,7 @@ public class ModelMap {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Adding component: " + comp.getInstantiationIdentifier(), IProgressMonitor.UNKNOWN);
 				SadComponentInstantiation newComp = null;
 				try {
-					newComp = create(comp);
+					newComp = ModelMap.this.create(comp);
 					nodeMap.setProfile(newComp);
 					return Status.OK_STATUS;
 				} catch (CoreException e) {
@@ -165,7 +165,7 @@ public class ModelMap {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
 				LocalScaComponent newComp = null;
 				try {
-					newComp = create(comp, implID);
+					newComp = ModelMap.this.create(comp, implID);
 					nodeMap.setLocalScaComponent(newComp);
 					// nodeMap.setLocalScaComponent(newComp);
 					EditPart editPart = editor.getDiagramEditPart().findEditPart(editor.getDiagramEditPart(), comp);
@@ -213,7 +213,7 @@ public class ModelMap {
 			protected IStatus run(IProgressMonitor monitor) {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Connecting " + conn.getId(), IProgressMonitor.UNKNOWN);
 				try {
-					ScaConnection newConnection = create(conn);
+					ScaConnection newConnection = ModelMap.this.create(conn);
 					if (newConnection == null) {
 						delete(conn);
 						connections.remove(connectionMap.getKey());
@@ -261,7 +261,7 @@ public class ModelMap {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Adding connection " + conn.getId(), IProgressMonitor.UNKNOWN);
 				SadConnectInterface newSadInterface = null;
 				try {
-					newSadInterface = create(conn);
+					newSadInterface = ModelMap.this.create(conn);
 					if (newSadInterface == null) {
 						connections.remove(connectionMap.getKey());
 						return Status.CANCEL_STATUS;
