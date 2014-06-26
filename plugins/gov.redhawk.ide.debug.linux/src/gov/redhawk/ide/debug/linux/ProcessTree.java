@@ -22,15 +22,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-
 public class ProcessTree {
 
 	private Map<String, List<String>> processTree = new HashMap<String, List<String>>();
 	private static final Pattern PATTERN = Pattern.compile("\\s*(\\d+)\\s+(\\d+)");
+	private static final int MAX_ATTEMPTS = 2;
 
 	public ProcessTree() throws IOException {
 		createProcessList();
@@ -60,7 +56,7 @@ public class ProcessTree {
 		}
 	}
 
-	public List<String> getChildren(String pid) {
+	private List<String> getChildren(String pid) {
 		List<String> children = processTree.get(pid);
 		if (children == null || children.isEmpty()) {
 			return Collections.singletonList(pid);
@@ -75,6 +71,84 @@ public class ProcessTree {
 		}
 
 	}
+	
+	private void kill(String pid) throws IOException {
+		if (!isRunning(pid)) {
+			return;
+		}
+		ProcessBuilder builder = new ProcessBuilder("kill", "-s", "SIGTERM", pid);
+		Process p = builder.start();
+		try {
+			p.waitFor();
+			if (p.exitValue() != 0) {
+				return;
+			}
+		} catch (InterruptedException e) {
+			// PASS
+		}
+
+		for (int attempts = 0; attempts < MAX_ATTEMPTS; attempts++) {
+			if (isRunning(pid)) {
+				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e) {
+					// PASS
+				}
+			} else {
+				return;
+			}
+		}
+
+		builder = new ProcessBuilder("kill", "-s", "SIGQUIT", pid);
+		p = builder.start();
+		try {
+			p.waitFor();
+		} catch (InterruptedException e) {
+			// PASS
+		}
+
+		for (int attempts = 0; attempts < MAX_ATTEMPTS; attempts++) {
+			if (isRunning(pid)) {
+				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e) {
+					// PASS
+				}
+			} else {
+				return;
+			}
+		}
+
+		builder = new ProcessBuilder("kill", "-s", "SIGINT", pid);
+		p = builder.start();
+		try {
+			p.waitFor();
+		} catch (InterruptedException e) {
+			// PASS
+		}
+
+		for (int attempts = 0; attempts < MAX_ATTEMPTS; attempts++) {
+			if (isRunning(pid)) {
+				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e) {
+					// PASS
+				}
+			} else {
+				return;
+			}
+		}
+
+		// Send SigKill to Destroy the process
+		builder = new ProcessBuilder("kill", "-s", "SIGKILL", pid);
+		p = builder.start();
+		try {
+			p.waitFor();
+		} catch (InterruptedException e) {
+			// PASS
+		}
+
+	}
 
 	/**
 	 * @since 2.0
@@ -83,118 +157,8 @@ public class ProcessTree {
 		List<String> children = getChildren(ppid);
 		Collections.reverse(children);
 
-		final boolean[] sigKill = new boolean[] { false };
-		root: for (final String child : children) {
-			if (!isRunning(child)) {
-				continue;
-			}
-			ProcessBuilder builder = new ProcessBuilder("kill", "SIGTERM", child);
-			Process p = builder.start();
-			try {
-				p.waitFor();
-			} catch (InterruptedException e) {
-				// PASS
-			}
-
-			for (int attempts = 0; attempts < 2; attempts++) {
-				if (isRunning(child)) {
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						// PASS
-					}
-				} else {
-					continue root;
-				}
-			}
-
-			builder = new ProcessBuilder("kill", "SIGQUIT", child);
-			p = builder.start();
-			try {
-				p.waitFor();
-			} catch (InterruptedException e) {
-				// PASS
-			}
-
-			for (int attempts = 0; attempts < 2; attempts++) {
-				if (isRunning(child)) {
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						// PASS
-					}
-				} else {
-					continue root;
-				}
-			}
-
-			builder = new ProcessBuilder("kill", "SIGINT", child);
-			p = builder.start();
-			try {
-				p.waitFor();
-			} catch (InterruptedException e) {
-				// PASS
-			}
-
-			for (int attempts = 0; attempts < 2; attempts++) {
-				if (isRunning(child)) {
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						// PASS
-					}
-				} else {
-					continue root;
-				}
-			}
-
-			while (true) {
-				if (!sigKill[0]) {
-					Display display = PlatformUI.getWorkbench().getDisplay();
-					if (display.isDisposed()) {
-						sigKill[0] = true;
-					} else {
-						display.syncExec(new Runnable() {
-
-							@Override
-							public void run() {
-								Shell parent = Display.getCurrent().getActiveShell();
-								MessageDialog dialog = new MessageDialog(parent, "Process Unresponding", null, "The process (" + child
-									+ ") is not responding to requests to terminate.\n\nDo you wish to kill (SIGKILL)?", MessageDialog.WARNING, new String[] {
-									"Yes", "No" }, 1);
-								if (dialog.open() == 0) {
-									sigKill[0] = true;
-								}
-							}
-
-						});
-					}
-				}
-
-				if (sigKill[0]) {
-					// Send SigKill to Destroy the process
-					builder = new ProcessBuilder("kill", "SIGKILL", child);
-					p = builder.start();
-					try {
-						p.waitFor();
-					} catch (InterruptedException e) {
-						// PASS
-					}
-					break;
-				}
-
-				for (int attempts = 0; attempts < 20; attempts++) {
-					if (isRunning(child)) {
-						try {
-							Thread.sleep(500);
-						} catch (InterruptedException e) {
-							// PASS
-						}
-					} else {
-						continue root;
-					}
-				}
-			}
+		for (final String pid : children) {
+			kill(pid);
 		}
 	}
 
