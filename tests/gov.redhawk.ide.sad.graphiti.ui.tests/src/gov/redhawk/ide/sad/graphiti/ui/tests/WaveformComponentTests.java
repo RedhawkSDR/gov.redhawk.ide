@@ -142,7 +142,7 @@ public class WaveformComponentTests {
 //
 //		// Drill down to graphiti component shape
 //		SWTBotGefEditPart gefEditPart = editor.getEditPart(COMPONENT_NAME);
-//		ComponentShapeImpl componentShape = (ComponentSha01:12peImpl) gefEditPart.part().getModel();
+//		ComponentShapeImpl componentShape = (ComponentShapeImpl) gefEditPart.part().getModel();
 //
 //		MenuUtils.closeAllWithoutSave(bot);
 //	}

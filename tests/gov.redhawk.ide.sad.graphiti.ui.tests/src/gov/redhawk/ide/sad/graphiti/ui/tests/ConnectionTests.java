@@ -64,14 +64,13 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		EditorTestUtils.dragFromPaletteToDiagram(editor, sourceComponent, 0, 0);
 		EditorTestUtils.dragFromPaletteToDiagram(editor, targetComponent, 300, 0);
 
-		// Define object references to the ports
+		// Get component edit parts and container shapes
 		SWTBotGefEditPart sourceComponentEditPart = editor.getEditPart(sourceComponent);
-		
 		ContainerShape sourceContainerShape = (ContainerShape) sourceComponentEditPart.part().getModel();
-
 		SWTBotGefEditPart targetComponentEditPart = editor.getEditPart(targetComponent);
 		ContainerShape targetContainerShape = (ContainerShape) targetComponentEditPart.part().getModel();
 		
+		// Get port edit parts
 		SWTBotGefEditPart usesEditPart = EditorTestUtils.getDiagramUsesPort(editor, sourceComponent);
 		SWTBotGefEditPart providesEditPart = EditorTestUtils.getDiagramProvidesPort(editor, targetComponent);
 
@@ -83,9 +82,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		// TODO do this test
 		
 		// Draw the connection and save
-		editor.activateTool("Connection");
-		EditorTestUtils.getDiagramPortAnchor(usesEditPart).click();
-		EditorTestUtils.getDiagramPortAnchor(providesEditPart).click();
+		EditorTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
 		bot.menu("File").menu("Save").click();
 
 		// Test to make sure connection was made correctly

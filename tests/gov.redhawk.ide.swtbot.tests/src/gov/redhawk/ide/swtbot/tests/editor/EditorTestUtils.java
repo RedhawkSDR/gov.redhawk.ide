@@ -24,14 +24,14 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility method is intended to be public
 
 	/**
-	 * Deletes the provided part from the diagram.  Part must have a context menu option for "Delete"
+	 * Deletes the provided part from the diagram. Part must have a context menu option for "Delete"
 	 * @param editor - SWTBotGefEditor
 	 * @param part - part to be delete from diagram
 	 */
 	public static void deleteFromPalette(SWTBotGefEditor editor, SWTBotGefEditPart partToDelete) {
-		
+
 	}
-	
+
 	/**
 	 * Drag a component onto the SAD diagram editor from the Palette.
 	 * Position is determined relative to the last item dropped on the diagram.
@@ -44,7 +44,19 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 		editor.activateTool(componentName);
 		editor.drag(xTargetPosition, yTargetPosition, xTargetPosition, yTargetPosition);
 	}
-	
+
+	/**
+	 * 
+	 * @param editor - SWTBotGefEditor
+	 * @param usesEditPart - SWTBotGefEditPart for the uses/source port
+	 * @param providesEditPart - SWTBotGefEditPart for the provides/target port
+	 */
+	public static void drawConnectionBetweenPorts(SWTBotGefEditor editor, SWTBotGefEditPart usesEditPart, SWTBotGefEditPart providesEditPart) {
+		editor.activateTool("Connection");
+		EditorTestUtils.getDiagramPortAnchor(usesEditPart).click();
+		EditorTestUtils.getDiagramPortAnchor(providesEditPart).click();
+	}
+
 	/**
 	 * Drills down into the ports GEF children to return the anchor point
 	 * Primarily uses for making connections
