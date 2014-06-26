@@ -147,7 +147,20 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 						}
 						retVal = new Status(IStatus.ERROR, RedhawkCodegenUiActivator.getPluginId(), "Missing property" + builder.toString(), null);
 					}
-					AllRequiredPropertiesValidator.this.status.setValue(retVal);
+					final IStatus finalRetVal = retVal;
+					if (!status.isDisposed()) {
+						AllRequiredPropertiesValidator.this.status.getRealm().exec(new Runnable() {
+
+							@Override
+							public void run() {
+								if (status.isDisposed()) {
+									return;
+								}
+								AllRequiredPropertiesValidator.this.status.setValue(finalRetVal);
+							}
+
+						});
+					}
 				}
 			});
 		}
@@ -224,7 +237,7 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 	 */
 	@Override
 	public void configure(final SoftPkg softPkg, final Implementation spd, final ICodeGeneratorDescriptor desc, final ImplementationSettings implSettings,
-	        final String componentType) {
+		final String componentType) {
 		this.softPkg = softPkg;
 		this.implSettings = implSettings;
 		this.codegen = desc;
@@ -376,7 +389,8 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 		tableComp.setLayoutData(GridDataFactory.fillDefaults().span(2, 1).grab(true, true).create());
 
 		final Table table = new Table(tableComp, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION);
-		table.setLayoutData(GridDataFactory.fillDefaults().span(1, 3).grab(true, true).create()); // SUPPRESS CHECKSTYLE MagicNumber
+		table.setLayoutData(GridDataFactory.fillDefaults().span(1, 3).grab(true, true).create()); // SUPPRESS CHECKSTYLE
+																									// MagicNumber
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 		final TableLayout tableLayout = new TableLayout();
@@ -402,8 +416,8 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 				String text = "";
 				if (element instanceof Property) {
 					if (((Property) element).getId().length() != 0) {
-						final ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry()
-						        .findCodegen(DefaultGeneratorPropertiesWizardPage.this.implSettings.getGeneratorId());
+						final ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(
+							DefaultGeneratorPropertiesWizardPage.this.implSettings.getGeneratorId());
 						final ITemplateDesc template = getTemplateDesc(generator);
 
 						for (final IPropertyDescriptor propDesc : template.getPropertyDescriptors()) {
@@ -422,8 +436,8 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 				String text = "No description available for this property";
 				if (element instanceof Property) {
 					if (((Property) element).getId().length() != 0) {
-						final ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry()
-						        .findCodegen(DefaultGeneratorPropertiesWizardPage.this.implSettings.getGeneratorId());
+						final ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(
+							DefaultGeneratorPropertiesWizardPage.this.implSettings.getGeneratorId());
 						final ITemplateDesc template = getTemplateDesc(generator);
 
 						for (final IPropertyDescriptor propDesc : template.getPropertyDescriptors()) {
@@ -462,8 +476,8 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 				if (element instanceof Property) {
 					final Property prop = (Property) element;
 					if (prop.getId().length() != 0) {
-						final ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry()
-						        .findCodegen(DefaultGeneratorPropertiesWizardPage.this.implSettings.getGeneratorId());
+						final ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(
+							DefaultGeneratorPropertiesWizardPage.this.implSettings.getGeneratorId());
 						final ITemplateDesc template = getTemplateDesc(generator);
 
 						for (final IPropertyDescriptor propDesc : template.getPropertyDescriptors()) {
@@ -487,9 +501,8 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 		this.propertiesViewer.setContentProvider(new AdapterFactoryContentProvider(getAdapterFactory()));
 		this.propertiesViewer.setComparator(createPropertiesViewerComparator());
 		this.propertiesViewer.setFilters(createPropertiesViewerFilter());
-		this.propertiesViewer.setColumnProperties(new String[] {
-		        CodegenPackage.Literals.PROPERTY__ID.getName(), CodegenPackage.Literals.PROPERTY__VALUE.getName()
-		});
+		this.propertiesViewer.setColumnProperties(new String[] { CodegenPackage.Literals.PROPERTY__ID.getName(),
+			CodegenPackage.Literals.PROPERTY__VALUE.getName() });
 
 		final Button addButton = new Button(tableComp, SWT.PUSH);
 		addButton.setText("Add...");
@@ -553,14 +566,12 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 		initFields();
 
 		this.context.bindValue(ViewersObservables.observeSingleSelection(this.templateViewer),
-		        EMFObservables.observeValue(this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__TEMPLATE),
-		        createTemplateTargetToModel(),
-		        createTemplateModelToTarget());
+			EMFObservables.observeValue(this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__TEMPLATE), createTemplateTargetToModel(),
+			createTemplateModelToTarget());
 
 		this.context.bindValue(SWTObservables.observeText(this.outputDirText, SWT.Modify),
-		        EMFObservables.observeValue(this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR),
-		        new UpdateValueStrategy().setAfterConvertValidator(new OutputDirectoryValidator(this.softPkg)),
-		        null);
+			EMFObservables.observeValue(this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR),
+			new UpdateValueStrategy().setAfterConvertValidator(new OutputDirectoryValidator(this.softPkg)), null);
 
 		if ((this.implSettings.getOutputDir() == null) || "".equals(this.implSettings.getOutputDir().trim())) {
 			setDefaults();
@@ -577,13 +588,13 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 	private void initFields() {
 		this.generatorLabel.setText(this.codegen.getName());
 		final ITemplateDesc[] temps = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(this.codegen.getId(),
-		        this.componentType);
+			this.componentType);
 		this.templateViewer.setInput(temps);
 	}
 
 	private void selectInitialTemplate(final boolean setDefault) {
 		final ITemplateDesc[] temps = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(this.codegen.getId(),
-		        this.componentType);
+			this.componentType);
 		final ITemplateDesc[] input = temps;
 		String templateId = this.implSettings.getTemplate();
 		// Use this to select the legacy code generator template
@@ -688,7 +699,7 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 				}
 				return true;
 			}
-			
+
 		};
 		return filters;
 	}
@@ -840,7 +851,7 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 
 	private ITemplateDesc getTemplateDesc(final ICodeGeneratorDescriptor generator) {
 		String templateId = this.implSettings.getTemplate();
-		// If the templateId is null or old style, select the legacy code 
+		// If the templateId is null or old style, select the legacy code
 		// generator template if the implementationSettings has existing props
 		if (((templateId == null) || ("src/".equals(templateId))) && (this.implSettings.getProperties().size() > 0)) {
 			templateId = this.implSettings.getGeneratorId();
