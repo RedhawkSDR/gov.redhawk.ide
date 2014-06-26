@@ -11,12 +11,16 @@
 package gov.redhawk.ide.swtbot.tests.editor;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+
+import java.util.List;
+
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
@@ -28,8 +32,9 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 	 * @param editor - SWTBotGefEditor
 	 * @param part - part to be delete from diagram
 	 */
-	public static void deleteFromPalette(SWTBotGefEditor editor, SWTBotGefEditPart partToDelete) {
-
+	public static void deleteFromDiagram(SWTBotGefEditor editor, SWTBotGefEditPart part) {
+		part.select();
+		editor.clickContextMenu("Delete");
 	}
 
 	/**
@@ -53,18 +58,19 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 	 */
 	public static void drawConnectionBetweenPorts(SWTBotGefEditor editor, SWTBotGefEditPart usesEditPart, SWTBotGefEditPart providesEditPart) {
 		editor.activateTool("Connection");
-		EditorTestUtils.getDiagramPortAnchor(usesEditPart).click();
-		EditorTestUtils.getDiagramPortAnchor(providesEditPart).click();
+		getDiagramPortAnchor(usesEditPart).click();
+		getDiagramPortAnchor(providesEditPart).click();
 	}
 
 	/**
 	 * Drills down into the ports GEF children to return the anchor point
-	 * Primarily uses for making connections
+	 * Primarily uses for making connections. Makes assumptions as to how deep the anchor is.
+	 * TODO: Figure out how to grab the anchor without assuming depth, maybe a recursive loop and type check?
 	 * @param portEditPart - The SWTBotGefEditPart of the port you are trying to get the anchor for
 	 * @return
 	 */
 	public static SWTBotGefEditPart getDiagramPortAnchor(SWTBotGefEditPart portEditPart) {
-		return portEditPart.children().get(0).children().get(0);
+		return portEditPart.children().get(0).children().get(0).children().get(0);
 	}
 
 	/**
@@ -147,6 +153,28 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 			return child;
 		}
 		return null;
+	}
+
+	/**
+	 * 
+	 * @param editor - SWTBotGefEditor
+	 * @param portEditPart - source port edit part
+	 * @return - Returns of list of SWTBotGefConnectionEditParts that includes any connection where the provided port is the source
+	 */
+	public static List<SWTBotGefConnectionEditPart> getSourceConnectionsFromPort(SWTBotGefEditor editor, SWTBotGefEditPart portEditPart) {
+		SWTBotGefEditPart anchor = getDiagramPortAnchor(portEditPart);
+		return anchor.sourceConnections();
+	}
+
+	/**
+	 * 
+	 * @param editor - SWTBotGefEditor
+	 * @param portEditPart - target port edit part
+	 * @return - Returns of list of SWTBotGefConnectionEditParts that includes any connection where the provided port is the target
+	 */
+	public static List<SWTBotGefConnectionEditPart> getTargetConnectionsFromPort(SWTBotGefEditor editor, SWTBotGefEditPart portEditPart) {
+		SWTBotGefEditPart anchor = getDiagramPortAnchor(portEditPart);
+		return anchor.targetConnections();
 	}
 
 	/**

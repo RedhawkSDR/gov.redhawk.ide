@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.tests.editor.EditorTestUtils;
 import gov.redhawk.ide.swtbot.tests.waveform.CreateNewWaveform;
@@ -20,7 +19,6 @@ import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
-import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -29,7 +27,6 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.hamcrest.Matcher;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -69,7 +66,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		ContainerShape sourceContainerShape = (ContainerShape) sourceComponentEditPart.part().getModel();
 		SWTBotGefEditPart targetComponentEditPart = editor.getEditPart(targetComponent);
 		ContainerShape targetContainerShape = (ContainerShape) targetComponentEditPart.part().getModel();
-		
+
 		// Get port edit parts
 		SWTBotGefEditPart usesEditPart = EditorTestUtils.getDiagramUsesPort(editor, sourceComponent);
 		SWTBotGefEditPart providesEditPart = EditorTestUtils.getDiagramProvidesPort(editor, targetComponent);
@@ -80,7 +77,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 
 		// Attempt to make an illegal connection and confirm that it was not actually made
 		// TODO do this test
-		
+
 		// Draw the connection and save
 		EditorTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
 		bot.menu("File").menu("Save").click();
@@ -92,44 +89,29 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		Assert.assertEquals("Connection uses port not correct", usesPort, DUtil.getBusinessObject((ContainerShape) usesEditPart.part().getModel()));
 		ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(connection.getEnd());
 		Assert.assertEquals("Connect provides port not correct", providesPort, DUtil.getBusinessObject((ContainerShape) providesEditPart.part().getModel()));
-		
-		// Delete connection TODO
-//		System.out.println("Main: " + editor.mainEditPart());
-		Matcher<? extends EditPart> matcher = instanceOf(sourceComponentEditPart.part().getClass());
-		List<SWTBotGefEditPart> allParts = editor.editParts(matcher);
-		for (SWTBotGefEditPart part : allParts) {
-			List<SWTBotGefConnectionEditPart> con = part.targetConnections();
-			con.get(0).click();
-			editor.clickContextMenu("");
-		}
-		SWTBotGefEditPart root = editor.rootEditPart();
-		
-		
-//		EditorTestUtils.deleteFromPalette(editor, partToDelete);
-//		Assert.assertTrue("All connections should have been deleted", diagram.getConnections().isEmpty());
-		
-		// TODO junit assertion test to confirm connection created successfully
-		// confirm earlier in the test that no connections exists in the diagram
-		// using DUtil.getOutogingConnections & Dutil.getIncomingConnections
-		// or DUtil.findDigram(containerShape).getConnections
-		// or both
-		// confirm that a connection PE element now exists between elements using DUtil methods
-		// get the PE and check the start and end
-		// get the business object and check that it is accurate as well
-		// TODO junit test for bad connections
-		// maybe do this first
-		// test trying to make impossible connections, and then DUtil.findDigram(containerShape).getConnections
-		// to make sure no connection was made
-		// include out-to-out and in-to-in
-		// test making unrecommended connections and look for color/style change
-		// redundant connections
-		// double to long or something like that
-		// use data-converter
-		// TODO Follow this test with a reconnect feature test trying the same bad connections as above
-		// Test in it's own method below
-		// TODO Follow with a delete connection test
-		// Test in it's own method below
 
+		// Delete connection (IDE-687 - Users need to be able to delete connections)
+		List<SWTBotGefConnectionEditPart> sourceConnections = EditorTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
+		Assert.assertFalse("Source connections should not be empty for this test", sourceConnections.isEmpty());
+		for (SWTBotGefConnectionEditPart con : sourceConnections) {
+			EditorTestUtils.deleteFromDiagram(editor, con);
+		}
+		sourceConnections = EditorTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
+		Assert.assertTrue("Source connections should be empty, all connections were deleted", sourceConnections.isEmpty());
+		Assert.assertTrue("All connections should have been deleted", diagram.getConnections().isEmpty());
+
+		// TODO junit test for bad connections
+			// maybe do this first
+			// test trying to make impossible connections, and then DUtil.findDigram(containerShape).getConnections
+			// to make sure no connection was made
+			// include out-to-out and in-to-in
+			// test making unrecommended connections and look for color/style change
+			// redundant connections
+			// double to long or something like that
+			// use data-converter
+
+		// TODO Follow this test with a reconnect feature test trying the same bad connections as above
+			// Test in it's own method below
 	}
 
 	/**
