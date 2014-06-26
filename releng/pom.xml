@@ -35,6 +35,7 @@
   </properties>
 
   <repositories>
+
     <repository>
       <id>eclipse</id>
       <layout>p2</layout>
@@ -201,7 +202,19 @@
       <id>ui-tests</id>
       <modules>
         <module>../tests/gov.redhawk.ide.tests.ui</module>
-      </modules> 
+        <module>../tests/gov.redhawk.ide.sad.graphiti.ui.tests</module>
+      </modules>
+      <properties>
+        <tycho-version>0.20.0</tycho-version>
+        <swt-bot>http://download.eclipse.org/technology/swtbot/releases/latest/</swt-bot>
+      </properties>
+      <repositories>
+        <repository>
+          <id>swt-bot</id>
+          <layout>p2</layout>
+          <url>${swt-bot}</url>
+        </repository>
+      </repositories>
     </profile>
   </profiles>
 </project>

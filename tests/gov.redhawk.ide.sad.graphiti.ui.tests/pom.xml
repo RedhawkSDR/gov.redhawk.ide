@@ -26,10 +26,33 @@
           <application>org.eclipse.ui.ide.workbench</application>
           <argLine>-Xmx512m -Djava.net.preferIPv4Stack=true</argLine>
           <appArgLine>-nl en</appArgLine>
+          <includes>
+            <include>**/*Tests.java</include>
+          </includes>
           <dependencies>
             <dependency>
               <type>eclipse-feature</type>
-              <artifactId>gov.redhawk.ide.ui</artifactId>
+              <artifactId>gov.redhawk.ide.ui.feature</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-feature</type>
+              <artifactId>gov.redhawk.ide.feature</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-feature</type>
+              <artifactId>gov.redhawk.core</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-feature</type>
+              <artifactId>gov.redhawk.core.ui</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-feature</type>
+              <artifactId>gov.redhawk.rcp</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>

@@ -17,6 +17,8 @@ import gov.redhawk.ide.swtbot.tests.editor.EditorTestUtils;
 import gov.redhawk.ide.swtbot.tests.waveform.CreateNewWaveform;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
+import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
@@ -29,6 +31,7 @@ public class WaveformComponentTests {
 
 	private static SWTGefBot bot;
 	private static SWTBotGefEditor editor;
+	private static SWTWorkbenchBot wbBot;
 	private static final String WAVEFORM_NAME = "IDE-726-Test";
 	private static final String COMPONENT_NAME = "HardLimit";
 	private static final String WAVEFORM_AC_NAME = "IDE-680-Test";
@@ -37,6 +40,10 @@ public class WaveformComponentTests {
 	@BeforeClass
 	public static void beforeClass() {
 		bot = new SWTGefBot();
+		wbBot = new SWTWorkbenchBot();
+		// Switch to SCA Perspective
+		SWTBotPerspective perspective = wbBot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
+		perspective.activate();
 	}
 
 	/**
