@@ -17,9 +17,6 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 
 public class CreateNewWaveform { // SUPPRESS CHECKSTYLE INLINE
 
-	protected CreateNewWaveform() {
-	}
-
 	/**
 	 * Creates a new waveform using File > New > SCA Waveform Project wizard
 	 * @param bot - the executing SWTBot
