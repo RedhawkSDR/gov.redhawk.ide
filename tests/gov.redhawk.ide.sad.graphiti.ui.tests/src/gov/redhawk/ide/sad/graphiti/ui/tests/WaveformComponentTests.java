@@ -12,8 +12,8 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.swtbot.tests.editor.EditorUtils;
 import gov.redhawk.ide.swtbot.tests.menus.MenuUtils;
+import gov.redhawk.ide.swtbot.tests.editor.EditorTestUtils;
 import gov.redhawk.ide.swtbot.tests.waveform.CreateNewWaveform;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
@@ -52,7 +52,7 @@ public class WaveformComponentTests {
 
 		// Add component to diagram from palette
 		editor = bot.gefEditor(WAVEFORM_NAME);
-		EditorUtils.dragFromPaletteToDiagram(editor, COMPONENT_NAME, 0, 0);
+		EditorTestUtils.dragFromPaletteToDiagram(editor, COMPONENT_NAME, 0, 0);
 
 		// Drill down to graphiti component shape
 		SWTBotGefEditPart gefEditPart = editor.getEditPart(COMPONENT_NAME);
@@ -81,7 +81,7 @@ public class WaveformComponentTests {
 
 	@AfterClass
 	public static void cleanUp() {
-		bot.sleep(5000);
+		bot.sleep(2000);
 	}
 
 	/**

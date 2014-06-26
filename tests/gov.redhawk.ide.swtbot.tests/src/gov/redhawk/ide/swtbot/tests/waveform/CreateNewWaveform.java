@@ -15,7 +15,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 
-public class CreateNewWaveform {
+public class CreateNewWaveform { // SUPPRESS CHECKSTYLE INLINE
 
 	protected CreateNewWaveform() {
 	}
