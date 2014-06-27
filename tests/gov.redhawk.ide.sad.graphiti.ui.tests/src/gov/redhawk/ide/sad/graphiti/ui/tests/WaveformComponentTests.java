@@ -16,7 +16,6 @@ import gov.redhawk.ide.swtbot.tests.menus.MenuUtils;
 import gov.redhawk.ide.swtbot.tests.editor.EditorTestUtils;
 import gov.redhawk.ide.swtbot.tests.waveform.CreateNewWaveform;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
@@ -112,10 +111,11 @@ public class WaveformComponentTests {
 		Assert.assertEquals("inner text should match component usage name", ci.getUsageName(), componentShape.getInnerText().getValue());
 		Assert.assertNotNull("component supported interface graphic should not be null", componentShape.getLollipop());
 		Assert.assertNotNull("start order shape/text should not be null", componentShape.getStartOrderText());
-		// TODO check if is assembly controller 
+		Assert.assertTrue("should be assembly controller", EditorTestUtils.isAssemblyController(componentShape));
 
 		// HardLimit only has the two ports
 		Assert.assertTrue(componentShape.getUsesPortStubs().size() == 1 && componentShape.getProvidesPortStubs().size() == 1);
+
 		// Both ports are of type dataDouble
 		Assert.assertEquals(componentShape.getUsesPortStubs().get(0).getUses().getInterface().getName(), "dataDouble");
 		Assert.assertEquals(componentShape.getProvidesPortStubs().get(0).getProvides().getInterface().getName(), "dataDouble");
@@ -142,14 +142,12 @@ public class WaveformComponentTests {
 			editor = bot.gefEditor(waveformName);
 			EditorTestUtils.dragFromPaletteToDiagram(editor, components[i], 0, 0);			
 		}
-		
+
 		bot.menu("File").menu("Save").click();		
 
 		for (int i = 0; i < components.length; i++) {
 			// Drill down to graphiti component shape
 			SWTBotGefEditPart gefEditPart = editor.getEditPart(components[i]);
-			gefEditPart.select();
-
 			// Delete component
 			EditorTestUtils.deleteFromDiagram(editor, gefEditPart);
 			Assert.assertNull(editor.getEditPart(components[i]));
@@ -158,8 +156,6 @@ public class WaveformComponentTests {
 		MenuUtils.closeAllWithoutSave(bot);
 		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
 	}
-
-
 
 	@AfterClass
 	public static void cleanUp() {

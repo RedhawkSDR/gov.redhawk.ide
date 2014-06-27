@@ -10,14 +10,19 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.tests.editor;
 
+import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import mil.jpeojtrs.sca.sad.AssemblyController;
 
 import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
@@ -198,4 +203,22 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 			}
 		}
 	}
+	
+	/**
+	 * Determines whether the given component shape is the assembly controller of its waveform diagram
+	 * @param componentShape
+	 * @return
+	 */
+	public static boolean isAssemblyController(ComponentShape componentShape) {
+		Diagram diagram = DUtil.findDiagram(componentShape);
+		final SoftwareAssembly sad = (SoftwareAssembly) DUtil.getBusinessObject(diagram, SoftwareAssembly.class);
+		AssemblyController ac = sad.getAssemblyController();
+		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
+		if (ac != null && ac.getComponentInstantiationRef() != null) {
+			return ac.getComponentInstantiationRef().getRefid().equals(ci.getId());
+		}
+		return false;
+	}
+
+
 }
