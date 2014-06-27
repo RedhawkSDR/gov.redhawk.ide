@@ -417,7 +417,9 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		}
 
 		// remove assembly controller from list, it has already been updated
-		componentInstantiationsInStartOrder.remove(assemblyController.getComponentInstantiationRef().getInstantiation());
+		if (assemblyController != null) {
+			componentInstantiationsInStartOrder.remove(assemblyController.getComponentInstantiationRef().getInstantiation());
+		}
 		
 		// set start order
 		for (SadComponentInstantiation ci : componentInstantiationsInStartOrder) { 

@@ -32,9 +32,7 @@ public class WaveformComponentTests {
 	private static SWTGefBot bot;
 	private static SWTBotGefEditor editor;
 	private static SWTWorkbenchBot wbBot;
-	private static final String WAVEFORM_NAME = "IDE-726-Test";
 	private static final String COMPONENT_NAME = "HardLimit";
-	private static final String WAVEFORM_AC_NAME = "IDE-680-Test";
 
 
 	@BeforeClass
@@ -54,11 +52,12 @@ public class WaveformComponentTests {
 	 */
 	@Test
 	public void checkComponentPictogramElements() {
+		final String waveformName = "IDE-726-Test";
 		// Create an empty waveform project
-		CreateNewWaveform.createNewWaveform(bot, WAVEFORM_NAME);
+		CreateNewWaveform.createNewWaveform(bot, waveformName);
 
 		// Add component to diagram from palette
-		editor = bot.gefEditor(WAVEFORM_NAME);
+		editor = bot.gefEditor(waveformName);
 		EditorTestUtils.dragFromPaletteToDiagram(editor, COMPONENT_NAME, 0, 0);
 
 		// Drill down to graphiti component shape
@@ -81,14 +80,10 @@ public class WaveformComponentTests {
 		// Both ports are of type dataDouble
 		Assert.assertEquals(componentShape.getUsesPortStubs().get(0).getUses().getInterface().getName(), "dataDouble");
 		Assert.assertEquals(componentShape.getProvidesPortStubs().get(0).getProvides().getInterface().getName(), "dataDouble");
-		
-		MenuUtils.closeAllWithoutSave(bot);
-		MenuUtils.deleteNodeInProjectExplorer(bot, WAVEFORM_NAME);
-	}
 
-	@AfterClass
-	public static void cleanUp() {
-		bot.sleep(2000);
+		MenuUtils.closeAllWithoutSave(bot);
+		//MenuUtils.openWFEditorFromProjectExplorer(bot, waveformName);
+		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
 	}
 
 	/**
@@ -99,9 +94,9 @@ public class WaveformComponentTests {
 	 */
 	@Test
 	public void checkComponentPictogramElementsWithAssemblyController() {
-		CreateNewWaveform.createNewWaveformWithAssemblyController(bot, WAVEFORM_AC_NAME, COMPONENT_NAME);
-		// Add component to diagram from palette
-		editor = bot.gefEditor(WAVEFORM_AC_NAME);
+		final String waveformName = "IDE-680-Test";
+		CreateNewWaveform.createNewWaveformWithAssemblyController(bot, waveformName, COMPONENT_NAME);
+		editor = bot.gefEditor(waveformName);
 
 		// Drill down to graphiti component shape
 		SWTBotGefEditPart gefEditPart = editor.getEditPart(COMPONENT_NAME);
@@ -117,9 +112,7 @@ public class WaveformComponentTests {
 		Assert.assertEquals("inner text should match component usage name", ci.getUsageName(), componentShape.getInnerText().getValue());
 		Assert.assertNotNull("component supported interface graphic should not be null", componentShape.getLollipop());
 		Assert.assertNotNull("start order shape/text should not be null", componentShape.getStartOrderText());
-		
-		// TODO check if assembly controller 
-		// ? componentShape.getStartOrderEllipseShape().getGraphicsAlgorithm().getBackground().equals(...)
+		// TODO check if is assembly controller 
 
 		// HardLimit only has the two ports
 		Assert.assertTrue(componentShape.getUsesPortStubs().size() == 1 && componentShape.getProvidesPortStubs().size() == 1);
@@ -128,23 +121,50 @@ public class WaveformComponentTests {
 		Assert.assertEquals(componentShape.getProvidesPortStubs().get(0).getProvides().getInterface().getName(), "dataDouble");
 
 		MenuUtils.closeAllWithoutSave(bot);
-		MenuUtils.deleteNodeInProjectExplorer(bot, WAVEFORM_AC_NAME);
+		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
 	}
 
-//	@Test
-//	public void makeConnectionBetweenPictogramElements() {
-//		// Create an empty waveform project
-//		CreateNewWaveform.createNewWaveform(bot, WAVEFORM_NAME);
-//
-//		// Add component to diagram from palette
-//		editor = bot.gefEditor(WAVEFORM_NAME);
-//		EditorUtils.dragFromPaletteToDiagram(editor, COMPONENT_NAME, 0, 0);
-//
-//		// Drill down to graphiti component shape
-//		SWTBotGefEditPart gefEditPart = editor.getEditPart(COMPONENT_NAME);
-//		ComponentShapeImpl componentShape = (ComponentShapeImpl) gefEditPart.part().getModel();
-//
-//		MenuUtils.closeAllWithoutSave(bot);
-//	}
+	/**
+	 * IDE-669
+	 * Components are removed with the delete button (trashcan image) that appears when you select the component, 
+	 * but the delete context menu does not remove the component from the diagram. In most cases, the delete and 
+	 * remove context menu options are grayed out and not selectable.
+	 */
+	@Test
+	public void checkComponentContextMenuDelete() {
+		final String waveformName = "IDE-669-Test";
+		// Create an empty waveform project
+		CreateNewWaveform.createNewWaveform(bot, waveformName);
+		String[] components = {"HardLimit", "SigGen", "DataConverter"};
+
+		for (int i = 0; i < components.length; i++) {
+			// Add component to diagram from palette
+			editor = bot.gefEditor(waveformName);
+			EditorTestUtils.dragFromPaletteToDiagram(editor, components[i], 0, 0);			
+		}
+		
+		bot.menu("File").menu("Save").click();		
+
+		for (int i = 0; i < components.length; i++) {
+			// Drill down to graphiti component shape
+			SWTBotGefEditPart gefEditPart = editor.getEditPart(components[i]);
+			gefEditPart.select();
+
+			// Delete component
+			EditorTestUtils.deleteFromDiagram(editor, gefEditPart);
+			Assert.assertNull(editor.getEditPart(components[i]));
+		}
+
+		MenuUtils.closeAllWithoutSave(bot);
+		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
+	}
+
+
+
+	@AfterClass
+	public static void cleanUp() {
+		bot.sleep(2000);
+	}
+
 
 }
