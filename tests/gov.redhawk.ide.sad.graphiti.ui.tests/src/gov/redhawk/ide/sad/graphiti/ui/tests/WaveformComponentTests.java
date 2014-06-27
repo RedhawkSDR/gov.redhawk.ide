@@ -14,8 +14,10 @@ import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.tests.menus.MenuUtils;
 import gov.redhawk.ide.swtbot.tests.editor.EditorTestUtils;
+import gov.redhawk.ide.swtbot.tests.editor.FindByUtils;
 import gov.redhawk.ide.swtbot.tests.waveform.CreateNewWaveform;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
@@ -32,7 +34,9 @@ public class WaveformComponentTests {
 	private static SWTBotGefEditor editor;
 	private static SWTWorkbenchBot wbBot;
 	private static final String COMPONENT_NAME = "HardLimit";
-
+	private static final String[] COMPONENTS = {"HardLimit", "SigGen", "DataConverter"};
+	private static final String[] FINDBYS = { FindByUtils.FIND_BY_CORBA_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, 
+		FindByUtils.FIND_BY_EVENT_CHANNEL, FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -134,27 +138,71 @@ public class WaveformComponentTests {
 	public void checkComponentContextMenuDelete() {
 		final String waveformName = "IDE-669-Test";
 		// Create an empty waveform project
-		CreateNewWaveform.createNewWaveform(bot, waveformName);
-		String[] components = {"HardLimit", "SigGen", "DataConverter"};
+		CreateNewWaveform.createNewWaveform(bot, waveformName); 
+		editor = bot.gefEditor(waveformName);
 
-		for (int i = 0; i < components.length; i++) {
+		for (String s : COMPONENTS) {
 			// Add component to diagram from palette
-			editor = bot.gefEditor(waveformName);
-			EditorTestUtils.dragFromPaletteToDiagram(editor, components[i], 0, 0);			
+			EditorTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);			
 		}
 
 		bot.menu("File").menu("Save").click();		
 
-		for (int i = 0; i < components.length; i++) {
+
+		for (String s : COMPONENTS) {
 			// Drill down to graphiti component shape
-			SWTBotGefEditPart gefEditPart = editor.getEditPart(components[i]);
-			// Delete component
+			SWTBotGefEditPart gefEditPart = editor.getEditPart(s);
 			EditorTestUtils.deleteFromDiagram(editor, gefEditPart);
-			Assert.assertNull(editor.getEditPart(components[i]));
+			Assert.assertNull(editor.getEditPart(s));
 		}
 
 		MenuUtils.closeAllWithoutSave(bot);
 		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
+	}
+
+	@Test
+	public void checkFindByContextMenuDelete() {
+		final String waveformName = "IDE-669-Test-b";
+
+		CreateNewWaveform.createNewWaveform(bot, waveformName);
+		editor = bot.gefEditor(waveformName);
+		
+		for (String s : FINDBYS) {
+			// Add component to diagram from palette
+			EditorTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);
+			FindByUtils.completeFindByWizard(bot, s);
+		}
+
+		for (String s : FINDBYS) {
+			// Drill down to graphiti component shape
+			SWTBotGefEditPart gefEditPart = editor.getEditPart(FindByUtils.getFindByDefaultName(s));
+			EditorTestUtils.deleteFromDiagram(editor, gefEditPart);
+			bot.button("Yes").click(); // are you sure you want to delete this element?
+			Assert.assertNull(editor.getEditPart(s));
+		}
+
+		MenuUtils.closeAllWithoutSave(bot);
+		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
+	}
+
+	/**
+	 * IDE-653
+	 * Users are able to directly edit the name of Component and FindBy shapes on the diagram by double clicking on it.  
+	 * If you click on text other than the usage name and it will think you are editing the usage name.
+	 * This likely involves telling Graphiti not to do anything when selecting certain Pictogram Elements.
+	 */
+	@Test
+	public void checkComponentDirectEdit() {
+		final String waveformName = "IDE-653-Test";
+		// Create an empty waveform project
+		CreateNewWaveform.createNewWaveform(bot, waveformName);
+		// TODO implement
+
+	}
+
+	@Test
+	public void checkFindByDirectEdit() {
+
 	}
 
 	@AfterClass

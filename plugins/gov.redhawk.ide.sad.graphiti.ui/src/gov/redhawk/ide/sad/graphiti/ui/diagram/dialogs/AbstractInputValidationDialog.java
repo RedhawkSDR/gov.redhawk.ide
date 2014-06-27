@@ -37,7 +37,7 @@ public abstract class AbstractInputValidationDialog extends TitleAreaDialog {
 		super(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		this.windowTitle = windowTitle;
 		this.defaultMessage = defaultMessage;
-		this.inputLabel = inputLabel;
+		this.inputLabel = inputLabel + ":";
 		
 	}
 

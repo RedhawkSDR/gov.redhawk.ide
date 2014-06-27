@@ -41,6 +41,7 @@ Export-Package: gov.redhawk.ide.sad.graphiti.ext,
  gov.redhawk.ide.sad.graphiti.ext.util,
  gov.redhawk.ide.sad.graphiti.ui,
  gov.redhawk.ide.sad.graphiti.ui.diagram,
+ gov.redhawk.ide.sad.graphiti.ui.diagram.patterns,
  gov.redhawk.ide.sad.graphiti.ui.diagram.providers,
  gov.redhawk.ide.sad.graphiti.ui.diagram.util
 
