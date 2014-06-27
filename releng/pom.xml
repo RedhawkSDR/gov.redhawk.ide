@@ -22,9 +22,9 @@
     <nxm>http://nextmidas.techma.com/p2/nxm/updates/stable</nxm>
     <nxm-rcp>http://nextmidas.techma.com/p2/nxm.ui/updates/latest/</nxm-rcp>
     <jacorb>http://download.redhawksdr.org/jacorb/releases/3.1.0</jacorb>
-    <mil.jpeojtrs.sca>http://download.redhawksdr.org/mil.jpeojtrs.sca/releases/1.10</mil.jpeojtrs.sca>
-    <gov.redhawk.core>http://download.redhawksdr.org/gov.redhawk.core/releases/1.10</gov.redhawk.core>
-    <gov.redhawk.core.rcp>http://download.redhawksdr.org/gov.redhawk.core/rcp/releases/1.10</gov.redhawk.core.rcp>
+    <mil.jpeojtrs.sca>http://download.redhawksdr.org/mil.jpeojtrs.sca/releases/1.11</mil.jpeojtrs.sca>
+    <gov.redhawk.core>http://download.redhawksdr.org/gov.redhawk.core/releases/1.11</gov.redhawk.core>
+    <gov.redhawk.core.rcp>http://download.redhawksdr.org/gov.redhawk.core/rcp/releases/1.11</gov.redhawk.core.rcp>
   </properties>
 
   <repositories>
