@@ -49,10 +49,10 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 	 */
 	@Test
 	public void connectFeatureTest() {
-		// TODO CHECKSTYLE:OFF
 		final String waveformName = "IDE-731-Test";
 		final String sourceComponent = "SigGen";
 		final String targetComponent = "HardLimit";
+		
 		// Create an empty waveform project
 		CreateNewWaveform.createNewWaveform(gefBot, waveformName);
 
