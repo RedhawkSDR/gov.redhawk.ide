@@ -13,7 +13,6 @@ package gov.redhawk.ide.swtbot.tests.waveform;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 
 public class CreateNewWaveform { // SUPPRESS CHECKSTYLE INLINE

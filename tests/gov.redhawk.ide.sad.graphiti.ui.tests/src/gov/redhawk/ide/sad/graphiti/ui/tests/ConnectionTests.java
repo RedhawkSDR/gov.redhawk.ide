@@ -76,7 +76,9 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		Assert.assertTrue("No connections should exist", diagram.getConnections().isEmpty());
 
 		// Attempt to make an illegal connection and confirm that it was not actually made
-		// TODO do this test
+		SWTBotGefEditPart illegalTarget = EditorTestUtils.getDiagramUsesPort(editor, targetComponent);
+		EditorTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, illegalTarget);
+		Assert.assertTrue("Illegal connection should not have been drawn", diagram.getConnections().isEmpty());
 
 		// Draw the connection and save
 		EditorTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
@@ -101,10 +103,6 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		Assert.assertTrue("All connections should have been deleted", diagram.getConnections().isEmpty());
 
 		// TODO junit test for bad connections
-			// maybe do this first
-			// test trying to make impossible connections, and then DUtil.findDigram(containerShape).getConnections
-			// to make sure no connection was made
-			// include out-to-out and in-to-in
 			// test making unrecommended connections and look for color/style change
 			// redundant connections
 			// double to long or something like that
