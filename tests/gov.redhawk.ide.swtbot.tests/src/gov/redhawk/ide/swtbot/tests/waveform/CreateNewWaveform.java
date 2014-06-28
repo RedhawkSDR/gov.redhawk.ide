@@ -14,6 +14,7 @@ import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class CreateNewWaveform { // SUPPRESS CHECKSTYLE INLINE
 
@@ -26,7 +27,7 @@ public class CreateNewWaveform { // SUPPRESS CHECKSTYLE INLINE
 		// Open the new waveform project wizard
 		bot.menu("File").menu("New").menu("Other...").click();
 		bot.shell("New").activate();
-		bot.tree().select("SCA Waveform Project");
+		bot.tree().getTreeItem("SCA").expand().getNode("SCA Waveform Project").select();
 		bot.button("Next >").click();
 
 		// Enter the name for the new waveform
