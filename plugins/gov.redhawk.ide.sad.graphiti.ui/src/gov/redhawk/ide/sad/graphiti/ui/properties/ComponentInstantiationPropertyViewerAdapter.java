@@ -184,7 +184,9 @@ public class ComponentInstantiationPropertyViewerAdapter {
 			component.unsetProfileObj();
 		}
 		ignore = false;
-		viewer.refresh();
+		if (viewer != null) {
+			viewer.refresh();
+		}
 	}
 
 	private void setValue(final AbstractPropertyRef< ? > ref, final ScaAbstractProperty< ? > prop) {

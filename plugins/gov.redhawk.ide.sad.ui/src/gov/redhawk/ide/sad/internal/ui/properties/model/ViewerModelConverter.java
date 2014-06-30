@@ -651,7 +651,7 @@ public class ViewerModelConverter {
 		if (this.sad == sad) {
 			return;
 		}
-		if (this.sad != null) {
+		if (this.sad != null && this.sad.eAdapters() != null) {
 			//			sadListener.unsetTarget(this.sad);
 			sad.eAdapters().remove(sadListener);
 		}
