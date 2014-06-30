@@ -140,7 +140,7 @@ public class GraphitiModelMap {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
 				LocalScaComponent newComp = null;
 				try {
-					newComp = create(comp, implID);
+					newComp = GraphitiModelMap.this.create(comp, implID);
 					nodeMap.setLocalScaComponent(newComp);
 				
 					return Status.OK_STATUS;
@@ -183,7 +183,7 @@ public class GraphitiModelMap {
 			protected IStatus run(IProgressMonitor monitor) {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Connecting " + conn.getId(), IProgressMonitor.UNKNOWN);
 				try {
-					ScaConnection newConnection = create(conn);
+					ScaConnection newConnection = GraphitiModelMap.this.create(conn);
 					connectionMap.setScaConnection(newConnection);
 					return Status.OK_STATUS;
 				} catch (final InvalidPort e) {
@@ -224,7 +224,7 @@ public class GraphitiModelMap {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Adding connection " + conn.getId(), IProgressMonitor.UNKNOWN);
 				SadConnectInterface newSadInterface = null;
 				try {
-					newSadInterface = create(conn);
+					newSadInterface = GraphitiModelMap.this.create(conn);
 					if (newSadInterface == null) {
 						connections.remove(connectionMap.getKey());
 						return Status.CANCEL_STATUS;
