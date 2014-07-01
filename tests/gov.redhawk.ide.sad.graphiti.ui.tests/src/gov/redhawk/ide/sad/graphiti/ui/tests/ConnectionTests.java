@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.tests.editor.EditorTestUtils;
+import gov.redhawk.ide.swtbot.tests.menus.MenuUtils;
 import gov.redhawk.ide.swtbot.tests.waveform.CreateNewWaveform;
 
 import java.util.List;
@@ -98,9 +99,14 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		for (SWTBotGefConnectionEditPart con : sourceConnections) {
 			EditorTestUtils.deleteFromDiagram(editor, con);
 		}
+		bot.menu("File").menu("Save").click();
 		sourceConnections = EditorTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
 		Assert.assertTrue("Source connections should be empty, all connections were deleted", sourceConnections.isEmpty());
 		Assert.assertTrue("All connections should have been deleted", diagram.getConnections().isEmpty());
+		
+		// Close the editor and delete the waveform project
+		MenuUtils.closeAllWithoutSave(bot);
+		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
 
 		// TODO junit test for bad connections
 			// test making unrecommended connections and look for color/style change
@@ -110,16 +116,6 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 
 		// TODO Follow this test with a reconnect feature test trying the same bad connections as above
 			// Test in it's own method below
-	}
-
-	/**
-	 * IDE-697
-	 * Users should be able to take existing connections and change them
-	 * via drag-and-drop, without being able to create an invalid connection in the process
-	 */
-	@Test
-	public void reconnectFeatureTest() {
-		// TODO Create this test
 	}
 
 	@AfterClass
