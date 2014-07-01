@@ -32,6 +32,8 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility method is intended to be public
 
+	public static final String OVERVIEW_TAB = "Overview", PROPERTIES_TAB = "Properties", DIAGRAM_TAB = "Diagram", XML_TAB = ".sad.xml";
+	
 	/**
 	 * Deletes the provided part from the diagram. Part must have a context menu option for "Delete"
 	 * @param editor - SWTBotGefEditor
@@ -202,6 +204,15 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Opens the given tab with the given name within the waveform editor.
+	 * @param editor - the editor within which to open the tab
+	 * @param tabName - name of the tab to be opened
+	 */
+	public static void openTabInEditor(SWTBotGefEditor editor, String tabName) {
+		editor.bot().cTabItem(tabName).activate();
 	}
 	
 	/**

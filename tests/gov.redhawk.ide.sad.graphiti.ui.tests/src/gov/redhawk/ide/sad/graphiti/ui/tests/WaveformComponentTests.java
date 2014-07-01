@@ -136,11 +136,11 @@ public class WaveformComponentTests {
 	 */
 	@Test
 	public void checkComponentContextMenuDelete() {
-		final String waveformName = "IDE-669-Test";
+		final String waveformName = "IDE-669-Test-a";
 		// Create an empty waveform project
 		CreateNewWaveform.createNewWaveform(bot, waveformName); 
 		editor = bot.gefEditor(waveformName);
-
+		
 		for (String s : COMPONENTS) {
 			// Add component to diagram from palette
 			EditorTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);			
@@ -194,15 +194,43 @@ public class WaveformComponentTests {
 	@Test
 	public void checkComponentDirectEdit() {
 		final String waveformName = "IDE-653-Test";
-		// Create an empty waveform project
+		
 		CreateNewWaveform.createNewWaveform(bot, waveformName);
-		// TODO implement
+		editor = bot.gefEditor(waveformName);
+		
+		// Add component to diagram from palette
+		EditorTestUtils.dragFromPaletteToDiagram(editor, COMPONENT_NAME, 0, 0);
+		FindByUtils.completeFindByWizard(bot, COMPONENT_NAME);
+		
+		// Drill down to graphiti component shape
+		SWTBotGefEditPart gefEditPart = editor.getEditPart(COMPONENT_NAME);
+		ComponentShapeImpl componentShape = (ComponentShapeImpl) gefEditPart.part().getModel();
 
+		// Grab the associated business object and confirm it is a SadComponentInstantiation
+		Object bo = DUtil.getBusinessObject(componentShape);
+		Assert.assertTrue("business object should be of type SadComponentInstantiation", bo instanceof SadComponentInstantiation);
+		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
+		
+		// TODO Edit via directEdit
+		String initName = ci.getUsageName();
+		gefEditPart.activateDirectEdit();
+		editor.directEditType(initName + "_edit");
+		gefEditPart.click();
+		
+		Assert.assertEquals(initName + "_edit", ci.getUsageName());
+		
+		// Save, close, and reopen
+		MenuUtils.closeAll(bot, true);
+		EditorTestUtils.openSadDiagram(wbBot, waveformName);
+		Assert.assertEquals(initName + "_edit", ci.getUsageName());
+		
+		MenuUtils.closeAllWithoutSave(bot);
+		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
 	}
 
 	@Test
 	public void checkFindByDirectEdit() {
-
+		
 	}
 
 	@AfterClass
