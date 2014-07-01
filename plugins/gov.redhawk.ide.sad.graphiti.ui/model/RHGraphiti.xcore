@@ -9,41 +9,27 @@
 package gov.redhawk.ide.sad.graphiti.ext
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractContainerPattern
-import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern
-import java.util.List
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub
-import mil.jpeojtrs.sca.partitioning.UsesPortStub
-import mil.jpeojtrs.sca.sad.AssemblyController
-import mil.jpeojtrs.sca.sad.ExternalPorts
-import mil.jpeojtrs.sca.sad.Port
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation
 import org.eclipse.emf.ecore.EEList
-import org.eclipse.graphiti.features.IFeatureProvider
-import org.eclipse.graphiti.features.context.IAddContext
-import org.eclipse.graphiti.features.context.IUpdateContext
-import org.eclipse.graphiti.features.impl.Reason
-import org.eclipse.graphiti.mm.pictograms.ContainerShape
 
-type ComponentSupportedInterfaceStub wraps ComponentSupportedInterfaceStub
-type IFeatureProvider wraps IFeatureProvider
-type UsesPortStub wraps UsesPortStub
-type ProvidesPortStub wraps ProvidesPortStub
-type Port wraps Port
-type AssemblyController wraps AssemblyController
-type ExternalPorts wraps ExternalPorts
-type Reason wraps Reason
-type List<Port> wraps List
-type SadComponentInstantiation wraps SadComponentInstantiation
-type IAddContext wraps IAddContext
+type ComponentSupportedInterfaceStub wraps mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub
+type IFeatureProvider wraps org.eclipse.graphiti.features.IFeatureProvider
+type UsesPortStub wraps mil.jpeojtrs.sca.partitioning.UsesPortStub
+type ProvidesPortStub wraps mil.jpeojtrs.sca.partitioning.ProvidesPortStub
+type Port wraps mil.jpeojtrs.sca.sad.Port
+type AssemblyController wraps mil.jpeojtrs.sca.sad.AssemblyController
+type ExternalPorts wraps mil.jpeojtrs.sca.sad.ExternalPorts
+type Reason wraps org.eclipse.graphiti.features.impl.Reason
+type List<Port> wraps java.util.List
+type SadComponentInstantiation wraps mil.jpeojtrs.sca.sad.SadComponentInstantiation
+type IAddContext wraps org.eclipse.graphiti.features.context.IAddContext
 type AbstractContainerPattern wraps AbstractContainerPattern
-type ComponentPattern wraps ComponentPattern
-type IUpdateContext wraps IUpdateContext
+type ComponentPattern wraps gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern
+type IUpdateContext wraps org.eclipse.graphiti.features.context.IUpdateContext
 
-interface ContainerShapeImpl wraps ContainerShape {}
+interface ContainerShapeImpl wraps org.eclipse.graphiti.mm.pictograms.ContainerShape {}
 
 
-class RHContainerShape extends ContainerShape{
+class RHContainerShape extends org.eclipse.graphiti.mm.pictograms.ContainerShape {
 	
 	op void init(IAddContext context, AbstractContainerPattern pattern) 
 	op void init(IAddContext context, AbstractContainerPattern pattern, List<Port> externalPorts)
