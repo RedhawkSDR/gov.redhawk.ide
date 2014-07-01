@@ -648,7 +648,7 @@ public class ViewerModelConverter {
 	}
 
 	public void setSoftwareAssembly(SoftwareAssembly sad) {
-		if (this.sad == sad) {
+		if (this.sad == sad || sad == null) {
 			return;
 		}
 		if (this.sad != null && this.sad.eAdapters() != null) {

@@ -57,7 +57,7 @@ public class SadPropertiesPage extends ScaFormPage {
 		{
 			setToolTipText("Expand All");
 			final ImageDescriptor expandAllImageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(SadUiActivator.PLUGIN_ID,
-				"icons/full/elcl16/expandall.gif");
+					"icons/full/elcl16/expandall.gif");
 			setImageDescriptor(expandAllImageDescriptor);
 			//			setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 		}
@@ -106,7 +106,7 @@ public class SadPropertiesPage extends ScaFormPage {
 	protected BasicCommandStack getCommandStack() {
 		return ((GFWorkspaceCommandStackImpl) getEditingDomain().getCommandStack());
 	}
-	
+
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
@@ -115,7 +115,7 @@ public class SadPropertiesPage extends ScaFormPage {
 		addActions(managedForm.getForm().getToolBarManager());
 		viewer.getControl().setFocus();
 		super.createFormContent(managedForm);
-		
+
 		final ToolBarManager manager = (ToolBarManager) form.getToolBarManager();
 		final IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
 		service.populateContributionManager(manager, "toolbar:" + SadPropertiesPage.TOOLBAR_ID);
@@ -156,7 +156,9 @@ public class SadPropertiesPage extends ScaFormPage {
 	@Override
 	protected void refresh(Resource resource) {
 		SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(resource);
-		model.setSoftwareAssembly(sad);
+		if (model != null) {
+			model.setSoftwareAssembly(sad);
+		}
 	}
 
 	@Override
@@ -165,7 +167,7 @@ public class SadPropertiesPage extends ScaFormPage {
 		viewer.refresh();
 		viewer.expandToLevel(2);
 	}
-	
+
 	@Override
 	public void setFocus() {
 		if (viewer != null) {
