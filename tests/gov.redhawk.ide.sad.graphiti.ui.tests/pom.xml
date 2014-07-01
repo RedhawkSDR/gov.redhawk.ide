@@ -24,12 +24,32 @@
           <useUIHarness>true</useUIHarness>
           <useUIThread>false</useUIThread>
           <application>org.eclipse.ui.ide.workbench</application>
-          <argLine>-Xmx512m -Djava.net.preferIPv4Stack=true</argLine>
-          <appArgLine>-nl en</appArgLine>
+          <argLine>-Dorg.eclipse.swt.browser.DefaultType=mozilla -DORBInitialPort=2908 -XX:MaxPermSize=256m -Xmx1024m -Djava.net.preferIPv4Stack=true</argLine>
+          <appArgLine>-nl en -consoleLog</appArgLine>
           <includes>
             <include>**/*Tests.java</include>
           </includes>
           <dependencies>
+            <dependency>
+              <type>eclipse-feature</type>
+              <artifactId>org.eclipse.wst.xml_core.feature</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-feature</type>
+              <artifactId>org.eclipse.wst.xml_ui.feature</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-feature</type>
+              <artifactId>org.eclipse.xsd.sdk</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-feature</type>
+              <artifactId>org.eclipse.epp.package.standard.feature</artifactId>
+              <version>0.0.0</version>
+            </dependency>
             <dependency>
               <type>eclipse-feature</type>
               <artifactId>gov.redhawk.ide.ui.feature</artifactId>
@@ -57,6 +77,11 @@
             </dependency>
             <dependency>
               <type>eclipse-feature</type>
+              <artifactId>mil.jpeojtrs.sca</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-feature</type>
               <artifactId>org.eclipse.swtbot.forms</artifactId>
               <version>0.0.0</version>
             </dependency>
@@ -66,8 +91,23 @@
               <version>0.0.0</version>
             </dependency>
             <dependency>
-              <type>org.eclipse.swtbot</type>
+              <type>eclipse-feature</type>
               <artifactId>org.eclipse.swtbot</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>slf4j.api</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>ch.qos.logback.classic</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>ch.qos.logback.core</artifactId>
               <version>0.0.0</version>
             </dependency>
           </dependencies>

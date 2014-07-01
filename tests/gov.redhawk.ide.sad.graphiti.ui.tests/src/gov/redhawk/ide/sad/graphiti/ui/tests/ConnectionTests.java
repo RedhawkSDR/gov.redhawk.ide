@@ -23,25 +23,51 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
+import org.eclipse.ui.PlatformUI;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(SWTBotJunit4ClassRunner.class) 
 public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
-	private static SWTBot bot;
-	private static SWTGefBot gefBot;
-	private static SWTBotGefEditor editor;
+	private SWTBot bot;
+	private SWTGefBot gefBot;
+	private SWTBotGefEditor editor;
 
 	@BeforeClass
-	public static void beforeClass() {
+	public static void beforeClass() throws Exception {
+		while (PlatformUI.getWorkbench().isStarting()) {
+			Thread.sleep(1000);
+		}
+	}
+	
+	@Before
+	public void setUp() throws Exception {
 		bot = new SWTBot();
 		gefBot = new SWTGefBot();
+		SWTBotPerspective perspective = gefBot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
+		perspective.activate();
+		gefBot.resetActivePerspective();
+	}
+	
+	@After
+	public void cleanUp() {
+		for (SWTBotEditor e : gefBot.editors()) {
+			e.close();
+		}
+		gefBot.sleep(2000);
 	}
 
 	/**
@@ -119,8 +145,8 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	@AfterClass
-	public static void cleanUp() {
-		gefBot.sleep(2000);
+	public static void cleanUpClass() {
+		
 	}
 
 }

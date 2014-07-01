@@ -19,32 +19,54 @@ import gov.redhawk.ide.swtbot.tests.waveform.CreateNewWaveform;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
+import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
+import org.eclipse.ui.PlatformUI;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(SWTBotJunit4ClassRunner.class) 
 public class WaveformComponentTests {
 
-	private static SWTGefBot bot;
-	private static SWTBotGefEditor editor;
-	private static SWTWorkbenchBot wbBot;
+	private SWTGefBot bot;
+	private SWTBotGefEditor editor;
+	private SWTWorkbenchBot wbBot;
 	private static final String COMPONENT_NAME = "HardLimit";
 	private static final String[] COMPONENTS = {"HardLimit", "SigGen", "DataConverter"};
 	private static final String[] FINDBYS = { FindByUtils.FIND_BY_CORBA_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, 
 		FindByUtils.FIND_BY_EVENT_CHANNEL, FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
 
 	@BeforeClass
-	public static void beforeClass() {
+	public static void beforeClass() throws Exception {
+		while (PlatformUI.getWorkbench().isStarting()) {
+			Thread.sleep(1000);
+		}
+	}
+	
+	@Before
+	public void setUp() throws Exception {
 		bot = new SWTGefBot();
 		wbBot = new SWTWorkbenchBot();
-		// Switch to SCA Perspective
 		SWTBotPerspective perspective = wbBot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
 		perspective.activate();
+		wbBot.resetActivePerspective();
+	}
+	
+	@After
+	public void cleanUp() {
+		for (SWTBotEditor e : wbBot.editors()) {
+			e.close();
+		}
+		bot.sleep(2000);
 	}
 
 	/**
@@ -234,8 +256,8 @@ public class WaveformComponentTests {
 	}
 
 	@AfterClass
-	public static void cleanUp() {
-		bot.sleep(2000);
+	public static void cleanUpClass() {
+		
 	}
 
 

@@ -24,7 +24,10 @@ public class CreateNewWaveform { // SUPPRESS CHECKSTYLE INLINE
 	 */
 	public static void createNewWaveform(SWTBot bot, String waveformName) {
 		// Open the new waveform project wizard
-		bot.menu("File").menu("New").menu("Other...").click();
+		SWTBotMenu fileMenu = bot.menu("File");
+		SWTBotMenu newMenu = fileMenu.menu("New");
+		SWTBotMenu otherMenu = newMenu.menu("Other...");
+		otherMenu.click();
 		bot.shell("New").activate();
 		bot.tree().getTreeItem("SCA").expand().getNode("SCA Waveform Project").select();
 		bot.button("Next >").click();
@@ -44,10 +47,14 @@ public class CreateNewWaveform { // SUPPRESS CHECKSTYLE INLINE
 	 */
 	public static void createNewWaveformWithAssemblyController(SWTBot bot, String waveformName, String assemblyControllerType) {
 		// Open the new waveform project wizard
+		// Open the new waveform project wizard
 		SWTBotMenu fileMenu = bot.menu("File");
 		SWTBotMenu newMenu = fileMenu.menu("New");
-		SWTBotMenu waveformMenu = newMenu.menu("SCA Waveform Project");
-		waveformMenu.click();
+		SWTBotMenu otherMenu = newMenu.menu("Other...");
+		otherMenu.click();
+		bot.shell("New").activate();
+		bot.tree().getTreeItem("SCA").expand().getNode("SCA Waveform Project").select();
+		bot.button("Next >").click();
 
 		// Enter the name for the new waveform
 		bot.textWithLabel("Project name:").setText(waveformName);
