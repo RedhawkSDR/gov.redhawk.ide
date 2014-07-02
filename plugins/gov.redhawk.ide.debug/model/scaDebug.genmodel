@@ -68,7 +68,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/implementationID"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalAbstractComponent/execParam"/>
     </genClasses>
-    <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalScaWaveform">
+    <genClasses provider="Stateful" image="false" ecoreClass="scaDebug.ecore#//LocalScaWaveform">
       <genFeatures property="Readonly" notify="false" createChild="false" propertySortChoices="true"
           ecoreFeature="ecore:EReference scaDebug.ecore#//LocalScaWaveform/namingContext"/>
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalScaWaveform/localApp"/>
@@ -81,7 +81,7 @@
       </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalScaComponent"/>
-    <genClasses image="false" ecoreClass="scaDebug.ecore#//LocalScaDeviceManager">
+    <genClasses provider="Stateful" image="false" ecoreClass="scaDebug.ecore#//LocalScaDeviceManager">
       <genFeatures property="Readonly" notify="false" createChild="false" propertySortChoices="true"
           ecoreFeature="ecore:EReference scaDebug.ecore#//LocalScaDeviceManager/namingContext"/>
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EAttribute scaDebug.ecore#//LocalScaDeviceManager/localDeviceManager"/>

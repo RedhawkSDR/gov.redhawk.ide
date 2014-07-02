@@ -147,20 +147,24 @@ public class LocalApplicationFactory {
 		final SubMonitor progress = SubMonitor.convert(monitor, 100);
 		String adjustedName = name;
 
-		// Try and narrow to the given name.  If an already bound exception occurs, append _ + i to the end and try again until 
+		// Try and narrow to the given name. If an already bound exception occurs, append _ + i to the end and try again
+		// until
 		// we've found a good name.
+		ApplicationImpl app = null;
+		LocalScaWaveform waveform = null;
 		try {
 			progress.subTask("Create application");
 			final String appId = DceUuidUtil.createDceUUID();
 			final String profile = sad.eResource().getURI().path();
 
-			final LocalScaWaveform waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
+			waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
 			waveform.setProfile(profile);
 			waveform.setLaunch(this.launch);
 			waveform.setMode(this.launch.getLaunchMode());
 			waveform.setNamingContext(LocalApplicationFactory.createWaveformContext(namingContext, adjustedName));
 
-			final ApplicationImpl app = new ApplicationImpl(waveform, appId, adjustedName);
+			app = new ApplicationImpl(waveform, appId, adjustedName);
+			app.setLaunching(true);
 			this.launch.addProcess(app);
 			waveform.setLocalApp(app);
 
@@ -172,11 +176,12 @@ public class LocalApplicationFactory {
 			waveform.setProfileURI(sadUri);
 			waveform.fetchProfileObject(null);
 
+			final ScaWaveform tmpWaveform = waveform;
 			ScaModelCommand.execute(this.localSca, new ScaModelCommand() {
 
 				@Override
 				public void execute() {
-					LocalApplicationFactory.this.localSca.getWaveforms().add(waveform);
+					LocalApplicationFactory.this.localSca.getWaveforms().add(tmpWaveform);
 				}
 			});
 
@@ -197,6 +202,13 @@ public class LocalApplicationFactory {
 			LocalApplicationFactory.bindApp(app);
 			progress.worked(1);
 
+		} catch (final SystemException e) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
+		} finally {
+			app.setLaunching(false);
+		}
+		
+		if (app != null && waveform != null) {
 			progress.subTask("Refresh");
 			SubMonitor subTask = progress.newChild(1);
 			try {
@@ -206,11 +218,9 @@ public class LocalApplicationFactory {
 			}
 
 			app.getStreams().getOutStream().println("Done");
-			progress.done();
-			return waveform;
-		} catch (final SystemException e) {
-			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
 		}
+		progress.done();
+		return waveform;
 	}
 
 	private String getImplId(final SadComponentInstantiation comp) {
@@ -284,6 +294,7 @@ public class LocalApplicationFactory {
 			NameComponent[] name = Name.toName(app.name());
 			org.omg.CORBA.Object obj = app.getLocalWaveform().getCorbaObj();
 			context.bind(name, obj);
+			app.getStreams().getOutStream().println("Done Binding application.");
 		} catch (final NotFound e) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to bind application to context " + e.getMessage(), e));
 		} catch (final CannotProceed e) {
