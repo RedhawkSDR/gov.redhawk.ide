@@ -12,6 +12,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.gef,
  mil.jpeojtrs.sca.sad
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: gov.redhawk.ide.swtbot.tests.editor,
- gov.redhawk.ide.swtbot.tests.menus,
- gov.redhawk.ide.swtbot.tests.waveform
+Export-Package: gov.redhawk.ide.swtbot.tests.utils

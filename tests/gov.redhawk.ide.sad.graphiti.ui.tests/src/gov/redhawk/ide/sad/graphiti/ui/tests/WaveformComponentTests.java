@@ -12,10 +12,11 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.swtbot.tests.menus.MenuUtils;
-import gov.redhawk.ide.swtbot.tests.editor.EditorTestUtils;
-import gov.redhawk.ide.swtbot.tests.editor.FindByUtils;
-import gov.redhawk.ide.swtbot.tests.waveform.CreateNewWaveform;
+import gov.redhawk.ide.swtbot.tests.utils.ComponentUtils;
+import gov.redhawk.ide.swtbot.tests.utils.WaveformUtils;
+import gov.redhawk.ide.swtbot.tests.utils.EditorTestUtils;
+import gov.redhawk.ide.swtbot.tests.utils.FindByUtils;
+import gov.redhawk.ide.swtbot.tests.utils.MenuUtils;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
@@ -79,7 +80,7 @@ public class WaveformComponentTests {
 	public void checkComponentPictogramElements() {
 		final String waveformName = "IDE-726-Test";
 		// Create an empty waveform project
-		CreateNewWaveform.createNewWaveform(bot, waveformName);
+		WaveformUtils.createNewWaveform(bot, waveformName);
 
 		// Add component to diagram from palette
 		editor = bot.gefEditor(waveformName);
@@ -120,7 +121,7 @@ public class WaveformComponentTests {
 	@Test
 	public void checkComponentPictogramElementsWithAssemblyController() {
 		final String waveformName = "IDE-680-Test";
-		CreateNewWaveform.createNewWaveformWithAssemblyController(bot, waveformName, COMPONENT_NAME);
+		WaveformUtils.createNewWaveformWithAssemblyController(bot, waveformName, COMPONENT_NAME);
 		editor = bot.gefEditor(waveformName);
 
 		// Drill down to graphiti component shape
@@ -137,7 +138,7 @@ public class WaveformComponentTests {
 		Assert.assertEquals("inner text should match component usage name", ci.getUsageName(), componentShape.getInnerText().getValue());
 		Assert.assertNotNull("component supported interface graphic should not be null", componentShape.getLollipop());
 		Assert.assertNotNull("start order shape/text should not be null", componentShape.getStartOrderText());
-		Assert.assertTrue("should be assembly controller", EditorTestUtils.isAssemblyController(componentShape));
+		Assert.assertTrue("should be assembly controller", ComponentUtils.isAssemblyController(componentShape));
 
 		// HardLimit only has the two ports
 		Assert.assertTrue(componentShape.getUsesPortStubs().size() == 1 && componentShape.getProvidesPortStubs().size() == 1);
@@ -160,7 +161,7 @@ public class WaveformComponentTests {
 	public void checkComponentContextMenuDelete() {
 		final String waveformName = "IDE-669-Test-a";
 		// Create an empty waveform project
-		CreateNewWaveform.createNewWaveform(bot, waveformName); 
+		WaveformUtils.createNewWaveform(bot, waveformName); 
 		editor = bot.gefEditor(waveformName);
 		
 		for (String s : COMPONENTS) {
@@ -186,7 +187,7 @@ public class WaveformComponentTests {
 	public void checkFindByContextMenuDelete() {
 		final String waveformName = "IDE-669-Test-b";
 
-		CreateNewWaveform.createNewWaveform(bot, waveformName);
+		WaveformUtils.createNewWaveform(bot, waveformName);
 		editor = bot.gefEditor(waveformName);
 		
 		for (String s : FINDBYS) {
@@ -217,7 +218,7 @@ public class WaveformComponentTests {
 	public void checkComponentDirectEdit() {
 		final String waveformName = "IDE-653-Test";
 		
-		CreateNewWaveform.createNewWaveform(bot, waveformName);
+		WaveformUtils.createNewWaveform(bot, waveformName);
 		editor = bot.gefEditor(waveformName);
 		
 		// Add component to diagram from palette

@@ -8,14 +8,14 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.swtbot.tests.waveform;
+package gov.redhawk.ide.swtbot.tests.utils;
 
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 
-public class CreateNewWaveform { // SUPPRESS CHECKSTYLE INLINE
+public class WaveformUtils { // SUPPRESS CHECKSTYLE INLINE
 
 	/**
 	 * Creates a new waveform using File > New > Other... > SCA Waveform Project wizard

@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.swtbot.tests.menus;
+package gov.redhawk.ide.swtbot.tests.utils;
 
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
@@ -59,6 +59,10 @@ public class MenuUtils {
 			}
 			bot.button(OK).click();
 		}
+	}
+	
+	public static void save(SWTBot bot) {
+		bot.menu("File").menu("Save");
 	}
 
 	private static boolean buttonExists(SWTBot bot, String buttonText) {

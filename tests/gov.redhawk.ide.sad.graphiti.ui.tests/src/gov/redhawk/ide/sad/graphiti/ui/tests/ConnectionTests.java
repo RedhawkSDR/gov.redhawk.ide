@@ -11,9 +11,9 @@
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.swtbot.tests.editor.EditorTestUtils;
-import gov.redhawk.ide.swtbot.tests.menus.MenuUtils;
-import gov.redhawk.ide.swtbot.tests.waveform.CreateNewWaveform;
+import gov.redhawk.ide.swtbot.tests.utils.WaveformUtils;
+import gov.redhawk.ide.swtbot.tests.utils.EditorTestUtils;
+import gov.redhawk.ide.swtbot.tests.utils.MenuUtils;
 
 import java.util.List;
 
@@ -81,7 +81,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		final String targetComponent = "HardLimit";
 		
 		// Create an empty waveform project
-		CreateNewWaveform.createNewWaveform(gefBot, waveformName);
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
 
 		// Add component to diagram from palette
 		editor = gefBot.gefEditor(waveformName);
