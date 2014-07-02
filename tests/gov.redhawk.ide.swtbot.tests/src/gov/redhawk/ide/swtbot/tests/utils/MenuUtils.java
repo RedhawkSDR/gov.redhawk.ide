@@ -62,7 +62,7 @@ public class MenuUtils {
 	}
 	
 	public static void save(SWTBot bot) {
-		bot.menu("File").menu("Save");
+		bot.menu("File").menu("Save").click();
 	}
 
 	private static boolean buttonExists(SWTBot bot, String buttonText) {
@@ -75,7 +75,7 @@ public class MenuUtils {
 	}
 	
 	public static void deleteNodeInProjectExplorer(SWTBot bot, String projectName) {
-		bot.tree().getTreeItem(projectName).select().pressShortcut(Keystrokes.DELETE);
+		bot.tree().getTreeItem(projectName).select().pressShortcut(Keystrokes.DELETE).pressShortcut(Keystrokes.SPACE);
 		bot.button(OK).click();
 		bot.sleep(500);
 	}
