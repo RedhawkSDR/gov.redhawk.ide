@@ -47,8 +47,9 @@ public class ComponentPropertiesSection extends GFPropertySection implements ITa
 		super.createControls(parent, tabbedPropertySheetPage);
 		this.adapterFactory = createAdapterFactory();
 
-		final TreeViewer viewer = createTreeViewer(parent);
-		this.adapter.setViewer(viewer);
+		// TODO - this section broke when we moved to Luna...
+//		final TreeViewer viewer = createTreeViewer(parent);
+//		this.adapter.setViewer(viewer);
 	}
 
 	public TreeViewer getViewer() {
