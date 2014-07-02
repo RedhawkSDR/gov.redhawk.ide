@@ -13,35 +13,37 @@ package gov.redhawk.ide.swtbot.tests.utils;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
+import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 
 public class ComponentUtils { //SUPPRESS CHECKSTYLE INLINE
-	
+
 	public static void decrementStartOrder(SWTBotGefEditor editor, String componentName) {
 		editor.select(componentName).clickContextMenu("Move Start Order Later");
 	}
-	
+
 	public static int getStartOrder(SWTBotGefEditor editor, String component) {
 		ComponentShapeImpl componentShape = (ComponentShapeImpl) editor.getEditPart(component).part().getModel();
 		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 		return ci.getStartOrder().intValue();
 	}
-	
+
 	public static void incrementStartOrder(SWTBotGefEditor editor, String componentName) {
 		editor.select(componentName).clickContextMenu("Move Start Order Earlier");
 	}
-	
+
 	public static boolean isAssemblyController(SWTGefBot bot, SWTBotGefEditor editor, String component) {
 		ComponentShape assemblyController = (ComponentShapeImpl) editor.getEditPart(component).part().getModel();
 		return isAssemblyController(assemblyController);
 	}
-	
+
 	/**
 	 * Determines whether the given component shape is the assembly controller of its waveform diagram
 	 * @param componentShape
@@ -60,6 +62,24 @@ public class ComponentUtils { //SUPPRESS CHECKSTYLE INLINE
 
 	public static void setAsAssemblyController(SWTBotGefEditor editor, String componentName) {
 		editor.select(componentName).clickContextMenu("Set As Assembly Controller");
+	}
+
+	public static boolean correctStartOrderValue(ComponentShape componentShape, int expected) {
+		return ((ComponentShapeImpl) componentShape).getStartOrderText().getValue().equals(Integer.toString(expected));
+	}
+
+	public static boolean correctStartOrderStyling(ComponentShape componentShape, boolean assemblyController) {
+		Diagram diagram = DUtil.findDiagram(componentShape);
+		Style style = ((ComponentShapeImpl) componentShape).getStartOrderEllipseShape().getGraphicsAlgorithm().getStyle();
+		if (assemblyController) {
+			return style.equals(StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
+		}
+		return style.equals(StyleUtil.getStyleForStartOrderEllipse(diagram));
+	}
+
+	public static boolean correctStylingAndValue(SWTBotGefEditor editor, String component, int expectedNumber, boolean assemblyController) {
+		ComponentShape componentShape = (ComponentShapeImpl) editor.getEditPart(component).part().getModel();
+		return correctStartOrderValue(componentShape, expectedNumber) && correctStartOrderStyling(componentShape, assemblyController);
 	}
 
 }

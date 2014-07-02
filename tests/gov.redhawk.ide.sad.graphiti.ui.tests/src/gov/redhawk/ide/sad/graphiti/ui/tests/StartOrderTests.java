@@ -150,16 +150,16 @@ public class StartOrderTests {
 		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.OVERVIEW_TAB);
 		editor.bot().ccomboBoxWithLabel("Controller:").setSelection(component.length - 1);
 		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.DIAGRAM_TAB);
-
+		
 		// Confirm start order numbers have adjusted appropriately
 		for (int i = 0; i < component.length - 1; i++) {
-			Assert.assertEquals(i + 1, ComponentUtils.getStartOrder(editor, component[i]));
+			Assert.assertTrue(ComponentUtils.correctStylingAndValue(editor, component[i], i + 1, false));
 		}
 
 		// Check new assembly controller
 		MenuUtils.save(gefBot);
 		assemblyController = component[component.length - 1];
-		Assert.assertEquals(0, ComponentUtils.getStartOrder(editor, assemblyController));
+		Assert.assertTrue(ComponentUtils.correctStylingAndValue(editor, assemblyController, 0, true));
 		Assert.assertTrue(ComponentUtils.isAssemblyController(gefBot, editor, assemblyController));
 	}
 
@@ -189,12 +189,12 @@ public class StartOrderTests {
 		
 		// Confirm start order numbers have adjusted appropriately
 		for (int i = 0; i < component.length - 1; i++) {
-			Assert.assertEquals(i + 1, ComponentUtils.getStartOrder(editor, component[i]));
+			Assert.assertTrue(ComponentUtils.correctStylingAndValue(editor, component[i], i + 1, false));
 		}
 
 		// Check new assembly controller
 		MenuUtils.save(gefBot);
-		Assert.assertEquals(0, ComponentUtils.getStartOrder(editor, assemblyController));
+		Assert.assertTrue(ComponentUtils.correctStylingAndValue(editor, assemblyController, 0, true));
 		Assert.assertTrue(ComponentUtils.isAssemblyController(gefBot, editor, assemblyController));
 		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.OVERVIEW_TAB);
 		Assert.assertTrue(editor.bot().ccomboBoxWithLabel("Controller:").getText().contains(assemblyController));
@@ -211,17 +211,17 @@ public class StartOrderTests {
 	@Test
 	public void checkStartOrderSequence() {
 		waveformName = "IDE---Test";
-		final String[] COMPONENT = { "DataConverter", "HardLimit", "SigGen" };
+		final String[] component = { "DataConverter", "HardLimit", "SigGen" };
 
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
 		// Add and check start order
-		for (int i = 0; i < COMPONENT.length; i++) {
-			EditorTestUtils.dragFromPaletteToDiagram(editor, COMPONENT[i], 0, 0);
-			Assert.assertEquals(i, ComponentUtils.getStartOrder(editor, COMPONENT[i]));
+		for (int i = 0; i < component.length; i++) {
+			EditorTestUtils.dragFromPaletteToDiagram(editor, component[i], 0, 0);
+			Assert.assertEquals(i, ComponentUtils.getStartOrder(editor, component[i]));
 		}
 		// Check first added is assembly controller
-		Assert.assertTrue(ComponentUtils.isAssemblyController(gefBot, editor, COMPONENT[0]));
+		Assert.assertTrue(ComponentUtils.isAssemblyController(gefBot, editor, component[0]));
 	}
 
 	@After
