@@ -23,8 +23,8 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 
 public class ComponentUtils { //SUPPRESS CHECKSTYLE INLINE
 	
-	public static void decrementStartOrder(SWTBotGefEditor editor, String componentOne) {
-		editor.select(componentOne).clickContextMenu("Move Start Order Later");
+	public static void decrementStartOrder(SWTBotGefEditor editor, String componentName) {
+		editor.select(componentName).clickContextMenu("Move Start Order Later");
 	}
 	
 	public static int getStartOrder(SWTBotGefEditor editor, String component) {
@@ -33,8 +33,8 @@ public class ComponentUtils { //SUPPRESS CHECKSTYLE INLINE
 		return ci.getStartOrder().intValue();
 	}
 	
-	public static void incrementStartOrder(SWTBotGefEditor editor, String componentOne) {
-		editor.select(componentOne).clickContextMenu("Move Start Order Earlier");
+	public static void incrementStartOrder(SWTBotGefEditor editor, String componentName) {
+		editor.select(componentName).clickContextMenu("Move Start Order Earlier");
 	}
 	
 	public static boolean isAssemblyController(SWTGefBot bot, SWTBotGefEditor editor, String component) {
@@ -58,5 +58,8 @@ public class ComponentUtils { //SUPPRESS CHECKSTYLE INLINE
 		return false;
 	}
 
+	public static void setAsAssemblyController(SWTBotGefEditor editor, String componentName) {
+		editor.select(componentName).clickContextMenu("Set As Assembly Controller");
+	}
 
 }
