@@ -131,36 +131,76 @@ public class StartOrderTests {
 	@Test
 	public void setAssemblyControllerFromOverview() {
 		waveformName = "IDE-695-Test";
-		final String[] COMPONENT = { "DataConverter", "HardLimit", "SigGen" }; // Alphabetical order
+		final String[] component = { "DataConverter", "HardLimit", "SigGen" };
 
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add components to diagram
-		for (int i = 0; i < COMPONENT.length; i++) {
-			EditorTestUtils.dragFromPaletteToDiagram(editor, COMPONENT[i], 0, 0);
+		for (int i = 0; i < component.length; i++) {
+			EditorTestUtils.dragFromPaletteToDiagram(editor, component[i], 0, 0);
 		}
-
+		
 		// Check initial assembly controller
-		String assemblyController = COMPONENT[0];
+		MenuUtils.save(gefBot);
+		String assemblyController = component[0];
 		Assert.assertTrue(ComponentUtils.isAssemblyController(gefBot, editor, assemblyController));
 
 		// Change assembly controller to last component in list via Overview Tab
 		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.OVERVIEW_TAB);
-		editor.bot().ccomboBoxWithLabel("Controller:").setSelection(COMPONENT.length - 1);
+		editor.bot().ccomboBoxWithLabel("Controller:").setSelection(component.length - 1);
+		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.DIAGRAM_TAB);
 
 		// Confirm start order numbers have adjusted appropriately
-		for (int i = 0; i < COMPONENT.length - 1; i++) {
-			Assert.assertEquals(i + 1, ComponentUtils.getStartOrder(editor, COMPONENT[i]));
+		for (int i = 0; i < component.length - 1; i++) {
+			Assert.assertEquals(i + 1, ComponentUtils.getStartOrder(editor, component[i]));
 		}
 
 		// Check new assembly controller
-		assemblyController = COMPONENT[COMPONENT.length - 1];
+		MenuUtils.save(gefBot);
+		assemblyController = component[component.length - 1];
 		Assert.assertEquals(0, ComponentUtils.getStartOrder(editor, assemblyController));
 		Assert.assertTrue(ComponentUtils.isAssemblyController(gefBot, editor, assemblyController));
-
-		MenuUtils.closeAndDelete(gefBot, waveformName);
 	}
+
+	@Test
+	public void setAssemblyControllerFromDiagramChangesOverview() {
+		waveformName = "IDE-695-Test";
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+		final String[] component = { "DataConverter", "HardLimit", "SigGen" };
+
+		// Add components to diagram
+		for (int i = 0; i < component.length; i++) {
+			EditorTestUtils.dragFromPaletteToDiagram(editor, component[i], 0, 0);
+		}
+
+		// Check initial assembly controller
+		MenuUtils.save(gefBot);
+		String assemblyController = component[0];
+		Assert.assertTrue(ComponentUtils.isAssemblyController(gefBot, editor, assemblyController));		
+		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.OVERVIEW_TAB);
+		Assert.assertTrue(editor.bot().ccomboBoxWithLabel("Controller:").getText().contains(assemblyController));
+		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.DIAGRAM_TAB);
+		
+		// Change start order via context menu
+		assemblyController = component[component.length - 1];
+		ComponentUtils.setAsAssemblyController(editor, assemblyController);
+		
+		// Confirm start order numbers have adjusted appropriately
+		for (int i = 0; i < component.length - 1; i++) {
+			Assert.assertEquals(i + 1, ComponentUtils.getStartOrder(editor, component[i]));
+		}
+
+		// Check new assembly controller
+		MenuUtils.save(gefBot);
+		Assert.assertEquals(0, ComponentUtils.getStartOrder(editor, assemblyController));
+		Assert.assertTrue(ComponentUtils.isAssemblyController(gefBot, editor, assemblyController));
+		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.OVERVIEW_TAB);
+		Assert.assertTrue(editor.bot().ccomboBoxWithLabel("Controller:").getText().contains(assemblyController));
+		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.DIAGRAM_TAB);
+	}
+
 
 	/**
 	 * TODO - is there a ticket for this?
@@ -171,7 +211,7 @@ public class StartOrderTests {
 	@Test
 	public void checkStartOrderSequence() {
 		waveformName = "IDE---Test";
-		final String[] COMPONENT = { "DataConverter", "HardLimit", "SigGen" }; // Alphabetical order
+		final String[] COMPONENT = { "DataConverter", "HardLimit", "SigGen" };
 
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
