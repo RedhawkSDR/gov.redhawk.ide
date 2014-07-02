@@ -10,12 +10,14 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.tests.utils;
 
+import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 
 import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
@@ -62,6 +64,18 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 		editor.activateTool("Connection");
 		getDiagramPortAnchor(usesEditPart).click();
 		getDiagramPortAnchor(providesEditPart).click();
+	}
+	
+	/**
+	 * Utility method to extract business object from a component in the Graphiti diagram
+	 * @param editor
+	 * @param componentName
+	 * @return
+	 */
+	public static SadComponentInstantiation getComponentObject(SWTBotGefEditor editor, String componentName) {
+		ComponentShapeImpl componentShape = (ComponentShapeImpl) editor.getEditPart(componentName).part().getModel();
+		SadComponentInstantiation businessObject = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
+		return businessObject;
 	}
 
 	/**
