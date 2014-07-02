@@ -81,6 +81,14 @@ public class StartOrderTests {
 		Assert.assertFalse(ComponentUtils.isAssemblyController(gefBot, editor, componentTwo));
 		Assert.assertEquals(BigInteger.ZERO, componentOneObj.getStartOrder());
 		Assert.assertEquals(BigInteger.ONE, componentTwoObj.getStartOrder());
+		
+		// Set a new assembly controller - Assert new start orders and new assembly controller assignment
+		ComponentUtils.setAsAssemblyController(editor, componentTwo);
+		MenuUtils.save(gefBot);
+		Assert.assertFalse(ComponentUtils.isAssemblyController(gefBot, editor, componentOne));
+		Assert.assertTrue(ComponentUtils.isAssemblyController(gefBot, editor, componentTwo));
+		Assert.assertEquals(BigInteger.ONE, componentOneObj.getStartOrder());
+		Assert.assertEquals(BigInteger.ZERO, componentTwoObj.getStartOrder());
 	}
 
 	/**
