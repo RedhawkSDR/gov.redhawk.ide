@@ -23,6 +23,25 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 
 public class ComponentUtils { //SUPPRESS CHECKSTYLE INLINE
 	
+	public static void decrementStartOrder(SWTBotGefEditor editor, String componentOne) {
+		editor.select(componentOne).clickContextMenu("Move Start Order Later");
+	}
+	
+	public static int getStartOrder(SWTBotGefEditor editor, String component) {
+		ComponentShapeImpl componentShape = (ComponentShapeImpl) editor.getEditPart(component).part().getModel();
+		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
+		return ci.getStartOrder().intValue();
+	}
+	
+	public static void incrementStartOrder(SWTBotGefEditor editor, String componentOne) {
+		editor.select(componentOne).clickContextMenu("Move Start Order Earlier");
+	}
+	
+	public static boolean isAssemblyController(SWTGefBot bot, SWTBotGefEditor editor, String component) {
+		ComponentShape assemblyController = (ComponentShapeImpl) editor.getEditPart(component).part().getModel();
+		return isAssemblyController(assemblyController);
+	}
+	
 	/**
 	 * Determines whether the given component shape is the assembly controller of its waveform diagram
 	 * @param componentShape
@@ -38,16 +57,6 @@ public class ComponentUtils { //SUPPRESS CHECKSTYLE INLINE
 		}
 		return false;
 	}
-	
-	public static int getStartOrder(SWTBotGefEditor editor, String component) {
-		ComponentShapeImpl componentShape = (ComponentShapeImpl) editor.getEditPart(component).part().getModel();
-		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
-		return ci.getStartOrder().intValue();
-	}
-	
-	public static boolean isAssemblyController(SWTGefBot bot, SWTBotGefEditor editor, String component) {
-		bot.menu("File").menu("Save").click();	
-		ComponentShape assemblyController = (ComponentShapeImpl) editor.getEditPart(component).part().getModel();
-		return isAssemblyController(assemblyController);
-	}
+
+
 }
