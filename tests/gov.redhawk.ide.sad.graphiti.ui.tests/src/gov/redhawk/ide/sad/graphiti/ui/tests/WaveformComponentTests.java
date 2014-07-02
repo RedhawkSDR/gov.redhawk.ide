@@ -42,7 +42,7 @@ public class WaveformComponentTests {
 	private SWTBotGefEditor editor;
 	private SWTWorkbenchBot wbBot;
 	private static final String COMPONENT_NAME = "HardLimit";
-	private static final String[] COMPONENTS = {"HardLimit", "SigGen", "DataConverter"};
+	private static final String[] COMPONENTS = {"DataConverter", "HardLimit", "SigGen"};
 	private static final String[] FINDBYS = { FindByUtils.FIND_BY_CORBA_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, 
 		FindByUtils.FIND_BY_EVENT_CHANNEL, FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
 
@@ -163,7 +163,7 @@ public class WaveformComponentTests {
 		// Create an empty waveform project
 		WaveformUtils.createNewWaveform(bot, waveformName); 
 		editor = bot.gefEditor(waveformName);
-		
+
 		for (String s : COMPONENTS) {
 			// Add component to diagram from palette
 			EditorTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);			
@@ -179,8 +179,7 @@ public class WaveformComponentTests {
 			Assert.assertNull(editor.getEditPart(s));
 		}
 
-		MenuUtils.closeAllWithoutSave(bot);
-		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
+		MenuUtils.closeAndDelete(bot, waveformName);
 	}
 
 	@Test
@@ -189,7 +188,7 @@ public class WaveformComponentTests {
 
 		WaveformUtils.createNewWaveform(bot, waveformName);
 		editor = bot.gefEditor(waveformName);
-		
+
 		for (String s : FINDBYS) {
 			// Add component to diagram from palette
 			EditorTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);
@@ -204,8 +203,7 @@ public class WaveformComponentTests {
 			Assert.assertNull(editor.getEditPart(s));
 		}
 
-		MenuUtils.closeAllWithoutSave(bot);
-		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
+		MenuUtils.closeAndDelete(bot, waveformName);
 	}
 
 	/**
@@ -214,48 +212,50 @@ public class WaveformComponentTests {
 	 * If you click on text other than the usage name and it will think you are editing the usage name.
 	 * This likely involves telling Graphiti not to do anything when selecting certain Pictogram Elements.
 	 */
-	@Test
-	public void checkComponentDirectEdit() {
-		final String waveformName = "IDE-653-Test";
-		
-		WaveformUtils.createNewWaveform(bot, waveformName);
-		editor = bot.gefEditor(waveformName);
-		
-		// Add component to diagram from palette
-		EditorTestUtils.dragFromPaletteToDiagram(editor, COMPONENT_NAME, 0, 0);
-		FindByUtils.completeFindByWizard(bot, COMPONENT_NAME);
-		
-		// Drill down to graphiti component shape
-		SWTBotGefEditPart gefEditPart = editor.getEditPart(COMPONENT_NAME);
-		ComponentShapeImpl componentShape = (ComponentShapeImpl) gefEditPart.part().getModel();
+	//	@Test
+	//	public void checkComponentDirectEdit() {
+	//		final String waveformName = "IDE-653-Test";
+	//		
+	//		CreateNewWaveform.createNewWaveform(bot, waveformName);
+	//		editor = bot.gefEditor(waveformName);
+	//		
+	//		// Add component to diagram from palette
+	//		EditorTestUtils.dragFromPaletteToDiagram(editor, COMPONENT_NAME, 0, 0);
+	//		FindByUtils.completeFindByWizard(bot, COMPONENT_NAME);
+	//		
+	//		// Drill down to graphiti component shape
+	//		SWTBotGefEditPart gefEditPart = editor.getEditPart(COMPONENT_NAME);
+	//		ComponentShapeImpl componentShape = (ComponentShapeImpl) gefEditPart.part().getModel();
+	//
+	//		// Grab the associated business object and confirm it is a SadComponentInstantiation
+	//		Object bo = DUtil.getBusinessObject(componentShape);
+	//		Assert.assertTrue("business object should be of type SadComponentInstantiation", bo instanceof SadComponentInstantiation);
+	//		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
+	//		
+	//		// TODO Edit via directEdit
+	//		String initName = ci.getUsageName();
+	//		editor.getEditPart(initName).activateDirectEdit();
+	//		
+	//		editor.directEditType(initName + "_edit");
+	//		gefEditPart.click();
+	//		
+	//		Assert.assertEquals(initName + "_edit", ci.getUsageName());
+	//		
+	//		// Save, close, and reopen
+	//		MenuUtils.closeAll(bot, true);
+	//		EditorTestUtils.openSadDiagram(wbBot, waveformName);
+	//		Assert.assertEquals(initName + "_edit", ci.getUsageName());
+	//		
+	//		MenuUtils.closeAllWithoutSave(bot);
+	//		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
+	//	}
+	//
+	//	@Test
+	//	public void checkFindByDirectEdit() {
+	//		
+	//	}
 
-		// Grab the associated business object and confirm it is a SadComponentInstantiation
-		Object bo = DUtil.getBusinessObject(componentShape);
-		Assert.assertTrue("business object should be of type SadComponentInstantiation", bo instanceof SadComponentInstantiation);
-		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
-		
-		// TODO Edit via directEdit
-		String initName = ci.getUsageName();
-		gefEditPart.activateDirectEdit();
-		editor.directEditType(initName + "_edit");
-		gefEditPart.click();
-		
-		Assert.assertEquals(initName + "_edit", ci.getUsageName());
-		
-		// Save, close, and reopen
-		MenuUtils.closeAll(bot, true);
-		EditorTestUtils.openSadDiagram(wbBot, waveformName);
-		Assert.assertEquals(initName + "_edit", ci.getUsageName());
-		
-		MenuUtils.closeAllWithoutSave(bot);
-		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
-	}
-
-	@Test
-	public void checkFindByDirectEdit() {
-		
-	}
-
+	
 	@AfterClass
 	public static void cleanUpClass() {
 		

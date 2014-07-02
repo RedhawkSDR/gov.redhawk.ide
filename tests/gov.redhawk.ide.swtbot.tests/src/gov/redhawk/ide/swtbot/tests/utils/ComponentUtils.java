@@ -45,9 +45,9 @@ public class ComponentUtils { //SUPPRESS CHECKSTYLE INLINE
 		return ci.getStartOrder().intValue();
 	}
 	
-	public static void isAssemblyController(SWTGefBot bot, SWTBotGefEditor editor, String component) {
+	public static boolean isAssemblyController(SWTGefBot bot, SWTBotGefEditor editor, String component) {
 		bot.menu("File").menu("Save").click();	
 		ComponentShape assemblyController = (ComponentShapeImpl) editor.getEditPart(component).part().getModel();
-		isAssemblyController(assemblyController);
+		return isAssemblyController(assemblyController);
 	}
 }
