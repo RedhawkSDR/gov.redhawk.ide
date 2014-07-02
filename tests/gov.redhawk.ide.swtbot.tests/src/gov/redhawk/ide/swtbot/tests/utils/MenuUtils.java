@@ -79,4 +79,9 @@ public class MenuUtils {
 		bot.button(OK).click();
 		bot.sleep(500);
 	}
+	
+	public static void closeAndDelete(SWTBot bot, String waveformName) {
+		closeAllWithoutSave(bot);
+		deleteNodeInProjectExplorer(bot, waveformName);
+	}
 }

@@ -11,12 +11,15 @@
 package gov.redhawk.ide.swtbot.tests.utils;
 
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
+import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 
 public class ComponentUtils { //SUPPRESS CHECKSTYLE INLINE
 	
@@ -34,5 +37,17 @@ public class ComponentUtils { //SUPPRESS CHECKSTYLE INLINE
 			return ac.getComponentInstantiationRef().getRefid().equals(ci.getId());
 		}
 		return false;
+	}
+	
+	public static int getStartOrder(SWTBotGefEditor editor, String component) {
+		ComponentShapeImpl componentShape = (ComponentShapeImpl) editor.getEditPart(component).part().getModel();
+		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
+		return ci.getStartOrder().intValue();
+	}
+	
+	public static void isAssemblyController(SWTGefBot bot, SWTBotGefEditor editor, String component) {
+		bot.menu("File").menu("Save").click();	
+		ComponentShape assemblyController = (ComponentShapeImpl) editor.getEditPart(component).part().getModel();
+		isAssemblyController(assemblyController);
 	}
 }
