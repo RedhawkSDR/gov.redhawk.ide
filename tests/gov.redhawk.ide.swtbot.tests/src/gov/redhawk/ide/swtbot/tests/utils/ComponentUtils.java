@@ -21,6 +21,7 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 
 public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
@@ -58,6 +59,10 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 			return ac.getComponentInstantiationRef().getRefid().equals(ci.getId());
 		}
 		return false;
+	}
+	
+	public static boolean isAssemblyController(SWTBotGefEditPart gefEditPart) {
+		return isAssemblyController((ComponentShapeImpl) gefEditPart.part().getModel());
 	}
 
 	/**

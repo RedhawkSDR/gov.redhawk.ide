@@ -20,7 +20,6 @@ import gov.redhawk.ide.swtbot.tests.utils.MenuUtils;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
@@ -38,13 +37,13 @@ import org.junit.runner.RunWith;
 @RunWith(SWTBotJunit4ClassRunner.class) 
 public class WaveformComponentTests {
 
-	private SWTGefBot bot;
+	private static SWTGefBot gefBot;
 	private SWTBotGefEditor editor;
 	private SWTWorkbenchBot wbBot;
-	private static final String COMPONENT_NAME = "HardLimit";
+
+	private String waveformName;
+	private static final String HARD_LIMIT = "HardLimit";
 	private static final String[] COMPONENTS = {"DataConverter", "HardLimit", "SigGen"};
-	private static final String[] FINDBYS = { FindByUtils.FIND_BY_CORBA_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, 
-		FindByUtils.FIND_BY_EVENT_CHANNEL, FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
@@ -52,22 +51,31 @@ public class WaveformComponentTests {
 			Thread.sleep(1000);
 		}
 	}
-	
+
 	@Before
-	public void setUp() throws Exception {
-		bot = new SWTGefBot();
+	public void beforeTest() throws Exception {
+		gefBot = new SWTGefBot();
 		wbBot = new SWTWorkbenchBot();
 		SWTBotPerspective perspective = wbBot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
 		perspective.activate();
 		wbBot.resetActivePerspective();
 	}
-	
+
 	@After
-	public void cleanUp() {
-		for (SWTBotEditor e : wbBot.editors()) {
-			e.close();
+	public void afterTest() {
+		if (gefBot == null) {
+			return;
 		}
-		bot.sleep(2000);
+		if (waveformName != null) {
+			MenuUtils.closeAndDelete(gefBot, waveformName);
+		}
+		gefBot.closeAllEditors();
+	}
+
+
+	@AfterClass
+	public static void afterClass() {
+		gefBot.sleep(2000);
 	}
 
 	/**
@@ -78,38 +86,17 @@ public class WaveformComponentTests {
 	 */
 	@Test
 	public void checkComponentPictogramElements() {
-		final String waveformName = "IDE-726-Test";
+		waveformName = "IDE-726-Test";
+		
 		// Create an empty waveform project
-		WaveformUtils.createNewWaveform(bot, waveformName);
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
 
 		// Add component to diagram from palette
-		editor = bot.gefEditor(waveformName);
-		EditorTestUtils.dragFromPaletteToDiagram(editor, COMPONENT_NAME, 0, 0);
+		editor = gefBot.gefEditor(waveformName);
+		EditorTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
 
-		// Drill down to graphiti component shape
-		SWTBotGefEditPart gefEditPart = editor.getEditPart(COMPONENT_NAME);
-		ComponentShapeImpl componentShape = (ComponentShapeImpl) gefEditPart.part().getModel();
-
-		// Grab the associated business object and confirm it is a SadComponentInstantiation
-		Object bo = DUtil.getBusinessObject(componentShape);
-		Assert.assertTrue("business object should be of type SadComponentInstantiation", bo instanceof SadComponentInstantiation);
-		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
-
-		// Run assertions on expected properties
-		Assert.assertEquals("outer text should match component type", COMPONENT_NAME, componentShape.getOuterText().getValue());  
-		Assert.assertEquals("inner text should match component usage name", ci.getUsageName(), componentShape.getInnerText().getValue());
-		Assert.assertNotNull("component supported interface graphic should not be null", componentShape.getLollipop());
-		Assert.assertNotNull("start order shape/text should not be null", componentShape.getStartOrderText());
-
-		// HardLimit only has the two ports
-		Assert.assertTrue(componentShape.getUsesPortStubs().size() == 1 && componentShape.getProvidesPortStubs().size() == 1);
-		// Both ports are of type dataDouble
-		Assert.assertEquals(componentShape.getUsesPortStubs().get(0).getUses().getInterface().getName(), "dataDouble");
-		Assert.assertEquals(componentShape.getProvidesPortStubs().get(0).getProvides().getInterface().getName(), "dataDouble");
-
-		MenuUtils.closeAllWithoutSave(bot);
-		//MenuUtils.openWFEditorFromProjectExplorer(bot, waveformName);
-		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
+		// Confirm created component truly is HardLimit
+		assertHardLimit(editor.getEditPart(HARD_LIMIT));
 	}
 
 	/**
@@ -120,12 +107,91 @@ public class WaveformComponentTests {
 	 */
 	@Test
 	public void checkComponentPictogramElementsWithAssemblyController() {
-		final String waveformName = "IDE-680-Test";
-		WaveformUtils.createNewWaveformWithAssemblyController(bot, waveformName, COMPONENT_NAME);
-		editor = bot.gefEditor(waveformName);
+		waveformName = "IDE-680-Test";
+		
+		// Create waveform with an initial Assembly Controller
+		WaveformUtils.createNewWaveformWithAssemblyController(gefBot, waveformName, HARD_LIMIT);
+
+		// Confirm created component truly is HardLimit and Assembly Controller
+		editor = gefBot.gefEditor(waveformName);
+		assertHardLimit(editor.getEditPart(HARD_LIMIT));
+	}
+
+	/**
+	 * IDE-669
+	 * Components are removed with the delete button (trashcan image) that appears when you select the component, 
+	 * but the delete context menu does not remove the component from the diagram. In most cases, the delete and 
+	 * remove context menu options are grayed out and not selectable.
+	 */
+	@Test
+	public void checkComponentContextMenuDelete() {
+		waveformName = "IDE-669-Test";
+		// Create an empty waveform project
+		WaveformUtils.createNewWaveform(gefBot, waveformName); 
+		editor = gefBot.gefEditor(waveformName);
+
+		for (String s : COMPONENTS) {
+			// Add component to diagram from palette
+			EditorTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);			
+		}
+		
+		gefBot.menu("File").menu("Save").click();		
+
+		for (String s : COMPONENTS) {
+			// Drill down to graphiti component shape
+			SWTBotGefEditPart gefEditPart = editor.getEditPart(s);
+			EditorTestUtils.deleteFromDiagram(editor, gefEditPart);
+			Assert.assertNull(editor.getEditPart(s));
+		}
+	}
+
+	/**
+	 * IDE-653
+	 * Users are able to directly edit the name of Component and FindBy shapes on the diagram by double clicking on it.  
+	 * If you click on text other than the usage name and it will think you are editing the usage name.
+	 * This likely involves telling Graphiti not to do anything when selecting certain Pictogram Elements.
+	 */
+	@Test
+	public void checkComponentDirectEdit() {
+		waveformName = "IDE-653-Test";
+
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+
+		// Add component to diagram from palette
+		EditorTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
+		FindByUtils.completeFindByWizard(gefBot, HARD_LIMIT);
 
 		// Drill down to graphiti component shape
-		SWTBotGefEditPart gefEditPart = editor.getEditPart(COMPONENT_NAME);
+		SWTBotGefEditPart gefEditPart = editor.getEditPart(HARD_LIMIT);
+		ComponentShapeImpl componentShape = (ComponentShapeImpl) gefEditPart.part().getModel();
+
+		// Grab the associated business object and confirm it is a SadComponentInstantiation
+		Object bo = DUtil.getBusinessObject(componentShape);
+		Assert.assertTrue("business object should be of type SadComponentInstantiation", bo instanceof SadComponentInstantiation);
+		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
+		
+		// TODO Edit via directEdit
+		String initName = ci.getUsageName();
+		//gefEditPart.activateDirectEdit(ci);
+		editor.directEditType(initName + "_edit");
+		gefEditPart.click();
+
+		Assert.assertEquals(initName + "_edit", ci.getUsageName());
+
+		// Save, close, and reopen
+		MenuUtils.closeAll(gefBot, true);
+		EditorTestUtils.openSadDiagram(wbBot, waveformName);
+		Assert.assertEquals(initName + "_edit", ci.getUsageName());
+	}
+
+	/**
+	 * Private helper method for {@link #checkComponentPictogramElements()} and {@link #checkComponentPictogramElementsWithAssemblyController()}.
+	 * Asserts the given SWTBotGefEditPart is a HardLimit component and assembly controller
+	 * @param gefEditPart
+	 */
+	private static void assertHardLimit(SWTBotGefEditPart gefEditPart) {
+		// Drill down to graphiti component shape
 		ComponentShapeImpl componentShape = (ComponentShapeImpl) gefEditPart.part().getModel();
 
 		// Grab the associated business object and confirm it is a SadComponentInstantiation
@@ -134,7 +200,7 @@ public class WaveformComponentTests {
 		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
 
 		// Run assertions on expected properties
-		Assert.assertEquals("outer text should match component type", COMPONENT_NAME, componentShape.getOuterText().getValue());  
+		Assert.assertEquals("outer text should match component type", HARD_LIMIT, componentShape.getOuterText().getValue());  
 		Assert.assertEquals("inner text should match component usage name", ci.getUsageName(), componentShape.getInnerText().getValue());
 		Assert.assertNotNull("component supported interface graphic should not be null", componentShape.getLollipop());
 		Assert.assertNotNull("start order shape/text should not be null", componentShape.getStartOrderText());
@@ -146,120 +212,5 @@ public class WaveformComponentTests {
 		// Both ports are of type dataDouble
 		Assert.assertEquals(componentShape.getUsesPortStubs().get(0).getUses().getInterface().getName(), "dataDouble");
 		Assert.assertEquals(componentShape.getProvidesPortStubs().get(0).getProvides().getInterface().getName(), "dataDouble");
-
-		MenuUtils.closeAllWithoutSave(bot);
-		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
 	}
-
-	/**
-	 * IDE-669
-	 * Components are removed with the delete button (trashcan image) that appears when you select the component, 
-	 * but the delete context menu does not remove the component from the diagram. In most cases, the delete and 
-	 * remove context menu options are grayed out and not selectable.
-	 */
-	@Test
-	public void checkComponentContextMenuDelete() {
-		final String waveformName = "IDE-669-Test-a";
-		// Create an empty waveform project
-		WaveformUtils.createNewWaveform(bot, waveformName); 
-		editor = bot.gefEditor(waveformName);
-
-		for (String s : COMPONENTS) {
-			// Add component to diagram from palette
-			EditorTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);			
-		}
-
-		bot.menu("File").menu("Save").click();		
-
-
-		for (String s : COMPONENTS) {
-			// Drill down to graphiti component shape
-			SWTBotGefEditPart gefEditPart = editor.getEditPart(s);
-			EditorTestUtils.deleteFromDiagram(editor, gefEditPart);
-			Assert.assertNull(editor.getEditPart(s));
-		}
-
-		MenuUtils.closeAndDelete(bot, waveformName);
-	}
-
-	@Test
-	public void checkFindByContextMenuDelete() {
-		final String waveformName = "IDE-669-Test-b";
-
-		WaveformUtils.createNewWaveform(bot, waveformName);
-		editor = bot.gefEditor(waveformName);
-
-		for (String s : FINDBYS) {
-			// Add component to diagram from palette
-			EditorTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);
-			FindByUtils.completeFindByWizard(bot, s);
-		}
-
-		for (String s : FINDBYS) {
-			// Drill down to graphiti component shape
-			SWTBotGefEditPart gefEditPart = editor.getEditPart(FindByUtils.getFindByDefaultName(s));
-			EditorTestUtils.deleteFromDiagram(editor, gefEditPart);
-			bot.button("Yes").click(); // are you sure you want to delete this element?
-			Assert.assertNull(editor.getEditPart(s));
-		}
-
-		MenuUtils.closeAndDelete(bot, waveformName);
-	}
-
-	/**
-	 * IDE-653
-	 * Users are able to directly edit the name of Component and FindBy shapes on the diagram by double clicking on it.  
-	 * If you click on text other than the usage name and it will think you are editing the usage name.
-	 * This likely involves telling Graphiti not to do anything when selecting certain Pictogram Elements.
-	 */
-	//	@Test
-	//	public void checkComponentDirectEdit() {
-	//		final String waveformName = "IDE-653-Test";
-	//		
-	//		CreateNewWaveform.createNewWaveform(bot, waveformName);
-	//		editor = bot.gefEditor(waveformName);
-	//		
-	//		// Add component to diagram from palette
-	//		EditorTestUtils.dragFromPaletteToDiagram(editor, COMPONENT_NAME, 0, 0);
-	//		FindByUtils.completeFindByWizard(bot, COMPONENT_NAME);
-	//		
-	//		// Drill down to graphiti component shape
-	//		SWTBotGefEditPart gefEditPart = editor.getEditPart(COMPONENT_NAME);
-	//		ComponentShapeImpl componentShape = (ComponentShapeImpl) gefEditPart.part().getModel();
-	//
-	//		// Grab the associated business object and confirm it is a SadComponentInstantiation
-	//		Object bo = DUtil.getBusinessObject(componentShape);
-	//		Assert.assertTrue("business object should be of type SadComponentInstantiation", bo instanceof SadComponentInstantiation);
-	//		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
-	//		
-	//		// TODO Edit via directEdit
-	//		String initName = ci.getUsageName();
-	//		editor.getEditPart(initName).activateDirectEdit();
-	//		
-	//		editor.directEditType(initName + "_edit");
-	//		gefEditPart.click();
-	//		
-	//		Assert.assertEquals(initName + "_edit", ci.getUsageName());
-	//		
-	//		// Save, close, and reopen
-	//		MenuUtils.closeAll(bot, true);
-	//		EditorTestUtils.openSadDiagram(wbBot, waveformName);
-	//		Assert.assertEquals(initName + "_edit", ci.getUsageName());
-	//		
-	//		MenuUtils.closeAllWithoutSave(bot);
-	//		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
-	//	}
-	//
-	//	@Test
-	//	public void checkFindByDirectEdit() {
-	//		
-	//	}
-
-	
-	@AfterClass
-	public static void cleanUpClass() {
-		
-	}
-
-
 }

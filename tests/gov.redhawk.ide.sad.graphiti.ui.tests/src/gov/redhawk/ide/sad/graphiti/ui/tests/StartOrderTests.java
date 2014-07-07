@@ -37,6 +37,19 @@ public class StartOrderTests {
 	public static void beforeClass() {
 		gefBot = new SWTGefBot();
 	}
+	
+	@After
+	public void afterTest() {
+		if (waveformName != null) {
+			MenuUtils.closeAndDelete(gefBot, waveformName);
+		}
+		gefBot.closeAllEditors();
+	}
+
+	@AfterClass
+	public static void afterClass() {
+		gefBot.sleep(2000);
+	}
 
 	/**
 	 * Test ability to set and change start order.
@@ -300,17 +313,5 @@ public class StartOrderTests {
 		Assert.assertTrue(ComponentUtils.isAssemblyController(gefBot, editor, component[0]));
 	}
 
-	@After
-	public void afterTest() {
-		if (waveformName != null) {
-			MenuUtils.closeAndDelete(gefBot, waveformName);
-		}
-		gefBot.closeAllEditors();
-	}
-
-	@AfterClass
-	public static void cleanUp() {
-		gefBot.sleep(2000);
-	}
 
 }

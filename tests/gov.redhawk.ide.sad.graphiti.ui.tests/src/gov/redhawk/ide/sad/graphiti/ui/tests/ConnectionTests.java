@@ -54,7 +54,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 	}
 	
 	@Before
-	public void setUp() throws Exception {
+	public void beforeTest() throws Exception {
 		bot = new SWTBot();
 		gefBot = new SWTGefBot();
 		SWTBotPerspective perspective = gefBot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
@@ -63,11 +63,16 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 	}
 	
 	@After
-	public void cleanUp() {
+	public void afterTest() {
 		for (SWTBotEditor e : gefBot.editors()) {
 			e.close();
 		}
 		gefBot.sleep(2000);
+	}
+	
+	@AfterClass
+	public static void afterClass() {
+		
 	}
 
 	/**
