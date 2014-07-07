@@ -23,7 +23,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 
-public class ComponentUtils { //SUPPRESS CHECKSTYLE INLINE
+public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 
 	public static void decrementStartOrder(SWTBotGefEditor editor, String componentName) {
 		editor.select(componentName).clickContextMenu("Move Start Order Later");
@@ -60,26 +60,51 @@ public class ComponentUtils { //SUPPRESS CHECKSTYLE INLINE
 		return false;
 	}
 
+	/**
+	 * Set component as assembly controller via context menu option
+	 * @param editor
+	 * @param componentName
+	 */
 	public static void setAsAssemblyController(SWTBotGefEditor editor, String componentName) {
 		editor.select(componentName).clickContextMenu("Set As Assembly Controller");
 	}
 
-	public static boolean correctStartOrderValue(ComponentShape componentShape, int expected) {
-		return ((ComponentShapeImpl) componentShape).getStartOrderText().getValue().equals(Integer.toString(expected));
+	/**
+	 * Check whether the component graphical start order text matches the expected value
+	 * @param componentShape - Component to be check
+	 * @param expectedValue - Expected value of start order
+	 * @return - True if component start order text matches expected value
+	 */
+	public static boolean correctStartOrderValue(ComponentShape componentShape, String expectedValue) {
+		return ((ComponentShapeImpl) componentShape).getStartOrderText().getValue().equals(expectedValue);
 	}
 
-	public static boolean correctStartOrderStyling(ComponentShape componentShape, boolean assemblyController) {
+	/**
+	 * Check whether the component graphical start order styling is set correctly
+	 * @param componentShape - Component to be check
+	 * @param isAssemblyController - boolean declaring whether assembly controller styling is expected
+	 * @return - True if component styling is set correctly
+	 */
+	public static boolean correctStartOrderStyling(ComponentShape componentShape, boolean isAssemblyController) {
 		Diagram diagram = DUtil.findDiagram(componentShape);
 		Style style = ((ComponentShapeImpl) componentShape).getStartOrderEllipseShape().getGraphicsAlgorithm().getStyle();
-		if (assemblyController) {
+		if (isAssemblyController) {
 			return style.equals(StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
 		}
 		return style.equals(StyleUtil.getStyleForStartOrderEllipse(diagram));
 	}
 
-	public static boolean correctStylingAndValue(SWTBotGefEditor editor, String component, int expectedNumber, boolean assemblyController) {
+	/**
+	 * Check both the graphical start order text and styling of a component shape
+	 * @param editor - SWTBotGefEditor
+	 * @param component - Component name
+	 * @param expectedNumber - Expected value of start order
+	 * @param isAssemblyController - boolean declaring whether assembly controller styling is expected
+	 * @return - True if component start order text matches expected value AND component styling is set correctly
+	 */
+	public static boolean correctStylingAndValue(SWTBotGefEditor editor, String component, String expectedValue, boolean isAssemblyController) {
 		ComponentShape componentShape = (ComponentShapeImpl) editor.getEditPart(component).part().getModel();
-		return correctStartOrderValue(componentShape, expectedNumber) && correctStartOrderStyling(componentShape, assemblyController);
+		return correctStartOrderValue(componentShape, expectedValue) && correctStartOrderStyling(componentShape, isAssemblyController);
 	}
 
 }
