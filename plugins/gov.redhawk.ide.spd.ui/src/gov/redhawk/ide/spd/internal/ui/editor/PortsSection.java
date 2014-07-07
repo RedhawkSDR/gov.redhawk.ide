@@ -292,7 +292,8 @@ public class PortsSection extends ScaSection {
 		if (!isPortSupplier()) {
 			this.editable = false;
 		}
-		this.portsViewer.getTable().setEnabled(this.editable);
+		// Don't set enabled on properties viewer since this will disable scrolling
+//		this.portsViewer.getTable().setEnabled(this.editable);
 		this.addButton.setEnabled(this.editable);
 	}
 
