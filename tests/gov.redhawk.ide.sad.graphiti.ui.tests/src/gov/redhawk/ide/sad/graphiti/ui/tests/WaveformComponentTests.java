@@ -128,36 +128,6 @@ public class WaveformComponentTests {
 	}
 
 	/**
-	 * IDE-653
-	 * Users should be able to directly edit the usage name of Component shapes on the diagram by double clicking on it.
-	 */
-	@Test
-	public void checkComponentDirectEdit() {
-//		waveformName = "IDE-653-Test";
-//		WaveformUtils.createNewWaveform(gefBot, waveformName);
-//		editor = gefBot.gefEditor(waveformName);
-
-		// Add component to diagram from palette
-//		EditorTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
-
-		// Drill down to Graphiti component shape
-//		SWTBotGefEditPart editPart = editor.getEditPart("HardLimit_1");
-//		gefBot.sleep(2000);
-//		editPart.activateDirectEdit();
-//		gefBot.sleep(2000);
-//		editor.directEditType("NewName");
-
-		// assert that the new name was entered
-//		ComponentShapeImpl componentShape = (ComponentShapeImpl) editPart.part().getModel();
-//		Assert.assertEquals(initName + "_edit", ci.getUsageName());
-
-		// Save, close, and reopen
-//		MenuUtils.closeAll(gefBot, true);
-//		EditorTestUtils.openSadDiagram(wbBot, waveformName);
-//		Assert.assertEquals(initName + "_edit", ci.getUsageName());
-	}
-
-	/**
 	 * Private helper method for {@link #checkComponentPictogramElements()} and
 	 * {@link #checkComponentPictogramElementsWithAssemblyController()}.
 	 * Asserts the given SWTBotGefEditPart is a HardLimit component and assembly controller
