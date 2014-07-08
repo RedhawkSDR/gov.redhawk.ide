@@ -20,11 +20,7 @@ public class MenuUtils {
 	protected MenuUtils() {
 	}
 
-	public static final String CONSOLE = "Console", CORBA_NAME_BROWSER = "CORBA Name Browser", ERROR_LOG = "Error Log", 
-			EVENT_VIEWER = "Event Viewer", OUTLINE = "Outline", PROBLEMS = "Problems", PROJECT_EXPLORER = "Project Explorer", 
-			PROPERTIES = "Properties", SCA_EXPLORER = "SCA Explorer";
-
-	public static final String NO = "No", YES = "Yes", DESELECT_ALL = "Deselect All", OK = "OK", DELETE = "Delete";
+	private static final String NO = "No", YES = "Yes", DESELECT_ALL = "Deselect All", OK = "OK";
 
 	/**
 	 * Opens the indicated view. If already open, brings view into focus.
@@ -39,20 +35,29 @@ public class MenuUtils {
 		viewMenu.click();
 	}
 
+	/**
+	 * Close all open editors without saving changes
+	 * @param bot - SWTBot
+	 */
 	public static void closeAllWithoutSave(SWTBot bot) {
 		closeAll(bot, false);
 	}
 
+	/**
+	 * Close all open editors
+	 * @param bot - SWTBot
+	 * @param save - True if you want to save editor contents before closing
+	 */
 	public static void closeAll(SWTBot bot, boolean save) {
 		bot.menu("File").menu("Close All").click();
-		if (buttonExists(bot, NO)) { 
+		if (buttonExists(bot, NO)) {
 			// One unsaved resource
 			if (!save) {
 				bot.button(NO).click();
 			} else {
 				bot.button(YES).click();
 			}
-		} else if (buttonExists(bot, DESELECT_ALL)) { 
+		} else if (buttonExists(bot, DESELECT_ALL)) {
 			// Multiple unsaved resources
 			if (!save) {
 				bot.button(DESELECT_ALL).click();
@@ -60,7 +65,7 @@ public class MenuUtils {
 			bot.button(OK).click();
 		}
 	}
-	
+
 	public static void save(SWTBot bot) {
 		bot.menu("File").menu("Save").click();
 	}
@@ -73,13 +78,23 @@ public class MenuUtils {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Delete specified project from the file system
+	 * @param bot
+	 * @param projectName
+	 */
 	public static void deleteNodeInProjectExplorer(SWTBot bot, String projectName) {
 		bot.tree().getTreeItem(projectName).select().pressShortcut(Keystrokes.DELETE).pressShortcut(Keystrokes.SPACE);
 		bot.button(OK).click();
 		bot.sleep(500);
 	}
-	
+
+	/**
+	 * Close all open editors and delete the specified project from the file system
+	 * @param bot
+	 * @param waveformName
+	 */
 	public static void closeAndDelete(SWTBot bot, String waveformName) {
 		closeAllWithoutSave(bot);
 		deleteNodeInProjectExplorer(bot, waveformName);
