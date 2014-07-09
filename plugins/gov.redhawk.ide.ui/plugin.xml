@@ -352,7 +352,7 @@
                  class="gov.redhawk.ide.ui.wizard.RedhawkImportWizard"
                  icon="icons/rh_logo_16x16.gif"
                  id="gov.redhawk.ide.ui.wizard.noneclipsewizard"
-                 name="Redhawk Import Wizard">
+                 name="REDHAWK Import Wizard">
            </wizard>
         </extension>
         <extension
