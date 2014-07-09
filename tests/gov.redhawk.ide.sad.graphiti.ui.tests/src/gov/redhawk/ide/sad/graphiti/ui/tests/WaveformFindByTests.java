@@ -10,15 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
-import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.tests.utils.WaveformUtils;
 import gov.redhawk.ide.swtbot.tests.utils.EditorTestUtils;
 import gov.redhawk.ide.swtbot.tests.utils.FindByUtils;
 import gov.redhawk.ide.swtbot.tests.utils.MenuUtils;
-import mil.jpeojtrs.sca.partitioning.FindByStub;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
@@ -100,53 +95,4 @@ public class WaveformFindByTests {
 			Assert.assertNull(editor.getEditPart(s));
 		}
 	}
-
-	/**
-	 * IDE-653
-	 * Users are able to directly edit the name of Component and FindBy shapes on the diagram by double clicking on it.  
-	 * If you click on text other than the usage name and it will think you are editing the usage name.
-	 * This likely involves telling Graphiti not to do anything when selecting certain Pictogram Elements.
-	 */
-//	@Test
-//	public void checkFindByDirectEdit() {
-//		waveformName = "IDE-653-Test";
-//		WaveformUtils.createNewWaveform(gefBot, waveformName);
-//		editor = gefBot.gefEditor(waveformName);
-//
-//		for (String findBy : FINDBYS) {
-//			// Add component to diagram from palette
-//			EditorTestUtils.dragFromPaletteToDiagram(editor, findBy, 0, 0);
-//			FindByUtils.completeFindByWizard(gefBot, findBy);
-//
-//			// Drill down to graphiti component shape
-//			SWTBotGefEditPart gefEditPart = editor.getEditPart(findBy);
-//			ComponentShapeImpl componentShape = (ComponentShapeImpl) gefEditPart.part().getModel();
-//
-//			// Grab the associated business object and confirm it is a FindByStub
-//			Object bo = DUtil.getBusinessObject(componentShape);
-//			Assert.assertTrue("business object should be of type FindByStub", bo instanceof FindByStub);
-//			SadComponentInstantiation ci = (SadComponentInstantiation) bo;
-//
-//			// TODO Edit via directEdit
-//			String initName = ci.getUsageName();
-//			editor.getEditPart(initName).activateDirectEdit();
-//
-//			editor.directEditType(initName + "_edit");
-//			gefEditPart.click();
-//
-//			Assert.assertEquals(initName + "_edit", ci.getUsageName());
-//
-//			// Save, close, and reopen
-//			MenuUtils.closeAll(gefBot, true);
-//			EditorTestUtils.openSadDiagram(wbBot, waveformName);
-//			Assert.assertEquals(initName + "_edit", ci.getUsageName());
-//		}
-//	}
-//	
-//	@Test
-//	public void checkFindByEdit() {
-//		
-//	}
-
-
 }

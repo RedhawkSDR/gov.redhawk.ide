@@ -128,6 +128,45 @@ public class WaveformComponentTests {
 	}
 
 	/**
+	 * IDE-729
+	 * New components should be added to sad.xml when the diagram is saved.  All edits to components 
+	 * (such as changes to the usage name) should also be reflected in the sad.xml on save.
+	 */
+	@Test
+	public void checkComponentsInSad() {
+		waveformName = "IDE-729-Test";
+		
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+		
+		// Add a SigGen component instantiation to the diagram and save
+		EditorTestUtils.dragFromPaletteToDiagram(editor, "SigGen", 0, 0);
+		gefBot.menu("File").menu("Save").click();
+		
+		// Add a HardLimit component instantiation to the diagram
+		EditorTestUtils.dragFromPaletteToDiagram(editor, "HardLimit", 0, 0);
+		
+		// Find expected xml string for SigGen and HardLimit components
+		final String sigGenSad = EditorTestUtils.regexStringForSadComponent((ComponentShapeImpl) editor.getEditPart("SigGen").part().getModel());
+		final String hardLimitSad = EditorTestUtils.regexStringForSadComponent((ComponentShapeImpl) editor.getEditPart("HardLimit").part().getModel());
+		
+		// Check to see if SigGen is included in the sad.xml
+		EditorTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		String editorText = editor.toTextEditor().getText();
+		Assert.assertTrue("The sad.xml should include SigGen's software assembly", editorText.matches(sigGenSad));
+		Assert.assertFalse("The sad.xml should not yet include HardLimit's software assembly", editorText.matches(hardLimitSad));
+		EditorTestUtils.openTabInEditor(editor, "Diagram");
+		
+		// Save project and check to see if HardLimit is now in the sad.xml
+		gefBot.menu("File").menu("Save").click();
+		EditorTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		editorText = editor.toTextEditor().getText();
+		Assert.assertTrue("The sad.xml should include SigGen's software assembly", editorText.matches(sigGenSad));
+		Assert.assertTrue("The sad.xml should include HardLimit's software assembly", editorText.matches(hardLimitSad));
+	}
+
+
+	/**
 	 * Private helper method for {@link #checkComponentPictogramElements()} and
 	 * {@link #checkComponentPictogramElementsWithAssemblyController()}.
 	 * Asserts the given SWTBotGefEditPart is a HardLimit component and assembly controller
