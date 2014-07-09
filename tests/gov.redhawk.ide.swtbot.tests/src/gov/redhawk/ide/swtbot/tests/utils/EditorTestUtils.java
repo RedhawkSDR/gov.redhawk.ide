@@ -227,10 +227,8 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 	public static String regexStringForSadComponent(ComponentShapeImpl componentShape) {
 		Object bo = DUtil.getBusinessObject(componentShape);
 		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
-		
-		//String componentfile = "<componentfile id=\"" + ci.getId() + "\">";
-		//String componentfileref = "<componentfileref refid=\"" + ci.getId() + "\">";
-		String componentinstantiation = "<componentinstantiation id=\"" + ci.getUsageName() + "\"";
+		String componentinstantiation = "<componentinstantiation id=\"" + ci.getUsageName() + "\"" 
+				+ ((ci.getStartOrder() != null) ? " startorder=\"" + ci.getStartOrder() + "\">" : ">");
 		String usagename = "<usagename>" + ci.getUsageName() + "</usagename>";
 		String namingservice = "<namingservice name=\"" + ci.getUsageName() + "\"/>";
 
