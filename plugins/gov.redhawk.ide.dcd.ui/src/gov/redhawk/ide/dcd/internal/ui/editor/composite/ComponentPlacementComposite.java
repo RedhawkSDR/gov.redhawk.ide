@@ -172,7 +172,8 @@ public class ComponentPlacementComposite extends Composite implements IScaCompos
 		this.nameEntry.setEditable(canEdit);
 		this.parentViewer.getCombo().setEnabled(canEdit);
 		this.unsetParentButton.setEnabled(canEdit);
-		this.propertiesViewer.getTree().setEnabled(canEdit);
+		// Don't set enabled on properties viewer since this will disable scrolling
+//		this.propertiesViewer.getTree().setEnabled(canEdit);
 	}
 
 	public void setInput(final DcdComponentInstantiation instantiation) {

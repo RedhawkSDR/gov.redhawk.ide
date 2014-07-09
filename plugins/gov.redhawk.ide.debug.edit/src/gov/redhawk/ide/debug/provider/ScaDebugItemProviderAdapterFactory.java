@@ -22,6 +22,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.edit.provider.ChangeNotifier;
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
+import org.eclipse.emf.edit.provider.Disposable;
 import org.eclipse.emf.edit.provider.IChangeNotifier;
 import org.eclipse.emf.edit.provider.IDisposable;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
@@ -56,6 +57,14 @@ public class ScaDebugItemProviderAdapterFactory extends ScaDebugAdapterFactory i
 	 * @generated
 	 */
 	protected IChangeNotifier changeNotifier = new ChangeNotifier();
+	/**
+	 * This keeps track of all the item providers created, so that they can be {@link #dispose disposed}.
+	 * <!-- begin-user-doc -->
+	 * @since 2.0
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected Disposable disposable = new Disposable();
 	/**
 	 * This keeps track of all the supported types checked by {@link #isFactoryForType isFactoryForType}.
 	 * <!-- begin-user-doc -->
@@ -194,14 +203,6 @@ public class ScaDebugItemProviderAdapterFactory extends ScaDebugAdapterFactory i
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link gov.redhawk.ide.debug.LocalScaWaveform} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected LocalScaWaveformItemProvider localScaWaveformItemProvider;
-
-	/**
 	 * This creates an adapter for a {@link gov.redhawk.ide.debug.LocalScaWaveform}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -209,11 +210,7 @@ public class ScaDebugItemProviderAdapterFactory extends ScaDebugAdapterFactory i
 	 */
 	@Override
 	public Adapter createLocalScaWaveformAdapter() {
-		if (localScaWaveformItemProvider == null) {
-			localScaWaveformItemProvider = new LocalScaWaveformItemProvider(this);
-		}
-
-		return localScaWaveformItemProvider;
+		return new LocalScaWaveformItemProvider(this);
 	}
 
 	/**
@@ -240,14 +237,6 @@ public class ScaDebugItemProviderAdapterFactory extends ScaDebugAdapterFactory i
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link gov.redhawk.ide.debug.LocalScaDeviceManager} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected LocalScaDeviceManagerItemProvider localScaDeviceManagerItemProvider;
-
-	/**
 	 * This creates an adapter for a {@link gov.redhawk.ide.debug.LocalScaDeviceManager}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -255,11 +244,7 @@ public class ScaDebugItemProviderAdapterFactory extends ScaDebugAdapterFactory i
 	 */
 	@Override
 	public Adapter createLocalScaDeviceManagerAdapter() {
-		if (localScaDeviceManagerItemProvider == null) {
-			localScaDeviceManagerItemProvider = new LocalScaDeviceManagerItemProvider(this);
-		}
-
-		return localScaDeviceManagerItemProvider;
+		return new LocalScaDeviceManagerItemProvider(this);
 	}
 
 	/**
@@ -415,6 +400,20 @@ public class ScaDebugItemProviderAdapterFactory extends ScaDebugAdapterFactory i
 	}
 
 	/**
+	 * Associates an adapter with a notifier via the base implementation, then records it to ensure it will be disposed.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	protected void associate(Adapter adapter, Notifier target) {
+		super.associate(adapter, target);
+		if (adapter != null) {
+			disposable.add(adapter);
+		}
+	}
+
+	/**
 	 * This adds a listener.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -459,30 +458,7 @@ public class ScaDebugItemProviderAdapterFactory extends ScaDebugAdapterFactory i
 	 */
 	@Override
 	public void dispose() {
-		if (localScaItemProvider != null)
-			localScaItemProvider.dispose();
-		if (notifyingNamingContextItemProvider != null)
-			notifyingNamingContextItemProvider.dispose();
-		if (nameToObjectEntryItemProvider != null)
-			nameToObjectEntryItemProvider.dispose();
-		if (nameToNamingContextEntryItemProvider != null)
-			nameToNamingContextEntryItemProvider.dispose();
-		if (localFileManagerItemProvider != null)
-			localFileManagerItemProvider.dispose();
-		if (localScaWaveformItemProvider != null)
-			localScaWaveformItemProvider.dispose();
-		if (localScaComponentItemProvider != null)
-			localScaComponentItemProvider.dispose();
-		if (localScaDeviceManagerItemProvider != null)
-			localScaDeviceManagerItemProvider.dispose();
-		if (localScaExecutableDeviceItemProvider != null)
-			localScaExecutableDeviceItemProvider.dispose();
-		if (localScaLoadableDeviceItemProvider != null)
-			localScaLoadableDeviceItemProvider.dispose();
-		if (localScaDeviceItemProvider != null)
-			localScaDeviceItemProvider.dispose();
-		if (localScaServiceItemProvider != null)
-			localScaServiceItemProvider.dispose();
+		disposable.dispose();
 	}
 
 }

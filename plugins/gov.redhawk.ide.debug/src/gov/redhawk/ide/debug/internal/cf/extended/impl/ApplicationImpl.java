@@ -282,6 +282,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	private final String profile;
 	private boolean started;
 	private final Application delegate;
+	private boolean launching;
 
 	public ApplicationImpl(final LocalScaWaveform waveform, final String identifier, final String name, Application delegate) {
 		this.name = name;
@@ -322,6 +323,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public boolean started() {
+		try {
+			waitOnLaunch();
+		} catch (InterruptedException e) {
+			logException("Interrupted while waiting for application to launch", e);
+		}
 		if (this.delegate != null) {
 			return this.delegate.started();
 		}
@@ -340,6 +346,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public void start() throws StartError {
+		try {
+			waitOnLaunch();
+		} catch (InterruptedException e) {
+			logException("Interrupted while waiting for application to launch", e);
+		}
 		this.streams.getOutStream().println("Starting...");
 		if (this.delegate != null) {
 			this.streams.getOutStream().println("Invoking delegate start");
@@ -378,6 +389,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public void stop() throws StopError {
+		try {
+			waitOnLaunch();
+		} catch (InterruptedException e) {
+			logException("Interrupted while waiting for application to launch", e);
+		}
 		this.streams.getOutStream().println("Stopping...");
 		if (this.delegate != null) {
 			this.streams.getOutStream().println("Invoking delegate stop");
@@ -419,6 +435,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public void initialize() throws InitializeError {
+		try {
+			waitOnLaunch();
+		} catch (InterruptedException e) {
+			logException("Interrupted while waiting for application to launch", e);
+		}
 		if (this.delegate != null) {
 			this.streams.getOutStream().println("Delegate Initializing application...");
 			try {
@@ -458,6 +479,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	public void releaseObject() throws ReleaseError {
 		if (this.terminated) {
 			return;
+		}
+		try {
+			waitOnLaunch();
+		} catch (InterruptedException e) {
+			logException("Interrupted while waiting for application to launch", e);
 		}
 		this.terminated = true;
 		this.streams.getOutStream().println("Releasing Application...");
@@ -588,6 +614,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public void runTest(final int testid, final PropertiesHolder testValues) throws UnknownTest, UnknownProperties {
+		try {
+			waitOnLaunch();
+		} catch (InterruptedException e) {
+			logException("Interrupted while waiting for application to launch", e);
+		}
 		if (this.delegate != null) {
 			this.streams.getOutStream().println("Delegate Runing Test: " + testValues);
 			try {
@@ -618,6 +649,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public void configure(final DataType[] configProperties) throws InvalidConfiguration, PartialConfiguration {
+		try {
+			waitOnLaunch();
+		} catch (InterruptedException e) {
+			logException("Interrupted while waiting for application to launch", e);
+		}
 		this.streams.getOutStream().println("Configuring application: ");
 		for (DataType t : configProperties) {
 			streams.getOutStream().println("\n\t" + LocalApplicationFactory.toString(t));
@@ -675,6 +711,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public void query(final PropertiesHolder configProperties) throws UnknownProperties {
+		try {
+			waitOnLaunch();
+		} catch (InterruptedException e) {
+			logException("Interrupted while waiting for application to launch", e);
+		}
 		Set<String> queryProperties = new HashSet<String>();
 		if (configProperties.value != null) {
 			for (DataType t : configProperties.value) {
@@ -734,6 +775,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public org.omg.CORBA.Object getPort(final String name) throws UnknownPort {
+		try {
+			waitOnLaunch();
+		} catch (InterruptedException e) {
+			logException("Interrupted while waiting for application to launch", e);
+		}
 		getStreamsProxy().getOutStream().println("Get port " + name);
 		try {
 			if (name == null) {
@@ -752,6 +798,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 								portName = p.getUsesIdentifier();
 							}
 							return comp.getPort(portName);
+						} else {
+							throw new UnknownPort("Internal component " + p.getComponentInstantiationRef().getRefid() + " not found, port unavailable.");
 						}
 					} else if (name.equals(p.getSupportedIdentifier())) {
 						final ScaComponent comp = findComponent(p.getComponentInstantiationRef().getRefid());
@@ -776,6 +824,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public ComponentType[] registeredComponents() {
+		try {
+			waitOnLaunch();
+		} catch (InterruptedException e) {
+			logException("Interrupted while waiting for application to launch", e);
+		}
 		ComponentType[] delegateValues;
 		if (this.delegate != null) {
 			delegateValues = this.delegate.registeredComponents();
@@ -809,6 +862,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public ComponentElementType[] componentNamingContexts() {
+		try {
+			waitOnLaunch();
+		} catch (InterruptedException e) {
+			logException("Interrupted while waiting for application to launch", e);
+		}
 		ComponentElementType[] delegateValues;
 		if (this.delegate != null) {
 			delegateValues = this.delegate.componentNamingContexts();
@@ -860,6 +918,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 */
 	@Override
 	public ComponentElementType[] componentImplementations() {
+		try {
+			waitOnLaunch();
+		} catch (InterruptedException e) {
+			logException("Interrupted while waiting for application to launch", e);
+		}
 		ComponentElementType[] delegateValues;
 		if (this.delegate != null) {
 			delegateValues = this.delegate.componentImplementations();
@@ -1281,13 +1344,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	@Override
 	public void log_level(int newLogLevel) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void setLogLevel(String loggerId, int newLevel) throws UnknownIdentifier {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -1299,7 +1360,6 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	@Override
 	public void setLogConfig(String configContents) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -1310,6 +1370,19 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 	public boolean isDelegate() {
 		return this.delegate != null;
+	}
+	
+	private synchronized void waitOnLaunch() throws InterruptedException {
+		while (launching) {
+			wait();
+		}
+	}
+
+	public synchronized void setLaunching(boolean b) {
+		this.launching = b;
+		if (!launching) {
+			notifyAll();
+		}
 	}
 
 }

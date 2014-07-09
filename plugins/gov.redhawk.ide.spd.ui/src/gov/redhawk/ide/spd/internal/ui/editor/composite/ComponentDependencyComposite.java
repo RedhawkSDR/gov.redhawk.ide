@@ -401,8 +401,9 @@ public class ComponentDependencyComposite extends Composite implements IScaCompo
 	@Override
 	public void setEditable(final boolean canEdit) {
 		this.osViewer.getTable().setEnabled(canEdit);
-		this.processorViewer.getTable().setEnabled(canEdit);
-		this.dependencyViewer.getTable().setEnabled(canEdit);
+		// Don't set enabled on properties viewer since this will disable scrolling
+//		this.processorViewer.getTable().setEnabled(canEdit);
+//		this.dependencyViewer.getTable().setEnabled(canEdit);
 		this.addDependencyButton.setEnabled(canEdit);
 		this.addOsButton.setEnabled(canEdit);
 		this.addProcessorButton.setEnabled(canEdit);
