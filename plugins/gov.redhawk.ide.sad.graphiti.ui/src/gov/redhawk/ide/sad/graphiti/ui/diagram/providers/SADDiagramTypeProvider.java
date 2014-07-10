@@ -34,9 +34,7 @@ public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider implemen
 
 		// open properties view
 		try {
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("org.eclipse.ui.views.PropertySheet",
-				"org.eclipse.ui.views.PropertySheet", IWorkbenchPage.VIEW_VISIBLE);
-
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("org.eclipse.ui.views.PropertySheet");
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE catching Exception allowed here
 			IStatus status = new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, e.getMessage(), e);
 		}
