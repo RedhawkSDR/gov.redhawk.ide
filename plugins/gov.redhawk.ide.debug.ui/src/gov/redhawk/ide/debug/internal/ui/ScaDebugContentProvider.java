@@ -10,8 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui;
 
-import java.util.Collection;
-
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.LocalScaWaveform;
@@ -22,11 +20,14 @@ import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.provider.ScaItemProviderAdapterFactory;
 import gov.redhawk.sca.ui.ScaContentProvider;
 
+import java.util.Collection;
+
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.emf.ecore.impl.EStructuralFeatureImpl.BasicFeatureMapEntry;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.jface.viewers.TreeViewer;
 
@@ -91,7 +92,10 @@ public class ScaDebugContentProvider extends ScaContentProvider {
 		}
 
 		private void reveal(final Object obj) {
-			if (obj == null) {
+			if (obj instanceof BasicFeatureMapEntry) {
+				BasicFeatureMapEntry entry = (BasicFeatureMapEntry) obj;
+				reveal(entry.getValue());
+			} else if (obj == null) {
 				return;
 			} else if (viewer != null && !viewer.getControl().isDisposed()) {
 				viewer.getControl().getDisplay().asyncExec(new Runnable() {
@@ -126,6 +130,9 @@ public class ScaDebugContentProvider extends ScaContentProvider {
 				localSca.eAdapters().add(listener);
 				if (localSca.getSandboxWaveform() != null) {
 					localSca.getSandboxWaveform().eAdapters().add(listener);
+				}
+				if (localSca.getSandboxDeviceManager() != null) {
+					localSca.getSandboxDeviceManager().eAdapters().add(listener);
 				}
 			}
 		});
