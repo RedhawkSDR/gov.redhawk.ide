@@ -11,7 +11,7 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.features.create.CreateComponentFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.FindByEditFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
@@ -312,7 +312,7 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 			if (!foundTool) {
 				// special way of instantiating create feature
 				// allows us to know which palette tool was used
-				ICreateFeature createComponentFeature = new CreateComponentFeature(getFeatureProvider(), spd);
+				ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), spd);
 				final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature);
 				compartmentEntry.addToolEntry(entry);
 			}

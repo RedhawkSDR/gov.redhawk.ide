@@ -10,11 +10,14 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram;
 
+import java.util.List;
+
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.ui.editor.DefaultUpdateBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
+import org.eclipse.jface.util.TransferDropTargetListener;
 
 public class RHGraphitiDiagramEditor extends DiagramEditor {
 
@@ -24,22 +27,6 @@ public class RHGraphitiDiagramEditor extends DiagramEditor {
 		this.editingDomain = editingDomain;
 	}
 
-//juno
-//	@Override
-//	protected DefaultUpdateBehavior createUpdateBehavior() {
-//		return new DefaultUpdateBehavior(this) {
-//
-//			// we need to provide our own editing domain so that all editors are working on the
-//			// same resource. In order to work with a Graphiti diagram our form creates an editing domain
-//			// with the Graphiti supplied Command stack.
-//			@Override
-//			protected void createEditingDomain() {
-//				initializeEditingDomain((TransactionalEditingDomain) editingDomain);
-//			}
-//		};
-//	}
-
-//kepler
 	@Override
 	protected DiagramBehavior createDiagramBehavior() {
 		return new DiagramBehavior(this) {
@@ -48,14 +35,21 @@ public class RHGraphitiDiagramEditor extends DiagramEditor {
 			protected DefaultUpdateBehavior createUpdateBehavior() {
 				return new DefaultUpdateBehavior(this) {
 
-					// we need to provide our own editing domain so that all editors are working on the
-					// same resource. In order to work with a Graphiti diagram our form creates an editing domain
-					// with the Graphiti supplied Command stack.
+					// We need to provide our own editing domain so that all editors are working on the same resource.
+					// In order to work with a Graphiti diagram, our form creates an editing domain with the Graphiti
+					// supplied Command stack.
 					@Override
 					protected void createEditingDomain() {
 						initializeEditingDomain((TransactionalEditingDomain) editingDomain);
 					}
 				};
+			}
+
+			@Override
+			protected List<TransferDropTargetListener> createBusinessObjectDropTargetListeners() {
+				List<TransferDropTargetListener> retVal = super.createBusinessObjectDropTargetListeners();
+				retVal.add(0, new DiagramDropTargetListener(getDiagramContainer().getGraphicalViewer(), this));
+				return retVal;
 			}
 
 		};

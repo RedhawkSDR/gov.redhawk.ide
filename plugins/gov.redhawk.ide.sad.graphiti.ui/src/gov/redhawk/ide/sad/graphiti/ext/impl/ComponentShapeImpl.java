@@ -15,9 +15,11 @@ import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.AssemblyController;
@@ -25,6 +27,7 @@ import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -48,16 +51,18 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  * <!-- end-user-doc -->
  * <p>
  * </p>
- *
+ * 
  * @generated
  */
 public class ComponentShapeImpl extends RHContainerShapeImpl implements ComponentShape {
 
-	// These are property key/value pairs that help us resize an existing shape by properly identifying graphicsAlgorithms
+	// These are property key/value pairs that help us resize an existing shape by properly identifying
+	// graphicsAlgorithms
 	public static final String GA_START_ORDER_ELLIPSE = "startOrderEllipse";
 	public static final String GA_START_ORDER_TEXT = "startOrderText";
 
-	// Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove etc.)
+	// Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove
+	// etc.)
 	public static final String SHAPE_START_ORDER_ELLIPSE_SHAPE = "startOrderEllipseShape";
 
 	// Shape size constants
@@ -278,11 +283,13 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 				updateStatus = true;
 				startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
 				if (ci.getStartOrder() != null && ci.getStartOrder().compareTo(BigInteger.ZERO) != 0) {
-					// Make sure start order is set to zero for assembly controller, if the update occurred from elsewhere in the model
+					// Make sure start order is set to zero for assembly controller, if the update occurred from
+					// elsewhere in the model
 					ci.setStartOrder(BigInteger.ZERO);
 					ComponentPattern.organizeStartOrder(sad, diagram, featureProvider);
 				} else {
-					// Organization check to make sure start order sequence is correct, if the update occurred from elsewhere in the model
+					// Organization check to make sure start order sequence is correct, if the update occurred from
+					// elsewhere in the model
 					ComponentPattern.organizeStartOrder(sad, diagram, featureProvider);
 				}
 				featureProvider.link(startOrderEllipse.getPictogramElement(), assemblyController);

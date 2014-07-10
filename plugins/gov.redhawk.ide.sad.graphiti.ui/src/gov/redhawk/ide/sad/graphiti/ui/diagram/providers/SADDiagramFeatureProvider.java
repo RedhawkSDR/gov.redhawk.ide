@@ -295,9 +295,9 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		return super.getMoveShapeFeature(context);
 	}
 
+	// NOTE - create features are handled directly by patterns
 	@Override
 	public ICreateFeature[] getCreateFeatures() {
-		// create features are added via patterns
 		return super.getCreateFeatures();
 	}
 

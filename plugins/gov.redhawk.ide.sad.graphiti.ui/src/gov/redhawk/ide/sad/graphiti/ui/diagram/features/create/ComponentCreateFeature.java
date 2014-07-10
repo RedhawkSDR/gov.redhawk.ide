@@ -44,17 +44,17 @@ import org.eclipse.graphiti.features.impl.AbstractCreateFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-public class CreateComponentFeature extends AbstractCreateFeature {
+public class ComponentCreateFeature extends AbstractCreateFeature {
 
 	private SoftPkg spd = null;
 
 	@Override
 	public String getDescription() {
 		// Provides the context menu Undo/Redo description
-		return "Add Component from Palette";
+		return "Add Component to Diagram";
 	}
 	
-	public CreateComponentFeature(IFeatureProvider fp, final SoftPkg spd) {
+	public ComponentCreateFeature(IFeatureProvider fp, final SoftPkg spd) {
 		super(fp, spd.getName(), spd.getDescription());
 		this.spd = spd;
 	}
