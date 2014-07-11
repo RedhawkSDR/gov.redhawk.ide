@@ -15,11 +15,13 @@ import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -77,6 +79,7 @@ public class FEIScaExplorerTest {
 		explorerTree = viewBot.tree();
 		
 		localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
+		explorerTree.collapseNode("Sandbox");
 		devMgr = localSca.getSandboxDeviceManager();
 		
 		AnalogDevice stubDevice = new AnalogDevice();
@@ -106,7 +109,16 @@ public class FEIScaExplorerTest {
 			} catch (InvalidObjectReference e) {
 				// PASS
 			}
+			devMgr.fetchDevices(null);
+			viewBot.sleep(500);
 		}
+	}
+	
+	@Test
+	public void test_IDE_803() throws Exception {
+		SWTBotTreeItem node = explorerTree.expandNode("Sandbox", "Device Manager");
+		
+		Assert.assertTrue(node.isExpanded());
 	}
 	
 	@Test
