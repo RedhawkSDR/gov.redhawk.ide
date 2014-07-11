@@ -24,6 +24,8 @@ import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
+import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -80,25 +82,7 @@ public class WaveformComponentTests {
 		// Confirm created component truly is HardLimit
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
 	}
-
-	/**
-	 * IDE-680
-	 * When using the New Waveform Project wizard, if the user selects an Assembly Controller as part of the wizard
-	 * then the component will not appear in the resulting diagram. The component is added to the sad.xml, though it
-	 * does not have a start order attribute.
-	 */
-	@Test
-	public void checkComponentPictogramElementsWithAssemblyController() {
-		waveformName = "IDE-680-Test";
-
-		// Create waveform with an initial Assembly Controller
-		WaveformUtils.createNewWaveformWithAssemblyController(gefBot, waveformName, HARD_LIMIT);
-
-		// Confirm created component truly is HardLimit and Assembly Controller
-		editor = gefBot.gefEditor(waveformName);
-		assertHardLimit(editor.getEditPart(HARD_LIMIT));
-	}
-
+	
 	/**
 	 * IDE-669
 	 * Components are removed with the delete button (trashcan image) that appears when you select the component,
@@ -125,6 +109,36 @@ public class WaveformComponentTests {
 			EditorTestUtils.deleteFromDiagram(editor, gefEditPart);
 			Assert.assertNull(editor.getEditPart(s));
 		}
+	}
+	
+	/**
+	 * IDE-728
+	 * Components selected in the diagram should have the properties of their corresponding 
+	 * model objects correctly exposed in the default Eclipse properties view.
+	 */
+	@Test
+	public void checkChangesToPropertiesReflectedInSad() {
+		waveformName = "IDE-728-Test";
+		
+		WaveformUtils.createNewWaveformWithAssemblyController(gefBot, waveformName, HARD_LIMIT);
+		editor = gefBot.gefEditor(waveformName);
+		editor.getEditPart(HARD_LIMIT).click();
+		MenuUtils.showView(gefBot, "Properties");
+		String propertyname = gefBot.viewByTitle("Properties").bot().tree().cell(0, "Property").toString();
+		String newValue = "0.0";
+		for (SWTBotTreeItem item : gefBot.viewByTitle("Properties").bot().tree().getAllItems()) {
+			if (item.getText().equals(propertyname)) {
+				item.click(1).pressShortcut(Keystrokes.create('0')[0]);
+				break;
+			}
+		}
+		editor.getEditPart(HARD_LIMIT).click();
+		gefBot.menu("File").menu("Save").click();
+		String regex = EditorTestUtils.regexStringForSadProperty((ComponentShapeImpl) 
+			editor.getEditPart(HARD_LIMIT).part().getModel(), propertyname, newValue);
+		EditorTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		String editorText = editor.toTextEditor().getText();
+		Assert.assertTrue("The sad.xml should include HardLimit's changed property", editorText.matches(regex));
 	}
 
 	/**
@@ -164,7 +178,6 @@ public class WaveformComponentTests {
 		Assert.assertTrue("The sad.xml should include SigGen's software assembly", editorText.matches(sigGenSad));
 		Assert.assertTrue("The sad.xml should include HardLimit's software assembly", editorText.matches(hardLimitSad));
 	}
-
 
 	/**
 	 * Private helper method for {@link #checkComponentPictogramElements()} and

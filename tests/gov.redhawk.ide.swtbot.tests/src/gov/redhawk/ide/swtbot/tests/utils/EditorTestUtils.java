@@ -235,4 +235,10 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 		return "(?s).*" + componentinstantiation + ".*" + usagename + ".*" + namingservice + ".*";
 
 	}
+	
+	public static String regexStringForSadProperty(ComponentShapeImpl componentShape, String propertyname, String value) {
+		Object bo = DUtil.getBusinessObject(componentShape);
+		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
+		return "(?s).*<componentproperties>.*<simpleref refid=\"" + propertyname + "\" value=\"" + value + "\"/>.*</componentproperties>.*";
+	}
 }
