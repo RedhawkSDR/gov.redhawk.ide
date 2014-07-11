@@ -26,10 +26,8 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
@@ -39,12 +37,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 public class ExportToSDRHandler extends AbstractHandler implements IHandler {
-	private static final IPath SDRROOT = new Path(System.getenv("SDRROOT"));
 	private IScaExporter exporter;
 
 	@Override
 	public Object execute(@Nullable final ExecutionEvent event) throws ExecutionException {
-		this.exporter = new FileStoreExporter(SDRROOT);
+		this.exporter = new FileStoreExporter(SdrUiPlugin.getDefault().getTargetSdrPath());
 		final ISelection sel = HandlerUtil.getCurrentSelection(event);
 		Job exportJob = new Job("Exporting Project to SDR") {
 			@Override
