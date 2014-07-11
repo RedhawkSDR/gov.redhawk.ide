@@ -9,7 +9,6 @@ import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.sca.ui.views.ScaExplorer;
 import gov.redhawk.sca.util.OrbSession;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
