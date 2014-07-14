@@ -10,10 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.tests.utils;
 
+import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 
 public class MenuUtils {
 
@@ -27,12 +28,10 @@ public class MenuUtils {
 	 * @param bot
 	 * @param view
 	 */
-	public static void showView(SWTBot bot, String view) {
+	public static void showView(SWTWorkbenchBot bot, String viewID) {
 		// Open the new waveform project wizard
-		SWTBotMenu fileMenu = bot.menu("Window");
-		SWTBotMenu showViewMenu = fileMenu.menu("Show View");
-		SWTBotMenu viewMenu = showViewMenu.menu(view);
-		viewMenu.click();
+		SWTBotView viewToOpen = bot.viewById(viewID);
+		viewToOpen.show();
 	}
 
 	/**
@@ -66,8 +65,8 @@ public class MenuUtils {
 		}
 	}
 
-	public static void save(SWTBot bot) {
-		bot.menu("File").menu("Save").click();
+	public static void save(SWTWorkbenchBot bot) {
+		bot.saveAllEditors();
 	}
 
 	private static boolean buttonExists(SWTBot bot, String buttonText) {

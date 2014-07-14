@@ -131,7 +131,7 @@ public class WaveformComponentTests {
 		WaveformUtils.createNewWaveformWithAssemblyController(gefBot, waveformName, HARD_LIMIT);
 		editor = gefBot.gefEditor(waveformName);
 		editor.getEditPart(HARD_LIMIT).click();
-		MenuUtils.showView(gefBot, "Properties");
+		MenuUtils.showView(gefBot, "org.eclipse.ui.views.PropertySheet");
 		String propertyname = gefBot.viewByTitle("Properties").bot().tree().cell(0, "Property").toString();
 		String newValue = "0.0";
 		for (SWTBotTreeItem item : gefBot.viewByTitle("Properties").bot().tree().getAllItems()) {
