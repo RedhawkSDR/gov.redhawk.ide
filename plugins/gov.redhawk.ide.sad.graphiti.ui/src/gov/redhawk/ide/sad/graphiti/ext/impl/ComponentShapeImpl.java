@@ -51,7 +51,7 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  * <!-- end-user-doc -->
  * <p>
  * </p>
- * 
+ *
  * @generated
  */
 public class ComponentShapeImpl extends RHContainerShapeImpl implements ComponentShape {

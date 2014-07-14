@@ -13,6 +13,7 @@ package gov.redhawk.ide.swtbot.tests.utils;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -20,17 +21,21 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefViewer;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+import org.junit.Assert;
 
 public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility method is intended to be public
 
 	public static final String OVERVIEW_TAB = "Overview", PROPERTIES_TAB = "Properties", DIAGRAM_TAB = "Diagram", XML_TAB = ".sad.xml";
-	
+
 	/**
 	 * Deletes the provided part from the diagram. Part must have a context menu option for "Delete"
 	 * @param editor - SWTBotGefEditor
@@ -55,6 +60,40 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 	}
 
 	/**
+	 * Drag a component onto the SAD diagram editor from the Target SDR.
+	 * @param gefBot
+	 * @param editor
+	 * @param componentName
+	 */
+	public static void dragFromTargetSDRToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String componentName) {
+		SWTBotView scaExplorerView = gefBot.viewByTitle("SCA Explorer");
+		SWTBotTree scaTree = scaExplorerView.bot().tree();
+		SWTBotTreeItem hardLimitItem = scaTree.expandNode("Target SDR", "Components", componentName);
+
+		SWTBotGefViewer viewer = editor.getSWTBotGefViewer();
+		SWTBotGefFigureCanvas canvas = null;
+
+		for (Field f : viewer.getClass().getDeclaredFields()) {
+			if ("canvas".equals(f.getName())) {
+				f.setAccessible(true);
+				try {
+					canvas = (SWTBotGefFigureCanvas) f.get(viewer);
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace(); // SUPPRESS CHECKSTYLE INLINE
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace(); // SUPPRESS CHECKSTYLE INLINE
+				}
+			}
+		}
+
+		Assert.assertNotNull(canvas);
+		hardLimitItem.dragAndDrop(canvas);
+
+	}
+
+	/**
 	 * 
 	 * @param editor - SWTBotGefEditor
 	 * @param usesEditPart - SWTBotGefEditPart for the uses/source port
@@ -65,7 +104,7 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 		getDiagramPortAnchor(usesEditPart).click();
 		getDiagramPortAnchor(providesEditPart).click();
 	}
-	
+
 	/**
 	 * Utility method to extract business object from a component in the Graphiti diagram
 	 * @param editor
@@ -175,7 +214,8 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 	 * 
 	 * @param editor - SWTBotGefEditor
 	 * @param portEditPart - source port edit part
-	 * @return - Returns of list of SWTBotGefConnectionEditParts that includes any connection where the provided port is the source
+	 * @return - Returns of list of SWTBotGefConnectionEditParts that includes any connection where the provided port is
+	 * the source
 	 */
 	public static List<SWTBotGefConnectionEditPart> getSourceConnectionsFromPort(SWTBotGefEditor editor, SWTBotGefEditPart portEditPart) {
 		SWTBotGefEditPart anchor = getDiagramPortAnchor(portEditPart);
@@ -186,35 +226,14 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 	 * 
 	 * @param editor - SWTBotGefEditor
 	 * @param portEditPart - target port edit part
-	 * @return - Returns of list of SWTBotGefConnectionEditParts that includes any connection where the provided port is the target
+	 * @return - Returns of list of SWTBotGefConnectionEditParts that includes any connection where the provided port is
+	 * the target
 	 */
 	public static List<SWTBotGefConnectionEditPart> getTargetConnectionsFromPort(SWTBotGefEditor editor, SWTBotGefEditPart portEditPart) {
 		SWTBotGefEditPart anchor = getDiagramPortAnchor(portEditPart);
 		return anchor.targetConnections();
 	}
 
-	/**
-	 * Open the diagram editor from an existing sad.xml in the Project Explorer
-	 * @param waveformName - name of waveform that will be opened
-	 */
-	public static void openSadDiagram(SWTWorkbenchBot wbBot, String waveformName) {
-		// TODO develop static method to open SAD editor from sad.xml
-
-		// Expand tree view to sad.xml
-		SWTBotView explorerView = wbBot.viewByTitle("Project Explorer");
-		SWTBotTreeItem[] projects = explorerView.bot().tree().getAllItems();
-		for (SWTBotTreeItem project : projects) {
-			if (waveformName.equals(project.getText())) {
-				for (SWTBotTreeItem childElement : project.expand().getItems()) {
-					// PASS
-					// System.out.println("child: " + childElement.getText());
-					// TODO: Select the node for the sad.xml and double-click
-					// TODO: Make sure the diagram tab in the SAD editor is selected
-				}
-			}
-		}
-	}
-	
 	/**
 	 * Opens the given tab with the given name within the waveform editor.
 	 * @param editor - the editor within which to open the tab
@@ -223,12 +242,12 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 	public static void openTabInEditor(SWTBotGefEditor editor, String tabName) {
 		editor.bot().cTabItem(tabName).activate();
 	}
-	
+
 	public static String regexStringForSadComponent(ComponentShapeImpl componentShape) {
 		Object bo = DUtil.getBusinessObject(componentShape);
 		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
-		String componentinstantiation = "<componentinstantiation id=\"" + ci.getUsageName() + "\"" 
-				+ ((ci.getStartOrder() != null) ? " startorder=\"" + ci.getStartOrder() + "\">" : ">");
+		String componentinstantiation = "<componentinstantiation id=\"" + ci.getUsageName() + "\""
+			+ ((ci.getStartOrder() != null) ? " startorder=\"" + ci.getStartOrder() + "\">" : ">");
 		String usagename = "<usagename>" + ci.getUsageName() + "</usagename>";
 		String namingservice = "<namingservice name=\"" + ci.getUsageName() + "\"/>";
 

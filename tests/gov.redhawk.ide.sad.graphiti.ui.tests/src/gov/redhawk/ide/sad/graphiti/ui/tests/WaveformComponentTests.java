@@ -74,13 +74,22 @@ public class WaveformComponentTests {
 
 		// Create an empty waveform project
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+		editor.setFocus();
 
 		// Add component to diagram from palette
-		editor = gefBot.gefEditor(waveformName);
 		EditorTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
 
 		// Confirm created component truly is HardLimit
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
+		EditorTestUtils.deleteFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
+
+		// Add component to diagram from Target SDR
+		EditorTestUtils.dragFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
+
+		// Confirm created component truly is HardLimit
+		assertHardLimit(editor.getEditPart(HARD_LIMIT));
+		EditorTestUtils.deleteFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
 	}
 	
 	/**
@@ -143,34 +152,34 @@ public class WaveformComponentTests {
 
 	/**
 	 * IDE-729
-	 * New components should be added to sad.xml when the diagram is saved.  All edits to components 
+	 * New components should be added to sad.xml when the diagram is saved. All edits to components
 	 * (such as changes to the usage name) should also be reflected in the sad.xml on save.
 	 */
 	@Test
 	public void checkComponentsInSad() {
 		waveformName = "IDE-729-Test";
-		
+
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
-		
+
 		// Add a SigGen component instantiation to the diagram and save
 		EditorTestUtils.dragFromPaletteToDiagram(editor, "SigGen", 0, 0);
 		gefBot.menu("File").menu("Save").click();
-		
+
 		// Add a HardLimit component instantiation to the diagram
 		EditorTestUtils.dragFromPaletteToDiagram(editor, "HardLimit", 0, 0);
-		
+
 		// Find expected xml string for SigGen and HardLimit components
 		final String sigGenSad = EditorTestUtils.regexStringForSadComponent((ComponentShapeImpl) editor.getEditPart("SigGen").part().getModel());
 		final String hardLimitSad = EditorTestUtils.regexStringForSadComponent((ComponentShapeImpl) editor.getEditPart("HardLimit").part().getModel());
-		
+
 		// Check to see if SigGen is included in the sad.xml
 		EditorTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		String editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The sad.xml should include SigGen's software assembly", editorText.matches(sigGenSad));
 		Assert.assertFalse("The sad.xml should not yet include HardLimit's software assembly", editorText.matches(hardLimitSad));
 		EditorTestUtils.openTabInEditor(editor, "Diagram");
-		
+
 		// Save project and check to see if HardLimit is now in the sad.xml
 		gefBot.menu("File").menu("Save").click();
 		EditorTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
@@ -186,6 +195,7 @@ public class WaveformComponentTests {
 	 * @param gefEditPart
 	 */
 	private static void assertHardLimit(SWTBotGefEditPart gefEditPart) {
+		Assert.assertNotNull(gefEditPart);
 		// Drill down to graphiti component shape
 		ComponentShapeImpl componentShape = (ComponentShapeImpl) gefEditPart.part().getModel();
 
