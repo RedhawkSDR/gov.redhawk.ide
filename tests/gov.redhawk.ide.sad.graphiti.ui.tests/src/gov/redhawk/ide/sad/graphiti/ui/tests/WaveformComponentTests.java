@@ -89,7 +89,6 @@ public class WaveformComponentTests {
 
 		// Confirm created component truly is HardLimit
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
-		EditorTestUtils.deleteFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
 	}
 	
 	/**
@@ -168,7 +167,7 @@ public class WaveformComponentTests {
 
 		// Add a HardLimit component instantiation to the diagram
 		EditorTestUtils.dragFromPaletteToDiagram(editor, "HardLimit", 0, 0);
-
+		
 		// Find expected xml string for SigGen and HardLimit components
 		final String sigGenSad = EditorTestUtils.regexStringForSadComponent((ComponentShapeImpl) editor.getEditPart("SigGen").part().getModel());
 		final String hardLimitSad = EditorTestUtils.regexStringForSadComponent((ComponentShapeImpl) editor.getEditPart("HardLimit").part().getModel());
