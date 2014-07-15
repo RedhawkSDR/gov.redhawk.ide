@@ -13,7 +13,9 @@ import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
+import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.ui.PlatformUI;
@@ -89,7 +91,6 @@ public class FEIScaExplorerTest {
 		devMgr.fetchDevices(null);
 		ScaDevice< ? > device = devMgr.getDevice("analogDevice");
 		device.refresh(null, RefreshDepth.SELF);
-		
 		viewBot.sleep(500);
 	}
 	
@@ -123,7 +124,31 @@ public class FEIScaExplorerTest {
 	
 	@Test
 	public void test_IDE_797() throws Exception {
-		explorerTree.expandNode("Sandbox", "Device Manager", "analogDevice", "FrontEnd Tuners");
+		final SWTBotTreeItem item = explorerTree.expandNode("Sandbox", "Device Manager");
+		viewBot.sleep(1000);
+		viewBot.waitWhile(new ICondition() {
+			
+			@Override
+			public boolean test() {
+				try {
+					item.getNode("analogDevice");
+				} catch (WidgetNotFoundException e) {
+					return true;
+				}
+				return false;
+			}
+			
+			@Override
+			public void init(SWTBot bot) {
+				
+			}
+			
+			@Override
+			public String getFailureMessage() {
+				return "Failed to find analogDevice";
+			}
+		}, 30000, 1000);
+		item.expandNode("analogDevice", "FrontEnd Tuners");
 	}
 
 }
