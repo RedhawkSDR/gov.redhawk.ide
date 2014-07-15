@@ -666,8 +666,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 		Map<String, List<DataType>> configMap = new HashMap<String, List<DataType>>();
 		ExternalProperties externalProperties = waveform.getProfileObj().getExternalProperties();
-		for (DataType t : configProperties) {
-			boolean isExternalProp = false;
+		
+		config: for (DataType t : configProperties) {
 			if (externalProperties != null) {
 				for (ExternalProperty p : externalProperties.getProperties()) {
 					String propId = (p.getExternalPropID() != null) ? p.getExternalPropID() : p.getPropID();
@@ -677,20 +677,20 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 							configList = new ArrayList<DataType>();
 							configMap.put(p.getCompRefID(), configList);
 						}
-						configList.add(t);
-						isExternalProp = true;
-						break;
+						configList.add(new DataType(p.getPropID(), t.value));
+						
+						// External prop, go to new config property item
+						continue config;
 					}
 				}
 			}
-			if (!isExternalProp) {
-				List<DataType> configList = configMap.get(null);
-				if (configList == null) {
-					configList = new ArrayList<DataType>();
-					configMap.put(null, configList);
-				}
-				configList.add(t);
+			
+			List<DataType> configList = configMap.get(null);
+			if (configList == null) {
+				configList = new ArrayList<DataType>();
+				configMap.put(null, configList);
 			}
+			configList.add(t);
 		}
 
 		for (Map.Entry<String, List<DataType>> entry : configMap.entrySet()) {
@@ -748,6 +748,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 					}
 				}
 				tmpHolder.value = propsToQuery.toArray(new DataType[propsToQuery.size()]);
+			} else {
+				tmpHolder.value = new DataType[0];
 			}
 			localController.query(tmpHolder);
 			retVal.addAll(Arrays.asList(tmpHolder.value));
@@ -761,7 +763,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 					ScaComponent component = waveform.getScaComponent(prop.getCompRefID());
 					if (component != null) {
 						component.query(tmpHolder);
-						retVal.addAll(Arrays.asList(tmpHolder.value));
+						retVal.add(new DataType(prop.getExternalPropID(), tmpHolder.value[0].value));
+					} else {
+						this.streams.getErrStream().println("Failed to find component for external property: " + prop.getPropID() + "@" + prop.getCompRefID());
 					}
 				}
 			}
@@ -1244,9 +1248,9 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create sub context for spd: " + spdContextNameStr, e));
 		}
 		config.setAttribute(LaunchVariables.NAMING_CONTEXT_IOR, spdContext.toString());
-
+		String instID = ScaComponentImpl.convertIdentifierToInstantiationID(compId);
 		if (usageName == null && compId != null) {
-			usageName = ScaComponentImpl.convertIdentifierToInstantiationID(compId);
+			usageName = instID;
 		}
 
 		if (usageName != null) {
@@ -1294,9 +1298,15 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			}
 		}
 
+		if (instID == null) {
+			instID = newComponent.getInstantiationIdentifier();
+		}
+
 		String assemblyID = ApplicationImpl.getAssemblyControllerID(waveform.getProfileObj());
-		if (assemblyID != null && assemblyID.equals(newCompId)) {
-			this.assemblyController = newComponent;
+		if (assemblyID != null) {
+			if (assemblyID.equals(instID)) {
+				this.assemblyController = newComponent;
+			}
 		}
 		return newComponent;
 	}
@@ -1371,7 +1381,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	public boolean isDelegate() {
 		return this.delegate != null;
 	}
-	
+
 	private synchronized void waitOnLaunch() throws InterruptedException {
 		while (launching) {
 			wait();
