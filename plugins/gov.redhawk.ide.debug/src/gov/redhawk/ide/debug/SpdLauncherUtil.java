@@ -57,6 +57,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.transaction.RunnableWithResult;
@@ -210,7 +211,13 @@ public final class SpdLauncherUtil {
 					while (newComponent == null) {
 						// If this launch was terminated, immediately bail
 						if (launch.isTerminated()) {
-							throw new Exception("Component terminated while waiting to launch. " + compID);
+							IProcess[] processes = launch.getProcesses();
+							String msg = "Component terminated while waiting to launch " + compID + ".";
+							for (IProcess p : processes) {
+								int exitCode = p.getExitValue();
+								msg = msg + " " + getExitCodeMessage(exitCode);
+							}
+							throw new Exception(msg);
 						}
 
 						NamingContextExt namingContext = null;
@@ -294,6 +301,58 @@ public final class SpdLauncherUtil {
 		}
 
 	}
+
+	protected static String getExitCodeMessage(int exitCode) {
+		if ((exitCode & 128) == 128) {
+			int unixCode = exitCode & 127;
+			String signalStr;
+			switch (unixCode) {
+			case 1:
+				signalStr = "SIGHUP";
+				break;
+			case 2:
+				signalStr = "SIGINT";
+				break;
+			case 3:
+				signalStr = "SIGQUIT";
+				break;
+			case 4:
+				signalStr = "SIGILL";
+				break;
+			case 5:
+				signalStr = "SIGTRAP";
+				break;
+			case 6:
+				signalStr = "SIGABRT";
+				break;
+			case 8:
+				signalStr = "SIGFPE";
+				break;
+			case 9:
+				signalStr = "SIGKILL";
+				break;
+			case 11:
+				signalStr = "SIGSEGV";
+				break;
+			case 13:
+				signalStr = "SIGPIPE";
+				break;
+			case 14:
+				signalStr = "SIGALRM";
+				break;
+			case 15:
+				signalStr = "SIGTERM";
+				break;
+			default:
+				signalStr = "";
+				break;
+			} 
+			return "Terminated with signal " + signalStr + " (" + unixCode + ")";
+		} else {
+			return "Terminated with exit code " + exitCode;
+		}
+	}
+
 
 	private static LocalAbstractComponent postLaunchService(final ILaunch launch) throws CoreException {
 		final String name = launch.getAttribute(LaunchVariables.SERVICE_NAME);
