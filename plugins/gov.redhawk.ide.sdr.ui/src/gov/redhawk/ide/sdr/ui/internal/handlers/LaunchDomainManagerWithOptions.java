@@ -125,7 +125,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 					ScaModelCommand.execute(dmReg, new ScaModelCommand() {
 						@Override
 						public void execute() {
-							dmReg.createDomain(model.getDomainName(), false, connectionProperties);
+							dmReg.createDomain(model.getLocalDomainName(), model.getDomainName(), false, connectionProperties);
 						}
 					});
 				} else {
@@ -136,7 +136,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 
 				final ScaDomainManager config = dmReg.findDomain(model.getDomainName());
 
-				final String domainName = config.getName();
+				final String domainName = config.getLabel();
 				subMonitor.newChild(1).beginTask("Launching domain " + domainName, 2);
 				try {
 					final UIJob launcherJob = new UIJob("Domain Launcher") {
@@ -249,7 +249,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 
 	private IStatus connectToDomain(final ScaDomainManager connection, final IProgressMonitor monitor) {
 		try {
-			monitor.beginTask("Connecting to domain " + connection.getName(), 1);
+			monitor.beginTask("Connecting to domain " + connection.getLabel(), 1);
 			for (int tries = 0; tries < getMaxConnectionAttempts(); tries++) {
 				try {
 					connection.connect(new SubProgressMonitor(monitor, 1), RefreshDepth.SELF);
@@ -263,7 +263,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 							// PASS
 						}
 					} else {
-						return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Failed to connect to domain: " + connection.getName(), e);
+						return new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Failed to connect to domain: " + connection.getLabel(), e);
 					}
 				}
 			}

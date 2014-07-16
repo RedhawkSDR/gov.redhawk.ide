@@ -148,7 +148,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 						// if the domain connection registry uses a different name server we cannot
 						// use this name regardless of the connection state because to do so would
 						// require us to modify the domain registry entry...which is not allowable
-						LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.add(dom.getName());
+						LaunchDomainManagerWithOptionsDialog.this.takenDomainNames.add(dom.getLabel());
 					}
 				}
 			}

@@ -98,7 +98,7 @@ public class LaunchDeviceManagersHelper {
 		Assert.isNotNull(devConfigs);
 		String domainName = null;
 		if (domain != null) {
-			domainName = domain.getName();
+			domainName = domain.getLabel();
 		}
 		final SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching device managers...", devConfigs.length);
 		final MultiStatus retVal = new MultiStatus(SdrUiPlugin.PLUGIN_ID, IStatus.OK, "Failed to launch Device Managers...", null);

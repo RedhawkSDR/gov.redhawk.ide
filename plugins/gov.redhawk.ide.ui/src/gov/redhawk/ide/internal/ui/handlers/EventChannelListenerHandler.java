@@ -120,7 +120,7 @@ public class EventChannelListenerHandler extends AbstractHandler {
 					final ScaDomainManager domMgr = ScaEcoreUtils.getEContainerOfType(channel, ScaDomainManager.class);
 
 					if (domMgr != null) {
-						final String secondaryId = domMgr.getName() + "/" + channel.getName();
+						final String secondaryId = domMgr.getLabel() + "/" + channel.getName();
 						try {
 							final EventView finalView = showView(page, view, isMany, secondaryId);
 							Job connectJob = new Job("Connecting to : " + secondaryId) {

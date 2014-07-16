@@ -19,6 +19,7 @@ public class DomainManagerLaunchConfiguration {
 	public static final String PROP_DEBUG_LEVEL = "debugLevel";
 	public static final String PROP_ARGUMENTS = "arguments";
 	
+	private String localDomainName = null;
 	private String domainName = "";
 	private DebugLevel debugLevel = DebugLevel.Info;
 	private String arguments = "";
@@ -60,6 +61,14 @@ public class DomainManagerLaunchConfiguration {
 
 	public void setArguments(String arguments) {
 		this.arguments = arguments;
+	}
+	
+	public String getLocalDomainName() {
+		return localDomainName;
+	}
+	
+	public void setLocalDomainName(String localDomainName) {
+		this.localDomainName = localDomainName;
 	}
 
 }

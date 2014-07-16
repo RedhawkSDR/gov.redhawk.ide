@@ -64,7 +64,7 @@ public class LaunchDeviceManager extends AbstractHandler implements IHandler {
 					DeviceManagerLaunchConfiguration conf = dialog.getConfiguration();
 					// If Default was chosen then tmpDomMgr is null.
 					final ScaDomainManager domMgr = tmpDomMgr;
-					String domainName = (domMgr == null) ? "" : domMgr.getName();
+					String domainName = (domMgr == null) ? "" : domMgr.getLabel();
 
 					// Go through and set the debug Level for them all.  Currently the GUI only allows a single debug level to be applied to all of them.
 					for (DeviceManagerLaunchConfiguration entry : launchConfigs) {
@@ -74,7 +74,7 @@ public class LaunchDeviceManager extends AbstractHandler implements IHandler {
 					}
 					final Job refreshJob;
 					if (domMgr != null) {
-						refreshJob = new Job("Refreshing Device Managers of " + domMgr.getName()) {
+						refreshJob = new Job("Refreshing Device Managers of " + domMgr.getLabel()) {
 
 							@Override
 							protected IStatus run(final IProgressMonitor monitor) {

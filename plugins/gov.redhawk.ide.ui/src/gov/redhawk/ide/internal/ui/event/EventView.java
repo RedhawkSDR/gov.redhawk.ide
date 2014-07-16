@@ -253,7 +253,7 @@ public class EventView extends ViewPart {
 	public synchronized void connect(final ScaDomainManager domain, final String channel) throws CoreException {
 		// Don't add duplicate listeners
 		for (ChannelListener l : channelListeners) {
-			if (l.getFullChannelName().equals(domain.getName() + "/" + channel)) {
+			if (l.getFullChannelName().equals(domain.getLabel() + "/" + channel)) {
 				return;
 			}
 		}

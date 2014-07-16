@@ -60,22 +60,22 @@ public class DomainChannelListener extends ChannelListener {
 			domain.registerWithEventChannel(ref, registrationId, getChannel());
 		} catch (SystemException e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + getChannel() + ")", e));
+				+ domain.getLabel() + "(" + getChannel() + ")", e));
 		} catch (InvalidObjectReference e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + getChannel() + ")", e));
+				+ domain.getLabel() + "(" + getChannel() + ")", e));
 		} catch (InvalidEventChannelName e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + getChannel() + ")", e));
+				+ domain.getLabel() + "(" + getChannel() + ")", e));
 		} catch (AlreadyConnected e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + getChannel() + ")", e));
+				+ domain.getLabel() + "(" + getChannel() + ")", e));
 		} catch (ServantNotActive e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + getChannel() + ")", e));
+				+ domain.getLabel() + "(" + getChannel() + ")", e));
 		} catch (WrongPolicy e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIDEUiPlugin.PLUGIN_ID, "Failed to connect to event channel for monitor: "
-				+ domain.getName() + "(" + getChannel() + ")", e));
+				+ domain.getLabel() + "(" + getChannel() + ")", e));
 		}
 
 	}
@@ -119,7 +119,7 @@ public class DomainChannelListener extends ChannelListener {
 
 	@Override
 	public String getFullChannelName() {
-		return domain.getName() + "/" + getChannel();
+		return domain.getLabel() + "/" + getChannel();
 	}
 
 }

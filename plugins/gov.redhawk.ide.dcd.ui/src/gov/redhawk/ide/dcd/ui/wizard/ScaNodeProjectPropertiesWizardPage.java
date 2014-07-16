@@ -126,8 +126,8 @@ public class ScaNodeProjectPropertiesWizardPage extends ScaProjectPropertiesWiza
 		// Get the domain names for any stored domain names
 		final EList<ScaDomainManager> domains = ScaPlugin.getDefault().getDomainManagerRegistry(parent.getDisplay()).getDomains();
 		for (final ScaDomainManager domain : domains) {
-			if (!domainNames.contains(domain.getName())) {
-				domainNames.add(domain.getName());
+			if (!domainNames.contains(domain.getLabel())) {
+				domainNames.add(domain.getLabel());
 			}
 		}
 		this.domainCombo.setItems(domainNames.toArray(new String[domainNames.size()]));
