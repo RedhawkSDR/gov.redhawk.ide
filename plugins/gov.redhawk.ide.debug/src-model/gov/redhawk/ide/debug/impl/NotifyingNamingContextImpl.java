@@ -78,14 +78,14 @@ import org.omg.PortableServer.POAPackage.WrongPolicy;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#isDisposed <em>Disposed</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getObjectMap <em>Object Map</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getContextMap <em>Context Map</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getNamingContext <em>Naming Context</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getSubContexts <em>Sub Contexts</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getParentContext <em>Parent Context</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getPoa <em>Poa</em>}</li>
- *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getName <em>Name</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#isDisposed <em>Disposed</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getObjectMap <em>Object Map</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getContextMap <em>Context Map</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getNamingContext <em>Naming Context</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getSubContexts <em>Sub Contexts</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getParentContext <em>Parent Context</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getPoa <em>Poa</em>}</li>
+ * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getName <em>Name</em>}</li>
  * </ul>
  * </p>
  *
@@ -376,6 +376,10 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	}
 
 	private Name name;
+	/** no tests of bound objects for existence */
+	private boolean ping = true;
+	/** purge? */
+	private boolean doPurge = true;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -486,7 +490,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 				return name.fullName().toString();
 			}
 		} catch (InvalidName e) {
-			//PASS			
+			// PASS
 		}
 		return "";
 		// BEGIN GENERATED CODE
@@ -558,6 +562,10 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	 */
 	@Override
 	public void dispose() {
+		if (disposed) {
+			return;
+		}
+		this.disposed = true;
 		getObjectMap().clear();
 		getContextMap().clear();
 		getSubContexts().clear();
@@ -565,7 +573,6 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 		this.destroyed = true;
 		this.namingContext = null;
 		this.poa = null;
-		this.disposed = true;
 	}
 
 	/**
@@ -803,7 +810,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	}
 
 	/**
-	 *  bind a name (an array of name components) to an object
+	 * bind a name (an array of name components) to an object
 	 */
 
 	@Override
@@ -1073,11 +1080,19 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	}
 
 	/**
-	 *  cleanup bindings, i.e. ping every object and remove bindings to
-	 *  non-existent objects
+	 * cleanup bindings, i.e. ping every object and remove bindings to
+	 * non-existent objects
+	 * @since 6.0
 	 */
 
-	private void cleanup() {
+	public void cleanup() {
+
+		// Check if object purging enabled
+
+		if (!doPurge) {
+			return;
+		}
+
 		final List<Name> itemsToRemoveNames = new ArrayList<Name>();
 		for (final Iterator<Entry<Name, org.omg.CORBA.Object>> iterator = getObjectMap().entrySet().iterator(); iterator.hasNext();) {
 			final Entry<Name, org.omg.CORBA.Object> entry = iterator.next();
@@ -1105,12 +1120,8 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 			@Override
 			public void execute() {
-				for (final Name name : itemsToRemoveNames) {
-					getObjectMap().removeKey(name);
-				}
-				for (final Name name : itemsToRemoveContexts) {
-					getContextMap().removeKey(name);
-				}
+				getObjectMap().keySet().removeAll(itemsToRemoveNames);
+				getContextMap().keySet().removeAll(itemsToRemoveContexts);
 			}
 
 		});
@@ -1129,7 +1140,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	}
 
 	/**
-	 *  @return numer of bindings in this context
+	 * @return numer of bindings in this context
 	 */
 
 	public int how_many() {
@@ -1140,7 +1151,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 	}
 
 	/**
-	 *  list all bindings
+	 * list all bindings
 	 */
 
 	@Override
@@ -1232,11 +1243,15 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 			throw new InvalidName();
 		}
 
+		long start = System.currentTimeMillis();
+
 		final Name n = new Name(nc[0]);
 		if (nc.length > 1) {
 			final NamingContextExt next_context = NamingContextExtHelper.narrow(getContextMap().get(n));
+			System.out.println(this + ": Narrow " + (System.currentTimeMillis() - start));
+			start = System.currentTimeMillis();
 
-			if ((next_context == null) || (isDead(next_context))) {
+			if ((next_context == null) || (ping && isDead(next_context))) {
 				throw new NotFound(NotFoundReason.missing_node, nc);
 			}
 
@@ -1260,7 +1275,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 				throw NotifyingNamingContextImpl.DEBUG.throwing(new NotFound(NotFoundReason.missing_node, n.components()));
 			}
 
-			if (isDead(result)) {
+			if (ping && isDead(result)) {
 				throw NotifyingNamingContextImpl.DEBUG.throwing(new NotFound(NotFoundReason.missing_node, n.components()));
 			}
 
@@ -1359,7 +1374,8 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 	@Override
 	public org.omg.CORBA.Object resolve_str(final String n) throws NotFound, CannotProceed, InvalidName {
-		return resolve(to_name(n));
+		org.omg.CORBA.Object retVal = resolve(to_name(n));
+		return retVal;
 	}
 
 	/**
@@ -1370,10 +1386,18 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 		boolean non_exist = true;
 		try {
 			non_exist = o._non_existent();
-		} catch (final org.omg.CORBA.SystemException e) {
+			// Code added to release the reference.
+			if (!non_exist) {
+				o._release();
+			}
+		} catch (org.omg.CORBA.NO_IMPLEMENT ni) {
+			// not a failure, the peer is alive, it just doesn't
+			// implement _non_existent()
+			non_exist = false;
+		} catch (org.omg.CORBA.SystemException e) {
 			non_exist = true;
 		}
 		return non_exist;
 	}
 
-} //NotifyingNamingContextImpl
+} // NotifyingNamingContextImpl
