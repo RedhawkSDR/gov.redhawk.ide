@@ -30,7 +30,10 @@ import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.OrbSession;
 import gov.redhawk.sca.util.SilentJob;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -855,6 +858,22 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	@Override
 	public void attachDataProviders() {
 		// Do nothing
+	}
+	
+	/**
+	 * @since 6.0
+	 */
+	@Override
+	public List<ScaWaveform> fetchWaveforms(IProgressMonitor monitor) {
+		final List<ScaWaveform> retVal = new ArrayList<ScaWaveform>(getWaveforms().size());
+		ScaModelCommand.execute(this, new ScaModelCommand() {
+			
+			@Override
+			public void execute() {
+				retVal.addAll(getWaveforms());
+			}
+		});
+		return Collections.unmodifiableList(retVal);
 	}
 
 } //LocalScaImpl
