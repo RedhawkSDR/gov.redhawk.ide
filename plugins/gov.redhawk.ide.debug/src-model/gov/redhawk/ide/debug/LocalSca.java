@@ -11,9 +11,12 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug;
 
+import java.util.List;
+
 import gov.redhawk.model.sca.CorbaObjWrapper;
 import gov.redhawk.model.sca.ScaWaveform;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 
 import ExtendedCF.Sandbox;
@@ -58,6 +61,11 @@ public interface LocalSca extends CorbaObjWrapper<Sandbox> {
 	 * @generated
 	 */
 	EList<ScaWaveform> getWaveforms();
+	
+	/**
+	 * @since 6.0
+	 */
+	List<ScaWaveform> fetchWaveforms(IProgressMonitor monitor);
 
 	/**
 	 * Returns the value of the '<em><b>Sandbox Waveform</b></em>' reference.

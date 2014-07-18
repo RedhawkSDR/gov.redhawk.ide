@@ -57,14 +57,11 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.transaction.RunnableWithResult;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
-import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import CF.ResourceHelper;
@@ -91,9 +88,18 @@ public final class SpdLauncherUtil {
 
 	public static void postLaunch(final SoftPkg spd, final ILaunchConfiguration configuration, final String mode, final ILaunch launch,
 		final IProgressMonitor monitor) throws CoreException {
+
 		Map< ? , ? > programArgs = configuration.getAttribute(SpdLauncherUtil.LAUNCH_ATT_PROGRAM_ARGUMENT_MAP, Collections.EMPTY_MAP);
 
 		LocalAbstractComponent comp = null;
+
+		// Do an initial wait to give the resource an opportunity to start
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e1) {
+			// PASS
+		}
+
 		try {
 			if (programArgs.containsKey(LaunchVariables.DEVICE_LABEL)) {
 				comp = SpdLauncherUtil.postLaunchDevice(launch);
@@ -127,13 +133,10 @@ public final class SpdLauncherUtil {
 				newComponent.setImplementationID(implID);
 				newComponent.setMode(launch.getLaunchMode());
 				newComponent.setLaunch(launch);
-				// TODO Should we do this?
-				//				if (newComponent instanceof ScaAbstractComponent< ? >) {
-				//					((ScaAbstractComponent< ? >) newComponent).setProfile(spd.eResource().getURI().path());
-				//				}
 				((ProfileObjectWrapper< ? >) newComponent).setProfileURI(spd.eResource().getURI());
 			}
 		});
+
 		if (newComponent instanceof ProfileObjectWrapper< ? >) {
 			((ProfileObjectWrapper< ? >) newComponent).fetchProfileObject(null);
 		}
@@ -204,77 +207,77 @@ public final class SpdLauncherUtil {
 		final Future<LocalScaComponent> future = SpdLauncherUtil.EXECUTOR.submit(new Callable<LocalScaComponent>() {
 			@Override
 			public LocalScaComponent call() throws Exception {
-				LocalScaComponent newComponent = null;
 				OrbSession session = OrbSession.createSession();
 
-				try {
-					while (newComponent == null) {
-						// If this launch was terminated, immediately bail
-						if (launch.isTerminated()) {
-							IProcess[] processes = launch.getProcesses();
-							String msg = "Component terminated while waiting to launch " + compID + ".";
-							for (IProcess p : processes) {
-								int exitCode = p.getExitValue();
-								msg = msg + " " + getExitCodeMessage(exitCode);
-							}
-							throw new Exception(msg);
-						}
+				NamingContextExt namingContext = null;
+				CF.Resource ref = null;
 
-						NamingContextExt namingContext = null;
-						CF.Resource ref = null;
+				try {
+					while (namingContext == null && !launch.isTerminated()) {
 						try {
 							namingContext = NamingContextExtHelper.narrow(session.getOrb().string_to_object(namingContextIOR));
-							ref = ResourceHelper.narrow(namingContext.resolve_str(nameBinding));
-							final CF.Resource localRef = ref;
-							RunnableWithResult<LocalScaComponent> runnable = new RunnableWithResult.Impl<LocalScaComponent>() {
-
-								@Override
-								public void run() {
-									for (final ScaComponent comp : localSca.getSandboxWaveform().getComponents()) {
-										if (comp instanceof LocalScaComponent && localRef._is_equivalent(comp.getCorbaObj())) {
-											setResult((LocalScaComponent) comp);
-											return;
-										}
-									}
-									for (final ScaWaveform waveform : localSca.getWaveforms()) {
-										for (final ScaComponent comp : waveform.getComponents()) {
-											if (comp instanceof LocalScaComponent && localRef._is_equivalent(comp.getCorbaObj())) {
-												setResult((LocalScaComponent) comp);
-												return;
-											}
-										}
-									}
-								}
-							};
-							newComponent = ScaModelCommand.runExclusive(localSca, runnable);
-						} catch (final NotFound e) {
+						} catch (SystemException e) {
 							// PASS
-						} catch (final CannotProceed e) {
-							// PASS
-						} catch (final SystemException e) {
-							// PASS
-						} finally {
-							if (namingContext != null) {
-								ORBUtil.release(namingContext);
-								namingContext = null;
-							}
-							if (ref != null) {
-								ORBUtil.release(ref);
-								ref = null;
-							}
 						}
-						if (newComponent == null) {
+						if (namingContext == null) {
 							try {
-								Thread.sleep(500);
-							} catch (final InterruptedException e) {
-								throw e;
+								Thread.sleep(100);
+							} catch (final InterruptedException e1) {
+								throw e1;
 							}
 						}
 					}
+
+					NotifyingNamingContext namingRef = ScaDebugPlugin.getInstance().getLocalSca().getRootContext().findContext(namingContext);
+
+					while (ref == null && !launch.isTerminated()) {
+						try {
+							ref = ResourceHelper.narrow(namingRef.resolve_str(nameBinding));
+						} catch (NotFound e) {
+							// PASS
+						}
+						if (ref == null) {
+							try {
+								Thread.sleep(100);
+							} catch (final InterruptedException e1) {
+								throw e1;
+							}
+						}
+					}
+
+					// If this launch was terminated, immediately bail
+					while (!launch.isTerminated()) {
+						for (ScaComponent comp : localSca.getSandboxWaveform().fetchComponents(null)) {
+							if (comp instanceof LocalScaComponent && ref._is_equivalent(comp.getCorbaObj())) {
+								return (LocalScaComponent) comp;
+							}
+						}
+
+						for (final ScaWaveform waveform : localSca.fetchWaveforms(null)) {
+							for (ScaComponent comp : waveform.fetchComponents(null)) {
+								if (comp instanceof LocalScaComponent && ref._is_equivalent(comp.getCorbaObj())) {
+									return (LocalScaComponent) comp;
+								}
+							}
+						}
+
+						Thread.sleep(500);
+					}
+
+					throw new EarlyTerminationException("Component terminated while waiting to launch. " + compID, launch);
 				} finally {
+					if (namingContext != null) {
+						ORBUtil.release(namingContext);
+						namingContext = null;
+					}
+
+					if (ref != null) {
+						ORBUtil.release(ref);
+						ref = null;
+					}
+
 					session.dispose();
 				}
-				return newComponent;
 			}
 
 		});
@@ -302,58 +305,6 @@ public final class SpdLauncherUtil {
 
 	}
 
-	protected static String getExitCodeMessage(int exitCode) {
-		if ((exitCode & 128) == 128) {
-			int unixCode = exitCode & 127;
-			String signalStr;
-			switch (unixCode) {
-			case 1:
-				signalStr = "SIGHUP";
-				break;
-			case 2:
-				signalStr = "SIGINT";
-				break;
-			case 3:
-				signalStr = "SIGQUIT";
-				break;
-			case 4:
-				signalStr = "SIGILL";
-				break;
-			case 5:
-				signalStr = "SIGTRAP";
-				break;
-			case 6:
-				signalStr = "SIGABRT";
-				break;
-			case 8:
-				signalStr = "SIGFPE";
-				break;
-			case 9:
-				signalStr = "SIGKILL";
-				break;
-			case 11:
-				signalStr = "SIGSEGV";
-				break;
-			case 13:
-				signalStr = "SIGPIPE";
-				break;
-			case 14:
-				signalStr = "SIGALRM";
-				break;
-			case 15:
-				signalStr = "SIGTERM";
-				break;
-			default:
-				signalStr = "";
-				break;
-			} 
-			return "Terminated with signal " + signalStr + " (" + unixCode + ")";
-		} else {
-			return "Terminated with exit code " + exitCode;
-		}
-	}
-
-
 	private static LocalAbstractComponent postLaunchService(final ILaunch launch) throws CoreException {
 		final String name = launch.getAttribute(LaunchVariables.SERVICE_NAME);
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
@@ -365,10 +316,10 @@ public final class SpdLauncherUtil {
 				while (retVal == null) {
 					// If this launch was terminated, immediately bail
 					if (launch.isTerminated()) {
-						throw new Exception("Service terminated while waiting to launch. " + name);
+						throw new EarlyTerminationException("Service terminated while waiting to launch. " + name, launch);
 					}
 
-					for (final ScaService service : localSca.getSandboxDeviceManager().getServices()) {
+					for (final ScaService service : localSca.getSandboxDeviceManager().fetchServices(null)) {
 						if (name.equals(service.getName())) {
 							retVal = (LocalAbstractComponent) service;
 							break;
@@ -420,10 +371,10 @@ public final class SpdLauncherUtil {
 				while (retVal == null) {
 					// If this launch was terminated, immediately bail
 					if (launch.isTerminated()) {
-						throw new Exception("Device terminated while waiting to launch. " + deviceLabel);
+						throw new EarlyTerminationException("Device terminated while waiting to launch. " + deviceLabel, launch);
 					}
 
-					for (final ScaDevice< ? > device : localSca.getSandboxDeviceManager().getAllDevices()) {
+					for (final ScaDevice< ? > device : localSca.getSandboxDeviceManager().fetchDevices(null)) {
 						final String label = device.fetchLabel(null);
 						if (deviceLabel.equals(label)) {
 							retVal = (LocalAbstractComponent) device;
@@ -432,7 +383,7 @@ public final class SpdLauncherUtil {
 					}
 					if (retVal == null) {
 						try {
-							Thread.sleep(500);
+							Thread.sleep(100);
 						} catch (final InterruptedException e) {
 							throw e;
 						}
@@ -558,17 +509,17 @@ public final class SpdLauncherUtil {
 //		retVal.append(" ");
 //		retVal.append(manager.generateVariableExpression(LaunchVariables.NAMING_CONTEXT_IOR, null));
 //		retVal.append(" ");
-		
+
 //		retVal.append(LaunchVariables.NAME_BINDING);
 //		retVal.append(" ");
 //		retVal.append(manager.generateVariableExpression(LaunchVariables.NAME_BINDING, null));
 //		retVal.append(" ");
-		
+
 //		retVal.append(LaunchVariables.PROFILE_NAME);
 //		retVal.append(" ");
 //		retVal.append(manager.generateVariableExpression(LaunchVariables.PROFILE_NAME, null));
 //		retVal.append(" ");
-		
+
 		retVal.append(LaunchVariables.DEVICE_MGR_IOR);
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.DEVICE_MGR_IOR, null));
@@ -590,22 +541,22 @@ public final class SpdLauncherUtil {
 		final StringBuilder retVal = new StringBuilder();
 		retVal.append(manager.generateVariableExpression(LaunchVariables.EXEC_PARAMS, null));
 		retVal.append(" ");
-		
+
 //		retVal.append(LaunchVariables.NAMING_CONTEXT_IOR);
 //		retVal.append(" ");
 //		retVal.append(manager.generateVariableExpression(LaunchVariables.NAMING_CONTEXT_IOR, null));
 //		retVal.append(" ");
-		
+
 		retVal.append(LaunchVariables.DEVICE_MGR_IOR);
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.DEVICE_MGR_IOR, null));
 		retVal.append(" ");
-		
+
 		retVal.append(LaunchVariables.PROFILE_NAME);
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.PROFILE_NAME, null));
 		retVal.append(" ");
-		
+
 		retVal.append(LaunchVariables.DEVICE_ID);
 		retVal.append(" ");
 		retVal.append(manager.generateVariableExpression(LaunchVariables.DEVICE_ID, null));
