@@ -10,10 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete;
 
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
@@ -23,6 +25,8 @@ import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
+import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
@@ -84,6 +88,13 @@ public class SADConnectionInterfaceDeleteFeature extends DefaultDeleteFeature {
 		if (removeFeature != null) {
 			removeFeature.remove(rc);
 			setDoneChanges(true);
+		}
+
+		Diagram diagram = featureProvider.getDiagramTypeProvider().getDiagram();
+		EList<Connection> connections = diagram.getConnections();
+		for (Connection connection : connections) {
+			SadConnectInterface ci = (SadConnectInterface) getBusinessObjectForPictogramElement(connection);
+			SADConnectInterfacePattern.decorateConnection(connection, ci, diagram);
 		}
 
 		postDelete(context);
