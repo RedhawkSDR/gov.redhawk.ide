@@ -763,7 +763,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 					ScaComponent component = waveform.getScaComponent(prop.getCompRefID());
 					if (component != null) {
 						component.query(tmpHolder);
-						retVal.add(new DataType(prop.getExternalPropID(), tmpHolder.value[0].value));
+						retVal.add(new DataType(prop.resolveExternalID(), tmpHolder.value[0].value));
 					} else {
 						this.streams.getErrStream().println("Failed to find component for external property: " + prop.getPropID() + "@" + prop.getCompRefID());
 					}
