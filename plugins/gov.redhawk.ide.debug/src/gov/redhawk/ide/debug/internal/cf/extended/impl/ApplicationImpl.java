@@ -282,7 +282,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	private final String profile;
 	private boolean started;
 	private final Application delegate;
-	private boolean launching;
+	private volatile boolean launching;
 
 	public ApplicationImpl(final LocalScaWaveform waveform, final String identifier, final String name, Application delegate) {
 		this.name = name;

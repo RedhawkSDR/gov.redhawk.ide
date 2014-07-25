@@ -25,6 +25,7 @@ import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
 import gov.redhawk.model.sca.impl.CorbaObjWrapperImpl;
 import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.OrbSession;
@@ -564,10 +565,22 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	protected void addApplication(final Name key, final Application app) {
 		// END GENERATED CODE
 		final String id = app.identifier();
-		for (final ScaWaveform waveform : getWaveforms()) {
-			if (waveform.getIdentifier().equals(id)) {
-				return;
+
+		// Check for existing application of same id
+		boolean result = ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<Boolean>() {
+			@Override
+			public void execute() {
+				for (final ScaWaveform waveform : getWaveforms()) {
+					if (waveform.getIdentifier() != null && waveform.getIdentifier().equals(id)) {
+						setResult(true);
+						return;
+					}
+				}
+				setResult(false);
 			}
+		});
+		if (result) {
+			return;
 		}
 
 		final String profilePath = app.profile();
@@ -865,7 +878,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 */
 	@Override
 	public List<ScaWaveform> fetchWaveforms(IProgressMonitor monitor) {
-		final List<ScaWaveform> retVal = new ArrayList<ScaWaveform>(getWaveforms().size());
+		final List<ScaWaveform> retVal = new ArrayList<ScaWaveform>();
 		ScaModelCommand.execute(this, new ScaModelCommand() {
 			
 			@Override
