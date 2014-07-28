@@ -102,7 +102,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		Assert.assertFalse(editorText.matches("(?s).*<connectinterface id=\"connection_1\">.*"));
 		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.DIAGRAM_TAB);
 
-		// Attempt to make an illegal connection and confirm that it was not actually made
+		// (IDE-657) Attempt to make an illegal connection and confirm that it was not actually made
 		SWTBotGefEditPart illegalTarget = EditorTestUtils.getDiagramUsesPort(editor, targetComponent);
 		EditorTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, illegalTarget);
 		Assert.assertTrue("Illegal connection should not have been drawn", diagram.getConnections().isEmpty());
@@ -146,7 +146,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * IDE-679
+	 * IDE-679 && IDE-657
 	 * The creation of a redundant connection results in a yellow warning icon, an error message
 	 * ("Redundant connection"), and a dotted red line for the connection path.
 	 * When the redundant connection(s) are deleted the error decorators should be removed.
@@ -219,6 +219,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
+	 * IDE-657
 	 * Test that connection decorators are drawn for incompatible connections
 	 */
 	@Test
