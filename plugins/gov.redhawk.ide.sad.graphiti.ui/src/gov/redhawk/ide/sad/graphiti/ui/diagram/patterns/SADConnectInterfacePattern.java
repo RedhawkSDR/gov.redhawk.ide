@@ -156,8 +156,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 				}
 
 				// image
-				ConnectionDecorator imgConnectionDecorator;
-				imgConnectionDecorator = peCreateService.createConnectionDecorator(connectionPE, true, 0.5, true); // must be active in order to display
+				ConnectionDecorator imgConnectionDecorator = peCreateService.createConnectionDecorator(connectionPE, true, 0.5, true); // must be active in order to display
 				Graphiti.getPeService().setPropertyValue(imgConnectionDecorator, DUtil.SHAPE_TYPE, SHAPE_IMG_CONNECTION_DECORATOR);
 				Image errorImage = gaService.createImage(imgConnectionDecorator, decoratorImageId);
 				errorImage.setHeight(20);
@@ -166,7 +165,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 				
 				// text
 				ConnectionDecorator textConnectionDecorator = peCreateService.createConnectionDecorator(connectionPE, true, 0.5, true); // must be active in order to display
-				Graphiti.getPeService().setPropertyValue(imgConnectionDecorator, DUtil.SHAPE_TYPE, SHAPE_TEXT_CONNECTION_DECORATOR);
+				Graphiti.getPeService().setPropertyValue(textConnectionDecorator, DUtil.SHAPE_TYPE, SHAPE_TEXT_CONNECTION_DECORATOR);
 				Text text = gaService.createPlainText(textConnectionDecorator);
 				text.setValue(decoratorMessage);
 				text.setStyle(StyleUtil.getStyleForErrorTextConnections((diagram)));

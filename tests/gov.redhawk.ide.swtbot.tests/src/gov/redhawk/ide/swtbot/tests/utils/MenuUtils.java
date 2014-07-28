@@ -23,15 +23,23 @@ public class MenuUtils {
 
 	private static final String NO = "No", YES = "Yes", DESELECT_ALL = "Deselect All", OK = "OK";
 
+	private static boolean buttonExists(SWTBot bot, String buttonText) {
+		try {
+			bot.button(buttonText);
+			return true;
+		} catch (WidgetNotFoundException e) {
+			return false;
+		}
+	}
+
 	/**
-	 * Opens the indicated view. If already open, brings view into focus.
+	 * Close all open editors and delete the specified project from the file system
 	 * @param bot
-	 * @param view
+	 * @param waveformName
 	 */
-	public static void showView(SWTWorkbenchBot bot, String viewID) {
-		// Open the new waveform project wizard
-		SWTBotView viewToOpen = bot.viewById(viewID);
-		viewToOpen.show();
+	public static void closeAndDelete(SWTBot bot, String waveformName) {
+		closeAllWithoutSave(bot);
+		deleteNodeInProjectExplorer(bot, waveformName);
 	}
 
 	/**
@@ -65,19 +73,6 @@ public class MenuUtils {
 		}
 	}
 
-	public static void save(SWTWorkbenchBot bot) {
-		bot.saveAllEditors();
-	}
-
-	private static boolean buttonExists(SWTBot bot, String buttonText) {
-		try {
-			bot.button(buttonText);
-			return true;
-		} catch (WidgetNotFoundException e) {
-			return false;
-		}
-	}
-
 	/**
 	 * Delete specified project from the file system
 	 * @param bot
@@ -90,12 +85,22 @@ public class MenuUtils {
 	}
 
 	/**
-	 * Close all open editors and delete the specified project from the file system
+	 * Save all editors
 	 * @param bot
-	 * @param waveformName
 	 */
-	public static void closeAndDelete(SWTBot bot, String waveformName) {
-		closeAllWithoutSave(bot);
-		deleteNodeInProjectExplorer(bot, waveformName);
+	public static void save(SWTWorkbenchBot bot) {
+		bot.saveAllEditors();
 	}
+
+	/**
+	 * Opens the indicated view. If already open, brings view into focus.
+	 * @param bot
+	 * @param view
+	 */
+	public static void showView(SWTWorkbenchBot bot, String viewID) {
+		// Open the new waveform project wizard
+		SWTBotView viewToOpen = bot.viewById(viewID);
+		viewToOpen.show();
+	}
+
 }

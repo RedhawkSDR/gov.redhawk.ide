@@ -11,16 +11,19 @@
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.swtbot.tests.utils.WaveformUtils;
 import gov.redhawk.ide.swtbot.tests.utils.EditorTestUtils;
 import gov.redhawk.ide.swtbot.tests.utils.MenuUtils;
+import gov.redhawk.ide.swtbot.tests.utils.WaveformUtils;
 
 import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
+import org.eclipse.graphiti.mm.algorithms.Image;
+import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
@@ -77,7 +80,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 
 	/**
 	 * IDE-731
-	 * Users should be able to take create connections between components in the Graphiti diagram
+	 * Users should be able to create connections between components in the Graphiti diagram
 	 */
 	@Test
 	public void connectFeatureTest() {
@@ -88,7 +91,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		// Create an empty waveform project
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 
-		// Add component to diagram from palette
+		// Add components to diagram from palette
 		editor = gefBot.gefEditor(waveformName);
 		EditorTestUtils.dragFromPaletteToDiagram(editor, sourceComponent, 0, 0);
 		EditorTestUtils.dragFromPaletteToDiagram(editor, targetComponent, 300, 0);
@@ -141,12 +144,79 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 
 		// TODO junit test for bad connections
 			// test making unrecommended connections and look for color/style change
-			// redundant connections
 			// double to long or something like that
 			// use data-converter
 
 		// TODO Follow this test with a reconnect feature test trying the same bad connections as above
 			// Test in it's own method below
+	}
+	
+	
+	/**
+	 * IDE-679
+	 * The creation of a redundant connection results in a yellow warning icon, an error message ("Redundant connection"), and a dotted red line for the connection path.
+	 * When the redundant connection(s) are deleted the error decorators should be removed.
+	 */
+	@Test
+	public void redundantConnectionTest() {
+		final String waveformName = "IDE-679-Test";
+		final String sourceComponent = "SigGen";
+		final String targetComponent = "HardLimit";
+		
+		// Create an empty waveform project
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		
+		// Add components to diagram from palette
+		editor = gefBot.gefEditor(waveformName);
+		EditorTestUtils.dragFromPaletteToDiagram(editor, sourceComponent, 0, 0);
+		EditorTestUtils.dragFromPaletteToDiagram(editor, targetComponent, 300, 0);
+
+		// Get port edit parts
+		SWTBotGefEditPart usesEditPart = EditorTestUtils.getDiagramUsesPort(editor, sourceComponent);
+		SWTBotGefEditPart providesEditPart = EditorTestUtils.getDiagramProvidesPort(editor, targetComponent);
+		
+		// Draw redundant connections, save and close the editor
+		EditorTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
+		EditorTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
+		MenuUtils.closeAll(bot, true);
+		
+		// Open editor and confirm that error decorators are present
+		bot.tree().expandNode(waveformName);
+		bot.tree().getTreeItem(waveformName).getNode(waveformName + ".sad.xml").select().doubleClick();
+		bot.sleep(5000);	// Give editor time to open
+		editor = gefBot.gefEditor(waveformName);
+		
+		// ...get target component edit parts and container shapes
+		SWTBotGefEditPart targetComponentEditPart = editor.getEditPart(targetComponent);
+		ContainerShape targetContainerShape = (ContainerShape) targetComponentEditPart.part().getModel();
+		
+		// ...update uses port edit part references, since this is technically a new editor
+		usesEditPart = EditorTestUtils.getDiagramUsesPort(editor, sourceComponent);
+		
+		boolean decoratorFound = false;
+		Connection connection = DUtil.getIncomingConnectionsContainedInContainerShape(targetContainerShape).get(0);
+		for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
+			if (decorator.getGraphicsAlgorithm() instanceof Image || decorator.getGraphicsAlgorithm() instanceof Text) {
+				decoratorFound = true;
+			}
+		}
+		Assert.assertTrue(decoratorFound); // Confirm that decorators are present
+		
+		// Delete one of the connections
+		List<SWTBotGefConnectionEditPart> sourceConnections = EditorTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
+		SWTBotGefConnectionEditPart connectionEditPart = sourceConnections.get(0);
+		EditorTestUtils.deleteFromDiagram(editor, connectionEditPart);
+		bot.menu("File").menu("Save").click();
+		
+		// Confirm that error decorators do not exist for the remaining connection
+		connection = DUtil.getIncomingConnectionsContainedInContainerShape(targetContainerShape).get(0);
+		decoratorFound = false;
+		for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
+			if (decorator.getGraphicsAlgorithm() instanceof Image || decorator.getGraphicsAlgorithm() instanceof Text) {
+				decoratorFound = true;
+			}
+		}
+		Assert.assertFalse(decoratorFound); // Confirm that decorators were removed
 	}
 
 	@AfterClass
