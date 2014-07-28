@@ -125,7 +125,7 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 	 * @return
 	 */
 	public static SWTBotGefEditPart getDiagramPortAnchor(SWTBotGefEditPart portEditPart) {
-		return portEditPart.children().get(0).children().get(0).children().get(0);
+		return portEditPart.children().get(0).children().get(0);
 	}
 
 	/**
@@ -156,16 +156,22 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 			if (bo == null || !(bo instanceof ProvidesPortStub)) {
 				continue;
 			}
-
-			ProvidesPortStub providesPort = (ProvidesPortStub) bo;
-			// If a port name was supplied then use it to check for non-matching ports
-			if (portName != null && !(portName.equals(providesPort.getName()))) {
-				continue;
+			
+			List<SWTBotGefEditPart> providesPortsEditParts = child.children();
+			for (SWTBotGefEditPart portEditPart : providesPortsEditParts) {
+				// If no port name was supplied, return edit part for first provides port
+				if (portName == null) {
+					return portEditPart; 
+				}
+				
+				// Other wise, check for a matching port name
+				ProvidesPortStub portStub = (ProvidesPortStub) DUtil.getBusinessObject((ContainerShape) portEditPart.part().getModel());
+				if (portName != null && portName.equals(portStub.getName())) {
+					return portEditPart;
+				}
 			}
-
-			// If you get here, the object is a ProvidesPort, and matches the name supplied (or a name wasn't given)
-			return child;
 		}
+		// If you get here, no matching provides port was found
 		return null;
 	}
 
@@ -197,15 +203,20 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 			if (bo == null || !(bo instanceof UsesPortStub)) {
 				continue;
 			}
-
-			UsesPortStub usesPort = (UsesPortStub) bo;
-			// If a port name was supplied then use it to check for non-matching ports
-			if (portName != null && !(portName.equals(usesPort.getName()))) {
-				continue;
+			
+			List<SWTBotGefEditPart> usesPortsEditParts = child.children();
+			for (SWTBotGefEditPart portEditPart : usesPortsEditParts) {
+				// If no port name was supplied, return edit part for first provides port
+				if (portName == null) {
+					return portEditPart; 
+				}
+				
+				// Other wise, check for a matching port name
+				UsesPortStub portStub = (UsesPortStub) DUtil.getBusinessObject((ContainerShape) portEditPart.part().getModel());
+				if (portName != null && portName.equals(portStub.getName())) {
+					return portEditPart;
+				}
 			}
-
-			// If you get here, the object is a UsesPort, and matches the name supplied (or a name wasn't given)
-			return child;
 		}
 		return null;
 	}
