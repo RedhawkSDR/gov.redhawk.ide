@@ -254,7 +254,7 @@ public final class SpdLauncherUtil {
 						}
 
 						for (final ScaWaveform waveform : localSca.fetchWaveforms(null)) {
-							for (ScaComponent comp : waveform.fetchComponents(null)) {
+							for (ScaComponent comp : waveform.getComponents()) {
 								if (comp instanceof LocalScaComponent && ref._is_equivalent(comp.getCorbaObj())) {
 									return (LocalScaComponent) comp;
 								}
