@@ -224,7 +224,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 	 */
 	@Test
 	public void incompatibleConnectionTest() {
-		waveformName = "IDE-incompatCon-Test";
+		waveformName = "IDE-657-Test";
 		final String sourceComponent = "SigGen";
 		final String targetComponent = "DataConverter";
 
@@ -259,8 +259,6 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		}
 		Assert.assertTrue(imageDecoratorFound && textDecoratorFound); // Confirm that decorators are present
 	}
-
-	// TODO reconnection feature test
 
 	@After
 	public void afterTest() {
