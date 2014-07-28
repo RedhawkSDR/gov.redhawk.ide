@@ -242,7 +242,12 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 	public static void openTabInEditor(SWTBotGefEditor editor, String tabName) {
 		editor.bot().cTabItem(tabName).activate();
 	}
-
+	
+	/**
+	 * Checks sad.xml for component instantiation code
+	 * @param componentShape
+	 * @return
+	 */
 	public static String regexStringForSadComponent(ComponentShapeImpl componentShape) {
 		Object bo = DUtil.getBusinessObject(componentShape);
 		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
@@ -255,6 +260,13 @@ public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility meth
 
 	}
 	
+	/**
+	 * Checks sad.xml for component property code
+	 * @param componentShape
+	 * @param propertyname
+	 * @param value
+	 * @return
+	 */
 	public static String regexStringForSadProperty(ComponentShapeImpl componentShape, String propertyname, String value) {
 		Object bo = DUtil.getBusinessObject(componentShape);
 		SadComponentInstantiation ci = (SadComponentInstantiation) bo;

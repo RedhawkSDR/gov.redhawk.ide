@@ -21,12 +21,12 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 import org.eclipse.graphiti.mm.algorithms.Image;
+import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
@@ -43,11 +43,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(SWTBotJunit4ClassRunner.class) 
+@RunWith(SWTBotJunit4ClassRunner.class)
 public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 	private SWTBot bot;
-	private SWTGefBot gefBot;
+	private static SWTGefBot gefBot;
 	private SWTBotGefEditor editor;
+	private String waveformName;
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
@@ -55,7 +56,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 			Thread.sleep(1000);
 		}
 	}
-	
+
 	@Before
 	public void beforeTest() throws Exception {
 		bot = new SWTBot();
@@ -64,19 +65,6 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		perspective.activate();
 		gefBot.resetActivePerspective();
 	}
-	
-	@After
-	public void afterTest() {
-		for (SWTBotEditor e : gefBot.editors()) {
-			e.close();
-		}
-		gefBot.sleep(2000);
-	}
-	
-	@AfterClass
-	public static void afterClass() {
-		
-	}
 
 	/**
 	 * IDE-731
@@ -84,10 +72,10 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 	 */
 	@Test
 	public void connectFeatureTest() {
-		final String waveformName = "IDE-731-Test";
+		waveformName = "IDE-731-Test";
 		final String sourceComponent = "SigGen";
 		final String targetComponent = "HardLimit";
-		
+
 		// Create an empty waveform project
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 
@@ -109,6 +97,10 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		// Confirm that no connections currently exist
 		Diagram diagram = DUtil.findDiagram(sourceContainerShape);
 		Assert.assertTrue("No connections should exist", diagram.getConnections().isEmpty());
+		EditorTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		String editorText = editor.toTextEditor().getText();
+		Assert.assertFalse(editorText.matches("(?s).*<connectinterface id=\"connection_1\">.*"));
+		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.DIAGRAM_TAB);
 
 		// Attempt to make an illegal connection and confirm that it was not actually made
 		SWTBotGefEditPart illegalTarget = EditorTestUtils.getDiagramUsesPort(editor, targetComponent);
@@ -121,11 +113,25 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 
 		// Test to make sure connection was made correctly
 		Assert.assertFalse("Connection should exist", diagram.getConnections().isEmpty());
+
 		Connection connection = DUtil.getIncomingConnectionsContainedInContainerShape(targetContainerShape).get(0);
+
 		UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(connection.getStart());
 		Assert.assertEquals("Connection uses port not correct", usesPort, DUtil.getBusinessObject((ContainerShape) usesEditPart.part().getModel()));
+
 		ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(connection.getEnd());
 		Assert.assertEquals("Connect provides port not correct", providesPort, DUtil.getBusinessObject((ContainerShape) providesEditPart.part().getModel()));
+
+		Assert.assertTrue("Only arrowhead decorator should be present", connection.getConnectionDecorators().size() == 1);
+		for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
+			Assert.assertTrue("Only arrowhead decorator should be present", decorator.getGraphicsAlgorithm() instanceof Polyline);
+		}
+
+		// Check sad.xml new for connection
+		EditorTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		editorText = editor.toTextEditor().getText();
+		Assert.assertTrue("The sad.xml should include a new connection", editorText.matches("(?s).*<connectinterface id=\"connection_1\">.*"));
+		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.DIAGRAM_TAB);
 
 		// Delete connection (IDE-687 - Users need to be able to delete connections)
 		List<SWTBotGefConnectionEditPart> sourceConnections = EditorTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
@@ -137,35 +143,23 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		sourceConnections = EditorTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
 		Assert.assertTrue("Source connections should be empty, all connections were deleted", sourceConnections.isEmpty());
 		Assert.assertTrue("All connections should have been deleted", diagram.getConnections().isEmpty());
-		
-		// Close the editor and delete the waveform project
-		MenuUtils.closeAllWithoutSave(bot);
-		MenuUtils.deleteNodeInProjectExplorer(bot, waveformName);
-
-		// TODO junit test for bad connections
-			// test making unrecommended connections and look for color/style change
-			// double to long or something like that
-			// use data-converter
-
-		// TODO Follow this test with a reconnect feature test trying the same bad connections as above
-			// Test in it's own method below
 	}
-	
-	
+
 	/**
 	 * IDE-679
-	 * The creation of a redundant connection results in a yellow warning icon, an error message ("Redundant connection"), and a dotted red line for the connection path.
+	 * The creation of a redundant connection results in a yellow warning icon, an error message
+	 * ("Redundant connection"), and a dotted red line for the connection path.
 	 * When the redundant connection(s) are deleted the error decorators should be removed.
 	 */
 	@Test
 	public void redundantConnectionTest() {
-		final String waveformName = "IDE-679-Test";
+		waveformName = "IDE-679-Test";
 		final String sourceComponent = "SigGen";
 		final String targetComponent = "HardLimit";
-		
+
 		// Create an empty waveform project
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
-		
+
 		// Add components to diagram from palette
 		editor = gefBot.gefEditor(waveformName);
 		EditorTestUtils.dragFromPaletteToDiagram(editor, sourceComponent, 0, 0);
@@ -174,43 +168,48 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		// Get port edit parts
 		SWTBotGefEditPart usesEditPart = EditorTestUtils.getDiagramUsesPort(editor, sourceComponent);
 		SWTBotGefEditPart providesEditPart = EditorTestUtils.getDiagramProvidesPort(editor, targetComponent);
-		
+
 		// Draw redundant connections, save and close the editor
 		EditorTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
 		EditorTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
 		MenuUtils.closeAll(bot, true);
-		
+
 		// Open editor and confirm that error decorators are present
 		bot.tree().expandNode(waveformName);
 		bot.tree().getTreeItem(waveformName).getNode(waveformName + ".sad.xml").select().doubleClick();
-		bot.sleep(5000);	// Give editor time to open
+		bot.sleep(5000); // Give editor time to open
 		editor = gefBot.gefEditor(waveformName);
-		
+
 		// ...get target component edit parts and container shapes
 		SWTBotGefEditPart targetComponentEditPart = editor.getEditPart(targetComponent);
 		ContainerShape targetContainerShape = (ContainerShape) targetComponentEditPart.part().getModel();
-		
+
 		// ...update uses port edit part references, since this is technically a new editor
 		usesEditPart = EditorTestUtils.getDiagramUsesPort(editor, sourceComponent);
-		
-		boolean decoratorFound = false;
+
+		boolean imageDecoratorFound = true, textDecoratorFound = false;
 		Connection connection = DUtil.getIncomingConnectionsContainedInContainerShape(targetContainerShape).get(0);
 		for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
-			if (decorator.getGraphicsAlgorithm() instanceof Image || decorator.getGraphicsAlgorithm() instanceof Text) {
-				decoratorFound = true;
+			if (decorator.getGraphicsAlgorithm() instanceof Image) {
+				imageDecoratorFound = true;
+			}
+			if (decorator.getGraphicsAlgorithm() instanceof Text) {
+				Text text = (Text) decorator.getGraphicsAlgorithm();
+				Assert.assertEquals(text.getValue(), "Redundant connection");
+				textDecoratorFound = true;
 			}
 		}
-		Assert.assertTrue(decoratorFound); // Confirm that decorators are present
-		
+		Assert.assertTrue(imageDecoratorFound && textDecoratorFound); // Confirm that decorators are present
+
 		// Delete one of the connections
 		List<SWTBotGefConnectionEditPart> sourceConnections = EditorTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
 		SWTBotGefConnectionEditPart connectionEditPart = sourceConnections.get(0);
 		EditorTestUtils.deleteFromDiagram(editor, connectionEditPart);
 		bot.menu("File").menu("Save").click();
-		
+
 		// Confirm that error decorators do not exist for the remaining connection
 		connection = DUtil.getIncomingConnectionsContainedInContainerShape(targetContainerShape).get(0);
-		decoratorFound = false;
+		boolean decoratorFound = false;
 		for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
 			if (decorator.getGraphicsAlgorithm() instanceof Image || decorator.getGraphicsAlgorithm() instanceof Text) {
 				decoratorFound = true;
@@ -219,9 +218,62 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		Assert.assertFalse(decoratorFound); // Confirm that decorators were removed
 	}
 
-	@AfterClass
-	public static void cleanUpClass() {
-		
+	/**
+	 * Test that connection decorators are drawn for incompatible connections
+	 */
+	@Test
+	public void incompatibleConnectionTest() {
+		waveformName = "IDE-incompatCon-Test";
+		final String sourceComponent = "SigGen";
+		final String targetComponent = "DataConverter";
+
+		// Create an empty waveform project
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+
+		// Add components to diagram from palette
+		editor = gefBot.gefEditor(waveformName);
+		EditorTestUtils.dragFromPaletteToDiagram(editor, sourceComponent, 0, 0);
+		EditorTestUtils.dragFromPaletteToDiagram(editor, targetComponent, 300, 0);
+
+		// Get port edit parts
+		SWTBotGefEditPart usesEditPart = EditorTestUtils.getDiagramUsesPort(editor, sourceComponent);
+		SWTBotGefEditPart providesEditPart = EditorTestUtils.getDiagramProvidesPort(editor, targetComponent, "dataOctet");
+
+		// Draw incompatible connection and confirm error decorator exists
+		EditorTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
+		List<SWTBotGefConnectionEditPart> connections = EditorTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
+		Assert.assertTrue(connections.size() == 1);
+
+		boolean imageDecoratorFound = false, textDecoratorFound = false;
+		Connection connection = (Connection) connections.get(0).part().getModel();
+		for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
+			if (decorator.getGraphicsAlgorithm() instanceof Image) {
+				imageDecoratorFound = true;
+			}
+			if (decorator.getGraphicsAlgorithm() instanceof Text) {
+				Text text = (Text) decorator.getGraphicsAlgorithm();
+				Assert.assertEquals(text.getValue(), "Incompatible Connection");
+				textDecoratorFound = true;
+			}
+		}
+		Assert.assertTrue(imageDecoratorFound && textDecoratorFound); // Confirm that decorators are present
 	}
 
+	// TODO reconnection feature test
+
+	@After
+	public void afterTest() {
+		if (gefBot == null) {
+			return;
+		}
+		if (waveformName != null) {
+			MenuUtils.closeAndDelete(gefBot, waveformName);
+		}
+		gefBot.closeAllEditors();
+	}
+
+	@AfterClass
+	public static void afterClass() {
+		gefBot.sleep(2000);
+	}
 }
