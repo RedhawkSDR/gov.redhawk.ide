@@ -383,6 +383,13 @@ public class ModelMap {
 	@Nullable
 	private SadConnectInterface create(@NonNull final ScaConnection newValue) throws CoreException {
 		UsesPortStub source = null;
+		EObject container = newValue.getPort().eContainer();
+		if (!(container instanceof LocalScaComponent)) {
+			if (ModelMap.DEBUG.enabled) {
+				ModelMap.DEBUG.trace("Container of port is not a component");
+			}
+			return null;
+		}
 		final SadComponentInstantiation sourceComponent = get((LocalScaComponent) newValue.getPort().eContainer());
 		if (sourceComponent != null) {
 			for (final UsesPortStub stub : sourceComponent.getUses()) {
