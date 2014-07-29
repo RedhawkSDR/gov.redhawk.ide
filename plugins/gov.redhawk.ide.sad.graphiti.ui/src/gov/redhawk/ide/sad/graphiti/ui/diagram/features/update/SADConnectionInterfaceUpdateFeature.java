@@ -96,7 +96,13 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 					// Incompatible connection without an error decorator! We need to add an error decorator
 					SADConnectInterfacePattern.decorateConnection(connectionPE, connectInterface, getDiagram());
 				} else {
-					return new Reason(true, "Connection requires Error Decorator");
+					if (!uniqueConnection) {
+						return new Reason(true, "Redundant connection");
+					} else if (!compatibleConnection) {
+						return new Reason(true, "Incompatible connection");
+					} else {
+						return new Reason(true, "Connection Error");
+					}
 				}
 			} else if ((compatibleConnection || uniqueConnection) && (imgConnectionDecorator != null || textConnectionDecorator != null)) {
 				if (performUpdate) {
