@@ -27,12 +27,15 @@ import gov.redhawk.sca.ScaPlugin;
 import gov.redhawk.sca.preferences.ScaPreferenceConstants;
 import gov.redhawk.sca.ui.ScaUiPlugin;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import mil.jpeojtrs.sca.dmd.DomainManagerConfiguration;
+import mil.jpeojtrs.sca.util.CorbaUtils;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -49,6 +52,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -71,12 +76,44 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
 		displayContext = HandlerUtil.getActiveShell(event);
 		dmReg = ScaPlugin.getDefault().getDomainManagerRegistry(displayContext);
+		final Shell shell = HandlerUtil.getActiveShell(event);
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection ss = (IStructuredSelection) selection;
 			for (final Object obj : ss.toArray()) {
 				if (obj instanceof SdrRoot) {
 					final SdrRoot sdrRoot = (SdrRoot) obj;
 					Assert.isNotNull(sdrRoot);
+					if (sdrRoot.getLoadStatus() == null) {
+						ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
+						try {
+							dialog.run(true, true, new IRunnableWithProgress() {
+								
+								@Override
+								public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+									monitor.beginTask("Loading Target SDR..", IProgressMonitor.UNKNOWN);
+									try {
+										CorbaUtils.invoke(new Callable<Object>() {
+
+											@Override
+											public Object call() throws Exception {
+												sdrRoot.load(monitor);
+												return null;
+											}
+											
+										}, monitor);
+									} catch (CoreException e) {
+										throw new InvocationTargetException(e);
+									}
+									
+								}
+							});
+						} catch (InvocationTargetException e) {
+							StatusManager.getManager().handle(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Failed to load SDR.", e.getCause()),
+								StatusManager.SHOW | StatusManager.LOG);
+						} catch (InterruptedException e) {
+							return null;
+						}
+					}
 
 					final DomainManagerConfiguration domain = sdrRoot.getDomainConfiguration();
 					if (domain == null) {
@@ -86,7 +123,7 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 					}
 					model.setDomainName(domain.getName());
 
-					final LaunchDomainManagerWithOptionsDialog dialog = new LaunchDomainManagerWithOptionsDialog(HandlerUtil.getActiveShell(event), model,
+					final LaunchDomainManagerWithOptionsDialog dialog = new LaunchDomainManagerWithOptionsDialog(shell, model,
 						sdrRoot);
 					if (dialog.open() == IStatus.OK) {
 						deviceManagers = dialog.getDeviceManagerLaunchConfigurations();
