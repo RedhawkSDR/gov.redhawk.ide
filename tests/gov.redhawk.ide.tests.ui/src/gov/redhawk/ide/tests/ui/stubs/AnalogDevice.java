@@ -1,4 +1,3 @@
-package gov.redhawk.ide.tests.ui.stubs;
 /**
  * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
@@ -10,6 +9,7 @@ package gov.redhawk.ide.tests.ui.stubs;
  * http://www.eclipse.org/legal/epl-v10.html.
  *
  */
+package gov.redhawk.ide.tests.ui.stubs;
 
 import org.eclipse.emf.common.util.URI;
 import org.ossie.component.Device;
@@ -28,7 +28,7 @@ import CF.LoadableDevicePackage.InvalidLoadKind;
 import CF.LoadableDevicePackage.LoadFail;
 import CF.LoadableDevicePackage.LoadType;
 
-public class AnalogDevice extends Device implements ExecutableDeviceOperations{
+public class AnalogDevice extends Device implements ExecutableDeviceOperations {
 
 	@Override
 	public void run() {

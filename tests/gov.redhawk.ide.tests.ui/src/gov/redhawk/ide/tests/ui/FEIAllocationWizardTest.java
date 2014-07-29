@@ -1,4 +1,3 @@
-package gov.redhawk.ide.tests.ui;
 /**
  * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
@@ -10,6 +9,7 @@ package gov.redhawk.ide.tests.ui;
  * http://www.eclipse.org/legal/epl-v10.html.
  *
  */
+package gov.redhawk.ide.tests.ui;
 
 import gov.redhawk.frontend.FrontendFactory;
 import gov.redhawk.frontend.TunerStatus;
