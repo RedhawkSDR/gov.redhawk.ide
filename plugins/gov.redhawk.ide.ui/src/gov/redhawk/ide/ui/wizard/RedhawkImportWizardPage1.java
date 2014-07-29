@@ -1020,15 +1020,15 @@ public class RedhawkImportWizardPage1 extends WizardPage implements IOverwriteQu
 		projectsList.refresh(true);
 		ProjectRecord[] projects = getProjectRecords();
 		boolean displayWarning = false;
-		for (int i = 0; i < projects.length; i++) {
-			if (projects[i].hasConflicts) {
-				displayWarning = true;
-				projectsList.setGrayed(projects[i], true);
-			} else {
-				projectsList.setChecked(projects[i], true);
+		if (projects != null && projects.length > 0) {
+			for (int i = 0; i < projects.length; i++) {
+				if (projects[i].hasConflicts) {
+					displayWarning = true;
+					projectsList.setGrayed(projects[i], true);
+				} else {
+					projectsList.setChecked(projects[i], true);
+				}
 			}
-		}
-		if (projects != null || projects.length > 0) {
 			setPageComplete(true);
 		}
 
