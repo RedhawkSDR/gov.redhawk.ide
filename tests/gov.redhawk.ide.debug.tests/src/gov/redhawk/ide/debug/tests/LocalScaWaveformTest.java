@@ -12,15 +12,20 @@
  // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.tests;
 
+import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.Assert;
+import org.junit.Test;
 
 import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.ReleaseError;
@@ -164,6 +169,23 @@ public class LocalScaWaveformTest extends TestCase {
 		}
 		
 		// TODO Add more tests
+	}
+	
+	@Test
+	public void test_IDE_824() throws Exception {
+		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
+		final LocalScaWaveform localWaveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
+		localWaveform.setName("TestWaveform");
+		ScaModelCommand.execute(localSca, new ScaModelCommand() {
+			
+			@Override
+			public void execute() {
+				localSca.getWaveforms().add(localWaveform);
+			}
+		});
+		Assert.assertEquals(2, localSca.getWaveforms().size());
+		localWaveform.releaseObject();
+		Assert.assertEquals(1, localSca.getWaveforms().size());
 	}
 
 

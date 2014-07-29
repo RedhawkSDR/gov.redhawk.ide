@@ -102,6 +102,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 	@Override
 	public boolean performFinish() {
 		try {
+			getContainer().getCurrentPage().getControl().setEnabled(false);
 			// Find the working sets and where the new project should be located on disk
 			final IWorkingSet[] workingSets = this.nodePropertiesPage.getSelectedWorkingSets();
 			final boolean isCreateNewResource = this.nodePropertiesPage.getContentsGroup().isCreateNewResource();
@@ -181,6 +182,8 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 		} catch (final PartInitException e) {
 			// If the editor cannot be opened, still close the wizard
 			return true;
+		} finally {
+			getContainer().getCurrentPage().getControl().setEnabled(true);
 		}
 		return true;
 	}

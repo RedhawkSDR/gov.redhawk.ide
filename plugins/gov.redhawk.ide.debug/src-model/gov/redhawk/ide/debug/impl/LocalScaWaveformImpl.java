@@ -742,14 +742,14 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	@Override
 	public void releaseObject() throws ReleaseError {
-		LocalSca localSca;
+		LocalSca localSca = null;
 		try {
 			localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
 		} catch (CoreException e) {
-			throw new ReleaseError(new String[]{"Failed to find local sandbox."});
+			// PASS
 		}
 		
-		if (this == localSca.getSandboxWaveform()) {
+		if (localSca != null && this == localSca.getSandboxWaveform()) {
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 
 				@Override

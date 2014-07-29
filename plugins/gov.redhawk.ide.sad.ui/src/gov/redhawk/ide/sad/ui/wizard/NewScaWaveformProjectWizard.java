@@ -131,6 +131,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 	@Override
 	public boolean performFinish() {
 		try {
+			getContainer().getCurrentPage().getControl().setEnabled(false);
 			// Find the working sets and where the new project should be located on disk
 			final IWorkingSet[] workingSets = this.waveformPropertiesPage.getSelectedWorkingSets();
 			final java.net.URI locationURI;
@@ -204,6 +205,8 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 		} catch (final PartInitException e) {
 			// If the editor cannot be opened, still close the wizard
 			return true;
+		} finally {
+			getContainer().getCurrentPage().getControl().setEnabled(true);
 		}
 		return true;
 	}
