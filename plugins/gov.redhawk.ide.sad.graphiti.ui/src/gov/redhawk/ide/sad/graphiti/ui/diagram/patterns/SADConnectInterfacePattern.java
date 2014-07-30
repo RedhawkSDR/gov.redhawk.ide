@@ -36,9 +36,7 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IConnectionContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
-import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
-import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
@@ -46,7 +44,6 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.AbstractConnectionPattern;
 import org.eclipse.graphiti.pattern.IConnectionPattern;
-import org.eclipse.graphiti.platform.IPlatformImageConstants;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
@@ -141,39 +138,14 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
 			boolean compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
 			
-			// Add error decorators and text if necessary
+			// Add error decorator if necessary
 			if (!compatibleConnection || !uniqueConnection) {
-
-				// set decorator image/text
-				String decoratorMessage = "";
-				String decoratorImageId = "";
-				if (!compatibleConnection) {
-					decoratorMessage = "Incompatible Connection";
-					decoratorImageId = IPlatformImageConstants.IMG_ECLIPSE_ERROR_TSK;
-				} else if (!uniqueConnection) {
-					decoratorMessage = "Redundant connection";
-					decoratorImageId = IPlatformImageConstants.IMG_ECLIPSE_WARNING_TSK;
-				}
-
-				// image
-				ConnectionDecorator imgConnectionDecorator = peCreateService.createConnectionDecorator(connectionPE, true, 0.5, true); // must be active in order to display
-				Graphiti.getPeService().setPropertyValue(imgConnectionDecorator, DUtil.SHAPE_TYPE, SHAPE_IMG_CONNECTION_DECORATOR);
-				Image errorImage = gaService.createImage(imgConnectionDecorator, decoratorImageId);
-				errorImage.setHeight(20);
-				errorImage.setWidth(20);
-				gaService.setLocation(errorImage, -60, -18);
 				
-				// text
-				ConnectionDecorator textConnectionDecorator = peCreateService.createConnectionDecorator(connectionPE, true, 0.5, true); // must be active in order to display
-				Graphiti.getPeService().setPropertyValue(textConnectionDecorator, DUtil.SHAPE_TYPE, SHAPE_TEXT_CONNECTION_DECORATOR);
-				Text text = gaService.createPlainText(textConnectionDecorator);
-				text.setValue(decoratorMessage);
-				text.setStyle(StyleUtil.getStyleForErrorTextConnections((diagram)));
-				gaService.setLocation(text, -40, -15);
-				
-				// this unfortunately hides the connection line. TODO: Try setting transparency for text and then sending to front
-				// Graphiti.getPeService().sendToFront(imgDecorator);
-				// Graphiti.getPeService().sendToFront(textDecorator);
+				// add graphical X to the middle of the erroneous connection
+				ConnectionDecorator errorDecorator = peCreateService.createConnectionDecorator(connectionPE, false, 0.5, true);
+				Polyline errPolyline = gaService.createPolyline(errorDecorator, new int[] { -7, 7, 0, 0, -7, -7, 0, 0, 7, -7, 0, 0, 7, 7});
+				errPolyline.setForeground(gaService.manageColor(diagram, IColorConstant.RED));
+				errPolyline.setLineWidth(2);
 			}
 
 			// add graphical arrow to end of the connection

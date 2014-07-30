@@ -20,9 +20,7 @@ import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
-import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
-import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -187,19 +185,9 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		// ...update uses port edit part references, since this is technically a new editor
 		usesEditPart = EditorTestUtils.getDiagramUsesPort(editor, sourceComponent);
 
-		boolean imageDecoratorFound = true, textDecoratorFound = false;
+//		boolean imageDecoratorFound = false, textDecoratorFound = false;
 		Connection connection = DUtil.getIncomingConnectionsContainedInContainerShape(targetContainerShape).get(0);
-		for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
-			if (decorator.getGraphicsAlgorithm() instanceof Image) {
-				imageDecoratorFound = true;
-			}
-			if (decorator.getGraphicsAlgorithm() instanceof Text) {
-				Text text = (Text) decorator.getGraphicsAlgorithm();
-				Assert.assertEquals(text.getValue(), "Redundant connection");
-				textDecoratorFound = true;
-			}
-		}
-		Assert.assertTrue(imageDecoratorFound && textDecoratorFound); // Confirm that decorators are present
+		Assert.assertTrue("Error decorator should have been added", connection.getConnectionDecorators().size() == 2);
 
 		// Delete one of the connections
 		List<SWTBotGefConnectionEditPart> sourceConnections = EditorTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
@@ -209,13 +197,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 
 		// Confirm that error decorators do not exist for the remaining connection
 		connection = DUtil.getIncomingConnectionsContainedInContainerShape(targetContainerShape).get(0);
-		boolean decoratorFound = false;
-		for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
-			if (decorator.getGraphicsAlgorithm() instanceof Image || decorator.getGraphicsAlgorithm() instanceof Text) {
-				decoratorFound = true;
-			}
-		}
-		Assert.assertFalse(decoratorFound); // Confirm that decorators were removed
+		Assert.assertTrue("Only arrowhead decorator should exist", connection.getConnectionDecorators().size() == 1);
 	}
 
 	/**
@@ -245,19 +227,8 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		List<SWTBotGefConnectionEditPart> connections = EditorTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
 		Assert.assertTrue(connections.size() == 1);
 
-		boolean imageDecoratorFound = false, textDecoratorFound = false;
 		Connection connection = (Connection) connections.get(0).part().getModel();
-		for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
-			if (decorator.getGraphicsAlgorithm() instanceof Image) {
-				imageDecoratorFound = true;
-			}
-			if (decorator.getGraphicsAlgorithm() instanceof Text) {
-				Text text = (Text) decorator.getGraphicsAlgorithm();
-				Assert.assertEquals(text.getValue(), "Incompatible Connection");
-				textDecoratorFound = true;
-			}
-		}
-		Assert.assertTrue(imageDecoratorFound && textDecoratorFound); // Confirm that decorators are present
+		Assert.assertTrue("Error decorator should have been added", connection.getConnectionDecorators().size() == 2);
 	}
 
 	@After
