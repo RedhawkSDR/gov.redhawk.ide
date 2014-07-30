@@ -48,176 +48,175 @@ import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
  */
 public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EClass containerShapeImplEClass = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EClass rhContainerShapeEClass = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EClass componentShapeEClass = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EDataType componentSupportedInterfaceStubEDataType = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EDataType iFeatureProviderEDataType = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EDataType usesPortStubEDataType = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EDataType providesPortStubEDataType = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EDataType portEDataType = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EDataType assemblyControllerEDataType = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EDataType externalPortsEDataType = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EDataType reasonEDataType = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EDataType listEDataType = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EDataType sadComponentInstantiationEDataType = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EDataType iAddContextEDataType = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EDataType abstractContainerPatternEDataType = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EDataType componentPatternEDataType = null;
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private EDataType iUpdateContextEDataType = null;
 
 	/**
-	 * Creates an instance of the model <b>Package</b>, registered with
-	 * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
-	 * package URI value.
-	 * <p>Note: the correct way to create the package is via the static
-	 * factory method {@link #init init()}, which also performs
-	 * initialization of the package, or returns the registered package,
-	 * if one already exists.
-	 * <!-- begin-user-doc -->
+	* Creates an instance of the model <b>Package</b>, registered with
+	* {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
+	* package URI value.
+	* <p>Note: the correct way to create the package is via the static
+	* factory method {@link #init init()}, which also performs
+	* initialization of the package, or returns the registered package,
+	* if one already exists.
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.emf.ecore.EPackage.Registry
-	 * @see gov.redhawk.ide.sad.graphiti.ext.RHGxPackage#eNS_URI
-	 * @see #init()
-	 * @generated
-	 */
+	* @see org.eclipse.emf.ecore.EPackage.Registry
+	* @see gov.redhawk.ide.sad.graphiti.ext.RHGxPackage#eNS_URI
+	* @see #init()
+	* @generated
+	*/
 	private RHGxPackageImpl() {
 		super(eNS_URI, RHGxFactory.eINSTANCE);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private static boolean isInited = false;
 
 	/**
-	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-	 * 
-	 * <p>This method is used to initialize {@link RHGxPackage#eINSTANCE} when that field is accessed.
-	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
-	 * <!-- begin-user-doc -->
+	* Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
+	* 
+	* <p>This method is used to initialize {@link RHGxPackage#eINSTANCE} when that field is accessed.
+	* Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #eNS_URI
-	 * @see #createPackageContents()
-	 * @see #initializePackageContents()
-	 * @generated
-	 */
+	* @see #eNS_URI
+	* @see #createPackageContents()
+	* @see #initializePackageContents()
+	* @generated
+	*/
 	public static RHGxPackage init() {
 		if (isInited)
 			return (RHGxPackage) EPackage.Registry.INSTANCE.getEPackage(RHGxPackage.eNS_URI);
 
 		// Obtain or create and register package
-		RHGxPackageImpl theRHGxPackage = (RHGxPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof RHGxPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI)
-			: new RHGxPackageImpl());
+		RHGxPackageImpl theRHGxPackage = (RHGxPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof RHGxPackageImpl ? EPackage.Registry.INSTANCE
+		        .get(eNS_URI) : new RHGxPackageImpl());
 
 		isInited = true;
 
 		// Initialize simple dependencies
-		PictogramsPackage.eINSTANCE.eClass();
-		EcorePackage.eINSTANCE.eClass();
 		AlgorithmsPackage.eINSTANCE.eClass();
+		EcorePackage.eINSTANCE.eClass();
 		MmPackage.eINSTANCE.eClass();
 
 		// Create package meta-data objects
@@ -235,181 +234,181 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EClass getContainerShapeImpl() {
 		return containerShapeImplEClass;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EClass getRHContainerShape() {
 		return rhContainerShapeEClass;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EClass getComponentShape() {
 		return componentShapeEClass;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EDataType getComponentSupportedInterfaceStub() {
 		return componentSupportedInterfaceStubEDataType;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EDataType getIFeatureProvider() {
 		return iFeatureProviderEDataType;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EDataType getUsesPortStub() {
 		return usesPortStubEDataType;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EDataType getProvidesPortStub() {
 		return providesPortStubEDataType;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EDataType getPort() {
 		return portEDataType;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EDataType getAssemblyController() {
 		return assemblyControllerEDataType;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EDataType getExternalPorts() {
 		return externalPortsEDataType;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EDataType getReason() {
 		return reasonEDataType;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EDataType getList() {
 		return listEDataType;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EDataType getSadComponentInstantiation() {
 		return sadComponentInstantiationEDataType;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EDataType getIAddContext() {
 		return iAddContextEDataType;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EDataType getAbstractContainerPattern() {
 		return abstractContainerPatternEDataType;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EDataType getComponentPattern() {
 		return componentPatternEDataType;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public EDataType getIUpdateContext() {
 		return iUpdateContextEDataType;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public RHGxFactory getRHGxFactory() {
 		return (RHGxFactory) getEFactoryInstance();
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private boolean isCreated = false;
 
 	/**
-	 * Creates the meta-model objects for the package.  This method is
-	 * guarded to have no affect on any invocation but its first.
-	 * <!-- begin-user-doc -->
+	* Creates the meta-model objects for the package.  This method is
+	* guarded to have no affect on any invocation but its first.
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public void createPackageContents() {
 		if (isCreated)
 			return;
@@ -440,19 +439,19 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	private boolean isInitialized = false;
 
 	/**
-	 * Complete the initialization of the package and its meta-model.  This
-	 * method is guarded to have no affect on any invocation but its first.
-	 * <!-- begin-user-doc -->
+	* Complete the initialization of the package and its meta-model.  This
+	* method is guarded to have no affect on any invocation but its first.
+	* <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	* @generated
+	*/
 	public void initializePackageContents() {
 		if (isInitialized)
 			return;
@@ -543,7 +542,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 
 		// Initialize data types
 		initEDataType(componentSupportedInterfaceStubEDataType, ComponentSupportedInterfaceStub.class, "ComponentSupportedInterfaceStub", IS_SERIALIZABLE,
-			!IS_GENERATED_INSTANCE_CLASS);
+		        !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iFeatureProviderEDataType, IFeatureProvider.class, "IFeatureProvider", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(usesPortStubEDataType, UsesPortStub.class, "UsesPortStub", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(providesPortStubEDataType, ProvidesPortStub.class, "ProvidesPortStub", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
@@ -553,10 +552,10 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		initEDataType(reasonEDataType, Reason.class, "Reason", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(listEDataType, List.class, "List", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(sadComponentInstantiationEDataType, SadComponentInstantiation.class, "SadComponentInstantiation", IS_SERIALIZABLE,
-			!IS_GENERATED_INSTANCE_CLASS);
+		        !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iAddContextEDataType, IAddContext.class, "IAddContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(abstractContainerPatternEDataType, AbstractContainerPattern.class, "AbstractContainerPattern", IS_SERIALIZABLE,
-			!IS_GENERATED_INSTANCE_CLASS);
+		        !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(componentPatternEDataType, ComponentPattern.class, "ComponentPattern", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iUpdateContextEDataType, IUpdateContext.class, "IUpdateContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 

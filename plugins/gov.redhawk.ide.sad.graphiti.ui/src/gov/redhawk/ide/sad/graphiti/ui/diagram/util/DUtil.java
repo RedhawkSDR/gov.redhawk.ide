@@ -58,13 +58,17 @@ import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
+import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAreaContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
+import org.eclipse.graphiti.features.context.impl.DeleteContext;
+import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.internal.datatypes.impl.DimensionImpl;
@@ -698,7 +702,12 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 					updateStatus = true;
 					// delete shape
 					peIter.remove();
-					EcoreUtil.delete(pe, true);
+					//TODO: if we use DeleteContext it prompts user, if we use EcoreUtil.delete there is no prompt
+					RemoveContext rc = new RemoveContext(pe);
+					IRemoveFeature removeFeature = featureProvider.getRemoveFeature(rc);
+					if (removeFeature != null) {
+						removeFeature.remove(rc);
+					}
 				} else {
 					return new Reason(true, "A " + pictogramLabel + " in diagram no longer has an associated business object");
 				}
@@ -711,6 +720,74 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 
 		return new Reason(false, "No updates required");
 	}
+	
+	/**
+	 * Remove connections from the diagram that are missing start/end points.
+	 * Connections in the diagram may no longer have start/end points.  
+	 * They may have been deleted which will cause the connection to point to random places in the diagram.
+	 * @param pes
+	 * @param objects
+	 * @param objectClass
+	 * @param pictogramLabel
+	 * @param featureProvider
+	 * @param performUpdate
+	 * @return
+	 */
+	public static Reason removeConnectionsWithoutEndpoints(List<Connection> connections, List<SadConnectInterface> sadConnectInterfaces,
+			IFeatureProvider featureProvider, boolean performUpdate) {
+
+			boolean updateStatus = false;
+
+			// update PictogramElements if in model, if not in model remove from diagram
+			for (Iterator<Connection> connIter = connections.iterator(); connIter.hasNext();) {
+				Connection conn = connIter.next();
+				if (conn.getStart() == null || conn.getEnd() == null) {
+					//endpoint missing, delete connection
+					if (performUpdate) {
+						updateStatus = true;
+						// delete shape
+						connIter.remove();
+						DeleteContext dc = new DeleteContext(conn);
+						IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
+						if (deleteFeature != null) {
+							deleteFeature.delete(dc);
+						}
+					} else {
+						return new Reason(true, "A connection in diagram is missing either a start or end point");
+					}
+				}
+			}
+
+			// update model if there are references to components that no longer exist
+			for (Iterator<SadConnectInterface> connIter = sadConnectInterfaces.iterator(); connIter.hasNext();) {
+				
+				//delete connection in model if
+				// uses port is present but the referenced component isn't
+				// provides port is present but references component isn't 
+				SadConnectInterface conn = connIter.next();
+				if ((conn.getUsesPort() != null 
+						&& conn.getUsesPort().getComponentInstantiationRef() != null && conn.getUsesPort().getComponentInstantiationRef().getInstantiation() == null) 
+						|| (conn.getProvidesPort() != null 
+						&& conn.getProvidesPort().getComponentInstantiationRef() != null && conn.getProvidesPort().getComponentInstantiationRef().getInstantiation() == null)) {
+					
+					//endpoint missing, delete connection
+					if (performUpdate) {
+						updateStatus = true;
+						//delete connection
+						connIter.remove();
+						EcoreUtil.delete(conn, true);
+					} else {
+						return new Reason(true, "A connection in model is missing reference to component");
+					}
+				}
+			}
+						
+			if (updateStatus && performUpdate) {
+				return new Reason(true, "Update successful");
+			}
+
+			return new Reason(false, "No updates required");
+		}
 
 	/**
 	 * Examines a list of Shapes and ensures there is an associated object in the model (objects).

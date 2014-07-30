@@ -19,14 +19,17 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -35,6 +38,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.DefaultUpdateDiagramFeature;
@@ -100,12 +104,33 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				}
 			}
 			updateShapesReason = DUtil.addRemoveUpdateShapes((List<Shape>) (List< ? >) ComponentPattern.getAllComponentShapes(d), componentInstatiations,
-				ComponentInstantiation.class, "Host", getDiagram(), getFeatureProvider(), performUpdate);
+				ComponentInstantiation.class, "Component", getDiagram(), getFeatureProvider(), performUpdate);
 			if (!performUpdate && updateShapesReason.toBoolean()) {
 				return updateShapesReason;
 			} else if (updateShapesReason.toBoolean() == true) {
 				updateStatus = true;
 			}
+			
+			// Remove Component File instance if there are no component instantiations of the same type
+			if (sad.getComponentFiles() != null) {
+				for (Iterator<ComponentFile> iter = sad.getComponentFiles().getComponentFile().iterator(); iter.hasNext();) {
+					ComponentFile componentFile = iter.next();
+					boolean found = false;
+					for (Object c: componentInstatiations) {
+						SadComponentInstantiation comp = (SadComponentInstantiation) c;
+						if (comp.getPlacement().getComponentFileRef().getRefid().equals(componentFile.getId())) {
+							found = true;
+						}
+					}
+					if (!found) {
+						iter.remove();
+						EcoreUtil.delete(componentFile, true);
+					}
+				}
+			}
+			
+			//Ensure assembly controller is set.  It's possible a component was deleted that used to be the assembly controller
+			ComponentPattern.organizeStartOrder(sad, getDiagram(), getFeatureProvider());
 
 			// Update connections, remove old connections, add new connections
 			List<SadConnectInterface> sadConnectInterfaces = new ArrayList<SadConnectInterface>();
@@ -340,14 +365,24 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 
 		boolean updateStatus = false;
 
+		// remove connections missing start or end point. (component/findby deletion)
+		Reason updateConnectionsReason = DUtil.removeConnectionsWithoutEndpoints(connections, sadConnectInterfaces, featureProvider, performUpdate);
+		if (!performUpdate && updateConnectionsReason.toBoolean()) {
+			return updateConnectionsReason;
+		} else if (updateConnectionsReason.toBoolean() == true) {
+			updateStatus = true;
+		}
+				
 		// remove Connections on diagram if no longer in model, update all other Connections if necessary
-		Reason updateConnectionsReason = DUtil.removeUpdatePictogramElement((List<PictogramElement>) (List< ? >) connections,
+		updateConnectionsReason = DUtil.removeUpdatePictogramElement((List<PictogramElement>) (List< ? >) connections,
 			(List<EObject>) (List< ? >) sadConnectInterfaces, objectClass, pictogramLabel, featureProvider, performUpdate);
 		if (!performUpdate && updateConnectionsReason.toBoolean()) {
 			return updateConnectionsReason;
 		} else if (updateConnectionsReason.toBoolean() == true) {
 			updateStatus = true;
 		}
+		
+		
 
 		// correct unfriendly findByConnections
 		updateConnectionsReason = DUtil.replaceDirectFindByConnection(sadConnectInterfaces, objectClass, pictogramLabel, diagram, featureProvider,

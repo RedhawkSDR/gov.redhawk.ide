@@ -164,7 +164,9 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 			}
 		});
 
-		// delete graphical component
+		
+		
+		// delete graphical component for component as well as removing all connections
 		IRemoveContext rc = new RemoveContext(context.getPictogramElement());
 		IFeatureProvider featureProvider = getFeatureProvider();
 		IRemoveFeature removeFeature = featureProvider.getRemoveFeature(rc);
@@ -398,9 +400,11 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		// get components by start order
 		EList<SadComponentInstantiation> componentInstantiationsInStartOrder = sad.getComponentInstantiationsInStartOrder();
 
-		// if assembly controller was deleted, set a new assembly controller
+		// if assembly controller was deleted (or component that used to be assembly controller was deleted)
+		//set a new assembly controller
 		AssemblyController assemblyController = getAssemblyController(featureProvider, diagram);
-		if (assemblyController == null && componentInstantiationsInStartOrder.size() > 0) {
+		if ((assemblyController == null || assemblyController.getComponentInstantiationRef().getInstantiation() == null) 
+				&& componentInstantiationsInStartOrder.size() > 0) {
 			// assign assembly controller assign to first component
 			assemblyController = SadFactory.eINSTANCE.createAssemblyController();
 			SadComponentInstantiation ci = componentInstantiationsInStartOrder.get(0);

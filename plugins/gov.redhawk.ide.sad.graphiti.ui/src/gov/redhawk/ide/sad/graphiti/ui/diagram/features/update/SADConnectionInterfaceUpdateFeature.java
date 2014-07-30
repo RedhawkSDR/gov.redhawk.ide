@@ -16,11 +16,13 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 
+import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.features.context.impl.DeleteContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.impl.AbstractUpdateFeature;
 import org.eclipse.graphiti.features.impl.Reason;
@@ -84,8 +86,27 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 		ConnectionDecorator textConnectionDecorator = (ConnectionDecorator) DUtil.findFirstPropertyContainer(connectionPE,
 			SADConnectInterfacePattern.SHAPE_TEXT_CONNECTION_DECORATOR);
 
-		// if not compatible draw error/warning decorator
-		if (connectInterface.getSource() != null && connectInterface.getTarget() != null) {
+		//problem if either source or target not present
+		if (connectInterface.getSource() == null || connectInterface.getTarget() == null) {
+			if (performUpdate) {
+				updateStatus = true;
+				//remove the connection (handles pe and business object)
+				DeleteContext dc = new DeleteContext(connectionPE);
+				IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
+				if (deleteFeature != null) {
+					deleteFeature.delete(dc);
+				}
+			} else {
+				String tmpMsg = "Target";
+				if (connectInterface.getSource() == null) {
+					tmpMsg = "Source";
+				}
+				return new Reason(true, tmpMsg + " endpoint for connection is null");
+			}
+			
+
+		// check if not compatible draw error/warning decorator
+		} else {
 			// connection validation
 			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
 			boolean compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
