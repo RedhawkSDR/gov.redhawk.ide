@@ -22,14 +22,17 @@ import gov.redhawk.model.sca.ScaPropertyContainer;
 import gov.redhawk.model.sca.ScaService;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.ORBUtil;
 import gov.redhawk.sca.util.OrbSession;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -254,7 +257,15 @@ public final class SpdLauncherUtil {
 						}
 
 						for (final ScaWaveform waveform : localSca.fetchWaveforms(null)) {
-							for (ScaComponent comp : waveform.getComponents()) {
+							List<ScaComponent> components = ScaModelCommandWithResult.execute(waveform, new ScaModelCommandWithResult<List<ScaComponent>>() {
+
+								@Override
+								public void execute() {
+									setResult(new ArrayList<ScaComponent>(waveform.getComponents()));
+								}
+								
+							});
+							for (ScaComponent comp : components) {
 								if (comp instanceof LocalScaComponent && ref._is_equivalent(comp.getCorbaObj())) {
 									return (LocalScaComponent) comp;
 								}

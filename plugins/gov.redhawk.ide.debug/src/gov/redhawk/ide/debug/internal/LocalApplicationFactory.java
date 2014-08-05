@@ -168,6 +168,10 @@ public class LocalApplicationFactory {
 			this.launch.addProcess(app);
 			waveform.setLocalApp(app);
 
+			progress.subTask("Bind application");
+			LocalApplicationFactory.bindApp(app);
+			progress.worked(1);
+
 			URI uri = sad.eResource().getURI();
 			Map<String, String> query = new HashMap<String, String>(QueryParser.parseQuery(uri.query()));
 			query.put(ScaFileSystemConstants.QUERY_PARAM_WF, waveform.getIor());
@@ -198,14 +202,13 @@ public class LocalApplicationFactory {
 			createConnections(app, sad);
 			progress.worked(3);
 
-			progress.subTask("Bind application");
-			LocalApplicationFactory.bindApp(app);
-			progress.worked(1);
 
 		} catch (final SystemException e) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to create application: " + adjustedName + " " + e.getMessage(), e));
 		} finally {
-			app.setLaunching(false);
+			if (app != null) {
+				app.setLaunching(false);
+			}
 		}
 		
 		if (app != null && waveform != null) {
@@ -302,6 +305,8 @@ public class LocalApplicationFactory {
 		} catch (final InvalidName e) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to bind application to context " + e.getMessage(), e));
 		} catch (final AlreadyBound e) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to bind application to context " + e.getMessage(), e));
+		} catch (final SystemException e) {
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to bind application to context " + e.getMessage(), e));
 		}
 

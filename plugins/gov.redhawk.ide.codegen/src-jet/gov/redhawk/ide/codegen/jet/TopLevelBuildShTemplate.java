@@ -48,7 +48,7 @@ public class TopLevelBuildShTemplate
   protected final String TEXT_9 = "-";
   protected final String TEXT_10 = ".tar.gz" + NL + "        rm -rf $tmpdir" + NL + "    else" + NL + "        echo \"Missing RPM spec file in\" `pwd`" + NL + "        exit 1" + NL + "    fi" + NL + "else" + NL + "    for impl in";
   protected final String TEXT_11 = " ";
-  protected final String TEXT_12 = " ; do" + NL + "        cd $impl" + NL + "        if [ -e build.sh ]; then" + NL + "            ./build.sh $*" + NL + "        elif [ -e reconf ]; then" + NL + "            ./reconf && ./configure && make" + NL + "        else" + NL + "            echo \"No build.sh found for $impl\"" + NL + "        fi" + NL + "        cd -" + NL + "    done" + NL + "fi";
+  protected final String TEXT_12 = " ; do" + NL + "        cd $impl" + NL + "        if [ -e build.sh ]; then" + NL + "            ./build.sh $*" + NL + "        elif [ -e reconf ]; then" + NL + "            ./reconf && ./configure && make $*" + NL + "        else" + NL + "            echo \"No build.sh found for $impl\"" + NL + "        fi" + NL + "        cd -" + NL + "    done" + NL + "fi";
   protected final String TEXT_13 = NL;
 
   public String generate(Object argument) throws CoreException
