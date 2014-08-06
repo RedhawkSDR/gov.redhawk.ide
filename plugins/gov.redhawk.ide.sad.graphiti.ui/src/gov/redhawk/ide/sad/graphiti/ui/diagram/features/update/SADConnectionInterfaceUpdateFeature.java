@@ -47,10 +47,16 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 
 	@Override
 	public IReason updateNeeded(IUpdateContext context) {
-
-		Connection connectionPE = (Connection) context.getPictogramElement();
-		SadConnectInterface sadConnectInterface = (SadConnectInterface) DUtil.getBusinessObject(context.getPictogramElement());
-
+		Connection connectionPE = null;
+		SadConnectInterface sadConnectInterface = null;
+		
+		if (context.getPictogramElement() instanceof Connection) {
+			connectionPE = (Connection) context.getPictogramElement();
+		}
+		if (DUtil.getBusinessObject(context.getPictogramElement()) instanceof SadConnectInterface) {
+			sadConnectInterface = (SadConnectInterface) DUtil.getBusinessObject(context.getPictogramElement());
+		}
+		
 		Reason requiresUpdate = internalUpdate(connectionPE, sadConnectInterface, getFeatureProvider(), false);
 
 		return requiresUpdate;
@@ -78,6 +84,10 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 	public Reason internalUpdate(Connection connectionPE, SadConnectInterface connectInterface, IFeatureProvider featureProvider, boolean performUpdate) {
 
 		boolean updateStatus = false;
+		if (connectInterface == null) {
+			return new Reason(false, "No updates required");
+		}
+		
 
 		// imgConnectionDecorator
 		ConnectionDecorator imgConnectionDecorator = (ConnectionDecorator) DUtil.findFirstPropertyContainer(connectionPE,
