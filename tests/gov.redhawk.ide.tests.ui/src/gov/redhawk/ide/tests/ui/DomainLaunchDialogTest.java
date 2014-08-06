@@ -70,6 +70,7 @@ public class DomainLaunchDialogTest {
 		SWTBotTree scaTree = scaExplorerView.bot().tree();
 		SWTBotTreeItem targetSDR = scaTree.getTreeItem("Target SDR");
 		
+		gefBot.sleep(1000);
 		targetSDR.pressShortcut(Keystrokes.ESC);
 		targetSDR.select();
 		new SWTBotMenu(ContextMenuHelper.contextMenu(scaTree, "Launch...")).click();
