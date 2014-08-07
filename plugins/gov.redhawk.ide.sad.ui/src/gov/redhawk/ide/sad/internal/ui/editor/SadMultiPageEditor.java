@@ -44,6 +44,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
@@ -83,6 +84,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -629,10 +631,26 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 				PictogramLink link = PictogramsFactory.eINSTANCE.createPictogramLink();
 				link.getBusinessObjects().add(sad);
 				diagram.setLink(link);
-				
             }
 		});
-
+		
+		//linking above will dirty the editor, we must save
+		Job saveJob = new Job("Save Editor Job") {
+			@Override
+            protected IStatus run(final IProgressMonitor monitor) {
+				Display.getDefault().asyncExec(new Runnable() {
+					@Override
+                    public void run() {
+						doSave(monitor);
+                    }
+					
+				});
+				return Status.OK_STATUS;
+            }
+		};
+		saveJob.setUser(true);
+		saveJob.schedule();
+		
 		//return editor input from diagram with sad diagram type
 		return DiagramEditorInput.createEditorInput(diagram, SADDiagramTypeProvider.PROVIDER_ID);
 		

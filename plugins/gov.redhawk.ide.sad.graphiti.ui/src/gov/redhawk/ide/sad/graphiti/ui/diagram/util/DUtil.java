@@ -693,7 +693,7 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 				if (obj.equals(DUtil.getBusinessObject(pe, objectClass))) {
 					found = true;
 					// update Shape
-					featureProvider.updateIfPossible(new UpdateContext(pe));
+					featureProvider.updateIfPossibleAndNeeded(new UpdateContext(pe));
 				}
 			}
 			if (!found) {
