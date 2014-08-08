@@ -634,19 +634,19 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
             }
 		});
 		
-		//linking above will dirty the editor, we must save
+		//save editor automatically because all we are doing is linking the GraphitiDiagram to SoftwareAssembly
 		Job saveJob = new Job("Save Editor Job") {
 			@Override
-            protected IStatus run(final IProgressMonitor monitor) {
+			protected IStatus run(final IProgressMonitor monitor) {
 				Display.getDefault().asyncExec(new Runnable() {
 					@Override
-                    public void run() {
+					public void run() {
 						doSave(monitor);
-                    }
-					
+					}
+
 				});
 				return Status.OK_STATUS;
-            }
+			}
 		};
 		saveJob.setUser(true);
 		saveJob.schedule();

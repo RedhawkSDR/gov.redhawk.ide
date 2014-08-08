@@ -12,12 +12,17 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.ui.editor.DefaultUpdateBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.jface.util.TransferDropTargetListener;
+import org.eclipse.swt.widgets.Display;
 
 public class RHGraphitiDiagramEditor extends DiagramEditor {
 
@@ -51,8 +56,33 @@ public class RHGraphitiDiagramEditor extends DiagramEditor {
 				retVal.add(0, new DiagramDropTargetListener(getDiagramContainer().getGraphicalViewer(), this));
 				return retVal;
 			}
+			
+			
 
 		};
+	}
+	
+	@Override
+	public void setFocus() {
+		super.setFocus();
+		
+		//save editor automatically
+		//When a change has been made to the sad.xml directly and the user switches to the Diagram and update runs
+		Job saveJob = new Job("Save Editor Job") {
+			@Override
+			protected IStatus run(final IProgressMonitor monitor) {
+				Display.getDefault().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						doSave(monitor);
+					}
+
+				});
+				return Status.OK_STATUS;
+			}
+		};
+		saveJob.setUser(true);
+		saveJob.schedule();
 	}
 
 }

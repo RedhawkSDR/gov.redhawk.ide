@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.features.update;
 
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.HostCollocationPattern;
@@ -111,23 +112,24 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				updateStatus = true;
 			}
 			
+			//We decided not to remove component file instances at this time in case a user comments out a component and plans to later uncomment it.
 			// Remove Component File instance if there are no component instantiations of the same type
-			if (sad.getComponentFiles() != null) {
-				for (Iterator<ComponentFile> iter = sad.getComponentFiles().getComponentFile().iterator(); iter.hasNext();) {
-					ComponentFile componentFile = iter.next();
-					boolean found = false;
-					for (Object c: componentInstatiations) {
-						SadComponentInstantiation comp = (SadComponentInstantiation) c;
-						if (comp.getPlacement().getComponentFileRef().getRefid().equals(componentFile.getId())) {
-							found = true;
-						}
-					}
-					if (!found) {
-						iter.remove();
-						EcoreUtil.delete(componentFile, true);
-					}
-				}
-			}
+//			if (sad.getComponentFiles() != null) {
+//				for (Iterator<ComponentFile> iter = sad.getComponentFiles().getComponentFile().iterator(); iter.hasNext();) {
+//					ComponentFile componentFile = iter.next();
+//					boolean found = false;
+//					for (Object c: componentInstatiations) {
+//						SadComponentInstantiation comp = (SadComponentInstantiation) c;
+//						if (comp.getPlacement().getComponentFileRef().getRefid().equals(componentFile.getId())) {
+//							found = true;
+//						}
+//					}
+//					if (!found) {
+//						iter.remove();
+//						EcoreUtil.delete(componentFile, true);
+//					}
+//				}
+//			}
 			
 			//Ensure assembly controller is set.  It's possible a component was deleted that used to be the assembly controller
 			ComponentPattern.organizeStartOrder(sad, getDiagram(), getFeatureProvider());
