@@ -32,7 +32,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
 
-public class EditorTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility method is intended to be public
+public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility method is intended to be public
 
 	public static final String OVERVIEW_TAB = "Overview", PROPERTIES_TAB = "Properties", DIAGRAM_TAB = "Diagram", XML_TAB = ".sad.xml";
 

@@ -11,7 +11,7 @@
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.swtbot.tests.utils.ComponentUtils;
-import gov.redhawk.ide.swtbot.tests.utils.EditorTestUtils;
+import gov.redhawk.ide.swtbot.tests.utils.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.tests.utils.MenuUtils;
 import gov.redhawk.ide.swtbot.tests.utils.WaveformUtils;
 
@@ -66,12 +66,12 @@ public class StartOrderTests {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add components to the diagram
-		EditorTestUtils.dragFromPaletteToDiagram(editor, componentOne, 100, 0);
-		EditorTestUtils.dragFromPaletteToDiagram(editor, componentTwo, 100, 150);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentOne, 100, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentTwo, 100, 150);
 
 		// Get component objects
-		SadComponentInstantiation componentOneObj = EditorTestUtils.getComponentObject(editor, componentOne);
-		SadComponentInstantiation componentTwoObj = EditorTestUtils.getComponentObject(editor, componentTwo);
+		SadComponentInstantiation componentOneObj = DiagramTestUtils.getComponentObject(editor, componentOne);
+		SadComponentInstantiation componentTwoObj = DiagramTestUtils.getComponentObject(editor, componentTwo);
 
 		// Initial assertion
 		MenuUtils.save(gefBot);
@@ -131,13 +131,13 @@ public class StartOrderTests {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add additional components to the diagram
-		EditorTestUtils.dragFromPaletteToDiagram(editor, componentOne, 100, 100);
-		EditorTestUtils.dragFromPaletteToDiagram(editor, componentTwo, 100, 250);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentOne, 100, 100);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentTwo, 100, 250);
 
 		// Get component objects
-		SadComponentInstantiation compNoStartOrderObj = EditorTestUtils.getComponentObject(editor, compNoStartOrder);
-		SadComponentInstantiation componentOneObj = EditorTestUtils.getComponentObject(editor, componentOne);
-		SadComponentInstantiation componentTwoObj = EditorTestUtils.getComponentObject(editor, componentTwo);
+		SadComponentInstantiation compNoStartOrderObj = DiagramTestUtils.getComponentObject(editor, compNoStartOrder);
+		SadComponentInstantiation componentOneObj = DiagramTestUtils.getComponentObject(editor, componentOne);
+		SadComponentInstantiation componentTwoObj = DiagramTestUtils.getComponentObject(editor, componentTwo);
 
 		// Initial assertion
 		MenuUtils.save(gefBot);
@@ -226,7 +226,7 @@ public class StartOrderTests {
 
 		// Add components to diagram
 		for (int i = 0; i < component.length; i++) {
-			EditorTestUtils.dragFromPaletteToDiagram(editor, component[i], 0, 0);
+			DiagramTestUtils.dragFromPaletteToDiagram(editor, component[i], 0, 0);
 		}
 
 		// Check initial assembly controller
@@ -235,9 +235,9 @@ public class StartOrderTests {
 		Assert.assertTrue(ComponentUtils.isAssemblyController(gefBot, editor, assemblyController));
 
 		// Change assembly controller to last component in list via Overview Tab
-		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.OVERVIEW_TAB);
+		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.OVERVIEW_TAB);
 		editor.bot().ccomboBoxWithLabel("Controller:").setSelection(component.length - 1);
-		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.DIAGRAM_TAB);
+		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.DIAGRAM_TAB);
 
 		// Confirm start order numbers have adjusted appropriately
 		for (int i = 0; i < component.length - 1; i++) {
@@ -264,16 +264,16 @@ public class StartOrderTests {
 
 		// Add components to diagram
 		for (int i = 0; i < component.length; i++) {
-			EditorTestUtils.dragFromPaletteToDiagram(editor, component[i], 0, 0);
+			DiagramTestUtils.dragFromPaletteToDiagram(editor, component[i], 0, 0);
 		}
 
 		// Check initial assembly controller
 		MenuUtils.save(gefBot);
 		String assemblyController = component[0];
 		Assert.assertTrue(ComponentUtils.isAssemblyController(gefBot, editor, assemblyController));
-		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.OVERVIEW_TAB);
+		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.OVERVIEW_TAB);
 		Assert.assertTrue(editor.bot().ccomboBoxWithLabel("Controller:").getText().contains(assemblyController));
-		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.DIAGRAM_TAB);
+		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.DIAGRAM_TAB);
 
 		// Change start order via context menu
 		assemblyController = component[component.length - 1];
@@ -288,9 +288,9 @@ public class StartOrderTests {
 		MenuUtils.save(gefBot);
 		Assert.assertTrue(ComponentUtils.correctStylingAndValue(editor, assemblyController, "0", true));
 		Assert.assertTrue(ComponentUtils.isAssemblyController(gefBot, editor, assemblyController));
-		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.OVERVIEW_TAB);
+		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.OVERVIEW_TAB);
 		Assert.assertTrue(editor.bot().ccomboBoxWithLabel("Controller:").getText().contains(assemblyController));
-		EditorTestUtils.openTabInEditor(editor, EditorTestUtils.DIAGRAM_TAB);
+		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.DIAGRAM_TAB);
 	}
 
 	/**
@@ -306,7 +306,7 @@ public class StartOrderTests {
 		editor = gefBot.gefEditor(waveformName);
 		// Add and check start order
 		for (int i = 0; i < component.length; i++) {
-			EditorTestUtils.dragFromPaletteToDiagram(editor, component[i], 0, 0);
+			DiagramTestUtils.dragFromPaletteToDiagram(editor, component[i], 0, 0);
 			Assert.assertEquals(i, ComponentUtils.getStartOrder(editor, component[i]));
 		}
 		// Check first added is assembly controller

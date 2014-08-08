@@ -13,7 +13,7 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.tests.utils.ComponentUtils;
-import gov.redhawk.ide.swtbot.tests.utils.EditorTestUtils;
+import gov.redhawk.ide.swtbot.tests.utils.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.tests.utils.MenuUtils;
 import gov.redhawk.ide.swtbot.tests.utils.WaveformUtils;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -78,14 +78,14 @@ public class WaveformComponentTests {
 		editor.setFocus();
 
 		// Add component to diagram from palette
-		EditorTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
 
 		// Confirm created component truly is HardLimit
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
-		EditorTestUtils.deleteFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
+		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
 
 		// Add component to diagram from Target SDR
-		EditorTestUtils.dragFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
+		DiagramTestUtils.dragFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
 
 		// Confirm created component truly is HardLimit
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
@@ -106,7 +106,7 @@ public class WaveformComponentTests {
 
 		for (String s : COMPONENTS) {
 			// Add component to diagram from palette
-			EditorTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);
+			DiagramTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);
 		}
 
 		gefBot.menu("File").menu("Save").click();
@@ -114,7 +114,7 @@ public class WaveformComponentTests {
 		for (String s : COMPONENTS) {
 			// Drill down to graphiti component shape
 			SWTBotGefEditPart gefEditPart = editor.getEditPart(s);
-			EditorTestUtils.deleteFromDiagram(editor, gefEditPart);
+			DiagramTestUtils.deleteFromDiagram(editor, gefEditPart);
 			Assert.assertNull(editor.getEditPart(s));
 		}
 	}
@@ -142,9 +142,9 @@ public class WaveformComponentTests {
 		}
 		editor.getEditPart(HARD_LIMIT).click();
 		gefBot.menu("File").menu("Save").click();
-		String regex = EditorTestUtils.regexStringForSadProperty((ComponentShapeImpl) 
+		String regex = DiagramTestUtils.regexStringForSadProperty((ComponentShapeImpl) 
 			editor.getEditPart(HARD_LIMIT).part().getModel(), propertyname, newValue);
-		EditorTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		String editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The sad.xml should include HardLimit's changed property", editorText.matches(regex));
 	}
@@ -162,26 +162,26 @@ public class WaveformComponentTests {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add a SigGen component instantiation to the diagram and save
-		EditorTestUtils.dragFromPaletteToDiagram(editor, "SigGen", 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, "SigGen", 0, 0);
 		gefBot.menu("File").menu("Save").click();
 
 		// Add a HardLimit component instantiation to the diagram
-		EditorTestUtils.dragFromPaletteToDiagram(editor, "HardLimit", 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, "HardLimit", 0, 0);
 		
 		// Find expected xml string for SigGen and HardLimit components
-		final String sigGenSad = EditorTestUtils.regexStringForSadComponent((ComponentShapeImpl) editor.getEditPart("SigGen").part().getModel());
-		final String hardLimitSad = EditorTestUtils.regexStringForSadComponent((ComponentShapeImpl) editor.getEditPart("HardLimit").part().getModel());
+		final String sigGenSad = DiagramTestUtils.regexStringForSadComponent((ComponentShapeImpl) editor.getEditPart("SigGen").part().getModel());
+		final String hardLimitSad = DiagramTestUtils.regexStringForSadComponent((ComponentShapeImpl) editor.getEditPart("HardLimit").part().getModel());
 
 		// Check to see if SigGen is included in the sad.xml
-		EditorTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		String editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The sad.xml should include SigGen's software assembly", editorText.matches(sigGenSad));
 		Assert.assertFalse("The sad.xml should not yet include HardLimit's software assembly", editorText.matches(hardLimitSad));
-		EditorTestUtils.openTabInEditor(editor, "Diagram");
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
 
 		// Save project and check to see if HardLimit is now in the sad.xml
 		gefBot.menu("File").menu("Save").click();
-		EditorTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The sad.xml should include SigGen's software assembly", editorText.matches(sigGenSad));
 		Assert.assertTrue("The sad.xml should include HardLimit's software assembly", editorText.matches(hardLimitSad));

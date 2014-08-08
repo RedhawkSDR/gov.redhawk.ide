@@ -11,7 +11,7 @@
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.swtbot.tests.utils.WaveformUtils;
-import gov.redhawk.ide.swtbot.tests.utils.EditorTestUtils;
+import gov.redhawk.ide.swtbot.tests.utils.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.tests.utils.FindByUtils;
 import gov.redhawk.ide.swtbot.tests.utils.MenuUtils;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
@@ -83,14 +83,14 @@ public class WaveformFindByTests {
 
 		for (String s : FINDBYS) {
 			// Add component to diagram from palette
-			EditorTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);
+			DiagramTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);
 			FindByUtils.completeFindByWizard(gefBot, s);
 		}
 
 		for (String s : FINDBYS) {
 			// Drill down to graphiti component shape
 			SWTBotGefEditPart gefEditPart = editor.getEditPart(FindByUtils.getFindByDefaultName(s));
-			EditorTestUtils.deleteFromDiagram(editor, gefEditPart);
+			DiagramTestUtils.deleteFromDiagram(editor, gefEditPart);
 			gefBot.button("Yes").click(); // are you sure you want to delete this element?
 			Assert.assertNull(editor.getEditPart(s));
 		}
