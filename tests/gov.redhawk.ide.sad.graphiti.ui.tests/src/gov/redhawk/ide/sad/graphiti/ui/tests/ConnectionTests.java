@@ -11,9 +11,9 @@
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.swtbot.tests.utils.DiagramTestUtils;
-import gov.redhawk.ide.swtbot.tests.utils.MenuUtils;
-import gov.redhawk.ide.swtbot.tests.utils.WaveformUtils;
+import gov.redhawk.ide.swt.diagram.DiagramTestUtils;
+import gov.redhawk.ide.swt.MenuUtils;
+import gov.redhawk.ide.swt.WaveformUtils;
 
 import java.util.List;
 

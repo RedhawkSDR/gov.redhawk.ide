@@ -12,7 +12,6 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.features.update;
 
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.HostCollocationPattern;
@@ -20,17 +19,14 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
-import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -39,7 +35,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.DefaultUpdateDiagramFeature;

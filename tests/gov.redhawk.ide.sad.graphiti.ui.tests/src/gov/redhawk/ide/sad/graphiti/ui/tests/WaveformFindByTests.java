@@ -10,10 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
-import gov.redhawk.ide.swtbot.tests.utils.WaveformUtils;
-import gov.redhawk.ide.swtbot.tests.utils.DiagramTestUtils;
-import gov.redhawk.ide.swtbot.tests.utils.FindByUtils;
-import gov.redhawk.ide.swtbot.tests.utils.MenuUtils;
+import gov.redhawk.ide.swt.WaveformUtils;
+import gov.redhawk.ide.swt.diagram.DiagramTestUtils;
+import gov.redhawk.ide.swt.diagram.FindByUtils;
+import gov.redhawk.ide.swt.MenuUtils;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;

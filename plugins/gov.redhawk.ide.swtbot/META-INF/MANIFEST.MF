@@ -6,8 +6,13 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: gov.redhawk.ide.swtbot.SwtBotActivator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
+ org.eclipse.gef,
  org.eclipse.swtbot.go;bundle-version="2.2.1",
- org.eclipse.swtbot.eclipse.gef.finder;bundle-version="2.2.1"
+ org.eclipse.swtbot.eclipse.gef.finder;bundle-version="2.2.1",
+ gov.redhawk.sca,
+ gov.redhawk.ide.sad.graphiti.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: REDHAWK
+Export-Package: gov.redhawk.ide.swt,
+ gov.redhawk.ide.swt.diagram
