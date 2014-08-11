@@ -47,7 +47,6 @@ public class WaveformUtils { // SUPPRESS CHECKSTYLE INLINE
 	 */
 	public static void createNewWaveformWithAssemblyController(SWTBot bot, String waveformName, String assemblyControllerType) {
 		// Open the new waveform project wizard
-		// Open the new waveform project wizard
 		SWTBotMenu fileMenu = bot.menu("File");
 		SWTBotMenu newMenu = fileMenu.menu("New");
 		SWTBotMenu otherMenu = newMenu.menu("Other...");
