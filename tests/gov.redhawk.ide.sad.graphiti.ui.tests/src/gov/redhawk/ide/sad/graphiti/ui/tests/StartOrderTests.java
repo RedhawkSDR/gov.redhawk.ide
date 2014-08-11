@@ -225,9 +225,9 @@ public class StartOrderTests {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add components to diagram
-		for (int i = 0; i < component.length; i++) {
-			DiagramTestUtils.dragFromPaletteToDiagram(editor, component[i], 0, 0);
-		}
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[0], 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[1], 250, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[2], 200, 200);
 
 		// Check initial assembly controller
 		MenuUtils.save(gefBot);
@@ -263,9 +263,9 @@ public class StartOrderTests {
 		final String[] component = { "DataConverter", "HardLimit", "SigGen" };
 
 		// Add components to diagram
-		for (int i = 0; i < component.length; i++) {
-			DiagramTestUtils.dragFromPaletteToDiagram(editor, component[i], 0, 0);
-		}
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[0], 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[1], 250, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[2], 200, 200);
 
 		// Check initial assembly controller
 		MenuUtils.save(gefBot);
@@ -305,9 +305,11 @@ public class StartOrderTests {
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
 		// Add and check start order
+		int xCoord = 0;
 		for (int i = 0; i < component.length; i++) {
-			DiagramTestUtils.dragFromPaletteToDiagram(editor, component[i], 0, 0);
+			DiagramTestUtils.dragFromPaletteToDiagram(editor, component[i], xCoord, 0);
 			Assert.assertEquals(i, ComponentUtils.getStartOrder(editor, component[i]));
+			xCoord += 250;
 		}
 		// Check first added is assembly controller
 		Assert.assertTrue(ComponentUtils.isAssemblyController(gefBot, editor, component[0]));
