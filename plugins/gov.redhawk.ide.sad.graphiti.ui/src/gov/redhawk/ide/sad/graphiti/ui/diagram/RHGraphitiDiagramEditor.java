@@ -74,7 +74,10 @@ public class RHGraphitiDiagramEditor extends DiagramEditor {
 				Display.getDefault().asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						doSave(monitor);
+						if (getDiagramBehavior().getEditingDomain() != null) {
+							doSave(monitor);
+						}
+						
 					}
 
 				});
