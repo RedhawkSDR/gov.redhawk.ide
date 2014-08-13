@@ -11,7 +11,9 @@
 package gov.redhawk.ide.internal.ui.perspective;
 
 import gov.redhawk.ide.internal.ui.event.EventView;
+import gov.redhawk.sca.ui.views.ScaExplorer;
 import gov.redhawk.ui.port.nxmplot.PlotActivator;
+import gov.redhawk.ui.views.namebrowser.view.NameBrowserView;
 
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
@@ -19,7 +21,6 @@ import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IPlaceholderFolderLayout;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
-// TODO: Auto-generated Javadoc
 /**
  * A factory for creating ScaPerspective objects.
  */
@@ -30,45 +31,45 @@ public class ScaPerspectiveFactory implements IPerspectiveFactory {
 
 	private static final String CONSOLE_VIEW_ID = "org.eclipse.ui.console.ConsoleView";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void createInitialLayout(final IPageLayout layout) {
 		final String editorArea = layout.getEditorArea();
 
 		// Add show view shortcuts
-		layout.addShowViewShortcut("gov.redhawk.ui.sca_explorer");
+		layout.addShowViewShortcut(ScaExplorer.VIEW_ID);
 		layout.addShowViewShortcut(ScaPerspectiveFactory.PDE_ERROR_LOG_VIEW_ID);
 		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 		layout.addShowViewShortcut(ScaPerspectiveFactory.CONSOLE_VIEW_ID);
 
 		// Place project explorer to left of editor area.
-		final IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, (float) 0.20, editorArea);
+		final IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, 0.20f, editorArea);
 		topLeft.addView(ProjectExplorer.VIEW_ID);
 
-		final IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT, (float) 0.7, editorArea);
-		right.addView("gov.redhawk.ui.sca_explorer");
-		right.addView("gov.redhawk.ui.views.namebrowserview");
+		// Place SCA Explorer and CORBA Name Browser to right of editor area
+		final IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT, 0.7f, editorArea);
+		right.addView(ScaExplorer.VIEW_ID);
+		right.addView(NameBrowserView.ID);
 
-		final IFolderLayout bottomLeft = layout.createFolder("bottomLeft", IPageLayout.BOTTOM, (float) 0.50, "topLeft");
+		final IFolderLayout bottomLeft = layout.createFolder("bottomLeft", IPageLayout.BOTTOM, 0.50f, "topLeft");
 		bottomLeft.addView(IPageLayout.ID_OUTLINE);
 
-		final IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, (float) 0.60, editorArea);
+		// Place following views to the bottom of the editor area
+		final IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.60f, editorArea);
 		bottom.addView(IPageLayout.ID_PROP_SHEET);
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 		bottom.addView(ScaPerspectiveFactory.CONSOLE_VIEW_ID);
 		bottom.addPlaceholder(EventView.ID);
 		bottom.addPlaceholder(EventView.ID + ":*");
+		bottom.addPlaceholder(IPageLayout.ID_PROGRESS_VIEW); // <-- workaround fix for Eclipse e4 BUG 441723
 		bottom.addPlaceholder("*");
 		bottom.addPlaceholder("*:*");
 
-		IPlaceholderFolderLayout plotFolder = layout.createPlaceholderFolder("plotFolder", IPageLayout.BOTTOM, (float) 0.25, editorArea);
+		IPlaceholderFolderLayout plotFolder = layout.createPlaceholderFolder("plotFolder", IPageLayout.BOTTOM, 0.25f, editorArea);
 		plotFolder.addPlaceholder(PlotActivator.VIEW_PLOT_2);
 		plotFolder.addPlaceholder(PlotActivator.VIEW_PLOT_2 + ":*");
 
-		layout.addPlaceholder("gov.redhawk.ui.port.playaudio.view", IPageLayout.BOTTOM, (float) 0.25, editorArea);
+		layout.addPlaceholder("gov.redhawk.ui.port.playaudio.view", IPageLayout.BOTTOM, 0.25f, editorArea);
 	}
 
 }
