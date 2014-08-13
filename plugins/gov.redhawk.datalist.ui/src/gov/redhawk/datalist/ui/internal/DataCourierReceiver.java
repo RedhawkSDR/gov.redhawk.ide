@@ -10,6 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.datalist.ui.internal;
 
+import gov.redhawk.bulkio.util.BulkIOType;
+import gov.redhawk.datalist.ui.DataListPlugin;
+import gov.redhawk.datalist.ui.Sample;
+import gov.redhawk.ide.snapshot.capture.IDataReceiver;
+import gov.redhawk.ide.snapshot.writer.IDataWriter;
+import gov.redhawk.ide.snapshot.writer.IDataWriterSettings;
+
 import java.io.IOException;
 import java.lang.reflect.Array;
 
@@ -18,23 +25,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import BULKIO.PrecisionUTCTime;
-import BULKIO.StreamSRI;
-import gov.redhawk.bulkio.util.BulkIOType;
-import gov.redhawk.datalist.ui.DataListPlugin;
-import gov.redhawk.datalist.ui.Sample;
-import gov.redhawk.datalist.ui.views.DataCourier;
-import gov.redhawk.ide.snapshot.capture.IDataReceiver;
-import gov.redhawk.ide.snapshot.writer.IDataWriter;
-import gov.redhawk.ide.snapshot.writer.IDataWriterSettings;
 
 public class DataCourierReceiver implements IDataReceiver {
 
 	private DataCourier courier;
-	private StreamSRI sri;
 
-	public DataCourierReceiver(DataCourier courier, StreamSRI sri) {
+	public DataCourierReceiver(DataCourier courier) {
 		this.courier = courier;
-		this.sri = sri;
 	}
 
 	private IDataWriter writer;
@@ -56,11 +53,12 @@ public class DataCourierReceiver implements IDataReceiver {
 		IDataWriterSettings settings = writer.getSettings();
 		settings.setType(type);
 		writer.setSettings(settings);
-		int length = dimensions * courier.getSize();
+		Sample[] buffer = courier.getBuffer();
+		int length = buffer.length;
 		Object data = Array.newInstance(type.getJavaType(), length);
-		PrecisionUTCTime time = courier.getList().get(0).getTime();
-		for (int i = 0; i < courier.getSize(); i++) {
-			Sample s = courier.getList().get(i);
+		PrecisionUTCTime time = buffer[0].getTime();
+		for (int i = 0; i < length; i++) {
+			Sample s = buffer[i];
 			if (dimensions == 1) {
 				Array.set(data, i, s.getData());
 			} else {
@@ -68,7 +66,7 @@ public class DataCourierReceiver implements IDataReceiver {
 			}
 		}
 		try {
-			writer.pushSRI(sri);
+			writer.pushSRI(this.courier.getStreamSRI());
 			writer.open();
 			try {
 				switch (type) {

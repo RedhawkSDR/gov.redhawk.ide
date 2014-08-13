@@ -61,7 +61,7 @@ public class StatisticsView extends ViewPart {
 
 	private Label[] labels = new Label[STAT_PROPS.length];
 
-	private List<Object> datalist;
+	private List<? extends Object> datalist;
 
 	private JFreeChart chart;
 
@@ -222,7 +222,7 @@ public class StatisticsView extends ViewPart {
 		}
 	}
 
-	private void createStatsArray(int dims, List<Object> list) {
+	private void createStatsArray(int dims, List<? extends Object> list) {
 		if (list != null) {
 			stats = new Stats[dims];
 			for (int i = 0; i < dims; i++) {
@@ -261,7 +261,7 @@ public class StatisticsView extends ViewPart {
 		section.setDescription(getCategoryName(dimensions, showIndex));
 	}
 
-	private void setAllCategories(int dims, List<Object> list) {
+	private void setAllCategories(int dims, List<? extends Object> list) {
 		if (list != null) {
 			dataSet.removeAllSeries();
 			if (curIndex >= 0) {
@@ -290,7 +290,7 @@ public class StatisticsView extends ViewPart {
 
 	}
 
-	public void setInput(List<Object> datalist, int dimensions, BulkIOType type) {
+	public void setInput(List<? extends Object> datalist, int dimensions, BulkIOType type) {
 		this.datalist = datalist;
 		this.dimensions = dimensions;
 		switch (type) {
@@ -303,7 +303,7 @@ public class StatisticsView extends ViewPart {
 		refreshJob.schedule();
 	}
 
-	public double[] doubleArray(int index, List<Object> list) {
+	public double[] doubleArray(int index, List<? extends Object> list) {
 		double[] array = new double[list.size()];
 		for (int i = 0; i < array.length; i++) {
 			array[i] = (Double) getSampleData(list.get(i), index);
@@ -311,7 +311,7 @@ public class StatisticsView extends ViewPart {
 		return array;
 	}
 
-	private double[] magArray(List<Object> list) {
+	private double[] magArray(List<? extends Object> list) {
 		double[] array = new double[list.size()];
 		for (int i = 0; i < list.size(); i++) {
 			double[] sample = new double[dimensions];

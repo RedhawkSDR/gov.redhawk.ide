@@ -23,13 +23,12 @@ import gov.redhawk.model.sca.ScaUsesPort;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.annotation.NonNull;
@@ -39,10 +38,10 @@ import BULKIO.StreamSRI;
 
 public class DataBuffer extends AbstractUberBulkIOPort {
 
-	private final List<Sample> dataBuffer = new CopyOnWriteArrayList<Sample>();
+	private final List<Sample> dataBuffer = Collections.synchronizedList(new ArrayList<Sample>());
 	private int dimension = 1;
 	private final ScaUsesPort port;
-	private final List<IDataBufferListener> listeners = Collections.synchronizedList(new LinkedList<IDataBufferListener>());
+	private final ListenerList listeners = new ListenerList();
 
 	private List<Object> cached;
 
@@ -89,6 +88,7 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 	private double totalTime;
 	private CaptureMethod captureMethod;
 	private DataCollectionSettings settings;
+	private boolean connected = false;
 
 	public DataBuffer(@NonNull ScaUsesPort port, @NonNull BulkIOType type) {
 		super(type);
@@ -104,8 +104,14 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 	}
 
 	protected void fireDataBufferChanged() {
-		for (final IDataBufferListener listener : this.listeners) {
-			listener.dataBufferChanged(this);
+		for (final Object listener : listeners.getListeners()) {
+			((IDataBufferListener) listener).dataBufferChanged(this);
+		}
+	}
+
+	protected void fireDataBufferComplete() {
+		for (final Object listener : listeners.getListeners()) {
+			((IDataBufferListener) listener).dataBufferComplete(this);
 		}
 	}
 
@@ -113,16 +119,14 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 		return this.port;
 	}
 
-	public void acquire(final int samples) {
-		clear();
-		this.samples = samples;
-		this.connectJob.schedule();
-	}
-
 	public void acquire(final DataCollectionSettings settings) {
+		if (connected) {
+			return;
+		}
+		connected = true;
 		clear();
 		this.setDimension(settings.getDimensions());
-		CaptureMethod method = CaptureMethod.stringToValue(settings.getProcessType());
+		CaptureMethod method = settings.getProcessType();
 		this.currentSampleDelta = 1;
 		switch (method) {
 		case NUMBER:
@@ -147,16 +151,11 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 		this.captureMethod = method;
 		this.settings = settings;
 		this.connectJob.schedule();
-
 	}
 
 	public void dispose() {
 		disconnect();
 		this.listeners.clear();
-	}
-
-	public List<Sample> getDataBuffer() {
-		return this.dataBuffer;
 	}
 
 	public void clear() {
@@ -174,7 +173,7 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 	public void setDimension(final int dimension) {
 		this.dimension = dimension;
 	}
-	
+
 	/*
 	 * @see gov.redhawk.bulkio.util.AbstractBulkIOPort#handleStreamSRIChanged(java.lang.String, BULKIO.StreamSRI, BULKIO.StreamSRI)
 	 */
@@ -190,17 +189,20 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 	}
 
 	public void pushPacket(final Object data, final PrecisionUTCTime time, final boolean eos, final String streamID) {
+		if (!connected) {
+			return;
+		}
 		final int length = Array.getLength(data);
-
 		super.pushPacket(length, time, eos, streamID);
 
 		// converting from milliseconds to seconds (double)
 		double t = ((double) System.currentTimeMillis()) / 1000;
-		if (reachedLimit(t) || eos) {
-			return;
-		}
 
 		for (int i = 0; i < length; i++) {
+			if (reachedLimit(t) || eos) {
+				disconnect();
+				break;
+			}
 			if (this.dimension == 1) {
 				this.dataBuffer.add(new Sample(time, this.index++, Array.get(data, i)));
 			} else {
@@ -226,11 +228,8 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 				}
 			}
 		}
-		fireDataBufferChanged();
 
-		if (reachedLimit(t)) {
-			disconnect();
-		}
+		fireDataBufferChanged();
 	}
 
 	private boolean reachedLimit(double currentTime) {
@@ -250,7 +249,7 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 
 	}
 
-	public DataCollectionSettings saveSettings() {
+	private DataCollectionSettings saveSettings() {
 		if (captureMethod != null) {
 			switch (captureMethod) {
 			case NUMBER:
@@ -263,30 +262,20 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 		return null;
 	}
 
-	public List<Object> listCopy() {
-		List<Object> s = new ArrayList<Object>();
-		for (Sample smpl : dataBuffer) {
-			s.add(smpl.getIndex(), smpl.getData());
-		}
-		return s;
-	}
-
-	public List<Sample> samplesCopy() {
-		List<Sample> s = new ArrayList<Sample>();
-		for (Sample smpl : dataBuffer) {
-			s.add(smpl.getIndex(), smpl);
-		}
-		return s;
-	}
-
 	public void disconnect() {
+		if (!connected) {
+			return;
+		}
+		connected = false;
 		saveSettings();
 		this.disconnectJob.schedule();
-
+		fireDataBufferComplete();
 	}
 
-	public List<Sample> getList() {
-		return dataBuffer;
+	public Sample[] getBuffer() {
+		synchronized (dataBuffer) {
+			return dataBuffer.toArray(new Sample[0]);
+		}
 	}
 
 	@Override
@@ -322,6 +311,14 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 	@Override
 	public void pushPacket(double[] data, PrecisionUTCTime time, boolean eos, String streamID) {
 		pushPacket((Object) data, time, eos, streamID);
+	}
+
+	public int getDimension() {
+		return dimension;
+	}
+
+	public int size() {
+		return dataBuffer.size();
 	}
 
 }

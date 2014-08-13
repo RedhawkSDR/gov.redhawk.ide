@@ -10,48 +10,72 @@
  *******************************************************************************/
 package gov.redhawk.datalist.ui;
 
+import gov.redhawk.datalist.ui.views.OptionsComposite.CaptureMethod;
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 /**
  * @since 1.1
  */
 public class DataCollectionSettings {
-	/** number of samples to take*/
-    private double samples = 1024;
-    /**How the samples are to be capture*/
-    private String captureType = "";
-    /**The options of how to capture samples*/
-    private String [] captureTypes;
-    private int dimensions = 1;
+	/** number of samples to take */
+	private double samples = 1024;
+	/** How the samples are to be capture */
+	private CaptureMethod captureType = CaptureMethod.NUMBER;
+	/** The options of how to capture samples */
+	private CaptureMethod[] captureTypes = CaptureMethod.values();
+	private int dimensions = 1;
 
-    public int getDimensions() {
-    	return dimensions;
-    }
-    
-    public void setDimensions(int dimensions) {
-    	this.dimensions = dimensions;
-    }
-    
-    public double getSamples() {
-        return samples;
-    }
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	
 
-    public void setSamples(double samples) {
-        this.samples = samples;
-    }
-    
-    public String getProcessType() {
-    	return this.captureType;
-    }
-    
-    public void setProcessType(String method) {
-    	this.captureType = method;
-    }
-    
-    public String [] getProcessingTypes() {
-    	return captureTypes;
-    }
-    public void setProcessingTypes(String [] processingTypes) {
-    	this.captureTypes = processingTypes;
-    	this.captureType = this.captureTypes[0];
-    }
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
+	}
+
+	public int getDimensions() {
+		return dimensions;
+	}
+
+	public void setDimensions(int dimensions) {
+		int oldValue = this.dimensions;
+		this.dimensions = dimensions;
+		pcs.firePropertyChange("dimensions", oldValue, dimensions);
+	}
+
+	public double getSamples() {
+		return samples;
+	}
+
+	public void setSamples(double samples) {
+		double oldValue = this.samples;
+		this.samples = samples;
+		pcs.firePropertyChange("samples", oldValue, samples);
+	}
+
+	public CaptureMethod getProcessType() {
+		return this.captureType;
+	}
+
+	public void setProcessType(CaptureMethod method) {
+		CaptureMethod oldValue = this.captureType;
+		this.captureType = method;
+		pcs.firePropertyChange("processType", oldValue, captureType);
+	}
+
+	public CaptureMethod[] getProcessingTypes() {
+		return captureTypes;
+	}
+
+	public void setProcessingTypes(CaptureMethod[] processingTypes) {
+		CaptureMethod[] oldValue = this.captureTypes;
+		this.captureTypes = processingTypes;
+		setProcessType(this.captureTypes[0]);
+		pcs.firePropertyChange("processingTypes", oldValue, processingTypes);
+	}
 }
