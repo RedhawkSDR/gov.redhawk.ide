@@ -16,7 +16,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 /**
- * @since 1.1
+ * @since 2.0
  */
 public class DataCollectionSettings {
 	/** number of samples to take */
