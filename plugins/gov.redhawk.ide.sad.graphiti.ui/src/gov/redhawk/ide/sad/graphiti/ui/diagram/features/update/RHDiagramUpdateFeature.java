@@ -77,37 +77,43 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			// TODO: ensure our SAD has an assembly controller
 			// set one if necessary, why bother the user?
 
+			Reason updateShapesReason;
+
 			// HostCollocation update shapes, remove old shapes, add new shapes
 			List<HostCollocation> hostCollocations = new ArrayList<HostCollocation>();
 			if (sad != null && sad.getPartitioning() != null && sad.getPartitioning().getHostCollocation() != null) {
 				// Elist -> List
 				Collections.addAll(hostCollocations, (HostCollocation[]) sad.getPartitioning().getHostCollocation().toArray(new HostCollocation[0]));
 			}
-			Reason updateShapesReason = DUtil.addRemoveUpdateShapes((List<Shape>) (List< ? >) HostCollocationPattern.getHostCollocationContainerShapes(d),
-				(List<EObject>) (List< ? >) hostCollocations, HostCollocation.class, "Host", getDiagram(), getFeatureProvider(), performUpdate);
-			if (!performUpdate && updateShapesReason.toBoolean()) {
-				return updateShapesReason;
-			} else if (updateShapesReason.toBoolean() == true) {
-				updateStatus = true;
+			
+			if (!hostCollocations.isEmpty()) {
+				updateShapesReason = DUtil.addRemoveUpdateShapes((List<Shape>) (List< ? >) HostCollocationPattern.getHostCollocationContainerShapes(d),
+					(List<EObject>) (List< ? >) hostCollocations, HostCollocation.class, "Host", getDiagram(), getFeatureProvider(), performUpdate);
+				if (!performUpdate && updateShapesReason.toBoolean()) {
+					return updateShapesReason;
+				} else if (updateShapesReason.toBoolean() == true) {
+					updateStatus = true;
+				}
 			}
 
 			// Component update shapes, remove old shapes, add new shapes
-			List<EObject> componentInstatiations = new ArrayList<EObject>();
+			List<EObject> componentInstantiations = new ArrayList<EObject>();
 			if (sad != null && sad.getPartitioning() != null && sad.getPartitioning().getComponentPlacement() != null) {
 				// Get list of componentInstantiations from model
 				for (SadComponentPlacement p : sad.getPartitioning().getComponentPlacement()) {
-					Collections.addAll(componentInstatiations, (EObject[]) p.getComponentInstantiation().toArray(new EObject[0]));
+					Collections.addAll(componentInstantiations, (EObject[]) p.getComponentInstantiation().toArray(new EObject[0]));
 				}
 			}
-			updateShapesReason = DUtil.addRemoveUpdateShapes((List<Shape>) (List< ? >) ComponentPattern.getAllComponentShapes(d), componentInstatiations,
+			updateShapesReason = DUtil.addRemoveUpdateShapes((List<Shape>) (List< ? >) ComponentPattern.getAllComponentShapes(d), componentInstantiations,
 				ComponentInstantiation.class, "Component", getDiagram(), getFeatureProvider(), performUpdate);
 			if (!performUpdate && updateShapesReason.toBoolean()) {
 				return updateShapesReason;
 			} else if (updateShapesReason.toBoolean() == true) {
 				updateStatus = true;
 			}
-			
-			//We decided not to remove component file instances at this time in case a user comments out a component and plans to later uncomment it.
+
+			// We decided not to remove component file instances at this time in case a user comments out a component
+			// and plans to later uncomment it.
 			// Remove Component File instance if there are no component instantiations of the same type
 //			if (sad.getComponentFiles() != null) {
 //				for (Iterator<ComponentFile> iter = sad.getComponentFiles().getComponentFile().iterator(); iter.hasNext();) {
@@ -125,8 +131,9 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 //					}
 //				}
 //			}
-			
-			//Ensure assembly controller is set.  It's possible a component was deleted that used to be the assembly controller
+
+			// Ensure assembly controller is set. It's possible a component was deleted that used to be the assembly
+			// controller
 			ComponentPattern.organizeStartOrder(sad, getDiagram(), getFeatureProvider());
 
 			// Update connections, remove old connections, add new connections
@@ -138,8 +145,10 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			// diagram connections EList->List
 			List<Connection> connections = new ArrayList<Connection>();
 			Collections.addAll(connections, (Connection[]) d.getConnections().toArray(new Connection[0]));
-			updateShapesReason = addRemoveUpdateConnections(connections, sadConnectInterfaces, SadConnectInterface.class, "Connection", getDiagram(),
-				getFeatureProvider(), performUpdate);
+			if (connections != null && connections.size() > 0) {
+				updateShapesReason = addRemoveUpdateConnections(connections, sadConnectInterfaces, SadConnectInterface.class, "Connection", getDiagram(),
+					getFeatureProvider(), performUpdate);
+			}
 			if (!performUpdate) {
 				return updateShapesReason;
 			} else if (updateShapesReason.toBoolean() == true) {
@@ -183,6 +192,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		} catch (CoreException e) {
 			// PASS
 			// TODO: catch exception
+			e.printStackTrace(); // SUPPRESS CHECKSTYLE INLINE
 		}
 
 		return false;
@@ -359,7 +369,6 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Reason addRemoveUpdateConnections(List<Connection> connections, List<SadConnectInterface> sadConnectInterfaces, Class objectClass,
 		String pictogramLabel, Diagram diagram, IFeatureProvider featureProvider, boolean performUpdate) throws CoreException {
-
 		boolean updateStatus = false;
 
 		// remove connections missing start or end point. (component/findby deletion)
@@ -369,7 +378,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		} else if (updateConnectionsReason.toBoolean() == true) {
 			updateStatus = true;
 		}
-				
+
 		// remove Connections on diagram if no longer in model, update all other Connections if necessary
 		updateConnectionsReason = DUtil.removeUpdatePictogramElement((List<PictogramElement>) (List< ? >) connections,
 			(List<EObject>) (List< ? >) sadConnectInterfaces, objectClass, pictogramLabel, featureProvider, performUpdate);
@@ -378,8 +387,6 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		} else if (updateConnectionsReason.toBoolean() == true) {
 			updateStatus = true;
 		}
-		
-		
 
 		// correct unfriendly findByConnections
 		updateConnectionsReason = DUtil.replaceDirectFindByConnection(sadConnectInterfaces, objectClass, pictogramLabel, diagram, featureProvider,
