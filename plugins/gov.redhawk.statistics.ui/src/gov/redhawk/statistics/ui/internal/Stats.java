@@ -25,9 +25,9 @@ public class Stats extends DescriptiveStatistics {
 
 	private final int length;
 
-	public Stats(double[] initialDoubleArray) {
-		for (double d : initialDoubleArray) {
-			addValue(d);
+	public Stats(Number [] initialDoubleArray) {
+		for (Number d : initialDoubleArray) {
+			addValue(d.doubleValue());
 		}
 		length = initialDoubleArray.length;
 	}

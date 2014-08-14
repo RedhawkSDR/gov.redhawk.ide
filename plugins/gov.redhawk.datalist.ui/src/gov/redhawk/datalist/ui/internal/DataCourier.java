@@ -17,8 +17,7 @@ import gov.redhawk.datalist.ui.Sample;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.statistics.ui.views.StatisticsView;
 
-import java.util.Arrays;
-
+import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.events.DisposeEvent;
@@ -77,8 +76,51 @@ public class DataCourier {
 
 	private void updateStatisticsView() {
 		if (sView != null) {
-			sView.setInput(Arrays.asList(dataBuffer.getBuffer()), dataBuffer.getDimension(), type);
+			sView.setInput(convertToDataSet(dataBuffer.getBuffer()));
 		}
+	}
+
+	private Number[][] convertToDataSet(Sample[] buffer) {
+		Number[][] dataSet = new Number[buffer.length][];
+		for (int i = 0; i < dataSet.length; i++) {
+			Object data = buffer[i].getData();
+			if (data instanceof Number[]) {
+				dataSet[i] = (Number[]) buffer[i].getData();
+			} else if (data instanceof Number) {
+				dataSet[i] = new Number[] { (Number) buffer[i].getData() };
+			} else if (data instanceof double[]) {
+				dataSet[i] = ArrayUtils.toObject((double[]) data);
+			} else if (data instanceof float[]) {
+				dataSet[i] = ArrayUtils.toObject((float[]) data);
+			} else if (data instanceof long[]) {
+				dataSet[i] = ArrayUtils.toObject((long[]) data);
+			} else if (data instanceof int[]) {
+				dataSet[i] = ArrayUtils.toObject((int[]) data);
+			} else if (data instanceof short[]) {
+				dataSet[i] = ArrayUtils.toObject((short[]) data);
+			} else if (data instanceof byte[]) {
+				dataSet[i] = ArrayUtils.toObject((byte[]) data);
+			} else if (data instanceof Object[]) {
+				Object[] objArray = (Object[]) data;
+				dataSet[i] = new Number[objArray.length];
+				for (int j = 0; j < objArray.length; j++) {
+					dataSet[i][j] = (Number) objArray[j];
+				}
+			} else {
+				throw new IllegalStateException("Unsupported type: " + data.getClass());
+			}
+
+		}
+
+		// Transpose the result
+		Number[][] retVal = new Number[dataSet[0].length][dataSet.length];
+		for (int i = 0; i < retVal.length; i++) {
+			for (int j = 0; j < retVal[i].length; j++) {
+				retVal[i][j] = dataSet[j][i];
+			}
+		}
+
+		return retVal;
 	}
 
 	public void clear() {
