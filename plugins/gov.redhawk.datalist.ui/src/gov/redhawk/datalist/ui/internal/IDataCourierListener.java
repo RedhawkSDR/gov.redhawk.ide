@@ -1,4 +1,4 @@
-/*******************************************************************************
+/******************************************************************************
  * This file is protected by Copyright. 
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
@@ -8,15 +8,9 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.datalist.ui.views;
+package gov.redhawk.datalist.ui.internal;
 
-
-/**
- * @since 1.1
- */
-public interface IFullListener {
-
-	public void fireIsFull(DataCourier courier);
-	
-
+public interface IDataCourierListener  {
+	void dataChanged();
+	void complete();
 }

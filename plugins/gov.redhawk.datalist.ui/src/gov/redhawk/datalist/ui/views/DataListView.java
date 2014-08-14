@@ -11,13 +11,12 @@
 
 package gov.redhawk.datalist.ui.views;
 
-import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.datalist.ui.DataCollectionSettings;
 import gov.redhawk.datalist.ui.DataListPlugin;
 import gov.redhawk.datalist.ui.Sample;
-import gov.redhawk.datalist.ui.internal.DataBuffer;
+import gov.redhawk.datalist.ui.internal.DataCourier;
 import gov.redhawk.datalist.ui.internal.DataCourierReceiver;
-import gov.redhawk.datalist.ui.internal.IDataBufferListener;
+import gov.redhawk.datalist.ui.internal.IDataCourierListener;
 import gov.redhawk.ide.snapshot.ui.SnapshotJob;
 import gov.redhawk.ide.snapshot.ui.SnapshotWizard;
 import gov.redhawk.model.sca.ScaUsesPort;
@@ -35,7 +34,7 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -44,17 +43,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import BULKIO.PrecisionUTCTime;
 
 /**
- * @since 1.1
+ * @since 2.0
  */
 public class DataListView extends ViewPart {
 	/**
@@ -70,10 +69,6 @@ public class DataListView extends ViewPart {
 
 	private TableViewer viewer;
 
-	private BulkIOType type;
-
-	private DataBuffer buffer;
-
 	private Button chartButton, snapshotButton;
 
 	private ProgressBar loading;
@@ -81,36 +76,76 @@ public class DataListView extends ViewPart {
 	private Composite tableComposite;
 
 	private int prevCols;
+	private int selectedIndex;
 
-	private final WorkbenchJob refreshJob = new WorkbenchJob("Refreshing View") {
-		{
-			setSystem(true);
-			setUser(false);
-		}
+	private class ViewContentProvider implements ILazyContentProvider {
+		private TableViewer viewer;
+		private DataCourier data;
+		private Sample[] buffer;
 
-		@Override
-		public IStatus runInUIThread(final IProgressMonitor monitor) {
-			if (DataListView.this.viewer != null && !DataListView.this.viewer.getControl().isDisposed()) {
-				DataListView.this.viewer.refresh();
-				for (Sample s : buffer.getList()) {
-					dataCourier.addToList(s);
+		private IDataCourierListener listener = new IDataCourierListener() {
+			
+			private WorkbenchJob refreshJob = new WorkbenchJob("Refresh...") {
+				{
+					setSystem(true);
+					setUser(false);
 				}
+				
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					updateViewer();
+					viewer.refresh();
+					return Status.OK_STATUS;
+				}
+			};
+
+			@Override
+			public void dataChanged() {
+				refreshJob.schedule(1000);
 			}
-			return Status.OK_STATUS;
+
+			@Override
+			public void complete() {
+				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+					@Override
+					public void run() {
+						if (DataListView.this.viewer != null && !DataListView.this.viewer.getControl().isDisposed()) {
+							stopAcquire();
+							updateViewer();
+						}
+					}
+
+				});
+			}
+		};
+		
+		private void updateViewer() {
+			if (data != null) {
+				buffer = data.getBuffer();
+			} else {
+				buffer = null;
+			}
+			if (buffer != null) {
+				viewer.setItemCount(buffer.length);
+			} else {
+				viewer.setItemCount(0);
+			}
 		}
-	};
 
-	private final IDataBufferListener listener = new IDataBufferListener() {
-		@Override
-		public void dataBufferChanged(final DataBuffer d) {
-			DataListView.this.refreshJob.schedule();
-
-		}
-	};
-
-	static class ViewContentProvider implements IStructuredContentProvider {
 		@Override
 		public void inputChanged(final Viewer v, final Object oldInput, final Object newInput) {
+			viewer = (TableViewer) v;
+
+			if (newInput instanceof DataCourier) {
+				data = (DataCourier) newInput;
+				data.addListener(listener);
+			}
+			if (oldInput instanceof DataCourier) {
+				((DataCourier) oldInput).removeListener(listener);
+			}
+			
+			updateViewer();
 		}
 
 		@Override
@@ -118,16 +153,13 @@ public class DataListView extends ViewPart {
 		}
 
 		@Override
-		public Object[] getElements(final Object parent) {
-			if (parent instanceof DataCourier) {
-				return ((DataCourier) parent).getList().toArray();
-			}
-			return ((DataBuffer) parent).getDataBuffer().toArray();
+		public void updateElement(int index) {
+			viewer.replace(buffer[index], index);
 		}
 
 	}
 
-	abstract static class PrecisionTimeTooltipProvider extends ColumnLabelProvider {
+	private abstract static class PrecisionTimeTooltipProvider extends ColumnLabelProvider {
 		@Override
 		public int getToolTipDisplayDelayTime(final Object object) {
 			return 50;
@@ -150,7 +182,7 @@ public class DataListView extends ViewPart {
 		}
 	}
 
-	static class IndexColumnLabelProvider extends PrecisionTimeTooltipProvider {
+	private static class IndexColumnLabelProvider extends PrecisionTimeTooltipProvider {
 
 		@Override
 		public String getText(final Object element) {
@@ -210,14 +242,6 @@ public class DataListView extends ViewPart {
 	 */
 	public DataListView() {
 		dataCourier = new DataCourier();
-		dataCourier.addFullListener(new IFullListener() {
-
-			@Override
-			public void fireIsFull(DataCourier courier) {
-				setButtons(false); // is not collecting
-				viewer.setItemCount(courier.getSize());
-			}
-		});
 	}
 
 	/**
@@ -237,7 +261,6 @@ public class DataListView extends ViewPart {
 			@Override
 			public void stopAcquire() {
 				DataListView.this.stopAcquire();
-
 			}
 		};
 
@@ -265,7 +288,7 @@ public class DataListView extends ViewPart {
 
 				WizardDialog dialog = new WizardDialog(parent.getShell(), wizard);
 				dialog.open();
-				DataCourierReceiver receiver = new DataCourierReceiver(dataCourier, buffer.getStreamSRI());
+				DataCourierReceiver receiver = new DataCourierReceiver(dataCourier);
 				receiver.setDataWriter(wizard.getDataWriter());
 				SnapshotJob job = new SnapshotJob("Data list snapshot", receiver);
 				job.schedule();
@@ -296,10 +319,11 @@ public class DataListView extends ViewPart {
 
 		final TableColumnLayout layout = new TableColumnLayout();
 		this.tableComposite.setLayout(layout);
-		this.viewer = new TableViewer(this.tableComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL | SWT.FULL_SELECTION);
+		this.viewer = new TableViewer(this.tableComposite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL | SWT.FULL_SELECTION);
 		this.viewer.setContentProvider(new ViewContentProvider());
 		this.viewer.getTable().setHeaderVisible(true);
 		this.viewer.getTable().setLinesVisible(true);
+		this.viewer.setUseHashlookup(true);
 		ColumnViewerToolTipSupport.enableFor(this.viewer);
 
 		final TableViewerColumn indexColumn = new TableViewerColumn(this.viewer, SWT.CENTER);
@@ -315,7 +339,7 @@ public class DataListView extends ViewPart {
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				dataCourier.setSelectedIndex(DataCourier.ALL);
+				selectedIndex = DataCourier.ALL;
 			}
 
 			@Override
@@ -328,7 +352,7 @@ public class DataListView extends ViewPart {
 
 		for (int i = 0; i < numColumns; i++) {
 			final TableViewerColumn dataColumn = new TableViewerColumn(this.viewer, SWT.CENTER);
-			dataColumn.getColumn().setText("Value");
+			dataColumn.getColumn().setText("Value [" + i + "]");
 			dataColumn.getColumn().setResizable(true);
 			dataColumn.getColumn().setMoveable(false);
 			dataColumn.getColumn().setWidth(75);
@@ -343,12 +367,13 @@ public class DataListView extends ViewPart {
 			}
 
 			dataColumn.getColumn().addSelectionListener(new SelectionListener() {
+
 				/**
 				 * Called when the column header is selected.
 				 */
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					dataCourier.setSelectedIndex((Integer) dataColumn.getColumn().getData());
+					selectedIndex = (Integer) dataColumn.getColumn().getData();
 				}
 
 				@Override
@@ -361,66 +386,27 @@ public class DataListView extends ViewPart {
 		}
 
 		this.viewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(6, 1).create());
-		if (this.buffer != null) {
-			this.viewer.setInput(this.buffer);
-		}
-
+		this.viewer.setInput(dataCourier);
+		tableComposite.layout(true);
 	}
 
 	protected void startAcquire(DataCollectionSettings settings) {
 		int columns = settings.getDimensions();
-		double samples = settings.getSamples();
 
-		if (dataCourier != null) {
-			dataCourier.clear();
-		}
-		if (this.buffer != null) {
-			this.viewer.setInput(this.buffer);
-		}
-
-		this.viewer.getTable().clearAll();
 		if (prevCols != columns) {
 			createTable(columns);
 			prevCols = columns;
 		}
-		switch (OptionsComposite.CaptureMethod.stringToValue(settings.getProcessType())) {
-		case NUMBER:
-			dataCourier.setProperties(columns, (int) samples);
-			this.viewer.getTable().setItemCount((int) samples);
-			this.viewer.getTable().setData(false); // sample-number dependent
-			break;
-		default:
-			dataCourier.setProperties(columns, 0);
-			this.viewer.getTable().setItemCount(1);
-			this.viewer.getTable().setData(true); // not sample-number dependent; increment when adding
-			break;
-		}
 
-		this.viewer.refresh();
-
-		this.buffer.clear();
-		this.buffer.setDimension(columns);
-		this.buffer.acquire(settings);
-
-		final Point size = this.tableComposite.getSize();
-		this.tableComposite.setSize(size.x + 1, size.y + 1);
-		this.tableComposite.setSize(size);
+		dataCourier.acquire(settings);
+		viewer.refresh();
 
 		setButtons(true); // is running
-		refreshJob.schedule();
 	}
 
 	private void stopAcquire() {
-		this.buffer.disconnect();
-		Sample[] elements = dataCourier.getList().toArray(new Sample[0]);
-		dataCourier.setSize(elements.length);
-		dataCourier.fireListIsFull();
+		dataCourier.stop();
 
-		input.showSamples(elements.length);
-		input.getSettings().setSamples(elements.length);
-		viewer.getTable().removeAll();
-		viewer.setInput(dataCourier);
-		viewer.refresh();
 		setButtons(false); // is no longer running
 	}
 
@@ -437,27 +423,14 @@ public class DataListView extends ViewPart {
 	@Override
 	public void dispose() {
 		super.dispose();
-		if (this.buffer != null) {
-			this.buffer.dispose();
+		if (this.dataCourier != null) {
+			this.dataCourier.dispose();
 		}
 	}
 
 	public void setInput(final ScaUsesPort port) {
-		if (this.buffer != null) {
-			this.buffer.dispose();
-			this.buffer = null;
-		}
 		try {
-			BulkIOType newType = BulkIOType.getType(port.getRepid());
-
-			this.buffer = new DataBuffer(port, newType);
-			this.buffer.addDataBufferListener(this.listener);
-
-			this.type = newType;
-			this.dataCourier.setType(newType);
-			if (this.viewer != null) {
-				this.viewer.setInput(this.buffer);
-			}
+			dataCourier.setSource(port);
 		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			setContentDescription(e.getMessage());
 			if (this.viewer != null) {

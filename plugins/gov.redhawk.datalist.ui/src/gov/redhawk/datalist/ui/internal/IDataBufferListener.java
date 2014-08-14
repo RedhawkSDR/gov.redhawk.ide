@@ -12,5 +12,7 @@ package gov.redhawk.datalist.ui.internal;
 
 public interface IDataBufferListener {
 	public void dataBufferChanged(DataBuffer d);
+	
+	public void dataBufferComplete(DataBuffer d);
 
 }

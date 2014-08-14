@@ -13,7 +13,7 @@ package gov.redhawk.datalist.ui;
 import BULKIO.PrecisionUTCTime;
 
 /**
- * @since 1.1
+ * @since 2.0
  */
 public class Sample {
 	private final PrecisionUTCTime time;
