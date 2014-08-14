@@ -28,7 +28,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * @since 1.1
+ * @since 2.0
  */
 public class DataListHandler extends AbstractHandler {
 	/**
