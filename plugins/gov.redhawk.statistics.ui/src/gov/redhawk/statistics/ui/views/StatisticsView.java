@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.statistics.ui.views;
 
-import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.statistics.ui.internal.CustomAction;
 import gov.redhawk.statistics.ui.internal.DatalistDataset;
 import gov.redhawk.statistics.ui.internal.SettingsDialog;
@@ -27,6 +26,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.window.Window;
@@ -34,8 +34,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.ViewPart;
@@ -61,11 +61,9 @@ public class StatisticsView extends ViewPart {
 
 	private Label[] labels = new Label[STAT_PROPS.length];
 
-	private List<? extends Object> datalist;
+	private Number[][] datalist;
 
 	private JFreeChart chart;
-
-	private int dimensions;
 
 	private Stats[] stats;
 
@@ -111,12 +109,12 @@ public class StatisticsView extends ViewPart {
 		parent = comp;
 		parent.setLayout(GridLayoutFactory.fillDefaults().margins(10, 10).numColumns(1).create());
 
-		// Custom Action for the View's Menu  
+		// Custom Action for the View's Menu
 		CustomAction customAction = new CustomAction() {
 
 			@Override
 			public void run() {
-				SettingsDialog dialog = new SettingsDialog(parent.getShell(), dimensions, curIndex, numBars);
+				SettingsDialog dialog = new SettingsDialog(parent.getShell(), datalist.length, curIndex, numBars);
 				dialog.create();
 				if (dialog.open() == Window.OK) {
 					numBars = dialog.getNumBars();
@@ -212,29 +210,40 @@ public class StatisticsView extends ViewPart {
 	}
 
 	private void refresh() {
-		if (datalist != null) {
-			createStatsArray(dimensions, datalist);
-			setAllCategories(dimensions, datalist);
-			updateStatsLabels(curIndex);
-			parent.redraw();
-			Display.getCurrent().update();
+			Job job = new Job("Update Chart..") {
 
-		}
-	}
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					createStatsArray();
+					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
-	private void createStatsArray(int dims, List<? extends Object> list) {
-		if (list != null) {
-			stats = new Stats[dims];
-			for (int i = 0; i < dims; i++) {
-				stats[i] = new Stats(doubleArray(i, list));
-			}
-			magnitudeStats = new Stats(magArray(list));
+						@Override
+						public void run() {
+							updateStatsLabels(curIndex);
+						}
+						
+					});
+					
+					setAllCategories();
+					
+					return Status.OK_STATUS;
+				}
+				
+			};
+			job.schedule();
 		}
+
+	private void createStatsArray() {
+		stats = new Stats[datalist.length];
+		for (int i = 0; i < stats.length; i++) {
+			stats[i] = new Stats(datalist[i]);
+		}
+		magnitudeStats = new Stats(magArray());
 	}
 
 	private void updateStatsLabels(int i) {
 		int showIndex = i;
-		if (dimensions == 1) {
+		if (datalist.length == 1) {
 			showIndex = 0;
 		}
 		Stats s;
@@ -258,75 +267,66 @@ public class StatisticsView extends ViewPart {
 			}
 			labels[j].setText(form.format(value));
 		}
-		section.setDescription(getCategoryName(dimensions, showIndex));
+		section.setDescription(getCategoryName(showIndex));
 	}
 
-	private void setAllCategories(int dims, List<? extends Object> list) {
-		if (list != null) {
-			dataSet.removeAllSeries();
-			if (curIndex >= 0) {
-				dataSet.addSeries(getCategoryName(dims, curIndex), doubleArray(curIndex, list), numBars);
-			} else {
-				for (int i = 0; i < dims; i++) {
-					dataSet.addSeries(getCategoryName(dims, i), doubleArray(i, list), numBars);
-				}
+	private void setAllCategories() {
+		dataSet.removeAllSeries();
+		if (curIndex >= 0) {
+			dataSet.addSeries(getCategoryName(curIndex), doubleArray(curIndex), numBars);
+		} else {
+			for (int i = 0; i < datalist.length; i++) {
+				dataSet.addSeries(getCategoryName(i), doubleArray(i), numBars);
 			}
 		}
 	}
 
-	private String getCategoryName(int dims, int i) {
+	private String getCategoryName(int i) {
 		if (i < 0) {
 			return "Complex (statistics calculated using magnitude)";
-		} else if (dims == 2) {
+		} else if (datalist.length == 2) {
 			if (i == 0) {
 				return "Real";
 			} else {
 				return "Imaginary";
 			}
-		} else if (dims == 1) {
+		} else if (datalist.length == 1) {
 			return "";
 		}
 		return "Dimension " + i;
 
 	}
 
-	public void setInput(List<? extends Object> datalist, int dimensions, BulkIOType type) {
+	/**
+	 * @since 2.0
+	 */
+	public void setInput(Number[][] datalist) {
 		this.datalist = datalist;
-		this.dimensions = dimensions;
-		switch (type) {
-		case DOUBLE:
-			break;
-		default:
-			throw new IllegalArgumentException("This data type is not currently supported in the statistics chart feature.");
-		}
-
 		refreshJob.schedule();
 	}
 
-	public double[] doubleArray(int index, List<? extends Object> list) {
-		double[] array = new double[list.size()];
+	private double[] doubleArray(int index) {
+		Number[] series = datalist[index];
+
+		double[] array = new double[series.length];
 		for (int i = 0; i < array.length; i++) {
-			array[i] = (Double) getSampleData(list.get(i), index);
+			array[i] = series[i].doubleValue();
 		}
 		return array;
 	}
 
-	private double[] magArray(List<? extends Object> list) {
-		double[] array = new double[list.size()];
-		for (int i = 0; i < list.size(); i++) {
-			double[] sample = new double[dimensions];
-			for (int j = 0; j < dimensions; j++) {
-				sample[j] = (Double) getSampleData(list.get(i), j);
-			}
-			array[i] = findMagnitude(sample);
+	private Number[] magArray() {
+		Number[] array = new Number[datalist.length];
+		for (int i = 0; i < datalist.length; i++) {
+			array[i] = findMagnitude(datalist[i]);
 		}
 		return array;
 	}
 
-	public double findMagnitude(double[] nums) {
+	private Number findMagnitude(Number[] nums) {
 		double n = 0;
 		for (int i = 0; i < nums.length; i++) {
-			n += Math.pow(nums[i], 2);
+			n += Math.pow(nums[i].doubleValue(), 2);
 		}
 		return Math.sqrt(n);
 	}
@@ -338,21 +338,6 @@ public class StatisticsView extends ViewPart {
 
 	public void setNumBars(int i) {
 		this.numBars = i;
-	}
-
-	public void setDimensions(int i) {
-		dimensions = i;
-	}
-
-	public int getDimensions() {
-		return dimensions;
-	}
-
-	private static Object getSampleData(Object sample, int i) {
-		if (sample.getClass().isArray()) {
-			return ((Object[]) sample)[i];
-		}
-		return sample;
 	}
 
 	/**
