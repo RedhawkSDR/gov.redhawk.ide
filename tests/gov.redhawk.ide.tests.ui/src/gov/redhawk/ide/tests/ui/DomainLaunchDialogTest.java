@@ -25,6 +25,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -60,6 +61,15 @@ public class DomainLaunchDialogTest {
 	public void beforeTest() {
 		gefBot = new SWTGefBot();
 	}
+	
+	@After
+	public void cleanup() {
+		try {
+			gefBot.shell("Launch Domain Manager").close();
+		} catch (Exception e) {
+			// PASS
+		}
+	}
 
 	/**
 	 * User should be able to open the domain launching dialog immediately after starting the IDE
@@ -76,6 +86,6 @@ public class DomainLaunchDialogTest {
 		new SWTBotMenu(ContextMenuHelper.contextMenu(scaTree, "Launch...")).click();
 		
 		// Will timeout if error causes launch window not to display
-		gefBot.waitUntil(Conditions.shellIsActive("Launch Domain Manager"));
+		gefBot.waitUntil(Conditions.shellIsActive("Launch Domain Manager"), 30000);
 	}
 }
