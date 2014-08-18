@@ -1,12 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Swt
-Bundle-SymbolicName: gov.redhawk.ide.swt
+Bundle-Name: SWT Bot Library
+Bundle-SymbolicName: gov.redhawk.ide.swtbot
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: gov.redhawk.ide.swt.Activator
+Bundle-Activator: gov.redhawk.ide.swtbot.SwtBotActivator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.swtbot.go;bundle-version="2.2.1",
  org.eclipse.swtbot.eclipse.gef.finder;bundle-version="2.2.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
+Bundle-Vendor: REDHAWK
