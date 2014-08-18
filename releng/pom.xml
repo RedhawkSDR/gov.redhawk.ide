@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    This file is protected by Copyright.
-    Please refer to the COPYRIGHT file distributed with this source distribution.
-
-    This file is part of REDHAWK IDE.
-
-    All rights reserved.  This program and the accompanying materials are made available under
-    the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
-    http://www.eclipse.org/legal/epl-v10.html.
--->
+<!-- This file is protected by Copyright. Please refer to the COPYRIGHT file 
+  distributed with this source distribution. This file is part of REDHAWK IDE. 
+  All rights reserved. This program and the accompanying materials are made 
+  available under the terms of the Eclipse Public License v1.0 which accompanies 
+  this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html. -->
 <project
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -25,6 +20,7 @@
   </parent>
 
   <properties>
+    <tycho-version>0.20.0</tycho-version>
     <tycho.scmUrl>scm:git:https://github.com/RedhawkSDR/eclipse-gov.redhawk.ide</tycho.scmUrl>
     <eclipse>http://download.eclipse.org/releases/juno</eclipse>
     <orbit>http://download.eclipse.org/tools/orbit/downloads/drops/R20130118183705/repository</orbit>
@@ -35,6 +31,7 @@
     <mil.jpeojtrs.sca>http://download.redhawksdr.org/mil.jpeojtrs.sca/releases/1.11</mil.jpeojtrs.sca>
     <gov.redhawk.core>http://download.redhawksdr.org/gov.redhawk.core/releases/1.11</gov.redhawk.core>
     <gov.redhawk.core.rcp>http://download.redhawksdr.org/gov.redhawk.core/rcp/releases/1.11</gov.redhawk.core.rcp>
+    <swt-bot>http://download.eclipse.org/technology/swtbot/releases/latest/</swt-bot>
   </properties>
 
   <repositories>
@@ -91,6 +88,12 @@
       <layout>p2</layout>
       <url>${nebula}</url>
     </repository>
+
+    <repository>
+      <id>swt-bot</id>
+      <layout>p2</layout>
+      <url>${swt-bot}</url>
+    </repository>
   </repositories>
 
   <build>
@@ -145,6 +148,7 @@
     <module>../features/gov.redhawk.ide.sdk</module>
     <module>../features/gov.redhawk.ide.ui.feature</module>
     <module>../features/gov.redhawk.ide.tools</module>
+    <module>../features/gov.redhawk.ide.swtbot.feature</module>
     <module>../features/gov.redhawk.ide.ui.sdk</module>
     <module>../plugins/gov.redhawk.codegen.validation</module>
     <module>../plugins/gov.redhawk.eclipsecorba.library.ui</module>
@@ -177,6 +181,7 @@
     <module>../plugins/gov.redhawk.datalist.ui</module>
     <module>../plugins/gov.redhawk.statistics.ui</module>
     <module>../plugins/gov.redhawk.mfile.parser</module>
+    <module>../plugins/gov.redhawk.ide.swtbot</module>
     <module>../tests/gov.redhawk.codegen.validation.tests</module>
     <module>../tests/gov.redhawk.ide.dcd.tests</module>
     <module>../tests/gov.redhawk.ide.debug.tests</module>
@@ -187,27 +192,8 @@
     <module>../tests/gov.redhawk.ide.spd.ui.tests</module>
     <module>../tests/gov.redhawk.spd.validation.tests</module>
     <module>../tests/gov.redhawk.mfile.parser.tests</module>
+    <module>../tests/gov.redhawk.ide.tests.ui</module>
     <module>p2</module>
   </modules>
 
-  <profiles>
-    <profile>
-      <id>ui-tests</id>
-      <modules>
-        <module>../plugins/gov.redhawk.ide.swtbot</module>
-        <module>../tests/gov.redhawk.ide.tests.ui</module>
-      </modules>
-      <properties>
-        <tycho-version>0.20.0</tycho-version>
-        <swt-bot>http://download.eclipse.org/technology/swtbot/releases/latest/</swt-bot>
-      </properties>
-      <repositories>
-        <repository>
-          <id>swt-bot</id>
-          <layout>p2</layout>
-          <url>${swt-bot}</url>
-        </repository>
-      </repositories>
-    </profile>
-  </profiles>
 </project>

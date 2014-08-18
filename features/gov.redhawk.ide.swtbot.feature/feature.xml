@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="gov.redhawk.ide.swtbot"
+      label="%featureName"
+      version="1.11.0.qualifier"
+      provider-name="%providerName"
+      plugin="gov.redhawk.ide.ui">
+
+   <description url="http://redhawksdr.org">
+      %description
+   </description>
+
+   <copyright url="http://redhawksdr.org">
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <plugin
+         id="gov.redhawk.ide.swtbot"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
