@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.swt.diagram;
+package gov.redhawk.ide.swtbot.diagram;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;

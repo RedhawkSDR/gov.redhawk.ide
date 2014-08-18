@@ -13,5 +13,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.swtbot.eclipse.gef.finder;bundle-version="2.2.1",
  gov.redhawk.sca;bundle-version="7.0.0",
  gov.redhawk.ide.sad.graphiti.ui,
- gov.redhawk.ide.swt
+ gov.redhawk.ide.swtbot;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

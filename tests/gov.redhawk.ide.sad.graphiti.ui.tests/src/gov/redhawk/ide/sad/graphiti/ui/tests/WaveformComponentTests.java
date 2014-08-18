@@ -12,10 +12,10 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.swt.diagram.ComponentUtils;
-import gov.redhawk.ide.swt.diagram.DiagramTestUtils;
-import gov.redhawk.ide.swt.MenuUtils;
-import gov.redhawk.ide.swt.WaveformUtils;
+import gov.redhawk.ide.swtbot.diagram.ComponentUtils;
+import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+import gov.redhawk.ide.swtbot.MenuUtils;
+import gov.redhawk.ide.swtbot.WaveformUtils;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;

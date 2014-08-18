@@ -76,19 +76,19 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	private static final String NO_START_ORDER_STRING = "*";
 
 	/**
-	* <!-- begin-user-doc -->
+	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	* @generated
-	*/
+	 * @generated
+	 */
 	protected ComponentShapeImpl() {
 		super();
 	}
 
 	/**
-	* <!-- begin-user-doc -->
+	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	* @generated
-	*/
+	 * @generated
+	 */
 	@Override
 	protected EClass eStaticClass() {
 		return RHGxPackage.Literals.COMPONENT_SHAPE;
@@ -151,7 +151,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * Add an Ellipse to provided container shape that will contain the start order from sadComponentInstantiation
 	 */
 	public ContainerShape addStartOrderEllipse(SadComponentInstantiation sadComponentInstantiation, AssemblyController assemblyController,
-	        IFeatureProvider featureProvider) {
+		IFeatureProvider featureProvider) {
 		Diagram diagram = DUtil.findDiagram(getInnerContainerShape());
 
 		// Create ellipse shape to display component start order
@@ -187,7 +187,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		IDimension textDimension = GraphitiUi.getUiLayoutService().calculateTextSize(startOrder, StyleUtil.getStartOrderFont(diagram));
 		int textX = START_ORDER_ELLIPSE_DIAMETER / 2 - textDimension.getWidth() / 2;
 		Graphiti.getGaLayoutService().setLocationAndSize(startOrderText, textX, START_ORDER_TOP_TEXT_PADDING, START_ORDER_ELLIPSE_DIAMETER,
-		        START_ORDER_ELLIPSE_DIAMETER);
+			START_ORDER_ELLIPSE_DIAMETER);
 
 		return startOrderEllipseShape;
 	}
@@ -214,8 +214,8 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 
 		// Set the layout for the start order ellipse
 		Graphiti.getGaLayoutService().setLocation(getStartOrderEllipseShape().getGraphicsAlgorithm(),
-		        getInnerContainerShape().getGraphicsAlgorithm().getWidth() - (START_ORDER_ELLIPSE_DIAMETER + START_ORDER_ELLIPSE_RIGHT_PADDING),
-		        START_ORDER_ELLIPSE_TOP_PADDING);
+			getInnerContainerShape().getGraphicsAlgorithm().getWidth() - (START_ORDER_ELLIPSE_DIAMETER + START_ORDER_ELLIPSE_RIGHT_PADDING),
+			START_ORDER_ELLIPSE_TOP_PADDING);
 	}
 
 	/**
@@ -265,7 +265,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 				return new Reason(true, "Component has been assigned a start order, update required");
 			}
 		} else if (ci.getStartOrder() != null && !startOrderTextGA.getValue().equals(NO_START_ORDER_STRING)
-		        && ci.getStartOrder().compareTo(new BigInteger(startOrderTextGA.getValue())) != 0) {
+			&& ci.getStartOrder().compareTo(new BigInteger(startOrderTextGA.getValue())) != 0) {
 			// Handle all other start order changes
 			if (performUpdate) {
 				updateStatus = true;
@@ -334,7 +334,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * Returns minimum width for Shape with provides and uses port stubs and name text
 	 */
 	public int getMinimumWidth(final String outerTitle, final String innerTitle, final EList<ProvidesPortStub> providesPortStubs,
-	        final EList<UsesPortStub> usesPortStubs) {
+		final EList<UsesPortStub> usesPortStubs) {
 
 		// determine width of parent shape
 		int rhContainerShapeMinWidth = super.getMinimumWidth(outerTitle, innerTitle, providesPortStubs, usesPortStubs);
@@ -345,8 +345,8 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		// inner title (including start order)
 		IDimension innerTitleDimension = GraphitiUi.getUiLayoutService().calculateTextSize(innerTitle, StyleUtil.getInnerTitleFont(diagram));
 		innerTitleWidth = innerTitleDimension.getWidth() + INTERFACE_SHAPE_WIDTH + INNER_CONTAINER_SHAPE_TITLE_HORIZONTAL_PADDING
-		        + ComponentShapeImpl.START_ORDER_ELLIPSE_DIAMETER + ComponentShapeImpl.START_ORDER_ELLIPSE_LEFT_PADDING
-		        + ComponentShapeImpl.START_ORDER_ELLIPSE_RIGHT_PADDING;
+			+ ComponentShapeImpl.START_ORDER_ELLIPSE_DIAMETER + ComponentShapeImpl.START_ORDER_ELLIPSE_LEFT_PADDING
+			+ ComponentShapeImpl.START_ORDER_ELLIPSE_RIGHT_PADDING;
 
 		// return the largest width
 		if (rhContainerShapeMinWidth > innerTitleWidth) {
