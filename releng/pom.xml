@@ -194,6 +194,7 @@
     <profile>
       <id>ui-tests</id>
       <modules>
+        <module>../plugins/gov.redhawk.ide.swtbot</module>
         <module>../tests/gov.redhawk.ide.tests.ui</module>
       </modules>
       <properties>
