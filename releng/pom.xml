@@ -192,8 +192,15 @@
     <module>../tests/gov.redhawk.ide.spd.ui.tests</module>
     <module>../tests/gov.redhawk.spd.validation.tests</module>
     <module>../tests/gov.redhawk.mfile.parser.tests</module>
-    <module>../tests/gov.redhawk.ide.tests.ui</module>
     <module>p2</module>
   </modules>
 
+  <profiles>
+    <profile>
+      <id>ui-tests</id>
+      <modules>
+        <module>../tests/gov.redhawk.ide.tests.ui</module>
+      </modules> 
+    </profile>
+  </profiles>
 </project>
