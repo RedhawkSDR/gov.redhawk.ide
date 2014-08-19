@@ -132,16 +132,14 @@
       <handler
             class="gov.redhawk.ide.spd.internal.ui.handlers.RemovePortsHandler"
             commandId="gov.redhawk.ide.spd.ui.command.removePorts">
-         <activeWhen>
+         <enabledWhen>
             <iterate
                   ifEmpty="false">
-               <or>
-                  <instanceof
-                        value="org.eclipse.emf.edit.provider.IWrapperItemProvider">
-                  </instanceof>
-               </or>
+               <instanceof
+                     value="org.eclipse.emf.edit.provider.IWrapperItemProvider">
+               </instanceof>
             </iterate>
-         </activeWhen>
+         </enabledWhen>
       </handler>
       <handler
             class="gov.redhawk.ide.spd.internal.ui.handlers.AddPortHandler"
@@ -150,7 +148,7 @@
       <handler
             class="gov.redhawk.ide.spd.internal.ui.handlers.EditPortHandler"
             commandId="gov.redhawk.ide.spd.ui.command.editPort">
-         <activeWhen>
+         <enabledWhen>
             <and>
                <count
                      value="1">
@@ -162,7 +160,7 @@
                   </instanceof>
                </iterate>
             </and>
-         </activeWhen>
+         </enabledWhen>
       </handler>
       <handler
             class="gov.redhawk.ide.spd.internal.ui.handlers.RecreateSettingsHandler"
