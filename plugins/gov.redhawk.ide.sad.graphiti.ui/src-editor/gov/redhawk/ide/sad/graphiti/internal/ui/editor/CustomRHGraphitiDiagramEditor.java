@@ -8,9 +8,10 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.internal.ui.editor;
+package gov.redhawk.ide.sad.graphiti.internal.ui.editor;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
+import gov.redhawk.ide.sad.internal.ui.editor.WaveformOutlinePage;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -224,7 +225,8 @@ public class CustomRHGraphitiDiagramEditor extends RHGraphitiDiagramEditor imple
 
 	@Override
 	public boolean selectReveal(final Object object) {
-		((SadEditor) this.editor).handleContentOutlineSelection(object);
+		// TODO
+//		((SadEditor) this.editor).handleContentOutlineSelection(object);
 		return false;
 	}
 

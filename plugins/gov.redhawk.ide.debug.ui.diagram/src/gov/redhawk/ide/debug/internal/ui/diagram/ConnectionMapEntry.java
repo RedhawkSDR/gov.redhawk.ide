@@ -15,7 +15,7 @@ import mil.jpeojtrs.sca.sad.SadConnectInterface;
 
 import org.eclipse.jdt.annotation.Nullable;
 
-class ConnectionMapEntry {
+public class ConnectionMapEntry {
 	private String key;
 	private ScaConnection conn;
 	private SadConnectInterface profile;
@@ -47,7 +47,7 @@ class ConnectionMapEntry {
 	}
 
 	@Nullable
-	String getKey() {
+	public String getKey() {
 		return key;
 	}
 

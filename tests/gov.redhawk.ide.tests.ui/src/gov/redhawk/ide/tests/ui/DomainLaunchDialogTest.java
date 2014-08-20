@@ -33,7 +33,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
 public class DomainLaunchDialogTest {
-	private static SWTGefBot gefBot;
+	private SWTGefBot gefBot;
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {

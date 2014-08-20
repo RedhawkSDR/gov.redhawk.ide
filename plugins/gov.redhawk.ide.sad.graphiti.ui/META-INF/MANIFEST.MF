@@ -30,8 +30,17 @@ Require-Bundle: gov.redhawk.validation;bundle-version="1.0.0",
  org.eclipse.jface.databinding,
  org.eclipse.emf.common.ui,
  gov.redhawk.sca.ui,
+ gov.redhawk.sca.sad.validation,
+ gov.redhawk.ide.codegen;bundle-version="10.1.0",
+ gov.redhawk.ui;bundle-version="7.1.0",
+ gov.redhawk.ide.sad.ui,
+ org.eclipse.emf.workspace;bundle-version="1.5.1",
  gov.redhawk.diagram,
- gov.redhawk.sca.sad.validation
+ gov.redhawk.ide.debug;bundle-version="6.0.0",
+ org.eclipse.jdt.annotation;bundle-version="[1.1.0,2.0.0)",
+ gov.redhawk.core.resourceFactory,
+ gov.redhawk.ide.debug.ui,
+ gov.redhawk.ide.debug.ui.diagram
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
@@ -39,9 +48,22 @@ Bundle-Localization: plugin
 Export-Package: gov.redhawk.ide.sad.graphiti.ext,
  gov.redhawk.ide.sad.graphiti.ext.impl,
  gov.redhawk.ide.sad.graphiti.ext.util,
+ gov.redhawk.ide.sad.graphiti.internal.ui.editor,
  gov.redhawk.ide.sad.graphiti.ui,
  gov.redhawk.ide.sad.graphiti.ui.diagram,
+ gov.redhawk.ide.sad.graphiti.ui.diagram.dialogs,
+ gov.redhawk.ide.sad.graphiti.ui.diagram.features.create,
+ gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom,
+ gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete,
+ gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout,
+ gov.redhawk.ide.sad.graphiti.ui.diagram.features.reconnect,
+ gov.redhawk.ide.sad.graphiti.ui.diagram.features.update,
+ gov.redhawk.ide.sad.graphiti.ui.diagram.palette,
  gov.redhawk.ide.sad.graphiti.ui.diagram.patterns,
  gov.redhawk.ide.sad.graphiti.ui.diagram.providers,
- gov.redhawk.ide.sad.graphiti.ui.diagram.util
+ gov.redhawk.ide.sad.graphiti.ui.diagram.util,
+ gov.redhawk.ide.sad.graphiti.ui.diagram.wizards,
+ gov.redhawk.ide.sad.graphiti.ui.properties,
+ gov.redhawk.ide.sad.graphiti.ui.wizard
+Import-Package: org.eclipse.wst.sse.ui;resolution:=optional
 

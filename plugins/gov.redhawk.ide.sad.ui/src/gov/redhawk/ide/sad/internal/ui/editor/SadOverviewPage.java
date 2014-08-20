@@ -30,9 +30,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.graphiti.ui.internal.editor.GFWorkspaceCommandStackImpl;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -155,13 +153,6 @@ public class SadOverviewPage extends AbstractOverviewPage {
 		this.fInfoSection.refresh(getInput());
 	}
 
-	/**
-	 * @return the common command stack provided by the parent editor
-	 */
-	protected BasicCommandStack getCommandStack() {
-		return ((GFWorkspaceCommandStackImpl) getEditingDomain().getCommandStack());
-	}
-	
 	/**
 	 * {@inheritDoc}
 	 */

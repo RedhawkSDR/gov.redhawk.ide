@@ -10,7 +10,7 @@
  *******************************************************************************/
   // BEGIN GENERATED CODE
 
-package gov.redhawk.ide.debug.internal.ui.diagram;
+package gov.redhawk.ide.sad.graphiti.debug.internal.ui;
 
 import gov.redhawk.ide.debug.internal.ui.LocalScaElementFactory;
 import gov.redhawk.model.sca.util.ScaTransactionEditingDomainFactory;

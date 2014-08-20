@@ -8,13 +8,16 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.ui.wizard;
+package gov.redhawk.ide.sad.graphiti.ui.wizard;
 
 import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
-import gov.redhawk.ide.sad.internal.ui.editor.SadEditor;
-import gov.redhawk.ide.sad.ui.SadUiActivator;
+import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
+import gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiSadMultiPageEditor;
+import gov.redhawk.ide.sad.ui.wizard.ScaWaveformProjectAssemblyControllerWizardPage;
+import gov.redhawk.ide.sad.ui.wizard.ScaWaveformProjectPropertiesWizardPage;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
@@ -36,16 +39,16 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.gmf.runtime.diagram.ui.internal.properties.WorkspaceViewerProperties;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramGraphicalViewer;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.graphiti.examples.common.FileService;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -176,7 +179,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 							try {
 	                            sad.eResource().save(null);
                             } catch (IOException e) {
-                            	throw new CoreException(new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, "Failed to modify SAD File."));
+                            	throw new CoreException(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to modify SAD File."));
                             }
 							openEditorOn.refreshLocal(IResource.DEPTH_ONE, null);
 						}
@@ -191,13 +194,53 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 			getContainer().run(false, false, op);
 			final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			if ((this.openEditorOn != null) && this.openEditorOn.exists()) {
-				final SadEditor sadPart = (SadEditor) IDE.openEditor(activePage, this.openEditorOn, true);
-				setCustomPreferences(sadPart);
+
+				//opens the Graphiti editor
+				//create diagram instance
+				Diagram diagram = Graphiti.getPeCreateService().createDiagram(SADDiagramTypeProvider.DIAGRAM_TYPE_ID, projectName, true);
+				
+				//create file to contain diagram
+				IFile diagramFile = this.openEditorOn.getParent().getFile(new Path(projectName + SADDiagramTypeProvider.DIAGRAM_EXT));
+				
+				//uri for diagram file
+				URI uri = URI.createPlatformResourceURI(diagramFile.getFullPath().toString(), true);
+				//create resource for diagram file
+//				ResourceSet resourceSet = new ResourceSetImpl();
+//				TransactionalEditingDomain editingDomain = TransactionUtil.getEditingDomain(resourceSet);
+//				if(editingDomain == null){
+//					editingDomain = TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain(resourceSet);
+//				}
+//				Resource createdResource = resourceSet.createResource(uri);
+//				createdResource.getContents().add(diagram);
+				
+				FileService.createEmfFileForDiagram(uri, diagram);
+				
+//				String providerId = GraphitiUi.getExtensionManager().getDiagramTypeProviderId(diagram.getDiagramTypeId());
+//				
+//				DiagramEditorInput editorInput = new DiagramEditorInput(uri, providerId);
+//				
+//				try {
+//					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, DiagramEditor.DIAGRAM_EDITOR_ID);
+//				} catch (PartInitException e) {
+//					String error = "Error while opening SAD diagram editor";
+//					IStatus status = new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, error, e);
+//					ErrorDialog.openError(getShell(), "An error occured", null, status);
+//					return false;
+//				}
+				
+				//opens the GEF editor
+				final GraphitiSadMultiPageEditor sadPart = (GraphitiSadMultiPageEditor) IDE.openEditor(activePage, this.openEditorOn, GraphitiSadMultiPageEditor.ID, true);
+				
+				//TODO: bwhoff2 we probably need to handle this
+				//setCustomPreferences(sadPart);
+				
+				
+				
 			}
 
 			BasicNewProjectResourceWizard.updatePerspective(this.fConfig);
 		} catch (final InvocationTargetException x) {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, x.getCause().getMessage(), x.getCause()),
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, x.getCause().getMessage(), x.getCause()),
 			        StatusManager.SHOW | StatusManager.LOG);
 			return false;
 		} catch (final InterruptedException x) {
@@ -211,25 +254,26 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 		return true;
 	}
 
-	/**
-	 * Set custom viewing properties for the Sad Editor so that we can tell the difference between this editor and the Sad Explorer
-	 * 
-	 * @param sadPart The Sad Editor instance that we shall change the initial diagram style for
-	 */
-	private void setCustomPreferences(final SadEditor sadPart) {
-		if (sadPart == null) {
-			return;
-		}
-		final DiagramGraphicalViewer viewer = (DiagramGraphicalViewer) sadPart.getDiagramGraphicalViewer();
-		final IPreferenceStore store = viewer.getWorkspaceViewerPreferenceStore();
+//	/**
+//	 * Set custom viewing properties for the Sad Editor so that we can tell the difference between this editor and the Sad Explorer
+//	 * 
+//	 * @param sadPart The Sad Editor instance that we shall change the initial diagram style for
+//	 */
+//	private void setCustomPreferences(final SadEditor sadPart) {
+//		if (sadPart == null) {
+//			return;
+//		}
+//		final DiagramGraphicalViewer viewer = (DiagramGraphicalViewer) sadPart.getDiagramGraphicalViewer();
+//		final IPreferenceStore store = viewer.getWorkspaceViewerPreferenceStore();
+//
+//		store.setValue(WorkspaceViewerProperties.VIEWRULERS, true);
+//		store.setValue(WorkspaceViewerProperties.VIEWGRID, true);
+//		store.setValue(WorkspaceViewerProperties.GRIDSPACING, .5); // SUPPRESS CHECKSTYLE MagicNumber
+//		store.setValue(WorkspaceViewerProperties.GRIDORDER, false);
+//		store.setValue(WorkspaceViewerProperties.GRIDLINESTYLE, SWT.LINE_SOLID);
+//		store.setValue(WorkspaceViewerProperties.GRIDLINECOLOR, SWT.COLOR_BLACK);
+//	}
 
-		store.setValue(WorkspaceViewerProperties.VIEWRULERS, true);
-		store.setValue(WorkspaceViewerProperties.VIEWGRID, true);
-		store.setValue(WorkspaceViewerProperties.GRIDSPACING, .5); // SUPPRESS CHECKSTYLE MagicNumber
-		store.setValue(WorkspaceViewerProperties.GRIDORDER, false);
-		store.setValue(WorkspaceViewerProperties.GRIDLINESTYLE, SWT.LINE_SOLID);
-		store.setValue(WorkspaceViewerProperties.GRIDLINECOLOR, SWT.COLOR_BLACK);
-	}
 
 	/**
 	 * {@inheritDoc}

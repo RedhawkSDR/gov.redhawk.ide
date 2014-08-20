@@ -8,11 +8,11 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.debug.internal.ui.diagram;
+package gov.redhawk.ide.sad.graphiti.debug.internal.ui;
 
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
+import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
@@ -134,7 +134,7 @@ public class SadGraphitiModelInitializerCommand extends AbstractCommand {
 		final SoftPkg spd = comp.fetchProfileObject(null);
 		if (spd == null) {
 			// For some reason we couldn't find the SPD Abort.
-			PluginUtil.logError(LocalScaDiagramPlugin.getDefault(), "Failed to find Soft Pkg for comp: " + comp.getInstantiationIdentifier(), null);
+			PluginUtil.logError(SADUIGraphitiPlugin.getDefault(), "Failed to find Soft Pkg for comp: " + comp.getInstantiationIdentifier(), null);
 			return;
 		}
 
@@ -208,14 +208,14 @@ public class SadGraphitiModelInitializerCommand extends AbstractCommand {
 
 					});
 				} catch (InterruptedException e) {
-					LocalScaDiagramPlugin.getDefault().getLog().log(
-						new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch ports to initialize diagram.", e));
+					SADUIGraphitiPlugin.getDefault().getLog().log(
+						new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to fetch ports to initialize diagram.", e));
 				} catch (ExecutionException e) {
-					LocalScaDiagramPlugin.getDefault().getLog().log(
-						new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch ports to initialize diagram.", e));
+					SADUIGraphitiPlugin.getDefault().getLog().log(
+						new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to fetch ports to initialize diagram.", e));
 				} catch (TimeoutException e) {
-					LocalScaDiagramPlugin.getDefault().getLog().log(
-						new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch ports to initialize diagram.", e));
+					SADUIGraphitiPlugin.getDefault().getLog().log(
+						new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to fetch ports to initialize diagram.", e));
 				}
 				for (final ScaPort< ? , ? > port : ports) {
 					if (port instanceof ScaUsesPort) {
@@ -230,14 +230,14 @@ public class SadGraphitiModelInitializerCommand extends AbstractCommand {
 								}
 							});
 						} catch (InterruptedException e) {
-							LocalScaDiagramPlugin.getDefault().getLog().log(
-								new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch connections to initialize diagram.", e));
+							SADUIGraphitiPlugin.getDefault().getLog().log(
+								new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to fetch connections to initialize diagram.", e));
 						} catch (ExecutionException e) {
-							LocalScaDiagramPlugin.getDefault().getLog().log(
-								new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch connections to initialize diagram.", e));
+							SADUIGraphitiPlugin.getDefault().getLog().log(
+								new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to fetch connections to initialize diagram.", e));
 						} catch (TimeoutException e) {
-							LocalScaDiagramPlugin.getDefault().getLog().log(
-								new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to fetch connections to initialize diagram.", e));
+							SADUIGraphitiPlugin.getDefault().getLog().log(
+								new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to fetch connections to initialize diagram.", e));
 						}
 
 						for (final ScaConnection con : connections) {

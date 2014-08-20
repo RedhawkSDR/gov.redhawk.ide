@@ -10,17 +10,16 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
+import gov.redhawk.ide.swtbot.MenuUtils;
+import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.FindByUtils;
-import gov.redhawk.ide.swtbot.MenuUtils;
-import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
+
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
-import org.eclipse.ui.PlatformUI;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -32,40 +31,34 @@ import org.junit.runner.RunWith;
 @RunWith(SWTBotJunit4ClassRunner.class) 
 public class WaveformFindByTests {
 
-	private static SWTGefBot gefBot;
-	private static SWTBotGefEditor editor;
-	private static SWTWorkbenchBot wbBot;
+	private SWTGefBot gefBot;
+	private SWTBotGefEditor editor;
 	private String waveformName;
 	private static final String[] FINDBYS = { FindByUtils.FIND_BY_CORBA_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, 
 		FindByUtils.FIND_BY_EVENT_CHANNEL, FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-		while (PlatformUI.getWorkbench().isStarting()) {
-			Thread.sleep(1000);
-		}
+		StandardTestActions.beforeClass();
 	}
 
 	@Before
 	public void beforeTest() throws Exception {
 		gefBot = new SWTGefBot();
-		wbBot = new SWTWorkbenchBot();
-		SWTBotPerspective perspective = wbBot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
-		perspective.activate();
-		wbBot.resetActivePerspective();
+		StandardTestActions.beforeTest(gefBot);
 	}
 
 	@After
-	public void afterTest() {
+	public void afterTest() throws Exception {
 		if (waveformName != null) {
 			MenuUtils.closeAndDelete(gefBot, waveformName);
 		}
-		gefBot.closeAllEditors();
+		StandardTestActions.afterTest(gefBot);
 	}
-
+	
 	@AfterClass
-	public static void afterClass() {
-		gefBot.sleep(2000);
+	public static void afterClass() throws Exception {
+		StandardTestActions.afterClass();
 	}
 
 	/**

@@ -8,17 +8,16 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.internal.ui.editor;
+package gov.redhawk.ide.sad.graphiti.internal.ui.editor;
 
 import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
+import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.SadDiagramUtilHelper;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.util.ModelUtil;
-import gov.redhawk.sca.sad.diagram.part.SadDiagramEditor;
 import gov.redhawk.sca.util.PluginUtil;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
@@ -44,7 +43,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
@@ -84,7 +82,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -104,11 +101,11 @@ import CF.Application;
 /**
  * This is an example of a Sad model editor.
  */
-public class SadMultiPageEditor extends SCAFormEditor implements ITabbedPropertySheetPageContributor, IViewerProvider {
+public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbedPropertySheetPageContributor, IViewerProvider {
 
-	public static final String ID = "gov.redhawk.ide.sad.ui.editor.presentation.SadEditorID";
+	public static final String ID = "gov.redhawk.ide.sad.graphiti.ui.editor.presentation.SadEditorID";
 
-	public static final String EDITING_DOMAIN_ID = SadDiagramEditor.EDITING_DOMAIN_ID;
+	public static final String EDITING_DOMAIN_ID = "mil.jpeojtrs.sca.sad.diagram.EditingDomain";
 
 	private static final String DIAGRAM_PAGE_ID = "2";
 
@@ -209,7 +206,7 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 	/**
 	 * This creates a model editor.
 	 */
-	public SadMultiPageEditor() {
+	public GraphitiSadMultiPageEditor() {
 		super();
 		this.selectionProvider = new MultiPageSelectionProvider(this);
 		this.selectionProvider.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -260,8 +257,8 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 					// Try to select the items in the current content viewer of
 					// the editor.
 					//
-					if (SadMultiPageEditor.this.currentViewer != null) {
-						SadMultiPageEditor.this.currentViewer.setSelection(new StructuredSelection(theSelection.toArray()), true);
+					if (GraphitiSadMultiPageEditor.this.currentViewer != null) {
+						GraphitiSadMultiPageEditor.this.currentViewer.setSelection(new StructuredSelection(theSelection.toArray()), true);
 					}
 				}
 			};
@@ -353,7 +350,7 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 				}
 			}
 		} catch (final CoreException exception) {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to go to marker.", exception),
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to go to marker.", exception),
 			        StatusManager.LOG | StatusManager.SHOW);
 		}
 	}
@@ -556,13 +553,13 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
 
 			} catch (final PartInitException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
+				StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
 				        StatusManager.LOG | StatusManager.SHOW);
 			} catch (final IOException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
+				StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
 				        StatusManager.LOG | StatusManager.SHOW);
 			} catch (final CoreException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),
+				StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
 				        StatusManager.LOG | StatusManager.SHOW);
 			}
 		}
@@ -573,7 +570,7 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 	}
 
 	protected IFormPage createPropertiesPage(Resource sadResource) {
-		SadPropertiesPage retVal = new SadPropertiesPage(this, "propertiesPage", "Properties", true);
+		GraphitiSadPropertiesPage retVal = new GraphitiSadPropertiesPage(this, "propertiesPage", "Properties", true);
 		retVal.setInput(sadResource);
 		return retVal;
 	}
@@ -653,7 +650,7 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 	 * 
 	 */
 	protected IFormPage createOverviewPage(final Resource sadResource) {
-		final SadOverviewPage retVal = new SadOverviewPage(this);
+		final GraphitiSadOverviewPage retVal = new GraphitiSadOverviewPage(this);
 		retVal.setInput(sadResource);
 		return retVal;
 	}
@@ -682,7 +679,7 @@ public class SadMultiPageEditor extends SCAFormEditor implements ITabbedProperty
 	 */
 	@Override
 	public String getEditingDomainId() {
-		return SadMultiPageEditor.EDITING_DOMAIN_ID;
+		return GraphitiSadMultiPageEditor.EDITING_DOMAIN_ID;
 	}
 
 	/**

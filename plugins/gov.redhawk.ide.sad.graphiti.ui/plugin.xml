@@ -129,4 +129,61 @@
                         </adapter>
                 </factory>
         </extension>
+            <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiSadMultiPageEditor"
+            contributorClass="gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiSadMultipageEditorActionBarContributor"
+            default="true"
+            icon="icons/full/obj16/SadModelFile.gif"
+            id="gov.redhawk.ide.sad.graphiti.ui.editor.presentation.SadEditorID"
+            name="Graphiti Waveform Editor">
+         <contentTypeBinding contentTypeId="mil.jpeojtrs.sca.sad.content-type"/>
+      </editor>
+   </extension>
+   	<extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            canFinishEarly="false"
+            category="gov.redhawk.ide.ui.wizards.category.sca"
+            class="gov.redhawk.ide.sad.graphiti.ui.wizard.NewScaWaveformProjectWizard"
+            finalPerspective="gov.redhawk.ide.ui.perspectives.sca"
+            hasPages="true"
+            icon="icons/etool16/newprj_wiz.gif"
+            id="gov.redhawk.ide.graphiti.ui.wizards.newwaveform"
+            name="Graphiti SCA Waveform Project"
+            preferredPerspectives="gov.redhawk.ide.ui.wizards.category.sca"
+            project="true">
+      </wizard>
+   </extension>
+   
+   <extension
+       point="gov.redhawk.sca.ui.scaContentTypes">
+    <contentTypeBinding
+          contentTypeId="mil.jpeojtrs.sca.sad.contentType"
+          editorId="gov.redhawk.ide.sad.graphiti.ui.editor.presentation.SadEditorID"
+          priority="LOWEST">
+    </contentTypeBinding>
+   </extension>
+   
+    <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="gov.redhawk.ide.sad.graphiti.debug.internal.ui.LocalMultiPageScaEditor"
+            default="false"
+            icon="icons/redhawk16.gif"
+            id="gov.redhawk.ide.debug.ui.diagram.editor.localMultiPageSca"
+            name="Graphiti Chalkboard">
+      </editor>
+   </extension>
+   
+      <extension
+         point="gov.redhawk.sca.ui.scaContentTypes">
+      <contentTypeBinding
+            contentTypeId="gov.redhawk.ide.debug.ui.contentType.localSca"
+            editorId="gov.redhawk.ide.debug.ui.diagram.editor.localMultiPageSca"
+            priority="NORMAL">
+      </contentTypeBinding>
+   </extension>
+   
 </plugin>

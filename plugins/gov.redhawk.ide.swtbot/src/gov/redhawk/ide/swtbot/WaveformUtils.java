@@ -13,12 +13,13 @@ package gov.redhawk.ide.swtbot;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 
 public class WaveformUtils { // SUPPRESS CHECKSTYLE INLINE
 
 	/**
-	 * Creates a new waveform using File > New > Other... > SCA Waveform Project wizard
+	 * Creates a new waveform using File > New > Other... > Graphiti SCA Waveform Project wizard
 	 * @param bot - the executing SWTBot
 	 * @param waveformName
 	 */
@@ -28,8 +29,9 @@ public class WaveformUtils { // SUPPRESS CHECKSTYLE INLINE
 		SWTBotMenu newMenu = fileMenu.menu("New");
 		SWTBotMenu otherMenu = newMenu.menu("Other...");
 		otherMenu.click();
-		bot.shell("New").activate();
-		bot.tree().getTreeItem("SCA").expand().getNode("SCA Waveform Project").select();
+		SWTBotShell wizardShell = bot.shell("New");
+		wizardShell.activate();
+		bot.tree().getTreeItem("SCA").expand().getNode("Graphiti SCA Waveform Project").select();
 		bot.button("Next >").click();
 
 		// Enter the name for the new waveform
@@ -38,10 +40,13 @@ public class WaveformUtils { // SUPPRESS CHECKSTYLE INLINE
 		// Close wizard
 		SWTBotButton finishButton = bot.button("Finish");
 		finishButton.click();
+		
+		// TODO Why doesn't this work?
+//		bot.waitWhile(Conditions.shellCloses(wizardShell), 30000);
 	}
 
 	/**
-	 * Creates a new waveform with an assembly controller using File > New > SCA Waveform Project wizard
+	 * Creates a new waveform with an assembly controller using File > New > Graphiti SCA Waveform Project wizard
 	 * @param bot - the executing SWTBot
 	 * @param waveformName
 	 */
@@ -51,8 +56,9 @@ public class WaveformUtils { // SUPPRESS CHECKSTYLE INLINE
 		SWTBotMenu newMenu = fileMenu.menu("New");
 		SWTBotMenu otherMenu = newMenu.menu("Other...");
 		otherMenu.click();
-		bot.shell("New").activate();
-		bot.tree().getTreeItem("SCA").expand().getNode("SCA Waveform Project").select();
+		SWTBotShell wizardShell = bot.shell("New");
+		wizardShell.activate();
+		bot.tree().getTreeItem("SCA").expand().getNode("Graphiti SCA Waveform Project").select();
 		bot.button("Next >").click();
 
 		// Enter the name for the new waveform
@@ -77,6 +83,9 @@ public class WaveformUtils { // SUPPRESS CHECKSTYLE INLINE
 		// Click finish
 		SWTBotButton finishButton = bot.button("Finish");
 		finishButton.click();
+		
+		// TODO Why doesn't this work?
+//		bot.waitWhile(Conditions.shellCloses(wizardShell), 30000);
 	}
 
 }

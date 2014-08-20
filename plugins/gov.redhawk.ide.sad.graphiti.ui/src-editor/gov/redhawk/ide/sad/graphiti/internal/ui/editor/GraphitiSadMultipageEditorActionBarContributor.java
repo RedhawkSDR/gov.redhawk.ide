@@ -8,12 +8,13 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.internal.ui.editor;
+package gov.redhawk.ide.sad.graphiti.internal.ui.editor;
 
+import gov.redhawk.ide.sad.internal.ui.editor.SadActionBarContributor;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaMultipageActionBarContributor;
-import mil.jpeojtrs.sca.sad.diagram.part.SadDiagramEditor;
 
+import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.editors.text.TextEditor;
@@ -21,7 +22,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 /**
  * 
  */
-public class SadMultipageEditorActionBarContributor extends ScaMultipageActionBarContributor {
+public class GraphitiSadMultipageEditorActionBarContributor extends ScaMultipageActionBarContributor {
 
 	/**
 	 * {@inheritDoc}
@@ -43,7 +44,7 @@ public class SadMultipageEditorActionBarContributor extends ScaMultipageActionBa
 			return "SAD Editor";
 		} else if (activeEditor instanceof TextEditor) {
 			return "Text Editor";
-		} else if (activeEditor instanceof SadDiagramEditor) {
+		} else if (activeEditor instanceof DiagramEditor) {
 			return "SAD Diagram Editor";
 		} else {
 			try {

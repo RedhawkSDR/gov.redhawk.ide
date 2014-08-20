@@ -11,9 +11,10 @@
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.MenuUtils;
+import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
+import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 
 import java.util.List;
 
@@ -25,14 +26,11 @@ import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
-import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
-import org.eclipse.ui.PlatformUI;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -43,25 +41,19 @@ import org.junit.runner.RunWith;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
 public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
-	private SWTBot bot;
-	private static SWTGefBot gefBot;
+	private SWTGefBot gefBot;
 	private SWTBotGefEditor editor;
 	private String waveformName;
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-		while (PlatformUI.getWorkbench().isStarting()) {
-			Thread.sleep(1000);
-		}
+		StandardTestActions.beforeClass();
 	}
 
 	@Before
 	public void beforeTest() throws Exception {
-		bot = new SWTBot();
-		gefBot = new SWTGefBot();
-		SWTBotPerspective perspective = gefBot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
-		perspective.activate();
-		gefBot.resetActivePerspective();
+		gefBot = new SWTGefBot();	
+		StandardTestActions.beforeTest(gefBot);
 	}
 
 	/**
@@ -107,7 +99,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 
 		// Draw the connection and save
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
-		bot.menu("File").menu("Save").click();
+		gefBot.menu("File").menu("Save").click();
 
 		// Test to make sure connection was made correctly
 		Assert.assertFalse("Connection should exist", diagram.getConnections().isEmpty());
@@ -137,7 +129,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		for (SWTBotGefConnectionEditPart con : sourceConnections) {
 			DiagramTestUtils.deleteFromDiagram(editor, con);
 		}
-		bot.menu("File").menu("Save").click();
+		gefBot.menu("File").menu("Save").click();
 		sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
 		Assert.assertTrue("Source connections should be empty, all connections were deleted", sourceConnections.isEmpty());
 		Assert.assertTrue("All connections should have been deleted", diagram.getConnections().isEmpty());
@@ -170,12 +162,12 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		// Draw redundant connections, save and close the editor
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
-		MenuUtils.closeAll(bot, true);
+		MenuUtils.closeAll(gefBot, true);
 
 		// Open editor and confirm that error decorators are present
-		bot.tree().expandNode(waveformName);
-		bot.tree().getTreeItem(waveformName).getNode(waveformName + ".sad.xml").select().doubleClick();
-		bot.sleep(5000); // Give editor time to open
+		gefBot.tree().expandNode(waveformName);
+		gefBot.tree().getTreeItem(waveformName).getNode(waveformName + ".sad.xml").select().doubleClick();
+		gefBot.sleep(5000); // Give editor time to open
 		editor = gefBot.gefEditor(waveformName);
 
 		// ...get target component edit parts and container shapes
@@ -193,7 +185,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 		List<SWTBotGefConnectionEditPart> sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
 		SWTBotGefConnectionEditPart connectionEditPart = sourceConnections.get(0);
 		DiagramTestUtils.deleteFromDiagram(editor, connectionEditPart);
-		bot.menu("File").menu("Save").click();
+		gefBot.menu("File").menu("Save").click();
 
 		// Confirm that error decorators do not exist for the remaining connection
 		connection = DUtil.getIncomingConnectionsContainedInContainerShape(targetContainerShape).get(0);
@@ -232,18 +224,18 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	@After
-	public void afterTest() {
+	public void afterTest() throws Exception {
 		if (gefBot == null) {
 			return;
 		}
 		if (waveformName != null) {
 			MenuUtils.closeAndDelete(gefBot, waveformName);
 		}
-		gefBot.closeAllEditors();
+		StandardTestActions.afterTest(gefBot);
 	}
 
 	@AfterClass
-	public static void afterClass() {
-		gefBot.sleep(2000);
+	public static void afterClass() throws Exception {
+		StandardTestActions.afterClass();
 	}
 }

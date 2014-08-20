@@ -8,14 +8,15 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.debug.internal.ui.diagram;
+package gov.redhawk.ide.sad.graphiti.debug.internal.ui;
 
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
-import gov.redhawk.ide.sad.internal.ui.editor.SadMultiPageEditor;
+import gov.redhawk.ide.debug.internal.ui.diagram.NewWaveformFromLocalWizard;
+import gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiSadMultiPageEditor;
+import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -47,8 +48,9 @@ import org.eclipse.ui.statushandlers.StatusManager;
 /**
  * 
  */
-public class LocalMultiPageScaEditor extends SadMultiPageEditor {
-	private static final Debug DEBUG = new Debug(LocalScaDiagramPlugin.PLUGIN_ID, "editor");
+public class LocalMultiPageScaEditor extends GraphitiSadMultiPageEditor {
+	public static final String EDITOR_ID = "gov.redhawk.ide.debug.ui.diagram.editor.localMultiPageSca";
+	private static final Debug DEBUG = new Debug(SADUIGraphitiPlugin.PLUGIN_ID, "editor");
 	private ScaGraphitiModelAdapter scaListener;
 
 	private SadGraphitiModelAdapter sadlistener;

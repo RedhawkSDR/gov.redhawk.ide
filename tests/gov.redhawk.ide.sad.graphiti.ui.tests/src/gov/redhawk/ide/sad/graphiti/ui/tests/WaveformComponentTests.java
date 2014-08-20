@@ -12,21 +12,19 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.swtbot.MenuUtils;
+import gov.redhawk.ide.swtbot.StandardTestActions;
+import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.ComponentUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
-import gov.redhawk.ide.swtbot.MenuUtils;
-import gov.redhawk.ide.swtbot.WaveformUtils;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
-import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
-import org.eclipse.ui.PlatformUI;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -38,9 +36,8 @@ import org.junit.runner.RunWith;
 @RunWith(SWTBotJunit4ClassRunner.class)
 public class WaveformComponentTests {
 
-	private static SWTGefBot gefBot;
+	private SWTGefBot gefBot;
 	private SWTBotGefEditor editor;
-	private SWTWorkbenchBot wbBot;
 
 	private String waveformName;
 	private static final String HARD_LIMIT = "HardLimit";
@@ -48,18 +45,13 @@ public class WaveformComponentTests {
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-		while (PlatformUI.getWorkbench().isStarting()) {
-			Thread.sleep(1000);
-		}
+		StandardTestActions.beforeClass();
 	}
 
 	@Before
 	public void beforeTest() throws Exception {
 		gefBot = new SWTGefBot();
-		wbBot = new SWTWorkbenchBot();
-		SWTBotPerspective perspective = wbBot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
-		perspective.activate();
-		wbBot.resetActivePerspective();
+		StandardTestActions.beforeTest(gefBot);
 	}
 
 	/**
@@ -219,18 +211,15 @@ public class WaveformComponentTests {
 	}
 
 	@After
-	public void afterTest() {
-		if (gefBot == null) {
-			return;
-		}
+	public void afterTest() throws Exception {
 		if (waveformName != null) {
 			MenuUtils.closeAndDelete(gefBot, waveformName);
 		}
-		gefBot.closeAllEditors();
+		StandardTestActions.afterTest(gefBot);
 	}
-
+	
 	@AfterClass
-	public static void afterClass() {
-		gefBot.sleep(2000);
+	public static void afterClass() throws Exception {
+		StandardTestActions.afterClass();
 	}
 }

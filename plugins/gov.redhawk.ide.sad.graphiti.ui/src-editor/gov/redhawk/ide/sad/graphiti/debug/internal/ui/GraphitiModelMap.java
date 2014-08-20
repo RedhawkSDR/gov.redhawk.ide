@@ -8,11 +8,13 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.debug.internal.ui.diagram;
+package gov.redhawk.ide.sad.graphiti.debug.internal.ui;
 
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
+import gov.redhawk.ide.debug.internal.ui.diagram.ConnectionMapEntry;
+import gov.redhawk.ide.debug.internal.ui.diagram.NodeMapEntry;
+import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
@@ -60,7 +62,7 @@ import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
 
 public class GraphitiModelMap {
-	private static final Debug DEBUG = new Debug(LocalScaDiagramPlugin.PLUGIN_ID, "modelMap");
+	private static final Debug DEBUG = new Debug(SADUIGraphitiPlugin.PLUGIN_ID, "modelMap");
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
 		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
 	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
@@ -189,11 +191,11 @@ public class GraphitiModelMap {
 				} catch (final InvalidPort e) {
 					delete(conn);
 					connections.remove(connectionMap.getKey());
-					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
+					return new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
 				} catch (final OccupiedPort e) {
 					delete(conn);
 					connections.remove(connectionMap.getKey());
-					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
+					return new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
 				} finally {
 					if (connections.get(connectionMap.getKey()) == null) {
 						delete(conn);
@@ -233,7 +235,7 @@ public class GraphitiModelMap {
 					return Status.OK_STATUS;
 				} catch (CoreException e) {
 					connections.remove(connectionMap.getKey());
-					return new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
+					return new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
 				} finally {
 					if (connections.get(connectionMap.getKey()) == null) {
 						delete(newSadInterface);
@@ -297,7 +299,7 @@ public class GraphitiModelMap {
 		}
 		final SoftPkg spd = ScaEcoreUtils.getFeature(comp, GraphitiModelMap.SPD_PATH);
 		if (spd == null) {
-			throw new CoreException(new Status(IStatus.ERROR, LocalScaDiagramPlugin.PLUGIN_ID, "Failed to resolve SPD.", null));
+			throw new CoreException(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to resolve SPD.", null));
 		}
 		final URI spdURI = spd.eResource().getURI();
 		return this.waveform.launch(comp.getId(), execParams, spdURI, implID, ILaunchManager.RUN_MODE);
@@ -625,7 +627,7 @@ public class GraphitiModelMap {
 						delete(oldComp);
 						return Status.OK_STATUS;
 					} catch (ReleaseError e) {
-						return new Status(IStatus.WARNING, LocalScaDiagramPlugin.PLUGIN_ID, "Problems while removing component " + comp.getId(), e);
+						return new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Problems while removing component " + comp.getId(), e);
 					} finally {
 						subMonitor.done();
 					}
@@ -652,7 +654,7 @@ public class GraphitiModelMap {
 						delete(oldConnection);
 						return Status.OK_STATUS;
 					} catch (InvalidPort e) {
-						return new Status(IStatus.WARNING, LocalScaDiagramPlugin.PLUGIN_ID, "Problems while removing connection " + conn.getId(), e);
+						return new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Problems while removing connection " + conn.getId(), e);
 					} finally {
 						subMonitor.done();
 					}

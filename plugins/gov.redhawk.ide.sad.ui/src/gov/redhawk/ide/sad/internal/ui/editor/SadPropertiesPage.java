@@ -21,9 +21,7 @@ import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
-import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.graphiti.ui.internal.editor.GFWorkspaceCommandStackImpl;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
@@ -98,13 +96,6 @@ public class SadPropertiesPage extends ScaFormPage {
 	 */
 	public SadPropertiesPage(SCAFormEditor editor, String id, String title, boolean newStyleHeader) {
 		super(editor, id, title, newStyleHeader);
-	}
-
-	/**
-	 * @return the common command stack provided by the parent editor
-	 */
-	protected BasicCommandStack getCommandStack() {
-		return ((GFWorkspaceCommandStackImpl) getEditingDomain().getCommandStack());
 	}
 
 	@Override

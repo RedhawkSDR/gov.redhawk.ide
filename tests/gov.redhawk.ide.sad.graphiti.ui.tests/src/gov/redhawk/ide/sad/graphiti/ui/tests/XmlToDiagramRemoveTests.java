@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
+import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -24,6 +25,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -33,26 +35,32 @@ import org.junit.Test;
  */
 public class XmlToDiagramRemoveTests {
 
-	private static SWTGefBot gefBot;
-	private static SWTBotGefEditor editor;
+	private SWTGefBot gefBot;
+	private SWTBotGefEditor editor;
 	private String waveformName;
 
 	@BeforeClass
-	public static void beforeClass() {
+	public static void beforeClass() throws Exception {
+		StandardTestActions.beforeClass();
+	}
+	
+	@Before
+	public void beforeTest() throws Exception {
 		gefBot = new SWTGefBot();
+		StandardTestActions.beforeTest(gefBot);
 	}
 
 	@After
-	public void afterTest() {
+	public void afterTest() throws Exception {
 		if (waveformName != null) {
 			MenuUtils.closeAndDelete(gefBot, waveformName);
 		}
-		gefBot.closeAllEditors();
+		StandardTestActions.afterTest(gefBot);
 	}
-
+	
 	@AfterClass
-	public static void afterClass() {
-		gefBot.sleep(2000);
+	public static void afterClass() throws Exception {
+		StandardTestActions.afterClass();
 	}
 	
 	/**
