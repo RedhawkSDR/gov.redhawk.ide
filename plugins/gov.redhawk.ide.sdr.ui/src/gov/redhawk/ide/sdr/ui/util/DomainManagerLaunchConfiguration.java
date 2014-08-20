@@ -63,10 +63,16 @@ public class DomainManagerLaunchConfiguration {
 		this.arguments = arguments;
 	}
 	
+	/**
+	 * @since 3.4
+	 */
 	public String getLocalDomainName() {
 		return localDomainName;
 	}
 	
+	/**
+	 * @since 3.4
+	 */
 	public void setLocalDomainName(String localDomainName) {
 		this.localDomainName = localDomainName;
 	}

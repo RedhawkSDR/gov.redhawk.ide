@@ -198,7 +198,7 @@ public class ExportUtils {
 
 	/**
 	 * @return System environment overridden with preference values
-	 * @since 3.3
+	 * @since 3.4
 	 */
 	public static Map<String, String> getEnv() {
 		Map<String, String> env = new HashMap<String, String>(System.getenv());
