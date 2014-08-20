@@ -15,9 +15,6 @@ import gov.redhawk.datalist.ui.views.OptionsComposite.CaptureMethod;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-/**
- * @since 2.0
- */
 public class DataCollectionSettings {
 	/** number of samples to take */
 	private double samples = 1024;
@@ -29,11 +26,16 @@ public class DataCollectionSettings {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	
-
+	/**
+	 * @since 2.0
+	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
 	}
@@ -58,20 +60,32 @@ public class DataCollectionSettings {
 		pcs.firePropertyChange("samples", oldValue, samples);
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public CaptureMethod getProcessType() {
 		return this.captureType;
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public void setProcessType(CaptureMethod method) {
 		CaptureMethod oldValue = this.captureType;
 		this.captureType = method;
 		pcs.firePropertyChange("processType", oldValue, captureType);
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public CaptureMethod[] getProcessingTypes() {
 		return captureTypes;
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public void setProcessingTypes(CaptureMethod[] processingTypes) {
 		CaptureMethod[] oldValue = this.captureTypes;
 		this.captureTypes = processingTypes;
