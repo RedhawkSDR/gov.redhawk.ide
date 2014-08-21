@@ -166,7 +166,7 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 
 		// Open editor and confirm that error decorators are present
 		gefBot.tree().expandNode(waveformName);
-		gefBot.tree().getTreeItem(waveformName).getNode(waveformName + ".sad.xml").select().doubleClick();
+		gefBot.tree().getTreeItem(waveformName).getNode(waveformName + ".sad.xml").select().contextMenu("Open With").menu("Graphiti Waveform Editor").click();
 		gefBot.sleep(5000); // Give editor time to open
 		editor = gefBot.gefEditor(waveformName);
 
