@@ -116,6 +116,12 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 
 	@Override
 	public boolean canRemove(IRemoveContext context) {
+		//TODO: this used to return false, doing this so we can remove components during the 
+		//RHDiagramUpdateFeature...might be negative consequences
+		Object obj = DUtil.getBusinessObject(context.getPictogramElement());
+		if (obj instanceof SadComponentInstantiation) {
+			return true;
+		}
 		return false;
 	}
 
