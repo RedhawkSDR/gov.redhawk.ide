@@ -162,13 +162,13 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 					return new Reason(true, "The sad.xml file and diagram have different number of components and the only reasonable "
 							+ "action is to reload the components onto the diagram from the xml file.");
 				}
-			} 
-//			else {
-//				//update components
-//				//TODO is this actually necessary, will the update happen on its own?
-//				// update component shapes
+			} else {
+				super.update(context);
+				//update components
+				//TODO is this actually necessary, will the update happen on its own?
+				// update component shapes
 //				getFeatureProvider().updateIfPossibleAndNeeded(new UpdateContext(pe));
-//			}
+			}
 
 			//TODO: we should probably do this in the model prior to drawing
 			// Ensure assembly controller is set. It's possible a component was deleted that used to be the assembly
