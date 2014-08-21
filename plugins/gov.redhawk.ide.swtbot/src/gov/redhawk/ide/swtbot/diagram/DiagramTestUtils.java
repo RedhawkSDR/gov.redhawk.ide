@@ -106,13 +106,19 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	}
 
 	/**
-	 * Utility method to extract business object from a component in the Graphiti diagram
+	 * Utility method to extract business object from a component in the Graphiti diagram.
+	 * Returns null if object not found
 	 * @param editor
 	 * @param componentName
 	 * @return
 	 */
 	public static SadComponentInstantiation getComponentObject(SWTBotGefEditor editor, String componentName) {
-		ComponentShapeImpl componentShape = (ComponentShapeImpl) editor.getEditPart(componentName).part().getModel();
+		
+		SWTBotGefEditPart swtBotGefEditPart = editor.getEditPart(componentName);
+		if (swtBotGefEditPart == null) {
+			return null;
+		}
+		ComponentShapeImpl componentShape = (ComponentShapeImpl) swtBotGefEditPart.part().getModel();
 		SadComponentInstantiation businessObject = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 		return businessObject;
 	}
