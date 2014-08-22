@@ -118,9 +118,25 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		if (swtBotGefEditPart == null) {
 			return null;
 		}
-		ComponentShapeImpl componentShape = (ComponentShapeImpl) swtBotGefEditPart.part().getModel();
+		ComponentShapeImpl componentShape = getComponentShape(editor, componentName);
 		SadComponentInstantiation businessObject = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 		return businessObject;
+	}
+	
+	/**
+	 * Utility method to extract ComponentShape from the Graphiti diagram with the provided componentName.
+	 * Returns null if object not found
+	 * @param editor
+	 * @param componentName
+	 * @return
+	 */
+	public static ComponentShapeImpl getComponentShape(SWTBotGefEditor editor, String componentName) {
+		
+		SWTBotGefEditPart swtBotGefEditPart = editor.getEditPart(componentName);
+		if (swtBotGefEditPart == null) {
+			return null;
+		}
+		return (ComponentShapeImpl) swtBotGefEditPart.part().getModel();
 	}
 
 	/**

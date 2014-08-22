@@ -10,11 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
-import java.math.BigInteger;
-
+import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+
+import java.math.BigInteger;
+
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
@@ -95,5 +97,47 @@ public class XmlToDiagramEditTests {
 		Assert.assertEquals("Naming Service did not update correctly", componentTwo + "_2", componentObj.getFindComponent().getNamingService().getName());
 		Assert.assertEquals("Start Order did not update correctly", BigInteger.valueOf(2), componentObj.getStartOrder());
 		
+	}
+	
+	/**
+	 * IDE-855
+	 * Test editing assembly controller refid in sad.xml
+	 * Ensure that edits are reflected to the diagram upon save
+	 */
+	@Test
+	public void editAssemblyControllerInXmlTest() {
+		waveformName = "Edit_Assembly_Controller_Xml";
+		final String componentOne = "SigGen";
+		final String componentTwo = "HardLimit";
+		
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+		
+		// Add component to the diagram
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentOne, 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentTwo, 200, 0);
+		MenuUtils.save(gefBot);
+		
+		// Verify componentOne is set as assembly Controller
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		ComponentShapeImpl componentShapeOne = DiagramTestUtils.getComponentShape(editor, componentOne);
+		Assert.assertEquals("Setup for test is flawed, componentOne is not the assembly controller", componentShapeOne.getStartOrderText().getValue(), "0");
+		ComponentShapeImpl componentShapeTwo = DiagramTestUtils.getComponentShape(editor, componentTwo);
+		Assert.assertEquals("Setup for test is flawed, componentTwo is the assembly controller", componentShapeTwo.getStartOrderText().getValue(), "1");
+		
+		// Edit content of sad.xml, change assembly controller from componentOne to componentTwo
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		String editorText = editor.toTextEditor().getText();
+		editorText = editorText.replace("<componentinstantiationref refid=\"SigGen_1\"/>", "<componentinstantiationref refid=\"HardLimit_1\"/>");
+		editor.toTextEditor().setText(editorText);
+		MenuUtils.save(gefBot);
+		
+		// Confirm edits reflect that componentTwo is now assembly controller
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		componentShapeOne = DiagramTestUtils.getComponentShape(editor, componentOne);
+		Assert.assertEquals("Diagram does not represent newly changed assembly controller", componentShapeOne.getStartOrderText().getValue(), "1");
+		componentShapeTwo = DiagramTestUtils.getComponentShape(editor, componentTwo);
+		Assert.assertEquals("Diagram does not represent newly changed assembly controller", componentShapeTwo.getStartOrderText().getValue(), "0");
 	}
 }
