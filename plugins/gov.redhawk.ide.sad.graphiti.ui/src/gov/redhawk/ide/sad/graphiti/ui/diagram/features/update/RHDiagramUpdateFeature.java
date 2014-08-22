@@ -125,8 +125,8 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				List<PictogramElement> pesToRemove = new ArrayList<PictogramElement>(); // gather all shapes to remove
 				List<Object> objsToAdd = new ArrayList<Object>(); // gather all model object to add
 
-				// If number of model and diagram objects don't mark them to be removed and
-				// query 
+				// If number of model and diagram objects don't match, mark them to be removed
+				// and query the model for the correct number of objects to be drawn
 				if (hostCollocations.size() != hostCollocationShapes.size()) {
 					Collections.addAll(pesToRemove, (PictogramElement[]) hostCollocationShapes.toArray(new PictogramElement[0]));
 					Collections.addAll(objsToAdd, (Object[]) hostCollocations.toArray(new Object[0]));
