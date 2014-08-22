@@ -88,6 +88,7 @@ public class XmlToDiagramRemoveTests {
 		
 		// Confirm that the connection no longer exists
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		gefBot.sleep(2000); // Sometimes takes a few seconds for the diagram to redraw
 		SWTBotGefEditPart componentEditPart = editor.getEditPart(SIGGEN);
 		ContainerShape containerShape = (ContainerShape) componentEditPart.part().getModel();
 		Diagram diagram = DUtil.findDiagram(containerShape);
@@ -135,6 +136,7 @@ public class XmlToDiagramRemoveTests {
 		
 		// Confirm that the connection no longer exists
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		gefBot.sleep(2000); // Sometimes takes a few seconds for the diagram to redraw
 		SWTBotGefEditPart componentEditPart = editor.getEditPart(HARDLIMIT);
 		ContainerShape containerShape = (ContainerShape) componentEditPart.part().getModel();
 		Diagram diagram = DUtil.findDiagram(containerShape);

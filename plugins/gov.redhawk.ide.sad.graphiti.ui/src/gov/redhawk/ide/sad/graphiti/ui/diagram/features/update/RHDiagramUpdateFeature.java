@@ -131,7 +131,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 					Collections.addAll(pesToRemove, (PictogramElement[]) hostCollocationShapes.toArray(new PictogramElement[0]));
 					Collections.addAll(objsToAdd, (Object[]) hostCollocations.toArray(new Object[0]));
 				}
-				if (componentShapes.size() != componentInstantiations.size()) {
+				if (componentShapes.size() != componentInstantiations.size() || !componentsResolved(componentShapes)) {
 					Collections.addAll(pesToRemove, (PictogramElement[]) componentShapes.toArray(new PictogramElement[0]));
 					Collections.addAll(objsToAdd, (Object[]) componentInstantiations.toArray(new Object[0]));
 				}
@@ -185,6 +185,16 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		return new Reason(false, "No updates required");
 	}
 
+	/** Checks if componentShape has lost its reference to the model object*/
+	private boolean componentsResolved(List<ComponentShape> componentShapes) {
+		for (ComponentShape componentShape : componentShapes) {
+			if (!(DUtil.getBusinessObject(componentShape) instanceof SadComponentInstantiation)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	@Override
 	public Reason updateNeeded(IUpdateContext context) {
 		try {
