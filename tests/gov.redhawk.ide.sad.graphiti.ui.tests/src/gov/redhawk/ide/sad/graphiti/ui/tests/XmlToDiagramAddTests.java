@@ -11,6 +11,7 @@
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
@@ -24,8 +25,8 @@ import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
@@ -95,10 +96,12 @@ public class XmlToDiagramAddTests {
 			+ "<findcomponent> <namingservice name=\"HardLimit_1\"/> </findcomponent> </componentinstantiation> </componentplacement>";
 		editorText = editorText.replace("</componentplacement>", newComponentPlacement);
 		editor.toTextEditor().setText(editorText);
+		gefBot.sleep(1000);
 		MenuUtils.save(gefBot);
 		
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		gefBot.sleep(2000); // It can take a few seconds for the diagram to redraw
 		SadComponentInstantiation componentObj = DiagramTestUtils.getComponentObject(editor, "HardLimit");
 		Assert.assertEquals("Usage Name did not create correctly", "HardLimit_1", componentObj.getUsageName());
 		Assert.assertEquals("Component ID did not create correctly", "HardLimit_1", componentObj.getId());
@@ -128,10 +131,11 @@ public class XmlToDiagramAddTests {
 		// Get component edit parts and container shapes
 		SWTBotGefEditPart componentEditPart = editor.getEditPart(SIGGEN);
 		ContainerShape containerShape = (ContainerShape) componentEditPart.part().getModel();
-		Diagram diagram = DUtil.findDiagram(containerShape);
 		
 		// Confirm that no connections currently exist
-		Assert.assertTrue("No connections should exist", diagram.getConnections().isEmpty());
+		SWTBotGefEditPart sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		List<SWTBotGefConnectionEditPart> sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesEditPart);
+		Assert.assertTrue("No connections should exist", sourceConnections.isEmpty());
 		
 		// Edit content of sad.xml
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
@@ -147,12 +151,14 @@ public class XmlToDiagramAddTests {
 		
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		Assert.assertFalse("Connection should exist", diagram.getConnections().isEmpty());
-		Connection connection = DUtil.getOutgoingConnectionsContainedInContainerShape(containerShape).get(0);
+		sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesEditPart);
+		Assert.assertFalse("Connection should exist", sourceConnections.isEmpty());
 		
 		// Get port edit parts
 		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
+		Connection connection = (Connection) sourceConnections.get(0).part().getModel();
 		
 		UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(connection.getStart());
 		Assert.assertEquals("Connection uses port not correct", usesPort, DUtil.getBusinessObject((ContainerShape) usesEditPart.part().getModel()));

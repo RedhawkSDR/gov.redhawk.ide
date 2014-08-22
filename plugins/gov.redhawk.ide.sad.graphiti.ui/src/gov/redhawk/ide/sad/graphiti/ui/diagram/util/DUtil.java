@@ -183,7 +183,7 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * Return all incoming connections originating from within the provided ContainerShape
+	 * Return all outgoing connections originating from within the provided ContainerShape
 	 * @param containerShape
 	 * @return
 	 */

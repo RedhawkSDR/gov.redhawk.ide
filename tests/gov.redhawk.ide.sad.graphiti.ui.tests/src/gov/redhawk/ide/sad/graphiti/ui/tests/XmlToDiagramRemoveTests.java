@@ -57,7 +57,7 @@ public class XmlToDiagramRemoveTests {
 	
 	/**
 	 * IDE-851
-	 * Add a connection to the diagram via the sad.xml
+	 * Remove a connection from the diagram via the sad.xml
 	 */
 	@Test
 	public void removeConnectionInXmlTest() {
@@ -102,7 +102,7 @@ public class XmlToDiagramRemoveTests {
 	
 	/**
 	 * IDE-850
-	 * Remove a component to the diagram via the sad.xml
+	 * Remove a component from the diagram via the sad.xml
 	 */
 	@Test
 	public void removeComponentInXmlTest() {
