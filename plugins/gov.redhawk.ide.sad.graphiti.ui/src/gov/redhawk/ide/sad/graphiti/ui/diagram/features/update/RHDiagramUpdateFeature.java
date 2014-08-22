@@ -135,9 +135,9 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 					Collections.addAll(pesToRemove, (PictogramElement[]) componentShapes.toArray(new PictogramElement[0]));
 					Collections.addAll(objsToAdd, (Object[]) componentInstantiations.toArray(new Object[0]));
 				}
-				if (sadConnectInterfaces.size() != connections.size()) {
-					Collections.addAll(pesToRemove, (PictogramElement[]) connections.toArray(new PictogramElement[0]));
-				}
+				
+				// Easiest just to remove and redraw connections every time
+				Collections.addAll(pesToRemove, (PictogramElement[]) connections.toArray(new PictogramElement[0]));
 
 				if (!pesToRemove.isEmpty()) {
 					// remove shapes from diagram
@@ -163,7 +163,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 						DUtil.addShapeViaFeature(getFeatureProvider(), getDiagram(), objToAdd);
 					}
 				}
-
+				
 				// add connections to diagram
 				addConnections(sadConnectInterfaces, getDiagram(), getFeatureProvider());
 
