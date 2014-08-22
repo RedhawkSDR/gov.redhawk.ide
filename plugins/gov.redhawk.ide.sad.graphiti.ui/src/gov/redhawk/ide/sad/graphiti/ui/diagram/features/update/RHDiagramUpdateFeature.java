@@ -82,95 +82,97 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			// TODO: ensure our SAD has an assembly controller
 			// set one if necessary, why bother the user?
 
-
-			//model HostCollocation
+			// model HostCollocation
 			List<HostCollocation> hostCollocations = new ArrayList<HostCollocation>();
 			if (sad != null && sad.getPartitioning() != null && sad.getPartitioning().getHostCollocation() != null) {
 				// Elist -> List
 				Collections.addAll(hostCollocations, (HostCollocation[]) sad.getPartitioning().getHostCollocation().toArray(new HostCollocation[0]));
 			}
-			//shape HostCollocation
+			// shape HostCollocation
 			List<ContainerShape> hostCollocationShapes = HostCollocationPattern.getHostCollocationContainerShapes(d);
-			
 
-			//model components
+			// model components
 			List<SadComponentInstantiation> componentInstantiations = new ArrayList<SadComponentInstantiation>();
 			if (sad != null && sad.getPartitioning() != null && sad.getPartitioning().getComponentPlacement() != null) {
 				// Get list of componentInstantiations from model
 				for (SadComponentPlacement p : sad.getPartitioning().getComponentPlacement()) {
-					Collections.addAll(componentInstantiations, (SadComponentInstantiation[]) p.getComponentInstantiation().toArray(new SadComponentInstantiation[0]));
+					Collections.addAll(componentInstantiations,
+						(SadComponentInstantiation[]) p.getComponentInstantiation().toArray(new SadComponentInstantiation[0]));
 				}
 			}
-			//shape components
+			// shape components
 			List<ComponentShape> componentShapes = ComponentPattern.getAllComponentShapes(d);
-			
-			
-			//model connections
+
+			// model connections
 			List<SadConnectInterface> sadConnectInterfaces = new ArrayList<SadConnectInterface>();
 			if (sad != null && sad.getConnections() != null && sad.getConnections().getConnectInterface() != null) {
 				// Get list of SadConnectInterfaces from model
 				Collections.addAll(sadConnectInterfaces, (SadConnectInterface[]) sad.getConnections().getConnectInterface().toArray(new SadConnectInterface[0]));
 			}
-			//remove invalid model connections
+			// remove invalid model connections
 			removeInvalidConnections(sadConnectInterfaces);
-			
-			
-			//shape connections
+
+			// shape connections
 			List<Connection> connections = new ArrayList<Connection>();
 			Collections.addAll(connections, (Connection[]) d.getConnections().toArray(new Connection[0]));
-			
-			
-			//if the sad file and diagram file don't have the same number of components, remove all components from the diagram and start over
-			//we must do this because the diagram uses indexed lists to refer to components in the sad file.
-			if (hostCollocations.size() != hostCollocationShapes.size()
-					|| componentShapes.size() != componentInstantiations.size()
-					|| sadConnectInterfaces.size() != connections.size()) {
-				
-				if (performUpdate) {
-					updateStatus = true;
-					
-					//gather all shapes to remove
-					List<PictogramElement> pesToRemove = new ArrayList<PictogramElement>();
-					Collections.addAll(pesToRemove, (PictogramElement[]) connections.toArray(new PictogramElement[0]));
+
+			// Check for inconsistencies in hostcollocation and number of components and connections
+			// If found remove all objects of that type and redraw
+			// we must do this because the diagram uses indexed lists to refer to components in the sad file.
+			if (performUpdate) {
+				updateStatus = true;
+
+				List<PictogramElement> pesToRemove = new ArrayList<PictogramElement>(); // gather all shapes to remove
+				List<Object> objsToAdd = new ArrayList<Object>(); // gather all model object to add
+
+				// If number of model and diagram objects don't mark them to be removed and
+				// query 
+				if (hostCollocations.size() != hostCollocationShapes.size()) {
 					Collections.addAll(pesToRemove, (PictogramElement[]) hostCollocationShapes.toArray(new PictogramElement[0]));
+					Collections.addAll(objsToAdd, (Object[]) hostCollocations.toArray(new Object[0]));
+				}
+				if (componentShapes.size() != componentInstantiations.size()) {
 					Collections.addAll(pesToRemove, (PictogramElement[]) componentShapes.toArray(new PictogramElement[0]));
-					
-					//remove shapes from diagram
-					for (PictogramElement peToRemove: pesToRemove) {
-						//remove shape
+					Collections.addAll(objsToAdd, (Object[]) componentInstantiations.toArray(new Object[0]));
+				}
+				if (sadConnectInterfaces.size() != connections.size()) {
+					Collections.addAll(pesToRemove, (PictogramElement[]) connections.toArray(new PictogramElement[0]));
+				}
+
+				if (!pesToRemove.isEmpty()) {
+					// remove shapes from diagram
+					for (PictogramElement peToRemove : pesToRemove) {
+						// remove shape
 						RemoveContext rc = new RemoveContext(peToRemove);
 						IRemoveFeature removeFeature = getFeatureProvider().getRemoveFeature(rc);
 						if (removeFeature != null) {
 							removeFeature.remove(rc);
 						}
 					}
-					
-					//gather all model object to add
-					List<Object> objsToAdd = new ArrayList<Object>();
-					Collections.addAll(objsToAdd, (Object[]) hostCollocations.toArray(new Object[0]));
-					Collections.addAll(objsToAdd, (Object[]) componentInstantiations.toArray(new Object[0]));
-					//add shapes to diagram
-					for (Object objToAdd: objsToAdd) {
-						// add shape
+				} else {
+					super.update(context);
+					// update components
+					// TODO is this actually necessary, will the update happen on its own?
+					// update component shapes
+					// getFeatureProvider().updateIfPossibleAndNeeded(new UpdateContext(pe));
+				}
+
+				// add shapes to diagram
+				if (!objsToAdd.isEmpty()) {
+					for (Object objToAdd : objsToAdd) {
 						DUtil.addShapeViaFeature(getFeatureProvider(), getDiagram(), objToAdd);
 					}
-					
-					//add connections to diagram
-					addConnections(sadConnectInterfaces, getDiagram(), getFeatureProvider());
-					
-				} else {
-					return new Reason(true, "The sad.xml file and diagram have different number of components and the only reasonable "
-							+ "action is to reload the components onto the diagram from the xml file.");
 				}
+
+				// add connections to diagram
+				addConnections(sadConnectInterfaces, getDiagram(), getFeatureProvider());
+
 			} else {
-				super.update(context);
-				//update components
-				//TODO is this actually necessary, will the update happen on its own?
-				// update component shapes
-//				getFeatureProvider().updateIfPossibleAndNeeded(new UpdateContext(pe));
+				return new Reason(true, "The sad.xml file and diagram have different number of components and the only reasonable "
+					+ "action is to reload the components onto the diagram from the xml file.");
 			}
 
-			//TODO: we should probably do this in the model prior to drawing
+			// TODO: we should probably do this in the model prior to drawing
 			// Ensure assembly controller is set. It's possible a component was deleted that used to be the assembly
 			// controller
 			ComponentPattern.organizeStartOrder(sad, getDiagram(), getFeatureProvider());
@@ -221,8 +223,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 	 * Add necessary FindByShapes based on connections in model
 	 * @return
 	 */
-	public static void addFindBy(List<SadConnectInterface> sadConnectInterfaces, Diagram diagram,
-		IFeatureProvider featureProvider) {
+	public static void addFindBy(List<SadConnectInterface> sadConnectInterfaces, Diagram diagram, IFeatureProvider featureProvider) {
 
 		// contains all the findByStubs that should exist in the diagram
 		ArrayList<FindByStub> findByStubs = new ArrayList<FindByStub>();
@@ -241,11 +242,11 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 
 				// does findBy exist in diagram already?
 				if (findByStub == null) {
-						// create FindBy Shape for Source
-						findByStub = AbstractFindByPattern.createFindByStub(findBy, featureProvider, diagram);
+					// create FindBy Shape for Source
+					findByStub = AbstractFindByPattern.createFindByStub(findBy, featureProvider, diagram);
 
-						// add to list
-						findByStubs.add(findByStub);
+					// add to list
+					findByStubs.add(findByStub);
 				}
 				// add provides port to stub if doesn't already exist
 				boolean uPFound = false;
@@ -327,7 +328,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			}
 		}
 	}
-	
+
 	/**
 	 * Removes invalid connections where start/end points no longer exist
 	 * TODO:Consider moving this method to another class
@@ -335,19 +336,17 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 	 * @return
 	 */
 	public static void removeInvalidConnections(List<SadConnectInterface> sadConnectInterfaces) {
-		
+
 		for (Iterator<SadConnectInterface> connIter = sadConnectInterfaces.iterator(); connIter.hasNext();) {
-			
-			//delete connection in model if
+
+			// delete connection in model if
 			// uses port is present but the referenced component isn't
-			// provides port is present but references component isn't 
+			// provides port is present but references component isn't
 			SadConnectInterface conn = connIter.next();
-			if ((conn.getUsesPort() != null 
-					&& conn.getUsesPort().getComponentInstantiationRef() != null && conn.getUsesPort().getComponentInstantiationRef().getInstantiation() == null) 
-					|| (conn.getProvidesPort() != null 
-					&& conn.getProvidesPort().getComponentInstantiationRef() != null && conn.getProvidesPort().getComponentInstantiationRef().getInstantiation() == null)) {
-				
-				//endpoint missing, delete connection
+			if ((conn.getUsesPort() != null && conn.getUsesPort().getComponentInstantiationRef() != null && conn.getUsesPort().getComponentInstantiationRef().getInstantiation() == null)
+				|| (conn.getProvidesPort() != null && conn.getProvidesPort().getComponentInstantiationRef() != null && conn.getProvidesPort().getComponentInstantiationRef().getInstantiation() == null)) {
+
+				// endpoint missing, delete connection
 				connIter.remove();
 				EcoreUtil.delete(conn, true);
 			}
@@ -364,145 +363,143 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 	 * @throws CoreException
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void addConnections(List<SadConnectInterface> sadConnectInterfaces,
-		Diagram diagram, IFeatureProvider featureProvider) throws CoreException {
+	public static void addConnections(List<SadConnectInterface> sadConnectInterfaces, Diagram diagram, IFeatureProvider featureProvider) throws CoreException {
 
 		// add findByStub shapes
 		addFindBy(sadConnectInterfaces, diagram, featureProvider);
-
 
 		// add Connections found in model, but not in diagram
 		for (SadConnectInterface sadConnectInterface : sadConnectInterfaces) {
 
 			// wasn't found, add Connection
-				// lookup sourceAnchor
-				Anchor sourceAnchor = DUtil.lookupSourceAnchor(sadConnectInterface, diagram);
+			// lookup sourceAnchor
+			Anchor sourceAnchor = DUtil.lookupSourceAnchor(sadConnectInterface, diagram);
 
-				// if sourceAnchor wasn't found its because the findBy needs to be added to the diagram
-				if (sourceAnchor == null) {
+			// if sourceAnchor wasn't found its because the findBy needs to be added to the diagram
+			if (sourceAnchor == null) {
 
-					// FindBy is always used inside usesPort
-					if (sadConnectInterface.getUsesPort() != null && sadConnectInterface.getUsesPort().getFindBy() != null) {
+				// FindBy is always used inside usesPort
+				if (sadConnectInterface.getUsesPort() != null && sadConnectInterface.getUsesPort().getFindBy() != null) {
 
-						FindBy findBy = (FindBy) sadConnectInterface.getUsesPort().getFindBy();
+					FindBy findBy = (FindBy) sadConnectInterface.getUsesPort().getFindBy();
 
-						// search for findByStub in diagram
-						FindByStub findByStub = DUtil.findFindByStub(findBy, diagram);
+					// search for findByStub in diagram
+					FindByStub findByStub = DUtil.findFindByStub(findBy, diagram);
 
-						if (findByStub == null) {
-							// should never occur, addRemoveUpdateFindBy() takes care of this
-							throw new CoreException(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Unable to locate FindBy Shape in Diagram"));
-						}
+					if (findByStub == null) {
+						// should never occur, addRemoveUpdateFindBy() takes care of this
+						throw new CoreException(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Unable to locate FindBy Shape in Diagram"));
+					}
 
-						// determine which usesPortStub
-						UsesPortStub usesPortStub = null;
-						for (UsesPortStub p : findByStub.getUses()) {
-							if (p != null && sadConnectInterface.getUsesPort().getUsesIndentifier() != null
-									&& p.getName().equals(sadConnectInterface.getUsesPort().getUsesIndentifier())) {
-								usesPortStub = p;
-							}
-						}
-						// determine port anchor for FindByMatch
-						if (usesPortStub != null) {
-							PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, (EObject) usesPortStub, Anchor.class);
-							sourceAnchor = (Anchor) pe;
-						} else {
-							System.out.println("our source port is not getting set"); // SUPPRESS CHECKSTYLE INLINE
-							// TODO: this means the provides port didn't exist in the existing findByStub..we need
-							// to add it
+					// determine which usesPortStub
+					UsesPortStub usesPortStub = null;
+					for (UsesPortStub p : findByStub.getUses()) {
+						if (p != null && sadConnectInterface.getUsesPort().getUsesIndentifier() != null
+							&& p.getName().equals(sadConnectInterface.getUsesPort().getUsesIndentifier())) {
+							usesPortStub = p;
 						}
 					}
-				}
-
-				// lookup Target Anchor
-				Anchor targetAnchor = null;
-				PictogramElement targetAnchorPe = DUtil.getPictogramElementForBusinessObject(diagram, sadConnectInterface.getTarget(), Anchor.class);
-				if (targetAnchorPe != null) {
-					targetAnchor = (Anchor) targetAnchorPe;
-				} else {
-
-					// sadConnectInterface.getComponentSupportedInterface().getFindBy()
-					if (sadConnectInterface.getComponentSupportedInterface() != null
-							&& sadConnectInterface.getComponentSupportedInterface().getSupportedIdentifier() != null
-							&& sadConnectInterface.getComponentSupportedInterface().getFindBy() != null) {
-
-						// The model provides us with interface information for the FindBy we are connecting to
-						FindBy findBy = (FindBy) sadConnectInterface.getComponentSupportedInterface().getFindBy();
-
-						// iterate through FindByStubs in diagram
-						FindByStub findByStub = DUtil.findFindByStub(findBy, diagram);
-
-						if (findByStub == null) {
-							// should never occur, addRemoveUpdateFindBy() takes care of this
-							throw new CoreException(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Unable to locate FindBy Shape in Diagram"));
-						}
-
-						// determine port anchor for FindByMatch
-						if (findByStub.getInterface() != null) {
-							PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, findByStub.getInterface(), Anchor.class);
-							targetAnchor = (Anchor) pe;
-						}
-
-						// findBy nested in ProvidesPort
-					} else if (sadConnectInterface.getProvidesPort() != null && sadConnectInterface.getProvidesPort().getFindBy() != null) {
-
-						FindBy findBy = (FindBy) sadConnectInterface.getProvidesPort().getFindBy();
-
-						// iterate through FindByStubs in diagram
-						FindByStub findByStub = DUtil.findFindByStub(findBy, diagram);
-
-						if (findByStub == null) {
-							// should never occur, addRemoveUpdateFindBy() takes care of this
-							throw new CoreException(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Unable to locate FindBy Shape in Diagram"));
-						}
-
-						// ensure the providesPort exists in FindByStub that already exists in diagram
-						boolean foundProvidesPortStub = false;
-						for (ProvidesPortStub p : findByStub.getProvides()) {
-							if (p.getName().equals(sadConnectInterface.getProvidesPort().getProvidesIdentifier())) {
-								foundProvidesPortStub = true;
-							}
-						}
-						if (!foundProvidesPortStub) {
-							// add the required providesPort
-							AbstractFindByPattern.addProvidesPortStubToFindByStub(findByStub, sadConnectInterface.getProvidesPort(), featureProvider);
-							// Update on FindByStub PE
-							DUtil.updateShapeViaFeature(featureProvider, diagram,
-									DUtil.getPictogramElementForBusinessObject(diagram, findByStub, RHContainerShape.class));
-
-							// maybe call layout?
-
-						}
-
-						// determine which providesPortStub we are targeting
-						ProvidesPortStub providesPortStub = null;
-						for (ProvidesPortStub p : findByStub.getProvides()) {
-							if (p != null && sadConnectInterface.getProvidesPort().getProvidesIdentifier() != null
-									&& p.getName().equals(sadConnectInterface.getProvidesPort().getProvidesIdentifier())) {
-								providesPortStub = p;
-								break;
-							}
-						}
-
-						// determine port anchor for FindByMatch
-						if (providesPortStub != null) {
-							PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, (EObject) providesPortStub, Anchor.class);
-							targetAnchor = (Anchor) pe;
-						} else {
-							// PASS
-							// TODO: this means the provides port didn't exist in the existing findByStub..we need
-							// to add it
-						}
+					// determine port anchor for FindByMatch
+					if (usesPortStub != null) {
+						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, (EObject) usesPortStub, Anchor.class);
+						sourceAnchor = (Anchor) pe;
+					} else {
+						System.out.println("our source port is not getting set"); // SUPPRESS CHECKSTYLE INLINE
+						// TODO: this means the provides port didn't exist in the existing findByStub..we need
+						// to add it
 					}
 				}
+			}
 
-				// add Connection if anchors
-				if (sourceAnchor != null && targetAnchor != null) {
-					DUtil.addConnectionViaFeature(featureProvider, sadConnectInterface, sourceAnchor, targetAnchor);
-				} else {
-					// PASS
-					// TODO: how do we handle this?
+			// lookup Target Anchor
+			Anchor targetAnchor = null;
+			PictogramElement targetAnchorPe = DUtil.getPictogramElementForBusinessObject(diagram, sadConnectInterface.getTarget(), Anchor.class);
+			if (targetAnchorPe != null) {
+				targetAnchor = (Anchor) targetAnchorPe;
+			} else {
+
+				// sadConnectInterface.getComponentSupportedInterface().getFindBy()
+				if (sadConnectInterface.getComponentSupportedInterface() != null
+					&& sadConnectInterface.getComponentSupportedInterface().getSupportedIdentifier() != null
+					&& sadConnectInterface.getComponentSupportedInterface().getFindBy() != null) {
+
+					// The model provides us with interface information for the FindBy we are connecting to
+					FindBy findBy = (FindBy) sadConnectInterface.getComponentSupportedInterface().getFindBy();
+
+					// iterate through FindByStubs in diagram
+					FindByStub findByStub = DUtil.findFindByStub(findBy, diagram);
+
+					if (findByStub == null) {
+						// should never occur, addRemoveUpdateFindBy() takes care of this
+						throw new CoreException(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Unable to locate FindBy Shape in Diagram"));
+					}
+
+					// determine port anchor for FindByMatch
+					if (findByStub.getInterface() != null) {
+						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, findByStub.getInterface(), Anchor.class);
+						targetAnchor = (Anchor) pe;
+					}
+
+					// findBy nested in ProvidesPort
+				} else if (sadConnectInterface.getProvidesPort() != null && sadConnectInterface.getProvidesPort().getFindBy() != null) {
+
+					FindBy findBy = (FindBy) sadConnectInterface.getProvidesPort().getFindBy();
+
+					// iterate through FindByStubs in diagram
+					FindByStub findByStub = DUtil.findFindByStub(findBy, diagram);
+
+					if (findByStub == null) {
+						// should never occur, addRemoveUpdateFindBy() takes care of this
+						throw new CoreException(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Unable to locate FindBy Shape in Diagram"));
+					}
+
+					// ensure the providesPort exists in FindByStub that already exists in diagram
+					boolean foundProvidesPortStub = false;
+					for (ProvidesPortStub p : findByStub.getProvides()) {
+						if (p.getName().equals(sadConnectInterface.getProvidesPort().getProvidesIdentifier())) {
+							foundProvidesPortStub = true;
+						}
+					}
+					if (!foundProvidesPortStub) {
+						// add the required providesPort
+						AbstractFindByPattern.addProvidesPortStubToFindByStub(findByStub, sadConnectInterface.getProvidesPort(), featureProvider);
+						// Update on FindByStub PE
+						DUtil.updateShapeViaFeature(featureProvider, diagram,
+							DUtil.getPictogramElementForBusinessObject(diagram, findByStub, RHContainerShape.class));
+
+						// maybe call layout?
+
+					}
+
+					// determine which providesPortStub we are targeting
+					ProvidesPortStub providesPortStub = null;
+					for (ProvidesPortStub p : findByStub.getProvides()) {
+						if (p != null && sadConnectInterface.getProvidesPort().getProvidesIdentifier() != null
+							&& p.getName().equals(sadConnectInterface.getProvidesPort().getProvidesIdentifier())) {
+							providesPortStub = p;
+							break;
+						}
+					}
+
+					// determine port anchor for FindByMatch
+					if (providesPortStub != null) {
+						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, (EObject) providesPortStub, Anchor.class);
+						targetAnchor = (Anchor) pe;
+					} else {
+						// PASS
+						// TODO: this means the provides port didn't exist in the existing findByStub..we need
+						// to add it
+					}
 				}
+			}
+
+			// add Connection if anchors
+			if (sourceAnchor != null && targetAnchor != null) {
+				DUtil.addConnectionViaFeature(featureProvider, sadConnectInterface, sourceAnchor, targetAnchor);
+			} else {
+				// PASS
+				// TODO: how do we handle this?
+			}
 		}
 	}
 
