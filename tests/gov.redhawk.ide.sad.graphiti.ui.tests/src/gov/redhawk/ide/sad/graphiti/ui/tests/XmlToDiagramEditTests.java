@@ -99,6 +99,7 @@ public class XmlToDiagramEditTests {
 		
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		gefBot.sleep(2000); // Sometimes diagram takes a few seconds to update
 		SadComponentInstantiation componentObj = DiagramTestUtils.getComponentObject(editor, componentTwo);
 		Assert.assertEquals("Usage Name did not update correctly", componentTwo + "_2", componentObj.getUsageName());
 		Assert.assertEquals("Component ID did not update correctly", componentTwo + "_2", componentObj.getId());
@@ -143,6 +144,7 @@ public class XmlToDiagramEditTests {
 		
 		// Confirm edits reflect that componentTwo is now assembly controller
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		gefBot.sleep(2000); // Sometimes diagram takes a few seconds to update
 		componentShapeOne = DiagramTestUtils.getComponentShape(editor, componentOne);
 		Assert.assertEquals("Diagram does not represent newly changed assembly controller", componentShapeOne.getStartOrderText().getValue(), "1");
 		componentShapeTwo = DiagramTestUtils.getComponentShape(editor, componentTwo);
