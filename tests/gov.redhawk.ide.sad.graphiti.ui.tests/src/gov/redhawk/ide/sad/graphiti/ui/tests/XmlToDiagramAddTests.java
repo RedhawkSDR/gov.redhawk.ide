@@ -136,10 +136,6 @@ public class XmlToDiagramAddTests {
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
 		MenuUtils.save(gefBot);
 
-		// Get component edit parts and container shapes
-		SWTBotGefEditPart componentEditPart = editor.getEditPart(SIGGEN);
-		ContainerShape containerShape = (ContainerShape) componentEditPart.part().getModel();
-		
 		// Confirm that no connections currently exist
 		SWTBotGefEditPart sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		List<SWTBotGefConnectionEditPart> sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesEditPart);
@@ -160,19 +156,17 @@ public class XmlToDiagramAddTests {
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
 		sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		SWTBotGefEditPart hardLimitProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
+		
+		Connection connection = (Connection) sourceConnections.get(0).part().getModel();
 		sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesEditPart);
 		Assert.assertFalse("Connection should exist", sourceConnections.isEmpty());
 		
-		// Get port edit parts
-		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
-		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
-		Connection connection = (Connection) sourceConnections.get(0).part().getModel();
-		
 		UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(connection.getStart());
-		Assert.assertEquals("Connection uses port not correct", usesPort, DUtil.getBusinessObject((ContainerShape) usesEditPart.part().getModel()));
+		Assert.assertEquals("Connection uses port not correct", usesPort, DUtil.getBusinessObject((ContainerShape) sigGenUsesEditPart.part().getModel()));
 
 		ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(connection.getEnd());
-		Assert.assertEquals("Connect provides port not correct", providesPort, DUtil.getBusinessObject((ContainerShape) providesEditPart.part().getModel()));
+		Assert.assertEquals("Connect provides port not correct", providesPort, DUtil.getBusinessObject((ContainerShape) hardLimitProvidesEditPart.part().getModel()));
 
 		Assert.assertTrue("Only arrowhead decorator should be present", connection.getConnectionDecorators().size() == 1);
 		for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {

@@ -11,16 +11,24 @@
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 
 import java.math.BigInteger;
+import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
+import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.junit.After;
@@ -99,13 +107,72 @@ public class XmlToDiagramEditTests {
 		
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		gefBot.sleep(2000); // Sometimes diagram takes a few seconds to update
+		gefBot.sleep(10000); // Sometimes diagram takes a few seconds to update
 		SadComponentInstantiation componentObj = DiagramTestUtils.getComponentObject(editor, componentTwo);
 		Assert.assertEquals("Usage Name did not update correctly", componentTwo + "_2", componentObj.getUsageName());
 		Assert.assertEquals("Component ID did not update correctly", componentTwo + "_2", componentObj.getId());
 		Assert.assertEquals("Naming Service did not update correctly", componentTwo + "_2", componentObj.getFindComponent().getNamingService().getName());
 		Assert.assertEquals("Start Order did not update correctly", BigInteger.valueOf(2), componentObj.getStartOrder());
 		
+	}
+	
+	/**
+	 * IDE-854
+	 * Test editing connection properties in the sad.xml
+	 * Ensure that edits are reflected to the diagram upon save
+	 */
+	@Test
+	public void editConnectionInXmlTest() {
+		waveformName = "Edit_Connection_Xml";
+		final String SIGGEN = "SigGen";
+		final String HARDLIMIT = "HardLimit";
+		final String DATA_CONVERTER = "DataConverter";
+		
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+		
+		// Add components to the diagram
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, DATA_CONVERTER, 0, 100);
+		
+		// Get port edit parts
+		SWTBotGefEditPart sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		SWTBotGefEditPart hardLimitProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
+		DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenUsesEditPart, hardLimitProvidesEditPart);
+		MenuUtils.save(gefBot);
+		
+		// Edit content of sad.xml
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		String editorText = editor.toTextEditor().getText();
+		editorText = editorText.replace("<providesidentifier>dataDouble_in</providesidentifier>", "<providesidentifier>dataDouble</providesidentifier>");
+		editorText = editorText.replace("<componentinstantiationref refid=\"HardLimit_1\"/>", "<componentinstantiationref refid=\"DataConverter_1\"/>");
+		editor.toTextEditor().setText(editorText);
+		MenuUtils.save(gefBot);
+		
+		// Confirm edits appear in the diagram
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		gefBot.sleep(2000); // Sometimes diagram takes a few seconds to update
+		sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		hardLimitProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
+		SWTBotGefEditPart dataConverterProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, DATA_CONVERTER);
+		
+		// Check that connection data has changed
+		List<SWTBotGefConnectionEditPart> sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesEditPart);
+		Assert.assertTrue("Only one connection should exist", sourceConnections.size() == 1);
+		Connection connection = (Connection) sourceConnections.get(0).part().getModel();
+		
+		UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(connection.getStart());
+		Assert.assertEquals("Connection uses port not correct", usesPort, DUtil.getBusinessObject((ContainerShape) sigGenUsesEditPart.part().getModel()));
+
+		ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(connection.getEnd());
+		SWTBotGefEditPart dataConverterProvidesPort = DiagramTestUtils.getDiagramProvidesPort(editor, DATA_CONVERTER, "dataDouble");
+		Assert.assertEquals("Connect provides port not correct", providesPort, DUtil.getBusinessObject((ContainerShape) dataConverterProvidesPort.part().getModel()));
+		
+		// Check that HardLimit is no longer a part of a connection
+		List<SWTBotGefConnectionEditPart> providesConnections = DiagramTestUtils.getTargetConnectionsFromPort(editor, hardLimitProvidesEditPart);
+		Assert.assertTrue("HardLimit should not be the target of a connection", providesConnections.isEmpty());
 	}
 	
 	/**
