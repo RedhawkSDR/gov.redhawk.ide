@@ -16,6 +16,7 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IContext;
@@ -32,7 +33,7 @@ public class SADReconnectFeature extends DefaultReconnectionFeature {
 
 	@Override
 	public boolean canReconnect(IReconnectionContext context) {
-		// Only allow reconnect if the connection is being made to the same type of object and component is not connecting to itself
+		// Only allow reconnect if the connection is being made to the same type of object
 
 		Anchor oldAnchor = context.getOldAnchor();
 		Anchor newAnchor = context.getNewAnchor();
@@ -63,23 +64,31 @@ public class SADReconnectFeature extends DefaultReconnectionFeature {
 			IReconnectionContext reconnectContext = (IReconnectionContext) context;
 			Connection connectionPE = reconnectContext.getConnection();
 			SadConnectInterface connectInterface = (SadConnectInterface) getBusinessObjectForPictogramElement(connectionPE);
-			Object connectionStartBusinessObject = getBusinessObjectForPictogramElement(connectionPE.getStart());
-			Object oldAnchorBusinesObject = getBusinessObjectForPictogramElement(reconnectContext.getOldAnchor());
-			Object newAnchorBusinesObject = getBusinessObjectForPictogramElement(reconnectContext.getNewAnchor());
 
-			if (oldAnchorBusinesObject.equals(connectionStartBusinessObject)) {
-				// Update model with new source
-				UsesPortStub source = (UsesPortStub) newAnchorBusinesObject;
+			Object connectionStart = getBusinessObjectForPictogramElement(connectionPE.getStart());
+			EObject oldPort = (EObject) getBusinessObjectForPictogramElement(reconnectContext.getOldAnchor());
+			EObject newPort = (EObject) getBusinessObjectForPictogramElement(reconnectContext.getNewAnchor());
+
+			if (oldPort.equals(connectionStart)) {
+				// User changed uses port, update model with new source
+				UsesPortStub source = (UsesPortStub) newPort;
 				connectInterface.setSource(source);
+				connectionStart = source;
 				// Update diagram with new start anchor
 				connectionPE.setStart(reconnectContext.getNewAnchor());
 			} else {
-				// Update model with new target
-				ConnectionTarget target = (ConnectionTarget) newAnchorBusinesObject;
+				// User changed provides port, update model with new target
+				ConnectionTarget target = (ConnectionTarget) newPort;
 				connectInterface.setTarget(target);
 				// Update diagram with new end anchor
 				connectionPE.setEnd(reconnectContext.getNewAnchor());
 			}
+
+			// Update port business object for connection pictogram element
+			// TODO: Have to do this manually for some reason. It should happen automatically...
+			EList<EObject> connectionBusinessObjects = connectionPE.getLink().getBusinessObjects();
+			connectionBusinessObjects.remove(oldPort);
+			connectionBusinessObjects.add(newPort);
 
 			// Update connection decorators
 			SADConnectInterfacePattern.decorateConnection(connectionPE, connectInterface, getDiagram());
