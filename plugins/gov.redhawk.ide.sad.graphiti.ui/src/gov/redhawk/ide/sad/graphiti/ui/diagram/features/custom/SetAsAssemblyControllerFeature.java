@@ -20,6 +20,8 @@ import java.util.List;
 
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
+import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.transaction.RecordingCommand;
@@ -93,16 +95,26 @@ public class SetAsAssemblyControllerFeature extends AbstractCustomFeature {
 		final AssemblyController assemblyController = sad.getAssemblyController();
 
 		// get current Component marked as assembly controller
-		final SadComponentInstantiation oldAssemblyCI = assemblyController.getComponentInstantiationRef().getInstantiation();
+		final SadComponentInstantiation oldAssemblyCI;
+		if (assemblyController != null && assemblyController.getComponentInstantiationRef() != null) {
+			oldAssemblyCI = assemblyController.getComponentInstantiationRef().getInstantiation();
+		} else {
+			oldAssemblyCI = null;
+		}
 
 		// Perform business object manipulation in a Command
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
+				// get AssemblyController
+				final AssemblyController newAsm = SadFactory.eINSTANCE.createAssemblyController();
+				SadComponentInstantiationRef newRef = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
+				newAsm.setComponentInstantiationRef(newRef);
 
 				// set new assembly controller
-				assemblyController.getComponentInstantiationRef().setInstantiation(newAssemblyCI);
+				newRef.setInstantiation(newAssemblyCI);
+				sad.setAssemblyController(newAsm);
 
 				// if new assembly controller has a start order declared, change it to zero and update all other component start orders
 				if (newAssemblyCI.getStartOrder() != null) {
@@ -114,7 +126,9 @@ public class SetAsAssemblyControllerFeature extends AbstractCustomFeature {
 
 		// update CI shapes associated with AssemblyController changes
 		List<PictogramElement> elementsToUpdate = new ArrayList<PictogramElement>();
-		elementsToUpdate.addAll(Graphiti.getLinkService().getPictogramElements(getDiagram(), oldAssemblyCI));
+		if (oldAssemblyCI != null) {
+			elementsToUpdate.addAll(Graphiti.getLinkService().getPictogramElements(getDiagram(), oldAssemblyCI));
+		}
 		elementsToUpdate.addAll(Graphiti.getLinkService().getPictogramElements(getDiagram(), newAssemblyCI));
 		for (PictogramElement pe : elementsToUpdate) {
 			updatePictogramElement(pe);
