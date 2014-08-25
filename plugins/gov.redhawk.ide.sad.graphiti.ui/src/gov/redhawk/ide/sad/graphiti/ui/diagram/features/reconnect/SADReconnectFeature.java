@@ -85,7 +85,6 @@ public class SADReconnectFeature extends DefaultReconnectionFeature {
 			}
 
 			// Update port business object for connection pictogram element
-			// TODO: Have to do this manually for some reason. It should happen automatically...
 			EList<EObject> connectionBusinessObjects = connectionPE.getLink().getBusinessObjects();
 			connectionBusinessObjects.remove(oldPort);
 			connectionBusinessObjects.add(newPort);
