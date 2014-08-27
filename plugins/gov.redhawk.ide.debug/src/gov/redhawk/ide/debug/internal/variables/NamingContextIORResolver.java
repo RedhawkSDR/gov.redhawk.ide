@@ -51,8 +51,9 @@ public class NamingContextIORResolver extends AbstractLauncherResolver implement
 	/**
 	 * @param spd
 	 * @return
+	 * @throws CoreException 
 	 */
-	private String resolveResource(final SoftPkg spd) {
+	private String resolveResource(final SoftPkg spd) throws CoreException {
 		final String namingContext;
 		final NotifyingNamingContext nc = getDomNamingContext(spd);
 		namingContext = nc.getNamingContext().toString();
@@ -62,19 +63,20 @@ public class NamingContextIORResolver extends AbstractLauncherResolver implement
 	/**
 	 * @param spd
 	 * @return
+	 * @throws CoreException 
 	 */
-	private String resolveService(final SoftPkg spd) {
+	private String resolveService(final SoftPkg spd) throws CoreException {
 		final String namingContext;
 		final NotifyingNamingContext nc = getDevNamingContext(spd);
 		namingContext = nc.getNamingContext().toString();
 		return namingContext;
 	}
 
-	private NotifyingNamingContext getDomNamingContext(final SoftPkg spd) {
-		return ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform().getNamingContext().getResourceContext(spd.eResource().getURI());
+	private NotifyingNamingContext getDomNamingContext(final SoftPkg spd) throws CoreException {
+		return ScaDebugPlugin.getInstance().getLocalSca(null).getSandboxWaveform().getNamingContext().getResourceContext(spd.eResource().getURI());
 	}
 
-	private NotifyingNamingContext getDevNamingContext(final SoftPkg spd) {
-		return ScaDebugPlugin.getInstance().getLocalSca().getSandboxDeviceManager().getNamingContext().getResourceContext(spd.eResource().getURI());
+	private NotifyingNamingContext getDevNamingContext(final SoftPkg spd) throws CoreException {
+		return ScaDebugPlugin.getInstance().getLocalSca(null).getSandboxDeviceManager().getNamingContext().getResourceContext(spd.eResource().getURI());
 	}
 }
