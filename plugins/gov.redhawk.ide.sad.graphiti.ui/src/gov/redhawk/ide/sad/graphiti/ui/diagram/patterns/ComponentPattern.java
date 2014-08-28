@@ -602,7 +602,11 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 	 * @return
 	 */
 	public String getOuterTitle(SadComponentInstantiation ci) {
-		return ci.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName();
+		try {
+			return ci.getPlacement().getComponentFileRef().getFile().getSoftPkg().getName();
+		} catch (NullPointerException e) {
+			return "< Component Bad Reference >";
+		}
 	}
 	
 	/**
