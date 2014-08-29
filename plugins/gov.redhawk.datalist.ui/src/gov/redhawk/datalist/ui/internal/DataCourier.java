@@ -10,6 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.datalist.ui.internal;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.datalist.ui.DataCollectionSettings;
 import gov.redhawk.datalist.ui.DataListPlugin;
@@ -80,14 +84,15 @@ public class DataCourier {
 		}
 	}
 
-	private Number[][] convertToDataSet(Sample[] buffer) {
-		Number[][] dataSet = new Number[buffer.length][];
+	private Number[][] convertToDataSet(List<Sample> buffer) {
+		Number[][] dataSet = new Number[buffer.size()][];
+		Iterator<Sample> iterator = buffer.iterator();
 		for (int i = 0; i < dataSet.length; i++) {
-			Object data = buffer[i].getData();
+			Object data = iterator.next().getData();
 			if (data instanceof Number[]) {
-				dataSet[i] = (Number[]) buffer[i].getData();
+				dataSet[i] = (Number[]) data;
 			} else if (data instanceof Number) {
-				dataSet[i] = new Number[] { (Number) buffer[i].getData() };
+				dataSet[i] = new Number[] { (Number) data };
 			} else if (data instanceof double[]) {
 				dataSet[i] = ArrayUtils.toObject((double[]) data);
 			} else if (data instanceof float[]) {
@@ -131,9 +136,9 @@ public class DataCourier {
 		return dataBuffer.getDimension();
 	}
 
-	public Sample[] getBuffer() {
+	public List<Sample> getBuffer() {
 		if (dataBuffer == null) {
-			return new Sample[0];
+			return Collections.emptyList();
 		}
 		return dataBuffer.getBuffer();
 	}

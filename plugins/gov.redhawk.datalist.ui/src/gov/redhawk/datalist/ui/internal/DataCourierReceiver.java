@@ -19,6 +19,8 @@ import gov.redhawk.ide.snapshot.writer.IDataWriterSettings;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -53,12 +55,13 @@ public class DataCourierReceiver implements IDataReceiver {
 		IDataWriterSettings settings = writer.getSettings();
 		settings.setType(type);
 		writer.setSettings(settings);
-		Sample[] buffer = courier.getBuffer();
-		int length = buffer.length;
+		List<Sample> buffer = courier.getBuffer();
+		int length = buffer.size();
 		Object data = Array.newInstance(type.getJavaType(), length);
-		PrecisionUTCTime time = buffer[0].getTime();
+		PrecisionUTCTime time = buffer.get(0).getTime();
+		Iterator<Sample> iterator = buffer.iterator();
 		for (int i = 0; i < length; i++) {
-			Sample s = buffer[i];
+			Sample s = iterator.next();
 			if (dimensions == 1) {
 				Array.set(data, i, s.getData());
 			} else {

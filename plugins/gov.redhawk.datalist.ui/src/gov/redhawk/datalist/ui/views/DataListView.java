@@ -19,7 +19,9 @@ import gov.redhawk.datalist.ui.internal.DataCourierReceiver;
 import gov.redhawk.datalist.ui.internal.IDataCourierListener;
 import gov.redhawk.ide.snapshot.ui.SnapshotJob;
 import gov.redhawk.ide.snapshot.ui.SnapshotWizard;
+import gov.redhawk.model.sca.ScaAbstractComponent;
 import gov.redhawk.model.sca.ScaUsesPort;
+import gov.redhawk.model.sca.ScaWaveform;
 
 import java.lang.reflect.Array;
 import java.text.DecimalFormat;
@@ -27,6 +29,8 @@ import java.text.DecimalFormat;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -40,15 +44,17 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ProgressBar;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import BULKIO.PrecisionUTCTime;
 
@@ -81,56 +87,44 @@ public class DataListView extends ViewPart {
 	private class ViewContentProvider implements ILazyContentProvider {
 		private TableViewer viewer;
 		private DataCourier data;
-		private Sample[] buffer;
 
 		private IDataCourierListener listener = new IDataCourierListener() {
-			
-			private WorkbenchJob refreshJob = new WorkbenchJob("Refresh...") {
+			private WorkbenchJob completeJob = new WorkbenchJob("Refresh Viewer...") {
+
 				{
-					setSystem(true);
 					setUser(false);
+					setSystem(true);
 				}
-				
+
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-					updateViewer();
-					viewer.refresh();
+					if (DataListView.this.viewer != null && !DataListView.this.viewer.getControl().isDisposed()) {
+						stopAcquire();
+						updateViewer();
+					}
 					return Status.OK_STATUS;
 				}
 			};
 
 			@Override
 			public void dataChanged() {
-				refreshJob.schedule(1000);
 			}
 
 			@Override
 			public void complete() {
-				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						if (DataListView.this.viewer != null && !DataListView.this.viewer.getControl().isDisposed()) {
-							stopAcquire();
-							updateViewer();
-						}
-					}
-
-				});
+				completeJob.schedule(100);
 			}
 		};
-		
+
 		private void updateViewer() {
-			if (data != null) {
-				buffer = data.getBuffer();
-			} else {
-				buffer = null;
-			}
-			if (buffer != null) {
-				viewer.setItemCount(buffer.length);
-			} else {
-				viewer.setItemCount(0);
-			}
+			BusyIndicator.showWhile(null, new Runnable() {
+
+				@Override
+				public void run() {
+					viewer.setItemCount(data.getBuffer().size());
+				}
+			});
+
 		}
 
 		@Override
@@ -144,7 +138,7 @@ public class DataListView extends ViewPart {
 			if (oldInput instanceof DataCourier) {
 				((DataCourier) oldInput).removeListener(listener);
 			}
-			
+
 			updateViewer();
 		}
 
@@ -154,7 +148,7 @@ public class DataListView extends ViewPart {
 
 		@Override
 		public void updateElement(int index) {
-			viewer.replace(buffer[index], index);
+			viewer.replace(data.getBuffer().get(index), index);
 		}
 
 	}
@@ -391,6 +385,34 @@ public class DataListView extends ViewPart {
 	}
 
 	protected void startAcquire(DataCollectionSettings settings) {
+		ScaUsesPort source = dataCourier.getSource();
+		if (source == null || source.isDisposed()) {
+			StatusManager.getManager().handle(
+				new Status(Status.ERROR, DataListPlugin.PLUGIN_ID, "No source or source is no longer valid.", new Exception().fillInStackTrace()),
+				StatusManager.SHOW);
+			chartButton.setEnabled(false);
+			snapshotButton.setEnabled(false);
+			loading.setVisible(false);
+			input.getButton().setEnabled(false);
+			return;
+		} else {
+			EObject container = source.eContainer();
+			Boolean started = null;
+			if (container instanceof ScaAbstractComponent< ? >) {
+				ScaAbstractComponent< ? > comp = (ScaAbstractComponent< ? >) container;
+				started = comp.getStarted();
+			} else if (container instanceof ScaWaveform) {
+				ScaWaveform waveform = (ScaWaveform) container;
+				started = waveform.getStarted();
+			}
+			if (started == null || !started) {
+				boolean result = MessageDialog.openQuestion(Display.getCurrent().getActiveShell(), "Started?",
+					"Attempting to accquire data from a stopped resource will generally wait forever.  \n\nDo you wish to continue?");
+				if (!result) {
+					return;
+				}
+			}
+		}
 		int columns = settings.getDimensions();
 
 		if (prevCols != columns) {
@@ -399,7 +421,7 @@ public class DataListView extends ViewPart {
 		}
 
 		dataCourier.acquire(settings);
-		viewer.refresh();
+		viewer.setItemCount(0);
 
 		setButtons(true); // is running
 	}

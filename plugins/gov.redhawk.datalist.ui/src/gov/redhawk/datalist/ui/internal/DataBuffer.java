@@ -23,6 +23,7 @@ import gov.redhawk.model.sca.ScaUsesPort;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -38,7 +39,7 @@ import BULKIO.StreamSRI;
 
 public class DataBuffer extends AbstractUberBulkIOPort {
 
-	private final List<Sample> dataBuffer = Collections.synchronizedList(new ArrayList<Sample>());
+	private final List<Sample> dataBuffer = new LinkedList<Sample>();
 	private int dimension = 1;
 	private final ScaUsesPort port;
 	private final ListenerList listeners = new ListenerList();
@@ -272,10 +273,8 @@ public class DataBuffer extends AbstractUberBulkIOPort {
 		fireDataBufferComplete();
 	}
 
-	public Sample[] getBuffer() {
-		synchronized (dataBuffer) {
-			return dataBuffer.toArray(new Sample[0]);
-		}
+	public List<Sample> getBuffer() {
+		return Collections.unmodifiableList(dataBuffer);
 	}
 
 	@Override

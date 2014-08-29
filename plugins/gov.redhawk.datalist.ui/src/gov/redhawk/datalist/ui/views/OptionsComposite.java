@@ -312,6 +312,13 @@ public abstract class OptionsComposite {
 			button.setToolTipText("Start Acquire");
 		}
 	}
+	
+	/**
+	 * @since 2.1
+	 */
+	public Button getButton() {
+		return button;
+	}
 
 	public boolean isIndefinite() {
 		return settings.getProcessType() == CaptureMethod.INDEFINITELY;
