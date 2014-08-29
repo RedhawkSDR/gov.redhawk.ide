@@ -18,6 +18,7 @@
             allowMultiple="true"
             category="gov.redhawk.ui.category.sca"
             class="gov.redhawk.datalist.ui.views.DataListView"
+            icon="icons/dataIcon.png"
             id="gov.redhawk.datalist.ui.views.DataListView"
             name="Data List"
             restorable="false">
