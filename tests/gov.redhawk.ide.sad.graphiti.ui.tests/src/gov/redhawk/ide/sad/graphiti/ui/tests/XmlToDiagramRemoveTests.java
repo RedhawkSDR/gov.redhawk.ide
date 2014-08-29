@@ -15,6 +15,7 @@ import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -22,6 +23,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
+import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -155,5 +157,51 @@ public class XmlToDiagramRemoveTests {
 		Assert.assertTrue(HARDLIMIT + " should continue to exist regardless of connection", hardLimitComponentObj != null);
 		SadComponentInstantiation sigGenComponentObj = DiagramTestUtils.getComponentObject(editor, SIGGEN);
 		Assert.assertTrue(SIGGEN + " should have been deleted", sigGenComponentObj == null);
+	}
+	
+	/**
+	 * IDE-852
+	 * Remove a host collocation from the diagram via the sad.xml
+	 */
+	@Test
+	public void removeHostCollocationInXmlTest() {
+		waveformName = "Remove_HostCollocation_Xml";
+		final String SIGGEN = "SigGen";
+		final String HOSTCOLLOCATION_PALETTE = "Host Collocation";
+		final String HOSTCOLLOCATION_INSTANCE_NAME = "AAA";
+
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+
+		// Add host collocation to the diagram
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HOSTCOLLOCATION_PALETTE, 0, 0);
+		
+		gefBot.waitUntil(Conditions.shellIsActive("Host Collocation"));
+		gefBot.textWithLabel("Host Collocation:").setText("AAA");
+		gefBot.button("OK").click();
+		gefBot.sleep(1000);
+		//add component inside host collocation (so host collocation is valid)
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 5, 5);
+
+		//save
+		MenuUtils.save(gefBot);
+		
+		// Remove host collocation from sad.xml
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		String editorText = editor.toTextEditor().getText();
+		int endIndex = editorText.indexOf("<hostcollocation");
+		String partOneText = editorText.substring(0, endIndex);
+		int startIndex = editorText.indexOf("</partitioning>");
+		String partTwoText = editorText.substring(startIndex);
+		editor.toTextEditor().setText(partOneText + partTwoText);
+		MenuUtils.save(gefBot);
+		
+		
+		// Confirm the host collocation no longer exists in diagram
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		gefBot.sleep(2000); // Sometimes takes a few seconds for the diagram to redraw
+		HostCollocation hostCollocationObj = DiagramTestUtils.getHostCollocationObject(editor, HOSTCOLLOCATION_INSTANCE_NAME);
+		Assert.assertTrue(HOSTCOLLOCATION_INSTANCE_NAME + " should have been deleted", hostCollocationObj == null);
 	}
 }

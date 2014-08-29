@@ -18,6 +18,7 @@ import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -114,11 +115,10 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 */
 	public static SadComponentInstantiation getComponentObject(SWTBotGefEditor editor, String componentName) {
 		
-		SWTBotGefEditPart swtBotGefEditPart = editor.getEditPart(componentName);
-		if (swtBotGefEditPart == null) {
+		ComponentShapeImpl componentShape = getComponentShape(editor, componentName);
+		if (componentShape == null) {
 			return null;
 		}
-		ComponentShapeImpl componentShape = getComponentShape(editor, componentName);
 		SadComponentInstantiation businessObject = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 		return businessObject;
 	}
@@ -137,6 +137,39 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			return null;
 		}
 		return (ComponentShapeImpl) swtBotGefEditPart.part().getModel();
+	}
+	
+	/**
+	 * Utility method to extract business object from a host collocation in the Graphiti diagram.
+	 * Returns null if object not found
+	 * @param editor
+	 * @param name
+	 * @return
+	 */
+	public static HostCollocation getHostCollocationObject(SWTBotGefEditor editor, String name) {
+		
+		ContainerShape containerShape = getHostCollocationShape(editor, name);
+		if (containerShape == null) {
+			return null;
+		}
+		HostCollocation businessObject = (HostCollocation) DUtil.getBusinessObject(containerShape);
+		return businessObject;
+	}
+	
+	/**
+	 * Utility method to extract HostCollocationShape from the Graphiti diagram with the provided name.
+	 * Returns null if object not found
+	 * @param editor
+	 * @param name
+	 * @return
+	 */
+	public static ContainerShape getHostCollocationShape(SWTBotGefEditor editor, String name) {
+		
+		SWTBotGefEditPart swtBotGefEditPart = editor.getEditPart(name);
+		if (swtBotGefEditPart == null) {
+			return null;
+		}
+		return (ContainerShape) swtBotGefEditPart.part().getModel();
 	}
 
 	/**

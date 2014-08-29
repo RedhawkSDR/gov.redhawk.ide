@@ -60,7 +60,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 
 	// Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove
 	// etc.)
-	public static final String SHAPE_OUTER_CONTAINER = "outerContainerShape";
+	public static final String HOST_COLLOCATION_OUTER_CONTAINER_SHAPE = "hostCollocationOuterContainerShape";
 
 	// These are property key/value pairs that help us resize an existing shape by properly identifying
 	// graphicsAlgorithms
@@ -127,11 +127,9 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 	public static List<ContainerShape> getHostCollocationContainerShapes(Diagram diagram) {
 		List<ContainerShape> hostCollocationContainerShapes = new ArrayList<ContainerShape>();
 		// get all Shapes linked to a HostCollocation
-		List<ContainerShape> containerShapes = DUtil.getAllContainerShapes(diagram, SHAPE_OUTER_CONTAINER);
+		List<ContainerShape> containerShapes = DUtil.getAllContainerShapes(diagram, HOST_COLLOCATION_OUTER_CONTAINER_SHAPE);
 		for (ContainerShape cs : containerShapes) {
-			if (DUtil.doesLinkContainObjectTypeInstance(cs.getLink(), HostCollocation.class)) {
-				hostCollocationContainerShapes.add(cs);
-			}
+			hostCollocationContainerShapes.add(cs);
 		}
 		return hostCollocationContainerShapes;
 	}
@@ -453,7 +451,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 	private ContainerShape addOuterRectangle(ContainerShape targetContainerShape, String text, Object businessObject, IFeatureProvider featureProvider,
 		String imageId, Style containerStyle) {
 		ContainerShape outerContainerShape = Graphiti.getCreateService().createContainerShape(targetContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(outerContainerShape, DUtil.SHAPE_TYPE, SHAPE_OUTER_CONTAINER);
+		Graphiti.getPeService().setPropertyValue(outerContainerShape, DUtil.SHAPE_TYPE, HOST_COLLOCATION_OUTER_CONTAINER_SHAPE);
 		RoundedRectangle outerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(outerContainerShape, 5, 5);
 		outerRoundedRectangle.setStyle(containerStyle);
 		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE);
