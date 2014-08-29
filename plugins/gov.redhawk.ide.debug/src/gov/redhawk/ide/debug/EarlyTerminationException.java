@@ -39,55 +39,58 @@ public class EarlyTerminationException extends Exception {
 		}
 	}
 
-	protected static String getExitCodeMessage(int exitCode) {
+	/**
+	 * @since 6.1
+	 */
+	public static String getExitCodeMessage(int exitCode) {
+		String endString;
 		if ((exitCode & 128) == 128) {
 			int unixCode = exitCode & 127;
-			String signalStr;
 			switch (unixCode) {
 			case 1:
-				signalStr = "SIGHUP";
+				endString = "SIGHUP (" + unixCode + ")";
 				break;
 			case 2:
-				signalStr = "SIGINT";
+				endString = "SIGINT (" + unixCode + ")";
 				break;
 			case 3:
-				signalStr = "SIGQUIT";
+				endString = "SIGQUIT (" + unixCode + ")";
 				break;
 			case 4:
-				signalStr = "SIGILL";
+				endString = "SIGILL (" + unixCode + ")";
 				break;
 			case 5:
-				signalStr = "SIGTRAP";
+				endString = "SIGTRAP (" + unixCode + ")";
 				break;
 			case 6:
-				signalStr = "SIGABRT";
+				endString = "SIGABRT (" + unixCode + ")";
 				break;
 			case 8:
-				signalStr = "SIGFPE";
+				endString = "SIGFPE (" + unixCode + ")";
 				break;
 			case 9:
-				signalStr = "SIGKILL";
+				endString = "SIGKILL (" + unixCode + ")";
 				break;
 			case 11:
-				signalStr = "SIGSEGV";
+				endString = "SIGSEGV (" + unixCode + ")";
 				break;
 			case 13:
-				signalStr = "SIGPIPE";
+				endString = "SIGPIPE (" + unixCode + ")";
 				break;
 			case 14:
-				signalStr = "SIGALRM";
+				endString = "SIGALRM (" + unixCode + ")";
 				break;
 			case 15:
-				signalStr = "SIGTERM";
+				endString = "SIGTERM (" + unixCode + ")";
 				break;
 			default:
-				signalStr = "";
+				endString = String.valueOf(unixCode);
 				break;
 			}
-			return "Terminated with error code " + signalStr + " (" + unixCode + ")";
 		} else {
-			return "Terminated with exit code " + exitCode;
+			endString = String.valueOf(exitCode);
 		}
+		return "Terminated with exit code " + endString;
 	}
 
 }
