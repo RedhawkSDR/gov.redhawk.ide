@@ -602,10 +602,10 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 	 * @param object
 	 * @return
 	 */
-	public static PictogramElement addShapeViaFeature(IFeatureProvider featureProvider, Diagram diagram, Object object) {
+	public static PictogramElement addShapeViaFeature(IFeatureProvider featureProvider, ContainerShape targetContainer, Object object) {
 		AddContext addContext = new AddContext();
 		addContext.setNewObject(object);
-		addContext.setTargetContainer(diagram);
+		addContext.setTargetContainer(targetContainer);
 		addContext.setX(0);
 		addContext.setY(0);
 		IAddFeature addFeature = featureProvider.getAddFeature(addContext);

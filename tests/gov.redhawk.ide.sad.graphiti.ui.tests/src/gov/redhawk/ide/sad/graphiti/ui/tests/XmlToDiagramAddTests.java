@@ -10,16 +10,19 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
-import java.math.BigInteger;
-import java.util.List;
-
+import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+
+import java.math.BigInteger;
+import java.util.List;
+
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.graphiti.mm.algorithms.Polyline;
@@ -173,4 +176,54 @@ public class XmlToDiagramAddTests {
 			Assert.assertTrue("Only arrowhead decorator should be present", decorator.getGraphicsAlgorithm() instanceof Polyline);
 		}
 	}
+	
+	/**
+	 * IDE-849
+	 * Add a host collocation to the diagram via the sad.xml
+	 */
+	@Test
+	public void addHostCollocationInXmlTest() {
+		waveformName = "Add_Host_Collocation_Xml";
+		final String HOSTCOLLOCATION_INSTANCE_NAME = "Host A";
+		final String HARDLIMIT = "HardLimit";
+
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 400, 0);
+		MenuUtils.save(gefBot);
+
+		// Edit content of sad.xml
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		String editorText = editor.toTextEditor().getText();
+
+		//add host collocation
+		editorText = editorText.replace("<componentplacement>", 
+				"<hostcollocation name=\"" + HOSTCOLLOCATION_INSTANCE_NAME + "\"><componentplacement>");
+		
+		editorText = editorText.replace("</partitioning>", "</hostcollocation></partitioning>");
+		
+		editor.toTextEditor().setText(editorText);
+		gefBot.sleep(1000);
+		MenuUtils.save(gefBot);
+		
+		// Confirm edits appear in the diagram
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		gefBot.sleep(2000); // It can take a few seconds for the diagram to redraw
+		
+		//check the shapes are drawing properly
+		ContainerShape hostCollocationShape = DiagramTestUtils.getHostCollocationShape(editor, HOSTCOLLOCATION_INSTANCE_NAME);
+		Assert.assertTrue(HOSTCOLLOCATION_INSTANCE_NAME + " host collocation shape does not exist", hostCollocationShape != null);
+		ComponentShape componentShape = DiagramTestUtils.getComponentShape(editor, HARDLIMIT);
+		Assert.assertTrue(HARDLIMIT + " component shape does not exist", componentShape != null);
+		Assert.assertTrue(HARDLIMIT + " component shape does not exist within " + HOSTCOLLOCATION_INSTANCE_NAME, DiagramTestUtils.childShapeExists(hostCollocationShape, componentShape));
+	
+		//verify component exists within host collocation
+		HostCollocation hostCollocation = DiagramTestUtils.getHostCollocationObject(editor, HOSTCOLLOCATION_INSTANCE_NAME);
+		Assert.assertTrue(HOSTCOLLOCATION_INSTANCE_NAME + " host collocation object does not exist", hostCollocation != null);
+		Assert.assertTrue(HARDLIMIT + " component object does not exist within "
+				+ HOSTCOLLOCATION_INSTANCE_NAME, hostCollocation.getComponentPlacement().size() == 1
+				&& hostCollocation.getComponentPlacement().get(0).getComponentInstantiation().size() == 1);
+	}
+	
 }

@@ -191,6 +191,13 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 				}
 			}
 		}
+		
+		//Add component's inside host collocation model into the newly added shape
+		for (SadComponentPlacement componentPlacement: hostCollocation.getComponentPlacement()) {
+			for (SadComponentInstantiation componentInstantiation: componentPlacement.getComponentInstantiation()) {
+				DUtil.addShapeViaFeature(getFeatureProvider(), outerContainerShape, componentInstantiation);
+			}
+		}
 
 		// layout
 		layoutPictogramElement(outerContainerShape);

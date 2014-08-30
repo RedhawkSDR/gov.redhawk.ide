@@ -22,6 +22,7 @@ import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
@@ -170,6 +171,22 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			return null;
 		}
 		return (ContainerShape) swtBotGefEditPart.part().getModel();
+	}
+	
+	/**
+	 * Return true if child shape exists within ContainerShape.  Grandchildren, Great grandchildren included..
+	 * @param containerShape
+	 * @param childShape
+	 * @return
+	 */
+	public static boolean childShapeExists(ContainerShape containerShape, Shape childShape) {
+		List<Shape> shapes = DUtil.collectShapeChildren(containerShape);
+		for (Shape s: shapes) {
+			if (childShape.equals(s)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
