@@ -19,8 +19,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label; 
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
@@ -45,15 +44,9 @@ public abstract class AbstractInputValidationDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		this.getShell().setText(windowTitle);
+		this.getShell().setText("New " + windowTitle);
 		setTitle(windowTitle);
 		setMessage(defaultMessage);
-	}
-
-	@Override
-	protected void configureShell(Shell shell) {
-		super.configureShell(shell);
-		shell.setText("New " + windowTitle);
 	}
 	
 	@Override
