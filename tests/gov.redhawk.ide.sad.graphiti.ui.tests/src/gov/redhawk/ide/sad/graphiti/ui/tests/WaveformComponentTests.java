@@ -82,7 +82,7 @@ public class WaveformComponentTests {
 		// Confirm created component truly is HardLimit
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
 	}
-	
+
 	/**
 	 * IDE-669
 	 * Components are removed with the delete button (trashcan image) that appears when you select the component,
@@ -110,16 +110,16 @@ public class WaveformComponentTests {
 			Assert.assertNull(editor.getEditPart(s));
 		}
 	}
-	
+
 	/**
 	 * IDE-728
-	 * Components selected in the diagram should have the properties of their corresponding 
+	 * Components selected in the diagram should have the properties of their corresponding
 	 * model objects correctly exposed in the default Eclipse properties view.
 	 */
 	@Test
 	public void checkChangesToPropertiesReflectedInSad() {
 		waveformName = "IDE-728-Test";
-		
+
 		WaveformUtils.createNewWaveformWithAssemblyController(gefBot, waveformName, HARD_LIMIT);
 		editor = gefBot.gefEditor(waveformName);
 		editor.getEditPart(HARD_LIMIT).click();
@@ -134,8 +134,7 @@ public class WaveformComponentTests {
 		}
 		editor.getEditPart(HARD_LIMIT).click();
 		gefBot.menu("File").menu("Save").click();
-		String regex = DiagramTestUtils.regexStringForSadProperty((ComponentShapeImpl) 
-			editor.getEditPart(HARD_LIMIT).part().getModel(), propertyname, newValue);
+		String regex = DiagramTestUtils.regexStringForSadProperty((ComponentShapeImpl) editor.getEditPart(HARD_LIMIT).part().getModel(), propertyname, newValue);
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		String editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The sad.xml should include HardLimit's changed property", editorText.matches(regex));
@@ -159,7 +158,7 @@ public class WaveformComponentTests {
 
 		// Add a HardLimit component instantiation to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, "HardLimit", 0, 0);
-		
+
 		// Find expected xml string for SigGen and HardLimit components
 		final String sigGenSad = DiagramTestUtils.regexStringForSadComponent((ComponentShapeImpl) editor.getEditPart("SigGen").part().getModel());
 		final String hardLimitSad = DiagramTestUtils.regexStringForSadComponent((ComponentShapeImpl) editor.getEditPart("HardLimit").part().getModel());
@@ -217,7 +216,7 @@ public class WaveformComponentTests {
 		}
 		StandardTestActions.afterTest(gefBot);
 	}
-	
+
 	@AfterClass
 	public static void afterClass() throws Exception {
 		StandardTestActions.afterClass();
