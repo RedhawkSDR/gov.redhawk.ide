@@ -30,6 +30,8 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefViewer;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
@@ -92,7 +94,20 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 
 		Assert.assertNotNull(canvas);
 		hardLimitItem.dragAndDrop(canvas);
-
+	}
+	
+	/**
+	 * Drag a HostCollocation onto the SAD diagram editor 
+	 */
+	public static void dragHostCollocationToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String hostCoName) {
+		dragFromPaletteToDiagram(editor, hostCoName, 0, 0);
+		SWTBotShell hostCoShell = gefBot.shell("New " + hostCoName);
+		hostCoShell.setFocus();
+		SWTBotText textField = gefBot.textWithLabel("Host Collocation:");
+		textField.setFocus();
+		textField.typeText(hostCoName);
+		gefBot.button("OK").click();
+		editor.setFocus();
 	}
 
 	/**
