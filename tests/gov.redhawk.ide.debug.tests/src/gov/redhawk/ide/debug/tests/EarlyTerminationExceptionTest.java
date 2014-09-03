@@ -10,19 +10,19 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.tests;
 
-import java.util.regex.Pattern;
-
 import gov.redhawk.ide.debug.EarlyTerminationException;
 
+import java.util.regex.Pattern;
+
+import junit.framework.TestCase;
+
 import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * 
  */
-public class EarlyTerminationExceptionTest {
+public class EarlyTerminationExceptionTest extends TestCase {
 
-	@Test
 	public void testMessage() {
 		Pattern unixCodeMsgPattern = Pattern.compile("Terminated with exit code \\w+ \\(\\d+\\)");
 		Pattern codeMsgPattern = Pattern.compile("Terminated with exit code \\d+");
