@@ -34,8 +34,9 @@
           <useUIHarness>true</useUIHarness>
           <useUIThread>false</useUIThread>
           <application>org.eclipse.ui.ide.workbench</application>
+          <showEclipseLog>true</showEclipseLog>
           <argLine>-Dorg.eclipse.swt.browser.DefaultType=mozilla -DORBInitialPort=2908 -XX:MaxPermSize=256m -Xmx1024m -Djava.net.preferIPv4Stack=true</argLine>
-          <appArgLine>-nl en -consoleLog</appArgLine>
+          <appArgLine>-nl en</appArgLine>
           <dependencies>
             <dependency>
               <type>eclipse-feature</type>
