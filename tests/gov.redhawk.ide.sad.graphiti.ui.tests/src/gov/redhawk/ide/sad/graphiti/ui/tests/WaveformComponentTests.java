@@ -11,17 +11,25 @@
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.ComponentUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
 import org.junit.Test;
@@ -90,6 +98,63 @@ public class WaveformComponentTests extends AbstractGraphitiTest {
 			DiagramTestUtils.deleteFromDiagram(editor, gefEditPart);
 			Assert.assertNull(editor.getEditPart(s));
 		}
+	}
+	
+	/**
+	 * IDE-881
+	 * Ensure components that are located within host collocation are deleted both in the diagram and model when
+	 * clicking the delete action (trashcan)
+	 */
+	@Test
+	public void checkComponentInHostCollocationContextMenuDelete() {
+		waveformName = "HC_Pictogram";
+		final String HOST_CO = "Host Collocation";
+		final String HOST_CO_NAME = "HC1";
+		
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+		
+		// Add host collocation to the waveform
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HOST_CO, 0, 0);
+		SWTBotShell hostCoShell = gefBot.shell("New " + HOST_CO);
+		hostCoShell.setFocus();
+		SWTBotText hostCoName = gefBot.textWithLabel(HOST_CO + ":");
+		hostCoName.setFocus();
+		hostCoName.typeText(HOST_CO_NAME);
+		gefBot.button("OK").click();
+		
+		// Add component to the host collocation
+		editor.setFocus();
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
+		
+		MenuUtils.save(gefBot);
+		
+		// Check pictogram elements
+		SWTBotGefEditPart hostCoEditPart = editor.getEditPart(HOST_CO_NAME);
+		Assert.assertNotNull(hostCoEditPart);
+		ContainerShape hostCollocationContainerShape = (ContainerShape) hostCoEditPart.part().getModel();
+		String shapeType = Graphiti.getPeService().getPropertyValue(hostCollocationContainerShape, DUtil.SHAPE_TYPE);
+		Assert.assertTrue("Host Collocation property is missing or wrong", shapeType.equals(HostCollocationPattern.HOST_COLLOCATION_OUTER_CONTAINER_SHAPE));
+		
+		// Check model object values
+		Object bo = DUtil.getBusinessObject(hostCollocationContainerShape);
+		Assert.assertTrue("Business object should be instance of HostCollocation", bo instanceof HostCollocation);
+		
+		HostCollocation hostCo = (HostCollocation) bo;
+		EList<SadComponentPlacement> components = hostCo.getComponentPlacement();
+		Assert.assertEquals("Expected component \'" + HARD_LIMIT + "\' was not found", HARD_LIMIT + "_1",
+			components.get(0).getComponentInstantiation().get(0).getId());
+		
+		//delete  component
+		SWTBotGefEditPart gefEditPart = editor.getEditPart(HARD_LIMIT);
+		DiagramTestUtils.deleteFromDiagram(editor, gefEditPart);
+		//ensure component shape is deleted
+		Assert.assertNull(editor.getEditPart(HARD_LIMIT));
+		//ensure component business object is deleted
+		Assert.assertTrue("Expected component \'" + HARD_LIMIT + "\' exists",
+				hostCo.getComponentPlacement().size() < 1);
+
 	}
 
 	/**

@@ -1115,7 +1115,7 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 		}
 
 		// delete component placement
-		sad.getPartitioning().getComponentPlacement().remove(placement);
+		EcoreUtil.delete(placement);
 	}
 
 	public static URI getDiagramResourceURI(final IDiagramUtilHelper options, final Resource resource) throws IOException {
