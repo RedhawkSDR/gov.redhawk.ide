@@ -157,7 +157,6 @@ public class XmlToDiagramEditTests {
 		gefBot.sleep(2000); // Sometimes diagram takes a few seconds to update
 		sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		hardLimitProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
-		SWTBotGefEditPart dataConverterProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, DATA_CONVERTER);
 		
 		// Check that connection data has changed
 		List<SWTBotGefConnectionEditPart> sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesEditPart);
