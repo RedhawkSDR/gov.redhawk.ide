@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
+import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
@@ -29,8 +30,11 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.datatypes.ILocation;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.IMoveShapeFeature;
 import org.eclipse.graphiti.features.IReason;
+import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
@@ -38,6 +42,8 @@ import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.features.context.impl.MoveShapeContext;
+import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.PropertyContainer;
@@ -53,6 +59,7 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaLayoutService;
+import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 public class HostCollocationPattern extends AbstractContainerPattern implements IPattern {
 
@@ -407,7 +414,8 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 
 		// set hostCollocationToDelete
 		final HostCollocation hostCollocationToDelete = (HostCollocation) DUtil.getBusinessObject(context.getPictogramElement());
-
+		final ContainerShape hostCollocationShape = (ContainerShape) context.getPictogramElement();
+		
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
@@ -425,12 +433,20 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 					return;
 				}
 
-				// remove all contained component's appropriately
+				// move components from host collocation to diagram (don't delete them)
 				if (hostCollocationToDelete.getComponentPlacement() != null) {
-					for (SadComponentPlacement placement : hostCollocationToDelete.getComponentPlacement()) {
-						if (placement.getComponentInstantiation() != null) {
-							for (SadComponentInstantiation ci : placement.getComponentInstantiation()) {
-								DUtil.deleteComponentInstantiation(ci, sad);
+					//move on diagram
+					for (Shape s: GraphitiUi.getPeService().getAllContainedShapes(hostCollocationShape)) {
+						if (s instanceof ComponentShape) {
+							final ComponentShape c = (ComponentShape) s;
+							MoveShapeContext moveContext = new MoveShapeContext(c);
+							moveContext.setSourceContainer(hostCollocationShape);
+							moveContext.setTargetContainer(getDiagram());
+							ILocation cLocation = GraphitiUi.getUiLayoutService().getLocationRelativeToDiagram(c);
+							moveContext.setLocation(cLocation.getX(), cLocation.getY());
+							IMoveShapeFeature moveShapeFeature = getFeatureProvider().getMoveShapeFeature(moveContext);
+							if (moveShapeFeature.canMoveShape(moveContext)) {
+								moveShapeFeature.moveShape(moveContext);
 							}
 						}
 					}
@@ -444,7 +460,12 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 		});
 
 		// delete the graphical component
-		super.delete(context);
+		IRemoveContext rc = new RemoveContext(context.getPictogramElement());
+		IFeatureProvider featureProvider = getFeatureProvider();
+		IRemoveFeature removeFeature = featureProvider.getRemoveFeature(rc);
+		if (removeFeature != null) {
+			removeFeature.remove(rc);
+		}
 	}
 
 	/**
