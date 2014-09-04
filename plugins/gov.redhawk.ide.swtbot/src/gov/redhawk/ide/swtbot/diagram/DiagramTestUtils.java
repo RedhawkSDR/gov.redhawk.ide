@@ -100,8 +100,8 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * Drag a HostCollocation onto the SAD diagram editor 
 	 */
 	public static void dragHostCollocationToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String hostCoName) {
-		dragFromPaletteToDiagram(editor, hostCoName, 0, 0);
-		SWTBotShell hostCoShell = gefBot.shell("New " + hostCoName);
+		dragFromPaletteToDiagram(editor, "Host Collocation", 0, 0);
+		SWTBotShell hostCoShell = gefBot.shell("New Host Collocation");
 		hostCoShell.setFocus();
 		SWTBotText textField = gefBot.textWithLabel("Host Collocation:");
 		textField.setFocus();
