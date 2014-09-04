@@ -127,13 +127,14 @@ public class XmlToDiagramAddTests extends AbstractGraphitiTest {
 		
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		gefBot.sleep(2000); // It can take a few seconds for the diagram to redraw
 		sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		SWTBotGefEditPart hardLimitProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
 		
-		Connection connection = (Connection) sourceConnections.get(0).part().getModel();
 		sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesEditPart);
 		Assert.assertFalse("Connection should exist", sourceConnections.isEmpty());
 		
+		Connection connection = (Connection) sourceConnections.get(0).part().getModel();
 		UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(connection.getStart());
 		Assert.assertEquals("Connection uses port not correct", usesPort, DUtil.getBusinessObject((ContainerShape) sigGenUsesEditPart.part().getModel()));
 
