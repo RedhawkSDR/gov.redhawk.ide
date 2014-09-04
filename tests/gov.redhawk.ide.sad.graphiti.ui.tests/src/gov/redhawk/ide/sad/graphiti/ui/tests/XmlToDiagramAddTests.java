@@ -13,7 +13,6 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
-import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 
@@ -29,16 +28,11 @@ import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -46,32 +40,10 @@ import org.junit.runner.RunWith;
  * Test class that deals with adding elements to the sad.xml and making sure they appear correctly in the diagram
  */
 @RunWith(SWTBotJunit4ClassRunner.class) 
-public class XmlToDiagramAddTests {
+public class XmlToDiagramAddTests extends AbstractGraphitiTest {
 
-	private SWTGefBot gefBot;
 	private SWTBotGefEditor editor;
 	private String waveformName;
-
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		StandardTestActions.beforeClass();
-	}
-	
-	@Before
-	public void beforeTest() throws Exception {
-		gefBot = new SWTGefBot();
-		StandardTestActions.beforeTest(gefBot);
-	}
-
-	@After
-	public void afterTest() throws Exception {
-		StandardTestActions.afterTest(gefBot);
-	}
-	
-	@AfterClass
-	public static void afterClass() throws Exception {
-		StandardTestActions.afterClass();
-	}
 
 	/**
 	 * IDE-847

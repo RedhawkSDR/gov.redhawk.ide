@@ -13,46 +13,27 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
-import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.ComponentUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
-import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class WaveformComponentTests {
+public class WaveformComponentTests extends AbstractGraphitiTest {
 
-	private SWTGefBot gefBot;
 	private SWTBotGefEditor editor;
-
 	private String waveformName;
 	private static final String HARD_LIMIT = "HardLimit";
 	private static final String[] COMPONENTS = { "DataConverter", "HardLimit", "SigGen" };
-
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		StandardTestActions.beforeClass();
-	}
-
-	@Before
-	public void beforeTest() throws Exception {
-		gefBot = new SWTGefBot();
-		StandardTestActions.beforeTest(gefBot);
-	}
 
 	/**
 	 * IDE-726
@@ -207,15 +188,5 @@ public class WaveformComponentTests {
 		// Both ports are of type dataDouble
 		Assert.assertEquals(componentShape.getUsesPortStubs().get(0).getUses().getInterface().getName(), "dataDouble");
 		Assert.assertEquals(componentShape.getProvidesPortStubs().get(0).getProvides().getInterface().getName(), "dataDouble");
-	}
-
-	@After
-	public void afterTest() throws Exception {
-		StandardTestActions.afterTest(gefBot);
-	}
-
-	@AfterClass
-	public static void afterClass() throws Exception {
-		StandardTestActions.afterClass();
 	}
 }

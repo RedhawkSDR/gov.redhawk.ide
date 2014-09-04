@@ -10,52 +10,21 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
-import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
-import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class GmfGraphitiTests {
+public class GmfGraphitiTests extends AbstractGraphitiTest {
 
 	private String waveformName;
-	private SWTGefBot gefBot;
-
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		StandardTestActions.beforeClass();
-	}
-
-	@Before
-	public void beforeTest() throws Exception {
-		gefBot = new SWTGefBot();
-		StandardTestActions.beforeTest(gefBot);
-	}
-
-	@After
-	public void afterTest() throws Exception {
-		if (gefBot == null) {
-			return;
-		}
-		StandardTestActions.afterTest(gefBot);
-	}
-
-	@AfterClass
-	public static void afterClass() throws Exception {
-		StandardTestActions.afterClass();
-	}
 
 	@Test
 	public void openDiagramGmfAndGraphiti() {

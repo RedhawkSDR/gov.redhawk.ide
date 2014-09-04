@@ -11,7 +11,6 @@
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.swtbot.MenuUtils;
-import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.ComponentUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
@@ -20,41 +19,14 @@ import java.math.BigInteger;
 
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
-import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class StartOrderTests {
+public class StartOrderTests extends AbstractGraphitiTest {
 
-	private SWTGefBot gefBot;
 	private SWTBotGefEditor editor;
 	private String waveformName;
-
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		StandardTestActions.beforeClass();
-	}
-	
-	@Before
-	public void beforeTest() throws Exception {
-		gefBot = new SWTGefBot();
-		StandardTestActions.beforeTest(gefBot);
-	}
-	
-	@After
-	public void afterTest() throws Exception {
-		StandardTestActions.afterTest(gefBot);
-	}
-	
-	@AfterClass
-	public static void afterClass() throws Exception {
-		StandardTestActions.afterClass();
-	}
 
 	/**
 	 * Test ability to set and change start order.

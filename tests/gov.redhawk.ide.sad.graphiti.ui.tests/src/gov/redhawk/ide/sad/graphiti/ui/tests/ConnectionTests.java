@@ -12,7 +12,6 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
-import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 
@@ -26,35 +25,19 @@ import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
-	private SWTGefBot gefBot;
+public class ConnectionTests extends AbstractGraphitiTest{ // SUPPRESS CHECKSTYLE INLINE
+
 	private SWTBotGefEditor editor;
 	private String waveformName;
-
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		StandardTestActions.beforeClass();
-	}
-
-	@Before
-	public void beforeTest() throws Exception {
-		gefBot = new SWTGefBot();	
-		StandardTestActions.beforeTest(gefBot);
-	}
 
 	/**
 	 * IDE-731
@@ -176,8 +159,6 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 
 		// ...update uses port edit part references, since this is technically a new editor
 		usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, sourceComponent);
-
-//		boolean imageDecoratorFound = false, textDecoratorFound = false;
 		Connection connection = DUtil.getIncomingConnectionsContainedInContainerShape(targetContainerShape).get(0);
 		Assert.assertTrue("Error decorator should have been added", connection.getConnectionDecorators().size() == 2);
 
@@ -221,18 +202,5 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 
 		Connection connection = (Connection) connections.get(0).part().getModel();
 		Assert.assertTrue("Error decorator should have been added", connection.getConnectionDecorators().size() == 2);
-	}
-
-	@After
-	public void afterTest() throws Exception {
-		if (gefBot == null) {
-			return;
-		}
-		StandardTestActions.afterTest(gefBot);
-	}
-
-	@AfterClass
-	public static void afterClass() throws Exception {
-		StandardTestActions.afterClass();
 	}
 }

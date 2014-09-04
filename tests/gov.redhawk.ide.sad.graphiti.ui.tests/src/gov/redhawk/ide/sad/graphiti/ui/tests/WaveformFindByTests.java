@@ -10,52 +10,24 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
-import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.FindByUtils;
 
-import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(SWTBotJunit4ClassRunner.class) 
-public class WaveformFindByTests {
+public class WaveformFindByTests extends AbstractGraphitiTest {
 
-	private SWTGefBot gefBot;
 	private SWTBotGefEditor editor;
 	private String waveformName;
 	private static final String[] FINDBYS = { FindByUtils.FIND_BY_CORBA_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, 
 		FindByUtils.FIND_BY_EVENT_CHANNEL, FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
-
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		StandardTestActions.beforeClass();
-	}
-
-	@Before
-	public void beforeTest() throws Exception {
-		gefBot = new SWTGefBot();
-		StandardTestActions.beforeTest(gefBot);
-	}
-
-	@After
-	public void afterTest() throws Exception {
-		StandardTestActions.afterTest(gefBot);
-	}
-	
-	@AfterClass
-	public static void afterClass() throws Exception {
-		StandardTestActions.afterClass();
-	}
 
 	/**
 	 * IDE-669
