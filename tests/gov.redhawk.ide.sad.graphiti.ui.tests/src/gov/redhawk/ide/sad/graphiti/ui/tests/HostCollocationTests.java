@@ -56,9 +56,6 @@ public class HostCollocationTests {
 	
 	@After
 	public void afterTest() throws Exception {
-		if (waveformName != null) {
-			MenuUtils.closeAndDelete(gefBot, waveformName);
-		}
 		StandardTestActions.afterTest(gefBot);
 	}
 	

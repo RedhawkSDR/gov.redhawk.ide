@@ -38,7 +38,6 @@ public class StartOrderTests {
 	@BeforeClass
 	public static void beforeClass() throws Exception {
 		StandardTestActions.beforeClass();
-		StandardTestActions.setTargetSdr(GraphitiTestsActivator.PLUGIN_ID);
 	}
 	
 	@Before
@@ -49,9 +48,6 @@ public class StartOrderTests {
 	
 	@After
 	public void afterTest() throws Exception {
-		if (waveformName != null) {
-			MenuUtils.closeAndDelete(gefBot, waveformName);
-		}
 		StandardTestActions.afterTest(gefBot);
 	}
 	

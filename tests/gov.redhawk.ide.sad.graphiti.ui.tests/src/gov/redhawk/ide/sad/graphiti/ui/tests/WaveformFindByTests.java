@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
-import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
@@ -40,7 +39,6 @@ public class WaveformFindByTests {
 	@BeforeClass
 	public static void beforeClass() throws Exception {
 		StandardTestActions.beforeClass();
-		StandardTestActions.setTargetSdr(GraphitiTestsActivator.PLUGIN_ID);
 	}
 
 	@Before
@@ -51,9 +49,6 @@ public class WaveformFindByTests {
 
 	@After
 	public void afterTest() throws Exception {
-		if (waveformName != null) {
-			MenuUtils.closeAndDelete(gefBot, waveformName);
-		}
 		StandardTestActions.afterTest(gefBot);
 	}
 	

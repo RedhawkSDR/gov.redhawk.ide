@@ -44,7 +44,6 @@ public class XmlToDiagramRemoveTests {
 	@BeforeClass
 	public static void beforeClass() throws Exception {
 		StandardTestActions.beforeClass();
-		StandardTestActions.setTargetSdr(GraphitiTestsActivator.PLUGIN_ID);
 	}
 	
 	@Before
@@ -55,9 +54,6 @@ public class XmlToDiagramRemoveTests {
 
 	@After
 	public void afterTest() throws Exception {
-		if (waveformName != null) {
-			MenuUtils.closeAndDelete(gefBot, waveformName);
-		}
 		StandardTestActions.afterTest(gefBot);
 	}
 	
@@ -178,7 +174,7 @@ public class XmlToDiagramRemoveTests {
 		// Add host collocation to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HOSTCOLLOCATION_PALETTE, 0, 0);
 		
-		gefBot.waitUntil(Conditions.shellIsActive("Host Collocation"));
+		gefBot.waitUntil(Conditions.shellIsActive("New Host Collocation"));
 		gefBot.textWithLabel("Host Collocation:").setText("AAA");
 		gefBot.button("OK").click();
 		gefBot.sleep(1000);

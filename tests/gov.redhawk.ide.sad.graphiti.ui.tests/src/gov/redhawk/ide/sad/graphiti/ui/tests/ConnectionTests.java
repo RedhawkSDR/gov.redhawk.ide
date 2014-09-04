@@ -48,7 +48,6 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 	@BeforeClass
 	public static void beforeClass() throws Exception {
 		StandardTestActions.beforeClass();
-		StandardTestActions.setTargetSdr(GraphitiTestsActivator.PLUGIN_ID);
 	}
 
 	@Before
@@ -228,9 +227,6 @@ public class ConnectionTests { // SUPPRESS CHECKSTYLE INLINE
 	public void afterTest() throws Exception {
 		if (gefBot == null) {
 			return;
-		}
-		if (waveformName != null) {
-			MenuUtils.closeAndDelete(gefBot, waveformName);
 		}
 		StandardTestActions.afterTest(gefBot);
 	}
