@@ -10,6 +10,18 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.ui.PlatformUI;
@@ -44,7 +56,7 @@ public final class StandardTestActions {
 			}
 		});
 	}
-	
+
 	@Before
 	public static void beforeTest(SWTWorkbenchBot bot) throws Exception {
 		SWTBotPerspective perspective = bot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
@@ -52,16 +64,26 @@ public final class StandardTestActions {
 		bot.resetActivePerspective();
 		bot.sleep(100);
 	}
-	
+
 	@After
 	public static void afterTest(SWTWorkbenchBot bot) throws Exception {
 		bot.closeAllEditors();
 		bot.sleep(100);
 	}
-	
+
 	@AfterClass
 	public static void afterClass() throws Exception {
 		SWTWorkbenchBot tmpBot = new SWTWorkbenchBot();
 		tmpBot.sleep(500);
+	}
+
+	public static void setTargetSdr(String pluginId) throws IOException, URISyntaxException {
+		final URL url = FileLocator.find(Platform.getBundle(pluginId), new Path("sdr"), null);
+		final SdrRoot root = SdrUiPlugin.getDefault().getTargetSdrRoot();
+		root.load(null);
+		final URL fileURL = FileLocator.toFileURL(url);
+		SdrUiPlugin.getDefault().getPreferenceStore().setValue(SdrUiPreferenceConstants.SCA_LOCAL_SDR_PATH_PREFERENCE,
+			new File(fileURL.toURI()).getAbsolutePath());
+		root.reload(null);
 	}
 }
