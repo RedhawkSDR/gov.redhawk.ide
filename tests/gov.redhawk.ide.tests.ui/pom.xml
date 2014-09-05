@@ -24,7 +24,7 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
 
-  <build>
+   <build>
     <plugins>
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
@@ -35,6 +35,12 @@
           <useUIThread>false</useUIThread>
           <application>org.eclipse.ui.ide.workbench</application>
           <showEclipseLog>true</showEclipseLog>
+          <environmentVariables>
+            <DISPLAY>${env.DISPLAY}</DISPLAY>
+            <PATH>${env.PATH}</PATH>
+            <SDRROOT>${basedir}/sdr</SDRROOT>
+            <OSSIEHOME>${basedir}/ossie</OSSIEHOME>
+          </environmentVariables>
           <argLine>-Dorg.eclipse.swt.browser.DefaultType=mozilla -DORBInitialPort=2908 -XX:MaxPermSize=256m -Xmx1024m -Djava.net.preferIPv4Stack=true</argLine>
           <appArgLine>-nl en</appArgLine>
           <dependencies>
@@ -55,12 +61,17 @@
             </dependency>
             <dependency>
               <type>eclipse-feature</type>
-              <artifactId>org.eclipse.sdk</artifactId>
+              <artifactId>org.eclipse.epp.package.standard.feature</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-feature</type>
-              <artifactId>gov.redhawk.ide.all.sdk</artifactId>
+              <artifactId>gov.redhawk.ide.ui.feature</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-feature</type>
+              <artifactId>gov.redhawk.ide.feature</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -96,11 +107,6 @@
             <dependency>
               <type>eclipse-feature</type>
               <artifactId>org.eclipse.swtbot</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>org.jacorb</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
