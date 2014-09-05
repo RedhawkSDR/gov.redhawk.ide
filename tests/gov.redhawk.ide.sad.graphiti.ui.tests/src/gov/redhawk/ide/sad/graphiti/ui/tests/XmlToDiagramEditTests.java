@@ -76,7 +76,7 @@ public class XmlToDiagramEditTests extends AbstractGraphitiTest {
 		
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		gefBot.sleep(10000); // Sometimes diagram takes a few seconds to update
+		gefBot.sleep(2000); // Sometimes diagram takes a few seconds to update
 		SadComponentInstantiation componentObj = DiagramTestUtils.getComponentObject(editor, componentTwo);
 		Assert.assertEquals("Usage Name did not update correctly", componentTwo + "_2", componentObj.getUsageName());
 		Assert.assertEquals("Component ID did not update correctly", componentTwo + "_2", componentObj.getId());
