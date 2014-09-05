@@ -100,8 +100,13 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 						(SadComponentInstantiation[]) p.getComponentInstantiation().toArray(new SadComponentInstantiation[0]));
 				}
 			}
-			// shape components
+			// shape components, excluding those found in host collocations
 			List<ComponentShape> componentShapes = ComponentPattern.getAllComponentShapes(d);
+			for (int i = 0; i < componentShapes.size(); i++) {
+				if (!(componentShapes.get(i).eContainer() instanceof Diagram)) {
+					componentShapes.remove(i);
+				}
+			}
 
 			// model connections
 			List<SadConnectInterface> sadConnectInterfaces = new ArrayList<SadConnectInterface>();
@@ -125,9 +130,28 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				List<PictogramElement> pesToRemove = new ArrayList<PictogramElement>(); // gather all shapes to remove
 				List<Object> objsToAdd = new ArrayList<Object>(); // gather all model object to add
 
-				// If number of model and diagram objects don't match, mark them to be removed
-				// and query the model for the correct number of objects to be drawn
-				if (hostCollocations.size() != hostCollocationShapes.size()) {
+				// Check hostCollocations for inconsistencies on text/name values
+				boolean valuesMatch = true;
+				if (hostCollocations.size() == hostCollocationShapes.size()) {
+					for (int i = 0; i < hostCollocations.size(); i++) {
+						valuesMatch = HostCollocationPattern.compareHostCoText(hostCollocationShapes.get(i), hostCollocations.get(i));
+						break;
+					}
+				}
+				
+				// Check hostCollocations for inconsistencies in contained components
+				boolean numberOfComponentsMatch = true;
+				if (hostCollocations.size() == hostCollocationShapes.size()) {
+					for (int i = 0; i < hostCollocations.size(); i++) {
+						if (hostCollocations.get(i).getComponentPlacement().size() != hostCollocationShapes.get(i).getChildren().size()) {
+							numberOfComponentsMatch = false;
+							break;
+						}
+					}
+				}
+				
+				// If inconsistencies found, redraw diagram elements based on model objects
+				if (hostCollocations.size() != hostCollocationShapes.size() || !numberOfComponentsMatch || !valuesMatch) {
 					Collections.addAll(pesToRemove, (PictogramElement[]) hostCollocationShapes.toArray(new PictogramElement[0]));
 					Collections.addAll(objsToAdd, (Object[]) hostCollocations.toArray(new Object[0]));
 				}
@@ -213,6 +237,9 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			reason = internalUpdate(context, true);
 			reason.toBoolean();
 
+			/* Devin - Currently commented out because this resets the layout even on minor edits.  
+			 * Need to look into minimizing this call to extreme cases
+			 */
 			// TODO: THIS IS NOT THE RIGHT WAY, JUST DO IT TO GET SOMETHING WORKING
 			// if we changed something lets layout the diagram
 //			if (reason.toBoolean()) {

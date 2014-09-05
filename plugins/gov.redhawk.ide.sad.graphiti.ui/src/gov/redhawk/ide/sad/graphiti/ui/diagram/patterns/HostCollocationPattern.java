@@ -496,13 +496,8 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 	 */
 	@Override
 	public IReason updateNeeded(IUpdateContext context) {
-		PictogramElement hostCoPE = context.getPictogramElement();
-		Object businessObject = getBusinessObjectForPictogramElement(hostCoPE);
-		if (businessObject instanceof HostCollocation) {
-			return this.internalUpdate(hostCoPE, (HostCollocation) businessObject, false);
-		}
+		// Currently all logic for host collocation update is done in RHDiagramUpdateFeature
 		return new Reason(false);
-		// TODO
 	}
 
 	/**
@@ -510,50 +505,8 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 	 */
 	@Override
 	public boolean update(IUpdateContext context) {
-		PictogramElement hostCoPE = context.getPictogramElement();
-		Object businessObject = getBusinessObjectForPictogramElement(hostCoPE);
-		if (businessObject instanceof HostCollocation) {
-			Reason updateCompleted = this.internalUpdate(hostCoPE, (HostCollocation) businessObject, true);
-			return updateCompleted.toBoolean();
-		}
+		// Currently all logic for host collocation update is done in RHDiagramUpdateFeature
 		return false;
-	}
-
-	/**
-	 * Performs either an update or a check to determine if update is required.
-	 * if performUpdate flag is true it will update the shape,
-	 * otherwise it will return reason why update is required.
-	 * @param component instantiation
-	 * @param performUpdate
-	 * @return
-	 */
-	public Reason internalUpdate(PictogramElement hostCoPE, HostCollocation hostCo, boolean performUpdate) {
-		// See RHDiagramUpdateFeature for host collocation name updates. Since name is a primary identifier, it requires
-		// special handling
-
-		// Check if Host Collocation contents need to be updated
-//		if (performUpdate && !compareHostCoContents(hostCoPE, hostCo)) {
-//			ContainerShape containerShape = (ContainerShape) hostCoPE;
-//			for (int i = 0; i < containerShape.getChildren().size(); i++) {
-//				Shape shape = containerShape.getChildren().get(i);
-//				if (shape instanceof ComponentShape) {
-//					ComponentShape componentShape = (ComponentShape) shape;
-//
-//				}
-//			}
-//
-//			containerShape.getChildren().clear();
-//			for (SadComponentPlacement componentPlacement : hostCo.getComponentPlacement()) {
-//				for (SadComponentInstantiation componentInstantiation : componentPlacement.getComponentInstantiation()) {
-//					DUtil.addShapeViaFeature(getFeatureProvider(), containerShape, componentInstantiation);
-//				}
-//			}
-//			return new Reason(true);
-//		} else if (!compareHostCoContents(hostCoPE, hostCo)) {
-//			return new Reason(true, "Host Collocation contents do not match model");
-//		}
-
-		return new Reason(false, "No Update Needed");
 	}
 
 	/**
