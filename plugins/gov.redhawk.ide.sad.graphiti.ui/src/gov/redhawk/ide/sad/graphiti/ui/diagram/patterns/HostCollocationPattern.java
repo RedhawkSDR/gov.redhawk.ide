@@ -132,13 +132,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 	 * @return
 	 */
 	public static List<ContainerShape> getHostCollocationContainerShapes(Diagram diagram) {
-		List<ContainerShape> hostCollocationContainerShapes = new ArrayList<ContainerShape>();
-		// get all Shapes linked to a HostCollocation
-		List<ContainerShape> containerShapes = DUtil.getAllContainerShapes(diagram, HOST_COLLOCATION_OUTER_CONTAINER_SHAPE);
-		for (ContainerShape cs : containerShapes) {
-			hostCollocationContainerShapes.add(cs);
-		}
-		return hostCollocationContainerShapes;
+		return DUtil.getAllContainerShapes(diagram, HOST_COLLOCATION_OUTER_CONTAINER_SHAPE);
 	}
 
 	/**
@@ -198,10 +192,10 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 				}
 			}
 		}
-		
-		//Add component's inside host collocation model into the newly added shape
-		for (SadComponentPlacement componentPlacement: hostCollocation.getComponentPlacement()) {
-			for (SadComponentInstantiation componentInstantiation: componentPlacement.getComponentInstantiation()) {
+
+		// Add component's inside host collocation model into the newly added shape
+		for (SadComponentPlacement componentPlacement : hostCollocation.getComponentPlacement()) {
+			for (SadComponentInstantiation componentInstantiation : componentPlacement.getComponentInstantiation()) {
 				DUtil.addShapeViaFeature(getFeatureProvider(), outerContainerShape, componentInstantiation);
 			}
 		}
@@ -272,7 +266,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 
 		addGraphicalRepresentation(context, hostCollocations[0]);
 
-		return new Object[] { hostCollocations[0] }; 
+		return new Object[] { hostCollocations[0] };
 	}
 
 	/**
@@ -415,7 +409,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 		// set hostCollocationToDelete
 		final HostCollocation hostCollocationToDelete = (HostCollocation) DUtil.getBusinessObject(context.getPictogramElement());
 		final ContainerShape hostCollocationShape = (ContainerShape) context.getPictogramElement();
-		
+
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
@@ -435,8 +429,8 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 
 				// move components from host collocation to diagram (don't delete them)
 				if (hostCollocationToDelete.getComponentPlacement() != null) {
-					//move on diagram
-					for (Shape s: GraphitiUi.getPeService().getAllContainedShapes(hostCollocationShape)) {
+					// move on diagram
+					for (Shape s : GraphitiUi.getPeService().getAllContainedShapes(hostCollocationShape)) {
 						if (s instanceof ComponentShape) {
 							final ComponentShape c = (ComponentShape) s;
 							MoveShapeContext moveContext = new MoveShapeContext(c);
@@ -497,21 +491,96 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 		return outerContainerShape;
 	}
 
-	@Override
-	public boolean update(IUpdateContext context) {
-		return false;
-		// TODO
-	}
-
 	/**
 	 * Determines whether we need to update the diagram from the model.
 	 */
 	@Override
 	public IReason updateNeeded(IUpdateContext context) {
+		PictogramElement hostCoPE = context.getPictogramElement();
+		Object businessObject = getBusinessObjectForPictogramElement(hostCoPE);
+		if (businessObject instanceof HostCollocation) {
+			return this.internalUpdate(hostCoPE, (HostCollocation) businessObject, false);
+		}
 		return new Reason(false);
 		// TODO
 	}
-	
+
+	/**
+	 * Updates the host collocation if needed
+	 */
+	@Override
+	public boolean update(IUpdateContext context) {
+		PictogramElement hostCoPE = context.getPictogramElement();
+		Object businessObject = getBusinessObjectForPictogramElement(hostCoPE);
+		if (businessObject instanceof HostCollocation) {
+			Reason updateCompleted = this.internalUpdate(hostCoPE, (HostCollocation) businessObject, true);
+			return updateCompleted.toBoolean();
+		}
+		return false;
+	}
+
+	/**
+	 * Performs either an update or a check to determine if update is required.
+	 * if performUpdate flag is true it will update the shape,
+	 * otherwise it will return reason why update is required.
+	 * @param component instantiation
+	 * @param performUpdate
+	 * @return
+	 */
+	public Reason internalUpdate(PictogramElement hostCoPE, HostCollocation hostCo, boolean performUpdate) {
+		// See RHDiagramUpdateFeature for host collocation name updates. Since name is a primary identifier, it requires
+		// special handling
+
+		// Check if Host Collocation contents need to be updated
+//		if (performUpdate && !compareHostCoContents(hostCoPE, hostCo)) {
+//			ContainerShape containerShape = (ContainerShape) hostCoPE;
+//			for (int i = 0; i < containerShape.getChildren().size(); i++) {
+//				Shape shape = containerShape.getChildren().get(i);
+//				if (shape instanceof ComponentShape) {
+//					ComponentShape componentShape = (ComponentShape) shape;
+//
+//				}
+//			}
+//
+//			containerShape.getChildren().clear();
+//			for (SadComponentPlacement componentPlacement : hostCo.getComponentPlacement()) {
+//				for (SadComponentInstantiation componentInstantiation : componentPlacement.getComponentInstantiation()) {
+//					DUtil.addShapeViaFeature(getFeatureProvider(), containerShape, componentInstantiation);
+//				}
+//			}
+//			return new Reason(true);
+//		} else if (!compareHostCoContents(hostCoPE, hostCo)) {
+//			return new Reason(true, "Host Collocation contents do not match model");
+//		}
+
+		return new Reason(false, "No Update Needed");
+	}
+
+	/**
+	 * Checks for inconsistencies in text value between model and diagram elements
+	 * returns false if values don't match
+	 */
+	public static boolean compareHostCoText(PictogramElement hostCoPE, HostCollocation hostCo) {
+		GraphicsAlgorithm hostCoGA = hostCoPE.getGraphicsAlgorithm();
+		for (GraphicsAlgorithm childGA : hostCoGA.getGraphicsAlgorithmChildren()) {
+			if (childGA instanceof Text) {
+				Text text = (Text) childGA;
+				if (!text.getValue().equals(hostCo.getName())) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	public static boolean compareHostCoContents(PictogramElement pe, HostCollocation hostCo) {
+		ContainerShape hostCoPE = (ContainerShape) pe;
+		if (hostCoPE.getChildren().size() != hostCo.getComponentPlacement().size()) {
+			return false;
+		}
+		return true;
+	}
+
 	/**
 	 * Creates a dialog which prompts the user for an event channel name.
 	 * Will return <code>null</code> if the user terminates the dialog via
@@ -520,8 +589,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 	 */
 	private String getUserInput() {
 		// prompt user for Host Collocation name
-		AbstractInputValidationDialog dialog = new AbstractInputValidationDialog(
-			NAME, "Enter " + NAME + " name", NAME) {
+		AbstractInputValidationDialog dialog = new AbstractInputValidationDialog(NAME, "Enter " + NAME + " name", NAME) {
 			@Override
 			public String inputValidity(String value) {
 				return checkValueValid(value, null);
@@ -537,8 +605,6 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 		}
 		return null;
 	}
-
-
 
 	@Override
 	public boolean canDirectEdit(IDirectEditingContext context) {
@@ -556,7 +622,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 		}
 		return false;
 	}
-	
+
 	@Override
 	public String getInitialValue(IDirectEditingContext context) {
 		EObject hc = (EObject) DUtil.getBusinessObject(context.getPictogramElement());
