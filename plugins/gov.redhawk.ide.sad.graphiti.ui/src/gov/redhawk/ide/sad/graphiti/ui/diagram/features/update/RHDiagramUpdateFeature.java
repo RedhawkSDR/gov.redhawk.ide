@@ -235,7 +235,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		Reason reason;
 		try {
 			reason = internalUpdate(context, true);
-			reason.toBoolean();
+			return reason.toBoolean();
 
 			/* Devin - Currently commented out because this resets the layout even on minor edits.  
 			 * Need to look into minimizing this call to extreme cases
