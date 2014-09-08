@@ -127,6 +127,7 @@ public class WaveformComponentTests extends AbstractGraphitiTest {
 		// Add component to the host collocation
 		editor.setFocus();
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 200);
 		
 		MenuUtils.save(gefBot);
 		
@@ -143,17 +144,21 @@ public class WaveformComponentTests extends AbstractGraphitiTest {
 		
 		HostCollocation hostCo = (HostCollocation) bo;
 		EList<SadComponentPlacement> components = hostCo.getComponentPlacement();
-		Assert.assertEquals("Expected component \'" + HARD_LIMIT + "\' was not found", HARD_LIMIT + "_1",
+		Assert.assertEquals("Expected component \'" + HARD_LIMIT + "_1\' was not found", HARD_LIMIT + "_1",
 			components.get(0).getComponentInstantiation().get(0).getId());
+		Assert.assertEquals("Expected component \'" + HARD_LIMIT + "_2\' was not found", HARD_LIMIT + "_2",
+				components.get(1).getComponentInstantiation().get(0).getId());
 		
 		//delete  component
 		SWTBotGefEditPart gefEditPart = editor.getEditPart(HARD_LIMIT);
 		DiagramTestUtils.deleteFromDiagram(editor, gefEditPart);
-		//ensure component shape is deleted
-		Assert.assertNull(editor.getEditPart(HARD_LIMIT));
-		//ensure component business object is deleted
-		Assert.assertTrue("Expected component \'" + HARD_LIMIT + "\' exists",
-				hostCo.getComponentPlacement().size() < 1);
+
+		//ensure HardLimit_2 shape still exists
+		Assert.assertNotNull(editor.getEditPart("HardLimit_2"));
+		//ensure HardLimit_1 component business object is deleted
+		Assert.assertTrue("Expected there to be only 1 component left after deletion",
+				hostCo.getComponentPlacement().size() == 1);
+		Assert.assertNotNull("ComponentFile for " + HARD_LIMIT + " no longer exists", hostCo.getComponentPlacement().get(0).getComponentFileRef().getFile());
 
 	}
 
