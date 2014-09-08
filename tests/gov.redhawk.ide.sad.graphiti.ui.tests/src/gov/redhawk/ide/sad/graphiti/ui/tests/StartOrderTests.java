@@ -34,7 +34,7 @@ public class StartOrderTests extends AbstractGraphitiTest {
 	 */
 	@Test
 	public void changeStartOrderTest() {
-		waveformName = "IDE---Test";
+		waveformName = "Change_Start_Order";
 		final String componentOne = "HardLimit";
 		final String componentTwo = "SigGen";
 
@@ -96,7 +96,7 @@ public class StartOrderTests extends AbstractGraphitiTest {
 	 */
 	@Test
 	public void changeStartOrderWithNullTest() {
-		waveformName = "IDE-721-Test";
+		waveformName = "Null_Start_Order";
 		final String compNoStartOrder = "SigGen";
 		final String componentOne = "HardLimit";
 		final String componentTwo = "DataConverter";
@@ -195,7 +195,7 @@ public class StartOrderTests extends AbstractGraphitiTest {
 	 */
 	@Test
 	public void setAssemblyControllerFromOverview() {
-		waveformName = "IDE-695-Test";
+		waveformName = "AC_From_Overview";
 		final String[] component = { "DataConverter", "HardLimit", "SigGen" };
 
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
@@ -218,7 +218,7 @@ public class StartOrderTests extends AbstractGraphitiTest {
 
 		// Confirm start order numbers have adjusted appropriately
 		for (int i = 0; i < component.length - 1; i++) {
-			Assert.assertTrue("Component order is incorrect for " + component[i],  ComponentUtils.correctStylingAndValue(editor, component[i], Integer.toString(i + 1), false));
+			Assert.assertTrue("Start order is incorrect for " + component[i],  ComponentUtils.correctStylingAndValue(editor, component[i], Integer.toString(i + 1), false));
 		}
 
 		// Check new assembly controller
@@ -229,12 +229,13 @@ public class StartOrderTests extends AbstractGraphitiTest {
 	}
 
 	/**
+	 * IDE-695
 	 * Checks that the overview tab assembly controller combo updates correctly when a new assembly controller is set in
 	 * the Graphiti diagram editor
 	 */
 	@Test
 	public void setAssemblyControllerFromDiagramChangesOverview() {
-		waveformName = "IDE-695-Test";
+		waveformName = "AC_From_Diagram";
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
 		final String[] component = { "DataConverter", "HardLimit", "SigGen" };
@@ -276,7 +277,7 @@ public class StartOrderTests extends AbstractGraphitiTest {
 	 */
 	@Test
 	public void checkStartOrderSequence() {
-		waveformName = "IDE---Test";
+		waveformName = "Start_Order_Seq";
 		final String[] component = { "DataConverter", "HardLimit", "SigGen" };
 
 		WaveformUtils.createNewWaveform(gefBot, waveformName);

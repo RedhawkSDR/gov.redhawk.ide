@@ -278,7 +278,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		// update assembly controller styling and text
 		Ellipse startOrderEllipse = (Ellipse) getStartOrderEllipseShape().getGraphicsAlgorithm();
 		boolean isStyleCorrect = startOrderEllipse.getStyle() == StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram);
-		boolean isTextCorrect = ci.getStartOrder().compareTo(BigInteger.ZERO) == 0; 
+		boolean isTextCorrect = ci.getStartOrder() != null ? (ci.getStartOrder().compareTo(BigInteger.ZERO) == 0) : false; 
 		if ((!isStyleCorrect || !isTextCorrect) && assemblyController != null) {
 			// if assembly controller, then use special style
 			if (performUpdate) {
