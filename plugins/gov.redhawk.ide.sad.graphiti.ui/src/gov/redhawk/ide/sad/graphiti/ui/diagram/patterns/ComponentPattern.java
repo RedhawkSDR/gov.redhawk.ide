@@ -21,6 +21,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -29,12 +30,14 @@ import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
+import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -162,7 +165,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 			protected void doExecute() {
 
 				// delete component from SoftwareAssembly
-				DUtil.deleteComponentInstantiation(ciToDelete, sad);
+				deleteComponentInstantiation(ciToDelete, sad);
 
 				// re-organize start order
 				organizeStartOrder(sad, diagram, getFeatureProvider());
@@ -182,6 +185,76 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 
 		// redraw start order
 		// DUtil.organizeDiagramStartOrder(diagram);
+	}
+	
+	/**
+	 * Delete SadComponentInstantiation and corresponding SadComponentPlacement business object from SoftwareAssembly
+	 * This method should be executed within a RecordingCommand.
+	 * @param ciToDelete
+	 * @param diagram
+	 */
+	public static void deleteComponentInstantiation(final SadComponentInstantiation ciToDelete, final SoftwareAssembly sad) {
+
+		// assembly controller may reference componentInstantiation
+		// delete reference if applicable
+		if (sad.getAssemblyController() != null && sad.getAssemblyController().getComponentInstantiationRef() != null
+			&& sad.getAssemblyController().getComponentInstantiationRef().getInstantiation().equals(ciToDelete)) {
+			EcoreUtil.delete(sad.getAssemblyController().getComponentInstantiationRef());
+			sad.getAssemblyController().setComponentInstantiationRef(null);
+		}
+
+		// get placement for instantiation and delete it from sad partitioning after we look at removing the component
+		// file ref.
+		SadComponentPlacement placement = (SadComponentPlacement) ciToDelete.getPlacement();
+
+		// find and remove any attached connections
+		// gather connections
+		List<SadConnectInterface> connectionsToRemove = new ArrayList<SadConnectInterface>();
+		if (sad.getConnections() != null) {
+			for (SadConnectInterface connectionInterface : sad.getConnections().getConnectInterface()) {
+				// we need to do thorough null checks here because of the many connection possibilities. Firstly a
+				// connection requires only a usesPort and either (providesPort || componentSupportedInterface)
+				// and therefore null checks need to be performed.
+				// FindBy connections don't have ComponentInstantiationRefs and so they can also be null
+				if ((connectionInterface.getComponentSupportedInterface() != null
+					&& connectionInterface.getComponentSupportedInterface().getComponentInstantiationRef() != null && ciToDelete.getId().equals(
+					connectionInterface.getComponentSupportedInterface().getComponentInstantiationRef().getRefid()))
+					|| (connectionInterface.getUsesPort() != null && connectionInterface.getUsesPort().getComponentInstantiationRef() != null && ciToDelete.getId().equals(
+						connectionInterface.getUsesPort().getComponentInstantiationRef().getRefid()))
+					|| (connectionInterface.getProvidesPort() != null && connectionInterface.getProvidesPort().getComponentInstantiationRef() != null && ciToDelete.getId().equals(
+						connectionInterface.getProvidesPort().getComponentInstantiationRef().getRefid()))) {
+					connectionsToRemove.add(connectionInterface);
+				}
+			}
+		}
+		// remove gathered connections
+		if (sad.getConnections() != null) {
+			sad.getConnections().getConnectInterface().removeAll(connectionsToRemove);
+		}
+
+		// delete component file if applicable
+		// figure out which component file we are using and if no other component placements using it then remove it.
+		ComponentFile componentFileToRemove = placement.getComponentFileRef().getFile();
+		//check components (not in host collocation)
+		for (SadComponentPlacement p : sad.getPartitioning().getComponentPlacement()) {
+			if (p != placement && p.getComponentFileRef().getRefid().equals(placement.getComponentFileRef().getRefid())) {
+				componentFileToRemove = null;
+			}
+		}
+		//check components in host collocation
+		for (HostCollocation hc : sad.getPartitioning().getHostCollocation()) {
+			for (SadComponentPlacement p : hc.getComponentPlacement()) {
+				if (p != placement && p.getComponentFileRef().getRefid().equals(placement.getComponentFileRef().getRefid())) {
+					componentFileToRemove = null;
+				}
+			}
+		}
+		if (componentFileToRemove != null) {
+			sad.getComponentFiles().getComponentFile().remove(componentFileToRemove);
+		}
+
+		// delete component placement
+		EcoreUtil.delete(placement);
 	}
 
 	@Override
