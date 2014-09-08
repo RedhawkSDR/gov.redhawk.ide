@@ -218,7 +218,7 @@ public class StartOrderTests extends AbstractGraphitiTest {
 
 		// Confirm start order numbers have adjusted appropriately
 		for (int i = 0; i < component.length - 1; i++) {
-			Assert.assertTrue(ComponentUtils.correctStylingAndValue(editor, component[i], Integer.toString(i + 1), false));
+			Assert.assertTrue("Component order is incorrect for " + component[i],  ComponentUtils.correctStylingAndValue(editor, component[i], Integer.toString(i + 1), false));
 		}
 
 		// Check new assembly controller
