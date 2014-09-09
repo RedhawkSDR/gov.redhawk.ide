@@ -133,7 +133,7 @@ public class WaveformComponentTests extends AbstractGraphitiTest {
 		
 		// Check pictogram elements
 		SWTBotGefEditPart hostCoEditPart = editor.getEditPart(HOST_CO_NAME);
-		Assert.assertNotNull(hostCoEditPart);
+		Assert.assertNotNull(HOST_CO_NAME + "edit part not found", hostCoEditPart);
 		ContainerShape hostCollocationContainerShape = (ContainerShape) hostCoEditPart.part().getModel();
 		String shapeType = Graphiti.getPeService().getPropertyValue(hostCollocationContainerShape, DUtil.SHAPE_TYPE);
 		Assert.assertTrue("Host Collocation property is missing or wrong", shapeType.equals(HostCollocationPattern.HOST_COLLOCATION_OUTER_CONTAINER_SHAPE));
