@@ -13,6 +13,7 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 import gov.redhawk.ide.swtbot.StandardTestActions;
 
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
+import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -27,6 +28,7 @@ public abstract class AbstractGraphitiTest {
 	
 	@BeforeClass
 	public static void beforeClass() throws Exception {
+		SWTBotPreferences.PLAYBACK_DELAY = 500;
 		StandardTestActions.beforeClass();
 	}
 	
