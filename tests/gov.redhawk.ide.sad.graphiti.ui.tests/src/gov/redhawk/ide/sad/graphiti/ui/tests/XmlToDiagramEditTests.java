@@ -30,6 +30,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,24 +52,24 @@ public class XmlToDiagramEditTests extends AbstractGraphitiTest {
 	@Test
 	public void editComponentInXmlTest() {
 		waveformName = "Edit_Component_Xml";
-		final String componentOne = "SigGen";
-		final String componentTwo = "HardLimit";
-		final String componentThree = "SigGen";
+		final String SIGGEN = "SigGen";
+		final String HARD_LIMIT = "HardLimit";
+		final String DATA_CONVETER = "DataConverter";
 
 		// Create a new empty waveform
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentOne, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentTwo, 200, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentThree, 0, 200);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 200, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, DATA_CONVETER, 0, 200);
 		MenuUtils.save(gefBot);
 
 		// Edit content of sad.xml
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		String editorText = editor.toTextEditor().getText();
-		editorText = editorText.replace(componentTwo + "_1", componentTwo + "_2");
+		editorText = editorText.replace(HARD_LIMIT + "_1", HARD_LIMIT + "_2");
 		editorText = editorText.replace("startorder=\"1\"", "startorder=\"3\"");
 		editorText = editorText.replace("startorder=\"2\"", "startorder=\"1\"");
 		editorText = editorText.replace("startorder=\"3\"", "startorder=\"2\"");
@@ -77,11 +78,24 @@ public class XmlToDiagramEditTests extends AbstractGraphitiTest {
 
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		gefBot.sleep(2000); // Sometimes diagram takes a few seconds to update
-		SadComponentInstantiation componentObj = DiagramTestUtils.getComponentObject(editor, componentTwo);
-		Assert.assertEquals("Usage Name did not update correctly", componentTwo + "_2", componentObj.getUsageName());
-		Assert.assertEquals("Component ID did not update correctly", componentTwo + "_2", componentObj.getId());
-		Assert.assertEquals("Naming Service did not update correctly", componentTwo + "_2", componentObj.getFindComponent().getNamingService().getName());
+
+		gefBot.waitUntil(new DefaultCondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				return (HARD_LIMIT + "_2").equals(DiagramTestUtils.getComponentObject(editor, HARD_LIMIT).getUsageName());
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Usage Name did not update correctly. Expected [" + HARD_LIMIT + "_2] Found ["
+					+ DiagramTestUtils.getComponentObject(editor, HARD_LIMIT).getUsageName() + "]";
+			}
+		}, 10000, 1000);
+
+		SadComponentInstantiation componentObj = DiagramTestUtils.getComponentObject(editor, HARD_LIMIT);
+		Assert.assertEquals("Component ID did not update correctly", HARD_LIMIT + "_2", componentObj.getId());
+		Assert.assertEquals("Naming Service did not update correctly", HARD_LIMIT + "_2", componentObj.getFindComponent().getNamingService().getName());
 		Assert.assertEquals("Start Order did not update correctly", BigInteger.valueOf(2), componentObj.getStartOrder());
 
 	}
@@ -123,24 +137,22 @@ public class XmlToDiagramEditTests extends AbstractGraphitiTest {
 
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		gefBot.sleep(2000); // Sometimes diagram takes a few seconds to update
-		sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
-		hardLimitProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
 
-		// Check that connection data has changed
+		// Check that SigGen connection data has changed
+		sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		List<SWTBotGefConnectionEditPart> sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesEditPart);
-		Assert.assertTrue("Only one connection should exist", sourceConnections.size() == 1);
-		Connection connection = (Connection) sourceConnections.get(0).part().getModel();
+		Assert.assertEquals("Wrong number of connections found", 1, sourceConnections.size());
+		final Connection connection = (Connection) sourceConnections.get(0).part().getModel();
 
 		UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(connection.getStart());
 		Assert.assertEquals("Connection uses port not correct", usesPort, DUtil.getBusinessObject((ContainerShape) sigGenUsesEditPart.part().getModel()));
 
+		final SWTBotGefEditPart dataConverterProvidesPort = DiagramTestUtils.getDiagramProvidesPort(editor, DATA_CONVERTER, "dataDouble");
 		ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(connection.getEnd());
-		SWTBotGefEditPart dataConverterProvidesPort = DiagramTestUtils.getDiagramProvidesPort(editor, DATA_CONVERTER, "dataDouble");
-		Assert.assertEquals("Connect provides port not correct", providesPort,
-			DUtil.getBusinessObject((ContainerShape) dataConverterProvidesPort.part().getModel()));
+		Assert.assertEquals("Connect provides port not correct", DUtil.getBusinessObject((ContainerShape) dataConverterProvidesPort.part().getModel()),	providesPort);
 
 		// Check that HardLimit is no longer a part of a connection
+		hardLimitProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
 		List<SWTBotGefConnectionEditPart> providesConnections = DiagramTestUtils.getTargetConnectionsFromPort(editor, hardLimitProvidesEditPart);
 		Assert.assertTrue("HardLimit should not be the target of a connection", providesConnections.isEmpty());
 	}
@@ -153,23 +165,23 @@ public class XmlToDiagramEditTests extends AbstractGraphitiTest {
 	@Test
 	public void editAssemblyControllerInXmlTest() {
 		waveformName = "Edit_Assembly_Controller_Xml";
-		final String componentOne = "SigGen";
-		final String componentTwo = "HardLimit";
+		final String SIGGEN = "SigGen";
+		final String HARD_LIMIT = "HardLimit";
 
 		// Create a new empty waveform
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentOne, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentTwo, 200, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 200, 0);
 		MenuUtils.save(gefBot);
 
 		// Verify componentOne is set as assembly Controller
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		ComponentShapeImpl componentShapeOne = DiagramTestUtils.getComponentShape(editor, componentOne);
+		ComponentShapeImpl componentShapeOne = DiagramTestUtils.getComponentShape(editor, SIGGEN);
 		Assert.assertEquals("Setup for test is flawed, componentOne is not the assembly controller", componentShapeOne.getStartOrderText().getValue(), "0");
-		ComponentShapeImpl componentShapeTwo = DiagramTestUtils.getComponentShape(editor, componentTwo);
+		ComponentShapeImpl componentShapeTwo = DiagramTestUtils.getComponentShape(editor, HARD_LIMIT);
 		Assert.assertEquals("Setup for test is flawed, componentTwo is the assembly controller", componentShapeTwo.getStartOrderText().getValue(), "1");
 
 		// Edit content of sad.xml, change assembly controller from componentOne to componentTwo
@@ -181,11 +193,20 @@ public class XmlToDiagramEditTests extends AbstractGraphitiTest {
 
 		// Confirm edits reflect that componentTwo is now assembly controller
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		gefBot.sleep(2000); // Sometimes diagram takes a few seconds to update
-		componentShapeOne = DiagramTestUtils.getComponentShape(editor, componentOne);
-		Assert.assertEquals("Diagram does not represent newly changed assembly controller", componentShapeOne.getStartOrderText().getValue(), "1");
-		componentShapeTwo = DiagramTestUtils.getComponentShape(editor, componentTwo);
-		Assert.assertEquals("Diagram does not represent newly changed assembly controller", componentShapeTwo.getStartOrderText().getValue(), "0");
+
+		gefBot.waitUntil(new DefaultCondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				return "1".equals(DiagramTestUtils.getComponentShape(editor, SIGGEN).getStartOrderText().getValue())
+					&& "0".equals(DiagramTestUtils.getComponentShape(editor, HARD_LIMIT).getStartOrderText().getValue());
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Diagram does not represent newly changed assembly controller";
+			}
+		}, 10000, 1000);
 	}
 
 	/**
@@ -231,11 +252,25 @@ public class XmlToDiagramEditTests extends AbstractGraphitiTest {
 
 		// Confirm SigGen component was removed from Host Collocation
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		gefBot.sleep(2000); // Sometimes diagram takes a few seconds to update
+		hostCoShape = DiagramTestUtils.getHostCollocationShape(editor, HOST_CO_NAME);
+
+		gefBot.waitUntil(new DefaultCondition() {
+			private ContainerShape shape;
+
+			@Override
+			public boolean test() throws Exception {
+				shape = DiagramTestUtils.getHostCollocationShape(editor, HOST_CO_NAME);
+				return shape.getChildren().size() == 1;
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Wrong number of components found. Expected [1] Found [" + shape.getChildren().size() + "]";
+			}
+		}, 10000, 1000);
+
 		editor.drag(HOST_CO_NAME, 20, 20); // Need to do a save to prevent override dialog from showing on next edit
 		MenuUtils.save(gefBot);
-		hostCoShape = DiagramTestUtils.getHostCollocationShape(editor, HOST_CO_NAME);
-		Assert.assertEquals("Only one component expected", 1, hostCoShape.getChildren().size());
 		ComponentShape componentShape = (ComponentShape) hostCoShape.getChildren().get(0);
 		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 		Assert.assertEquals("HardLimit component expected", HARD_LIMIT + "_1", ci.getId());
@@ -250,11 +285,25 @@ public class XmlToDiagramEditTests extends AbstractGraphitiTest {
 
 		// Confirm SigGen component was added back to Host Collocation
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		gefBot.sleep(2000); // Sometimes diagram takes a few seconds to update
+		hostCoShape = DiagramTestUtils.getHostCollocationShape(editor, HOST_CO_NAME);
+
+		gefBot.waitUntil(new DefaultCondition() {
+			private ContainerShape shape;
+
+			@Override
+			public boolean test() throws Exception {
+				shape = DiagramTestUtils.getHostCollocationShape(editor, HOST_CO_NAME);
+				return shape.getChildren().size() == 2;
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Wrong number of components found. Expected [2] Found [" + shape.getChildren().size() + "]";
+			}
+		}, 10000, 1000);
+
 		editor.drag(HOST_CO_NAME, 20, 20); // Need to do a save to prevent override dialog from showing on next edit
 		MenuUtils.save(gefBot);
-		hostCoShape = DiagramTestUtils.getHostCollocationShape(editor, HOST_CO_NAME);
-		Assert.assertEquals("Two components expected", 2, hostCoShape.getChildren().size());
 		componentShape = (ComponentShape) hostCoShape.getChildren().get(0);
 		ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 		Assert.assertEquals("SigGen component expected", SIGGEN + "_1", ci.getId());
@@ -268,8 +317,17 @@ public class XmlToDiagramEditTests extends AbstractGraphitiTest {
 
 		// Confirm that Host Collocation name updated in diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		gefBot.sleep(2000); // Sometimes diagram takes a few seconds to update
-		SWTBotGefEditPart hostCoPart = editor.getEditPart(HOST_CO_NAME + "_1");
-		Assert.assertNotNull("Host Collocatoin " + HOST_CO_NAME + "_1" + "does not exist", hostCoPart);
+
+		gefBot.waitUntil(new DefaultCondition() {
+			@Override
+			public boolean test() throws Exception {
+				return editor.getEditPart(HOST_CO_NAME + "_1") != null;
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Host Collocation " + HOST_CO_NAME + "_1" + " does not exist";
+			}
+		}, 10000, 1000);
 	}
 }
