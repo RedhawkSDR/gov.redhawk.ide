@@ -20,6 +20,7 @@ import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
@@ -78,6 +79,48 @@ public class HostCollocationTests extends AbstractGraphitiTest {
 	}
 
 	/**
+	 * IDE-749
+	 * Elements contained within a Host Collocation container should should stay in their relative locations when the
+	 * parent container is moved.
+	 */
+	@Test
+	public void hostCollocationRelativePosition() {
+		waveformName = "HC_Component_Position";
+		final String HARD_LIMIT = "HardLimit";
+		final String HOST_CO_NAME = "HC1";
+
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+
+		// Add host collocation to the waveform
+		DiagramTestUtils.dragHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
+
+		// Add component to the host collocation
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
+		MenuUtils.save(gefBot);
+
+		// Store host collocation and component relative location
+		ContainerShape hostCoShape = DiagramTestUtils.getHostCollocationShape(editor, HOST_CO_NAME);
+		int hostCoX = hostCoShape.getGraphicsAlgorithm().getX();
+		int hostCoY = hostCoShape.getGraphicsAlgorithm().getY();
+		Shape child = hostCoShape.getChildren().get(0);
+		int childX = child.getGraphicsAlgorithm().getX();
+		int childY = child.getGraphicsAlgorithm().getY();
+		
+		// Drag host collocation
+		editor.drag(HOST_CO_NAME, 50, 50);
+		
+		// Check that host collocation has moved, but component relative location is the same
+		hostCoShape = DiagramTestUtils.getHostCollocationShape(editor, HOST_CO_NAME);
+		Assert.assertNotEquals("Host Collocation x-coord did not change, and it should have", hostCoX, hostCoShape.getGraphicsAlgorithm().getX());
+		Assert.assertNotEquals("Host Collocation y-coord did not change, and it should have", hostCoY, hostCoShape.getGraphicsAlgorithm().getY());
+		child = hostCoShape.getChildren().get(0);
+		Assert.assertEquals("Child component relative x-coord should not have changed", childX, child.getGraphicsAlgorithm().getX());
+		Assert.assertEquals("Child component relative y-coord should not have changed", childX, child.getGraphicsAlgorithm().getY());
+	}
+
+	/**
 	 * IDE-747
 	 * User should be able to add and remove components to a Host Collocation container by dragging them in and out of
 	 * the pictogram element.
@@ -131,11 +174,11 @@ public class HostCollocationTests extends AbstractGraphitiTest {
 		final String HARD_LIMIT = "HardLimit";
 		final String HOST_CO = "Host Collocation";
 		final String HOST_CO_NAME = "HC1";
-		
+
 		// Create a new empty waveform
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
-		
+
 		// Add host collocation to the waveform
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HOST_CO, 0, 0);
 		SWTBotShell hostCoShell = gefBot.shell("New " + HOST_CO);
@@ -144,35 +187,35 @@ public class HostCollocationTests extends AbstractGraphitiTest {
 		hostCoName.setFocus();
 		hostCoName.typeText(HOST_CO_NAME);
 		gefBot.button("OK").click();
-		
+
 		// Add component to the host collocation
 		editor.setFocus();
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
-		
+
 		MenuUtils.save(gefBot);
-		
+
 		// Check pictogram elements
 		SWTBotGefEditPart hostCoEditPart = editor.getEditPart(HOST_CO_NAME);
 		Assert.assertNotNull(hostCoEditPart);
 		ContainerShape hostCollocationContainerShape = (ContainerShape) hostCoEditPart.part().getModel();
 		String shapeType = Graphiti.getPeService().getPropertyValue(hostCollocationContainerShape, DUtil.SHAPE_TYPE);
 		Assert.assertTrue("Host Collocation property is missing or wrong", shapeType.equals(HostCollocationPattern.HOST_COLLOCATION_OUTER_CONTAINER_SHAPE));
-		
+
 		// Check model object values
 		Object bo = DUtil.getBusinessObject(hostCollocationContainerShape);
 		Assert.assertTrue("Business object should be instance of HostCollocation", bo instanceof HostCollocation);
-		
+
 		HostCollocation hostCo = (HostCollocation) bo;
 		EList<SadComponentPlacement> components = hostCo.getComponentPlacement();
 		Assert.assertEquals("Expected component \'" + HARD_LIMIT + "\' was not found", HARD_LIMIT + "_1",
 			components.get(0).getComponentInstantiation().get(0).getId());
-		
-		//delete  host collocation
+
+		// delete host collocation
 		SWTBotGefEditPart gefEditPart = editor.getEditPart(HOST_CO_NAME);
 		DiagramTestUtils.deleteFromDiagram(editor, gefEditPart);
-		//ensure host collocation is deleted
+		// ensure host collocation is deleted
 		Assert.assertNull(editor.getEditPart(HOST_CO_NAME));
-		//ensure component still exists
+		// ensure component still exists
 		Assert.assertNotNull(editor.getEditPart(HARD_LIMIT));
 	}
 }

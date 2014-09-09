@@ -107,7 +107,7 @@ public class WaveformComponentTests extends AbstractGraphitiTest {
 	 */
 	@Test
 	public void checkComponentInHostCollocationContextMenuDelete() {
-		waveformName = "HC_Pictogram";
+		waveformName = "HC_Context_Menu_Delete";
 		final String HOST_CO = "Host Collocation";
 		final String HOST_CO_NAME = "HC1";
 		
