@@ -117,7 +117,7 @@ public class HostCollocationTests extends AbstractGraphitiTest {
 		Assert.assertNotEquals("Host Collocation y-coord did not change, and it should have", hostCoY, hostCoShape.getGraphicsAlgorithm().getY());
 		child = hostCoShape.getChildren().get(0);
 		Assert.assertEquals("Child component relative x-coord should not have changed", childX, child.getGraphicsAlgorithm().getX());
-		Assert.assertEquals("Child component relative y-coord should not have changed", childX, child.getGraphicsAlgorithm().getY());
+		Assert.assertEquals("Child component relative y-coord should not have changed", childY, child.getGraphicsAlgorithm().getY());
 	}
 
 	/**
