@@ -83,7 +83,9 @@ public final class StandardTestActions {
 					if (s == PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()) {
 						dialogsClosed[0] = true;
 					} else {
-						s.dispose();
+						if (s != null) {
+							s.dispose();
+						}
 					}
 				}
 
