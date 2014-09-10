@@ -39,9 +39,6 @@ import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -104,7 +101,7 @@ public class ExportUtils {
 	}
 
 	private static void exportFiles(IProject proj, IPath outputFolder, IScaExporter exporter, SubMonitor progress, Collection<String> validExtensions)
-			throws CoreException, IOException {
+		throws CoreException, IOException {
 		int loopWorkRemaining = proj.members().length;
 		for (final IResource child : proj.members()) {
 			String fileName = child.getName();
@@ -137,6 +134,11 @@ public class ExportUtils {
 		if (!ExportUtils.checkProject(proj)) {
 			return;
 		}
+		
+		if (isBuildSH(proj)) {
+			buildSH(monitor, proj);
+			return;
+		}
 
 		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting waveforms", 1 + proj.members().length);
 
@@ -164,6 +166,11 @@ public class ExportUtils {
 			return;
 		}
 
+		if (isBuildSH(proj)) {
+			buildSH(monitor, proj);
+			return;
+		}
+
 		ExportUtils.basicExportComponent(proj, exporter, true, monitor);
 	}
 
@@ -183,6 +190,11 @@ public class ExportUtils {
 		}
 
 		if (!ExportUtils.checkProject(proj)) {
+			return;
+		}
+		
+		if (isBuildSH(proj)) {
+			buildSH(monitor, proj);
 			return;
 		}
 
@@ -263,7 +275,7 @@ public class ExportUtils {
 	 * that the operation cannot be canceled.
 	 */
 	private static void basicExportComponent(final IProject proj, final IScaExporter exporter, final boolean includeCode, final IProgressMonitor monitor)
-			throws CoreException, IOException {
+		throws CoreException, IOException {
 		if (!proj.hasNature(ScaComponentProjectNature.ID)) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Project missing required nature"));
 		}
@@ -337,7 +349,7 @@ public class ExportUtils {
 
 			outputFolder = outputFolder.append(proj.getName());
 			exporter.mkdir(outputFolder, progress.newChild(MKDIR_WORK));
-			
+
 			// Copy the SPD File
 			IPath outputPath = outputFolder.append(spdResource.getName());
 			exporter.write(spdResource, outputPath, progress.newChild(SPD_WORK));
@@ -371,7 +383,9 @@ public class ExportUtils {
 			progress.setWorkRemaining(IMPL_WORK);
 
 			if (softPkg.getImplementation() != null) {
-				int implWork = softPkg.getImplementation().size() * (PRF_WORK + ((includeCode) ? IMPL_WORK : 0)); // SUPPRESS CHECKSTYLE INLINE
+				int implWork = softPkg.getImplementation().size() * (PRF_WORK + ((includeCode) ? IMPL_WORK : 0)); // SUPPRESS
+																													// CHECKSTYLE
+																													// INLINE
 				progress.setWorkRemaining(implWork);
 				for (final Implementation impl : softPkg.getImplementation()) {
 					ExportUtils.exportImpl(exporter, includeCode, progress.newChild(1), outputFolder, spdRootPath, impl);
@@ -396,29 +410,7 @@ public class ExportUtils {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Cannot export absolute 'localfile' paths"));
 		}
 		final IResource srcPath = ExportUtils.getWorkspaceResource(spdRootPath.append(codeLocalFile));
-		final IContainer srcFolder;
-		if (srcPath instanceof IFile) {
-			srcFolder = ((IFile) srcPath).getParent();
-		} else if (srcPath instanceof IContainer) {
-			srcFolder = (IFolder) srcPath;
-		} else {
-			srcFolder = null;
-		}
 
-		if (srcFolder != null) {
-			IFile reconfFile = srcFolder.getFile(new Path("reconf"));
-			if (reconfFile.exists()) {
-				ExportUtils.installImplUsingMakeInstall(progress, impl, srcFolder);
-				return;
-			}
-		}
-
-		ExportUtils.installImplDefault(exporter, includeCode, progress, outputFolder, spdRootPath, impl, codeLocalFile, srcPath);
-
-	}
-
-	private static void installImplDefault(final IScaExporter exporter, final boolean includeCode, final SubMonitor progress, IPath outputFolder,
-		final IPath spdRootPath, final Implementation impl, final IPath codeLocalFile, final IResource srcPath) throws IOException, CoreException {
 		IPath outputPath;
 		if (includeCode) {
 
@@ -443,11 +435,14 @@ public class ExportUtils {
 		}
 	}
 
-	private static void installImplUsingMakeInstall(final SubMonitor progress, final Implementation impl, IContainer srcFolder) throws CoreException,
-	IOException, DebugException {
+	private static boolean isBuildSH(IProject project) {
+		return project.getFile(new Path("build.sh")).exists();
+	}
+
+	private static void buildSH(final IProgressMonitor progress, IProject project) throws CoreException, IOException, DebugException {
 		String configTypeId = IExternalToolConstants.ID_PROGRAM_LAUNCH_CONFIGURATION_TYPE;
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-		final String launchConfigName = launchManager.generateLaunchConfigurationName("Install " + impl.getSoftPkg().getName() + " " + impl.getId());
+		final String launchConfigName = launchManager.generateLaunchConfigurationName("Build Install " + project.getName());
 		final ILaunchConfigurationType configType = launchManager.getLaunchConfigurationType(configTypeId);
 		final ILaunchConfigurationWorkingCopy retVal = configType.newInstance(null, launchConfigName);
 
@@ -468,7 +463,7 @@ public class ExportUtils {
 		} catch (URISyntaxException e1) {
 			throw new CoreException(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Failed to find install script.", e1));
 		}
-		retVal.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, srcFolder.getLocation().toOSString());
+		retVal.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, project.getLocation().toOSString());
 
 		ILaunch launch = retVal.launch("run", progress, false);
 		while (!launch.isTerminated()) {
@@ -484,7 +479,7 @@ public class ExportUtils {
 		}
 		if (launch.getProcesses()[0].getExitValue() != 0) {
 			throw new CoreException(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Install script returned with error code "
-					+ launch.getProcesses()[0].getExitValue() + "\n\nSee console output for details.", null));
+				+ launch.getProcesses()[0].getExitValue() + "\n\nSee console output for details.", null));
 		}
 	}
 
@@ -553,116 +548,6 @@ public class ExportUtils {
 		return true;
 	}
 
-	/**
-	 * Exports IDL projects from the specified project using the provided exporter.
-	 * 
-	 * @param project The project to build and export interfaces from
-	 * @param exporter The IScaExporter to use of type FileStoreExporter
-	 * @param monitor The user supplied progress monitor
-	 * @throws CoreException
-	 * @throws IOException
-	 */
-	//  This has been commented out because IDL projects need to be "installed" into $OSSIEHOME.  They aren't exported into SDR.
-	//  REDHAWK would need to change conventions on where IDL files are installed for this exporter to make sense
-	// 
-	//	private static void exportIdl(final IProject project, final IScaExporter exporter, final IProgressMonitor monitor) throws CoreException, IOException {
-	//		if (!project.hasNature(IdlLibraryProjectNature.ID)) {
-	//			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Project missing required IDL project nature"));
-	//		}
-	//
-	//		if (!(exporter instanceof FileStoreExporter)) {
-	//			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "IDL Project can't be exported with the current exporter"));
-	//		}
-	//
-	//		// Add custom filters to ignore .cpp, .lai and .o resources
-	//		((FileStoreExporter) exporter).addExcludePattern(Pattern.compile(".*\\.cpp"));
-	//		((FileStoreExporter) exporter).addExcludePattern(Pattern.compile(".*\\.lai"));
-	//		((FileStoreExporter) exporter).addExcludePattern(Pattern.compile(".*\\.o"));
-	//
-	//		// Get the interface module name from the builder properties
-	//		final String moduleName = IdlLibraryProjectNature.getBuilderProperty(project, IdlProjectBuilder.MODULE_NAME_ARG);
-	//
-	//		if (moduleName == "") {
-	//			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Project missing interface name"));
-	//		}
-	//
-	//		// Preconfigure our output paths
-	//		final String redhawkSegment = IPath.SEPARATOR + "redhawk" + IPath.SEPARATOR;
-	//		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting Interface", project.members().length + 1);
-	//
-	//		final IPath exportLocation = exporter.getExportLocation();
-	//		final IPath libPath = exportLocation.append(IPath.SEPARATOR + "lib" + IPath.SEPARATOR);
-	//		final IPath pkgPath = libPath.append("pkgconfig" + IPath.SEPARATOR);
-	//		final IPath includePath = exportLocation.append(IPath.SEPARATOR + "include" + IPath.SEPARATOR);
-	//		final IPath idlPath = exportLocation.append(IPath.SEPARATOR + "share" + IPath.SEPARATOR + "idl" + redhawkSegment + moduleName.toUpperCase()
-	//		        + IPath.SEPARATOR);
-	//
-	//		// Loop through all of our children and export them as needed
-	//		int loopWorkRemaining = project.members().length;
-	//		for (final IResource child : project.members()) {
-	//			// Handle cases where our files have certain expected file extensions
-	//			if (child.getFileExtension() != null) {
-	//				if (child.getFileExtension().equals("idl")) {
-	//					exporter.write(child, idlPath.append(child.getName()), progress.newChild(loopWorkRemaining));
-	//				} else if (child.getFileExtension().equals("pc")) {
-	//					exporter.write(child, pkgPath.append(child.getName()), progress.newChild(loopWorkRemaining));
-	//				} else if (child.getFileExtension().equals("jar")) {
-	//					exporter.write(child, libPath.append(child.getName()), progress.newChild(loopWorkRemaining));
-	//				}
-	//			}
-	//
-	//			// Handle exporting the source code folder (python and c++)
-	//			if (child.getName().equals("src")) {
-	//				final IFolder folder = (IFolder) child;
-	//				final IFolder pythonFolder = folder.getFolder("python");
-	//
-	//				// If the python folder exists, export it all together since it's already formatted appropriately
-	//				if (pythonFolder.exists()) {
-	//					exporter.write(pythonFolder, libPath.append(pythonFolder.getName()), progress.newChild(loopWorkRemaining));
-	//				}
-	//
-	//				final IFolder cppFolder = folder.getFolder("cpp");
-	//
-	//				// If the cpp folder exists, go ahead and copy over the folder since our ignore list will exclude the cpp files
-	//				if (cppFolder.exists()) {
-	//					for (final IResource cppChild : cppFolder.members()) {
-	//						exporter.write(cppChild, includePath.append(cppChild.getName()), progress.newChild(loopWorkRemaining));
-	//					}
-	//				}
-	//			}
-	//
-	//			// Handle the exporting of the library files
-	//			if (child.getName().equals(".libs")) {
-	//				final IFolder folder = (IFolder) child;
-	//				String target = "";
-	//				String source = "";
-	//				String source0 = "";
-	//
-	//				for (final IResource libChild : folder.members()) {
-	//					// Check to see if the file ends in a number
-	//					if (libChild.getFileExtension().matches("[0-9]")) {
-	//						// Keep track of the name of the library that follows the pattern: libexampleInterface.so.0.0.0
-	//						if (libChild.getName().split("\\.").length > 4) {
-	//							target = libChild.getName();
-	//						} else {
-	//							// Otherwise it's going to be the case: libexampleInterface.so.0
-	//							source0 = libPath.append(libChild.getName()).toString();
-	//							continue;
-	//						}
-	//					} else if (libChild.getFileExtension().equals("so")) {
-	//						source = libPath.append(libChild.getName()).toString();
-	//						continue;
-	//					}
-	//					// If the file is our target or it's doesn't meet the other criteria, go ahead and export it
-	//					exporter.write(libChild, libPath.append(libChild.getName()), progress.newChild(loopWorkRemaining));
-	//				}
-	//				// Manually create symlinks for the two source libraries
-	//				((FileStoreExporter) exporter).makeSymLink(target, source);
-	//				((FileStoreExporter) exporter).makeSymLink(target, source0);
-	//			}
-	//			--loopWorkRemaining;
-	//		}
-	//	}
 
 	private static IResource getWorkspaceResource(final IPath path) {
 		return ResourcesPlugin.getWorkspace().getRoot().findMember(path);
