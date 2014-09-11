@@ -46,6 +46,8 @@ public class DebugLevelResolver extends AbstractLauncherResolver implements ILau
 					level = 3;
 				} else if ("Debug".equalsIgnoreCase(debugLevel)) {
 					level = 4;
+				} else if ("Trace".equalsIgnoreCase(debugLevel)) {
+					level = 5;
 				} else {
 					level = 5;
 				}

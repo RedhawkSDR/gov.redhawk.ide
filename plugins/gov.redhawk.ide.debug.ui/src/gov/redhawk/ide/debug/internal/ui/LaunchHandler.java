@@ -12,6 +12,9 @@ package gov.redhawk.ide.debug.internal.ui;
 
 import gov.redhawk.ide.debug.ui.LaunchUtil;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
+import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.SoftPkgRegistry;
+import gov.redhawk.ide.sdr.WaveformsContainer;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.Code;
@@ -38,6 +41,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -53,22 +57,83 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 	 */
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
+		String value = event.getParameter("gov.redhawk.ide.debug.ui.wizardType");
+		if ("waveform".equalsIgnoreCase(value)) {
+			handleLaunchWaveform(event);
+		} else if ("component".equalsIgnoreCase(value) || "device".equalsIgnoreCase(value) || "service".equalsIgnoreCase(value)) {
+			handleLaunchComponentType(event);
+		} else {
+			ISelection sel = HandlerUtil.getActiveMenuSelection(event);
+			if (sel == null) {
+				sel = HandlerUtil.getCurrentSelection(event);
+			}
+			if (sel instanceof IStructuredSelection) {
+				final IStructuredSelection ss = (IStructuredSelection) sel;
+				for (final Object obj : ss.toList()) {
+					try {
+						handleLaunch(obj, event);
+					} catch (final CoreException e) {
+						StatusManager.getManager().handle(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e),
+							StatusManager.LOG | StatusManager.SHOW);
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private void handleLaunchComponentType(ExecutionEvent event) {
+		String type = event.getParameter("gov.redhawk.ide.debug.ui.wizardType");
 		ISelection sel = HandlerUtil.getActiveMenuSelection(event);
 		if (sel == null) {
 			sel = HandlerUtil.getCurrentSelection(event);
 		}
 		if (sel instanceof IStructuredSelection) {
-			final IStructuredSelection ss = (IStructuredSelection) sel;
-			for (final Object obj : ss.toList()) {
-				try {
-					handleLaunch(obj, event);
-				} catch (final CoreException e) {
-					StatusManager.getManager().handle(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e),
-						StatusManager.LOG | StatusManager.SHOW);
+			IStructuredSelection ss = (IStructuredSelection) sel;
+			Object element = ss.getFirstElement();
+			LaunchComponentWizard wizard = new LaunchComponentWizard();
+			if (element instanceof SoftPkgRegistry) {
+				wizard.setSpdContainer((SoftPkgRegistry) element);
+			} else if (element instanceof SoftPkg) {
+				wizard.setSoftPkg((SoftPkg) element);
+			} else if (element instanceof Implementation) {
+				wizard.setImplementation((Implementation) element);
+			} else if (element instanceof SdrRoot) {
+				SdrRoot root = (SdrRoot) element;
+				if ("device".equalsIgnoreCase(type)) {
+					wizard.setSpdContainer(root.getDevicesContainer());
+				} else if ("service".equalsIgnoreCase(type)) {
+					wizard.setSpdContainer(root.getServicesContainer());
+				} else {
+					wizard.setSpdContainer(root.getComponentsContainer());
 				}
 			}
+			WizardDialog dialog = new WizardDialog(HandlerUtil.getActiveShell(event), wizard);
+			dialog.open();
 		}
-		return null;
+	}
+
+	private void handleLaunchWaveform(ExecutionEvent event) {
+		ISelection sel = HandlerUtil.getActiveMenuSelection(event);
+		if (sel == null) {
+			sel = HandlerUtil.getCurrentSelection(event);
+		}
+		if (sel instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection) sel;
+			Object element = ss.getFirstElement();
+			LaunchLocalWaveformWizard wizard = new LaunchLocalWaveformWizard();
+			if (element instanceof SoftwareAssembly) {
+				wizard.setSoftwareAssembly((SoftwareAssembly) element);
+			} else if (element instanceof WaveformsContainer) {
+				WaveformsContainer container = (WaveformsContainer) element;
+				wizard.setWaveformsContainer(container);
+			} else if (element instanceof SdrRoot) {
+				SdrRoot root = (SdrRoot) element;
+				wizard.setWaveformsContainer(root.getWaveformsContainer());
+			}
+			WizardDialog dialog = new WizardDialog(HandlerUtil.getActiveShell(event), wizard);
+			dialog.open();
+		}
 	}
 
 	@Override

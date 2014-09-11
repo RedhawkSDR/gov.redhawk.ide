@@ -113,7 +113,10 @@ public final class LaunchUtil {
 		return LaunchUtil.createLaunchConfiguration(softwareAssembly);
 	}
 
-	private static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final SoftwareAssembly softwareAssembly) throws CoreException {
+	/**
+	 * @since 2.2
+	 */
+	public static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final SoftwareAssembly softwareAssembly) throws CoreException {
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		final String launcherPrefix = softwareAssembly.getName();
 		final String launchConfigName = launchManager.generateLaunchConfigurationName(launcherPrefix);

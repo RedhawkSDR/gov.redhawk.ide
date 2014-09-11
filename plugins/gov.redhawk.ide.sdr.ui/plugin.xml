@@ -204,20 +204,6 @@
            </visibleWhen>
         </command>
         <command
-              commandId="gov.redhawk.ide.sdr.ui.command.LaunchDomainManagerWithOptions"
-              style="push">
-           <visibleWhen
-                 checkEnabled="false">
-              <iterate
-                    ifEmpty="false"
-                    operator="or">
-                 <instanceof
-                       value="gov.redhawk.ide.sdr.SdrRoot">
-                 </instanceof>
-              </iterate>
-           </visibleWhen>
-        </command>
-        <command
               commandId="org.eclipse.ui.edit.delete"
               style="push">
            <visibleWhen
@@ -270,6 +256,25 @@
                     operator="and">
                  <instanceof
                        value="org.eclipse.core.resources.IProject">
+                 </instanceof>
+              </iterate>
+           </visibleWhen>
+        </command>
+     </menuContribution>
+     <menuContribution
+           allPopups="false"
+           locationURI="popup:org.eclipse.ui.popup.any?after=group.new">
+        <command
+              commandId="gov.redhawk.ide.sdr.ui.command.LaunchDomainManagerWithOptions"
+              label="Launch Domain ..."
+              style="push">
+           <visibleWhen
+                 checkEnabled="false">
+              <iterate
+                    ifEmpty="false"
+                    operator="or">
+                 <instanceof
+                       value="gov.redhawk.ide.sdr.SdrRoot">
                  </instanceof>
               </iterate>
            </visibleWhen>

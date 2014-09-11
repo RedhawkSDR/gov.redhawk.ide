@@ -186,6 +186,183 @@
                </and>
             </visibleWhen>
          </menu>
+         <command
+               commandId="gov.redhawk.ide.debug.ui.launch"
+               icon="icons/obj16/run_exc.gif"
+               label="Launch Component ..."
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <or>
+                        <instanceof
+                              value="gov.redhawk.ide.sdr.SdrRoot">
+                        </instanceof>
+                        <instanceof
+                              value="gov.redhawk.ide.sdr.ComponentsContainer">
+                        </instanceof>
+                     </or>
+                  </iterate>
+                  <count
+                        value="1">
+                  </count>
+               </and>
+            </visibleWhen>
+            <parameter
+                  name="gov.redhawk.ide.debug.ui.wizardType"
+                  value="component">
+            </parameter>
+         </command>
+         <command
+               commandId="gov.redhawk.ide.debug.ui.launch"
+               icon="icons/obj16/run_exc.gif"
+               label="Launch Waveform ..."
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <or>
+                        <instanceof
+                              value="gov.redhawk.ide.sdr.SdrRoot">
+                        </instanceof>
+                        <instanceof
+                              value="gov.redhawk.ide.sdr.WaveformsContainer">
+                        </instanceof>
+                     </or>
+                  </iterate>
+                  <count
+                        value="1">
+                  </count>
+               </and>
+            </visibleWhen>
+            <parameter
+                  name="gov.redhawk.ide.debug.ui.wizardType"
+                  value="waveform">
+            </parameter>
+         </command>
+         <command
+               commandId="gov.redhawk.ide.debug.ui.launch"
+               icon="icons/obj16/run_exc.gif"
+               label="Launch Device ..."
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <or>
+                        <instanceof
+                              value="gov.redhawk.ide.sdr.SdrRoot">
+                        </instanceof>
+                        <instanceof
+                              value="gov.redhawk.ide.sdr.DevicesContainer">
+                        </instanceof>
+                     </or>
+                  </iterate>
+                  <count
+                        value="1">
+                  </count>
+               </and>
+            </visibleWhen>
+            <parameter
+                  name="gov.redhawk.ide.debug.ui.wizardType"
+                  value="device">
+            </parameter>
+         </command>
+         <command
+               commandId="gov.redhawk.ide.debug.ui.launch"
+               icon="icons/obj16/run_exc.gif"
+               label="Launch Service ..."
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <or>
+                        <instanceof
+                              value="gov.redhawk.ide.sdr.SdrRoot">
+                        </instanceof>
+                        <instanceof
+                              value="gov.redhawk.ide.sdr.ServicesContainer">
+                        </instanceof>
+                     </or>
+                  </iterate>
+                  <count
+                        value="1">
+                  </count>
+               </and>
+            </visibleWhen>
+            <parameter
+                  name="gov.redhawk.ide.debug.ui.wizardType"
+                  value="service">
+            </parameter>
+         </command>
+         <command
+               commandId="gov.redhawk.ide.debug.ui.launch"
+               icon="icons/obj16/run_exc.gif"
+               label="Launch ..."
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <or>
+                        <instanceof
+                              value="mil.jpeojtrs.sca.spd.SoftPkg">
+                        </instanceof>
+                        <instanceof
+                              value="mil.jpeojtrs.sca.spd.Implementation">
+                        </instanceof>
+                     </or>
+                  </iterate>
+                  <count
+                        value="1">
+                  </count>
+               </and>
+            </visibleWhen>
+            <parameter
+                  name="gov.redhawk.ide.debug.ui.wizardType"
+                  value="component">
+            </parameter>
+         </command>
+         <command
+               commandId="gov.redhawk.ide.debug.ui.launch"
+               icon="icons/obj16/run_exc.gif"
+               label="Launch..."
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <or>
+                        <instanceof
+                              value="mil.jpeojtrs.sca.sad.SoftwareAssembly">
+                        </instanceof>
+                     </or>
+                  </iterate>
+                  <count
+                        value="1">
+                  </count>
+               </and>
+            </visibleWhen>
+            <parameter
+                  name="gov.redhawk.ide.debug.ui.wizardType"
+                  value="waveform">
+            </parameter>
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="popup:org.eclipse.ui.popup.any?after=group.control">
@@ -253,6 +430,11 @@
             defaultHandler="gov.redhawk.ide.debug.internal.ui.LaunchHandler"
             id="gov.redhawk.ide.debug.ui.launch"
             name="%command.name">
+         <commandParameter
+               id="gov.redhawk.ide.debug.ui.wizardType"
+               name="Wizard Type"
+               optional="true">
+         </commandParameter>
       </command>
       <command
             defaultHandler="gov.redhawk.ide.debug.internal.ui.ResetHandler"
