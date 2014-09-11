@@ -52,6 +52,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.datatypes.IDimension;
+import org.eclipse.graphiti.datatypes.ILocation;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
@@ -61,6 +62,7 @@ import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAreaContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
+import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
@@ -443,20 +445,73 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 	 * @param context
 	 * @return
 	 */
-	public static List<Shape> getContainersInArea(final ContainerShape containerShape, final IAreaContext context, String propertyValue) {
+	public static List<Shape> getContainersInArea(final ContainerShape containerShape, int width, int height, int x, int y, String propertyValue) {
 
 		List<Shape> retList = new ArrayList<Shape>();
 
 		EList<Shape> shapes = containerShape.getChildren();
 		for (Shape s : shapes) {
-			GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
-			if (gaExistInArea(ga, context) && DUtil.isPropertyElementType(ga, propertyValue)) {
+			if (shapeExistsPartiallyInArea(s, width, height, x, y)) {
 				retList.add(s);
 			}
 		}
 		return retList;
 	}
 
+	/**
+	 * Adjust children x/y so they remain in the same relative position after resize
+	 * @param containerShape
+	 * @param context
+	 */
+	public static void shiftChildrenRelativeToParentResize(ContainerShape containerShape, IResizeShapeContext context) {
+		
+		int widthDiff = containerShape.getGraphicsAlgorithm().getWidth() - context.getWidth();
+		int heightDiff = containerShape.getGraphicsAlgorithm().getHeight() - context.getHeight();
+		switch (context.getDirection()) {
+			case(IResizeShapeContext.DIRECTION_NORTH_EAST):
+				shiftChildrenYPositionUp(containerShape, heightDiff);
+				break;
+			case(IResizeShapeContext.DIRECTION_WEST):
+			case(IResizeShapeContext.DIRECTION_SOUTH_WEST):
+				shiftChildrenXPositionLeft(containerShape, widthDiff);
+				break;
+			case(IResizeShapeContext.DIRECTION_NORTH_WEST):
+				shiftChildrenXPositionLeft(containerShape, widthDiff);
+				shiftChildrenYPositionUp(containerShape, heightDiff);
+				break;
+			case(IResizeShapeContext.DIRECTION_NORTH): //handle top of box getting smaller
+				shiftChildrenYPositionUp(containerShape, heightDiff);
+				break;
+			default:
+				break;
+		}
+	}
+	
+	/**
+	 * Shifts children of container x value to the left by specified amount
+	 * Can be negative
+	 * @param ga
+	 * @param shiftLeftAmount
+	 */
+	private static void shiftChildrenXPositionLeft(ContainerShape containerShape, int shiftLeftAmount) {
+		for (Shape s: containerShape.getChildren()) {
+			GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
+			Graphiti.getGaService().setLocation(ga, ga.getX() - shiftLeftAmount, ga.getY());
+		}
+	}
+	/**
+	 * Shifts children of container Y value up by specified amount
+	 * Can be negative
+	 * @param ga
+	 * @param shiftUpAmount
+	 */
+	private static void shiftChildrenYPositionUp(ContainerShape containerShape, int shiftUpAmount) {
+		for (Shape s: containerShape.getChildren()) {
+			GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
+			Graphiti.getGaService().setLocation(ga, ga.getX(), ga.getY() - shiftUpAmount);
+		}
+	}
+	
 	/**
 	 * Returns list of ContainerShape outside of provided AreaContext on containerShape with
 	 * property key DiagramUtil.GA_TYPE and provided propertyValue
@@ -464,28 +519,89 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 	 * @param context
 	 * @return
 	 */
-	public static List<Shape> getContainersOutsideArea(final ContainerShape containerShape, final IAreaContext context, String propertyValue) {
-
+	public static List<Shape> getContainersOutsideArea(final ContainerShape containerShape, int width, int height, int x, int y, String propertyValue) {
 		List<Shape> retList = new ArrayList<Shape>();
 
 		EList<Shape> shapes = containerShape.getChildren();
 		for (Shape s : shapes) {
-			GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
-			if (!gaFitsInParentGA(ga, context) && DUtil.isPropertyElementType(ga, propertyValue)) {
+			if (!shapeExistsPartiallyInArea(s, width, height, x, y)) {
 				retList.add(s);
 			}
 		}
 		return retList;
 	}
 
+	
 	/**
 	 * Return true if GraphicsAlgorithm exists within IAreaContext
 	 * @param ga
 	 * @param context
 	 * @return
 	 */
-	public static boolean gaExistInArea(final GraphicsAlgorithm ga, final IAreaContext context) {
-		if (context.getX() <= ga.getX() && context.getWidth() >= ga.getWidth() && context.getY() <= ga.getY() && context.getHeight() >= ga.getHeight()) {
+	public static boolean shapeExistsPartiallyInArea(final Shape s, int areaW, int areaH, int areaX, int areaY) {
+		GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
+		ILocation sLoc = GraphitiUi.getUiLayoutService().getLocationRelativeToDiagram(s);
+		int[] x = new int [4];
+		int[] y = new int [4];
+		//top left
+		x[0] = sLoc.getX();
+		y[0] = sLoc.getY();
+		//top right
+		x[1] = sLoc.getX() + ga.getWidth();
+		y[1] = sLoc.getY();
+		//bottom left
+		x[2] = sLoc.getX();
+		y[2] = sLoc.getY() + ga.getHeight();
+		//bottom right
+		x[3] = sLoc.getX() + ga.getWidth();
+		y[3] = sLoc.getY() + ga.getHeight();
+		
+		//return true if any corner of s exists inside area
+		for (int i = 0; i < x.length; i++) { 
+			if (xyExistInArea(x[i], y[i], areaW, areaH, areaX, areaY)) {
+				return true;
+			}
+		}
+		
+		//return true if host collocation is inside shape
+		if ((sLoc.getX() < areaX) && ((sLoc.getX() + ga.getWidth()) > (areaX + areaW))
+				&& (sLoc.getY() < areaY) && ((sLoc.getY() + ga.getHeight()) > (areaY + areaH))) {
+			return true;
+		}
+		
+		//return true if area is inside of shape
+		if ((sLoc.getX() < areaX) && ((sLoc.getX() + ga.getWidth()) > (areaX + areaW))
+				&& (sLoc.getY() < areaY) && ((sLoc.getY() + ga.getHeight()) > (areaY + areaH))) {
+			return true;
+		}
+		
+		//return true if x area is outside of shape, but y is not
+		if ((sLoc.getX() > areaX) && ((sLoc.getX() + ga.getWidth()) < (areaX + areaW))
+				&& (sLoc.getY() < areaY) && ((sLoc.getY() + ga.getHeight()) > (areaY + areaH))) {
+			return true;
+		}
+		
+		//return true if y area is outside of shape, but c is not
+		if ((sLoc.getX() < areaX) && ((sLoc.getX() + ga.getWidth()) > (areaX + areaW))
+				&& (sLoc.getY() > areaY) && ((sLoc.getY() + ga.getHeight()) < (areaY + areaH))) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * XY exists within xy area
+	 * @param x
+	 * @param y
+	 * @param areaW
+	 * @param areaH
+	 * @param areaX
+	 * @param areaY
+	 * @return
+	 */
+	public static boolean xyExistInArea(int x, int y, int areaW, int areaH, int areaX, int areaY) {
+		if (areaX <= x && (areaX + areaW) >= x && areaY <= y && (areaY + areaH) >= y) {
 			return true;
 		}
 		return false;
@@ -497,8 +613,8 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 	 * @param context
 	 * @return
 	 */
-	public static boolean gaFitsInParentGA(final GraphicsAlgorithm childGA, final IAreaContext context) {
-		if (context.getWidth() >= childGA.getX() && context.getHeight() >= childGA.getY()) {
+	public static boolean gaFitsInParentGA(final GraphicsAlgorithm childGA, int width, int height, int x, int y) {
+		if (width >= childGA.getX() && height >= childGA.getY()) {
 			return true;
 		}
 		return false;

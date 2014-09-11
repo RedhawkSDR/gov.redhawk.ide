@@ -179,7 +179,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 
 		// move all SadComponentInstantiation shapes into new HostCollocation shape
 		// find all SadComponentInstantiation shapes
-		List<Shape> containedShapes = DUtil.getContainersInArea(getDiagram(), context, GA_OUTER_ROUNDED_RECTANGLE);
+		List<Shape> containedShapes = DUtil.getContainersInArea(getDiagram(), context.getWidth(), context.getHeight(), context.getX(), context.getY(), GA_OUTER_ROUNDED_RECTANGLE);
 		for (Shape shape : containedShapes) {
 			for (EObject obj : shape.getLink().getBusinessObjects()) {
 				if (obj instanceof SadComponentInstantiation) {
@@ -232,7 +232,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 
 		// find all SadComponentInstantiation
-		List<Shape> containedShapes = DUtil.getContainersInArea(getDiagram(), context, GA_OUTER_ROUNDED_RECTANGLE);
+		List<Shape> containedShapes = DUtil.getContainersInArea(getDiagram(), context.getWidth(), context.getHeight(), context.getX(), context.getY(), GA_OUTER_ROUNDED_RECTANGLE);
 		final List<SadComponentInstantiation> sadComponentInstantiations = new ArrayList<SadComponentInstantiation>();
 		for (Shape shape : containedShapes) {
 			for (EObject obj : shape.getLink().getBusinessObjects()) {
@@ -294,7 +294,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 		int y = context.getY();
 		int width = context.getWidth();
 		int height = context.getHeight();
-
+		
 		// set hostCollocationToDelete
 		final HostCollocation hostCollocation = (HostCollocation) DUtil.getBusinessObject(context.getPictogramElement());
 
@@ -305,7 +305,9 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 
 		// find all components to remove (no longer inside the host collocation box, minimized)
-		List<Shape> shapesToRemoveFromHostCollocation = DUtil.getContainersOutsideArea(containerShape, context, GA_OUTER_ROUNDED_RECTANGLE);
+		List<Shape> shapesToRemoveFromHostCollocation = DUtil.getContainersOutsideArea(containerShape, 
+				context.getWidth(), context.getHeight(), context.getX(), context.getY(), 
+				GA_OUTER_ROUNDED_RECTANGLE);
 		final List<SadComponentInstantiation> ciToRemove = new ArrayList<SadComponentInstantiation>();
 		for (Shape shape : shapesToRemoveFromHostCollocation) {
 			for (EObject obj : shape.getLink().getBusinessObjects()) {
@@ -316,7 +318,9 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 		}
 
 		// find all components to add to add (now inside host collocation, expanded)
-		List<Shape> shapesToAddToHostCollocation = DUtil.getContainersInArea(getDiagram(), context, GA_OUTER_ROUNDED_RECTANGLE);
+		List<Shape> shapesToAddToHostCollocation = DUtil.getContainersInArea(getDiagram(), 
+				context.getWidth(), context.getHeight(), context.getX(), context.getY(), 
+				GA_OUTER_ROUNDED_RECTANGLE);
 		final List<SadComponentInstantiation> ciToAdd = new ArrayList<SadComponentInstantiation>();
 		for (Shape shape : shapesToAddToHostCollocation) {
 			for (EObject obj : shape.getLink().getBusinessObjects()) {
@@ -372,12 +376,20 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 			}
 		}
 
+		//adjust children x/y so they remain in the same relative position after resize
+		DUtil.shiftChildrenRelativeToParentResize(containerShape, context);
+
+		//perform resize
 		if (containerShape.getGraphicsAlgorithm() != null) {
 			Graphiti.getGaService().setLocationAndSize(containerShape.getGraphicsAlgorithm(), x, y, width, height);
 		}
+		
 
 		layoutPictogramElement(containerShape);
 	}
+	
+
+
 
 	/**
 	 * Never enable remove on its own
