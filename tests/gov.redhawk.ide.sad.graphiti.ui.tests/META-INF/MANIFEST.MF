@@ -17,3 +17,4 @@ Require-Bundle: org.eclipse.ui,
  gov.redhawk.ide.swtbot;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Activator: gov.redhawk.ide.sad.graphiti.ui.tests.GraphitiTestsActivator
+Bundle-Vendor: REDHAWK
