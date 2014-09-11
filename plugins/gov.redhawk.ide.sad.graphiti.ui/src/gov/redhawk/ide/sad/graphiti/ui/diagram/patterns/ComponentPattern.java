@@ -119,8 +119,8 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 
 	@Override
 	public boolean canRemove(IRemoveContext context) {
-		//TODO: this used to return false, doing this so we can remove components during the 
-		//RHDiagramUpdateFeature...might be negative consequences
+		// TODO: this used to return false, doing this so we can remove components during the
+		// RHDiagramUpdateFeature...might be negative consequences
 		Object obj = DUtil.getBusinessObject(context.getPictogramElement());
 		if (obj instanceof SadComponentInstantiation) {
 			return true;
@@ -173,8 +173,6 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 			}
 		});
 
-		
-		
 		// delete graphical component for component as well as removing all connections
 		IRemoveContext rc = new RemoveContext(context.getPictogramElement());
 		IFeatureProvider featureProvider = getFeatureProvider();
@@ -186,7 +184,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		// redraw start order
 		// DUtil.organizeDiagramStartOrder(diagram);
 	}
-	
+
 	/**
 	 * Delete SadComponentInstantiation and corresponding SadComponentPlacement business object from SoftwareAssembly
 	 * This method should be executed within a RecordingCommand.
@@ -235,13 +233,13 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		// delete component file if applicable
 		// figure out which component file we are using and if no other component placements using it then remove it.
 		ComponentFile componentFileToRemove = placement.getComponentFileRef().getFile();
-		//check components (not in host collocation)
+		// check components (not in host collocation)
 		for (SadComponentPlacement p : sad.getPartitioning().getComponentPlacement()) {
 			if (p != placement && p.getComponentFileRef().getRefid().equals(placement.getComponentFileRef().getRefid())) {
 				componentFileToRemove = null;
 			}
 		}
-		//check components in host collocation
+		// check components in host collocation
 		for (HostCollocation hc : sad.getPartitioning().getHostCollocation()) {
 			for (SadComponentPlacement p : hc.getComponentPlacement()) {
 				if (p != placement && p.getComponentFileRef().getRefid().equals(placement.getComponentFileRef().getRefid())) {
@@ -386,9 +384,10 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		}
 		for (int i = 1; i < cis.size(); i++) {
 			SadComponentInstantiation c = cis.get(i);
-			
+
 			// If a component is found, and it's start order is null, assume it is the assembly controller
-			// Assembly controllers should always be at the beginning of the start order, so mark highest start order as zero
+			// Assembly controllers should always be at the beginning of the start order, so mark highest start order as
+			// zero
 			if (highestStartOrder == null) {
 				highestStartOrder = BigInteger.ZERO;
 			}
@@ -398,7 +397,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 				highestStartOrder = c.getStartOrder();
 			}
 		}
-		
+
 		// If there are no components, highestStartOrder will be null
 		return highestStartOrder;
 	}
@@ -425,13 +424,14 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 	}
 
 	/**
-	 *  swap start order of provided components. Change assembly controller if start order zero
+	 * swap start order of provided components. Change assembly controller if start order zero
 	 * @param sad
 	 * @param featureProvider
 	 * @param lowerCi - The component that currently has the lower start order
 	 * @param higherCi - The component that currently has the higher start order
 	 */
-	public static void swapStartOrder(SoftwareAssembly sad, IFeatureProvider featureProvider, final SadComponentInstantiation lowerCi, final SadComponentInstantiation higherCi) {
+	public static void swapStartOrder(SoftwareAssembly sad, IFeatureProvider featureProvider, final SadComponentInstantiation lowerCi,
+		final SadComponentInstantiation higherCi) {
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
@@ -499,17 +499,44 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 
 		}
 
-		// remove assembly controller from list, it has already been updated
 		if (assemblyController != null) {
+			final SadComponentInstantiation ci = assemblyController.getComponentInstantiationRef().getInstantiation();
+			// first check to make sure start order is set to zero
+			if (ci.getStartOrder() != BigInteger.ZERO) {
+				TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+				TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack(); 
+				stack.execute(new RecordingCommand(editingDomain) {
+					
+					@Override
+					protected void doExecute() {
+						ci.setStartOrder(BigInteger.ZERO);
+					}
+				});
+			}
+			
+			// remove assembly controller from list, it has already been updated
 			componentInstantiationsInStartOrder.remove(assemblyController.getComponentInstantiationRef().getInstantiation());
 		}
 		
 		// set start order
-		for (SadComponentInstantiation ci : componentInstantiationsInStartOrder) { 
+		for (final SadComponentInstantiation ci : componentInstantiationsInStartOrder) { 
 			// Don't update start order if it has not already been declared for this component
 			if (ci.getStartOrder() != null) {
 				startOrder = startOrder.add(BigInteger.ONE);
-				ci.setStartOrder(startOrder);
+				
+				// Only call the update if a change is needed
+				if (ci.getStartOrder().intValue() != startOrder.intValue()) {
+					final BigInteger newStartOrder = startOrder;
+					TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+					TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+					stack.execute(new RecordingCommand(editingDomain) {
+						
+						@Override
+						protected void doExecute() {
+							ci.setStartOrder(newStartOrder);
+						}
+					});
+				}
 			} 
 
 			// get external ports
@@ -652,7 +679,6 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		return children;
 	}
 
-	
 	@Override
 	public String getOuterTitle(EObject obj) {
 		if (obj instanceof SadComponentInstantiation) {
@@ -668,7 +694,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Provides the title of the outer shape
 	 * @param ci
@@ -681,7 +707,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 			return "< Component Bad Reference >";
 		}
 	}
-	
+
 	/**
 	 * Provides the title of the inner shape
 	 * @param ci
