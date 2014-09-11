@@ -42,6 +42,7 @@ import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
@@ -52,6 +53,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -134,7 +137,7 @@ public class ExportUtils {
 		if (!ExportUtils.checkProject(proj)) {
 			return;
 		}
-		
+
 		if (isBuildSH(proj)) {
 			buildSH(monitor, proj);
 			return;
@@ -192,7 +195,7 @@ public class ExportUtils {
 		if (!ExportUtils.checkProject(proj)) {
 			return;
 		}
-		
+
 		if (isBuildSH(proj)) {
 			buildSH(monitor, proj);
 			return;
@@ -436,8 +439,12 @@ public class ExportUtils {
 	}
 
 	private static boolean isBuildSH(IProject project) {
-//		return project.getFile(new Path("build.sh")).exists();
-		// TODO Disable the behavior until build.sh is fixed
+		if (project.getFile(new Path("build.sh")).exists()) {
+			// TODO Disable the behavior until build.sh is fixed
+			IScopeContext projectScope = new ProjectScope(project);
+			IEclipsePreferences node = projectScope.getNode(SdrUiPlugin.PLUGIN_ID);
+			return node.getBoolean("useBuild.sh", false);
+		}
 		return false;
 	}
 
@@ -549,7 +556,6 @@ public class ExportUtils {
 
 		return true;
 	}
-
 
 	private static IResource getWorkspaceResource(final IPath path) {
 		return ResourcesPlugin.getWorkspace().getRoot().findMember(path);
