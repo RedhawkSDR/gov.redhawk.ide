@@ -436,7 +436,9 @@ public class ExportUtils {
 	}
 
 	private static boolean isBuildSH(IProject project) {
-		return project.getFile(new Path("build.sh")).exists();
+//		return project.getFile(new Path("build.sh")).exists();
+		// TODO Disable the behavior until build.sh is fixed
+		return false;
 	}
 
 	private static void buildSH(final IProgressMonitor progress, IProject project) throws CoreException, IOException, DebugException {
