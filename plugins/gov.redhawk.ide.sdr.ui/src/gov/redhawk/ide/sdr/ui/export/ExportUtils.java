@@ -11,6 +11,8 @@
 package gov.redhawk.ide.sdr.ui.export;
 
 import gov.redhawk.ide.RedhawkIdeActivator;
+import gov.redhawk.ide.codegen.CodegenUtil;
+import gov.redhawk.ide.codegen.ImplementationSettings;
 import gov.redhawk.ide.natures.ScaComponentProjectNature;
 import gov.redhawk.ide.natures.ScaNodeProjectNature;
 import gov.redhawk.ide.natures.ScaWaveformProjectNature;
@@ -39,6 +41,7 @@ import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -138,11 +141,6 @@ public class ExportUtils {
 			return;
 		}
 
-		if (isBuildSH(proj)) {
-			buildSH(monitor, proj);
-			return;
-		}
-
 		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting waveforms", 1 + proj.members().length);
 
 		final IPath outputFolder = new Path("dom/waveforms").append(proj.getName());
@@ -193,11 +191,6 @@ public class ExportUtils {
 		}
 
 		if (!ExportUtils.checkProject(proj)) {
-			return;
-		}
-
-		if (isBuildSH(proj)) {
-			buildSH(monitor, proj);
 			return;
 		}
 
@@ -351,57 +344,78 @@ public class ExportUtils {
 			}
 
 			outputFolder = outputFolder.append(proj.getName());
-			exporter.mkdir(outputFolder, progress.newChild(MKDIR_WORK));
 
 			// Copy the SPD File
-			IPath outputPath = outputFolder.append(spdResource.getName());
-			exporter.write(spdResource, outputPath, progress.newChild(SPD_WORK));
+			final IPath spdOutputPath = outputFolder.append(spdResource.getName());
 
+			IResource prfResource = null;
+			IPath prfOutputPath = null;
 			if (softPkg.getPropertyFile() != null) {
 				final IPath prfPath = new Path(softPkg.getPropertyFile().getLocalFile().getName());
 				if (prfPath.isAbsolute()) {
 					throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Cannot export absolute path localfile paths"));
 				}
-				final IResource srcPath = ExportUtils.getWorkspaceResource(spdRootPath.append(prfPath));
-				if (srcPath == null) {
+				prfResource = ExportUtils.getWorkspaceResource(spdRootPath.append(prfPath));
+				if (prfResource == null) {
 					throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Expected file " + prfPath + " does not exist"));
 				}
-				outputPath = outputFolder.append(prfPath);
-				exporter.write(srcPath, outputPath, progress.newChild(PRF_WORK));
+				prfOutputPath = outputFolder.append(prfPath);
 			}
-			progress.setWorkRemaining(SCD_WORK + IMPL_WORK);
 
+			IResource scdResourcePath = null;
+			IPath scdOutputPath = null;
 			if (softPkg.getDescriptor() != null) {
 				final IPath scdPath = new Path(softPkg.getDescriptor().getLocalfile().getName());
 				if (scdPath.isAbsolute()) {
 					throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Cannot export absolute path localfile paths"));
 				}
-				final IResource srcPath = ExportUtils.getWorkspaceResource(spdRootPath.append(scdPath));
-				if (srcPath == null) {
+				scdResourcePath = ExportUtils.getWorkspaceResource(spdRootPath.append(scdPath));
+				if (scdResourcePath == null) {
 					throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Expected file " + scdPath + " does not exist"));
 				}
-				outputPath = outputFolder.append(scdPath);
-				exporter.write(srcPath, outputPath, progress.newChild(SCD_WORK));
+				scdOutputPath = outputFolder.append(scdPath);
 			}
 			progress.setWorkRemaining(IMPL_WORK);
-
+			
+			boolean useExporter = true;
 			if (softPkg.getImplementation() != null) {
 				int implWork = softPkg.getImplementation().size() * (PRF_WORK + ((includeCode) ? IMPL_WORK : 0)); // SUPPRESS
 																													// CHECKSTYLE
 																													// INLINE
 				progress.setWorkRemaining(implWork);
 				for (final Implementation impl : softPkg.getImplementation()) {
-					ExportUtils.exportImpl(exporter, includeCode, progress.newChild(1), outputFolder, spdRootPath, impl);
+					useExporter &= ExportUtils.exportImpl(exporter, includeCode, progress.newChild(1), outputFolder, spdRootPath, impl);
 					implWork -= (PRF_WORK + ((includeCode) ? IMPL_WORK : 0)); // SUPPRESS CHECKSTYLE INLINE
 					progress.setWorkRemaining(implWork);
+				}
+			}
+			
+			if (useExporter) {
+				exporter.mkdir(outputFolder, progress.newChild(MKDIR_WORK));
+				exporter.write(spdResource, spdOutputPath, progress.newChild(SPD_WORK));
+				if (prfResource != null) {
+					exporter.write(prfResource, prfOutputPath, progress.newChild(PRF_WORK));
+				}
+				if (scdResourcePath != null) {
+					exporter.write(scdResourcePath, scdOutputPath, progress.newChild(SCD_WORK));
 				}
 			}
 		}
 	}
 
-	private static void exportImpl(final IScaExporter exporter, final boolean includeCode, final SubMonitor progress, IPath outputFolder,
+	private static boolean exportImpl(final IScaExporter exporter, final boolean includeCode, final SubMonitor progress, IPath outputFolder,
 		final IPath spdRootPath, final Implementation impl) throws CoreException, IOException {
 		progress.beginTask("Exporting Implementation " + impl.getId(), 1);
+		
+		ImplementationSettings implSettings = CodegenUtil.getImplementationSettings(impl);
+		String outputDir = implSettings.getOutputDir();
+		IResource outputDirResource = ExportUtils.getWorkspaceResource(spdRootPath.append(outputDir));
+		
+		if (useInstallImplScript(outputDirResource)) {
+			installImpl(progress, impl.getId(), (IContainer) outputDirResource);
+			return false;
+		}
+		
 		final String localFileName = impl.getCode().getLocalFile().getName();
 		final IPath codeLocalFile;
 		if (localFileName != null) {
@@ -436,6 +450,60 @@ public class ExportUtils {
 			outputPath = outputFolder.append(prfPath);
 			exporter.write(srcPrfPath, outputPath, progress.newChild(1));
 		}
+		
+		return true;
+	}
+
+	private static void installImpl(IProgressMonitor monitor, String name, IContainer implSourceContainer) throws CoreException, IOException {
+		String configTypeId = IExternalToolConstants.ID_PROGRAM_LAUNCH_CONFIGURATION_TYPE;
+		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		final String launchConfigName = launchManager.generateLaunchConfigurationName("Build install implementation " + name);
+		final ILaunchConfigurationType configType = launchManager.getLaunchConfigurationType(configTypeId);
+		final ILaunchConfigurationWorkingCopy retVal = configType.newInstance(null, launchConfigName);
+
+		retVal.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
+		retVal.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, ExportUtils.getEnv());
+		retVal.setAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, false);
+		retVal.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, "${none}");
+		retVal.setAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, "${none}");
+		retVal.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, true);
+
+		URL fileUrl = FileLocator.toFileURL(FileLocator.find(SdrUiPlugin.getDefault().getBundle(), new Path("resources/installImpl.sh"), null));
+		try {
+			File file = new File(fileUrl.toURI());
+			if (!file.canExecute()) {
+				file.setExecutable(true);
+			}
+			retVal.setAttribute(IExternalToolConstants.ATTR_LOCATION, file.getAbsolutePath());
+		} catch (URISyntaxException e1) {
+			throw new CoreException(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Failed to find install script.", e1));
+		}
+		retVal.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, implSourceContainer.getLocation().toOSString());
+
+		ILaunch launch = retVal.launch("run", monitor, false);
+		while (!launch.isTerminated()) {
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// PASS
+			}
+			if (monitor.isCanceled()) {
+				launch.terminate();
+				break;
+			}
+		}
+		if (launch.getProcesses()[0].getExitValue() != 0) {
+			throw new CoreException(new Status(IStatus.ERROR, SdrUiPlugin.PLUGIN_ID, "Install script returned with error code "
+				+ launch.getProcesses()[0].getExitValue() + "\n\nSee console output for details.", null));
+		}
+	}
+
+	private static boolean useInstallImplScript(IResource outputDir) {
+		if (outputDir instanceof IContainer) {
+			IContainer container = (IContainer) outputDir;
+			return container.getFile(new Path("reconf")).exists() || container.getFile(new Path("configure")).exists() || container.getFile(new Path("Makefile")).exists();
+		}
+		return false;
 	}
 
 	private static boolean isBuildSH(IProject project) {

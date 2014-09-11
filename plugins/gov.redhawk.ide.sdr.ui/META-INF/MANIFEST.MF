@@ -27,7 +27,8 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  org.eclipse.core.databinding.beans;bundle-version="1.2.100",
  org.eclipse.core.variables;bundle-version="3.2.400",
  org.eclipse.core.externaltools,
- org.eclipse.jdt.annotation;bundle-version="[1.1.0,2.0.0)";resolution:=optional
+ org.eclipse.jdt.annotation;bundle-version="[1.1.0,2.0.0)";resolution:=optional,
+ gov.redhawk.ide.codegen;bundle-version="10.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Localization: plugin
