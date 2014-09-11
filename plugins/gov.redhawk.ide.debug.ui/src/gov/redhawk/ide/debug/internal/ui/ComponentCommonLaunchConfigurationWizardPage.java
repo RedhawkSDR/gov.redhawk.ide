@@ -40,6 +40,7 @@ public class ComponentCommonLaunchConfigurationWizardPage extends CommonLaunchCo
 			"Default", "Fatal", "Error", "Warn", "Info", "Debug", "Trace"
 		});
 		levelCombo.setLayoutData(GridDataFactory.swtDefaults().create());
+		levelCombo.setToolTipText("Set the debug logging level of the component.  Output will be visible in the console view.");
 
 		dbc.bindValue(SWTObservables.observeSelection(getStartButton()), BeansObservables.observeValue(wizard, "autoStart"));
 		dbc.bindValue(SWTObservables.observeSelection(getTimeout()), BeansObservables.observeValue(wizard, "timeout"));

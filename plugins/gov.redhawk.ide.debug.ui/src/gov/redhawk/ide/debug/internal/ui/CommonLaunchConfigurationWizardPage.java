@@ -26,6 +26,7 @@ public class CommonLaunchConfigurationWizardPage extends WizardPage {
 
 	public CommonLaunchConfigurationWizardPage() {
 		super("commonConfigPage", "Launch Configuration Options", null);
+		setDescription("Common post launch options.");
 	}
 
 	@Override
@@ -36,6 +37,7 @@ public class CommonLaunchConfigurationWizardPage extends WizardPage {
 		startButton = new Button(main, SWT.CHECK);
 		startButton.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
 		startButton.setText("Auto-start");
+		startButton.setToolTipText("Start the component automatically immediately after launching.");
 
 		final Label timeoutLabel = new Label(main, SWT.None);
 		timeoutLabel.setText("Timeout:");

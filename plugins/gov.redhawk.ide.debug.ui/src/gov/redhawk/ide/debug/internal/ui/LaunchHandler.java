@@ -95,27 +95,36 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 			Object element = ss.getFirstElement();
 			LaunchComponentWizard wizard = new LaunchComponentWizard();
 			if (element instanceof SoftPkgRegistry) {
+				wizard.setWindowTitle("Launch");
 				wizard.setSpdContainer((SoftPkgRegistry) element);
 			} else if (element instanceof SoftPkg) {
+				wizard.setWindowTitle("Launch");
 				wizard.setSoftPkg((SoftPkg) element);
 			} else if (element instanceof Implementation) {
+				wizard.setWindowTitle("Launch");
 				wizard.setImplementation((Implementation) element);
 			} else if (element instanceof SdrRoot) {
 				SdrRoot root = (SdrRoot) element;
 				if ("device".equalsIgnoreCase(type)) {
+					wizard.setWindowTitle("Launch Device");
 					wizard.setSpdContainer(root.getDevicesContainer());
 				} else if ("service".equalsIgnoreCase(type)) {
+					wizard.setWindowTitle("Launch Service");
 					wizard.setSpdContainer(root.getServicesContainer());
 				} else {
+					wizard.setWindowTitle("Launch Component");
 					wizard.setSpdContainer(root.getComponentsContainer());
 				}
 			} else if (element instanceof LocalSca) {
 				SdrRoot root = SdrUiPlugin.getDefault().getTargetSdrRoot();
 				if ("device".equalsIgnoreCase(type)) {
+					wizard.setWindowTitle("Launch Device");
 					wizard.setSpdContainer(root.getDevicesContainer());
 				} else if ("service".equalsIgnoreCase(type)) {
+					wizard.setWindowTitle("Launch Service");
 					wizard.setSpdContainer(root.getServicesContainer());
 				} else {
+					wizard.setWindowTitle("Launch Component");
 					wizard.setSpdContainer(root.getComponentsContainer());
 				}
 			}

@@ -30,6 +30,7 @@ public class LocalComponentPropertyEditWizardPage extends AbstractPropertyEditWi
 
 	protected LocalComponentPropertyEditWizardPage(LaunchComponentWizard wizard) {
 		super("propPage");
+		setDescription("Set the intial value of properties.");
 		this.wizard = wizard;
 	}
 

@@ -50,7 +50,7 @@ public class SoftPkgSelectionPage extends WizardPage {
 
 	protected SoftPkgSelectionPage(LaunchComponentWizard wizard) {
 		super("spdSelection", "Select Soft Package", null);
-		setDescription("Select the Soft Package (spd) to launch");
+		setDescription("Select the Soft Package (spd) to launch in the sandbox.");
 		this.wizard = wizard;
 	}
 
