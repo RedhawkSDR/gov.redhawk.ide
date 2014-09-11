@@ -499,7 +499,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 
 		}
 
-		if (assemblyController != null) {
+		if (assemblyController != null && assemblyController.getComponentInstantiationRef() != null) {
 			final SadComponentInstantiation ci = assemblyController.getComponentInstantiationRef().getInstantiation();
 			// first check to make sure start order is set to zero
 			if (ci != null && ci.getStartOrder() != null && ci.getStartOrder() != BigInteger.ZERO) {
