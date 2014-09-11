@@ -502,7 +502,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		if (assemblyController != null) {
 			final SadComponentInstantiation ci = assemblyController.getComponentInstantiationRef().getInstantiation();
 			// first check to make sure start order is set to zero
-			if (ci.getStartOrder() != BigInteger.ZERO) {
+			if (ci != null && ci.getStartOrder() != BigInteger.ZERO) {
 				TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 				TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack(); 
 				stack.execute(new RecordingCommand(editingDomain) {
