@@ -508,7 +508,6 @@ public class ExportUtils {
 
 	private static boolean isBuildSH(IProject project) {
 		if (project.getFile(new Path("build.sh")).exists()) {
-			// TODO Disable the behavior until build.sh is fixed
 			IScopeContext projectScope = new ProjectScope(project);
 			IEclipsePreferences node = projectScope.getNode(SdrUiPlugin.PLUGIN_ID);
 			return node.getBoolean("useBuild.sh", false);
@@ -530,7 +529,7 @@ public class ExportUtils {
 		retVal.setAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, "${none}");
 		retVal.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, true);
 
-		URL fileUrl = FileLocator.toFileURL(FileLocator.find(SdrUiPlugin.getDefault().getBundle(), new Path("install.sh"), null));
+		URL fileUrl = FileLocator.toFileURL(FileLocator.find(SdrUiPlugin.getDefault().getBundle(), new Path("resources/install.sh"), null));
 		try {
 			File file = new File(fileUrl.toURI());
 			if (!file.canExecute()) {
