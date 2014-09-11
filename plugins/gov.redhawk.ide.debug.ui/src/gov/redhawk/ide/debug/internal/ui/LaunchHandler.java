@@ -10,11 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.ui;
 
+import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.ui.LaunchUtil;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.WaveformsContainer;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.Code;
@@ -107,6 +109,15 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 				} else {
 					wizard.setSpdContainer(root.getComponentsContainer());
 				}
+			} else if (element instanceof LocalSca) {
+				SdrRoot root = SdrUiPlugin.getDefault().getTargetSdrRoot();
+				if ("device".equalsIgnoreCase(type)) {
+					wizard.setSpdContainer(root.getDevicesContainer());
+				} else if ("service".equalsIgnoreCase(type)) {
+					wizard.setSpdContainer(root.getServicesContainer());
+				} else {
+					wizard.setSpdContainer(root.getComponentsContainer());
+				}
 			}
 			WizardDialog dialog = new WizardDialog(HandlerUtil.getActiveShell(event), wizard);
 			dialog.open();
@@ -129,6 +140,9 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 				wizard.setWaveformsContainer(container);
 			} else if (element instanceof SdrRoot) {
 				SdrRoot root = (SdrRoot) element;
+				wizard.setWaveformsContainer(root.getWaveformsContainer());
+			} else if (element instanceof LocalSca) {
+				SdrRoot root = SdrUiPlugin.getDefault().getTargetSdrRoot();
 				wizard.setWaveformsContainer(root.getWaveformsContainer());
 			}
 			WizardDialog dialog = new WizardDialog(HandlerUtil.getActiveShell(event), wizard);
