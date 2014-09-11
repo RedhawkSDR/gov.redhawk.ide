@@ -67,7 +67,6 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 	 * @return
 	 * @throws CoreException
 	 */
-	@SuppressWarnings("unchecked")
 	public Reason internalUpdate(IUpdateContext context, boolean performUpdate) throws CoreException {
 
 		boolean updateStatus = false;
@@ -121,8 +120,28 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			List<Connection> connections = new ArrayList<Connection>();
 			Collections.addAll(connections, (Connection[]) d.getConnections().toArray(new Connection[0]));
 
-			// Check for inconsistencies in hostcollocation and number of components and connections
-			// If found remove all objects of that type and redraw
+			/**** Check for inconsistencies in Host Collocation and number of components and connections ****/
+			// Check Host Collocations for inconsistencies on text/name values
+			boolean valuesMatch = true;
+			if (hostCollocations.size() == hostCollocationShapes.size()) {
+				for (int i = 0; i < hostCollocations.size(); i++) {
+					valuesMatch = HostCollocationPattern.compareHostCoText(hostCollocationShapes.get(i), hostCollocations.get(i));
+					break;
+				}
+			}
+
+			// Check Host Collocations for inconsistencies in contained components
+			boolean numberOfComponentsMatch = true;
+			if (hostCollocations.size() == hostCollocationShapes.size()) {
+				for (int i = 0; i < hostCollocations.size(); i++) {
+					if (hostCollocations.get(i).getComponentPlacement().size() != hostCollocationShapes.get(i).getChildren().size()) {
+						numberOfComponentsMatch = false;
+						break;
+					}
+				}
+			}
+
+			// If inconsistencies are found remove all objects of that type and redraw
 			// we must do this because the diagram uses indexed lists to refer to components in the sad file.
 			if (performUpdate) {
 				updateStatus = true;
@@ -130,26 +149,6 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				List<PictogramElement> pesToRemove = new ArrayList<PictogramElement>(); // gather all shapes to remove
 				List<Object> objsToAdd = new ArrayList<Object>(); // gather all model object to add
 
-				// Check hostCollocations for inconsistencies on text/name values
-				boolean valuesMatch = true;
-				if (hostCollocations.size() == hostCollocationShapes.size()) {
-					for (int i = 0; i < hostCollocations.size(); i++) {
-						valuesMatch = HostCollocationPattern.compareHostCoText(hostCollocationShapes.get(i), hostCollocations.get(i));
-						break;
-					}
-				}
-				
-				// Check hostCollocations for inconsistencies in contained components
-				boolean numberOfComponentsMatch = true;
-				if (hostCollocations.size() == hostCollocationShapes.size()) {
-					for (int i = 0; i < hostCollocations.size(); i++) {
-						if (hostCollocations.get(i).getComponentPlacement().size() != hostCollocationShapes.get(i).getChildren().size()) {
-							numberOfComponentsMatch = false;
-							break;
-						}
-					}
-				}
-				
 				// If inconsistencies found, redraw diagram elements based on model objects
 				if (hostCollocations.size() != hostCollocationShapes.size() || !numberOfComponentsMatch || !valuesMatch) {
 					Collections.addAll(pesToRemove, (PictogramElement[]) hostCollocationShapes.toArray(new PictogramElement[0]));
@@ -159,7 +158,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 					Collections.addAll(pesToRemove, (PictogramElement[]) componentShapes.toArray(new PictogramElement[0]));
 					Collections.addAll(objsToAdd, (Object[]) componentInstantiations.toArray(new Object[0]));
 				}
-				
+
 				// Easiest just to remove and redraw connections every time
 				Collections.addAll(pesToRemove, (PictogramElement[]) connections.toArray(new PictogramElement[0]));
 
@@ -187,13 +186,17 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 						DUtil.addShapeViaFeature(getFeatureProvider(), getDiagram(), objToAdd);
 					}
 				}
-				
+
 				// add connections to diagram
 				addConnections(sadConnectInterfaces, getDiagram(), getFeatureProvider());
 
 			} else {
-				return new Reason(true, "The sad.xml file and diagram have different number of components and the only reasonable "
-					+ "action is to reload the components onto the diagram from the xml file.");
+				if (hostCollocations.size() != hostCollocationShapes.size() || !numberOfComponentsMatch || !valuesMatch) {
+					return new Reason(true, "The sad.xml file and diagram HostCollocation objects do not match.  Reload the diagram from the xml file.");
+				}
+				if (componentShapes.size() != componentInstantiations.size() || !componentsResolved(componentShapes)) {
+					return new Reason(true, "The sad.xml file and diagram component objects do not match.  Reload the diagram from the xml file.");
+				}
 			}
 
 			// TODO: we should probably do this in the model prior to drawing
@@ -209,7 +212,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		return new Reason(false, "No updates required");
 	}
 
-	/** Checks if componentShape has lost its reference to the model object*/
+	/** Checks if componentShape has lost its reference to the model object */
 	private boolean componentsResolved(List<ComponentShape> componentShapes) {
 		for (ComponentShape componentShape : componentShapes) {
 			if (!(DUtil.getBusinessObject(componentShape) instanceof SadComponentInstantiation)) {
@@ -218,7 +221,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public Reason updateNeeded(IUpdateContext context) {
 		try {
@@ -381,7 +384,8 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			// provides port is present but references component isn't
 			SadConnectInterface conn = connIter.next();
 			if ((conn.getUsesPort() != null && conn.getUsesPort().getComponentInstantiationRef() != null && conn.getUsesPort().getComponentInstantiationRef().getInstantiation() == null)
-				|| (conn.getProvidesPort() != null && conn.getProvidesPort().getComponentInstantiationRef() != null && conn.getProvidesPort().getComponentInstantiationRef().getInstantiation() == null)) {
+				|| (conn.getProvidesPort() != null && conn.getProvidesPort().getComponentInstantiationRef() != null 
+				&& conn.getProvidesPort().getComponentInstantiationRef().getInstantiation() == null)) {
 
 				// endpoint missing, delete connection
 				connIter.remove();
@@ -399,7 +403,6 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 	 * @return
 	 * @throws CoreException
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void addConnections(List<SadConnectInterface> sadConnectInterfaces, Diagram diagram, IFeatureProvider featureProvider) throws CoreException {
 
 		// add findByStub shapes
