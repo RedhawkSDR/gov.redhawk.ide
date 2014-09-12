@@ -60,7 +60,6 @@ import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
-import org.eclipse.graphiti.features.context.IAreaContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
@@ -418,25 +417,6 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 		return null;
 	}
 
-	/**
-	 * Returns list of Shapes that are contained in selected diagram context area
-	 * @param diagram
-	 * @param context
-	 * @return
-	 */
-	public static List<Shape> getContainersInArea(final Diagram diagram, final IAreaContext context) {
-
-		List<Shape> retList = new ArrayList<Shape>();
-
-		EList<Shape> shapes = diagram.getChildren();
-		for (Shape s : shapes) {
-			GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
-			if (context.getX() <= ga.getX() && context.getWidth() >= ga.getWidth() && context.getY() <= ga.getY() && context.getHeight() >= ga.getHeight()) {
-				retList.add(s);
-			}
-		}
-		return retList;
-	}
 
 	/**
 	 * Returns list of ContainerShape in provided AreaContext with
@@ -607,18 +587,6 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 		return false;
 	}
 
-	/**
-	 * Return true if GraphicsAlgorithm fits within parent. Context represents the parent width/height
-	 * @param ga
-	 * @param context
-	 * @return
-	 */
-	public static boolean gaFitsInParentGA(final GraphicsAlgorithm childGA, int width, int height, int x, int y) {
-		if (width >= childGA.getX() && height >= childGA.getY()) {
-			return true;
-		}
-		return false;
-	}
 
 	// returns width required to support longest provides port name
 	// 4 used as minimum, characters cut off otherwise
