@@ -44,11 +44,6 @@ public abstract class AbstractWorkspaceLaunchConfigurationFactory extends Abstra
 		return uri.isPlatformResource();
 	}
 
-	@Override
-	protected String getProfile(final SoftPkg spd) {
-		return spd.eResource().getURI().toPlatformString(true);
-	}
-
 	protected IFile getResource(final URI uri) {
 		final String path = uri.toPlatformString(true);
 		return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));

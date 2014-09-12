@@ -37,9 +37,11 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -47,11 +49,12 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 /**
  * 
  */
-public class LocalComponentMainTab extends LocalAbstractMainTab {
+public class LocalComponentMainTab extends AbstractMainTab {
 
 	private static final String DEFAULT_DEBUG_LEVEL = "Default";
 	private Text implText;
 	private Combo levelCombo;
+	private Button browseButton;
 
 	@Override
 	protected String getProfileExtension() {
@@ -59,11 +62,12 @@ public class LocalComponentMainTab extends LocalAbstractMainTab {
 	}
 
 	@Override
-	protected void createProfileGroup(final Composite parent) {
-		super.createProfileGroup(parent);
+	protected void createOtherComponents(Composite composite) {
+		Group parent = new Group(composite, SWT.None);
+		parent.setLayout(new GridLayout(2, false));
+		parent.setLayoutData(GridDataFactory.fillDefaults().create());
+		parent.setText("Implementation:");
 
-		final Label label = new Label(parent, SWT.None);
-		label.setText("Implementation:");
 		this.implText = new Text(parent, SWT.BORDER);
 		this.implText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.implText.addModifyListener(new ModifyListener() {
@@ -73,7 +77,7 @@ public class LocalComponentMainTab extends LocalAbstractMainTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		final Button browseButton = new Button(parent, SWT.PUSH);
+		browseButton = new Button(parent, SWT.PUSH);
 		browseButton.setText("&Browse...");
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -93,9 +97,7 @@ public class LocalComponentMainTab extends LocalAbstractMainTab {
 		final Label label = new Label(parent, SWT.None);
 		label.setText("Debug Level:");
 		this.levelCombo = new Combo(parent, SWT.BORDER | SWT.READ_ONLY);
-		this.levelCombo.setItems(new String[] {
-		        LocalComponentMainTab.DEFAULT_DEBUG_LEVEL, "Fatal", "Error", "Warn", "Info", "Debug", "Trace"
-		});
+		this.levelCombo.setItems(new String[] { LocalComponentMainTab.DEFAULT_DEBUG_LEVEL, "Fatal", "Error", "Warn", "Info", "Debug", "Trace" });
 		this.levelCombo.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
 		this.levelCombo.addModifyListener(new ModifyListener() {
 
@@ -128,20 +130,13 @@ public class LocalComponentMainTab extends LocalAbstractMainTab {
 
 	protected List<String> getImplementationIDs() {
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-		final Resource spdResource = resourceSet.getResource(URI.createPlatformResourceURI(getProfileText().getText(), true), true);
+		final Resource spdResource = resourceSet.getResource(URI.createFileURI(getLocationFile().getAbsolutePath()), true);
 		final SoftPkg spd = SoftPkg.Util.getSoftPkg(spdResource);
 		final ArrayList<String> retVal = new ArrayList<String>();
 		for (final Implementation impl : spd.getImplementation()) {
 			retVal.add(impl.getId());
 		}
 		return retVal;
-	}
-
-	@Override
-	protected Label createProfileLabel(final Composite parent) {
-		final Label label = new Label(parent, SWT.None);
-		label.setText("SPD:");
-		return label;
 	}
 
 	@Override
@@ -154,6 +149,14 @@ public class LocalComponentMainTab extends LocalAbstractMainTab {
 		super.initializeFrom(configuration);
 		updateImplementationText(configuration);
 		updateDebugText(configuration);
+	}
+	
+	/**
+	 * @since 3.0
+	 */
+	@Override
+	protected String getLocationLabel() {
+		return "Location of Soft Package File (spd.xml):";
 	}
 
 	private void updateDebugText(final ILaunchConfiguration configuration) {
@@ -211,6 +214,14 @@ public class LocalComponentMainTab extends LocalAbstractMainTab {
 			ScaDebugUiPlugin.log(e);
 		}
 		this.implText.setText(text);
+		List<String> ids = getImplementationIDs();
+		if (ids.size() <= 1) {
+			implText.setEnabled(false);
+			browseButton.setEnabled(false);
+		} else {
+			implText.setEnabled(true);
+			browseButton.setEnabled(true);
+		}
 	}
 
 	@Override

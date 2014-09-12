@@ -26,6 +26,7 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
@@ -44,6 +45,7 @@ public class LaunchLocalWaveformWizard extends Wizard {
 	private boolean autoStart;
 	private int timeout = ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT;
 	private WaveformCommonLaunchConfigurationWizardPage commonPage;
+	private boolean saveRunConfiguration;
 	
 	public LaunchLocalWaveformWizard() {
 		setNeedsProgressMonitor(true);
@@ -79,10 +81,12 @@ public class LaunchLocalWaveformWizard extends Wizard {
 
 						config.setAttribute(ScaLaunchConfigurationConstants.ATT_START, isAutoStart());
 						config.setAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT, getTimeout());
-
-//						TODO Allow the user to save the launch configuration
-//						ILaunchConfiguration savedConfig = config.doSave();
-						config.launch("run", monitor, false, true);
+						
+						ILaunchConfiguration finalConfig = config;
+						if (isSaveRunConfiguration()) {
+							finalConfig = config.doSave();
+						}
+						finalConfig.launch("run", monitor, false, true);
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
@@ -144,5 +148,17 @@ public class LaunchLocalWaveformWizard extends Wizard {
 		this.timeout = timeout;
 		pcs.firePropertyChange("timeout", oldValue, this.timeout);
 	}
+
+	public boolean isSaveRunConfiguration() {
+		return saveRunConfiguration;
+	}
+
+	public void setSaveRunConfiguration(boolean saveRunConfiguration) {
+		boolean oldValue = this.saveRunConfiguration;
+		this.saveRunConfiguration = saveRunConfiguration;
+		pcs.firePropertyChange("saveConfiguration", oldValue, this.saveRunConfiguration);
+	}
+	
+	
 
 }

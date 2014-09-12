@@ -664,7 +664,7 @@
       <launchConfigurationType
             delegate="gov.redhawk.ide.debug.internal.ui.LocalWaveformLaunchDelegate"
             id="gov.redhawk.ide.debug.launchLocalWaveform"
-            name="Launch Local Waveform">
+            name="Sandbox Waveform">
       </launchConfigurationType>
    </extension>
        

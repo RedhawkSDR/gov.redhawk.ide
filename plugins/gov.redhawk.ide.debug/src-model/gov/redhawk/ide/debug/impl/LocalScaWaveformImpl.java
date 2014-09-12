@@ -764,7 +764,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	@Override
 	public void dispose() {
-		Job releaseJob = new SilentJob("Local Waveform Release") {
+		Job releaseJob = new SilentJob("Sandbox Waveform Release") {
 
 			@Override
 			protected IStatus runSilent(IProgressMonitor monitor) {

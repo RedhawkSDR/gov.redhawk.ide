@@ -31,8 +31,8 @@ public class DebugLevelResolver extends AbstractLauncherResolver implements ILau
 	@Override
 	protected String resolveValue(String arg, final ILaunch launch, final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl) throws CoreException {
 		final String debugLevel = config.getAttribute(ScaDebugLaunchConstants.ATT_DEBUG_LEVEL, (String) null);
-		if (debugLevel != null) {
-			int level;
+		if (debugLevel != null && !debugLevel.isEmpty()) {
+			Integer level = null;
 			try {
 				level = Integer.valueOf(debugLevel);
 			} catch (final NumberFormatException e) {
@@ -48,11 +48,11 @@ public class DebugLevelResolver extends AbstractLauncherResolver implements ILau
 					level = 4;
 				} else if ("Trace".equalsIgnoreCase(debugLevel)) {
 					level = 5;
-				} else {
-					level = 5;
 				}
 			}
-			return "DEBUG_LEVEL " + String.valueOf(level);
+			if (level != null) {
+				return "DEBUG_LEVEL " + String.valueOf(level);
+			}
 		}
 		return null;
 	}

@@ -13,7 +13,6 @@ package gov.redhawk.ide.debug.internal.ui;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.swt.widgets.Composite;
 
 /**
  * 
@@ -25,12 +24,12 @@ public class WaveformCommonLaunchConfigurationWizardPage extends CommonLaunchCon
 	public WaveformCommonLaunchConfigurationWizardPage(LaunchLocalWaveformWizard wizard) {
 		this.wizard = wizard;
 	}
-
+	
 	@Override
-	protected void createOtherControls(Composite parent) {
-
+	protected void bindControls() {
 		dbc.bindValue(SWTObservables.observeSelection(getStartButton()), BeansObservables.observeValue(wizard, "autoStart"));
 		dbc.bindValue(SWTObservables.observeSelection(getTimeout()), BeansObservables.observeValue(wizard, "timeout"));
+		dbc.bindValue(SWTObservables.observeSelection(getRunConfigurationButton()), BeansObservables.observeValue(wizard, "saveRunConfiguration"));
 	}
 
 }

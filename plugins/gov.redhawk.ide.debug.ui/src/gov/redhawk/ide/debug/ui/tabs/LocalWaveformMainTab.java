@@ -12,25 +12,22 @@ package gov.redhawk.ide.debug.ui.tabs;
 
 import mil.jpeojtrs.sca.sad.SadPackage;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-
 /**
  * 
  */
-public class LocalWaveformMainTab extends LocalAbstractMainTab {
+public class LocalWaveformMainTab extends AbstractMainTab {
 
 	@Override
 	protected String getProfileExtension() {
 		return SadPackage.FILE_EXTENSION;
 	}
 
+	/**
+	 * @since 3.0
+	 */
 	@Override
-	protected Label createProfileLabel(final Composite parent) {
-		final Label label = new Label(parent, SWT.None);
-		label.setText("SAD:");
-		return label;
+	protected String getLocationLabel() {
+		return "Location of Software Assembly File (sad.xml):";
 	}
 
 }

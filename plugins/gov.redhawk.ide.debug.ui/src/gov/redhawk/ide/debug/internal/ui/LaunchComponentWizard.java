@@ -27,6 +27,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -46,6 +47,7 @@ public class LaunchComponentWizard extends Wizard {
 	private String debugLevel = "Default";
 	private LocalComponentPropertyEditWizardPage propertiesPage;
 	private ComponentCommonLaunchConfigurationWizardPage commonPage;
+	private boolean saveRunConfiguration;
 
 	public LaunchComponentWizard() {
 		setNeedsProgressMonitor(true);
@@ -82,9 +84,12 @@ public class LaunchComponentWizard extends Wizard {
 						config.setAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT, getTimeout());
 						config.setAttribute(ScaDebugLaunchConstants.ATT_DEBUG_LEVEL, getDebugLevel());
 						
-//						TODO Allow the user to save the launch configuration
-//						ILaunchConfiguration savedConfiguration = config.doSave();
-						config.launch("run", monitor, false, true);
+						ILaunchConfiguration finalConfig = config;
+						if (isSaveRunConfiguration()) {
+							finalConfig = config.doSave();	
+						} 
+						
+						finalConfig.launch("run", monitor, false, true);
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
@@ -206,6 +211,16 @@ public class LaunchComponentWizard extends Wizard {
 		String oldValue = this.debugLevel;
 		this.debugLevel = debugLevel;
 		pcs.firePropertyChange("debugLevel", oldValue, this.debugLevel);
+	}
+
+	public boolean isSaveRunConfiguration() {
+		return saveRunConfiguration;
+	}
+
+	public void setSaveRunConfiguration(boolean saveRunConfiguration) {
+		boolean oldValue = this.saveRunConfiguration;
+		this.saveRunConfiguration = saveRunConfiguration;
+		pcs.firePropertyChange("saveRunConfiguration", oldValue, this.saveRunConfiguration);
 	}
 	
 

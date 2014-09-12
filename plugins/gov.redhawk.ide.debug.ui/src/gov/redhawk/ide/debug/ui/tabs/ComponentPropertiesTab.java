@@ -10,14 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.ui.tabs;
 
-import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
+import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 import gov.redhawk.sca.launch.ui.ScaLauncherActivator;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -31,20 +29,13 @@ public class ComponentPropertiesTab extends AbstractPropertiesTab {
 	@Override
 	protected SoftPkg loadProfile(final ILaunchConfiguration configuration) {
 		try {
-			final String spdPath = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, "");
-			if (spdPath == null || spdPath.length() == 0) {
-				return null;
-			}
-			if (ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(spdPath)).exists()) {
-				final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-				final Resource resource = resourceSet.getResource(URI.createPlatformResourceURI(spdPath, true), true);
-				return SoftPkg.Util.getSoftPkg(resource);
-			} else {
-				return null;
-			}
+			URI spdUri = ScaLaunchConfigurationUtil.getProfileURI(configuration);
+			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
+			final Resource resource = resourceSet.getResource(spdUri, true);
+			return SoftPkg.Util.getSoftPkg(resource);
 		} catch (final CoreException e) {
 			ScaLauncherActivator.log(e);
-		} catch (final Exception e) {  // SUPPRESS CHECKSTYLE Logged Catch all exception
+		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			ScaLauncherActivator.log(e);
 		}
 		return null;

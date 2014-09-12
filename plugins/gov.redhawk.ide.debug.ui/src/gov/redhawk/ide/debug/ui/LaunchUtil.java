@@ -16,6 +16,7 @@ import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
+import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,13 +29,10 @@ import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
@@ -45,6 +43,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.window.Window;
@@ -114,22 +113,15 @@ public final class LaunchUtil {
 	}
 
 	/**
-	 * @since 2.2
+	 * @since 3.0
 	 */
 	public static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final SoftwareAssembly softwareAssembly) throws CoreException {
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-		final String launcherPrefix = softwareAssembly.getName();
+		final String launcherPrefix = (softwareAssembly.getName() == null) ? softwareAssembly.eResource().getURI().lastSegment() : softwareAssembly.getName();
 		final String launchConfigName = launchManager.generateLaunchConfigurationName(launcherPrefix);
 		final ILaunchConfigurationType configType = launchManager.getLaunchConfigurationType(ScaDebugLaunchConstants.ID_LOCAL_WAVEFORM_LAUNCH);
 		final ILaunchConfigurationWorkingCopy retVal = configType.newInstance(null, launchConfigName);
-		if (softwareAssembly.eResource().getURI().isPlatform()) {
-			IFile sadFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(softwareAssembly.eResource().getURI().toPlatformString(true)));
-			retVal.setMappedResources(new IResource[] { sadFile.getProject() });
-			retVal.setAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, softwareAssembly.eResource().getURI().toPlatformString(true));
-		} else {
-			retVal.setAttribute(ScaLaunchConfigurationConstants.ATT_WORKSPACE, false);
-			retVal.setAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, softwareAssembly.eResource().getURI().toString());
-		}
+		ScaLaunchConfigurationUtil.setProfileURI(retVal, EcoreUtil.getURI(softwareAssembly));
 
 		return retVal;
 	}

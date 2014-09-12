@@ -85,7 +85,7 @@ public class TestingSection extends ScaSection {
 	 */
 	private void createTestingArea(final Composite client, final FormToolkit toolkit, final IActionBars actionBars) {
 		ImageHyperlink imageHyperlink = toolkit.createImageHyperlink(client, SWT.None);
-		imageHyperlink.setText("Launch a local component");
+		imageHyperlink.setText("Launch a component in the sandbox");
 		imageHyperlink.setHref(TestingSection.TESTING_HREF_LOCAL_LAUNCH);
 		imageHyperlink.addHyperlinkListener(this.getPage());
 		imageHyperlink.setImage(ComponentImages.getImage(ComponentImages.RUN_EXEC));
@@ -96,7 +96,7 @@ public class TestingSection extends ScaSection {
 		//		imageHyperlink.addHyperlinkListener(this.getPage());
 
 		imageHyperlink = toolkit.createImageHyperlink(client, SWT.None);
-		imageHyperlink.setText("Launch a local component in debug mode");
+		imageHyperlink.setText("Debug a component in the sandbox");
 		imageHyperlink.setHref(TestingSection.TESTING_HREF_LOCAL_DEBUG);
 		imageHyperlink.addHyperlinkListener(this.getPage());
 		imageHyperlink.setEnabled(getPage().getEditor().getMainResource().getURI().isPlatform());

@@ -12,7 +12,7 @@ package gov.redhawk.ide.debug.ui.tabs;
 
 import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
-import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
+import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -295,13 +295,9 @@ public class ImplementationTab extends AbstractLaunchConfigurationTab {
 
 	private void updateSoftwareAssembly(final ILaunchConfiguration configuration) {
 		try {
-			final String sadPath = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, "");
-			if (sadPath == null || sadPath.length() == 0) {
-				setSoftwareAssembly(null);
-				return;
-			}
+			URI sadUri = ScaLaunchConfigurationUtil.getProfileURI(configuration);
 			final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-			final Resource resource = resourceSet.getResource(URI.createPlatformResourceURI(sadPath, true), true);
+			final Resource resource = resourceSet.getResource(sadUri, true);
 			setSoftwareAssembly(SoftwareAssembly.Util.getSoftwareAssembly(resource));
 		} catch (final CoreException e) {
 			setSoftwareAssembly(null);

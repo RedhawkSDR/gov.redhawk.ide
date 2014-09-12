@@ -620,12 +620,7 @@ public final class SpdLauncherUtil {
 	}
 
 	public static SoftPkg getSpd(final ILaunchConfiguration configuration) throws CoreException {
-		final URI spdURI;
-		if (configuration.getAttribute(ScaDebugLaunchConstants.ATT_WORKSPACE_PROFILE, ScaDebugLaunchConstants.DEFAULT_ATT_WORKSPACE_PROFILE)) {
-			spdURI = URI.createPlatformResourceURI(configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, ""), true);
-		} else {
-			spdURI = URI.createFileURI(configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, ""));
-		}
+		final URI spdURI = ScaLaunchConfigurationUtil.getProfileURI(configuration);
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		return SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
 	}

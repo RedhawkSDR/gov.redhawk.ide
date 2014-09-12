@@ -21,7 +21,6 @@ public interface ScaDebugLaunchConstants extends ScaLaunchConfigurationConstants
 	public static final String ATT_LW_IMPLS = ScaDebugPlugin.ID + ".localWaveform.impls";
 	public static final String ATT_OVERRIDE_MAP = ScaDebugPlugin.ID + ".localWaveform.override";
 	public static final String ATT_IMPL_ID = ScaDebugPlugin.ID + ".implementationID";
-	public static final String ATT_WORKSPACE_PROFILE = ScaDebugPlugin.ID + ".workspaceProfile";
 	public static final String ATT_DEBUG_LEVEL = ScaDebugPlugin.ID + ".debugLevel";
 	/**
 	 * @since 1.2

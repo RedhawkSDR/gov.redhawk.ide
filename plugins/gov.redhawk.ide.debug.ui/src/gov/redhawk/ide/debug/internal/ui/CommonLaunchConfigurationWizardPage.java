@@ -17,12 +17,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 
 public class CommonLaunchConfigurationWizardPage extends WizardPage {
 	private Button startButton;
 	private Spinner timeout;
+	private Button runConfigurationButton;
 
 	public CommonLaunchConfigurationWizardPage() {
 		super("commonConfigPage", "Launch Configuration Options", null);
@@ -32,37 +34,60 @@ public class CommonLaunchConfigurationWizardPage extends WizardPage {
 	@Override
 	public final void createControl(Composite parent) {
 		Composite main = new Composite(parent, SWT.None);
-		main.setLayout(new GridLayout(2, false));
-		
-		startButton = new Button(main, SWT.CHECK);
+		main.setLayout(new GridLayout(1, false));
+
+		Group postLaunch = new Group(main, SWT.None);
+		postLaunch.setText("Post Launch");
+		postLaunch.setLayout(new GridLayout(2, false));
+		postLaunch.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
+		startButton = new Button(postLaunch, SWT.CHECK);
 		startButton.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
 		startButton.setText("Auto-start");
 		startButton.setToolTipText("Start the component automatically immediately after launching.");
 
-		final Label timeoutLabel = new Label(main, SWT.None);
+		final Label timeoutLabel = new Label(postLaunch, SWT.None);
 		timeoutLabel.setText("Timeout:");
-		timeout = new Spinner(main, SWT.BORDER);
+		timeout = new Spinner(postLaunch, SWT.BORDER);
 		timeout.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 		timeout.setMinimum(-1);
-		timeout.setToolTipText("Time in seconds to wait for a resource to register with the naming context.  "
-			+ "A value of -1 will wait forever.");
+		timeout.setToolTipText("Time in seconds to wait for a resource to register with the naming context.  " + "A value of -1 will wait forever.");
 
 		createOtherControls(main);
-		
+
+		Label spacer = new Label(main, SWT.None);
+		spacer.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
+
+		runConfigurationButton = new Button(main, SWT.CHECK);
+		runConfigurationButton.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
+		runConfigurationButton.setText("Save as new run configuration");
+		runConfigurationButton.setToolTipText("Saves the settings as a new run configuration for quick reuse.  "
+			+ "The run configuration is available from the 'Run' menu or from the run icon on the toolbar.");
+
+		bindControls();
+
 		setControl(main);
 	}
-	
+
+	protected void bindControls() {
+		// TODO Auto-generated method stub
+
+	}
+
 	public Button getStartButton() {
 		return startButton;
 	}
-	
+
 	public Spinner getTimeout() {
 		return timeout;
 	}
 
 	protected void createOtherControls(Composite main) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	public Button getRunConfigurationButton() {
+		return runConfigurationButton;
 	}
 
 }

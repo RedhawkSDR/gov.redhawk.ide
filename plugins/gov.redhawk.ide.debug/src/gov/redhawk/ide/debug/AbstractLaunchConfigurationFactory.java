@@ -11,7 +11,7 @@
 package gov.redhawk.ide.debug;
 
 import gov.redhawk.ide.sdr.util.ScaEnvironmentUtil;
-import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
+import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 
 import java.util.Map;
 
@@ -55,7 +55,7 @@ public abstract class AbstractLaunchConfigurationFactory implements ILaunchConfi
 		final ILaunchConfigurationWorkingCopy retVal = configType.newInstance(null, launchConfigName);
 
 		retVal.setAttribute(ScaDebugLaunchConstants.ATT_IMPL_ID, implId);
-		retVal.setAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, getProfile(spd));
+		ScaLaunchConfigurationUtil.setProfileURI(retVal, spd.eResource().getURI());
 
 		// Setup Environment variables for override locations of OSSIEHOME and SDRROOT
 		final Map<String, String> envVar = ScaEnvironmentUtil.getLauncherEnvMap(spd.getImplementation(implId));
@@ -86,10 +86,6 @@ public abstract class AbstractLaunchConfigurationFactory implements ILaunchConfi
 
 	protected String getLaunchConfigTypeID() {
 		return this.launchConfigId;
-	}
-
-	protected String getProfile(final SoftPkg spd) {
-		return spd.eResource().getURI().path();
 	}
 
 	@Override

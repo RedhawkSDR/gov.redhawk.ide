@@ -42,7 +42,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -67,18 +66,12 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 	@Override
 	public void launch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
 		final boolean start = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
-		final String path = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROFILE, "");
-		boolean platform = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_WORKSPACE, true);
+
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(monitor);
 		final Map<String, String> implMap = SadLauncherUtil.getImplementationMap(configuration);
 
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
-		final Resource sadResource;
-		if (platform) {
-			sadResource = resourceSet.getResource(URI.createPlatformResourceURI(path, true), true);
-		} else {
-			sadResource = resourceSet.getResource(URI.createURI(path), true);
-		}
+		final Resource sadResource = resourceSet.getResource(ScaLaunchConfigurationUtil.getProfileURI(configuration), true);
 		final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(sadResource);
 		final String name = sad.getName();
 		final List<DataType> assemblyConfig = new ArrayList<DataType>();
