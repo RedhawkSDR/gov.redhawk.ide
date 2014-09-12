@@ -357,21 +357,36 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 				// reparent
 				s.setContainer(getDiagram());
 				// reposition shape outside host shape
-				int newX = s.getGraphicsAlgorithm().getX() + x;
-				int newY = s.getGraphicsAlgorithm().getY() + y;
+				int newX = s.getGraphicsAlgorithm().getX() + containerShape.getGraphicsAlgorithm().getX();
+				int newY = s.getGraphicsAlgorithm().getY() + containerShape.getGraphicsAlgorithm().getY();
 				Graphiti.getGaService().setLocation(s.getGraphicsAlgorithm(), newX, newY);
 			}
 		}
 
-		// move shapes from host collocation to diagram
+		// move shapes from diagram to host collocation 
 		for (Shape s : shapesToAddToHostCollocation) {
 			Object obj = DUtil.getBusinessObject(s);
 			if (obj instanceof SadComponentInstantiation) {
 				// reparent
 				s.setContainer(containerShape);
-				// reposition shape outside host shape
-				int newX = s.getGraphicsAlgorithm().getX() - x;
-				int newY = s.getGraphicsAlgorithm().getY() - y;
+				// reposition shape inside host shape (this is necessary as a result of the 
+				//shiftChildrenRelativeToParentResize method that is below)
+				int newX = 0;
+				if (context.getDirection() == IResizeShapeContext.DIRECTION_EAST
+						|| context.getDirection() == IResizeShapeContext.DIRECTION_SOUTH_EAST
+						|| context.getDirection() == IResizeShapeContext.DIRECTION_NORTH_EAST) {
+					newX = s.getGraphicsAlgorithm().getX() - x;
+				} else {
+					newX = s.getGraphicsAlgorithm().getX() - x + (containerShape.getGraphicsAlgorithm().getWidth() - context.getWidth());
+				}
+				int newY = 0;
+				if (context.getDirection() == IResizeShapeContext.DIRECTION_NORTH
+						|| context.getDirection() == IResizeShapeContext.DIRECTION_NORTH_EAST
+						|| context.getDirection() == IResizeShapeContext.DIRECTION_NORTH_WEST) {
+					newY = s.getGraphicsAlgorithm().getY() - y + (containerShape.getGraphicsAlgorithm().getHeight() - context.getHeight());
+				} else {
+					newY = s.getGraphicsAlgorithm().getY() - y;
+				}
 				Graphiti.getGaService().setLocation(s.getGraphicsAlgorithm(), newX, newY);
 			}
 		}

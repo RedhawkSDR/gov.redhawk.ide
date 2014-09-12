@@ -101,9 +101,9 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			}
 			// shape components, excluding those found in host collocations
 			List<ComponentShape> componentShapes = ComponentPattern.getAllComponentShapes(d);
-			for (int i = 0; i < componentShapes.size(); i++) {
-				if (!(componentShapes.get(i).eContainer() instanceof Diagram)) {
-					componentShapes.remove(i);
+			for (Iterator<ComponentShape> iter = componentShapes.iterator(); iter.hasNext();) {
+				if (!(iter.next().eContainer() instanceof Diagram)) {
+					iter.remove();
 				}
 			}
 
