@@ -83,7 +83,7 @@ public class DomainLaunchDialogTest {
 		gefBot.sleep(1000);
 		targetSDR.pressShortcut(Keystrokes.ESC);
 		targetSDR.select();
-		new SWTBotMenu(ContextMenuHelper.contextMenu(scaTree, "Launch...")).click();
+		new SWTBotMenu(ContextMenuHelper.contextMenu(scaTree, "Launch Domain ...")).click();
 		
 		// Will timeout if error causes launch window not to display
 		gefBot.waitUntil(Conditions.shellIsActive("Launch Domain Manager"), 30000);
