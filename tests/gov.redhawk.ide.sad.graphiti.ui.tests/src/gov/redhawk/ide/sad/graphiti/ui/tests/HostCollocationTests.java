@@ -19,6 +19,7 @@ import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
@@ -217,5 +218,295 @@ public class HostCollocationTests extends AbstractGraphitiTest {
 		Assert.assertNull(editor.getEditPart(HOST_CO_NAME));
 		// ensure component still exists
 		Assert.assertNotNull(editor.getEditPart(HARD_LIMIT));
+	}
+	
+	/**
+	 * IDE-748
+	 * Upon resizing Host Collocation components should be added/removed to/from Host Collocation 
+	 * if they are contained within the boundaries of the new host collocation shape.  Most of the location
+	 * checking appears to be the same which is what we expect.  There is code in place that maintains the absolute position
+	 * of components within the graph as they are transitioned to the hostCollocation and we don't want them shifting.
+	 */
+	@Test
+	public void hostCollocationResize() {
+		waveformName = "HC_Resize";
+		final String HARD_LIMIT = "HardLimit";
+		final String SIGGEN = "SigGen";
+		final String HOST_CO_NAME = "HC1";
+		final String UNEXPECTED_SHAPE_LOCATION = "Shape location unexpected";
+		final String UNEXPECTED_NUM_COMPONENTS = "Incorrect number of components in Host Collocation";
+		//maximize window
+		DiagramTestUtils.maximizeActiveWindow(gefBot);
+		
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+
+		// Add host collocation to the waveform
+		DiagramTestUtils.dragHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
+				
+		// Add component to the host collocation
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 20, 150);
+
+		MenuUtils.save(gefBot);
+		gefBot.sleep(1000);
+
+		// Check that component was added
+		HostCollocation hostCo = DiagramTestUtils.getHostCollocationObject(editor, HOST_CO_NAME);
+		Assert.assertFalse("Component was not added to the Host Collocation", hostCo.getComponentPlacement().isEmpty());
+		Assert.assertTrue("Number of components should be 2, instead there are " + hostCo.getComponentPlacement().size(),
+			hostCo.getComponentPlacement().size() == 2);
+		Assert.assertEquals("Expected component \'" + HARD_LIMIT + "\' was not found", HARD_LIMIT + "_1",
+			hostCo.getComponentPlacement().get(0).getComponentInstantiation().get(0).getId());
+
+		// Get hold of the shapes involved
+		//HostCOllocation
+		SWTBotGefEditPart hostCollocationEditPart = editor.getEditPart(HOST_CO_NAME);
+		GraphicsAlgorithm hostCollocationGa = DiagramTestUtils.getHostCollocationShape(editor, HOST_CO_NAME).getGraphicsAlgorithm();
+		
+		//HardLimit
+		ContainerShape hardLimitShape = (ContainerShape) editor.getEditPart(HARD_LIMIT).part().getModel();
+		//SigGen
+		ContainerShape sigGenShape = (ContainerShape) editor.getEditPart(SIGGEN).part().getModel();
+		
+		// Expand Host Collocation, verify components are still part of Host Collocation and 
+		// absolute position of components (in relation to diagram) has not changed
+		hostCollocationEditPart.click();
+		gefBot.sleep(1000);
+		int oldX = hostCollocationGa.getX() + hostCollocationGa.getWidth();
+		int oldY = hostCollocationGa.getY() + hostCollocationGa.getHeight();
+		int newX = oldX + 500;
+		int newY = oldY + 200;
+		editor.drag(oldX + 5, oldY + 5, newX, newY);
+		MenuUtils.save(gefBot);
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 10, 10));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 2);
+		
+		// Contract Host Collocation from the left thereby excluding the two components
+		oldX = hostCollocationGa.getX();
+		oldY = hostCollocationGa.getY() / 2;
+		newX = oldX + 500;
+		newY = oldY;
+		editor.drag(oldX + 2, oldY + 2, newX, newY);
+		//MenuUtils.save(gefBot);  //don't save because there are no components (popup will appear because invalid model)
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 10, 10));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		//Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 0);
+		
+		// Expand Host Collocation from the left thereby including the two components
+		hostCollocationEditPart.click();
+		gefBot.sleep(1000);
+		oldX = hostCollocationGa.getX();
+		oldY = hostCollocationGa.getY() / 2;
+		newX = 0;
+		newY = oldY;
+		editor.drag(oldX - 1, oldY + 2, newX, newY);
+		//MenuUtils.save(gefBot);  //don't save because there are no components (popup will appear because invalid model)
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 10, 10));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		//Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 2);
+		
+		// Contract Host Collocation from the top-left coming down and to the right thereby including the two components
+		oldX = hostCollocationGa.getX();
+		oldY = hostCollocationGa.getY();
+		newX = oldX + 500;
+		newY = oldY + 200;
+		editor.drag(oldX, oldY + 2, newX, newY);
+		//MenuUtils.save(gefBot);  //don't save because there are no components (popup will appear because invalid model)
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 10, 10));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		//Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 0);
+		
+		// Expand Host Collocation from the top-left thereby including the two components
+		oldX = hostCollocationGa.getX();
+		oldY = hostCollocationGa.getY();
+		newX = 0;
+		newY = 0;
+		editor.drag(oldX, oldY, newX, newY);
+		MenuUtils.save(gefBot);
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 10, 10));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 2);
+		
+		// Contract Host Collocation from the bottom-left to the right and up thereby excluding the two components
+		oldX = hostCollocationGa.getX();
+		oldY = hostCollocationGa.getY() + hostCollocationGa.getHeight();
+		newX = 500;
+		newY = oldY / 2;
+		editor.drag(oldX, oldY, newX, newY);
+		//MenuUtils.save(gefBot);  //don't save because there are no components (popup will appear because invalid model)
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 10, 10));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		//Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 0);
+
+		// Expand Host Collocation from the bottom-left to the left and down thereby including the two components
+		oldX = hostCollocationGa.getX();
+		oldY = hostCollocationGa.getY() + hostCollocationGa.getHeight();
+		newX = 0;
+		newY = oldY * 2;
+		editor.drag(oldX - 2, oldY  - 1, newX, newY);
+		MenuUtils.save(gefBot);
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 10, 10));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 2);
+		
+		// Collapse Host Collocation from the top-right downwards thereby excluding the two components
+		oldX = hostCollocationGa.getX() + hostCollocationGa.getWidth();
+		oldY = 0;
+		newX = oldX;
+		newY = hostCollocationGa.getHeight() / 2;
+		editor.drag(oldX, oldY, newX, newY);
+		//MenuUtils.save(gefBot);  //don't save because there are no components (popup will appear because invalid model)
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 10, 10));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		//Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 0);
+		
+		// Expand Host Collocation from the top-right upwards thereby including the two components
+		oldX = hostCollocationGa.getX() + hostCollocationGa.getWidth();
+		oldY = hostCollocationGa.getY();
+		newX = oldX;
+		newY = 0;
+		editor.drag(oldX, oldY, newX, newY);
+		MenuUtils.save(gefBot);
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 10, 10));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 2);
+		
+		// Collapse Host Collocation from the bottom-right upwards thereby including the one component (topmost)
+		oldX = hostCollocationGa.getX() + hostCollocationGa.getWidth();
+		oldY = hostCollocationGa.getY() + hostCollocationGa.getHeight();
+		newX = oldX;
+		newY = 130;
+		editor.drag(oldX, oldY, newX, newY);
+		MenuUtils.save(gefBot);
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 10, 10));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 1);
+		
+		//Drag HardLimit to right
+		editor.drag(editor.getEditPart(HARD_LIMIT), 350, 15);
+	
+		// Collapse Host Collocation from the right towards the left thereby excluding the all components
+		hostCollocationEditPart.click();
+		oldX = hostCollocationGa.getX() + hostCollocationGa.getWidth();
+		oldY = (hostCollocationGa.getY() + hostCollocationGa.getHeight()) / 2;
+		newX = 300;
+		newY = oldY;
+		editor.drag(oldX + 5, oldY + 2, newX, newY);
+		//MenuUtils.save(gefBot);  //don't save because there are no components (popup will appear because invalid model)
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 350, 20));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		//Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 0);
+		
+		// Expand Host Collocation from the right towards the right thereby including one component
+		hostCollocationEditPart.click();
+		oldX = hostCollocationGa.getX() + hostCollocationGa.getWidth();
+		oldY = (hostCollocationGa.getY() + hostCollocationGa.getHeight()) / 2;
+		newX = 750;
+		newY = oldY;
+		editor.drag(oldX + 5, oldY + 2, newX, newY);
+		MenuUtils.save(gefBot);
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 350, 20));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 1);
+		
+		// Expand Host Collocation from the bottom downward thereby adding one more component
+		oldX = (hostCollocationGa.getX() + hostCollocationGa.getWidth()) / 2;
+		oldY = hostCollocationGa.getY() + hostCollocationGa.getHeight();
+		newX = oldX;
+		newY = 400;
+		editor.drag(oldX + 5, oldY + 2, newX, newY);
+		MenuUtils.save(gefBot);
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 350, 20));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 2);
+		
+		// Collapse Host Collocation from the bottom upward thereby removing one component
+		oldX = (hostCollocationGa.getX() + hostCollocationGa.getWidth()) / 2;
+		oldY = hostCollocationGa.getY() + hostCollocationGa.getHeight();
+		newX = oldX;
+		newY = 130;
+		editor.drag(oldX + 5, oldY + 2, newX, newY);
+		MenuUtils.save(gefBot);
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 350, 20));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 1);
+		
+		//Drag Host Collocation Down below SigGenComponent
+		editor.drag(hostCollocationEditPart, 0, 300);
+		
+		// Expand Host Collocation from the top upwards thereby adding one more component
+		hostCollocationGa = DiagramTestUtils.getHostCollocationShape(editor, HOST_CO_NAME).getGraphicsAlgorithm();
+		oldX = (hostCollocationGa.getX() + hostCollocationGa.getWidth()) / 2;
+		oldY = hostCollocationGa.getY();
+		newX = oldX;
+		newY = 0;
+		editor.drag(oldX + 5, oldY, newX, newY);
+		MenuUtils.save(gefBot);
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 350, 320));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 2);
+		
+		// Collapse Host Collocation from the top downwards thereby removing one component
+		oldX = (hostCollocationGa.getX() + hostCollocationGa.getWidth()) / 2;
+		oldY = hostCollocationGa.getY();
+		newX = oldX;
+		newY = 300;
+		editor.drag(oldX + 5, oldY, newX, newY);
+		MenuUtils.save(gefBot);
+		gefBot.sleep(1000);
+		// Test Position
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 350, 20));
+		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
+		// Test Containment
+		Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 1);
+		
 	}
 }

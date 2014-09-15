@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.diagram;
 
+import static org.eclipse.swtbot.swt.finder.finders.UIThreadRunnable.syncExec;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 
@@ -23,6 +24,7 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
@@ -30,6 +32,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefViewer;
+import org.eclipse.swtbot.swt.finder.results.VoidResult;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
@@ -367,5 +370,33 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 */
 	public static String regexStringForSadProperty(ComponentShapeImpl componentShape, String propertyname, String value) {
 		return "(?s).*<componentproperties>.*<simpleref refid=\"" + propertyname + "\" value=\"" + value + "\"/>.*</componentproperties>.*";
+	}
+	
+	/**
+	 * Maximizes active window
+	 */
+	public static void maximizeActiveWindow(SWTGefBot gefBot) {
+        final Shell activeShell = gefBot.activeShell().widget;
+        VoidResult maximizeShell = new VoidResult() {
+            @Override
+            public void run() {
+                    activeShell.setMaximized(true);
+            }
+        };
+        syncExec(maximizeShell);
+    }
+	
+	/**
+	 * Return true if Shape's x/y coordinates match arguments
+	 * @param shape
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public static boolean verifyShapeLocation(Shape shape, int x, int y) {
+		if (shape.getGraphicsAlgorithm().getX() == x && shape.getGraphicsAlgorithm().getY() == y) {
+			return true;
+		}
+		return false;
 	}
 }
