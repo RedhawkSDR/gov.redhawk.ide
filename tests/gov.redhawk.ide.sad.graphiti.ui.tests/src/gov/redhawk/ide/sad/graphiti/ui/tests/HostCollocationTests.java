@@ -148,6 +148,7 @@ public class HostCollocationTests extends AbstractGraphitiTest {
 
 		// Check that component was added
 		HostCollocation hostCo = DiagramTestUtils.getHostCollocationObject(editor, HOST_CO_NAME);
+		Assert.assertNotNull("Host collocation must not be null", hostCo);
 		Assert.assertFalse("Component was not added to the Host Collocation", hostCo.getComponentPlacement().isEmpty());
 		Assert.assertTrue("Number of components should be 2, instead there are " + hostCo.getComponentPlacement().size(),
 			hostCo.getComponentPlacement().size() == 2);
