@@ -10,34 +10,24 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
-import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 
 public class MenuUtils {
 
 	protected MenuUtils() {
 	}
 
-	private static final String NO = "No", YES = "Yes", DESELECT_ALL = "Deselect All", OK = "OK";
-
-	private static boolean buttonExists(SWTBot bot, String buttonText) {
-		try {
-			bot.button(buttonText);
-			return true;
-		} catch (WidgetNotFoundException e) {
-			return false;
-		}
-	}
 
 	/**
 	 * Close all open editors and delete the specified project from the file system
 	 * @param bot
 	 * @param waveformName
 	 */
-	public static void closeAndDelete(SWTBot bot, String waveformName) {
+	public static void closeAndDelete(SWTWorkbenchBot bot, String waveformName) {
 		closeAllWithoutSave(bot);
 		deleteNodeInProjectExplorer(bot, waveformName);
 	}
@@ -46,7 +36,7 @@ public class MenuUtils {
 	 * Close all open editors without saving changes
 	 * @param bot - SWTBot
 	 */
-	public static void closeAllWithoutSave(SWTBot bot) {
+	public static void closeAllWithoutSave(SWTWorkbenchBot bot) {
 		closeAll(bot, false);
 	}
 
@@ -55,22 +45,11 @@ public class MenuUtils {
 	 * @param bot - SWTBot
 	 * @param save - True if you want to save editor contents before closing
 	 */
-	public static void closeAll(SWTBot bot, boolean save) {
-		bot.menu("File").menu("Close All").click();
-		if (buttonExists(bot, NO)) {
-			// One unsaved resource
-			if (!save) {
-				bot.button(NO).click();
-			} else {
-				bot.button(YES).click();
-			}
-		} else if (buttonExists(bot, DESELECT_ALL)) {
-			// Multiple unsaved resources
-			if (!save) {
-				bot.button(DESELECT_ALL).click();
-			}
-			bot.button(OK).click();
+	public static void closeAll(SWTWorkbenchBot bot, boolean save) {
+		if (save) {
+			bot.saveAllEditors();
 		}
+		bot.closeAllEditors();
 	}
 
 	/**
@@ -79,9 +58,11 @@ public class MenuUtils {
 	 * @param projectName
 	 */
 	public static void deleteNodeInProjectExplorer(SWTBot bot, String projectName) {
-		bot.tree().getTreeItem(projectName).select().pressShortcut(Keystrokes.DELETE).pressShortcut(Keystrokes.SPACE);
-		bot.button(OK).click();
-		bot.sleep(500);
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().getProject(projectName).delete(true, null);
+		} catch (CoreException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	/**
