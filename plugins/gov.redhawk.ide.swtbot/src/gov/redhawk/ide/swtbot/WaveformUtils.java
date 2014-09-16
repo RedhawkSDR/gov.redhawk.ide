@@ -30,15 +30,16 @@ public class WaveformUtils { // SUPPRESS CHECKSTYLE INLINE
 		SWTBotMenu otherMenu = newMenu.menu("Other...");
 		otherMenu.click();
 		SWTBotShell wizardShell = bot.shell("New");
+		SWTBot wizardBot = wizardShell.bot();
 		wizardShell.activate();
-		bot.tree().getTreeItem("SCA").expand().getNode("Graphiti SCA Waveform Project").select();
-		bot.button("Next >").click();
+		wizardBot.tree().getTreeItem("SCA").expand().getNode("Graphiti SCA Waveform Project").select();
+		wizardBot.button("Next >").click();
 
 		// Enter the name for the new waveform
-		bot.textWithLabel("Project name:").setText(waveformName);
+		wizardBot.textWithLabel("Project name:").setText(waveformName);
 
 		// Close wizard
-		SWTBotButton finishButton = bot.button("Finish");
+		SWTBotButton finishButton = wizardBot.button("Finish");
 		finishButton.click();
 		
 		// TODO Why doesn't this work?
@@ -58,21 +59,22 @@ public class WaveformUtils { // SUPPRESS CHECKSTYLE INLINE
 		otherMenu.click();
 		SWTBotShell wizardShell = bot.shell("New");
 		wizardShell.activate();
-		bot.tree().getTreeItem("SCA").expand().getNode("Graphiti SCA Waveform Project").select();
-		bot.button("Next >").click();
+		SWTBot wizardBot = wizardShell.bot();
+		wizardBot.tree().getTreeItem("SCA").expand().getNode("Graphiti SCA Waveform Project").select();
+		wizardBot.button("Next >").click();
 
 		// Enter the name for the new waveform
-		bot.textWithLabel("Project name:").setText(waveformName);
+		wizardBot.textWithLabel("Project name:").setText(waveformName);
 
 		// Click next
 		SWTBotButton nextButton = bot.button("Next >");
 		nextButton.click();
 
 		// Wait as the assembly controller table populates
-		bot.sleep(1000);
+		wizardBot.sleep(1000);
 
 		// Select AC for new waveform
-		SWTBotTable acTable = bot.table();
+		SWTBotTable acTable = wizardBot.table();
 		for (int row = 0; row < acTable.rowCount(); row++) {
 			if (acTable.getTableItem(row).getText().contains(assemblyControllerType)) {
 				acTable.select(row);
@@ -81,7 +83,7 @@ public class WaveformUtils { // SUPPRESS CHECKSTYLE INLINE
 		}
 
 		// Click finish
-		SWTBotButton finishButton = bot.button("Finish");
+		SWTBotButton finishButton = wizardBot.button("Finish");
 		finishButton.click();
 		
 		// TODO Why doesn't this work?
