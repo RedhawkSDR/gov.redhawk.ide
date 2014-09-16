@@ -150,7 +150,6 @@ public class ConnectionTests extends AbstractGraphitiTest{ // SUPPRESS CHECKSTYL
 		// Open editor and confirm that error decorators are present
 		gefBot.tree().expandNode(waveformName);
 		gefBot.tree().getTreeItem(waveformName).getNode(waveformName + ".sad.xml").select().contextMenu("Open With").menu("Graphiti Waveform Editor").click();
-		gefBot.sleep(5000); // Give editor time to open
 		editor = gefBot.gefEditor(waveformName);
 
 		// ...get target component edit parts and container shapes
