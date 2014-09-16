@@ -74,6 +74,7 @@ public final class StandardTestActions {
 	@After
 	public static void afterTest(SWTWorkbenchBot bot) throws Exception {
 		final boolean[] dialogsClosed = { false };
+		final boolean[] badDialogs = { false };
 		while (!dialogsClosed[0]) {
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
@@ -84,6 +85,7 @@ public final class StandardTestActions {
 						dialogsClosed[0] = true;
 					} else {
 						if (s != null) {
+							badDialogs[0] = true;
 							s.dispose();
 						}
 					}
@@ -91,24 +93,28 @@ public final class StandardTestActions {
 
 			});
 		}
-		
+
+		bot.closeAllShells();
 
 		bot.closeAllEditors();
-		bot.sleep(100);
-		
+
 		for (IProject p : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 			p.delete(true, true, null);
+		}
+
+		if (badDialogs[0]) {
+			Assert.fail("Invalid dialogs left open at end of test.");
 		}
 	}
 
 	@AfterClass
 	public static void afterClass() throws Exception {
-		SWTWorkbenchBot tmpBot = new SWTWorkbenchBot();
-		tmpBot.sleep(500);
+
 	}
 
 	/**
-	 * <b>NOTE</b>: It is recommended you override the environment variables in the pom.xml for tests instead of changing the SDR root. 
+	 * <b>NOTE</b>: It is recommended you override the environment variables in the pom.xml for tests instead of
+	 * changing the SDR root.
 	 * @param pluginId Plugin that contains the SDR
 	 * @param path Relative path within the plugin for the SDR, usually 'sdr'
 	 * @throws IOException
