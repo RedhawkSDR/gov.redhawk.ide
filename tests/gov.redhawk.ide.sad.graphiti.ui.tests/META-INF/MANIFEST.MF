@@ -12,9 +12,14 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.gef,
  org.eclipse.swtbot.go;bundle-version="2.2.1",
  org.eclipse.swtbot.eclipse.gef.finder;bundle-version="2.2.1",
- gov.redhawk.sca;bundle-version="7.0.0",
+ gov.redhawk.sca,
  gov.redhawk.ide.sad.graphiti.ui,
- gov.redhawk.ide.swtbot;bundle-version="1.0.0"
+ gov.redhawk.ide.swtbot,
+ org.eclipse.emf.common.ui,
+ org.eclipse.ui.views.properties.tabbed,
+ gov.redhawk.sca.ui,
+ gov.redhawk.ui,
+ org.eclipse.emf.workspace;bundle-version="1.5.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Activator: gov.redhawk.ide.sad.graphiti.ui.tests.GraphitiTestsActivator
 Bundle-Vendor: REDHAWK

@@ -31,7 +31,7 @@
             <SDRROOT>${basedir}/sdr</SDRROOT>
             <OSSIEHOME>${basedir}/ossie</OSSIEHOME>
           </environmentVariables>
-          <argLine>-Dorg.eclipse.swt.browser.DefaultType=mozilla -DORBInitialPort=2908 -XX:MaxPermSize=256m -Xmx1024m -Djava.net.preferIPv4Stack=true</argLine>
+          <argLine>-Dorg.eclipse.swtbot.playback.delay=100 -Dorg.eclipse.swt.browser.DefaultType=mozilla -DORBInitialPort=2908 -XX:MaxPermSize=256m -Xmx1024m -Djava.net.preferIPv4Stack=true</argLine>
           <appArgLine>-nl en</appArgLine>
           <includes>
             <include>**/*Tests.java</include>

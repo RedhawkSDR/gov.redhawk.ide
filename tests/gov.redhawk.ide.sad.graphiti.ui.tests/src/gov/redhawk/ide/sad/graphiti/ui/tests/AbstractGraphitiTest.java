@@ -13,7 +13,6 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 import gov.redhawk.ide.swtbot.StandardTestActions;
 
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
-import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -23,15 +22,14 @@ import org.junit.BeforeClass;
  * 
  */
 public abstract class AbstractGraphitiTest {
-	
+
 	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE INLINE
-	
+
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-		SWTBotPreferences.PLAYBACK_DELAY = 500;
 		StandardTestActions.beforeClass();
 	}
-	
+
 	@Before
 	public void beforeTest() throws Exception {
 		gefBot = new SWTGefBot();
@@ -40,9 +38,6 @@ public abstract class AbstractGraphitiTest {
 
 	@After
 	public void afterTest() throws Exception {
-		if (gefBot == null) {
-			return;
-		}
 		StandardTestActions.afterTest(gefBot);
 	}
 
