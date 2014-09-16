@@ -86,11 +86,9 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 				try {
 					canvas = (SWTBotGefFigureCanvas) f.get(viewer);
 				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace(); // SUPPRESS CHECKSTYLE INLINE
+					throw new IllegalStateException(e);
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace(); // SUPPRESS CHECKSTYLE INLINE
+					throw new IllegalStateException(e);
 				}
 			}
 		}
