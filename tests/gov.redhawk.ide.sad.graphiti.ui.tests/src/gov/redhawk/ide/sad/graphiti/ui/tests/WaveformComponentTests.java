@@ -90,7 +90,7 @@ public class WaveformComponentTests extends AbstractGraphitiTest {
 			DiagramTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);
 		}
 
-		gefBot.menu("File").menu("Save").click();
+		MenuUtils.save(gefBot);
 
 		for (String s : COMPONENTS) {
 			// Drill down to graphiti component shape
@@ -184,7 +184,7 @@ public class WaveformComponentTests extends AbstractGraphitiTest {
 			}
 		}
 		editor.getEditPart(HARD_LIMIT).click();
-		gefBot.menu("File").menu("Save").click();
+		MenuUtils.save(gefBot);
 		String regex = DiagramTestUtils.regexStringForSadProperty((ComponentShapeImpl) editor.getEditPart(HARD_LIMIT).part().getModel(), propertyname, newValue);
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		String editorText = editor.toTextEditor().getText();
@@ -205,7 +205,7 @@ public class WaveformComponentTests extends AbstractGraphitiTest {
 
 		// Add a SigGen component instantiation to the diagram and save
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, "SigGen", 0, 0);
-		gefBot.menu("File").menu("Save").click();
+		MenuUtils.save(gefBot);
 
 		// Add a HardLimit component instantiation to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, "HardLimit", 0, 0);
@@ -222,7 +222,7 @@ public class WaveformComponentTests extends AbstractGraphitiTest {
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
 
 		// Save project and check to see if HardLimit is now in the sad.xml
-		gefBot.menu("File").menu("Save").click();
+		MenuUtils.save(gefBot);
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The sad.xml should include SigGen's software assembly", editorText.matches(sigGenSad));
