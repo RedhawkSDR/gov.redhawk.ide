@@ -40,6 +40,13 @@ public class ScaChalkboardMatchingStrategy implements IEditorMatchingStrategy {
 		} else if (input instanceof URIEditorInput) {
 			//only one instance of Chalkboard should be opened
 			final URIEditorInput inp1 = (URIEditorInput) input;
+			try {
+				if (input.equals(editorRef.getEditorInput())) {
+					return true;
+				}
+			} catch (PartInitException e1) {
+				return false;
+			}
 			if (("/plugin" +  ScaDebugUiPlugin.CHALKBOARD_EDITOR_URI_PATH).equals(inp1.getURI().path())) {
 				try {
 					if (editorRef.getEditorInput() instanceof URIEditorInput) {
