@@ -21,7 +21,6 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class StartOrderTests extends AbstractGraphitiTest {
@@ -187,14 +186,9 @@ public class StartOrderTests extends AbstractGraphitiTest {
 
 	/**
 	 * IDE-695
-	 * When using the Overview Tab to change the assembly controller, the start order icons do not
-	 * correctly update in the diagram. The color of the start order icon correctly changes (yellow
-	 * for the new controller, white for all other components). But the number remains as they were
-	 * before the modification. The 'Set as Assembly Controller' context option is also disabled on
-	 * the new assembly controller, meaning the only way to fix is to unassign and reassign the
-	 * controller again in the diagram, or edit the sad.xml directly.
+	 * When using the Overview Tab to change the assembly controller, the start order icons 
+	 * for all components should update the next time the diagram is viewed
 	 */
-	@Ignore
 	@Test
 	public void setAssemblyControllerFromOverview() {
 		waveformName = "AC_From_Overview";
