@@ -31,11 +31,15 @@ public class FindByUtils {
 	 * Add a FindBy object to the Diagram from the palette
 	 * @param editor
 	 * @param findByType
+	 * @param name - Name of FindBy element.  If null, defaults to FindBy type
+	 * @param provides - Array of provides port names. Can be null if no ports desired, or FindBy type doesn't support ports
+	 * @param uses - Array of uses port names. Can be null if no ports desired, or FindBy type doesn't support ports
 	 */
-	public static void completeFindByWizard(SWTBot bot, String findByType) {
-		String[] provides = {"p1", "p2"};
-		String[] uses = {"u1", "u2"};
-		String name = removeSpaces(findByType);
+	public static void completeFindByWizard(SWTBot bot, String findByType, String name, String[] provides, String[] uses) {
+		// TODO - need to add cases for File Manager and Domain Manager
+		if (name == null) {
+			name = removeSpaces(findByType);
+		}
 		switch (findByType) {
 		case FIND_BY_CORBA_NAME:
 			addFindByCorbaName(bot, name, provides, uses);
