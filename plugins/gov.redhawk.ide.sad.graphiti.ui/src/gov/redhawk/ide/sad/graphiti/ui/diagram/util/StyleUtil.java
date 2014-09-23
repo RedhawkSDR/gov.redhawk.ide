@@ -152,7 +152,7 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 			style = gaService.createStyle(diagram, styleId);
 			style.setBackground(gaService.manageColor(diagram, new ColorConstant(255, 0, 0)));
 			style.setLineStyle(LineStyle.DASH);
-			gaService.setRenderingStyle(style, PredefinedColoredAreas.getCopperWhiteGlossAdaptions());
+			gaService.setRenderingStyle(style, FindByColoredAreas.getCopperWhiteAdaptions());
 			style.setLineWidth(2);
 		}
 		return style;
