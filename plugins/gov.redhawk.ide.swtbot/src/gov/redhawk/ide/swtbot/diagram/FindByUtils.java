@@ -40,6 +40,12 @@ public class FindByUtils {
 		if (name == null) {
 			name = removeSpaces(findByType);
 		}
+		if (provides == null) {
+			provides = new String[0];
+		}
+		if (uses == null) {
+			uses = new String[0];
+		}
 		switch (findByType) {
 		case FIND_BY_CORBA_NAME:
 			addFindByCorbaName(bot, name, provides, uses);
