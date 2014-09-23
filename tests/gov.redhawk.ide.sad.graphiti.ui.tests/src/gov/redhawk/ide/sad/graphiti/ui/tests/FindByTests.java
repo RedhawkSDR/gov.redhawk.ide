@@ -35,6 +35,9 @@ public class FindByTests extends AbstractGraphitiTest {
 	 * represents the FindBy business object. This includes the ContainerShape
 	 * for the element, outer and inner text, port shapes and labels,
 	 * and component supported interface.
+	 * 
+	 * IDE-737 Create wizards to get user input when adding FindBy Name, FindBy Service,
+	 * and FindBy Event Channel elements to the SAD Diagram.
 	 */
 	@Test
 	public void checkFindByPictogramElements() {
@@ -60,14 +63,13 @@ public class FindByTests extends AbstractGraphitiTest {
 		RHContainerShapeImpl findByShape = (RHContainerShapeImpl) fbEditPart.part().getModel();
 		Assert.assertTrue("Element is not a FindBy", DUtil.getBusinessObject(findByShape) instanceof FindByStub);
 		FindByStub findByObject = (FindByStub) DUtil.getBusinessObject(findByShape);
-		
-		
+
 		// Run assertions on expected properties: outer/inner text, lollipop, port number, type(provides-uses), name
 		Assert.assertEquals("Outer Text does not match input", FindByUtils.FIND_BY_CORBA_NAME, findByShape.getOuterText().getValue());
 		Assert.assertEquals("Inner Text does not match input", findByName, findByShape.getInnerText().getValue());
 		Assert.assertEquals("Diagram object and domain object names don't match", findByName, findByObject.getNamingService().getName());
 		Assert.assertNotNull("component supported interface graphic should not be null", findByShape.getLollipop());
-		
+
 		Assert.assertTrue("Number of ports is incorrect", findByShape.getUsesPortStubs().size() == 1 && findByShape.getProvidesPortStubs().size() == 1);
 		Assert.assertEquals("Uses port name is incorrect", uses[0], findByShape.getUsesPortStubs().get(0).getName());
 		Assert.assertEquals("Diagram uses and domain uses don't match", uses[0], findByObject.getUses().get(0).getName());
@@ -80,10 +82,13 @@ public class FindByTests extends AbstractGraphitiTest {
 	 * that appears when you select the component, but the delete context menu
 	 * does not remove the component from the diagram. In most cases, the delete
 	 * and remove context menu options are grayed out and not selectable.
+	 * 
+	 * IDE-737 Create wizards to get user input when adding FindBy Name, FindBy Service,
+	 * and FindBy Event Channel elements to the SAD Diagram.
 	 */
 	@Test
 	public void checkFindByContextMenuDelete() {
-		waveformName = "IDE-669-Test";
+		waveformName = "FindBy_Delete";
 		String[] findByList = { FindByUtils.FIND_BY_CORBA_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, FindByUtils.FIND_BY_EVENT_CHANNEL,
 			FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
 
@@ -104,5 +109,41 @@ public class FindByTests extends AbstractGraphitiTest {
 			gefBot.button("Yes").click(); // are you sure you want to delete this element?
 			Assert.assertNull(editor.getEditPart(s));
 		}
+	}
+
+	/**
+	 * IDE-738
+	 * Allow connections that include FindBy elements.
+	 * Update the sad.xml to show the resultant connection details
+	 */
+	@Test
+	public void findByConnectionTest() {
+		waveformName = "FindBy_Connection";
+		final String SIGGEN = "SigGen";
+		final String findByName = "FindBy";
+		final String[] provides = { "data_in" };
+
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+
+		// Add component to the diagram
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_CORBA_NAME, 0, 150);
+		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_CORBA_NAME, findByName, provides, null);
+		MenuUtils.save(gefBot);
+
+		// Create connection on diagram
+		SWTBotGefEditPart sigGenUsesPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		SWTBotGefEditPart findByProvidesPart = DiagramTestUtils.getDiagramProvidesPort(editor, findByName);
+		DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenUsesPart, findByProvidesPart);
+		MenuUtils.save(gefBot);
+
+		// Check sad.xml for connection
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		String editorText = editor.toTextEditor().getText();
+		Assert.assertTrue("The sad.xml should include a new connection. Expected: <findby><namingservice name=\"" + findByName + "\"/>",
+			editorText.matches("(?s).*" + "<connectinterface.*<findby>.*<namingservice name=\"" + findByName + "\"/>" + ".*"));
+
 	}
 }
