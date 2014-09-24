@@ -58,13 +58,11 @@ import org.osgi.framework.Bundle;
 import org.python.pydev.ui.pythonpathconf.AutoConfigMaker;
 import org.python.pydev.ui.pythonpathconf.IInterpreterProviderFactory.InterpreterType;
 
-public final class StandardTestActions {
+public abstract class StandardTestActions {
 
 	private static boolean pydevSetup = false;
-
-	private StandardTestActions() {
-		// TODO Auto-generated constructor stub
-	}
+	
+	protected SWTWorkbenchBot bot;
 
 	public static void configurePyDev() {
 		if (pydevSetup) {
@@ -122,17 +120,33 @@ public final class StandardTestActions {
 			}
 		});
 	}
-
+	
 	@Before
+	public void before() throws Exception {
+		bot = new SWTWorkbenchBot();
+		beforeTest(bot);
+	}
+
 	public static void beforeTest(SWTWorkbenchBot bot) throws Exception {
+		if (bot == null) {
+			bot = new SWTWorkbenchBot();
+		}
 		SWTBotPerspective perspective = bot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
 		perspective.activate();
 		bot.resetActivePerspective();
 		bot.sleep(100);
 	}
-
+	
 	@After
+	public void afterTest() throws Exception {
+		afterTest(bot);
+		bot = null;
+	}
+
 	public static void afterTest(SWTWorkbenchBot bot) throws Exception {
+		if (bot == null) {
+			bot = new SWTWorkbenchBot();
+		}
 		final boolean[] dialogsClosed = { false };
 		final boolean[] badDialogs = { false };
 		while (!dialogsClosed[0]) {
