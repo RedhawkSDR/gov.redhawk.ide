@@ -383,6 +383,14 @@ public class ComponentEditor extends SCAFormEditor {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, ComponentUiPlugin.getPluginId(), "Failed to add pages.", e));
 		}
 	}
+	
+	public ComponentOverviewPage getOverviewPage() {
+		return overviewPage;
+	}
+	
+	public ImplementationPage getImplementationPage() {
+		return implementationPage;
+	}
 
 	/**
 	 * @return
@@ -555,6 +563,11 @@ public class ComponentEditor extends SCAFormEditor {
 			}
 		}
 	}
+	
+	public PropertiesFormPage getPropertiesPage() {
+		return propertiesPage;
+	}
+	
 
 	/**
 	 */
