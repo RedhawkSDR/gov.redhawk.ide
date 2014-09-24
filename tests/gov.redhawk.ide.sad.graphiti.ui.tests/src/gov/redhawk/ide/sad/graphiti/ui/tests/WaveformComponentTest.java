@@ -36,7 +36,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class WaveformComponentTests extends AbstractGraphitiTest {
+public class WaveformComponentTest extends AbstractGraphitiTest {
 
 	private SWTBotGefEditor editor;
 	private String waveformName;

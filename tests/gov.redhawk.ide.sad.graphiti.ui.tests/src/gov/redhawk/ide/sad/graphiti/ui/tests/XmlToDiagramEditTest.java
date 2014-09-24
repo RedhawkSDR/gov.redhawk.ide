@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
  * Test class that deals with editing elements to the sad.xml and making sure they appear correctly in the diagram
  */
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class XmlToDiagramEditTests extends AbstractGraphitiTest {
+public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 
 	private SWTBotGefEditor editor;
 	private String waveformName;

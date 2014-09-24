@@ -13,14 +13,17 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 import gov.redhawk.ide.swtbot.StandardTestActions;
 
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
+import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
 
 /**
  * 
  */
+@RunWith(SWTBotJunit4ClassRunner.class) 
 public abstract class AbstractGraphitiTest {
 
 	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE INLINE

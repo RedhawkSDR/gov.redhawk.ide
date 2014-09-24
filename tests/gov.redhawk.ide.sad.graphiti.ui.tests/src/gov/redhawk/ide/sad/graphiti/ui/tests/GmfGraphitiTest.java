@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class GmfGraphitiTests extends AbstractGraphitiTest {
+public class GmfGraphitiTest extends AbstractGraphitiTest {
 
 	private String waveformName;
 

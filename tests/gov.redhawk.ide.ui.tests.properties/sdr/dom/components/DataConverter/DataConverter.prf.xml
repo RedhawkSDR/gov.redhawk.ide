@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+          This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
+               source distribution.
+
+This file is part of REDHAWK Basic Components DataConverter.
+
+REDHAWK Basic Components DataConverter is free software: you can redistribute it and/or modify it under the terms of 
+the GNU Lesser General Public License as published by the Free Software Foundation, either 
+version 3 of the License, or (at your option) any later version.
+
+REDHAWK Basic Components DataConverter is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+PURPOSE.  See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this 
+program.  If not, see http://www.gnu.org/licenses/.
+-->
+<!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
+<properties>
+  <struct id="Octet" mode="readwrite">
+    <simple id="Octet::MaxValue" type="octet">
+      <value>255</value>
+    </simple>
+    <simple id="Octet::MinValue" type="octet">
+      <value>0</value>
+    </simple>
+    <configurationkind kindtype="configure"/>
+  </struct>
+  <struct id="Ushort" mode="readwrite">
+    <simple id="Ushort::MaxValue" type="ushort">
+      <value>65535</value>
+    </simple>
+    <simple id="Ushort::MinValue" type="ushort">
+      <value>0</value>
+    </simple>
+    <configurationkind kindtype="configure"/>
+  </struct>
+  <struct id="Short" mode="readwrite">
+    <simple id="Short::MaxValue" type="short">
+      <value>32767</value>
+    </simple>
+    <simple id="Short::MinValue" type="short">
+      <value>-32768</value>
+    </simple>
+    <configurationkind kindtype="configure"/>
+  </struct>
+  <struct id="ULong" mode="readwrite">
+    <simple id="ULong::MaxValue" type="ulong">
+      <value>4294967295</value>
+    </simple>
+    <simple id="ULong::MinValue" type="ulong">
+      <value>0</value>
+    </simple>
+    <configurationkind kindtype="configure"/>
+  </struct>
+  <struct id="Long" mode="readwrite">
+    <simple id="Long::MaxValue" type="long">
+      <value>2147483647</value>
+    </simple>
+    <simple id="Long::MinValue" type="long">
+      <value>-2147483648</value>
+    </simple>
+    <configurationkind kindtype="configure"/>
+  </struct>
+  <struct id="Float" mode="readwrite">
+    <simple id="Float::MaxValue" type="float">
+      <value>1e10</value>
+    </simple>
+    <simple id="Float::MinValue" type="float">
+      <value>-1e10</value>
+    </simple>
+    <configurationkind kindtype="configure"/>
+  </struct>
+  <struct id="Double" mode="readwrite">
+    <simple id="Double::MaxValue" type="double">
+      <value>1e10</value>
+    </simple>
+    <simple id="Double::MinValue" type="double">
+      <value>-1e10</value>
+    </simple>
+    <configurationkind kindtype="configure"/>
+  </struct>
+  <struct id="Octet_out" mode="readwrite">
+    <simple id="Octet_out::MaxValue" type="octet">
+      <value>255</value>
+    </simple>
+    <simple id="Octet_out::MinValue" type="octet">
+      <value>0</value>
+    </simple>
+    <simple id="Octet_out::scale_enabled" type="boolean">
+      <value>False</value>
+    </simple>
+    <configurationkind kindtype="configure"/>
+  </struct>
+  <struct id="Ushort_out" mode="readwrite">
+    <simple id="Ushort_out::MaxValue" type="ushort">
+      <value>65535</value>
+    </simple>
+    <simple id="Ushort_out::MinValue" type="ushort">
+      <value>0</value>
+    </simple>
+    <simple id="Ushort_out::scale_enabled" type="boolean">
+      <value>False</value>
+    </simple>
+    <configurationkind kindtype="configure"/>
+  </struct>
+  <struct id="Short_out" mode="readwrite">
+    <simple id="Short_out::MaxValue" type="short">
+      <value>32767</value>
+    </simple>
+    <simple id="Short_out::MinValue" type="short">
+      <value>-32768</value>
+    </simple>
+    <simple id="Short_out::scale_enabled" type="boolean">
+      <value>False</value>
+    </simple>
+    <configurationkind kindtype="configure"/>
+  </struct>
+  <struct id="Ulong_out" mode="readwrite">
+    <simple id="Ulong_out::MaxValue" type="ulong">
+      <value>4294967295</value>
+    </simple>
+    <simple id="Ulong_out::MinValue" type="ulong">
+      <value>0</value>
+    </simple>
+    <simple id="Ulong_out::scale_enabled" type="boolean">
+      <value>False</value>
+    </simple>
+    <configurationkind kindtype="configure"/>
+  </struct>
+  <struct id="Long_out" mode="readwrite">
+    <simple id="Long_out::MaxValue" type="long">
+      <value>2147483647</value>
+    </simple>
+    <simple id="Long_out::MinValue" type="long">
+      <value>-2147483648</value>
+    </simple>
+    <simple id="Long_out::scale_enabled" type="boolean">
+      <value>False</value>
+    </simple>
+    <configurationkind kindtype="configure"/>
+  </struct>
+  <struct id="Float_out" mode="readwrite">
+    <simple id="Float_out::MaxValue" type="float">
+      <value>1e10</value>
+    </simple>
+    <simple id="Float_out::MinValue" type="float">
+      <value>-1e10</value>
+    </simple>
+    <simple id="Float_out::scale_enabled" type="boolean">
+      <value>False</value>
+    </simple>
+    <configurationkind kindtype="configure"/>
+  </struct>
+  <struct id="Double_out" mode="readwrite">
+    <simple id="Double_out::MaxValue" type="double">
+      <value>1e10</value>
+    </simple>
+    <simple id="Double_out::MinValue" type="double">
+      <value>-1e10</value>
+    </simple>
+    <simple id="Double_out::scale_enabled" type="boolean">
+      <value>False</value>
+    </simple>
+    <configurationkind kindtype="configure"/>
+  </struct>
+</properties>

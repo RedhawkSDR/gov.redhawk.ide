@@ -34,7 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class ConnectionTests extends AbstractGraphitiTest{ // SUPPRESS CHECKSTYLE INLINE
+public class ConnectionTest extends AbstractGraphitiTest{ // SUPPRESS CHECKSTYLE INLINE
 
 	private SWTBotGefEditor editor;
 	private String waveformName;
