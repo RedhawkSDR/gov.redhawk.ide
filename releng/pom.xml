@@ -218,6 +218,7 @@
       <modules>
         <module>../tests/gov.redhawk.ide.tests.ui</module>
         <module>../tests/gov.redhawk.ide.sad.graphiti.ui.tests</module>
+        <module>../tests/gov.redhawk.ide.ui.tests.properties</module>
       </modules>
       <properties>
         <tycho-version>0.20.0</tycho-version>
