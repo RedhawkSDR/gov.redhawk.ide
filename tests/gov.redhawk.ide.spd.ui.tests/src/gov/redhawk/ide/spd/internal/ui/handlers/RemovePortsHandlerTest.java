@@ -45,7 +45,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.junit.Before;
 import org.junit.Test;
 
-public class RemovePortsHandlerTests {
+public class RemovePortsHandlerTest {
 
 	private SoftwareComponent scd;
 	private IdlLibrary library;

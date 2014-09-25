@@ -112,7 +112,7 @@ public class SdrRootTest extends TestCase {
 	 */
 	@Override
 	protected void setUp() throws Exception {
-		setFixture(SdrTests.getSdrTestsSdrRoot());
+		setFixture(SdrTestsUtil.getSdrTestsSdrRoot());
 		this.fixture.load(null);
 	}
 

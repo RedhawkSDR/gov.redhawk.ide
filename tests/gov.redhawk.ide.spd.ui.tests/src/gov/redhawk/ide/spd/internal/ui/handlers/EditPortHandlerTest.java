@@ -40,7 +40,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.junit.Before;
 import org.junit.Test;
 
-public class EditPortHandlerTests {
+public class EditPortHandlerTest {
 
 	private SoftwareComponent scd;
 	private IdlLibrary library;

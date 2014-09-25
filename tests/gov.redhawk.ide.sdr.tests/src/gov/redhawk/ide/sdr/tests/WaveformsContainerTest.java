@@ -84,7 +84,7 @@ public class WaveformsContainerTest extends TestCase {
 	 */
 	@Override
 	protected void setUp() throws Exception {
-		this.sdrRoot = SdrTests.getSdrTestsSdrRoot();
+		this.sdrRoot = SdrTestsUtil.getSdrTestsSdrRoot();
 		this.sdrRoot.load(null);
 		setFixture(this.sdrRoot.getWaveformsContainer());
 	}

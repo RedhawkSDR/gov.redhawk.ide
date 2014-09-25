@@ -38,7 +38,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AddPortHandlerTests {
+public class AddPortHandlerTest {
 
 	private SoftwareComponent scd;
 	private IdlLibrary library;

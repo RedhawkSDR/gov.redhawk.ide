@@ -19,14 +19,14 @@ import java.net.URISyntaxException;
 
 import org.eclipse.emf.common.util.URI;
 
-public class SdrTests {
+public class SdrTestsUtil {
 
 	public static final String PLUGIN_ID = "gov.redhawk.ide.sdr.tests";
 
 	public static final String DEFAULT_SDR_PATH = "testFiles/sdr";
 
 	public static SdrRoot getSdrTestsSdrRoot() throws URISyntaxException, IOException {
-		return SdrPluginLoader.getSdrRoot(SdrTests.PLUGIN_ID, SdrTests.DEFAULT_SDR_PATH);
+		return SdrPluginLoader.getSdrRoot(SdrTestsUtil.PLUGIN_ID, SdrTestsUtil.DEFAULT_SDR_PATH);
 	}
 
 	public static synchronized SdrRoot getSdrRoot(final URI sdrRootPath) {

@@ -62,7 +62,7 @@ public class SdrRootInvalidPathTest extends TestCase {
 	@Override
 	@Before
 	public void setUp() throws Exception {
-		setFixture(SdrTests.getSdrRoot(URI.createFileURI("/invalidPath")));
+		setFixture(SdrTestsUtil.getSdrRoot(URI.createFileURI("/invalidPath")));
 	}
 
 	/**
