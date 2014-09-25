@@ -481,6 +481,7 @@ public class FindByServiceWizardPage extends WizardPage {
 					for (String selection : selections) {
 						portList.remove(selection);
 					}
+					dbc.updateModels();
 				}
 				if (portList.getItemCount() <= 0) {
 					deleteBtn.setEnabled(false);

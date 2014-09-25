@@ -15,12 +15,15 @@ import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -72,7 +75,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			GA_PROVIDES_PORT_TEXT = "GA_PROVIDES_PORT_TEXT", GA_FIX_POINT_ANCHOR_RECTANGLE = "GA_FIX_POINT_ANCHOR_RECTANGLE",
 			GA_USES_PORTS_RECTANGLE = "usesPortsRectangle", GA_USES_PORT_RECTANGLE = "usesPortRectangle", GA_USES_PORT_TEXT = "GA_USES_PORT_TEXT";
 
-	// Property key/value pairs help us identify Shapes to enable/disable user actions 
+	// Property key/value pairs help us identify Shapes to enable/disable user actions
 	// (move, resize, delete, remove, etc.)
 	public static final String SHAPE_OUTER_CONTAINER = "outerContainerShape", SHAPE_INNER_CONTAINER = "innerContainerShape",
 			SHAPE_USES_PORTS_CONTAINER = "usesPortsContainerShape", SHAPE_PROVIDES_PORTS_CONTAINER = "providesPortsContainerShape",
@@ -326,10 +329,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * Adds a ProvidesPortStub shape to the providesPortsContainerShape
 	 */
-	public void addProvidesPortContainerShape(ProvidesPortStub p, ContainerShape providesPortsContainerShape, int providesPortNameLength,
+	private void addProvidesPortContainerShape(ProvidesPortStub p, ContainerShape providesPortsContainerShape, int providesPortNameLength,
 		IFeatureProvider featureProvider, Port externalPort) {
 
-		// determine how many uses port are already there.
+		// determine how many provides port are already there.
 		int iter = 0;
 		for (PropertyContainer child : DUtil.collectPropertyContainerChildren(providesPortsContainerShape)) {
 			if (DUtil.isPropertyElementType(child, SHAPE_PROVIDES_PORT_CONTAINER)) {
@@ -393,7 +396,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * Adds provides port container to provided container shape. Adds a port shape with name and anchor for each
 	 * providesPortStub.
 	 */
-	public void addProvidesPorts(EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
+	private void addProvidesPorts(EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
 
 		// provides (input)
 		int providesPortNameLength = DUtil.getLongestProvidesPortWidth(providesPortStubs, DUtil.findDiagram(this));
@@ -413,9 +416,40 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	/**
+	 * Adds provides ports if an RHContainerShape is edited after initial creation
+	 */
+	public void addNewProvidesPorts(EList<ProvidesPortStub> providesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
+		// Manually clean up any links
+		for (Shape child : getProvidesPortsContainerShape().getChildren()) {
+			EcoreUtil.delete(child.getLink()); // provides port individual container link
+			EcoreUtil.delete(((ContainerShape) child).getChildren().get(0).getLink()); // provides port shape link
+			EcoreUtil.delete(((ContainerShape) child).getChildren().get(0).getAnchors().get(0).getLink()); // anchor
+		}
+
+		// Manually clean up the provides port parent container. Easier to just rebuild from scratch
+		EcoreUtil.delete(getProvidesPortsContainerShape().getLink());
+		EcoreUtil.delete(getProvidesPortsContainerShape());
+
+		int providesPortNameLength = DUtil.getLongestProvidesPortWidth(providesPortStubs, DUtil.findDiagram(this));
+		ContainerShape providesPortsContainerShape = Graphiti.getCreateService().createContainerShape(this, true);
+		Graphiti.getPeService().setPropertyValue(providesPortsContainerShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORTS_CONTAINER);
+		Rectangle providesPortsRectangle = Graphiti.getCreateService().createRectangle(providesPortsContainerShape);
+		providesPortsRectangle.setTransparency(1d);
+		Graphiti.getPeService().setPropertyValue(providesPortsRectangle, DUtil.GA_TYPE, GA_PROVIDES_PORT_RECTANGLE);
+		Graphiti.getGaLayoutService().setLocationAndSize(providesPortsRectangle, PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING,
+			PORT_SHAPE_WIDTH + providesPortNameLength, providesPortStubs.size() * (PORT_ROW_HEIGHT + PORT_ROW_PADDING_HEIGHT));
+
+		// Reset links
+		featureProvider.link(providesPortsContainerShape, providesPortStubs.toArray());
+		for (ProvidesPortStub p : providesPortStubs) {
+			addProvidesPortContainerShape(p, providesPortsContainerShape, providesPortNameLength, featureProvider, findExternalPort(p, externalPorts));
+		}
+	}
+
+	/**
 	 * Adds a UsesPort shape to the usesPortsContainerShape
 	 */
-	public void addUsesPortContainerShape(UsesPortStub p, ContainerShape usesPortsContainerShape, int usesPortNameLength, IFeatureProvider featureProvider,
+	private void addUsesPortContainerShape(UsesPortStub p, ContainerShape usesPortsContainerShape, int usesPortNameLength, IFeatureProvider featureProvider,
 		Port externalPort) {
 		// determine how many uses port are already there.
 		int iter = 0;
@@ -482,7 +516,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * Adds uses port container to provided container shape. Adds a port shape with name and anchor for each
 	 * usesPortStub.
 	 */
-	public void addUsesPorts(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
+	private void addUsesPorts(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
 		// uses (output)
 		int usesPortNameLength = DUtil.getLongestUsesPortWidth(usesPortStubs, DUtil.findDiagram(this));
 		ContainerShape usesPortsContainerShape = Graphiti.getPeService().createContainerShape(this, true);
@@ -495,6 +529,37 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		featureProvider.link(usesPortsContainerShape, usesPortStubs.toArray());
 
 		// add uses ports
+		for (UsesPortStub p : usesPortStubs) {
+			addUsesPortContainerShape(p, usesPortsContainerShape, usesPortNameLength, featureProvider, findExternalPort(p, externalPorts));
+		}
+	}
+
+	/**
+	 * Adds uses ports if an RHContainerShape is edited after initial creation
+	 */
+	public void addNewUsesPorts(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
+		// Manually clean up any links
+		for (Shape child : getUsesPortsContainerShape().getChildren()) {
+			EcoreUtil.delete(child.getLink()); // uses port individual container link
+			EcoreUtil.delete(((ContainerShape) child).getChildren().get(0).getLink()); // uses port shape link
+			EcoreUtil.delete(((ContainerShape) child).getChildren().get(0).getAnchors().get(0).getLink()); // anchor
+		}
+
+		// Manually clean up the uses port parent container. Easier to just rebuild from scratch
+		EcoreUtil.delete(getUsesPortsContainerShape().getLink());
+		EcoreUtil.delete(getUsesPortsContainerShape());
+
+		int usesPortNameLength = DUtil.getLongestUsesPortWidth(usesPortStubs, DUtil.findDiagram(this));
+		ContainerShape usesPortsContainerShape = Graphiti.getCreateService().createContainerShape(this, true);
+		Graphiti.getPeService().setPropertyValue(usesPortsContainerShape, DUtil.SHAPE_TYPE, SHAPE_USES_PORTS_CONTAINER);
+		Rectangle usesPortsRectangle = Graphiti.getCreateService().createRectangle(usesPortsContainerShape);
+		usesPortsRectangle.setTransparency(1d);
+		Graphiti.getPeService().setPropertyValue(usesPortsRectangle, DUtil.GA_TYPE, GA_USES_PORTS_RECTANGLE);
+		Graphiti.getGaLayoutService().setSize(usesPortsRectangle, PORT_SHAPE_WIDTH + usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING,
+			usesPortStubs.size() * (PORT_SHAPE_HEIGHT));
+
+		// Reset links
+		featureProvider.link(usesPortsContainerShape, usesPortStubs.toArray());
 		for (UsesPortStub p : usesPortStubs) {
 			addUsesPortContainerShape(p, usesPortsContainerShape, usesPortNameLength, featureProvider, findExternalPort(p, externalPorts));
 		}

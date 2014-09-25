@@ -602,7 +602,7 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 
 		IDimension requiredWidth = GraphitiUi.getUiLayoutService().calculateTextSize(longest, StyleUtil.getPortFont(diagram));
 
-		return requiredWidth.getWidth() + 5; // 5 gives us some breathing room
+		return requiredWidth.getWidth() + 8; // 8 gives us some breathing room
 	}
 
 	// returns width required to support longest uses port name
