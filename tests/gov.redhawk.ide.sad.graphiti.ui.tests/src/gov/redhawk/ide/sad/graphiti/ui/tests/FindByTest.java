@@ -112,6 +112,60 @@ public class FindByTest extends AbstractGraphitiTest {
 	}
 
 	/**
+	 * IDE-652
+	 * Edit existing FindBy Elements
+	 * Change names, add & remove ports
+	 */
+	@Test
+	public void editFindByTest() {
+		waveformName = "FindBy_Connection";
+		final String SIGGEN = "SigGen";
+		final String findByName = "FindBy";
+		final String newFindByName = "NewFindByName";
+		final String[] provides = { "data_in" };
+		final String[] uses = { "data_out" };
+
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+
+		// Add component to the diagram
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_CORBA_NAME, 0, 150);
+		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_CORBA_NAME, findByName, provides, null);
+		MenuUtils.save(gefBot);
+
+		// Open FindBy edit wizard and change name, remove existing port, and add a new one
+		editor.getEditPart(findByName).select();
+		editor.clickContextMenu("Edit Find By");
+
+		// Change Name
+		gefBot.textWithLabel("CORBA Name:").setText(newFindByName);
+
+		// Delete existing provides port
+		gefBot.listInGroup("Port Options", 0).select(provides[0]);
+		gefBot.button("Delete", 0).click();
+
+		// Add new uses port
+		gefBot.textInGroup("Port Options", 1).setText(uses[0]);
+		gefBot.button("Add Uses Port").click();
+
+		gefBot.button("Finish").click();
+
+		// Confirm that changes were made
+		SWTBotGefEditPart fbEditPart = editor.getEditPart(newFindByName);
+		Assert.assertNotNull("FindBy Element not found", fbEditPart);
+		RHContainerShapeImpl findByShape = (RHContainerShapeImpl) fbEditPart.part().getModel();
+		FindByStub findByObject = (FindByStub) DUtil.getBusinessObject(findByShape);
+
+		Assert.assertEquals("Inner Text was not updated", newFindByName, findByShape.getInnerText().getValue());
+		Assert.assertEquals("Diagram object and domain object names don't match", newFindByName, findByObject.getNamingService().getName());
+		Assert.assertTrue("Number of ports is incorrect", findByShape.getUsesPortStubs().size() == 1 && findByShape.getProvidesPortStubs().size() == 0);
+		Assert.assertEquals("Uses port name is incorrect", uses[0], findByShape.getUsesPortStubs().get(0).getName());
+		Assert.assertEquals("Diagram uses and domain uses don't match", uses[0], findByObject.getUses().get(0).getName());
+	}
+
+	/**
 	 * IDE-738
 	 * Allow connections that include FindBy elements.
 	 * Update the sad.xml to show the resultant connection details
@@ -144,6 +198,5 @@ public class FindByTest extends AbstractGraphitiTest {
 		String editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The sad.xml should include a new connection. Expected: <findby><namingservice name=\"" + findByName + "\"/>",
 			editorText.matches("(?s).*" + "<connectinterface.*<findby>.*<namingservice name=\"" + findByName + "\"/>" + ".*"));
-
 	}
 }
