@@ -1,7 +1,6 @@
 package gov.redhawk.ide.ui.tests.properties;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.junit.Test;
@@ -217,16 +216,6 @@ public class PropertiesTabSimpleTest extends AbstractBasicTest {
 		bot.comboBox().setSelection("objref");
 		bot.textWithLabel("Value:").setText("1");
 		assertFormInvalid();
-	}
-	
-	@Test
-	public void testCompleteSimple() throws CoreException {
-		bot.textWithLabel("Units:").setText("m");
-		bot.textWithLabel("Description:").setText("This is a test");
-		bot.textWithLabel("ID*:").setText("ID");
-		bot.textWithLabel("Name:").setText("Name1");
-		assertFormValid();
-		
 	}
 
 	

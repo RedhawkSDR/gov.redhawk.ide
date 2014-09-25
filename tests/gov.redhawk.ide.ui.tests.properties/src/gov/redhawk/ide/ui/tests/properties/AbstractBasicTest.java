@@ -104,94 +104,94 @@ public abstract class AbstractBasicTest extends UITest {
 	
 	@Test
 	public void testID() throws CoreException {
-		bot.textWithLabel("ID*:").setText("");
+		editor.bot().textWithLabel("ID*:").setText("");
 		assertFormInvalid();
-		bot.textWithLabel("ID*:").setText("hello");
+		editor.bot().textWithLabel("ID*:").setText("hello");
 		assertFormValid();
 	}
 	
 	@Test
-	public void testUnqueID() {
+	public void testUniqueID() {
 		assertFormValid();
-		createType();
-		bot.textWithLabel("ID*:").setText("ID");
+		editor.bot().button("Add Simple").click();
+		editor.bot().textWithLabel("ID*:").setText("ID");
 		assertFormInvalid();
-		bot.textWithLabel("ID*:").setText("ID2");
+		editor.bot().textWithLabel("ID*:").setText("ID2");
 		assertFormValid();
 	}
 	
 	@Test
 	public void testUnits() {
-		bot.textWithLabel("Units:").setText("m");
-		bot.textWithLabel("Units:").setText("");
+		editor.bot().textWithLabel("Units:").setText("m");
+		editor.bot().textWithLabel("Units:").setText("");
 		assertFormValid();
 	}
 	
 	@Test
 	public void testAction() {	
-		bot.comboBoxWithLabel("Action:").setSelection("eq");
+		editor.bot().comboBoxWithLabel("Action:").setSelection("eq");
 		assertFormValid();
 		
-		bot.comboBoxWithLabel("Action:").setSelection("ge");
+		editor.bot().comboBoxWithLabel("Action:").setSelection("ge");
 		assertFormValid();
 		
-		bot.comboBoxWithLabel("Action:").setSelection("gt");
+		editor.bot().comboBoxWithLabel("Action:").setSelection("gt");
 		assertFormValid();
 		
-		bot.comboBoxWithLabel("Action:").setSelection("le");
+		editor.bot().comboBoxWithLabel("Action:").setSelection("le");
 		assertFormValid();
 		
-		bot.comboBoxWithLabel("Action:").setSelection("lt");
+		editor.bot().comboBoxWithLabel("Action:").setSelection("lt");
 		assertFormValid();
 		
-		bot.comboBoxWithLabel("Action:").setSelection("ne");
+		editor.bot().comboBoxWithLabel("Action:").setSelection("ne");
 		assertFormValid();
 	}
 	
 	@Test
 	public void testRange() {
-		bot.comboBox().setSelection("boolean");
+		editor.bot().comboBox().setSelection("boolean");
 		assertFormValid();
 		
-		bot.checkBox("Enable").click();
+		editor.bot().checkBox("Enable").click();
 		assertFormInvalid();
 		
-		bot.textWithLabel("Min:").setText("true");
-		bot.textWithLabel("Max:").setText("true");
+		editor.bot().textWithLabel("Min:").setText("true");
+		editor.bot().textWithLabel("Max:").setText("true");
 		assertFormValid();
 		
-		bot.textWithLabel("Min:").setText("asopina");
+		editor.bot().textWithLabel("Min:").setText("asopina");
 		assertFormInvalid();
 		
-		bot.comboBox().setSelection("double (64-bit)");
-		bot.comboBox(1).setSelection("complex");
-		bot.textWithLabel("Max:").setText("20");
-		bot.textWithLabel("Min:").setText("-1.1");
+		editor.bot().comboBox().setSelection("double (64-bit)");
+		editor.bot().comboBox(1).setSelection("complex");
+		editor.bot().textWithLabel("Max:").setText("20");
+		editor.bot().textWithLabel("Min:").setText("-1.1");
 		assertFormValid();
 		
-		bot.textWithLabel("Max:").setText("20+i10sad");
+		editor.bot().textWithLabel("Max:").setText("20+i10sad");
 		assertFormInvalid();
 		
-		bot.textWithLabel("Max:").setText("20");
+		editor.bot().textWithLabel("Max:").setText("20");
 		assertFormValid();
 		
-		bot.textWithLabel("Min:").setText("-1.1+ja");
+		editor.bot().textWithLabel("Min:").setText("-1.1+ja");
 		assertFormInvalid();
 		
-		bot.textWithLabel("Min:").setText("-1.1");
+		editor.bot().textWithLabel("Min:").setText("-1.1");
 		assertFormValid();
 		
-		bot.textWithLabel("Max:").setText("10+j10.5");
+		editor.bot().textWithLabel("Max:").setText("10+j10.5");
 		assertFormValid();
 		
-		bot.textWithLabel("Min:").setText("-1.1+j1");
+		editor.bot().textWithLabel("Min:").setText("-1.1+j1");
 		assertFormValid();
 		
-		bot.textWithLabel("Min:").setText("bad");
-		bot.textWithLabel("Max:").setText("bad");
+		editor.bot().textWithLabel("Min:").setText("bad");
+		editor.bot().textWithLabel("Max:").setText("bad");
 		assertFormInvalid();
 		
-		bot.checkBox("Enable").click();
+		editor.bot().checkBox("Enable").click();
 		assertFormValid();
 	}
 	
@@ -199,7 +199,7 @@ public abstract class AbstractBasicTest extends UITest {
 	public void testKind() {
 		assertFormValid();
 		
-		SWTBotTable kindTable = bot.tableWithLabel("Kind:");
+		SWTBotTable kindTable = editor.bot().tableWithLabel("Kind:");
 		kindTable.getTableItem("configure (default)").check();
 		assertFormValid();
 		kindTable.getTableItem("execparam").check();
@@ -264,19 +264,19 @@ public abstract class AbstractBasicTest extends UITest {
 	
 	@Test
 	public void testEnum() throws CoreException {	
-		bot.button("Add...").click();
+		editor.bot().button("Add...").click();
 		bot.textWithLabel("Label:").setText("lab");
 		bot.textWithLabel("Value:").setText("asf");
 		bot.button("Finish").click();
 		assertFormValid();
 		
-		SWTBotTable enumTable = bot.tableWithLabel("Enumerations:");
+		SWTBotTable enumTable = editor.bot().tableWithLabel("Enumerations:");
 		SWTBotTableItem item = enumTable.getTableItem(0);
 		Assert.assertEquals("lab", item.getText(0));
 		Assert.assertEquals("asf", item.getText(1));
 			
 		item.select();
-		bot.button("Edit").click();
+		editor.bot().button("Edit").click();
 		Assert.assertEquals("lab", bot.textWithLabel("Label:").getText());
 		Assert.assertEquals("asf", bot.textWithLabel("Value:").getText());
 		bot.button("Cancel").click();
@@ -284,7 +284,7 @@ public abstract class AbstractBasicTest extends UITest {
 		Assert.assertEquals("lab", item.getText(0));
 		Assert.assertEquals("asf", item.getText(1));
 		
-		bot.button("Edit").click();
+		editor.bot().button("Edit").click();
 		bot.textWithLabel("Value:").setText("abc");
 		bot.button("Finish").click();
 		item = enumTable.getTableItem(0);
@@ -294,30 +294,31 @@ public abstract class AbstractBasicTest extends UITest {
 		
 		item = enumTable.getTableItem(0);
 		item.select();
-		bot.button("Remove", 1).click();
+		editor.bot().button("Remove", 1).click();
 		assertFormValid();
 		Assert.assertEquals(0, enumTable.rowCount());
 	}
 	
 	@Test
 	public void testDescription() {
-		bot.textWithLabel("Description:").setText("This is a test");
+		editor.bot().textWithLabel("Description:").setText("This is a test");
 		assertFormValid();
 	}
 	
 	@Test
 	public void testName() {	
-		bot.textWithLabel("Name:").setText("Name1");
+		editor.bot().textWithLabel("Name:").setText("Name1");
 		assertFormValid();
 	}
 	
 	@Test
 	public void testMode() {
-		bot.comboBoxWithLabel("Mode:").setSelection("writeonly");
+		editor.bot().comboBoxWithLabel("Mode:").setSelection("writeonly");
 		assertFormValid();
-		bot.comboBoxWithLabel("Mode:").setSelection("readonly");
+		editor.bot().comboBoxWithLabel("Mode:").setSelection("readonly");
 		assertFormValid();
-		bot.comboBoxWithLabel("Mode:").setSelection("readwrite");
+		editor.bot().comboBoxWithLabel("Mode:").setSelection("readwrite");
+		assertFormValid();
 	}
 
 }
