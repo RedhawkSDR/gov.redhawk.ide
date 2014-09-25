@@ -14,56 +14,29 @@ package gov.redhawk.ide.tests.ui;
 import gov.redhawk.frontend.FrontendFactory;
 import gov.redhawk.frontend.TunerStatus;
 import gov.redhawk.frontend.ui.wizard.TunerAllocationWizard;
+import gov.redhawk.ide.swtbot.StandardTestActions;
 
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.intro.IIntroManager;
-import org.eclipse.ui.intro.IIntroPart;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class FEIAllocationWizardTest {
-
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				final IIntroManager introManager = PlatformUI.getWorkbench().getIntroManager();
-				if (introManager != null) {
-					IIntroPart part = introManager.getIntro();
-					if (part != null) {
-						introManager.closeIntro(part);
-					}
-				}
-			}
-		});
-		
-		SWTWorkbenchBot tmpBot = new SWTWorkbenchBot();
-		SWTBotPerspective perspective = tmpBot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
-		perspective.activate();
-		tmpBot.resetActivePerspective();
-	}
-
+public class FEIAllocationWizardTest extends StandardTestActions {
 	private TunerAllocationWizard wizard;
 	private WizardDialog dialog;
 	protected SWTBot wizardBot;
 
 	@Before
 	public void beforeTest() throws Exception {
+		super.before();
 		TunerStatus tuner = FrontendFactory.eINSTANCE.createTunerStatus();
 		wizard = new TunerAllocationWizard(tuner);
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
@@ -81,7 +54,7 @@ public class FEIAllocationWizardTest {
 	}
 
 	@After
-	public void afterTest() {
+	public void afterTest() throws Exception {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
 			@Override
@@ -92,12 +65,9 @@ public class FEIAllocationWizardTest {
 		dialog = null;
 		wizardBot = null;
 		wizard = null;
+		super.afterTest();
 	}
 
-	@AfterClass
-	public static void afterClass() {
-
-	}
 
 	@Test
 	public void test_IDE_789() {

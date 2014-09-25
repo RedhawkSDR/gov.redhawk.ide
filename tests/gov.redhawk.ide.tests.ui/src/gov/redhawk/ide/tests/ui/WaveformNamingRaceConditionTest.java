@@ -11,8 +11,8 @@
  */
 package gov.redhawk.ide.tests.ui;
 
-import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
+import gov.redhawk.ide.swtbot.StandardTestActions;
+
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
@@ -20,57 +20,11 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.intro.IIntroManager;
-import org.eclipse.ui.intro.IIntroPart;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class WaveformNamingRaceConditionTest {
-
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				final IIntroManager introManager = PlatformUI.getWorkbench().getIntroManager();
-				if (introManager != null) {
-					IIntroPart part = introManager.getIntro();
-					if (part != null) {
-						introManager.closeIntro(part);
-					}
-				}
-			}
-		});
-	}
-
-	private SWTWorkbenchBot bot;
-
-	@Before
-	public void setup() throws Exception {
-		bot = new SWTWorkbenchBot();
-		SWTBotPerspective perspective = bot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
-		perspective.activate();
-		bot.resetActivePerspective();
-
-		bot = new SWTWorkbenchBot();
-	}
-
-	@AfterClass
-	public static void classCleanup() {
-
-	}
-
-	@After
-	public void cleanUp() {
-		
-	}
+public class WaveformNamingRaceConditionTest extends StandardTestActions {
 
 	@Test
 	public void test_IDE_826() throws Exception {

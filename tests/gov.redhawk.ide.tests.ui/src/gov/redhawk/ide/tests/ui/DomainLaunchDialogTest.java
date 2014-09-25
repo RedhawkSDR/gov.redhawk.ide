@@ -11,64 +11,32 @@
  */
 package gov.redhawk.ide.tests.ui;
 
-import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import gov.redhawk.ide.swtbot.StandardTestActions;
+
 import org.eclipse.swtbot.eclipse.finder.waits.Conditions;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
-import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.swt.finder.finders.ContextMenuHelper;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.intro.IIntroManager;
-import org.eclipse.ui.intro.IIntroPart;
 import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class DomainLaunchDialogTest {
-	private SWTGefBot gefBot;
+public class DomainLaunchDialogTest extends StandardTestActions {
 
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				final IIntroManager introManager = PlatformUI.getWorkbench().getIntroManager();
-				if (introManager != null) {
-					IIntroPart part = introManager.getIntro();
-					if (part != null) {
-						introManager.closeIntro(part);
-					}
-				}
-			}
-		});
-
-		SWTWorkbenchBot tmpBot = new SWTWorkbenchBot();
-		SWTBotPerspective perspective = tmpBot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
-		perspective.activate();
-		tmpBot.resetActivePerspective();
-	}
-
-	@Before
-	public void beforeTest() {
-		gefBot = new SWTGefBot();
-	}
 	
 	@After
-	public void cleanup() {
+	public void cleanup() throws Exception {
 		try {
-			gefBot.shell("Launch Domain Manager").close();
+			bot.shell("Launch Domain Manager").close();
 		} catch (Exception e) {
 			// PASS
 		}
+		super.afterTest();
 	}
 
 	/**
@@ -76,7 +44,7 @@ public class DomainLaunchDialogTest {
 	 */
 	@Test
 	public void test_IDE_828() {
-		SWTBotView scaExplorerView = gefBot.viewByTitle("SCA Explorer");
+		SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
 		SWTBotTree scaTree = scaExplorerView.bot().tree();
 		SWTBotTreeItem targetSDR = scaTree.getTreeItem("Target SDR");
 		
@@ -85,6 +53,6 @@ public class DomainLaunchDialogTest {
 		new SWTBotMenu(ContextMenuHelper.contextMenu(scaTree, "Launch Domain ...")).click();
 		
 		// Will timeout if error causes launch window not to display
-		gefBot.waitUntil(Conditions.shellIsActive("Launch Domain Manager"), 30000);
+		bot.waitUntil(Conditions.shellIsActive("Launch Domain Manager"), 30000);
 	}
 }

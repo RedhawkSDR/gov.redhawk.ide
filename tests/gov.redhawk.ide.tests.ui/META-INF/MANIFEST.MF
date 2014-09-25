@@ -18,4 +18,5 @@ Require-Bundle: org.eclipse.core.runtime,
  gov.redhawk.frontend,
  gov.redhawk.sca.ui,
  gov.redhawk.ide.debug,
- org.ossie
+ org.ossie,
+ gov.redhawk.ide.swtbot;bundle-version="1.0.0"

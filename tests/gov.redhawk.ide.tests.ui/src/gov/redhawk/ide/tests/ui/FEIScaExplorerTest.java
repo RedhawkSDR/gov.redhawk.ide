@@ -14,6 +14,7 @@ package gov.redhawk.ide.tests.ui;
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.tests.ui.stubs.AnalogDevice;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDevice;
@@ -29,9 +30,6 @@ import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.intro.IIntroManager;
-import org.eclipse.ui.intro.IIntroPart;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -46,24 +44,12 @@ import CF.ExecutableDevicePOATie;
 import CF.InvalidObjectReference;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class FEIScaExplorerTest {
-	
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+public class FEIScaExplorerTest extends StandardTestActions {
 
-			@Override
-			public void run() {
-				final IIntroManager introManager = PlatformUI.getWorkbench().getIntroManager();
-				if (introManager != null) {
-					IIntroPart part = introManager.getIntro();
-					if (part != null) {
-						introManager.closeIntro(part);
-					}
-				}
-			}
-		});
-		
+	@BeforeClass
+	public static void classSetup() throws Exception {
+		beforeClass();
+
 		session = OrbSession.createSession();
 		session.getPOA();
 	}
@@ -76,45 +62,47 @@ public class FEIScaExplorerTest {
 	private LocalSca localSca;
 	private LocalScaDeviceManager devMgr;
 	private static OrbSession session;
-	
+
 	@Before
-	public void setup() throws Exception {
+	public void before() throws Exception {
+		super.before();
 		bot = new SWTWorkbenchBot();
 		SWTBotPerspective perspective = bot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
 		perspective.activate();
 		bot.resetActivePerspective();
-		
+
 		bot = new SWTWorkbenchBot();
-		
+
 		explorerView = bot.viewById(ScaExplorer.VIEW_ID);
 		explorerView.show();
 		viewBot = explorerView.bot();
 		explorerTree = viewBot.tree();
-		
+
 		localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
 		explorerTree.collapseNode("Sandbox");
 		devMgr = localSca.getSandboxDeviceManager();
-		
+
 		AnalogDevice stubDevice = new AnalogDevice();
-		ref =  ExecutableDeviceHelper.narrow(session.getPOA().servant_to_reference(new ExecutableDevicePOATie(stubDevice)));
+		ref = ExecutableDeviceHelper.narrow(session.getPOA().servant_to_reference(new ExecutableDevicePOATie(stubDevice)));
 		devMgr.registerDevice(ref);
-		
+
 		devMgr.fetchDevices(null);
 		ScaDevice< ? > device = devMgr.getDevice("analogDevice");
 		device.refresh(null, RefreshDepth.SELF);
 		viewBot.sleep(500);
 	}
-	
+
 	@AfterClass
-	public static void classCleanup() {
+	public static void classCleanup() throws Exception {
 		if (session != null) {
 			session.dispose();
 			session = null;
 		}
+		afterClass();
 	}
-	
+
 	@After
-	public void cleanUp() {
+	public void cleanUp() throws Exception {
 		if (ref != null) {
 			try {
 				devMgr.unregisterDevice(ref);
@@ -124,21 +112,22 @@ public class FEIScaExplorerTest {
 			devMgr.fetchDevices(null);
 			viewBot.sleep(500);
 		}
+		super.afterTest();
 	}
-	
+
 	@Test
 	public void test_IDE_803() throws Exception {
 		SWTBotTreeItem node = explorerTree.expandNode("Sandbox", "Device Manager");
-		
+
 		Assert.assertTrue(node.isExpanded());
 	}
-	
+
 	@Test
 	public void test_IDE_797() throws Exception {
 		final SWTBotTreeItem item = explorerTree.expandNode("Sandbox", "Device Manager");
 		viewBot.sleep(1000);
 		viewBot.waitWhile(new ICondition() {
-			
+
 			@Override
 			public boolean test() {
 				try {
@@ -148,12 +137,12 @@ public class FEIScaExplorerTest {
 				}
 				return false;
 			}
-			
+
 			@Override
 			public void init(SWTBot bot) {
-				
+
 			}
-			
+
 			@Override
 			public String getFailureMessage() {
 				return "Failed to find analogDevice";
