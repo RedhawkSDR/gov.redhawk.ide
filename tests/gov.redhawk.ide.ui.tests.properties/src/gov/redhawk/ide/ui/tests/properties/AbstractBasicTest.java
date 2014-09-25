@@ -111,6 +111,16 @@ public abstract class AbstractBasicTest extends UITest {
 	}
 	
 	@Test
+	public void testUnqueID() {
+		assertFormValid();
+		createType();
+		bot.textWithLabel("ID*:").setText("ID");
+		assertFormInvalid();
+		bot.textWithLabel("ID*:").setText("ID2");
+		assertFormValid();
+	}
+	
+	@Test
 	public void testUnits() {
 		bot.textWithLabel("Units:").setText("m");
 		bot.textWithLabel("Units:").setText("");
