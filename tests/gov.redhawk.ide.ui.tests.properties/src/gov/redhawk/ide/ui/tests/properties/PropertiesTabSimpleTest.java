@@ -17,7 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class PropertiesTabSimpleTest extends AbstractBasicTest {
+public class PropertiesTabSimpleTest extends AbstractBasicPropertyTest {
 
 	@Override
 	protected void createType() {

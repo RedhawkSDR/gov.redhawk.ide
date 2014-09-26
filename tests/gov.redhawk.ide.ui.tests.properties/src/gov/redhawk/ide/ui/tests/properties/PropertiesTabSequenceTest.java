@@ -26,7 +26,7 @@ import org.junit.runner.RunWith;
 
 @SuppressWarnings("restriction")
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class PropertiesTabSequenceTest extends AbstractBasicTest {
+public class PropertiesTabSequenceTest extends AbstractBasicPropertyTest {
 
 	@Test
 	public void testValues() throws CoreException {
