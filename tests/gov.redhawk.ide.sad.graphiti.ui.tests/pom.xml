@@ -15,7 +15,7 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
-    <org.eclipse.swtbot.playback.delay>700</org.eclipse.swtbot.playback.delay>
+    <org.eclipse.swtbot.playback.delay>400</org.eclipse.swtbot.playback.delay>
   </properties>
 
 </project>
