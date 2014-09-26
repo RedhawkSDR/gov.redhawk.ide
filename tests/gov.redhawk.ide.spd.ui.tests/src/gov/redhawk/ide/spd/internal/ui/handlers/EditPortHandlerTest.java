@@ -56,7 +56,7 @@ public class EditPortHandlerTest {
 		final ResourceSet set = this.editingDomain.getResourceSet();
 		final Resource libraryResource = set.createResource(URI.createFileURI(".library"));
 		final URIPathSet uriPath = LibraryFactory.eINSTANCE.createURIPathSet();
-		uriPath.getDirs().add(SpdUiTestUtils.getURI("idl"));
+		uriPath.getDirs().add(SpdUiTestUtils.getURI("ossie/share/idl"));
 		this.library = LibraryFactory.eINSTANCE.createIdlLibrary();
 		this.library.getPaths().add(uriPath);
 		this.editingDomain.getCommandStack().execute(new AddCommand(this.editingDomain, libraryResource.getContents(), this.library));
@@ -71,25 +71,26 @@ public class EditPortHandlerTest {
 	}
 
 	@Test
-	public void testHandleEditPort() {
+	public void testHandleEditPort() throws CoreException {
 		//Add a port
-		final Provides provides = SpdUiTestUtils.createProvides("IDL:BULKIO/dataChar:1.0");
+		final Provides provides = SpdUiTestUtils.createProvides("IDL:SAMPLE/SampleInterface:1.0");
 		PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides)), this.editingDomain);
-		Assert.assertEquals("The provides port " + provides.getRepID() + " should be contained in the SCD", true, this.scd.getComponentFeatures()
+		Assert.assertTrue("The provides port " + provides.getRepID() + " should be contained in the SCD", this.scd.getComponentFeatures()
 		        .getPorts()
 		        .getProvides()
 		        .contains(provides));
 
 		//Create a second port
-		final Provides provides2 = SpdUiTestUtils.createProvides("IDL:BULKIO/dataChar:1.0");
+		final Provides provides2 = SpdUiTestUtils.createProvides("IDL:SAMPLE/SampleInterface2:1.0");
+		
 		this.editHandler.handleEditPort(this.library, provides, new PortWizardModel(provides2));
 		//Make sure the first port is gone
-		Assert.assertEquals("The provides port " + provides.getRepID() + " should not be contained in the SCD", false, this.scd.getComponentFeatures()
+		Assert.assertFalse("The provides port " + provides.getRepID() + " should not be contained in the SCD", this.scd.getComponentFeatures()
 		        .getPorts()
 		        .getProvides()
 		        .contains(provides));
 		//Make sure the second port is there
-		Assert.assertEquals("The uses port " + provides2.getRepID() + " should be contained in the SCD", true, this.scd.getComponentFeatures()
+		Assert.assertTrue("The uses port " + provides2.getRepID() + " should be contained in the SCD", this.scd.getComponentFeatures()
 		        .getPorts()
 		        .getProvides()
 		        .contains(provides2));
@@ -97,11 +98,11 @@ public class EditPortHandlerTest {
 	}
 
 	@Test
-	public void testHandleEditMultiplePorts() {
+	public void testHandleEditMultiplePorts() throws CoreException {
 		for (final Definition def : this.library.getDefinitions()) {
 			if (def instanceof RepositoryModule) {
 				final RepositoryModule module = (RepositoryModule) def;
-				if ("BULKIO".equals(module.getName())) {
+				if ("SAMPLE".equals(module.getName())) {
 					for (final Definition definition : module.getDefinitions()) {
 						final List<Object> ports = new ArrayList<Object>();
 						if (definition instanceof IdlInterfaceDcl) {

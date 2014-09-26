@@ -13,3 +13,6 @@ Require-Bundle: org.junit;bundle-version="4.8.1",
  org.eclipse.core.commands;bundle-version="3.6.0"
 Export-Package: gov.redhawk.ide.spd.internal.ui.handlers;x-internal:=true,
  gov.redhawk.ide.spd.ui.tests
+Bundle-ActivationPolicy: lazy
+Eclipse-BundleShape: dir
+Bundle-Activator: gov.redhawk.ide.spd.ui.tests.SpdUiTestsActivator

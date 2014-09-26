@@ -14,6 +14,7 @@ import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.ide.spd.internal.ui.editor.ComponentEditor;
 import gov.redhawk.ide.spd.internal.ui.editor.wizard.PortWizard;
 import gov.redhawk.ide.spd.internal.ui.editor.wizard.PortWizardPage.PortWizardModel;
+import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.model.sca.util.ModelUtil;
 
 import java.util.Collections;
@@ -22,12 +23,13 @@ import java.util.Set;
 
 import mil.jpeojtrs.sca.scd.AbstractPort;
 import mil.jpeojtrs.sca.scd.Ports;
-import mil.jpeojtrs.sca.scd.Provides;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
@@ -37,6 +39,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * An implementation of {@link AbstractHandler} for editing a port.
@@ -50,10 +53,10 @@ public class EditPortHandler extends AbstractHandler {
 	private SoftPkg softPkg;
 
 	/**
-	 * Default Constructor for instantiation by framework;  do not use.
+	 * Default Constructor for instantiation by framework; do not use.
 	 */
 	public EditPortHandler() {
-		//DefaultConstructor
+		// DefaultConstructor
 	}
 
 	/**
@@ -93,7 +96,7 @@ public class EditPortHandler extends AbstractHandler {
 		this.resource = this.editor.getMainResource();
 		this.softPkg = ModelUtil.getSoftPkg(this.resource);
 		this.displayEditWizard(selection);
-		// Fixes #103.  Return focus to the editor once the wizard has closed.
+		// Fixes #103. Return focus to the editor once the wizard has closed.
 		this.editor.setFocus();
 		return null;
 	}
@@ -112,7 +115,13 @@ public class EditPortHandler extends AbstractHandler {
 
 		final WizardDialog dialog = new WizardDialog(this.editor.getSite().getShell(), wizard);
 		if (dialog.open() == Window.OK) {
-			this.handleEditPort(wizard.getIdlLibrary(), (AbstractPort) obj, wizard.getValue());
+			try {
+				this.handleEditPort(wizard.getIdlLibrary(), (AbstractPort) obj, wizard.getValue());
+			} catch (CoreException e) {
+				StatusManager.getManager().handle(
+					new Status(e.getStatus().getSeverity(), ComponentUiPlugin.PLUGIN_ID, "Failed to edit port", e.getStatus().getException()),
+					StatusManager.SHOW | StatusManager.LOG);
+			}
 		}
 	}
 
@@ -121,8 +130,9 @@ public class EditPortHandler extends AbstractHandler {
 	 * 
 	 * @param oldPort the Port to remove from the component
 	 * @param newPort the Port to add to the component
+	 * @throws CoreException 
 	 */
-	protected void handleEditPort(final IdlLibrary library, final AbstractPort oldPort, final PortWizardModel model) {
+	public void handleEditPort(final IdlLibrary library, final AbstractPort oldPort, final PortWizardModel model) throws CoreException {
 
 		final CompoundCommand command = new CompoundCommand("Edit Port Command");
 
@@ -130,7 +140,7 @@ public class EditPortHandler extends AbstractHandler {
 		final AddPortHandler addHandler = new AddPortHandler(this.editingDomain, this.resource, this.softPkg);
 
 		final Set<String> ignore = new HashSet<String>();
-		//  Instruct the remove handler to not remove any of the interfaces from the new port
+		// Instruct the remove handler to not remove any of the interfaces from the new port
 		ignore.add(model.getRepId());
 		ignore.addAll(PortsHandlerUtil.getInheritedInterfaces(library, model.getRepId()));
 
@@ -141,13 +151,5 @@ public class EditPortHandler extends AbstractHandler {
 
 	private Ports getPorts() {
 		return PortsHandlerUtil.getPorts(this.softPkg);
-	}
-
-	/**
-	 * @deprecated Use {@link #handleEditPort(IdlLibrary, AbstractPort, PortWizardModel)} instead
-	 */
-	@Deprecated
-	protected void handleEditPort(final IdlLibrary library, final Provides oldPort, final Provides newPort) {
-		handleEditPort(library, oldPort, new PortWizardModel(newPort));
 	}
 }

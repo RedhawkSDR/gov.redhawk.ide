@@ -28,12 +28,12 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * @since 6.0
@@ -58,12 +58,11 @@ public class PortsHandlerUtil {
 	 * 
 	 * @param command the command
 	 */
-	public static void execute(final Command command, final EditingDomain editingDomain) {
+	public static void execute(final Command command, final EditingDomain editingDomain) throws CoreException {
 		if (command.canExecute()) {
 			editingDomain.getCommandStack().execute(command);
 		} else {
-			final Status status = new Status(IStatus.ERROR, ComponentUiPlugin.getPluginId(), "Failed to execute: " + command.getLabel());
-			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
+			throw new CoreException(new Status(IStatus.ERROR, ComponentUiPlugin.getPluginId(), "Failed to execute: " + command.getLabel(), new Exception().fillInStackTrace()));
 		}
 	}
 

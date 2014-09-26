@@ -11,6 +11,7 @@
 package gov.redhawk.ide.spd.internal.ui.handlers;
 
 import gov.redhawk.ide.spd.internal.ui.editor.ComponentEditor;
+import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.model.sca.util.ModelUtil;
 
 import java.util.ArrayList;
@@ -34,6 +35,8 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.ecore.EObject;
@@ -45,6 +48,7 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * An implementation of {@link AbstractHandler} for removing ports from a SoftwareComponent.
@@ -61,12 +65,12 @@ public class RemovePortsHandler extends AbstractHandler {
 	 * Default Constructor for instantiation by framework.
 	 */
 	public RemovePortsHandler() {
-		//DefaultConstructor
+		// DefaultConstructor
 	}
 
 	/**
 	 * Constructor for use within the package so this handler can be used by other handlers.
-	 * @param editor 
+	 * @param editor
 	 * 
 	 * @param editingDomain
 	 * @param resource
@@ -91,33 +95,44 @@ public class RemovePortsHandler extends AbstractHandler {
 		this.softPkg = ModelUtil.getSoftPkg(this.resource);
 		this.interfaceMap = PortsHandlerUtil.getInterfaceMap(this.softPkg);
 		final List<Object> ports = Arrays.asList(((IStructuredSelection) selection).toArray());
-		PortsHandlerUtil.execute(this.createRemovePortCommand(ports, new HashSet<String>()), this.editingDomain);
+		try {
+			PortsHandlerUtil.execute(this.createRemovePortCommand(ports, new HashSet<String>()), this.editingDomain);
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(
+				new Status(e.getStatus().getSeverity(), ComponentUiPlugin.PLUGIN_ID, "Failed to add port", e.getStatus().getException()),
+				StatusManager.SHOW | StatusManager.LOG);
+		}
 		return null;
 	}
 
 	/**
 	 * Creates and returns a command to remove the specified ports.
-	 *  
+	 * 
 	 * @param ports the ports to remove from the {@link mil.jpeojtrs.sca.scd.SoftwareComponent}
 	 * @param ignoreIds ignore the specified repIds when considering which interfaces to remove
 	 * @return the {@link Command} to remove the port and all associated {@link Interface}
 	 */
 	public Command createRemovePortCommand(final Collection<Object> ports, final Set<String> ignoreIds) {
-		final List<String> repIds = new ArrayList<String>();
+		final Set<String> repIds = new HashSet<String>();
 		final List<EObject> removePorts = new ArrayList<EObject>();
 		final CompoundCommand command = new CompoundCommand("Remove Ports");
 		for (final Object obj : ports) {
 			final EObject port = (EObject) AdapterFactoryEditingDomain.unwrap(obj);
 			if (port instanceof AbstractPort) {
-				final AbstractPort ap = (AbstractPort) port;
-				repIds.add(ap.getRepID());
-				command.append(RemoveCommand.create(this.editingDomain, getPorts(), ap.eContainingFeature(), ap));
-				final AbstractPort sibling = ap.getSibling();
-				if (sibling != null) {
-					command.append(RemoveCommand.create(this.editingDomain, getPorts(), sibling.eContainingFeature(), sibling));
+				for (AbstractPort p : getPorts().getAllPorts()) {
+					if (p.equals(port)) {
+						final AbstractPort sibling = p.getSibling();
+						if (sibling == null || !(p instanceof Uses)) {
+							repIds.add(p.getRepID());
+							command.append(RemoveCommand.create(this.editingDomain, getPorts(), p.eContainingFeature(), p));
+							if (sibling != null) {
+								command.append(RemoveCommand.create(this.editingDomain, getPorts(), sibling.eContainingFeature(), sibling));
+							}
+							removePorts.add(p);
+						}
+					}
 				}
 			}
-			removePorts.add(port);
 		}
 
 		for (final String repId : repIds) {
@@ -133,12 +148,14 @@ public class RemovePortsHandler extends AbstractHandler {
 	}
 
 	/**
-	 * Creates and returns a command to remove the interface and associated inherited interfaces if they are not referenced by other ports.
+	 * Creates and returns a command to remove the interface and associated inherited interfaces if they are not
+	 * referenced by other ports.
 	 * 
 	 * @param i the {@link Interface} to remove
 	 * @param removePorts the {@link Uses} or {@link Provides} to ignore when considering which interfaces to remove
-	 * @param removeInterfaces the {@link Set} of repIds already scheduled for removal 
-	 * @return a {@link Command} to remove the specified {@link Interface} and {@link InheritsInterface} if they can be removed
+	 * @param removeInterfaces the {@link Set} of repIds already scheduled for removal
+	 * @return a {@link Command} to remove the specified {@link Interface} and {@link InheritsInterface} if they can be
+	 * removed
 	 */
 	private Command createRemoveInterfaceCommand(final Collection<EObject> removePorts, final Set<String> removeInterfaces, final Interface i) {
 		if (!containsRepId(i.getRepid(), removePorts)) {
@@ -146,19 +163,18 @@ public class RemovePortsHandler extends AbstractHandler {
 			for (final InheritsInterface inherited : i.getInheritsInterfaces()) {
 				if (!containsRepId(inherited.getRepid(), removePorts)) {
 					if (!removeInterfaces.contains(inherited.getRepid())) {
-						//If the inherited interface isn't referenced by another port and isn't already scheduled for removal, make a recursive call to remove it
+						// If the inherited interface isn't referenced by another port and isn't already scheduled for
+						// removal, make a recursive call to remove it
 						if (inherited.getInterface() != null) {
 							command.append(this.createRemoveInterfaceCommand(removePorts, removeInterfaces, inherited.getInterface()));
 						}
 					}
 				}
 			}
-			//If the interface isn't already scheduled for removal, create a command to remove it
+			// If the interface isn't already scheduled for removal, create a command to remove it
 			if (removeInterfaces.add(i.getRepid())) {
-				command.append(RemoveCommand.create(this.editingDomain,
-				        PortsHandlerUtil.getInterfaces(this.softPkg),
-				        ScdPackage.Literals.INTERFACES__INTERFACE,
-				        i));
+				command.append(RemoveCommand.create(this.editingDomain, PortsHandlerUtil.getInterfaces(this.softPkg),
+					ScdPackage.Literals.INTERFACES__INTERFACE, i));
 			}
 			return command;
 		}
@@ -169,22 +185,22 @@ public class RemovePortsHandler extends AbstractHandler {
 	 * Searches the software component for the specified repID.
 	 *
 	 * @param repID the repID to search for
-	 * @param removePorts the {@link Uses} or {@link Provides} ports being removed, these are disregarded 
+	 * @param removePorts the {@link Uses} or {@link Provides} ports being removed, these are disregarded
 	 * @param repIds the {@link Set} of repIds belonging to the {@link mil.jpeojtrs.sca.scd.SoftwareComponent}
 	 * @return <code> true </code> if the repID is found; <code> false </code> otherwise
 	 */
 	private boolean containsRepId(final String repID, final Collection<EObject> removePorts) {
-		//If it's a supported interface, return true;
+		// If it's a supported interface, return true;
 		if (getSupportsInterfaceIds().contains(repID)) {
 			return true;
 		} else {
-			//Go through the ports and try to match
+			// Go through the ports and try to match
 			for (final FeatureMap.Entry entry : getPorts().getGroup()) {
 				if (!(entry.getValue() instanceof AbstractPort)) {
 					continue; // unexpected
 				}
 				final AbstractPort port = (AbstractPort) entry.getValue();
-				//Ignore ports being removed
+				// Ignore ports being removed
 				if (!removePorts.contains(port) && !removePorts.contains(port.getSibling())) {
 					if (port instanceof Provides) {
 						if (!repID.equals(((Provides) port).getRepID())) {
@@ -196,7 +212,7 @@ public class RemovePortsHandler extends AbstractHandler {
 						} else {
 							return true;
 						}
-					} else { //Uses
+					} else { // Uses
 						if (!repID.equals(((Uses) port).getRepID())) {
 							for (final InheritsInterface inherits : ((Uses) port).getInterface().getInheritsInterfaces()) {
 								if (repID.equals(inherits.getRepid())) {

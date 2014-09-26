@@ -15,11 +15,11 @@ import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.ide.spd.internal.ui.editor.ComponentEditor;
 import gov.redhawk.ide.spd.internal.ui.editor.wizard.PortWizard;
 import gov.redhawk.ide.spd.internal.ui.editor.wizard.PortWizardPage.PortWizardModel;
+import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.model.sca.util.ModelUtil;
 
 import java.util.Map;
 
-import mil.jpeojtrs.sca.scd.AbstractPort;
 import mil.jpeojtrs.sca.scd.InheritsInterface;
 import mil.jpeojtrs.sca.scd.Interface;
 import mil.jpeojtrs.sca.scd.PortType;
@@ -33,6 +33,8 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -41,6 +43,7 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * An implementation of {@link AbstractHandler} for adding a port to a SoftwareComponent.
@@ -58,7 +61,7 @@ public class AddPortHandler extends AbstractHandler {
 	 * Default Constructor for instantiation by framework.
 	 */
 	public AddPortHandler() {
-		//DefaultConstructor
+		// DefaultConstructor
 	}
 
 	/**
@@ -97,7 +100,13 @@ public class AddPortHandler extends AbstractHandler {
 		wizard.setWindowTitle("Add Port");
 		final WizardDialog dialog = new WizardDialog(this.editor.getSite().getShell(), wizard);
 		if (dialog.open() == Window.OK) {
-			PortsHandlerUtil.execute(this.createAddPortCommand(wizard.getIdlLibrary(), wizard.getValue()), this.editingDomain);
+			try {
+				PortsHandlerUtil.execute(this.createAddPortCommand(wizard.getIdlLibrary(), wizard.getValue()), this.editingDomain);
+			} catch (CoreException e) {
+				StatusManager.getManager().handle(
+					new Status(e.getStatus().getSeverity(), ComponentUiPlugin.PLUGIN_ID, "Failed to add port", e.getStatus().getException()),
+					StatusManager.SHOW | StatusManager.LOG);
+			}
 		}
 	}
 
@@ -105,7 +114,8 @@ public class AddPortHandler extends AbstractHandler {
 	 * Adds the port and any associated interfaces.
 	 * 
 	 * @param port the port to add
-	 * @param isEdit <code> true </code> if the addComand should be considered part of an edit command; <code> false </code> otherwise
+	 * @param isEdit <code> true </code> if the addComand should be considered part of an edit command; <code> false
+	 * </code> otherwise
 	 */
 	public Command createAddPortCommand(final IdlLibrary library, final PortWizardModel model) {
 		final String repId = model.getRepId();
@@ -148,36 +158,37 @@ public class AddPortHandler extends AbstractHandler {
 	}
 
 	/**
-	 * Creates a command to add the interface and all inherited interfaces provided they're not already in the interfaceMap.
+	 * Creates a command to add the interface and all inherited interfaces provided they're not already in the
+	 * interfaceMap.
 	 * 
-	 * @param repId the {@link String} repId of the {@link Interface} to add 
+	 * @param repId the {@link String} repId of the {@link Interface} to add
 	 * @param interfaceMap the {@link Map} of current interfaces
-	 * @return the {@link Command} to add the specified {@link Interface} and all {@link InheritsInterface} if they 
-	 * 				don't already exist and are present in the {@link IdlLibrary}; <code> null </code> otherwise
+	 * @return the {@link Command} to add the specified {@link Interface} and all {@link InheritsInterface} if they
+	 * don't already exist and are present in the {@link IdlLibrary}; <code> null </code> otherwise
 	 */
 	private Command createAddInterfaceCommand(final IdlLibrary library, final String repId, final Map<String, Interface> interfaceMap) {
 		final Interface i = ScdFactory.eINSTANCE.createInterface();
 		final IdlInterfaceDcl idlInter = (IdlInterfaceDcl) library.find(repId);
 
-		//If the interface isn't present in the IdlLibrary, there's nothing to do
+		// If the interface isn't present in the IdlLibrary, there's nothing to do
 		if (idlInter != null) {
 			final CompoundCommand command = new CompoundCommand("Add Interfaces");
 			i.setName(idlInter.getName());
 			i.setRepid(repId);
 
-			//Add all the inherited interfaces first.
+			// Add all the inherited interfaces first.
 			for (final IdlInterfaceDcl inherited : idlInter.getInheritedInterfaces()) {
 				final InheritsInterface iface = ScdFactory.eINSTANCE.createInheritsInterface();
 				iface.setRepid(inherited.getRepId());
 				i.getInheritsInterfaces().add(iface);
 
-				//If the inherited interface isn't already present, make a recursive call to add it.
+				// If the inherited interface isn't already present, make a recursive call to add it.
 				if (!interfaceMap.containsKey(inherited.getRepId())) {
 					command.append(createAddInterfaceCommand(library, inherited.getRepId(), interfaceMap));
 				}
 			}
 
-			//If the interface isn't already present
+			// If the interface isn't already present
 			if (!interfaceMap.containsKey(i.getRepid())) {
 				interfaceMap.put(i.getRepid(), i);
 				command.append(AddCommand.create(this.editingDomain, PortsHandlerUtil.getInterfaces(this.softPkg), ScdPackage.Literals.INTERFACES__INTERFACE, i));
@@ -189,13 +200,5 @@ public class AddPortHandler extends AbstractHandler {
 
 	private Ports getPorts() {
 		return PortsHandlerUtil.getPorts(this.softPkg);
-	}
-
-	/**
-	 * @deprecated Use {@link #createAddPortCommand(IdlLibrary, PortWizardModel)}
-	 */
-	@Deprecated
-	public Command createAddPortCommand(final IdlLibrary library, final AbstractPort port) {
-		return createAddPortCommand(library, new PortWizardModel(port));
 	}
 }

@@ -15,7 +15,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
 import mil.jpeojtrs.sca.scd.InheritsInterface;
 import mil.jpeojtrs.sca.scd.Interface;
 import mil.jpeojtrs.sca.scd.PortType;
@@ -27,8 +26,8 @@ import mil.jpeojtrs.sca.scd.Uses;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
+import org.junit.Assert;
 
 public class SpdUiTestUtils {
 
@@ -39,7 +38,11 @@ public class SpdUiTestUtils {
 	}
 
 	public static URI getURI(final String filePath) throws IOException {
-		final URL url = FileLocator.toFileURL(FileLocator.find(Platform.getBundle("gov.redhawk.ide.spd.ui.tests"), new Path(filePath), null));
+		URL bundleUrl = FileLocator.find(SpdUiTestsActivator.getInstance().getBundle(), new Path(filePath), null);
+		if (bundleUrl == null) {
+			throw new IllegalStateException("No such file in bundle: " + SpdUiTestsActivator.ID + ":" + filePath);
+		}
+		final URL url = FileLocator.toFileURL(bundleUrl);
 		return URI.createURI(url.toString());
 	}
 

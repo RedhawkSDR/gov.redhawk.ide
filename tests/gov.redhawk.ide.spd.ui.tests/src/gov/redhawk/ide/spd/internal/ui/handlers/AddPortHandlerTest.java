@@ -52,7 +52,7 @@ public class AddPortHandlerTest {
 		final ResourceSet set = this.editingDomain.getResourceSet();
 		final Resource libraryResource = set.createResource(URI.createFileURI(".library"));
 		final URIPathSet uriPath = LibraryFactory.eINSTANCE.createURIPathSet();
-		uriPath.getDirs().add(SpdUiTestUtils.getURI("idl"));
+		uriPath.getDirs().add(SpdUiTestUtils.getURI("ossie/share/idl"));
 		this.library = LibraryFactory.eINSTANCE.createIdlLibrary();
 		this.library.getPaths().add(uriPath);
 		this.editingDomain.getCommandStack().execute(new AddCommand(this.editingDomain, libraryResource.getContents(), this.library));
@@ -68,11 +68,12 @@ public class AddPortHandlerTest {
 
 	/**
 	 * Add a single port.
+	 * @throws CoreException 
 	 */
 	@Test
-	public void addPort() {
+	public void addPort() throws CoreException {
 		//Add a port
-		final Provides provides = SpdUiTestUtils.createProvides("IDL:omg.org/CosContainment/ContainedInRole:1.0");
+		final Provides provides = SpdUiTestUtils.createProvides("IDL:SAMPLE/SampleInterface:1.0");
 		PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides)), this.editingDomain);
 		Assert.assertEquals("The provides port " + provides.getRepID() + " should be contained in the SCD", true, this.scd.getComponentFeatures()
 		        .getPorts()
@@ -82,9 +83,10 @@ public class AddPortHandlerTest {
 
 	/**
 	 * Make sure we can create and execute add commands for each repID in a standard IdlLibrary
+	 * @throws CoreException 
 	 */
 	@Test
-	public void testAddAll() {
+	public void testAddAll() throws CoreException {
 		for (final Definition def : this.library.getDefinitions()) {
 			if (def instanceof RepositoryModule) {
 				final RepositoryModule module = (RepositoryModule) def;
@@ -93,7 +95,7 @@ public class AddPortHandlerTest {
 		}
 	}
 
-	public void addRecursive(final RepositoryModule module) {
+	public void addRecursive(final RepositoryModule module) throws CoreException {
 		for (final Definition definition : module.getDefinitions()) {
 			if (definition instanceof IdlInterfaceDcl) {
 				final Provides provides = SpdUiTestUtils.createProvides(definition.getRepId());

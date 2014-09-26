@@ -60,7 +60,7 @@ public class RemovePortsHandlerTest {
 		final ResourceSet set = this.editingDomain.getResourceSet();
 		final Resource libraryResource = set.createResource(URI.createFileURI(".library"));
 		final URIPathSet uriPath = LibraryFactory.eINSTANCE.createURIPathSet();
-		uriPath.getDirs().add(SpdUiTestUtils.getURI("idl"));
+		uriPath.getDirs().add(SpdUiTestUtils.getURI("ossie/share/idl"));
 		this.library = LibraryFactory.eINSTANCE.createIdlLibrary();
 		this.library.getPaths().add(uriPath);
 		this.editingDomain.getCommandStack().execute(new AddCommand(this.editingDomain, libraryResource.getContents(), this.library));
@@ -76,9 +76,9 @@ public class RemovePortsHandlerTest {
 	}
 
 	@Test
-	public void removePort() {
+	public void removePort() throws CoreException {
 		//Add a port
-		final Provides provides = SpdUiTestUtils.createProvides("IDL:omg.org/CosContainment/ContainedInRole:1.0");
+		final Provides provides = SpdUiTestUtils.createProvides("IDL:SAMPLE/SampleInterface:1.0");
 		PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides)), this.editingDomain);
 		Assert.assertEquals("The provides port " + provides.getRepID() + " should be contained in the SCD", true, this.scd.getComponentFeatures()
 		        .getPorts()
@@ -96,9 +96,10 @@ public class RemovePortsHandlerTest {
 
 	/**
 	 * Adds all IdlInterfaces in the repository as ports and then removes them all individually.
+	 * @throws CoreException 
 	 */
 	@Test
-	public void removeAllPorts() {
+	public void removeAllPorts() throws CoreException {
 		this.addAllFromRepo();
 		final List<Object> removePorts = new ArrayList<Object>();
 		for (final FeatureMap.Entry entry : this.scd.getComponentFeatures().getPorts().getGroup()) {
@@ -111,8 +112,9 @@ public class RemovePortsHandlerTest {
 
 	/**
 	 * Adds all idlInterfaces in IdlLibrary as a Uses and Provides port.
+	 * @throws CoreException 
 	 */
-	private void addAllFromRepo() {
+	private void addAllFromRepo() throws CoreException {
 		for (final Definition def : this.library.getDefinitions()) {
 			if (def instanceof RepositoryModule) {
 				final RepositoryModule module = (RepositoryModule) def;
