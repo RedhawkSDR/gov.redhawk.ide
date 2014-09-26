@@ -338,7 +338,6 @@
         <module>../tests/gov.redhawk.ide.sad.tests</module>
         <module>../tests/gov.redhawk.ide.sdr.tests</module>
         <module>../tests/gov.redhawk.ide.spd.tests</module>
-        <module>../tests/gov.redhawk.ide.spd.ui.tests</module>
         <module>../tests/gov.redhawk.spd.validation.tests</module>
         <module>../tests/gov.redhawk.mfile.parser.tests</module>
         <module>p2</module>
