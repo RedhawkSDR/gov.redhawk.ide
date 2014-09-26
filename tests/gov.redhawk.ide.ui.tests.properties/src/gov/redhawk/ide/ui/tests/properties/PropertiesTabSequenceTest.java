@@ -10,27 +10,20 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.tests.properties;
 
-import gov.redhawk.ide.spd.internal.ui.editor.ComponentEditor;
-import gov.redhawk.prf.internal.ui.editor.detailspart.SimpleSequencePropertyDetailsPage;
-import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
-import org.eclipse.ui.PlatformUI;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@SuppressWarnings("restriction")
 @RunWith(SWTBotJunit4ClassRunner.class)
 public class PropertiesTabSequenceTest extends AbstractBasicPropertyTest {
 
 	@Test
 	public void testValues() throws CoreException {
-		TableViewer valuesViewer = getValuesViewer();
+		SWTBotTable valuesViewer = editor.bot().tableWithLabel("Values:");
 		// Start with type selected as string
 		bot.button("Add...").click();
 		bot.textWithLabel("Value:").setText("true");
@@ -236,23 +229,6 @@ public class PropertiesTabSequenceTest extends AbstractBasicPropertyTest {
 		bot.button("OK").click();
 		assertFormValid();
 		clearValues();
-	}
-
-	private TableViewer getValuesViewer() {
-		final TableViewer[] retVal = new TableViewer[1];
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				ComponentEditor spdEditor = (ComponentEditor) editor.getReference().getEditor(false);
-				PropertiesFormPage propPage = spdEditor.getPropertiesPage();
-				SimpleSequencePropertyDetailsPage sequencePage = (SimpleSequencePropertyDetailsPage) propPage.getPropertiesBlock().getDetailsPart().getCurrentPage();
-				retVal[0] = sequencePage.getComposite().getValuesViewer();
-			}
-
-		});
-		TableViewer valuesViewer = retVal[0];
-		return valuesViewer;
 	}
 
 	private void clearValues() {
