@@ -11,8 +11,6 @@
 package gov.redhawk.ide.ui.tests.properties;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -102,66 +100,7 @@ public class PropertiesTabStructTest extends PropertiesTabSimpleTest {
 		assertFormValid();
 		selectStruct();
 		
-		SWTBotTable kindTable = editor.bot().tableWithLabel("Kind:");
-		Assert.assertFalse("Structs don't support kind type execparam." , kindTable.containsItem("execparam"));
-		
-		kindTable.getTableItem("configure (default)").check();
-		assertFormValid();
-		kindTable.getTableItem("allocation").check();
-		assertFormValid();
-		kindTable.getTableItem("event").check();
-		kindTable.getTableItem("message").check();
-		assertFormInvalid();
-		kindTable.getTableItem("message").uncheck();
-		kindTable.getTableItem("event").uncheck();
-		assertFormValid();
-		kindTable.getTableItem("message").check();
-		assertFormInvalid();
-		kindTable.getTableItem("message").uncheck();
-		kindTable.getTableItem("allocation").uncheck();
-		assertFormValid();
-		kindTable.getTableItem("event").check();
-		assertFormValid();
-		kindTable.getTableItem("message").check();
-		assertFormInvalid();
-		kindTable.getTableItem("message").uncheck();
-		kindTable.getTableItem("event").uncheck();
-		assertFormValid();
-		kindTable.getTableItem("message").check();
-		assertFormInvalid();
-		kindTable.getTableItem("message").uncheck();
-		kindTable.getTableItem("configure (default)").uncheck();
-		assertFormValid();
-		
-		kindTable.getTableItem("allocation").check();
-		assertFormValid();
-		kindTable.getTableItem("event").check();
-		assertFormValid();
-		kindTable.getTableItem("message").check();
-		assertFormInvalid();
-		kindTable.getTableItem("message").uncheck();
-		assertFormValid();
-		kindTable.getTableItem("event").uncheck();
-		kindTable.getTableItem("message").check();
-		assertFormInvalid();
-		kindTable.getTableItem("message").uncheck();
-		kindTable.getTableItem("allocation").uncheck();
-		assertFormValid();
-
-		
-		kindTable.getTableItem("event").check();
-		assertFormValid();
-		kindTable.getTableItem("message").check();
-		assertFormInvalid();
-		kindTable.getTableItem("message").uncheck();
-		kindTable.getTableItem("event").uncheck();
-		assertFormValid();
-		
-		kindTable.getTableItem("configure (default)").uncheck();
-		kindTable.getTableItem("message").check();
-		assertFormValid();
-		kindTable.getTableItem("message").uncheck();
-		assertFormValid();
+		testKind(false);
 	}
 	
 	

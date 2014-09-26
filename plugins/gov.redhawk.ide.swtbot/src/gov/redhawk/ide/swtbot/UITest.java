@@ -13,11 +13,12 @@ package gov.redhawk.ide.swtbot;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swtbot.swt.finder.keyboard.Keyboard;
 import org.eclipse.swtbot.swt.finder.keyboard.KeyboardFactory;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotTableItem;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class UITest extends StandardTestActions {
 
@@ -49,6 +50,27 @@ public class UITest extends StandardTestActions {
 	}
 
 	/**
+	 * 
+	 * @param item
+	 * @param column Column to write to, NOTE the first column is '1'
+	 * @param text
+	 */
+	protected void writeToCell(final SWTBotTreeItem item, final int column, final String text) {
+		item.click(column);
+		
+		// Wait for cell editor to appear
+		bot.sleep(500);
+		
+		Keyboard keyboard = KeyboardFactory.getSWTKeyboard();
+		keyboard.typeText(text);
+		keyboard.pressShortcut(Keystrokes.CR);
+		
+		// Wait for cell editor to close
+		bot.sleep(100);
+
+	}
+
+	/**
 	 * Writes the text to the specified cell of parent table in loverCase letters by alphanumeric keys pressing.
 	 * 
 	 * @param table
@@ -67,8 +89,6 @@ public class UITest extends StandardTestActions {
 		final SWTBotTable table = new SWTBotTable(viewer.getTable());
 
 		table.select(row);
-
-		SWTBotTableItem item = table.getTableItem(row);
 
 		startEditing(viewer, row, column, editorActivationType);
 

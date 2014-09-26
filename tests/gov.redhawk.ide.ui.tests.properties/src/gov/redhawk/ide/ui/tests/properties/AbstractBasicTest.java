@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.tests.properties;
 
+import java.util.Arrays;
+
 import gov.redhawk.ide.spd.internal.ui.editor.ComponentEditor;
 import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.UITest;
@@ -25,6 +27,7 @@ import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTableItem;
+import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -90,22 +93,54 @@ public abstract class AbstractBasicTest extends UITest {
 	protected abstract void createType();
 
 	protected void assertFormValid() {
-		int messageType = getValidationState(editor);
-		Assert.assertNotEquals("Form should be valid", IMessageProvider.ERROR, messageType);
+		try {
+			waitForValidationState(IMessageProvider.NONE, IMessageProvider.INFORMATION, IMessageProvider.WARNING);
+		} catch (TimeoutException e) {
+			Assert.fail("Form should be valid");
+		}
 	}
 
-	protected int getValidationState(SWTBotEditor editor) {
+	protected int getValidationState() {
 		ComponentEditor spdEditor = (ComponentEditor) editor.getReference().getEditor(false);
-		bot.sleep(600);
 
 		PropertiesFormPage propertiesPage = spdEditor.getPropertiesPage();
 		int messageType = propertiesPage.getManagedForm().getForm().getMessageType();
 		return messageType;
 	}
 	
+	protected void waitForValidationState(final int ... states) {
+		bot.waitUntil(new ICondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				int current = getValidationState();
+				for (int i : states) {
+					if (i == current) {
+						return true;
+					}
+				}
+				return false;
+			}
+
+			@Override
+			public void init(SWTBot bot) {
+				
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Failed waiting for validation state to change to: " + Arrays.toString(states);
+			}
+			
+		}, 5000, 200);
+	}
+	
 	protected void assertFormInvalid() {
-		int messageType = getValidationState(editor);
-		Assert.assertEquals("Form should not be valid", IMessageProvider.ERROR, messageType);
+		try {
+			waitForValidationState(IMessageProvider.ERROR);
+		} catch (TimeoutException e) {
+			Assert.fail("Form should be valid");
+		}
 	}
 	
 	@Test
@@ -206,14 +241,18 @@ public abstract class AbstractBasicTest extends UITest {
 		assertFormValid();
 	}
 	
-	@Test
-	public void testKind() {
+	public void testKind(boolean supportsExec) {
 		assertFormValid();
 		
 		SWTBotTable kindTable = editor.bot().tableWithLabel("Kind:");
 		kindTable.getTableItem("configure (default)").check();
 		assertFormValid();
-		kindTable.getTableItem("execparam").check();
+		
+		Assert.assertEquals("Support exec param: " + supportsExec, supportsExec, kindTable.containsItem("execparam"));
+		
+		if (supportsExec) {
+			kindTable.getTableItem("execparam").check();
+		}
 		assertFormValid();
 		kindTable.getTableItem("allocation").check();
 		assertFormValid();
@@ -238,7 +277,9 @@ public abstract class AbstractBasicTest extends UITest {
 		kindTable.getTableItem("message").check();
 		assertFormInvalid();
 		kindTable.getTableItem("message").uncheck();
-		kindTable.getTableItem("execparam").uncheck();
+		if (supportsExec) {
+			kindTable.getTableItem("execparam").uncheck();
+		}
 		kindTable.getTableItem("configure (default)").uncheck();
 		assertFormValid();
 		

@@ -121,6 +121,12 @@ public abstract class StandardTestActions {
 						introManager.closeIntro(part);
 					}
 				}
+				
+				Display current = Display.getCurrent();
+				if (current != null) {
+					Shell shell = current.getActiveShell();
+					shell.setMaximized(true);
+				}
 			}
 		});
 	}
