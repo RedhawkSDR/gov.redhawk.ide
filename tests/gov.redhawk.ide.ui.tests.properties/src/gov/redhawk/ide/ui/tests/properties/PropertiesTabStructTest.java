@@ -11,7 +11,8 @@
 package gov.redhawk.ide.ui.tests.properties;
 
 import org.eclipse.core.runtime.CoreException;
-import org.junit.Ignore;
+import org.eclipse.swtbot.swt.finder.finders.ContextMenuHelper;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.junit.Test;
 
 public class PropertiesTabStructTest extends PropertiesTabSimpleTest {
@@ -104,14 +105,11 @@ public class PropertiesTabStructTest extends PropertiesTabSimpleTest {
 	}
 	
 	
-	/**
-	 * Ignore for now until we figure out why the context menu doesn't want to work.
-	 */
-	@Ignore
+
 	@Test
 	public void testAddSecondSimple() {
 		selectStruct();
-		editor.bot().tree().contextMenu("New").menu("Simple").click();
+		new SWTBotMenu(ContextMenuHelper.contextMenu(editor.bot().tree(), "New", "Simple")).click();
 		assertFormInvalid();
 		editor.bot().textWithLabel("ID*:").setText("SID2");
 		assertFormValid();
