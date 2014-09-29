@@ -34,7 +34,7 @@ public class DeleteProjectTest extends AbstractGraphitiTest {
 	 * Diagram editor should close if the respective project is deleted
 	 */
 	@Test
-	public void checkFindByPictogramElements() {
+	public void confirmEditorClosesOnDelete() {
 		waveformName = "Delete_and_Close";
 		final String SIGGEN = "SigGen";
 
