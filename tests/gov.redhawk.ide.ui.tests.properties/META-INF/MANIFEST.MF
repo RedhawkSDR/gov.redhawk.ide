@@ -21,6 +21,7 @@ Require-Bundle: gov.redhawk.ide.swtbot;bundle-version="1.0.0",
  gov.redhawk.ui;bundle-version="7.1.0",
  gov.redhawk.ide.spd.ui;bundle-version="8.1.0",
  gov.redhawk.prf.ui
+Eclipse-BundleShape: dir
 Bundle-Activator: gov.redhawk.ide.ui.tests.properties.PropertiesUITestsActivator
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: REDHAWK
