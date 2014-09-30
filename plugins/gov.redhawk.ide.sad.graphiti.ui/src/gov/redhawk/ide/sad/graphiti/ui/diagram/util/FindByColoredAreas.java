@@ -38,7 +38,7 @@ public class FindByColoredAreas extends PredefinedColoredAreas implements FindBy
 		gradientColoredAreas.setStyleAdaption(IPredefinedRenderingStyle.STYLE_ADAPTATION_PRIMARY_SELECTED);
 		final EList<GradientColoredArea> gcas = gradientColoredAreas.getGradientColor();
 		
-		addGradientColoredArea(gcas, "E4D0C4", 0, LocationType.LOCATION_TYPE_ABSOLUTE_START, "E4D0C4", 0, LocationType.LOCATION_TYPE_ABSOLUTE_END);
+		addGradientColoredArea(gcas, "D4B4A1", 0, LocationType.LOCATION_TYPE_ABSOLUTE_START, "D4B4A1", 0, LocationType.LOCATION_TYPE_ABSOLUTE_END);
 		return gradientColoredAreas;
 	}
 
@@ -47,7 +47,7 @@ public class FindByColoredAreas extends PredefinedColoredAreas implements FindBy
 		gradientColoredAreas.setStyleAdaption(IPredefinedRenderingStyle.STYLE_ADAPTATION_SECONDARY_SELECTED);
 		final EList<GradientColoredArea> gcas = gradientColoredAreas.getGradientColor();
 		
-		addGradientColoredArea(gcas, "ECDED5", 0, LocationType.LOCATION_TYPE_ABSOLUTE_START, "ECDED5", 0, LocationType.LOCATION_TYPE_ABSOLUTE_END);
+		addGradientColoredArea(gcas, "E4D0C4", 0, LocationType.LOCATION_TYPE_ABSOLUTE_START, "E4D0C4", 0, LocationType.LOCATION_TYPE_ABSOLUTE_END);
 		return gradientColoredAreas;
 	}
 
