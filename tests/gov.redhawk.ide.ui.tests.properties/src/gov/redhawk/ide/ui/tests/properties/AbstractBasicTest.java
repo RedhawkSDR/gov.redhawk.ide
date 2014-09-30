@@ -13,6 +13,7 @@ package gov.redhawk.ide.ui.tests.properties;
 import gov.redhawk.ide.spd.internal.ui.editor.ComponentEditor;
 import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.UITest;
+import gov.redhawk.ide.swtbot.WaitForEditorCondition;
 import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
 
 import java.util.Arrays;
@@ -49,26 +50,7 @@ public abstract class AbstractBasicTest extends UITest {
 		bot.tree().getTreeItem("PropTest_Comp").expand();
 		bot.tree().getTreeItem("PropTest_Comp").getNode("PropTest_Comp.spd.xml").doubleClick();
 		
-		bot.waitUntil(new ICondition() {
-
-			@Override
-			public boolean test() throws Exception {
-				bot.activeEditor();
-				return true;
-			}
-
-			@Override
-			public void init(SWTBot bot) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public String getFailureMessage() {
-				return "no editor available";
-			}
-			
-		}, 30000);
+		bot.waitUntil(new WaitForEditorCondition(), 30000);
 		
 		editor = bot.activeEditor();
 		editor.setFocus();
