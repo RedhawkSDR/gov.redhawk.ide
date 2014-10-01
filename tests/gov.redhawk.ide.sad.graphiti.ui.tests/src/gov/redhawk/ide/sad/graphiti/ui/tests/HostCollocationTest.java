@@ -15,6 +15,7 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+import gov.redhawk.ide.swtbot.diagram.FindByUtils;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 
@@ -29,6 +30,7 @@ import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -43,6 +45,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 	 * Create the pictogram shape in the waveform diagram that represents the Host Collocation object.
 	 * This includes the ContainerShape for the component a label for the object name.
 	 */
+	@Ignore
 	@Test
 	public void checkHostCollocationPictogramElements() {
 		waveformName = "HC_Pictogram";
@@ -84,6 +87,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 	 * Elements contained within a Host Collocation container should should stay in their relative locations when the
 	 * parent container is moved.
 	 */
+	@Ignore
 	@Test
 	public void hostCollocationRelativePosition() {
 		waveformName = "HC_Component_Position";
@@ -126,6 +130,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 	 * User should be able to add and remove components to a Host Collocation container by dragging them in and out of
 	 * the pictogram element.
 	 */
+	@Ignore
 	@Test
 	public void hostCollocationDnDComponents() {
 		waveformName = "HC_DragAndDrop";
@@ -170,6 +175,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 	 * Ensure deletion of host collocation does not remove contained components and instead leaves
 	 * them in the diagram.
 	 */
+	@Ignore
 	@Test
 	public void hostCollocationContextMenuDelete() {
 		waveformName = "HC_Pictogram";
@@ -228,6 +234,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 	 * checking appears to be the same which is what we expect.  There is code in place that maintains the absolute position
 	 * of components within the graph as they are transitioned to the hostCollocation and we don't want them shifting.
 	 */
+	@Ignore
 	@Test
 	public void hostCollocationResize() {
 		waveformName = "HC_Resize";
@@ -236,12 +243,13 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		final String HOST_CO_NAME = "HC1";
 		final String UNEXPECTED_SHAPE_LOCATION = "Shape location unexpected";
 		final String UNEXPECTED_NUM_COMPONENTS = "Incorrect number of components in Host Collocation";
-		//maximize window
-		DiagramTestUtils.maximizeActiveWindow(gefBot);
 		
 		// Create a new empty waveform
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
+
+		//maximize window
+		DiagramTestUtils.maximizeActiveWindow(gefBot);
 
 		// Add host collocation to the waveform
 		DiagramTestUtils.dragHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
@@ -508,6 +516,54 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
 		// Test Containment
 		Assert.assertTrue(UNEXPECTED_NUM_COMPONENTS, hostCo.getComponentPlacement().size() == 1);
+	}
+	
+	/**
+	 * IDE-698
+	 * Host Collocation resize should not execute if a Find By object would end up inside the contained
+	 */
+	@Test
+	public void hostCollocationResizeOverFindBy() {
+		waveformName = "HC_Resize_FindBy";
+		final String SIGGEN = "SigGen";
+		final String HOST_CO_NAME = "HC1";
+
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
 		
+		
+		//maximize window
+		DiagramTestUtils.maximizeActiveWindow(gefBot);
+		
+		// Add host collocation to the waveform
+		DiagramTestUtils.dragHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
+				
+		// Add component/findby to the host collocation
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 20, 150);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_DOMAIN_MANAGER, 450, 150);
+		MenuUtils.save(gefBot);
+		
+		//HostCOllocation objects
+		HostCollocation hostCo = DiagramTestUtils.getHostCollocationObject(editor, HOST_CO_NAME);
+		GraphicsAlgorithm hostCollocationGa = DiagramTestUtils.getHostCollocationShape(editor, HOST_CO_NAME).getGraphicsAlgorithm();
+
+		// Attempt to expand host collocation right to cover the FindBy object
+		editor.getEditPart(HOST_CO_NAME).click();
+		int oldX = hostCollocationGa.getX() + hostCollocationGa.getWidth();
+		int oldY = (hostCollocationGa.getY() + hostCollocationGa.getHeight()) / 2;
+		int newX = oldX + 1000;
+		int newY = oldY;
+		editor.drag(oldX + 5, oldY + 2, newX, newY);
+		MenuUtils.save(gefBot);
+		
+		// Assert that the host collocation resize was rejected
+		Assert.assertEquals("Host collocation width not have changed size", oldX, hostCollocationGa.getX() + hostCollocationGa.getWidth());
+
+		// Assert that FindBy Element is not contained within host collocation
+		Assert.assertTrue("Number of components should be 1, instead there are " + hostCo.getComponentPlacement().size(), 
+			hostCo.getComponentPlacement().size() == 1);
+		Assert.assertEquals("Expected component \'" + SIGGEN + "\' was not found", SIGGEN + "_1",
+			hostCo.getComponentPlacement().get(0).getComponentInstantiation().get(0).getId());
 	}
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.diagram;
 
-import static org.eclipse.swtbot.swt.finder.finders.UIThreadRunnable.syncExec;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 
@@ -24,7 +23,6 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
@@ -32,15 +30,20 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefViewer;
-import org.eclipse.swtbot.swt.finder.results.VoidResult;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.junit.Assert;
 
+@SuppressWarnings("restriction")
 public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility method is intended to be public
 
+	protected DiagramTestUtils() {
+		
+	}
+	
 	public static final String OVERVIEW_TAB = "Overview", PROPERTIES_TAB = "Properties", DIAGRAM_TAB = "Diagram", XML_TAB = ".sad.xml";
 
 	/**
@@ -374,14 +377,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * Maximizes active window
 	 */
 	public static void maximizeActiveWindow(SWTGefBot gefBot) {
-        final Shell activeShell = gefBot.activeShell().widget;
-        VoidResult maximizeShell = new VoidResult() {
-            @Override
-            public void run() {
-                    activeShell.setMaximized(true);
-            }
-        };
-        syncExec(maximizeShell);
+		gefBot.menu(IDEWorkbenchMessages.Workbench_window).menu("Maximize Active View or Editor").click();
     }
 	
 	/**
