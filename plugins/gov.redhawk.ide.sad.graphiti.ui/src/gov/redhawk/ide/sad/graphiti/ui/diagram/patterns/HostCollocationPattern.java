@@ -20,6 +20,7 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
@@ -274,6 +275,19 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 	 */
 	@Override
 	public boolean canResizeShape(IResizeShapeContext context) {
+		// If a FindBy object would be wrapped in the Host Collocation, then cancel the operation
+		List<Shape> shapesToAddToHostCollocation = DUtil.getContainersInArea(getDiagram(), 
+			context.getWidth(), context.getHeight(), context.getX(), context.getY(), 
+			GA_OUTER_ROUNDED_RECTANGLE);
+		for (Shape shape : shapesToAddToHostCollocation) {
+			for (EObject obj : shape.getLink().getBusinessObjects()) {
+				if (obj instanceof FindByStub) {
+					return false;
+				}
+			}
+		}
+		
+		// ...otherwise, allow the resize
 		return true;
 	}
 
