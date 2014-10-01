@@ -20,7 +20,6 @@
   </parent>
 
   <properties>
-    <org.eclipse.swtbot.playback.delay>250</org.eclipse.swtbot.playback.delay>
     <tycho-version>0.20.0</tycho-version>
     <tycho.scmUrl>scm:git:https://github.com/RedhawkSDR/eclipse-gov.redhawk.ide</tycho.scmUrl>
     <eclipse>http://download.eclipse.org/releases/juno</eclipse>

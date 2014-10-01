@@ -32,14 +32,14 @@ import org.junit.runner.RunWith;
  * 
  */
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class ComponentWizardTest extends UITest{
+public class ComponentWizardTest extends UITest {
 	private SWTBotShell wizardShell;
 	private SWTBot wizardBot;
 
 	private void testProjectCreation(String name, String lang, String generator, String template) {
 		wizardBot.textWithLabel("&Project name:").setText(name);
 		wizardBot.button("Next >").click();
-		
+
 		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection(lang);
 		wizardBot.comboBoxWithLabel("Code Generator:").setSelection(generator);
 		Assert.assertFalse(wizardBot.textWithLabel("ID:").getText().isEmpty());
@@ -47,12 +47,12 @@ public class ComponentWizardTest extends UITest{
 		Assert.assertFalse(wizardBot.textWithLabel("Description:").getText().isEmpty());
 		wizardBot.textWithLabel("Description:").setText("custom description");
 		wizardBot.button("Next >").click();
-		
+
 		wizardBot.comboBoxWithLabel("Template:").setSelection(template);
 		Assert.assertFalse(wizardBot.textWithLabel("Output Directory:").getText().isEmpty());
 		wizardBot.textWithLabel("Output Directory:").setText("customOutput");
 		wizardBot.button("Finish").click();
-		
+
 		// Ensure SPD file was created
 		SWTBotView view = bot.viewById("org.eclipse.ui.navigator.ProjectExplorer");
 		view.show();
@@ -60,61 +60,64 @@ public class ComponentWizardTest extends UITest{
 		view.bot().tree().getTreeItem(name).select();
 		view.bot().tree().getTreeItem(name).expand();
 		view.bot().tree().getTreeItem(name).getNode(name + ".spd.xml");
-		
+
 		bot.waitUntil(new WaitForEditorCondition(), 30000, 500);
-		
+
 		// Ensure SPD Editor is open and has correct content
 		SWTBotEditor editorBot = bot.activeEditor();
 		Assert.assertTrue(editorBot.getReference().getEditor(true) instanceof ComponentEditor);
-		
+
 		Assert.assertEquals(name, editorBot.bot().textWithLabel("Name*:").getText());
 		editorBot.bot().cTabItem("Implementations").activate();
-		
+
 		SWTBotTreeItem[] items = editorBot.bot().tree().getAllItems();
 		Assert.assertEquals(1, editorBot.bot().tree().selectionCount());
 		Assert.assertEquals(1, items.length);
 		Assert.assertTrue(items[0].getText().matches("customImplID.*"));
 		Assert.assertEquals("customImplID", editorBot.bot().textWithLabel("ID*:").getText());
 		Assert.assertEquals(lang, editorBot.bot().textWithLabel("Prog. Lang:").getText());
-		
+
 		Assert.assertEquals("custom description", editorBot.bot().textWithLabel("Description:").getText());
-		
+
 		Assert.assertEquals("customOutput", editorBot.bot().textWithLabel("Output Dir:").getText());
-		
+
 	}
-	
+
 	@Test
-	public void testPythonCreation() {
-		testProjectCreation("ComponentWizardTest01", "Python", "Python Code Generator", "Pull Port Data");
+	public void testStubPythonCreation() {
+		testProjectCreation("ComponentWizardTest01", "Python", "Stub Python Code Generator", "Pull Port Data");
 	}
-	
+
 	@Test
-	public void testCppCreation() {
-		testProjectCreation("ComponentWizardTest01", "C++", "C++ Code Generator", "Pull Port Data");
+	public void testStubCppCreation() {
+		testProjectCreation("ComponentWizardTest01", "C++", "Stub C++ Code Generator", "Pull Port Data");
 	}
-	
+
 	@Test
-	public void testJavaCreation() {
-		testProjectCreation("ComponentWizardTest01", "Java", "Java Code Generator", "Pull Port Data (Base/Derived)");
+	public void testStubJavaCreation() {
+		testProjectCreation("ComponentWizardTest01", "Java", "Stub Java Code Generator", "Pull Port Data (Base/Derived)");
 	}
-	
+
 	@BeforeClass
 	public static void beforeClass() throws Exception {
 		StandardTestActions.beforeClass();
-		
+
 		configurePyDev();
 	}
-	
+
 	@Before
 	@Override
 	public void before() throws Exception {
 		super.before();
-		
-		bot.menu("File").menu("New").menu("SCA Component Project").click();
-		wizardShell = bot.activeShell();
+
+		bot.menu("File").menu("New").menu("Project...").click();
+		wizardShell = bot.shell("New Project");
+		Assert.assertTrue(wizardShell.isActive());
 		wizardBot = wizardShell.bot();
+		wizardBot.tree().getTreeItem("SCA").expand().getNode("SCA Component Project").select();
+		wizardBot.button("Next >").click();
 	}
-	
+
 	@After
 	@Override
 	public void afterTest() throws Exception {
@@ -124,8 +127,7 @@ public class ComponentWizardTest extends UITest{
 		}
 		super.afterTest();
 	}
-	
-	
+
 	@Test
 	public void testBackNext() {
 		wizardBot.textWithLabel("&Project name:").setText("ComponentWizardTest01");
@@ -133,62 +135,62 @@ public class ComponentWizardTest extends UITest{
 		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection("Python");
 		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection("Java");
 		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection("C++");
-		
+
 		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection("Python");
-		wizardBot.comboBoxWithLabel("Code Generator:").setSelection("Python Code Generator");
+		wizardBot.comboBoxWithLabel("Code Generator:").setSelection("Stub Python Code Generator");
 		wizardBot.button("Next >").click();
 		Assert.assertTrue(wizardBot.button("Finish").isEnabled());
 		wizardBot.button("< Back").click();
-		
+
 		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection("Java");
-		wizardBot.comboBoxWithLabel("Code Generator:").setSelection("Java Code Generator");
+		wizardBot.comboBoxWithLabel("Code Generator:").setSelection("Stub Java Code Generator");
 		wizardBot.button("Next >").click();
 		Assert.assertTrue(wizardBot.button("Finish").isEnabled());
 		wizardBot.button("< Back").click();
-		
+
 		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection("C++");
-		wizardBot.comboBoxWithLabel("Code Generator:").setSelection("C++ Code Generator");
+		wizardBot.comboBoxWithLabel("Code Generator:").setSelection("Stub C++ Code Generator");
 		wizardBot.button("Next >").click();
 		Assert.assertTrue(wizardBot.button("Finish").isEnabled());
 		wizardBot.button("< Back").click();
-		
+
 		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection("Python");
-		wizardBot.comboBoxWithLabel("Code Generator:").setSelection("Python Code Generator");
+		wizardBot.comboBoxWithLabel("Code Generator:").setSelection("Stub Python Code Generator");
 		wizardBot.button("Next >").click();
 		Assert.assertTrue(wizardBot.button("Finish").isEnabled());
 	}
-	
+
 	@Test
 	public void testUUID() {
 		wizardBot.textWithLabel("&Project name:").setText("WizardTest02");
 		Assert.assertTrue(wizardBot.button("Next >").isEnabled());
-		
+
 		wizardBot.radio("Provide an ID").click();
 		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
-		
+
 		wizardBot.textWithLabel("DCE UUID:").setText("187ca38e-ef38-487f-8f9b-935dca8595da");
 		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
-		
+
 		wizardBot.textWithLabel("DCE UUID:").setText("DCE");
 		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
-		
+
 		wizardBot.textWithLabel("DCE UUID:").setText("DCE:187ca38e-ef38-487f-8f9b-935dca8595dz");
 		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
-		
+
 		wizardBot.textWithLabel("DCE UUID:").setText("DCE");
 		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
-		
+
 		wizardBot.radio("Generate an ID").click();
 		Assert.assertTrue(wizardBot.button("Next >").isEnabled());
-		
+
 		wizardBot.radio("Provide an ID").click();
 		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
 		wizardBot.textWithLabel("DCE UUID:").setText("DCE:187ca38e-ef38-487f-8f9b-935dca8595da");
 		Assert.assertTrue(wizardBot.button("Next >").isEnabled());
 	}
-	
+
 	@Test
-	public void testJavaPackage() {
+	public void testContributedPropertiesUI() {
 		wizardBot.textWithLabel("&Project name:").setText("WizardTest03");
 		wizardBot.button("Next >").click();
 		wizardBot.comboBox().setSelection("Java");
