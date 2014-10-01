@@ -30,7 +30,6 @@ import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -45,7 +44,6 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 	 * Create the pictogram shape in the waveform diagram that represents the Host Collocation object.
 	 * This includes the ContainerShape for the component a label for the object name.
 	 */
-	@Ignore
 	@Test
 	public void checkHostCollocationPictogramElements() {
 		waveformName = "HC_Pictogram";
@@ -87,7 +85,6 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 	 * Elements contained within a Host Collocation container should should stay in their relative locations when the
 	 * parent container is moved.
 	 */
-	@Ignore
 	@Test
 	public void hostCollocationRelativePosition() {
 		waveformName = "HC_Component_Position";
@@ -130,7 +127,6 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 	 * User should be able to add and remove components to a Host Collocation container by dragging them in and out of
 	 * the pictogram element.
 	 */
-	@Ignore
 	@Test
 	public void hostCollocationDnDComponents() {
 		waveformName = "HC_DragAndDrop";
@@ -175,7 +171,6 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 	 * Ensure deletion of host collocation does not remove contained components and instead leaves
 	 * them in the diagram.
 	 */
-	@Ignore
 	@Test
 	public void hostCollocationContextMenuDelete() {
 		waveformName = "HC_Pictogram";
@@ -234,7 +229,6 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 	 * checking appears to be the same which is what we expect.  There is code in place that maintains the absolute position
 	 * of components within the graph as they are transitioned to the hostCollocation and we don't want them shifting.
 	 */
-	@Ignore
 	@Test
 	public void hostCollocationResize() {
 		waveformName = "HC_Resize";
