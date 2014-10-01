@@ -14,6 +14,7 @@ import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
+import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 
@@ -30,8 +31,10 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
+import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -43,6 +46,12 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 
 	private SWTBotGefEditor editor;
 	private String waveformName;
+	
+	@BeforeClass
+	public static void beforeClass() throws Exception {
+		StandardTestActions.beforeClass();
+		SWTBotPreferences.PLAYBACK_DELAY = 500;
+	}
 
 	/**
 	 * IDE-853

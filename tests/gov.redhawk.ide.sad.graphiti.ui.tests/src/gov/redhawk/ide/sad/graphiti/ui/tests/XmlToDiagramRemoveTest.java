@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
+import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import mil.jpeojtrs.sca.sad.HostCollocation;
@@ -22,8 +23,10 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
+import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,6 +40,12 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 	private SWTBotGefEditor editor;
 	private String waveformName;
 
+	@BeforeClass
+	public static void beforeClass() throws Exception {
+		StandardTestActions.beforeClass();
+		SWTBotPreferences.PLAYBACK_DELAY = 500;
+	}
+	
 	/**
 	 * IDE-851
 	 * Remove a connection from the diagram via the sad.xml
