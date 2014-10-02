@@ -48,6 +48,7 @@ public class LaunchComponentWizard extends Wizard {
 	private LocalComponentPropertyEditWizardPage propertiesPage;
 	private ComponentCommonLaunchConfigurationWizardPage commonPage;
 	private boolean saveRunConfiguration;
+	private boolean showAutoStart = true;
 
 	public LaunchComponentWizard() {
 		setNeedsProgressMonitor(true);
@@ -65,7 +66,7 @@ public class LaunchComponentWizard extends Wizard {
 		}
 		propertiesPage = new LocalComponentPropertyEditWizardPage(this);
 		addPage(propertiesPage);
-		commonPage = new ComponentCommonLaunchConfigurationWizardPage(this);
+		commonPage = new ComponentCommonLaunchConfigurationWizardPage(this, showAutoStart);
 		addPage(commonPage);
 	}
 
@@ -152,7 +153,9 @@ public class LaunchComponentWizard extends Wizard {
 		if (element == this.implementation) {
 			return;
 		}
-		setSoftPkg(element.getSoftPkg());
+		if (element != null) {
+			setSoftPkg(element.getSoftPkg());
+		}
 		Implementation oldValue = this.implementation;
 		this.implementation = element;
 		pcs.firePropertyChange("implementation", oldValue, implementation);
@@ -191,6 +194,10 @@ public class LaunchComponentWizard extends Wizard {
 	
 	public boolean isAutoStart() {
 		return autoStart;
+	}
+	
+	public void hideAutoStartControl() {
+		showAutoStart = false;
 	}
 	
 	public int getTimeout() {

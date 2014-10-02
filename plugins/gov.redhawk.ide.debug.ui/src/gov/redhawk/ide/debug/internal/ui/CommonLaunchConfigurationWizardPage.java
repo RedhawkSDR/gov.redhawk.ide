@@ -25,10 +25,16 @@ public class CommonLaunchConfigurationWizardPage extends WizardPage {
 	private Button startButton;
 	private Spinner timeout;
 	private Button runConfigurationButton;
+	private boolean showAutoStart;
 
-	public CommonLaunchConfigurationWizardPage() {
+	public CommonLaunchConfigurationWizardPage(boolean withAutoStart) {
 		super("commonConfigPage", "Launch Configuration Options", null);
 		setDescription("Common post launch options.");
+		showAutoStart = withAutoStart;
+	}
+
+	public CommonLaunchConfigurationWizardPage() {
+		this(true);
 	}
 
 	@Override
@@ -40,11 +46,12 @@ public class CommonLaunchConfigurationWizardPage extends WizardPage {
 		postLaunch.setText("Post Launch");
 		postLaunch.setLayout(new GridLayout(2, false));
 		postLaunch.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
-		startButton = new Button(postLaunch, SWT.CHECK);
-		startButton.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
-		startButton.setText("Auto-start");
-		startButton.setToolTipText("Start the component automatically immediately after launching.");
-
+		if (showAutoStart) {
+			startButton = new Button(postLaunch, SWT.CHECK);
+			startButton.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
+			startButton.setText("Auto-start");
+			startButton.setToolTipText("Start the component automatically immediately after launching.");
+		}
 		final Label timeoutLabel = new Label(postLaunch, SWT.None);
 		timeoutLabel.setText("Timeout:");
 		timeout = new Spinner(postLaunch, SWT.BORDER);

@@ -16,6 +16,7 @@ import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.WaveformsContainer;
+import gov.redhawk.ide.sdr.impl.ServicesContainerImpl;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -43,6 +44,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -94,6 +97,14 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 			IStructuredSelection ss = (IStructuredSelection) sel;
 			Object element = ss.getFirstElement();
 			LaunchComponentWizard wizard = new LaunchComponentWizard();
+			if (ss instanceof TreeSelection) {
+				TreeSelection ts = (TreeSelection) ss;
+				TreePath[] tps = ts.getPathsFor(element);
+				if (tps != null && tps.length > 0 && tps[0].getSegmentCount() > 1 && 
+						tps[0].getSegment(1) instanceof ServicesContainerImpl) {
+					wizard.hideAutoStartControl();
+				}
+			}
 			if (element instanceof SoftPkgRegistry) {
 				wizard.setWindowTitle("Launch");
 				wizard.setSpdContainer((SoftPkgRegistry) element);
@@ -111,6 +122,7 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 				} else if ("service".equalsIgnoreCase(type)) {
 					wizard.setWindowTitle("Launch Service");
 					wizard.setSpdContainer(root.getServicesContainer());
+					wizard.hideAutoStartControl();
 				} else {
 					wizard.setWindowTitle("Launch Component");
 					wizard.setSpdContainer(root.getComponentsContainer());

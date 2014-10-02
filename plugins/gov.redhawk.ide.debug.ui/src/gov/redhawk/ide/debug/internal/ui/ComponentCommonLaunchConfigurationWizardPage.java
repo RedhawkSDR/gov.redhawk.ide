@@ -30,6 +30,11 @@ public class ComponentCommonLaunchConfigurationWizardPage extends CommonLaunchCo
 	private LaunchComponentWizard wizard;
 	private Combo levelCombo;
 
+	public ComponentCommonLaunchConfigurationWizardPage(LaunchComponentWizard wizard, boolean withAutoStart) {
+		super(withAutoStart);
+		this.wizard = wizard;
+	}
+
 	public ComponentCommonLaunchConfigurationWizardPage(LaunchComponentWizard wizard) {
 		this.wizard = wizard;
 	}
@@ -51,7 +56,9 @@ public class ComponentCommonLaunchConfigurationWizardPage extends CommonLaunchCo
 	
 	@Override
 	protected void bindControls() {
-		dbc.bindValue(SWTObservables.observeSelection(getStartButton()), BeansObservables.observeValue(wizard, "autoStart"));
+		if (getStartButton() != null) {
+			dbc.bindValue(SWTObservables.observeSelection(getStartButton()), BeansObservables.observeValue(wizard, "autoStart"));
+		}
 		dbc.bindValue(SWTObservables.observeSelection(getTimeout()), BeansObservables.observeValue(wizard, "timeout"));
 		dbc.bindValue(SWTObservables.observeSelection(levelCombo), BeansObservables.observeValue(wizard, "debugLevel"));
 		dbc.bindValue(SWTObservables.observeSelection(getRunConfigurationButton()), BeansObservables.observeValue(wizard, "saveRunConfiguration"));
