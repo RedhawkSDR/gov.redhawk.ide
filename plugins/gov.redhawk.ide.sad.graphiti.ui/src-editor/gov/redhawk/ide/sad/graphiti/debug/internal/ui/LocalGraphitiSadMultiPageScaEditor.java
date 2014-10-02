@@ -12,35 +12,40 @@ package gov.redhawk.ide.sad.graphiti.debug.internal.ui;
 
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.internal.ui.diagram.NewWaveformFromLocalWizard;
 import gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiSadMultiPageEditor;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
-import gov.redhawk.model.sca.ScaWaveform;
+import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 import gov.redhawk.sca.util.Debug;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 
+import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.util.CorbaUtils;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.ui.URIEditorInput;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -48,7 +53,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 /**
  * 
  */
-public class LocalMultiPageScaEditor extends GraphitiSadMultiPageEditor {
+public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEditor {
 	public static final String EDITOR_ID = "gov.redhawk.ide.debug.ui.diagram.editor.localMultiPageSca";
 	private static final Debug DEBUG = new Debug(SADUIGraphitiPlugin.PLUGIN_ID, "editor");
 	private ScaGraphitiModelAdapter scaListener;
@@ -56,62 +61,169 @@ public class LocalMultiPageScaEditor extends GraphitiSadMultiPageEditor {
 	private SadGraphitiModelAdapter sadlistener;
 	private LocalScaWaveform waveform;
 	private boolean isLocalSca;
+	private Resource mainResource;
+	private SoftwareAssembly sad;
 
 	@Override
 	protected void createModel() {
-		super.createModel();
+		if (isLocalSca) {
+			mainResource = getEditingDomain().getResourceSet().createResource(ScaDebugInstance.getLocalSandboxWaveformURI());
+			sad = SadFactory.eINSTANCE.createSoftwareAssembly();
+			getEditingDomain().getCommandStack().execute(new ScaModelCommand() {
 
-		if (waveform == null && isLocalSca) {
-			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
-			localSca.eAdapters().add(new AdapterImpl() {
 				@Override
-				public void notifyChanged(Notification msg) {
-					switch (msg.getFeatureID(LocalSca.class)) {
-					case ScaDebugPackage.LOCAL_SCA__SANDBOX_WAVEFORM:
-						if (msg.getNewValue() instanceof ScaWaveform) {
-							waveform = ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform();
-							initModelMap();
-							localSca.eAdapters().remove(this);
-						}
-						break;
-					default:
-						break;
-					}
-
+				public void execute() {
+					mainResource.getContents().add(sad);
 				}
-
 			});
 		} else {
-			initModelMap();
+			super.createModel();
+			sad = SoftwareAssembly.Util.getSoftwareAssembly(super.getMainResource());
 		}
 
+		initModelMap();
 	}
 
+	@SuppressWarnings("restriction")
 	@Override
 	protected void setInput(IEditorInput input) {
 		if (input instanceof ScaFileStoreEditorInput) {
 			ScaFileStoreEditorInput scaInput = (ScaFileStoreEditorInput) input;
 			if (scaInput.getScaObject() instanceof LocalScaWaveform) {
 				this.waveform = (LocalScaWaveform) scaInput.getScaObject();
+			} else {
+				throw new IllegalStateException("Sandbox Editor opened on invalid sca input " + scaInput.getScaObject());
 			}
 		} else if (input instanceof URIEditorInput) {
 			URIEditorInput uriInput = (URIEditorInput) input;
-			if (uriInput.getURI().equals(URI.createPlatformPluginURI("gov.redhawk.ide.debug.ui/data/LocalSca.sad.xml", false))) {
-				isLocalSca = true;
+			if (uriInput.getURI().equals(ScaDebugInstance.getLocalSandboxWaveformURI())) {
 				final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
-				this.waveform = localSca.getSandboxWaveform();
-			}
+				if (!ScaDebugInstance.INSTANCE.isInit()) {
+					ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
+					try {
+						dialog.run(true, true, new IRunnableWithProgress() {
 
+							@Override
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								monitor.beginTask("Starting Chalkboard...", IProgressMonitor.UNKNOWN);
+								try {
+									ScaDebugInstance.INSTANCE.init(monitor);
+								} catch (CoreException e) {
+									throw new InvocationTargetException(e);
+								}
+								monitor.done();
+							}
+
+						});
+					} catch (InvocationTargetException e1) {
+						StatusManager.getManager().handle(new Status(Status.ERROR, ScaDebugPlugin.ID, "Failed to initialize sandbox.", e1),
+							StatusManager.SHOW | StatusManager.LOG);
+					} catch (InterruptedException e1) {
+						// PASS
+					}
+				}
+
+				this.waveform = localSca.getSandboxWaveform();
+				if (waveform == null) {
+					ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
+					try {
+						dialog.run(true, true, new IRunnableWithProgress() {
+							
+							@Override
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								monitor.beginTask("Starting Sandbox...", IProgressMonitor.UNKNOWN);
+								try {
+									ScaDebugPlugin.getInstance().getLocalSca(monitor);
+								} catch (CoreException e) {
+									throw new InvocationTargetException(e);
+								}
+								
+							}
+						});
+					} catch (InvocationTargetException e) {
+						throw new IllegalStateException("Failed to setup sandbox", e);
+					} catch (InterruptedException e) {
+						throw new IllegalStateException("Sandbox setup canceled, can not load editor.");
+					}
+					this.waveform = localSca.getSandboxWaveform();
+					if (waveform == null) {
+						throw new IllegalStateException("Failed to setup sandbox, null waveform.", null);
+					}
+				}
+			}
+		} else {
+			throw new IllegalStateException("Sandbox Editor opened on invalid input " + input);
 		}
+
+		if (ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform() == waveform || this.waveform == null) {
+			isLocalSca = true;
+		}
+
 		super.setInput(input);
+	}
+	
+	@Override
+	public Resource getMainResource() {
+		if (mainResource == null) {
+			return super.getMainResource();
+		}
+		return mainResource;
 	}
 
 	private void initModelMap() {
-		final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(getMainResource());
-		if (waveform == null || sad == null) {
-			throw new IllegalStateException("Can not initialize the Model Map with null local waveform or SAD");
+		if (waveform == null) {
+			throw new IllegalStateException("Can not initialize the Model Map with null local waveform");
 		}
+		if (sad == null) {
+			throw new IllegalStateException("Can not initialize the Model Map with null sad");
+		}
+
+		if (!waveform.isSetComponents()) {
+			if (Display.getCurrent() != null) {
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
+				try {
+					dialog.run(true, true, new IRunnableWithProgress() {
+
+						@Override
+						public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {
+								CorbaUtils.invoke(new Callable<Object>() {
+
+									@Override
+									public Object call() throws Exception {
+										waveform.refresh(monitor, RefreshDepth.FULL);
+										return null;
+									}
+
+								}, monitor);
+							} catch (CoreException e) {
+								throw new InvocationTargetException(e);
+							}
+						}
+					});
+				} catch (InvocationTargetException e) {
+					// PASS
+				} catch (InterruptedException e) {
+					// PASS
+				}
+			} else {
+				try {
+					waveform.refresh(null, RefreshDepth.FULL);
+				} catch (InterruptedException e) {
+					// PASS
+				}
+			}
+		}
+
 		final GraphitiModelMap modelMap = new GraphitiModelMap(this, sad, waveform);
+
+		if (isLocalSca) {
+			// Use the SCA Model are source to build the SAD when we are in the chalkboard since the SAD file isn't
+			// modified
+			getEditingDomain().getCommandStack().execute(new SadGraphitiModelInitializerCommand(modelMap, sad, waveform));
+		}
+		getEditingDomain().getCommandStack().flush();
+
 		this.sadlistener = new SadGraphitiModelAdapter(modelMap);
 		this.scaListener = new ScaGraphitiModelAdapter(modelMap) {
 			@Override
@@ -124,7 +236,7 @@ public class LocalMultiPageScaEditor extends GraphitiSadMultiPageEditor {
 							@Override
 							public void run() {
 								if (!isDisposed()) {
-									getEditorSite().getPage().closeEditor(LocalMultiPageScaEditor.this, false);
+									getEditorSite().getPage().closeEditor(LocalGraphitiSadMultiPageScaEditor.this, false);
 								}
 							}
 
@@ -134,31 +246,30 @@ public class LocalMultiPageScaEditor extends GraphitiSadMultiPageEditor {
 			}
 		};
 
-		getEditingDomain().getCommandStack().execute(new SadGraphitiModelInitializerCommand(modelMap, sad, waveform));
-		getEditingDomain().getCommandStack().flush();
-
+		
 		ScaModelCommand.execute(this.waveform, new ScaModelCommand() {
 
 			@Override
 			public void execute() {
-				waveform.eAdapters().add(LocalMultiPageScaEditor.this.scaListener);
+				waveform.eAdapters().add(LocalGraphitiSadMultiPageScaEditor.this.scaListener);
 			}
 		});
 		sad.eAdapters().add(this.sadlistener);
 
-		if (LocalMultiPageScaEditor.DEBUG.enabled) {
+		if (LocalGraphitiSadMultiPageScaEditor.DEBUG.enabled) {
 			try {
 				sad.eResource().save(null);
 			} catch (final IOException e) {
-				LocalMultiPageScaEditor.DEBUG.catching("Failed to save local diagram.", e);
+				LocalGraphitiSadMultiPageScaEditor.DEBUG.catching("Failed to save local diagram.", e);
 			}
 		}
+		
 	}
+
 
 	@Override
 	public void dispose() {
 		if (this.sadlistener != null) {
-			final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(getMainResource());
 			if (sad != null) {
 				sad.eAdapters().remove(this.sadlistener);
 			}
@@ -170,7 +281,7 @@ public class LocalMultiPageScaEditor extends GraphitiSadMultiPageEditor {
 
 				@Override
 				public void execute() {
-					localSca.eAdapters().remove(LocalMultiPageScaEditor.this.scaListener);
+					localSca.eAdapters().remove(LocalGraphitiSadMultiPageScaEditor.this.scaListener);
 				}
 			});
 			this.scaListener = null;

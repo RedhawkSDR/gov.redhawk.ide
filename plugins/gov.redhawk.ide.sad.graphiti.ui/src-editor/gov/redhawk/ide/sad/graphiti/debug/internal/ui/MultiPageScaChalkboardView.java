@@ -36,7 +36,7 @@ import org.eclipse.ui.part.ViewPart;
 
 public class MultiPageScaChalkboardView extends ViewPart {
 
-	private LocalMultiPageScaEditor diagram;
+	private LocalGraphitiSadMultiPageScaEditor diagram;
 	private ViewEditorSite editorSite;
 	private IEditorInput editorInput;
 
@@ -58,7 +58,7 @@ public class MultiPageScaChalkboardView extends ViewPart {
 		editorSite = new ViewEditorSite(this.getSite());
 		//editorInput = new URIEditorInput(ScaDebugPlugin.getInstance().getLocalSca().eResource().getURI());
 		editorInput = LocalScaElementFactory.getLocalScaInput();
-		diagram = new LocalMultiPageScaEditor();
+		diagram = new LocalGraphitiSadMultiPageScaEditor();
 		try {
 			diagram.init(editorSite, editorInput);
 			diagram.createPartControl(parent);

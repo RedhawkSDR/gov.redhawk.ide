@@ -68,7 +68,7 @@ public class GraphitiModelMap {
 	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
 		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
 		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
-	private final LocalMultiPageScaEditor editor;
+	private final LocalGraphitiSadMultiPageScaEditor editor;
 	private final SoftwareAssembly sad;
 
 	private final Map<String, NodeMapEntry> nodes = Collections.synchronizedMap(new HashMap<String, NodeMapEntry>());
@@ -76,7 +76,7 @@ public class GraphitiModelMap {
 
 	private final LocalScaWaveform waveform;
 
-	public GraphitiModelMap(@NonNull final LocalMultiPageScaEditor editor, @NonNull final SoftwareAssembly sad, @NonNull final LocalScaWaveform waveform) {
+	public GraphitiModelMap(@NonNull final LocalGraphitiSadMultiPageScaEditor editor, @NonNull final SoftwareAssembly sad, @NonNull final LocalScaWaveform waveform) {
 		Assert.isNotNull(waveform, "Sandbox Waveform must not be null");
 		Assert.isNotNull(editor, "Sandbox Editor must not be null");
 		Assert.isNotNull(sad, "Software Assembly must not be null");

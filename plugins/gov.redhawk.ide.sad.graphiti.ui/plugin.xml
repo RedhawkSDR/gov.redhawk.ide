@@ -169,7 +169,7 @@
     <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="gov.redhawk.ide.sad.graphiti.debug.internal.ui.LocalMultiPageScaEditor"
+            class="gov.redhawk.ide.sad.graphiti.debug.internal.ui.LocalGraphitiSadMultiPageScaEditor"
             default="false"
             icon="icons/redhawk16.gif"
             id="gov.redhawk.ide.debug.ui.diagram.editor.localMultiPageSca"
