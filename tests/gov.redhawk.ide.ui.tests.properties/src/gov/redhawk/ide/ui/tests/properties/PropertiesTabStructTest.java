@@ -122,7 +122,9 @@ public class PropertiesTabStructTest extends PropertiesTabSimpleTest {
 	
 	@Test
 	public void testMode() {
+		bot.sleep(500);
 		selectStruct();
+		bot.sleep(500);
 		super.testMode();
 	}
 
