@@ -11,13 +11,17 @@
 package gov.redhawk.ide.ui.tests.projectCreation;
 
 import gov.redhawk.ide.swtbot.WaitForEditorCondition;
+import gov.redhawk.model.sca.util.ModelUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.junit.Assert;
@@ -79,6 +83,38 @@ public class WaveformWizardTest extends AbstractCreationWizardTest {
 
 		Assert.assertEquals("WaveformProj01", editorBot.bot().textWithLabel("Name:").getText());
 		Assert.assertNotEquals("DCE:64a7d543-7055-494d-936f-30225b3b283e", editorBot.bot().textWithLabel("ID:").getText());
+	}
+
+	@Test
+	public void testSelectAssemblyController() throws IOException {
+		bot.textWithLabel("&Project name:").setText("WaveformProj01");
+		bot.button("Next >").click();
+
+		bot.activeShell().bot().table().select("SigGen (/components/SigGen/)");
+		bot.button("Finish").click();
+
+		// Ensure SAD file was created
+		SWTBotView view = bot.viewById("org.eclipse.ui.navigator.ProjectExplorer");
+		view.show();
+		view.bot().tree().setFocus();
+		view.bot().tree().getTreeItem("WaveformProj01").select();
+		view.bot().tree().getTreeItem("WaveformProj01").expand();
+		view.bot().tree().getTreeItem("WaveformProj01").getNode("WaveformProj01.sad.xml");
+
+		bot.waitUntil(new WaitForEditorCondition(), 30000, 500);
+
+		SWTBotEditor editorBot = bot.activeEditor();
+		editorBot.bot().cTabItem("Overview").activate();
+
+		Assert.assertEquals("WaveformProj01", editorBot.bot().textWithLabel("Name:").getText());
+
+		URI uri = URI.createPlatformResourceURI("/WaveformProj01/WaveformProj01.sad.xml", true);
+		SoftwareAssembly sad = ModelUtil.loadSoftwareAssembly(uri);
+		Assert.assertEquals(1, sad.getPartitioning().getComponentPlacement().size());
+		Assert.assertEquals(1, sad.getPartitioning().getComponentPlacement().get(0).getComponentInstantiation().size());
+		Assert.assertEquals("SigGen_1", sad.getPartitioning().getComponentPlacement().get(0).getComponentInstantiation().get(0).getUsageName());
+		Assert.assertEquals(sad.getPartitioning().getComponentPlacement().get(0).getComponentInstantiation().get(0),
+			sad.getAssemblyController().getComponentInstantiationRef().getInstantiation());
 	}
 
 }
