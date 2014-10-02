@@ -10,14 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.tests.properties;
 
+import gov.redhawk.ide.swtbot.StandardTestActions;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(SWTBotJunit4ClassRunner.class)
 public class PropertiesTabStructSequenceTest extends PropertiesTabSimpleTest {
 	
 	@Override
@@ -150,7 +149,7 @@ public class PropertiesTabStructSequenceTest extends PropertiesTabSimpleTest {
 		SWTBotTreeItem subItem1 = item1.getNode("Simple");
 		subItem1.select();
 		
-		writeToCell(subItem1, 2, "hello");
+		StandardTestActions.writeToCell(bot, subItem1, 2, "hello");
 		assertFormValid();
 		
 		item1.select();
@@ -169,7 +168,7 @@ public class PropertiesTabStructSequenceTest extends PropertiesTabSimpleTest {
 		
 		subItem.click(1);
 		bot.sleep(500);
-		writeToCell(subItem, 2, "1.1");
+		StandardTestActions.writeToCell(bot, subItem, 2, "1.1");
 		assertFormValid();
 		
 		

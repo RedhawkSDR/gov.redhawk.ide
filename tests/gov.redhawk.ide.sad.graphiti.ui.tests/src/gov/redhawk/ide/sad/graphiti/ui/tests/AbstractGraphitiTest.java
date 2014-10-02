@@ -10,42 +10,23 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
-import gov.redhawk.ide.swtbot.StandardTestActions;
+import gov.redhawk.ide.swtbot.UITest;
 
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
 
 /**
  * 
  */
-@RunWith(SWTBotJunit4ClassRunner.class) 
-public abstract class AbstractGraphitiTest {
+public abstract class AbstractGraphitiTest extends UITest {
 
 	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE INLINE
 
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		StandardTestActions.beforeClass();
-	}
 
 	@Before
 	public void beforeTest() throws Exception {
 		gefBot = new SWTGefBot();
-		StandardTestActions.beforeTest(gefBot);
+		super.before();
 	}
 
-	@After
-	public void afterTest() throws Exception {
-		StandardTestActions.afterTest(gefBot);
-	}
-
-	@AfterClass
-	public static void afterClass() throws Exception {
-		StandardTestActions.afterClass();
-	}
 }

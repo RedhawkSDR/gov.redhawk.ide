@@ -20,19 +20,15 @@ import java.util.Arrays;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.runner.RunWith;
 
 @SuppressWarnings("restriction")
-@RunWith(SWTBotJunit4ClassRunner.class)
 public abstract class AbstractBasicTest extends UITest {
 	
 	protected SWTBotEditor editor;
@@ -41,10 +37,7 @@ public abstract class AbstractBasicTest extends UITest {
 	@Before
 	public void before() throws Exception {
 		super.before();
-		bot = new SWTWorkbenchBot();
-		StandardTestActions.beforeTest(bot);
 		
-		StandardTestActions.clearWorkspace();
 		StandardTestActions.importProject(PropertiesUITestsActivator.getInstance().getBundle(), new Path("workspace/PropTest_Comp"), null);
 		bot.tree().getTreeItem("PropTest_Comp").select();
 		bot.tree().getTreeItem("PropTest_Comp").expand();
@@ -62,7 +55,7 @@ public abstract class AbstractBasicTest extends UITest {
 	public void after() throws Exception {
 		editor = null;
 		bot.sleep(500);
-		super.afterTest();
+		super.after();
 	}
 
 	protected void assertFormValid() {

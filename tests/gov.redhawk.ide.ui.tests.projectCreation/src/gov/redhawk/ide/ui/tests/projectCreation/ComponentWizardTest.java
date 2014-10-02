@@ -8,33 +8,25 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.ui.tests.projectcreation;
+package gov.redhawk.ide.ui.tests.projectCreation;
 
 import gov.redhawk.ide.spd.internal.ui.editor.ComponentEditor;
-import gov.redhawk.ide.swtbot.StandardTestActions;
-import gov.redhawk.ide.swtbot.UITest;
 import gov.redhawk.ide.swtbot.WaitForEditorCondition;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
-import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /**
  * 
  */
-@RunWith(SWTBotJunit4ClassRunner.class)
-public class ComponentWizardTest extends UITest {
-	private SWTBotShell wizardShell;
-	private SWTBot wizardBot;
+public class ComponentWizardTest extends AbstractCreationWizardTest {
+
+	public ComponentWizardTest() {
+		super("SCA Component Project");
+	}
 
 	private void testProjectCreation(String name, String lang, String generator, String template) {
 		wizardBot.textWithLabel("&Project name:").setText(name);
@@ -86,46 +78,19 @@ public class ComponentWizardTest extends UITest {
 	@Test
 	public void testStubPythonCreation() {
 		testProjectCreation("ComponentWizardTest01", "Python", "Stub Python Code Generator", "Pull Port Data");
+		wizardShell.close();
 	}
 
 	@Test
 	public void testStubCppCreation() {
 		testProjectCreation("ComponentWizardTest01", "C++", "Stub C++ Code Generator", "Pull Port Data");
+		wizardShell.close();
 	}
 
 	@Test
 	public void testStubJavaCreation() {
 		testProjectCreation("ComponentWizardTest01", "Java", "Stub Java Code Generator", "Pull Port Data (Base/Derived)");
-	}
-
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		StandardTestActions.beforeClass();
-
-		configurePyDev();
-	}
-
-	@Before
-	@Override
-	public void before() throws Exception {
-		super.before();
-
-		bot.menu("File").menu("New").menu("Project...").click();
-		wizardShell = bot.shell("New Project");
-		Assert.assertTrue(wizardShell.isActive());
-		wizardBot = wizardShell.bot();
-		wizardBot.tree().getTreeItem("SCA").expand().getNode("SCA Component Project").select();
-		wizardBot.button("Next >").click();
-	}
-
-	@After
-	@Override
-	public void afterTest() throws Exception {
-		if (wizardShell != null) {
-			wizardShell.close();
-			wizardShell = null;
-		}
-		super.afterTest();
+		wizardShell.close();
 	}
 
 	@Test
@@ -158,35 +123,8 @@ public class ComponentWizardTest extends UITest {
 		wizardBot.comboBoxWithLabel("Code Generator:").setSelection("Stub Python Code Generator");
 		wizardBot.button("Next >").click();
 		Assert.assertTrue(wizardBot.button("Finish").isEnabled());
-	}
-
-	@Test
-	public void testUUID() {
-		wizardBot.textWithLabel("&Project name:").setText("WizardTest02");
-		Assert.assertTrue(wizardBot.button("Next >").isEnabled());
-
-		wizardBot.radio("Provide an ID").click();
-		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
-
-		wizardBot.textWithLabel("DCE UUID:").setText("187ca38e-ef38-487f-8f9b-935dca8595da");
-		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
-
-		wizardBot.textWithLabel("DCE UUID:").setText("DCE");
-		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
-
-		wizardBot.textWithLabel("DCE UUID:").setText("DCE:187ca38e-ef38-487f-8f9b-935dca8595dz");
-		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
-
-		wizardBot.textWithLabel("DCE UUID:").setText("DCE");
-		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
-
-		wizardBot.radio("Generate an ID").click();
-		Assert.assertTrue(wizardBot.button("Next >").isEnabled());
-
-		wizardBot.radio("Provide an ID").click();
-		Assert.assertFalse(wizardBot.button("Next >").isEnabled());
-		wizardBot.textWithLabel("DCE UUID:").setText("DCE:187ca38e-ef38-487f-8f9b-935dca8595da");
-		Assert.assertTrue(wizardBot.button("Next >").isEnabled());
+		
+		wizardShell.close();
 	}
 
 	@Test
@@ -197,6 +135,8 @@ public class ComponentWizardTest extends UITest {
 		wizardBot.button("Next >").click();
 		Assert.assertFalse(wizardBot.textWithLabel("Package:").getText().isEmpty());
 		wizardBot.textWithLabel("Package:").setText("customPackageName");
+		
+		wizardShell.close();
 	}
 
 }

@@ -20,12 +20,9 @@ import mil.jpeojtrs.sca.partitioning.FindByStub;
 
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(SWTBotJunit4ClassRunner.class)
 public class FindByTest extends AbstractGraphitiTest {
 	private SWTBotGefEditor editor;
 	private String waveformName;

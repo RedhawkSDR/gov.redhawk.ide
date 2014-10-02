@@ -10,15 +10,14 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.tests.properties;
 
+import gov.redhawk.ide.swtbot.StandardTestActions;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(SWTBotJunit4ClassRunner.class)
 public class PropertiesTabSequenceTest extends AbstractBasicPropertyTest {
 
 	@Test
@@ -29,9 +28,9 @@ public class PropertiesTabSequenceTest extends AbstractBasicPropertyTest {
 		bot.textWithLabel("Value:").setText("true");
 		bot.button("OK").click();
 		assertFormValid();
-		writeToCell(valuesViewer, 0, 0, "a");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "a");
 		assertFormValid();
-		writeToCell(valuesViewer, 0, 0, "true");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "true");
 		assertFormValid();
 		bot.button("Add...").click();
 		bot.textWithLabel("Value:").setText("true");
@@ -43,9 +42,9 @@ public class PropertiesTabSequenceTest extends AbstractBasicPropertyTest {
 		bot.button("Add...").click();
 		bot.textWithLabel("Value:").setText("1");
 		bot.button("OK").click();
-		writeToCell(valuesViewer, 0, 0, "abc");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "abc");
 		assertFormInvalid();
-		writeToCell(valuesViewer, 0, 0, "1");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "1");
 		assertFormValid();
 		bot.button("Add...").click();
 		bot.textWithLabel("Value:").setText("1");
@@ -61,9 +60,9 @@ public class PropertiesTabSequenceTest extends AbstractBasicPropertyTest {
 		Assert.assertFalse("OK should not be enabled", bot.button("OK").isEnabled());
 		bot.textWithLabel("Value:").setText("-1.1");
 		bot.button("OK").click();
-		writeToCell(valuesViewer, 0, 0, "al");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "al");
 		assertFormInvalid();
-		writeToCell(valuesViewer, 0, 0, "-1.1");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "-1.1");
 		assertFormValid();
 		bot.button("Add...").click();
 		bot.textWithLabel("Value:").setText("-1.1");
@@ -84,13 +83,13 @@ public class PropertiesTabSequenceTest extends AbstractBasicPropertyTest {
 		bot.textWithLabel("Value:").setText("-1.1+j10.1");
 		bot.button("OK").click();
 		assertFormValid();
-		writeToCell(valuesViewer, 0, 0, "-1.1");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "-1.1");
 		assertFormValid();
-		writeToCell(valuesViewer, 0, 0, "-1.1+jjak");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "-1.1+jjak");
 		assertFormInvalid();
-		writeToCell(valuesViewer, 0, 0, "-1.1");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "-1.1");
 		assertFormValid();
-		writeToCell(valuesViewer, 0, 0, "-1.1+j10.1");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "-1.1+j10.1");
 		assertFormValid();
 		bot.button("Add...").click();
 		bot.textWithLabel("Value:").setText("-1.1");
@@ -106,9 +105,9 @@ public class PropertiesTabSequenceTest extends AbstractBasicPropertyTest {
 		bot.textWithLabel("Value:").setText("-11");
 		bot.button("OK").click();
 		assertFormValid();
-		writeToCell(valuesViewer, 0, 0, "1.1");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "1.1");
 		assertFormInvalid();
-		writeToCell(valuesViewer, 0, 0, "-11");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "-11");
 		assertFormValid();
 		bot.button("Add...").click();
 		bot.textWithLabel("Value:").setText("-11");
@@ -122,9 +121,9 @@ public class PropertiesTabSequenceTest extends AbstractBasicPropertyTest {
 		bot.textWithLabel("Value:").setText("-11");
 		bot.button("OK").click();
 		assertFormValid();
-		writeToCell(valuesViewer, 0, 0, "1.1");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "1.1");
 		assertFormInvalid();
-		writeToCell(valuesViewer, 0, 0, "-11");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "-11");
 		assertFormValid();
 		bot.button("Add...").click();
 		bot.textWithLabel("Value:").setText("-11");
@@ -139,11 +138,11 @@ public class PropertiesTabSequenceTest extends AbstractBasicPropertyTest {
 		Assert.assertTrue("OK should be enabled", bot.button("OK").isEnabled());
 		bot.textWithLabel("Value:").setText("-11-j2");
 		bot.button("OK").click();
-		writeToCell(valuesViewer, 0, 0, "1");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "1");
 		assertFormValid();
-		writeToCell(valuesViewer, 0, 0, "1+100iada");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "1+100iada");
 		assertFormInvalid();
-		writeToCell(valuesViewer, 0, 0, "-11-j2");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "-11-j2");
 		assertFormValid();
 		bot.button("Add...").click();
 		bot.textWithLabel("Value:").setText("-11-j2");
@@ -157,9 +156,9 @@ public class PropertiesTabSequenceTest extends AbstractBasicPropertyTest {
 		bot.textWithLabel("Value:").setText("11");
 		bot.button("OK").click();
 		assertFormValid();
-		writeToCell(valuesViewer, 0, 0, "-1");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "-1");
 		assertFormInvalid();
-		writeToCell(valuesViewer, 0, 0, "11");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "11");
 		assertFormValid();
 		bot.button("Add...").click();
 		bot.textWithLabel("Value:").setText("11");
@@ -173,9 +172,9 @@ public class PropertiesTabSequenceTest extends AbstractBasicPropertyTest {
 		bot.textWithLabel("Value:").setText("11");
 		bot.button("OK").click();
 		assertFormValid();
-		writeToCell(valuesViewer, 0, 0, "-1");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "-1");
 		assertFormInvalid();
-		writeToCell(valuesViewer, 0, 0, "11");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "11");
 		assertFormValid();
 		bot.button("Add...").click();
 		bot.textWithLabel("Value:").setText("11");
@@ -193,13 +192,13 @@ public class PropertiesTabSequenceTest extends AbstractBasicPropertyTest {
 		bot.textWithLabel("Value:").setText("11+j2");
 		bot.button("OK").click();
 		assertFormValid();
-		writeToCell(valuesViewer, 0, 0, "1");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "1");
 		assertFormValid();
-		writeToCell(valuesViewer, 0, 0, "1+j1ada");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "1+j1ada");
 		assertFormInvalid();
-		writeToCell(valuesViewer, 0, 0, "11");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "11");
 		assertFormValid();
-		writeToCell(valuesViewer, 0, 0, "11+j2");
+		StandardTestActions.writeToCell(bot, valuesViewer, 0, 0, "11+j2");
 		assertFormValid();
 		bot.button("Add...").click();
 		bot.textWithLabel("Value:").setText("11");

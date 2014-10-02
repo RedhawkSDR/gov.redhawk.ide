@@ -11,15 +11,12 @@
 package gov.redhawk.ide.ui.tests.properties;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTableItem;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(SWTBotJunit4ClassRunner.class)
 public abstract class AbstractBasicPropertyTest extends AbstractBasicTest {
 	
 

@@ -278,7 +278,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		// update assembly controller styling and text
 		Ellipse startOrderEllipse = (Ellipse) getStartOrderEllipseShape().getGraphicsAlgorithm();
 		boolean isStyleCorrect = startOrderEllipse.getStyle() == StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram);
-		boolean isTextCorrect = ci.getStartOrder() != null ? (ci.getStartOrder().compareTo(BigInteger.ZERO) == 0) : false; 
+		boolean isTextCorrect = ci.getStartOrder() != null ? (ci.getStartOrder().compareTo(BigInteger.ZERO) == 0) : false;
 		if ((!isStyleCorrect || !isTextCorrect) && assemblyController != null) {
 			// if assembly controller, then use special style
 			if (performUpdate) {
@@ -307,7 +307,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 				return new Reason(true, "Component start order requires update");
 			}
 		}
-		
+
 		// we must make sure externalPorts is linked with this object if its set, otherwise we need to remove it
 		if (performUpdate) {
 			if (externalPorts != null && !this.getLink().getBusinessObjects().contains(externalPorts)) {

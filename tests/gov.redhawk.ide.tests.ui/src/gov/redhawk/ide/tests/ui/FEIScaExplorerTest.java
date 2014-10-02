@@ -14,19 +14,16 @@ package gov.redhawk.ide.tests.ui;
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.ide.swtbot.StandardTestActions;
+import gov.redhawk.ide.swtbot.UITest;
 import gov.redhawk.ide.tests.ui.stubs.AnalogDevice;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.sca.ui.views.ScaExplorer;
 import gov.redhawk.sca.util.OrbSession;
 
-import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
@@ -36,25 +33,28 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import CF.ExecutableDevice;
 import CF.ExecutableDeviceHelper;
 import CF.ExecutableDevicePOATie;
 import CF.InvalidObjectReference;
 
-@RunWith(SWTBotJunit4ClassRunner.class)
-public class FEIScaExplorerTest extends StandardTestActions {
+public class FEIScaExplorerTest extends UITest {
 
 	@BeforeClass
-	public static void classSetup() throws Exception {
-		beforeClass();
-
+	public static void createSession() throws Exception {
 		session = OrbSession.createSession();
 		session.getPOA();
 	}
-
-	private SWTWorkbenchBot bot;
+	
+	@AfterClass
+	public static void disposeSession() throws Exception {
+		if (session != null) {
+			session.dispose();
+			session = null;
+		}
+	}
+	
 	private ExecutableDevice ref;
 	private SWTBotView explorerView;
 	private SWTBot viewBot;
@@ -64,15 +64,7 @@ public class FEIScaExplorerTest extends StandardTestActions {
 	private static OrbSession session;
 
 	@Before
-	public void before() throws Exception {
-		super.before();
-		bot = new SWTWorkbenchBot();
-		SWTBotPerspective perspective = bot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
-		perspective.activate();
-		bot.resetActivePerspective();
-
-		bot = new SWTWorkbenchBot();
-
+	public void registerDevice() throws Exception {
 		explorerView = bot.viewById(ScaExplorer.VIEW_ID);
 		explorerView.show();
 		viewBot = explorerView.bot();
@@ -92,17 +84,8 @@ public class FEIScaExplorerTest extends StandardTestActions {
 		viewBot.sleep(500);
 	}
 
-	@AfterClass
-	public static void classCleanup() throws Exception {
-		if (session != null) {
-			session.dispose();
-			session = null;
-		}
-		afterClass();
-	}
-
 	@After
-	public void cleanUp() throws Exception {
+	public void unregisterDevice() throws Exception {
 		if (ref != null) {
 			try {
 				devMgr.unregisterDevice(ref);
@@ -112,7 +95,6 @@ public class FEIScaExplorerTest extends StandardTestActions {
 			devMgr.fetchDevices(null);
 			viewBot.sleep(500);
 		}
-		super.afterTest();
 	}
 
 	@Test

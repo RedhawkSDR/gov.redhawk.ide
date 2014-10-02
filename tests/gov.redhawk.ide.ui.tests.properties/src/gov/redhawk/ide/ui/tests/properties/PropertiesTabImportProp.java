@@ -10,12 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.tests.properties;
 
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(SWTBotJunit4ClassRunner.class)
 public class PropertiesTabImportProp extends AbstractBasicTest {
 	
 	@Test

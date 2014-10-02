@@ -31,15 +31,12 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /**
  * Test class that deals with adding elements to the sad.xml and making sure they appear correctly in the diagram
  */
-@RunWith(SWTBotJunit4ClassRunner.class) 
 public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 
 	private SWTBotGefEditor editor;

@@ -43,30 +43,30 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
+import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.keyboard.Keyboard;
+import org.eclipse.swtbot.swt.finder.keyboard.KeyboardFactory;
+import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
 import org.osgi.framework.Bundle;
 import org.python.pydev.ui.pythonpathconf.AutoConfigMaker;
 import org.python.pydev.ui.pythonpathconf.IInterpreterProviderFactory.InterpreterType;
 
-
-@RunWith(SWTBotJunit4ClassRunner.class)
-public abstract class StandardTestActions {
+public final class StandardTestActions {
 
 	private static boolean pydevSetup = false;
-	
-	protected SWTWorkbenchBot bot;
+
+	private StandardTestActions() {
+
+	}
 
 	public static void configurePyDev() {
 		if (pydevSetup) {
@@ -105,11 +105,7 @@ public abstract class StandardTestActions {
 		}
 	}
 
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		while (PlatformUI.getWorkbench().isStarting()) {
-			Thread.sleep(1000);
-		}
+	public static void closeIntro() {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
 			@Override
@@ -121,7 +117,7 @@ public abstract class StandardTestActions {
 						introManager.closeIntro(part);
 					}
 				}
-				
+
 				Display current = Display.getCurrent();
 				if (current != null) {
 					Shell shell = current.getActiveShell();
@@ -130,59 +126,31 @@ public abstract class StandardTestActions {
 			}
 		});
 	}
-	
-	@Before
-	public void before() throws Exception {
-		bot = new SWTWorkbenchBot();
-		beforeTest(bot);
-	}
 
-	public static void beforeTest(SWTWorkbenchBot bot) throws Exception {
-		if (bot == null) {
-			bot = new SWTWorkbenchBot();
-		}
+	public static void switchToScaPerspective(SWTWorkbenchBot bot) {
 		SWTBotPerspective perspective = bot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
 		perspective.activate();
 		bot.resetActivePerspective();
 		bot.sleep(100);
 	}
-	
-	@After
-	public void afterTest() throws Exception {
-		afterTest(bot);
-		bot = null;
-	}
 
-	public static void afterTest(SWTWorkbenchBot bot) throws Exception {
-		if (bot == null) {
-			bot = new SWTWorkbenchBot();
-		}
-		final boolean[] dialogsClosed = { false };
+	public static void assertNoOpenDialogs() {
 		final boolean[] badDialogs = { false };
-		while (!dialogsClosed[0]) {
-			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
-				@Override
-				public void run() {
-					Shell s = Display.getCurrent().getActiveShell();
-					if (s == PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()) {
-						dialogsClosed[0] = true;
-					} else {
-						if (s != null) {
-							badDialogs[0] = true;
-							s.dispose();
-						}
+			@Override
+			public void run() {
+				Shell s = Display.getCurrent().getActiveShell();
+				if (s == PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()) {
+					badDialogs[0] = false;
+				} else {
+					if (s != null) {
+						badDialogs[0] = true;
 					}
 				}
+			}
 
-			});
-		}
-
-		bot.closeAllShells();
-
-		bot.closeAllEditors();
-
-		clearWorkspace();
+		});
 
 		if (badDialogs[0]) {
 			Assert.fail("Invalid dialogs left open at end of test.");
@@ -193,11 +161,6 @@ public abstract class StandardTestActions {
 		for (IProject p : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 			p.delete(true, true, null);
 		}
-	}
-
-	@AfterClass
-	public static void afterClass() throws Exception {
-
 	}
 
 	/**
@@ -322,5 +285,64 @@ public abstract class StandardTestActions {
 		}
 
 		return true;
+	}
+	
+	public static void writeToCell(SWTBot bot, final SWTBotTreeItem item, final int column, final String text) {
+		item.click(column);
+		
+		// Wait for cell editor to appear
+		bot.sleep(500);
+		
+		Keyboard keyboard = KeyboardFactory.getSWTKeyboard();
+		keyboard.typeText(text);
+		keyboard.pressShortcut(Keystrokes.CR);
+		
+		// Wait for cell editor to close
+		bot.sleep(100);
+	}
+	
+	public static void cleanup(SWTWorkbenchBot bot) throws CoreException {
+		if (bot == null) {
+			bot = new SWTWorkbenchBot();
+		}
+
+		final boolean[] dialogsClosed = { false };
+		while (!dialogsClosed[0]) {
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+
+				@Override
+				public void run() {
+					Shell s = Display.getCurrent().getActiveShell();
+					if (s == PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()) {
+						dialogsClosed[0] = true;
+					} else {
+						if (s != null) {
+							s.dispose();
+						}
+					}
+				}
+
+			});
+		}
+
+		bot.closeAllShells();
+
+		bot.closeAllEditors();
+
+		StandardTestActions.clearWorkspace();
+	}
+	
+	public static void writeToCell(SWTBot bot, SWTBotTable table, final int row, final int column, final String text) {
+		table.click(row, column);
+		
+		// Wait for cell editor to appear
+		bot.sleep(500);
+		
+		Keyboard keyboard = KeyboardFactory.getSWTKeyboard();
+		keyboard.typeText(text);
+		keyboard.pressShortcut(Keystrokes.CR);
+		
+		// Wait for cell editor to close
+		bot.sleep(100);
 	}
 }

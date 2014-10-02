@@ -8,17 +8,14 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.ui.tests.projectcreation;
+package gov.redhawk.ide.ui.tests.projectCreation;
 
 import gov.redhawk.ide.swtbot.UITest;
 
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(SWTBotJunit4ClassRunner.class)
 public class GeneralTest extends UITest {
 	
 	private void testNewProjectWizardAccess(String menuItem, String shellTitle) {

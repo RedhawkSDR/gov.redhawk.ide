@@ -14,7 +14,6 @@ import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
-import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 
@@ -30,18 +29,15 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /**
  * Test class that deals with editing elements to the sad.xml and making sure they appear correctly in the diagram
  */
-@RunWith(SWTBotJunit4ClassRunner.class)
 public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 
 	private SWTBotGefEditor editor;
@@ -49,7 +45,6 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 	
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-		StandardTestActions.beforeClass();
 		SWTBotPreferences.PLAYBACK_DELAY = 500;
 	}
 

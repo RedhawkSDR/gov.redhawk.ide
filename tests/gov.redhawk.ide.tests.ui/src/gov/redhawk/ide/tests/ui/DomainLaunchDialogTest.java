@@ -11,33 +11,18 @@
  */
 package gov.redhawk.ide.tests.ui;
 
-import gov.redhawk.ide.swtbot.StandardTestActions;
+import gov.redhawk.ide.swtbot.UITest;
 
 import org.eclipse.swtbot.eclipse.finder.waits.Conditions;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.finders.ContextMenuHelper;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
-import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(SWTBotJunit4ClassRunner.class)
-public class DomainLaunchDialogTest extends StandardTestActions {
-
-	
-	@After
-	public void cleanup() throws Exception {
-		try {
-			bot.shell("Launch Domain Manager").close();
-		} catch (Exception e) {
-			// PASS
-		}
-		super.afterTest();
-	}
+public class DomainLaunchDialogTest extends UITest {
 
 	/**
 	 * User should be able to open the domain launching dialog immediately after starting the IDE
@@ -54,5 +39,11 @@ public class DomainLaunchDialogTest extends StandardTestActions {
 		
 		// Will timeout if error causes launch window not to display
 		bot.waitUntil(Conditions.shellIsActive("Launch Domain Manager"), 30000);
+		
+		try {
+			bot.shell("Launch Domain Manager").close();
+		} catch (Exception e) {
+			// PASS
+		}
 	}
 }

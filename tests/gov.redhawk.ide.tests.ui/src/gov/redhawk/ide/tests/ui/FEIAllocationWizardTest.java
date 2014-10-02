@@ -14,22 +14,19 @@ package gov.redhawk.ide.tests.ui;
 import gov.redhawk.frontend.FrontendFactory;
 import gov.redhawk.frontend.TunerStatus;
 import gov.redhawk.frontend.ui.wizard.TunerAllocationWizard;
-import gov.redhawk.ide.swtbot.StandardTestActions;
+import gov.redhawk.ide.swtbot.UITest;
 
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.ui.PlatformUI;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(SWTBotJunit4ClassRunner.class)
-public class FEIAllocationWizardTest extends StandardTestActions {
+public class FEIAllocationWizardTest extends UITest {
 	private TunerAllocationWizard wizard;
 	private WizardDialog dialog;
 	protected SWTBot wizardBot;
@@ -54,18 +51,11 @@ public class FEIAllocationWizardTest extends StandardTestActions {
 	}
 
 	@After
-	public void afterTest() throws Exception {
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				dialog.close();
-			}
-		});
+	public void after() throws Exception {
 		dialog = null;
 		wizardBot = null;
 		wizard = null;
-		super.afterTest();
+		super.after();
 	}
 
 
@@ -95,6 +85,14 @@ public class FEIAllocationWizardTest extends StandardTestActions {
 		wizardBot.sleep(500);
 		Assert.assertNotNull(dialog.getErrorMessage());
 		Assert.assertFalse(wizard.canFinish());
+		
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				dialog.close();
+			}
+		});
 	}
 
 }

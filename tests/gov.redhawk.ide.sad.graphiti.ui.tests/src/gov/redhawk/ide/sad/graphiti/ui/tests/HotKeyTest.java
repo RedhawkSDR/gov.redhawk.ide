@@ -20,12 +20,9 @@ import java.awt.event.KeyEvent;
 
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(SWTBotJunit4ClassRunner.class) 
 public class HotKeyTest extends AbstractGraphitiTest {
 	private SWTBotGefEditor editor;
 	private String waveformName;
