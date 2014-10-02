@@ -100,8 +100,7 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 			if (ss instanceof TreeSelection) {
 				TreeSelection ts = (TreeSelection) ss;
 				TreePath[] tps = ts.getPathsFor(element);
-				if (tps != null && tps.length > 0 && tps[0].getSegmentCount() > 1 && 
-						tps[0].getSegment(1) instanceof ServicesContainerImpl) {
+				if (tps != null && tps.length > 0 && tps[0].getSegmentCount() > 1 && tps[0].getSegment(1) instanceof ServicesContainerImpl) {
 					wizard.hideAutoStartControl();
 				}
 			}
