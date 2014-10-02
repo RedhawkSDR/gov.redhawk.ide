@@ -27,8 +27,10 @@ import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadProvidesPort;
 import mil.jpeojtrs.sca.sad.SadUsesPort;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -39,6 +41,7 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
+import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
@@ -91,7 +94,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Provides the title of the outer shape
 	 * @param findByStub
@@ -100,7 +103,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	public String getOuterTitle(FindByStub findByStub) {
 		return getCreateName();
 	}
-	
+
 	@Override
 	public String getInnerTitle(EObject obj) {
 		if (obj instanceof FindByStub) {
@@ -115,7 +118,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	 * @return
 	 */
 	public abstract String getInnerTitle(FindByStub findByStub);
-	
+
 	/**
 	 * Sets the title of the inner shape
 	 * @param findByStub
@@ -183,7 +186,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		if (updated.toBoolean()) {
 			layoutPictogramElement(context.getPictogramElement());
 		}
-		
+
 		return updated.toBoolean();
 	}
 
@@ -193,6 +196,63 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	@Override
 	public IReason updateNeeded(IUpdateContext context) {
 		return ((RHContainerShape) context.getPictogramElement()).updateNeeded(context, this);
+	}
+
+	@Override
+	public boolean canDelete(IDeleteContext context) {
+		Object obj = DUtil.getBusinessObject(context.getPictogramElement());
+		if (obj instanceof FindByStub) {
+			return true;
+		}
+		return super.canDelete(context);
+	}
+
+	@Override
+	public void delete(IDeleteContext context) {
+		// set Find By to delete
+		final FindByStub findByToDelete = (FindByStub) DUtil.getBusinessObject(context.getPictogramElement());
+
+		// get sad from diagram
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+
+		// editing domain for our transaction
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+
+		// Perform business object manipulation in a Command
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+
+				// delete component from SoftwareAssembly
+				deleteFindByConnections(findByToDelete, sad);
+
+			}
+		});
+		super.delete(context);
+	}
+
+	private void deleteFindByConnections(FindByStub findByToDelete, SoftwareAssembly sad) {
+		// find and remove any attached connections
+		// gather connections
+		List<SadConnectInterface> connectionsToRemove = new ArrayList<SadConnectInterface>();
+		for (SadConnectInterface connection : sad.getConnections().getConnectInterface()) {
+			if (connection.getProvidesPort().getFindBy() != null
+				&& connection.getProvidesPort().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
+				connectionsToRemove.add(connection);
+			}
+		}
+		for (SadConnectInterface connection : sad.getConnections().getConnectInterface()) {
+			if (connection.getUsesPort().getFindBy() != null
+				&& connection.getUsesPort().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
+				connectionsToRemove.add(connection);
+			}
+		}
+
+		// remove gathered connections
+		if (sad.getConnections() != null) {
+			sad.getConnections().getConnectInterface().removeAll(connectionsToRemove);
+		}
 	}
 
 	@Override
@@ -415,7 +475,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 
 		return false;
 	}
-	
+
 	/**
 	 * Returns the {@link Diagram} this pattern lives for.
 	 * 
@@ -424,7 +484,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	public Diagram getDiagram() {
 		return getFeatureProvider().getDiagramTypeProvider().getDiagram();
 	}
-	
+
 	@Override
 	public EList<UsesPortStub> getUses(EObject obj) {
 		if (obj instanceof FindByStub) {
@@ -448,7 +508,6 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		}
 		return null;
 	}
-	
 
 	@Override
 	public String getOuterImageId() {
@@ -459,7 +518,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	public String getInnerImageId() {
 		return getCreateImageId();
 	}
-	
+
 	@Override
 	public Style getStyleForOuter() {
 		return StyleUtil.getStyleForFindByOuter(getDiagram());
