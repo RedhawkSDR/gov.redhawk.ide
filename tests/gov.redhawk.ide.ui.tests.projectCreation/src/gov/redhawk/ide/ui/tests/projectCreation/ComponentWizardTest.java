@@ -49,17 +49,11 @@ public class ComponentWizardTest extends AbstractCreationWizardTest {
 		wizardBot.textWithLabel("&Location:").setText(createdFolder.getAbsolutePath());
 		wizardBot.button("Next >").click();
 
-		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection(0);
+		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection("Python");
 		wizardBot.comboBoxWithLabel("Code Generator:").setSelection(0);
-		Assert.assertFalse(wizardBot.textWithLabel("ID:").getText().isEmpty());
-		wizardBot.textWithLabel("ID:").setText("customImplID");
-		Assert.assertFalse(wizardBot.textWithLabel("Description:").getText().isEmpty());
-		wizardBot.textWithLabel("Description:").setText("custom description");
 		wizardBot.button("Next >").click();
 
-		wizardBot.comboBoxWithLabel("Template:").setSelection(0);
-		Assert.assertFalse(wizardBot.textWithLabel("Output Directory:").getText().isEmpty());
-		wizardBot.textWithLabel("Output Directory:").setText("customOutput");
+		wizardBot.comboBoxWithLabel("Template:").setSelection("Pull Port Data");
 		wizardBot.button("Finish").click();
 		
 		bot.waitUntil(new WaitForEditorCondition(), 30000, 500);
