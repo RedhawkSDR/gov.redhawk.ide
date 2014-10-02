@@ -20,7 +20,9 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.wizards.FindByCORBANameWizardPage
 import gov.redhawk.ide.sad.graphiti.ui.diagram.wizards.FindByServiceWizardPage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
@@ -31,12 +33,19 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
+import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
+import org.eclipse.graphiti.features.context.impl.DeleteContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.jface.wizard.Wizard;
 
@@ -212,16 +221,29 @@ public class FindByEditFeature extends AbstractCustomFeature {
 
 	private void updatePorts(final FindByStub findByStub, final RHContainerShapeImpl findByShape, final List<String> usesPortNames,
 		final List<String> providesPortNames) {
-		// Update provides port stub(s)
+		Diagram diagram = featureProvider.getDiagramTypeProvider().getDiagram();
+
+		// Update uses port stub(s)
 		if (usesPortNames != null) {
-			// Delete all ports and rebuild from the list provided by the FindByEdit wizard
+			// Mark the ports to delete
 			List<UsesPortStub> portsToDelete = new ArrayList<UsesPortStub>();
 			for (UsesPortStub uses : findByStub.getUses()) {
 				portsToDelete.add(uses);
 			}
-			findByStub.getUses().removeAll(portsToDelete);
 
-			// add new ports to the FindBy element
+			// Capture the existing connection information and delete the connection
+			HashMap<Connection, String> oldConnectionMap = new HashMap<Connection, String>();
+			for (UsesPortStub portStub : portsToDelete) {
+				Anchor portStubPe = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, (EObject) portStub, Anchor.class);
+				EList<Connection> connections = portStubPe.getOutgoingConnections();
+				if (!connections.isEmpty()) {
+					for (Connection connection : connections) {
+						oldConnectionMap.put(connection, portStub.getName());
+					}
+				}
+			}
+
+			// Add new ports to the FindBy element
 			EList<UsesPortStub> usesPortStubs = new BasicEList<UsesPortStub>();
 			for (String usesPortName : usesPortNames) {
 				// Add the new port to the Domain model
@@ -230,20 +252,59 @@ public class FindByEditFeature extends AbstractCustomFeature {
 				findByStub.getUses().add(usesPortStub);
 				usesPortStubs.add(usesPortStub);
 			}
-			// Add the new port to the Diagram model
+
+			// Add the new ports to the Diagram model
 			findByShape.addNewUsesPorts((EList<UsesPortStub>) usesPortStubs, featureProvider, null);
+
+			// Build the new connections using the reconnect feature
+			for (Map.Entry<Connection, String> cursor : oldConnectionMap.entrySet()) {
+				// First check if port still even exists
+				Anchor sourceAnchor = getUsesAnchor(diagram, usesPortStubs, cursor.getValue());
+				if (sourceAnchor != null) {
+					CreateConnectionContext createContext = new CreateConnectionContext();
+					createContext.setSourceAnchor(sourceAnchor);
+					createContext.setTargetAnchor(cursor.getKey().getEnd());
+
+					ICreateConnectionFeature[] createConnectionFeatures = featureProvider.getCreateConnectionFeatures();
+					for (ICreateConnectionFeature createConnectionFeature : createConnectionFeatures) {
+						if (createConnectionFeature.canCreate(createContext)) {
+							createConnectionFeature.create(createContext);
+						}
+					}
+				}
+
+				// Delete the old connection
+				for (int i = 0; i < oldConnectionMap.size(); i++) {
+					DeleteContext deleteContext = new DeleteContext(cursor.getKey());
+					featureProvider.getDeleteFeature(deleteContext).delete(deleteContext);
+				}
+			}
+
+			// Delete all ports and rebuild from the list provided by the FindByEdit wizard
+			findByStub.getUses().removeAll(portsToDelete);
 		}
 
 		// Update provides port stub(s)
 		if (providesPortNames != null) {
-			// Delete all ports and rebuild from the list provided by the FindByEdit wizard
+			// Mark the ports to delete
 			List<ProvidesPortStub> portsToDelete = new ArrayList<ProvidesPortStub>();
 			for (ProvidesPortStub provides : findByStub.getProvides()) {
 				portsToDelete.add(provides);
 			}
-			findByStub.getProvides().removeAll(portsToDelete);
 
-			// add new ports to the FindBy element
+			// Capture the existing connection information and delete the connection
+			HashMap<Connection, String> oldConnectionMap = new HashMap<Connection, String>();
+			for (ProvidesPortStub portStub : portsToDelete) {
+				Anchor portStubPe = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, (EObject) portStub, Anchor.class);
+				EList<Connection> connections = portStubPe.getIncomingConnections();
+				if (!connections.isEmpty()) {
+					for (Connection connection : connections) {
+						oldConnectionMap.put(connection, portStub.getName());
+					}
+				}
+			}
+
+			// Add new ports to the FindBy element
 			EList<ProvidesPortStub> providesPortStubs = new BasicEList<ProvidesPortStub>();
 			for (String providesPortName : providesPortNames) {
 				// Add the new port to the Domain model
@@ -252,11 +313,71 @@ public class FindByEditFeature extends AbstractCustomFeature {
 				findByStub.getProvides().add(providesPortStub);
 				providesPortStubs.add(providesPortStub);
 			}
-			// Add the new port to the Diagram model
+
+			// Add the new ports to the Diagram model
 			findByShape.addNewProvidesPorts((EList<ProvidesPortStub>) providesPortStubs, featureProvider, null);
+
+			// Build the new connections using the reconnect feature
+			for (Map.Entry<Connection, String> cursor : oldConnectionMap.entrySet()) {
+				// First check if port still even exists
+				Anchor targetAnchor = getProvidesAnchor(diagram, providesPortStubs, cursor.getValue());
+				if (targetAnchor != null) {
+					CreateConnectionContext createContext = new CreateConnectionContext();
+					createContext.setSourceAnchor(cursor.getKey().getStart());
+					createContext.setTargetAnchor(targetAnchor);
+
+					ICreateConnectionFeature[] createConnectionFeatures = featureProvider.getCreateConnectionFeatures();
+					for (ICreateConnectionFeature createConnectionFeature : createConnectionFeatures) {
+						if (createConnectionFeature.canCreate(createContext)) {
+							createConnectionFeature.create(createContext);
+						}
+					}
+				}
+
+				// Delete the old connection
+				for (int i = 0; i < oldConnectionMap.size(); i++) {
+					DeleteContext deleteContext = new DeleteContext(cursor.getKey());
+					featureProvider.getDeleteFeature(deleteContext).delete(deleteContext);
+				}
+			}
+
+			// Delete the old ports
+			findByStub.getProvides().removeAll(portsToDelete);
 		}
 
 		// Update the shape layout to account for any changes
 		findByShape.layout();
+	}
+
+	/**
+	 * If a provides port with the port name still exists, return the new anchor so the connection can be redrawn
+	 * @param providesPortStubs
+	 * @param oldPortName
+	 * @return Anchor object that is associated with the port
+	 */
+	private Anchor getProvidesAnchor(Diagram diagram, EList<ProvidesPortStub> providesPortStubs, String oldPortName) {
+		for (ProvidesPortStub port : providesPortStubs) {
+			if (port.getName().equals(oldPortName)) {
+				Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, (EObject) port, Anchor.class);
+				return anchor;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * If a uses port with the port name still exists, return the new anchor so the connection can be redrawn
+	 * @param usesPortStubs
+	 * @param oldPortName
+	 * @return Anchor object that is associated with the port
+	 */
+	private Anchor getUsesAnchor(Diagram diagram, EList<UsesPortStub> usesPortStubs, String oldPortName) {
+		for (UsesPortStub port : usesPortStubs) {
+			if (port.getName().equals(oldPortName)) {
+				Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, (EObject) port, Anchor.class);
+				return anchor;
+			}
+		}
+		return null;
 	}
 }
