@@ -289,6 +289,29 @@
                      value="service">
                </parameter>
             </command>
+            <command
+                  commandId="gov.redhawk.ide.debug.ui.launch"
+                  icon="icons/obj16/run_exc.gif"
+                  label="Default"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <and>
+                     <iterate
+                           ifEmpty="false"
+                           operator="and">
+                        <or>
+                           <instanceof
+                                 value="mil.jpeojtrs.sca.sad.SoftwareAssembly">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </and>
+               </visibleWhen>
+            </command>
             <separator
                   name="gov.redhawk.ide.debug.ui.launch.separator"
                   visible="true">
