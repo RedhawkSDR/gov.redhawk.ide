@@ -10,15 +10,24 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.tests.projectCreation;
 
+import gov.redhawk.ide.swtbot.StandardTestActions;
+import gov.redhawk.ide.swtbot.UITest;
+import gov.redhawk.ide.swtbot.WaitForEditorCondition;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-
-import gov.redhawk.ide.swtbot.StandardTestActions;
-import gov.redhawk.ide.swtbot.UITest;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * 
@@ -26,11 +35,9 @@ import gov.redhawk.ide.swtbot.UITest;
 public abstract class AbstractCreationWizardTest extends UITest {
 	protected SWTBotShell wizardShell;
 	protected SWTBot wizardBot;
-	private final String projectType;
-	
-	public AbstractCreationWizardTest(String projectType) {
-		this.projectType = projectType;
-	}
+
+	@Rule
+	public TemporaryFolder folder = new TemporaryFolder();
 	
 	@BeforeClass
 	public static void setupPyDev() throws Exception {
@@ -77,8 +84,29 @@ public abstract class AbstractCreationWizardTest extends UITest {
 		wizardShell = bot.shell("New Project");
 		Assert.assertTrue(wizardShell.isActive());
 		wizardBot = wizardShell.bot();
-		wizardBot.tree().getTreeItem("SCA").expand().getNode(projectType).select();
+		wizardBot.tree().getTreeItem("SCA").expand().getNode(getProjectType()).select();
 		wizardBot.button("Next >").click();
+	}
+	
+	protected abstract String getProjectType();
+
+	@Test
+	public void testNonDefaultLocation() throws IOException {
+		bot.textWithLabel("&Project name:").setText("ProjectName");
+		bot.checkBox("Use default location").click();
+
+		bot.textWithLabel("&Location:").setText("Bad location");
+		Assert.assertFalse(bot.button("Finish").isEnabled());
+
+		File createdFolder = folder.newFolder("ProjectName");
+		bot.textWithLabel("&Location:").setText(createdFolder.getAbsolutePath());
+		bot.button("Finish").click();
+
+		bot.waitUntil(new WaitForEditorCondition(), 30000, 500);
+		
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("ProjectName");
+		IPath location = project.getLocation();
+		Assert.assertEquals(createdFolder.getAbsolutePath(), location.toOSString());
 	}
 
 }

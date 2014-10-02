@@ -10,9 +10,15 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.tests.projectCreation;
 
+import java.io.File;
+import java.io.IOException;
+
 import gov.redhawk.ide.spd.internal.ui.editor.ComponentEditor;
 import gov.redhawk.ide.swtbot.WaitForEditorCondition;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
@@ -24,11 +30,46 @@ import org.junit.Test;
  */
 public class ComponentWizardTest extends AbstractCreationWizardTest {
 
-	public ComponentWizardTest() {
-		super("SCA Component Project");
+	
+	@Override
+	protected String getProjectType() {
+		return "SCA Component Project";
+	}
+	
+	@Test
+	@Override
+	public void testNonDefaultLocation() throws IOException {
+		wizardBot.textWithLabel("&Project name:").setText("ProjectName");
+		wizardBot.checkBox("Use default location").click();
+
+		wizardBot.textWithLabel("&Location:").setText("Bad location");
+		Assert.assertFalse(bot.button("Finish").isEnabled());
+
+		File createdFolder = folder.newFolder("ProjectName");
+		wizardBot.textWithLabel("&Location:").setText(createdFolder.getAbsolutePath());
+		wizardBot.button("Next >").click();
+
+		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection(0);
+		wizardBot.comboBoxWithLabel("Code Generator:").setSelection(0);
+		Assert.assertFalse(wizardBot.textWithLabel("ID:").getText().isEmpty());
+		wizardBot.textWithLabel("ID:").setText("customImplID");
+		Assert.assertFalse(wizardBot.textWithLabel("Description:").getText().isEmpty());
+		wizardBot.textWithLabel("Description:").setText("custom description");
+		wizardBot.button("Next >").click();
+
+		wizardBot.comboBoxWithLabel("Template:").setSelection(0);
+		Assert.assertFalse(wizardBot.textWithLabel("Output Directory:").getText().isEmpty());
+		wizardBot.textWithLabel("Output Directory:").setText("customOutput");
+		wizardBot.button("Finish").click();
+		
+		bot.waitUntil(new WaitForEditorCondition(), 30000, 500);
+		
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("ProjectName");
+		IPath location = project.getLocation();
+		Assert.assertEquals(createdFolder.getAbsolutePath(), location.toOSString());
 	}
 
-	private void testProjectCreation(String name, String lang, String generator, String template) {
+	protected void testProjectCreation(String name, String lang, String generator, String template) {
 		wizardBot.textWithLabel("&Project name:").setText(name);
 		wizardBot.button("Next >").click();
 
@@ -78,19 +119,16 @@ public class ComponentWizardTest extends AbstractCreationWizardTest {
 	@Test
 	public void testStubPythonCreation() {
 		testProjectCreation("ComponentWizardTest01", "Python", "Stub Python Code Generator", "Pull Port Data");
-		wizardShell.close();
 	}
 
 	@Test
 	public void testStubCppCreation() {
 		testProjectCreation("ComponentWizardTest01", "C++", "Stub C++ Code Generator", "Pull Port Data");
-		wizardShell.close();
 	}
 
 	@Test
 	public void testStubJavaCreation() {
 		testProjectCreation("ComponentWizardTest01", "Java", "Stub Java Code Generator", "Pull Port Data (Base/Derived)");
-		wizardShell.close();
 	}
 
 	@Test
