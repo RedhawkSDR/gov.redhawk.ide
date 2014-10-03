@@ -21,6 +21,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotCombo;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,12 +31,11 @@ import org.junit.Test;
  */
 public class ComponentWizardTest extends AbstractCreationWizardTest {
 
-	
 	@Override
 	protected String getProjectType() {
 		return "SCA Component Project";
 	}
-	
+
 	@Test
 	@Override
 	public void testNonDefaultLocation() throws IOException {
@@ -53,11 +53,17 @@ public class ComponentWizardTest extends AbstractCreationWizardTest {
 		wizardBot.comboBoxWithLabel("Code Generator:").setSelection(0);
 		wizardBot.button("Next >").click();
 
-		wizardBot.comboBoxWithLabel("Template:").setSelection("Pull Port Data");
+		SWTBotCombo templateCombo = wizardBot.comboBoxWithLabel("Template:");
+		for (int i = 0; i < templateCombo.itemCount(); i++) {
+			wizardBot.comboBoxWithLabel("Template:").setSelection(i);
+			if (wizardBot.button("Finish").isEnabled()) {
+				break;
+			}
+		}
 		wizardBot.button("Finish").click();
-		
+
 		bot.waitUntil(new WaitForEditorCondition(), 30000, 500);
-		
+
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("ProjectName");
 		IPath location = project.getLocation();
 		Assert.assertEquals(createdFolder.getAbsolutePath(), location.toOSString());
@@ -155,7 +161,7 @@ public class ComponentWizardTest extends AbstractCreationWizardTest {
 		wizardBot.comboBoxWithLabel("Code Generator:").setSelection("Stub Python Code Generator");
 		wizardBot.button("Next >").click();
 		Assert.assertTrue(wizardBot.button("Finish").isEnabled());
-		
+
 		wizardShell.close();
 	}
 
@@ -167,7 +173,7 @@ public class ComponentWizardTest extends AbstractCreationWizardTest {
 		wizardBot.button("Next >").click();
 		Assert.assertFalse(wizardBot.textWithLabel("Package:").getText().isEmpty());
 		wizardBot.textWithLabel("Package:").setText("customPackageName");
-		
+
 		wizardShell.close();
 	}
 
