@@ -15,26 +15,19 @@ import gov.redhawk.ide.spd.internal.ui.editor.ComponentOverviewPage;
 import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.UITest;
 import gov.redhawk.ide.swtbot.WaitForEditorCondition;
-
-import java.util.Arrays;
-
 import mil.jpeojtrs.sca.scd.Ports;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
 
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.swt.SWT;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTableItem;
-import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
