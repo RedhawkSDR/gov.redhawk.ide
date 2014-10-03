@@ -51,10 +51,12 @@ public class SADConnectionInterfaceDeleteFeature extends DefaultDeleteFeature {
 
 		// delete business objects
 		SadConnectInterface connectInterface = null;
-		for (EObject eObj : pe.getLink().getBusinessObjects()) {
-			if (eObj instanceof SadConnectInterface) {
-				connectInterface = (SadConnectInterface) eObj;
-				break;
+		if (pe != null && pe.getLink() != null) {
+			for (EObject eObj : pe.getLink().getBusinessObjects()) {
+				if (eObj instanceof SadConnectInterface) {
+					connectInterface = (SadConnectInterface) eObj;
+					break;
+				}
 			}
 		}
 		final SadConnectInterface finalConnectInterface = connectInterface;
