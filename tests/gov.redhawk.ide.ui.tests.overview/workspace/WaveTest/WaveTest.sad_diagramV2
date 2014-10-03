@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:diagram="http://sca.jpeojtrs.mil/diagram" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:sad="http://sca.jpeojtrs.mil/sad" xmi:id="_TGy20fiIEeKpeZwv0nAGew" type="Sad" name="WaveTest.sad_diagramV2" measurementUnit="Pixel">
+  <children xmi:type="notation:Shape" xmi:id="_h4T48AOBEeOLG7X-822wog" type="3001" fontName="Ubuntu">
+    <children xmi:type="notation:DecorationNode" xmi:id="_h4T48gOBEeOLG7X-822wog" type="5006"/>
+    <children xmi:type="notation:DecorationNode" xmi:id="_h4T48wOBEeOLG7X-822wog" type="7002">
+      <styles xmi:type="notation:SortingStyle" xmi:id="_h4T49AOBEeOLG7X-822wog"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_h4T49QOBEeOLG7X-822wog"/>
+    </children>
+    <element xmi:type="sad:SadComponentPlacement" href="WaveTest.sad.xml#//@partitioning/@componentPlacement.0"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4T48QOBEeOLG7X-822wog" x="62" y="55"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_VqreMAaREeOr9b5DI4gXqg" type="3001" fontName="Ubuntu">
+    <children xmi:type="notation:DecorationNode" xmi:id="_VqreMgaREeOr9b5DI4gXqg" type="5006"/>
+    <children xmi:type="notation:DecorationNode" xmi:id="_VqreMwaREeOr9b5DI4gXqg" type="7002">
+      <styles xmi:type="notation:SortingStyle" xmi:id="_VqreNAaREeOr9b5DI4gXqg"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_VqreNQaREeOr9b5DI4gXqg"/>
+    </children>
+    <element xmi:type="sad:SadComponentPlacement" href="WaveTest.sad.xml#//@partitioning/@componentPlacement.1"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_VqreMQaREeOr9b5DI4gXqg" x="365" y="134"/>
+  </children>
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_TGy20viIEeKpeZwv0nAGew"/>
+  <styles xmi:type="diagram:EObjectContainerStyle" xmi:id="_TGy20_iIEeKpeZwv0nAGew" name="FindByStubContainer"/>
+  <element xmi:type="sad:SoftwareAssembly" href="WaveTest.sad.xml#DCE:7236616c-548f-4da1-9fcb-52ceac624228"/>
+</notation:Diagram>

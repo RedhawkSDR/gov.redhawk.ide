@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
@@ -47,10 +49,13 @@ import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.keyboard.Keyboard;
 import org.eclipse.swtbot.swt.finder.keyboard.KeyboardFactory;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
+import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
+import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
@@ -344,5 +349,53 @@ public final class StandardTestActions {
 		
 		// Wait for cell editor to close
 		bot.sleep(100);
+	}
+	
+	public static void assertFormValid(SWTBot bot, final FormPage page) {
+		try {
+			waitForValidationState(bot, page, IMessageProvider.NONE, IMessageProvider.INFORMATION, IMessageProvider.WARNING);
+		} catch (TimeoutException e) {
+			Assert.fail("Form should be valid");
+		}
+	}
+
+	public static int getValidationState(FormPage page) {
+		int messageType = page.getManagedForm().getForm().getMessageType();
+		return messageType;
+	}
+	
+	public static void waitForValidationState(SWTBot bot, final FormPage page, final int ... states) {
+		bot.waitUntil(new ICondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				int current = getValidationState(page);
+				for (int i : states) {
+					if (i == current) {
+						return true;
+					}
+				}
+				return false;
+			}
+
+			@Override
+			public void init(SWTBot bot) {
+				
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Failed waiting for validation state to change to: " + Arrays.toString(states);
+			}
+			
+		}, 5000, 200);
+	}
+	
+	public static void assertFormInvalid(SWTBot bot, final FormPage page) {
+		try {
+			waitForValidationState(bot, page, IMessageProvider.ERROR);
+		} catch (TimeoutException e) {
+			Assert.fail("Form should be valid");
+		}
 	}
 }

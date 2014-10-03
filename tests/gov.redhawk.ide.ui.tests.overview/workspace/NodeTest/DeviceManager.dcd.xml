@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE deviceconfiguration PUBLIC "-//JTRS//DTD SCA V2.2.2 DCD//EN" "deviceconfiguration.dtd">
+<!-- Created with REDHAWK IDE-->
+<!-- Powered by Eclipse -->
+<deviceconfiguration name="NodeTest" id="DCE:b4bf2a06-6885-41f9-bf32-2409971e4d61">
+    <devicemanagersoftpkg>
+    	<localfile name="/mgr/DeviceManager.spd.xml">
+    	</localfile>
+    </devicemanagersoftpkg>
+    <componentfiles> 
+    	<componentfile type="SPD" id="GPP_5fb7cacc-7176-4982-9557-66904db6bb9c">
+    		<localfile name="/devices/GPP/GPP.spd.xml">
+    		</localfile>
+    	</componentfile>
+    </componentfiles>    
+    <partitioning>
+		<componentplacement>
+	    	<componentfileref refid="GPP_5fb7cacc-7176-4982-9557-66904db6bb9c">
+    		</componentfileref>
+	     	<componentinstantiation id="DCE:12ef180c-952b-4d2e-aca6-1fffddeb888d">
+	     		<usagename>GPP_1</usagename>
+	     	</componentinstantiation>
+    	</componentplacement>
+    </partitioning>
+    <domainmanager>
+    	<namingservice name="REDHAWK_DEV/REDHAWK_DEV">
+    	</namingservice>
+    </domainmanager>
+</deviceconfiguration>

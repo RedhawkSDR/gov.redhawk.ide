@@ -16,16 +16,10 @@ import gov.redhawk.ide.swtbot.UITest;
 import gov.redhawk.ide.swtbot.WaitForEditorCondition;
 import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
 
-import java.util.Arrays;
-
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.eclipse.swtbot.swt.finder.waits.ICondition;
-import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 
 @SuppressWarnings("restriction")
@@ -58,55 +52,32 @@ public abstract class AbstractBasicTest extends UITest {
 		super.after();
 	}
 
-	protected void assertFormValid() {
-		try {
-			waitForValidationState(IMessageProvider.NONE, IMessageProvider.INFORMATION, IMessageProvider.WARNING);
-		} catch (TimeoutException e) {
-			Assert.fail("Form should be valid");
-		}
+	protected void assertFormValid() {		
+		ComponentEditor spdEditor = (ComponentEditor) editor.getReference().getEditor(false);
+
+		PropertiesFormPage propertiesPage = spdEditor.getPropertiesPage();
+		StandardTestActions.assertFormValid(bot, propertiesPage);
 	}
 
 	protected int getValidationState() {
 		ComponentEditor spdEditor = (ComponentEditor) editor.getReference().getEditor(false);
 
 		PropertiesFormPage propertiesPage = spdEditor.getPropertiesPage();
-		int messageType = propertiesPage.getManagedForm().getForm().getMessageType();
-		return messageType;
+		return StandardTestActions.getValidationState(propertiesPage);
 	}
 	
 	protected void waitForValidationState(final int ... states) {
-		bot.waitUntil(new ICondition() {
+		ComponentEditor spdEditor = (ComponentEditor) editor.getReference().getEditor(false);
 
-			@Override
-			public boolean test() throws Exception {
-				int current = getValidationState();
-				for (int i : states) {
-					if (i == current) {
-						return true;
-					}
-				}
-				return false;
-			}
-
-			@Override
-			public void init(SWTBot bot) {
-				
-			}
-
-			@Override
-			public String getFailureMessage() {
-				return "Failed waiting for validation state to change to: " + Arrays.toString(states);
-			}
-			
-		}, 5000, 200);
+		PropertiesFormPage propertiesPage = spdEditor.getPropertiesPage();
+		StandardTestActions.waitForValidationState(bot, propertiesPage, states);
 	}
 	
 	protected void assertFormInvalid() {
-		try {
-			waitForValidationState(IMessageProvider.ERROR);
-		} catch (TimeoutException e) {
-			Assert.fail("Form should be valid");
-		}
+		ComponentEditor spdEditor = (ComponentEditor) editor.getReference().getEditor(false);
+
+		PropertiesFormPage propertiesPage = spdEditor.getPropertiesPage();
+		StandardTestActions.assertFormInvalid(bot, propertiesPage);
 	}
 
 }
