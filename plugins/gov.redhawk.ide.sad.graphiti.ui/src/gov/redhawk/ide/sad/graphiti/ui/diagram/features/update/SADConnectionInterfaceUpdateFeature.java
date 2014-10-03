@@ -96,8 +96,9 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 		ConnectionDecorator textConnectionDecorator = (ConnectionDecorator) DUtil.findFirstPropertyContainer(connectionPE,
 			SADConnectInterfacePattern.SHAPE_TEXT_CONNECTION_DECORATOR);
 
-		//problem if either source or target not present
-		if (connectInterface.getSource() == null || connectInterface.getTarget() == null) {
+		//problem if either source or target not present, unless dealing with a findby element
+		if ((connectInterface.getSource() == null || connectInterface.getTarget() == null) 
+				&& (connectInterface.getUsesPort().getFindBy() == null && connectInterface.getProvidesPort().getFindBy() == null)) {
 			if (performUpdate) {
 				updateStatus = true;
 				//remove the connection (handles pe and business object)
@@ -119,7 +120,12 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 		} else {
 			// connection validation
 			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
+
+			// don't check compatibility if connection includes a Find By element
 			boolean compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
+			if (connectInterface.getUsesPort().getFindBy() != null || connectInterface.getProvidesPort().getFindBy() != null) {
+				compatibleConnection = true;
+			}
 
 			if ((!compatibleConnection || !uniqueConnection) && (imgConnectionDecorator == null || textConnectionDecorator == null)) {
 				if (performUpdate) {
@@ -153,6 +159,10 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 					return new Reason(true, "Error Decorator needs to be removed from Connection");
 				}
 			}
+			
+//			if (connectInterface.getProvidesPort().getFindBy() != null || connectInterface.getUsesPort().getFindBy() != null) {
+//				SADConnectInterfacePattern.decorateConnection(connectionPE, connectInterface, getDiagram());
+//			}
 		}
 
 		if (updateStatus && performUpdate) {

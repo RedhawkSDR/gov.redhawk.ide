@@ -132,11 +132,23 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		
 		IGaService gaService = Graphiti.getGaService();
 		IPeCreateService peCreateService = Graphiti.getPeCreateService();
-
-		if (connectInterface.getSource() != null && connectInterface.getTarget() != null) {
+		boolean isFindByConnection = false;
+		if (connectInterface.getProvidesPort() != null && connectInterface.getUsesPort() != null) {
+			if (connectInterface.getProvidesPort().getFindBy() != null || connectInterface.getUsesPort().getFindBy() != null) {
+				isFindByConnection = true;
+			}
+		}
+		
+		if (connectInterface.getSource() != null && connectInterface.getTarget() != null || isFindByConnection) {
 			// Connection validation
 			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
-			boolean compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
+			
+			// don't check for compatibility if this is a FindBy connection
+			boolean compatibleConnection = true;
+			if (!isFindByConnection) {
+				compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
+			}
+			
 			
 			// Add error decorator if necessary
 			if (!compatibleConnection || !uniqueConnection) {
