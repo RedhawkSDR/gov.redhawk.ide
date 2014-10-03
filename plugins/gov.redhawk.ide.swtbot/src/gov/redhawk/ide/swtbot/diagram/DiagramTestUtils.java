@@ -11,11 +11,13 @@
 package gov.redhawk.ide.swtbot.diagram;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
+import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
@@ -157,6 +159,39 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			return null;
 		}
 		return (ComponentShapeImpl) swtBotGefEditPart.part().getModel();
+	}
+	
+	/**
+	 * Utility method to extract business object from a findby in the Graphiti diagram.
+	 * Returns null if object not found
+	 * @param editor
+	 * @param findByName
+	 * @return
+	 */
+	public static FindByStub getFindByObject(SWTBotGefEditor editor, String findByName) {
+		
+		RHContainerShapeImpl findByShape = getFindByShape(editor, findByName);
+		if (findByShape == null) {
+			return null;
+		}
+		FindByStub businessObject = (FindByStub) DUtil.getBusinessObject(findByShape);
+		return businessObject;
+	}
+	
+	/**
+	 * Utility method to extract RHContainerShapeImpl from the Graphiti diagram with the provided findByName.
+	 * Returns null if object not found
+	 * @param editor
+	 * @param findByName
+	 * @return
+	 */
+	public static RHContainerShapeImpl getFindByShape(SWTBotGefEditor editor, String findByName) {
+		
+		SWTBotGefEditPart swtBotGefEditPart = editor.getEditPart(findByName);
+		if (swtBotGefEditPart == null) {
+			return null;
+		}
+		return (RHContainerShapeImpl) swtBotGefEditPart.part().getModel();
 	}
 	
 	/**
