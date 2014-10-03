@@ -107,6 +107,56 @@ public class FindByTest extends AbstractGraphitiTest {
 			Assert.assertNull(editor.getEditPart(s));
 		}
 	}
+	
+	/**
+	 * Ensure that deleting a FindBy that is part of a connection removes the connection from the sad.xml
+	 */
+	@Test
+	public void deleteFindByTest() {
+		waveformName = "Delete_FindBy";
+		final String SIGGEN = "SigGen";
+		final String FIND_BY_NAME = "FindByName";
+		final String[] provides = { "data_in" };
+
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+
+		// Add component to the diagram
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_CORBA_NAME, 0, 150);
+		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_CORBA_NAME, FIND_BY_NAME, provides, null);
+		MenuUtils.save(gefBot);
+
+		// Create connection on diagram
+		SWTBotGefEditPart sigGenUsesPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		SWTBotGefEditPart findByProvidesPart = DiagramTestUtils.getDiagramProvidesPort(editor, FIND_BY_NAME);
+		DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenUsesPart, findByProvidesPart);
+		MenuUtils.save(gefBot);
+
+		// Check sad.xml for connection
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		String editorText = editor.toTextEditor().getText();
+		Assert.assertTrue("The sad.xml should include a new connection. Expected: <findby><namingservice name=\"" + FIND_BY_NAME + "\"/>",
+			editorText.matches("(?s).*" + "<connectinterface.*<findby>.*<namingservice name=\"" + FIND_BY_NAME + "\"/>" + ".*"));
+		
+		// Delete Findby
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(FIND_BY_NAME));
+		gefBot.shell("Confirm Delete").setFocus();
+		gefBot.button("Yes").click();
+		editor = gefBot.gefEditor(waveformName);
+		editor.setFocus();
+		gefBot.menu("File").menu("Save").click();
+		
+		Assert.assertNull("FindBy shape was not removed", editor.getEditPart(FIND_BY_NAME));
+		
+		// Ensure Findby connection is removed from the XML
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		editorText = editor.toTextEditor().getText();
+		Assert.assertTrue("FindBy Connection was not removed",
+			editorText.matches("(?s).*" + "<connections/>" + ".*"));
+	}
 
 	/**
 	 * IDE-652
