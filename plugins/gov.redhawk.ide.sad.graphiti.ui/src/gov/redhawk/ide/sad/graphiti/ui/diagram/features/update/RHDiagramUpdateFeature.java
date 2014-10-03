@@ -264,9 +264,15 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 	 * @return
 	 */
 	public static void addFindBy(List<SadConnectInterface> sadConnectInterfaces, Diagram diagram, IFeatureProvider featureProvider) {
-
+		
 		// contains all the findByStubs that should exist in the diagram
 		ArrayList<FindByStub> findByStubs = new ArrayList<FindByStub>();
+		
+		// populate list of findByStubs with existing instances from diagram
+		List<RHContainerShape> findByShapes = AbstractFindByPattern.getAllFindByShapes(diagram);
+		for (RHContainerShape findByShape : findByShapes) {
+			findByStubs.add((FindByStub) DUtil.getBusinessObject(findByShape));
+		}
 
 		// look for findby in connections to add
 		for (SadConnectInterface sadConnectInterface : sadConnectInterfaces) {
