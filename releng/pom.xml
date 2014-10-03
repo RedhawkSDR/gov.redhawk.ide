@@ -226,14 +226,11 @@
       </modules>
     </profile>
     <profile>
-      <id>runTestModule</id>
+      <id>runTest</id>
       <properties>
         <tycho-version>0.20.0</tycho-version>
         <gov.redhawk.ide>http://download.redhawksdr.org/gov.redhawk.ide/releases/1.11</gov.redhawk.ide>
       </properties>
-      <modules>
-        <module>${testModule}</module>
-      </modules>
 
       <repositories>
         <repository>
