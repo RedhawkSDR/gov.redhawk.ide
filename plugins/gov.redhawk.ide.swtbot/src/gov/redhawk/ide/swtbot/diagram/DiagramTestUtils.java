@@ -32,6 +32,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefViewer;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
@@ -100,6 +101,22 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 
 		Assert.assertNotNull(canvas);
 		hardLimitItem.dragAndDrop(canvas);
+	}
+	
+	/**
+	 * Open Graphiti Chalkboard Diagram from Sandbox.
+	 * @param gefBot
+	 * @param editor
+	 * @param componentName
+	 */
+	public static void openChalkboardFromSandbox(SWTGefBot gefBot) {
+		SWTBotView scaExplorerView = gefBot.viewByTitle("SCA Explorer");
+		SWTBotTree scaTree = scaExplorerView.bot().tree();
+		SWTBotTreeItem chalkboard = scaTree.expandNode("Sandbox", "Chalkboard");
+		chalkboard.select();
+		SWTBotMenu openWith = chalkboard.contextMenu("Open With");
+		SWTBotMenu graphitiChalkboard = openWith.menu("Graphiti Chalkboard");
+		graphitiChalkboard.click();
 	}
 	
 	/**

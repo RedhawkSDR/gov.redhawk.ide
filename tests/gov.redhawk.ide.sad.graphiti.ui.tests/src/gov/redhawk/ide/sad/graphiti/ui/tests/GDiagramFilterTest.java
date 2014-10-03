@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.swtbot.ViewUtils;
 import gov.redhawk.ide.swtbot.WaveformUtils;
+import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.junit.Assert;
