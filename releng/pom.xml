@@ -316,11 +316,6 @@
                 </dependency>
                 <dependency>
                   <type>eclipse-feature</type>
-                  <artifactId>gov.redhawk.rcp</artifactId>
-                  <version>0.0.0</version>
-                </dependency>
-                <dependency>
-                  <type>eclipse-feature</type>
                   <artifactId>mil.jpeojtrs.sca</artifactId>
                   <version>0.0.0</version>
                 </dependency>
