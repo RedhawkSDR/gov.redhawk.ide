@@ -33,6 +33,7 @@ import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -109,6 +110,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 	 * Test editing connection properties in the sad.xml
 	 * Ensure that edits are reflected to the diagram upon save
 	 */
+	@Ignore
 	@Test
 	public void editConnectionInXmlTest() {
 		waveformName = "Edit_Connection_Xml";

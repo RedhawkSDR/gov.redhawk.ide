@@ -29,6 +29,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class HostCollocationTest extends AbstractGraphitiTest {
@@ -226,6 +227,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 	 * checking appears to be the same which is what we expect.  There is code in place that maintains the absolute position
 	 * of components within the graph as they are transitioned to the hostCollocation and we don't want them shifting.
 	 */
+	@Ignore
 	@Test
 	public void hostCollocationResize() {
 		waveformName = "HC_Resize";
