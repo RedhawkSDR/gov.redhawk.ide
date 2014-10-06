@@ -236,6 +236,9 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		// find and remove any attached connections
 		// gather connections
 		List<SadConnectInterface> connectionsToRemove = new ArrayList<SadConnectInterface>();
+		if (sad.getConnections() == null) {
+			return;
+		}
 		for (SadConnectInterface connection : sad.getConnections().getConnectInterface()) {
 			if (connection.getProvidesPort().getFindBy() != null
 				&& connection.getProvidesPort().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
