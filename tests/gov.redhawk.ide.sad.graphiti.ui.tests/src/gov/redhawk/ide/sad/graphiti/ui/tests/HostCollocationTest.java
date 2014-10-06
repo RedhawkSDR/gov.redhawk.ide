@@ -227,7 +227,6 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 	 * checking appears to be the same which is what we expect.  There is code in place that maintains the absolute position
 	 * of components within the graph as they are transitioned to the hostCollocation and we don't want them shifting.
 	 */
-	@Ignore
 	@Test
 	public void hostCollocationResize() {
 		waveformName = "HC_Resize";
