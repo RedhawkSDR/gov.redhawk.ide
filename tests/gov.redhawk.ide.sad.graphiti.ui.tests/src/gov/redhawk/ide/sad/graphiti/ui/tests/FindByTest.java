@@ -16,8 +16,15 @@ import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.FindByUtils;
-import mil.jpeojtrs.sca.partitioning.FindByStub;
 
+import java.util.List;
+
+import mil.jpeojtrs.sca.partitioning.FindByStub;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+
+import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.junit.Assert;
@@ -107,7 +114,7 @@ public class FindByTest extends AbstractGraphitiTest {
 			Assert.assertNull(editor.getEditPart(s));
 		}
 	}
-	
+
 	/**
 	 * Ensure that deleting a FindBy that is part of a connection removes the connection from the sad.xml
 	 */
@@ -139,7 +146,7 @@ public class FindByTest extends AbstractGraphitiTest {
 		String editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The sad.xml should include a new connection. Expected: <findby><namingservice name=\"" + FIND_BY_NAME + "\"/>",
 			editorText.matches("(?s).*" + "<connectinterface.*<findby>.*<namingservice name=\"" + FIND_BY_NAME + "\"/>" + ".*"));
-		
+
 		// Delete Findby
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
 		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(FIND_BY_NAME));
@@ -148,14 +155,13 @@ public class FindByTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 		editor.setFocus();
 		gefBot.menu("File").menu("Save").click();
-		
+
 		Assert.assertNull("FindBy shape was not removed", editor.getEditPart(FIND_BY_NAME));
-		
+
 		// Ensure Findby connection is removed from the XML
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		editorText = editor.toTextEditor().getText();
-		Assert.assertTrue("FindBy Connection was not removed",
-			editorText.matches("(?s).*" + "<connections/>" + ".*"));
+		Assert.assertTrue("FindBy Connection was not removed", editorText.matches("(?s).*" + "<connections/>" + ".*"));
 	}
 
 	/**
@@ -167,10 +173,12 @@ public class FindByTest extends AbstractGraphitiTest {
 	public void editFindByTest() {
 		waveformName = "FindBy_Connection";
 		final String SIGGEN = "SigGen";
-		final String findByName = "FindBy";
+		final String HARD_LIMIT = "HardLimit";
+		final String FIND_BY_NAME = "FindBy";
 		final String newFindByName = "NewFindByName";
 		final String[] provides = { "data_in" };
 		final String[] uses = { "data_out" };
+		final String NEW_USES_PORT = "dataDouble_out";
 
 		// Create a new empty waveform
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
@@ -178,12 +186,24 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		// Add component to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 200, 20);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_CORBA_NAME, 0, 150);
-		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_CORBA_NAME, findByName, provides, null);
+		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_CORBA_NAME, FIND_BY_NAME, provides, uses);
+		MenuUtils.save(gefBot);
+
+		// Create connection on diagram
+		SWTBotGefEditPart sigGenUsesPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		SWTBotGefEditPart findByProvidesPart = DiagramTestUtils.getDiagramProvidesPort(editor, FIND_BY_NAME);
+		DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenUsesPart, findByProvidesPart);
+
+		SWTBotGefEditPart findByUsesPart = DiagramTestUtils.getDiagramUsesPort(editor, FIND_BY_NAME);
+		SWTBotGefEditPart hardLimitProvidesPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT);
+		DiagramTestUtils.drawConnectionBetweenPorts(editor, findByUsesPart, hardLimitProvidesPart);
+
 		MenuUtils.save(gefBot);
 
 		// Open FindBy edit wizard and change name, remove existing port, and add a new one
-		editor.getEditPart(findByName).select();
+		editor.getEditPart(FIND_BY_NAME).select();
 		editor.clickContextMenu("Edit Find By");
 
 		// Change Name
@@ -194,7 +214,7 @@ public class FindByTest extends AbstractGraphitiTest {
 		gefBot.button("Delete", 0).click();
 
 		// Add new uses port
-		gefBot.textInGroup("Port Options", 1).setText(uses[0]);
+		gefBot.textInGroup("Port Options", 1).setText(NEW_USES_PORT);
 		gefBot.button("Add Uses Port").click();
 
 		gefBot.button("Finish").click();
@@ -207,9 +227,25 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		Assert.assertEquals("Inner Text was not updated", newFindByName, findByShape.getInnerText().getValue());
 		Assert.assertEquals("Diagram object and domain object names don't match", newFindByName, findByObject.getNamingService().getName());
-		Assert.assertTrue("Number of ports is incorrect", findByShape.getUsesPortStubs().size() == 1 && findByShape.getProvidesPortStubs().size() == 0);
-		Assert.assertEquals("Uses port name is incorrect", uses[0], findByShape.getUsesPortStubs().get(0).getName());
-		Assert.assertEquals("Diagram uses and domain uses don't match", uses[0], findByObject.getUses().get(0).getName());
+		Assert.assertTrue("Number of ports is incorrect", findByShape.getUsesPortStubs().size() == 2 && findByShape.getProvidesPortStubs().size() == 0);
+		Assert.assertEquals("Uses port name is incorrect", NEW_USES_PORT, findByShape.getUsesPortStubs().get(1).getName());
+		Assert.assertEquals("Diagram uses and domain uses don't match", NEW_USES_PORT, findByObject.getUses().get(1).getName());
+
+		// Confirm that connections properly updated
+		sigGenUsesPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		List<SWTBotGefConnectionEditPart> connections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesPart);
+		Assert.assertTrue("SigGen connection should have been removed", connections.size() == 0);
+
+		hardLimitProvidesPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT);
+		connections = DiagramTestUtils.getTargetConnectionsFromPort(editor, hardLimitProvidesPart);
+		Assert.assertEquals("HardLimit should only have one incoming connection", 1, connections.size());
+
+		SWTBotGefConnectionEditPart connectionPart = connections.get(0);
+		Connection connection = (Connection) connectionPart.part().getModel();
+		UsesPortStub connectionSource = (UsesPortStub) DUtil.getBusinessObject(connection.getStart());
+		ProvidesPortStub connectionTarget = (ProvidesPortStub) DUtil.getBusinessObject(connection.getEnd());
+		Assert.assertEquals("Connection source incorrect", uses[0], connectionSource.getName());
+		Assert.assertEquals("Connection target incorrect", "dataDouble_in", connectionTarget.getName());
 	}
 
 	/**
