@@ -16,7 +16,11 @@ import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalScaDevice;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.model.sca.impl.ScaDeviceImpl;
+import gov.redhawk.sca.util.SilentJob;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.common.notify.Notification;
@@ -417,11 +421,28 @@ public class LocalScaDeviceImpl extends ScaDeviceImpl<Device> implements LocalSc
 	@Override
 	public void dispose() {
 		// END GENERATED CODE
-		try {
-			releaseObject();
-		} catch (final ReleaseError e) {
-			// PASS
-		}
+//		try {
+//			releaseObject();
+//		} catch (final ReleaseError e) {
+//			// PASS
+//		}
+		Job job = new SilentJob("Local Device Release job") {
+
+			@Override
+			protected IStatus runSilent(IProgressMonitor monitor) {
+				try {
+					releaseObject();
+				} catch (final ReleaseError e) {
+					// PASS
+				}
+				return Status.OK_STATUS;
+			}
+			
+		};
+		job.setUser(false);
+		job.setSystem(true);
+		job.schedule();
+		
 		super.dispose();
 		// BEGIN GENERATED CODE
 	}
