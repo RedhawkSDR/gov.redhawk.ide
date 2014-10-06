@@ -165,7 +165,7 @@ public class FindByTest extends AbstractGraphitiTest {
 	}
 
 	/**
-	 * IDE-652
+	 * IDE-652 & IDE-908
 	 * Edit existing FindBy Elements
 	 * Change names, add & remove ports
 	 */
