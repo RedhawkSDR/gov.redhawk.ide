@@ -29,7 +29,6 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class HostCollocationTest extends AbstractGraphitiTest {
