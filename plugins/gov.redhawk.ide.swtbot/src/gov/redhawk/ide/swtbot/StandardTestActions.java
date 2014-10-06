@@ -14,6 +14,7 @@ import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
 import gov.redhawk.ide.swtbot.internal.ProjectRecord;
+import gov.redhawk.sca.util.OrbSession;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +25,13 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -45,12 +53,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.keyboard.Keyboard;
 import org.eclipse.swtbot.swt.finder.keyboard.KeyboardFactory;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.eclipse.ui.PlatformUI;
@@ -61,6 +71,7 @@ import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.osgi.framework.Bundle;
 import org.python.pydev.ui.pythonpathconf.AutoConfigMaker;
 import org.python.pydev.ui.pythonpathconf.IInterpreterProviderFactory.InterpreterType;
@@ -291,21 +302,21 @@ public final class StandardTestActions {
 
 		return true;
 	}
-	
+
 	public static void writeToCell(SWTBot bot, final SWTBotTreeItem item, final int column, final String text) {
 		item.click(column);
-		
+
 		// Wait for cell editor to appear
 		bot.sleep(500);
-		
+
 		Keyboard keyboard = KeyboardFactory.getSWTKeyboard();
 		keyboard.typeText(text);
 		keyboard.pressShortcut(Keystrokes.CR);
-		
+
 		// Wait for cell editor to close
 		bot.sleep(100);
 	}
-	
+
 	public static void cleanup(SWTWorkbenchBot bot) throws CoreException {
 		if (bot == null) {
 			bot = new SWTWorkbenchBot();
@@ -336,21 +347,21 @@ public final class StandardTestActions {
 
 		StandardTestActions.clearWorkspace();
 	}
-	
+
 	public static void writeToCell(SWTBot bot, SWTBotTable table, final int row, final int column, final String text) {
 		table.click(row, column);
-		
+
 		// Wait for cell editor to appear
 		bot.sleep(500);
-		
+
 		Keyboard keyboard = KeyboardFactory.getSWTKeyboard();
 		keyboard.typeText(text);
 		keyboard.pressShortcut(Keystrokes.CR);
-		
+
 		// Wait for cell editor to close
 		bot.sleep(100);
 	}
-	
+
 	public static void assertFormValid(SWTBot bot, final FormPage page) {
 		try {
 			waitForValidationState(bot, page, IMessageProvider.NONE, IMessageProvider.INFORMATION, IMessageProvider.WARNING);
@@ -363,8 +374,8 @@ public final class StandardTestActions {
 		int messageType = page.getManagedForm().getForm().getMessageType();
 		return messageType;
 	}
-	
-	public static void waitForValidationState(SWTBot bot, final FormPage page, final int ... states) {
+
+	public static void waitForValidationState(SWTBot bot, final FormPage page, final int... states) {
 		bot.waitUntil(new ICondition() {
 
 			@Override
@@ -380,22 +391,117 @@ public final class StandardTestActions {
 
 			@Override
 			public void init(SWTBot bot) {
-				
+
 			}
 
 			@Override
 			public String getFailureMessage() {
 				return "Failed waiting for validation state to change to: " + Arrays.toString(states);
 			}
-			
+
 		}, 5000, 200);
 	}
-	
+
 	public static void assertFormInvalid(SWTBot bot, final FormPage page) {
 		try {
 			waitForValidationState(bot, page, IMessageProvider.ERROR);
 		} catch (TimeoutException e) {
 			Assert.fail("Form should be valid");
 		}
+	}
+
+	private static Boolean supportsRuntime = null;
+
+	public static void assumeRuntimeEnvirornment() {
+		if (supportsRuntime != null) {
+			Assume.assumeTrue("Envirornment does not support runtime tests.", supportsRuntime);
+		}
+
+		try {
+			String ossieHome = System.getenv("OSSIEHOME");
+			String sdrRoot = System.getenv("SDRROOT");
+
+			Assume.assumeNotNull(ossieHome, sdrRoot);
+
+			File ossieHomeFile = new File(ossieHome);
+			File sdrRootFile = new File(sdrRoot);
+
+			Assume.assumeTrue("OSSIEHOME is not directory: " + ossieHome, ossieHomeFile.isDirectory());
+			Assume.assumeTrue("SDRROOT is not directory: " + sdrRootFile, sdrRootFile.isDirectory());
+
+			File nodeBooter = new File(ossieHome, "bin/nodeBooter");
+			Assume.assumeTrue("nodeBooter is not file: " + nodeBooter, nodeBooter.isFile());
+			Assume.assumeTrue("nodeBooter not executable: " + nodeBooter, nodeBooter.canExecute());
+
+			Map<String, String> initRefs = OrbSession.getOmniORBInitRefs();
+			Assume.assumeTrue("NameService init ref not defined in /etc/omniORB.cfg", initRefs.get("NameService") != null);
+			Assume.assumeTrue("EventService init ref not defined in /etc/omniORB.cfg", initRefs.get("EventService") != null);
+
+			Properties props = OrbSession.getOmniORBInitRefsAsProperties();
+			final OrbSession session = OrbSession.createSession("testSession", Platform.getApplicationArgs(), props);
+
+			try {
+				ExecutorService executor = Executors.newSingleThreadExecutor();
+				Future<Object> future = executor.submit(new Callable<Object>() {
+
+					@Override
+					public Object call() throws Exception {
+						return session.getOrb().resolve_initial_references("NameService");
+					}
+
+				});
+				try {
+					future.get(30, TimeUnit.SECONDS);
+				} catch (InterruptedException | ExecutionException | java.util.concurrent.TimeoutException e) {
+					Assume.assumeNoException("Failed to connect to NameService", e);
+				}
+
+				future = executor.submit(new Callable<Object>() {
+
+					@Override
+					public Object call() throws Exception {
+						return session.getOrb().resolve_initial_references("EventService");
+					}
+
+				});
+				try {
+					future.get(30, TimeUnit.SECONDS);
+				} catch (InterruptedException | ExecutionException | java.util.concurrent.TimeoutException e) {
+					Assume.assumeNoException("Failed to connect to EventService", e);
+				}
+			} finally {
+				session.dispose();
+			}
+
+			supportsRuntime = true;
+		} catch (RuntimeException e) {
+			supportsRuntime = false;
+			throw e;
+		}
+	}
+	
+	public static SWTBotToolbarButton viewToolbarWithToolTip(final SWTBotView view, final String tooltip) {
+		Assert.assertNotNull(view);
+		Assert.assertNotNull(tooltip);
+		
+		final SWTBotToolbarButton [] button = new SWTBotToolbarButton[1];
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				List<SWTBotToolbarButton> buttons = view.getToolbarButtons();
+				for (SWTBotToolbarButton b : buttons) {
+					if (tooltip.equals(b.getToolTipText())) {
+						button[0] = b;
+						return;
+					}
+				}
+			}
+			
+		});
+		
+		Assert.assertNotNull("Unable to find button with tooltip: " + tooltip, button[0]);
+		
+		return button[0];
 	}
 }

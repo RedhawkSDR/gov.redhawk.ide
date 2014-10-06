@@ -23,6 +23,8 @@ public class DomainManagerLaunchConfiguration {
 	private String domainName = "";
 	private DebugLevel debugLevel = DebugLevel.Info;
 	private String arguments = "";
+	private String launchConfigName;
+	private String spdPath;
 
 	/**
 	 * @return the domainName
@@ -77,4 +79,33 @@ public class DomainManagerLaunchConfiguration {
 		this.localDomainName = localDomainName;
 	}
 
+	/**
+	 * @since 3.4
+	 */
+	public String getLaunchConfigName() {
+		return launchConfigName;
+	}
+
+	/**
+	 * @since 3.4
+	 */
+	public void setLaunchConfigName(String launchConfigName) {
+		this.launchConfigName = launchConfigName;
+	}
+
+	/**
+	 * @since 3.4
+	 */
+	public String getSpdPath() {
+		return spdPath;
+	}
+
+	/**
+	 * @since 3.4
+	 */
+	public void setSpdPath(String spdPath) {
+		this.spdPath = spdPath;
+	}
+
+	
 }

@@ -174,13 +174,17 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 				final ScaDomainManager config = dmReg.findDomain(model.getDomainName());
 
 				final String domainName = config.getLabel();
+				final String launchConfigName = getLaunchConfigName(incomingDomain);
+				final String spdPath = incomingDomain.getDomainManagerSoftPkg().getLocalFile().getName();
+				model.setLaunchConfigName(launchConfigName);
+				model.setSpdPath(spdPath);
 				subMonitor.newChild(1).beginTask("Launching domain " + domainName, 2);
 				try {
 					final UIJob launcherJob = new UIJob("Domain Launcher") {
 
 						@Override
 						public IStatus runInUIThread(final IProgressMonitor monitor) {
-							final IStatus retVal = launchDomainManager(event, incomingDomain, new SubProgressMonitor(monitor, 1));
+							final IStatus retVal = launchDomainManager(model, new SubProgressMonitor(monitor, 1));
 							if (retVal != null && retVal.isOK()) {
 								final Job connectJob = new Job("Connect to Domain: " + domainName) {
 
@@ -226,19 +230,16 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 		launchJob.schedule();
 	}
 
-	private IStatus launchDomainManager(final ExecutionEvent event, final DomainManagerConfiguration domain, final IProgressMonitor monitor) {
-		final String launchConfigName;
-		launchConfigName = getLaunchConfigName(domain);
-
-		monitor.beginTask("Launching NodeBooter (DomainManager) Process", 2);
+	public static IStatus launchDomainManager(DomainManagerLaunchConfiguration model,  final IProgressMonitor parentMonitor) {
+		SubMonitor monitor = SubMonitor.convert(parentMonitor, "Launching NodeBooter (DomainManager) Process", 2);
 		try {
 			try {
 				final StringBuilder arguments = new StringBuilder();
 
 				monitor.subTask("Seting up launch configuration...");
-				final ILaunchConfigurationWorkingCopy config = NodeBooterLauncherUtil.createNodeBooterLaunchConfig(launchConfigName);
+				final ILaunchConfigurationWorkingCopy config = NodeBooterLauncherUtil.createNodeBooterLaunchConfig(model.getLaunchConfigName());
 
-				arguments.append("-D ").append(domain.getDomainManagerSoftPkg().getLocalFile().getName());
+				arguments.append("-D ").append(model.getSpdPath());
 
 				if (model.getDomainName() != null) {
 					arguments.append(" --domainname \"" + model.getDomainName() + "\"");
@@ -310,15 +311,15 @@ public class LaunchDomainManagerWithOptions extends AbstractHandler implements I
 		}
 	}
 
-	private long getConnectionAttemptInterval() {
+	private static long getConnectionAttemptInterval() {
 		return SdrUiPlugin.getDefault().getPreferenceStore().getLong(SdrUiPreferenceConstants.PREF_AUTO_CONNECT_ATTEMPT_RETRY_INTERVAL_MSEC);
 	}
 
-	private int getMaxConnectionAttempts() {
+	private static int getMaxConnectionAttempts() {
 		return SdrUiPlugin.getDefault().getPreferenceStore().getInt(SdrUiPreferenceConstants.PREF_AUTO_CONNECT_MAX_CONNECTION_ATTEMPTS);
 	}
 
-	private String getLaunchConfigName(final DomainManagerConfiguration domain) {
+	private static String getLaunchConfigName(final DomainManagerConfiguration domain) {
 		return SdrUiPlugin.getDefault().getPreferenceStore().getString(SdrUiPreferenceConstants.PREF_DEFAULT_DOMAIN_MANAGER_NAME) + " " + domain.getName();
 	}
 }
