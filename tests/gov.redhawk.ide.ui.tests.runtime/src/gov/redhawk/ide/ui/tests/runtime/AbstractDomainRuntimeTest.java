@@ -23,7 +23,7 @@ import org.junit.Assume;
 /**
  * 
  */
-public class AbstractDomainRuntimeTest extends UIRuntimeTest {
+public abstract class AbstractDomainRuntimeTest extends UIRuntimeTest {
 	
 	protected void launchDomainManager(String name) {
 		final DomainManagerLaunchConfiguration model = new DomainManagerLaunchConfiguration();
@@ -34,7 +34,7 @@ public class AbstractDomainRuntimeTest extends UIRuntimeTest {
 		model.setLocalDomainName(name);
 		model.setSpdPath("/mgr/DomainManager.spd.xml");
 		String sdrRoot = System.getenv("SDRROOT");
-		File dmdSpd = new File(new File(sdrRoot), "/mgr/DomainManager.spd.xml");
+		File dmdSpd = new File(new File(sdrRoot), "dom/mgr/DomainManager.spd.xml");
 		
 		Assume.assumeTrue("${SDROOT}/mgr/DomainManager.spd.xml does not exist", dmdSpd.isFile());
 		

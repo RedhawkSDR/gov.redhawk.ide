@@ -11,9 +11,13 @@
 package gov.redhawk.ide.ui.tests.runtime;
 
 import gov.redhawk.ide.swtbot.StandardTestActions;
+import gov.redhawk.model.sca.ScaDomainManagerRegistry;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.sca.ScaPlugin;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,18 +34,26 @@ public class DomainInteractionTest extends AbstractDomainRuntimeTest {
 	@Before
 	public void before() throws Exception {
 		super.before();
+		
+		final ScaDomainManagerRegistry domReg = ScaPlugin.getDefault().getDomainManagerRegistry(null);
+		ScaModelCommand.execute(domReg, new ScaModelCommand() {
+			
+			@Override
+			public void execute() {
+				domReg.getDomains().clear();
+			}
+		});
 
 		explorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
 		explorerView.show();
 		explorerView.setFocus();
 		viewBot = explorerView.bot();
-
-		launchDomainManager("REDHAWK_DEV");
-
 	}
 
 	@Test
 	public void testConnect() {
+		launchDomainManager("REDHAWK_DEV");
+		
 		StandardTestActions.viewToolbarWithToolTip(explorerView, "New Domain Connection").click();
 
 		SWTBotShell shell = bot.activeShell();
@@ -66,7 +78,70 @@ public class DomainInteractionTest extends AbstractDomainRuntimeTest {
 
 		bot.button("Finish").click();
 
+		viewBot.waitUntil(new ICondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				viewBot.tree().getTreeItem("REDHAWK_DEV CONNECTED");
+				return true;
+			}
+
+			@Override
+			public void init(SWTBot bot) {
+				
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "REDHAWK_DEV never connected";
+			}
+			
+		}, 30000, 1000);
 		viewBot.tree().getTreeItem("REDHAWK_DEV CONNECTED").expand();
 		viewBot.tree().getTreeItem("REDHAWK_DEV CONNECTED").select();
+	}
+	
+	@Test
+	public void testLaunch() {
+		viewBot.tree().getTreeItem("Target SDR").select();
+		viewBot.tree().getTreeItem("Target SDR").contextMenu("Launch Domain ...").click();
+		bot.textWithLabel("Domain Name: ").setText("REDHAWK");
+		Assert.assertTrue(bot.button("OK").isEnabled());
+		
+		bot.textWithLabel("Domain Name: ").setText("REDHAWK_DOMAIN");
+		Assert.assertTrue(bot.button("OK").isEnabled());
+		
+		bot.textWithLabel("Domain Name: ").setText("REDHAWK_DOMAIN_TEST02");
+		Assert.assertTrue(bot.button("OK").isEnabled());
+		bot.button("OK").click();
+		
+		viewBot.waitUntil(new ICondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				viewBot.tree().getTreeItem("REDHAWK_DOMAIN_TEST02 CONNECTED");
+				return true;
+			}
+
+			@Override
+			public void init(SWTBot bot) {
+				
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "REDHAWK_DOMAIN_TEST02 never connected";
+			}
+			
+		}, 30000, 1000);
+		viewBot.tree().getTreeItem("REDHAWK_DOMAIN_TEST02 CONNECTED").expand();
+		viewBot.tree().getTreeItem("REDHAWK_DOMAIN_TEST02 CONNECTED").select();
+		
+
+		SWTBotView consoleView = bot.viewById("org.eclipse.ui.console.ConsoleView");
+		consoleView.show();
+		consoleView.setFocus();
+		StandardTestActions.viewToolbarWithToolTip(consoleView, "Terminate").click();
+		StandardTestActions.viewToolbarWithToolTip(consoleView, "Remove All Terminated Launches").click();
 	}
 }
