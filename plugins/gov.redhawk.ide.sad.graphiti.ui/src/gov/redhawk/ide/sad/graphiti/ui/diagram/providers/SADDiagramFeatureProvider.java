@@ -260,7 +260,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		}
 
 		// add Set As Assembly Controller menu item
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
+		if (!(DUtil.getActiveEditor() instanceof LocalGraphitiSadMultiPageScaEditor) && context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 			if (obj instanceof SadComponentInstantiation) {
 				retList.add(new SetAsAssemblyControllerFeature(this.getDiagramTypeProvider().getFeatureProvider()));
@@ -268,7 +268,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		}
 
 		// add Increment Start Order menu item
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
+		if (!(DUtil.getActiveEditor() instanceof LocalGraphitiSadMultiPageScaEditor) && context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 			if (obj instanceof SadComponentInstantiation) {
 				retList.add(new IncrementStartOrderFeature(this.getDiagramTypeProvider().getFeatureProvider()));
@@ -276,7 +276,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		}
 
 		// add Decrement Start Order menu item
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
+		if (!(DUtil.getActiveEditor() instanceof LocalGraphitiSadMultiPageScaEditor) && context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 			if (obj instanceof SadComponentInstantiation) {
 				retList.add(new DecrementStartOrderFeature(this.getDiagramTypeProvider().getFeatureProvider()));
