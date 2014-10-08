@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ext.impl;
 
+import gov.redhawk.ide.sad.graphiti.debug.internal.ui.LocalGraphitiSadMultiPageScaEditor;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
@@ -44,6 +45,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * <!-- begin-user-doc -->
@@ -127,7 +129,10 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		super.init(context, pattern, ciExternalPorts);
 
 		// add start order ellipse
-		addStartOrderEllipse(ci, assemblyController, featureProvider);
+		IEditorPart activeEditor = DUtil.getActiveEditor(); 
+		if (activeEditor != null && !( activeEditor instanceof LocalGraphitiSadMultiPageScaEditor)) {
+			addStartOrderEllipse(ci, assemblyController, featureProvider);
+		}
 	}
 
 	/**
@@ -212,10 +217,13 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	public void layout() {
 		super.layout();
 
-		// Set the layout for the start order ellipse
-		Graphiti.getGaLayoutService().setLocation(getStartOrderEllipseShape().getGraphicsAlgorithm(),
-			getInnerContainerShape().getGraphicsAlgorithm().getWidth() - (START_ORDER_ELLIPSE_DIAMETER + START_ORDER_ELLIPSE_RIGHT_PADDING),
-			START_ORDER_ELLIPSE_TOP_PADDING);
+		IEditorPart activeEditor = DUtil.getActiveEditor(); 
+		if (activeEditor != null && !( activeEditor instanceof LocalGraphitiSadMultiPageScaEditor)) {
+			// Set the layout for the start order ellipse
+			Graphiti.getGaLayoutService().setLocation(getStartOrderEllipseShape().getGraphicsAlgorithm(),
+				getInnerContainerShape().getGraphicsAlgorithm().getWidth() - (START_ORDER_ELLIPSE_DIAMETER + START_ORDER_ELLIPSE_RIGHT_PADDING),
+				START_ORDER_ELLIPSE_TOP_PADDING);
+		}
 	}
 
 	/**
@@ -246,68 +254,70 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			updateStatus = superReason.toBoolean();
 		}
 
-		// update startOrderText
-		Text startOrderTextGA = getStartOrderText();
-		if (ci.getStartOrder() == null && !startOrderTextGA.getValue().equals(NO_START_ORDER_STRING)) {
-			// Start order was removed from component business object that previously had one.
-			if (performUpdate) {
-				updateStatus = true;
-				startOrderTextGA.setValue(NO_START_ORDER_STRING);
-			} else {
-				return new Reason(true, "Component start order removed, update required");
-			}
-		} else if (ci.getStartOrder() != null && startOrderTextGA.getValue().equals(NO_START_ORDER_STRING)) {
-			// Start order was add to component business object that previously DID NOT have one
-			if (performUpdate) {
-				updateStatus = true;
-				startOrderTextGA.setValue(ci.getStartOrder().toString());
-			} else {
-				return new Reason(true, "Component has been assigned a start order, update required");
-			}
-		} else if (ci.getStartOrder() != null && !startOrderTextGA.getValue().equals(NO_START_ORDER_STRING)
-			&& ci.getStartOrder().compareTo(new BigInteger(startOrderTextGA.getValue())) != 0) {
-			// Handle all other start order changes
-			if (performUpdate) {
-				updateStatus = true;
-				startOrderTextGA.setValue(ci.getStartOrder().toString());
-			} else {
-				return new Reason(true, "Component start order changed, update required");
-			}
-		}
-
-		// update assembly controller styling and text
-		Ellipse startOrderEllipse = (Ellipse) getStartOrderEllipseShape().getGraphicsAlgorithm();
-		boolean isStyleCorrect = startOrderEllipse.getStyle() == StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram);
-		boolean isTextCorrect = ci.getStartOrder() != null ? (ci.getStartOrder().compareTo(BigInteger.ZERO) == 0) : false;
-		if ((!isStyleCorrect || !isTextCorrect) && assemblyController != null) {
-			// if assembly controller, then use special style
-			if (performUpdate) {
-				updateStatus = true;
-				startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
-				if (ci.getStartOrder() != null && ci.getStartOrder().compareTo(BigInteger.ZERO) != 0) {
-					// Make sure start order is set to zero for assembly controller, if the update occurred from
-					// elsewhere in the model
-					ci.setStartOrder(BigInteger.ZERO);
-					ComponentPattern.organizeStartOrder(sad, diagram, featureProvider);
+		IEditorPart activeEditor = DUtil.getActiveEditor(); 
+		if (activeEditor != null && !( activeEditor instanceof LocalGraphitiSadMultiPageScaEditor)) {
+			// update startOrderText
+			Text startOrderTextGA = getStartOrderText();
+			if (ci.getStartOrder() == null && !startOrderTextGA.getValue().equals(NO_START_ORDER_STRING)) {
+				// Start order was removed from component business object that previously had one.
+				if (performUpdate) {
+					updateStatus = true;
+					startOrderTextGA.setValue(NO_START_ORDER_STRING);
 				} else {
-					// Organization check to make sure start order sequence is correct, if the update occurred from
-					// elsewhere in the model
-					ComponentPattern.organizeStartOrder(sad, diagram, featureProvider);
+					return new Reason(true, "Component start order removed, update required");
 				}
-				featureProvider.link(startOrderEllipse.getPictogramElement(), assemblyController);
-			} else {
-				return new Reason(true, "Component start order requires update");
+			} else if (ci.getStartOrder() != null && startOrderTextGA.getValue().equals(NO_START_ORDER_STRING)) {
+				// Start order was add to component business object that previously DID NOT have one
+				if (performUpdate) {
+					updateStatus = true;
+					startOrderTextGA.setValue(ci.getStartOrder().toString());
+				} else {
+					return new Reason(true, "Component has been assigned a start order, update required");
+				}
+			} else if (ci.getStartOrder() != null && !startOrderTextGA.getValue().equals(NO_START_ORDER_STRING)
+				&& ci.getStartOrder().compareTo(new BigInteger(startOrderTextGA.getValue())) != 0) {
+				// Handle all other start order changes
+				if (performUpdate) {
+					updateStatus = true;
+					startOrderTextGA.setValue(ci.getStartOrder().toString());
+				} else {
+					return new Reason(true, "Component start order changed, update required");
+				}
 			}
-		} else if (startOrderEllipse.getStyle() != StyleUtil.getStyleForStartOrderEllipse(diagram) && assemblyController == null) {
-			if (performUpdate) {
-				startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderEllipse(diagram));
-				// remove assembly controller links
-				EcoreUtil.delete((EObject) startOrderEllipse.getPictogramElement().getLink());
-			} else {
-				return new Reason(true, "Component start order requires update");
+
+			// update assembly controller styling and text
+			Ellipse startOrderEllipse = (Ellipse) getStartOrderEllipseShape().getGraphicsAlgorithm();
+			boolean isStyleCorrect = startOrderEllipse.getStyle() == StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram);
+			boolean isTextCorrect = ci.getStartOrder() != null ? (ci.getStartOrder().compareTo(BigInteger.ZERO) == 0) : false;
+			if ((!isStyleCorrect || !isTextCorrect) && assemblyController != null) {
+				// if assembly controller, then use special style
+				if (performUpdate) {
+					updateStatus = true;
+					startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
+					if (ci.getStartOrder() != null && ci.getStartOrder().compareTo(BigInteger.ZERO) != 0) {
+						// Make sure start order is set to zero for assembly controller, if the update occurred from
+						// elsewhere in the model
+						ci.setStartOrder(BigInteger.ZERO);
+						ComponentPattern.organizeStartOrder(sad, diagram, featureProvider);
+					} else {
+						// Organization check to make sure start order sequence is correct, if the update occurred from
+						// elsewhere in the model
+						ComponentPattern.organizeStartOrder(sad, diagram, featureProvider);
+					}
+					featureProvider.link(startOrderEllipse.getPictogramElement(), assemblyController);
+				} else {
+					return new Reason(true, "Component start order requires update");
+				}
+			} else if (startOrderEllipse.getStyle() != StyleUtil.getStyleForStartOrderEllipse(diagram) && assemblyController == null) {
+				if (performUpdate) {
+					startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderEllipse(diagram));
+					// remove assembly controller links
+					EcoreUtil.delete((EObject) startOrderEllipse.getPictogramElement().getLink());
+				} else {
+					return new Reason(true, "Component start order requires update");
+				}
 			}
 		}
-
 		// we must make sure externalPorts is linked with this object if its set, otherwise we need to remove it
 		if (performUpdate) {
 			if (externalPorts != null && !this.getLink().getBusinessObjects().contains(externalPorts)) {
