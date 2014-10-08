@@ -87,8 +87,6 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 			DiagramTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);
 		}
 
-		MenuUtils.save(gefBot);
-
 		for (String s : COMPONENTS) {
 			// Drill down to graphiti component shape
 			SWTBotGefEditPart gefEditPart = editor.getEditPart(s);
@@ -125,8 +123,6 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		editor.setFocus();
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 200);
-		
-		MenuUtils.save(gefBot);
 		
 		// Check pictogram elements
 		SWTBotGefEditPart hostCoEditPart = editor.getEditPart(HOST_CO_NAME);
@@ -181,7 +177,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 			}
 		}
 		editor.getEditPart(HARD_LIMIT).click();
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 		String regex = DiagramTestUtils.regexStringForSadProperty((ComponentShapeImpl) editor.getEditPart(HARD_LIMIT).part().getModel(), propertyname, newValue);
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		String editorText = editor.toTextEditor().getText();
@@ -202,7 +198,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 
 		// Add a SigGen component instantiation to the diagram and save
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, "SigGen", 0, 0);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Add a HardLimit component instantiation to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, "HardLimit", 0, 0);
@@ -219,7 +215,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
 
 		// Save project and check to see if HardLimit is now in the sad.xml
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The sad.xml should include SigGen's software assembly", editorText.matches(sigGenSad));

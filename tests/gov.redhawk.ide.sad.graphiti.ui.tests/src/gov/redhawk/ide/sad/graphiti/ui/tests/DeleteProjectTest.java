@@ -18,6 +18,8 @@ import java.util.List;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
+import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -54,6 +56,24 @@ public class DeleteProjectTest extends AbstractGraphitiTest {
 		gefBot.button("OK").click();
 		
 		// Make sure the editor closed
+		bot.waitUntil(new ICondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				return gefBot.editors().size() == 0;
+			}
+
+			@Override
+			public void init(SWTBot bot) {
+				
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Editor did not close";
+			}
+			
+		}, 30000, 1000);
 		editors = gefBot.editors();
 		Assert.assertEquals("Editor did not close", 0, editors.size());
 	}

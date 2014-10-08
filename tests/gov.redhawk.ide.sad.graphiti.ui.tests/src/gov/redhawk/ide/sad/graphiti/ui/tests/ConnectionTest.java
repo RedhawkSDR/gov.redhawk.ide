@@ -79,7 +79,7 @@ public class ConnectionTest extends AbstractGraphitiTest {
 
 		// Draw the connection and save
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
-		gefBot.menu("File").menu("Save").click();
+		MenuUtils.save(editor);
 
 		// Test to make sure connection was made correctly
 		Assert.assertFalse("Connection should exist", diagram.getConnections().isEmpty());
@@ -109,7 +109,7 @@ public class ConnectionTest extends AbstractGraphitiTest {
 		for (SWTBotGefConnectionEditPart con : sourceConnections) {
 			DiagramTestUtils.deleteFromDiagram(editor, con);
 		}
-		gefBot.menu("File").menu("Save").click();
+		MenuUtils.save(editor);
 		sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
 		Assert.assertTrue("Source connections should be empty, all connections were deleted", sourceConnections.isEmpty());
 		Assert.assertTrue("All connections should have been deleted", diagram.getConnections().isEmpty());

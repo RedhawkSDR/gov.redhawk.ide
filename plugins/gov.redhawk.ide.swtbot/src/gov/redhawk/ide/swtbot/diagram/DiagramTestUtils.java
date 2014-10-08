@@ -320,7 +320,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 */
 	public static SWTBotGefEditPart getDiagramUsesPort(SWTBotGefEditor editor, String componentName, String portName) {
 		SWTBotGefEditPart componentEditPart = editor.getEditPart(componentName);
-
+		Assert.assertNotNull(componentEditPart);
 		for (SWTBotGefEditPart child : componentEditPart.children()) {
 			ContainerShape containerShape = (ContainerShape) child.part().getModel();
 			Object bo = DUtil.getBusinessObject(containerShape);

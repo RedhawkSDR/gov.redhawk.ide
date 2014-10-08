@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
-import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 
@@ -45,7 +44,6 @@ public class HotKeyTest extends AbstractGraphitiTest {
 
 		// Add component to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		MenuUtils.save(gefBot);
 		
 		// Confirm component was added to waveform
 		Assert.assertNotNull("SigGen component not found", editor.getEditPart(SIGGEN));

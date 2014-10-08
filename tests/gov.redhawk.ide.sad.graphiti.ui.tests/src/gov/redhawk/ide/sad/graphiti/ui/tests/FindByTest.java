@@ -59,7 +59,7 @@ public class FindByTest extends AbstractGraphitiTest {
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_CORBA_NAME, 0, 150);
 		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_CORBA_NAME, findByName, provides, uses);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Grab the associated business object and confirm it is a FindBy element
 		SWTBotGefEditPart fbEditPart = editor.getEditPart(findByName);
@@ -133,13 +133,13 @@ public class FindByTest extends AbstractGraphitiTest {
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_CORBA_NAME, 0, 150);
 		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_CORBA_NAME, FIND_BY_NAME, provides, null);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Create connection on diagram
 		SWTBotGefEditPart sigGenUsesPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		SWTBotGefEditPart findByProvidesPart = DiagramTestUtils.getDiagramProvidesPort(editor, FIND_BY_NAME);
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenUsesPart, findByProvidesPart);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Check sad.xml for connection
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
@@ -189,7 +189,7 @@ public class FindByTest extends AbstractGraphitiTest {
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 200, 20);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_CORBA_NAME, 0, 150);
 		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_CORBA_NAME, FIND_BY_NAME, provides, uses);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Create connection on diagram
 		SWTBotGefEditPart sigGenUsesPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
@@ -200,7 +200,7 @@ public class FindByTest extends AbstractGraphitiTest {
 		SWTBotGefEditPart hardLimitProvidesPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT);
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, findByUsesPart, hardLimitProvidesPart);
 
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Open FindBy edit wizard and change name, remove existing port, and add a new one
 		editor.getEditPart(FIND_BY_NAME).select();
@@ -268,13 +268,13 @@ public class FindByTest extends AbstractGraphitiTest {
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_CORBA_NAME, 0, 150);
 		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_CORBA_NAME, findByName, provides, null);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Create connection on diagram
 		SWTBotGefEditPart sigGenUsesPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		SWTBotGefEditPart findByProvidesPart = DiagramTestUtils.getDiagramProvidesPort(editor, findByName);
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenUsesPart, findByProvidesPart);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Check sad.xml for connection
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");

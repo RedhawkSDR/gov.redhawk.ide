@@ -42,7 +42,9 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
@@ -132,6 +134,8 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 
 	private IFormPage propertiesPage;
 
+	private IEditorPart textEditor;
+
 	private class ResourceListener extends AdapterImpl {
 		private SoftwareAssembly sad;
 		private final Resource sadResource;
@@ -218,25 +222,6 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 	}
 
 	/**
-	 * This is here for the listener to be able to call it.
-	 */
-	@Override
-	protected void firePropertyChange(final int action) {
-		super.firePropertyChange(action);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setActivePage(final int pageIndex) {
-		if (pageIndex >= 0 && pageIndex < getPageCount()) {
-			super.setActivePage(pageIndex);
-		}
-	}
-
-
-	/**
 	 * This sets the selection into whichever viewer is active.
 	 */
 	@Override
@@ -281,8 +266,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 	}
 
 	/**
-	 * This returns the viewer as required by the {@link IViewerProvider}
-	 * interface.
+	 * This returns the viewer as required by the {@link IViewerProvider} interface.
 	 */
 	@Override
 	public Viewer getViewer() {
@@ -292,9 +276,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 	/**
 	 * This is how the framework determines which interfaces we implement.
 	 */
-	@SuppressWarnings({
-		"unchecked"
-	})
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") final Class key) {
 //		if (key.equals(IPropertySheetPage.class)) {
@@ -308,7 +290,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 //		} else {
 //			return super.getAdapter(key);
 //		}
-		
+
 		if (key.equals(IGotoMarker.class)) {
 			return this;
 		} else if (key.equals(ScaWaveform.class)) {
@@ -351,7 +333,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 			}
 		} catch (final CoreException exception) {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to go to marker.", exception),
-			        StatusManager.LOG | StatusManager.SHOW);
+				StatusManager.LOG | StatusManager.SHOW);
 		}
 	}
 
@@ -361,7 +343,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 
 	public void setStatusLineManager(final ISelection selection) {
 		final IStatusLineManager statusLineManager;
-		
+
 		statusLineManager = getActionBars().getStatusLineManager();
 
 		if (statusLineManager != null) {
@@ -396,6 +378,18 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 		return super.isDirty();
 	}
 
+	@Override
+	protected boolean computeDirtyState() {
+		int activePage = getActivePage();
+		if (activePage == -1) {
+			return false;
+		} else if (activePage == getPageCount() - 1) {
+			return textEditor.isDirty();
+		} 
+		BasicCommandStack commandStack = (BasicCommandStack) diagramEditor.getEditingDomain().getCommandStack();
+		return commandStack.isSaveNeeded();
+	}
+
 	/**
 	 * This implements {@link org.eclipse.jface.action.IMenuListener} to help
 	 * fill the context menus with contributions from the Edit menu.
@@ -407,7 +401,6 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 
 	@Override
 	public void dispose() {
-
 
 		if (this.nameListener != null) {
 			this.nameListener.dispose();
@@ -523,7 +516,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 		// Only creates the other pages if there is something that can be edited
 		//
 		if (!getEditingDomain().getResourceSet().getResources().isEmpty()
-		        && !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
+			&& !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
 			try {
 				int pageIndex = 0;
 
@@ -534,7 +527,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 				final IFormPage page = createOverviewPage(sadResource);
 				setOverviewPage(page);
 				this.addPage(page);
-				
+
 				this.propertiesPage = createPropertiesPage(sadResource);
 				addPage(propertiesPage);
 
@@ -544,27 +537,25 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 				pageIndex = addPage(editor, diagramInput);
 				setPageText(pageIndex, "Diagram");
 
-				final IEditorPart textEditor = createTextEditor();
+				textEditor = createTextEditor();
 				if (textEditor != null) {
 					final int sadSourcePageNum = addPage(textEditor, getEditorInput());
 					this.setPageText(sadSourcePageNum, getEditorInput().getName());
 				}
 
-				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
-
 			} catch (final PartInitException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
-				        StatusManager.LOG | StatusManager.SHOW);
+					StatusManager.LOG | StatusManager.SHOW);
 			} catch (final IOException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
-				        StatusManager.LOG | StatusManager.SHOW);
+					StatusManager.LOG | StatusManager.SHOW);
 			} catch (final CoreException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
-				        StatusManager.LOG | StatusManager.SHOW);
+					StatusManager.LOG | StatusManager.SHOW);
 			}
 		}
 	}
-	
+
 	public IFormPage getPropertiesPage() {
 		return propertiesPage;
 	}
@@ -606,40 +597,40 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 	 * @throws CoreException
 	 */
 	protected IEditorInput createDiagramInput(final Resource sadResource) throws IOException, CoreException {
-		
+
 		final URI diagramURI = DUtil.getDiagramResourceURI(SadDiagramUtilHelper.INSTANCE, sadResource);
-		
+
 		DUtil.initializeDiagramResource(SadDiagramUtilHelper.INSTANCE, diagramURI, sadResource);
-		
+
 		Resource diagramResource = getEditingDomain().getResourceSet().getResource(diagramURI, true);
-		
-		//load diagram from resource
+
+		// load diagram from resource
 		final Diagram diagram = (Diagram) diagramResource.getContents().get(0);
-		
-		//load sad from resource
+
+		// load sad from resource
 		final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(sadResource);
 
-		//link diagram with SoftwareAssembly
+		// link diagram with SoftwareAssembly
 		TransactionalCommandStack stack = (TransactionalCommandStack) getEditingDomain().getCommandStack();
 		stack.execute(new RecordingCommand((TransactionalEditingDomain) getEditingDomain()) {
 			@Override
-            protected void doExecute() {
-				
+			protected void doExecute() {
+
 				PictogramLink link = PictogramsFactory.eINSTANCE.createPictogramLink();
 				link.getBusinessObjects().add(sad);
 				diagram.setLink(link);
-            }
+			}
 		});
-		
-		//return editor input from diagram with sad diagram type
+
+		// return editor input from diagram with sad diagram type
 		return DiagramEditorInput.createEditorInput(diagram, SADDiagramTypeProvider.PROVIDER_ID);
-		
+
 	}
 
 	protected DiagramEditor createDiagramEditor() {
 		RHGraphitiDiagramEditor d = new RHGraphitiDiagramEditor((TransactionalEditingDomain) getEditingDomain());
 		return d;
-		
+
 	}
 
 	protected void setDiagramEditor(final DiagramEditor diagramEditor) {
@@ -671,8 +662,6 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 			}
 		}
 	}
-
-
 
 	/**
 	 * {@inheritDoc}
@@ -713,13 +702,6 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 	}
 
 	@Override
-	protected void emfDoSave(final IProgressMonitor progressMonitor) {
-		// Refresh the necessary state. We are delegating the save to the diagram page
-		//
-		((BasicCommandStack) getEditingDomain().getCommandStack()).saveIsDone();
-	}
-
-	@Override
 	public boolean isPersisted(final Resource resource) {
 		return resource.getURI().equals(getSoftwareAssembly().eResource().getURI()) && super.isPersisted(resource);
 	}
@@ -730,7 +712,28 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 		cleanAction.setRoot(getSoftwareAssembly());
 		cleanAction.run();
 
-		super.doSave(monitor);
+		try {
+			this.editorSaving = true;
+			int activePage = getActivePage();
+			if (textEditor.isDirty() && activePage == getPageCount() - 1) {
+				textEditor.doSave(monitor);
+				reload();
+				emfDoSave(new SubProgressMonitor(monitor, 1));
+			} else {
+				commitPages(true);
+				monitor.beginTask("Saving " + this.getTitle(), this.getPageCount() + 2);
+//				internalDoValidate(new SubProgressMonitor(monitor, 1));
+				emfDoSave(new SubProgressMonitor(monitor, 1));
+			}
+			BasicCommandStack commandStack = (BasicCommandStack) diagramEditor.getEditingDomain().getCommandStack();
+			commandStack.saveIsDone();
+			editorDirtyStateChanged();
+		} catch (final OperationCanceledException e) {
+			// PASS
+		} finally {
+			monitor.done();
+			this.editorSaving = false;
+		}
 	}
 
 	/**
@@ -738,11 +741,24 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 	 */
 	@Override
 	protected void resourceChanged(final IResource resource, final IResourceDelta delta) {
-		//Make sure we don't call resource changed on a non sad resource
+		// Make sure we don't call resource changed on a non sad resource
 		if (this.isValidSadResource(resource) && !delta.getResource().getWorkspace().isAutoBuilding()) {
 			super.resourceChanged(resource, delta);
 		}
 		validate();
+	}
+
+	@Override
+	public void reload() {
+		super.reload();
+		diagramEditor.getDiagramBehavior().getUpdateBehavior().setResourceChanged(true);
+		diagramEditor.getDiagramBehavior().getUpdateBehavior().handleActivate();
+	}
+	
+	@Override
+	protected void emfDoSave(IProgressMonitor progressMonitor) {
+		diagramEditor.doSave(progressMonitor);
+//		super.emfDoSave(progressMonitor);
 	}
 
 	/**
@@ -763,36 +779,32 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 		return this.diagramEditor;
 	}
 
-
 	@Override
-    protected IContentOutlinePage createContentOutline() {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
-	
+	protected IContentOutlinePage createContentOutline() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	@Override
 	@SuppressWarnings("restriction")
-    protected TransactionalEditingDomain createEditingDomain() {
-		
-	    
-	    final ResourceSet resourceSet = new ResourceSetImpl();
-	    final IWorkspaceCommandStack workspaceCommandStack = new GFWorkspaceCommandStackImpl(new DefaultOperationHistory());
-	    
-	    TransactionalEditingDomain domain = new TransactionalEditingDomainImpl(new ComposedAdapterFactory(
-	    		ComposedAdapterFactory.Descriptor.Registry.INSTANCE), workspaceCommandStack, resourceSet);
-	    WorkspaceEditingDomainFactory.INSTANCE.mapResourceSet((TransactionalEditingDomain) domain);
-	    domain.setID(getEditingDomainId());
-	    
+	protected TransactionalEditingDomain createEditingDomain() {
 
+		final ResourceSet resourceSet = new ResourceSetImpl();
+		final IWorkspaceCommandStack workspaceCommandStack = new GFWorkspaceCommandStackImpl(new DefaultOperationHistory());
 
-	    // Create an adapter factory that yields item providers.
-	    //
-	    final ComposedAdapterFactory localAdapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
+		TransactionalEditingDomain domain = new TransactionalEditingDomainImpl(new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE),
+			workspaceCommandStack, resourceSet);
+		WorkspaceEditingDomainFactory.INSTANCE.mapResourceSet((TransactionalEditingDomain) domain);
+		domain.setID(getEditingDomainId());
 
-	    localAdapterFactory.addAdapterFactory(new ResourceItemProviderAdapterFactory());
-	    localAdapterFactory.addAdapterFactory(getSpecificAdapterFactory());
-	    localAdapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
-	    ((AdapterFactoryEditingDomain) domain).setAdapterFactory(localAdapterFactory);
-	    return domain;
-    }
+		// Create an adapter factory that yields item providers.
+		//
+		final ComposedAdapterFactory localAdapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
+
+		localAdapterFactory.addAdapterFactory(new ResourceItemProviderAdapterFactory());
+		localAdapterFactory.addAdapterFactory(getSpecificAdapterFactory());
+		localAdapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
+		((AdapterFactoryEditingDomain) domain).setAdapterFactory(localAdapterFactory);
+		return domain;
+	}
 }

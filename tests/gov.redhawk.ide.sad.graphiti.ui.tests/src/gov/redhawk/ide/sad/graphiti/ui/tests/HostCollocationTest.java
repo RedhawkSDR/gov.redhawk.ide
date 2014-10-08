@@ -57,7 +57,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		// Add component to the host collocation
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
 
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Check pictogram elements
 		SWTBotGefEditPart hostCoEditPart = editor.getEditPart(HOST_CO_NAME);
@@ -97,7 +97,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 
 		// Add component to the host collocation
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Store host collocation and component relative location
 		ContainerShape hostCoShape = DiagramTestUtils.getHostCollocationShape(editor, HOST_CO_NAME);
@@ -142,7 +142,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 20, 150);
 
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Check that component was added
 		HostCollocation hostCo = DiagramTestUtils.getHostCollocationObject(editor, HOST_CO_NAME);
@@ -155,7 +155,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 
 		// Drag component outside of host collocation and confirm that it was removed
 		editor.drag(editor.getEditPart(HARD_LIMIT), 350, 0);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 		hostCo = DiagramTestUtils.getHostCollocationObject(editor, HOST_CO_NAME);
 		Assert.assertTrue("Number of components should be 1, instead there are " + hostCo.getComponentPlacement().size(),
 			hostCo.getComponentPlacement().size() == 1);
@@ -192,7 +192,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		editor.setFocus();
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
 
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Check pictogram elements
 		SWTBotGefEditPart hostCoEditPart = editor.getEditPart(HOST_CO_NAME);
@@ -249,8 +249,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 20, 150);
 
-		MenuUtils.save(gefBot);
-		gefBot.sleep(1000);
+		MenuUtils.save(editor);
 
 		// Check that component was added
 		HostCollocation hostCo = DiagramTestUtils.getHostCollocationObject(editor, HOST_CO_NAME);
@@ -279,8 +278,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		int newX = oldX + 500;
 		int newY = oldY + 200;
 		editor.drag(oldX + 5, oldY + 5, newX, newY);
-		MenuUtils.save(gefBot);
-		gefBot.sleep(1000);
+		MenuUtils.save(editor);
 		// Test Position
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 10, 10));
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
@@ -337,8 +335,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		newX = 0;
 		newY = 0;
 		editor.drag(oldX, oldY, newX, newY);
-		MenuUtils.save(gefBot);
-		gefBot.sleep(1000);
+		MenuUtils.save(editor);
 		// Test Position
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 10, 10));
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
@@ -365,8 +362,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		newX = 0;
 		newY = oldY * 2;
 		editor.drag(oldX - 2, oldY  - 1, newX, newY);
-		MenuUtils.save(gefBot);
-		gefBot.sleep(1000);
+		MenuUtils.save(editor);
 		// Test Position
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 10, 10));
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
@@ -393,8 +389,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		newX = oldX;
 		newY = 0;
 		editor.drag(oldX, oldY, newX, newY);
-		MenuUtils.save(gefBot);
-		gefBot.sleep(1000);
+		MenuUtils.save(editor);
 		// Test Position
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 10, 10));
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
@@ -407,8 +402,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		newX = oldX;
 		newY = 130;
 		editor.drag(oldX, oldY, newX, newY);
-		MenuUtils.save(gefBot);
-		gefBot.sleep(1000);
+		MenuUtils.save(editor);
 		// Test Position
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 10, 10));
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
@@ -440,8 +434,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		newX = 750;
 		newY = oldY;
 		editor.drag(oldX + 5, oldY + 2, newX, newY);
-		MenuUtils.save(gefBot);
-		gefBot.sleep(1000);
+		MenuUtils.save(editor);
 		// Test Position
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 350, 20));
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
@@ -454,8 +447,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		newX = oldX;
 		newY = 400;
 		editor.drag(oldX + 5, oldY + 2, newX, newY);
-		MenuUtils.save(gefBot);
-		gefBot.sleep(1000);
+		MenuUtils.save(editor);
 		// Test Position
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 350, 20));
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
@@ -468,8 +460,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		newX = oldX;
 		newY = 130;
 		editor.drag(oldX + 5, oldY + 2, newX, newY);
-		MenuUtils.save(gefBot);
-		gefBot.sleep(1000);
+		MenuUtils.save(editor);
 		// Test Position
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 350, 20));
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
@@ -486,8 +477,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		newX = oldX;
 		newY = 0;
 		editor.drag(oldX + 5, oldY, newX, newY);
-		MenuUtils.save(gefBot);
-		gefBot.sleep(1000);
+		MenuUtils.save(editor);
 		// Test Position
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 350, 320));
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
@@ -500,9 +490,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		newX = oldX;
 		newY = 300;
 		editor.drag(oldX + 5, oldY, newX, newY);
-		MenuUtils.save(gefBot);
-		gefBot.sleep(1000);
-		// Test Position
+		MenuUtils.save(editor);
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(hardLimitShape, 350, 20));
 		Assert.assertTrue(UNEXPECTED_SHAPE_LOCATION, DiagramTestUtils.verifyShapeLocation(sigGenShape, 10, 140));
 		// Test Containment
@@ -533,7 +521,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		// Add component/findby to the host collocation
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 20, 150);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_DOMAIN_MANAGER, 450, 150);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 		
 		//HostCOllocation objects
 		HostCollocation hostCo = DiagramTestUtils.getHostCollocationObject(editor, HOST_CO_NAME);
@@ -546,9 +534,9 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		int newX = oldX + 1000;
 		int newY = oldY;
 		editor.drag(oldX + 5, oldY + 2, newX, newY);
-		MenuUtils.save(gefBot);
 		
 		// Assert that the host collocation resize was rejected
+		Assert.assertFalse(editor.isDirty());
 		Assert.assertEquals("Host collocation width not have changed size", oldX, hostCollocationGa.getX() + hostCollocationGa.getWidth());
 
 		// Assert that FindBy Element is not contained within host collocation

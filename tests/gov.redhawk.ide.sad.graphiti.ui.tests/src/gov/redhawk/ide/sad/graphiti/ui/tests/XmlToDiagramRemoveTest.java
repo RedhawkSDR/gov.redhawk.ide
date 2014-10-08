@@ -21,35 +21,19 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
-import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Test class that deals with removing elements from the sad.xml 
- * and making sure they are removed correctly from the diagram 
+ * Test class that deals with removing elements from the sad.xml
+ * and making sure they are removed correctly from the diagram
  */
 public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 
-	private static long oldValue;
 	private SWTBotGefEditor editor;
 	private String waveformName;
 
-	@BeforeClass
-	public static void beforeClassDelay() throws Exception {
-		oldValue = SWTBotPreferences.PLAYBACK_DELAY;
-		SWTBotPreferences.PLAYBACK_DELAY = 500;
-	}
-	
-	@AfterClass
-	public static void afterClassDelay() throws Exception {
-		SWTBotPreferences.PLAYBACK_DELAY = oldValue;
-	}
-	
-	
 	/**
 	 * IDE-851
 	 * Remove a connection from the diagram via the sad.xml
@@ -71,19 +55,18 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
-		MenuUtils.save(gefBot);
-		
+		MenuUtils.save(editor);
+
 		// Remove connection from sad.xml
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		String editorText = editor.toTextEditor().getText();
 		int endString = editorText.indexOf("<connections>");
 		editorText = editorText.substring(0, endString);
 		editor.toTextEditor().setText(editorText);
-		MenuUtils.save(gefBot);
-		
+		MenuUtils.save(editor);
+
 		// Confirm that the connection no longer exists
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		gefBot.sleep(2000); // Sometimes takes a few seconds for the diagram to redraw
 		SWTBotGefEditPart componentEditPart = editor.getEditPart(SIGGEN);
 		ContainerShape containerShape = (ContainerShape) componentEditPart.part().getModel();
 		Diagram diagram = DUtil.findDiagram(containerShape);
@@ -117,8 +100,8 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
-		MenuUtils.save(gefBot);
-		
+		MenuUtils.save(editor);
+
 		// Remove component from sad.xml
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		String editorText = editor.toTextEditor().getText();
@@ -127,11 +110,10 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 		int startIndex = editorText.indexOf("<componentplacement>", endIndex + 1);
 		String partTwoText = editorText.substring(startIndex);
 		editor.toTextEditor().setText(partOneText + partTwoText);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 		
 		// Confirm that the connection no longer exists
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		gefBot.sleep(2000); // Sometimes takes a few seconds for the diagram to redraw
 		SWTBotGefEditPart componentEditPart = editor.getEditPart(HARDLIMIT);
 		ContainerShape containerShape = (ContainerShape) componentEditPart.part().getModel();
 		Diagram diagram = DUtil.findDiagram(containerShape);
@@ -143,7 +125,7 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 		SadComponentInstantiation sigGenComponentObj = DiagramTestUtils.getComponentObject(editor, SIGGEN);
 		Assert.assertTrue(SIGGEN + " should have been deleted", sigGenComponentObj == null);
 	}
-	
+
 	/**
 	 * IDE-852
 	 * Remove a host collocation from the diagram via the sad.xml
@@ -161,17 +143,16 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 
 		// Add host collocation to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HOSTCOLLOCATION_PALETTE, 0, 0);
-		
+
 		gefBot.waitUntil(Conditions.shellIsActive("New Host Collocation"));
 		gefBot.textWithLabel("Host Collocation:").setText("AAA");
 		gefBot.button("OK").click();
-		gefBot.sleep(1000);
 		//add component inside host collocation (so host collocation is valid)
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 5, 5);
 
 		//save
-		MenuUtils.save(gefBot);
-		
+		MenuUtils.save(editor);
+
 		// Remove host collocation from sad.xml
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		String editorText = editor.toTextEditor().getText();
@@ -180,12 +161,10 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 		int startIndex = editorText.indexOf("</partitioning>");
 		String partTwoText = editorText.substring(startIndex);
 		editor.toTextEditor().setText(partOneText + partTwoText);
-		MenuUtils.save(gefBot);
-		
-		
+		MenuUtils.save(editor);
+
 		// Confirm the host collocation no longer exists in diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		gefBot.sleep(2000); // Sometimes takes a few seconds for the diagram to redraw
 		HostCollocation hostCollocationObj = DiagramTestUtils.getHostCollocationObject(editor, HOSTCOLLOCATION_INSTANCE_NAME);
 		Assert.assertTrue(HOSTCOLLOCATION_INSTANCE_NAME + " should have been deleted", hostCollocationObj == null);
 	}

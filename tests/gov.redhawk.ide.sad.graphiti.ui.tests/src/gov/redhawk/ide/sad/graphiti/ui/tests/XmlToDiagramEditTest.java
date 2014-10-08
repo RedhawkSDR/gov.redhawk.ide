@@ -29,11 +29,8 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
-import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -43,11 +40,6 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 
 	private SWTBotGefEditor editor;
 	private String waveformName;
-	
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		SWTBotPreferences.PLAYBACK_DELAY = 500;
-	}
 
 	/**
 	 * IDE-853
@@ -69,7 +61,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 200, 0);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, DATA_CONVETER, 0, 200);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Edit content of sad.xml
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
@@ -79,7 +71,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		editorText = editorText.replace("startorder=\"2\"", "startorder=\"1\"");
 		editorText = editorText.replace("startorder=\"3\"", "startorder=\"2\"");
 		editor.toTextEditor().setText(editorText);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
@@ -110,7 +102,6 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 	 * Test editing connection properties in the sad.xml
 	 * Ensure that edits are reflected to the diagram upon save
 	 */
-	@Ignore
 	@Test
 	public void editConnectionInXmlTest() {
 		waveformName = "Edit_Connection_Xml";
@@ -131,7 +122,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		SWTBotGefEditPart sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		SWTBotGefEditPart hardLimitProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenUsesEditPart, hardLimitProvidesEditPart);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Edit content of sad.xml
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
@@ -139,7 +130,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		editorText = editorText.replace("<providesidentifier>dataDouble_in</providesidentifier>", "<providesidentifier>dataDouble</providesidentifier>");
 		editorText = editorText.replace("<componentinstantiationref refid=\"HardLimit_1\"/>", "<componentinstantiationref refid=\"DataConverter_1\"/>");
 		editor.toTextEditor().setText(editorText);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
@@ -181,7 +172,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		// Add component to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 200, 0);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Verify componentOne is set as assembly Controller
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
@@ -195,7 +186,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		String editorText = editor.toTextEditor().getText();
 		editorText = editorText.replace("<componentinstantiationref refid=\"SigGen_1\"/>", "<componentinstantiationref refid=\"HardLimit_1\"/>");
 		editor.toTextEditor().setText(editorText);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Confirm edits reflect that componentTwo is now assembly controller
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
@@ -237,7 +228,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		// Add component to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 20, 20);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 150);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Verify that the host collocation has two components
 		ContainerShape hostCoShape = DiagramTestUtils.getHostCollocationShape(editor, HOST_CO_NAME);
@@ -254,7 +245,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		String sigGenCpText = editorText.substring(begin, end); // save this
 		editorText = editorText.substring(0, begin) + editorText.substring(end);
 		editor.toTextEditor().setText(editorText);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Confirm SigGen component was removed from Host Collocation
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
@@ -276,7 +267,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		}, 10000, 1000);
 
 		editor.drag(HOST_CO_NAME, 20, 20); // Need to do a save to prevent override dialog from showing on next edit
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 		ComponentShape componentShape = (ComponentShape) hostCoShape.getChildren().get(0);
 		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 		Assert.assertEquals("HardLimit component expected", HARD_LIMIT + "_1", ci.getId());
@@ -287,7 +278,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		editorText = editorText.replace("<componentfile id", sigGenCfText + " \n <componentfile id");
 		editorText = editorText.replace("<componentplacement>", sigGenCpText + " \n <componentplacement>");
 		editor.toTextEditor().setText(editorText);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Confirm SigGen component was added back to Host Collocation
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
@@ -309,7 +300,9 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		}, 10000, 1000);
 
 		editor.drag(HOST_CO_NAME, 20, 20); // Need to do a save to prevent override dialog from showing on next edit
-		MenuUtils.save(gefBot);
+		if (editor.isDirty()) {
+			MenuUtils.save(editor);
+		}
 		componentShape = (ComponentShape) hostCoShape.getChildren().get(0);
 		ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 		Assert.assertEquals("SigGen component expected", SIGGEN + "_1", ci.getId());
@@ -319,7 +312,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		editorText = editor.toTextEditor().getText();
 		editorText = editorText.replace("<hostcollocation name=\"" + HOST_CO_NAME + "\">", "<hostcollocation name=\"" + HOST_CO_NAME + "_1\">");
 		editor.toTextEditor().setText(editorText);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Confirm that Host Collocation name updated in diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");

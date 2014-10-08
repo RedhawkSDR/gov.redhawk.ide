@@ -58,7 +58,7 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 
 		// Add component to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentOne, 0, 0);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Edit content of sad.xml
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
@@ -74,13 +74,13 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 			+ "<findcomponent> <namingservice name=\"HardLimit_1\"/> </findcomponent> </componentinstantiation> </componentplacement>";
 		editorText = editorText.replace("</componentplacement>", newComponentPlacement);
 		editor.toTextEditor().setText(editorText);
-		gefBot.sleep(1000);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		gefBot.sleep(2000); // It can take a few seconds for the diagram to redraw
+
 		SadComponentInstantiation componentObj = DiagramTestUtils.getComponentObject(editor, "HardLimit");
+		Assert.assertNotNull(componentObj);
 		Assert.assertEquals("Usage Name did not create correctly", "HardLimit_1", componentObj.getUsageName());
 		Assert.assertEquals("Component ID did not create correctly", "HardLimit_1", componentObj.getId());
 		Assert.assertEquals("Naming Service did not create correctly", "HardLimit_1", componentObj.getFindComponent().getNamingService().getName());
@@ -104,7 +104,7 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		// Add component to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Confirm that no connections currently exist
 		SWTBotGefEditPart sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
@@ -121,11 +121,11 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 			+ "<componentinstantiationref refid=\"HardLimit_1\"/> </providesport> </connectinterface> </connections>";
 		editorText = editorText.replace("</assemblycontroller>", newConnection);
 		editor.toTextEditor().setText(editorText);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		gefBot.sleep(2000); // It can take a few seconds for the diagram to redraw
+
 		sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		SWTBotGefEditPart hardLimitProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
 
@@ -160,7 +160,7 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 400, 0);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Edit content of sad.xml
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
@@ -172,12 +172,10 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		editorText = editorText.replace("</partitioning>", "</hostcollocation></partitioning>");
 
 		editor.toTextEditor().setText(editorText);
-		gefBot.sleep(1000);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		gefBot.sleep(2000); // It can take a few seconds for the diagram to redraw
 
 		// check the shapes are drawing properly
 		ContainerShape hostCollocationShape = DiagramTestUtils.getHostCollocationShape(editor, HOSTCOLLOCATION_INSTANCE_NAME);
@@ -214,7 +212,7 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 
 		// Add component to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		MenuUtils.save(gefBot);
+		MenuUtils.save(editor);
 
 		// Edit content of sad.xml
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
@@ -230,7 +228,8 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 
 		editorText = editorText.replace("</assemblycontroller>", newFindByConnections);
 		editor.toTextEditor().setText(editorText);
-		MenuUtils.save(gefBot);
+		// Need to allow the editor to get the changes
+		MenuUtils.save(editor);
 
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
@@ -238,6 +237,8 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		FindByStub findByServiceObject = DiagramTestUtils.getFindByObject(editor, FIND_BY_SERVICE);
 
 		// Check find by object names
+		Assert.assertNotNull(findByNameObject);
+		Assert.assertNotNull(findByNameObject.getNamingService());
 		Assert.assertEquals("Naming Service did not create correctly", FIND_BY_NAME, findByNameObject.getNamingService().getName());
 		Assert.assertEquals("Domain Finder did not create correctly", FIND_BY_SERVICE, findByServiceObject.getDomainFinder().getName());
 

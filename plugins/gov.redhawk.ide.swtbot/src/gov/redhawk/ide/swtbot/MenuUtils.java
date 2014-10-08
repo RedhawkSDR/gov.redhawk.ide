@@ -13,14 +13,15 @@ package gov.redhawk.ide.swtbot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 
 public class MenuUtils {
 
 	protected MenuUtils() {
 	}
-
 
 	/**
 	 * Close all open editors and delete the specified project from the file system
@@ -69,8 +70,32 @@ public class MenuUtils {
 	 * Save all editors
 	 * @param bot
 	 */
-	public static void save(SWTWorkbenchBot bot) {
-		bot.saveAllEditors();
+	public static void save(final SWTBotEditor editor) {
+		editor.bot().waitUntil(new DefaultCondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				return editor.isDirty();
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Editor never dirty";
+			}
+		}, 10000, 1000);
+		editor.save();
+		editor.bot().waitUntil(new DefaultCondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				return !editor.isDirty();
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Editor still dirty";
+			}
+		}, 10000, 1000);
 	}
 
 	/**
