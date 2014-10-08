@@ -53,7 +53,6 @@ public class StartComponentFeature extends AbstractCustomFeature {
 		Object[] selection = DUtil.getSelectedEditParts();
 		for (Object obj : selection) {
 			this.action.setContext(obj);
-			this.action.setEnabled(true);
 			this.action.run();
 		}
 	}
