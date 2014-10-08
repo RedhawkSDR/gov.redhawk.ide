@@ -17,19 +17,14 @@ import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
-import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.impl.listeners.DisposableObjectContainerListener;
-import gov.redhawk.model.sca.RefreshDepth;
-import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
-import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
 import gov.redhawk.model.sca.impl.CorbaObjWrapperImpl;
 import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.OrbSession;
-import gov.redhawk.sca.util.SilentJob;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,9 +32,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
@@ -48,20 +40,13 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
-import org.jacorb.naming.Name;
-import org.omg.CORBA.SystemException;
-import org.omg.CosNaming.NameComponent;
 
-import CF.Application;
-import CF.ApplicationHelper;
-import CF.LifeCyclePackage.InitializeError;
 import ExtendedCF.Sandbox;
 import ExtendedCF.SandboxHelper;
 import ExtendedCF.SandboxOperations;
@@ -447,20 +432,6 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 
 	private static final Debug DEBUG = new Debug(ScaDebugPlugin.getInstance(), "localSca");
 
-	private final NotifyingNamingContextAdapter adapter = new NotifyingNamingContextAdapter() {
-
-		@Override
-		protected void addObject(final NameComponent[] location, final org.omg.CORBA.Object obj, final Notification msg) {
-			addResource(location, obj, msg);
-
-		}
-
-		@Override
-		protected void removeObject(final NameComponent[] location, final org.omg.CORBA.Object obj, final Notification msg) {
-			removeResource(location, obj, msg);
-		}
-
-	};
 
 	private CheckupJob checkupJob = new CheckupJob(this);
 
@@ -510,127 +481,6 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		}
 	};
 
-	protected void addResource(final NameComponent[] location, final org.omg.CORBA.Object obj, final Notification msg) {
-		// END GENERATED CODE
-		final Job addResourceJob = new SilentJob("Add Resource") {
-
-			@Override
-			protected IStatus runSilent(final IProgressMonitor monitor) {
-				try {
-					if (obj._is_a(ApplicationHelper.id())) {
-						addApplication(new Name(location), ApplicationHelper.narrow(obj));
-					}
-				} catch (final SystemException e) {
-					// PASS
-				} catch (final org.omg.CosNaming.NamingContextPackage.InvalidName e) {
-					// PASS
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		addResourceJob.setSystem(true);
-		addResourceJob.schedule();
-		// BEGIN GENERATED CODE
-	}
-
-	protected void removeResource(final NameComponent[] location, final org.omg.CORBA.Object obj, final Notification msg) {
-		// END GENERATED CODE
-		final Job addResourceJob = new SilentJob("Remove Resource") {
-
-			@Override
-			protected IStatus runSilent(final IProgressMonitor monitor) {
-				try {
-					if (obj._is_a(ApplicationHelper.id())) {
-						removeApplication(new Name(location), ApplicationHelper.narrow(obj));
-					}
-				} catch (final SystemException e) {
-					// PASS
-				} catch (final org.omg.CosNaming.NamingContextPackage.InvalidName e) {
-					// PASS
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		addResourceJob.setSystem(true);
-		addResourceJob.schedule();
-		// BEGIN GENERATED CODE
-
-	}
-
-	private void removeApplication(final Name key, final Application corbaObject) {
-		// TODO Auto-generated method stub
-
-	}
-
-	protected void addApplication(final Name key, final Application app) {
-		// END GENERATED CODE
-		final String id = app.identifier();
-
-		// Check for existing application of same id
-		boolean result = ScaModelCommandWithResult.execute(this, new ScaModelCommandWithResult<Boolean>() {
-			@Override
-			public void execute() {
-				for (final ScaWaveform waveform : getWaveforms()) {
-					if (waveform.getIdentifier() != null && waveform.getIdentifier().equals(id)) {
-						setResult(true);
-						return;
-					}
-				}
-				setResult(false);
-			}
-		});
-		if (result) {
-			return;
-		}
-
-		final String profilePath = app.profile();
-		final URI uri = this.rootContext.getURI(key.components());
-		final LocalScaWaveform waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
-		final NotifyingNamingContext waveformContext = this.rootContext.getResourceContext(uri);
-		waveform.setNamingContext(waveformContext);
-		waveform.setCorbaObj(app);
-		waveform.setProfile(profilePath);
-		waveform.setProfileURI(uri);
-
-		try {
-			waveform.initialize();
-		} catch (final InitializeError e) {
-			ScaModelCommand.execute(this, new ScaModelCommand() {
-
-				@Override
-				public void execute() {
-					waveform.setStatus(ScaPackage.Literals.SCA_WAVEFORM__DOM_MGR, new Status(IStatus.ERROR, ScaDebugPlugin.ID,
-						"Component failed to initialize", e));
-				}
-			});
-		} catch (final SystemException e) {
-			ScaModelCommand.execute(this, new ScaModelCommand() {
-
-				@Override
-				public void execute() {
-					waveform.setStatus(ScaPackage.Literals.SCA_WAVEFORM__DOM_MGR, new Status(IStatus.ERROR, ScaDebugPlugin.ID,
-						"Component failed to initialize", e));
-				}
-			});
-		}
-
-		ScaModelCommand.execute(this, new ScaModelCommand() {
-
-			@Override
-			public void execute() {
-				getWaveforms().add(waveform);
-			}
-		});
-
-		try {
-			waveform.refresh(null, RefreshDepth.SELF);
-		} catch (final InterruptedException e) {
-			// PASS
-		}
-
-		// BEGIN GENERATED CODE
-	}
-
 	/**
 	 * @param sandboxRef 
 	 * @param fileManagerRef 
@@ -650,7 +500,6 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		setSandboxWaveform(sandboxWaveformRef);
 		setSandboxDeviceManager(sandboxDeviceManagerRef);
 		this.checkupJob.schedule();
-		eAdapters().add(this.adapter);
 		// BEGIN GENERATED CODE
 	}
 
