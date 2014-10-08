@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.workspace.util.WorkspaceSynchronizer.Delegate;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.IUpdateFeature;
@@ -47,6 +48,27 @@ public class RHGraphitiDiagramEditor extends DiagramEditor {
 					protected void createEditingDomain() {
 						initializeEditingDomain((TransactionalEditingDomain) editingDomain);
 					}
+					
+					@Override
+					protected boolean handleDirtyConflict() {
+						return true;
+					}
+					
+					@Override
+					protected Delegate createWorkspaceSynchronizerDelegate() {
+						return null;
+					}
+					
+					@Override
+					protected void closeContainer() {
+						
+					}
+					
+					@Override
+					protected void disposeEditingDomain() {
+						
+					}
+					
 				};
 			}
 
