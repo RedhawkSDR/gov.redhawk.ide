@@ -19,6 +19,7 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkExternalPortF
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkNonExternalPortFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime.StartComponentFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime.StopComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.SADConnectionInterfaceDeleteFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.reconnect.SADReconnectFeature;
@@ -207,10 +208,11 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 			if (obj instanceof FindByStub) {
-				retList.add(new FindByEditFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+				retList.add(new FindByEditFeature(this));
 			}
 			if (obj instanceof SadComponentInstantiation && DUtil.getActiveEditor() instanceof LocalGraphitiSadMultiPageScaEditor) {
-				retList.add(new StartComponentFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+				retList.add(new StartComponentFeature(this));
+				retList.add(new StopComponentFeature(this));
 			}
 		}
 
