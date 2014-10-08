@@ -128,6 +128,22 @@
                                 type="org.eclipse.ui.views.properties.IPropertySource">
                         </adapter>
                 </factory>
+                <factory
+                      adaptableType="org.eclipse.graphiti.ui.internal.parts.ContainerShapeEditPart"
+                      class="gov.redhawk.ide.sad.graphiti.ui.adapters.ComponentShapeAdapterFactory">
+                   <adapter
+                         type="gov.redhawk.model.sca.ScaComponent">
+                   </adapter>
+                   <adapter
+                         type="gov.redhawk.model.sca.ScaAbstractComponent">
+                   </adapter>
+                   <adapter
+                         type="gov.redhawk.model.sca.ScaPropertyContainer">
+                   </adapter>
+                   <adapter
+                         type="CF.ResourceOperations">
+                   </adapter>
+                </factory>
         </extension>
             <extension
          point="org.eclipse.ui.editors">

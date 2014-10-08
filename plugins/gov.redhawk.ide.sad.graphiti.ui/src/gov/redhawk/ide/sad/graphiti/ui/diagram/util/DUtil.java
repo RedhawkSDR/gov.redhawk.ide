@@ -83,6 +83,11 @@ import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
 
 public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 
@@ -222,6 +227,23 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 //		return sad;
 	}
 
+	/**
+	 * @returns the IEditorPart for the active editor
+	 * Useful for getting the edit part for the GraphitiSadMultiPageScaEditor and the LocalGraphitiSadMultiPageScaEditor
+	 */
+	public static IEditorPart getActiveEditor() {
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+	}
+	
+	public static Object[] getSelectedEditParts() {
+		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ss = (StructuredSelection) selection;
+			return ss.toArray();
+		}
+		return null;
+	}
+	
 	/**
 	 * Returns true if the provided context contains a pictogram element with one of the provided property values.
 	 * False otherwise.

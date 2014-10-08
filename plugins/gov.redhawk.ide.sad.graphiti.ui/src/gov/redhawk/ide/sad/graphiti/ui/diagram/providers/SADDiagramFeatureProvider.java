@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
+import gov.redhawk.ide.sad.graphiti.debug.internal.ui.LocalGraphitiSadMultiPageScaEditor;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.DecrementStartOrderFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.FindByEditFeature;
@@ -17,6 +18,7 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.IncrementStartOrd
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkExternalPortFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkNonExternalPortFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime.StartComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.SADConnectionInterfaceDeleteFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.reconnect.SADReconnectFeature;
@@ -206,6 +208,9 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 			if (obj instanceof FindByStub) {
 				retList.add(new FindByEditFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+			}
+			if (obj instanceof SadComponentInstantiation && DUtil.getActiveEditor() instanceof LocalGraphitiSadMultiPageScaEditor) {
+				retList.add(new StartComponentFeature(this.getDiagramTypeProvider().getFeatureProvider()));
 			}
 		}
 
