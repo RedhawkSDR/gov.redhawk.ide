@@ -12,6 +12,7 @@ package gov.redhawk.ide.ui.tests.properties;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swtbot.swt.finder.finders.ContextMenuHelper;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.junit.Test;
 
@@ -108,8 +109,21 @@ public class PropertiesTabStructTest extends PropertiesTabSimpleTest {
 
 	@Test
 	public void testAddSecondSimple() {
-		selectStruct();
-		new SWTBotMenu(ContextMenuHelper.contextMenu(editor.bot().tree(), "New", "Simple")).click();
+		bot.waitUntil(new DefaultCondition() {
+			
+			@Override
+			public boolean test() throws Exception {
+				selectStruct();
+				new SWTBotMenu(ContextMenuHelper.contextMenu(editor.bot().tree(), "New", "Simple")).click();
+				return true;
+			}
+			
+			@Override
+			public String getFailureMessage() {
+				return "Could not find context menu: New->Simple";
+			}
+		});
+		
 		assertFormInvalid();
 		editor.bot().textWithLabel("ID*:").setText("SID2");
 		assertFormValid();
