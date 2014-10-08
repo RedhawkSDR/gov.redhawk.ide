@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softwareassembly PUBLIC "-//JTRS//DTD SCA V2.2.2 SAD//EN" "softwareassembly.dtd">
+<softwareassembly id="DCE:e79dac11-d55a-4cbe-9e75-27789d01f266" name="ExampleWaveform05">
+  <componentfiles>
+    <componentfile id="SigGen_8b1a4ce7-06bf-43b4-844c-cc57ce0d0e53" type="SPD">
+      <localfile name="/components/SigGen/SigGen.spd.xml"/>
+    </componentfile>
+  </componentfiles>
+  <partitioning>
+    <componentplacement>
+      <componentfileref refid="SigGen_8b1a4ce7-06bf-43b4-844c-cc57ce0d0e53"/>
+      <componentinstantiation id="SigGen_1" startorder="1">
+        <usagename>SigGen_1</usagename>
+        <findcomponent>
+          <namingservice name="SigGen_1"/>
+        </findcomponent>
+      </componentinstantiation>
+    </componentplacement>
+  </partitioning>
+  <assemblycontroller>
+    <componentinstantiationref refid="SigGen_1"/>
+  </assemblycontroller>
+  <connections>
+  </connections>
+</softwareassembly>

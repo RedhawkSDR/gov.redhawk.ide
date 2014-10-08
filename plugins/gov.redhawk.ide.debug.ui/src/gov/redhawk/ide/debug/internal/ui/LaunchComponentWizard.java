@@ -138,7 +138,7 @@ public class LaunchComponentWizard extends Wizard {
 		this.softPkg = element;
 		pcs.firePropertyChange("softPkg", oldValue, softPkg);
 		
-		if (softPkg != null && softPkg.getImplementation().size() == 1) {
+		if (softPkg != null && !softPkg.getImplementation().isEmpty()) {
 			setImplementation(this.softPkg.getImplementation().get(0));
 		} else {
 			setImplementation(null);

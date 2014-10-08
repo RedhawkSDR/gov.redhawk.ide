@@ -32,6 +32,12 @@
           <useUIThread>false</useUIThread>
           <application>org.eclipse.ui.ide.workbench</application>
           <showEclipseLog>true</showEclipseLog>
+          <environmentVariables>
+            <DISPLAY>${env.DISPLAY}</DISPLAY>
+            <PATH>${env.PATH}</PATH>
+            <SDRROOT>${parent.basedir}/sdr</SDRROOT>
+            <OSSIEHOME>${env.OSSIEHOME}</OSSIEHOME>
+          </environmentVariables>
           <argLine>${test-argLine}</argLine>
           <appArgLine>-nl en</appArgLine>
           <bundleStartLevel>

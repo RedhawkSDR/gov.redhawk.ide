@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:diagram="http://sca.jpeojtrs.mil/diagram" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:partitioning="http://sca.jpeojtrs.mil/partitioning" xmlns:sad="http://sca.jpeojtrs.mil/sad" xmi:id="_giee8P4REeKcAddA2O5T7g" type="Sad" name="ExampleWaveform05.sad_diagramV2" measurementUnit="Pixel">
+  <children xmi:type="notation:Shape" xmi:id="_ikNGIP4REeKcAddA2O5T7g" type="3001" fontName="Ubuntu">
+    <children xmi:type="notation:DecorationNode" xmi:id="_ikNGIv4REeKcAddA2O5T7g" type="5006"/>
+    <children xmi:type="notation:DecorationNode" xmi:id="_ikNtMP4REeKcAddA2O5T7g" type="7002">
+      <children xmi:type="notation:Shape" xmi:id="_ikQwgP4REeKcAddA2O5T7g" type="3002" fontName="Ubuntu">
+        <children xmi:type="notation:DecorationNode" xmi:id="_ikQwgv4REeKcAddA2O5T7g" type="5004"/>
+        <children xmi:type="notation:Node" xmi:id="_ikVpAP4REeKcAddA2O5T7g" type="3003">
+          <children xmi:type="notation:DecorationNode" xmi:id="_ikVpBf4REeKcAddA2O5T7g" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_ikVpBv4REeKcAddA2O5T7g" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_ikVpAf4REeKcAddA2O5T7g"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_ikVpAv4REeKcAddA2O5T7g" fontName="Ubuntu"/>
+          <styles xmi:type="notation:LineStyle" xmi:id="_ikVpA_4REeKcAddA2O5T7g"/>
+          <element xmi:type="partitioning:UsesPortStub" href="ExampleWaveform05.sad.xml#//@partitioning/@componentPlacement.0/@componentInstantiation.0/@uses.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ikVpBP4REeKcAddA2O5T7g"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_ikVpB_4REeKcAddA2O5T7g" type="3004">
+          <children xmi:type="notation:DecorationNode" xmi:id="_ikWQEv4REeKcAddA2O5T7g" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_ikWQE_4REeKcAddA2O5T7g" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_ikVpCP4REeKcAddA2O5T7g"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_ikVpCf4REeKcAddA2O5T7g" fontName="Ubuntu"/>
+          <styles xmi:type="notation:LineStyle" xmi:id="_ikWQEP4REeKcAddA2O5T7g"/>
+          <element xmi:type="partitioning:ProvidesPortStub" href="ExampleWaveform05.sad.xml#//@partitioning/@componentPlacement.0/@componentInstantiation.0/@provides.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ikWQEf4REeKcAddA2O5T7g"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_ikWQFP4REeKcAddA2O5T7g" type="3005">
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_ikWQFf4REeKcAddA2O5T7g"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_ikWQFv4REeKcAddA2O5T7g" fontName="Ubuntu"/>
+          <styles xmi:type="notation:LineStyle" xmi:id="_ikWQF_4REeKcAddA2O5T7g"/>
+          <element xmi:type="partitioning:ComponentSupportedInterfaceStub" href="ExampleWaveform05.sad.xml#//@partitioning/@componentPlacement.0/@componentInstantiation.0/@interfaceStub"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ikWQGP4REeKcAddA2O5T7g"/>
+        </children>
+        <element xmi:type="sad:SadComponentInstantiation" href="ExampleWaveform05.sad.xml#HardLimit_1"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ikQwgf4REeKcAddA2O5T7g"/>
+      </children>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_ikNtMf4REeKcAddA2O5T7g"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_ikNtMv4REeKcAddA2O5T7g"/>
+    </children>
+    <element xmi:type="sad:SadComponentPlacement" href="ExampleWaveform05.sad.xml#//@partitioning/@componentPlacement.0"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ikNGIf4REeKcAddA2O5T7g" x="624" y="240"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_ku9GcP4REeKcAddA2O5T7g" type="3001" fontName="Ubuntu">
+    <children xmi:type="notation:DecorationNode" xmi:id="_ku9tgP4REeKcAddA2O5T7g" type="5006"/>
+    <children xmi:type="notation:DecorationNode" xmi:id="_ku9tgf4REeKcAddA2O5T7g" type="7002">
+      <children xmi:type="notation:Shape" xmi:id="_ku-7oP4REeKcAddA2O5T7g" type="3002" fontName="Ubuntu">
+        <children xmi:type="notation:DecorationNode" xmi:id="_ku-7ov4REeKcAddA2O5T7g" type="5004"/>
+        <children xmi:type="notation:Node" xmi:id="_kvD0IP4REeKcAddA2O5T7g" type="3003">
+          <children xmi:type="notation:DecorationNode" xmi:id="_kvEbMP4REeKcAddA2O5T7g" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_kvEbMf4REeKcAddA2O5T7g" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_kvD0If4REeKcAddA2O5T7g"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_kvD0Iv4REeKcAddA2O5T7g" fontName="Ubuntu"/>
+          <styles xmi:type="notation:LineStyle" xmi:id="_kvD0I_4REeKcAddA2O5T7g"/>
+          <element xmi:type="partitioning:UsesPortStub" href="ExampleWaveform05.sad.xml#//@partitioning/@componentPlacement.1/@componentInstantiation.0/@uses.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_kvD0JP4REeKcAddA2O5T7g"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_kvEbMv4REeKcAddA2O5T7g" type="3005">
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_kvEbM_4REeKcAddA2O5T7g"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_kvEbNP4REeKcAddA2O5T7g" fontName="Ubuntu"/>
+          <styles xmi:type="notation:LineStyle" xmi:id="_kvEbNf4REeKcAddA2O5T7g"/>
+          <element xmi:type="partitioning:ComponentSupportedInterfaceStub" href="ExampleWaveform05.sad.xml#//@partitioning/@componentPlacement.1/@componentInstantiation.0/@interfaceStub"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_kvEbNv4REeKcAddA2O5T7g"/>
+        </children>
+        <element xmi:type="sad:SadComponentInstantiation" href="ExampleWaveform05.sad.xml#SigGen_1"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ku-7of4REeKcAddA2O5T7g"/>
+      </children>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_ku9tgv4REeKcAddA2O5T7g"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_ku9tg_4REeKcAddA2O5T7g"/>
+    </children>
+    <element xmi:type="sad:SadComponentPlacement" href="ExampleWaveform05.sad.xml#//@partitioning/@componentPlacement.1"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ku9Gcf4REeKcAddA2O5T7g" x="96" y="240"/>
+  </children>
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_giee8f4REeKcAddA2O5T7g"/>
+  <styles xmi:type="diagram:EObjectContainerStyle" xmi:id="_giee8v4REeKcAddA2O5T7g" name="FindByStubContainer"/>
+  <element xmi:type="sad:SoftwareAssembly" href="ExampleWaveform05.sad.xml#DCE:e79dac11-d55a-4cbe-9e75-27789d01f266"/>
+  <edges xmi:type="notation:Connector" xmi:id="_lwSAkP4REeKcAddA2O5T7g" type="4001" source="_kvD0IP4REeKcAddA2O5T7g" target="_ikVpB_4REeKcAddA2O5T7g" routing="Rectilinear" avoidObstructions="true">
+    <styles xmi:type="notation:FontStyle" xmi:id="_lwSnoP4REeKcAddA2O5T7g" fontName="Ubuntu"/>
+    <element xmi:type="sad:SadConnectInterface" href="ExampleWaveform05.sad.xml#connection_1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_lwSnof4REeKcAddA2O5T7g" points="[8, 0, -320, -18]$[328, 18, 0, 0]"/>
+  </edges>
+</notation:Diagram>

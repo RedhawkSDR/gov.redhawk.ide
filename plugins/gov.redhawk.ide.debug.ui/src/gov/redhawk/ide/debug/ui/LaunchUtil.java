@@ -163,6 +163,7 @@ public final class LaunchUtil {
 	}
 
 	public static ILaunchConfigurationWorkingCopy createLaunchConfiguration(final Implementation impl) throws CoreException {
+		Assert.isNotNull(impl);
 		final SoftPkg spd = impl.getSoftPkg();
 		ILaunchConfigurationFactoryRegistry registry = ScaDebugPlugin.getInstance().getLaunchConfigurationFactoryRegistry();
 		ILaunchConfigurationFactory factory = registry.getFactory(spd, impl.getId());

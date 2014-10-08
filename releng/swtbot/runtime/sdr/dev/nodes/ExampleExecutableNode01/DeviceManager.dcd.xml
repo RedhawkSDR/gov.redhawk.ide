@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE deviceconfiguration PUBLIC "-//JTRS//DTD SCA V2.2.2 DCD//EN" "deviceconfiguration.dtd">
+<deviceconfiguration id="DCE:e52881f4-b684-45d5-9ebf-f6c0b217d47d" name="ExampleExecutableNode01">
+  <devicemanagersoftpkg>
+    <localfile name="/mgr/DeviceManager.spd.xml"/>
+  </devicemanagersoftpkg>
+  <componentfiles>
+    <componentfile id="ExampleExecutableDevice01_d3027c18-3fc6-440c-bccd-bbb68e136764" type="SPD">
+      <localfile name="/devices/ExampleExecutableDevice01/ExampleExecutableDevice01.spd.xml"/>
+    </componentfile>
+  </componentfiles>
+  <partitioning>
+    <componentplacement>
+      <componentfileref refid="ExampleExecutableDevice01_d3027c18-3fc6-440c-bccd-bbb68e136764"/>
+      <componentinstantiation id="ExampleExecutableNode01:ExampleExecutableDevice01_1">
+        <usagename>ExampleExecutableDevice01_1</usagename>
+      </componentinstantiation>
+    </componentplacement>
+  </partitioning>
+  <domainmanager>
+    <namingservice name="REDHAWK_DEV/REDHAWK_DEV"/>
+  </domainmanager>
+</deviceconfiguration>

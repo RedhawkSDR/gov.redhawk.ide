@@ -14,6 +14,9 @@ import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
 import gov.redhawk.ide.swtbot.internal.ProjectRecord;
+import gov.redhawk.model.sca.ScaDomainManagerRegistry;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.sca.ScaPlugin;
 import gov.redhawk.sca.util.OrbSession;
 
 import java.io.File;
@@ -48,6 +51,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -55,12 +62,14 @@ import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.keyboard.Keyboard;
 import org.eclipse.swtbot.swt.finder.keyboard.KeyboardFactory;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.eclipse.ui.PlatformUI;
@@ -137,7 +146,9 @@ public final class StandardTestActions {
 				Display current = Display.getCurrent();
 				if (current != null) {
 					Shell shell = current.getActiveShell();
-					shell.setMaximized(true);
+					if (shell != null) {
+						shell.setMaximized(true);
+					}
 				}
 			}
 		});
@@ -503,5 +514,75 @@ public final class StandardTestActions {
 		Assert.assertNotNull("Unable to find button with tooltip: " + tooltip, button[0]);
 		
 		return button[0];
+	}
+	
+	public static void cleanUpConnections() {
+		final ScaDomainManagerRegistry domReg = ScaPlugin.getDefault().getDomainManagerRegistry(null);
+		ScaModelCommand.execute(domReg, new ScaModelCommand() {
+
+			@Override
+			public void execute() {
+				domReg.getDomains().clear();
+			}
+		});
+	}
+
+	public static void cleanUpLaunches() throws DebugException {
+		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		for (ILaunch launch : launchManager.getLaunches()) {
+			launch.terminate();
+		}
+	}
+	
+	public static SWTBotTreeItem getTreeItemMatches(SWTBotTree tree, String ... regexp) {
+		SWTBotTreeItem result = getTreeItemMatches(tree, Arrays.asList(regexp));
+		if (result == null) {
+			throw new WidgetNotFoundException("Could not find TreeItem with text that matches: " + Arrays.toString(regexp)); //$NON-NLS-1$
+		}
+		return result;
+	}
+	
+	private static SWTBotTreeItem getTreeItemMatches(SWTBotTree parent, List<String> regexp) {
+		if (regexp.isEmpty()) {
+			return null;
+		}
+		SWTBotTreeItem[] items = parent.getAllItems();
+		for (SWTBotTreeItem item : items) {
+			if (item.getText().matches(regexp.get(0))) {
+				item.expand();
+				SWTBotTreeItem result = getTreeItemMatches(item, regexp.subList(1, regexp.size()));
+				if (result != null) {
+					return result;
+				}
+			}
+		}
+		return null;
+	}
+	
+	private static SWTBotTreeItem getTreeItemMatches(SWTBotTreeItem parent, List<String> regexp) {
+		if (regexp.isEmpty()) {
+			return parent;
+		}
+		SWTBotTreeItem[] items = parent.getItems();
+		for (SWTBotTreeItem item : items) {
+			if (item.getText().matches(regexp.get(0))) {
+				item.expand();
+				SWTBotTreeItem result = getTreeItemMatches(item, regexp.subList(1, regexp.size()));
+				if (result != null) {
+					return result;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static SWTBotTreeItem getTreeItemMatches(SWTBotTreeItem tree, String regexp) {
+		List<String> labels = tree.getNodes();
+		for (String l : labels) {
+			if (l.matches(regexp)) {
+				return tree.getNode(l);
+			}
+		}
+		throw new WidgetNotFoundException("Could not find node with text that matches: " + regexp); //$NON-NLS-1$
 	}
 }
