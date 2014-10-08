@@ -14,6 +14,7 @@ import gov.redhawk.ide.debug.ILaunchConfigurationFactory;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
+import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.SpdLauncherUtil;
 import gov.redhawk.ide.debug.internal.ApplicationStreams;
@@ -1269,6 +1270,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			this.streams.getOutStream().println("\tUsing default exec params.");
 		}
 
+		if (parentLaunch != null) {
+			int timeout = parentLaunch.getLaunchConfiguration().getAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT,
+				ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT);
+			config.setAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT, timeout);
+		}
 		this.streams.getOutStream().println("\tCalling launch on configuration...");
 		final ILaunch subLaunch = config.launch(mode, new NullProgressMonitor(), false);
 		this.streams.getOutStream().println("\tLaunch configuration succeeded.");

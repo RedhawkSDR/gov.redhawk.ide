@@ -11,6 +11,7 @@
 package gov.redhawk.ide.debug.internal;
 
 import gov.redhawk.ide.debug.LocalSca;
+import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugFactory;
@@ -19,6 +20,7 @@ import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
@@ -36,6 +38,7 @@ import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
+import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
@@ -59,6 +62,9 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
+import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jacorb.naming.Name;
 import org.omg.CORBA.Any;
@@ -250,7 +256,7 @@ public class LocalApplicationFactory {
 		for (final ScaComponent comp : app.getLocalWaveform().getComponents()) {
 			try {
 				app.getStreams().getOutStream().println("Configuring component: " + comp.getName());
-				configureComponent(app, comp);
+				configureComponent(app, comp, sad, assemblyConfig);
 				app.getStreams().getOutStream().println("");
 			} catch (final InvalidConfiguration e) {
 				app.logException("WARNING: Error while configuring component: " + comp.getName() + " InvalidConfiguration ", e);
@@ -282,7 +288,13 @@ public class LocalApplicationFactory {
 				String errorMsg = String.format("Failed to find SPD for component: %s", comp.getUsageName());
 				throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, errorMsg));
 			} else {
-				app.launch(comp.getUsageName(), createExecParam(comp), spdUri, getImplId(comp), this.mode);
+				LocalScaComponent localComp = app.launch(comp.getUsageName(), createExecParam(comp), spdUri, getImplId(comp), this.mode);
+				if (localComp != null) {
+					TransactionalEditingDomain localEditingDomain = TransactionUtil.getEditingDomain(localComp);
+					if (localEditingDomain != null) {
+						localEditingDomain.getCommandStack().execute(SetCommand.create(localEditingDomain, localComp, ScaPackage.Literals.SCA_COMPONENT__COMPONENT_INSTANTIATION, comp));
+					}
+				}
 			}
 
 			app.getStreams().getOutStream().println("\n");
@@ -368,16 +380,21 @@ public class LocalApplicationFactory {
 		}
 	}
 
-	private void configureComponent(ApplicationImpl app, final ScaComponent comp) throws InvalidConfiguration, PartialConfiguration {
+	private void configureComponent(ApplicationImpl app, final ScaComponent comp, final SoftwareAssembly sad, final DataType[] assemblyConfig) throws InvalidConfiguration, PartialConfiguration {
 		DataType[] configuration = getConfiguration(comp);
 		if (configuration == null || configuration.length == 0) {
 			app.getStreams().getOutStream().println("\tNo configuration.");
 			return;
 		}
-		if (this.assemblyConfig != null && isAssemblyController(comp.getComponentInstantiation())) {
+		if (this.assemblyConfig != null /*&& isAssemblyController(comp.getComponentInstantiation())*/) {
 			configuration = this.assemblyConfig;
 		}
 		for (DataType t : configuration) {
+			for (ExternalProperty extProp: sad.getExternalProperties().getProperties()) {
+				if (t.id.equals(extProp.getExternalPropID()) && extProp.getCompRefID().equals(comp.getName())) {
+					t.id = extProp.getPropID();
+				}
+			}
 			app.getStreams().getOutStream().println(LocalApplicationFactory.toString(t));
 		}
 		comp.configure(configuration);
