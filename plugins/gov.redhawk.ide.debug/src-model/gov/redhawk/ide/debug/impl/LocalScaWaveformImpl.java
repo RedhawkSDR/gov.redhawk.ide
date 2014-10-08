@@ -764,6 +764,10 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	@Override
 	public void dispose() {
+		if (disposed) {
+			return;
+		}
+
 		Job releaseJob = new SilentJob("Sandbox Waveform Release") {
 
 			@Override
