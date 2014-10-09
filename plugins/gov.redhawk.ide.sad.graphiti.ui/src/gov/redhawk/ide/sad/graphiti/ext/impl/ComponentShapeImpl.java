@@ -287,13 +287,13 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 
 			// update assembly controller styling and text
 			Ellipse startOrderEllipse = (Ellipse) getStartOrderEllipseShape().getGraphicsAlgorithm();
-			boolean isStyleCorrect = startOrderEllipse.getStyle() == StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram);
+			boolean needsUpdate = StyleUtil.needsUpdateForStartOrderAssemblyControllerEllipse(diagram, startOrderEllipse.getStyle());
 			boolean isTextCorrect = ci.getStartOrder() != null ? (ci.getStartOrder().compareTo(BigInteger.ZERO) == 0) : false;
-			if ((!isStyleCorrect || !isTextCorrect) && assemblyController != null) {
+			if ((needsUpdate || !isTextCorrect) && assemblyController != null) {
 				// if assembly controller, then use special style
 				if (performUpdate) {
 					updateStatus = true;
-					startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
+					startOrderEllipse.setStyle(StyleUtil.createStyleForStartOrderAssemblyControllerEllipse(diagram));
 					if (ci.getStartOrder() != null && ci.getStartOrder().compareTo(BigInteger.ZERO) != 0) {
 						// Make sure start order is set to zero for assembly controller, if the update occurred from
 						// elsewhere in the model
@@ -308,9 +308,9 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 				} else {
 					return new Reason(true, "Component start order requires update");
 				}
-			} else if (startOrderEllipse.getStyle() != StyleUtil.getStyleForStartOrderEllipse(diagram) && assemblyController == null) {
+			} else if (StyleUtil.needsUpdateForStartOrderEllipse(diagram, startOrderEllipse.getStyle()) && assemblyController == null) {
 				if (performUpdate) {
-					startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderEllipse(diagram));
+					startOrderEllipse.setStyle(StyleUtil.createStyleForStartOrderEllipse(diagram));
 					// remove assembly controller links
 					EcoreUtil.delete((EObject) startOrderEllipse.getPictogramElement().getLink());
 				} else {

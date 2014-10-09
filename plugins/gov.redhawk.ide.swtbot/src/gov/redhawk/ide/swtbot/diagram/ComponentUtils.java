@@ -95,9 +95,9 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 		Diagram diagram = DUtil.findDiagram(componentShape);
 		Style style = ((ComponentShapeImpl) componentShape).getStartOrderEllipseShape().getGraphicsAlgorithm().getStyle();
 		if (isAssemblyController) {
-			return PluginUtil.equals(style, StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
+			return !StyleUtil.needsUpdateForStartOrderAssemblyControllerEllipse(diagram, style);
 		}
-		return PluginUtil.equals(style, StyleUtil.getStyleForStartOrderEllipse(diagram));
+		return !StyleUtil.needsUpdateForStartOrderEllipse(diagram, style);
 	}
 
 	/**

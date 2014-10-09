@@ -15,6 +15,7 @@ import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.sca.util.PluginUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -721,11 +722,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 								// ProvidesPortStub
 								if (isExternalPort(portObject, externalPorts)) {
 									// external port
-									if (!fixPointAnchorRectangle.getStyle().equals(StyleUtil.getStyleForExternalProvidesPort(DUtil.findDiagram(this)))) {
+									if (StyleUtil.needsUpdateForExternalProvidesPort(DUtil.findDiagram(this), fixPointAnchorRectangle.getStyle())) {
 										if (performUpdate) {
 											updateStatus = true;
 											// update style
-											fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalProvidesPort(DUtil.findDiagram(this)));
+											fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForExternalProvidesPort(DUtil.findDiagram(this)));
 											featureProvider.link(fixPointAnchorRectangle.getPictogramElement(), findExternalPort(portObject, externalPorts)); // link
 											// to externalPort so that update fires when it changes
 										} else {
@@ -734,11 +735,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 									}
 								} else {
 									// non-external port
-									if (!fixPointAnchorRectangle.getStyle().equals(StyleUtil.getStyleForProvidesPort(DUtil.findDiagram(this)))) {
+									if (StyleUtil.needsUpdateForProvidesPort(DUtil.findDiagram(this), fixPointAnchorRectangle.getStyle())) {
 										if (performUpdate) {
 											updateStatus = true;
 											// update style
-											fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForProvidesPort(DUtil.findDiagram(this)));
+											fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForProvidesPort(DUtil.findDiagram(this)));
 										} else {
 											return new Reason(true, "Port style requires update");
 										}
@@ -817,11 +818,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 								// usesPortStub
 								if (isExternalPort(portObject, externalPorts)) {
 									// external port
-									if (!fixPointAnchorRectangle.getStyle().equals(StyleUtil.getStyleForExternalUsesPort(DUtil.findDiagram(this)))) {
+									if (StyleUtil.needsUpdateForExternalUsesPort(DUtil.findDiagram(this), fixPointAnchorRectangle.getStyle())) {
 										if (performUpdate) {
 											updateStatus = true;
 											// update style
-											fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalUsesPort(DUtil.findDiagram(this)));
+											fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForExternalUsesPort(DUtil.findDiagram(this)));
 											fixPointAnchorRectangle.getPictogramElement().getLink().getBusinessObjects().add(
 												findExternalPort(portObject, externalPorts));// link to externalPort so
 											// that update fires
@@ -832,11 +833,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 									}
 								} else {
 									// non-external port
-									if (!fixPointAnchorRectangle.getStyle().equals(StyleUtil.getStyleForUsesPort(DUtil.findDiagram(this)))) {
+									if (StyleUtil.needsUpdateForUsesPort(DUtil.findDiagram(this), fixPointAnchorRectangle.getStyle())) {
 										if (performUpdate) {
 											updateStatus = true;
 											// update style
-											fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForUsesPort(DUtil.findDiagram(this)));
+											fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForUsesPort(DUtil.findDiagram(this)));
 											// this line will actually remove existing links (which will include an
 											// external port) and simply add the portObject (which already existed)
 											featureProvider.link(fixPointAnchorRectangle.getPictogramElement(), portObject);

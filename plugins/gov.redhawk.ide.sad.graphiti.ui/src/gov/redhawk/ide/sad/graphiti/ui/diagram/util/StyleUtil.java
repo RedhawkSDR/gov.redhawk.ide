@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.util;
 
+import gov.redhawk.sca.util.PluginUtil;
+
 import java.util.Collection;
 
 import org.eclipse.graphiti.mm.StyleContainer;
@@ -253,6 +255,17 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
+	
+	
+	public static boolean needsUpdateForProvidesPort(Diagram diagram, Style style) {
+		IGaService gaService = Graphiti.getGaService();
+		boolean result = PluginUtil.equals(style.getForeground(), gaService.manageColor(diagram, BLACK))
+				&& PluginUtil.equals(style.getBackground(), gaService.manageColor(diagram, WHITE))
+				&& PluginUtil.equals(style.getFont(), getPortFont(diagram))
+				&& PluginUtil.equals(style.getLineWidth(), Integer.valueOf(2))
+				&& PluginUtil.equals(style.getLineVisible() , true);
+		return result;
+	}
 
 	public static Style getStyleForProvidesPort(Diagram diagram) {
 		final String styleId = "ProvidesPort";
@@ -274,6 +287,19 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			style.setLineVisible(true);
 		}
 		return style;
+	}
+	
+	public static boolean needsUpdateForExternalProvidesPort(Diagram diagram, Style style) {
+		if (style == null) {
+			return true;
+		}
+		IGaService gaService = Graphiti.getGaService();
+		boolean result = PluginUtil.equals(style.getForeground(), gaService.manageColor(diagram, BLACK))
+		 && PluginUtil.equals(style.getBackground(), gaService.manageColor(diagram, BLUE))
+		 && PluginUtil.equals(style.getFont(), getPortFont(diagram))
+		 && PluginUtil.equals(style.getLineWidth(), Integer.valueOf(2))
+		 && PluginUtil.equals(style.getLineVisible(), true);
+		return result;
 	}
 
 	public static Style getStyleForExternalProvidesPort(Diagram diagram) {
@@ -297,6 +323,19 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
+	
+	public static boolean needsUpdateForUsesPort(Diagram diagram, Style style) {
+		if (style == null) {
+			return true;
+		}
+		IGaService gaService = Graphiti.getGaService();
+		boolean result = PluginUtil.equals(style.getForeground(), gaService.manageColor(diagram, BLACK))
+				&& PluginUtil.equals(style.getBackground(), gaService.manageColor(diagram, BLACK))
+				&& PluginUtil.equals(style.getFont(), getPortFont(diagram))
+				&& PluginUtil.equals(style.getLineWidth(), Integer.valueOf(2))
+				&& PluginUtil.equals(style.getLineVisible(), true);
+		return result;
+	}
 
 	public static Style getStyleForUsesPort(Diagram diagram) {
 		final String styleId = "UsesPort";
@@ -318,6 +357,19 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			style.setLineVisible(true);
 		}
 		return style;
+	}
+	
+	public static boolean needsUpdateForExternalUsesPort(Diagram diagram, Style style) {
+		if (style == null) {
+			return true;
+		}
+		IGaService gaService = Graphiti.getGaService();
+		boolean result = PluginUtil.equals(style.getForeground(), gaService.manageColor(diagram, BLACK))
+				&& PluginUtil.equals(style.getBackground(), gaService.manageColor(diagram, BLUE))
+				&& PluginUtil.equals(style.getFont(), getPortFont(diagram))
+				&& PluginUtil.equals(style.getLineWidth(), Integer.valueOf(2))
+				&& PluginUtil.equals(style.getLineVisible(), true);
+		return result;
 	}
 
 	// returns style for uses external port
@@ -426,6 +478,16 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
+	
+	public static boolean needsUpdateForStartOrderAssemblyControllerEllipse(Diagram diagram, Style style) {
+		if (style == null) {
+			return true;
+		}
+		boolean result = PluginUtil.equals(style.getLineWidth(), Integer.valueOf(1))
+				&& PluginUtil.equals(style.getBackground(), Graphiti.getGaService().manageColor(diagram, GOLD))
+				&& PluginUtil.equals(style.getTransparency(), Double.valueOf(.99d));
+		return result;
+	}
 
 	public static Style getStyleForStartOrderAssemblyControllerEllipse(Diagram diagram) {
 		final String styleId = "StartOrderAssemblyControllerEllipse";
@@ -451,6 +513,16 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		final String styleId = "StartOrderEllipse";
 		Style style = findStyle(diagram, styleId);
 		return style;
+	}
+	
+	public static boolean needsUpdateForStartOrderEllipse(Diagram diagram, Style style) {
+		if (style == null) {
+			return true;
+		}
+		boolean result = PluginUtil.equals(style.getLineWidth(), Integer.valueOf(1))
+				&& PluginUtil.equals(style.getBackground(), Graphiti.getGaService().manageColor(diagram, WHITE))
+				&& PluginUtil.equals(style.getTransparency(), Double.valueOf(.99d));
+		return result;
 	}
 
 	public static Style createStyleForStartOrderEllipse(Diagram diagram) {
