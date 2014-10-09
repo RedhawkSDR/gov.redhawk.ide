@@ -82,7 +82,7 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 	 * @return - True if component start order text matches expected value
 	 */
 	public static boolean correctStartOrderValue(ComponentShape componentShape, String expectedValue) {
-		return ((ComponentShapeImpl) componentShape).getStartOrderText().getValue().equals(expectedValue);
+		return PluginUtil.equals(((ComponentShapeImpl) componentShape).getStartOrderText().getValue(), expectedValue);
 	}
 
 	/**

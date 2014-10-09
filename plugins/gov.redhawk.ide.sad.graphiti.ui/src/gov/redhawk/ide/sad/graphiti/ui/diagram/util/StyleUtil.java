@@ -29,6 +29,25 @@ import org.eclipse.swt.graphics.Color;
 
 public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
+	private static final String COMPONENT_TEXT = "gov.redhawk.style.ComponentText";
+	private static final String START_ORDER_TEXT = "gov.redhawk.style.StartOrderText";
+	private static final String START_ORDER_ELLIPSE = "gov.redhawk.style.StartOrderEllipse";
+	private static final String START_ORDER_ASSEMBLY_CONTROLLER_ELLIPSE = "gov.redhawk.style.StartOrderAssemblyControllerEllipse";
+	private static final String LOLLIPOP_LINE = "gov.redhawk.style.LollipopLine";
+	private static final String LOLLIPOP_ELLIPSE = "gov.redhawk.style.LollipopEllipse";
+	private static final String USES_PORT_ANCHOR = "gov.redhawk.style.UsesPortAnchor";
+	private static final String USES_EXTERNAL_PORT = "gov.redhawk.style.UsesExternalPort";
+	private static final String USES_PORT = "gov.redhawk.style.UsesPort";
+	private static final String EXTERNAL_PROVIDES_PORT = "gov.redhawk.style.ExternalProvidesPort";
+	private static final String PROVIDES_PORT = "gov.redhawk.style.ProvidesPort";
+	private static final String ERROR_TEXT_CONNECTIONS = "gov.redhawk.style.ErrorTextConnections";
+	private static final String INNER_TEXT = "gov.redhawk.style.InnerText";
+	private static final String OUTER_TEXT = "gov.redhawk.style.OuterText";
+	private static final String FIND_BY_INNER = "gov.redhawk.style.FindByInner";
+	private static final String HOST_COLLOCATION = "gov.redhawk.style.HostCollocation";
+	private static final String FIND_BY_OUTER = "gov.redhawk.style.FindByOuter";
+	private static final String COMPONENT_INNER = "gov.redhawk.style.ComponentInner";
+	private static final String COMPONENT_OUTER = "gov.redhawk.style.ComponentOuter";
 	public static final IColorConstant TEXT_FOREGROUND = IColorConstant.BLACK;
 	public static final IColorConstant WHITE = new ColorConstant(255, 255, 255);
 	public static final IColorConstant GOLD = new ColorConstant(255, 218, 105);
@@ -82,14 +101,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	public static Style getStyleForComponentOuter(Diagram diagram) {
-		final String styleId = "ComponentOuter";
+		final String styleId = COMPONENT_OUTER;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns component outer rectangle style
 	public static Style createStyleForComponentOuter(Diagram diagram) {
-		final String styleId = "ComponentOuter";
+		final String styleId = COMPONENT_OUTER;
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -106,14 +125,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	// returns component inner rectangle style
 	public static Style getStyleForComponentInner(Diagram diagram) {
-		final String styleId = "ComponentInner";
+		final String styleId = COMPONENT_INNER;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns component inner rectangle style
 	public static Style createStyleForComponentInner(Diagram diagram) {
-		final String styleId = "ComponentInner";
+		final String styleId = COMPONENT_INNER;
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -126,14 +145,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	// returns findby outer rectangle style
 	public static Style getStyleForFindByOuter(Diagram diagram) {
-		final String styleId = "FindByOuter";
+		final String styleId = FIND_BY_OUTER;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns findby outer rectangle style
 	public static Style createStyleForFindByOuter(Diagram diagram) {
-		final String styleId = "FindByOuter";
+		final String styleId = FIND_BY_OUTER;
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -150,14 +169,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	// returns host collocation rectangle style
 	public static Style getStyleForHostCollocation(Diagram diagram) {
-		final String styleId = "HostCollocation";
+		final String styleId = HOST_COLLOCATION;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns host collocation rectangle style
 	public static Style createStyleForHostCollocation(Diagram diagram) {
-		final String styleId = "HostCollocation";
+		final String styleId = HOST_COLLOCATION;
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -174,14 +193,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	// returns find by inner rectangle style
 	public static Style getStyleForFindByInner(Diagram diagram) {
-		final String styleId = "FindByInner";
+		final String styleId = FIND_BY_INNER;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns find by inner rectangle style
 	public static Style createStyleForFindByInner(Diagram diagram) {
-		final String styleId = "FindByInner";
+		final String styleId = FIND_BY_INNER;
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -196,14 +215,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	// returns outer text style
 	public static Style getStyleForOuterText(Diagram diagram) {
-		final String styleId = "OuterText";
+		final String styleId = OUTER_TEXT;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns outer text style
 	public static Style createStyleForOuterText(Diagram diagram) {
-		final String styleId = "OuterText";
+		final String styleId = OUTER_TEXT;
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -216,14 +235,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	public static Style getStyleForInnerText(Diagram diagram) {
-		final String styleId = "InnerText";
+		final String styleId = INNER_TEXT;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns inner text style
 	public static Style createStyleForInnerText(Diagram diagram) {
-		final String styleId = "InnerText";
+		final String styleId = INNER_TEXT;
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -236,14 +255,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	public static Style getStyleForErrorTextConnections(Diagram diagram) {
-		final String styleId = "ErrorTextConnections";
+		final String styleId = ERROR_TEXT_CONNECTIONS;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns error message font for improper connections
 	public static Style createStyleForErrorTextConnections(Diagram diagram) {
-		final String styleId = "ErrorTextConnections";
+		final String styleId = ERROR_TEXT_CONNECTIONS;
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -255,27 +274,24 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
-	
-	
+
 	public static boolean needsUpdateForProvidesPort(Diagram diagram, Style style) {
-		IGaService gaService = Graphiti.getGaService();
-		boolean result = PluginUtil.equals(style.getForeground(), gaService.manageColor(diagram, BLACK))
-				&& PluginUtil.equals(style.getBackground(), gaService.manageColor(diagram, WHITE))
-				&& PluginUtil.equals(style.getFont(), getPortFont(diagram))
-				&& PluginUtil.equals(style.getLineWidth(), Integer.valueOf(2))
-				&& PluginUtil.equals(style.getLineVisible() , true);
+		if (style == null) {
+			return true;
+		}
+		boolean result = PluginUtil.equals(PROVIDES_PORT, style.getId());
 		return result;
 	}
 
 	public static Style getStyleForProvidesPort(Diagram diagram) {
-		final String styleId = "ProvidesPort";
+		final String styleId = PROVIDES_PORT;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns style for provides port
 	public static Style createStyleForProvidesPort(Diagram diagram) {
-		final String styleId = "ProvidesPort";
+		final String styleId = PROVIDES_PORT;
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -288,29 +304,24 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
-	
+
 	public static boolean needsUpdateForExternalProvidesPort(Diagram diagram, Style style) {
 		if (style == null) {
 			return true;
 		}
-		IGaService gaService = Graphiti.getGaService();
-		boolean result = PluginUtil.equals(style.getForeground(), gaService.manageColor(diagram, BLACK))
-		 && PluginUtil.equals(style.getBackground(), gaService.manageColor(diagram, BLUE))
-		 && PluginUtil.equals(style.getFont(), getPortFont(diagram))
-		 && PluginUtil.equals(style.getLineWidth(), Integer.valueOf(2))
-		 && PluginUtil.equals(style.getLineVisible(), true);
+		boolean result = PluginUtil.equals(EXTERNAL_PROVIDES_PORT, style.getId());
 		return result;
 	}
 
 	public static Style getStyleForExternalProvidesPort(Diagram diagram) {
-		final String styleId = "ExternalProvidesPort";
+		final String styleId = EXTERNAL_PROVIDES_PORT;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns style for provides port
 	public static Style createStyleForExternalProvidesPort(Diagram diagram) {
-		final String styleId = "ExternalProvidesPort";
+		final String styleId = EXTERNAL_PROVIDES_PORT;
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -323,29 +334,24 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
-	
+
 	public static boolean needsUpdateForUsesPort(Diagram diagram, Style style) {
 		if (style == null) {
 			return true;
 		}
-		IGaService gaService = Graphiti.getGaService();
-		boolean result = PluginUtil.equals(style.getForeground(), gaService.manageColor(diagram, BLACK))
-				&& PluginUtil.equals(style.getBackground(), gaService.manageColor(diagram, BLACK))
-				&& PluginUtil.equals(style.getFont(), getPortFont(diagram))
-				&& PluginUtil.equals(style.getLineWidth(), Integer.valueOf(2))
-				&& PluginUtil.equals(style.getLineVisible(), true);
+		boolean result = PluginUtil.equals(USES_PORT, style.getId());
 		return result;
 	}
 
 	public static Style getStyleForUsesPort(Diagram diagram) {
-		final String styleId = "UsesPort";
+		final String styleId = USES_PORT;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns style for uses port
 	public static Style createStyleForUsesPort(Diagram diagram) {
-		final String styleId = "UsesPort";
+		final String styleId = USES_PORT;
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -358,30 +364,25 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
-	
+
 	public static boolean needsUpdateForExternalUsesPort(Diagram diagram, Style style) {
 		if (style == null) {
 			return true;
 		}
-		IGaService gaService = Graphiti.getGaService();
-		boolean result = PluginUtil.equals(style.getForeground(), gaService.manageColor(diagram, BLACK))
-				&& PluginUtil.equals(style.getBackground(), gaService.manageColor(diagram, BLUE))
-				&& PluginUtil.equals(style.getFont(), getPortFont(diagram))
-				&& PluginUtil.equals(style.getLineWidth(), Integer.valueOf(2))
-				&& PluginUtil.equals(style.getLineVisible(), true);
+		boolean result = PluginUtil.equals(USES_EXTERNAL_PORT, style.getId());
 		return result;
 	}
 
 	// returns style for uses external port
 	public static Style getStyleForExternalUsesPort(Diagram diagram) {
-		final String styleId = "UsesExternalPort";
+		final String styleId = USES_EXTERNAL_PORT;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns style for uses external port
 	public static Style createStyleForExternalUsesPort(Diagram diagram) {
-		final String styleId = "UsesExternalPort";
+		final String styleId = USES_EXTERNAL_PORT;
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -397,14 +398,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	// returns style for uses port
 	public static Style getStyleForUsesPortAnchor(Diagram diagram) {
-		final String styleId = "UsesPortAnchor";
+		final String styleId = USES_PORT_ANCHOR;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns style for uses port
 	public static Style createStyleForUsesPortAnchor(Diagram diagram) {
-		final String styleId = "UsesPortAnchor";
+		final String styleId = USES_PORT_ANCHOR;
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -439,14 +440,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	// returns style for lollipop ellipse
 	public static Style getStyleForLollipopEllipse(Diagram diagram) {
-		final String styleId = "LollipopEllipse";
+		final String styleId = LOLLIPOP_ELLIPSE;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns style for lollipop ellipse
 	public static Style createStyleForLollipopEllipse(Diagram diagram) {
-		final String styleId = "LollipopEllipse";
+		final String styleId = LOLLIPOP_ELLIPSE;
 		Style style = findStyle(diagram, styleId);
 
 		if (style == null) {
@@ -461,14 +462,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	// returns style for lollipop line
 	public static Style getStyleForLollipopLine(Diagram diagram) {
-		final String styleId = "LollipopLine";
+		final String styleId = LOLLIPOP_LINE;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns style for lollipop line
 	public static Style createStyleForLollipopLine(Diagram diagram) {
-		final String styleId = "LollipopLine";
+		final String styleId = LOLLIPOP_LINE;
 		Style style = findStyle(diagram, styleId);
 
 		if (style == null) {
@@ -478,25 +479,23 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
-	
+
 	public static boolean needsUpdateForStartOrderAssemblyControllerEllipse(Diagram diagram, Style style) {
 		if (style == null) {
 			return true;
 		}
-		boolean result = PluginUtil.equals(style.getLineWidth(), Integer.valueOf(1))
-				&& PluginUtil.equals(style.getBackground(), Graphiti.getGaService().manageColor(diagram, GOLD))
-				&& PluginUtil.equals(style.getTransparency(), Double.valueOf(.99d));
+		boolean result = PluginUtil.equals(style.getId(), START_ORDER_ASSEMBLY_CONTROLLER_ELLIPSE);
 		return result;
 	}
 
 	public static Style getStyleForStartOrderAssemblyControllerEllipse(Diagram diagram) {
-		final String styleId = "StartOrderAssemblyControllerEllipse";
+		final String styleId = START_ORDER_ASSEMBLY_CONTROLLER_ELLIPSE;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	public static Style createStyleForStartOrderAssemblyControllerEllipse(Diagram diagram) {
-		final String styleId = "StartOrderAssemblyControllerEllipse";
+		final String styleId = START_ORDER_ASSEMBLY_CONTROLLER_ELLIPSE;
 		Style style = findStyle(diagram, styleId);
 
 		if (style == null) {
@@ -510,23 +509,21 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	public static Style getStyleForStartOrderEllipse(Diagram diagram) {
-		final String styleId = "StartOrderEllipse";
+		final String styleId = START_ORDER_ELLIPSE;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
-	
+
 	public static boolean needsUpdateForStartOrderEllipse(Diagram diagram, Style style) {
 		if (style == null) {
 			return true;
 		}
-		boolean result = PluginUtil.equals(style.getLineWidth(), Integer.valueOf(1))
-				&& PluginUtil.equals(style.getBackground(), Graphiti.getGaService().manageColor(diagram, WHITE))
-				&& PluginUtil.equals(style.getTransparency(), Double.valueOf(.99d));
+		boolean result = PluginUtil.equals(style.getId(), START_ORDER_ELLIPSE);
 		return result;
 	}
 
 	public static Style createStyleForStartOrderEllipse(Diagram diagram) {
-		final String styleId = "StartOrderEllipse";
+		final String styleId = START_ORDER_ELLIPSE;
 		Style style = findStyle(diagram, styleId);
 
 		if (style == null) {
@@ -540,13 +537,13 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	public static Style getStyleForStartOrderText(Diagram diagram) {
-		final String styleId = "StartOrderText";
+		final String styleId = START_ORDER_TEXT;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	public static Style createStyleForStartOrderText(Diagram diagram) {
-		final String styleId = "StartOrderText";
+		final String styleId = START_ORDER_TEXT;
 		Style style = findStyle(diagram, styleId);
 
 		if (style == null) {
@@ -561,14 +558,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	// returns component text style
 	public static Style getStyleForPortText(Diagram diagram) {
-		final String styleId = "ComponentText";
+		final String styleId = COMPONENT_TEXT;
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
 
 	// returns component text style
 	public static Style createStyleForPortText(Diagram diagram) {
-		final String styleId = "ComponentText";
+		final String styleId = COMPONENT_TEXT;
 		Style style = findStyle(diagram, styleId);
 
 		if (style == null) {
