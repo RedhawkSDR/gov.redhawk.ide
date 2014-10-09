@@ -130,7 +130,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 
 		// add start order ellipse
 		IEditorPart activeEditor = DUtil.getActiveEditor(); 
-		if (activeEditor != null && !( activeEditor instanceof LocalGraphitiSadMultiPageScaEditor)) {
+		if (sad.getId() != null && !( activeEditor instanceof LocalGraphitiSadMultiPageScaEditor)) {
 			addStartOrderEllipse(ci, assemblyController, featureProvider);
 		}
 	}
@@ -218,7 +218,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		super.layout();
 
 		IEditorPart activeEditor = DUtil.getActiveEditor(); 
-		if (activeEditor != null && !( activeEditor instanceof LocalGraphitiSadMultiPageScaEditor)) {
+		if (getStartOrderEllipseShape() != null && !( activeEditor instanceof LocalGraphitiSadMultiPageScaEditor)) {
 			// Set the layout for the start order ellipse
 			Graphiti.getGaLayoutService().setLocation(getStartOrderEllipseShape().getGraphicsAlgorithm(),
 				getInnerContainerShape().getGraphicsAlgorithm().getWidth() - (START_ORDER_ELLIPSE_DIAMETER + START_ORDER_ELLIPSE_RIGHT_PADDING),
@@ -255,7 +255,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		}
 
 		IEditorPart activeEditor = DUtil.getActiveEditor(); 
-		if (activeEditor != null && !( activeEditor instanceof LocalGraphitiSadMultiPageScaEditor)) {
+		if (sad.getId() != null && !( activeEditor instanceof LocalGraphitiSadMultiPageScaEditor)) {
 			// update startOrderText
 			Text startOrderTextGA = getStartOrderText();
 			if (ci.getStartOrder() == null && !startOrderTextGA.getValue().equals(NO_START_ORDER_STRING)) {
