@@ -89,7 +89,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
-public class DUtil { //SUPPRESS CHECKSTYLE INLINE
+public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	// These are property key/value pairs that help us resize an existing shape by properly identifying
 	// graphicsAlgorithms
@@ -234,7 +234,7 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 	public static IEditorPart getActiveEditor() {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 	}
-	
+
 	public static Object[] getSelectedEditParts() {
 		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
 		if (selection instanceof IStructuredSelection) {
@@ -243,7 +243,7 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns true if the provided context contains a pictogram element with one of the provided property values.
 	 * False otherwise.
@@ -439,7 +439,6 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 		return null;
 	}
 
-
 	/**
 	 * Returns list of ContainerShape in provided AreaContext with
 	 * property key DiagramUtil.GA_TYPE and provided propertyValue
@@ -466,29 +465,29 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 	 * @param context
 	 */
 	public static void shiftChildrenRelativeToParentResize(ContainerShape containerShape, IResizeShapeContext context) {
-		
+
 		int widthDiff = containerShape.getGraphicsAlgorithm().getWidth() - context.getWidth();
 		int heightDiff = containerShape.getGraphicsAlgorithm().getHeight() - context.getHeight();
 		switch (context.getDirection()) {
-			case(IResizeShapeContext.DIRECTION_NORTH_EAST):
-				shiftChildrenYPositionUp(containerShape, heightDiff);
-				break;
-			case(IResizeShapeContext.DIRECTION_WEST):
-			case(IResizeShapeContext.DIRECTION_SOUTH_WEST):
-				shiftChildrenXPositionLeft(containerShape, widthDiff);
-				break;
-			case(IResizeShapeContext.DIRECTION_NORTH_WEST):
-				shiftChildrenXPositionLeft(containerShape, widthDiff);
-				shiftChildrenYPositionUp(containerShape, heightDiff);
-				break;
-			case(IResizeShapeContext.DIRECTION_NORTH): //handle top of box getting smaller
-				shiftChildrenYPositionUp(containerShape, heightDiff);
-				break;
-			default:
-				break;
+		case (IResizeShapeContext.DIRECTION_NORTH_EAST):
+			shiftChildrenYPositionUp(containerShape, heightDiff);
+			break;
+		case (IResizeShapeContext.DIRECTION_WEST):
+		case (IResizeShapeContext.DIRECTION_SOUTH_WEST):
+			shiftChildrenXPositionLeft(containerShape, widthDiff);
+			break;
+		case (IResizeShapeContext.DIRECTION_NORTH_WEST):
+			shiftChildrenXPositionLeft(containerShape, widthDiff);
+			shiftChildrenYPositionUp(containerShape, heightDiff);
+			break;
+		case (IResizeShapeContext.DIRECTION_NORTH): // handle top of box getting smaller
+			shiftChildrenYPositionUp(containerShape, heightDiff);
+			break;
+		default:
+			break;
 		}
 	}
-	
+
 	/**
 	 * Shifts children of container x value to the left by specified amount
 	 * Can be negative
@@ -496,11 +495,12 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 	 * @param shiftLeftAmount
 	 */
 	private static void shiftChildrenXPositionLeft(ContainerShape containerShape, int shiftLeftAmount) {
-		for (Shape s: containerShape.getChildren()) {
+		for (Shape s : containerShape.getChildren()) {
 			GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
 			Graphiti.getGaService().setLocation(ga, ga.getX() - shiftLeftAmount, ga.getY());
 		}
 	}
+
 	/**
 	 * Shifts children of container Y value up by specified amount
 	 * Can be negative
@@ -508,12 +508,12 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 	 * @param shiftUpAmount
 	 */
 	private static void shiftChildrenYPositionUp(ContainerShape containerShape, int shiftUpAmount) {
-		for (Shape s: containerShape.getChildren()) {
+		for (Shape s : containerShape.getChildren()) {
 			GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
 			Graphiti.getGaService().setLocation(ga, ga.getX(), ga.getY() - shiftUpAmount);
 		}
 	}
-	
+
 	/**
 	 * Returns list of ContainerShape outside of provided AreaContext on containerShape with
 	 * property key DiagramUtil.GA_TYPE and provided propertyValue
@@ -533,7 +533,6 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 		return retList;
 	}
 
-	
 	/**
 	 * Return true if GraphicsAlgorithm exists within IAreaContext
 	 * @param ga
@@ -543,55 +542,55 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 	public static boolean shapeExistsPartiallyInArea(final Shape s, int areaW, int areaH, int areaX, int areaY) {
 		GraphicsAlgorithm ga = s.getGraphicsAlgorithm();
 		ILocation sLoc = GraphitiUi.getUiLayoutService().getLocationRelativeToDiagram(s);
-		int[] x = new int [4];
-		int[] y = new int [4];
-		//top left
+		int[] x = new int[4];
+		int[] y = new int[4];
+		// top left
 		x[0] = sLoc.getX();
 		y[0] = sLoc.getY();
-		//top right
+		// top right
 		x[1] = sLoc.getX() + ga.getWidth();
 		y[1] = sLoc.getY();
-		//bottom left
+		// bottom left
 		x[2] = sLoc.getX();
 		y[2] = sLoc.getY() + ga.getHeight();
-		//bottom right
+		// bottom right
 		x[3] = sLoc.getX() + ga.getWidth();
 		y[3] = sLoc.getY() + ga.getHeight();
-		
-		//return true if any corner of s exists inside area
-		for (int i = 0; i < x.length; i++) { 
+
+		// return true if any corner of s exists inside area
+		for (int i = 0; i < x.length; i++) {
 			if (xyExistInArea(x[i], y[i], areaW, areaH, areaX, areaY)) {
 				return true;
 			}
 		}
-		
-		//return true if host collocation is inside shape
-		if ((sLoc.getX() < areaX) && ((sLoc.getX() + ga.getWidth()) > (areaX + areaW))
-				&& (sLoc.getY() < areaY) && ((sLoc.getY() + ga.getHeight()) > (areaY + areaH))) {
+
+		// return true if host collocation is inside shape
+		if ((sLoc.getX() < areaX) && ((sLoc.getX() + ga.getWidth()) > (areaX + areaW)) && (sLoc.getY() < areaY)
+			&& ((sLoc.getY() + ga.getHeight()) > (areaY + areaH))) {
 			return true;
 		}
-		
-		//return true if area is inside of shape
-		if ((sLoc.getX() < areaX) && ((sLoc.getX() + ga.getWidth()) > (areaX + areaW))
-				&& (sLoc.getY() < areaY) && ((sLoc.getY() + ga.getHeight()) > (areaY + areaH))) {
+
+		// return true if area is inside of shape
+		if ((sLoc.getX() < areaX) && ((sLoc.getX() + ga.getWidth()) > (areaX + areaW)) && (sLoc.getY() < areaY)
+			&& ((sLoc.getY() + ga.getHeight()) > (areaY + areaH))) {
 			return true;
 		}
-		
-		//return true if x area is outside of shape, but y is not
-		if ((sLoc.getX() > areaX) && ((sLoc.getX() + ga.getWidth()) < (areaX + areaW))
-				&& (sLoc.getY() < areaY) && ((sLoc.getY() + ga.getHeight()) > (areaY + areaH))) {
+
+		// return true if x area is outside of shape, but y is not
+		if ((sLoc.getX() > areaX) && ((sLoc.getX() + ga.getWidth()) < (areaX + areaW)) && (sLoc.getY() < areaY)
+			&& ((sLoc.getY() + ga.getHeight()) > (areaY + areaH))) {
 			return true;
 		}
-		
-		//return true if y area is outside of shape, but c is not
-		if ((sLoc.getX() < areaX) && ((sLoc.getX() + ga.getWidth()) > (areaX + areaW))
-				&& (sLoc.getY() > areaY) && ((sLoc.getY() + ga.getHeight()) < (areaY + areaH))) {
+
+		// return true if y area is outside of shape, but c is not
+		if ((sLoc.getX() < areaX) && ((sLoc.getX() + ga.getWidth()) > (areaX + areaW)) && (sLoc.getY() > areaY)
+			&& ((sLoc.getY() + ga.getHeight()) < (areaY + areaH))) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * XY exists within xy area
 	 * @param x
@@ -608,7 +607,6 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 		}
 		return false;
 	}
-
 
 	// returns width required to support longest provides port name
 	// 4 used as minimum, characters cut off otherwise
@@ -652,9 +650,11 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 	 * @return
 	 */
 	public static boolean isPropertyElementType(PropertyContainer pc, String propertyValue) {
-		for (Property p : pc.getProperties()) {
-			if ((GA_TYPE.equals(p.getKey()) || SHAPE_TYPE.equals(p.getKey())) && propertyValue.equals(p.getValue())) {
-				return true;
+		if (pc != null) {
+			for (Property p : pc.getProperties()) {
+				if ((GA_TYPE.equals(p.getKey()) || SHAPE_TYPE.equals(p.getKey())) && propertyValue.equals(p.getValue())) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -805,7 +805,7 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 					updateStatus = true;
 					// delete shape
 					peIter.remove();
-					//TODO: if we use DeleteContext it prompts user, if we use EcoreUtil.delete there is no prompt
+					// TODO: if we use DeleteContext it prompts user, if we use EcoreUtil.delete there is no prompt
 					RemoveContext rc = new RemoveContext(pe);
 					IRemoveFeature removeFeature = featureProvider.getRemoveFeature(rc);
 					if (removeFeature != null) {
@@ -823,10 +823,10 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 
 		return new Reason(false, "No updates required");
 	}
-	
+
 	/**
 	 * Remove connections from the diagram that are missing start/end points.
-	 * Connections in the diagram may no longer have start/end points.  
+	 * Connections in the diagram may no longer have start/end points.
 	 * They may have been deleted which will cause the connection to point to random places in the diagram.
 	 * @param pes
 	 * @param objects
@@ -837,60 +837,58 @@ public class DUtil { //SUPPRESS CHECKSTYLE INLINE
 	 * @return
 	 */
 	public static Reason removeConnectionsWithoutEndpoints(List<Connection> connections, List<SadConnectInterface> sadConnectInterfaces,
-			IFeatureProvider featureProvider, boolean performUpdate) {
+		IFeatureProvider featureProvider, boolean performUpdate) {
 
-			boolean updateStatus = false;
+		boolean updateStatus = false;
 
-			// update PictogramElements if in model, if not in model remove from diagram
-			for (Iterator<Connection> connIter = connections.iterator(); connIter.hasNext();) {
-				Connection conn = connIter.next();
-				if (conn.getStart() == null || conn.getEnd() == null) {
-					//endpoint missing, delete connection
-					if (performUpdate) {
-						updateStatus = true;
-						// delete shape
-						connIter.remove();
-						DeleteContext dc = new DeleteContext(conn);
-						IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
-						if (deleteFeature != null) {
-							deleteFeature.delete(dc);
-						}
-					} else {
-						return new Reason(true, "A connection in diagram is missing either a start or end point");
+		// update PictogramElements if in model, if not in model remove from diagram
+		for (Iterator<Connection> connIter = connections.iterator(); connIter.hasNext();) {
+			Connection conn = connIter.next();
+			if (conn.getStart() == null || conn.getEnd() == null) {
+				// endpoint missing, delete connection
+				if (performUpdate) {
+					updateStatus = true;
+					// delete shape
+					connIter.remove();
+					DeleteContext dc = new DeleteContext(conn);
+					IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
+					if (deleteFeature != null) {
+						deleteFeature.delete(dc);
 					}
+				} else {
+					return new Reason(true, "A connection in diagram is missing either a start or end point");
 				}
 			}
-
-			// update model if there are references to components that no longer exist
-			for (Iterator<SadConnectInterface> connIter = sadConnectInterfaces.iterator(); connIter.hasNext();) {
-				
-				//delete connection in model if
-				// uses port is present but the referenced component isn't
-				// provides port is present but references component isn't 
-				SadConnectInterface conn = connIter.next();
-				if ((conn.getUsesPort() != null 
-						&& conn.getUsesPort().getComponentInstantiationRef() != null && conn.getUsesPort().getComponentInstantiationRef().getInstantiation() == null) 
-						|| (conn.getProvidesPort() != null 
-						&& conn.getProvidesPort().getComponentInstantiationRef() != null && conn.getProvidesPort().getComponentInstantiationRef().getInstantiation() == null)) {
-					
-					//endpoint missing, delete connection
-					if (performUpdate) {
-						updateStatus = true;
-						//delete connection
-						connIter.remove();
-						EcoreUtil.delete(conn, true);
-					} else {
-						return new Reason(true, "A connection in model is missing reference to component");
-					}
-				}
-			}
-						
-			if (updateStatus && performUpdate) {
-				return new Reason(true, "Update successful");
-			}
-
-			return new Reason(false, "No updates required");
 		}
+
+		// update model if there are references to components that no longer exist
+		for (Iterator<SadConnectInterface> connIter = sadConnectInterfaces.iterator(); connIter.hasNext();) {
+
+			// delete connection in model if
+			// uses port is present but the referenced component isn't
+			// provides port is present but references component isn't
+			SadConnectInterface conn = connIter.next();
+			if ((conn.getUsesPort() != null && conn.getUsesPort().getComponentInstantiationRef() != null && conn.getUsesPort().getComponentInstantiationRef().getInstantiation() == null)
+				|| (conn.getProvidesPort() != null && conn.getProvidesPort().getComponentInstantiationRef() != null && conn.getProvidesPort().getComponentInstantiationRef().getInstantiation() == null)) {
+
+				// endpoint missing, delete connection
+				if (performUpdate) {
+					updateStatus = true;
+					// delete connection
+					connIter.remove();
+					EcoreUtil.delete(conn, true);
+				} else {
+					return new Reason(true, "A connection in model is missing reference to component");
+				}
+			}
+		}
+
+		if (updateStatus && performUpdate) {
+			return new Reason(true, "Update successful");
+		}
+
+		return new Reason(false, "No updates required");
+	}
 
 	/**
 	 * Examines a list of Shapes and ensures there is an associated object in the model (objects).
