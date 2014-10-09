@@ -13,7 +13,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 
-public class ChalkboardTest extends AbstractGraphitiTest {
+public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 
 	private SWTBotGefEditor editor;
 	private static final String CHALKBOARD = "Chalkboard";
@@ -67,8 +67,9 @@ public class ChalkboardTest extends AbstractGraphitiTest {
 		Assert.assertEquals("outer text should match component type", HARD_LIMIT, componentShape.getOuterText().getValue());
 		Assert.assertEquals("inner text should match component usage name", ci.getUsageName(), componentShape.getInnerText().getValue());
 		Assert.assertNotNull("component supported interface graphic should not be null", componentShape.getLollipop());
-		Assert.assertNotNull("start order shape/text should not be null", componentShape.getStartOrderText());
-		Assert.assertTrue("should be assembly controller", ComponentUtils.isAssemblyController(componentShape));
+		Assert.assertNull("start order shape/text should be null", componentShape.getStartOrderText());
+		// TODO
+//		Assert.assertFalse("should not be assembly controller", ComponentUtils.isAssemblyController(componentShape));
 
 		// HardLimit only has the two ports
 		Assert.assertTrue(componentShape.getUsesPortStubs().size() == 1 && componentShape.getProvidesPortStubs().size() == 1);
