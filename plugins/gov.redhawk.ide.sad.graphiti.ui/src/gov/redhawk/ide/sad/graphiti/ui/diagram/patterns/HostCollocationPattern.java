@@ -149,7 +149,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 
 		// OUTER RECTANGLE
 		ContainerShape outerContainerShape = addOuterRectangle(diagram, hostCollocation.getName(), hostCollocation, getFeatureProvider(), getCreateImageId(),
-			StyleUtil.getStyleForHostCollocation(diagram));
+			StyleUtil.createStyleForHostCollocation(diagram));
 
 		RoundedRectangle outerRoundedRectangle = null;
 		Text outerRoundedRectangleText = null;
@@ -518,7 +518,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 		// resize
 		// text
 		Text cText = Graphiti.getCreateService().createText(outerRoundedRectangle, text);
-		cText.setStyle(StyleUtil.getStyleForOuterText(DUtil.findDiagram(targetContainerShape)));
+		cText.setStyle(StyleUtil.createStyleForOuterText(DUtil.findDiagram(targetContainerShape)));
 		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 		featureProvider.link(outerContainerShape, businessObject); // link container and business object
 

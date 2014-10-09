@@ -14,6 +14,7 @@ import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -94,9 +95,9 @@ public class ComponentUtils { // SUPPRESS CHECKSTYLE INLINE
 		Diagram diagram = DUtil.findDiagram(componentShape);
 		Style style = ((ComponentShapeImpl) componentShape).getStartOrderEllipseShape().getGraphicsAlgorithm().getStyle();
 		if (isAssemblyController) {
-			return style.equals(StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
+			return PluginUtil.equals(style, StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
 		}
-		return style.equals(StyleUtil.getStyleForStartOrderEllipse(diagram));
+		return PluginUtil.equals(style, StyleUtil.getStyleForStartOrderEllipse(diagram));
 	}
 
 	/**

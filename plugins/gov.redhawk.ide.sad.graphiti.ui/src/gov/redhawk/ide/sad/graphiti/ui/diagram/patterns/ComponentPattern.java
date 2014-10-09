@@ -275,11 +275,11 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		// pre-add a few styles that will be used for updates. This is necessary because if the style isn't present
 		// during updateNeeded (Not a Transaction)
 		// it will try to create it and an exception will occur
-		StyleUtil.getStyleForExternalUsesPort(getDiagram());
-		StyleUtil.getStyleForExternalProvidesPort(getDiagram());
-		StyleUtil.getStyleForUsesPort(getDiagram());
-		StyleUtil.getStyleForProvidesPort(getDiagram());
-		StyleUtil.getStyleForStartOrderEllipse(getDiagram());
+		StyleUtil.createStyleForExternalUsesPort(getDiagram());
+		StyleUtil.createStyleForExternalProvidesPort(getDiagram());
+		StyleUtil.createStyleForUsesPort(getDiagram());
+		StyleUtil.createStyleForProvidesPort(getDiagram());
+		StyleUtil.createStyleForStartOrderEllipse(getDiagram());
 
 		// layout
 		layoutPictogramElement(componentShape);

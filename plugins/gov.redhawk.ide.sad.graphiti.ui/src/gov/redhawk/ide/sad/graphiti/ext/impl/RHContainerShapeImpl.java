@@ -143,7 +143,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// text
 		Text cText = Graphiti.getCreateService().createText(outerRoundedRectangle, pattern.getOuterTitle(newObject));
-		cText.setStyle(StyleUtil.getStyleForOuterText(DUtil.findDiagram(targetContainerShape)));
+		cText.setStyle(StyleUtil.createStyleForOuterText(DUtil.findDiagram(targetContainerShape)));
 		Graphiti.getPeService().setPropertyValue(cText, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE_TEXT);
 
 		IFeatureProvider featureProvider = pattern.getFeatureProvider();
@@ -266,7 +266,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// text
 		Text ciText = Graphiti.getCreateService().createText(innerRoundedRectangle, text);
-		ciText.setStyle(StyleUtil.getStyleForInnerText(DUtil.findDiagram(this)));
+		ciText.setStyle(StyleUtil.createStyleForInnerText(DUtil.findDiagram(this)));
 		Graphiti.getPeService().setPropertyValue(ciText, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_TEXT);
 
 		// line
@@ -297,13 +297,13 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Shape lollipopEllipseShape = Graphiti.getCreateService().createShape(interfaceContainerShape, true);
 		Graphiti.getPeService().setPropertyValue(lollipopEllipseShape, DUtil.GA_TYPE, SHAPE_INTERFACE_ELLIPSE);
 		Ellipse lollipopEllipse = Graphiti.getCreateService().createEllipse(lollipopEllipseShape);
-		lollipopEllipse.setStyle(StyleUtil.getStyleForLollipopEllipse(DUtil.findDiagram(this)));
+		lollipopEllipse.setStyle(StyleUtil.createStyleForLollipopEllipse(DUtil.findDiagram(this)));
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopEllipse, 0, 0, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER);
 
 		// interface lollipop line
 		Shape lollipopLineShape = Graphiti.getCreateService().createContainerShape(interfaceContainerShape, false);
 		Rectangle lollipopLine = Graphiti.getCreateService().createRectangle(lollipopLineShape);
-		lollipopLine.setStyle(StyleUtil.getStyleForLollipopLine(DUtil.findDiagram(this)));
+		lollipopLine.setStyle(StyleUtil.createStyleForLollipopLine(DUtil.findDiagram(this)));
 		Graphiti.getGaLayoutService().setLocationAndSize(lollipopLine, LOLLIPOP_ELLIPSE_DIAMETER, LOLLIPOP_ELLIPSE_DIAMETER / 2,
 			INTERFACE_SHAPE_WIDTH - LOLLIPOP_ELLIPSE_DIAMETER, 1);
 
@@ -359,13 +359,13 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// move
 		Rectangle providesPortRectangle = Graphiti.getCreateService().createRectangle(providesPortRectangleShape);
 		featureProvider.link(providesPortRectangleShape, p);
-		providesPortRectangle.setStyle(StyleUtil.getStyleForProvidesPort(diagram));
+		providesPortRectangle.setStyle(StyleUtil.createStyleForProvidesPort(diagram));
 		Graphiti.getGaLayoutService().setLocationAndSize(providesPortRectangle, 0, 0, PORT_SHAPE_WIDTH, PORT_SHAPE_HEIGHT);
 
 		// port text
 		Shape providesPortTextShape = Graphiti.getCreateService().createShape(providesPortContainerShape, false);
 		Text providesPortText = Graphiti.getCreateService().createText(providesPortTextShape, p.getName());
-		providesPortText.setStyle(StyleUtil.getStyleForProvidesPort(diagram));
+		providesPortText.setStyle(StyleUtil.createStyleForProvidesPort(diagram));
 		Graphiti.getPeService().setPropertyValue(providesPortText, DUtil.GA_TYPE, GA_PROVIDES_PORT_TEXT);
 		Graphiti.getGaLayoutService().setLocationAndSize(providesPortText, PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_HEIGHT, 0,
 			providesPortNameLength * PORT_CHAR_WIDTH, 20);
@@ -382,11 +382,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
 		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
 		if (externalPort != null) {
-			fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalProvidesPort(diagram));
+			fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForExternalProvidesPort(diagram));
 			featureProvider.link(fixPointAnchor, externalPort); // link to externalPort so that update fires when it
 			// changes
 		} else {
-			fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForProvidesPort(diagram));
+			fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForProvidesPort(diagram));
 		}
 		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, 0, -PORT_SHAPE_HEIGHT / 2, PORT_SHAPE_WIDTH, PORT_SHAPE_HEIGHT);
 
@@ -477,13 +477,13 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Rectangle usesPortRectangle = Graphiti.getCreateService().createRectangle(usesPortRectangleShape);
 		Graphiti.getPeService().setPropertyValue(usesPortRectangle, DUtil.GA_TYPE, GA_USES_PORT_RECTANGLE);
 		featureProvider.link(usesPortRectangleShape, p);
-		usesPortRectangle.setStyle(StyleUtil.getStyleForUsesPort(diagram));
+		usesPortRectangle.setStyle(StyleUtil.createStyleForUsesPort(diagram));
 		Graphiti.getGaLayoutService().setLocationAndSize(usesPortRectangle, usesPortNameLength, 0, PORT_SHAPE_WIDTH, PORT_SHAPE_HEIGHT);
 
 		// port text
 		Shape usesPortTextShape = Graphiti.getPeService().createShape(usesPortContainerShape, false);
 		Text usesPortText = Graphiti.getCreateService().createText(usesPortTextShape, p.getName());
-		usesPortText.setStyle(StyleUtil.getStyleForUsesPort(diagram));
+		usesPortText.setStyle(StyleUtil.createStyleForUsesPort(diagram));
 		usesPortText.setHorizontalAlignment(Orientation.ALIGNMENT_RIGHT);
 		Graphiti.getPeService().setPropertyValue(usesPortText, DUtil.GA_TYPE, GA_USES_PORT_TEXT);
 		Graphiti.getGaLayoutService().setLocationAndSize(usesPortText, 0, 0,
@@ -501,11 +501,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
 		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
 		if (externalPort != null) {
-			fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalUsesPort(diagram));
+			fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForExternalUsesPort(diagram));
 			featureProvider.link(fixPointAnchor, externalPort); // link to externalPort so that update fires when it
 			// changes
 		} else {
-			fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForUsesPort(diagram));
+			fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForUsesPort(diagram));
 		}
 		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, -PORT_SHAPE_WIDTH, -PORT_SHAPE_HEIGHT / 2, PORT_SHAPE_WIDTH,
 			PORT_SHAPE_HEIGHT);

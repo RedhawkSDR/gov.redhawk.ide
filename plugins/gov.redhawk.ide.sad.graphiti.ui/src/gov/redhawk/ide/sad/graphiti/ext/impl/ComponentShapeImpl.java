@@ -166,10 +166,10 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 
 		if (assemblyController != null) {
 			// If component is assembly controller, then set background to a different color
-			startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderAssemblyControllerEllipse(diagram));
+			startOrderEllipse.setStyle(StyleUtil.createStyleForStartOrderAssemblyControllerEllipse(diagram));
 			featureProvider.link(startOrderEllipseShape, assemblyController);
 		} else {
-			startOrderEllipse.setStyle(StyleUtil.getStyleForStartOrderEllipse(diagram));
+			startOrderEllipse.setStyle(StyleUtil.createStyleForStartOrderEllipse(diagram));
 		}
 		Graphiti.getPeService().setPropertyValue(startOrderEllipse, DUtil.GA_TYPE, GA_START_ORDER_ELLIPSE);
 		Graphiti.getGaLayoutService().setSize(startOrderEllipse, START_ORDER_ELLIPSE_DIAMETER, START_ORDER_ELLIPSE_DIAMETER);
@@ -188,7 +188,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		Shape startOrderTextShape = Graphiti.getPeCreateService().createShape(startOrderEllipseShape, false);
 		Text startOrderText = Graphiti.getCreateService().createText(startOrderTextShape, startOrder);
 		Graphiti.getPeService().setPropertyValue(startOrderText, DUtil.GA_TYPE, GA_START_ORDER_TEXT);
-		startOrderText.setStyle(StyleUtil.getStyleForStartOrderText(diagram));
+		startOrderText.setStyle(StyleUtil.createStyleForStartOrderText(diagram));
 		IDimension textDimension = GraphitiUi.getUiLayoutService().calculateTextSize(startOrder, StyleUtil.getStartOrderFont(diagram));
 		int textX = START_ORDER_ELLIPSE_DIAMETER / 2 - textDimension.getWidth() / 2;
 		Graphiti.getGaLayoutService().setLocationAndSize(startOrderText, textX, START_ORDER_TOP_TEXT_PADDING, START_ORDER_ELLIPSE_DIAMETER,

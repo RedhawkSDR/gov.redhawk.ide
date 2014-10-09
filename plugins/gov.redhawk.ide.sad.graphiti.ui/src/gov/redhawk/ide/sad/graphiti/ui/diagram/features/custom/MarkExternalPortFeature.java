@@ -117,7 +117,7 @@ public class MarkExternalPortFeature extends AbstractCustomFeature {
 
 				// change style of port
 				Rectangle fixPointAnchorRectangle = (Rectangle) fixPointAnchor.getGraphicsAlgorithm();
-				fixPointAnchorRectangle.setStyle(StyleUtil.getStyleForExternalUsesPort(DUtil.findDiagram(outerContainerShape)));
+				fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForExternalUsesPort(DUtil.findDiagram(outerContainerShape)));
 				fixPointAnchor.getLink().getBusinessObjects().add(port);
 			}
 		});

@@ -25,7 +25,7 @@ import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.graphiti.util.PredefinedColoredAreas;
 import org.eclipse.swt.graphics.Color;
 
-public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
+public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	public static final IColorConstant TEXT_FOREGROUND = IColorConstant.BLACK;
 	public static final IColorConstant WHITE = new ColorConstant(255, 255, 255);
@@ -79,8 +79,14 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 		return Graphiti.getGaService().manageFont(diagram, DEFAULT_FONT, 8, false, false);
 	}
 
-	// returns component outer rectangle style
 	public static Style getStyleForComponentOuter(Diagram diagram) {
+		final String styleId = "ComponentOuter";
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns component outer rectangle style
+	public static Style createStyleForComponentOuter(Diagram diagram) {
 		final String styleId = "ComponentOuter";
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
@@ -100,6 +106,13 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 	public static Style getStyleForComponentInner(Diagram diagram) {
 		final String styleId = "ComponentInner";
 		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns component inner rectangle style
+	public static Style createStyleForComponentInner(Diagram diagram) {
+		final String styleId = "ComponentInner";
+		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
@@ -111,6 +124,13 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 
 	// returns findby outer rectangle style
 	public static Style getStyleForFindByOuter(Diagram diagram) {
+		final String styleId = "FindByOuter";
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns findby outer rectangle style
+	public static Style createStyleForFindByOuter(Diagram diagram) {
 		final String styleId = "FindByOuter";
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
@@ -130,6 +150,13 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 	public static Style getStyleForHostCollocation(Diagram diagram) {
 		final String styleId = "HostCollocation";
 		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns host collocation rectangle style
+	public static Style createStyleForHostCollocation(Diagram diagram) {
+		final String styleId = "HostCollocation";
+		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
@@ -147,6 +174,13 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 	public static Style getStyleForFindByInner(Diagram diagram) {
 		final String styleId = "FindByInner";
 		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns find by inner rectangle style
+	public static Style createStyleForFindByInner(Diagram diagram) {
+		final String styleId = "FindByInner";
+		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
@@ -162,6 +196,13 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 	public static Style getStyleForOuterText(Diagram diagram) {
 		final String styleId = "OuterText";
 		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns outer text style
+	public static Style createStyleForOuterText(Diagram diagram) {
+		final String styleId = "OuterText";
+		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
@@ -172,8 +213,14 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-	// returns inner text style
 	public static Style getStyleForInnerText(Diagram diagram) {
+		final String styleId = "InnerText";
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns inner text style
+	public static Style createStyleForInnerText(Diagram diagram) {
 		final String styleId = "InnerText";
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
@@ -186,8 +233,14 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-	// returns error message font for improper connections
 	public static Style getStyleForErrorTextConnections(Diagram diagram) {
+		final String styleId = "ErrorTextConnections";
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns error message font for improper connections
+	public static Style createStyleForErrorTextConnections(Diagram diagram) {
 		final String styleId = "ErrorTextConnections";
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
@@ -201,8 +254,14 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-	// returns style for provides port
 	public static Style getStyleForProvidesPort(Diagram diagram) {
+		final String styleId = "ProvidesPort";
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns style for provides port
+	public static Style createStyleForProvidesPort(Diagram diagram) {
 		final String styleId = "ProvidesPort";
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
@@ -217,8 +276,14 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-	// returns style for provides port
 	public static Style getStyleForExternalProvidesPort(Diagram diagram) {
+		final String styleId = "ExternalProvidesPort";
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns style for provides port
+	public static Style createStyleForExternalProvidesPort(Diagram diagram) {
 		final String styleId = "ExternalProvidesPort";
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
@@ -233,8 +298,14 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 
-	// returns style for uses port
 	public static Style getStyleForUsesPort(Diagram diagram) {
+		final String styleId = "UsesPort";
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns style for uses port
+	public static Style createStyleForUsesPort(Diagram diagram) {
 		final String styleId = "UsesPort";
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
@@ -253,6 +324,13 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 	public static Style getStyleForExternalUsesPort(Diagram diagram) {
 		final String styleId = "UsesExternalPort";
 		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns style for uses external port
+	public static Style createStyleForExternalUsesPort(Diagram diagram) {
+		final String styleId = "UsesExternalPort";
+		Style style = findStyle(diagram, styleId);
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
@@ -267,6 +345,13 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 
 	// returns style for uses port
 	public static Style getStyleForUsesPortAnchor(Diagram diagram) {
+		final String styleId = "UsesPortAnchor";
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns style for uses port
+	public static Style createStyleForUsesPortAnchor(Diagram diagram) {
 		final String styleId = "UsesPortAnchor";
 		Style style = findStyle(diagram, styleId);
 		if (style == null) {
@@ -304,6 +389,13 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 	public static Style getStyleForLollipopEllipse(Diagram diagram) {
 		final String styleId = "LollipopEllipse";
 		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns style for lollipop ellipse
+	public static Style createStyleForLollipopEllipse(Diagram diagram) {
+		final String styleId = "LollipopEllipse";
+		Style style = findStyle(diagram, styleId);
 
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -319,6 +411,13 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 	public static Style getStyleForLollipopLine(Diagram diagram) {
 		final String styleId = "LollipopLine";
 		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns style for lollipop line
+	public static Style createStyleForLollipopLine(Diagram diagram) {
+		final String styleId = "LollipopLine";
+		Style style = findStyle(diagram, styleId);
 
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -329,6 +428,12 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 	}
 
 	public static Style getStyleForStartOrderAssemblyControllerEllipse(Diagram diagram) {
+		final String styleId = "StartOrderAssemblyControllerEllipse";
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	public static Style createStyleForStartOrderAssemblyControllerEllipse(Diagram diagram) {
 		final String styleId = "StartOrderAssemblyControllerEllipse";
 		Style style = findStyle(diagram, styleId);
 
@@ -345,6 +450,12 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 	public static Style getStyleForStartOrderEllipse(Diagram diagram) {
 		final String styleId = "StartOrderEllipse";
 		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	public static Style createStyleForStartOrderEllipse(Diagram diagram) {
+		final String styleId = "StartOrderEllipse";
+		Style style = findStyle(diagram, styleId);
 
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
@@ -357,6 +468,12 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 	}
 
 	public static Style getStyleForStartOrderText(Diagram diagram) {
+		final String styleId = "StartOrderText";
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	public static Style createStyleForStartOrderText(Diagram diagram) {
 		final String styleId = "StartOrderText";
 		Style style = findStyle(diagram, styleId);
 
@@ -372,6 +489,13 @@ public class StyleUtil { //SUPPRESS CHECKSTYLE INLINE
 
 	// returns component text style
 	public static Style getStyleForPortText(Diagram diagram) {
+		final String styleId = "ComponentText";
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns component text style
+	public static Style createStyleForPortText(Diagram diagram) {
 		final String styleId = "ComponentText";
 		Style style = findStyle(diagram, styleId);
 
