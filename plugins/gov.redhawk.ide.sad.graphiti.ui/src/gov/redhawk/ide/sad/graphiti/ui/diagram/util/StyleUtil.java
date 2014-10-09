@@ -280,7 +280,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			return true;
 		}
 		boolean result = PluginUtil.equals(PROVIDES_PORT, style.getId());
-		return result;
+		return !result;
 	}
 
 	public static Style getStyleForProvidesPort(Diagram diagram) {
@@ -310,7 +310,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			return true;
 		}
 		boolean result = PluginUtil.equals(EXTERNAL_PROVIDES_PORT, style.getId());
-		return result;
+		return !result;
 	}
 
 	public static Style getStyleForExternalProvidesPort(Diagram diagram) {
@@ -340,7 +340,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			return true;
 		}
 		boolean result = PluginUtil.equals(USES_PORT, style.getId());
-		return result;
+		return !result;
 	}
 
 	public static Style getStyleForUsesPort(Diagram diagram) {
@@ -370,7 +370,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			return true;
 		}
 		boolean result = PluginUtil.equals(USES_EXTERNAL_PORT, style.getId());
-		return result;
+		return !result;
 	}
 
 	// returns style for uses external port
@@ -485,7 +485,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			return true;
 		}
 		boolean result = PluginUtil.equals(style.getId(), START_ORDER_ASSEMBLY_CONTROLLER_ELLIPSE);
-		return result;
+		return !result;
 	}
 
 	public static Style getStyleForStartOrderAssemblyControllerEllipse(Diagram diagram) {
@@ -519,7 +519,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			return true;
 		}
 		boolean result = PluginUtil.equals(style.getId(), START_ORDER_ELLIPSE);
-		return result;
+		return !result;
 	}
 
 	public static Style createStyleForStartOrderEllipse(Diagram diagram) {
