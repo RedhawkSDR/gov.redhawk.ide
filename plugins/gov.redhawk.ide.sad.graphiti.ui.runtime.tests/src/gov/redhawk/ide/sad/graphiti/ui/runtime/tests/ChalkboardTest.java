@@ -18,7 +18,6 @@ public class ChalkboardTest extends AbstractGraphitiTest {
 	private SWTBotGefEditor editor;
 	private static final String CHALKBOARD = "Chalkboard";
 	private static final String HARD_LIMIT = "HardLimit";
-	private static final String[] COMPONENTS = { "DataConverter", "HardLimit", "SigGen" };
 	
 	/**
 	 * IDE-884
