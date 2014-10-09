@@ -18,7 +18,6 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaModelPlugin;
 import gov.redhawk.model.sca.ScaWaveform;
-import gov.redhawk.sca.sad.diagram.adapters.AdapterUtil;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.util.QueryParser;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
@@ -48,7 +47,7 @@ public class ComponentShapeAdapterFactory implements IAdapterFactory {
 				final ScaWaveform waveform = ScaModelPlugin.getDefault().findEObject(ScaWaveform.class, wfRef);
 				final String myId = ci.getId();
 				if (waveform != null) {
-					for (final ScaComponent component : AdapterUtil.safeFetchComponents(waveform)) {
+					for (final ScaComponent component : GraphitiAdapterUtil.safeFetchComponents(waveform)) {
 						final String scaComponentId = component.identifier();
 						if (scaComponentId.startsWith(myId)) {
 							return component;
