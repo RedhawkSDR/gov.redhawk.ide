@@ -523,12 +523,12 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	@Override
-	public Style getStyleForOuter() {
+	public Style createStyleForOuter() {
 		return StyleUtil.createStyleForFindByOuter(getDiagram());
 	}
 
 	@Override
-	public Style getStyleForInner() {
+	public Style createStyleForInner() {
 		return StyleUtil.createStyleForFindByInner(getDiagram());
 	}
 }

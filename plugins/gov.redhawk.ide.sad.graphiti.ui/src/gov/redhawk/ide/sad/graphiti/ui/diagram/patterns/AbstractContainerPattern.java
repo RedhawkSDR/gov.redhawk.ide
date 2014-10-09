@@ -134,7 +134,7 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 	 * @param
 	 * @return
 	 */
-	public Style getStyleForOuter() {
+	public Style createStyleForOuter() {
 		return null;
 	}
 	
@@ -143,7 +143,7 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 	 * @param
 	 * @return
 	 */
-	public Style getStyleForInner() {
+	public Style createStyleForInner() {
 		return null;
 	}
 	

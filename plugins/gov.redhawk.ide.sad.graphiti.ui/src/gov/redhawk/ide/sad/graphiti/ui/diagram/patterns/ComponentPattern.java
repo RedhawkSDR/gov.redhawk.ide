@@ -752,12 +752,12 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 	}
 
 	@Override
-	public Style getStyleForOuter() {
+	public Style createStyleForOuter() {
 		return StyleUtil.createStyleForComponentOuter(getDiagram());
 	}
 
 	@Override
-	public Style getStyleForInner() {
+	public Style createStyleForInner() {
 		return StyleUtil.createStyleForComponentInner(getDiagram());
 	}
 }

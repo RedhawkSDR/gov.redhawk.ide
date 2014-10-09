@@ -135,7 +135,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// graphic
 		RoundedRectangle outerRoundedRectangle = Graphiti.getCreateService().createRoundedRectangle(this, 5, 5);
 		Graphiti.getPeService().setPropertyValue(outerRoundedRectangle, DUtil.GA_TYPE, GA_OUTER_ROUNDED_RECTANGLE);
-		outerRoundedRectangle.setStyle(pattern.getStyleForOuter());
+		outerRoundedRectangle.setStyle(pattern.createStyleForOuter());
 
 		// image
 		Image imgIcon = Graphiti.getGaCreateService().createImage(outerRoundedRectangle, pattern.getOuterImageId());
@@ -151,7 +151,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// link objects
 		featureProvider.link(this, Arrays.asList(newObject).toArray());
 
-		addInnerContainer(pattern.getInnerTitle(newObject), pattern.getInnerImageId(), pattern.getStyleForInner());
+		addInnerContainer(pattern.getInnerTitle(newObject), pattern.getInnerImageId(), pattern.createStyleForInner());
 		addLollipop(pattern.getInterface(newObject), featureProvider);
 		addProvidesPorts(pattern.getProvides(newObject), featureProvider, externalPorts);
 		addUsesPorts(pattern.getUses(newObject), featureProvider, externalPorts);
