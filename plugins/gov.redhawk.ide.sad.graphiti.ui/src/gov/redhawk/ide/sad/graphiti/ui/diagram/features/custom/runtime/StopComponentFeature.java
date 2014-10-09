@@ -12,14 +12,20 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime;
 
 import gov.redhawk.ide.sad.graphiti.debug.internal.ui.LocalGraphitiSadMultiPageScaEditor;
+import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
+import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.ui.actions.StopAction;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
+import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
+import org.eclipse.graphiti.ui.internal.parts.ContainerShapeEditPart;
 
+@SuppressWarnings("restriction")
 public class StopComponentFeature extends AbstractCustomFeature {
 
 	private final StopAction action = new StopAction();
@@ -55,6 +61,15 @@ public class StopComponentFeature extends AbstractCustomFeature {
 		for (Object obj : selection) {
 			this.action.setContext(obj);
 			this.action.run();
+			if (obj instanceof ContainerShapeEditPart) {
+				Object modelObj = ((ContainerShapeEditPart) obj).getModel();
+				if (modelObj instanceof ComponentShapeImpl) {
+					ComponentShapeImpl shape = (ComponentShapeImpl) modelObj;
+					RoundedRectangle innerRoundedRectangle = (RoundedRectangle) DUtil.findFirstPropertyContainer(shape,
+						RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE);
+					innerRoundedRectangle.setStyle(StyleUtil.getStyleForComponentInner(getDiagram()));
+				}
+			}
 		}
 	}
 

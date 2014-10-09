@@ -142,7 +142,27 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
-
+	
+	// returns component inner rectangle style
+	public static Style getStyleForComponentInnerStarted(Diagram diagram) {
+		final String styleId = "ComponentInnerStarted";
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+	
+	// updates component inner rectangle style
+	public static Style createStyleForComponentInnerStarted(Diagram diagram) {
+		final String styleId = "ComponentInnerStarted";
+		Style style = findStyle(diagram, styleId);
+		if (style == null) {
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			gaService.setRenderingStyle(style, ComponentColoredAreas.getGreenWhiteAdaptions());
+			style.setLineWidth(2);
+		}
+		return style;
+	}
+	
 	// returns findby outer rectangle style
 	public static Style getStyleForFindByOuter(Diagram diagram) {
 		final String styleId = FIND_BY_OUTER;
