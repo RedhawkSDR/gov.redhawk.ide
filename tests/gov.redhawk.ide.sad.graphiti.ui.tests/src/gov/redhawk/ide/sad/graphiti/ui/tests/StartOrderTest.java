@@ -201,7 +201,7 @@ public class StartOrderTest extends AbstractGraphitiTest {
 		// Add components to diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[0], 0, 0);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[1], 250, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[2], 200, 200);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[2], 300, 200);
 
 		// Check initial assembly controller
 		MenuUtils.save(editor);
@@ -240,7 +240,7 @@ public class StartOrderTest extends AbstractGraphitiTest {
 		// Add components to diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[0], 0, 0);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[1], 250, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[2], 200, 200);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[2], 300, 200);
 
 		// Check initial assembly controller
 		MenuUtils.save(editor);
