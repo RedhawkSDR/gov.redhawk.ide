@@ -121,34 +121,35 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 			extProps.put(extProp.resolveExternalID(), absProp);
 		}
 		final String properties = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROPERTIES, (String) null);
-		final XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(properties.getBytes()));
-		final Map< ? , ? > propMap = (Map< ? , ? >) decoder.readObject();
-		decoder.close();
-		ScaFactory propFactory = ScaFactoryImpl.init();
-		for (Object key: propMap.keySet()) {
-			if (extProps.containsKey(key)) {
-				AbstractProperty prop = (AbstractProperty) extProps.get(key);
-				ScaAbstractProperty< ? > newProp = makeScaProperty(propFactory, prop);
-				final Object value = propMap.get(key);
-				if (prop instanceof Simple) {
-					((ScaSimpleProperty) newProp).setValue(value);
-				} else if (prop instanceof SimpleSequence) {
-					((ScaSimpleSequenceProperty) newProp).setValue((Object[]) value);
-				} else if (prop instanceof Struct) {
-					setStructValue((ScaStructProperty) newProp, (Map< ?, ? >) value);
-				} else if (prop instanceof StructSequence) {
-					for (Object obj: (List< ? >) value) {
-						setStructValue(((ScaStructSequenceProperty) prop).createScaStructProperty(), (Map< ?, ?>) obj);
+		if (properties != null) {
+			final XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(properties.getBytes()));
+			final Map< ? , ? > propMap = (Map< ? , ? >) decoder.readObject();
+			decoder.close();
+			ScaFactory propFactory = ScaFactoryImpl.init();
+			for (Object key: propMap.keySet()) {
+				if (extProps.containsKey(key)) {
+					AbstractProperty prop = (AbstractProperty) extProps.get(key);
+					ScaAbstractProperty< ? > newProp = makeScaProperty(propFactory, prop);
+					final Object value = propMap.get(key);
+					if (prop instanceof Simple) {
+						((ScaSimpleProperty) newProp).setValue(value);
+					} else if (prop instanceof SimpleSequence) {
+						((ScaSimpleSequenceProperty) newProp).setValue((Object[]) value);
+					} else if (prop instanceof Struct) {
+						setStructValue((ScaStructProperty) newProp, (Map< ?, ? >) value);
+					} else if (prop instanceof StructSequence) {
+						for (Object obj: (List< ? >) value) {
+							setStructValue(((ScaStructSequenceProperty) prop).createScaStructProperty(), (Map< ?, ?>) obj);
+						}
 					}
-				}
-				if (!newProp.isDefaultValue() && newProp.getDefinition() != null
-						&& newProp.getDefinition().isKind(PropertyConfigurationType.CONFIGURE, PropertyConfigurationType.EXECPARAM)) {
-					newProp.setId((String) key);
-					assemblyConfig.add(newProp.getProperty());
+					if (!newProp.isDefaultValue() && newProp.getDefinition() != null
+							&& newProp.getDefinition().isKind(PropertyConfigurationType.CONFIGURE, PropertyConfigurationType.EXECPARAM)) {
+						newProp.setId((String) key);
+						assemblyConfig.add(newProp.getProperty());
+					}
 				}
 			}
 		}
-			
 		final LocalApplicationFactory factory = new LocalApplicationFactory(implMap, localSca, mode, launch,
 			assemblyExec.toArray(new DataType[assemblyExec.size()]), assemblyConfig.toArray(new DataType[assemblyConfig.size()]));
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("DDD_HHmmssSSS");
