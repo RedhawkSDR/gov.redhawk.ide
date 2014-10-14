@@ -109,16 +109,18 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		}
 		
 		final Map<String, AbstractProperty> extProps = new HashMap<String, AbstractProperty>();
-		for (ExternalProperty extProp: sad.getExternalProperties().getProperties()) {
-			SadComponentInstantiation inst = sad.getComponentInstantiation(extProp.getCompRefID());
-			if (inst == null) {
-				continue;
+		if (sad.getExternalProperties() != null) {
+			for (ExternalProperty extProp: sad.getExternalProperties().getProperties()) {
+				SadComponentInstantiation inst = sad.getComponentInstantiation(extProp.getCompRefID());
+				if (inst == null) {
+					continue;
+				}
+				AbstractProperty absProp = inst.getPlacement().getComponentFileRef().getFile().getSoftPkg().getPropertyFile().getProperties().getProperty(extProp.getPropID());
+				if (absProp == null) {
+					continue;
+				}
+				extProps.put(extProp.resolveExternalID(), absProp);
 			}
-			AbstractProperty absProp = inst.getPlacement().getComponentFileRef().getFile().getSoftPkg().getPropertyFile().getProperties().getProperty(extProp.getPropID());
-			if (absProp == null) {
-				continue;
-			}
-			extProps.put(extProp.resolveExternalID(), absProp);
 		}
 		final String properties = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROPERTIES, (String) null);
 		if (properties != null) {
