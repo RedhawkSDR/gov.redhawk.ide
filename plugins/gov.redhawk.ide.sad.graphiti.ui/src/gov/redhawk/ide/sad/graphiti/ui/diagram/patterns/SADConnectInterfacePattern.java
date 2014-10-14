@@ -208,6 +208,16 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 			return false;
 		}
 		
+		// doing the null check because it breaks when loading a findby without a diagram
+		if (((RHGraphitiDiagramEditor) getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer()).getGraphicalViewer() != null) {
+			// force selection of shape so that we can then right click for contextual options
+			// this is kind of a hack, it would be better if selection happened automatically when its clicked.
+			if (context.getSourcePictogramElement() != null) {
+				getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer().selectPictogramElements(
+					new PictogramElement[] { context.getSourcePictogramElement() });
+			}
+		}
+		
 		// determine source
 		UsesPortStub source = getUsesPortStub(context);
 		if (source == null) {
@@ -223,31 +233,6 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 			// TODO: check if provides port on findBy...not sure how were doing all this??
 		}
 
-		// not currently used but will select the portRectangeShape instead of the anchorRectangle
-		/*
-			ContainerShape portRectangleShape = null;
-			if(target != null){
-				portRectangleShape = DiagramUtil.findContainerShapeParentWithProperty(
-						context.getSourcePictogramElement(), DiagramUtil.SHAPE_providesPortRectangleShape);
-			}
-			if(source != null){
-				portRectangleShape = DiagramUtil.findContainerShapeParentWithProperty(
-						context.getSourcePictogramElement(), DiagramUtil.SHAPE_usesPortRectangleShape);
-			}
-			
-			getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior()
-			.getDiagramContainer().selectPictogramElements(
-					new PictogramElement[] {portRectangleShape});
-		 */
- 
-
-		// doing the null check because it breaks when loading a findby without a diagram
-		if (((RHGraphitiDiagramEditor) getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer()).getGraphicalViewer() != null) {
-			// force selection of shape so that we can then right click for contextual options
-			// this is kind of a hack, it would be better if selection happened automatically when its clicked.
-			getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer().selectPictogramElements(
-				new PictogramElement[] { context.getSourcePictogramElement() });
-		}
 		return true;
 
 	}
