@@ -19,6 +19,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -312,6 +313,7 @@ public class DomainInteractionTest extends AbstractDomainRuntimeTest {
 
 	}
 
+	@Ignore
 	@Test
 	public void testLaunch08() {
 		viewBot.tree().getTreeItem("Target SDR").select();
@@ -346,7 +348,7 @@ public class DomainInteractionTest extends AbstractDomainRuntimeTest {
 				return "OK enabled";
 			}
 
-		});
+		}, 30000, 1000);
 		Assert.assertFalse(bot.button("OK").isEnabled());
 		bot.button("Cancel").click();
 	}
