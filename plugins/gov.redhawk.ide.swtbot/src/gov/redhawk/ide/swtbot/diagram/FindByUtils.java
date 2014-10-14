@@ -20,7 +20,7 @@ import org.eclipse.swtbot.swt.finder.SWTBot;
 
 public class FindByUtils {
 
-	public static final String FIND_BY_CORBA_NAME = FindByCORBANamePattern.NAME, FIND_BY_SERVICE = FindByServicePattern.NAME, 
+	public static final String FIND_BY_NAME = FindByCORBANamePattern.NAME, FIND_BY_SERVICE = FindByServicePattern.NAME, 
 			FIND_BY_DOMAIN_MANAGER = FindByDomainManagerPattern.NAME, FIND_BY_EVENT_CHANNEL = FindByEventChannelPattern.NAME, 
 			FIND_BY_FILE_MANAGER = FindByFileManagerPattern.NAME;
 	
@@ -47,7 +47,7 @@ public class FindByUtils {
 			uses = new String[0];
 		}
 		switch (findByType) {
-		case FIND_BY_CORBA_NAME:
+		case FIND_BY_NAME:
 			addFindByCorbaName(bot, name, provides, uses);
 			break;
 		case FIND_BY_EVENT_CHANNEL:
@@ -93,7 +93,7 @@ public class FindByUtils {
 	}
 	
 	public static String getFindByDefaultName(String findByType) {
-		if (findByType.equals(FIND_BY_CORBA_NAME) || findByType.equals(FIND_BY_EVENT_CHANNEL) || findByType.equals(FIND_BY_SERVICE)) {
+		if (findByType.equals(FIND_BY_NAME) || findByType.equals(FIND_BY_EVENT_CHANNEL) || findByType.equals(FIND_BY_SERVICE)) {
 			return removeSpaces(findByType);
 		}
 		return findByType;
