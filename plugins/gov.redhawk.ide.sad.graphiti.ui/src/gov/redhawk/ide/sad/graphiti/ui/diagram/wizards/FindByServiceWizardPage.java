@@ -197,6 +197,7 @@ public class FindByServiceWizardPage extends WizardPage {
 
 		serviceNameText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		serviceNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		serviceNameText.setToolTipText("The name of a service in the domain");
 		serviceNameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -245,6 +246,7 @@ public class FindByServiceWizardPage extends WizardPage {
 
 		serviceTypeText = new Text(serviceTypeComposite, SWT.SINGLE | SWT.LEAD | SWT.BORDER | SWT.READ_ONLY);
 		serviceTypeText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		serviceTypeText.setToolTipText("The interface (repid) of a service in the domain");
 		serviceTypeText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -306,12 +308,13 @@ public class FindByServiceWizardPage extends WizardPage {
 		final Group portOptions = new Group(composite, SWT.NONE);
 		portOptions.setLayout(new GridLayout(2, true));
 		portOptions.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		portOptions.setText("Port Options");
+		portOptions.setText("Port(s) to use for connections");
 
 		// provides port composite
 		final Composite providesPortComposite = createPortComposite(portOptions);
 		// add provides port name text
 		providesPortNameText = addPortNameText(providesPortComposite);
+		providesPortNameText.setToolTipText("The specified provides port on the component will be located to make connections");
 		// add provides port "Add" button
 		providesPortAddBtn = new Button(providesPortComposite, SWT.PUSH);
 		providesPortAddBtn.setText("Add Provides Port");
@@ -331,6 +334,7 @@ public class FindByServiceWizardPage extends WizardPage {
 		final Composite usesPortComposite = createPortComposite(portOptions);
 		// add uses port name text
 		usesPortNameText = addPortNameText(usesPortComposite);
+		usesPortNameText.setToolTipText("The specified uses port on the component will be located to make connections");
 		// add uses port "Add" button
 		usesPortAddBtn = new Button(usesPortComposite, SWT.PUSH);
 		usesPortAddBtn.setText("Add Uses Port");

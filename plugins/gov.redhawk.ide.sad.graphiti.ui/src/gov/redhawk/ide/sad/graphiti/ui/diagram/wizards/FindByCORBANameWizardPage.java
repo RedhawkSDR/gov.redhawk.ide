@@ -114,8 +114,8 @@ public class FindByCORBANameWizardPage extends WizardPage {
 	private Text usesPortNameText, providesPortNameText, corbaNameText;
 
 	public FindByCORBANameWizardPage() {
-		super("findByCorbaName", "Find By CORBA Name", TITLE_IMAGE);
-		this.setDescription("Enter CORBA Name and port information");
+		super("findByCorbaName", "Find By Name", TITLE_IMAGE);
+		this.setDescription("Enter the details of a component you want to make connections to");
 
 		model = new CORBANameModel();
 		dbc = new DataBindingContext();
@@ -133,10 +133,11 @@ public class FindByCORBANameWizardPage extends WizardPage {
 		// CORBA Name
 		Label corbaNameLabel = new Label(composite, SWT.NONE);
 		corbaNameLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		corbaNameLabel.setText("CORBA Name:");
+		corbaNameLabel.setText("Cmponent Name:");
 
 		corbaNameText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		corbaNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		corbaNameText.setToolTipText("The name of the component as it appears in the naming service");
 		corbaNameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -162,12 +163,13 @@ public class FindByCORBANameWizardPage extends WizardPage {
 		final Group portOptions = new Group(composite, SWT.NONE);
 		portOptions.setLayout(new GridLayout(2, true));
 		portOptions.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		portOptions.setText("Port Options");
+		portOptions.setText("Port(s) to use for connections");
 
 		// provides port composite
 		final Composite providesPortComposite = createPortComposite(portOptions);
 		// add provides port name text
 		providesPortNameText = addPortNameText(providesPortComposite);
+		providesPortNameText.setToolTipText("The specified provides port on the component will be located to make connections");
 		// add provides port "Add" button
 		providesPortAddBtn = new Button(providesPortComposite, SWT.PUSH);
 		providesPortAddBtn.setText("Add Provides Port");
@@ -187,6 +189,7 @@ public class FindByCORBANameWizardPage extends WizardPage {
 		final Composite usesPortComposite = createPortComposite(portOptions);
 		// add uses port name text
 		usesPortNameText = addPortNameText(usesPortComposite);
+		usesPortNameText.setToolTipText("The specified uses port on the component will be located to make connections");
 		// add uses port "Add" button
 		usesPortAddBtn = new Button(usesPortComposite, SWT.PUSH);
 		usesPortAddBtn.setText("Add Uses Port");
