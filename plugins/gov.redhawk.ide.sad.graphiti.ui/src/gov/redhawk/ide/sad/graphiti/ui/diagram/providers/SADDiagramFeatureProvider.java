@@ -210,6 +210,11 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 			if (obj instanceof FindByStub) {
 				retList.add(new FindByEditFeature(this));
 			}
+		}
+		
+		// add runtime features
+		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
+			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 			if (obj instanceof SadComponentInstantiation && DUtil.getActiveEditor() instanceof LocalGraphitiSadMultiPageScaEditor) {
 				retList.add(new StartComponentFeature(this));
 				retList.add(new StopComponentFeature(this));

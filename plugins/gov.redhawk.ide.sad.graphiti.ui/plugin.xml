@@ -144,6 +144,19 @@
                          type="CF.ResourceOperations">
                    </adapter>
                 </factory>
+                <factory
+                      adaptableType="org.eclipse.graphiti.ui.internal.parts.IAnchorEditPart"
+                      class="gov.redhawk.ide.sad.graphiti.ui.adapters.PortEditPartAdapterFactory">
+                   <adapter
+                         type="gov.redhawk.model.sca.ScaProvidesPort">
+                   </adapter>
+                   <adapter
+                         type="gov.redhawk.model.sca.ScaUsesPort">
+                   </adapter>
+                   <adapter
+                         type="gov.redhawk.model.sca.ScaPort">
+                   </adapter>
+                </factory>
         </extension>
             <extension
          point="org.eclipse.ui.editors">
