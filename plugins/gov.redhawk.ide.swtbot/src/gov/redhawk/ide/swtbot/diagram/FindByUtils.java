@@ -62,13 +62,13 @@ public class FindByUtils {
 	}
 	
 	public static void addFindByCorbaName(SWTBot bot, String name, String[] providesPortNames, String[] usesPortNames) {
-		bot.textWithLabel("CORBA Name:").setText(name);
+		bot.textWithLabel("Component Name:").setText(name);
 		for (String s : providesPortNames) {
-			bot.textInGroup("Port Options", 0).setText(s);
+			bot.textInGroup("Port(s) to use for connections", 0).setText(s);
 			bot.button("Add Provides Port").click();
 		}
 		for (String s : usesPortNames) {
-			bot.textInGroup("Port Options", 1).setText(s);
+			bot.textInGroup("Port(s) to use for connections", 1).setText(s);
 			bot.button("Add Uses Port").click();
 		}
 		bot.button("Finish").click();
@@ -77,11 +77,11 @@ public class FindByUtils {
 	public static void addFindByService(SWTBot bot, String name, String[] providesPortNames, String[] usesPortNames) {
 		bot.textWithLabel("Service Name:").setText(name);
 		for (String s : providesPortNames) {
-			bot.textInGroup("Port Options", 0).setText(s);
+			bot.textInGroup("Port(s) to use for connections", 0).setText(s);
 			bot.button("Add Provides Port").click();
 		}
 		for (String s : usesPortNames) {
-			bot.textInGroup("Port Options", 1).setText(s);
+			bot.textInGroup("Port(s) to use for connections", 1).setText(s);
 			bot.button("Add Uses Port").click();
 		}
 		bot.button("Finish").click();
