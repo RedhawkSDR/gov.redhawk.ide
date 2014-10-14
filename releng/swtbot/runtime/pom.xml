@@ -19,6 +19,10 @@
     <version>1.11.0-SNAPSHOT</version>
   </parent>
 
+  <properties>
+    <SDRROOT>${basedir}/../../releng/swtbot/runtime/sdr</SDRROOT>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
@@ -35,7 +39,11 @@
           <environmentVariables>
             <DISPLAY>${env.DISPLAY}</DISPLAY>
             <PATH>${env.PATH}</PATH>
-            <SDRROOT>${parent.basedir}/sdr</SDRROOT>
+            <PYTHONPATH>${env.PYTHONPATH}</PYTHONPATH>
+            <LD_LIBRARY_PATH>${env.LD_LIBRARY_PATH}</LD_LIBRARY_PATH>
+            <CLASSPATH>${env.LD_LIBRARY_PATH}</CLASSPATH>
+            <JAVA_HOME>${java.home}</JAVA_HOME>
+            <SDRROOT>${SDRROOT}</SDRROOT>
             <OSSIEHOME>${env.OSSIEHOME}</OSSIEHOME>
           </environmentVariables>
           <argLine>${test-argLine}</argLine>
@@ -43,7 +51,7 @@
           <bundleStartLevel>
             <bundle>
               <id>org.eclipse.equinox.ds</id>
-              <level>1</level>
+              <level>2</level>
               <autoStart>true</autoStart>
             </bundle>
           </bundleStartLevel>
@@ -66,6 +74,11 @@
             <dependency>
               <type>eclipse-feature</type>
               <artifactId>org.eclipse.xsd.sdk</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-feature</type>
+              <artifactId>org.eclipse.pde</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
