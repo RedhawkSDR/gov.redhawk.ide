@@ -133,7 +133,7 @@ public class FindByCORBANameWizardPage extends WizardPage {
 		// CORBA Name
 		Label corbaNameLabel = new Label(composite, SWT.NONE);
 		corbaNameLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		corbaNameLabel.setText("Cmponent Name:");
+		corbaNameLabel.setText("Component Name:");
 
 		corbaNameText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		corbaNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
