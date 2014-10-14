@@ -58,8 +58,8 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		// Add component to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_CORBA_NAME, 0, 150);
-		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_CORBA_NAME, findByName, provides, uses);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
+		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_NAME, findByName, provides, uses);
 		MenuUtils.save(editor);
 
 		// Grab the associated business object and confirm it is a FindBy element
@@ -70,7 +70,7 @@ public class FindByTest extends AbstractGraphitiTest {
 		FindByStub findByObject = (FindByStub) DUtil.getBusinessObject(findByShape);
 
 		// Run assertions on expected properties: outer/inner text, lollipop, port number, type(provides-uses), name
-		Assert.assertEquals("Outer Text does not match input", FindByUtils.FIND_BY_CORBA_NAME, findByShape.getOuterText().getValue());
+		Assert.assertEquals("Outer Text does not match input", FindByUtils.FIND_BY_NAME, findByShape.getOuterText().getValue());
 		Assert.assertEquals("Inner Text does not match input", findByName, findByShape.getInnerText().getValue());
 		Assert.assertEquals("Diagram object and domain object names don't match", findByName, findByObject.getNamingService().getName());
 		Assert.assertNotNull("component supported interface graphic should not be null", findByShape.getLollipop());
@@ -94,7 +94,7 @@ public class FindByTest extends AbstractGraphitiTest {
 	@Test
 	public void checkFindByContextMenuDelete() {
 		waveformName = "FindBy_Delete";
-		String[] findByList = { FindByUtils.FIND_BY_CORBA_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, FindByUtils.FIND_BY_EVENT_CHANNEL,
+		String[] findByList = { FindByUtils.FIND_BY_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, FindByUtils.FIND_BY_EVENT_CHANNEL,
 			FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
 
 		// Create a new empty waveform
@@ -132,8 +132,8 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		// Add component to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_CORBA_NAME, 0, 150);
-		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_CORBA_NAME, FIND_BY_NAME, provides, null);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
+		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_NAME, FIND_BY_NAME, provides, null);
 		MenuUtils.save(editor);
 
 		// Create connection on diagram
@@ -188,8 +188,8 @@ public class FindByTest extends AbstractGraphitiTest {
 		// Add component to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 200, 20);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_CORBA_NAME, 0, 150);
-		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_CORBA_NAME, FIND_BY_NAME, provides, uses);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
+		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_NAME, FIND_BY_NAME, provides, uses);
 		MenuUtils.save(editor);
 
 		// Create connection on diagram
@@ -208,14 +208,14 @@ public class FindByTest extends AbstractGraphitiTest {
 		editor.clickContextMenu("Edit Find By");
 
 		// Change Name
-		gefBot.textWithLabel("CORBA Name:").setText(newFindByName);
+		gefBot.textWithLabel("Component Name:").setText(newFindByName);
 
 		// Delete existing provides port
-		gefBot.listInGroup("Port Options", 0).select(provides[0]);
+		gefBot.listInGroup("Port(s) to use for connections", 0).select(provides[0]);
 		gefBot.button("Delete", 0).click();
 
 		// Add new uses port
-		gefBot.textInGroup("Port Options", 1).setText(NEW_USES_PORT);
+		gefBot.textInGroup("Port(s) to use for connections", 1).setText(NEW_USES_PORT);
 		gefBot.button("Add Uses Port").click();
 
 		gefBot.button("Finish").click();
@@ -267,8 +267,8 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		// Add component to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_CORBA_NAME, 0, 150);
-		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_CORBA_NAME, findByName, provides, null);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
+		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_NAME, findByName, provides, null);
 		MenuUtils.save(editor);
 
 		// Create connection on diagram
