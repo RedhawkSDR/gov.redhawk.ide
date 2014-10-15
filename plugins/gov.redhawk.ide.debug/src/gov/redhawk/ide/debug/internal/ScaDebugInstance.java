@@ -188,7 +188,7 @@ public enum ScaDebugInstance {
 		tmp.setProfile(uri.path());
 		tmp.setProfileObj(dcd);
 		tmp.setNamingContext(context.getResourceContext(dcd.eResource().getURI()));
-		final DeviceManagerImpl impl = new DeviceManagerImpl(uri.path(), DceUuidUtil.createDceUUID(), "Device Manager", tmp, fm, tmp);
+		final DeviceManagerImpl impl = new DeviceManagerImpl(uri.path(), DceUuidUtil.createDceUUID(), "Device Manager", tmp, fm);
 		tmp.setLocalDeviceManager(impl);
 		return tmp;
 	}

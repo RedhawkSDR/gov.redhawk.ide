@@ -89,8 +89,8 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	private final Job refreshJob;
 	private LocalScaDeviceManager devMgr;
 
-	public DeviceManagerImpl(final String profile, final String identifier, final String name, final LocalScaDeviceManager deviceManager,
-		final FileSystem fileSystem, LocalScaDeviceManager devMgr) {
+	public DeviceManagerImpl(final String profile, final String identifier, final String name, final LocalScaDeviceManager devMgr,
+		final FileSystem fileSystem) {
 		super();
 		this.profile = profile;
 		this.identifier = identifier;
@@ -102,7 +102,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					deviceManager.refresh(monitor, RefreshDepth.FULL);
+					devMgr.refresh(monitor, RefreshDepth.FULL);
 				} catch (InterruptedException e) {
 					return Status.CANCEL_STATUS;
 				}
