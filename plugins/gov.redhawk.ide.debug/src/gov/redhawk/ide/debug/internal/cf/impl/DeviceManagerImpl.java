@@ -180,6 +180,15 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	 * {@inheritDoc}
 	 */
 	@Override
+	public CF.DomainManager domMgr() {
+		// TODO
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Device[] registeredDevices() {
 		synchronized (devices) {
 			boolean changed = false;

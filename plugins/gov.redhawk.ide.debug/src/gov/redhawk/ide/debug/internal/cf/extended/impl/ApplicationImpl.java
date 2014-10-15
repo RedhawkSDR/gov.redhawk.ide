@@ -982,6 +982,13 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		return this.name;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean trusted() {
+		return true;
+	}
+
 	@Override
 	public boolean canTerminate() {
 		return !this.terminated;
