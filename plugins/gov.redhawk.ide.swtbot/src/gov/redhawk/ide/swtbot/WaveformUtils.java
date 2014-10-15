@@ -10,14 +10,21 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
+import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
-public class WaveformUtils { // SUPPRESS CHECKSTYLE INLINE
+public class WaveformUtils {
 
+	protected WaveformUtils() {
+	}
+	
 	/**
 	 * Creates a new waveform using File > New > Other... > Graphiti SCA Waveform Project wizard
 	 * @param bot - the executing SWTBot
@@ -41,7 +48,7 @@ public class WaveformUtils { // SUPPRESS CHECKSTYLE INLINE
 		// Close wizard
 		SWTBotButton finishButton = wizardBot.button("Finish");
 		finishButton.click();
-		
+
 		// TODO Why doesn't this work?
 //		bot.waitWhile(Conditions.shellCloses(wizardShell), 30000);
 	}
@@ -85,9 +92,56 @@ public class WaveformUtils { // SUPPRESS CHECKSTYLE INLINE
 		// Click finish
 		SWTBotButton finishButton = wizardBot.button("Finish");
 		finishButton.click();
-		
+
 		// TODO Why doesn't this work?
 //		bot.waitWhile(Conditions.shellCloses(wizardShell), 30000);
 	}
 
+	/**
+	 * Launches the selected waveform in the SCA Explorer sandbox
+	 * @returns the SWTBotTreeItem for the waveform
+	 */
+	public static SWTBotTreeItem launchLocalWaveform(final SWTWorkbenchBot bot, final String waveformName) {
+		SWTBotView explorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
+		explorerView.show();
+		explorerView.setFocus();
+		SWTBot viewBot = explorerView.bot();
+
+		SWTBotTreeItem waveformNode = viewBot.tree().expandNode("Target SDR", "Waveforms", waveformName);
+		waveformNode.contextMenu("Launch in Sandbox").menu("Default").click();
+
+		// Wait for the launched waveform to appear in the sandbox
+		final SWTBotTreeItem sandbox = viewBot.tree().getTreeItem("Sandbox");
+		bot.waitUntil(new ICondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				for (SWTBotTreeItem item : sandbox.getItems()) {
+					if (item.getText().matches(waveformName + ".*")) {
+						return true;
+					}
+				}
+				return false;
+			}
+
+			@Override
+			public void init(SWTBot bot) {
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Waveform: " + waveformName + " did not launch";
+			}
+		});
+
+		// Return the treeitem for the running waveform
+		for (SWTBotTreeItem item : sandbox.getItems()) {
+			if (item.getText().matches(waveformName + ".*")) {
+				return item;
+			}
+		}
+
+		return null;
+	}
+	
 }

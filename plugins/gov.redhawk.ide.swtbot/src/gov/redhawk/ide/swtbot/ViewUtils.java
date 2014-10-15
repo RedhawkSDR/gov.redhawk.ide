@@ -22,18 +22,18 @@ public class ViewUtils {
 
 	/**
 	 * Check to see if a specified tree item exists
-	 * @param tree - The base tree object
+	 * @param treeItem - The base tree object
 	 * @param treePath - Array of strings to define path to tree item to be checked. Ex: "tree root", "node parent", "node to check for")
 	 * @returns true if entire treePath exists, false if one or more elements in the treePath does not exist
 	 */
-	public static boolean checkIfTreeItemExistsEntry(SWTBotTree tree, String... treePath) {
+	public static boolean checkIfTreeItemExistsEntry(SWTBotTree treeItem, String... treePath) {
 		try {
 			// Expand down to the depth of the tree item we are looking for
 			String[] expandPath = new String[treePath.length - 1];
 			for (int i = 0; i < expandPath.length; i++) {
 				expandPath[i] = treePath[i];
 			}
-			SWTBotTreeItem parent = tree.expandNode(expandPath);
+			SWTBotTreeItem parent = treeItem.expandNode(expandPath);
 
 			// Check if tree item exists
 			parent.getNode(treePath[treePath.length - 1]);
