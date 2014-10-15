@@ -138,7 +138,8 @@ public class LaunchComponentWizard extends Wizard {
 		this.softPkg = element;
 		pcs.firePropertyChange("softPkg", oldValue, softPkg);
 		
-		if (softPkg != null && !softPkg.getImplementation().isEmpty()) {
+		// Only pre-choose implementation if there is exactly one to choose
+		if (softPkg != null && softPkg.getImplementation().size() == 1) {
 			setImplementation(this.softPkg.getImplementation().get(0));
 		} else {
 			setImplementation(null);
