@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
+import gov.redhawk.ide.sad.graphiti.debug.internal.ui.SandboxRHGraphitiDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.FindByEditFeature;
@@ -132,8 +133,8 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		if (DUtil.doesPictogramContainProperty(originalPe, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
 			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
 			RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
-			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
-			RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE, RHContainerShapeImpl.SHAPE_INNER_CONTAINER })) {
+			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE,
+			RHContainerShapeImpl.SHAPE_INNER_CONTAINER })) {
 			ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(originalPe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 			return outerContainerShape;
 		}
@@ -184,21 +185,21 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		List<IPaletteCompartmentEntry> compartments = new ArrayList<IPaletteCompartmentEntry>();
 
 		// COMPONENT Compartment
-		// get component container
 		final ComponentsContainer container = SdrUiPlugin.getDefault().getTargetSdrRoot().getComponentsContainer();
-		// populate compartment Entry with components from container
 		PaletteCompartmentEntry componentCompartmentEntry = getComponentCompartmentEntry(container);
 		compartments.add(componentCompartmentEntry);
 
 		// FINDBY Compartment
-		PaletteCompartmentEntry findByCompartmentEntry = getFindByCompartmentEntry();
-		compartments.add(findByCompartmentEntry);
+		boolean isSandbox = getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer() instanceof SandboxRHGraphitiDiagramEditor;
+		if (!isSandbox) {
+			PaletteCompartmentEntry findByCompartmentEntry = getFindByCompartmentEntry();
+			compartments.add(findByCompartmentEntry);
+		}
 
 		// BASE TYPES Compartment
 		PaletteCompartmentEntry baseTypesCompartmentEntry = getBaseTypesCompartmentEntry();
 		compartments.add(baseTypesCompartmentEntry);
 
-		// return palette compartments
 		return compartments.toArray(new IPaletteCompartmentEntry[compartments.size()]);
 
 	}
@@ -357,20 +358,16 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
 		return compartmentEntry;
 	}
-	
 
+	@Override
+	public ICustomFeature getDoubleClickFeature(IDoubleClickContext context) {
+		ICustomFeature customFeature = new FindByEditFeature(getFeatureProvider());
+		if (customFeature.canExecute(context)) {
+			return customFeature;
+		}
 
-    @Override
-    public ICustomFeature getDoubleClickFeature(IDoubleClickContext context) {
-        ICustomFeature customFeature =
-            new FindByEditFeature(getFeatureProvider());
-        if (customFeature.canExecute(context)) {
-            return customFeature;
-        }
- 
-        return super.getDoubleClickFeature(context);
-    }
-
+		return super.getDoubleClickFeature(context);
+	}
 
 	// ATTEMPT at ERROR decorator on Connections
 //	public IDecorator[] getDecorators(PictogramElement pe) {
