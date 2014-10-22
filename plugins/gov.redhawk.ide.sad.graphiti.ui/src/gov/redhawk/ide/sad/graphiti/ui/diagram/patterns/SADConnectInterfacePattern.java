@@ -139,13 +139,18 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 			}
 		}
 		
-		if (connectInterface.getSource() != null && connectInterface.getTarget() != null || isFindByConnection) {
+		boolean isLollipopConnection = false;
+		if (connectInterface.getProvidesPort() == null && connectInterface.getComponentSupportedInterface() != null) {
+			isLollipopConnection = true;
+		}
+		
+		if (connectInterface.getSource() != null && connectInterface.getTarget() != null || isFindByConnection || isLollipopConnection) {
 			// Connection validation
 			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
 			
 			// don't check for compatibility if this is a FindBy connection
 			boolean compatibleConnection = true;
-			if (!isFindByConnection) {
+			if (!isFindByConnection && !isLollipopConnection) {
 				compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
 			}
 			

@@ -98,7 +98,7 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 
 		//problem if either source or target not present, unless dealing with a findby element
 		if ((connectInterface.getSource() == null || connectInterface.getTarget() == null) 
-				&& (connectInterface.getUsesPort().getFindBy() == null && connectInterface.getProvidesPort().getFindBy() == null)) {
+				&& (connectInterface.getUsesPort().getFindBy() == null && (connectInterface.getProvidesPort() != null && connectInterface.getProvidesPort().getFindBy() == null))) {
 			if (performUpdate) {
 				updateStatus = true;
 				//remove the connection (handles pe and business object)
@@ -121,9 +121,9 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 			// connection validation
 			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
 
-			// don't check compatibility if connection includes a Find By element
+			// don't check compatibility if connection includes a Find By element or Lollipop
 			boolean compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
-			if (connectInterface.getUsesPort().getFindBy() != null || connectInterface.getProvidesPort().getFindBy() != null) {
+			if (connectInterface.getComponentSupportedInterface() != null || (connectInterface.getUsesPort().getFindBy() != null || connectInterface.getProvidesPort().getFindBy() != null)) {
 				compatibleConnection = true;
 			}
 
