@@ -1,9 +1,16 @@
-package gov.redhawk.ide.sad.graphiti.ui.runtime.tests;
+/*******************************************************************************
+ * This file is protected by Copyright. 
+ * Please refer to the COPYRIGHT file distributed with this source distribution.
+ *
+ * This file is part of REDHAWK IDE.
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under 
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/package gov.redhawk.ide.sad.graphiti.ui.runtime.tests;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
-import gov.redhawk.ide.swtbot.diagram.ComponentUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 

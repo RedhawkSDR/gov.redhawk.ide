@@ -11,7 +11,6 @@
 package gov.redhawk.ide.sad.graphiti.ui.runtime.tests;
 
 import gov.redhawk.ide.swtbot.UIRuntimeTest;
-import gov.redhawk.ide.swtbot.UITest;
 
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.junit.Before;
