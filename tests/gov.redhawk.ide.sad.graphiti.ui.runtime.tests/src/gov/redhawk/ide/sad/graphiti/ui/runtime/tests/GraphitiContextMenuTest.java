@@ -22,7 +22,6 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
