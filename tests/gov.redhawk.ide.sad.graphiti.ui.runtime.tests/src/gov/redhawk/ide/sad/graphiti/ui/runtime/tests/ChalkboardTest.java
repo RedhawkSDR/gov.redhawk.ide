@@ -7,25 +7,27 @@
  * All rights reserved.  This program and the accompanying materials are made available under 
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/package gov.redhawk.ide.sad.graphiti.ui.runtime.tests;
+ *******************************************************************************/
+package gov.redhawk.ide.sad.graphiti.ui.runtime.tests;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+import gov.redhawk.ide.swtbot.diagram.FindByUtils;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.junit.Assert;
 import org.junit.Test;
-
 
 public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 
 	private SWTBotGefEditor editor;
 	private static final String CHALKBOARD = "Chalkboard";
 	private static final String HARD_LIMIT = "HardLimit";
-	
+
 	/**
 	 * IDE-884
 	 * Create the chalkboard waveform diagram.
@@ -33,16 +35,16 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 	 */
 	@Test
 	public void checkChalkboardComponents() {
-		
+
 		// Open Chalkboard Graphiti Diagram
 		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
-		
+
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
 		// Add component to diagram from palette
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
-		
+
 		// Confirm created component truly is HardLimit
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
 		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
@@ -53,7 +55,29 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 		// Confirm created component truly is HardLimit
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
 	}
-	
+
+	/**
+	 * IDE-928
+	 * Check to make sure FindBy elements do not appear in the RHToolBar when in the Graphiti sandbox
+	 */
+	@Test
+	public void checkFindByNotInSandbox() {
+		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		editor = gefBot.gefEditor(CHALKBOARD);
+		editor.setFocus();
+		String[] findByList = { FindByUtils.FIND_BY_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, FindByUtils.FIND_BY_EVENT_CHANNEL,
+			FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
+		
+		for (String findByType : findByList) {
+			try {
+				DiagramTestUtils.dragFromPaletteToDiagram(editor, findByType, 0, 0);
+				Assert.fail(); // The only way to get here is if the FindBy type appears in the Palette
+			} catch (WidgetNotFoundException e) {
+				Assert.assertTrue(e.getMessage(), findByType.matches(".*" + e.getMessage() + ".*"));
+			}
+		}
+	}
+
 	/**
 	 * Private helper method for {@link #checkComponentPictogramElements()} and
 	 * {@link #checkComponentPictogramElementsWithAssemblyController()}.
