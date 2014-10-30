@@ -10,10 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.snapshot.internal.ui;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import gov.redhawk.bulkio.util.BulkIOType;
 import gov.redhawk.ide.snapshot.capture.CorbaDataReceiver;
 import gov.redhawk.ide.snapshot.ui.BulkIOSnapshotWizard;
@@ -24,6 +20,10 @@ import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.provider.ScaItemProviderAdapterFactory;
 import gov.redhawk.sca.sad.diagram.edit.parts.UsesPortStubEditPart;
 import gov.redhawk.sca.util.PluginUtil;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
+import org.eclipse.graphiti.ui.internal.parts.AdvancedAnchorEditPart;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -57,6 +58,7 @@ import BULKIO.dataUshortHelper;
 import CF.ResourceOperations;
 import CF.ResourcePackage.StartError;
 
+@SuppressWarnings("restriction")
 public class SnapshotHandler extends AbstractHandler {
 	/**
 	 * The constructor.
@@ -139,11 +141,10 @@ public class SnapshotHandler extends AbstractHandler {
 
 	private boolean isPortSupported(ScaUsesPort port) {
 		final String portRepId = port.getRepid();
-		if (portRepId.equals(dataLongLongHelper.id()) || portRepId.equals(dataUlongLongHelper.id())
-			|| portRepId.equals(dataFloatHelper.id()) || portRepId.equals(dataDoubleHelper.id())
-			|| portRepId.equals(dataShortHelper.id()) || portRepId.equals(dataUshortHelper.id())
-			|| portRepId.equals(dataLongHelper.id())  || portRepId.equals(dataUlongHelper.id())
-			|| portRepId.equals(dataOctetHelper.id()) || portRepId.equals(dataCharHelper.id())) {
+		if (portRepId.equals(dataLongLongHelper.id()) || portRepId.equals(dataUlongLongHelper.id()) || portRepId.equals(dataFloatHelper.id())
+			|| portRepId.equals(dataDoubleHelper.id()) || portRepId.equals(dataShortHelper.id()) || portRepId.equals(dataUshortHelper.id())
+			|| portRepId.equals(dataLongHelper.id()) || portRepId.equals(dataUlongHelper.id()) || portRepId.equals(dataOctetHelper.id())
+			|| portRepId.equals(dataCharHelper.id())) {
 			return true;
 		}
 		return false;
@@ -160,8 +161,13 @@ public class SnapshotHandler extends AbstractHandler {
 				setBaseEnabled(isPortSupported((ScaUsesPort) element));
 				return;
 			} else if (element instanceof UsesPortStubEditPart) {
-				//get ScaUsesPort from UsesPortStubEditPart and continue
+				// get ScaUsesPort from UsesPortStubEditPart and continue
 				ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, (UsesPortStubEditPart) element);
+				setBaseEnabled(isPortSupported(port));
+				return;
+			} else if (element instanceof AdvancedAnchorEditPart) {
+				// get ScaUsesPort from UsesPortStubEditPart when using Graphiti and continue
+				ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, (AdvancedAnchorEditPart) element);
 				setBaseEnabled(isPortSupported(port));
 				return;
 			}
