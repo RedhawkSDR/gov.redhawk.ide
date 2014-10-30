@@ -18,7 +18,6 @@ import gov.redhawk.ide.snapshot.ui.SnapshotJob;
 import gov.redhawk.model.sca.ScaDomainManagerRegistry;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.provider.ScaItemProviderAdapterFactory;
-import gov.redhawk.sca.sad.diagram.edit.parts.UsesPortStubEditPart;
 import gov.redhawk.sca.util.PluginUtil;
 
 import java.util.Iterator;
@@ -36,7 +35,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
-import org.eclipse.graphiti.ui.internal.parts.AdvancedAnchorEditPart;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -58,7 +56,6 @@ import BULKIO.dataUshortHelper;
 import CF.ResourceOperations;
 import CF.ResourcePackage.StartError;
 
-@SuppressWarnings("restriction")
 public class SnapshotHandler extends AbstractHandler {
 	/**
 	 * The constructor.
@@ -160,14 +157,8 @@ public class SnapshotHandler extends AbstractHandler {
 			if (element instanceof ScaUsesPort) {
 				setBaseEnabled(isPortSupported((ScaUsesPort) element));
 				return;
-			} else if (element instanceof UsesPortStubEditPart) {
-				// get ScaUsesPort from UsesPortStubEditPart and continue
-				ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, (UsesPortStubEditPart) element);
-				setBaseEnabled(isPortSupported(port));
-				return;
-			} else if (element instanceof AdvancedAnchorEditPart) {
-				// get ScaUsesPort from UsesPortStubEditPart when using Graphiti and continue
-				ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, (AdvancedAnchorEditPart) element);
+			} else {
+				ScaUsesPort port = PluginUtil.adapt(ScaUsesPort.class, element);
 				setBaseEnabled(isPortSupported(port));
 				return;
 			}
