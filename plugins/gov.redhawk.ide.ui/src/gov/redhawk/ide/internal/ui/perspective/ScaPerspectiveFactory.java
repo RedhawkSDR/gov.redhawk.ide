@@ -62,14 +62,18 @@ public class ScaPerspectiveFactory implements IPerspectiveFactory {
 		bottom.addPlaceholder(EventView.ID);
 		bottom.addPlaceholder(EventView.ID + ":*");
 		bottom.addPlaceholder(IPageLayout.ID_PROGRESS_VIEW); // <-- workaround fix for Eclipse e4 BUG 441723
-		bottom.addPlaceholder("*");
-		bottom.addPlaceholder("*:*");
+		bottom.addPlaceholder("gov.redhawk.bulkio.ui.sridata.view:*");
+		bottom.addPlaceholder("gov.redhawk.datalist.ui.views.DataListView:*");
+		bottom.addPlaceholder("gov.redhawk.statistics.ui.views.StatisticsView:*");
+		bottom.addPlaceholder("gov.redhawk.ui.views.monitor.ports.PortMonitorView");
+		bottom.addPlaceholder("gov.redhawk.ide.sandbox.console.py.view");
+		bottom.addPlaceholder("gov.redhawk.*");
+		bottom.addPlaceholder("gov.redhawk.*:*");
 
-		IPlaceholderFolderLayout plotFolder = layout.createPlaceholderFolder("plotFolder", IPageLayout.BOTTOM, 0.25f, editorArea);
-		plotFolder.addPlaceholder(PlotActivator.VIEW_PLOT_2);
+		IPlaceholderFolderLayout plotFolder = layout.createPlaceholderFolder("plotFolder", IPageLayout.BOTTOM, 0.50f, editorArea);
 		plotFolder.addPlaceholder(PlotActivator.VIEW_PLOT_2 + ":*");
 
-		layout.addPlaceholder("gov.redhawk.ui.port.playaudio.view", IPageLayout.BOTTOM, 0.25f, editorArea);
+		layout.addPlaceholder("gov.redhawk.ui.port.playaudio.view", IPageLayout.BOTTOM, 0.50f, editorArea);
 	}
 
 }
