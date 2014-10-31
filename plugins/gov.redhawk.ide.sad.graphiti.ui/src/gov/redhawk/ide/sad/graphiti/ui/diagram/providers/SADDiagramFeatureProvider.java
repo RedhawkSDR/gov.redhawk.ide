@@ -76,6 +76,7 @@ import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
 import org.eclipse.graphiti.features.impl.UpdateNoBoFeature;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.pattern.DefaultFeatureProviderWithPatterns;
 import org.eclipse.graphiti.pattern.DirectEditingFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
@@ -340,7 +341,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	public IDeleteFeature getDeleteFeature(IDeleteContext context) {
 		// Search for shapes for which we don't want the user to have
 		// the delete capability, including the diagram as a whole
-		if (context.getPictogramElement() instanceof Diagram
+		if (context.getPictogramElement() instanceof Diagram || context.getPictogramElement() instanceof FixPointAnchor
 				|| DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
 					RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
 					RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE,
