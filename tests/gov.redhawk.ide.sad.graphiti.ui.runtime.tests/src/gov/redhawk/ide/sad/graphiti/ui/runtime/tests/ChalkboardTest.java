@@ -16,6 +16,7 @@ import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.FindByUtils;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
@@ -32,28 +33,34 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 	 * IDE-884
 	 * Create the chalkboard waveform diagram.
 	 * Add components to diagram from palette and TargetSDR
+	 * IDE-658
+	 * Open chalkboard with components already launched in the Sandbox
 	 */
 	@Test
 	public void checkChalkboardComponents() {
 
 		// Open Chalkboard Graphiti Diagram
 		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
-
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
 		// Add component to diagram from palette
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
-
-		// Confirm created component truly is HardLimit
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
 		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
 
 		// Add component to diagram from Target SDR
 		DiagramTestUtils.dragFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
-
-		// Confirm created component truly is HardLimit
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
+		
+		// Open the chalkboard with components already launched
+		editor.close();
+		SWTBotView scaExplorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
+		scaExplorerView.setFocus();
+		scaExplorerView.bot().tree().expandNode("Sandbox", "Chalkboard", HARD_LIMIT + "_1");
+		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		editor = gefBot.gefEditor(CHALKBOARD);
+		Assert.assertNotNull(editor.getEditPart(HARD_LIMIT));
 	}
 
 	/**
