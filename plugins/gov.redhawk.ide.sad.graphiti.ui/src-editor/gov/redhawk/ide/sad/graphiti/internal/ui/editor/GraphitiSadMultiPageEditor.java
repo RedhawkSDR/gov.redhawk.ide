@@ -72,6 +72,7 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.PictogramsFactory;
+import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.editor.DiagramEditorInput;
 import org.eclipse.graphiti.ui.internal.editor.GFWorkspaceCommandStackImpl;
@@ -616,6 +617,10 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 			@Override
 			protected void doExecute() {
 
+				//set property specifying diagram context (design, local, domain)
+				Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CONTEXT, getDiagramContext());
+				
+				//link diagram and sad
 				PictogramLink link = PictogramsFactory.eINSTANCE.createPictogramLink();
 				link.getBusinessObjects().add(sad);
 				diagram.setLink(link);
@@ -625,6 +630,15 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 		// return editor input from diagram with sad diagram type
 		return DiagramEditorInput.createEditorInput(diagram, SADDiagramTypeProvider.PROVIDER_ID);
 
+	}
+	
+	/**
+	 * Returns the property value that should be set for the Diagram container's DIAGRAM_CONTEXT property.
+	 * Indicates the mode the diagram is operating in.
+	 * @return
+	 */
+	public String getDiagramContext() {
+		return DUtil.DIAGRAM_CONTEXT_DESIGN;
 	}
 
 	protected DiagramEditor createDiagramEditor() {

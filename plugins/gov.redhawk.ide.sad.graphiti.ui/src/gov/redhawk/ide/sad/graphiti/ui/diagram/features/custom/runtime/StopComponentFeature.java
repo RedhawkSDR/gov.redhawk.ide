@@ -11,7 +11,6 @@
  */
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime;
 
-import gov.redhawk.ide.sad.graphiti.debug.internal.ui.LocalGraphitiSadMultiPageScaEditor;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
@@ -23,6 +22,7 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.ui.internal.parts.ContainerShapeEditPart;
 
 @SuppressWarnings("restriction")
@@ -48,7 +48,7 @@ public class StopComponentFeature extends AbstractCustomFeature {
 	public boolean canExecute(ICustomContext context) {
 		Object object = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 		
-		if (object instanceof SadComponentInstantiation && DUtil.getActiveEditor() instanceof LocalGraphitiSadMultiPageScaEditor) {
+		if (object instanceof SadComponentInstantiation && DUtil.isDiagramLocal(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
 			return true;
 		}
 		

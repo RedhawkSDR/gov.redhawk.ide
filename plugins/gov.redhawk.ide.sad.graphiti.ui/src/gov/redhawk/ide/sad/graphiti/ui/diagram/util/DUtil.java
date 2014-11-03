@@ -98,6 +98,11 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	// Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove
 	// etc.)
 	public static final String SHAPE_TYPE = "ShapeType"; // key for Shape types
+	
+	public static final String DIAGRAM_CONTEXT = "DiagramContext"; // key for Diagram contexts
+	public static final String DIAGRAM_CONTEXT_DESIGN = "design";
+	public static final String DIAGRAM_CONTEXT_LOCAL = "local";
+	public static final String DIAGRAM_CONTEXT_DOMAIN = "domain";
 
 	public static final int DIAGRAM_SHAPE_HORIZONTAL_PADDING = 100;
 	public static final int DIAGRAM_SHAPE_SIBLING_VERTICAL_PADDING = 50;
@@ -1274,6 +1279,24 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 */
 	public static boolean isDiagramLocalSandbox(final Resource resource) {
 		return ".LocalSca.sad.xml".equals(resource.getURI().lastSegment());
+	}
+	
+	
+	/**
+	 * Returns true if the diagram is running in local mode
+	 * @param diagram
+	 * @return
+	 */
+	public static boolean isDiagramLocal(final Diagram diagram) {
+		return getDiagramContext(diagram).equals(DUtil.DIAGRAM_CONTEXT_LOCAL);
+	}
+	
+	/**
+	 * Returns the property value that indicates the mode the diagram is operating in.
+	 * @param diagram
+	 */
+	public static String getDiagramContext(Diagram diagram) {
+		return Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_CONTEXT);
 	}
 
 }

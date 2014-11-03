@@ -46,6 +46,10 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 public class ComponentCreateFeature extends AbstractCreateFeature {
 
+	
+	public static final String OVERRIDE_USAGE_NAME = "OverrideUsageName";
+	public static final String OVERRIDE_INSTANTIATION_ID = "OverrideInstantiationId";
+	
 	private SoftPkg spd = null;
 
 	@Override
@@ -68,13 +72,17 @@ public class ComponentCreateFeature extends AbstractCreateFeature {
 		return false;
 	}
 
-	@Override
+
 	public Object[] create(ICreateContext context) {
 
 		if (spd == null) {
 			// TODO: return some kind of error
 			return null;
 		}
+		
+		//collect overrides (currently used by GraphitiModelMap)
+		final String usageName = (String) context.getProperty(OVERRIDE_USAGE_NAME);
+		final String instantiationId = (String) context.getProperty(OVERRIDE_INSTANTIATION_ID);
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
@@ -110,7 +118,7 @@ public class ComponentCreateFeature extends AbstractCreateFeature {
 				componentPlacement.setComponentFileRef(ref);
 
 				// component instantiation
-				componentInstantiations[0] = createComponentInstantiation(sad, componentPlacement, spd);
+				componentInstantiations[0] = createComponentInstantiation(sad, componentPlacement, spd, usageName, instantiationId);
 
 				// determine start order and potentially create assembly controller if zero is zero
 				intializeComponentStartOrder(sad, componentInstantiations[0]);
@@ -132,6 +140,7 @@ public class ComponentCreateFeature extends AbstractCreateFeature {
 
 		return new Object[] { componentInstantiations[0] };
 	}
+
 
 	// adds corresponding component file to sad if not already present
 	private ComponentFile createComponentFile(final SoftwareAssembly sad, final SoftPkg spd) {
@@ -166,12 +175,15 @@ public class ComponentCreateFeature extends AbstractCreateFeature {
 	}
 
 	// create ComponentInstantiation
-	private SadComponentInstantiation createComponentInstantiation(final SoftwareAssembly sad, final SadComponentPlacement componentPlacement, final SoftPkg spd) {
+	private SadComponentInstantiation createComponentInstantiation(final SoftwareAssembly sad, final SadComponentPlacement componentPlacement, final SoftPkg spd,
+		final String providedUsageName, final String providedInstantiationId) {
 
 		SadComponentInstantiation sadComponentInstantiation = SadFactory.eINSTANCE.createSadComponentInstantiation();
 
-		String compName = SoftwareAssembly.Util.createComponentUsageName(sad, spd.getName());
-		String id = SoftwareAssembly.Util.createComponentIdentifier(sad, compName);
+		//use provided name/id if provided otherwise generate
+		String compName = (providedUsageName != null) ? providedUsageName : SoftwareAssembly.Util.createComponentUsageName(sad, spd.getName());
+		String id = (providedInstantiationId != null) ? providedInstantiationId : SoftwareAssembly.Util.createComponentIdentifier(sad, compName);
+		
 
 		sadComponentInstantiation.setUsageName(compName);
 		sadComponentInstantiation.setId(id);

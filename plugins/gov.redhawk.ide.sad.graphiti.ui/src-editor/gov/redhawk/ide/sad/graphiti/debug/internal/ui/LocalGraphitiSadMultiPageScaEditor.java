@@ -17,6 +17,7 @@ import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.internal.ui.diagram.NewWaveformFromLocalWizard;
 import gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiSadMultiPageEditor;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -169,6 +170,15 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 		}
 		return mainResource;
 	}
+	
+	/**
+	 * Returns the property value that should be set for the Diagram container's DIAGRAM_CONTEXT property.
+	 * Indicates the mode the diagram is operating in.
+	 * @return
+	 */
+	public String getDiagramContext() {
+		return DUtil.DIAGRAM_CONTEXT_LOCAL;
+	}
 
 	private void initModelMap() {
 		if (waveform == null) {
@@ -221,6 +231,9 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 			// Use the SCA Model are source to build the SAD when we are in the chalkboard since the SAD file isn't
 			// modified
 			getEditingDomain().getCommandStack().execute(new SadGraphitiModelInitializerCommand(modelMap, sad, waveform));
+		} else {
+			// Use the existing SAD file as a template when initializing the modeling map
+			getEditingDomain().getCommandStack().execute(new GraphitiModelMapInitializerCommand(modelMap, sad, waveform));
 		}
 		getEditingDomain().getCommandStack().flush();
 

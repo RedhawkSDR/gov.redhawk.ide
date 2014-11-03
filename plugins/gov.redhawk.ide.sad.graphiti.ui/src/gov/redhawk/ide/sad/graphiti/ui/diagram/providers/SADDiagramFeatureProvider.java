@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
-import gov.redhawk.ide.sad.graphiti.debug.internal.ui.LocalGraphitiSadMultiPageScaEditor;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.DecrementStartOrderFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.FindByEditFeature;
@@ -75,6 +74,7 @@ import org.eclipse.graphiti.features.impl.DefaultRemoveFeature;
 import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
 import org.eclipse.graphiti.features.impl.UpdateNoBoFeature;
 import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.pattern.DefaultFeatureProviderWithPatterns;
@@ -216,7 +216,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		// add runtime features
 		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof SadComponentInstantiation && DUtil.getActiveEditor() instanceof LocalGraphitiSadMultiPageScaEditor) {
+			if (obj instanceof SadComponentInstantiation && DUtil.isDiagramLocal(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
 				retList.add(new StartComponentFeature(this));
 				retList.add(new StopComponentFeature(this));
 			}
@@ -266,25 +266,25 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		}
 
 		// add Set As Assembly Controller menu item
-		if (!(DUtil.getActiveEditor() instanceof LocalGraphitiSadMultiPageScaEditor) && context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
+		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof SadComponentInstantiation) {
+			if (obj instanceof SadComponentInstantiation && !DUtil.isDiagramLocal(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
 				retList.add(new SetAsAssemblyControllerFeature(this.getDiagramTypeProvider().getFeatureProvider()));
 			}
 		}
 
 		// add Increment Start Order menu item
-		if (!(DUtil.getActiveEditor() instanceof LocalGraphitiSadMultiPageScaEditor) && context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
+		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof SadComponentInstantiation) {
+			if (obj instanceof SadComponentInstantiation && !DUtil.isDiagramLocal(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
 				retList.add(new IncrementStartOrderFeature(this.getDiagramTypeProvider().getFeatureProvider()));
 			}
 		}
 
 		// add Decrement Start Order menu item
-		if (!(DUtil.getActiveEditor() instanceof LocalGraphitiSadMultiPageScaEditor) && context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
+		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof SadComponentInstantiation) {
+			if (obj instanceof SadComponentInstantiation && !DUtil.isDiagramLocal(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
 				retList.add(new DecrementStartOrderFeature(this.getDiagramTypeProvider().getFeatureProvider()));
 			}
 		}

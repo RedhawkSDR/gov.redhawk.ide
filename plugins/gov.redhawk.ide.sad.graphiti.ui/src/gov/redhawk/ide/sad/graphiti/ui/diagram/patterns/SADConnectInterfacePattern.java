@@ -54,6 +54,8 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	public static final String NAME = "Connection";
 	public static final String SHAPE_IMG_CONNECTION_DECORATOR = "imgConnectionDecorator";
 	public static final String SHAPE_TEXT_CONNECTION_DECORATOR = "textConnectionDecorator";
+	
+	public static final String OVERRIDE_CONNECTION_ID = "OverrideConnectionId";
 
 	@Override
 	public String getCreateName() {
@@ -264,6 +266,11 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 
 		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		
+		//create connectionId first check if provided in context (currently used by GraphitiModelMap), otherwise generate unique connection id
+		final String connectionId = (context.getProperty(OVERRIDE_CONNECTION_ID) != null) ? (String) context.getProperty(OVERRIDE_CONNECTION_ID)
+						: createConnectionId(sad);
+		
 
 		// container for new SadConnectInterface, necessary for reference after command execution
 		final SadConnectInterface[] sadConnectInterfaces = new SadConnectInterface[1];
@@ -286,7 +293,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 				sad.getConnections().getConnectInterface().add(sadConnectInterfaces[0]);
 
 				// set connection id
-				sadConnectInterfaces[0].setId(createConnectionId(sad));
+				sadConnectInterfaces[0].setId(connectionId);
 				// source
 				sadConnectInterfaces[0].setSource(source);
 				// target
