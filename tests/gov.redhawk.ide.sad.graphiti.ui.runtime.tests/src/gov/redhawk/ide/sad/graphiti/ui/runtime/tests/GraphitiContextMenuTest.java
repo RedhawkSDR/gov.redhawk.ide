@@ -13,6 +13,9 @@ package gov.redhawk.ide.sad.graphiti.ui.runtime.tests;
 
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
@@ -29,6 +32,7 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 	private SWTBotGefEditor editor;
 	private static final String CHALKBOARD = "Chalkboard";
 	private static final String SIGGEN = "SigGen";
+	private static final String HARD_LIMIT = "HardLimit";
 
 	/**
 	 * IDE-661, IDE-662, IDE-663, IDE-664, IDE-665, IDE-666, IDE-667
@@ -119,7 +123,7 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 		String item = audioView.bot().list().getItems()[0];
 		Assert.assertTrue("SigGen not found in Audio Port Playback", item.matches(SIGGEN + ".*"));
 		audioView.close();
-		
+
 		// Data List view test
 		editor.clickContextMenu("Data List");
 		final SWTBotView dataListView = bot.viewById("gov.redhawk.datalist.ui.views.DataListView");
@@ -143,7 +147,7 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 		SWTBotShell snapshotDialog = bot.shell("Snapshot");
 		Assert.assertNotNull(snapshotDialog);
 		snapshotDialog.close();
-		
+
 		// Monitor ports test
 		editor.clickContextMenu("Monitor Ports");
 		final SWTBotView monitorView = bot.viewById("gov.redhawk.ui.views.monitor.ports.PortMonitorView");
@@ -228,6 +232,36 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 				Assert.fail(); // The only way to get here is if the undesired context menu option appears
 			} catch (WidgetNotFoundException e) {
 				Assert.assertEquals(e.getMessage(), contextOption, e.getMessage());
+			}
+		}
+	}
+
+	/**
+	 * IDE-766
+	 * The delete context menu should not appear when ports are selected
+	 */
+	@Test
+	public void doNotDeletePortsTest() {
+		// Prepare Graphiti diagram
+		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		editor = gefBot.gefEditor(CHALKBOARD);
+		editor.setFocus();
+
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
+		SWTBotGefEditPart provides = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT);
+		SWTBotGefEditPart uses = DiagramTestUtils.getDiagramUsesPort(editor, HARD_LIMIT);
+
+		List<SWTBotGefEditPart> anchors = new ArrayList<SWTBotGefEditPart>();
+		anchors.add(DiagramTestUtils.getDiagramPortAnchor(provides));
+		anchors.add(DiagramTestUtils.getDiagramPortAnchor(uses));
+
+		for (SWTBotGefEditPart anchor : anchors) {
+			try {
+				anchor.select();
+				editor.clickContextMenu("Delete");
+				Assert.fail();
+			} catch (WidgetNotFoundException e) {
+				Assert.assertEquals(e.getMessage(), "Delete", e.getMessage());
 			}
 		}
 	}
