@@ -137,6 +137,9 @@ public class SnapshotHandler extends AbstractHandler {
 	}
 
 	private boolean isPortSupported(ScaUsesPort port) {
+		if (port == null) {
+			return false;
+		}
 		final String portRepId = port.getRepid();
 		if (portRepId.equals(dataLongLongHelper.id()) || portRepId.equals(dataUlongLongHelper.id()) || portRepId.equals(dataFloatHelper.id())
 			|| portRepId.equals(dataDoubleHelper.id()) || portRepId.equals(dataShortHelper.id()) || portRepId.equals(dataUshortHelper.id())
