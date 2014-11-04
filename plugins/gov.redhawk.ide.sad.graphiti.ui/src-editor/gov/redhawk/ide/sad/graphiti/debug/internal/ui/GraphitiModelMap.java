@@ -11,9 +11,7 @@
 package gov.redhawk.ide.sad.graphiti.debug.internal.ui;
 
 import gov.redhawk.ide.debug.LocalScaComponent;
-import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.internal.ui.diagram.ConnectionMapEntry;
-import gov.redhawk.ide.debug.internal.ui.diagram.NodeMapEntry;
+import gov.redhawk.ide.debug.LocalScaWaveform;	
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.create.ComponentCreateFeature;

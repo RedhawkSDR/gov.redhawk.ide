@@ -264,7 +264,8 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 
 			@Override
 			public void execute() {
-				waveform.eAdapters().add(LocalGraphitiSadMultiPageScaEditor.this.scaListener);
+				scaListener.addAdapter(waveform);
+				//waveform.eAdapters().add(LocalGraphitiSadMultiPageScaEditor.this.scaListener);
 			}
 		});
 		sad.eAdapters().add(this.sadlistener);
@@ -289,12 +290,14 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 			this.sadlistener = null;
 		}
 		if (this.scaListener != null) {
-			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
-			ScaModelCommand.execute(localSca, new ScaModelCommand() {
+			//final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
+			//ScaModelCommand.execute(localSca, new ScaModelCommand() {
+				ScaModelCommand.execute(waveform, new ScaModelCommand() {
 
 				@Override
 				public void execute() {
-					localSca.eAdapters().remove(LocalGraphitiSadMultiPageScaEditor.this.scaListener);
+					waveform.eAdapters().remove(LocalGraphitiSadMultiPageScaEditor.this.scaListener);
+					//localSca.eAdapters().remove(LocalGraphitiSadMultiPageScaEditor.this.scaListener);
 				}
 			});
 			this.scaListener = null;
