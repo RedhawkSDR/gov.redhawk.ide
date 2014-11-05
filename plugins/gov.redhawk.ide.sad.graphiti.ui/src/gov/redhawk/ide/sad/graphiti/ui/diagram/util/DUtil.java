@@ -105,7 +105,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String DIAGRAM_CONTEXT_DOMAIN = "domain";
 
 	public static final int DIAGRAM_SHAPE_HORIZONTAL_PADDING = 100;
-	public static final int DIAGRAM_SHAPE_SIBLING_VERTICAL_PADDING = 50;
+	public static final int DIAGRAM_SHAPE_SIBLING_VERTICAL_PADDING = 5;
 	public static final int DIAGRAM_SHAPE_ROOT_VERTICAL_PADDING = 50;
 
 	// do this because we need to pass it to layout diagram, assumes we already have shapes drawn of a certain

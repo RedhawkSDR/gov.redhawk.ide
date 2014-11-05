@@ -19,17 +19,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import mil.jpeojtrs.sca.sad.HostCollocation;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
+import org.eclipse.graphiti.internal.datatypes.impl.DimensionImpl;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -57,6 +61,7 @@ import org.eclipse.zest.layouts.algorithms.VerticalLayoutAlgorithm;
 import org.eclipse.zest.layouts.dataStructures.BendPoint;
 import org.eclipse.zest.layouts.exampleStructures.SimpleNode;
 
+@SuppressWarnings("restriction")
 public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 
 	private static List<String> layouts = Arrays.asList("Spring Layout", "Tree Layout", "Grid Layout", "Horizontal Layout", "Horizontal Tree Layout",
@@ -121,13 +126,14 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 
 		// Use the Horizontal Tree Layout
 		LayoutAlgorithm layoutAlgorithm = new HorizontalTreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING);
+		LayoutAlgorithm hostCoLayoutAlgorithm = new HorizontalTreeLayoutAlgorithm(LayoutStyles.ENFORCE_BOUNDS | LayoutStyles.NO_LAYOUT_NODE_RESIZING);
 
 		if (layoutAlgorithm != null) {
 			try {
 
 				// Get the map of SimpleNode per Shapes
 				Map<Shape, SimpleNode> map = getLayoutEntities();
-
+				
 				// Get the array of Connection LayoutRelationships
 				LayoutRelationship[] connections = getConnectionEntities(map);
 
@@ -138,12 +144,30 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 				IDimension diagramBounds = DUtil.calculateDiagramBounds(getDiagram());
 
 				// Apply the LayoutAlgorithmn
-//                    layoutAlgorithm.applyLayout(entities, connections, 0, 0, 1000, 1000, false, false);
 				layoutAlgorithm.applyLayout(entities, connections, 0, 0, diagramBounds.getWidth(), diagramBounds.getHeight(), false, false);
-
+				
 				// Update the Graphiti Shapes and Connections locations
 				updateGraphCoordinates(((TreeLayoutAlgorithm) layoutAlgorithm).getRoots(), entities, connections);
+				
+				// TODO: Break this out into it's own method
+				List<ContainerShape> hostCoList = new ArrayList<ContainerShape>();
+				EList<Shape> children = getDiagram().getChildren();
+				for (Shape shape : children) {
+					if (DUtil.getBusinessObject(shape) instanceof HostCollocation) {
+						hostCoList.add((ContainerShape) shape);
+					}
+				}
+				for (ContainerShape hostCollocation : hostCoList) {
+					Map<Shape, SimpleNode> hostCoMap = getLayoutEntitiesInHostCollocation(hostCollocation);
+					LayoutRelationship[] hostCoConnections = getConnectionEntities(hostCoMap);
+					LayoutEntity[] hostCoEntities = hostCoMap.values().toArray(new LayoutEntity[0]);
+					GraphicsAlgorithm hostCoGA = hostCollocation.getGraphicsAlgorithm();
+					IDimension hostCoBounds = new DimensionImpl(hostCoGA.getWidth(), hostCoGA.getHeight());
+					hostCoLayoutAlgorithm.applyLayout(hostCoEntities, hostCoConnections, 15, 0, hostCoBounds.getWidth(), hostCoBounds.getHeight(), false, false);
+					updateGraphCoordinates(((TreeLayoutAlgorithm) hostCoLayoutAlgorithm).getRoots(), hostCoEntities, hostCoConnections);
+				}
 
+				
 				// Reposition the self connections bendpoints:
 				adaptSelfBendPoints(selves);
 
@@ -151,37 +175,7 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 				e.printStackTrace(); // SUPPRESS CHECKSTYLE handle exception
 			}
 		}
-		// }
 	}
-
-//    private IDimension getDiagramSizeRequired(Diagram d){
-//    	
-//    	for(Connection c: d.getConnections()){
-//    		c.get
-//    	}
-//    	
-//    	
-//    	for(Shape s: d.getChildren()){
-//    		
-//    	}
-//    }
-//    
-//    private IDimension getDiagramSizeRequired(LayoutEntity[] entitiesToLayout, LayoutRelationship[] relationshipsToConsider){
-//    	
-//    	
-//    	for(LayoutEntity e: entitiesToLayout){
-//    		
-//    	}
-//    	
-//    	for(LayoutRelationship r: relationshipsToConsider){
-//    		r.
-//    	}
-//    	
-//    	
-////    	for(Shape s: d.getChildren()){
-////    		
-////    	}
-//    }
 
 	/**
 	 * Used to keep track of the initial Connection locations for self connections<br/>
@@ -231,44 +225,6 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 		}
 	}
 
-//    private List<SimpleNode> getTreeRootNodes(LayoutEntity[] entities){
-//    	for (LayoutEntity entity : entities) {
-//            SimpleNode node = (SimpleNode) entity;
-//            LinkedList<?> list = (LinkedList<?>)node.getRelatedEntities();
-//            if(list.getFirst().get)
-//    	}
-//    }
-
-//	/**
-//	 * Computes positions recursively until the leaf nodes are reached.
-//	 */
-//	private void computePositionRecursively(InternalNode layoutEntity, int i, int relativePosition, Set seenAlready, InternalNode[] entities) {
-//		if (seenAlready.contains(layoutEntity)) {
-//			return;
-//		}
-//		seenAlready.add(layoutEntity);
-//
-//		int relativeCount = 0;
-//		List children = childrenLists[i];
-//		//TODO: Slow
-//		for (Iterator iter = children.iterator(); iter.hasNext();) {
-//			InternalNode childEntity = (InternalNode) iter.next();
-//			int childEntityIndex = indexOfInternalNode(entities, childEntity);
-//			computePositionRecursively(childEntity, childEntityIndex, relativePosition + relativeCount, width, height, seenAlready, entities);
-//			relativeCount = relativeCount + getNumberOfLeaves(childEntity, childEntityIndex, entities);
-//		}
-//	}
-//	
-//    IDimension getDiagramDimension(List roots, LayoutEntity[] entities, LayoutRelationship[] connections){
-//    	int rootLength = 0;
-//    	for(Object r: roots){
-//    		SimpleNode node = (SimpleNode) r;
-//    		rootLength += node.getWidth();
-//    		node.getRelationships()
-//    	}
-//    }
-//    
-
 	/**
 	 * Reposition the Graphiti {@link PictogramElement}s and {@link Connection}s based on the
 	 * Zest {@link LayoutAlgorithm} computed locations
@@ -314,10 +270,34 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 		Map<Shape, SimpleNode> map = new HashMap<Shape, SimpleNode>();
 		EList<Shape> children = getDiagram().getChildren();
 		for (Shape shape : children) {
+			if (DUtil.getBusinessObject(shape) instanceof HostCollocation) {
+				map.putAll(getLayoutEntitiesInHostCollocation(shape));
+			}
+			
+				GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
+				SimpleNode entity = new SimpleNode(shape, ga.getX(), ga.getY(), ga.getWidth(), ga.getHeight());
+				map.put(shape, entity);
+			
+		}
+		return map;
+	}
+	
+	private Map<Shape, SimpleNode> getLayoutEntitiesInHostCollocation(Shape hostCollocation) {
+		Map<Shape, SimpleNode> map = new HashMap<Shape, SimpleNode>();
+		EList<Shape> children = ((ContainerShape) hostCollocation).getChildren();
+		int aggregateChildrenWidth = 0;
+		int tallestChild = 0;
+		for (Shape shape : children) {
 			GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
 			SimpleNode entity = new SimpleNode(shape, ga.getX(), ga.getY(), ga.getWidth(), ga.getHeight());
 			map.put(shape, entity);
+			aggregateChildrenWidth += ga.getWidth();
+			tallestChild = (tallestChild < ga.getHeight()) ? ga.getHeight() : tallestChild;
 		}
+		
+		// Update Host Collocation Boundaries
+		hostCollocation.getGraphicsAlgorithm().setWidth(aggregateChildrenWidth + 100);
+		hostCollocation.getGraphicsAlgorithm().setHeight(tallestChild + 40);
 		return map;
 	}
 
@@ -328,7 +308,7 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 	 * @return the array of {@link LayoutRelationship}s to compute
 	 */
 	private LayoutRelationship[] getConnectionEntities(Map<Shape, SimpleNode> map) {
-		List<LayoutRelationship> liste = new ArrayList<LayoutRelationship>();
+		List<LayoutRelationship> list = new ArrayList<LayoutRelationship>();
 		EList<Connection> connections = getDiagram().getConnections();
 		for (Connection connection : connections) {
 
@@ -344,11 +324,28 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 			// like: connection.getStart().getParent()
 			// get the SimpleNode already created from the map:
 			Shape source = (Shape) RHContainerShapeImpl.findFromChild(connection.getStart());
-			SimpleNode sourceEntity = map.get(source);
 			Shape target = (Shape) RHContainerShapeImpl.findFromChild(connection.getEnd());
-			SimpleNode targetEntity = map.get(target);
 
-			if (source != target) { // we don't add self relations to avoid Cycle errors
+			HostCollocation sourceHostCo = DUtil.getHostCollocation(((ContainerShape) source).getContainer());
+			HostCollocation targetHostCo = DUtil.getHostCollocation(((ContainerShape) target).getContainer());
+			
+			SimpleNode sourceEntity = null;
+			SimpleNode targetEntity = null;
+			if ((sourceHostCo == targetHostCo)) {
+				// Both entities are in the same host collocation or in the diagram, normal relationship
+				sourceEntity = map.get(source);
+				targetEntity = map.get(target);
+			} else if (sourceHostCo != null) {
+				// Only source is in host collocation, make relationship between hostCo and target
+				sourceEntity = map.get(source);
+				targetEntity = map.get(target);
+			} else if (targetHostCo != null) {
+				// Only target is in host collocation, make relationship between hostCo and source
+				sourceEntity = map.get(source);
+				targetEntity = map.get((Shape) target.getContainer());
+			}
+
+			if (source != target && sourceEntity != null && targetEntity != null) { // we don't add self relations to avoid Cycle errors
 				SimpleRelationship relationship = new SimpleRelationship(sourceEntity, targetEntity, (source != target));
 				relationship.setGraphData(connection);
 				relationship.clearBendPoints();
@@ -364,12 +361,12 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 					bendPoints.add(bendPoint);
 				}
 				relationship.setBendPoints(bendPoints.toArray(new LayoutBendPoint[0]));
-				liste.add(relationship);
+				list.add(relationship);
 				sourceEntity.addRelationship(relationship);
 				targetEntity.addRelationship(relationship);
 			}
 		}
-		return liste.toArray(new LayoutRelationship[0]);
+		return list.toArray(new LayoutRelationship[0]);
 	}
 
 	/**
