@@ -361,7 +361,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	 */
 	private String createConnectionId(SoftwareAssembly sad) {
 		final List<String> ids = new ArrayList<String>();
-		if(sad.getConnections() != null) {
+		if (sad.getConnections() != null) {
 			final List< ? extends ConnectInterface< ? , ? , ? >> connections = sad.getConnections().getConnectInterface();
 			for (final ConnectInterface< ? , ? , ? > connection : connections) {
 				ids.add(connection.getId());

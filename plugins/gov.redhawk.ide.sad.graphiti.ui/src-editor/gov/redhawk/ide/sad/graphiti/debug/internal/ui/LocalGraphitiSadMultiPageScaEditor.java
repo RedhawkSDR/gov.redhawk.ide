@@ -328,6 +328,9 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 				setPageText(pageIndex, "Diagram");
 
 				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
+				
+				// set layout for sandbox editors
+				DUtil.layout(editor);
 
 			} catch (final PartInitException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.getPluginId(), "Failed to create editor parts.", e),

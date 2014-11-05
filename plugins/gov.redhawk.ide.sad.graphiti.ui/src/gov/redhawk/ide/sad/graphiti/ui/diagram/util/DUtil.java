@@ -13,6 +13,7 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.util;
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.IDiagramUtilHelper;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.sca.efs.ScaFileSystemPlugin;
@@ -51,6 +52,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalCommandStack;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.datatypes.ILocation;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
@@ -60,14 +64,17 @@ import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
+import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
+import org.eclipse.graphiti.features.context.impl.CustomContext;
 import org.eclipse.graphiti.features.context.impl.DeleteContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.context.impl.UpdateContext;
+import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.internal.datatypes.impl.DimensionImpl;
 import org.eclipse.graphiti.mm.Property;
@@ -82,6 +89,8 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.graphiti.ui.editor.DiagramBehavior;
+import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -102,6 +111,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String DIAGRAM_CONTEXT = "DiagramContext"; // key for Diagram contexts
 	public static final String DIAGRAM_CONTEXT_DESIGN = "design";
 	public static final String DIAGRAM_CONTEXT_LOCAL = "local";
+	public static final String DIAGRAM_CONTEXT_TARGET_SDR = "target-sdr";
 	public static final String DIAGRAM_CONTEXT_DOMAIN = "domain";
 
 	public static final int DIAGRAM_SHAPE_HORIZONTAL_PADDING = 100;
@@ -1291,12 +1301,44 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		return getDiagramContext(diagram).equals(DUtil.DIAGRAM_CONTEXT_LOCAL);
 	}
 	
+	public static boolean isDiagramTargetSdr(final Diagram diagram) {
+		return getDiagramContext(diagram).equals(DUtil.DIAGRAM_CONTEXT_TARGET_SDR);
+	}
+	
 	/**
 	 * Returns the property value that indicates the mode the diagram is operating in.
 	 * @param diagram
 	 */
 	public static String getDiagramContext(Diagram diagram) {
 		return Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_CONTEXT);
+	}
+
+	public static void layout(DiagramEditor diagramEditor) {
+		Diagram diagram = diagramEditor.getDiagramTypeProvider().getDiagram();
+		if (isDiagramTargetSdr(diagram) || isDiagramLocal(diagram)) {	
+			DiagramBehavior diagramBehavior = diagramEditor.getDiagramBehavior();
+			IFeatureProvider featureProvider = diagramEditor.getDiagramTypeProvider().getFeatureProvider();
+			
+			if (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram)) {
+				final ICustomContext context = new CustomContext(new PictogramElement[]{diagram});
+				ICustomFeature[] features = featureProvider.getCustomFeatures(context);
+				for (final ICustomFeature feature : features) {
+					if (feature instanceof ZestLayoutDiagramFeature) {
+						TransactionalEditingDomain ed = diagramBehavior.getEditingDomain();
+						TransactionalCommandStack cs = (TransactionalCommandStack) ed.getCommandStack();
+						cs.execute(new RecordingCommand(ed) {
+							
+							@Override
+							protected void doExecute() {
+								((ZestLayoutDiagramFeature) feature).execute(context);
+							}
+						});
+					}
+				}
+			}
+		}
+		// TODO Auto-generated method stub
+
 	}
 
 }

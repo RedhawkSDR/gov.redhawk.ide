@@ -515,7 +515,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 	@Override
 	protected void addPages() {
 		// Only creates the other pages if there is something that can be edited
-		//
+		
 		if (!getEditingDomain().getResourceSet().getResources().isEmpty()
 			&& !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
 			try {
@@ -538,6 +538,9 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 				pageIndex = addPage(editor, diagramInput);
 				setPageText(pageIndex, "Diagram");
 
+				// set layout for target-sdr editors
+				DUtil.layout(editor);
+				
 				textEditor = createTextEditor();
 				if (textEditor != null) {
 					final int sadSourcePageNum = addPage(textEditor, getEditorInput());
@@ -618,7 +621,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 			protected void doExecute() {
 
 				//set property specifying diagram context (design, local, domain)
-				Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CONTEXT, getDiagramContext());
+				Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CONTEXT, getDiagramContext(sadResource));
 				
 				//link diagram and sad
 				PictogramLink link = PictogramsFactory.eINSTANCE.createPictogramLink();
@@ -629,6 +632,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 
 		// return editor input from diagram with sad diagram type
 		return DiagramEditorInput.createEditorInput(diagram, SADDiagramTypeProvider.PROVIDER_ID);
+		
 
 	}
 	
@@ -639,6 +643,14 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 	 */
 	public String getDiagramContext() {
 		return DUtil.DIAGRAM_CONTEXT_DESIGN;
+	}
+	
+	private String getDiagramContext(Resource sadResource) {
+		if (sadResource.getURI().toString().matches(".*" + System.getenv("SDRROOT") + ".*")) {
+			return DUtil.DIAGRAM_CONTEXT_TARGET_SDR;
+		}
+		
+		return getDiagramContext();
 	}
 
 	protected DiagramEditor createDiagramEditor() {
