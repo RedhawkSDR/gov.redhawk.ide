@@ -34,6 +34,7 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -229,6 +230,20 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 
 			}
 		});
+
+		PictogramElement pe = context.getPictogramElement();
+		Object[] businessObjects = getFeatureProvider().getAllBusinessObjectsForPictogramElement(pe);
+
+		preDelete(context);
+		if (businessObjects != null) {
+			for (Object bo : businessObjects) {
+				if (bo instanceof EObject) {
+					EcoreUtil.delete((EObject) bo, true);
+				}
+			}
+		}
+		postDelete(context);
+
 		super.delete(context);
 	}
 
