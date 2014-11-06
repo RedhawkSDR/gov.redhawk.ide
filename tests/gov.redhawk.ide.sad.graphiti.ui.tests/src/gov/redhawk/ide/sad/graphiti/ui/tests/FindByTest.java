@@ -28,6 +28,7 @@ import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -151,8 +152,14 @@ public class FindByTest extends AbstractGraphitiTest {
 		// Delete Findby
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
 		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(FIND_BY_NAME));
-		gefBot.shell("Confirm Delete").setFocus();
-		gefBot.button("Yes").click();
+
+		try {
+			gefBot.shell("Confirm Delete").setFocus();
+			Assert.fail("Deleting FindBy elements should not require a dialog");
+		} catch (WidgetNotFoundException e) {
+			Assert.assertTrue(e.getMessage().matches(".*" + "Confirm Delete" + ".*"));
+		}
+
 		editor = gefBot.gefEditor(waveformName);
 		editor.setFocus();
 		gefBot.menu("File").menu("Save").click();
