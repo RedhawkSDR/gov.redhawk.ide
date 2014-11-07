@@ -91,7 +91,7 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 
 		// Get the port
 		SWTBotGefEditPart usesPort = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
-		SWTBotGefEditPart usesAnchor = DiagramTestUtils.getDiagramPortAnchor(usesPort);
+		final SWTBotGefEditPart usesAnchor = DiagramTestUtils.getDiagramPortAnchor(usesPort);
 
 		// Plot view test
 		usesAnchor.select();
@@ -127,8 +127,20 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 		audioView.close();
 
 		// Data List view test
-		usesAnchor.select();
-		editor.clickContextMenu("Data List");
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return "Could not find the Data List context menu option";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				usesAnchor.select();
+				editor.clickContextMenu("Data List");
+				SWTBotView view = gefBot.viewById("gov.redhawk.datalist.ui.views.DataListView");
+				return (view != null);
+			}
+		});
 		final SWTBotView dataListView = bot.viewById("gov.redhawk.datalist.ui.views.DataListView");
 		SWTBotButton startButton = dataListView.bot().buttonWithTooltip("Start Acquire");
 		startButton.click();
