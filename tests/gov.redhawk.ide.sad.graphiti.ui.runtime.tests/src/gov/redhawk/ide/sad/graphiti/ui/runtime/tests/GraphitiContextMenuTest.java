@@ -89,17 +89,18 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 			}
 		});
 
-		// Select the port
+		// Get the port
 		SWTBotGefEditPart usesPort = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		SWTBotGefEditPart usesAnchor = DiagramTestUtils.getDiagramPortAnchor(usesPort);
-		usesAnchor.select();
 
 		// Plot view test
+		usesAnchor.select();
 		editor.clickContextMenu("Plot Port Data");
 		SWTBotView plotView = bot.viewById("gov.redhawk.ui.port.nxmplot.PlotView2");
 		plotView.close();
 
 		// SRI view test
+		usesAnchor.select();
 		editor.clickContextMenu("Display SRI");
 		final SWTBotView sriView = bot.viewById("gov.redhawk.bulkio.ui.sridata.view");
 		bot.waitUntil(new DefaultCondition() {
@@ -118,6 +119,7 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 		sriView.close();
 
 		// Audio/Play port view test
+		usesAnchor.select();
 		editor.clickContextMenu("Play Port");
 		SWTBotView audioView = bot.viewById("gov.redhawk.ui.port.playaudio.view");
 		String item = audioView.bot().list().getItems()[0];
@@ -125,6 +127,7 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 		audioView.close();
 
 		// Data List view test
+		usesAnchor.select();
 		editor.clickContextMenu("Data List");
 		final SWTBotView dataListView = bot.viewById("gov.redhawk.datalist.ui.views.DataListView");
 		SWTBotButton startButton = dataListView.bot().buttonWithTooltip("Start Acquire");
@@ -143,12 +146,14 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 		dataListView.close();
 
 		// Snapshot view test
+		usesAnchor.select();
 		editor.clickContextMenu("Snapshot");
 		SWTBotShell snapshotDialog = bot.shell("Snapshot");
 		Assert.assertNotNull(snapshotDialog);
 		snapshotDialog.close();
 
 		// Monitor ports test
+		usesAnchor.select();
 		editor.clickContextMenu("Monitor Ports");
 		final SWTBotView monitorView = bot.viewById("gov.redhawk.ui.views.monitor.ports.PortMonitorView");
 		bot.waitUntil(new DefaultCondition() {
