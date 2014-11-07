@@ -112,7 +112,6 @@ public class FindByTest extends AbstractGraphitiTest {
 			// Drill down to graphiti component shape
 			SWTBotGefEditPart gefEditPart = editor.getEditPart(FindByUtils.getFindByDefaultName(s));
 			DiagramTestUtils.deleteFromDiagram(editor, gefEditPart);
-			gefBot.button("Yes").click(); // are you sure you want to delete this element?
 			Assert.assertNull(editor.getEditPart(s));
 		}
 	}
