@@ -43,6 +43,7 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 		// Open Chalkboard Graphiti Diagram
 		System.out.println("STEP 1");
 		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		bot.sleep(10000);
 		System.out.println("STEP 2");
 		editor = gefBot.gefEditor(CHALKBOARD);
 		System.out.println("STEP 3");
