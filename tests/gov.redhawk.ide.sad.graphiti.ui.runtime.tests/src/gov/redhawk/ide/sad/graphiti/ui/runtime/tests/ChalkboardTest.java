@@ -37,6 +37,7 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 	 * IDE-658
 	 * Open chalkboard with components already launched in the Sandbox
 	 */
+	@Ignore
 	@Test
 	public void checkChalkboardComponents() {
 
@@ -88,17 +89,25 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 	@Ignore
 	@Test
 	public void checkFindByNotInSandbox() {
+		System.out.println("STEP 1");
 		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		System.out.println("STEP 2");
 		editor = gefBot.gefEditor(CHALKBOARD);
+		System.out.println("STEP 3");
 		editor.setFocus();
+		System.out.println("STEP 4");
 		String[] findByList = { FindByUtils.FIND_BY_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, FindByUtils.FIND_BY_EVENT_CHANNEL,
 			FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
 		
+		System.out.println("STEP 5");
 		for (String findByType : findByList) {
 			try {
+				System.out.println("STEP 6");
 				DiagramTestUtils.dragFromPaletteToDiagram(editor, findByType, 0, 0);
+				System.out.println("STEP 7");
 				Assert.fail(); // The only way to get here is if the FindBy type appears in the Palette
 			} catch (WidgetNotFoundException e) {
+				System.out.println("STEP 8");
 				Assert.assertTrue(e.getMessage(), findByType.matches(".*" + e.getMessage() + ".*"));
 			}
 		}
