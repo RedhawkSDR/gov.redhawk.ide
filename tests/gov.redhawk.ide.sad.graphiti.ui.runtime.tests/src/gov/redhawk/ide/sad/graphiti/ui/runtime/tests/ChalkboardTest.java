@@ -86,7 +86,6 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 	 * IDE-928
 	 * Check to make sure FindBy elements do not appear in the RHToolBar when in the Graphiti sandbox
 	 */
-	@Ignore
 	@Test
 	public void checkFindByNotInSandbox() {
 		System.out.println("STEP 1");
