@@ -21,6 +21,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
@@ -36,6 +37,7 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 	 * IDE-658
 	 * Open chalkboard with components already launched in the Sandbox
 	 */
+	@Ignore
 	@Test
 	public void checkChalkboardComponents() {
 
@@ -67,6 +69,7 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 	 * IDE-928
 	 * Check to make sure FindBy elements do not appear in the RHToolBar when in the Graphiti sandbox
 	 */
+	@Ignore
 	@Test
 	public void checkFindByNotInSandbox() {
 		DiagramTestUtils.openChalkboardFromSandbox(gefBot);

@@ -25,6 +25,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
@@ -39,6 +40,7 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 	 * Test that context menu options appear in Graphiti during runtime,
 	 * ensures that the proper views appear based on selection and that views are interactive
 	 */
+	@Ignore
 	@Test
 	public void runtimeContextMenuTest() {
 		// Prepare Graphiti diagram
@@ -88,7 +90,7 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 				return false;
 			}
 		});
-
+		
 		// Get the port
 		SWTBotGefEditPart usesPort = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		final SWTBotGefEditPart usesAnchor = DiagramTestUtils.getDiagramPortAnchor(usesPort);
@@ -212,6 +214,7 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 	 * IDE-326
 	 * Test that certain context menu option don't appear in Graphiti during runtime,
 	 */
+	@Ignore
 	@Test
 	public void removeDevelopmentContextOptionsTest() {
 		// Prepare Graphiti diagram
@@ -257,6 +260,7 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 	 * IDE-766
 	 * The delete context menu should not appear when ports are selected
 	 */
+	@Ignore
 	@Test
 	public void doNotDeletePortsTest() {
 		// Prepare Graphiti diagram

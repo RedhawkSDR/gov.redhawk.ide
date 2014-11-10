@@ -20,6 +20,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class StartOrderRuntimeTest extends AbstractGraphitiRuntimeTest {
@@ -32,6 +33,7 @@ public class StartOrderRuntimeTest extends AbstractGraphitiRuntimeTest {
 	 * IDE-326
 	 * Test to make sure the Start Order ellipse doesn't not get drawn in the sandbox
 	 */
+	@Ignore
 	@Test
 	public void removeStartOrderIconTest() {
 		// Prepare Graphiti diagram
