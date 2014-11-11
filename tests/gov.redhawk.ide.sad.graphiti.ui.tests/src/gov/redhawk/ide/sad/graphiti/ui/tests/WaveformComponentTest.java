@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
+import static org.junit.Assert.assertEquals;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
@@ -18,6 +19,11 @@ import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.ComponentUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
@@ -25,11 +31,15 @@ import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
 import org.junit.Test;
@@ -221,6 +231,54 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The sad.xml should include SigGen's software assembly", editorText.matches(sigGenSad));
 		Assert.assertTrue("The sad.xml should include HardLimit's software assembly", editorText.matches(hardLimitSad));
+	}
+
+	/**
+	 * IDE-741
+	 * Palette has all Components in Target SDR.
+	 */
+	@Test
+	public void checkTargetSDRComponentsInPalete() {
+		waveformName = "IDE-741-Test";
+		// Create an empty waveform project
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+		editor.setFocus();
+
+		List<String> sdrComponents = WaveformComponentTest.getTargetSdrComponents(gefBot);
+		LinkedList<String> paletteComponents = new LinkedList<String>();
+		LinkedList<String> missingSdrComponentSet = new LinkedList<String>();
+		for (String compName : sdrComponents) {
+			try {
+				@SuppressWarnings("unused")
+				SWTBotGefEditor paletteCompToolEditor = editor.activateTool(compName);
+				// System.out.println(compName + " paletteEditor  = " + paletteCompToolEditor);
+				paletteComponents.add(compName);
+			} catch (WidgetNotFoundException ex) {
+				missingSdrComponentSet.add(compName);
+				// System.err.println("WARN: activateTool(" + compName + ") -  WidgetNotFoundException ");
+			}
+		}
+
+		assertEquals("Missing Target SDR Components from Palette: " + missingSdrComponentSet, 0 , missingSdrComponentSet.size());
+		assertEquals("Palette contains all Target SDR Components - size", sdrComponents.size(), paletteComponents.size());
+		assertEquals("Palette contains all Target SDR Components - contents", sdrComponents, paletteComponents);
+	}
+	
+	static List<String> getTargetSdrComponents(final SWTWorkbenchBot bot) {
+		LinkedList<String> list = new LinkedList<String>();
+		
+		SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
+		SWTBotTree scaTree = scaExplorerView.bot().tree();
+		SWTBotTreeItem componentsItem = scaTree.expandNode("Target SDR", "Components");
+		SWTBotTreeItem[] sdrComponents = componentsItem.getItems();
+		
+		for (SWTBotTreeItem item : sdrComponents) {
+			final String compName = item.getText();
+			list.add(compName);
+		}
+
+		return Collections.unmodifiableList(list);
 	}
 
 	/**
