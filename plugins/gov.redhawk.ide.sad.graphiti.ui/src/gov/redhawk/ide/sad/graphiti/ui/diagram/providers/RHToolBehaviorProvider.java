@@ -10,6 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.providers;
 
+import gov.redhawk.core.resourcefactory.ComponentDesc;
+import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
+import gov.redhawk.core.resourcefactory.ResourceDesc;
+import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
 import gov.redhawk.ide.sad.graphiti.debug.internal.ui.SandboxRHGraphitiDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.create.ComponentCreateFeature;
@@ -27,10 +31,14 @@ import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -48,6 +56,7 @@ import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.gef.palette.PaletteEntry;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
@@ -154,7 +163,7 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
 				@Override
 				public IStatus runInUIThread(final IProgressMonitor monitor) {
-					// refresh pallete which will call RHToolBehaviorProvider.getPalette()
+					// refresh palette which will call RHToolBehaviorProvider.getPalette()
 					diagramTypeProvider.getDiagramBehavior().refreshPalette();
 					return Status.OK_STATUS;
 				}
@@ -176,10 +185,11 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	}
 
 	/**
-	 * Populates the palette entries.
+	 * Creates new palette compartments (categories), and populates the palette entries.
 	 */
 	@Override
 	public IPaletteCompartmentEntry[] getPalette() {
+		boolean isSandbox = getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer() instanceof SandboxRHGraphitiDiagramEditor;
 
 		// palette compartments
 		List<IPaletteCompartmentEntry> compartments = new ArrayList<IPaletteCompartmentEntry>();
@@ -190,7 +200,6 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		compartments.add(componentCompartmentEntry);
 
 		// FINDBY Compartment
-		boolean isSandbox = getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer() instanceof SandboxRHGraphitiDiagramEditor;
 		if (!isSandbox) {
 			PaletteCompartmentEntry findByCompartmentEntry = getFindByCompartmentEntry();
 			compartments.add(findByCompartmentEntry);
@@ -200,13 +209,18 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		PaletteCompartmentEntry baseTypesCompartmentEntry = getBaseTypesCompartmentEntry();
 		compartments.add(baseTypesCompartmentEntry);
 
+		// WORKSPACE Compartment
+		if (isSandbox) {
+			PaletteCompartmentEntry workspaceCompartmentEntry = getWorkspaceCompartmentEntry();
+			compartments.add(workspaceCompartmentEntry);
+		}
+
 		return compartments.toArray(new IPaletteCompartmentEntry[compartments.size()]);
 
 	}
 
 	/**
 	 * Returns a populated CompartmentEntry containing all the Base Types
-	 * @return
 	 */
 	private PaletteCompartmentEntry getBaseTypesCompartmentEntry() {
 
@@ -241,7 +255,6 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
 	/**
 	 * Returns a populated CompartmentEntry containing all the Find By tools
-	 * @return
 	 */
 	private PaletteCompartmentEntry getFindByCompartmentEntry() {
 
@@ -267,7 +280,6 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	/**
 	 * Returns a populated CompartmentEntry containing all components in Target SDR
 	 * @param container
-	 * @return
 	 */
 	private PaletteCompartmentEntry getComponentCompartmentEntry(final ComponentsContainer container) {
 
@@ -322,20 +334,107 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 			compartmentEntry.getToolEntries().remove(entry);
 		}
 
-		// Sort the children
-		final ArrayList<IToolEntry> top = new ArrayList<IToolEntry>();
-		final ArrayList<IToolEntry> childrenToSort = new ArrayList<IToolEntry>();
-		top.addAll(compartmentEntry.getToolEntries());
-		for (final IToolEntry entry : top) {
+		// Sort the children and return the new list of components
+		final ArrayList<SpdToolEntry> entries = new ArrayList<SpdToolEntry>();
+		for (final IToolEntry entry : compartmentEntry.getToolEntries()) {
 			if (entry instanceof SpdToolEntry) {
-				childrenToSort.add(entry);
+				entries.add((SpdToolEntry) entry);
 			}
 		}
-		top.removeAll(childrenToSort);
-		Collections.sort(childrenToSort, new Comparator<IToolEntry>() {
+		sort(entries);
+		compartmentEntry.getToolEntries().clear();
+		compartmentEntry.getToolEntries().addAll(entries);
+
+		return compartmentEntry;
+	}
+
+	/**
+	 * Returns a populated CompartmentEntry containing all components in Workspace
+	 * @param container
+	 */
+	private PaletteCompartmentEntry getWorkspaceCompartmentEntry() {
+		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Workspace", null);
+
+		Map<String, List<PaletteEntry>> containerMap = new HashMap<String, List<PaletteEntry>>();
+
+		// Add a listener to refresh the palette when the workspace is updated
+		IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
+		registry.addListener(listener);
+
+		List<SpdToolEntry> entries = new ArrayList<SpdToolEntry>();
+		for (ResourceDesc desc : registry.getResourceDescriptors()) {
+			String category = desc.getCategory();
+			List<PaletteEntry> containerList = containerMap.get(category);
+			if (containerList == null) {
+				String label = category;
+				if (!("Workspace".equals(label))) {
+					continue;
+				}
+				containerList = new ArrayList<PaletteEntry>();
+				containerMap.put(category, containerList);
+			}
+
+			if (desc instanceof ComponentDesc) {
+				ComponentDesc compDesc = (ComponentDesc) desc;
+				entries.addAll(createPaletteEntries(compDesc));
+			}
+		}
+
+		sort(entries);
+		compartmentEntry.getToolEntries().addAll(entries);
+		return compartmentEntry;
+	}
+
+	/**
+	 * Returns a listener that refreshes the palette
+	 */
+	private java.beans.PropertyChangeListener listener = new PropertyChangeListener() {
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (IResourceFactoryRegistry.PROP_RESOURCES.equals(evt.getPropertyName())) {
+				WorkbenchJob refreshPalletteJob = new WorkbenchJob("Refresh Pallette") {
+
+					@Override
+					public IStatus runInUIThread(final IProgressMonitor monitor) {
+						// refresh palette which will call RHToolBehaviorProvider.getPalette()
+						getDiagramTypeProvider().getDiagramBehavior().refreshPalette();
+						return Status.OK_STATUS;
+					}
+
+				};
+				refreshPalletteJob.schedule(1000);
+			}
+		}
+	};
+
+	/**
+	 * Creates a new SpdToolEntry for each implementation in the component description.
+	 * Also assigns the createComponentFeature to the palette entry so that the diagram knows which shape to create.
+	 */
+	private List<SpdToolEntry> createPaletteEntries(ComponentDesc desc) {
+		List<SpdToolEntry> retVal = new ArrayList<SpdToolEntry>(desc.getImplementationIds().size());
+		if (desc.getImplementationIds().size() == 1) {
+			ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), desc.getSoftPkg());
+			SpdToolEntry entry = new SpdToolEntry(desc.getName(), desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(),
+				desc.getImplementationIds().get(0), ImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
+			retVal.add(entry);
+		} else {
+			for (String implID : desc.getImplementationIds()) {
+				ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), desc.getSoftPkg());
+				SpdToolEntry entry = new SpdToolEntry(desc.getName() + " (" + implID + ")", desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(),
+					implID, ImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
+				retVal.add(entry);
+			}
+		}
+		return retVal;
+	}
+
+	private void sort(List<SpdToolEntry> entries) {
+		Collections.sort(entries, new Comparator<SpdToolEntry>() {
 
 			@Override
-			public int compare(final IToolEntry o1, final IToolEntry o2) {
+			public int compare(final SpdToolEntry o1, final SpdToolEntry o2) {
 				final String str1 = o1.getLabel();
 				final String str2 = o2.getLabel();
 				if (str1 == null) {
@@ -352,11 +451,6 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 			}
 
 		});
-		top.addAll(childrenToSort);
-		compartmentEntry.getToolEntries().clear();
-		compartmentEntry.getToolEntries().addAll(childrenToSort);
-
-		return compartmentEntry;
 	}
 
 	@Override
@@ -369,20 +463,10 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		return super.getDoubleClickFeature(context);
 	}
 
-	// ATTEMPT at ERROR decorator on Connections
-//	public IDecorator[] getDecorators(PictogramElement pe) {
-//		IFeatureProvider featureProvider = getFeatureProvider();
-//		//if(pe instanceof Connection) {
-////			IDecorator imageRenderingDecorator = new ImageDecorator(IPlatformImageConstants.IMG_ECLIPSE_WARNING_TSK);
-////			imageRenderingDecorator.setMessage("You should fix this");
-//			IDecorator imageRenderingDecorator = new ImageDecorator(IPlatformImageConstants.IMG_ECLIPSE_ERROR_TSK);
-//			imageRenderingDecorator.setMessage("You should fix this");
-//			
-//			return new IDecorator[] { imageRenderingDecorator };
-//		//}
-//		
-//		//return super.getDecorators(pe);
-//		
-//	}
-
+	@Override
+	public void dispose() {
+		IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
+		registry.removeListener(listener);
+		super.dispose();
+	}
 }
