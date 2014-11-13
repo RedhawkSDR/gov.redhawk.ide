@@ -33,13 +33,16 @@ public class StartOrderRuntimeTest extends AbstractGraphitiRuntimeTest {
 	 * IDE-326
 	 * Test to make sure the Start Order ellipse doesn't not get drawn in the sandbox
 	 */
-	@Ignore
 	@Test
 	public void removeStartOrderIconTest() {
 		// Prepare Graphiti diagram
+		System.out.println("STEP 1");
 		SWTBotView scaExplorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
+		System.out.println("STEP 2");
 		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		System.out.println("STEP 3");
 		editor = gefBot.gefEditor(CHALKBOARD);
+		System.out.println("STEP 4");
 		editor.setFocus();
 
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);

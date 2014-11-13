@@ -40,13 +40,16 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 	 * Test that context menu options appear in Graphiti during runtime,
 	 * ensures that the proper views appear based on selection and that views are interactive
 	 */
-	@Ignore
 	@Test
 	public void runtimeContextMenuTest() {
 		// Prepare Graphiti diagram
+		System.out.println("STEP 1");
 		SWTBotView scaExplorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
+		System.out.println("STEP 2");
 		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		System.out.println("STEP 3");
 		editor = gefBot.gefEditor(CHALKBOARD);
+		System.out.println("STEP 4");
 		editor.setFocus();
 
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
@@ -214,13 +217,16 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 	 * IDE-326
 	 * Test that certain context menu option don't appear in Graphiti during runtime,
 	 */
-	@Ignore
 	@Test
 	public void removeDevelopmentContextOptionsTest() {
 		// Prepare Graphiti diagram
+		System.out.println("STEP 1");
 		SWTBotView scaExplorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
+		System.out.println("STEP 2");		
 		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		System.out.println("STEP 3");
 		editor = gefBot.gefEditor(CHALKBOARD);
+		System.out.println("STEP 4");
 		editor.setFocus();
 
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
@@ -260,12 +266,14 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 	 * IDE-766
 	 * The delete context menu should not appear when ports are selected
 	 */
-	@Ignore
 	@Test
 	public void doNotDeletePortsTest() {
 		// Prepare Graphiti diagram
+		System.out.println("STEP 1");
 		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		System.out.println("STEP 2");
 		editor = gefBot.gefEditor(CHALKBOARD);
+		System.out.println("STEP 3");
 		editor.setFocus();
 
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);

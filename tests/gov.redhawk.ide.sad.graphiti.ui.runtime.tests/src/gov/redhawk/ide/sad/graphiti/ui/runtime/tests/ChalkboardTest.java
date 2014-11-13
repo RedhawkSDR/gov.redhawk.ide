@@ -37,7 +37,6 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 	 * IDE-658
 	 * Open chalkboard with components already launched in the Sandbox
 	 */
-	@Ignore
 	@Test
 	public void checkChalkboardComponents() {
 
