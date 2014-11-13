@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ext.impl;
 
-import gov.redhawk.ide.sad.graphiti.debug.internal.ui.LocalGraphitiSadMultiPageScaEditor;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
@@ -29,9 +28,11 @@ import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -39,25 +40,47 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
+import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
-import org.eclipse.ui.IEditorPart;
 
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>Component Shape</b></em>'.
  * <!-- end-user-doc -->
  * <p>
+ * The following features are implemented:
+ * <ul>
+ *   <li>{@link gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl#isStarted <em>Started</em>}</li>
+ * </ul>
  * </p>
  *
  * @generated
  */
 public class ComponentShapeImpl extends RHContainerShapeImpl implements ComponentShape {
 
+	/**
+	 * The default value of the '{@link #isStarted() <em>Started</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isStarted()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean STARTED_EDEFAULT = false;
+	/**
+	 * The cached value of the '{@link #isStarted() <em>Started</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isStarted()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean started = STARTED_EDEFAULT;
 	// These are property key/value pairs that help us resize an existing shape by properly identifying
 	// graphicsAlgorithms
 	public static final String GA_START_ORDER_ELLIPSE = "startOrderEllipse";
@@ -77,6 +100,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	// Default start order text value for components that do not have a start order declared
 	private static final String NO_START_ORDER_STRING = "*";
 
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -94,6 +118,27 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	@Override
 	protected EClass eStaticClass() {
 		return RHGxPackage.Literals.COMPONENT_SHAPE;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isStarted() {
+		return started;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setStarted(boolean newStarted) {
+		boolean oldStarted = started;
+		started = newStarted;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.COMPONENT_SHAPE__STARTED, oldStarted, started));
 	}
 
 	/**
@@ -129,9 +174,17 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		super.init(context, pattern, ciExternalPorts);
 
 		// add start order ellipse
-		if (sad.getId() != null && !( DUtil.isDiagramLocal(DUtil.findDiagram(this)))) {
+		if (sad.getId() != null && !(DUtil.isDiagramLocal(DUtil.findDiagram(this)))) {
 			addStartOrderEllipse(ci, assemblyController, featureProvider);
 		}
+
+		//set innerContainer color based on started value
+		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
+		if (isStarted()) {
+			innerRoundedRectangle.setStyle(StyleUtil.getStyleForComponentInnerStarted(diagram));
+		}
+
+		//runtimeAdapter = new ComponentRuntimeAdapter(this, featureProvider);
 	}
 
 	/**
@@ -149,6 +202,81 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	public Reason updateNeeded(final IUpdateContext context, ComponentPattern pattern) {
 		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());
 		return this.internalUpdate(pattern, ci, false);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eGet(int featureID, boolean resolve, boolean coreType) {
+		switch (featureID) {
+		case RHGxPackage.COMPONENT_SHAPE__STARTED:
+			return isStarted();
+		}
+		return super.eGet(featureID, resolve, coreType);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void eSet(int featureID, Object newValue) {
+		switch (featureID) {
+		case RHGxPackage.COMPONENT_SHAPE__STARTED:
+			setStarted((Boolean) newValue);
+			return;
+		}
+		super.eSet(featureID, newValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void eUnset(int featureID) {
+		switch (featureID) {
+		case RHGxPackage.COMPONENT_SHAPE__STARTED:
+			setStarted(STARTED_EDEFAULT);
+			return;
+		}
+		super.eUnset(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean eIsSet(int featureID) {
+		switch (featureID) {
+		case RHGxPackage.COMPONENT_SHAPE__STARTED:
+			return started != STARTED_EDEFAULT;
+		}
+		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String toString() {
+		if (eIsProxy())
+			return super.toString();
+
+		StringBuffer result = new StringBuffer(super.toString());
+		result.append(" (started: ");
+		result.append(started);
+		result.append(')');
+		return result.toString();
 	}
 
 	/**
@@ -252,7 +380,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			updateStatus = superReason.toBoolean();
 		}
 
-		if (sad.getId() != null && !( DUtil.isDiagramLocal(DUtil.findDiagram(this)))) {
+		if (sad.getId() != null && !(DUtil.isDiagramLocal(DUtil.findDiagram(this)))) {
 			// update startOrderText
 			Text startOrderTextGA = getStartOrderText();
 			if (ci.getStartOrder() == null && !startOrderTextGA.getValue().equals(NO_START_ORDER_STRING)) {

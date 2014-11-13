@@ -14,6 +14,7 @@ import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPackage;
+import gov.redhawk.model.sca.IDisposable;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPackage;
@@ -72,6 +73,39 @@ public class ScaGraphitiModelAdapter extends EContentAdapter {
 					break;
 				default:
 					break;
+				}
+				break;
+			default:
+				break;
+			}
+		} else if (notification.getNotifier() instanceof LocalScaComponent) {
+			switch (notification.getFeatureID(LocalSca.class)) {
+			case ScaPackage.SCA_COMPONENT__STARTED:
+				LocalScaComponent localScaComponent = (LocalScaComponent) notification.getNotifier();
+				final Boolean started = (Boolean) notification.getNewValue();
+				this.modelMap.startStopComponent(localScaComponent, started);
+				break;
+			default:
+				break;
+			}
+
+			//enable when device diagram uses model map
+//			switch (notification.getFeatureID(ScaDevice.class)) {
+//			case ScaPackage.SCA_DEVICE__STARTED:
+//				if (notification.getNotifier() instanceof ScaDevice) {
+//					final Boolean started = (Boolean) notification.getNewValue();
+//					//this.modelMap.paintComponent(componentShape, started);
+//				}
+//				break;
+//			default:
+//				break;
+//			}
+
+			switch (notification.getFeatureID(IDisposable.class)) {
+			case ScaPackage.IDISPOSABLE__DISPOSED:
+				if (notification.getNotifier() instanceof Notifier) {
+					final Notifier notifier = (Notifier) notification.getNotifier();
+					notifier.eAdapters().remove(this);
 				}
 				break;
 			default:

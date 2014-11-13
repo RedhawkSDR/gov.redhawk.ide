@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ext;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EPackage;
@@ -30,6 +31,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
  * @see gov.redhawk.ide.sad.graphiti.ext.RHGxFactory
  * @model kind="package"
  *        annotation="http://www.eclipse.org/emf/2002/GenModel prefix='RHGx' codeFormatting='true' modelPluginVariables='org.eclipse.xtext.xbase.lib' contentTypeIdentifier='http://www.redhawk.gov/model/rhgext/1.0.0' operationReflection='false' modelDirectory='/gov.redhawk.ide.sad.graphiti.ui/src' basePackage='gov.redhawk.ide.sad.graphiti'"
+ *        annotation="http://www.eclipse.org/emf/2011/Xcore GenModel='http://www.eclipse.org/emf/2002/GenModel' Ecore='http://www.eclipse.org/emf/2002/Ecore'"
  * @generated
  */
 public interface RHGxPackage extends EPackage {
@@ -266,13 +268,22 @@ public interface RHGxPackage extends EPackage {
 	int COMPONENT_SHAPE__CHILDREN = RH_CONTAINER_SHAPE__CHILDREN;
 
 	/**
+	 * The feature id for the '<em><b>Started</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_SHAPE__STARTED = RH_CONTAINER_SHAPE_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>Component Shape</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_SHAPE_FEATURE_COUNT = RH_CONTAINER_SHAPE_FEATURE_COUNT + 0;
+	int COMPONENT_SHAPE_FEATURE_COUNT = RH_CONTAINER_SHAPE_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '<em>Component Supported Interface Stub</em>' data type.
@@ -444,6 +455,17 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getComponentShape();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.sad.graphiti.ext.ComponentShape#isStarted <em>Started</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Started</em>'.
+	 * @see gov.redhawk.ide.sad.graphiti.ext.ComponentShape#isStarted()
+	 * @see #getComponentShape()
+	 * @generated
+	 */
+	EAttribute getComponentShape_Started();
 
 	/**
 	 * Returns the meta object for data type '{@link mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub <em>Component Supported Interface Stub</em>}'.
@@ -650,6 +672,14 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EClass COMPONENT_SHAPE = eINSTANCE.getComponentShape();
+
+		/**
+		 * The meta object literal for the '<em><b>Started</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMPONENT_SHAPE__STARTED = eINSTANCE.getComponentShape_Started();
 
 		/**
 		 * The meta object literal for the '<em>Component Supported Interface Stub</em>' data type.

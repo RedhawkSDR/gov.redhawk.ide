@@ -20,12 +20,44 @@ import org.eclipse.graphiti.features.impl.Reason;
  * A representation of the model object '<em><b>Component Shape</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <p>
+ * The following features are supported:
+ * <ul>
+ *   <li>{@link gov.redhawk.ide.sad.graphiti.ext.ComponentShape#isStarted <em>Started</em>}</li>
+ * </ul>
+ * </p>
  *
  * @see gov.redhawk.ide.sad.graphiti.ext.RHGxPackage#getComponentShape()
  * @model
  * @generated
  */
 public interface ComponentShape extends RHContainerShape {
+	/**
+	 * Returns the value of the '<em><b>Started</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Started</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Started</em>' attribute.
+	 * @see #setStarted(boolean)
+	 * @see gov.redhawk.ide.sad.graphiti.ext.RHGxPackage#getComponentShape_Started()
+	 * @model unique="false"
+	 * @generated
+	 */
+	boolean isStarted();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.sad.graphiti.ext.ComponentShape#isStarted <em>Started</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Started</em>' attribute.
+	 * @see #isStarted()
+	 * @generated
+	 */
+	void setStarted(boolean value);
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

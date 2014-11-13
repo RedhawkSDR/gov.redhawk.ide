@@ -24,6 +24,7 @@ import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EGenericType;
@@ -36,6 +37,7 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.MmPackage;
+import org.eclipse.graphiti.mm.algorithms.styles.StylesPackage;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
 
@@ -214,6 +216,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		isInited = true;
 
 		// Initialize simple dependencies
+		StylesPackage.eINSTANCE.eClass();
+		PictogramsPackage.eINSTANCE.eClass();
 		EcorePackage.eINSTANCE.eClass();
 		MmPackage.eINSTANCE.eClass();
 
@@ -256,6 +260,15 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 */
 	public EClass getComponentShape() {
 		return componentShapeEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getComponentShape_Started() {
+		return (EAttribute) componentShapeEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -418,6 +431,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		rhContainerShapeEClass = createEClass(RH_CONTAINER_SHAPE);
 
 		componentShapeEClass = createEClass(COMPONENT_SHAPE);
+		createEAttribute(componentShapeEClass, COMPONENT_SHAPE__STARTED);
 
 		// Create data types
 		componentSupportedInterfaceStubEDataType = createEDataType(COMPONENT_SUPPORTED_INTERFACE_STUB);
@@ -523,6 +537,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		initEClass(componentShapeEClass, ComponentShape.class, "ComponentShape", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getComponentShape_Started(), theEcorePackage.getEBoolean(), "started", null, 0, 1, ComponentShape.class, !IS_TRANSIENT, !IS_VOLATILE,
+			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		op = addEOperation(componentShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIAddContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
@@ -559,6 +575,21 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 
 		// Create resource
 		createResource(eNS_URI);
+
+		// Create annotations
+		// http://www.eclipse.org/emf/2011/Xcore
+		createXcoreAnnotations();
+	}
+
+	/**
+	 * Initializes the annotations for <b>http://www.eclipse.org/emf/2011/Xcore</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createXcoreAnnotations() {
+		String source = "http://www.eclipse.org/emf/2011/Xcore";
+		addAnnotation(this, source, new String[] { "GenModel", "http://www.eclipse.org/emf/2002/GenModel", "Ecore", "http://www.eclipse.org/emf/2002/Ecore" });
 	}
 
 } // RHGxPackageImpl

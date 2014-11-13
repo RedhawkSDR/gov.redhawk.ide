@@ -15,7 +15,6 @@ import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
-import gov.redhawk.sca.ui.actions.StopAction;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -27,8 +26,6 @@ import org.eclipse.graphiti.ui.internal.parts.ContainerShapeEditPart;
 
 @SuppressWarnings("restriction")
 public class StopComponentFeature extends AbstractCustomFeature {
-
-	private final StopAction action = new StopAction();
 	
 	@Override
 	public String getDescription() {
@@ -59,8 +56,6 @@ public class StopComponentFeature extends AbstractCustomFeature {
 	public void execute(ICustomContext context) {
 		Object[] selection = DUtil.getSelectedEditParts();
 		for (Object obj : selection) {
-			this.action.setContext(obj);
-			this.action.run();
 			if (obj instanceof ContainerShapeEditPart) {
 				Object modelObj = ((ContainerShapeEditPart) obj).getModel();
 				if (modelObj instanceof ComponentShapeImpl) {
@@ -68,6 +63,7 @@ public class StopComponentFeature extends AbstractCustomFeature {
 					RoundedRectangle innerRoundedRectangle = (RoundedRectangle) DUtil.findFirstPropertyContainer(shape,
 						RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE);
 					innerRoundedRectangle.setStyle(StyleUtil.getStyleForComponentInner(getDiagram()));
+					shape.setStarted(false);  //GraphitiModelMap is listening
 				}
 			}
 		}

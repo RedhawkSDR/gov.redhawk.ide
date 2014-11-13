@@ -147,6 +147,8 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 	@Override
 	public void delete(IDeleteContext context) {
 
+		final ComponentShape componentShape = (ComponentShape) context.getPictogramElement();
+		
 		// set componentToDelete
 		final SadComponentInstantiation ciToDelete = (SadComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());
 
@@ -163,7 +165,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-
+				
 				// delete component from SoftwareAssembly
 				deleteComponentInstantiation(ciToDelete, sad);
 
@@ -281,6 +283,9 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		StyleUtil.createStyleForProvidesPort(getDiagram());
 		StyleUtil.createStyleForStartOrderEllipse(getDiagram());
 
+		//add runtime listeners
+		//((ComponentShapeImpl) componentShape).runtimeAdapter.addRuntimeListeners();
+		
 		// layout
 		layoutPictogramElement(componentShape);
 

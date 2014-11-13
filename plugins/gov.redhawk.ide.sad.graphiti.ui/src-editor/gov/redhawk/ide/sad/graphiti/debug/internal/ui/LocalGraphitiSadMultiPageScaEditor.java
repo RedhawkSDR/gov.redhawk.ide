@@ -17,6 +17,7 @@ import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.internal.ui.diagram.NewWaveformFromLocalWizard;
 import gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiSadMultiPageEditor;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
+import gov.redhawk.ide.sad.graphiti.ui.adapters.GraphitiDiagramAdapter;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.model.sca.RefreshDepth;
@@ -60,10 +61,12 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 	private ScaGraphitiModelAdapter scaListener;
 
 	private SadGraphitiModelAdapter sadlistener;
+	private GraphitiDiagramAdapter graphitiDiagramListener;
 	private LocalScaWaveform waveform;
 	private boolean isLocalSca;
 	private Resource mainResource;
 	private SoftwareAssembly sad;
+	private GraphitiModelMap modelMap;
 
 	@Override
 	protected void createModel() {
@@ -225,7 +228,7 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 			}
 		}
 
-		final GraphitiModelMap modelMap = new GraphitiModelMap(this, sad, waveform);
+		modelMap = new GraphitiModelMap(this, sad, waveform);
 
 		if (isLocalSca) {
 			// Use the SCA Model are source to build the SAD when we are in the chalkboard since the SAD file isn't
@@ -237,6 +240,7 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 		}
 		getEditingDomain().getCommandStack().flush();
 
+		this.graphitiDiagramListener = new GraphitiDiagramAdapter(modelMap);
 		this.sadlistener = new SadGraphitiModelAdapter(modelMap);
 		this.scaListener = new ScaGraphitiModelAdapter(modelMap) {
 			@Override
@@ -265,10 +269,10 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 			@Override
 			public void execute() {
 				scaListener.addAdapter(waveform);
-				//waveform.eAdapters().add(LocalGraphitiSadMultiPageScaEditor.this.scaListener);
 			}
 		});
 		sad.eAdapters().add(this.sadlistener);
+		
 
 		if (LocalGraphitiSadMultiPageScaEditor.DEBUG.enabled) {
 			try {
@@ -288,6 +292,12 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 				sad.eAdapters().remove(this.sadlistener);
 			}
 			this.sadlistener = null;
+		}
+		if (this.graphitiDiagramListener != null) {
+			if (this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram() != null) {
+				this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram().eAdapters().remove(this.graphitiDiagramListener);
+			}
+			this.graphitiDiagramListener = null;
 		}
 		if (this.scaListener != null) {
 			//final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
@@ -329,6 +339,12 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 
 				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
 				
+				//register graphitiDiagramListener
+				this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram().eAdapters().add(graphitiDiagramListener);
+				
+				//reflect runtime aspects here
+				this.modelMap.reflectRuntimeStatus();
+				
 				// set layout for sandbox editors
 				DUtil.layout(editor);
 
@@ -344,6 +360,7 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 			}
 		}
 	}
+	
 
 	@Override
 	public List<Object> getOutlineItems() {
