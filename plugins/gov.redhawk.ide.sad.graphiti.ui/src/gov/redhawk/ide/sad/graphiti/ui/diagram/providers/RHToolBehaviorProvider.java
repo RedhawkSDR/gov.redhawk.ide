@@ -27,6 +27,7 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByServicePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.sad.graphiti.ui.palette.RHGraphitiPaletteFilter;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
@@ -75,6 +76,9 @@ import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
+
+	private RHGraphitiPaletteFilter paletteFilter;
+	private final PaletteCompartmentEntry componentCompartment = new PaletteCompartmentEntry("Components", null);
 
 	public RHToolBehaviorProvider(final IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
@@ -285,7 +289,8 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	 */
 	private PaletteCompartmentEntry getComponentCompartmentEntry(final ComponentsContainer container) {
 
-		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Components", null);
+		final PaletteCompartmentEntry compartmentEntry = componentCompartment;
+//		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Components", null);
 
 		// add all palette entries into a entriesToRemove list.
 		final List<SpdToolEntry> entriesToRemove = new ArrayList<SpdToolEntry>();
@@ -320,11 +325,13 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 				final SpdToolEntry entry = entriesToRemove.get(i);
 				if (entry.getSpdID().equals(spd.getId())) {
 					foundTool = true;
-					entriesToRemove.remove(i);
+					if (passesFilter(entry.getLabel())) {
+						entriesToRemove.remove(i);
+					}
 					break;
 				}
 			}
-			if (!foundTool) {
+			if (!foundTool && passesFilter(spd.getName())) {
 				// special way of instantiating create feature
 				// allows us to know which palette tool was used
 				ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), spd);
@@ -378,7 +385,9 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
 			if (desc instanceof ComponentDesc) {
 				ComponentDesc compDesc = (ComponentDesc) desc;
-				entries.addAll(createPaletteEntries(compDesc));
+				if (passesFilter(compDesc.getName())) {
+					entries.addAll(createPaletteEntries(compDesc));
+				}
 			}
 		}
 
@@ -455,6 +464,13 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		});
 	}
 
+	private boolean passesFilter(String id) {
+		if (paletteFilter == null || paletteFilter.getFilter().isEmpty() || paletteFilter.matches(id)) {
+			return true;
+		}
+		return false;
+	}
+
 	@Override
 	public ICustomFeature getDoubleClickFeature(IDoubleClickContext context) {
 		ICustomFeature customFeature = new FindByEditFeature(getFeatureProvider());
@@ -463,6 +479,10 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		}
 
 		return super.getDoubleClickFeature(context);
+	}
+	
+	public void setFilter(RHGraphitiPaletteFilter filter) {
+		paletteFilter = filter;
 	}
 
 	@Override
