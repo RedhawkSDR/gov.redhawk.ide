@@ -100,7 +100,6 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	// Default start order text value for components that do not have a start order declared
 	private static final String NO_START_ORDER_STRING = "*";
 
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
