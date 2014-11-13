@@ -212,7 +212,9 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		// WORKSPACE Compartment
 		if (isSandbox) {
 			PaletteCompartmentEntry workspaceCompartmentEntry = getWorkspaceCompartmentEntry();
-			compartments.add(workspaceCompartmentEntry);
+			if (!workspaceCompartmentEntry.getToolEntries().isEmpty()) {
+				compartments.add(workspaceCompartmentEntry);
+			}
 		}
 
 		return compartments.toArray(new IPaletteCompartmentEntry[compartments.size()]);
