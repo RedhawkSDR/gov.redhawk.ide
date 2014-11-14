@@ -147,8 +147,6 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 	@Override
 	public void delete(IDeleteContext context) {
 
-		final ComponentShape componentShape = (ComponentShape) context.getPictogramElement();
-		
 		// set componentToDelete
 		final SadComponentInstantiation ciToDelete = (SadComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());
 
@@ -165,7 +163,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				
+
 				// delete component from SoftwareAssembly
 				deleteComponentInstantiation(ciToDelete, sad);
 
@@ -270,6 +268,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		// create shape
 		ComponentShape componentShape = RHGxFactory.eINSTANCE.createComponentShape();
 		componentShape.init(context, this);
+
 		// set shape location to user's selection
 		Graphiti.getGaLayoutService().setLocation(componentShape.getGraphicsAlgorithm(), context.getX(), context.getY());
 
@@ -283,14 +282,56 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		StyleUtil.createStyleForProvidesPort(getDiagram());
 		StyleUtil.createStyleForStartOrderEllipse(getDiagram());
 
-		//add runtime listeners
-		//((ComponentShapeImpl) componentShape).runtimeAdapter.addRuntimeListeners();
-		
+		// add runtime listeners
+		// ((ComponentShapeImpl) componentShape).runtimeAdapter.addRuntimeListeners();
+
 		// layout
 		layoutPictogramElement(componentShape);
 
+		// Check for any needed location adjustments
+		adjustComponentLocation(componentShape);
+
 		return componentShape;
 
+	}
+
+	/**
+	 * Checks to make sure the new component is not being stacked on top of an existing component
+	 * @param componentShape
+	 */
+	private void adjustComponentLocation(ComponentShape componentShape) {
+		// if any overlap occurs (can happen when launching using the SCA Explorer) adjust x/y-coords
+		Diagram diagram = getFeatureProvider().getDiagramTypeProvider().getDiagram();
+		EList<Shape> children = diagram.getChildren();
+		for (Shape child : children) {
+			boolean xAdjusted = false;
+			int xAdjustment = 0;
+			if (child.equals(componentShape)) {
+				continue;
+			}
+			GraphicsAlgorithm childGa = child.getGraphicsAlgorithm();
+			int componentWidth = componentShape.getGraphicsAlgorithm().getWidth();
+			int componentHeight = componentShape.getGraphicsAlgorithm().getHeight();
+
+			int componentX = componentShape.getGraphicsAlgorithm().getX();
+			int componentY = componentShape.getGraphicsAlgorithm().getY();
+
+			boolean xOverlapped = componentX >= childGa.getX() && componentX <= (childGa.getX() + childGa.getWidth()) || childGa.getX() >= componentX
+				&& childGa.getX() <= componentX + componentWidth;
+			boolean yOverlapped = componentY >= childGa.getY() && componentY <= (childGa.getY() + childGa.getHeight()) || childGa.getY() >= componentY
+				&& childGa.getY() <= componentY + componentHeight;
+			// If there is any overlap, then move new component all the way to the right of the old component.
+			if (xOverlapped && yOverlapped) {
+				xAdjustment += childGa.getX() + childGa.getWidth() + 20; // TODO: Make BUFFER constant field
+				xAdjusted = true;
+			}
+			if (xAdjusted) {
+				componentShape.getGraphicsAlgorithm().setX(xAdjustment);
+				// If we've made any adjustments, we need to make a recursive call to make sure we create a new
+				// collision
+				adjustComponentLocation(componentShape);
+			}
+		}
 	}
 
 	@Override
@@ -485,10 +526,10 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		EList<SadComponentInstantiation> componentInstantiationsInStartOrder = sad.getComponentInstantiationsInStartOrder();
 
 		// if assembly controller was deleted (or component that used to be assembly controller was deleted)
-		//set a new assembly controller
+		// set a new assembly controller
 		AssemblyController assemblyController = getAssemblyController(featureProvider, diagram);
-		if ((assemblyController == null || assemblyController.getComponentInstantiationRef().getInstantiation() == null) 
-				&& componentInstantiationsInStartOrder.size() > 0) {
+		if ((assemblyController == null || assemblyController.getComponentInstantiationRef().getInstantiation() == null)
+			&& componentInstantiationsInStartOrder.size() > 0) {
 			// assign assembly controller assign to first component
 			assemblyController = SadFactory.eINSTANCE.createAssemblyController();
 			SadComponentInstantiation ci = componentInstantiationsInStartOrder.get(0);
@@ -496,7 +537,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 			sadComponentInstantiationRef.setInstantiation(ci);
 			assemblyController.setComponentInstantiationRef(sadComponentInstantiationRef);
 			sad.setAssemblyController(assemblyController);
-			
+
 			// If the component has a start order defined, update it to run first
 			if (ci.getStartOrder() != null) {
 				ci.setStartOrder(BigInteger.ZERO);
@@ -509,43 +550,44 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 			// first check to make sure start order is set to zero
 			if (ci != null && ci.getStartOrder() != null && ci.getStartOrder() != BigInteger.ZERO) {
 				TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-				TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack(); 
+				TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 				stack.execute(new RecordingCommand(editingDomain) {
-					
+
 					@Override
 					protected void doExecute() {
 						ci.setStartOrder(BigInteger.ZERO);
 					}
 				});
 			}
-			
+
 			// remove assembly controller from list, it has already been updated
 			componentInstantiationsInStartOrder.remove(assemblyController.getComponentInstantiationRef().getInstantiation());
 		}
-		
+
 		// set start order
-		for (final SadComponentInstantiation ci : componentInstantiationsInStartOrder) { 
+		for (final SadComponentInstantiation ci : componentInstantiationsInStartOrder) {
 			// Don't update start order if it has not already been declared for this component
 			if (ci.getStartOrder() != null) {
 				startOrder = startOrder.add(BigInteger.ONE);
-				
+
 				// Only call the update if a change is needed
 				if (ci.getStartOrder().intValue() != startOrder.intValue()) {
 					final BigInteger newStartOrder = startOrder;
 					TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 					TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 					stack.execute(new RecordingCommand(editingDomain) {
-						
+
 						@Override
 						protected void doExecute() {
 							ci.setStartOrder(newStartOrder);
 						}
 					});
 				}
-			} 
+			}
 
 			// get external ports
-			// TODO: This breaks the assembly update logic, can end up changing start order ellipse style for non-assembly controllers
+			// TODO: This breaks the assembly update logic, can end up changing start order ellipse style for
+			// non-assembly controllers
 //			ExternalPorts externalPorts = DUtil.getDiagramSAD(featureProvider, diagram).getExternalPorts();
 //
 //			List<PictogramElement> elements = Graphiti.getLinkService().getPictogramElements(diagram, ci);
