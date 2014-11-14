@@ -72,6 +72,7 @@ import org.eclipse.graphiti.palette.IToolEntry;
 import org.eclipse.graphiti.palette.impl.ConnectionCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
+import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -334,8 +335,24 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 				// special way of instantiating create feature
 				// allows us to know which palette tool was used
 				ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), spd);
-				final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature);
-				compartmentEntry.addToolEntry(entry);
+				if (spd.getImplementation().size() > 1) {
+					StackEntry stackEntry = new StackEntry(spd.getName() + spd.getImplementation().get(0).getId(), spd.getDescription(),
+						ImageProvider.IMG_COMPONENT_PLACEMENT);
+					compartmentEntry.addToolEntry(stackEntry);
+					List<IToolEntry> stackEntries = new ArrayList<IToolEntry>();
+					for (Implementation impl : spd.getImplementation()) {
+						SpdToolEntry entry = new SpdToolEntry(spd.getName() + " (" + impl.getId() + ")", spd.getDescription(), EcoreUtil.getURI(spd),
+							spd.getId(), null, ImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
+						stackEntries.add(entry);
+					}
+					sort(stackEntries);
+					for (IToolEntry entry : stackEntries) {
+						stackEntry.addCreationToolEntry((SpdToolEntry) entry);
+					}
+				} else {
+					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature);
+					compartmentEntry.addToolEntry(entry);
+				}
 			}
 		}
 		for (final IToolEntry entry : entriesToRemove) {
@@ -343,10 +360,10 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		}
 
 		// Sort the children and return the new list of components
-		final ArrayList<SpdToolEntry> entries = new ArrayList<SpdToolEntry>();
+		final ArrayList<IToolEntry> entries = new ArrayList<IToolEntry>();
 		for (final IToolEntry entry : compartmentEntry.getToolEntries()) {
-			if (entry instanceof SpdToolEntry) {
-				entries.add((SpdToolEntry) entry);
+			if (entry instanceof IToolEntry) {
+				entries.add((IToolEntry) entry);
 			}
 		}
 		sort(entries);
@@ -369,7 +386,7 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		IResourceFactoryRegistry registry = ResourceFactoryPlugin.getDefault().getResourceFactoryRegistry();
 		registry.addListener(listener);
 
-		List<SpdToolEntry> entries = new ArrayList<SpdToolEntry>();
+		List<IToolEntry> entries = new ArrayList<IToolEntry>();
 		for (ResourceDesc desc : registry.getResourceDescriptors()) {
 			String category = desc.getCategory();
 			List<PaletteEntry> containerList = containerMap.get(category);
@@ -381,11 +398,22 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 				containerList = new ArrayList<PaletteEntry>();
 				containerMap.put(category, containerList);
 			}
-
+			List<IToolEntry> newEntries = new ArrayList<IToolEntry>();
 			if (desc instanceof ComponentDesc) {
 				ComponentDesc compDesc = (ComponentDesc) desc;
 				if (passesFilter(compDesc.getName())) {
-					entries.addAll(createPaletteEntries(compDesc));
+					newEntries = createPaletteEntries(compDesc);
+					if (newEntries != null && newEntries.size() > 1) {
+						sort(newEntries);
+						IToolEntry firstEntry = newEntries.get(0);
+						StackEntry stackEntry = new StackEntry(firstEntry.getLabel(), ((SpdToolEntry) firstEntry).getDescription(), firstEntry.getIconId());
+						entries.add(stackEntry);
+						for (IToolEntry entry : newEntries) {
+							stackEntry.addCreationToolEntry((SpdToolEntry) entry);
+						}
+					} else {
+						entries.addAll(newEntries);
+					}
 				}
 			}
 		}
@@ -422,8 +450,8 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	 * Creates a new SpdToolEntry for each implementation in the component description.
 	 * Also assigns the createComponentFeature to the palette entry so that the diagram knows which shape to create.
 	 */
-	private List<SpdToolEntry> createPaletteEntries(ComponentDesc desc) {
-		List<SpdToolEntry> retVal = new ArrayList<SpdToolEntry>(desc.getImplementationIds().size());
+	private List<IToolEntry> createPaletteEntries(ComponentDesc desc) {
+		List<IToolEntry> retVal = new ArrayList<IToolEntry>(desc.getImplementationIds().size());
 		if (desc.getImplementationIds().size() == 1) {
 			ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), desc.getSoftPkg());
 			SpdToolEntry entry = new SpdToolEntry(desc.getName(), desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(),
@@ -440,11 +468,11 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		return retVal;
 	}
 
-	private void sort(List<SpdToolEntry> entries) {
-		Collections.sort(entries, new Comparator<SpdToolEntry>() {
+	private void sort(List<IToolEntry> entries) {
+		Collections.sort(entries, new Comparator<IToolEntry>() {
 
 			@Override
-			public int compare(final SpdToolEntry o1, final SpdToolEntry o2) {
+			public int compare(final IToolEntry o1, final IToolEntry o2) {
 				final String str1 = o1.getLabel();
 				final String str2 = o2.getLabel();
 				if (str1 == null) {
