@@ -21,4 +21,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: REDHAWK
 Export-Package: gov.redhawk.ide.swtbot,
- gov.redhawk.ide.swtbot.diagram
+ gov.redhawk.ide.swtbot.diagram,
+ gov.redhawk.ide.swtbot.scaExplorer

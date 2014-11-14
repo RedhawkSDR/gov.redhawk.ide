@@ -13,6 +13,7 @@ package gov.redhawk.ide.swtbot.diagram;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -23,8 +24,11 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
+import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
@@ -32,6 +36,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefViewer;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
@@ -444,5 +449,170 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Waits until Connection displays in Chalkboard Diagram
+	 * @param componentName
+	 */
+	public static void waitUntilConnectionDisplaysInDiagram(SWTWorkbenchBot bot, SWTBotGefEditor editor, 
+			final String targetComponentName) {
+		SWTBotGefEditPart targetComponentEditPart = editor.getEditPart(targetComponentName);
+		final ContainerShape targetContainerShape = (ContainerShape) targetComponentEditPart.part().getModel();
+		
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return targetComponentName + " Target Component's connection did not load into Chalkboard Diagram";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				if (DUtil.getIncomingConnectionsContainedInContainerShape(targetContainerShape).size() > 0) {
+					return true;
+				}
+				return false;
+			}
+		});
+	}
+	
+	/**
+	 * Waits until Connection disappears in Chalkboard Diagram
+	 * @param componentName
+	 */
+	public static void waitUntilConnectionDisappearsInDiagram(SWTWorkbenchBot bot, SWTBotGefEditor editor,
+		final String targetComponentName) {
+		
+		SWTBotGefEditPart targetComponentEditPart = editor.getEditPart(targetComponentName);
+		final ContainerShape targetContainerShape = (ContainerShape) targetComponentEditPart.part().getModel();
+		
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return targetComponentName + " Target Component's connection did not disappear diagram";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				if (DUtil.getIncomingConnectionsContainedInContainerShape(targetContainerShape).size() < 1) {
+					return true;
+				}
+				return false;
+			}
+		});
+	}
+	
+	/**
+	 * Start component from Chalkboard Diagram
+	 * @param componentName
+	 */
+	public static void startComponentFromDiagram(SWTBotGefEditor editor, String componentName) {
+		editor.setFocus();
+		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
+		componentPart.select();
+		editor.clickContextMenu("Start");
+	}
+	
+	/**
+	 * Stop component from Chalkboard Diagram
+	 * @param componentName
+	 */
+	public static void stopComponentFromDiagram(SWTBotGefEditor editor, String componentName) {
+		editor.setFocus();
+		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
+		componentPart.select();
+		editor.clickContextMenu("Stop");
+	}
+	
+	/**
+	 * Waits until Component displays in Chalkboard Diagram
+	 * @param componentName
+	 */
+	public static void waitUntilComponentDisappearsInChalkboardDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, 
+		final String componentName) {
+		
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return componentName + " Component did not disappear from Chalkboard Diagram";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				if (editor.getEditPart(componentName) == null) {
+						return true;
+				}
+				return false;
+			}
+		});
+	}
+	
+	/**
+	 * Waits until Component appears started in ChalkboardDiagram
+	 * @param componentName
+	 */
+	public static void waitUntilComponentAppearsStartedInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor,
+		final String componentName) {
+		
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return componentName + " Component did not appear started in Diagram";
+			}
+			@Override
+			public boolean test() throws Exception {
+				ComponentShapeImpl componentShape = (ComponentShapeImpl) editor.getEditPart(componentName).part().getModel();
+				RoundedRectangle innerRoundedRectangle = (RoundedRectangle) componentShape.getInnerContainerShape().getGraphicsAlgorithm();
+				Diagram diagram = DUtil.findDiagram(componentShape);
+				return innerRoundedRectangle.getStyle().equals(StyleUtil.createStyleForComponentInnerStarted(diagram));
+			}
+		});
+	}
+	
+
+	
+	/**
+	 * Waits until Component appears stopped in ChalkboardDiagram
+	 * @param componentName
+	 */
+	public static void waitUntilComponentAppearsStoppedInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor,
+			final String componentName) {
+		
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return componentName + " Component did not appear stopped in Diagram";
+			}
+			@Override
+			public boolean test() throws Exception {
+				ComponentShapeImpl componentShape = (ComponentShapeImpl) editor.getEditPart(componentName).part().getModel();
+				RoundedRectangle innerRoundedRectangle = (RoundedRectangle) componentShape.getInnerContainerShape().getGraphicsAlgorithm();
+				Diagram diagram = DUtil.findDiagram(componentShape);
+				return innerRoundedRectangle.getStyle().equals(StyleUtil.createStyleForComponentInner(diagram));
+			}
+		});
+	}
+	
+	/**
+	 * Waits until Component displays in Chalkboard Diagram
+	 * @param componentName
+	 */
+	public static void waitUntilComponentDisplaysInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor,
+			final String componentName) {
+		
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return componentName + " Component did not appear in Diagram";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				if (editor.getEditPart(componentName) != null) {
+						return true;
+				}
+				return false;
+			}
+		});
 	}
 }
