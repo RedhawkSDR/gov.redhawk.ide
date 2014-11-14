@@ -125,8 +125,7 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		if (o1 instanceof EObject && o2 instanceof EObject) {
 			return EcoreUtil.equals((EObject) o1, (EObject) o2);
 		}
-		// Both BOs have to be EMF objects. Otherwise the IndependenceSolver
-		// does the job.
+		// Both BOs have to be EMF objects. Otherwise the IndependenceSolver does the job.
 		return false;
 	}
 
@@ -136,9 +135,9 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	@Override
 	public PictogramElement getSelection(PictogramElement originalPe, PictogramElement[] oldSelection) {
 
-		if (originalPe instanceof FixPointAnchor || DUtil.doesPictogramContainProperty(originalPe, new String[] {// DiagramUtil.SHAPE_providesPortsContainerShape,
-																													// DiagramUtil.SHAPE_usesPortsContainerShape,
-				RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE, })) {
+		if (originalPe instanceof FixPointAnchor
+			|| DUtil.doesPictogramContainProperty(originalPe, new String[] { RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE,
+				RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE, })) {
 			return null;
 		}
 
@@ -480,7 +479,7 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
 		return super.getDoubleClickFeature(context);
 	}
-	
+
 	public void setFilter(RHGraphitiPaletteFilter filter) {
 		paletteFilter = filter;
 	}
