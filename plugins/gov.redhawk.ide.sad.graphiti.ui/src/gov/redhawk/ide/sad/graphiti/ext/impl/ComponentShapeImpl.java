@@ -131,13 +131,28 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	public void setStarted(boolean newStarted) {
 		boolean oldStarted = started;
 		started = newStarted;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.COMPONENT_SHAPE__STARTED, oldStarted, started));
+	
+		//update color according to value
+		final Diagram diagram = DUtil.findDiagram(this);
+		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
+		if (innerRoundedRectangle != null) {
+			if (newStarted) {
+				//started
+				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInnerStarted(diagram));
+			} else {
+				//not started
+				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInner(diagram));
+			}
+		}
+		
+		
 	}
 
 	/**

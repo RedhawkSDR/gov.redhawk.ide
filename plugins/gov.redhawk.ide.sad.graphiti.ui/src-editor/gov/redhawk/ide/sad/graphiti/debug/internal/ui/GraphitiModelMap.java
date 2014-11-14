@@ -524,10 +524,9 @@ public class GraphitiModelMap {
 	 * @param oldValue
 	 */
 	private void delete(@Nullable final SadComponentInstantiation sadComponentInstantiation) {
-		if (sadComponentInstantiation == null) {
+		if (sadComponentInstantiation == null || editor.isDisposed()) {
 			return;
 		}
-		
 		//setup to perform diagram operations
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		final IFeatureProvider featureProvider = provider.getFeatureProvider();
@@ -558,7 +557,7 @@ public class GraphitiModelMap {
 	 * @param connection
 	 */
 	private void delete(@Nullable final SadConnectInterface connection) {
-		if (connection == null) {
+		if (connection == null || editor.isDisposed()) {
 			return;
 		}
 		
@@ -675,16 +674,7 @@ public class GraphitiModelMap {
 		}
 		final SadComponentInstantiation oldComp = nodeMapEntry.getProfile();
 		if (oldComp != null) {
-			Job job = new Job("Removing " + comp.getInstantiationIdentifier()) {
-
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					delete(oldComp);
-					return Status.OK_STATUS;
-				}
-
-			};
-			job.schedule();
+			delete(oldComp);
 		}
 	}
 
@@ -767,16 +757,7 @@ public class GraphitiModelMap {
 		}
 		final SadConnectInterface oldSadInterface = connectionMap.getProfile();
 		if (oldSadInterface != null) {
-			Job job = new Job("Disconnect connection " + conn.getId()) {
-
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					delete(oldSadInterface);
-					return Status.OK_STATUS;
-				}
-
-			};
-			job.schedule();
+			delete(oldSadInterface);
 		}
 
 	}
@@ -795,6 +776,9 @@ public class GraphitiModelMap {
 
 		//setup to perform diagram operations
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+		final IFeatureProvider featureProvider = provider.getFeatureProvider();
+		final TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		
 		final Diagram diagram = provider.getDiagram();
 		
 		//get pictogram for component
@@ -804,7 +788,15 @@ public class GraphitiModelMap {
 			Job job = new Job("Syncronizing diagram start/stop status: " + localScaComponent.getInstantiationIdentifier()) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					paintComponent(componentShape, started);
+					// Perform business object manipulation in a Command
+					TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+					stack.execute(new RecordingCommand(editingDomain) {
+						@Override
+						protected void doExecute() {
+							//paint component
+							componentShape.setStarted(started);
+						}
+					});
 					return Status.OK_STATUS;
 				}
 			};
@@ -908,7 +900,10 @@ public class GraphitiModelMap {
 		//setup to perform diagram operations
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		final Diagram diagram = provider.getDiagram();
-
+		final IFeatureProvider featureProvider = provider.getFeatureProvider();
+		final TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		
+		
 		Job job = new Job("Syncronizing component started status") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -916,11 +911,21 @@ public class GraphitiModelMap {
 					final NodeMapEntry nodeMapEntry = nodes.get(nodeKey);
 					
 					//get pictogram for component
-					ComponentShape componentShape = (ComponentShape) DUtil.getPictogramElementForBusinessObject(diagram, nodeMapEntry.getProfile(), ComponentShapeImpl.class);
+					final ComponentShape componentShape = (ComponentShape) DUtil.getPictogramElementForBusinessObject(diagram, nodeMapEntry.getProfile(), ComponentShapeImpl.class);
 					
-					//paint component accordingly
-					paintComponent(componentShape, nodeMapEntry.getLocalScaComponent().getStarted());
-					
+					final boolean started = nodeMapEntry.getLocalScaComponent().getStarted();
+					if (started) {
+						
+						// Perform business object manipulation in a Command
+						TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+						stack.execute(new RecordingCommand(editingDomain) {
+							@Override
+							protected void doExecute() {
+								//paint component
+								componentShape.setStarted(true);
+							}
+						});
+					}
 				}
 				return Status.OK_STATUS;
 			}

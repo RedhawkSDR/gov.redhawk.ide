@@ -213,10 +213,12 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 			}
 		}
 		
-		// add runtime features
+		// add runtime features, start/stop component only work in sandbox and targetSDR, not design time
 		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof SadComponentInstantiation && DUtil.isDiagramLocal(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
+			Diagram diagram = DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]);
+			if (obj instanceof SadComponentInstantiation
+					&& (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
 				retList.add(new StartComponentFeature(this));
 				retList.add(new StopComponentFeature(this));
 			}

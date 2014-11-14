@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime;
 
+import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
@@ -21,6 +22,7 @@ import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.ui.internal.parts.ContainerShapeEditPart;
 
 @SuppressWarnings("restriction")
@@ -42,9 +44,12 @@ public class StartComponentFeature extends AbstractCustomFeature {
 
 	@Override
 	public boolean canExecute(ICustomContext context) {
-		Object object = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-
-		if (object instanceof SadComponentInstantiation && DUtil.isDiagramLocal(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
+		ComponentShape componentShape = (ComponentShape) context.getPictogramElements()[0];
+		Object object = DUtil.getBusinessObject(componentShape);
+		Diagram diagram = DUtil.findDiagram((ContainerShape) componentShape);
+		if (object instanceof SadComponentInstantiation
+				&& !componentShape.isStarted()
+				&& (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
 			return true;
 		}
 
