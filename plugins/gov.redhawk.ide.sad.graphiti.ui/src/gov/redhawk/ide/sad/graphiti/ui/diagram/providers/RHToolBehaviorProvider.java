@@ -293,10 +293,10 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 //		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Components", null);
 
 		// add all palette entries into a entriesToRemove list.
-		final List<SpdToolEntry> entriesToRemove = new ArrayList<SpdToolEntry>();
+		final List<IToolEntry> entriesToRemove = new ArrayList<IToolEntry>();
 		for (final Object obj : compartmentEntry.getToolEntries()) {
-			if (obj instanceof SpdToolEntry) {
-				entriesToRemove.add((SpdToolEntry) obj);
+			if (obj instanceof SpdToolEntry || obj instanceof StackEntry) {
+				entriesToRemove.add((IToolEntry) obj);
 			}
 		}
 
@@ -322,8 +322,8 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 			}
 			boolean foundTool = false;
 			for (int i = 0; i < entriesToRemove.size(); i++) {
-				final SpdToolEntry entry = entriesToRemove.get(i);
-				if (entry.getSpdID().equals(spd.getId())) {
+				final IToolEntry entry = entriesToRemove.get(i);
+				if (entry.getLabel().equals(spd.getId())) {
 					foundTool = true;
 					if (passesFilter(entry.getLabel())) {
 						entriesToRemove.remove(i);
