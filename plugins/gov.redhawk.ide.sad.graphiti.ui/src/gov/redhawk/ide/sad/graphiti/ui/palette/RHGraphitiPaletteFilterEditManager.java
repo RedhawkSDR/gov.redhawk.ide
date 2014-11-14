@@ -67,9 +67,6 @@ public class RHGraphitiPaletteFilterEditManager extends DirectEditManager {
 
 			@Override
 			public void modifyText(ModifyEvent e) {
-				if (retVal.getControl() == null) {
-					System.out.println("FFFFFFFFFFFFFF");
-				}
 				String text = textControl.getText().trim();
 				filter.setFilter(text);
 				((RHGraphitiPaletteFilterFigure) ((RHGraphitiPaletteFilterEditPart) getEditPart()).getFigure()).setText(text);

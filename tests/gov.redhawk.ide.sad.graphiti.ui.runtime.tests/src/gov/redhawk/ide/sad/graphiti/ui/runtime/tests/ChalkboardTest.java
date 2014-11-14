@@ -21,7 +21,6 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
@@ -41,44 +40,28 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 	public void checkChalkboardComponents() {
 
 		// Open Chalkboard Graphiti Diagram
-		System.out.println("STEP 1");
 		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
 		bot.sleep(10000);
-		System.out.println("STEP 2");
 		editor = gefBot.gefEditor(CHALKBOARD);
-		System.out.println("STEP 3");
 		editor.setFocus();
 
 		// Add component to diagram from palette
-		System.out.println("STEP 4");
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
-		System.out.println("STEP 5");
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
-		System.out.println("STEP 6");
 		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
 
 		// Add component to diagram from Target SDR
-		System.out.println("STEP 7");
 		DiagramTestUtils.dragFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
-		System.out.println("STEP 8");
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
 		
 		// Open the chalkboard with components already launched
-		System.out.println("STEP 9");
 		editor.close();
-		System.out.println("STEP 10");
 		SWTBotView scaExplorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
-		System.out.println("STEP 11");
 		scaExplorerView.setFocus();
-		System.out.println("STEP 12");
 		scaExplorerView.bot().tree().expandNode("Sandbox", "Chalkboard", HARD_LIMIT + "_1");
-		System.out.println("STEP 13");
 		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
-		System.out.println("STEP 14");
 		editor = gefBot.gefEditor(CHALKBOARD);
-		System.out.println("STEP 15");
 		Assert.assertNotNull(editor.getEditPart(HARD_LIMIT));
-		System.out.println("STEP 16");
 	}
 
 	/**
@@ -87,25 +70,17 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 	 */
 	@Test
 	public void checkFindByNotInSandbox() {
-		System.out.println("STEP 1");
 		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
-		System.out.println("STEP 2");
 		editor = gefBot.gefEditor(CHALKBOARD);
-		System.out.println("STEP 3");
 		editor.setFocus();
-		System.out.println("STEP 4");
 		String[] findByList = { FindByUtils.FIND_BY_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, FindByUtils.FIND_BY_EVENT_CHANNEL,
 			FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
 		
-		System.out.println("STEP 5");
 		for (String findByType : findByList) {
 			try {
-				System.out.println("STEP 6");
 				DiagramTestUtils.dragFromPaletteToDiagram(editor, findByType, 0, 0);
-				System.out.println("STEP 7");
 				Assert.fail(); // The only way to get here is if the FindBy type appears in the Palette
 			} catch (WidgetNotFoundException e) {
-				System.out.println("STEP 8");
 				Assert.assertTrue(e.getMessage(), findByType.matches(".*" + e.getMessage() + ".*"));
 			}
 		}

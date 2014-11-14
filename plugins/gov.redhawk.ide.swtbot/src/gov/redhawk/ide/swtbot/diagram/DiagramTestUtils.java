@@ -110,21 +110,13 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @param componentName
 	 */
 	public static void openChalkboardFromSandbox(SWTGefBot gefBot) {
-		System.out.println("STEP 2-1");
 		SWTBotView scaExplorerView = gefBot.viewByTitle("SCA Explorer");
-		System.out.println("STEP 2-2");
 		SWTBotTree scaTree = scaExplorerView.bot().tree();
-		System.out.println("STEP 2-3");
 		SWTBotTreeItem chalkboard = scaTree.expandNode("Sandbox", "Chalkboard");
-		System.out.println("STEP 2-4");
 		chalkboard.select();
-		System.out.println("STEP 2-5");
 		SWTBotMenu openWith = chalkboard.contextMenu("Open With");
-		System.out.println("STEP 2-6");
 		SWTBotMenu graphitiChalkboard = openWith.menu("Graphiti Chalkboard");
-		System.out.println("STEP 2-7");
 		graphitiChalkboard.click();
-		System.out.println("STEP 2-8");
 	}
 	
 	/**

@@ -49,9 +49,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 /**
  * 
  */
+@SuppressWarnings("restriction")
 public class RHGraphitiPaletteRoot extends PaletteRoot {
 
-	private static boolean DND_FROM_PALETTE = true; //
+	private static final boolean DND_FROM_PALETTE = true;
 
 	private IDiagramTypeProvider diagramTypeProvider;
 	private PaletteContainer paletteTools = null;

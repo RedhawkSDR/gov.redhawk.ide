@@ -16,9 +16,7 @@ import org.eclipse.gef.EditPartListener;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
-import org.eclipse.gef.requests.DirectEditRequest;
 import org.eclipse.gef.ui.palette.PaletteViewer;
-import org.eclipse.jface.viewers.TextCellEditor;
 
 /**
  * 

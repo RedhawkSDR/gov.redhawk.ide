@@ -20,7 +20,6 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class StartOrderRuntimeTest extends AbstractGraphitiRuntimeTest {
@@ -36,13 +35,9 @@ public class StartOrderRuntimeTest extends AbstractGraphitiRuntimeTest {
 	@Test
 	public void removeStartOrderIconTest() {
 		// Prepare Graphiti diagram
-		System.out.println("STEP 1");
 		SWTBotView scaExplorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
-		System.out.println("STEP 2");
 		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
-		System.out.println("STEP 3");
 		editor = gefBot.gefEditor(CHALKBOARD);
-		System.out.println("STEP 4");
 		editor.setFocus();
 
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
