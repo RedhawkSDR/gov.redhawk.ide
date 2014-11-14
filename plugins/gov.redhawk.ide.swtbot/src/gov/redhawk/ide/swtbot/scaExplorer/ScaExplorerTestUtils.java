@@ -12,7 +12,9 @@ package gov.redhawk.ide.swtbot.scaExplorer;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
@@ -26,6 +28,43 @@ public class ScaExplorerTestUtils {
 	public static final String SCA_EXPLORER_VIEW_ID = "gov.redhawk.ui.sca_explorer";
 	
 	protected ScaExplorerTestUtils() {
+	}
+	
+	
+	/**
+	 * Returns the Chalkboard tree item from Sca Explorer
+	 */
+	public static SWTBotTreeItem getChalkboardTreeItemFromScaExplorer(SWTWorkbenchBot bot) {
+		SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
+		SWTBotTreeItem sandbox = scaExplorerView.bot().tree().expandNode("Sandbox");
+		SWTBotTreeItem chalkboard = null;
+		//find chalkboard
+		//Chalkboard could be "Chalkboard" or "Chalkboard STARTED"
+		for (SWTBotTreeItem treeItem: sandbox.getItems()) {
+			if (treeItem.getText().startsWith("Chalkboard")) {
+				treeItem.expand();
+				return treeItem;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Open Graphiti Chalkboard Diagram from ScaExplorer.
+	 * @param gefBot
+	 * @param editor
+	 * @param componentName
+	 */
+	public static void openChalkboardFromScaExplorer(SWTGefBot gefBot) {
+		SWTBotTreeItem chalkboard = getChalkboardTreeItemFromScaExplorer(gefBot);
+		if (chalkboard == null) {
+			throw new WidgetNotFoundException("Chalkboard tree item not found in Sandbox");
+		}
+		
+		chalkboard.select();
+		SWTBotMenu openWith = chalkboard.contextMenu("Open With");
+		SWTBotMenu graphitiChalkboard = openWith.menu("Graphiti Chalkboard");
+		graphitiChalkboard.click();
 	}
 	
 	/**
@@ -103,7 +142,7 @@ public class ScaExplorerTestUtils {
 	public static void stopChalkboardFromScaExplorer(SWTWorkbenchBot bot) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem chalkboardEntry = scaExplorerView.bot().tree().expandNode(SANDBOX, CHALKBOARD);
+		SWTBotTreeItem chalkboardEntry = getChalkboardTreeItemFromScaExplorer(bot);
 		chalkboardEntry.select();
 		SWTBotMenu stop = chalkboardEntry.contextMenu("Stop");
 		stop.click();
@@ -115,9 +154,21 @@ public class ScaExplorerTestUtils {
 	public static void terminateChalkboardFromScaExplorer(SWTWorkbenchBot bot) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem chalkboardEntry = scaExplorerView.bot().tree().expandNode(SANDBOX, CHALKBOARD);
+		SWTBotTreeItem chalkboardEntry = getChalkboardTreeItemFromScaExplorer(bot);
 		chalkboardEntry.select();
 		SWTBotMenu terminate = chalkboardEntry.contextMenu("Terminate");
+		terminate.click();
+	}
+	
+	/**
+	 * Release Chalkboard via ScaExplorer Chalkboard.
+	 */
+	public static void releaseChalkboardFromScaExplorer(SWTWorkbenchBot bot) {
+		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
+		scaExplorerView.setFocus();
+		SWTBotTreeItem chalkboardEntry = getChalkboardTreeItemFromScaExplorer(bot);
+		chalkboardEntry.select();
+		SWTBotMenu terminate = chalkboardEntry.contextMenu("Release");
 		terminate.click();
 	}
 	
@@ -127,7 +178,7 @@ public class ScaExplorerTestUtils {
 	public static void startChalkboardFromScaExplorer(SWTWorkbenchBot bot) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem chalkboardEntry = scaExplorerView.bot().tree().expandNode(SANDBOX, CHALKBOARD);
+		SWTBotTreeItem chalkboardEntry = getChalkboardTreeItemFromScaExplorer(bot);
 		chalkboardEntry.select();
 		SWTBotMenu start = chalkboardEntry.contextMenu("Start");
 		start.click();
@@ -155,7 +206,7 @@ public class ScaExplorerTestUtils {
 	public static void waitUntilComponentAppearsStoppedInScaExplorerChalkboard(SWTWorkbenchBot bot, final String componentName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		final SWTBotTreeItem chalkboardTreeItem = scaExplorerView.bot().tree().expandNode(SANDBOX, CHALKBOARD);
+		final SWTBotTreeItem chalkboardTreeItem = getChalkboardTreeItemFromScaExplorer(bot);
 		
 		bot.waitUntil(new DefaultCondition() {
 			@Override
@@ -183,7 +234,7 @@ public class ScaExplorerTestUtils {
 	public static void waitUntilComponentAppearsStartedInScaExplorerChalkboard(SWTWorkbenchBot bot, final String componentName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		final SWTBotTreeItem chalkboardTreeItem = scaExplorerView.bot().tree().expandNode(SANDBOX, CHALKBOARD);
+		final SWTBotTreeItem chalkboardTreeItem = getChalkboardTreeItemFromScaExplorer(bot);
 		
 		bot.waitUntil(new DefaultCondition() {
 			@Override
@@ -211,7 +262,7 @@ public class ScaExplorerTestUtils {
 	public static void waitUntilComponentDisplaysInScaExplorerChalkboard(SWTWorkbenchBot bot, final String componentName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		final SWTBotTreeItem chalkboardTreeItem = scaExplorerView.bot().tree().expandNode(SANDBOX, CHALKBOARD);
+		final SWTBotTreeItem chalkboardTreeItem = getChalkboardTreeItemFromScaExplorer(bot);
 		
 		bot.waitUntil(new DefaultCondition() {
 			@Override
@@ -239,7 +290,7 @@ public class ScaExplorerTestUtils {
 	public static void waitUntilComponentDisappearsInScaExplorerChalkboard(SWTWorkbenchBot bot, final String componentName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		final SWTBotTreeItem chalkboardTreeItem = scaExplorerView.bot().tree().expandNode(SANDBOX, CHALKBOARD);
+		final SWTBotTreeItem chalkboardTreeItem = getChalkboardTreeItemFromScaExplorer(bot);
 		
 		bot.waitUntil(new DefaultCondition() {
 			@Override
@@ -256,6 +307,52 @@ public class ScaExplorerTestUtils {
 					}
 				}
 				return true;
+			}
+		});
+	}
+	
+	/**
+	 * Waits until ScaExplorer Chalkboard is stopped
+	 * @param componentName
+	 */
+	public static void waitUntilScaExplorerChalkboardStopped(final SWTWorkbenchBot bot) {
+		
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return "SCA Explorer Chalkboard is not empty";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				SWTBotTreeItem chalkboardTreeItem = ScaExplorerTestUtils.getChalkboardTreeItemFromScaExplorer((SWTWorkbenchBot) bot);
+				if (!chalkboardTreeItem.getText().contains("STARTED")) {
+					return true;
+				}
+				return false;
+			}
+		});
+	}
+	
+	/**
+	 * Waits until ScaExplorer Chalkboard has no child items
+	 * @param componentName
+	 */
+	public static void waitUntilScaExplorerChalkboardEmpty(SWTWorkbenchBot bot) {
+		final SWTBotTreeItem chalkboardTreeItem = getChalkboardTreeItemFromScaExplorer(bot);
+		
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return "SCA Explorer Chalkboard is not empty";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				if (chalkboardTreeItem.getItems().length < 1) {
+					return true;
+				}
+				return false;
 			}
 		});
 	}

@@ -12,6 +12,7 @@
 package gov.redhawk.ide.sad.graphiti.ui.runtime.tests;
 
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 	public void runtimeContextMenuTest() {
 		// Prepare Graphiti diagram
 		SWTBotView scaExplorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
-		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
@@ -215,30 +216,13 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 	@Test
 	public void removeDevelopmentContextOptionsTest() {
 		// Prepare Graphiti diagram
-		SWTBotView scaExplorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
-		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		final SWTBotTreeItem chalkboard = scaExplorerView.bot().tree().expandNode("Sandbox", "Chalkboard");
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public String getFailureMessage() {
-				return SIGGEN + " Component did not load into sandbox";
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				SWTBotTreeItem[] items = chalkboard.getItems();
-				for (SWTBotTreeItem item : items) {
-					if (item.getText().equals(SIGGEN + "_1")) {
-						return true;
-					}
-				}
-				return false;
-			}
-		});
+		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorerChalkboard(bot, SIGGEN + "_1");
+		
 
 		// Make sure start order and assembly controller context options don't exist
 		editor.getEditPart(SIGGEN).select();
@@ -260,7 +244,7 @@ public class GraphitiContextMenuTest extends AbstractGraphitiRuntimeTest {
 	@Test
 	public void doNotDeletePortsTest() {
 		// Prepare Graphiti diagram
-		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 

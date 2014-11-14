@@ -13,12 +13,10 @@ package gov.redhawk.ide.sad.graphiti.ui.runtime.tests;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
-import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -34,31 +32,15 @@ public class StartOrderRuntimeTest extends AbstractGraphitiRuntimeTest {
 	 */
 	@Test
 	public void removeStartOrderIconTest() {
-		// Prepare Graphiti diagram
-		SWTBotView scaExplorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
-		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		// open chalkboard diagram
+		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
+		//drag SigGen to diagram and verify loaded in sca explorer
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		final SWTBotTreeItem chalkboard = scaExplorerView.bot().tree().expandNode("Sandbox", "Chalkboard");
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public String getFailureMessage() {
-				return SIGGEN + " Component did not load into sandbox";
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				SWTBotTreeItem[] items = chalkboard.getItems();
-				for (SWTBotTreeItem item : items) {
-					if (item.getText().equals(SIGGEN + "_1")) {
-						return true;
-					}
-				}
-				return false;
-			}
-		});
+		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorerChalkboard(bot, SIGGEN + "_1");
+		
 
 		SWTBotGefEditPart sigGenEditPart = editor.getEditPart(SIGGEN);
 		ComponentShapeImpl componentShape = (ComponentShapeImpl) sigGenEditPart.part().getModel();

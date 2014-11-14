@@ -14,6 +14,7 @@ import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.FindByUtils;
+import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
@@ -40,8 +41,7 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 	public void checkChalkboardComponents() {
 
 		// Open Chalkboard Graphiti Diagram
-		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
-		bot.sleep(10000);
+		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
@@ -59,7 +59,7 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 		SWTBotView scaExplorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
 		scaExplorerView.setFocus();
 		scaExplorerView.bot().tree().expandNode("Sandbox", "Chalkboard", HARD_LIMIT + "_1");
-		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		Assert.assertNotNull(editor.getEditPart(HARD_LIMIT));
 	}
@@ -70,7 +70,7 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 	 */
 	@Test
 	public void checkFindByNotInSandbox() {
-		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 		String[] findByList = { FindByUtils.FIND_BY_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, FindByUtils.FIND_BY_EVENT_CHANNEL,

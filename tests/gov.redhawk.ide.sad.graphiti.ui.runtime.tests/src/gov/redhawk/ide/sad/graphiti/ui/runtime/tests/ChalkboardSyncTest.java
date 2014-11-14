@@ -37,7 +37,7 @@ public class ChalkboardSyncTest extends AbstractGraphitiRuntimeTest {
 	public void addRemoveComponentInChalkboardDiagram() {
 
 		// Open Chalkboard Diagram
-		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
@@ -63,7 +63,7 @@ public class ChalkboardSyncTest extends AbstractGraphitiRuntimeTest {
 	public void addRemoveComponentConnectionInChalkboardDiagram() {
 
 		// Open Chalkboard Diagram
-		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
@@ -110,7 +110,7 @@ public class ChalkboardSyncTest extends AbstractGraphitiRuntimeTest {
 		final String SIG_GEN_1 = SIG_GEN + "_1";
 		
 		// Open Chalkboard Diagram
-		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
@@ -161,6 +161,9 @@ public class ChalkboardSyncTest extends AbstractGraphitiRuntimeTest {
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorerChalkboard(bot, HARD_LIMIT_1);
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorerChalkboard(bot, SIG_GEN_1);
 		
+		//cleanup
+		ScaExplorerTestUtils.terminateChalkboardFromScaExplorer(bot);
+		
 	}
 	
 	/**
@@ -172,7 +175,7 @@ public class ChalkboardSyncTest extends AbstractGraphitiRuntimeTest {
 	public void addRemoveComponentInScaExplorerChalkboard() {
 
 		// Open Chalkboard Diagram
-		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
@@ -210,7 +213,7 @@ public class ChalkboardSyncTest extends AbstractGraphitiRuntimeTest {
 	public void addRemoveComponentConnectionInScaExplorerChalkboard() {
 
 		// Open Chalkboard Diagram
-		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
@@ -246,7 +249,7 @@ public class ChalkboardSyncTest extends AbstractGraphitiRuntimeTest {
 	public void startStopComponentsFromScaExplorer() {
 		
 		// Open Chalkboard Diagram
-		DiagramTestUtils.openChalkboardFromSandbox(gefBot);
+		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
@@ -308,6 +311,18 @@ public class ChalkboardSyncTest extends AbstractGraphitiRuntimeTest {
 		//verify both components started
 		DiagramTestUtils.waitUntilComponentAppearsStartedInDiagram(bot, editor, HARD_LIMIT);
 		DiagramTestUtils.waitUntilComponentAppearsStartedInDiagram(bot, editor, SIG_GEN);
+		
+		//terminate, then stop chalkboard
+		ScaExplorerTestUtils.terminateChalkboardFromScaExplorer(bot);
+		
+		//wait for Chalkboard to be empty
+		ScaExplorerTestUtils.waitUntilScaExplorerChalkboardEmpty(bot);
+				
+		//stop chalkboard
+		ScaExplorerTestUtils.stopChalkboardFromScaExplorer(bot);
+		
+		//wait for Chalkboard to be stopped
+		ScaExplorerTestUtils.waitUntilScaExplorerChalkboardStopped(bot);
 		
 	}
 	

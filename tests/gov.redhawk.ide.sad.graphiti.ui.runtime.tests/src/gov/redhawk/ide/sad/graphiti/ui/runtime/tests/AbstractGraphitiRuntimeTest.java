@@ -11,12 +11,9 @@
 package gov.redhawk.ide.sad.graphiti.ui.runtime.tests;
 
 import gov.redhawk.ide.swtbot.UIRuntimeTest;
+import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.After;
 import org.junit.Before;
 
@@ -35,13 +32,11 @@ public abstract class AbstractGraphitiRuntimeTest extends UIRuntimeTest {
 
 	@After
 	public void afterTest() {
-		// Clear out the Sandbox
-		SWTBotView scaExplorerView = gefBot.viewByTitle("SCA Explorer");
-		SWTBotTree scaTree = scaExplorerView.bot().tree();
-		SWTBotTreeItem chalkboard = scaTree.expandNode("Sandbox", "Chalkboard");
-		chalkboard.select();
-		SWTBotMenu release = chalkboard.contextMenu("Release");
-		release.click();
+		ScaExplorerTestUtils.releaseChalkboardFromScaExplorer(gefBot);
+		
+		//wait until chalkboard empty
+		ScaExplorerTestUtils.waitUntilScaExplorerChalkboardEmpty(gefBot);
+		
 	}
 
 }
