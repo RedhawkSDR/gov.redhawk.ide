@@ -36,6 +36,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefViewer;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
@@ -48,9 +49,9 @@ import org.junit.Assert;
 public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility method is intended to be public
 
 	protected DiagramTestUtils() {
-		
+
 	}
-	
+
 	public static final String OVERVIEW_TAB = "Overview", PROPERTIES_TAB = "Properties", DIAGRAM_TAB = "Diagram", XML_TAB = ".sad.xml";
 
 	/**
@@ -72,7 +73,19 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @param yTargetPosition - y coordinate for drop location
 	 */
 	public static void dragFromPaletteToDiagram(SWTBotGefEditor editor, String componentName, int xTargetPosition, int yTargetPosition) {
-		editor.activateTool(componentName);
+		String[] impls = { "", " (cpp)", " (java)", " (python)" };
+		for (int i = 0; i < impls.length; i++) {
+			try {
+				editor.activateTool(componentName + impls[i]);
+				break;
+			} catch (WidgetNotFoundException e) {
+				if (i == impls.length - 1) {
+					throw e;
+				} else {
+					continue;
+				}
+			}
+		}
 		editor.drag(xTargetPosition, yTargetPosition, xTargetPosition, yTargetPosition);
 	}
 
@@ -107,11 +120,8 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		hardLimitItem.dragAndDrop(canvas);
 	}
 
-	
-
-	
 	/**
-	 * Drag a HostCollocation onto the SAD diagram editor 
+	 * Drag a HostCollocation onto the SAD diagram editor
 	 */
 	public static void dragHostCollocationToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String hostCoName) {
 		dragFromPaletteToDiagram(editor, "Host Collocation", 0, 0);
@@ -144,7 +154,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @return
 	 */
 	public static SadComponentInstantiation getComponentObject(SWTBotGefEditor editor, String componentName) {
-		
+
 		ComponentShapeImpl componentShape = getComponentShape(editor, componentName);
 		if (componentShape == null) {
 			return null;
@@ -152,7 +162,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		SadComponentInstantiation businessObject = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 		return businessObject;
 	}
-	
+
 	/**
 	 * Utility method to extract ComponentShape from the Graphiti diagram with the provided componentName.
 	 * Returns null if object not found
@@ -161,14 +171,14 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @return
 	 */
 	public static ComponentShapeImpl getComponentShape(SWTBotGefEditor editor, String componentName) {
-		
+
 		SWTBotGefEditPart swtBotGefEditPart = editor.getEditPart(componentName);
 		if (swtBotGefEditPart == null) {
 			return null;
 		}
 		return (ComponentShapeImpl) swtBotGefEditPart.part().getModel();
 	}
-	
+
 	/**
 	 * Utility method to extract business object from a findby in the Graphiti diagram.
 	 * Returns null if object not found
@@ -177,7 +187,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @return
 	 */
 	public static FindByStub getFindByObject(SWTBotGefEditor editor, String findByName) {
-		
+
 		RHContainerShapeImpl findByShape = getFindByShape(editor, findByName);
 		if (findByShape == null) {
 			return null;
@@ -185,7 +195,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		FindByStub businessObject = (FindByStub) DUtil.getBusinessObject(findByShape);
 		return businessObject;
 	}
-	
+
 	/**
 	 * Utility method to extract RHContainerShapeImpl from the Graphiti diagram with the provided findByName.
 	 * Returns null if object not found
@@ -194,14 +204,14 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @return
 	 */
 	public static RHContainerShapeImpl getFindByShape(SWTBotGefEditor editor, String findByName) {
-		
+
 		SWTBotGefEditPart swtBotGefEditPart = editor.getEditPart(findByName);
 		if (swtBotGefEditPart == null) {
 			return null;
 		}
 		return (RHContainerShapeImpl) swtBotGefEditPart.part().getModel();
 	}
-	
+
 	/**
 	 * Utility method to extract business object from a host collocation in the Graphiti diagram.
 	 * Returns null if object not found
@@ -210,7 +220,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @return
 	 */
 	public static HostCollocation getHostCollocationObject(SWTBotGefEditor editor, String name) {
-		
+
 		ContainerShape containerShape = getHostCollocationShape(editor, name);
 		if (containerShape == null) {
 			return null;
@@ -218,7 +228,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		HostCollocation businessObject = (HostCollocation) DUtil.getBusinessObject(containerShape);
 		return businessObject;
 	}
-	
+
 	/**
 	 * Utility method to extract HostCollocationShape from the Graphiti diagram with the provided name.
 	 * Returns null if object not found
@@ -227,23 +237,23 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @return
 	 */
 	public static ContainerShape getHostCollocationShape(SWTBotGefEditor editor, String name) {
-		
+
 		SWTBotGefEditPart swtBotGefEditPart = editor.getEditPart(name);
 		if (swtBotGefEditPart == null) {
 			return null;
 		}
 		return (ContainerShape) swtBotGefEditPart.part().getModel();
 	}
-	
+
 	/**
-	 * Return true if child shape exists within ContainerShape.  Grandchildren, Great grandchildren included..
+	 * Return true if child shape exists within ContainerShape. Grandchildren, Great grandchildren included..
 	 * @param containerShape
 	 * @param childShape
 	 * @return
 	 */
 	public static boolean childShapeExists(ContainerShape containerShape, Shape childShape) {
 		List<Shape> shapes = DUtil.collectShapeChildren(containerShape);
-		for (Shape s: shapes) {
+		for (Shape s : shapes) {
 			if (childShape.equals(s)) {
 				return true;
 			}
@@ -290,14 +300,14 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			if (bo == null || !(bo instanceof ProvidesPortStub)) {
 				continue;
 			}
-			
+
 			List<SWTBotGefEditPart> providesPortsEditParts = child.children();
 			for (SWTBotGefEditPart portEditPart : providesPortsEditParts) {
 				// If no port name was supplied, return edit part for first provides port
 				if (portName == null) {
-					return portEditPart; 
+					return portEditPart;
 				}
-				
+
 				// Other wise, check for a matching port name
 				ProvidesPortStub portStub = (ProvidesPortStub) DUtil.getBusinessObject((ContainerShape) portEditPart.part().getModel());
 				if (portName != null && portName.equals(portStub.getName())) {
@@ -337,14 +347,14 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			if (bo == null || !(bo instanceof UsesPortStub)) {
 				continue;
 			}
-			
+
 			List<SWTBotGefEditPart> usesPortsEditParts = child.children();
 			for (SWTBotGefEditPart portEditPart : usesPortsEditParts) {
 				// If no port name was supplied, return edit part for first provides port
 				if (portName == null) {
-					return portEditPart; 
+					return portEditPart;
 				}
-				
+
 				// Other wise, check for a matching port name
 				UsesPortStub portStub = (UsesPortStub) DUtil.getBusinessObject((ContainerShape) portEditPart.part().getModel());
 				if (portName != null && portName.equals(portStub.getName())) {
@@ -387,7 +397,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	public static void openTabInEditor(SWTBotGefEditor editor, String tabName) {
 		editor.bot().cTabItem(tabName).activate();
 	}
-	
+
 	/**
 	 * Checks sad.xml for component instantiation code
 	 * @param componentShape
@@ -404,7 +414,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		return "(?s).*" + componentinstantiation + ".*" + usagename + ".*" + namingservice + ".*";
 
 	}
-	
+
 	/**
 	 * Checks sad.xml for component property code
 	 * @param componentShape
@@ -415,14 +425,14 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	public static String regexStringForSadProperty(ComponentShapeImpl componentShape, String propertyname, String value) {
 		return "(?s).*<componentproperties>.*<simpleref refid=\"" + propertyname + "\" value=\"" + value + "\"/>.*</componentproperties>.*";
 	}
-	
+
 	/**
 	 * Maximizes active window
 	 */
 	public static void maximizeActiveWindow(SWTGefBot gefBot) {
 		gefBot.menu(IDEWorkbenchMessages.Workbench_window).menu("Maximize Active View or Editor").click();
-    }
-	
+	}
+
 	/**
 	 * Return true if Shape's x/y coordinates match arguments
 	 * @param shape
@@ -436,16 +446,15 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Waits until Connection displays in Chalkboard Diagram
 	 * @param componentName
 	 */
-	public static void waitUntilConnectionDisplaysInDiagram(SWTWorkbenchBot bot, SWTBotGefEditor editor, 
-			final String targetComponentName) {
+	public static void waitUntilConnectionDisplaysInDiagram(SWTWorkbenchBot bot, SWTBotGefEditor editor, final String targetComponentName) {
 		SWTBotGefEditPart targetComponentEditPart = editor.getEditPart(targetComponentName);
 		final ContainerShape targetContainerShape = (ContainerShape) targetComponentEditPart.part().getModel();
-		
+
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
@@ -461,17 +470,16 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			}
 		});
 	}
-	
+
 	/**
 	 * Waits until Connection disappears in Chalkboard Diagram
 	 * @param componentName
 	 */
-	public static void waitUntilConnectionDisappearsInDiagram(SWTWorkbenchBot bot, SWTBotGefEditor editor,
-		final String targetComponentName) {
-		
+	public static void waitUntilConnectionDisappearsInDiagram(SWTWorkbenchBot bot, SWTBotGefEditor editor, final String targetComponentName) {
+
 		SWTBotGefEditPart targetComponentEditPart = editor.getEditPart(targetComponentName);
 		final ContainerShape targetContainerShape = (ContainerShape) targetComponentEditPart.part().getModel();
-		
+
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
@@ -487,7 +495,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			}
 		});
 	}
-	
+
 	/**
 	 * Start component from Chalkboard Diagram
 	 * @param componentName
@@ -498,7 +506,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		componentPart.select();
 		editor.clickContextMenu("Start");
 	}
-	
+
 	/**
 	 * Stop component from Chalkboard Diagram
 	 * @param componentName
@@ -509,14 +517,13 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		componentPart.select();
 		editor.clickContextMenu("Stop");
 	}
-	
+
 	/**
 	 * Waits until Component displays in Chalkboard Diagram
 	 * @param componentName
 	 */
-	public static void waitUntilComponentDisappearsInChalkboardDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, 
-		final String componentName) {
-		
+	public static void waitUntilComponentDisappearsInChalkboardDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, final String componentName) {
+
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
@@ -526,25 +533,25 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			@Override
 			public boolean test() throws Exception {
 				if (editor.getEditPart(componentName) == null) {
-						return true;
+					return true;
 				}
 				return false;
 			}
 		});
 	}
-	
+
 	/**
 	 * Waits until Component appears started in ChalkboardDiagram
 	 * @param componentName
 	 */
-	public static void waitUntilComponentAppearsStartedInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor,
-		final String componentName) {
-		
+	public static void waitUntilComponentAppearsStartedInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, final String componentName) {
+
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
 				return componentName + " Component did not appear started in Diagram";
 			}
+
 			@Override
 			public boolean test() throws Exception {
 				ComponentShapeImpl componentShape = (ComponentShapeImpl) editor.getEditPart(componentName).part().getModel();
@@ -555,19 +562,18 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		});
 	}
 
-	
 	/**
 	 * Waits until Component appears stopped in ChalkboardDiagram
 	 * @param componentName
 	 */
-	public static void waitUntilComponentAppearsStoppedInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor,
-			final String componentName) {
-		
+	public static void waitUntilComponentAppearsStoppedInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, final String componentName) {
+
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
 				return componentName + " Component did not appear stopped in Diagram";
 			}
+
 			@Override
 			public boolean test() throws Exception {
 				ComponentShapeImpl componentShape = (ComponentShapeImpl) editor.getEditPart(componentName).part().getModel();
@@ -577,14 +583,13 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			}
 		});
 	}
-	
+
 	/**
 	 * Waits until Component displays in Chalkboard Diagram
 	 * @param componentName
 	 */
-	public static void waitUntilComponentDisplaysInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor,
-			final String componentName) {
-		
+	public static void waitUntilComponentDisplaysInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, final String componentName) {
+
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
@@ -594,7 +599,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			@Override
 			public boolean test() throws Exception {
 				if (editor.getEditPart(componentName) != null) {
-						return true;
+					return true;
 				}
 				return false;
 			}
