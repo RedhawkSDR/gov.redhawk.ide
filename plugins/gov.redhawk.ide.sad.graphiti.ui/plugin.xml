@@ -213,6 +213,11 @@
             editorId="gov.redhawk.ide.debug.ui.diagram.editor.localMultiPageSca"
             priority="NORMAL">
       </contentTypeBinding>
+      <contentTypeBinding
+            contentTypeId="gov.redhawk.ide.debug.ui.contentType.sca"
+            editorId="gov.redhawk.ide.debug.ui.diagram.editor.localMultiPageSca"
+            priority="LOWEST">
+      </contentTypeBinding>
    </extension>
       <extension
             point="org.eclipse.ui.navigator.navigatorContent">
