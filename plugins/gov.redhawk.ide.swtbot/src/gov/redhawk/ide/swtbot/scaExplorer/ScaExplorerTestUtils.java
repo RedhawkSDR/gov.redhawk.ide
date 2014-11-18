@@ -109,12 +109,12 @@ public class ScaExplorerTestUtils {
 	 * @param componentName
 	 */
 	public static void connectComponentPortsInScaExplorer(SWTWorkbenchBot bot, 
-		String[] waveformParentPath, String waveform, String connectionName, 
-			String sourceComponentName, String sourceComponentPortName, 
-		String targetComponentName, String targetComponentPortName) {
+			final String[] waveformParentPath, final String waveform, final String connectionName, 
+			final String sourceComponentName, final String sourceComponentPortName, 
+			final String targetComponentName, final String targetComponentPortName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem waveformTreeItem = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
+		final SWTBotTreeItem waveformTreeItem = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
 		SWTBotTreeItem sourceComponentPortEntry = waveformTreeItem.expandNode(sourceComponentName, sourceComponentPortName);
 		sourceComponentPortEntry.select();
 		SWTBotMenu connect = sourceComponentPortEntry.contextMenu("Connect");
@@ -122,8 +122,28 @@ public class ScaExplorerTestUtils {
 		
 		//Connect wizard
 		SWTBotShell wizardShell = bot.shell("Connect");
-		SWTBot wizardBot = wizardShell.bot();
+		final SWTBot wizardBot = wizardShell.bot();
 		wizardShell.activate();
+		
+		//wait until waveform fully displays
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return waveform + " waveform did not display entirely in Connect wizard";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				SWTBotTreeItem targetWaveformParentTreeItem = wizardBot.treeInGroup("Target").expandNode(waveformParentPath);
+				SWTBotTreeItem targetComponentPortTreeItem = targetWaveformParentTreeItem.expandNode(waveform, targetComponentName, targetComponentPortName);
+				if (targetComponentPortTreeItem != null) {
+					return true;
+				}
+				return false;
+			}
+		});
+		
+		//select targetComponentPort
 		SWTBotTreeItem targetWaveformParentTreeItem = wizardBot.treeInGroup("Target").expandNode(waveformParentPath);
 		targetWaveformParentTreeItem.expandNode(waveform, targetComponentName, targetComponentPortName).select();
 

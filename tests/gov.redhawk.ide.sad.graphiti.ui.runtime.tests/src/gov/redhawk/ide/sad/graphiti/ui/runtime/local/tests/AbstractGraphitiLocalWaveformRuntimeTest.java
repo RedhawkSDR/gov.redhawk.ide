@@ -14,6 +14,7 @@ import gov.redhawk.ide.swtbot.UIRuntimeTest;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.After;
 import org.junit.Before;
 
@@ -34,11 +35,17 @@ public abstract class AbstractGraphitiLocalWaveformRuntimeTest extends UIRuntime
 	
 	@After
 	public void afterTest() {
-		ScaExplorerTestUtils.releaseWaveformFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
 		
-		//wait until waveform no longer exists!!!!
-		ScaExplorerTestUtils.waitUntilScaExplorerWaveformDisappears(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+		//does waveform exist
+		SWTBotTreeItem waveformEntry = ScaExplorerTestUtils.getWaveformTreeItemFromScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
 		
+		//release waveform, make sure it disappears
+		if (waveformEntry != null) {
+			ScaExplorerTestUtils.releaseWaveformFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+			
+			//wait until waveform no longer exists!!!!
+			ScaExplorerTestUtils.waitUntilScaExplorerWaveformDisappears(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+		}
 	}
 
 }
