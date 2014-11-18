@@ -635,22 +635,19 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 		
 
 	}
+
 	
 	/**
 	 * Returns the property value that should be set for the Diagram container's DIAGRAM_CONTEXT property.
 	 * Indicates the mode the diagram is operating in.
 	 * @return
 	 */
-	public String getDiagramContext() {
-		return DUtil.DIAGRAM_CONTEXT_DESIGN;
-	}
-	
-	private String getDiagramContext(Resource sadResource) {
+	public String getDiagramContext(Resource sadResource) {
 		if (sadResource.getURI().toString().matches(".*" + System.getenv("SDRROOT") + ".*")) {
 			return DUtil.DIAGRAM_CONTEXT_TARGET_SDR;
 		}
 		
-		return getDiagramContext();
+		return DUtil.DIAGRAM_CONTEXT_DESIGN;
 	}
 
 	protected DiagramEditor createDiagramEditor() {

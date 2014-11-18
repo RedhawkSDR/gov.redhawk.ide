@@ -179,7 +179,8 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 	 * Indicates the mode the diagram is operating in.
 	 * @return
 	 */
-	public String getDiagramContext() {
+	@Override
+	public String getDiagramContext(Resource sadResource) {
 		return DUtil.DIAGRAM_CONTEXT_LOCAL;
 	}
 

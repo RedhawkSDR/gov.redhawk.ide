@@ -123,7 +123,7 @@ public class LocalWaveformRuntimeTest extends AbstractGraphitiLocalWaveformRunti
 		Assert.assertEquals("outer text should match component type", HARD_LIMIT, componentShape.getOuterText().getValue());
 		Assert.assertEquals("inner text should match component usage name", ci.getUsageName(), componentShape.getInnerText().getValue());
 		Assert.assertNotNull("component supported interface graphic should not be null", componentShape.getLollipop());
-		Assert.assertEquals("start order shape/text should be *", "*", componentShape.getStartOrderText());
+		Assert.assertNull("start order shape/text should be Null", componentShape.getStartOrderText());
 
 		// HardLimit only has the two ports
 		Assert.assertTrue(componentShape.getUsesPortStubs().size() == 1 && componentShape.getProvidesPortStubs().size() == 1);
