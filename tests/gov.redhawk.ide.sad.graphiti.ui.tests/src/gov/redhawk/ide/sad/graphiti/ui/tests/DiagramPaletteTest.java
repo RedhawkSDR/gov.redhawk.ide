@@ -129,8 +129,8 @@ public class DiagramPaletteTest extends AbstractGraphitiTest {
 	@Test
 	public void testFilter() {
 		waveformName = "IDE-962-Test";
-		final String component1 = "SigGen (cpp)";
-		final String component2 = "HardLimit (cpp)";
+		final String component1 = "SigGen";
+		final String component2 = "HardLimit";
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		final SWTBotGefEditor editor = gefBot.gefEditor(waveformName);
 
@@ -166,11 +166,15 @@ public class DiagramPaletteTest extends AbstractGraphitiTest {
 	}
 	
 	private boolean toolIsPresent(SWTBotGefEditor editor, final String label) {
-		try {
-			editor.activateTool(label);
-		} catch (WidgetNotFoundException e) {
-			return false;
+		String impls[] = new String[] {"",  " (cpp)", " (java)", " (python)"};
+		for (String impl: impls) {
+			try {
+				editor.activateTool(label + impl);
+			} catch (WidgetNotFoundException e) {
+				continue;
+			}
+			return true;
 		}
-		return true;
+		return false;
 	}
 }
