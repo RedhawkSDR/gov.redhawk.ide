@@ -168,7 +168,7 @@ public class DiagramPaletteTest extends AbstractGraphitiTest {
 	}
 	
 	private boolean toolIsPresent(SWTBotGefEditor editor, final String label) {
-		String impls[] = new String[] {"",  " (cpp)", " (java)", " (python)"};
+		String[] impls = new String[] {"",  " (cpp)", " (java)", " (python)"};
 		for (String impl: impls) {
 			try {
 				editor.activateTool(label + impl);

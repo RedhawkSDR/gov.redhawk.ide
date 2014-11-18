@@ -50,7 +50,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 	private SWTBotGefEditor editor;
 	private String waveformName;
 	private static final String HARD_LIMIT = "HardLimit";
-	private static final String[] COMPONENTS = { "DataConverter", "HardLimit", "SigGen" };
+	private static final String[] COMPONENTS = { "DataReader", "HardLimit", "SigGen" };
 
 	/**
 	 * IDE-726
@@ -66,6 +66,9 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
 		editor.setFocus();
+
+		// Confirm component impl is displayed
+		editor.activateTool(HARD_LIMIT + " (java)");
 
 		// Add component to diagram from palette
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
@@ -106,7 +109,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 			Assert.assertNull(editor.getEditPart(s));
 		}
 	}
-	
+
 	/**
 	 * IDE-881
 	 * Ensure components that are located within host collocation are deleted both in the diagram and model when
@@ -117,11 +120,11 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		waveformName = "HC_Context_Menu_Delete";
 		final String HOST_CO = "Host Collocation";
 		final String HOST_CO_NAME = "HC1";
-		
+
 		// Create a new empty waveform
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
-		
+
 		// Add host collocation to the waveform
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HOST_CO, 0, 0);
 		SWTBotShell hostCoShell = gefBot.shell("New " + HOST_CO);
@@ -130,39 +133,38 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		hostCoName.setFocus();
 		hostCoName.typeText(HOST_CO_NAME);
 		gefBot.button("OK").click();
-		
+
 		// Add component to the host collocation
 		editor.setFocus();
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 200);
-		
+
 		// Check pictogram elements
 		SWTBotGefEditPart hostCoEditPart = editor.getEditPart(HOST_CO_NAME);
 		Assert.assertNotNull(HOST_CO_NAME + "edit part not found", hostCoEditPart);
 		ContainerShape hostCollocationContainerShape = (ContainerShape) hostCoEditPart.part().getModel();
 		String shapeType = Graphiti.getPeService().getPropertyValue(hostCollocationContainerShape, DUtil.SHAPE_TYPE);
 		Assert.assertTrue("Host Collocation property is missing or wrong", shapeType.equals(HostCollocationPattern.HOST_COLLOCATION_OUTER_CONTAINER_SHAPE));
-		
+
 		// Check model object values
 		Object bo = DUtil.getBusinessObject(hostCollocationContainerShape);
 		Assert.assertTrue("Business object should be instance of HostCollocation", bo instanceof HostCollocation);
-		
+
 		HostCollocation hostCo = (HostCollocation) bo;
 		EList<SadComponentPlacement> components = hostCo.getComponentPlacement();
 		Assert.assertEquals("Expected component \'" + HARD_LIMIT + "_1\' was not found", HARD_LIMIT + "_1",
 			components.get(0).getComponentInstantiation().get(0).getId());
 		Assert.assertEquals("Expected component \'" + HARD_LIMIT + "_2\' was not found", HARD_LIMIT + "_2",
-				components.get(1).getComponentInstantiation().get(0).getId());
-		
-		//delete  component
+			components.get(1).getComponentInstantiation().get(0).getId());
+
+		// delete component
 		SWTBotGefEditPart gefEditPart = editor.getEditPart(HARD_LIMIT);
 		DiagramTestUtils.deleteFromDiagram(editor, gefEditPart);
 
-		//ensure HardLimit_2 shape still exists
+		// ensure HardLimit_2 shape still exists
 		Assert.assertNotNull(editor.getEditPart("HardLimit_2"));
-		//ensure HardLimit_1 component business object is deleted
-		Assert.assertTrue("Expected there to be only 1 component left after deletion",
-				hostCo.getComponentPlacement().size() == 1);
+		// ensure HardLimit_1 component business object is deleted
+		Assert.assertTrue("Expected there to be only 1 component left after deletion", hostCo.getComponentPlacement().size() == 1);
 		Assert.assertNotNull("ComponentFile for " + HARD_LIMIT + " no longer exists", hostCo.getComponentPlacement().get(0).getComponentFileRef().getFile());
 
 	}
@@ -251,21 +253,36 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		LinkedList<String> missingSdrComponentSet = new LinkedList<String>();
 		for (String compName : sdrComponents) {
 			try {
-				@SuppressWarnings("unused")
-				SWTBotGefEditor paletteCompToolEditor = editor.activateTool(compName);
-				// System.out.println(compName + " paletteEditor  = " + paletteCompToolEditor);
-				paletteComponents.add(compName);
+				if (componentIsPresent(editor, compName)) {
+					paletteComponents.add(compName);
+				}
 			} catch (WidgetNotFoundException ex) {
 				missingSdrComponentSet.add(compName);
-				// System.err.println("WARN: activateTool(" + compName + ") -  WidgetNotFoundException ");
 			}
 		}
 
-		assertEquals("Missing Target SDR Components from Palette: " + missingSdrComponentSet, 0 , missingSdrComponentSet.size());
+		assertEquals("Missing Target SDR Components from Palette: " + missingSdrComponentSet, 0, missingSdrComponentSet.size());
 		assertEquals("Palette contains all Target SDR Components - size", sdrComponents.size(), paletteComponents.size());
 		assertEquals("Palette contains all Target SDR Components - contents", sdrComponents, paletteComponents);
 	}
-	
+
+	private boolean componentIsPresent(SWTBotGefEditor editor, final String compName) {
+		String[] impls = { "", " (cpp)", " (java)", " (python)" };
+		for (int i = 0; i < impls.length; i++) {
+			try {
+				editor.activateTool(compName + impls[i]);
+				return true;
+			} catch (WidgetNotFoundException e) {
+				if (i == impls.length - 1) {
+					throw e;
+				} else {
+					continue;
+				}
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * IDE-766
 	 * The delete context menu should not appear when ports are selected
@@ -296,15 +313,15 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 			}
 		}
 	}
-	
+
 	static List<String> getTargetSdrComponents(final SWTWorkbenchBot bot) {
 		LinkedList<String> list = new LinkedList<String>();
-		
+
 		SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
 		SWTBotTree scaTree = scaExplorerView.bot().tree();
 		SWTBotTreeItem componentsItem = scaTree.expandNode("Target SDR", "Components");
 		SWTBotTreeItem[] sdrComponents = componentsItem.getItems();
-		
+
 		for (SWTBotTreeItem item : sdrComponents) {
 			final String compName = item.getText();
 			list.add(compName);
@@ -343,6 +360,5 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		Assert.assertEquals(componentShape.getUsesPortStubs().get(0).getUses().getInterface().getName(), "dataDouble");
 		Assert.assertEquals(componentShape.getProvidesPortStubs().get(0).getProvides().getInterface().getName(), "dataDouble");
 	}
-	
 
 }
