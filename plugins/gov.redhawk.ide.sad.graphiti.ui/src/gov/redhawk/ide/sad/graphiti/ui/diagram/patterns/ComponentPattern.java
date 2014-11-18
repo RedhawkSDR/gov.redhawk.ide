@@ -300,13 +300,22 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 	 * @param componentShape
 	 */
 	private void adjustComponentLocation(ComponentShape componentShape) {
+		final int BUFFER_WIDTH = 20;
+
 		// if any overlap occurs (can happen when launching using the SCA Explorer) adjust x/y-coords
 		Diagram diagram = getFeatureProvider().getDiagramTypeProvider().getDiagram();
 		EList<Shape> children = diagram.getChildren();
 		for (Shape child : children) {
 			boolean xAdjusted = false;
 			int xAdjustment = 0;
+
+			// Avoid infinite loop by checking a shape against itself
 			if (child.equals(componentShape)) {
+				continue;
+			}
+
+			// Don't adjust if the target shape is in a Host Collocation
+			if (child instanceof ContainerShape && DUtil.getHostCollocation((ContainerShape) child) != null) {
 				continue;
 			}
 			GraphicsAlgorithm childGa = child.getGraphicsAlgorithm();
@@ -322,13 +331,12 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 				&& childGa.getY() <= componentY + componentHeight;
 			// If there is any overlap, then move new component all the way to the right of the old component.
 			if (xOverlapped && yOverlapped) {
-				xAdjustment += childGa.getX() + childGa.getWidth() + 20; // TODO: Make BUFFER constant field
+				xAdjustment += childGa.getX() + childGa.getWidth() + BUFFER_WIDTH;
 				xAdjusted = true;
 			}
 			if (xAdjusted) {
 				componentShape.getGraphicsAlgorithm().setX(xAdjustment);
-				// If we've made any adjustments, we need to make a recursive call to make sure we create a new
-				// collision
+				// If we've made any adjustments, make a recursive call to make sure we do not create a new collision
 				adjustComponentLocation(componentShape);
 			}
 		}

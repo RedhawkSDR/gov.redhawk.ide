@@ -76,7 +76,6 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		String[] impls = { "", " (cpp)", " (java)", " (python)" };
 		for (int i = 0; i < impls.length; i++) {
 			try {
-				System.out.println("TRYING IMPL: " + componentName + impls[i]);
 				editor.activateTool(componentName + impls[i]);
 				break;
 			} catch (WidgetNotFoundException e) {
