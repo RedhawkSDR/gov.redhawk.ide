@@ -78,7 +78,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 				DiagramTestUtils.dragFromPaletteToDiagram(editor, findByType, 0, 0);
 				Assert.fail(); // The only way to get here is if the FindBy type appears in the Palette
 			} catch (WidgetNotFoundException e) {
-				Assert.assertTrue(e.getMessage(), findByType.matches(".*" + e.getMessage() + ".*"));
+				Assert.assertTrue(e.getMessage(), e.getMessage().matches(".*" + findByType + ".*"));
 			}
 		}
 	}

@@ -83,7 +83,7 @@ public class ChalkboardSyncTest extends AbstractGraphitiChalkboardTest {
 		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, sourceComponent);
 		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, targetComponent);
 
-		// Draw redundant connections, save and close the editor
+		// Draw connection
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
 
 		//wait for connection to show up in ScaExplorer Chalkboard

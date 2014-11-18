@@ -16,7 +16,6 @@ import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
-import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
@@ -50,11 +49,11 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN_1);
 
 		// Start the component
-		SWTBotGefEditPart sigGen = editor.getEditPart(SIGGEN);
-		sigGen.select();
+		DiagramTestUtils.startComponentFromDiagram(editor, SIGGEN);
 		//wait until its started
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN_1);
 		//plot port data for SIGGEN
+		editor.setFocus();
 		DiagramTestUtils.plotPortDataOnComponentPort(editor, SIGGEN, null);
 		//close plot view
 		SWTBotView plotView = ViewUtils.getPlotView(bot);

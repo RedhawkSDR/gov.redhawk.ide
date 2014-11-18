@@ -48,7 +48,8 @@ public class LocalWaveformRuntimeTest extends AbstractGraphitiLocalWaveformRunti
 		
 		// Open Local Waveform Diagram
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		editor = gefBot.gefEditor(LOCAL_WAVEFORM);
+		String waveFormFullName = ScaExplorerTestUtils.getWaveformFullNameFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+		editor = gefBot.gefEditor(waveFormFullName);
 		editor.setFocus();
 		
 		//verify existing component exists
@@ -66,7 +67,7 @@ public class LocalWaveformRuntimeTest extends AbstractGraphitiLocalWaveformRunti
 		// Open the chalkboard with components already launched
 		editor.close();
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		editor = gefBot.gefEditor(LOCAL_WAVEFORM);
+		editor = gefBot.gefEditor(waveFormFullName);
 		Assert.assertNotNull(editor.getEditPart(HARD_LIMIT));
 	}
 
@@ -76,9 +77,19 @@ public class LocalWaveformRuntimeTest extends AbstractGraphitiLocalWaveformRunti
 	 */
 	@Test
 	public void checkFindByNotInSandbox() {
+		
+		//Launch Local Waveform From Target SDR
+		ScaExplorerTestUtils.launchWaveformFromTargetSDR(gefBot, LOCAL_WAVEFORM);
+		
+		//wait until local waveform appears in ScaExplorer Sandbox
+		ScaExplorerTestUtils.waitUntilWaveformAppearsInScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+		
+		// Open Local Waveform Diagram
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		editor = gefBot.gefEditor(LOCAL_WAVEFORM);
+		String waveFormFullName = ScaExplorerTestUtils.getWaveformFullNameFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+		editor = gefBot.gefEditor(waveFormFullName);
 		editor.setFocus();
+		
 		String[] findByList = { FindByUtils.FIND_BY_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, FindByUtils.FIND_BY_EVENT_CHANNEL,
 			FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
 		
@@ -112,7 +123,7 @@ public class LocalWaveformRuntimeTest extends AbstractGraphitiLocalWaveformRunti
 		Assert.assertEquals("outer text should match component type", HARD_LIMIT, componentShape.getOuterText().getValue());
 		Assert.assertEquals("inner text should match component usage name", ci.getUsageName(), componentShape.getInnerText().getValue());
 		Assert.assertNotNull("component supported interface graphic should not be null", componentShape.getLollipop());
-		Assert.assertNull("start order shape/text should be null", componentShape.getStartOrderText());
+		Assert.assertEquals("start order shape/text should be *", "*", componentShape.getStartOrderText());
 
 		// HardLimit only has the two ports
 		Assert.assertTrue(componentShape.getUsesPortStubs().size() == 1 && componentShape.getProvidesPortStubs().size() == 1);
