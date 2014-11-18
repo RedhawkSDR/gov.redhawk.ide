@@ -14,9 +14,14 @@ import gov.redhawk.ide.sad.graphiti.ui.palette.RHGraphitiPaletteFilterFigure;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.palette.PaletteContainer;
+import org.eclipse.gef.palette.PaletteStack;
+import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -60,6 +65,7 @@ public class DiagramPaletteTest extends AbstractGraphitiTest {
 		
 		public void setFilterString(String filterText) {
 			this.filterString = filterText;
+			Display.getDefault().syncExec(this);
 		}
 		
 		public Rectangle getRectangle() {
@@ -137,29 +143,25 @@ public class DiagramPaletteTest extends AbstractGraphitiTest {
 		Assert.assertTrue(toolIsPresent(editor, component1));
 		Assert.assertTrue(toolIsPresent(editor, component2));
 
-		FilterRunnable runnable = new FilterRunnable(editor);
-		runnable.setFilterString("s");
-		Display.getDefault().syncExec(runnable);
-		Rectangle filterRect = runnable.getRectangle();
+		FilterRunnable filterer = new FilterRunnable(editor);
+		filterer.setFilterString("s");
+		Rectangle filterRect = filterer.getRectangle();
 		Assert.assertNotNull(filterRect);
 
 		Assert.assertTrue(toolIsPresent(editor, component1));
 		Assert.assertFalse(toolIsPresent(editor, component2));
 		
-		runnable.setFilterString("sh");
-		Display.getDefault().syncExec(runnable);
+		filterer.setFilterString("sh");
 
 		Assert.assertFalse(toolIsPresent(editor, component1));
 		Assert.assertFalse(toolIsPresent(editor, component2));
 
-		runnable.setFilterString("h");
-		Display.getDefault().syncExec(runnable);
+		filterer.setFilterString("h");
 
 		Assert.assertFalse(toolIsPresent(editor, component1));
 		Assert.assertTrue(toolIsPresent(editor, component2));
 
-		runnable.setFilterString("");
-		Display.getDefault().syncExec(runnable);
+		filterer.setFilterString("");
 
 		Assert.assertTrue(toolIsPresent(editor, component1));
 		Assert.assertTrue(toolIsPresent(editor, component2));
@@ -176,5 +178,35 @@ public class DiagramPaletteTest extends AbstractGraphitiTest {
 			return true;
 		}
 		return false;
+	}
+	
+	@Test
+	public void checkImplementations() {
+		waveformName = "IDE-953-Test";
+		final String component1 = "SigGen";
+		final String component2 = "HardLimit";
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		final SWTBotGefEditor editor = gefBot.gefEditor(waveformName);
+		
+		Assert.assertTrue(hasMultipleImplementations(editor, component1));
+		Assert.assertTrue(hasMultipleImplementations(editor, component2));
+	}
+	
+	private boolean hasMultipleImplementations(SWTBotGefEditor editor, String component) {
+		Assert.assertTrue(toolIsPresent(editor, component));
+		ToolEntry entry = editor.getActiveTool();
+		Assert.assertNotNull(entry);
+		PaletteContainer container = entry.getParent();
+		Assert.assertTrue(container instanceof PaletteStack);
+		Assert.assertTrue(container.getChildren().size() > 1);
+		Pattern match = Pattern.compile(component + " \\(\\w+\\)");
+		for (Object obj: container.getChildren()) {
+			if (obj instanceof ToolEntry) {
+				Assert.assertTrue(match.matcher(((ToolEntry) obj).getLabel()).matches());
+			} else {
+				return false;
+			}
+		}
+		return true;
 	}
 }
