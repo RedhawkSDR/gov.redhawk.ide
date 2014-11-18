@@ -104,9 +104,9 @@ public class DiagramPaletteTest extends AbstractGraphitiTest {
 			if (w instanceof Composite) {
 				Composite comp = (Composite) w;
 				for (Control c: comp.getChildren()) {
-					Rectangle rect = typeInFilter(c, filterText);
-					if (rect != null) {
-						return rect;
+					Rectangle rectangle = typeInFilter(c, filterText);
+					if (rectangle != null) {
+						return rectangle;
 					}
 				}
 			}
@@ -122,9 +122,9 @@ public class DiagramPaletteTest extends AbstractGraphitiTest {
 				return figure.getBounds();
 			}
 			for (Object obj: f.getChildren()) {
-				Rectangle rect = typeInFilter((IFigure) obj, canvas, filterText);
-				if (rect != null) {
-					return rect;
+				Rectangle rectangle = typeInFilter((IFigure) obj, canvas, filterText);
+				if (rectangle != null) {
+					return rectangle;
 				}
 			}
 			return null;
