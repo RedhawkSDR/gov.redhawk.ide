@@ -10,7 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
+import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
@@ -41,6 +46,187 @@ public class ViewUtils {
 		} catch (WidgetNotFoundException e) {
 			return false;
 		}
+	}
+
+	/**
+	 * Return Plot View
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getPlotView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.ui.port.nxmplot.PlotView2");
+	}
+	
+	/**
+	 * Return SRI View
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getSRIView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.bulkio.ui.sridata.view");
+	}
+	
+	/**
+	 * Return Audio View
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getAudioView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.ui.port.playaudio.view");
+	}
+	
+	/**
+	 * Return Data List View
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getDataListView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.datalist.ui.views.DataListView");
+	}
+	
+	/**
+	 * Return Snapshot dialog
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotShell getSnapshotDialog(SWTWorkbenchBot bot) {
+		return bot.shell("Snapshot");
+	}
+	
+	/**
+	 * Return Port Monitor View
+	 * @param bot
+	 * @return
+	 */
+	public static SWTBotView getPortMonitorView(SWTWorkbenchBot bot) {
+		return bot.viewById("gov.redhawk.ui.views.monitor.ports.PortMonitorView");
+	}
+	
+	/**
+	 * Presses the 'Start Acquire button on the Data List View
+	 */
+	public static void startAquireOnDataListView(SWTWorkbenchBot bot) {
+		final SWTBotView dataListView = ViewUtils.getDataListView(bot);
+		SWTBotButton startButton = dataListView.bot().buttonWithTooltip("Start Acquire");
+		startButton.click();
+	}
+	
+	/**
+	 * Waits until SRI Plot View displays and is populated
+	 * @param bot
+	 */
+	public static void waitUntilSRIViewPopulates(final SWTWorkbenchBot bot) {
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return "SRI View property rows did not populate";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				final SWTBotView sriView = getSRIView((SWTWorkbenchBot) bot);
+				return sriView.bot().tree().rowCount() > 0;
+			}
+		});
+	}
+	
+	/**
+	 * Waits until Audio View displays and is populated
+	 * @param bot
+	 */
+	public static void waitUntilAudioViewPopulates(final SWTWorkbenchBot bot) {
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return "Audio View property rows did not populate";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				final SWTBotView audioView = getAudioView((SWTWorkbenchBot) bot);
+				return audioView.bot().list().getItems().length > 0;
+			}
+		});
+	}
+	
+	/**
+	 * Waits until Data List View displays
+	 * @param bot
+	 */
+	public static void waitUntilDataListViewDisplays(final SWTWorkbenchBot bot) {
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return "DataList View isn't displayed";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				return getDataListView((SWTWorkbenchBot) bot) != null;
+			}
+		});
+	}
+	
+	/**
+	 * Waits until Data List View populates
+	 * @param bot
+	 */
+	public static void waitUntilDataListViewPopulates(final SWTWorkbenchBot bot) {
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return "DataList View isn't displayed";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				SWTBotView dataListView = getDataListView((SWTWorkbenchBot) bot);
+				return dataListView.bot().table().rowCount() > 10;
+			}
+		});
+	}
+	
+	/**
+	 * Waits until Snapshot dialog displays
+	 * @param bot
+	 */
+	public static void waitUntilSnapshotDialogDisplays(final SWTWorkbenchBot bot) {
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return "Snapshot Dialog isn't displayed";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				SWTBotShell snapshotDialog = bot.shell("Snapshot");
+				return snapshotDialog != null;
+			}
+		});
+	}
+
+	/**
+	 * Waits until PortMonitor View populates
+	 * @param bot
+	 */
+	public static void waitUntilPortMonitorViewPopulates(final SWTWorkbenchBot bot, final String componentName) {
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return "Port Monitor View isn't populated";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				SWTBotView monitorView = ViewUtils.getPortMonitorView((SWTWorkbenchBot) bot);
+				for (SWTBotTreeItem item : monitorView.bot().tree().getAllItems()) {
+					if (item.getText().matches(componentName + ".*")) {
+						return true;
+					}
+				}
+				return false;
+			}
+		});
 	}
 
 }

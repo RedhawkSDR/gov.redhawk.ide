@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.graphiti.ui.runtime.tests;
+package gov.redhawk.ide.sad.graphiti.ui.runtime.local.tests;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
@@ -17,33 +17,42 @@ import gov.redhawk.ide.swtbot.diagram.FindByUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
+public class LocalWaveformRuntimeTest extends AbstractGraphitiLocalWaveformRuntimeTest {
 
 	private SWTBotGefEditor editor;
-	private static final String CHALKBOARD = "Chalkboard";
+	private static final String[] LOCAL_WAVEFORM_PARENT_PATH = {"Sandbox"};
+	private static final String LOCAL_WAVEFORM = "ExampleWaveform01";
 	private static final String HARD_LIMIT = "HardLimit";
 
 	/**
-	 * IDE-884
-	 * Create the chalkboard waveform diagram.
+	 * IDE-671
+	 * Launch local waveform waveform diagram
+	 * Verify existing component exists
 	 * Add components to diagram from palette and TargetSDR
-	 * IDE-658
-	 * Open chalkboard with components already launched in the Sandbox
+	 * Close diagram and re-open, verify newly added component exists
 	 */
 	@Test
-	public void checkChalkboardComponents() {
+	public void checkLocalWaveformComponents() {
 
-		// Open Chalkboard Graphiti Diagram
-		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
-		editor = gefBot.gefEditor(CHALKBOARD);
+		//Launch Local Waveform From Target SDR
+		ScaExplorerTestUtils.launchWaveformFromTargetSDR(gefBot, LOCAL_WAVEFORM);
+		
+		//wait until local waveform appears in ScaExplorer Sandbox
+		ScaExplorerTestUtils.waitUntilWaveformAppearsInScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+		
+		// Open Local Waveform Diagram
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+		editor = gefBot.gefEditor(LOCAL_WAVEFORM);
 		editor.setFocus();
+		
+		//verify existing component exists
+		Assert.assertNotNull(editor.getEditPart("ExamplePythonComponent"));
 
 		// Add component to diagram from palette
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
@@ -56,11 +65,8 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 		
 		// Open the chalkboard with components already launched
 		editor.close();
-		SWTBotView scaExplorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
-		scaExplorerView.setFocus();
-		scaExplorerView.bot().tree().expandNode("Sandbox", "Chalkboard", HARD_LIMIT + "_1");
-		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
-		editor = gefBot.gefEditor(CHALKBOARD);
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+		editor = gefBot.gefEditor(LOCAL_WAVEFORM);
 		Assert.assertNotNull(editor.getEditPart(HARD_LIMIT));
 	}
 
@@ -70,8 +76,8 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 	 */
 	@Test
 	public void checkFindByNotInSandbox() {
-		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
-		editor = gefBot.gefEditor(CHALKBOARD);
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+		editor = gefBot.gefEditor(LOCAL_WAVEFORM);
 		editor.setFocus();
 		String[] findByList = { FindByUtils.FIND_BY_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, FindByUtils.FIND_BY_EVENT_CHANNEL,
 			FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
@@ -107,8 +113,6 @@ public class ChalkboardTest extends AbstractGraphitiRuntimeTest {
 		Assert.assertEquals("inner text should match component usage name", ci.getUsageName(), componentShape.getInnerText().getValue());
 		Assert.assertNotNull("component supported interface graphic should not be null", componentShape.getLollipop());
 		Assert.assertNull("start order shape/text should be null", componentShape.getStartOrderText());
-		// TODO
-//		Assert.assertFalse("should not be assembly controller", ComponentUtils.isAssemblyController(componentShape));
 
 		// HardLimit only has the two ports
 		Assert.assertTrue(componentShape.getUsesPortStubs().size() == 1 && componentShape.getProvidesPortStubs().size() == 1);

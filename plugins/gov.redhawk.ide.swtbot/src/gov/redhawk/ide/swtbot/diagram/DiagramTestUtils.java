@@ -272,6 +272,84 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	public static SWTBotGefEditPart getDiagramPortAnchor(SWTBotGefEditPart portEditPart) {
 		return portEditPart.children().get(0).children().get(0);
 	}
+	
+	/**
+	 * Plot port data on provided Port Anchor
+	 * If there is only one port you leave portName null
+	 * @param portEditPart - The SWTBotGefEditPart of the port you are trying to get the anchor for
+	 * @return
+	 */
+	public static void plotPortDataOnComponentPort(SWTBotGefEditor editor, String componentName, String portName) {
+		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
+		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
+		usesPortAnchor.select();
+		editor.clickContextMenu("Plot Port Data");
+	}
+	
+	/**
+	 * Play port data on provided Port Anchor
+	 * If there is only one port you leave portName null
+	 * @param portEditPart - The SWTBotGefEditPart of the port you are trying to get the anchor for
+	 * @return
+	 */
+	public static void playPortDataOnComponentPort(SWTBotGefEditor editor, String componentName, String portName) {
+		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
+		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
+		usesPortAnchor.select();
+		editor.clickContextMenu("Play Port");
+	}
+	
+	/**
+	 * Display SRI data on provided Port Anchor
+	 * If there is only one port you leave portName null
+	 * @param portEditPart - The SWTBotGefEditPart of the port you are trying to get the anchor for
+	 * @return
+	 */
+	public static void displaySRIDataOnComponentPort(SWTBotGefEditor editor, String componentName, String portName) {
+		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
+		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
+		usesPortAnchor.select();
+		editor.clickContextMenu("Display SRI");
+	}
+	
+	/**
+	 * Display DataList View on provided Port Anchor
+	 * If there is only one port you leave portName null
+	 * @param portEditPart - The SWTBotGefEditPart of the port you are trying to get the anchor for
+	 * @return
+	 */
+	public static void displayDataListViewOnComponentPort(SWTBotGefEditor editor, String componentName, String portName) {
+		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
+		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
+		usesPortAnchor.select();
+		editor.clickContextMenu("Data List");
+	}
+	
+	/**
+	 * Display Snapshot View on provided Port Anchor
+	 * If there is only one port you leave portName null
+	 * @param portEditPart - The SWTBotGefEditPart of the port you are trying to get the anchor for
+	 * @return
+	 */
+	public static void displaySnapshotDialogOnComponentPort(SWTBotGefEditor editor, String componentName, String portName) {
+		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
+		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
+		usesPortAnchor.select();
+		editor.clickContextMenu("Snapshot");
+	}
+	
+	/**
+	 * Display Port Monitor View on provided Port Anchor
+	 * If there is only one port you leave portName null
+	 * @param portEditPart - The SWTBotGefEditPart of the port you are trying to get the anchor for
+	 * @return
+	 */
+	public static void displayPortMonitorViewOnComponentPort(SWTBotGefEditor editor, String componentName, String portName) {
+		final SWTBotGefEditPart usesPort = getDiagramUsesPort(editor, componentName, portName);
+		final SWTBotGefEditPart usesPortAnchor = getDiagramPortAnchor(usesPort);
+		usesPortAnchor.select();
+		editor.clickContextMenu("Monitor Ports");
+	}
 
 	/**
 	 * 

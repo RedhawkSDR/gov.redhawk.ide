@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.graphiti.ui.runtime.tests;
+package gov.redhawk.ide.sad.graphiti.ui.runtime.local.tests;
 
 import gov.redhawk.ide.swtbot.UIRuntimeTest;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
@@ -20,8 +20,10 @@ import org.junit.Before;
 /**
  * 
  */
-public abstract class AbstractGraphitiRuntimeTest extends UIRuntimeTest {
+public abstract class AbstractGraphitiLocalWaveformRuntimeTest extends UIRuntimeTest {
 
+	private static final String[] LOCAL_WAVEFORM_PARENT_PATH = {"Sandbox"};
+	private static final String LOCAL_WAVEFORM = "ExampleWaveform01";
 	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE INLINE
 
 	@Before
@@ -29,13 +31,13 @@ public abstract class AbstractGraphitiRuntimeTest extends UIRuntimeTest {
 		gefBot = new SWTGefBot();
 		super.before();
 	}
-
+	
 	@After
 	public void afterTest() {
-		ScaExplorerTestUtils.releaseChalkboardFromScaExplorer(gefBot);
+		ScaExplorerTestUtils.releaseWaveformFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
 		
-		//wait until chalkboard empty
-		ScaExplorerTestUtils.waitUntilScaExplorerChalkboardEmpty(gefBot);
+		//wait until waveform empty
+		ScaExplorerTestUtils.waitUntilScaExplorerWaveformEmpty(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
 		
 	}
 

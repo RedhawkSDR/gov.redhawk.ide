@@ -23,8 +23,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class ScaExplorerTestUtils {
 
-	public static final String CHALKBOARD = "Chalkboard";
-	public static final String SANDBOX = "Sandbox";
+
 	public static final String SCA_EXPLORER_VIEW_ID = "gov.redhawk.ui.sca_explorer";
 	
 	protected ScaExplorerTestUtils() {
@@ -32,16 +31,16 @@ public class ScaExplorerTestUtils {
 	
 	
 	/**
-	 * Returns the Chalkboard tree item from Sca Explorer
+	 * Returns the Waveform tree item from Sca Explorer
 	 */
-	public static SWTBotTreeItem getChalkboardTreeItemFromScaExplorer(SWTWorkbenchBot bot) {
+	public static SWTBotTreeItem getWaveformTreeItemFromScaExplorer(SWTWorkbenchBot bot, 
+		String[] waveformParentPath, String waveform) {
 		SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
-		SWTBotTreeItem sandbox = scaExplorerView.bot().tree().expandNode("Sandbox");
-		SWTBotTreeItem chalkboard = null;
-		//find chalkboard
-		//Chalkboard could be "Chalkboard" or "Chalkboard STARTED"
-		for (SWTBotTreeItem treeItem: sandbox.getItems()) {
-			if (treeItem.getText().startsWith("Chalkboard")) {
+		SWTBotTreeItem waveformParent = scaExplorerView.bot().tree().expandNode(waveformParentPath);
+		//find waveform
+		//Could be "<waveform>" or "<waveform> STARTED"
+		for (SWTBotTreeItem treeItem: waveformParent.getItems()) {
+			if (treeItem.getText().startsWith(waveform)) {
 				treeItem.expand();
 				return treeItem;
 			}
@@ -50,31 +49,38 @@ public class ScaExplorerTestUtils {
 	}
 	
 	/**
-	 * Open Graphiti Chalkboard Diagram from ScaExplorer.
+	 * Open Graphiti Diagram from ScaExplorer.
 	 * @param gefBot
 	 * @param editor
 	 * @param componentName
 	 */
-	public static void openChalkboardFromScaExplorer(SWTGefBot gefBot) {
-		SWTBotTreeItem chalkboard = getChalkboardTreeItemFromScaExplorer(gefBot);
-		if (chalkboard == null) {
-			throw new WidgetNotFoundException("Chalkboard tree item not found in Sandbox");
+	public static void openDiagramFromScaExplorer(SWTGefBot gefBot, String[] waveformParentPath, String waveform) {
+		SWTBotTreeItem waveformTreeItem = getWaveformTreeItemFromScaExplorer(gefBot, waveformParentPath, waveform);
+		if (waveformTreeItem == null) {
+			throw new WidgetNotFoundException("Waveform tree item not found in Sandbox");
 		}
 		
-		chalkboard.select();
-		SWTBotMenu openWith = chalkboard.contextMenu("Open With");
-		SWTBotMenu graphitiChalkboard = openWith.menu("Graphiti Chalkboard");
-		graphitiChalkboard.click();
+		waveformTreeItem.select();
+		SWTBotMenu openWith = waveformTreeItem.contextMenu("Open With");
+		SWTBotMenu graphitiDiagram = null;
+		if ("Chalkboard".equalsIgnoreCase(waveform)) {
+			graphitiDiagram = openWith.menu("Graphiti Chalkboard");
+		} else {
+			graphitiDiagram = openWith.menu("Graphiti Diagram");
+		}
+		graphitiDiagram.click();
 	}
 	
 	/**
 	 * Terminates component via ScaExplorer
 	 * @param componentName
 	 */
-	public static void terminateComponentInScaExplorerChalkboard(SWTWorkbenchBot bot, String componentName) {
+	public static void terminateComponentInScaExplorer(SWTWorkbenchBot bot, 
+			String[] waveformParentPath, String waveform, String componentName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem componentEntry = scaExplorerView.bot().tree().expandNode(SANDBOX, CHALKBOARD, componentName);
+		SWTBotTreeItem waveformTreeItem = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
+		SWTBotTreeItem componentEntry = waveformTreeItem.expandNode(componentName);
 		componentEntry.select();
 		SWTBotMenu terminate = componentEntry.contextMenu("Terminate");
 		terminate.click();
@@ -84,12 +90,14 @@ public class ScaExplorerTestUtils {
 	 * Connect component ports via SCA Explorer Chalkboard
 	 * @param componentName
 	 */
-	public static void connectComponentPortsInScaExplorerChalkboard(SWTWorkbenchBot bot, String connectionName, 
+	public static void connectComponentPortsInScaExplorer(SWTWorkbenchBot bot, 
+		String[] waveformParentPath, String waveform, String connectionName, 
 			String sourceComponentName, String sourceComponentPortName, 
 		String targetComponentName, String targetComponentPortName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem sourceComponentPortEntry = scaExplorerView.bot().tree().expandNode(SANDBOX, CHALKBOARD, sourceComponentName, sourceComponentPortName);
+		SWTBotTreeItem waveformTreeItem = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
+		SWTBotTreeItem sourceComponentPortEntry = waveformTreeItem.expandNode(sourceComponentName, sourceComponentPortName);
 		sourceComponentPortEntry.select();
 		SWTBotMenu connect = sourceComponentPortEntry.contextMenu("Connect");
 		connect.click(); //opens connect wizard
@@ -98,7 +106,8 @@ public class ScaExplorerTestUtils {
 		SWTBotShell wizardShell = bot.shell("Connect");
 		SWTBot wizardBot = wizardShell.bot();
 		wizardShell.activate();
-		wizardBot.treeInGroup("Target").expandNode(SANDBOX, CHALKBOARD, targetComponentName, targetComponentPortName).select();
+		SWTBotTreeItem targetWaveformParentTreeItem = wizardBot.treeInGroup("Target").expandNode(waveformParentPath);
+		targetWaveformParentTreeItem.expandNode(waveform, targetComponentName, targetComponentPortName).select();
 
 		// Enter the name for connection
 		wizardBot.textWithLabel("Connection ID:").setText(connectionName);
@@ -110,88 +119,94 @@ public class ScaExplorerTestUtils {
 	}
 	
 	/**
-	 * Disconnect connection via SCA Explorer Chalkboard
+	 * Disconnect connection via SCA Explorer
 	 * @param componentName
 	 */
-	public static void disconnectConnectionInScaExplorerChalkboard(SWTWorkbenchBot bot, String connectionName, 
+	public static void disconnectConnectionInScaExplorer(SWTWorkbenchBot bot, 
+			String[] waveformParentPath, String waveform, String connectionName, 
 			String sourceComponentName, String sourceComponentPortName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem connectionEntry = scaExplorerView.bot().tree().expandNode(SANDBOX, CHALKBOARD, sourceComponentName, sourceComponentPortName, connectionName);
+		SWTBotTreeItem waveformTreeItem = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
+		SWTBotTreeItem connectionEntry = waveformTreeItem.expandNode(sourceComponentName, sourceComponentPortName, connectionName);
 		connectionEntry.select();
 		SWTBotMenu disconnect = connectionEntry.contextMenu("Disconnect");
 		disconnect.click(); //disconnects connection
 	}
 	
 	/**
-	 * Start component from ScaExplorer Chalkboard
+	 * Start component from ScaExplorer
 	 * @param componentName
 	 */
-	public static void startComponentFromScaExplorer(SWTWorkbenchBot bot, String componentName) {
+	public static void startComponentFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, 
+			String waveform, String componentName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem componentEntry = scaExplorerView.bot().tree().expandNode(SANDBOX, CHALKBOARD, componentName);
+		SWTBotTreeItem chalkboardEntry = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
+		SWTBotTreeItem componentEntry = chalkboardEntry.getNode(componentName);
 		componentEntry.select();
 		SWTBotMenu start = componentEntry.contextMenu("Start");
 		start.click();
 	}
 	
 	/**
-	 * Stop components in Chalkboard via ScaExplorer Chalkboard
+	 * Stop components in Diagram via ScaExplorer
 	 */
-	public static void stopChalkboardFromScaExplorer(SWTWorkbenchBot bot) {
+	public static void stopWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem chalkboardEntry = getChalkboardTreeItemFromScaExplorer(bot);
+		SWTBotTreeItem chalkboardEntry = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
 		chalkboardEntry.select();
 		SWTBotMenu stop = chalkboardEntry.contextMenu("Stop");
 		stop.click();
 	}
 	
 	/**
-	 * Terminate components in Chalkboard via ScaExplorer Chalkboard.
+	 * Terminate components in Diagram via ScaExplorer.
 	 */
-	public static void terminateChalkboardFromScaExplorer(SWTWorkbenchBot bot) {
+	public static void terminateWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem chalkboardEntry = getChalkboardTreeItemFromScaExplorer(bot);
+		SWTBotTreeItem chalkboardEntry = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
 		chalkboardEntry.select();
 		SWTBotMenu terminate = chalkboardEntry.contextMenu("Terminate");
 		terminate.click();
 	}
 	
 	/**
-	 * Release Chalkboard via ScaExplorer Chalkboard.
+	 * Release Waveform via ScaExplorer.
 	 */
-	public static void releaseChalkboardFromScaExplorer(SWTWorkbenchBot bot) {
+	public static void releaseWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem chalkboardEntry = getChalkboardTreeItemFromScaExplorer(bot);
+		SWTBotTreeItem chalkboardEntry = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
 		chalkboardEntry.select();
 		SWTBotMenu terminate = chalkboardEntry.contextMenu("Release");
 		terminate.click();
 	}
 	
 	/**
-	 * Start components in Chalkboard via ScaExplorer Chalkboard
+	 * Start components in Diagram via ScaExplorer
 	 */
-	public static void startChalkboardFromScaExplorer(SWTWorkbenchBot bot) {
+	public static void startWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem chalkboardEntry = getChalkboardTreeItemFromScaExplorer(bot);
+		SWTBotTreeItem chalkboardEntry = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
 		chalkboardEntry.select();
 		SWTBotMenu start = chalkboardEntry.contextMenu("Start");
 		start.click();
 	}
 	
 	/**
-	 * Stop component from ScaExplorer Chalkboard
+	 * Stop component from ScaExplorer
 	 * @param componentName
 	 */
-	public static void stopComponentFromScaExplorer(SWTWorkbenchBot bot, String componentName) {
+	public static void stopComponentFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, 
+			String waveform, String componentName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem componentEntry = scaExplorerView.bot().tree().expandNode(SANDBOX, CHALKBOARD, componentName + " STARTED");
+		SWTBotTreeItem chalkboardEntry = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
+		SWTBotTreeItem componentEntry = chalkboardEntry.getNode(componentName);
 		componentEntry.select();
 		SWTBotMenu stop = componentEntry.contextMenu("Stop");
 		stop.click();
@@ -203,20 +218,20 @@ public class ScaExplorerTestUtils {
 	 * Waits until component appears stopped in ScaExplorer
 	 * @param componentName
 	 */
-	public static void waitUntilComponentAppearsStoppedInScaExplorerChalkboard(SWTWorkbenchBot bot, final String componentName) {
+	public static void waitUntilComponentAppearsStoppedInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, final String componentName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		final SWTBotTreeItem chalkboardTreeItem = getChalkboardTreeItemFromScaExplorer(bot);
+		final SWTBotTreeItem waveformTreeItem = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
 		
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return componentName + " Component did not appear stopped in SCA Explorer Chalkboard";
+				return componentName + " Component did not appear stopped in SCA Explorer";
 			}
 
 			@Override
 			public boolean test() throws Exception {
-				SWTBotTreeItem[] items = chalkboardTreeItem.getItems();
+				SWTBotTreeItem[] items = waveformTreeItem.getItems();
 				for (SWTBotTreeItem item : items) {
 					if (item.getText().equals(componentName)) {
 						return true;
@@ -231,20 +246,20 @@ public class ScaExplorerTestUtils {
 	 * Waits until component appears stopped in ScaExplorer
 	 * @param componentName
 	 */
-	public static void waitUntilComponentAppearsStartedInScaExplorerChalkboard(SWTWorkbenchBot bot, final String componentName) {
+	public static void waitUntilComponentAppearsStartedInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, final String componentName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		final SWTBotTreeItem chalkboardTreeItem = getChalkboardTreeItemFromScaExplorer(bot);
+		final SWTBotTreeItem waveformTreeItem = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
 		
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return componentName + " Component did not appear started in SCA Explorer Chalkboard";
+				return componentName + " Component did not appear started in SCA Explorer";
 			}
 
 			@Override
 			public boolean test() throws Exception {
-				SWTBotTreeItem[] items = chalkboardTreeItem.getItems();
+				SWTBotTreeItem[] items = waveformTreeItem.getItems();
 				for (SWTBotTreeItem item : items) {
 					if (item.getText().equals(componentName + " STARTED")) {
 						return true;
@@ -256,23 +271,23 @@ public class ScaExplorerTestUtils {
 	}
 	
 	/**
-	 * Waits until Component displays in ScaExplorer Chalkboard
+	 * Waits until Component displays in ScaExplorer
 	 * @param componentName
 	 */
-	public static void waitUntilComponentDisplaysInScaExplorerChalkboard(SWTWorkbenchBot bot, final String componentName) {
+	public static void waitUntilComponentDisplaysInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, final String componentName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		final SWTBotTreeItem chalkboardTreeItem = getChalkboardTreeItemFromScaExplorer(bot);
+		final SWTBotTreeItem waveformTreeItem = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
 		
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return componentName + " Component did not load into SCA Explorer Chalkboard";
+				return componentName + " Component did not load into SCA Explorer";
 			}
 
 			@Override
 			public boolean test() throws Exception {
-				SWTBotTreeItem[] items = chalkboardTreeItem.getItems();
+				SWTBotTreeItem[] items = waveformTreeItem.getItems();
 				for (SWTBotTreeItem item : items) {
 					if (item.getText().equals(componentName)) {
 						return true;
@@ -284,23 +299,23 @@ public class ScaExplorerTestUtils {
 	}
 	
 	/**
-	 * Waits until Component disappears in ScaExplorer Chalkboard
+	 * Waits until Component disappears in ScaExplorer
 	 * @param componentName
 	 */
-	public static void waitUntilComponentDisappearsInScaExplorerChalkboard(SWTWorkbenchBot bot, final String componentName) {
+	public static void waitUntilComponentDisappearsInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform, final String componentName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		final SWTBotTreeItem chalkboardTreeItem = getChalkboardTreeItemFromScaExplorer(bot);
+		final SWTBotTreeItem waveformTreeItem = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
 		
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return componentName + " Component did not disappear from SCA Explorer Chalkboard";
+				return componentName + " Component did not disappear from SCA Explorer";
 			}
 
 			@Override
 			public boolean test() throws Exception {
-				SWTBotTreeItem[] items = chalkboardTreeItem.getItems();
+				SWTBotTreeItem[] items = waveformTreeItem.getItems();
 				for (SWTBotTreeItem item : items) {
 					if (item.getText().equals(componentName)) {
 						return false;
@@ -312,21 +327,23 @@ public class ScaExplorerTestUtils {
 	}
 	
 	/**
-	 * Waits until ScaExplorer Chalkboard is stopped
+	 * Waits until ScaExplorer Waveform is stopped
 	 * @param componentName
 	 */
-	public static void waitUntilScaExplorerChalkboardStopped(final SWTWorkbenchBot bot) {
+	public static void waitUntilScaExplorerWaveformStopped(final SWTWorkbenchBot bot, 
+		final String[] waveformParentPath, final String waveform) {
 		
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return "SCA Explorer Chalkboard is not empty";
+				return "SCA Explorer Waveform is not stopped";
 			}
 
 			@Override
 			public boolean test() throws Exception {
-				SWTBotTreeItem chalkboardTreeItem = ScaExplorerTestUtils.getChalkboardTreeItemFromScaExplorer((SWTWorkbenchBot) bot);
-				if (!chalkboardTreeItem.getText().contains("STARTED")) {
+				SWTBotTreeItem waveformTreeItem = 
+						ScaExplorerTestUtils.getWaveformTreeItemFromScaExplorer((SWTWorkbenchBot) bot, waveformParentPath, waveform);
+				if (!waveformTreeItem.getText().contains("STARTED")) {
 					return true;
 				}
 				return false;
@@ -335,21 +352,21 @@ public class ScaExplorerTestUtils {
 	}
 	
 	/**
-	 * Waits until ScaExplorer Chalkboard has no child items
+	 * Waits until ScaExplorer Waveform has no child items
 	 * @param componentName
 	 */
-	public static void waitUntilScaExplorerChalkboardEmpty(SWTWorkbenchBot bot) {
-		final SWTBotTreeItem chalkboardTreeItem = getChalkboardTreeItemFromScaExplorer(bot);
+	public static void waitUntilScaExplorerWaveformEmpty(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform) {
+		final SWTBotTreeItem waveformTreeItem = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
 		
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return "SCA Explorer Chalkboard is not empty";
+				return "SCA Explorer Waveform is not empty";
 			}
 
 			@Override
 			public boolean test() throws Exception {
-				if (chalkboardTreeItem.getItems().length < 1) {
+				if (waveformTreeItem.getItems().length < 1) {
 					return true;
 				}
 				return false;
@@ -358,19 +375,21 @@ public class ScaExplorerTestUtils {
 	}
 	
 	/**
-	 * Waits until Connection displays in ScaExplorer Chalkboard
+	 * Waits until Connection displays in ScaExplorer
 	 * @param componentName
 	 */
-	public static void waitUntilConnectionDisplaysInScaExplorerChalkboard(SWTWorkbenchBot bot, 
-		final String componentName, final String usesPortName, final String connectionName) {
+	public static void waitUntilConnectionDisplaysInScaExplorer(SWTWorkbenchBot bot,
+			String[] waveformParentPath, String waveform,
+			final String componentName, final String usesPortName, final String connectionName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		final SWTBotTreeItem sigGenOutPortTreeItem = scaExplorerView.bot().tree().expandNode(SANDBOX, CHALKBOARD, componentName, usesPortName);
+		final SWTBotTreeItem waveformTreeItem = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
+		final SWTBotTreeItem sigGenOutPortTreeItem = waveformTreeItem.expandNode(componentName, usesPortName);
 		
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return connectionName + " Connection did not load into SCA Explorer Chalkboard";
+				return connectionName + " Connection did not load into SCA Explorer";
 			}
 
 			@Override
@@ -387,19 +406,21 @@ public class ScaExplorerTestUtils {
 	}
 	
 	/**
-	 * Waits until Connection disappears in ScaExplorer Chalkboard
+	 * Waits until Connection disappears in ScaExplorer
 	 * @param componentName
 	 */
-	public static void waitUntilConnectionDisappearsInScaExplorerChalkboard(SWTWorkbenchBot bot, 
+	public static void waitUntilConnectionDisappearsInScaExplorer(SWTWorkbenchBot bot,
+		String[] waveformParentPath, String waveform,
 			final String componentName, final String usesPortName, final String connectionName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		final SWTBotTreeItem sigGenOutPortTreeItem = scaExplorerView.bot().tree().expandNode(SANDBOX, CHALKBOARD, componentName, usesPortName);
+		final SWTBotTreeItem waveformTreeItem = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
+		final SWTBotTreeItem sigGenOutPortTreeItem = waveformTreeItem.expandNode(componentName, usesPortName);
 		
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return connectionName + " Connection did not load into SCA Explorer Chalkboard";
+				return connectionName + " Connection did not load into SCA Explorer";
 			}
 
 			@Override
@@ -429,5 +450,47 @@ public class ScaExplorerTestUtils {
 		SWTBotMenu launchInSandbox = componentEntry.contextMenu("Launch in Sandbox");
 		SWTBotMenu python = launchInSandbox.menu(componentLanguage);
 		python.click();
+	}
+	
+	/**
+	 * Launch waveform from ScaExplorer TargetSDR
+	 * @param componentName
+	 * @param componentLanguage
+	 */
+	public static void launchWaveformFromTargetSDR(SWTWorkbenchBot bot, 
+			String waveformName) {
+		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
+		scaExplorerView.setFocus();
+		SWTBotTreeItem waveformEntry = scaExplorerView.bot().tree().expandNode("Target SDR", "Waveforms", waveformName);
+		waveformEntry.select();
+		SWTBotMenu launchInSandbox = waveformEntry.contextMenu("Launch in Sandbox");
+		SWTBotMenu defaultItem = launchInSandbox.menu("Default");
+		defaultItem.click();
+	}
+	
+	/**
+	 * Waits until Waveform displays in ScaExplorer
+	 * @param componentName
+	 */
+	public static void waitUntilWaveformAppearsInScaExplorer(SWTWorkbenchBot bot, final String[] waveformParentPath, final String waveformName) {
+		
+		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
+		scaExplorerView.setFocus();
+		
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return waveformName + " did not load into SCA Explorer";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				SWTBotTreeItem waveformTreeItem = getWaveformTreeItemFromScaExplorer((SWTWorkbenchBot) bot, waveformParentPath, waveformName);
+				if (waveformTreeItem != null) {
+					return true;
+				}
+				return false;
+			}
+		});
 	}
 }

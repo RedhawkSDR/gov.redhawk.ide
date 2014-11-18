@@ -20,6 +20,7 @@ import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.ComponentUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -265,6 +266,37 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		assertEquals("Palette contains all Target SDR Components - contents", sdrComponents, paletteComponents);
 	}
 	
+	/**
+	 * IDE-766
+	 * The delete context menu should not appear when ports are selected
+	 */
+	@Test
+	public void doNotDeletePortsTest() {
+		waveformName = "IDE-766-Test";
+		// Create an empty waveform project
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+		editor.setFocus();
+
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
+		SWTBotGefEditPart provides = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT);
+		SWTBotGefEditPart uses = DiagramTestUtils.getDiagramUsesPort(editor, HARD_LIMIT);
+
+		List<SWTBotGefEditPart> anchors = new ArrayList<SWTBotGefEditPart>();
+		anchors.add(DiagramTestUtils.getDiagramPortAnchor(provides));
+		anchors.add(DiagramTestUtils.getDiagramPortAnchor(uses));
+
+		for (SWTBotGefEditPart anchor : anchors) {
+			try {
+				anchor.select();
+				editor.clickContextMenu("Delete");
+				Assert.fail();
+			} catch (WidgetNotFoundException e) {
+				Assert.assertEquals(e.getMessage(), "Delete", e.getMessage());
+			}
+		}
+	}
+	
 	static List<String> getTargetSdrComponents(final SWTWorkbenchBot bot) {
 		LinkedList<String> list = new LinkedList<String>();
 		
@@ -311,4 +343,6 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		Assert.assertEquals(componentShape.getUsesPortStubs().get(0).getUses().getInterface().getName(), "dataDouble");
 		Assert.assertEquals(componentShape.getProvidesPortStubs().get(0).getProvides().getInterface().getName(), "dataDouble");
 	}
+	
+
 }

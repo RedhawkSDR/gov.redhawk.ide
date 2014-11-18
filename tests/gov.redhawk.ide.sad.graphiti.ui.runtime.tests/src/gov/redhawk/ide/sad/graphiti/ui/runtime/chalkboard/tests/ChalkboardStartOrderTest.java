@@ -9,7 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html.
  *
  */
-package gov.redhawk.ide.sad.graphiti.ui.runtime.tests;
+package gov.redhawk.ide.sad.graphiti.ui.runtime.chalkboard.tests;
 
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
@@ -20,9 +20,10 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class StartOrderRuntimeTest extends AbstractGraphitiRuntimeTest {
+public class ChalkboardStartOrderTest extends AbstractGraphitiChalkboardTest {
 
 	private SWTBotGefEditor editor;
+	private static final String[] CHALKBOARD_PARENT_PATH = {"Sandbox"};
 	private static final String CHALKBOARD = "Chalkboard";
 	private static final String SIGGEN = "SigGen";
 
@@ -33,13 +34,13 @@ public class StartOrderRuntimeTest extends AbstractGraphitiRuntimeTest {
 	@Test
 	public void removeStartOrderIconTest() {
 		// open chalkboard diagram
-		ScaExplorerTestUtils.openChalkboardFromScaExplorer(gefBot);
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
 		//drag SigGen to diagram and verify loaded in sca explorer
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorerChalkboard(bot, SIGGEN + "_1");
+		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN + "_1");
 		
 
 		SWTBotGefEditPart sigGenEditPart = editor.getEditPart(SIGGEN);
