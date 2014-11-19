@@ -11,7 +11,6 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram;
 
 import gov.redhawk.ide.sad.graphiti.ui.palette.RHGraphitiPaletteBehavior;
-import gov.redhawk.ide.sad.ui.providers.SpdToolEntry;
 
 import java.util.List;
 
