@@ -1,17 +1,19 @@
 /*******************************************************************************
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.runtime.chalkboard.tests;
 
+import static org.junit.Assert.assertTrue;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.FindByUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
@@ -19,16 +21,18 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 
-	private SWTBotGefEditor editor;
 	private static final String[] CHALKBOARD_PARENT_PATH = {"Sandbox"};
 	private static final String CHALKBOARD = "Chalkboard";
 	private static final String HARD_LIMIT = "HardLimit";
+	private SWTBotGefEditor editor;
 
 	/**
 	 * IDE-884
@@ -53,7 +57,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		// Add component to diagram from Target SDR
 		DiagramTestUtils.dragFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
-		
+
 		// Open the chalkboard with components already launched
 		editor.close();
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
@@ -72,7 +76,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		editor.setFocus();
 		String[] findByList = { FindByUtils.FIND_BY_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, FindByUtils.FIND_BY_EVENT_CHANNEL,
 			FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
-		
+
 		for (String findByType : findByList) {
 			try {
 				DiagramTestUtils.dragFromPaletteToDiagram(editor, findByType, 0, 0);
@@ -81,6 +85,44 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 				Assert.assertTrue(e.getMessage(), e.getMessage().matches(".*" + findByType + ".*"));
 			}
 		}
+	}
+
+	/**
+	 * IDE-660 Chalkboard Palette contains Workspace Components
+	 */
+	@Test
+	public void checkWorkspaceComponents() {
+		// create test Component in workspace
+		final String wkspComponentName = "testComponentInWorkspace";
+		bot.menu("File").menu("New").menu("SCA Component Project").click();
+
+		SWTBotShell wizardShell = bot.shell("New Component Project");
+		SWTBot wizardBot = wizardShell.activate().bot();
+		wizardBot.textWithLabel("Project name:").setText(wkspComponentName);
+		wizardBot.button("Next >").click();
+
+		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection("Java");
+		wizardBot.button("Next >").click();
+		wizardBot.button("Finish").click();
+
+		// Open Chalkboard Graphiti Diagram
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
+		editor = gefBot.gefEditor(CHALKBOARD);
+		editor.setFocus();
+
+		// validate that workspace Component is in Chalkboard palette
+		boolean isWkspCompInPalette;
+		try {
+			editor.activateTool(wkspComponentName);
+			isWkspCompInPalette = true;
+		} catch (WidgetNotFoundException ex) {
+			isWkspCompInPalette = false;
+		}
+		assertTrue("found workspace Component in Chalkboard Palette", isWkspCompInPalette);
+
+		// cleanup
+		editor.close();
+		MenuUtils.deleteNodeInProjectExplorer(bot, wkspComponentName);
 	}
 
 	/**
