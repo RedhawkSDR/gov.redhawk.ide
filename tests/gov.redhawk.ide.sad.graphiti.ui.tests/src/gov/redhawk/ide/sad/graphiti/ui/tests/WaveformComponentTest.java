@@ -50,7 +50,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 	private SWTBotGefEditor editor;
 	private String waveformName;
 	private static final String HARD_LIMIT = "HardLimit";
-	private static final String[] COMPONENTS = { "DataReader", "HardLimit", "SigGen" };
+	private static final String[] COMPONENTS = { "DataConverter", "HardLimit", "SigGen" };
 
 	/**
 	 * IDE-726
