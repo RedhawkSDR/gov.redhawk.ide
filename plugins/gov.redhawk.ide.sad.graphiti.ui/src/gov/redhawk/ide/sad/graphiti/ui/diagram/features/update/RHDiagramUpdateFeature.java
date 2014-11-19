@@ -13,6 +13,7 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.features.update;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.HostCollocationPattern;
@@ -150,13 +151,16 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				List<Object> objsToAdd = new ArrayList<Object>(); // gather all model object to add
 
 				// If inconsistencies found, redraw diagram elements based on model objects
+				boolean layoutNeeded = false;
 				if (hostCollocations.size() != hostCollocationShapes.size() || !numberOfComponentsMatch || !valuesMatch) {
 					Collections.addAll(pesToRemove, (PictogramElement[]) hostCollocationShapes.toArray(new PictogramElement[0]));
 					Collections.addAll(objsToAdd, (Object[]) hostCollocations.toArray(new Object[0]));
+					layoutNeeded = true;
 				}
 				if (componentShapes.size() != componentInstantiations.size() || !componentsResolved(componentShapes)) {
 					Collections.addAll(pesToRemove, (PictogramElement[]) componentShapes.toArray(new PictogramElement[0]));
 					Collections.addAll(objsToAdd, (Object[]) componentInstantiations.toArray(new Object[0]));
+					layoutNeeded = true;
 				}
 
 				// Easiest just to remove and redraw connections every time
@@ -173,11 +177,8 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 						}
 					}
 				} else {
-					super.update(context);
 					// update components
-					// TODO is this actually necessary, will the update happen on its own?
-					// update component shapes
-					// getFeatureProvider().updateIfPossibleAndNeeded(new UpdateContext(pe));
+					super.update(context);
 				}
 
 				// add shapes to diagram
@@ -190,6 +191,10 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				// add connections to diagram
 				addConnections(sadConnectInterfaces, getDiagram(), getFeatureProvider());
 
+				if (layoutNeeded) {
+					ZestLayoutDiagramFeature layoutFeature = new ZestLayoutDiagramFeature(getFeatureProvider());
+					layoutFeature.execute(null);
+				}
 			} else {
 				if (hostCollocations.size() != hostCollocationShapes.size() || !numberOfComponentsMatch || !valuesMatch) {
 					return new Reason(true, "The sad.xml file and diagram HostCollocation objects do not match.  Reload the diagram from the xml file.");
@@ -199,9 +204,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				}
 			}
 
-			// TODO: we should probably do this in the model prior to drawing
-			// Ensure assembly controller is set. It's possible a component was deleted that used to be the assembly
-			// controller
+			// Ensure assembly controller is set in case a component was deleted that used to be the assembly controller
 			ComponentPattern.organizeStartOrder(sad, getDiagram(), getFeatureProvider());
 		}
 
@@ -239,17 +242,6 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 		try {
 			reason = internalUpdate(context, true);
 			return reason.toBoolean();
-
-			/* Devin - Currently commented out because this resets the layout even on minor edits.  
-			 * Need to look into minimizing this call to extreme cases
-			 */
-			// TODO: THIS IS NOT THE RIGHT WAY, JUST DO IT TO GET SOMETHING WORKING
-			// if we changed something lets layout the diagram
-//			if (reason.toBoolean()) {
-//	        	ZestLayoutDiagramFeature layoutFeature = new ZestLayoutDiagramFeature(getFeatureProvider());
-//	        	layoutFeature.execute(null);
-//			}
-
 		} catch (CoreException e) {
 			// PASS
 			// TODO: catch exception
@@ -264,10 +256,10 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 	 * @return
 	 */
 	public static void addFindBy(List<SadConnectInterface> sadConnectInterfaces, Diagram diagram, IFeatureProvider featureProvider) {
-		
+
 		// contains all the findByStubs that should exist in the diagram
 		ArrayList<FindByStub> findByStubs = new ArrayList<FindByStub>();
-		
+
 		// populate list of findByStubs with existing instances from diagram
 		List<RHContainerShape> findByShapes = AbstractFindByPattern.getAllFindByShapes(diagram);
 		for (RHContainerShape findByShape : findByShapes) {
@@ -358,12 +350,6 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 			}
 		}
 
-		// TODO: Should we do this, I don't think it hurts to leave them.
-		// get all FindByStub(s) in diagram and remove any that connections aren't using
-
-		// TODO: Should we be removing the ports on the FindBy automatically if they arent's used
-		// I don't see the harm in leaving them. User could "edit" the FindByShape if they really wanted to remove them
-
 		// add new FindByStub(s), update existing FindByStub
 		for (FindByStub fbs : findByStubs) {
 			List<PictogramElement> elements = GraphitiUi.getLinkService().getPictogramElements(diagram, fbs);
@@ -385,17 +371,15 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 
 		for (Iterator<SadConnectInterface> connIter = sadConnectInterfaces.iterator(); connIter.hasNext();) {
 
-			// delete connection in model if
-			// uses port is present but the referenced component isn't
-			// provides port is present but references component isn't
-			SadConnectInterface conn = connIter.next();
-			if ((conn.getUsesPort() != null && conn.getUsesPort().getComponentInstantiationRef() != null && conn.getUsesPort().getComponentInstantiationRef().getInstantiation() == null)
-				|| (conn.getProvidesPort() != null && conn.getProvidesPort().getComponentInstantiationRef() != null 
-				&& conn.getProvidesPort().getComponentInstantiationRef().getInstantiation() == null)) {
+			// delete connection in model if either uses port is present but the referenced component isn't, 
+			// or provides port is present but references component isn't
+			SadConnectInterface con = connIter.next();
+			if ((con.getUsesPort() != null && con.getUsesPort().getComponentInstantiationRef() != null && con.getUsesPort().getComponentInstantiationRef().getInstantiation() == null)
+				|| (con.getProvidesPort() != null && con.getProvidesPort().getComponentInstantiationRef() != null && con.getProvidesPort().getComponentInstantiationRef().getInstantiation() == null)) {
 
 				// endpoint missing, delete connection
 				connIter.remove();
-				EcoreUtil.delete(conn, true);
+				EcoreUtil.delete(con, true);
 			}
 		}
 	}
