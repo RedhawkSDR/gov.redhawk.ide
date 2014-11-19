@@ -28,7 +28,6 @@ import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.jface.util.TransferDropTargetListener;
 
-@SuppressWarnings("restriction")
 public class RHGraphitiDiagramEditor extends DiagramEditor {
 
 	private EditingDomain editingDomain;
