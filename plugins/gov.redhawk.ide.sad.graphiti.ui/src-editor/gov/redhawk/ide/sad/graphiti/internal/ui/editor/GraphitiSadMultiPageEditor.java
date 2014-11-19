@@ -627,12 +627,13 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 		stack.execute(new RecordingCommand((TransactionalEditingDomain) getEditingDomain()) {
 			@Override
 			protected void doExecute() {
+				// Evade dirty check - we DON'T want this action to mark the editor as dirty
+				GraphitiSadMultiPageEditor.this.setDirtyAllowed(false);
 
 				// set property specifying diagram context (design, local, domain)
 				Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CONTEXT, getDiagramContext(sadResource));
 
 				// link diagram and sad
-				GraphitiSadMultiPageEditor.this.setDirtyAllowed(false);
 				PictogramLink link = PictogramsFactory.eINSTANCE.createPictogramLink();
 				link.getBusinessObjects().add(sad);
 				diagram.setLink(link);
