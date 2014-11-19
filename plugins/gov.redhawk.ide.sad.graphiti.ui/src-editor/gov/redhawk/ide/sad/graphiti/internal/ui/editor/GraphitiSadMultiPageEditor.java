@@ -112,6 +112,8 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 
 	private static final String DIAGRAM_PAGE_ID = "2";
 
+	private boolean isDirtyAllowed = true;
+
 	/**
 	 * The graphical diagram editor embedded into this editor.
 	 */
@@ -170,8 +172,6 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 				this.sadResource.eAdapters().remove(this);
 			}
 		}
-		
-		
 
 		/**
 		 * {@inheritDoc}
@@ -381,12 +381,16 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 
 	@Override
 	protected boolean computeDirtyState() {
+		if (!isDirtyAllowed()) {
+			setDirtyAllowed(true);
+			return false;
+		}
 		int activePage = getActivePage();
 		if (activePage == -1) {
 			return false;
 		} else if (activePage == getPageCount() - 1) {
 			return textEditor.isDirty();
-		} 
+		}
 		BasicCommandStack commandStack = (BasicCommandStack) diagramEditor.getEditingDomain().getCommandStack();
 		return commandStack.isSaveNeeded();
 	}
@@ -515,7 +519,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 	@Override
 	protected void addPages() {
 		// Only creates the other pages if there is something that can be edited
-		
+
 		if (!getEditingDomain().getResourceSet().getResources().isEmpty()
 			&& !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
 			try {
@@ -540,7 +544,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 
 				// set layout for target-sdr editors
 				DUtil.layout(editor);
-				
+
 				textEditor = createTextEditor();
 				if (textEditor != null) {
 					final int sadSourcePageNum = addPage(textEditor, getEditorInput());
@@ -620,10 +624,11 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 			@Override
 			protected void doExecute() {
 
-				//set property specifying diagram context (design, local, domain)
+				// set property specifying diagram context (design, local, domain)
 				Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CONTEXT, getDiagramContext(sadResource));
-				
-				//link diagram and sad
+
+				// link diagram and sad
+				GraphitiSadMultiPageEditor.this.setDirtyAllowed(false);
 				PictogramLink link = PictogramsFactory.eINSTANCE.createPictogramLink();
 				link.getBusinessObjects().add(sad);
 				diagram.setLink(link);
@@ -632,11 +637,9 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 
 		// return editor input from diagram with sad diagram type
 		return DiagramEditorInput.createEditorInput(diagram, SADDiagramTypeProvider.PROVIDER_ID);
-		
 
 	}
 
-	
 	/**
 	 * Returns the property value that should be set for the Diagram container's DIAGRAM_CONTEXT property.
 	 * Indicates the mode the diagram is operating in.
@@ -646,7 +649,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 		if (sadResource.getURI().toString().matches(".*" + System.getenv("SDRROOT") + ".*")) {
 			return DUtil.DIAGRAM_CONTEXT_TARGET_SDR;
 		}
-		
+
 		return DUtil.DIAGRAM_CONTEXT_DESIGN;
 	}
 
@@ -777,7 +780,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 		diagramEditor.getDiagramBehavior().getUpdateBehavior().setResourceChanged(true);
 		diagramEditor.getDiagramBehavior().getUpdateBehavior().handleActivate();
 	}
-	
+
 	@Override
 	protected void emfDoSave(IProgressMonitor progressMonitor) {
 		diagramEditor.doSave(progressMonitor);
@@ -829,5 +832,13 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 		localAdapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
 		((AdapterFactoryEditingDomain) domain).setAdapterFactory(localAdapterFactory);
 		return domain;
+	}
+
+	public boolean isDirtyAllowed() {
+		return isDirtyAllowed;
+	}
+
+	public void setDirtyAllowed(boolean isDirtyAllowed) {
+		this.isDirtyAllowed = isDirtyAllowed;
 	}
 }
