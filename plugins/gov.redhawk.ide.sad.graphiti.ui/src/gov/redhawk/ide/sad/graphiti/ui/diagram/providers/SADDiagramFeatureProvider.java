@@ -20,7 +20,7 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.SetAsAssemblyCont
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime.StartComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime.StopComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.SADConnectionInterfaceDeleteFeature;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.reconnect.SADReconnectFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.update.RHDiagramUpdateFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.update.SADConnectionInterfaceUpdateFeature;
@@ -202,7 +202,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 
 		// add zest layout feature if diagram selected
 		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0 && context.getPictogramElements()[0] instanceof Diagram) {
-			retList.add(new ZestLayoutDiagramFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+			retList.add(new LayoutDiagramFeature(this.getDiagramTypeProvider().getFeatureProvider()));
 		}
 
 		// add findBy edit feature if findByStub selected

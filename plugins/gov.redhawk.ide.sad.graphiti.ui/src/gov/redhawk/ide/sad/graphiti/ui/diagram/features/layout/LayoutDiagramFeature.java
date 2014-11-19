@@ -40,8 +40,6 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.zest.layouts.InvalidLayoutConfiguration;
 import org.eclipse.zest.layouts.LayoutAlgorithm;
 import org.eclipse.zest.layouts.LayoutBendPoint;
@@ -62,7 +60,7 @@ import org.eclipse.zest.layouts.dataStructures.BendPoint;
 import org.eclipse.zest.layouts.exampleStructures.SimpleNode;
 
 @SuppressWarnings("restriction")
-public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
+public class LayoutDiagramFeature extends AbstractCustomFeature {
 
 	private static List<String> layouts = Arrays.asList("Spring Layout", "Tree Layout", "Grid Layout", "Horizontal Layout", "Horizontal Tree Layout",
 		"Vertical Layout", "Radial Layout", "Directed Graph Layout", "Composite Layout [Directed Graph + Horizontal Shift]",
@@ -72,7 +70,7 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 	/**
 	 * Constructor
 	 */
-	public ZestLayoutDiagramFeature(IFeatureProvider fp) {
+	public LayoutDiagramFeature(IFeatureProvider fp) {
 		super(fp);
 	}
 
@@ -113,16 +111,8 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 	 */
 	@Override
 	public void execute(ICustomContext context) {
-		// ask the user for a LayoutAlgorithmn
-		// Integer type = askForLayoutType();
-
-		// if (type != null) {
 		// get a map of the self connection anchor locations
 		final Map<Connection, Point> selves = getSelfConnections();
-
-		// get the chosen LayoutAlgorithmn instance
-		// This would be a good idea to let the user choose, I've found that only horizontal tree is worth it.
-		// LayoutAlgorithm layoutAlgorithm = getLayoutAlgorithmn(type.intValue());
 
 		// Use the Horizontal Tree Layout
 		LayoutAlgorithm layoutAlgorithm = new HorizontalTreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING);
@@ -370,20 +360,6 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 	}
 
 	/**
-	 * Simple dialog to ask the user for a {@link LayoutAlgorithm}<br/>
-	 * Used to test various Zest algorithmns
-	 * 
-	 * @return the chosen algorithmn
-	 */
-	@SuppressWarnings("unused")
-	private Integer askForLayoutType() {
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		/** ZestLayoutAlgorithmnChoiceDialog is a simple Dialog asking for an Integer for now */
-		ZestLayoutAlgorithmnChoiceDialog dialog = new ZestLayoutAlgorithmnChoiceDialog(shell);
-		return dialog.open();
-	}
-
-	/**
 	 * @param current
 	 * @return
 	 */
@@ -454,7 +430,7 @@ public class ZestLayoutDiagramFeature extends AbstractCustomFeature {
 	}
 
 	public static void setLayouts(List<String> layouts) {
-		ZestLayoutDiagramFeature.layouts = layouts;
+		LayoutDiagramFeature.layouts = layouts;
 	}
 
 	/**

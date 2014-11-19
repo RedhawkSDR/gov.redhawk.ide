@@ -13,7 +13,7 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.features.update;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.HostCollocationPattern;
@@ -192,7 +192,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				addConnections(sadConnectInterfaces, getDiagram(), getFeatureProvider());
 
 				if (layoutNeeded) {
-					ZestLayoutDiagramFeature layoutFeature = new ZestLayoutDiagramFeature(getFeatureProvider());
+					LayoutDiagramFeature layoutFeature = new LayoutDiagramFeature(getFeatureProvider());
 					layoutFeature.execute(null);
 				}
 			} else {

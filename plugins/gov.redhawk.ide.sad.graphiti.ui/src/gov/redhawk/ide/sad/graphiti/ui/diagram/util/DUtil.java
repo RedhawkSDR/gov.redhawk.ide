@@ -13,7 +13,7 @@ package gov.redhawk.ide.sad.graphiti.ui.diagram.util;
 import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.IDiagramUtilHelper;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.ZestLayoutDiagramFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.sca.efs.ScaFileSystemPlugin;
@@ -1323,14 +1323,14 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 				final ICustomContext context = new CustomContext(new PictogramElement[]{diagram});
 				ICustomFeature[] features = featureProvider.getCustomFeatures(context);
 				for (final ICustomFeature feature : features) {
-					if (feature instanceof ZestLayoutDiagramFeature) {
+					if (feature instanceof LayoutDiagramFeature) {
 						TransactionalEditingDomain ed = diagramBehavior.getEditingDomain();
 						TransactionalCommandStack cs = (TransactionalCommandStack) ed.getCommandStack();
 						cs.execute(new RecordingCommand(ed) {
 							
 							@Override
 							protected void doExecute() {
-								((ZestLayoutDiagramFeature) feature).execute(context);
+								((LayoutDiagramFeature) feature).execute(context);
 							}
 						});
 					}
