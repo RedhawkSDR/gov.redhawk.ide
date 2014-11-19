@@ -112,6 +112,10 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 
 	private static final String DIAGRAM_PAGE_ID = "2";
 
+	/**
+	 * This is used to manually override the dirty state. It can be used to avoid marking the editor as dirty on trivial
+	 * or hidden actions, such as linking the diagram to the sad.xml
+	 */
 	private boolean isDirtyAllowed = true;
 
 	/**
