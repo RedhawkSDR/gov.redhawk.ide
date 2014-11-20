@@ -1,10 +1,10 @@
 /**
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
- * 
+ *
  * This file is part of REDHAWK IDE.
- * 
- * All rights reserved.  This program and the accompanying materials are made available under 
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  *
@@ -15,13 +15,17 @@ import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class ComponentUtils {
 
-	protected ComponentUtils() {
+	public static final String COMPONENT_MENU_NAME = "SCA Component Project";
+
+	/** private to prevent instantiation since all functions are static. */
+	private ComponentUtils() {
 	}
-	
+
 	/**
 	 * Launches the selected component in the SCA Explorer chalkboard
 	 * @returns the SWTBotTreeItem for the component
@@ -68,5 +72,23 @@ public class ComponentUtils {
 
 		return null;
 	}
-	
+
+	/** create SCA Component in Workspace using default location */
+	public static void createComponentProject(SWTBot bot, String componentProjectName, String progLanguage) {
+		StandardTestActions.configurePyDev();
+
+		bot.menu("File").menu("New").menu("Project...").click();
+		SWTBotShell wizardShell = bot.shell("New Project");
+		wizardShell.activate();
+		SWTBot wizardBot = wizardShell.bot();
+		wizardBot.tree().getTreeItem("SCA").expand().getNode(COMPONENT_MENU_NAME).select();
+		wizardBot.button("Next >").click();
+
+		wizardBot.textWithLabel("Project name:").setText(componentProjectName);
+		wizardBot.button("Next >").click();
+
+		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection(progLanguage);
+		wizardBot.button("Next >").click();
+		wizardBot.button("Finish").click();
+	}
 }

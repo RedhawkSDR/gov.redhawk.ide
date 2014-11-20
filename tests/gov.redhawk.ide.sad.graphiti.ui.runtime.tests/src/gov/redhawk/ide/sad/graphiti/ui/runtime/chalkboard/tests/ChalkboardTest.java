@@ -13,6 +13,7 @@ package gov.redhawk.ide.sad.graphiti.ui.runtime.chalkboard.tests;
 import static org.junit.Assert.assertTrue;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.swtbot.ComponentUtils;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.FindByUtils;
@@ -21,9 +22,7 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
-import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -43,7 +42,6 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	 */
 	@Test
 	public void checkChalkboardComponents() {
-
 		// Open Chalkboard Graphiti Diagram
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
 		editor = gefBot.gefEditor(CHALKBOARD);
@@ -94,16 +92,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	public void checkWorkspaceComponents() {
 		// create test Component in workspace
 		final String wkspComponentName = "testComponentInWorkspace";
-		bot.menu("File").menu("New").menu("SCA Component Project").click();
-
-		SWTBotShell wizardShell = bot.shell("New Component Project");
-		SWTBot wizardBot = wizardShell.activate().bot();
-		wizardBot.textWithLabel("Project name:").setText(wkspComponentName);
-		wizardBot.button("Next >").click();
-
-		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection("Java");
-		wizardBot.button("Next >").click();
-		wizardBot.button("Finish").click();
+		ComponentUtils.createComponentProject(bot, wkspComponentName, "Python");
 
 		// Open Chalkboard Graphiti Diagram
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
