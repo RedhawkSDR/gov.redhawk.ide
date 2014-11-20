@@ -44,7 +44,7 @@ public class SaveChalkboardTest extends AbstractGraphitiChalkboardTest {
 	 * Save the Graphiti chalkboard as a waveform
 	 */
 	@Test
-	public void checkChalkboardComponents() {
+	public void saveChalkboardAsWaveform() {
 		final String WAVEFORM_NAME = "ChalkboardAsWaveform";
 
 		// Open Chalkboard Graphiti Diagram
