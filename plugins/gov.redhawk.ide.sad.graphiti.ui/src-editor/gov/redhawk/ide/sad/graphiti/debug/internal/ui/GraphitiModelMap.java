@@ -336,7 +336,7 @@ public class GraphitiModelMap {
 			protected void doExecute() {
 				
 				//create component feature
-				ComponentCreateFeature createComponentFeature = new ComponentCreateFeature(featureProvider, spd);
+				ComponentCreateFeature createComponentFeature = new ComponentCreateFeature(featureProvider, spd, newValue.getImplementationID());
 				CreateContext createContext = new CreateContext();
 				createContext.putProperty(ComponentCreateFeature.OVERRIDE_USAGE_NAME, newValue.getName());
 				createContext.putProperty(ComponentCreateFeature.OVERRIDE_INSTANTIATION_ID, newValue.getInstantiationIdentifier());

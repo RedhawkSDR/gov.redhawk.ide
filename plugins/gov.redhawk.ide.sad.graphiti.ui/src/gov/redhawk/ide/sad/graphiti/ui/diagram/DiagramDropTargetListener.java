@@ -70,7 +70,7 @@ public class DiagramDropTargetListener extends AbstractTransferDropTargetListene
 			
 			if (((IStructuredSelection) selection).getFirstElement() instanceof SoftPkg) {
 				SoftPkg spd = (SoftPkg) ((IStructuredSelection) selection).getFirstElement();
-				ICreateFeature newFeature = new ComponentCreateFeature(diagramBehavior.getDiagramTypeProvider().getFeatureProvider(), spd);
+				ICreateFeature newFeature = new ComponentCreateFeature(diagramBehavior.getDiagramTypeProvider().getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
 				
 				return newFeature;
 			}

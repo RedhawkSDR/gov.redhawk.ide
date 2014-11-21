@@ -334,13 +334,14 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 			if (!foundTool && passesFilter(spd.getName())) {
 				// special way of instantiating create feature
 				// allows us to know which palette tool was used
-				ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), spd);
+				
 				if (spd.getImplementation().size() > 1) {
 					StackEntry stackEntry = new StackEntry(spd.getName() + spd.getImplementation().get(0).getId(), spd.getDescription(),
 						ImageProvider.IMG_COMPONENT_PLACEMENT);
 					compartmentEntry.addToolEntry(stackEntry);
 					List<IToolEntry> stackEntries = new ArrayList<IToolEntry>();
 					for (Implementation impl : spd.getImplementation()) {
+						ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), spd, impl.getId());
 						SpdToolEntry entry = new SpdToolEntry(spd.getName() + " (" + impl.getId() + ")", spd.getDescription(), EcoreUtil.getURI(spd),
 							spd.getId(), null, ImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
 						stackEntries.add(entry);
@@ -350,6 +351,7 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 						stackEntry.addCreationToolEntry((SpdToolEntry) entry);
 					}
 				} else {
+					ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
 					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature);
 					compartmentEntry.addToolEntry(entry);
 				}
@@ -453,13 +455,13 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	private List<IToolEntry> createPaletteEntries(ComponentDesc desc) {
 		List<IToolEntry> retVal = new ArrayList<IToolEntry>(desc.getImplementationIds().size());
 		if (desc.getImplementationIds().size() == 1) {
-			ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), desc.getSoftPkg());
+			ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), desc.getSoftPkg(), desc.getImplementationIds().get(0));
 			SpdToolEntry entry = new SpdToolEntry(desc.getName(), desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(),
 				desc.getImplementationIds().get(0), ImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
 			retVal.add(entry);
 		} else {
 			for (String implID : desc.getImplementationIds()) {
-				ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), desc.getSoftPkg());
+				ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), desc.getSoftPkg(), implID);
 				SpdToolEntry entry = new SpdToolEntry(desc.getName() + " (" + implID + ")", desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(),
 					implID, ImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
 				retVal.add(entry);

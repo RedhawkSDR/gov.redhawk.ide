@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.create;
 
-import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.sca.util.PluginUtil;
@@ -32,8 +31,6 @@ import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
@@ -42,7 +39,6 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.impl.AbstractCreateFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 public class ComponentCreateFeature extends AbstractCreateFeature {
 
@@ -51,6 +47,7 @@ public class ComponentCreateFeature extends AbstractCreateFeature {
 	public static final String OVERRIDE_INSTANTIATION_ID = "OverrideInstantiationId";
 	
 	private SoftPkg spd = null;
+	private String implId = null;
 
 	@Override
 	public String getDescription() {
@@ -58,9 +55,10 @@ public class ComponentCreateFeature extends AbstractCreateFeature {
 		return "Add Component to Diagram";
 	}
 	
-	public ComponentCreateFeature(IFeatureProvider fp, final SoftPkg spd) {
+	public ComponentCreateFeature(IFeatureProvider fp, final SoftPkg spd, String implId) {
 		super(fp, spd.getName(), spd.getDescription());
 		this.spd = spd;
+		this.implId = implId;
 	}
 
 	// diagram and hostCollocation acceptable
@@ -193,15 +191,6 @@ public class ComponentCreateFeature extends AbstractCreateFeature {
 		namingService.setName(compName);
 		findComponent.setNamingService(namingService);
 		sadComponentInstantiation.setFindComponent(findComponent);
-
-		String implId = null;
-		if (!spd.getImplementation().isEmpty()) { // Panic! Just choose first implementation
-			implId = spd.getImplementation().get(0).getId();
-		} else {
-			StatusManager.getManager().handle(
-				new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, spd.getName() + " Component has no implementation. ID: " + spd.getId()),
-				StatusManager.LOG | StatusManager.SHOW);
-		}
 		sadComponentInstantiation.setImplID(implId);
 
 		// add to placement
