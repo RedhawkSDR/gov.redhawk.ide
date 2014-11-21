@@ -96,58 +96,6 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		addPattern(new FindByEventChannelPattern());
 		addPattern(new FindByServicePattern());
 		addPattern(new FindByCORBANamePattern());
-
-		// would be cool to add a diagram listener and fire off events on hover, not sure how to achieve this
-		// add a diagram listener
-		// final Diagram diagram = diagramTypeProvider.getDiagram();
-		// ((IDiagramContainerUI)diagramTypeProvider.getDiagramEditor()).getGraphicalViewer().getControl().addMouseMoveListener(new MouseMoveListener() {
-		// @Override
-		// public void mouseMove(MouseEvent e) {
-		// ILocationInfo info = Graphiti.getPeService().getLocationInfo(diagram, e.x, e.y);
-		// Shape shape = info.getShape();
-		// Object bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape);
-		// if(bo instanceof SadComponentInstantiation){
-		// return;
-		// }
-		// }
-		// });
-
-		// final Diagram diagram = diagramTypeProvider.getDiagram();
-		// diagramTypeProvider.getNotificationService().
-		// DiagramBehavior vov = (DiagramBehavior)diagramTypeProvider.getDiagramBehavior();
-		// vov.getContentEditPart().addEditPartListener(new EditPartListener(){
-		//
-		// @Override
-		// public void childAdded(EditPart child, int index) {
-		// }
-		//
-		// @Override
-		// public void partActivated(EditPart editpart) {
-		// }
-		//
-		// @Override
-		// public void partDeactivated(EditPart editpart) {
-		// }
-		//
-		// @Override
-		// public void removingChild(EditPart child, int index) {
-		// }
-		//
-		// @Override
-		// public void selectedStateChanged(EditPart editpart) {
-		// }
-		//
-		// });
-		// vov.
-		// diagramTypeProvide
-		// diagramTypeProvider.getDiagramEditor().getDiagramTypeProvider()..getGraphicalViewer().getControl().addMouseMoveListener(new MouseMoveListener() {
-		// @Override
-		// public void mouseMove(MouseEvent e) {
-		// ILocationInfo info = Graphiti.getPeService().getLocationInfo(diagram, e.x, e.y);
-		// Shape shape = info.getShape();
-		// Object bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(shape);
-		// }
-
 	}
 
 	// the text we double click is nested inside of the pictogram element that links to our business object
@@ -180,18 +128,6 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		return ret;
 	}
 
-//	@Override
-//	protected IDirectEditingFeature getDirectEditingFeatureAdditional(IDirectEditingContext context) {
-//
-//		PictogramElement pe = context.getPictogramElement();
-//		ComponentShape componentShape = (ComponentShape) DUtil.findContainerShapeParentWithProperty(
-//			pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-//		if (componentShape != null && getBusinessObjectForPictogramElement(componentShape) instanceof SadComponentInstantiation) {
-//			return new ComponentDirectEditUsageNameFeature(getDiagramTypeProvider().getFeatureProvider());
-//		}
-//		return null;
-//	}
-
 	@Override
 	public ICustomFeature[] getCustomFeatures(ICustomContext context) {
 		ICustomFeature[] ret = super.getCustomFeatures(context);
@@ -212,14 +148,13 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 				retList.add(new FindByEditFeature(this));
 			}
 		}
-		
+
 		// add runtime features, start/stop component only work in sandbox and targetSDR, not design time
 		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 			if (context.getPictogramElements()[0] instanceof ContainerShape) {
 				Diagram diagram = DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]);
-				if (obj instanceof SadComponentInstantiation
-						&& (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
+				if (obj instanceof SadComponentInstantiation && (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
 					retList.add(new StartComponentFeature(this));
 					retList.add(new StopComponentFeature(this));
 				}
@@ -343,13 +278,14 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 
 	@Override
 	public IDeleteFeature getDeleteFeature(IDeleteContext context) {
-		// Search for shapes for which we don't want the user to have
-		// the delete capability, including the diagram as a whole
-		if (context.getPictogramElement() instanceof Diagram || context.getPictogramElement() instanceof FixPointAnchor
-				|| DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
-					RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
-					RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE,
-					RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE })) {
+		// Search for shapes for which we don't want the user to have the delete capability,
+		// including the diagram as a whole
+		if (context.getPictogramElement() instanceof Diagram
+			|| context.getPictogramElement() instanceof FixPointAnchor
+			|| DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
+				RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
+				RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE,
+				RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE })) {
 			return new DefaultDeleteFeature(this) {
 				@Override
 				public boolean canDelete(IDeleteContext context) {
