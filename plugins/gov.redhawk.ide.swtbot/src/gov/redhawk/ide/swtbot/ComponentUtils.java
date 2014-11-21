@@ -14,6 +14,8 @@ package gov.redhawk.ide.swtbot;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
@@ -80,8 +82,25 @@ public class ComponentUtils {
 		bot.menu("File").menu("New").menu("Project...").click();
 		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();
-		SWTBot wizardBot = wizardShell.bot();
-		wizardBot.tree().getTreeItem("SCA").expand().getNode(COMPONENT_MENU_NAME).select();
+		final SWTBot wizardBot = wizardShell.bot();
+		wizardBot.waitUntil(new DefaultCondition() {
+
+			@Override
+			public String getFailureMessage() {
+				return "Could not find menu option for: " + COMPONENT_MENU_NAME;
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				try {
+					wizardBot.tree().getTreeItem("SCA").expand().getNode(COMPONENT_MENU_NAME).select();
+					return true;
+				} catch (WidgetNotFoundException e) {
+					return false;
+				}
+			}
+
+		});
 		wizardBot.button("Next >").click();
 
 		wizardBot.textWithLabel("Project name:").setText(componentProjectName);

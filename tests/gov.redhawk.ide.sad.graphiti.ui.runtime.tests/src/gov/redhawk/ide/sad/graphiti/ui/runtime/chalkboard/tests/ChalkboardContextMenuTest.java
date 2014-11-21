@@ -29,7 +29,6 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 	private static final String CHALKBOARD = "Chalkboard";
 	private static final String SIGGEN = "SigGen";
 	private static final String SIGGEN_1 = SIGGEN + "_1";
-	private static final String HARD_LIMIT = "HardLimit";
 
 	/**
 	 * IDE-661, IDE-662, IDE-663, IDE-664, IDE-665, IDE-666, IDE-667
