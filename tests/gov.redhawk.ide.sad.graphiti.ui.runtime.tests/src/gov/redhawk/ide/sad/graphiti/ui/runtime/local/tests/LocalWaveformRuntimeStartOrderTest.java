@@ -33,16 +33,8 @@ public class LocalWaveformRuntimeStartOrderTest extends AbstractGraphitiLocalWav
 	 */
 	@Test
 	public void removeStartOrderIconTest() {
-		//Launch Local Waveform From Target SDR
-		ScaExplorerTestUtils.launchWaveformFromTargetSDR(gefBot, LOCAL_WAVEFORM);
 		
-		//wait until local waveform appears in ScaExplorer Sandbox
-		ScaExplorerTestUtils.waitUntilWaveformAppearsInScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		
-		// Open Chalkboard Diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		String waveFormFullName = ScaExplorerTestUtils.getWaveformFullNameFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		editor = gefBot.gefEditor(waveFormFullName);
+		editor = gefBot.gefEditor(getWaveFormFullName());
 		editor.setFocus();
 
 		//drag SigGen to diagram and verify loaded in sca explorer

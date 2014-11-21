@@ -23,14 +23,26 @@ import org.junit.Before;
  */
 public abstract class AbstractGraphitiLocalWaveformRuntimeTest extends UIRuntimeTest {
 
-	private static final String[] LOCAL_WAVEFORM_PARENT_PATH = {"Sandbox"};
-	private static final String LOCAL_WAVEFORM = "ExampleWaveform01";
+	public static final String[] LOCAL_WAVEFORM_PARENT_PATH = {"Sandbox"};
+	public static final String LOCAL_WAVEFORM = "ExampleWaveform01";
 	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE INLINE
+	private String waveFormFullName; //full name of waveform that is launched
 
 	@Before
 	public void beforeTest() throws Exception {
 		gefBot = new SWTGefBot();
 		super.before();
+		
+		//Launch Local Waveform From Target SDR
+		ScaExplorerTestUtils.launchWaveformFromTargetSDR(gefBot, LOCAL_WAVEFORM);
+
+		//wait until local waveform appears in ScaExplorer Sandbox
+		ScaExplorerTestUtils.waitUntilWaveformAppearsInScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+
+		// Open Local Waveform Diagram
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+		waveFormFullName = ScaExplorerTestUtils.getWaveformFullNameFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+		
 	}
 	
 	@After
@@ -47,5 +59,16 @@ public abstract class AbstractGraphitiLocalWaveformRuntimeTest extends UIRuntime
 			ScaExplorerTestUtils.waitUntilScaExplorerWaveformDisappears(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
 		}
 	}
+
+
+	public String getWaveFormFullName() {
+		return waveFormFullName;
+	}
+
+	public void setWaveFormFullName(String waveFormFullName) {
+		this.waveFormFullName = waveFormFullName;
+	}
+	
+	
 
 }

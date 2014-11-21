@@ -37,16 +37,7 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 	@Test
 	public void addRemoveComponentInDiagram() {
 
-		//Launch Local Waveform From Target SDR
-		ScaExplorerTestUtils.launchWaveformFromTargetSDR(gefBot, LOCAL_WAVEFORM);
-		
-		//wait until local waveform appears in ScaExplorer Sandbox
-		ScaExplorerTestUtils.waitUntilWaveformAppearsInScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		
-		// Open Diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		String waveFormFullName = ScaExplorerTestUtils.getWaveformFullNameFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		editor = gefBot.gefEditor(waveFormFullName);
+		editor = gefBot.gefEditor(getWaveFormFullName());
 		editor.setFocus();
 		
 		// Add component to diagram from palette
@@ -70,16 +61,7 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 	@Test
 	public void addRemoveComponentConnectionInDiagram() {
 
-		//Launch Local Waveform From Target SDR
-		ScaExplorerTestUtils.launchWaveformFromTargetSDR(gefBot, LOCAL_WAVEFORM);
-		
-		//wait until local waveform appears in ScaExplorer Sandbox
-		ScaExplorerTestUtils.waitUntilWaveformAppearsInScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		
-		// Open Diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		String waveFormFullName = ScaExplorerTestUtils.getWaveformFullNameFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		editor = gefBot.gefEditor(waveFormFullName);
+		editor = gefBot.gefEditor(getWaveFormFullName());
 		editor.setFocus();
 
 		// Add two components to diagram from palette
@@ -121,16 +103,7 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 	@Test
 	public void startStopComponentsFromDiagram() {
 		
-		//Launch Local Waveform From Target SDR
-		ScaExplorerTestUtils.launchWaveformFromTargetSDR(gefBot, LOCAL_WAVEFORM);
-		
-		//wait until local waveform appears in ScaExplorer Sandbox
-		ScaExplorerTestUtils.waitUntilWaveformAppearsInScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		
-		// Open Diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		String waveFormFullName = ScaExplorerTestUtils.getWaveformFullNameFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		editor = gefBot.gefEditor(waveFormFullName);
+		editor = gefBot.gefEditor(getWaveFormFullName());
 		editor.setFocus();
 
 		// Add two components to diagram from palette
@@ -191,16 +164,7 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 	@Test
 	public void addRemoveComponentConnectionInScaExplorer() {
 
-		//Launch Local Waveform From Target SDR
-		ScaExplorerTestUtils.launchWaveformFromTargetSDR(gefBot, LOCAL_WAVEFORM);
-		
-		//wait until local waveform appears in ScaExplorer Sandbox
-		ScaExplorerTestUtils.waitUntilWaveformAppearsInScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		
-		// Open Diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		String waveFormFullName = ScaExplorerTestUtils.getWaveformFullNameFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		editor = gefBot.gefEditor(waveFormFullName);
+		editor = gefBot.gefEditor(getWaveFormFullName());
 		editor.setFocus();
 
 		// Add two components to diagram from palette
@@ -208,21 +172,21 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
 
 		//verify components were added to sca explorer
-		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, SIG_GEN_1);
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, HARD_LIMIT_1);
+		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, SIG_GEN_1);
 		
 		//create connection between components via Sca Explorer
-		ScaExplorerTestUtils.connectComponentPortsInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, waveFormFullName, "connection_1", SIG_GEN_1, "out",
+		ScaExplorerTestUtils.connectComponentPortsInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, getWaveFormFullName(), "connection_1", SIG_GEN_1, "out",
 			HARD_LIMIT_1, "dataDouble_in");
 		
 		//verify connection exists in diagram
-		DiagramTestUtils.waitUntilConnectionDisplaysInDiagram(bot, editor, HARD_LIMIT);
+		DiagramTestUtils.waitUntilConnectionDisplaysInDiagram(bot, editor, HARD_LIMIT_1);
 		
 		//disconnect connection_1 via Sca Explorer 
-		ScaExplorerTestUtils.disconnectConnectionInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, waveFormFullName, "connection_1", SIG_GEN_1, "out");
+		ScaExplorerTestUtils.disconnectConnectionInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, getWaveFormFullName(), "connection_1", SIG_GEN_1, "out");
 		
 		//verify connection does NOT exist in diagram
-		DiagramTestUtils.waitUntilConnectionDisappearsInDiagram(bot, editor, HARD_LIMIT);
+		DiagramTestUtils.waitUntilConnectionDisappearsInDiagram(bot, editor, HARD_LIMIT_1);
 	}
 	
 	/**
@@ -234,16 +198,7 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 	@Test
 	public void startStopComponentsFromScaExplorer() {
 		
-		//Launch Local Waveform From Target SDR
-		ScaExplorerTestUtils.launchWaveformFromTargetSDR(gefBot, LOCAL_WAVEFORM);
-		
-		//wait until local waveform appears in ScaExplorer Sandbox
-		ScaExplorerTestUtils.waitUntilWaveformAppearsInScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		
-		// Open Diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		String waveFormFullName = ScaExplorerTestUtils.getWaveformFullNameFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		editor = gefBot.gefEditor(waveFormFullName);
+		editor = gefBot.gefEditor(getWaveFormFullName());
 		editor.setFocus();
 
 		// Launch two components from TargetSDR

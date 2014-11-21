@@ -39,6 +39,8 @@ public abstract class AbstractGraphitiChalkboardTest extends UIRuntimeTest {
 		//wait until waveform empty
 		ScaExplorerTestUtils.waitUntilScaExplorerWaveformEmpty(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
 		
+		//close editors
+		gefBot.closeAllEditors();
 	}
 
 }

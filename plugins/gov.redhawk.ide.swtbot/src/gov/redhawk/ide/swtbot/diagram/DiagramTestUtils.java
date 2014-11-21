@@ -73,7 +73,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @param yTargetPosition - y coordinate for drop location
 	 */
 	public static void dragFromPaletteToDiagram(SWTBotGefEditor editor, String componentName, int xTargetPosition, int yTargetPosition) {
-		String[] impls = { "", " (cpp)", " (java)", " (python)" };
+		String[] impls = { " (python)", " (cpp)", " (java)", "" };
 		for (int i = 0; i < impls.length; i++) {
 			try {
 				editor.activateTool(componentName + impls[i]);

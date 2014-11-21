@@ -25,10 +25,9 @@ import org.junit.Test;
 
 public class LocalWaveformRuntimeTest extends AbstractGraphitiLocalWaveformRuntimeTest {
 
-	private SWTBotGefEditor editor;
-	private static final String[] LOCAL_WAVEFORM_PARENT_PATH = {"Sandbox"};
-	private static final String LOCAL_WAVEFORM = "ExampleWaveform01";
+
 	private static final String HARD_LIMIT = "HardLimit";
+	private SWTBotGefEditor editor;
 
 	/**
 	 * IDE-671
@@ -40,16 +39,7 @@ public class LocalWaveformRuntimeTest extends AbstractGraphitiLocalWaveformRunti
 	@Test
 	public void checkLocalWaveformComponents() {
 
-		//Launch Local Waveform From Target SDR
-		ScaExplorerTestUtils.launchWaveformFromTargetSDR(gefBot, LOCAL_WAVEFORM);
-		
-		//wait until local waveform appears in ScaExplorer Sandbox
-		ScaExplorerTestUtils.waitUntilWaveformAppearsInScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		
-		// Open Local Waveform Diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		String waveFormFullName = ScaExplorerTestUtils.getWaveformFullNameFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		editor = gefBot.gefEditor(waveFormFullName);
+		editor = gefBot.gefEditor(getWaveFormFullName());
 		editor.setFocus();
 		
 		//verify existing component exists
@@ -67,7 +57,7 @@ public class LocalWaveformRuntimeTest extends AbstractGraphitiLocalWaveformRunti
 		// Open the chalkboard with components already launched
 		editor.close();
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		editor = gefBot.gefEditor(waveFormFullName);
+		editor = gefBot.gefEditor(getWaveFormFullName());
 		Assert.assertNotNull(editor.getEditPart(HARD_LIMIT));
 	}
 
@@ -78,16 +68,7 @@ public class LocalWaveformRuntimeTest extends AbstractGraphitiLocalWaveformRunti
 	@Test
 	public void checkFindByNotInSandbox() {
 		
-		//Launch Local Waveform From Target SDR
-		ScaExplorerTestUtils.launchWaveformFromTargetSDR(gefBot, LOCAL_WAVEFORM);
-		
-		//wait until local waveform appears in ScaExplorer Sandbox
-		ScaExplorerTestUtils.waitUntilWaveformAppearsInScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		
-		// Open Local Waveform Diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		String waveFormFullName = ScaExplorerTestUtils.getWaveformFullNameFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		editor = gefBot.gefEditor(waveFormFullName);
+		editor = gefBot.gefEditor(getWaveFormFullName());
 		editor.setFocus();
 		
 		String[] findByList = { FindByUtils.FIND_BY_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, FindByUtils.FIND_BY_EVENT_CHANNEL,
