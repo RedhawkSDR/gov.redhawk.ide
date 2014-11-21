@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softwareassembly PUBLIC "-//JTRS//DTD SCA V2.2.2 SAD//EN" "softwareassembly.dtd">
+<softwareassembly id="DCE:7dbcd5d8-c12b-42a3-a7fc-d038c39dca70" name="ExampleWaveform06">
+  <componentfiles>
+    <componentfile id="SigGen_30331c62-6986-4b68-bc21-bbd32f8e1005" type="SPD">
+      <localfile name="/components/SigGen/SigGen.spd.xml"/>
+    </componentfile>
+    <componentfile id="HardLimit_68fd506c-103f-4231-8a28-d605b453df48" type="SPD">
+      <localfile name="/components/HardLimit/HardLimit.spd.xml"/>
+    </componentfile>
+  </componentfiles>
+  <partitioning>
+    <componentplacement>
+      <componentfileref refid="SigGen_30331c62-6986-4b68-bc21-bbd32f8e1005"/>
+      <componentinstantiation id="SigGen_1" startorder="0">
+        <usagename>SigGen_1</usagename>
+        <findcomponent>
+          <namingservice name="SigGen_1"/>
+        </findcomponent>
+      </componentinstantiation>
+    </componentplacement>
+    <componentplacement>
+      <componentfileref refid="HardLimit_68fd506c-103f-4231-8a28-d605b453df48"/>
+      <componentinstantiation id="HardLimit_1" startorder="1">
+        <usagename>HardLimit_1</usagename>
+        <findcomponent>
+          <namingservice name="HardLimit_1"/>
+        </findcomponent>
+      </componentinstantiation>
+    </componentplacement>
+  </partitioning>
+  <assemblycontroller>
+    <componentinstantiationref refid="SigGen_1"/>
+  </assemblycontroller>
+  <connections>
+    <connectinterface id="connection_1">
+      <usesport>
+        <usesidentifier>out</usesidentifier>
+        <componentinstantiationref refid="SigGen_1"/>
+      </usesport>
+      <providesport>
+        <providesidentifier>dataDouble_in</providesidentifier>
+        <componentinstantiationref refid="HardLimit_1"/>
+      </providesport>
+    </connectinterface>
+  </connections>
+</softwareassembly>
