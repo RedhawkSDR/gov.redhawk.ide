@@ -48,7 +48,6 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN_1);
 
 		// Start the component
-		gefBot.viewById("org.eclipse.ui.views.ProblemView").show();
 		DiagramTestUtils.startComponentFromDiagram(editor, SIGGEN);
 		//wait until its started
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN_1);
