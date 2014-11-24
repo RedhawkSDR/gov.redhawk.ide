@@ -140,7 +140,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		} catch (WidgetNotFoundException ex) {
 			isWkspCompInPalette = false;
 		}
-		assertTrue("found workspace Component in Chalkboard Palette", isWkspCompInPalette);
+		assertTrue("Workspace Component did not appear in Chalkboard Palette", isWkspCompInPalette);
 
 		// cleanup
 		editor.close();
