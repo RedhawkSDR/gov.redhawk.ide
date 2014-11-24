@@ -17,6 +17,7 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.IncrementStartOrd
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkExternalPortFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkNonExternalPortFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime.StartComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime.StopComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.SADConnectionInterfaceDeleteFeature;
@@ -155,6 +156,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 			if (context.getPictogramElements()[0] instanceof ContainerShape) {
 				Diagram diagram = DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]);
 				if (obj instanceof SadComponentInstantiation && (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
+					retList.add(new ShowConsoleFeature(this));
 					retList.add(new StartComponentFeature(this));
 					retList.add(new StopComponentFeature(this));
 				}

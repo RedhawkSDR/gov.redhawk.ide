@@ -38,7 +38,7 @@ import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 /**
  * @since 3.3
  */
-final class GraphitiAdapterUtil {
+public final class GraphitiAdapterUtil {
 
 	private GraphitiAdapterUtil() {
 
