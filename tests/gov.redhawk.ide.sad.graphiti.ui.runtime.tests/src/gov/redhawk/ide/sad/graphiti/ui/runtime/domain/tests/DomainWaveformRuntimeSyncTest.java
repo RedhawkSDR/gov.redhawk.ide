@@ -74,9 +74,6 @@ public class DomainWaveformRuntimeSyncTest extends AbstractGraphitiDomainWavefor
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM, HARD_LIMIT_1);
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM, SIG_GEN_1);
 		
-		//cleanup
-		ScaExplorerTestUtils.releaseWaveformFromScaExplorer(bot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
-		
 	}
 	
 	/**
@@ -128,25 +125,19 @@ public class DomainWaveformRuntimeSyncTest extends AbstractGraphitiDomainWavefor
 		DiagramTestUtils.waitUntilComponentAppearsStartedInDiagram(bot, editor, HARD_LIMIT);
 		DiagramTestUtils.waitUntilComponentAppearsStartedInDiagram(bot, editor, SIG_GEN);
 		
-		//stop chalkboard
+		//stop waveform
 		ScaExplorerTestUtils.stopWaveformFromScaExplorer(bot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
 		
 		//verify both components stopped
 		DiagramTestUtils.waitUntilComponentAppearsStoppedInDiagram(bot, editor, HARD_LIMIT);
 		DiagramTestUtils.waitUntilComponentAppearsStoppedInDiagram(bot, editor, SIG_GEN);
 		
-		//start chalkboard
+		//start waveform
 		ScaExplorerTestUtils.startWaveformFromScaExplorer(bot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
 		
 		//verify both components started
 		DiagramTestUtils.waitUntilComponentAppearsStartedInDiagram(bot, editor, HARD_LIMIT);
 		DiagramTestUtils.waitUntilComponentAppearsStartedInDiagram(bot, editor, SIG_GEN);
-		
-		//release waveform
-		ScaExplorerTestUtils.releaseWaveformFromScaExplorer(bot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
-		
-		//wait until waveform no longer exists!!!!
-		ScaExplorerTestUtils.waitUntilScaExplorerWaveformDisappears(gefBot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
 		
 	}
 	

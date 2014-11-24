@@ -94,7 +94,7 @@ public class ScaExplorerTestUtils {
 	 * @param bot
 	 * @param domainName
 	 */
-	public static void launchDomain(SWTWorkbenchBot bot, String domainName) {
+	public static void launchDomain(SWTWorkbenchBot bot, String domainName, String deviceName) {
 		
 		SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
 		SWTBotTreeItem targetSDRTreeItem = scaExplorerView.bot().tree().getTreeItem("Target SDR");
@@ -106,40 +106,87 @@ public class ScaExplorerTestUtils {
 		final SWTBot wizardBot = wizardShell.bot();
 		wizardShell.activate();
 		
-		// Enter the name for connection
-		wizardBot.textWithLabel("Domain Name:").setText("REDHAWK_DEV");
-
-		//TODO:
-		//Select Device
-		//wizardBot.
-			
+		// Enter the Domain Name text
+		wizardBot.text(0).setText("REDHAWK_DEV");
+		
+		//select waveform to launch
+		for (SWTBotTreeItem treeItem: wizardBot.tree().getAllItems()) {
+			if (treeItem.getText().startsWith(deviceName)) {
+				treeItem.check();
+				break;
+			}
+		}
 			
 		// Close wizard
 		SWTBotButton okButton = wizardBot.button("OK");
 		okButton.click();
-		
-		
 	}
 	
-	public static void launchWaveformFromDomain(SWTWorkbenchBot bot, String domain) {
+	/**
+	 * Returns the SWTBotTreeItem for the domain in ScaExplorer with the provided name
+	 * @param bot
+	 * @param domainName
+	 * @return
+	 */
+	public static SWTBotTreeItem getDomain(SWTWorkbenchBot bot, String domainName) {
+		SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
+		
+		SWTBotTreeItem[] items = scaExplorerView.bot().tree().getAllItems();
+		for (SWTBotTreeItem item : items) {
+			if (item.getText().startsWith(domainName)) {
+				return item;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Delete domain instance from ScaExplorer
+	 * @param bot
+	 * @param domainName
+	 */
+	public static void deleteDomainInstance(SWTWorkbenchBot bot, String domainName) {
+		
+		
+		SWTBotTreeItem domainTreeItem = getDomain(bot, domainName);
+		domainTreeItem.select();
+		SWTBotMenu deleteDomain = domainTreeItem.contextMenu("Delete");
+		deleteDomain.click();
+		
+		SWTBotShell deletePopup = bot.shell("Delete Domain Connection");
+		final SWTBot deletePopupBot = deletePopup.bot();
+		deletePopup.activate();
+		
+		SWTBotButton okButton = deletePopupBot.button("OK");
+		okButton.click();
+	}
+	
+	
+	public static void launchWaveformFromDomain(SWTWorkbenchBot bot, String domain, String waveform) {
 		
 		SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
 		SWTBotTreeItem domainTreeItem = scaExplorerView.bot().tree().getTreeItem(domain + " CONNECTED");
-		domainTreeItem.click();
-		domainTreeItem.contextMenu("Launch Waveform...");
+		domainTreeItem.select();
+		SWTBotMenu launchWaveform = domainTreeItem.contextMenu("Launch Waveform...");
+		launchWaveform.click();
 		
 		SWTBotShell wizardShell = bot.shell("Launch Waveform");
 		final SWTBot wizardBot = wizardShell.bot();
 		wizardShell.activate();
 		
-		//TODO:
-		//select waveform
+		bot.sleep(1000);
+		
+		//select waveform to launch
+		for (SWTBotTreeItem treeItem: wizardBot.tree().getAllItems()) {
+			if (waveform.equalsIgnoreCase(treeItem.getText())) {
+				treeItem.select();
+				break;
+			}
+		}
 		
 		// Close wizard
 		SWTBotButton finishButton = wizardBot.button("Finish");
 		finishButton.click();
-		
-		
 		
 	}
 	
@@ -276,8 +323,8 @@ public class ScaExplorerTestUtils {
 		scaExplorerView.setFocus();
 		SWTBotTreeItem waveformEntry = getWaveformTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
 		waveformEntry.select();
-		SWTBotMenu terminate = waveformEntry.contextMenu("Release");
-		terminate.click();
+		SWTBotMenu release = waveformEntry.contextMenu("Release");
+		release.click();
 	}
 	
 	/**
@@ -334,7 +381,7 @@ public class ScaExplorerTestUtils {
 				}
 				return false;
 			}
-		});
+		}, 10000);
 	}
 	
 	/**
@@ -362,7 +409,7 @@ public class ScaExplorerTestUtils {
 				}
 				return false;
 			}
-		});
+		}, 10000);
 	}
 	
 	/**

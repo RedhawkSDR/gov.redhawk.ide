@@ -47,6 +47,10 @@ public class ViewUtils {
 			return false;
 		}
 	}
+	
+	public static SWTBotView getConsoleView(SWTWorkbenchBot bot) {
+		return bot.viewById("org.eclipse.ui.console.ConsoleView");
+	}
 
 	/**
 	 * Return Plot View

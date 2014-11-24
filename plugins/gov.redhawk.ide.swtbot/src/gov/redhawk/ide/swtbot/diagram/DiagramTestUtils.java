@@ -637,7 +637,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 				Diagram diagram = DUtil.findDiagram(componentShape);
 				return innerRoundedRectangle.getStyle().equals(StyleUtil.createStyleForComponentInnerStarted(diagram));
 			}
-		});
+		}, 10000);
 	}
 
 	/**
@@ -659,7 +659,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 				Diagram diagram = DUtil.findDiagram(componentShape);
 				return innerRoundedRectangle.getStyle().equals(StyleUtil.createStyleForComponentInner(diagram));
 			}
-		});
+		}, 10000);
 	}
 
 	/**

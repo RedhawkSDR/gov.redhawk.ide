@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.runtime.domain.tests;
 
+import gov.redhawk.ide.swtbot.ConsoleUtils;
 import gov.redhawk.ide.swtbot.UIRuntimeTest;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 
@@ -26,6 +27,9 @@ public abstract class AbstractGraphitiDomainWaveformRuntimeTest extends UIRuntim
 	public static final String[] DOMAIN_WAVEFORM_PARENT_PATH = {"REDHAWK_DEV CONNECTED", "Waveforms"};
 	public static final String DOMAIN_WAVEFORM = "ExampleWaveform06";
 	public static final String DOMAIN = "REDHAWK_DEV";
+	public static final String DOMAIN_MANAGER_PROCESS = "Domain Manager";
+	public static final String DEVICE_MANAGER_PROCESS = "Device Manager";
+	public static final String DEVICE_MANAGER = "DevMgr";
 	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE INLINE
 	private String waveFormFullName; //full name of waveform that is launched
 
@@ -35,13 +39,13 @@ public abstract class AbstractGraphitiDomainWaveformRuntimeTest extends UIRuntim
 		super.before();
 		
 		//Launch Domain
-		ScaExplorerTestUtils.launchDomain(gefBot, DOMAIN);
+		ScaExplorerTestUtils.launchDomain(gefBot, DOMAIN, DEVICE_MANAGER);
 		
 		//wait until Domain launched and connected
 		ScaExplorerTestUtils.waitUntilScaExplorerDomainConnects(gefBot, DOMAIN);
 		
 		//Launch Domain Waveform From Domain
-		ScaExplorerTestUtils.launchWaveformFromDomain(gefBot, DOMAIN_WAVEFORM);
+		ScaExplorerTestUtils.launchWaveformFromDomain(gefBot, DOMAIN, DOMAIN_WAVEFORM);
 
 		//wait until domain waveform appears in ScaExplorer Domain
 		ScaExplorerTestUtils.waitUntilWaveformAppearsInScaExplorer(gefBot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
@@ -65,6 +69,18 @@ public abstract class AbstractGraphitiDomainWaveformRuntimeTest extends UIRuntim
 			//wait until waveform no longer exists!!!!
 			ScaExplorerTestUtils.waitUntilScaExplorerWaveformDisappears(gefBot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
 		}
+		
+		//delete domain instance from sca explorer
+		ScaExplorerTestUtils.deleteDomainInstance(bot, DOMAIN);
+		
+		//Stop domain manager and device manager
+		//TODO: Noticed that the first time this runs everything works great.  After the second test however the console's drop down menu
+		//for switching between processes throws exceptions.  I think this may actually be an Eclipse bug.
+		ConsoleUtils.terminateProcess(bot, DEVICE_MANAGER_PROCESS);
+		ConsoleUtils.terminateProcess(bot, DOMAIN_MANAGER_PROCESS);
+		
+		
+		
 	}
 	
 	public String getWaveFormFullName() {
