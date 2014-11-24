@@ -20,25 +20,31 @@ import gov.redhawk.ide.swtbot.diagram.FindByUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotLabel;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 
-	private static final String[] CHALKBOARD_PARENT_PATH = {"Sandbox"};
+	private static final String[] CHALKBOARD_PARENT_PATH = { "Sandbox" };
 	private static final String CHALKBOARD = "Chalkboard";
 	private static final String HARD_LIMIT = "HardLimit";
+	private static final String SIGGEN = "SigGen";
 	private SWTBotGefEditor editor;
 
 	/**
-	 * IDE-884
+	 * IDE-884:
 	 * Create the chalkboard waveform diagram.
-	 * Add components to diagram from palette and TargetSDR
-	 * IDE-658
-	 * Open chalkboard with components already launched in the Sandbox
+	 * Add components to diagram from palette and TargetSDR,
+	 * IDE-658:
+	 * Open chalkboard with components already launched in the Sandbox,
+	 * IDE-960:
+	 * Show Console Feature
 	 */
 	@Test
 	public void checkChalkboardComponents() {
@@ -61,6 +67,33 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		Assert.assertNotNull(editor.getEditPart(HARD_LIMIT));
+
+		// Check 'Show Console' context menu option functionality
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		String[] components = { HARD_LIMIT, SIGGEN };
+
+		for (String component : components) {
+			editor.getEditPart(component).click();
+			editor.clickContextMenu("Show Console");
+			bot.sleep(1000);
+			final SWTBotView consoleView = gefBot.viewByPartName("Console");
+			bot.waitUntil(new DefaultCondition() {
+
+				@Override
+				public boolean test() throws Exception {
+					consoleView.bot().label(0);
+					return true;
+				}
+
+				@Override
+				public String getFailureMessage() {
+					return "Console view label never loaded";
+				}
+			});
+			SWTBotLabel consoleLabel = consoleView.bot().label(0);
+			Assert.assertTrue("Console view for " + component + " did not display", consoleLabel.getText().matches(".*" + component + ".*"));
+		}
+
 	}
 
 	/**
