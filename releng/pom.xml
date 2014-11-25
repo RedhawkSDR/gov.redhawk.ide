@@ -20,7 +20,6 @@
   </parent>
 
   <properties>
-    <tycho-version>0.20.0</tycho-version>
     <tycho.scmUrl>scm:git:https://github.com/RedhawkSDR/eclipse-gov.redhawk.ide</tycho.scmUrl>
     <eclipse>http://download.eclipse.org/releases/juno</eclipse>
     <orbit>http://download.eclipse.org/tools/orbit/downloads/drops/R20130118183705/repository</orbit>
@@ -221,7 +220,6 @@
     <profile>
       <id>runTest</id>
       <properties>
-        <tycho-version>0.20.0</tycho-version>
         <gov.redhawk.ide>http://download.redhawksdr.org/gov.redhawk.ide/releases/1.11</gov.redhawk.ide>
       </properties>
 
