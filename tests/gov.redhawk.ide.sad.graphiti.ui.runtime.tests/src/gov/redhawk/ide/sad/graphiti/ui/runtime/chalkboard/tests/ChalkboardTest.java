@@ -34,7 +34,9 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	private static final String[] CHALKBOARD_PARENT_PATH = { "Sandbox" };
 	private static final String CHALKBOARD = "Chalkboard";
 	private static final String HARD_LIMIT = "HardLimit";
+	private static final String HARD_LIMIT_1 = "HardLimit_1";
 	private static final String SIGGEN = "SigGen";
+	private static final String SIG_GEN_1 = "SigGen_1";
 	private SWTBotGefEditor editor;
 
 	/**
@@ -145,6 +147,43 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		// cleanup
 		editor.close();
 		MenuUtils.deleteNodeInProjectExplorer(bot, wkspComponentName);
+	}
+	
+	/**
+	 * IDE-953
+	 * Verifies that when the user drags a component to the diagram of a particular implementation
+	 * that it in fact the correct implementation was added.
+	 */
+	@Test
+	public void checkCorrectImplementationAddedToDiagram() {
+		
+		// Open Chalkboard Diagram
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
+		editor = gefBot.gefEditor(CHALKBOARD);
+		editor.setFocus();
+
+		// Add two components to diagram from palette
+		final String sourceComponent = SIGGEN + " (python)";
+		final String targetComponent = HARD_LIMIT + " (java)";
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, sourceComponent, 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, targetComponent, 300, 0);
+
+		//verify sigGen is python
+		SWTBotGefEditPart sigGenEditPart = editor.getEditPart(SIGGEN);
+		//get graphiti shape
+		ComponentShapeImpl sigGenComponentShape = (ComponentShapeImpl) sigGenEditPart.part().getModel();
+		// Grab the associated business object and confirm it is a SadComponentInstantiation
+		SadComponentInstantiation sigGenSadComponentInstantiation = (SadComponentInstantiation) DUtil.getBusinessObject(sigGenComponentShape);
+		Assert.assertEquals("SigGen implementation was not python", "python", sigGenSadComponentInstantiation.getImplID());
+		
+		//verify hardLimit is java
+		SWTBotGefEditPart hardLimitEditPart = editor.getEditPart(HARD_LIMIT);
+		//get graphiti shape
+		ComponentShapeImpl hardLimitComponentShape = (ComponentShapeImpl) hardLimitEditPart.part().getModel();
+		// Grab the associated business object and confirm it is a SadComponentInstantiation
+		SadComponentInstantiation hardLimitSadComponentInstantiation = (SadComponentInstantiation) DUtil.getBusinessObject(hardLimitComponentShape);
+		Assert.assertEquals("HardLimit implementation was not java", "java", hardLimitSadComponentInstantiation.getImplID());
+		
 	}
 
 	/**
