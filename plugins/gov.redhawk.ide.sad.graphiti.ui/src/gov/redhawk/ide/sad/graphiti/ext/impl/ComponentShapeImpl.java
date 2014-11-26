@@ -56,8 +56,8 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl#isStarted <em>Started</em>}</li>
- *   <li>{@link gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl#getEvent <em>Event</em>}</li>
+ * <li>{@link gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl#isStarted <em>Started</em>}</li>
+ * <li>{@link gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl#getEvent <em>Event</em>}</li>
  * </ul>
  * </p>
  *
@@ -118,7 +118,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	public static final int START_ORDER_ELLIPSE_TOP_PADDING = 5;
 
 	// Default start order text value for components that do not have a start order declared
-	private static final String NO_START_ORDER_STRING = "*";
+	private static final String NO_START_ORDER_STRING = "";
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -159,15 +159,15 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.COMPONENT_SHAPE__STARTED, oldStarted, started));
 
-		//update color according to value
+		// update color according to value
 		final Diagram diagram = DUtil.findDiagram(this);
 		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
 		if (innerRoundedRectangle != null) {
 			if (newStarted) {
-				//started
+				// started
 				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInnerStarted(diagram));
 			} else {
-				//not started
+				// not started
 				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInner(diagram));
 			}
 		}
@@ -222,13 +222,13 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			addStartOrderEllipse(ci, assemblyController, featureProvider);
 		}
 
-		//set innerContainer color based on started value
+		// set innerContainer color based on started value
 		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
 		if (isStarted()) {
 			innerRoundedRectangle.setStyle(StyleUtil.getStyleForComponentInnerStarted(diagram));
 		}
 
-		//runtimeAdapter = new ComponentRuntimeAdapter(this, featureProvider);
+		// runtimeAdapter = new ComponentRuntimeAdapter(this, featureProvider);
 	}
 
 	/**
@@ -360,7 +360,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		// Set start order value for pictogram element
 		String startOrder;
 		if (sadComponentInstantiation.getStartOrder() == null) {
-			// if business object start order is null (possible in legacy waveforms), then set text to asterisk (*)
+			// if business object start order is null (possible in legacy waveforms), then set to an empty string
 			startOrder = NO_START_ORDER_STRING;
 		} else {
 			// if business object start order != null, then set text to that value
@@ -469,7 +469,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			// update assembly controller styling and text
 			Ellipse startOrderEllipse = (Ellipse) getStartOrderEllipseShape().getGraphicsAlgorithm();
 			boolean needsUpdate = StyleUtil.needsUpdateForStartOrderAssemblyControllerEllipse(diagram, startOrderEllipse.getStyle());
-			boolean isTextCorrect = ci.getStartOrder() != null ? (ci.getStartOrder().compareTo(BigInteger.ZERO) == 0) : false;
+			boolean isTextCorrect = ci.getStartOrder() != null ? (ci.getStartOrder().compareTo(BigInteger.ZERO) == 0) : startOrderTextGA.getValue().equals("");
 			if ((needsUpdate || !isTextCorrect) && assemblyController != null) {
 				// if assembly controller, then use special style
 				if (performUpdate) {
