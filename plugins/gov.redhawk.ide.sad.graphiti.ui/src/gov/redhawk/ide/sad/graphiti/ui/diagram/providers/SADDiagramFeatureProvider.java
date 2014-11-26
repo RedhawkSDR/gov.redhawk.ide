@@ -158,10 +158,10 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 			if (context.getPictogramElements()[0] instanceof ContainerShape) {
 				Diagram diagram = DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]);
 				if (obj instanceof SadComponentInstantiation && (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
-					retList.add(new ReleaseComponentFeature(this));
-					retList.add(new ShowConsoleFeature(this));
 					retList.add(new StartComponentFeature(this));
 					retList.add(new StopComponentFeature(this));
+					retList.add(new ShowConsoleFeature(this));
+					retList.add(new ReleaseComponentFeature(this));
 					retList.add(new TerminateComponentFeature(this));
 				}
 			}
