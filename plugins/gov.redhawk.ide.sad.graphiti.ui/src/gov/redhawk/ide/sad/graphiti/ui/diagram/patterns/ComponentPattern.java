@@ -26,6 +26,7 @@ import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.AssemblyController;
+import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
@@ -814,5 +815,26 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 	@Override
 	public Style createStyleForInner() {
 		return StyleUtil.createStyleForComponentInner(getDiagram());
+	}
+	
+	/**
+	 * Returns component, sad, and external ports.  Order does matter.
+	 */
+	public List<EObject> getBusinessObjectsToLink(EObject componentInstantiation) {
+		// get external ports
+		ExternalPorts externalPorts = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram()).getExternalPorts();
+
+		// get sad from diagram, we need to link it to all shapes so the diagram will update when changes occur to
+		// assembly controller and external ports
+		List<EObject> businessObjectsToLink = new ArrayList<EObject>();
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		// ORDER MATTERS, CI must be first
+		businessObjectsToLink.add(componentInstantiation);
+		businessObjectsToLink.add(sad);
+		if (externalPorts != null) {
+			businessObjectsToLink.add(externalPorts);
+		}
+		
+		return businessObjectsToLink;
 	}
 }

@@ -546,4 +546,11 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	public Style createStyleForInner() {
 		return StyleUtil.createStyleForFindByInner(getDiagram());
 	}
+
+	@Override
+	public List<EObject> getBusinessObjectsToLink(EObject obj) {
+		List<EObject> businessObjectsToLink = new ArrayList<EObject>();
+		businessObjectsToLink.add(obj);
+		return businessObjectsToLink;
+	}
 }

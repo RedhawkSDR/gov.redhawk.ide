@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
+import java.util.List;
+
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -144,6 +146,13 @@ public abstract class AbstractContainerPattern extends AbstractPattern {
 	 * @return
 	 */
 	public Style createStyleForInner() {
+		return null;
+	}
+	
+	/**
+	 * Returns business objects that should be linked to shape
+	 */
+	public List<EObject> getBusinessObjectsToLink(EObject obj) {
 		return null;
 	}
 	

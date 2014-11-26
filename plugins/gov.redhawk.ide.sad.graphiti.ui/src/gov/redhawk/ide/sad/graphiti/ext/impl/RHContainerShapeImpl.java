@@ -16,7 +16,6 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractContainerPattern
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -146,7 +145,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		IFeatureProvider featureProvider = pattern.getFeatureProvider();
 
 		// link objects
-		featureProvider.link(this, Arrays.asList(newObject).toArray());
+		featureProvider.link(this, pattern.getBusinessObjectsToLink(newObject).toArray());
 
 		addInnerContainer(pattern.getInnerTitle(newObject), pattern.getInnerImageId(), pattern.createStyleForInner());
 		addLollipop(pattern.getInterface(newObject), featureProvider);

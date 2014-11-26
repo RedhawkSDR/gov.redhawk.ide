@@ -636,4 +636,11 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 		// perform update, redraw
 		updatePictogramElement(context.getPictogramElement());
 	}
+	
+	@Override
+	public List<EObject> getBusinessObjectsToLink(EObject obj) {
+		List<EObject> businessObjectsToLink = new ArrayList<EObject>();
+		businessObjectsToLink.add(obj);
+		return businessObjectsToLink;
+	}
 }
