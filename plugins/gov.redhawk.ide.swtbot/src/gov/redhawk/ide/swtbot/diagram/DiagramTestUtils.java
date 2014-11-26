@@ -22,11 +22,14 @@ import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
+import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
+import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
@@ -682,5 +685,25 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 				return false;
 			}
 		});
+	}
+	
+	/**
+	 * Asserts external port
+	 * @param external
+	 * @return
+	 */
+	public static void assertExternalPort(SWTBotGefEditPart portEditPart, boolean external) {
+		ContainerShape portContainerShape = (ContainerShape) portEditPart.part().getModel();
+		for (PropertyContainer portChild : DUtil.collectPropertyContainerChildren(portContainerShape)) {
+			if (DUtil.isPropertyElementType(portChild, RHContainerShapeImpl.GA_FIX_POINT_ANCHOR_RECTANGLE)) {
+				Object obj = DUtil.getBusinessObject((PictogramElement) portChild.eContainer(), Port.class);
+				if (external) {
+					Assert.assertTrue("Not an external port", obj != null);
+				} else {
+					Assert.assertTrue("Port is external", obj == null);
+				}
+				break;
+			}
+		}
 	}
 }

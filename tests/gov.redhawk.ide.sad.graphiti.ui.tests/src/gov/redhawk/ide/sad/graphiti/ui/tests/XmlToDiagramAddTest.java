@@ -265,5 +265,56 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		Assert.assertEquals("FindByService connection source incorrect", SIGGEN_PORT, serviceConnectionSource.getName());
 		Assert.assertEquals("FindByService connection target incorrect", SERVICE_PORT, serviceConnectionTarget.getName());
 	}
+	
+	
+
+	/**
+	 * IDE-978, IDE-965
+	 * Add an external port to the diagram via the sad.xml
+	 */
+	@Test
+	public void addExternalPortsInXmlTest() {
+		waveformName = "Add_ExternalPort_Xml";
+		final String HARDLIMIT = "HardLimit";
+
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+
+		// Add component to the diagram
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
+		MenuUtils.save(editor);
+
+		// Confirm that no external ports exist in diagram
+		SWTBotGefEditPart hardLimitUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, HARDLIMIT);
+		DiagramTestUtils.assertExternalPort(hardLimitUsesEditPart, false);
+		
+		//switch to overview tab and verify there are no external ports
+		DiagramTestUtils.openTabInEditor(editor, "Overview");
+		Assert.assertEquals("There are external ports", 0, bot.table(0).rowCount());
+		
+		// Edit content of sad.xml
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		String editorText = editor.toTextEditor().getText();
+
+		String externalports = "</assemblycontroller> <externalports><port>"
+			+ "<usesidentifier>dataDouble_out</usesidentifier>"
+			+ "<componentinstantiationref refid=\"HardLimit_1\"/>"
+			+ "</port> </externalports>";
+		editorText = editorText.replace("</assemblycontroller>", externalports);
+		editor.toTextEditor().setText(editorText);
+		MenuUtils.save(editor);
+
+		// Confirm edits appear in the diagram
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+
+		//assert port set to external in diagram
+		hardLimitUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, HARDLIMIT);
+		DiagramTestUtils.assertExternalPort(hardLimitUsesEditPart, true);
+		
+		//switch to overview tab and verify there are external ports
+		DiagramTestUtils.openTabInEditor(editor, "Overview");
+		Assert.assertEquals("There are no external ports", 1, bot.table(0).rowCount());
+	}
 
 }

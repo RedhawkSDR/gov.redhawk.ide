@@ -36,6 +36,7 @@ import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
@@ -328,6 +329,53 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		}
 
 		return Collections.unmodifiableList(list);
+	}
+	
+	/**
+	 * IDE-978, IDE-965
+	 * Add an external port to the diagram via the sad.xml
+	 */
+	@Test
+	public void addRemoveExternalPortsViaOverviewTest() {
+		waveformName = "AddRemove_ExternalPort_Overview";
+		final String HARDLIMIT = "HardLimit";
+
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+
+		// Add component to the diagram
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
+		MenuUtils.save(editor);
+
+		//add port via Overview tab
+		DiagramTestUtils.openTabInEditor(editor, "Overview");
+		bot.button("Add").click();
+		SWTBotShell addExternalPortShell = bot.shell("Add external Port");
+		final SWTBot wizardBot = addExternalPortShell.bot();
+		addExternalPortShell.activate();
+		wizardBot.table(1).select(1);
+		wizardBot.button("Finish").click();
+		Assert.assertEquals("External ports not added", 1, bot.table(0).rowCount());
+		
+		// Confirm edits appear in the diagram
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		//assert port set to external in diagram
+		SWTBotGefEditPart hardLimitUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, HARDLIMIT);
+		DiagramTestUtils.assertExternalPort(hardLimitUsesEditPart, true);
+		
+		//remove port via Overview tab
+		DiagramTestUtils.openTabInEditor(editor, "Overview");
+		bot.table(0).select(0);
+		bot.button("Remove").click();
+		Assert.assertEquals("External ports not removed", 0, bot.table(0).rowCount());
+		
+		// Confirm that no external ports exist in diagram
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		hardLimitUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, HARDLIMIT);
+		DiagramTestUtils.assertExternalPort(hardLimitUsesEditPart, false);
+		
+		
 	}
 
 	/**
