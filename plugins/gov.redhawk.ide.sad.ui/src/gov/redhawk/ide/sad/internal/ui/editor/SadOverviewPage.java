@@ -196,6 +196,9 @@ public class SadOverviewPage extends AbstractOverviewPage {
 		if (this.fInfoSection != null) {
 			this.fInfoSection.refresh(resource);
 		}
+		if (this.externalPortsSection != null) {
+			this.externalPortsSection.refresh(resource);
+		}
 	}
 
 }
