@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ext.impl;
 
+import gov.redhawk.ide.sad.graphiti.ext.*;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
@@ -95,6 +96,8 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
+		case RHGxPackage.EVENT:
+			return createEventFromString(eDataType, initialValue);
 		case RHGxPackage.COMPONENT_SUPPORTED_INTERFACE_STUB:
 			return createComponentSupportedInterfaceStubFromString(eDataType, initialValue);
 		case RHGxPackage.IFEATURE_PROVIDER:
@@ -136,6 +139,8 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
+		case RHGxPackage.EVENT:
+			return convertEventToString(eDataType, instanceValue);
 		case RHGxPackage.COMPONENT_SUPPORTED_INTERFACE_STUB:
 			return convertComponentSupportedInterfaceStubToString(eDataType, instanceValue);
 		case RHGxPackage.IFEATURE_PROVIDER:
@@ -187,6 +192,27 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	public ComponentShape createComponentShape() {
 		ComponentShapeImpl componentShape = new ComponentShapeImpl();
 		return componentShape;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Event createEventFromString(EDataType eDataType, String initialValue) {
+		Event result = Event.get(initialValue);
+		if (result == null)
+			throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertEventToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
 	}
 
 	/**

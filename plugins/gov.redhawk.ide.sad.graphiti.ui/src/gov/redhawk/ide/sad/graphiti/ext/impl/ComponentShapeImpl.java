@@ -11,6 +11,7 @@
 package gov.redhawk.ide.sad.graphiti.ext.impl;
 
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
+import gov.redhawk.ide.sad.graphiti.ext.Event;
 import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
@@ -56,6 +57,7 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  * The following features are implemented:
  * <ul>
  *   <li>{@link gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl#isStarted <em>Started</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl#getEvent <em>Event</em>}</li>
  * </ul>
  * </p>
  *
@@ -81,6 +83,24 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * @ordered
 	 */
 	protected boolean started = STARTED_EDEFAULT;
+	/**
+	 * The default value of the '{@link #getEvent() <em>Event</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getEvent()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Event EVENT_EDEFAULT = Event.RELEASE;
+	/**
+	 * The cached value of the '{@link #getEvent() <em>Event</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getEvent()
+	 * @generated
+	 * @ordered
+	 */
+	protected Event event = EVENT_EDEFAULT;
 	// These are property key/value pairs that help us resize an existing shape by properly identifying
 	// graphicsAlgorithms
 	public static final String GA_START_ORDER_ELLIPSE = "startOrderEllipse";
@@ -155,6 +175,27 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	}
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Event getEvent() {
+		return event;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setEvent(Event newEvent) {
+		Event oldEvent = event;
+		event = newEvent == null ? EVENT_EDEFAULT : newEvent;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.COMPONENT_SHAPE__EVENT, oldEvent, event));
+	}
+
+	/**
 	 * Creates the inner shapes that make up this container shape
 	 */
 	public void init(IAddContext context, ComponentPattern pattern) {
@@ -217,6 +258,8 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		switch (featureID) {
 		case RHGxPackage.COMPONENT_SHAPE__STARTED:
 			return isStarted();
+		case RHGxPackage.COMPONENT_SHAPE__EVENT:
+			return getEvent();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -231,6 +274,9 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		switch (featureID) {
 		case RHGxPackage.COMPONENT_SHAPE__STARTED:
 			setStarted((Boolean) newValue);
+			return;
+		case RHGxPackage.COMPONENT_SHAPE__EVENT:
+			setEvent((Event) newValue);
 			return;
 		}
 		super.eSet(featureID, newValue);
@@ -247,6 +293,9 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		case RHGxPackage.COMPONENT_SHAPE__STARTED:
 			setStarted(STARTED_EDEFAULT);
 			return;
+		case RHGxPackage.COMPONENT_SHAPE__EVENT:
+			setEvent(EVENT_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -261,6 +310,8 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		switch (featureID) {
 		case RHGxPackage.COMPONENT_SHAPE__STARTED:
 			return started != STARTED_EDEFAULT;
+		case RHGxPackage.COMPONENT_SHAPE__EVENT:
+			return event != EVENT_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -278,6 +329,8 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (started: ");
 		result.append(started);
+		result.append(", event: ");
+		result.append(event);
 		result.append(')');
 		return result.toString();
 	}

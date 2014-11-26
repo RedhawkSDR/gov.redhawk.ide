@@ -71,6 +71,8 @@ class ComponentShape extends RHContainerShape{
 	
 	boolean started
 	
+	Event event
+	
 	op void init(IAddContext context, ComponentPattern pattern) 
 
 	/*performs a layout on the contents of this shape */
@@ -84,4 +86,10 @@ class ComponentShape extends RHContainerShape{
 	 * boolean value and message describing what needs to be updated
 	 */
 	 op Reason updateNeeded(IUpdateContext context, ComponentPattern pattern)
+}
+
+
+enum Event {
+	RELEASE  //indicates user issued release action on component
+	TERMINATE //indicates user issued terminate action on component
 }

@@ -24,6 +24,7 @@ import org.eclipse.graphiti.features.impl.Reason;
  * The following features are supported:
  * <ul>
  *   <li>{@link gov.redhawk.ide.sad.graphiti.ext.ComponentShape#isStarted <em>Started</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sad.graphiti.ext.ComponentShape#getEvent <em>Event</em>}</li>
  * </ul>
  * </p>
  *
@@ -57,6 +58,35 @@ public interface ComponentShape extends RHContainerShape {
 	 * @generated
 	 */
 	void setStarted(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Event</b></em>' attribute.
+	 * The literals are from the enumeration {@link gov.redhawk.ide.sad.graphiti.ext.Event}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Event</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Event</em>' attribute.
+	 * @see gov.redhawk.ide.sad.graphiti.ext.Event
+	 * @see #setEvent(Event)
+	 * @see gov.redhawk.ide.sad.graphiti.ext.RHGxPackage#getComponentShape_Event()
+	 * @model unique="false"
+	 * @generated
+	 */
+	Event getEvent();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.sad.graphiti.ext.ComponentShape#getEvent <em>Event</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Event</em>' attribute.
+	 * @see gov.redhawk.ide.sad.graphiti.ext.Event
+	 * @see #getEvent()
+	 * @generated
+	 */
+	void setEvent(Event value);
 
 	/**
 	 * <!-- begin-user-doc -->
