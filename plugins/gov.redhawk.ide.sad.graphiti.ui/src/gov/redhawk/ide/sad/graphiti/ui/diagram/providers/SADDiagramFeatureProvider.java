@@ -16,12 +16,12 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.FindByEditFeature
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.IncrementStartOrderFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkExternalPortFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.MarkNonExternalPortFeature;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.ReleaseComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.TerminateComponentFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime.ReleaseComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime.StartComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime.StopComponentFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime.TerminateComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete.SADConnectionInterfaceDeleteFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.reconnect.SADReconnectFeature;

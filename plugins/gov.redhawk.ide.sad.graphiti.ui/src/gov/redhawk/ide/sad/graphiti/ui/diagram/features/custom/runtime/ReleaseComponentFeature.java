@@ -9,11 +9,17 @@
  * http://www.eclipse.org/legal/epl-v10.html.
  *
  */
-package gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom;
+package gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime;
 
-import gov.redhawk.ide.sad.graphiti.ext.Event;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalCommandStack;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.ICustomContext;
@@ -49,16 +55,28 @@ public class ReleaseComponentFeature extends AbstractCustomFeature {
 	public void execute(ICustomContext context) {
 		final ComponentShapeImpl componentShape = (ComponentShapeImpl) context.getPictogramElements()[0];
 
-		// Changing this event is noticed by the GraphitiDiagramAdapter, which releases the component from the SAD model
-		componentShape.setEvent(Event.RELEASE);
+		final SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 
-		// Now we just need to remove the graphical representation of the component
-		IRemoveContext rc = new RemoveContext(componentShape);
-		IFeatureProvider featureProvider = getFeatureProvider();
-		IRemoveFeature removeFeature = featureProvider.getRemoveFeature(rc);
-		if (removeFeature != null) {
-			removeFeature.remove(rc);
-		}
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+
+			@Override
+			protected void doExecute() {
+				// Delete the component model object
+				ComponentPattern.deleteComponentInstantiation(ci, sad);
+
+				// Now we just need to remove the graphical representation of the component
+				IRemoveContext rc = new RemoveContext(componentShape);
+				IFeatureProvider featureProvider = getFeatureProvider();
+				IRemoveFeature removeFeature = featureProvider.getRemoveFeature(rc);
+				if (removeFeature != null) {
+					removeFeature.remove(rc);
+				}
+			}
+		});
+
 	}
 
 }

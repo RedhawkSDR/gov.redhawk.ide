@@ -93,17 +93,18 @@ public class GraphitiModelMap {
 	private final LocalGraphitiSadMultiPageScaEditor editor;
 	private final SoftwareAssembly sad;
 
-	//maps containing to uniquely identify component/connections, use with synchronized statement
+	// maps containing to uniquely identify component/connections, use with synchronized statement
 	private final Map<String, NodeMapEntry> nodes = Collections.synchronizedMap(new HashMap<String, NodeMapEntry>());
 	private final Map<String, ConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, ConnectionMapEntry>());
 
-	//actions for starting/stopping components
+	// actions for starting/stopping components
 	private final StartAction startAction = new StartAction();
 	private final StopAction stopAction = new StopAction();
-	
+
 	private final LocalScaWaveform waveform;
 
-	public GraphitiModelMap(@NonNull final LocalGraphitiSadMultiPageScaEditor editor, @NonNull final SoftwareAssembly sad, @NonNull final LocalScaWaveform waveform) {
+	public GraphitiModelMap(@NonNull final LocalGraphitiSadMultiPageScaEditor editor, @NonNull final SoftwareAssembly sad,
+		@NonNull final LocalScaWaveform waveform) {
 		Assert.isNotNull(waveform, "Sandbox Waveform must not be null");
 		Assert.isNotNull(editor, "Sandbox Editor must not be null");
 		Assert.isNotNull(sad, "Software Assembly must not be null");
@@ -119,7 +120,7 @@ public class GraphitiModelMap {
 	 */
 	@SuppressWarnings("restriction")
 	public void add(@NonNull final LocalScaComponent comp) {
-		
+
 		final NodeMapEntry nodeMapEntry = new NodeMapEntry();
 		nodeMapEntry.setLocalScaComponent(comp);
 		synchronized (nodes) {
@@ -138,7 +139,7 @@ public class GraphitiModelMap {
 				try {
 					newComp = GraphitiModelMap.this.create(comp);
 					nodeMapEntry.setProfile(newComp);
-					
+
 					return Status.OK_STATUS;
 				} catch (CoreException e) {
 					nodes.remove(nodeMapEntry.getKey());
@@ -158,10 +159,11 @@ public class GraphitiModelMap {
 
 		};
 		job.schedule();
-		
+
 	}
+
 	/**
-	 * New SadComponentInstantiation was recently added to the diagram and this method will now launch 
+	 * New SadComponentInstantiation was recently added to the diagram and this method will now launch
 	 * the corresponding LocalScaComponent
 	 * @param comp
 	 */
@@ -183,13 +185,13 @@ public class GraphitiModelMap {
 			@Override
 			@Nullable
 			protected IStatus run(IProgressMonitor monitor) {
-				
+
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
 				LocalScaComponent newComp = null;
 				try {
 					newComp = GraphitiModelMap.this.create(comp, implID);
 					nodeMapEntry.setLocalScaComponent(newComp);
-				
+
 					return Status.OK_STATUS;
 				} catch (final CoreException e) {
 					delete(comp);
@@ -214,7 +216,7 @@ public class GraphitiModelMap {
 	}
 
 	/**
-	 * New SadConnectInterface was recently added to the diagram and this method will now launch 
+	 * New SadConnectInterface was recently added to the diagram and this method will now launch
 	 * the corresponding ScaConnection
 	 * @param conn
 	 */
@@ -303,9 +305,8 @@ public class GraphitiModelMap {
 		job.schedule();
 	}
 
-
 	/**
-	 * Create SadComponentInstantiation from the provided LocalScaComponent.  Add the SadComponentInstantiation
+	 * Create SadComponentInstantiation from the provided LocalScaComponent. Add the SadComponentInstantiation
 	 * to the diagram
 	 * @param newValue
 	 * @return
@@ -314,15 +315,15 @@ public class GraphitiModelMap {
 	@SuppressWarnings("unchecked")
 	@NonNull
 	private SadComponentInstantiation create(@NonNull final LocalScaComponent newValue) throws CoreException {
-		
-		//get SoftPkg
+
+		// get SoftPkg
 		newValue.fetchAttributes(null);
 		final SoftPkg spd = newValue.fetchProfileObject(null);
 		if (spd == null) {
 			throw new IllegalStateException("Unable to load New components spd");
 		}
-		
-		//setup for transaction in diagram
+
+		// setup for transaction in diagram
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		final IFeatureProvider featureProvider = provider.getFeatureProvider();
 		final Diagram diagram = provider.getDiagram();
@@ -334,8 +335,8 @@ public class GraphitiModelMap {
 		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				
-				//create component feature
+
+				// create component feature
 				ComponentCreateFeature createComponentFeature = new ComponentCreateFeature(featureProvider, spd, newValue.getImplementationID());
 				CreateContext createContext = new CreateContext();
 				createContext.putProperty(ComponentCreateFeature.OVERRIDE_USAGE_NAME, newValue.getName());
@@ -468,23 +469,23 @@ public class GraphitiModelMap {
 			}
 		}
 
-		//setup for transaction in diagram
+		// setup for transaction in diagram
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		final IFeatureProvider featureProvider = provider.getFeatureProvider();
 		final Diagram diagram = provider.getDiagram();
 		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
 
-		//get anchors from business objects
+		// get anchors from business objects
 		final Anchor sourceAnchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, source, Anchor.class);
 		final Anchor targetAnchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, target, Anchor.class);
-		
+
 		// Create Component in transaction
 		final SadConnectInterface[] sadConnectInterfaces = new SadConnectInterface[1];
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				//create connection feature
+				// create connection feature
 				CreateConnectionContext createConnectionContext = new CreateConnectionContext();
 				createConnectionContext.putProperty(SADConnectInterfacePattern.OVERRIDE_CONNECTION_ID, newValue.getId());
 				createConnectionContext.setSourceAnchor(sourceAnchor);
@@ -493,22 +494,22 @@ public class GraphitiModelMap {
 				for (ICreateConnectionFeature createConnectionFeature : createConnectionFeatures) {
 					if (createConnectionFeature.canCreate(createConnectionContext)) {
 						Connection connection = createConnectionFeature.create(createConnectionContext);
-						//get business object for newly created diagram connection
-						sadConnectInterfaces[0] = (SadConnectInterface) DUtil.getBusinessObject(connection);;
+						// get business object for newly created diagram connection
+						sadConnectInterfaces[0] = (SadConnectInterface) DUtil.getBusinessObject(connection);
+						;
 						break;
 					}
 				}
-				
+
 			}
 		});
 
 		return sadConnectInterfaces[0];
 	}
 
-
 	/**
 	 * @param oldComp
-	 * @throws ReleaseError 
+	 * @throws ReleaseError
 	 */
 	private void delete(@Nullable final LocalScaComponent oldComp) throws ReleaseError {
 		if (oldComp == null) {
@@ -527,22 +528,22 @@ public class GraphitiModelMap {
 		if (sadComponentInstantiation == null || editor.isDisposed()) {
 			return;
 		}
-		//setup to perform diagram operations
+		// setup to perform diagram operations
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		final IFeatureProvider featureProvider = provider.getFeatureProvider();
 		final Diagram diagram = provider.getDiagram();
-		
-		//get pictogram for component
+
+		// get pictogram for component
 		final PictogramElement peToRemove = DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation, ComponentShapeImpl.class);
-		
+
 		// Delete Component in transaction
 		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-				
-				//delete shape & component
+
+				// delete shape & component
 				DeleteContext dc = new DeleteContext(peToRemove);
 				IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
 				if (deleteFeature != null) {
@@ -560,13 +561,13 @@ public class GraphitiModelMap {
 		if (connection == null || editor.isDisposed()) {
 			return;
 		}
-		
-		//setup to perform diagram operations
+
+		// setup to perform diagram operations
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		final IFeatureProvider featureProvider = provider.getFeatureProvider();
 		final Diagram diagram = provider.getDiagram();
 
-		//get pictogram for connection
+		// get pictogram for connection
 		final PictogramElement peToRemove = DUtil.getPictogramElementForBusinessObject(diagram, connection, Connection.class);
 
 		// Delete Component in transaction
@@ -576,7 +577,7 @@ public class GraphitiModelMap {
 			@Override
 			protected void doExecute() {
 
-				//delete connection shape & connection business object
+				// delete connection shape & connection business object
 				DeleteContext dc = new DeleteContext(peToRemove);
 				IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
 				if (deleteFeature != null) {
@@ -589,7 +590,7 @@ public class GraphitiModelMap {
 	/**
 	 * Delete ScaConnection from local waveform
 	 * @param oldConnection
-	 * @throws InvalidPort 
+	 * @throws InvalidPort
 	 */
 	private void delete(@Nullable final ScaConnection oldConnection) throws InvalidPort {
 		if (oldConnection == null) {
@@ -599,9 +600,6 @@ public class GraphitiModelMap {
 			oldConnection.getPort().disconnectPort(oldConnection);
 		}
 	}
-
-
-
 
 	@Nullable
 	public SadComponentInstantiation get(@Nullable final LocalScaComponent comp) {
@@ -655,7 +653,6 @@ public class GraphitiModelMap {
 		}
 	}
 
-
 	@Nullable
 	private TransactionalEditingDomain getEditingDomain() {
 		return this.editor.getDiagramEditor().getEditingDomain();
@@ -687,6 +684,7 @@ public class GraphitiModelMap {
 		if (comp == null) {
 			return;
 		}
+
 		final NodeMapEntry nodeMapEntry = nodes.remove(NodeMapEntry.getKey(comp));
 		if (nodeMapEntry == null) {
 			return;
@@ -761,7 +759,7 @@ public class GraphitiModelMap {
 		}
 
 	}
-	
+
 	/**
 	 * Paints the Chalkboard diagram component appropriate color
 	 * @param localScaComponent
@@ -774,16 +772,17 @@ public class GraphitiModelMap {
 		}
 		final SadComponentInstantiation sadComponentInstantiation = nodeMapEntry.getProfile();
 
-		//setup to perform diagram operations
+		// setup to perform diagram operations
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		final IFeatureProvider featureProvider = provider.getFeatureProvider();
 		final TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-		
+
 		final Diagram diagram = provider.getDiagram();
-		
-		//get pictogram for component
-		final ComponentShape componentShape = (ComponentShape) DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation, ComponentShapeImpl.class);
-		
+
+		// get pictogram for component
+		final ComponentShape componentShape = (ComponentShape) DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation,
+			ComponentShapeImpl.class);
+
 		if (componentShape != null) {
 			Job job = new Job("Syncronizing diagram start/stop status: " + localScaComponent.getInstantiationIdentifier()) {
 				@Override
@@ -793,7 +792,7 @@ public class GraphitiModelMap {
 					stack.execute(new RecordingCommand(editingDomain) {
 						@Override
 						protected void doExecute() {
-							//paint component
+							// paint component
 							componentShape.setStarted(started);
 						}
 					});
@@ -803,9 +802,9 @@ public class GraphitiModelMap {
 			job.schedule();
 		}
 	}
-	
+
 	/**
-	 * Starts/Stops the component in the ScaExplorer as a result of the user 
+	 * Starts/Stops the component in the ScaExplorer as a result of the user
 	 * stopping/starting the component in the diagram
 	 * @param localScaComponent
 	 * @param started
@@ -820,7 +819,7 @@ public class GraphitiModelMap {
 		}
 		final LocalScaComponent localComp = nodeMapEntry.getLocalScaComponent();
 
-		if (started) { 
+		if (started) {
 			Job job = new Job("Starting " + comp.getUsageName()) {
 
 				@Override
@@ -828,12 +827,12 @@ public class GraphitiModelMap {
 					startAction.setContext(localComp);
 					startAction.run();
 					return Status.OK_STATUS;
-					
+
 				}
 
 			};
 			job.schedule();
-		//stop
+			// stop
 		} else {
 			Job job = new Job("Stopping " + comp.getUsageName()) {
 
@@ -847,23 +846,23 @@ public class GraphitiModelMap {
 			job.schedule();
 		}
 	}
-	
+
 	private void paintComponent(final ComponentShape componentShape, final Boolean started) {
 		final WorkbenchJob job = new WorkbenchJob("Repainting Component") {
 
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
 				if (componentShape.isActive()) {
-					
-					//setup to perform diagram operations
+
+					// setup to perform diagram operations
 					final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 					final IFeatureProvider featureProvider = provider.getFeatureProvider();
 					TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-					
+
 					final RoundedRectangle innerRoundedRectangle = (RoundedRectangle) DUtil.findFirstPropertyContainer(componentShape,
 						RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE);
 					final Diagram diagram = DUtil.findDiagram(componentShape);
-					
+
 					// Perform business object manipulation in a Command
 					TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 					stack.execute(new RecordingCommand(editingDomain) {
@@ -872,17 +871,16 @@ public class GraphitiModelMap {
 
 							if (innerRoundedRectangle != null) {
 								if (started != null && started) {
-									//started
+									// started
 									innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInnerStarted(diagram));
 								} else {
-									//not started
+									// not started
 									innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInner(diagram));
 								}
 							}
 						}
 					});
-					
-					
+
 				}
 				return Status.OK_STATUS;
 			}
@@ -891,37 +889,37 @@ public class GraphitiModelMap {
 		job.setUser(false);
 		job.schedule();
 	}
-	
+
 	/**
 	 * Modifies the diagram to reflect component runtime status
 	 */
 	public void reflectRuntimeStatus() {
-		
-		//setup to perform diagram operations
+
+		// setup to perform diagram operations
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		final Diagram diagram = provider.getDiagram();
 		final IFeatureProvider featureProvider = provider.getFeatureProvider();
 		final TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-		
-		
+
 		Job job = new Job("Syncronizing component started status") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				for (String nodeKey: nodes.keySet()) {
+				for (String nodeKey : nodes.keySet()) {
 					final NodeMapEntry nodeMapEntry = nodes.get(nodeKey);
-					
-					//get pictogram for component
-					final ComponentShape componentShape = (ComponentShape) DUtil.getPictogramElementForBusinessObject(diagram, nodeMapEntry.getProfile(), ComponentShapeImpl.class);
-					
+
+					// get pictogram for component
+					final ComponentShape componentShape = (ComponentShape) DUtil.getPictogramElementForBusinessObject(diagram, nodeMapEntry.getProfile(),
+						ComponentShapeImpl.class);
+
 					final boolean started = nodeMapEntry.getLocalScaComponent().getStarted();
 					if (started) {
-						
+
 						// Perform business object manipulation in a Command
 						TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 						stack.execute(new RecordingCommand(editingDomain) {
 							@Override
 							protected void doExecute() {
-								//paint component
+								// paint component
 								componentShape.setStarted(true);
 							}
 						});
@@ -954,6 +952,5 @@ public class GraphitiModelMap {
 		nodeMapEntry.setProfile(inst);
 		nodes.put(nodeMapEntry.getKey(), nodeMapEntry);
 	}
-
 
 }

@@ -67,6 +67,16 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		editor.clickContextMenu("Delete");
 	}
 
+	public static void releaseFromChalkboard(SWTBotGefEditor editor, SWTBotGefEditPart part) {
+		part.select();
+		editor.clickContextMenu("Release");
+	}
+
+	public static void terminateFromChalkboard(SWTBotGefEditor editor, SWTBotGefEditPart part) {
+		part.select();
+		editor.clickContextMenu("Terminate");
+	}
+
 	/**
 	 * Drag a component onto the SAD diagram editor from the Palette.
 	 * Position is determined relative to the last item dropped on the diagram.
@@ -274,7 +284,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	public static SWTBotGefEditPart getDiagramPortAnchor(SWTBotGefEditPart portEditPart) {
 		return portEditPart.children().get(0).children().get(0);
 	}
-	
+
 	/**
 	 * Plot port data on provided Port Anchor
 	 * If there is only one port you leave portName null
@@ -287,7 +297,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		usesPortAnchor.select();
 		editor.clickContextMenu("Plot Port Data");
 	}
-	
+
 	/**
 	 * Play port data on provided Port Anchor
 	 * If there is only one port you leave portName null
@@ -300,7 +310,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		usesPortAnchor.select();
 		editor.clickContextMenu("Play Port");
 	}
-	
+
 	/**
 	 * Display SRI data on provided Port Anchor
 	 * If there is only one port you leave portName null
@@ -313,7 +323,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		usesPortAnchor.select();
 		editor.clickContextMenu("Display SRI");
 	}
-	
+
 	/**
 	 * Display DataList View on provided Port Anchor
 	 * If there is only one port you leave portName null
@@ -326,7 +336,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		usesPortAnchor.select();
 		editor.clickContextMenu("Data List");
 	}
-	
+
 	/**
 	 * Display Snapshot View on provided Port Anchor
 	 * If there is only one port you leave portName null
@@ -339,7 +349,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		usesPortAnchor.select();
 		editor.clickContextMenu("Snapshot");
 	}
-	
+
 	/**
 	 * Display Port Monitor View on provided Port Anchor
 	 * If there is only one port you leave portName null
@@ -686,7 +696,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			}
 		});
 	}
-	
+
 	/**
 	 * Asserts external port
 	 * @param external

@@ -60,45 +60,6 @@ public class GraphitiDiagramAdapter extends EContentAdapter {
 					SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 					this.modelMap.startStopComponent(ci, (Boolean) notification.getNewValue());
 				}
-			} else if (RHGxPackage.COMPONENT_SHAPE__EVENT == notification.getFeatureID(RHGxPackage.class)) {
-				if (notification.getNotifier() instanceof ComponentShape) {
-					final ComponentShape componentShape = (ComponentShape) notification.getNotifier();
-					if (componentShape.getEvent().equals(Event.RELEASE)) {
-						SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
-						this.modelMap.remove(ci);
-					} else if (componentShape.getEvent().equals(Event.TERMINATE)) {
-						SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
-						LocalLaunch localLaunch = null;
-
-						if (ci != null && ci.eResource() != null) {
-							final URI uri = ci.eResource().getURI();
-							final Map<String, String> query = QueryParser.parseQuery(uri.query());
-							final String wfRef = query.get(ScaFileSystemConstants.QUERY_PARAM_WF);
-							final ScaWaveform waveform = ScaModelPlugin.getDefault().findEObject(ScaWaveform.class, wfRef);
-							final String myId = ci.getId();
-							if (waveform != null) {
-								for (final ScaComponent component : GraphitiAdapterUtil.safeFetchComponents(waveform)) {
-									final String scaComponentId = component.identifier();
-									if (scaComponentId.startsWith(myId)) {
-										if (component instanceof LocalLaunch) {
-											localLaunch = (LocalLaunch) component;
-										}
-									}
-								}
-							}
-
-							if (localLaunch != null && localLaunch.getLaunch() != null && localLaunch.getLaunch().getProcesses().length > 0) {
-								try {
-									localLaunch.getLaunch().getProcesses()[0].terminate();
-								} catch (DebugException e) {
-									// PASS
-									// TODO Seems like it would be worth pushing a notification to the error log if a
-									// component fails to terminate.
-								}
-							}
-						}
-					}
-				}
 			}
 			break;
 		default:
