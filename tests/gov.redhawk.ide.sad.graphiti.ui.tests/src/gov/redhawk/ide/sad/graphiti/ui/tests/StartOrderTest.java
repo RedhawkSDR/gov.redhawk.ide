@@ -134,7 +134,7 @@ public class StartOrderTest extends AbstractGraphitiTest {
 		Assert.assertEquals("Model object start order is incorrect", 2, componentOneObj.getStartOrder().intValue());
 		Assert.assertEquals("Model object start order is incorrect", BigInteger.ONE, componentTwoObj.getStartOrder());
 
-		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, compNoStartOrder, "*", true));
+		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, compNoStartOrder, "", true));
 		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, componentOne, "2", false));
 		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, componentTwo, "1", false));
 
@@ -149,7 +149,7 @@ public class StartOrderTest extends AbstractGraphitiTest {
 		Assert.assertEquals("Model object start order is incorrect", BigInteger.ONE, componentOneObj.getStartOrder());
 		Assert.assertEquals("Model object start order is incorrect", 2, componentTwoObj.getStartOrder().intValue());
 
-		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, compNoStartOrder, "*", true));
+		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, compNoStartOrder, "", true));
 		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, componentOne, "1", false));
 		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, componentTwo, "2", false));
 
@@ -164,7 +164,7 @@ public class StartOrderTest extends AbstractGraphitiTest {
 		Assert.assertEquals("Model object start order is incorrect", BigInteger.ONE, componentOneObj.getStartOrder());
 		Assert.assertEquals("Model object start order is incorrect", BigInteger.ZERO, componentTwoObj.getStartOrder());
 
-		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, compNoStartOrder, "*", false));
+		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, compNoStartOrder, "", false));
 		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, componentOne, "1", false));
 		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, componentTwo, "0", true));
 
@@ -180,7 +180,7 @@ public class StartOrderTest extends AbstractGraphitiTest {
 		Assert.assertEquals("Model object start order is incorrect", 2, componentOneObj.getStartOrder().intValue());
 		Assert.assertEquals("Model object start order is incorrect", BigInteger.ONE, componentTwoObj.getStartOrder());
 
-		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, compNoStartOrder, "*", true));
+		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, compNoStartOrder, "", true));
 		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, componentOne, "2", false));
 		Assert.assertTrue("Graphical start order object is incorrect", ComponentUtils.correctStylingAndValue(editor, componentTwo, "1", false));
 	}
