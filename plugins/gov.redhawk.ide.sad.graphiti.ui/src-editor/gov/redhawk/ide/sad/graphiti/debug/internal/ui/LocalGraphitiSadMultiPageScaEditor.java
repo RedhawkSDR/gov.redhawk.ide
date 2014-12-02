@@ -56,7 +56,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * 
  */
 public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEditor {
-	public static final String EDITOR_ID = "gov.redhawk.ide.debug.ui.diagram.editor.localMultiPageSca";
+	public static final String EDITOR_ID = "gov.redhawk.ide.sad.graphiti.ui.editor.localMultiPageSca";
 	private static final Debug DEBUG = new Debug(SADUIGraphitiPlugin.PLUGIN_ID, "editor");
 	private ScaGraphitiModelAdapter scaListener;
 

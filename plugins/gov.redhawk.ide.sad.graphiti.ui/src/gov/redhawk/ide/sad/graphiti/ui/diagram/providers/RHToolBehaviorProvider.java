@@ -89,6 +89,14 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
 	}
 
+	@Override
+	public boolean isShowFlyoutPalette() {
+		if (DUtil.isDiagramWaveformExplorer(getFeatureProvider().getDiagramTypeProvider().getDiagram())) {
+			return false;
+		}
+		return super.isShowFlyoutPalette();
+	}
+	
 	/**
 	 * Returns true if the business objects are equal. Overriding this because default implementation
 	 * doesn't check the objects container and in some cases when attempting to automatically create connections

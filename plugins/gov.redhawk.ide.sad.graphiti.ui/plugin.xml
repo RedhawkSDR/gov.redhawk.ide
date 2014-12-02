@@ -169,6 +169,20 @@
             name="Graphiti Waveform Editor">
          <contentTypeBinding contentTypeId="mil.jpeojtrs.sca.sad.content-type"/>
       </editor>
+      <editor
+            class="gov.redhawk.ide.sad.graphiti.debug.internal.ui.LocalGraphitiSadMultiPageScaEditor"
+            default="false"
+            icon="icons/redhawk16.gif"
+            id="gov.redhawk.ide.sad.graphiti.ui..editor.localMultiPageSca"
+            name="Graphiti Chalkboard">
+      </editor>
+      <editor
+            class="gov.redhawk.ide.sad.graphiti.debug.internal.ui.GraphitiWaveformExplorerEditor"
+            default="false"
+            icon="icons/redhawk16.gif"
+            id="gov.redhawk.ide.sad.graphiti.ui.editor.waveformExplorer"
+            name="Graphiti Waveform Explorer">
+      </editor>
    </extension>
    	<extension
          point="org.eclipse.ui.newWizards">
@@ -186,36 +200,29 @@
       </wizard>
    </extension>
    
-   <extension
-       point="gov.redhawk.sca.ui.scaContentTypes">
-    <contentTypeBinding
-          contentTypeId="mil.jpeojtrs.sca.sad.contentType"
-          editorId="gov.redhawk.ide.sad.graphiti.ui.editor.presentation.SadEditorID"
-          priority="LOWEST">
-    </contentTypeBinding>
-   </extension>
    
-    <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            class="gov.redhawk.ide.sad.graphiti.debug.internal.ui.LocalGraphitiSadMultiPageScaEditor"
-            default="false"
-            icon="icons/redhawk16.gif"
-            id="gov.redhawk.ide.debug.ui.diagram.editor.localMultiPageSca"
-            name="Graphiti Chalkboard">
-      </editor>
-   </extension>
    
       <extension
-         point="gov.redhawk.sca.ui.scaContentTypes">
+            name="Graphiti Content Types"
+            point="gov.redhawk.sca.ui.scaContentTypes">
+         <contentTypeBinding
+               contentTypeId="mil.jpeojtrs.sca.sad.contentType"
+               editorId="gov.redhawk.ide.sad.graphiti.ui.editor.presentation.SadEditorID"
+               priority="LOWEST">
+         </contentTypeBinding>
       <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.localSca"
-            editorId="gov.redhawk.ide.debug.ui.diagram.editor.localMultiPageSca"
+            editorId="gov.redhawk.ide.sad.graphiti.ui..editor.localMultiPageSca"
             priority="NORMAL">
       </contentTypeBinding>
       <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.sca"
-            editorId="gov.redhawk.ide.debug.ui.diagram.editor.localMultiPageSca"
+            editorId="gov.redhawk.ide.sad.graphiti.ui..editor.localMultiPageSca"
+            priority="LOWEST">
+      </contentTypeBinding>
+      <contentTypeBinding
+            contentTypeId="gov.redhawk.ide.debug.ui.contentType.sca"
+            editorId="gov.redhawk.ide.sad.graphiti.ui.editor.waveformExplorer"
             priority="LOWEST">
       </contentTypeBinding>
    </extension>

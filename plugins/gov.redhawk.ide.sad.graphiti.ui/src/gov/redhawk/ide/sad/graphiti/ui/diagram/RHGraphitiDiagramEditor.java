@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram;
 
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.palette.RHGraphitiPaletteBehavior;
 
 import java.util.List;
@@ -84,7 +85,13 @@ public class RHGraphitiDiagramEditor extends DiagramEditor {
 			@Override
 			protected List<TransferDropTargetListener> createBusinessObjectDropTargetListeners() {
 				List<TransferDropTargetListener> retVal = super.createBusinessObjectDropTargetListeners();
-				retVal.add(0, new DiagramDropTargetListener(getDiagramContainer().getGraphicalViewer(), this));
+				Diagram diagram = getDiagramBehavior().getDiagramTypeProvider().getDiagram();
+
+				// This check stops users from adding from the Target SDR to Graphiti Waveform Explorer
+				if (!DUtil.isDiagramWaveformExplorer(diagram)) {
+					retVal.add(0, new DiagramDropTargetListener(getDiagramContainer().getGraphicalViewer(), this));
+				}
+				
 				return retVal;
 			}
 

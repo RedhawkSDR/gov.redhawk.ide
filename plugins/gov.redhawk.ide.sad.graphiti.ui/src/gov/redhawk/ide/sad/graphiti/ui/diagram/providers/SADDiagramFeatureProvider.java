@@ -161,8 +161,12 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 					retList.add(new StartComponentFeature(this));
 					retList.add(new StopComponentFeature(this));
 					retList.add(new ShowConsoleFeature(this));
-					retList.add(new ReleaseComponentFeature(this));
-					retList.add(new TerminateComponentFeature(this));
+
+					// Don't add ability to remove components to Graphiti Waveform Explorer
+					if (!DUtil.isDiagramWaveformExplorer(getDiagramTypeProvider().getDiagram())) {
+						retList.add(new ReleaseComponentFeature(this));
+						retList.add(new TerminateComponentFeature(this));
+					}
 				}
 			}
 		}
@@ -306,7 +310,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		}
 
 		// If the element to be deleted is a connection, return the proper feature
-		if (context.getPictogramElement() instanceof Connection) {
+		if (context.getPictogramElement() instanceof Connection && !DUtil.isDiagramWaveformExplorer(getDiagramTypeProvider().getDiagram())) {
 			return new SADConnectionInterfaceDeleteFeature(this);
 		}
 
