@@ -34,7 +34,7 @@ public class ChalkboardSyncTest extends AbstractGraphitiChalkboardTest {
 	/**
 	 * IDE-659
 	 * Adds, then removes a component via chalkboard diagram. Verify its no
-	 * longer present in ScaExplorer Chalkboard
+	 * longer present in ScaExplorer Chalkboard or Diagram
 	 */
 	@Test
 	public void addRemoveComponentInChalkboardDiagram() {
@@ -56,11 +56,23 @@ public class ChalkboardSyncTest extends AbstractGraphitiChalkboardTest {
 		// wait until hard limit component not present in ScaExplorer Chalkboard & Diagram
 		ScaExplorerTestUtils.waitUntilComponentDisappearsInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, HARD_LIMIT_1);
 		Assert.assertNull(editor.getEditPart(HARD_LIMIT));
+	}
+	
+	/**
+	 * IDE-659
+	 * Adds, then terminates a component via chalkboard diagram. Verify its no
+	 * longer present in ScaExplorer Chalkboard or Diagram
+	 */
+	@Test
+	public void addTerminateComponentInChalkboardDiagram() {
+
+		// Open Chalkboard Diagram
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
+		editor = gefBot.gefEditor(CHALKBOARD);
+		editor.setFocus();
 
 		// Add component to diagram from palette
-		DiagramTestUtils.maximizeActiveWindow(gefBot);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
-		DiagramTestUtils.maximizeActiveWindow(gefBot);
 
 		// wait for component to show up in ScaExplorer Chalkboard
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, HARD_LIMIT_1);
