@@ -11,35 +11,23 @@
 package gov.redhawk.ide.debug.internal.ui;
 
 import gov.redhawk.ide.debug.LocalLaunch;
-import gov.redhawk.ide.debug.LocalScaComponent;
-import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.SpdLauncherUtil;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaDevice;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.util.PluginUtil;
-
-import java.util.Arrays;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
-
-import CF.LifeCyclePackage.ReleaseError;
 
 /**
  * 
@@ -95,54 +83,8 @@ public class TerminateLocalLaunchHandler extends AbstractHandler {
 	 * @param localLaunch
 	 */
 	private void terminate(final LocalLaunch localLaunch) {
-		ScaModelCommand.execute(localLaunch, new ScaModelCommand() {
-
-			@Override
-			public void execute() {
-				EcoreUtil.delete(localLaunch);
-			}
-		});
-		if (localLaunch.getLaunch() != null) {
-			final Job job = new Job("Terminating") {
-
-				@Override
-				protected IStatus run(final IProgressMonitor monitor) {
-					try {
-						localLaunch.getLaunch().terminate();
-					} catch (final DebugException e) {
-						return new Status(e.getStatus().getSeverity(), ScaDebugUiPlugin.PLUGIN_ID, "Failed to terminate.", e);
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
-		} else if (localLaunch instanceof LocalScaWaveform) {
-			final Job job = new Job("Terminating") {
-
-				@Override
-				protected IStatus run(final IProgressMonitor monitor) {
-					LocalScaWaveform localScaWaveform = (LocalScaWaveform) localLaunch;
-					try {
-						for (ScaComponent comp : localScaWaveform.getComponents()) {
-							if (comp instanceof LocalScaComponent) {
-								LocalScaComponent localScaComponent = (LocalScaComponent) comp;
-								if (localScaComponent.getLaunch() != null) {
-									localScaComponent.getLaunch().terminate();
-								}
-							}
-						}
-						localScaWaveform.releaseObject();
-					} catch (final DebugException e) {
-						return new Status(e.getStatus().getSeverity(), ScaDebugUiPlugin.PLUGIN_ID, "Failed to terminate " + localScaWaveform.getName(), e);
-					} catch (ReleaseError e) {
-						return new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to terminate: " + localScaWaveform.getName() + " "
-							+ Arrays.toString(e.errorMessages), e);
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
-		}
+		// Terminate logic moved to utility class to be visible to other classes
+		SpdLauncherUtil.terminate(localLaunch);
 	}
 
 	@Override

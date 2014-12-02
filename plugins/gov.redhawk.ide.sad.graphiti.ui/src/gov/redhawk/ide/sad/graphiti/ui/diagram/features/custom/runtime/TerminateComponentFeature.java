@@ -12,31 +12,22 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime;
 
 import gov.redhawk.ide.debug.LocalLaunch;
+import gov.redhawk.ide.debug.SpdLauncherUtil;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.adapters.GraphitiAdapterUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaModelPlugin;
 import gov.redhawk.model.sca.ScaWaveform;
 
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.QueryParser;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
@@ -47,10 +38,8 @@ import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
-import org.eclipse.graphiti.features.custom.ICustomFeature;
 
 public class TerminateComponentFeature extends AbstractCustomFeature {
-	private static final int TIMEOUT_SECONDS = 30;
 
 	public TerminateComponentFeature(IFeatureProvider fp) {
 		super(fp);
@@ -76,37 +65,8 @@ public class TerminateComponentFeature extends AbstractCustomFeature {
 
 	@Override
 	public void execute(ICustomContext context) {
-		ICustomFeature[] customFeatures = getFeatureProvider().getCustomFeatures(context);
-		for (ICustomFeature customFeature : customFeatures) {
-			if (customFeature instanceof ReleaseComponentFeature) {
-				final ReleaseComponentFeature releaseFeature = (ReleaseComponentFeature) customFeature;
-				releaseComponent(releaseFeature, context);
-			}
-		}
-	}
-
-	private void releaseComponent(final ReleaseComponentFeature releaseFeature, final ICustomContext context) {
-		Job job = new Job("Terminating component...") {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				ExecutorService executor = Executors.newSingleThreadExecutor();
-				Future<Boolean> future = executor.submit(new ReleaseTask(releaseFeature, context));
-				try {
-					// First, try and release the object safely
-					future.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
-				} catch (TimeoutException | InterruptedException | ExecutionException e) {
-					// If we got here, the soft release failed or timed out and we need to terminate the process
-					ComponentShapeImpl componentShape = (ComponentShapeImpl) context.getPictogramElements()[0];
-					terminate(componentShape);
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
-
-	private void terminate(final ComponentShapeImpl componentShape) {
 		// Manually terminate the component process
+		final ComponentShapeImpl componentShape = (ComponentShapeImpl) context.getPictogramElements()[0];
 		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 		LocalLaunch localLaunch = null;
 		if (ci != null && ci.eResource() != null) {
@@ -127,17 +87,15 @@ public class TerminateComponentFeature extends AbstractCustomFeature {
 			}
 
 			if (localLaunch != null && localLaunch.getLaunch() != null && localLaunch.getLaunch().getProcesses().length > 0) {
-				try {
-					localLaunch.getLaunch().getProcesses()[0].terminate();
-				} catch (DebugException e) {
-					// PASS
-					// TODO Seems like it would be worth pushing a notification to the error log if a
-					// component fails to terminate.
-				}
+				SpdLauncherUtil.terminate(localLaunch);
 			}
 		}
 
-		// We also need to manually remove the graphical representation of the component
+		// We need to remove the component from the sad.xml
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		ComponentPattern.deleteComponentInstantiation(ci, sad);
+
+		// We need to manually remove the graphical representation of the component
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 		stack.execute(new RecordingCommand(editingDomain) {
@@ -152,22 +110,5 @@ public class TerminateComponentFeature extends AbstractCustomFeature {
 				}
 			}
 		});
-	}
-
-	class ReleaseTask implements Callable<Boolean> {
-		private final ReleaseComponentFeature releaseFeature;
-		private final ICustomContext context;
-
-		public ReleaseTask(ReleaseComponentFeature releaseFeature, ICustomContext context) {
-			this.releaseFeature = releaseFeature;
-			this.context = context;
-		}
-
-		@Override
-		public Boolean call() throws Exception {
-			releaseFeature.execute(context);
-			return true;
-		}
-
 	}
 }

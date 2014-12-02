@@ -11,6 +11,7 @@
  */
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime;
 
+import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
@@ -53,7 +54,7 @@ public class ReleaseComponentFeature extends AbstractCustomFeature {
 
 	@Override
 	public void execute(ICustomContext context) {
-		final ComponentShapeImpl componentShape = (ComponentShapeImpl) context.getPictogramElements()[0];
+		final ComponentShape componentShape = (ComponentShapeImpl) context.getPictogramElements()[0];
 
 		final SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());

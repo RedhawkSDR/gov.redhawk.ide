@@ -10,25 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.adapters;
 
-import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.sad.graphiti.debug.internal.ui.GraphitiModelMap;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
-import gov.redhawk.ide.sad.graphiti.ext.Event;
 import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.model.sca.ScaComponent;
-import gov.redhawk.model.sca.ScaModelPlugin;
-import gov.redhawk.model.sca.ScaWaveform;
-
-import java.util.Map;
-
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.util.QueryParser;
-import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 
 /**

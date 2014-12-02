@@ -30,6 +30,7 @@ import gov.redhawk.sca.util.ORBUtil;
 import gov.redhawk.sca.util.OrbSession;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -55,13 +56,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
@@ -69,6 +73,7 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import CF.ResourceHelper;
 import CF.ResourceOperations;
+import CF.LifeCyclePackage.ReleaseError;
 import CF.PropertySetPackage.InvalidConfiguration;
 import CF.PropertySetPackage.PartialConfiguration;
 import CF.ResourcePackage.StartError;
@@ -89,6 +94,7 @@ public final class SpdLauncherUtil {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void postLaunch(final SoftPkg spd, final ILaunchConfiguration configuration, final String mode, final ILaunch launch,
 		final IProgressMonitor monitor) throws CoreException {
 
@@ -263,7 +269,7 @@ public final class SpdLauncherUtil {
 								public void execute() {
 									setResult(new ArrayList<ScaComponent>(waveform.getComponents()));
 								}
-								
+
 							});
 							for (ScaComponent comp : components) {
 								if (comp instanceof LocalScaComponent && ref._is_equivalent(comp.getCorbaObj())) {
@@ -623,6 +629,60 @@ public final class SpdLauncherUtil {
 		final URI spdURI = ScaLaunchConfigurationUtil.getProfileURI(configuration);
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		return SoftPkg.Util.getSoftPkg(resourceSet.getResource(spdURI, true));
+	}
+
+	/**
+	 * @since 7.0
+	 */
+	public static void terminate(final LocalLaunch localLaunch) {
+		ScaModelCommand.execute(localLaunch, new ScaModelCommand() {
+
+			@Override
+			public void execute() {
+				EcoreUtil.delete(localLaunch);
+			}
+		});
+		if (localLaunch.getLaunch() != null) {
+			final Job job = new Job("Terminating") {
+
+				@Override
+				protected IStatus run(final IProgressMonitor monitor) {
+					try {
+						localLaunch.getLaunch().terminate();
+					} catch (final DebugException e) {
+						return new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to terminate.", e);
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule();
+		} else if (localLaunch instanceof LocalScaWaveform) {
+			final Job job = new Job("Terminating") {
+
+				@Override
+				protected IStatus run(final IProgressMonitor monitor) {
+					LocalScaWaveform localScaWaveform = (LocalScaWaveform) localLaunch;
+					try {
+						for (ScaComponent comp : localScaWaveform.getComponents()) {
+							if (comp instanceof LocalScaComponent) {
+								LocalScaComponent localScaComponent = (LocalScaComponent) comp;
+								if (localScaComponent.getLaunch() != null) {
+									localScaComponent.getLaunch().terminate();
+								}
+							}
+						}
+						localScaWaveform.releaseObject();
+					} catch (final DebugException e) {
+						return new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to terminate " + localScaWaveform.getName(), e);
+					} catch (ReleaseError e) {
+						return new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to terminate: " + localScaWaveform.getName() + " "
+							+ Arrays.toString(e.errorMessages), e);
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule();
+		}
 	}
 
 }
