@@ -17,6 +17,7 @@ import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.create.ComponentCreateFeature;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime.ReleaseComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
@@ -67,7 +68,9 @@ import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
+import org.eclipse.graphiti.features.context.impl.CustomContext;
 import org.eclipse.graphiti.features.context.impl.DeleteContext;
+import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
@@ -496,7 +499,6 @@ public class GraphitiModelMap {
 						Connection connection = createConnectionFeature.create(createConnectionContext);
 						// get business object for newly created diagram connection
 						sadConnectInterfaces[0] = (SadConnectInterface) DUtil.getBusinessObject(connection);
-						;
 						break;
 					}
 				}
@@ -534,7 +536,7 @@ public class GraphitiModelMap {
 		final Diagram diagram = provider.getDiagram();
 
 		// get pictogram for component
-		final PictogramElement peToRemove = DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation, ComponentShapeImpl.class);
+		final PictogramElement[] peToRemove = {DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation, ComponentShapeImpl.class)};
 
 		// Delete Component in transaction
 		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
@@ -544,10 +546,12 @@ public class GraphitiModelMap {
 			protected void doExecute() {
 
 				// delete shape & component
-				DeleteContext dc = new DeleteContext(peToRemove);
-				IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
-				if (deleteFeature != null) {
-					deleteFeature.delete(dc);
+				// We use release here instead of delete feature to control context menu options
+				CustomContext context = new CustomContext(peToRemove);
+				for (ICustomFeature feature : featureProvider.getCustomFeatures(context)) {
+					if (feature instanceof ReleaseComponentFeature) {
+						((ReleaseComponentFeature) feature).execute(context);
+					}
 				}
 			}
 		});
