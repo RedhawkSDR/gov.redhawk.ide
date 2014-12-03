@@ -208,22 +208,22 @@
          <contentTypeBinding
                contentTypeId="mil.jpeojtrs.sca.sad.contentType"
                editorId="gov.redhawk.ide.sad.graphiti.ui.editor.presentation.SadEditorID"
-               priority="LOWEST">
+               priority="HIGHEST">
          </contentTypeBinding>
       <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.localSca"
             editorId="gov.redhawk.ide.sad.graphiti.ui..editor.localMultiPageSca"
-            priority="NORMAL">
+            priority="HIGHEST">
       </contentTypeBinding>
       <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.sca"
             editorId="gov.redhawk.ide.sad.graphiti.ui..editor.localMultiPageSca"
-            priority="LOWEST">
+            priority="HIGHEST">
       </contentTypeBinding>
       <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.sca"
             editorId="gov.redhawk.ide.sad.graphiti.ui.editor.waveformExplorer"
-            priority="LOWEST">
+            priority="HIGHEST">
       </contentTypeBinding>
    </extension>
       <extension
