@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
@@ -153,4 +154,8 @@ public class FindByDomainManagerPattern extends AbstractFindByPattern implements
 		return SHAPE_TITLE;
 	}
 
+	@Override
+	public String getOuterImageId() {
+		return ImageProvider.IMG_FIND_BY;
+	}
 }

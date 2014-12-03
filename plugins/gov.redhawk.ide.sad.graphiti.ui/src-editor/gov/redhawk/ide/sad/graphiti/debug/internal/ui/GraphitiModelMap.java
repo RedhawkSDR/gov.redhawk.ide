@@ -12,15 +12,16 @@ package gov.redhawk.ide.sad.graphiti.debug.internal.ui;
 
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
-import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.runtime.ReleaseComponentFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.SADConnectInterfacePattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.SadStyleUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
@@ -876,7 +877,7 @@ public class GraphitiModelMap {
 							if (innerRoundedRectangle != null) {
 								if (started != null && started) {
 									// started
-									innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInnerStarted(diagram));
+									innerRoundedRectangle.setStyle(SadStyleUtil.createStyleForComponentInnerStarted(diagram));
 								} else {
 									// not started
 									innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInner(diagram));

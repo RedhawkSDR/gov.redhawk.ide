@@ -11,7 +11,7 @@
  */
 package gov.redhawk.ide.sad.graphiti.ui.adapters;
 
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaModelPlugin;
 import gov.redhawk.model.sca.ScaPort;

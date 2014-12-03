@@ -10,14 +10,15 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.update;
 
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
-import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.HostCollocationPattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.FindByUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -281,7 +282,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				// does findBy exist in diagram already?
 				if (findByStub == null) {
 					// create FindBy Shape for Source
-					findByStub = AbstractFindByPattern.createFindByStub(findBy, featureProvider, diagram);
+					findByStub = FindByUtil.createFindByStub(findBy, featureProvider, diagram);
 
 					// add to list
 					findByStubs.add(findByStub);
@@ -313,7 +314,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 
 				if (findByStub == null) {
 					// create findByStub
-					findByStub = AbstractFindByPattern.createFindByStub(findBy, featureProvider, diagram);
+					findByStub = FindByUtil.createFindByStub(findBy, featureProvider, diagram);
 
 					// add to list
 					findByStubs.add(findByStub);
@@ -330,7 +331,7 @@ public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 				// does findBy exist in diagram already?
 				if (findByStub == null) {
 					// create findByStub
-					findByStub = AbstractFindByPattern.createFindByStub(findBy, featureProvider, diagram);
+					findByStub = FindByUtil.createFindByStub(findBy, featureProvider, diagram);
 
 					// add to list
 					findByStubs.add(findByStub);

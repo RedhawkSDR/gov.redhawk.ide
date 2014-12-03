@@ -14,7 +14,9 @@ import gov.redhawk.core.resourcefactory.ComponentDesc;
 import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
 import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
-import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.FindByEditFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.palette.SpdToolEntry;
@@ -25,7 +27,6 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByFileManagerPattern
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByServicePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.SADConnectInterfacePattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.palette.RHGraphitiPaletteFilter;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.SdrPackage;

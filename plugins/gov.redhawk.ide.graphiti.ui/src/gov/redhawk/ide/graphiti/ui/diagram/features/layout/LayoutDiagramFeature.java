@@ -8,10 +8,10 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout;
+package gov.redhawk.ide.graphiti.ui.diagram.features.layout;
 
-import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +30,7 @@ import org.eclipse.graphiti.internal.datatypes.impl.DimensionImpl;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;

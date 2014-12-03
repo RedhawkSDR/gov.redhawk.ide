@@ -10,12 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom;
 
-import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByServicePattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.wizards.FindByCORBANameWizardPage;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.wizards.FindByServiceWizardPage;
 

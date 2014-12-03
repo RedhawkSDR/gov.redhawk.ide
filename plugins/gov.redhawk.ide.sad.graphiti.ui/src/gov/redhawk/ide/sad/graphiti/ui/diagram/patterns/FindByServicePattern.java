@@ -10,10 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
-import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.wizards.FindByServiceWizardPage;
 
 import java.util.List;
@@ -24,6 +25,7 @@ import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
@@ -314,5 +316,10 @@ public class FindByServicePattern extends AbstractFindByPattern implements IPatt
 	public IReason updateNeeded(IUpdateContext context) {
 		// TODO: Catch calls from the edit context wizard
 		return super.updateNeeded(context);
+	}
+	
+	@Override
+	public String getOuterImageId() {
+		return ImageProvider.IMG_FIND_BY;
 	}
 }

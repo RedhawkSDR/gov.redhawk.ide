@@ -9,7 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html.
  *
  */
-package gov.redhawk.ide.sad.graphiti.ui.diagram;
+package gov.redhawk.ide.graphiti.ui.diagram;
 
 import java.util.Map;
 

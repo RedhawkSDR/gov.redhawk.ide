@@ -1,15 +1,8 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
- * Please refer to the COPYRIGHT file distributed with this source distribution.
- *
- * This file is part of REDHAWK IDE.
- *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+/**
+ */
 package gov.redhawk.ide.sad.graphiti.ext;
 
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
@@ -28,7 +21,7 @@ import org.eclipse.graphiti.features.impl.Reason;
  * </ul>
  * </p>
  *
- * @see gov.redhawk.ide.sad.graphiti.ext.RHGxPackage#getComponentShape()
+ * @see gov.redhawk.ide.sad.graphiti.ext.RHSadGxPackage#getComponentShape()
  * @model
  * @generated
  */
@@ -43,7 +36,7 @@ public interface ComponentShape extends RHContainerShape {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Started</em>' attribute.
 	 * @see #setStarted(boolean)
-	 * @see gov.redhawk.ide.sad.graphiti.ext.RHGxPackage#getComponentShape_Started()
+	 * @see gov.redhawk.ide.sad.graphiti.ext.RHSadGxPackage#getComponentShape_Started()
 	 * @model unique="false"
 	 * @generated
 	 */
@@ -71,7 +64,7 @@ public interface ComponentShape extends RHContainerShape {
 	 * @return the value of the '<em>Event</em>' attribute.
 	 * @see gov.redhawk.ide.sad.graphiti.ext.Event
 	 * @see #setEvent(Event)
-	 * @see gov.redhawk.ide.sad.graphiti.ext.RHGxPackage#getComponentShape_Event()
+	 * @see gov.redhawk.ide.sad.graphiti.ext.RHSadGxPackage#getComponentShape_Event()
 	 * @model unique="false"
 	 * @generated
 	 */

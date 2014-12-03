@@ -10,8 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.runtime.local.tests;
 
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.FindByUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;

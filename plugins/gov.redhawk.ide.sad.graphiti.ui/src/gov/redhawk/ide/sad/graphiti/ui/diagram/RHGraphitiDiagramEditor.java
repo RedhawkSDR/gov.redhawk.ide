@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram;
 
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.palette.RHGraphitiPaletteBehavior;
 
 import java.util.List;

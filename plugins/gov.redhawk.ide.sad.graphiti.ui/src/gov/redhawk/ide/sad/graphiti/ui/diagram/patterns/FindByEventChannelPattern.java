@@ -10,11 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
-import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
@@ -206,6 +207,11 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 				return checkValueValid(value, null);
 			}
 		};
+	}
+	
+	@Override
+	public String getOuterImageId() {
+		return ImageProvider.IMG_FIND_BY;
 	}
 
 }

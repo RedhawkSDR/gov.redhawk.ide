@@ -10,8 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.delete;
 
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.SADConnectInterfacePattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 

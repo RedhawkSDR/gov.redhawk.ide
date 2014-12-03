@@ -12,9 +12,9 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom;
 
 import gov.redhawk.ide.debug.LocalLaunch;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.adapters.GraphitiAdapterUtil;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaModelPlugin;
 import gov.redhawk.model.sca.ScaWaveform;

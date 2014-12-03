@@ -11,8 +11,8 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.update;
 
 import gov.redhawk.diagram.util.InterfacesUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.SADConnectInterfacePattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 

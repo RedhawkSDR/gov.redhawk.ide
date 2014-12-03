@@ -11,10 +11,10 @@
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
 import gov.redhawk.diagram.util.InterfacesUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
 import gov.redhawk.sca.util.StringUtil;
 

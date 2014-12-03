@@ -10,8 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.properties;
 
-import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;

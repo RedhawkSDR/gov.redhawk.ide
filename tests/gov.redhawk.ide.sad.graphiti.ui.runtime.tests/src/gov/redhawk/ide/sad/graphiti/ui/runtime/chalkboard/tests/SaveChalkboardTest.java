@@ -10,11 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.runtime.chalkboard.tests;
 
-import java.util.List;
-
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
+
+import java.util.List;
+
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 

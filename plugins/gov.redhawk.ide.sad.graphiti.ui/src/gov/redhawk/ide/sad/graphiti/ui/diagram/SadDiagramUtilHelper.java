@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram;
 
+import gov.redhawk.ide.graphiti.ui.diagram.IDiagramUtilHelper;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.model.sca.util.ModelUtil;
 

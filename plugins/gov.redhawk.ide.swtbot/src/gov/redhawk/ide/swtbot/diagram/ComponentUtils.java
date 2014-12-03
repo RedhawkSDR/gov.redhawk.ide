@@ -10,10 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.diagram;
 
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;

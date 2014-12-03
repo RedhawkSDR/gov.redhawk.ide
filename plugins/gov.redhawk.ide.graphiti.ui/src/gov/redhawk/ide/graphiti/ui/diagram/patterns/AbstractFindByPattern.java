@@ -8,14 +8,13 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
+package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
-import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.sad.graphiti.ext.RHGxFactory;
-import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.RHGxFactory;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -336,41 +335,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		return children;
 	}
 
-	/**
-	 * Create FindByStub in the diagram based on values in findBy
-	 * @param findBy
-	 * @param featureProvider
-	 * @param diagram
-	 * @return
-	 */
-	public static FindByStub createFindByStub(FindBy findBy, IFeatureProvider featureProvider, Diagram diagram) {
 
-		// CORBA naming service
-		if (findBy.getNamingService() != null && findBy.getNamingService().getName() != null) {
-			return FindByCORBANamePattern.create(findBy.getNamingService().getName(), featureProvider, diagram);
-		} else if (findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.DOMAINMANAGER) {
-			// domain manager
-			return FindByDomainManagerPattern.create(featureProvider, diagram);
-		} else if (findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.FILEMANAGER) {
-			// file manager
-			return FindByFileManagerPattern.create(featureProvider, diagram);
-		} else if (findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.EVENTCHANNEL
-			&& findBy.getDomainFinder().getName() != null) {
-			// event manager
-			return FindByEventChannelPattern.create(findBy.getDomainFinder().getName(), featureProvider, diagram);
-		} else if (findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.SERVICENAME
-			&& findBy.getDomainFinder().getName() != null) {
-			// service name
-			return FindByServicePattern.create(findBy.getDomainFinder().getName(), null, featureProvider, diagram);
-		} else if (findBy.getDomainFinder() != null && findBy.getDomainFinder().getType() == DomainFinderType.SERVICETYPE
-			&& findBy.getDomainFinder().getName() != null) {
-			// service type
-			return FindByServicePattern.create(null, findBy.getDomainFinder().getName(), featureProvider, diagram);
-		}
-
-		return null;
-
-	}
 
 	/**
 	 * Add UsesPortStub to FindByStub
@@ -528,9 +493,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	}
 
 	@Override
-	public String getOuterImageId() {
-		return ImageProvider.IMG_FIND_BY;
-	}
+	public abstract String getOuterImageId();
 
 	@Override
 	public String getInnerImageId() {

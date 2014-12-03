@@ -11,8 +11,8 @@
 package gov.redhawk.ide.sad.graphiti.ui.runtime.chalkboard.tests;
 
 import static org.junit.Assert.assertTrue;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.ComponentUtils;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;

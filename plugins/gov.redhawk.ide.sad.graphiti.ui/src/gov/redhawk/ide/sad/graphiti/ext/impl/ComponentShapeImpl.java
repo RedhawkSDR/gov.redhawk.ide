@@ -10,17 +10,17 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ext.impl;
 
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.Event;
-import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
+import gov.redhawk.ide.sad.graphiti.ext.RHSadGxPackage;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
-
+import gov.redhawk.ide.sad.graphiti.ui.diagram.util.SadStyleUtil;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.AssemblyController;
@@ -28,7 +28,6 @@ import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -136,7 +135,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RHGxPackage.Literals.COMPONENT_SHAPE;
+		return RHSadGxPackage.Literals.COMPONENT_SHAPE;
 	}
 
 	/**
@@ -157,7 +156,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		boolean oldStarted = started;
 		started = newStarted;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.COMPONENT_SHAPE__STARTED, oldStarted, started));
+			eNotify(new ENotificationImpl(this, Notification.SET, RHSadGxPackage.COMPONENT_SHAPE__STARTED, oldStarted, started));
 
 		// update color according to value
 		final Diagram diagram = DUtil.findDiagram(this);
@@ -165,7 +164,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		if (innerRoundedRectangle != null) {
 			if (newStarted) {
 				// started
-				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInnerStarted(diagram));
+				innerRoundedRectangle.setStyle(SadStyleUtil.createStyleForComponentInnerStarted(diagram));
 			} else {
 				// not started
 				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInner(diagram));
@@ -192,7 +191,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		Event oldEvent = event;
 		event = newEvent == null ? EVENT_EDEFAULT : newEvent;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.COMPONENT_SHAPE__EVENT, oldEvent, event));
+			eNotify(new ENotificationImpl(this, Notification.SET, RHSadGxPackage.COMPONENT_SHAPE__EVENT, oldEvent, event));
 	}
 
 	/**
@@ -256,9 +255,9 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-		case RHGxPackage.COMPONENT_SHAPE__STARTED:
+		case RHSadGxPackage.COMPONENT_SHAPE__STARTED:
 			return isStarted();
-		case RHGxPackage.COMPONENT_SHAPE__EVENT:
+		case RHSadGxPackage.COMPONENT_SHAPE__EVENT:
 			return getEvent();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -272,10 +271,10 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-		case RHGxPackage.COMPONENT_SHAPE__STARTED:
+		case RHSadGxPackage.COMPONENT_SHAPE__STARTED:
 			setStarted((Boolean) newValue);
 			return;
-		case RHGxPackage.COMPONENT_SHAPE__EVENT:
+		case RHSadGxPackage.COMPONENT_SHAPE__EVENT:
 			setEvent((Event) newValue);
 			return;
 		}
@@ -290,10 +289,10 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-		case RHGxPackage.COMPONENT_SHAPE__STARTED:
+		case RHSadGxPackage.COMPONENT_SHAPE__STARTED:
 			setStarted(STARTED_EDEFAULT);
 			return;
-		case RHGxPackage.COMPONENT_SHAPE__EVENT:
+		case RHSadGxPackage.COMPONENT_SHAPE__EVENT:
 			setEvent(EVENT_EDEFAULT);
 			return;
 		}
@@ -308,9 +307,9 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-		case RHGxPackage.COMPONENT_SHAPE__STARTED:
+		case RHSadGxPackage.COMPONENT_SHAPE__STARTED:
 			return started != STARTED_EDEFAULT;
-		case RHGxPackage.COMPONENT_SHAPE__EVENT:
+		case RHSadGxPackage.COMPONENT_SHAPE__EVENT:
 			return event != EVENT_EDEFAULT;
 		}
 		return super.eIsSet(featureID);

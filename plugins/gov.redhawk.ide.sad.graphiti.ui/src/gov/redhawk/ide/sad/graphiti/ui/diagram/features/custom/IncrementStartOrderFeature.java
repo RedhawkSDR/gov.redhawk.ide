@@ -10,9 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom;
 
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 
 import java.math.BigInteger;
 

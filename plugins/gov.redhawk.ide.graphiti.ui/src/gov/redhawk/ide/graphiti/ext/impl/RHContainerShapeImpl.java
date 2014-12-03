@@ -8,13 +8,13 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.graphiti.ext.impl;
+package gov.redhawk.ide.graphiti.ext.impl;
 
-import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractContainerPattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.RHGxPackage;
 import java.util.ArrayList;
 import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;

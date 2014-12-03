@@ -8,14 +8,13 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.graphiti.ui.diagram.util;
+package gov.redhawk.ide.graphiti.ui.diagram.util;
 
-import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.IDiagramUtilHelper;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractFindByPattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.IDiagramUtilHelper;
+import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.sca.efs.ScaFileSystemPlugin;
 
 import java.io.ByteArrayInputStream;
@@ -26,7 +25,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
@@ -59,7 +57,6 @@ import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.datatypes.ILocation;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
-import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IRemoveFeature;
@@ -69,7 +66,6 @@ import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
-import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.CustomContext;
 import org.eclipse.graphiti.features.context.impl.DeleteContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
@@ -961,105 +957,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		return new Reason(false, "No updates required");
 	}
 
-	/**
-	 * Iterates through all sadConnectInterfaces to look for connections that use findBy tag that are not contained
-	 * within ComponentInterface or Provides
-	 * All FindBy tags without one of the two parents will be contained within a ComponentInterface afterwards. The
-	 * purpose of this is to draw connections
-	 * to the lollipop port in the diagram as apposed to directly connecting to the FindBy Box.
-	 * @param sadConnectInterfaces
-	 * @param objectClass
-	 * @param pictogramLabel
-	 * @param diagram
-	 * @param featureProvider
-	 * @param performUpdate
-	 * @return
-	 */
-	public static Reason replaceDirectFindByConnection(List<SadConnectInterface> sadConnectInterfaces, Class objectClass, String pictogramLabel,
-		Diagram diagram, IFeatureProvider featureProvider, boolean performUpdate) {
 
-		boolean updateStatus = false;
-
-		// iterate through all connections
-		for (ListIterator<SadConnectInterface> iter = sadConnectInterfaces.listIterator(); iter.hasNext();) {
-			SadConnectInterface sadConnectInterface = iter.next();
-
-			if (sadConnectInterface.getFindBy() != null && sadConnectInterface.getFindBy() instanceof FindBy) {
-
-				// The Graphiti SAD diagram doesn't support this type of connection and therefore it will not exist
-				// in the diagram, it may however exist in the model and we will convert it to use
-				// ComponentSupportedInterface
-
-				// lookup source anchor
-				Anchor sourceAnchor = lookupSourceAnchor(sadConnectInterface, diagram);
-
-				// if sourceAnchor wasn't found its because the findBy needs to be added to the diagram
-				if (sourceAnchor == null) {
-
-					// FindBy is always used inside usesPort
-					if (sadConnectInterface.getUsesPort() != null && sadConnectInterface.getUsesPort().getFindBy() != null) {
-						if (performUpdate) {
-							updateStatus = true;
-							FindBy findBy = (FindBy) sadConnectInterface.getUsesPort().getFindBy();
-
-							// create FindBy Shape for Source
-							FindByStub findByStub = AbstractFindByPattern.createFindByStub(findBy, featureProvider, diagram);
-
-							// add FindBYShape for Target
-							if (findByStub != null) {
-								PictogramElement pe = DUtil.addShapeViaFeature(featureProvider, diagram, findByStub);
-							}
-						} else {
-							return new Reason(true, "Add FindBy Shape");
-						}
-					}
-				}
-
-				// The model isn't providing us with an interface for the FindBy. First step is to modify the model and
-				// select an interface
-				FindBy findBy = (FindBy) sadConnectInterface.getFindBy();
-
-				// create FindBy Shape for Target
-				FindByStub findByStub = AbstractFindByPattern.createFindByStub(findBy, featureProvider, diagram);
-
-				// add FindBYShape for Target
-				PictogramElement pe = DUtil.addShapeViaFeature(featureProvider, diagram, findByStub);
-
-				Anchor targetAnchor = null;
-				if (pe != null && pe instanceof RHContainerShape) {
-					// determine lollipop anchor
-					PictogramElement peAnchor = DUtil.getPictogramElementForBusinessObject(diagram, (EObject) findByStub.getInterface(), Anchor.class);
-					targetAnchor = (Anchor) peAnchor;
-				}
-
-				// create a new connection and remove the connection we are currently analyzing
-				if (sourceAnchor == null || targetAnchor == null) {
-					// TODO: we might want to alert user of this...log maybe
-					break;
-				}
-
-				// remove the current connection, and replace it with this new connection
-				// remove
-				iter.remove();
-
-				// create
-				CreateConnectionContext createContext = new CreateConnectionContext();
-				createContext.setSourceAnchor(sourceAnchor);
-				createContext.setTargetAnchor(targetAnchor);
-				for (ICreateConnectionFeature createFeature : featureProvider.getCreateConnectionFeatures()) {
-					if (createFeature.canCreate(createContext)) {
-						featureProvider.getDiagramTypeProvider().getDiagramBehavior().executeFeature(createFeature, createContext);
-					}
-				}
-			}
-		}
-
-		if (updateStatus && performUpdate) {
-			return new Reason(true, "Update successful");
-		}
-
-		return new Reason(false, "No updates required");
-	}
 
 	/**
 	 * Lookup SourceAnchor for connection. Examines uses ports on Components as well as FindBys
@@ -1219,7 +1117,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	/**
 	 * 
 	 */
-	public static void initializeDiagramResource(final IDiagramUtilHelper options, final URI diagramURI, final Resource sadResource) throws IOException,
+	public static void initializeDiagramResource(final IDiagramUtilHelper options, final String diagramTypeId, final String diagramTypeProviderId, final URI diagramURI, final Resource sadResource) throws IOException,
 		CoreException {
 		if (diagramURI.isPlatform()) {
 			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(diagramURI.toPlatformString(true)));
@@ -1233,7 +1131,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 					public void run(final IProgressMonitor monitor) throws CoreException {
 						final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 						try {
-							DUtil.populateDiagram(options, diagramURI, sadResource, buffer);
+							DUtil.populateDiagram(options, diagramTypeId, diagramTypeProviderId, diagramURI, sadResource, buffer);
 						} catch (final IOException e) {
 							// PASS
 						}
@@ -1246,12 +1144,12 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 				ResourcesPlugin.getWorkspace().run(operation, rule, 0, null);
 			}
 		} else {
-			DUtil.populateDiagram(options, diagramURI, sadResource, null);
+			DUtil.populateDiagram(options, diagramTypeId, diagramTypeProviderId, diagramURI, sadResource, null);
 		}
 	}
 
 	// creates new diagram from provided model resource
-	private static void populateDiagram(final IDiagramUtilHelper options, final URI diagramURI, final Resource resource, final OutputStream buffer)
+	private static void populateDiagram(final IDiagramUtilHelper options, final String diagramTypeId, final String diagramTypeProviderId, final URI diagramURI, final Resource resource, final OutputStream buffer)
 		throws IOException {
 
 		// Create a resource set
@@ -1264,11 +1162,11 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		final String diagramName = diagramURI.lastSegment();
 
 		// create diagram
-		Diagram diagram = Graphiti.getPeCreateService().createDiagram(SADDiagramTypeProvider.DIAGRAM_TYPE_ID, diagramName, true);
+		Diagram diagram = Graphiti.getPeCreateService().createDiagram(diagramTypeId, diagramName, true);
 		diagramResource.getContents().add(diagram);
 
 		// TODO:we will want to move this logic somewhere else
-		IDiagramTypeProvider dtp = GraphitiUi.getExtensionManager().createDiagramTypeProvider(diagram, SADDiagramTypeProvider.PROVIDER_ID);
+		IDiagramTypeProvider dtp = GraphitiUi.getExtensionManager().createDiagramTypeProvider(diagram, diagramTypeProviderId);
 		IFeatureProvider featureProvider = dtp.getFeatureProvider();
 
 		// iterate over each component, both in an out of host collocations

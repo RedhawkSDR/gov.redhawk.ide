@@ -10,10 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.adapters;
 
+import gov.redhawk.ide.graphiti.ext.RHGxPackage;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.debug.internal.ui.GraphitiModelMap;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
-import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.sad.graphiti.ext.RHSadGxPackage;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -42,7 +43,7 @@ public class GraphitiDiagramAdapter extends EContentAdapter {
 		super.notifyChanged(notification);
 		switch (notification.getEventType()) {
 		case Notification.SET:
-			if (RHGxPackage.COMPONENT_SHAPE__STARTED == notification.getFeatureID(RHGxPackage.class)) {
+			if (RHSadGxPackage.COMPONENT_SHAPE__STARTED == notification.getFeatureID(RHGxPackage.class)) {
 				if (notification.getNotifier() instanceof ComponentShape) {
 					final ComponentShape componentShape = (ComponentShape) notification.getNotifier();
 					SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);

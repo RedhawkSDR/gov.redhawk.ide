@@ -13,7 +13,7 @@ import org.eclipse.emf.common.util.Enumerator;
  * A representation of the literals of the enumeration '<em><b>Event</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * @see gov.redhawk.ide.sad.graphiti.ext.RHGxPackage#getEvent()
+ * @see gov.redhawk.ide.sad.graphiti.ext.RHSadGxPackage#getEvent()
  * @model
  * @generated
  */

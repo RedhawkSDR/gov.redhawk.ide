@@ -1,23 +1,17 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
- * Please refer to the COPYRIGHT file distributed with this source distribution.
- *
- * This file is part of REDHAWK IDE.
- *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-package gov.redhawk.ide.sad.graphiti.ext.util;
+/**
+ */
+package gov.redhawk.ide.graphiti.ext.util;
 
-import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
-import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
+import gov.redhawk.ide.graphiti.ext.*;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+
 import org.eclipse.emf.ecore.util.Switch;
+
 import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.PropertyContainer;
+
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -26,14 +20,14 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 /**
  * <!-- begin-user-doc -->
  * The <b>Switch</b> for the model's inheritance hierarchy.
- * It supports the call {@link #doSwitch(EObject) doSwitch(object)} to invoke the <code>caseXXX</code> method for each
- * class of the model,
+ * It supports the call {@link #doSwitch(EObject) doSwitch(object)}
+ * to invoke the <code>caseXXX</code> method for each class of the model,
  * starting with the actual class of the object
  * and proceeding up the inheritance hierarchy
  * until a non-null result is returned,
  * which is the result of the switch.
  * <!-- end-user-doc -->
- * @see gov.redhawk.ide.sad.graphiti.ext.RHGxPackage
+ * @see gov.redhawk.ide.graphiti.ext.RHGxPackage
  * @generated
  */
 public class RHGxSwitch< T > extends Switch<T> {
@@ -106,27 +100,6 @@ public class RHGxSwitch< T > extends Switch<T> {
 				result = defaultCase(theEObject);
 			return result;
 		}
-		case RHGxPackage.COMPONENT_SHAPE: {
-			ComponentShape componentShape = (ComponentShape) theEObject;
-			T result = caseComponentShape(componentShape);
-			if (result == null)
-				result = caseRHContainerShape(componentShape);
-			if (result == null)
-				result = caseContainerShape(componentShape);
-			if (result == null)
-				result = caseShape(componentShape);
-			if (result == null)
-				result = caseAnchorContainer(componentShape);
-			if (result == null)
-				result = casePictogramElement(componentShape);
-			if (result == null)
-				result = caseGraphicsAlgorithmContainer(componentShape);
-			if (result == null)
-				result = casePropertyContainer(componentShape);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
 		default:
 			return defaultCase(theEObject);
 		}
@@ -159,21 +132,6 @@ public class RHGxSwitch< T > extends Switch<T> {
 	 * @generated
 	 */
 	public T caseRHContainerShape(RHContainerShape object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Component Shape</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Component Shape</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseComponentShape(ComponentShape object) {
 		return null;
 	}
 
@@ -283,4 +241,4 @@ public class RHGxSwitch< T > extends Switch<T> {
 		return null;
 	}
 
-} // RHGxSwitch
+} //RHGxSwitch

@@ -1,24 +1,19 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
- * Please refer to the COPYRIGHT file distributed with this source distribution.
- *
- * This file is part of REDHAWK IDE.
- *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-package gov.redhawk.ide.sad.graphiti.ext.util;
+/**
+ */
+package gov.redhawk.ide.graphiti.ext.util;
 
-import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
-import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
+import gov.redhawk.ide.graphiti.ext.*;
+
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
+
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
+
 import org.eclipse.emf.ecore.EObject;
+
 import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.PropertyContainer;
+
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -29,7 +24,7 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
  * The <b>Adapter Factory</b> for the model.
  * It provides an adapter <code>createXXX</code> method for each class of the model.
  * <!-- end-user-doc -->
- * @see gov.redhawk.ide.sad.graphiti.ext.RHGxPackage
+ * @see gov.redhawk.ide.graphiti.ext.RHGxPackage
  * @generated
  */
 public class RHGxAdapterFactory extends AdapterFactoryImpl {
@@ -56,8 +51,7 @@ public class RHGxAdapterFactory extends AdapterFactoryImpl {
 	/**
 	 * Returns whether this factory is applicable for the type of the object.
 	 * <!-- begin-user-doc -->
-	 * This implementation returns <code>true</code> if the object is either the model's package or is an instance
-	 * object of the model.
+	 * This implementation returns <code>true</code> if the object is either the model's package or is an instance object of the model.
 	 * <!-- end-user-doc -->
 	 * @return whether this factory is applicable for the type of the object.
 	 * @generated
@@ -88,11 +82,6 @@ public class RHGxAdapterFactory extends AdapterFactoryImpl {
 		@Override
 		public Adapter caseRHContainerShape(RHContainerShape object) {
 			return createRHContainerShapeAdapter();
-		}
-
-		@Override
-		public Adapter caseComponentShape(ComponentShape object) {
-			return createComponentShapeAdapter();
 		}
 
 		@Override
@@ -159,30 +148,16 @@ public class RHGxAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sad.graphiti.ext.RHContainerShape <em>RH Container Shape</em>}'.
+	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape <em>RH Container Shape</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see gov.redhawk.ide.sad.graphiti.ext.RHContainerShape
+	 * @see gov.redhawk.ide.graphiti.ext.RHContainerShape
 	 * @generated
 	 */
 	public Adapter createRHContainerShapeAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sad.graphiti.ext.ComponentShape <em>Component Shape</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see gov.redhawk.ide.sad.graphiti.ext.ComponentShape
-	 * @generated
-	 */
-	public Adapter createComponentShapeAdapter() {
 		return null;
 	}
 
@@ -282,4 +257,4 @@ public class RHGxAdapterFactory extends AdapterFactoryImpl {
 		return null;
 	}
 
-} // RHGxAdapterFactory
+} //RHGxAdapterFactory

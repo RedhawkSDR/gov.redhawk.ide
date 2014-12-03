@@ -8,7 +8,9 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.graphiti.ui.diagram.util;
+package gov.redhawk.ide.graphiti.ui.diagram.util;
+
+import gov.redhawk.ide.graphiti.ui.diagram.util.FindByRenderingStyle;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.mm.algorithms.styles.AdaptedGradientColoredAreas;

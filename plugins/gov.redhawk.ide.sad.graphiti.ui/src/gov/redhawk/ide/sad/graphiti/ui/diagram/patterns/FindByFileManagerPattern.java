@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
@@ -150,5 +151,10 @@ public class FindByFileManagerPattern extends AbstractFindByPattern implements I
 	@Override
 	public String checkValueValid(String value, IDirectEditingContext context) {
 		return null;
+	}
+	
+	@Override
+	public String getOuterImageId() {
+		return ImageProvider.IMG_FIND_BY;
 	}
 }

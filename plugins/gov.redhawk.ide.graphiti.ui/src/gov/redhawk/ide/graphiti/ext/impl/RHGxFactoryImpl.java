@@ -1,39 +1,36 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
- * Please refer to the COPYRIGHT file distributed with this source distribution.
- *
- * This file is part of REDHAWK IDE.
- *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-package gov.redhawk.ide.sad.graphiti.ext.impl;
+/**
+ */
+package gov.redhawk.ide.graphiti.ext.impl;
 
-import gov.redhawk.ide.sad.graphiti.ext.*;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.AbstractContainerPattern;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
-import gov.redhawk.ide.sad.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.sad.graphiti.ext.RHGxFactory;
-import gov.redhawk.ide.sad.graphiti.ext.RHGxPackage;
+import gov.redhawk.ide.graphiti.ext.*;
+
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+
 import java.util.List;
+
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
+
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+
 import org.eclipse.graphiti.features.IFeatureProvider;
+
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
+
 import org.eclipse.graphiti.features.impl.Reason;
 
 /**
@@ -81,8 +78,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 		switch (eClass.getClassifierID()) {
 		case RHGxPackage.RH_CONTAINER_SHAPE:
 			return createRHContainerShape();
-		case RHGxPackage.COMPONENT_SHAPE:
-			return createComponentShape();
 		default:
 			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -96,8 +91,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-		case RHGxPackage.EVENT:
-			return createEventFromString(eDataType, initialValue);
 		case RHGxPackage.COMPONENT_SUPPORTED_INTERFACE_STUB:
 			return createComponentSupportedInterfaceStubFromString(eDataType, initialValue);
 		case RHGxPackage.IFEATURE_PROVIDER:
@@ -122,8 +115,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return createIAddContextFromString(eDataType, initialValue);
 		case RHGxPackage.ABSTRACT_CONTAINER_PATTERN:
 			return createAbstractContainerPatternFromString(eDataType, initialValue);
-		case RHGxPackage.COMPONENT_PATTERN:
-			return createComponentPatternFromString(eDataType, initialValue);
 		case RHGxPackage.IUPDATE_CONTEXT:
 			return createIUpdateContextFromString(eDataType, initialValue);
 		default:
@@ -139,8 +130,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-		case RHGxPackage.EVENT:
-			return convertEventToString(eDataType, instanceValue);
 		case RHGxPackage.COMPONENT_SUPPORTED_INTERFACE_STUB:
 			return convertComponentSupportedInterfaceStubToString(eDataType, instanceValue);
 		case RHGxPackage.IFEATURE_PROVIDER:
@@ -165,8 +154,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 			return convertIAddContextToString(eDataType, instanceValue);
 		case RHGxPackage.ABSTRACT_CONTAINER_PATTERN:
 			return convertAbstractContainerPatternToString(eDataType, instanceValue);
-		case RHGxPackage.COMPONENT_PATTERN:
-			return convertComponentPatternToString(eDataType, instanceValue);
 		case RHGxPackage.IUPDATE_CONTEXT:
 			return convertIUpdateContextToString(eDataType, instanceValue);
 		default:
@@ -182,37 +169,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	public RHContainerShape createRHContainerShape() {
 		RHContainerShapeImpl rhContainerShape = new RHContainerShapeImpl();
 		return rhContainerShape;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ComponentShape createComponentShape() {
-		ComponentShapeImpl componentShape = new ComponentShapeImpl();
-		return componentShape;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Event createEventFromString(EDataType eDataType, String initialValue) {
-		Event result = Event.get(initialValue);
-		if (result == null)
-			throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-		return result;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertEventToString(EDataType eDataType, Object instanceValue) {
-		return instanceValue == null ? null : instanceValue.toString();
 	}
 
 	/**
@@ -436,24 +392,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ComponentPattern createComponentPatternFromString(EDataType eDataType, String initialValue) {
-		return (ComponentPattern) super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertComponentPatternToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public IUpdateContext createIUpdateContextFromString(EDataType eDataType, String initialValue) {
 		return (IUpdateContext) super.createFromString(eDataType, initialValue);
 	}
@@ -487,4 +425,4 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 		return RHGxPackage.eINSTANCE;
 	}
 
-} // RHGxFactoryImpl
+} //RHGxFactoryImpl

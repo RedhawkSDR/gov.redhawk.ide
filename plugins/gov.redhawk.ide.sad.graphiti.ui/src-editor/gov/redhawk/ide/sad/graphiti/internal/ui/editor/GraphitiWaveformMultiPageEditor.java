@@ -10,12 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.internal.ui.editor;
 
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.SadDiagramUtilHelper;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.sca.util.PluginUtil;
@@ -612,7 +612,8 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 
 		final URI diagramURI = DUtil.getDiagramResourceURI(SadDiagramUtilHelper.INSTANCE, sadResource);
 
-		DUtil.initializeDiagramResource(SadDiagramUtilHelper.INSTANCE, diagramURI, sadResource);
+		DUtil.initializeDiagramResource(SadDiagramUtilHelper.INSTANCE, SADDiagramTypeProvider.DIAGRAM_TYPE_ID,
+			SADDiagramTypeProvider.PROVIDER_ID, diagramURI, sadResource);
 
 		Resource diagramResource = getEditingDomain().getResourceSet().getResource(diagramURI, true);
 

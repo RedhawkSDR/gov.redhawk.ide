@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.graphiti.ui.diagram.util;
+package gov.redhawk.ide.graphiti.ui.diagram.util;
 
 import gov.redhawk.sca.util.PluginUtil;
 
@@ -150,18 +150,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 	
-	// updates component inner rectangle style
-	public static Style createStyleForComponentInnerStarted(Diagram diagram) {
-		final String styleId = "ComponentInnerStarted";
-		Style style = findStyle(diagram, styleId);
-		if (style == null) {
-			IGaService gaService = Graphiti.getGaService();
-			style = gaService.createStyle(diagram, styleId);
-			gaService.setRenderingStyle(style, ComponentColoredAreas.getGreenWhiteAdaptions());
-			style.setLineWidth(2);
-		}
-		return style;
-	}
+
 	
 	// returns findby outer rectangle style
 	public static Style getStyleForFindByOuter(Diagram diagram) {
@@ -599,7 +588,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// find the style with given id in style-container
-	private static Style findStyle(StyleContainer styleContainer, String id) {
+	public static Style findStyle(StyleContainer styleContainer, String id) {
 		// find and return style
 		Collection<Style> styles = styleContainer.getStyles();
 		if (styles != null) {

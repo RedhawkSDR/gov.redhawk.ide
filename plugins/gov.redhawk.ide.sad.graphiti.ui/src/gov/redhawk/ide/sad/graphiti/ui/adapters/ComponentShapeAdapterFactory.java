@@ -11,13 +11,14 @@
  */
 package gov.redhawk.ide.sad.graphiti.ui.adapters;
 
-import java.util.Map;
-
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaModelPlugin;
 import gov.redhawk.model.sca.ScaWaveform;
+
+import java.util.Map;
+
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.util.QueryParser;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;

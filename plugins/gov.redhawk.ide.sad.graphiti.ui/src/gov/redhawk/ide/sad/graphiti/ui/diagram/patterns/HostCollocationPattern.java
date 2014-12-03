@@ -10,12 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.diagram.patterns;
 
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
-import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
 import java.util.List;
