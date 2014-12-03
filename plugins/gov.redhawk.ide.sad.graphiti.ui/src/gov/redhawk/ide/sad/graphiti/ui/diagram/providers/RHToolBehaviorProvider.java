@@ -16,7 +16,6 @@ import gov.redhawk.core.resourcefactory.ResourceDesc;
 import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.FindByEditFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.palette.SpdToolEntry;
