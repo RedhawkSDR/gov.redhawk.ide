@@ -26,7 +26,6 @@ type ComponentPattern wraps gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.Com
 type IUpdateContext wraps org.eclipse.graphiti.features.context.IUpdateContext
 
 
-
 class ComponentShape extends gov.redhawk.ide.graphiti.ext.RHContainerShape{
 	
 	boolean started
