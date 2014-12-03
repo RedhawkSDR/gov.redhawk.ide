@@ -201,8 +201,6 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	 */
 	@Override
 	public IPaletteCompartmentEntry[] getPalette() {
-		boolean isSandbox = getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer() instanceof RHGraphitiDiagramEditor;
-
 		// palette compartments
 		List<IPaletteCompartmentEntry> compartments = new ArrayList<IPaletteCompartmentEntry>();
 
@@ -212,7 +210,7 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		compartments.add(componentCompartmentEntry);
 
 		// FINDBY Compartment
-		if (!isSandbox) {
+		if (!DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
 			PaletteCompartmentEntry findByCompartmentEntry = getFindByCompartmentEntry();
 			compartments.add(findByCompartmentEntry);
 		}
@@ -222,7 +220,7 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		compartments.add(baseTypesCompartmentEntry);
 
 		// WORKSPACE Compartment
-		if (isSandbox) {
+		if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
 			PaletteCompartmentEntry workspaceCompartmentEntry = getWorkspaceCompartmentEntry();
 			if (!workspaceCompartmentEntry.getToolEntries().isEmpty()) {
 				compartments.add(workspaceCompartmentEntry);
