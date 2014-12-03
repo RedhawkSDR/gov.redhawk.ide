@@ -15,7 +15,7 @@ import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
-import gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiSadMultiPageEditor;
+import gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiWaveformMultiPageEditor;
 import gov.redhawk.ide.sad.ui.wizard.ScaWaveformProjectAssemblyControllerWizardPage;
 import gov.redhawk.ide.sad.ui.wizard.ScaWaveformProjectPropertiesWizardPage;
 import gov.redhawk.ide.sdr.SdrRoot;
@@ -229,7 +229,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 //				}
 				
 				//opens the GEF editor
-				final GraphitiSadMultiPageEditor sadPart = (GraphitiSadMultiPageEditor) IDE.openEditor(activePage, this.openEditorOn, GraphitiSadMultiPageEditor.ID, true);
+				final GraphitiWaveformMultiPageEditor sadPart = (GraphitiWaveformMultiPageEditor) IDE.openEditor(activePage, this.openEditorOn, GraphitiWaveformMultiPageEditor.ID, true);
 				
 				//TODO: bwhoff2 we probably need to handle this
 				//setCustomPreferences(sadPart);

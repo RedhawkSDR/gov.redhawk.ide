@@ -13,13 +13,17 @@ package gov.redhawk.ide.sad.graphiti.internal.ui.editor;
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.graphiti.ui.internal.editor.GFWorkspaceCommandStackImpl;
 
-import gov.redhawk.ide.sad.internal.ui.editor.SadOverviewPage;
+import gov.redhawk.ide.sad.internal.ui.editor.SadPropertiesPage;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
-public class GraphitiSadOverviewPage extends SadOverviewPage {
+public class GraphitiWaveformPropertiesPage extends SadPropertiesPage {
 
-	public GraphitiSadOverviewPage(SCAFormEditor editor) {
-		super(editor);
+	public GraphitiWaveformPropertiesPage(SCAFormEditor editor, String id, String title, boolean newStyleHeader) {
+		super(editor, id, title, newStyleHeader);
+	}
+
+	public GraphitiWaveformPropertiesPage(SCAFormEditor editor, String id, String title) {
+		super(editor, id, title);
 	}
 
 	/**

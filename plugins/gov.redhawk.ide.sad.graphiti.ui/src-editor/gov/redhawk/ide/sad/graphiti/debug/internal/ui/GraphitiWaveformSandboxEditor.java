@@ -15,9 +15,10 @@ import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.internal.ui.diagram.NewWaveformFromLocalWizard;
-import gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiSadMultiPageEditor;
+import gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiWaveformMultiPageEditor;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sad.graphiti.ui.adapters.GraphitiDiagramAdapter;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.model.sca.RefreshDepth;
@@ -55,7 +56,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 /**
  * 
  */
-public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEditor {
+public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEditor {
 	public static final String EDITOR_ID = "gov.redhawk.ide.sad.graphiti.ui.editor.localMultiPageSca";
 	private static final Debug DEBUG = new Debug(SADUIGraphitiPlugin.PLUGIN_ID, "editor");
 	private ScaGraphitiModelAdapter scaListener;
@@ -254,7 +255,7 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 							@Override
 							public void run() {
 								if (!isDisposed()) {
-									getEditorSite().getPage().closeEditor(LocalGraphitiSadMultiPageScaEditor.this, false);
+									getEditorSite().getPage().closeEditor(GraphitiWaveformSandboxEditor.this, false);
 								}
 							}
 
@@ -275,11 +276,11 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 		sad.eAdapters().add(this.sadlistener);
 		
 
-		if (LocalGraphitiSadMultiPageScaEditor.DEBUG.enabled) {
+		if (GraphitiWaveformSandboxEditor.DEBUG.enabled) {
 			try {
 				sad.eResource().save(null);
 			} catch (final IOException e) {
-				LocalGraphitiSadMultiPageScaEditor.DEBUG.catching("Failed to save local diagram.", e);
+				GraphitiWaveformSandboxEditor.DEBUG.catching("Failed to save local diagram.", e);
 			}
 		}
 		
@@ -307,7 +308,7 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 
 				@Override
 				public void execute() {
-					waveform.eAdapters().remove(LocalGraphitiSadMultiPageScaEditor.this.scaListener);
+					waveform.eAdapters().remove(GraphitiWaveformSandboxEditor.this.scaListener);
 					//localSca.eAdapters().remove(LocalGraphitiSadMultiPageScaEditor.this.scaListener);
 				}
 			});
@@ -370,7 +371,7 @@ public class LocalGraphitiSadMultiPageScaEditor extends GraphitiSadMultiPageEdit
 
 	@Override
 	protected DiagramEditor createDiagramEditor() {
-		return new SandboxRHGraphitiDiagramEditor((TransactionalEditingDomain) getEditingDomain());
+		return new RHGraphitiDiagramEditor((TransactionalEditingDomain) getEditingDomain());
 	}
 
 	@Override

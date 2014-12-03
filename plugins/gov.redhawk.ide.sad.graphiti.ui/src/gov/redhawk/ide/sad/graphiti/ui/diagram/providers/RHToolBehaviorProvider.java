@@ -14,8 +14,8 @@ import gov.redhawk.core.resourcefactory.ComponentDesc;
 import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
 import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
-import gov.redhawk.ide.sad.graphiti.debug.internal.ui.SandboxRHGraphitiDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.FindByEditFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.palette.SpdToolEntry;
@@ -201,7 +201,7 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	 */
 	@Override
 	public IPaletteCompartmentEntry[] getPalette() {
-		boolean isSandbox = getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer() instanceof SandboxRHGraphitiDiagramEditor;
+		boolean isSandbox = getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer() instanceof RHGraphitiDiagramEditor;
 
 		// palette compartments
 		List<IPaletteCompartmentEntry> compartments = new ArrayList<IPaletteCompartmentEntry>();

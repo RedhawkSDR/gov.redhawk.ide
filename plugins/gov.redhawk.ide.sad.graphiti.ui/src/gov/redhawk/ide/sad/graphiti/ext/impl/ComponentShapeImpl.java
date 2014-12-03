@@ -56,8 +56,8 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  * <p>
  * The following features are implemented:
  * <ul>
- * <li>{@link gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl#isStarted <em>Started</em>}</li>
- * <li>{@link gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl#getEvent <em>Event</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl#isStarted <em>Started</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sad.graphiti.ext.impl.ComponentShapeImpl#getEvent <em>Event</em>}</li>
  * </ul>
  * </p>
  *

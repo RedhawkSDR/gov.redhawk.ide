@@ -161,8 +161,8 @@
             <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiSadMultiPageEditor"
-            contributorClass="gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiSadMultipageEditorActionBarContributor"
+            class="gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiWaveformMultiPageEditor"
+            contributorClass="gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
             default="true"
             icon="icons/full/obj16/SadModelFile.gif"
             id="gov.redhawk.ide.sad.graphiti.ui.editor.presentation.SadEditorID"
@@ -170,7 +170,7 @@
          <contentTypeBinding contentTypeId="mil.jpeojtrs.sca.sad.content-type"/>
       </editor>
       <editor
-            class="gov.redhawk.ide.sad.graphiti.debug.internal.ui.LocalGraphitiSadMultiPageScaEditor"
+            class="gov.redhawk.ide.sad.graphiti.debug.internal.ui.GraphitiWaveformSandboxEditor"
             default="false"
             icon="icons/redhawk16.gif"
             id="gov.redhawk.ide.sad.graphiti.ui..editor.localMultiPageSca"

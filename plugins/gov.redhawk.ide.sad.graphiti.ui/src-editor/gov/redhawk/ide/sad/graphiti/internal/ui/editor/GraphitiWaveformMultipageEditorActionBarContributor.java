@@ -22,7 +22,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 /**
  * 
  */
-public class GraphitiSadMultipageEditorActionBarContributor extends ScaMultipageActionBarContributor {
+public class GraphitiWaveformMultipageEditorActionBarContributor extends ScaMultipageActionBarContributor {
 
 	/**
 	 * {@inheritDoc}

@@ -104,7 +104,7 @@ import CF.Application;
 /**
  * This is an example of a Sad model editor.
  */
-public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbedPropertySheetPageContributor, IViewerProvider {
+public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements ITabbedPropertySheetPageContributor, IViewerProvider {
 
 	public static final String ID = "gov.redhawk.ide.sad.graphiti.ui.editor.presentation.SadEditorID";
 
@@ -215,7 +215,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 	/**
 	 * This creates a model editor.
 	 */
-	public GraphitiSadMultiPageEditor() {
+	public GraphitiWaveformMultiPageEditor() {
 		super();
 		this.selectionProvider = new MultiPageSelectionProvider(this);
 		this.selectionProvider.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -247,8 +247,8 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 					// Try to select the items in the current content viewer of
 					// the editor.
 					//
-					if (GraphitiSadMultiPageEditor.this.currentViewer != null) {
-						GraphitiSadMultiPageEditor.this.currentViewer.setSelection(new StructuredSelection(theSelection.toArray()), true);
+					if (GraphitiWaveformMultiPageEditor.this.currentViewer != null) {
+						GraphitiWaveformMultiPageEditor.this.currentViewer.setSelection(new StructuredSelection(theSelection.toArray()), true);
 					}
 				}
 			};
@@ -573,7 +573,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 	}
 
 	protected IFormPage createPropertiesPage(Resource sadResource) {
-		GraphitiSadPropertiesPage retVal = new GraphitiSadPropertiesPage(this, "propertiesPage", "Properties", true);
+		GraphitiWaveformPropertiesPage retVal = new GraphitiWaveformPropertiesPage(this, "propertiesPage", "Properties", true);
 		retVal.setInput(sadResource);
 		return retVal;
 	}
@@ -628,7 +628,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 			@Override
 			protected void doExecute() {
 				// Evade dirty check - we DON'T want this action to mark the editor as dirty
-				GraphitiSadMultiPageEditor.this.setDirtyAllowed(false);
+				GraphitiWaveformMultiPageEditor.this.setDirtyAllowed(false);
 
 				// set property specifying diagram context (design, local, domain)
 				Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CONTEXT, getDiagramContext(sadResource));
@@ -672,7 +672,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 	 * 
 	 */
 	protected IFormPage createOverviewPage(final Resource sadResource) {
-		final GraphitiSadOverviewPage retVal = new GraphitiSadOverviewPage(this);
+		final GraphitiWaveformOverviewPage retVal = new GraphitiWaveformOverviewPage(this);
 		retVal.setInput(sadResource);
 		return retVal;
 	}
@@ -699,7 +699,7 @@ public class GraphitiSadMultiPageEditor extends SCAFormEditor implements ITabbed
 	 */
 	@Override
 	public String getEditingDomainId() {
-		return GraphitiSadMultiPageEditor.EDITING_DOMAIN_ID;
+		return GraphitiWaveformMultiPageEditor.EDITING_DOMAIN_ID;
 	}
 
 	/**

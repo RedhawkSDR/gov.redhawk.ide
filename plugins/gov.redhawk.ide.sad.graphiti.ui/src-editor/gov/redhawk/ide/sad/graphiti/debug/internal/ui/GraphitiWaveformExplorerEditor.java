@@ -14,7 +14,7 @@ import gov.redhawk.ide.sad.graphiti.ui.diagram.util.DUtil;
 
 import org.eclipse.emf.ecore.resource.Resource;
 
-public class GraphitiWaveformExplorerEditor extends LocalGraphitiSadMultiPageScaEditor {
+public class GraphitiWaveformExplorerEditor extends GraphitiWaveformSandboxEditor {
 
 	public GraphitiWaveformExplorerEditor() {
 		// TODO Auto-generated constructor stub
