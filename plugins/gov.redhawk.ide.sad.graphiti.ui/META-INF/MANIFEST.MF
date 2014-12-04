@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: gov.redhawk.ide.sad.graphiti.ui;singleton:=true
+Bundle-SymbolicName: gov.redhawk.ide.graphiti.sad.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin
