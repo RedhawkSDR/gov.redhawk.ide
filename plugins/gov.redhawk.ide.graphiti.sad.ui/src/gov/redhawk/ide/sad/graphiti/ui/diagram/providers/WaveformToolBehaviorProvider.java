@@ -75,12 +75,11 @@ import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.ui.progress.WorkbenchJob;
 
-public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
+public class WaveformToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
 	private RHGraphitiPaletteFilter paletteFilter;
-	private final PaletteCompartmentEntry componentCompartment = new PaletteCompartmentEntry("Components", null);
 
-	public RHToolBehaviorProvider(final IDiagramTypeProvider diagramTypeProvider) {
+	public WaveformToolBehaviorProvider(final IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
 
 		// sync palette Components with Target SDR Components
@@ -293,9 +292,7 @@ public class RHToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	 * @param container
 	 */
 	private PaletteCompartmentEntry getComponentCompartmentEntry(final ComponentsContainer container) {
-
-		final PaletteCompartmentEntry compartmentEntry = componentCompartment;
-//		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Components", null);
+		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Components", null);
 
 		// add all palette entries into a entriesToRemove list.
 		final List<IToolEntry> entriesToRemove = new ArrayList<IToolEntry>();
