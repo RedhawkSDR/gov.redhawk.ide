@@ -204,7 +204,7 @@
         <module>../plugins/gov.redhawk.statistics.ui</module>
         <module>../plugins/gov.redhawk.mfile.parser</module>
         <module>../plugins/gov.redhawk.ide.swtbot</module>
-        <module>../plugins/gov.redhawk.ide.sad.graphiti.ui</module>
+        <module>../plugins/gov.redhawk.ide.graphiti.sad.ui</module>
         <module>../tests/gov.redhawk.codegen.validation.tests</module>
         <module>../tests/gov.redhawk.ide.dcd.tests</module>
         <module>../tests/gov.redhawk.ide.debug.tests</module>

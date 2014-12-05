@@ -127,7 +127,7 @@
          unpack="false"/>
 
    <plugin
-         id="gov.redhawk.ide.sad.graphiti.ui"
+         id="gov.redhawk.ide.graphiti.sad.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
