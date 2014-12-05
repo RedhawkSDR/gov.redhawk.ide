@@ -45,6 +45,7 @@ import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * This is the action bar contributor for the Spd model editor.
+ * @since 1.1
  */
 public class DcdActionBarContributor extends EditingDomainActionBarContributor implements ISelectionChangedListener {
 	/**

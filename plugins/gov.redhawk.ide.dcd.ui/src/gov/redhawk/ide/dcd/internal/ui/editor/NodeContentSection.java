@@ -22,6 +22,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 
 /**
+ * @since 1.1
  * 
  */
 public class NodeContentSection extends ScaSection {

@@ -17,6 +17,7 @@ import gov.redhawk.ide.sdr.ui.export.DeployableScaExportWizard;
 import gov.redhawk.ide.spd.ui.editor.AuthorsSection;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.editor.AbstractOverviewPage;
+import gov.redhawk.ui.editor.SCAFormEditor;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.dcd.DeviceManagerSoftPkg;
 
@@ -37,6 +38,7 @@ import org.eclipse.ui.menus.IMenuService;
 
 /**
  * The Class NodeOverviewPage.
+ * @since 1.1
  */
 public class NodeOverviewPage extends AbstractOverviewPage {
 
@@ -56,7 +58,7 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 	 * 
 	 * @param editor the editor
 	 */
-	public NodeOverviewPage(final NodeEditor editor) {
+	public NodeOverviewPage(final SCAFormEditor editor) {
 		super(editor, NodeOverviewPage.PAGE_ID, "Overview");
 	}
 
@@ -64,8 +66,8 @@ public class NodeOverviewPage extends AbstractOverviewPage {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NodeEditor getEditor() {
-		return (NodeEditor) super.getEditor();
+	public SCAFormEditor getEditor() {
+		return super.getEditor();
 	}
 
 	/**

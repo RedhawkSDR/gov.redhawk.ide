@@ -8,9 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.graphiti.ui.diagram.palette;
-
-import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider;
+package gov.redhawk.ide.graphiti.ui.diagram.palette;
 
 import java.text.MessageFormat;
 
@@ -58,8 +56,8 @@ public class SpdToolEntry extends ObjectCreationToolEntry {
 		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, iconId, null);
 	}
 
-	public SpdToolEntry(final SoftPkg spd, ICreateFeature createFeature) {
-		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, ImageProvider.IMG_COMPONENT_PLACEMENT, createFeature);
+	public SpdToolEntry(final SoftPkg spd, ICreateFeature createFeature, String iconId) {
+		this(spd.getName(), spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(), null, iconId, createFeature);
 	}
 
 	/**

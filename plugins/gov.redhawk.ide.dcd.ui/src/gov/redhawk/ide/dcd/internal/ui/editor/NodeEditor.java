@@ -94,6 +94,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 
 /**
  * The Class NodeEditor.
+ * @since 1.1
  */
 public class NodeEditor extends SCAFormEditor implements ITabbedPropertySheetPageContributor, IDiagramWorkbenchPart, IViewerProvider {
 

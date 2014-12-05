@@ -24,14 +24,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.zest.layouts,
  gov.redhawk.sca.util
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: gov.redhawk.ide.graphiti.ui.diagram,
- gov.redhawk.ide.graphiti.ui.diagram.features.layout,
- gov.redhawk.ide.graphiti.ui.diagram.patterns,
- gov.redhawk.ide.graphiti.ui.diagram.util,
- gov.redhawk.ide.graphiti.ext,
+Export-Package: gov.redhawk.ide.graphiti.ext,
  gov.redhawk.ide.graphiti.ext.impl,
  gov.redhawk.ide.graphiti.ext.util,
- gov.redhawk.ide.graphiti.ext,
- gov.redhawk.ide.graphiti.ext.impl,
- gov.redhawk.ide.graphiti.ext.util
+ gov.redhawk.ide.graphiti.ui.diagram,
+ gov.redhawk.ide.graphiti.ui.diagram.features.layout,
+ gov.redhawk.ide.graphiti.ui.diagram.palette,
+ gov.redhawk.ide.graphiti.ui.diagram.patterns,
+ gov.redhawk.ide.graphiti.ui.diagram.util
 Bundle-ActivationPolicy: lazy

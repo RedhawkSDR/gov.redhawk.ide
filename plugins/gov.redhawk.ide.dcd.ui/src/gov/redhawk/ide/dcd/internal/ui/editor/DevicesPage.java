@@ -13,6 +13,7 @@ package gov.redhawk.ide.dcd.internal.ui.editor;
 
 import gov.redhawk.ide.dcd.internal.ui.HelpContextIds;
 import gov.redhawk.ide.dcd.internal.ui.ScaIdeConstants;
+import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
 
 import org.eclipse.emf.ecore.resource.Resource;
@@ -25,6 +26,7 @@ import org.eclipse.ui.menus.IMenuService;
 // TODO: Auto-generated Javadoc
 /**
  * The Class ImplementationPage.
+ * @since 1.1
  */
 public class DevicesPage extends ScaFormPage {
 
@@ -38,7 +40,7 @@ public class DevicesPage extends ScaFormPage {
 	 * 
 	 * @param editor the editor
 	 */
-	public DevicesPage(final NodeEditor editor) {
+	public DevicesPage(final SCAFormEditor editor) {
 		super(editor, DevicesPage.PAGE_ID, "Devices");
 		this.fBlock = new DevicesBlock(this);
 	}
@@ -47,8 +49,8 @@ public class DevicesPage extends ScaFormPage {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NodeEditor getEditor() {
-		return (NodeEditor) super.getEditor();
+	public SCAFormEditor getEditor() {
+		return super.getEditor();
 	}
 
 	/**

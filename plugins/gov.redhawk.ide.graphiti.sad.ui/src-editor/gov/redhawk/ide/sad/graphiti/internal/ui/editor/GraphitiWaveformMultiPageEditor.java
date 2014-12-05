@@ -13,7 +13,7 @@ package gov.redhawk.ide.sad.graphiti.internal.ui.editor;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.GraphitiWaveformDiagramEditor;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.SadDiagramUtilHelper;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.model.sca.ScaWaveform;
@@ -660,7 +660,7 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 	}
 
 	protected DiagramEditor createDiagramEditor() {
-		RHGraphitiDiagramEditor d = new RHGraphitiDiagramEditor((TransactionalEditingDomain) getEditingDomain());
+		GraphitiWaveformDiagramEditor d = new GraphitiWaveformDiagramEditor((TransactionalEditingDomain) getEditingDomain());
 		return d;
 
 	}

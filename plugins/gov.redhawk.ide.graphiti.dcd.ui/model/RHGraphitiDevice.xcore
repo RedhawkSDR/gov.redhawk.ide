@@ -1,0 +1,14 @@
+
+@Ecore(nsURI="http://www.redhawk.gov/model/rhdevicegext/1.0.0")
+@GenModel(prefix="RHGDeviceGx", codeFormatting="true")
+@GenModel(modelPluginVariables="org.eclipse.xtext.xbase.lib")
+@GenModel(contentTypeIdentifier="http://www.redhawk.gov/model/rhdevicegext/1.0.0")
+@GenModel(operationReflection="false")
+//prevents custom coding from getting blown away
+@GenModel(modelDirectory="/gov.redhawk.ide.graphiti.dcd.ui/src")
+
+package gov.redhawk.ide.graphiti.dcd.ext 
+
+class DeviceShape extends gov.redhawk.ide.graphiti.ext.RHContainerShape{}
+	
+class ServiceShape extends gov.redhawk.ide.graphiti.ext.RHContainerShape{}

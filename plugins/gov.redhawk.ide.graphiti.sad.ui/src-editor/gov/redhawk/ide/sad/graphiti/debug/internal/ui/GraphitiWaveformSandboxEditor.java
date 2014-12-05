@@ -19,7 +19,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiWaveformMultiPageEditor;
 import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.sad.graphiti.ui.adapters.GraphitiDiagramAdapter;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.GraphitiWaveformDiagramEditor;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -371,7 +371,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 
 	@Override
 	protected DiagramEditor createDiagramEditor() {
-		return new RHGraphitiDiagramEditor((TransactionalEditingDomain) getEditingDomain());
+		return new GraphitiWaveformDiagramEditor((TransactionalEditingDomain) getEditingDomain());
 	}
 
 	@Override

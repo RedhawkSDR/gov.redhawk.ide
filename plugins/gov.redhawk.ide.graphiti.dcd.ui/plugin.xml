@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+   <extension
+         point="org.eclipse.graphiti.ui.diagramTypeProviders">
+      <diagramTypeProvider
+            class="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDDiagramTypeProvider"
+            id="gov.redhawk.ide.graphiti.dcd.ui.FactoryProvider"
+            name="FactoryProvider">
+         <diagramType
+               id="gov.redhawk.ide.graphiti.dcd.ui.DCDDiagramEditor">
+         </diagramType>
+      </diagramTypeProvider>
+   </extension>
+   <extension
+         point="org.eclipse.graphiti.ui.diagramTypes">
+      <diagramType
+            id="gov.redhawk.ide.graphiti.dcd.ui.DCDDiagramEditor"
+            name="DCD Diagram"
+            type="DCDDiagram">
+      </diagramType>
+   </extension>
+   <extension
+         point="org.eclipse.graphiti.ui.imageProviders">
+      <imageProvider
+            class="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DeviceImageProvider"
+            id="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.deviceImageProvider">
+      </imageProvider>
+   </extension>
+  
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditor"
+            contributorClass="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditorActionBarContributor"
+            id="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor"
+            name="Graphiti Dcd Editor">
+         <contentTypeBinding
+               contentTypeId="mil.jpeojtrs.sca.dcd.content-type">
+         </contentTypeBinding>
+      </editor>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated RHGraphitiDevice -->
+      <package
+            uri="http://www.redhawk.gov/model/rhdevicegext/1.0.0"
+            class="gov.redhawk.ide.graphiti.dcd.ext.RHGDeviceGxPackage"
+            genModel="model/RHGraphitiDevice.xcore"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.content_parser">
+      <!-- @generated RHGraphitiDevice -->
+      <parser
+            contentTypeIdentifier="http://www.redhawk.gov/model/rhdevicegext/1.0.0"
+            class="org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl"/>
+   </extension>
+
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <!-- @generated RHGraphitiDevice -->
+      <content-type
+            base-type="org.eclipse.emf.ecore.xmi"
+            file-extensions="rhgdevicegx"
+            id="http://www.redhawk.gov/model/rhdevicegext/1.0.0"
+            name="%_UI_RHGDeviceGx_content_type"
+            priority="normal">
+         <describer class="org.eclipse.emf.ecore.xmi.impl.RootXMLContentHandlerImpl$Describer">
+            <parameter name="namespace" value="http://www.redhawk.gov/model/rhdevicegext/1.0.0"/>
+            <parameter name="kind" value="xmi"/>
+         </describer>
+      </content-type>
+   </extension>
+</plugin>

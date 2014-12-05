@@ -27,6 +27,7 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.ui.part.PageBook;
 
 /**
+ * @since 1.1
  * 
  */
 public class NodeOutlinePage extends FormOutlinePage {

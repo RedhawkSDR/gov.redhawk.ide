@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.internal.ui.editor;
 
-import gov.redhawk.ide.sad.graphiti.ui.diagram.RHGraphitiDiagramEditor;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.GraphitiWaveformDiagramEditor;
 import gov.redhawk.ide.sad.internal.ui.editor.WaveformOutlinePage;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
@@ -36,7 +36,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 /**
  * 
  */
-public class CustomRHGraphitiDiagramEditor extends RHGraphitiDiagramEditor implements IFormPage {
+public class CustomRHGraphitiDiagramEditor extends GraphitiWaveformDiagramEditor implements IFormPage {
 	public static final String PAGE_ID = "diagram";
 	private int index;
 	private boolean active;

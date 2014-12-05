@@ -101,6 +101,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
+ * @since 1.1
  * 
  */
 public class DevicesSection extends TreeSection implements IPropertyChangeListener {
