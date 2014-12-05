@@ -29,11 +29,11 @@ import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.jface.util.TransferDropTargetListener;
 
-public class RHGraphitiDiagramEditor extends DiagramEditor {
+public class GraphitiWaveformDiagramEditor extends DiagramEditor {
 
 	private EditingDomain editingDomain;
 
-	public RHGraphitiDiagramEditor(EditingDomain editingDomain) {
+	public GraphitiWaveformDiagramEditor(EditingDomain editingDomain) {
 		this.editingDomain = editingDomain;
 	}
 

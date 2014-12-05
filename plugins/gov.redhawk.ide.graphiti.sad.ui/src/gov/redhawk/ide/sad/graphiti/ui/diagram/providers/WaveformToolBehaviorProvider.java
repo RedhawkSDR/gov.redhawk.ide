@@ -15,10 +15,10 @@ import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
 import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.features.custom.FindByEditFeature;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;
 import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
@@ -354,7 +354,7 @@ public class WaveformToolBehaviorProvider extends DefaultToolBehaviorProvider {
 					}
 				} else {
 					ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
-					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature);
+					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature, ImageProvider.IMG_COMPONENT_PLACEMENT);
 					compartmentEntry.addToolEntry(entry);
 				}
 			}

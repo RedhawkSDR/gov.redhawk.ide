@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.palette;
 
-import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.RHToolBehaviorProvider;
+import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.WaveformToolBehaviorProvider;
 
 import java.util.List;
 
@@ -79,7 +79,7 @@ public class RHGraphitiPaletteBehavior extends DefaultPaletteBehavior {
 									RHGraphitiPaletteFilterEditPart label = new RHGraphitiPaletteFilterEditPart(viewer);
 									paletteFilter = label.getPaletteFilter();
 									paletteFilter.setPaletteBehavior(RHGraphitiPaletteBehavior.this);
-									((RHToolBehaviorProvider) diagramBehavior.getDiagramTypeProvider().getCurrentToolBehaviorProvider()).setFilter(paletteFilter);
+									((WaveformToolBehaviorProvider) diagramBehavior.getDiagramTypeProvider().getCurrentToolBehaviorProvider()).setFilter(paletteFilter);
 									return label;
 								}
 								return super.createChild(model);
