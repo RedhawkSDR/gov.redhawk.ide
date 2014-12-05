@@ -12,9 +12,9 @@ package gov.redhawk.ide.sad.graphiti.ui.wizard;
 
 import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
+import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
-import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
-import gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiWaveformMultiPageEditor;
 import gov.redhawk.ide.sad.ui.wizard.ScaWaveformProjectAssemblyControllerWizardPage;
 import gov.redhawk.ide.sad.ui.wizard.ScaWaveformProjectPropertiesWizardPage;

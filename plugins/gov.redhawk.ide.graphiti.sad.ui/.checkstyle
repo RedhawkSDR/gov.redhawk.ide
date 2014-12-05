@@ -5,6 +5,6 @@
     <file-match-pattern match-pattern="." include-pattern="true"/>
   </fileset>
   <filter name="FilesFromPackage" enabled="true">
-    <filter-data value="src/gov/redhawk/ide/sad/graphiti/ext"/>
+    <filter-data value="src/gov/redhawk/ide/graphiti/sad/ext"/>
   </filter>
 </fileset-config>

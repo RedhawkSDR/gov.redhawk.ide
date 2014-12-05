@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.internal.ui.editor;
 
-import gov.redhawk.ide.sad.graphiti.ui.diagram.GraphitiWaveformDiagramEditor;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformDiagramEditor;
 import gov.redhawk.ide.sad.internal.ui.editor.WaveformOutlinePage;
 import gov.redhawk.ui.editor.SCAFormEditor;
 

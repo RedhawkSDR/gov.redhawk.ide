@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.graphiti.ui.diagramTypeProviders">
       <diagramTypeProvider
-            class="gov.redhawk.ide.sad.graphiti.ui.diagram.providers.SADDiagramTypeProvider"
+            class="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramTypeProvider"
             id="gov.redhawk.ide.sad.graphiti.ui.FactoryProvider"
             name="FactoryProvider">
          <diagramType
@@ -26,7 +26,7 @@
    <extension
          point="org.eclipse.graphiti.ui.imageProviders">
       <imageProvider
-            class="gov.redhawk.ide.sad.graphiti.ui.diagram.providers.ImageProvider"
+            class="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.ImageProvider"
             id="gov.redhawk.ide.sad.graphiti.ui.diagram.providers.imageProvider">
       </imageProvider>
    </extension>
@@ -35,7 +35,7 @@
       <!-- @generated RHGraphiti -->
       <package
             uri="http://www.redhawk.gov/model/rhgext/1.0.0"
-            class="gov.redhawk.ide.sad.graphiti.ext.RHGxPackage"
+            class="gov.redhawk.ide.graphiti.sad.ext.RHGxPackage"
             genModel="model/RHGraphiti.xcore"/>
    </extension>
 
@@ -43,7 +43,7 @@
       <!-- @generated RHSadGraphiti -->
       <package
             uri="http://www.redhawk.gov/model/rhsadgext/1.0.0"
-            class="gov.redhawk.ide.sad.graphiti.ext.RHSadGxPackage"
+            class="gov.redhawk.ide.graphiti.sad.ext.RHSadGxPackage"
             genModel="model/RHSadGraphiti.xcore"/>
    </extension>
 
@@ -119,8 +119,8 @@
       
          
          <propertySection
-         	   class="gov.redhawk.ide.sad.graphiti.ui.properties.ComponentPropertiesSection"
-               filter="gov.redhawk.ide.sad.graphiti.ui.properties.ComponentFilter"
+         	   class="gov.redhawk.ide.graphiti.sad.ui.properties.ComponentPropertiesSection"
+               filter="gov.redhawk.ide.graphiti.sad.ui.properties.ComponentFilter"
                id="property.section.ComponentProperties"
                tab="property.tab.ComponentProperties">
          </propertySection>
@@ -128,7 +128,7 @@
 
          <propertySection
          	class="org.eclipse.ui.views.properties.tabbed.AdvancedPropertySection"
-         	filter="gov.redhawk.ide.sad.graphiti.ui.properties.ComponentFilter"
+         	filter="gov.redhawk.ide.graphiti.sad.ui.properties.ComponentFilter"
          	id="graphiti.main.tab.emfreference.tableddd"
          	tab="property.tab.advanced">
          </propertySection>
@@ -146,14 +146,14 @@
        point="org.eclipse.core.runtime.adapters">
                 <factory
                         adaptableType="org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart"
-                        class="gov.redhawk.ide.sad.graphiti.ui.properties.GraphitiEditPartToIPropertySourceAdapterFactory">
+                        class="gov.redhawk.ide.graphiti.sad.ui.properties.GraphitiEditPartToIPropertySourceAdapterFactory">
                         <adapter
                                 type="org.eclipse.ui.views.properties.IPropertySource">
                         </adapter>
                 </factory>
                 <factory
                       adaptableType="org.eclipse.graphiti.ui.internal.parts.ContainerShapeEditPart"
-                      class="gov.redhawk.ide.sad.graphiti.ui.adapters.ComponentShapeAdapterFactory">
+                      class="gov.redhawk.ide.graphiti.sad.ui.adapters.ComponentShapeAdapterFactory">
                    <adapter
                          type="gov.redhawk.model.sca.ScaComponent">
                    </adapter>
@@ -169,7 +169,7 @@
                 </factory>
                 <factory
                       adaptableType="org.eclipse.graphiti.ui.internal.parts.IAnchorEditPart"
-                      class="gov.redhawk.ide.sad.graphiti.ui.adapters.PortEditPartAdapterFactory">
+                      class="gov.redhawk.ide.graphiti.sad.ui.adapters.PortEditPartAdapterFactory">
                    <adapter
                          type="gov.redhawk.model.sca.ScaProvidesPort">
                    </adapter>

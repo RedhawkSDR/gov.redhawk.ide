@@ -229,7 +229,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * The meta object id for the '<em>Component Pattern</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern
+	 * @see gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern
 	 * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHSadGxPackageImpl#getComponentPattern()
 	 * @generated
 	 */
@@ -409,12 +409,12 @@ public interface RHSadGxPackage extends EPackage {
 	EDataType getIAddContext();
 
 	/**
-	 * Returns the meta object for data type '{@link gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern <em>Component Pattern</em>}'.
+	 * Returns the meta object for data type '{@link gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern <em>Component Pattern</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>Component Pattern</em>'.
-	 * @see gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern
-	 * @model instanceClass="gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern"
+	 * @see gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern
+	 * @model instanceClass="gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern"
 	 * @generated
 	 */
 	EDataType getComponentPattern();
@@ -602,7 +602,7 @@ public interface RHSadGxPackage extends EPackage {
 		 * The meta object literal for the '<em>Component Pattern</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern
+		 * @see gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern
 		 * @see gov.redhawk.ide.sad.graphiti.ext.impl.RHSadGxPackageImpl#getComponentPattern()
 		 * @generated
 		 */

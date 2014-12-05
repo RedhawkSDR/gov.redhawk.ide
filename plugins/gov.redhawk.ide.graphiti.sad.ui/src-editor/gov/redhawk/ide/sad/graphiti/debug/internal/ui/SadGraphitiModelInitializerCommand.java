@@ -13,7 +13,7 @@ package gov.redhawk.ide.sad.graphiti.debug.internal.ui;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
-import gov.redhawk.ide.sad.graphiti.ui.SADUIGraphitiPlugin;
+import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;

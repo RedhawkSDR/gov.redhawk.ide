@@ -22,7 +22,7 @@ type Reason wraps org.eclipse.graphiti.features.impl.Reason
 type List<Port> wraps java.util.List
 type SadComponentInstantiation wraps mil.jpeojtrs.sca.sad.SadComponentInstantiation
 type IAddContext wraps org.eclipse.graphiti.features.context.IAddContext
-type ComponentPattern wraps gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern
+type ComponentPattern wraps gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern
 type IUpdateContext wraps org.eclipse.graphiti.features.context.IUpdateContext
 
 

@@ -3,34 +3,23 @@
 package gov.redhawk.ide.sad.graphiti.ext.impl;
 
 import gov.redhawk.ide.sad.graphiti.ext.*;
-
-import gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern;
-
 import java.util.List;
-
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-
 import org.eclipse.graphiti.features.IFeatureProvider;
-
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
-
 import org.eclipse.graphiti.features.impl.Reason;
 
 /**
@@ -399,8 +388,8 @@ public class RHSadGxFactoryImpl extends EFactoryImpl implements RHSadGxFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ComponentPattern createComponentPatternFromString(EDataType eDataType, String initialValue) {
-		return (ComponentPattern) super.createFromString(eDataType, initialValue);
+	public gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern createComponentPatternFromString(EDataType eDataType, String initialValue) {
+		return (gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern) super.createFromString(eDataType, initialValue);
 	}
 
 	/**
