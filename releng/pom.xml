@@ -187,6 +187,7 @@
         <module>../plugins/gov.redhawk.ide.debug.edit</module>
         <module>../plugins/gov.redhawk.ide.debug.ui</module>
         <module>../plugins/gov.redhawk.ide.debug.ui.diagram</module>
+        <module>../plugins/gov.redhawk.ide.graphiti.dcd.ui</module>
         <module>../plugins/gov.redhawk.ide.graphiti.sad.ui</module>
         <module>../plugins/gov.redhawk.ide.graphiti.ui</module>
         <module>../plugins/gov.redhawk.ide.prf</module>
