@@ -28,7 +28,6 @@ import org.eclipse.graphiti.ui.editor.DefaultPaletteBehavior;
 import org.eclipse.graphiti.ui.editor.DefaultUpdateBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
