@@ -3,6 +3,7 @@
 package gov.redhawk.ide.sad.graphiti.ext.impl;
 
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.Event;
 import gov.redhawk.ide.sad.graphiti.ext.RHSadGxPackage;
@@ -134,7 +135,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void init(IAddContext context, gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern pattern) {
+	public void init(IAddContext context, ComponentPattern pattern) {
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();
@@ -145,7 +146,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Reason update(IUpdateContext context, gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern pattern) {
+	public Reason update(IUpdateContext context, ComponentPattern pattern) {
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();
@@ -156,7 +157,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Reason updateNeeded(IUpdateContext context, gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern pattern) {
+	public Reason updateNeeded(IUpdateContext context, ComponentPattern pattern) {
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();

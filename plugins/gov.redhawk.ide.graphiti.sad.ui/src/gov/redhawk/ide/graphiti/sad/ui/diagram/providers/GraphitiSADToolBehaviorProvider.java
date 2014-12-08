@@ -75,11 +75,11 @@ import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.ui.progress.WorkbenchJob;
 
-public class WaveformToolBehaviorProvider extends DefaultToolBehaviorProvider {
+public class GraphitiSADToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
 	private RHGraphitiPaletteFilter paletteFilter;
 
-	public WaveformToolBehaviorProvider(final IDiagramTypeProvider diagramTypeProvider) {
+	public GraphitiSADToolBehaviorProvider(final IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
 
 		// sync palette Components with Target SDR Components

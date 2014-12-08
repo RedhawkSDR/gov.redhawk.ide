@@ -3,6 +3,7 @@
 package gov.redhawk.ide.sad.graphiti.ext;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
@@ -86,7 +87,7 @@ public interface ComponentShape extends RHContainerShape {
 	 * @model contextDataType="gov.redhawk.ide.sad.graphiti.ext.IAddContext" contextUnique="false" patternDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentPattern" patternUnique="false"
 	 * @generated
 	 */
-	void init(IAddContext context, gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern pattern);
+	void init(IAddContext context, ComponentPattern pattern);
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -108,7 +109,7 @@ public interface ComponentShape extends RHContainerShape {
 	 * @model dataType="gov.redhawk.ide.sad.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.sad.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentPattern" patternUnique="false"
 	 * @generated
 	 */
-	Reason update(IUpdateContext context, gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern pattern);
+	Reason update(IUpdateContext context, ComponentPattern pattern);
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -121,6 +122,6 @@ public interface ComponentShape extends RHContainerShape {
 	 * @model dataType="gov.redhawk.ide.sad.graphiti.ext.Reason" unique="false" contextDataType="gov.redhawk.ide.sad.graphiti.ext.IUpdateContext" contextUnique="false" patternDataType="gov.redhawk.ide.sad.graphiti.ext.ComponentPattern" patternUnique="false"
 	 * @generated
 	 */
-	Reason updateNeeded(IUpdateContext context, gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern pattern);
+	Reason updateNeeded(IUpdateContext context, ComponentPattern pattern);
 
 } // ComponentShape

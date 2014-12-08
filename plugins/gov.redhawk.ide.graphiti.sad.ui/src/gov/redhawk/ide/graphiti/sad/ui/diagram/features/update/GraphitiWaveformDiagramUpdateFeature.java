@@ -53,9 +53,9 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 
-public class RHDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
+public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFeature {
 
-	public RHDiagramUpdateFeature(IFeatureProvider fp) {
+	public GraphitiWaveformDiagramUpdateFeature(IFeatureProvider fp) {
 		super(fp);
 	}
 

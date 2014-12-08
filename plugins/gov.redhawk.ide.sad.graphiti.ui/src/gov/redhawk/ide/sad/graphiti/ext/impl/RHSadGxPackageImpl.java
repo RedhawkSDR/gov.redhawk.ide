@@ -3,6 +3,7 @@
 package gov.redhawk.ide.sad.graphiti.ext.impl;
 
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
 import gov.redhawk.ide.sad.graphiti.ext.Event;
 import gov.redhawk.ide.sad.graphiti.ext.RHSadGxFactory;
@@ -486,8 +487,7 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 		initEDataType(sadComponentInstantiationEDataType, SadComponentInstantiation.class, "SadComponentInstantiation", IS_SERIALIZABLE,
 			!IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iAddContextEDataType, IAddContext.class, "IAddContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(componentPatternEDataType, gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern.class, "ComponentPattern", IS_SERIALIZABLE,
-			!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(componentPatternEDataType, ComponentPattern.class, "ComponentPattern", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iUpdateContextEDataType, IUpdateContext.class, "IUpdateContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource

@@ -10,7 +10,7 @@ import gov.redhawk.ide.graphiti.ext.RHContainerShape;
  * <!-- end-user-doc -->
  *
  *
- * @see gov.redhawk.ide.graphiti.dcd.ext.RHGDeviceGxPackage#getServiceShape()
+ * @see gov.redhawk.ide.graphiti.dcd.ext.RHDeviceGxPackage#getServiceShape()
  * @model
  * @generated
  */

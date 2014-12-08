@@ -1,6 +1,6 @@
 
 @Ecore(nsURI="http://www.redhawk.gov/model/rhdevicegext/1.0.0")
-@GenModel(prefix="RHGDeviceGx", codeFormatting="true")
+@GenModel(prefix="RHDeviceGx", codeFormatting="true")
 @GenModel(modelPluginVariables="org.eclipse.xtext.xbase.lib")
 @GenModel(contentTypeIdentifier="http://www.redhawk.gov/model/rhdevicegext/1.0.0")
 @GenModel(operationReflection="false")

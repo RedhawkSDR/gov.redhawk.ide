@@ -30,7 +30,7 @@ public class DCDDiagramTypeProvider extends AbstractDiagramTypeProvider {
 	@Override
 	public IToolBehaviorProvider[] getAvailableToolBehaviorProviders() {
 		if (toolBehaviorProviders == null) {
-			toolBehaviorProviders = new IToolBehaviorProvider[] { new DcdToolBehaviorProvider(this) };
+			toolBehaviorProviders = new IToolBehaviorProvider[] { new GraphitiDCDToolBehaviorProvider(this) };
 		}
 		return toolBehaviorProviders;
 	}

@@ -24,7 +24,7 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.StopCompo
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.TerminateComponentFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete.SADConnectionInterfaceDeleteFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.reconnect.SADReconnectFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.update.RHDiagramUpdateFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.update.GraphitiWaveformDiagramUpdateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.update.SADConnectionInterfaceUpdateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByCORBANamePattern;
@@ -266,7 +266,7 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 	@Override
 	public IUpdateFeature getUpdateFeature(IUpdateContext context) {
 		if (context.getPictogramElement() instanceof Diagram) {
-			return new RHDiagramUpdateFeature(this);
+			return new GraphitiWaveformDiagramUpdateFeature(this);
 		} else if (context.getPictogramElement() instanceof Connection) {
 			return new SADConnectionInterfaceUpdateFeature(this);
 		}

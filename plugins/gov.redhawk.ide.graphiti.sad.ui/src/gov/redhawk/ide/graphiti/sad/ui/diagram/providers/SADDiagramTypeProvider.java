@@ -45,7 +45,7 @@ public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider implemen
 	@Override
 	public IToolBehaviorProvider[] getAvailableToolBehaviorProviders() {
 		if (toolBehaviorProviders == null) {
-			toolBehaviorProviders = new IToolBehaviorProvider[] { new WaveformToolBehaviorProvider(this) };
+			toolBehaviorProviders = new IToolBehaviorProvider[] { new GraphitiSADToolBehaviorProvider(this) };
 		}
 		return toolBehaviorProviders;
 	}

@@ -2,6 +2,7 @@
  */
 package gov.redhawk.ide.sad.graphiti.ext.impl;
 
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.sad.graphiti.ext.*;
 import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
@@ -388,8 +389,8 @@ public class RHSadGxFactoryImpl extends EFactoryImpl implements RHSadGxFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern createComponentPatternFromString(EDataType eDataType, String initialValue) {
-		return (gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern) super.createFromString(eDataType, initialValue);
+	public ComponentPattern createComponentPatternFromString(EDataType eDataType, String initialValue) {
+		return (ComponentPattern) super.createFromString(eDataType, initialValue);
 	}
 
 	/**

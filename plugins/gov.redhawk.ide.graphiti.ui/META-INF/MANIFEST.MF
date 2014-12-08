@@ -22,7 +22,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources;bundle-version="3.9.1",
  org.eclipse.emf.transaction,
  org.eclipse.zest.layouts,
- gov.redhawk.sca.util
+ gov.redhawk.sca.util,
+ mil.jpeojtrs.sca.dcd
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: gov.redhawk.ide.graphiti.ext,
  gov.redhawk.ide.graphiti.ext.impl,

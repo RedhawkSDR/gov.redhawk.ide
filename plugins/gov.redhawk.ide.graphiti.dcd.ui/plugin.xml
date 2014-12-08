@@ -38,7 +38,7 @@
             class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditor"
             contributorClass="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditorActionBarContributor"
             id="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor"
-            name="Graphiti Dcd Editor">
+            name="Graphiti Node Editor">
          <contentTypeBinding
                contentTypeId="mil.jpeojtrs.sca.dcd.content-type">
          </contentTypeBinding>
@@ -49,7 +49,7 @@
       <!-- @generated RHGraphitiDevice -->
       <package
             uri="http://www.redhawk.gov/model/rhdevicegext/1.0.0"
-            class="gov.redhawk.ide.graphiti.dcd.ext.RHGDeviceGxPackage"
+            class="gov.redhawk.ide.graphiti.dcd.ext.RHDeviceGxPackage"
             genModel="model/RHGraphitiDevice.xcore"/>
    </extension>
 
@@ -64,9 +64,9 @@
       <!-- @generated RHGraphitiDevice -->
       <content-type
             base-type="org.eclipse.emf.ecore.xmi"
-            file-extensions="rhgdevicegx"
+            file-extensions="rhdevicegx"
             id="http://www.redhawk.gov/model/rhdevicegext/1.0.0"
-            name="%_UI_RHGDeviceGx_content_type"
+            name="%_UI_RHDeviceGx_content_type"
             priority="normal">
          <describer class="org.eclipse.emf.ecore.xmi.impl.RootXMLContentHandlerImpl$Describer">
             <parameter name="namespace" value="http://www.redhawk.gov/model/rhdevicegext/1.0.0"/>

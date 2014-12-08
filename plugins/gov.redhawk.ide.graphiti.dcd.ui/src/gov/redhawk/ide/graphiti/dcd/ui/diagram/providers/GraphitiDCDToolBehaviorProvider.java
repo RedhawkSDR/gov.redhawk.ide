@@ -38,9 +38,9 @@ import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 
-public class DcdToolBehaviorProvider extends DefaultToolBehaviorProvider {
+public class GraphitiDCDToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
-	public DcdToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
+	public GraphitiDCDToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
 
 		// sync palette with Target SDR contents
@@ -84,7 +84,14 @@ public class DcdToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	private PaletteCompartmentEntry getCompartmentEntry(SoftPkgRegistry container) {
 		
 		// TODO: in practice, will there ever be a device with multiple implementations? 
-		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Devices", null);
+		final PaletteCompartmentEntry compartmentEntry;
+		if (container instanceof DevicesContainer) {
+			compartmentEntry = new PaletteCompartmentEntry("Devices", null);
+		} else if (container instanceof ServicesContainer) {
+			compartmentEntry = new PaletteCompartmentEntry("Services", null);
+		} else {
+			compartmentEntry = null;
+		}
 		
 		// add all palette entries into a entriesToRemove list.
 		final List<IToolEntry> entriesToRemove = new ArrayList<IToolEntry>();
@@ -203,5 +210,5 @@ public class DcdToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
 	// TODO: reimplement the filter. May be able to refactor this backwards out of the WaveformToolBehaviorProvider?
 
-	// TODO: dispose to clean up and listeners we add for refresh jobs
+	// TODO: dispose to clean up any listeners we add for refresh jobs
 }

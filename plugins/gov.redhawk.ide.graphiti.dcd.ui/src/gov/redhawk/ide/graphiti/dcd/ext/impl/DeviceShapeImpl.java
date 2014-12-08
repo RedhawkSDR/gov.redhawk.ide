@@ -3,7 +3,7 @@
 package gov.redhawk.ide.graphiti.dcd.ext.impl;
 
 import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
-import gov.redhawk.ide.graphiti.dcd.ext.RHGDeviceGxPackage;
+import gov.redhawk.ide.graphiti.dcd.ext.RHDeviceGxPackage;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import org.eclipse.emf.ecore.EClass;
 
@@ -33,7 +33,7 @@ public class DeviceShapeImpl extends RHContainerShapeImpl implements DeviceShape
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return RHGDeviceGxPackage.Literals.DEVICE_SHAPE;
+		return RHDeviceGxPackage.Literals.DEVICE_SHAPE;
 	}
 
 } //DeviceShapeImpl
