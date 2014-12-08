@@ -1,10 +1,10 @@
 /**
  */
-package gov.redhawk.ide.graphiti.dcd.ext.util;
-
-import gov.redhawk.ide.graphiti.dcd.ext.*;
+package gov.redhawk.ide.sad.graphiti.ext.util;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+
+import gov.redhawk.ide.sad.graphiti.ext.*;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
@@ -12,8 +12,10 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 
 import org.eclipse.emf.ecore.EObject;
+
 import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.PropertyContainer;
+
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -24,17 +26,17 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
  * The <b>Adapter Factory</b> for the model.
  * It provides an adapter <code>createXXX</code> method for each class of the model.
  * <!-- end-user-doc -->
- * @see gov.redhawk.ide.graphiti.dcd.ext.RHDeviceGxPackage
+ * @see gov.redhawk.ide.sad.graphiti.ext.RHSadGxPackage
  * @generated
  */
-public class RHDeviceGxAdapterFactory extends AdapterFactoryImpl {
+public class RHSadGxAdapterFactory extends AdapterFactoryImpl {
 	/**
 	 * The cached model package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected static RHDeviceGxPackage modelPackage;
+	protected static RHSadGxPackage modelPackage;
 
 	/**
 	 * Creates an instance of the adapter factory.
@@ -42,9 +44,9 @@ public class RHDeviceGxAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public RHDeviceGxAdapterFactory() {
+	public RHSadGxAdapterFactory() {
 		if (modelPackage == null) {
-			modelPackage = RHDeviceGxPackage.eINSTANCE;
+			modelPackage = RHSadGxPackage.eINSTANCE;
 		}
 	}
 
@@ -73,15 +75,10 @@ public class RHDeviceGxAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected RHDeviceGxSwitch<Adapter> modelSwitch = new RHDeviceGxSwitch<Adapter>() {
+	protected RHSadGxSwitch<Adapter> modelSwitch = new RHSadGxSwitch<Adapter>() {
 		@Override
-		public Adapter caseDeviceShape(DeviceShape object) {
-			return createDeviceShapeAdapter();
-		}
-
-		@Override
-		public Adapter caseServiceShape(ServiceShape object) {
-			return createServiceShapeAdapter();
+		public Adapter caseComponentShape(ComponentShape object) {
+			return createComponentShapeAdapter();
 		}
 
 		@Override
@@ -139,30 +136,16 @@ public class RHDeviceGxAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.graphiti.dcd.ext.DeviceShape <em>Device Shape</em>}'.
+	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sad.graphiti.ext.ComponentShape <em>Component Shape</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see gov.redhawk.ide.graphiti.dcd.ext.DeviceShape
+	 * @see gov.redhawk.ide.sad.graphiti.ext.ComponentShape
 	 * @generated
 	 */
-	public Adapter createDeviceShapeAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.graphiti.dcd.ext.ServiceShape <em>Service Shape</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see gov.redhawk.ide.graphiti.dcd.ext.ServiceShape
-	 * @generated
-	 */
-	public Adapter createServiceShapeAdapter() {
+	public Adapter createComponentShapeAdapter() {
 		return null;
 	}
 
@@ -276,4 +259,4 @@ public class RHDeviceGxAdapterFactory extends AdapterFactoryImpl {
 		return null;
 	}
 
-} //RHDeviceGxAdapterFactory
+} //RHSadGxAdapterFactory

@@ -174,7 +174,7 @@ public class RHGraphitiPaletteRoot extends PaletteRoot {
 			IObjectCreationToolEntry objectCreationToolEntry = (IObjectCreationToolEntry) creationToolEntry;
 			DefaultCreationFactory cf = new DefaultCreationFactory(objectCreationToolEntry.getCreateFeature(),
 					ICreateFeature.class);
-			Object template = DND_FROM_PALETTE ? cf : null;
+			Object template = (DND_FROM_PALETTE) ? cf : null;
 			CombinedTemplateCreationEntry pe = new CombinedTemplateCreationEntry(label, description, template, cf,
 					getImageDescriptor(creationToolEntry, true), getImageDescriptor(creationToolEntry, false));
 			pe.setToolClass(GFCreationTool.class);

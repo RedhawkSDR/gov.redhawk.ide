@@ -23,7 +23,3 @@ Bundle-Vendor: REDHAWK
 Export-Package: gov.redhawk.ide.swtbot,
  gov.redhawk.ide.swtbot.diagram,
  gov.redhawk.ide.swtbot.scaExplorer
-Import-Package: gov.redhawk.ide.graphiti.sad.ext,
- gov.redhawk.ide.graphiti.sad.ext.impl,
- gov.redhawk.ide.graphiti.sad.ui.diagram.patterns,
- gov.redhawk.ide.graphiti.sad.ui.diagram.util

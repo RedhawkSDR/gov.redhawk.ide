@@ -1,17 +1,19 @@
 /**
  */
-package gov.redhawk.ide.graphiti.dcd.ext.util;
-
-import gov.redhawk.ide.graphiti.dcd.ext.*;
+package gov.redhawk.ide.sad.graphiti.ext.util;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+
+import gov.redhawk.ide.sad.graphiti.ext.*;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
 import org.eclipse.emf.ecore.util.Switch;
+
 import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.PropertyContainer;
+
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -27,17 +29,17 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
  * until a non-null result is returned,
  * which is the result of the switch.
  * <!-- end-user-doc -->
- * @see gov.redhawk.ide.graphiti.dcd.ext.RHDeviceGxPackage
+ * @see gov.redhawk.ide.sad.graphiti.ext.RHSadGxPackage
  * @generated
  */
-public class RHDeviceGxSwitch< T > extends Switch<T> {
+public class RHSadGxSwitch< T > extends Switch<T> {
 	/**
 	 * The cached model package
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected static RHDeviceGxPackage modelPackage;
+	protected static RHSadGxPackage modelPackage;
 
 	/**
 	 * Creates an instance of the switch.
@@ -45,9 +47,9 @@ public class RHDeviceGxSwitch< T > extends Switch<T> {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public RHDeviceGxSwitch() {
+	public RHSadGxSwitch() {
 		if (modelPackage == null) {
-			modelPackage = RHDeviceGxPackage.eINSTANCE;
+			modelPackage = RHSadGxPackage.eINSTANCE;
 		}
 	}
 
@@ -74,44 +76,23 @@ public class RHDeviceGxSwitch< T > extends Switch<T> {
 	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
-		case RHDeviceGxPackage.DEVICE_SHAPE: {
-			DeviceShape deviceShape = (DeviceShape) theEObject;
-			T result = caseDeviceShape(deviceShape);
+		case RHSadGxPackage.COMPONENT_SHAPE: {
+			ComponentShape componentShape = (ComponentShape) theEObject;
+			T result = caseComponentShape(componentShape);
 			if (result == null)
-				result = caseRHContainerShape(deviceShape);
+				result = caseRHContainerShape(componentShape);
 			if (result == null)
-				result = caseContainerShape(deviceShape);
+				result = caseContainerShape(componentShape);
 			if (result == null)
-				result = caseShape(deviceShape);
+				result = caseShape(componentShape);
 			if (result == null)
-				result = caseAnchorContainer(deviceShape);
+				result = caseAnchorContainer(componentShape);
 			if (result == null)
-				result = casePictogramElement(deviceShape);
+				result = casePictogramElement(componentShape);
 			if (result == null)
-				result = caseGraphicsAlgorithmContainer(deviceShape);
+				result = caseGraphicsAlgorithmContainer(componentShape);
 			if (result == null)
-				result = casePropertyContainer(deviceShape);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
-		case RHDeviceGxPackage.SERVICE_SHAPE: {
-			ServiceShape serviceShape = (ServiceShape) theEObject;
-			T result = caseServiceShape(serviceShape);
-			if (result == null)
-				result = caseRHContainerShape(serviceShape);
-			if (result == null)
-				result = caseContainerShape(serviceShape);
-			if (result == null)
-				result = caseShape(serviceShape);
-			if (result == null)
-				result = caseAnchorContainer(serviceShape);
-			if (result == null)
-				result = casePictogramElement(serviceShape);
-			if (result == null)
-				result = caseGraphicsAlgorithmContainer(serviceShape);
-			if (result == null)
-				result = casePropertyContainer(serviceShape);
+				result = casePropertyContainer(componentShape);
 			if (result == null)
 				result = defaultCase(theEObject);
 			return result;
@@ -122,32 +103,17 @@ public class RHDeviceGxSwitch< T > extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Device Shape</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Component Shape</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Device Shape</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Component Shape</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseDeviceShape(DeviceShape object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Service Shape</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Service Shape</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseServiceShape(ServiceShape object) {
+	public T caseComponentShape(ComponentShape object) {
 		return null;
 	}
 
@@ -272,4 +238,4 @@ public class RHDeviceGxSwitch< T > extends Switch<T> {
 		return null;
 	}
 
-} //RHDeviceGxSwitch
+} //RHSadGxSwitch
