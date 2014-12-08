@@ -74,6 +74,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 /**
+ * @since 1.1
  * 
  */
 public class ImplementationsSection extends TreeSection implements IPropertyChangeListener {

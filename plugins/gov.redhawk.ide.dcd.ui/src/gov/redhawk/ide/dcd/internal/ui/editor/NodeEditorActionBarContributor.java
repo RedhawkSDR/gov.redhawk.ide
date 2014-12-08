@@ -15,6 +15,9 @@ import gov.redhawk.ui.editor.ScaMultipageActionBarContributor;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 
+/**
+ * @since 1.1
+ */
 public class NodeEditorActionBarContributor extends ScaMultipageActionBarContributor {
 
 	public NodeEditorActionBarContributor() {

@@ -46,6 +46,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 
 /**
  * The Class GeneralInfoSection.
+ * @since 1.1
  */
 public class GeneralInfoSection extends ScaSection {
 	private GeneralInformationComposite client;
