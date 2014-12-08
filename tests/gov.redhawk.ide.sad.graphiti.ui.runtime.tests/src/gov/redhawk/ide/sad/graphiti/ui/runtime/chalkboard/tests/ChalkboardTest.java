@@ -18,6 +18,7 @@ import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.FindByUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
+import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
@@ -51,7 +52,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	@Test
 	public void checkChalkboardComponents() {
 		// Open Chalkboard Graphiti Diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
@@ -66,7 +67,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 
 		// Open the chalkboard with components already launched
 		editor.close();
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		Assert.assertNotNull(editor.getEditPart(HARD_LIMIT));
 
@@ -104,7 +105,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	 */
 	@Test
 	public void checkFindByNotInSandbox() {
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 		String[] findByList = { FindByUtils.FIND_BY_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, FindByUtils.FIND_BY_EVENT_CHANNEL,
@@ -130,7 +131,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		ComponentUtils.createComponentProject(bot, wkspComponentName, "Python");
 
 		// Open Chalkboard Graphiti Diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
@@ -158,7 +159,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	public void checkCorrectImplementationAddedToDiagram() {
 		
 		// Open Chalkboard Diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 

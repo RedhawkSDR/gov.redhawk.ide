@@ -14,6 +14,7 @@ package gov.redhawk.ide.sad.graphiti.ui.runtime.chalkboard.tests;
 import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
+import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
@@ -34,7 +35,7 @@ public class ChalkboardStartOrderTest extends AbstractGraphitiChalkboardTest {
 	@Test
 	public void removeStartOrderIconTest() {
 		// open chalkboard diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 

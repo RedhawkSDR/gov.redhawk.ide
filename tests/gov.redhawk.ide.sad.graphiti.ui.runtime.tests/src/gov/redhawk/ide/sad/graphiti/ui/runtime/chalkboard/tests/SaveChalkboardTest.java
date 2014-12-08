@@ -13,6 +13,7 @@ package gov.redhawk.ide.sad.graphiti.ui.runtime.chalkboard.tests;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
+import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class SaveChalkboardTest extends AbstractGraphitiChalkboardTest {
 		final String WAVEFORM_NAME = "ChalkboardAsWaveform";
 
 		// Open Chalkboard Graphiti Diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
 		editor = gefBot.gefEditor(CHALKBOARD);
 		editor.setFocus();
 
