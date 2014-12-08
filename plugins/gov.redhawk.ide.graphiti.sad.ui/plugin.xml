@@ -194,6 +194,7 @@
       </editor>
       <editor
             class="gov.redhawk.ide.sad.graphiti.debug.internal.ui.GraphitiWaveformSandboxEditor"
+            contributorClass="org.eclipse.graphiti.ui.editor.DiagramEditorActionBarContributor"
             default="false"
             icon="icons/redhawk16.gif"
             id="gov.redhawk.ide.sad.graphiti.ui..editor.localMultiPageSca"
@@ -279,6 +280,36 @@
                </contentExtension>
             </includes>
          </viewerContentBinding>
+      </extension>
+      <extension
+            point="org.eclipse.ui.contexts">
+         <context
+               description="In a REDHAWK Graphiti diagram editor"
+               id="gov.redhawk.ide.sad.graphiti.ui.contexts.diagram"
+               name="RH Graphiti Diagram"
+               parentId="org.eclipse.graphiti.ui.diagramEditor">
+         </context>
+         <context
+               description="In the REDHAWK Graphiti Chalkboard editor"
+               id="gov.redhawk.ide.sad.graphiti.ui.contexts.sandbox"
+               name="RH Graphiti Chalkboard"
+               parentId="gov.redhawk.ide.sad.graphiti.ui.contexts.diagram">
+         </context>
+      </extension>
+      <extension
+            point="org.eclipse.ui.bindings">
+         <key
+               commandId="org.eclipse.gef.zoom_in"
+               contextId="gov.redhawk.ide.sad.graphiti.ui.contexts.diagram"
+               schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+               sequence="CTRL++">
+         </key>
+         <key
+               commandId="org.eclipse.ui.file.saveAs"
+               contextId="gov.redhawk.ide.sad.graphiti.ui.contexts.sandbox"
+               schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+               sequence="CTRL+S">
+         </key>
       </extension>
    
 </plugin>

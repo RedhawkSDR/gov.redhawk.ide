@@ -371,7 +371,9 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 
 	@Override
 	protected DiagramEditor createDiagramEditor() {
-		return new GraphitiWaveformDiagramEditor((TransactionalEditingDomain) getEditingDomain());
+		GraphitiWaveformDiagramEditor editor = new GraphitiWaveformDiagramEditor((TransactionalEditingDomain) getEditingDomain());
+		editor.addContext("gov.redhawk.ide.sad.graphiti.ui.contexts.sandbox");
+		return editor;
 	}
 
 	@Override

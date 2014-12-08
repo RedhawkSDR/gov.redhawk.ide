@@ -15,6 +15,7 @@ import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaMultipageActionBarContributor;
 
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
+import org.eclipse.graphiti.ui.editor.DiagramEditorActionBarContributor;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.editors.text.TextEditor;
@@ -29,6 +30,9 @@ public class GraphitiWaveformMultipageEditorActionBarContributor extends ScaMult
 	 */
 	@Override
 	protected IEditorActionBarContributor getSubActionBarContributor(final IEditorPart activeEditor) {
+		if (activeEditor instanceof DiagramEditor) {
+			return new DiagramEditorActionBarContributor();
+		}
 		if (activeEditor instanceof SCAFormEditor) {
 			return new SadActionBarContributor();
 		}
