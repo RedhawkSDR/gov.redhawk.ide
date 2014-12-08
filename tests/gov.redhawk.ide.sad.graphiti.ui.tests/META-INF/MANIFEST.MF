@@ -24,3 +24,7 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Activator: gov.redhawk.ide.sad.graphiti.ui.tests.GraphitiTestsActivator
 Bundle-Vendor: REDHAWK
+Import-Package: gov.redhawk.ide.graphiti.sad.ext,
+ gov.redhawk.ide.graphiti.sad.ext.impl,
+ gov.redhawk.ide.graphiti.sad.ui.diagram.patterns,
+ gov.redhawk.ide.graphiti.sad.ui.palette

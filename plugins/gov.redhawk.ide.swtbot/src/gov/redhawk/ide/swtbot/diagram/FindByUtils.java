@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.diagram;
 
+
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByDomainManagerPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByEventChannelPattern;
