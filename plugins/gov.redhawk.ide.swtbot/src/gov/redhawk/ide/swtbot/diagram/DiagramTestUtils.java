@@ -135,6 +135,37 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	}
 
 	/**
+	 * Drag a component onto the SAD diagram editor from the Target SDR.
+	 * @param gefBot
+	 * @param editor
+	 * @param deviceName
+	 */
+	public static void dragDeviceFromTargetSDRToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String deviceName) {
+		SWTBotView scaExplorerView = gefBot.viewByTitle("SCA Explorer");
+		SWTBotTree scaTree = scaExplorerView.bot().tree();
+		SWTBotTreeItem treeDragItem = scaTree.expandNode("Target SDR", "Devices", deviceName);
+
+		SWTBotGefViewer viewer = editor.getSWTBotGefViewer();
+		SWTBotGefFigureCanvas canvas = null;
+
+		for (Field f : viewer.getClass().getDeclaredFields()) {
+			if ("canvas".equals(f.getName())) {
+				f.setAccessible(true);
+				try {
+					canvas = (SWTBotGefFigureCanvas) f.get(viewer);
+				} catch (IllegalArgumentException e) {
+					throw new IllegalStateException(e);
+				} catch (IllegalAccessException e) {
+					throw new IllegalStateException(e);
+				}
+			}
+		}
+
+		Assert.assertNotNull(canvas);
+		treeDragItem.dragAndDrop(canvas);
+	}
+
+	/**
 	 * Drag a HostCollocation onto the SAD diagram editor
 	 */
 	public static void dragHostCollocationToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String hostCoName) {
