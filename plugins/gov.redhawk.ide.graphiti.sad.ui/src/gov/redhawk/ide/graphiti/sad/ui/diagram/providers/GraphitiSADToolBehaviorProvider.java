@@ -391,6 +391,7 @@ public class GraphitiSADToolBehaviorProvider extends DefaultToolBehaviorProvider
 		registry.addListener(listener);
 
 		List<IToolEntry> entries = new ArrayList<IToolEntry>();
+		final String componentType = mil.jpeojtrs.sca.scd.ComponentType.RESOURCE.getLiteral();
 		for (ResourceDesc desc : registry.getResourceDescriptors()) {
 			String category = desc.getCategory();
 			List<PaletteEntry> containerList = containerMap.get(category);
@@ -405,7 +406,8 @@ public class GraphitiSADToolBehaviorProvider extends DefaultToolBehaviorProvider
 			List<IToolEntry> newEntries = new ArrayList<IToolEntry>();
 			if (desc instanceof ComponentDesc) {
 				ComponentDesc compDesc = (ComponentDesc) desc;
-				if (passesFilter(compDesc.getName())) {
+				// Filter out devices and services, and apply name filter
+				if (compDesc.getComponentType().equals(componentType) && passesFilter(compDesc.getName())) {
 					newEntries = createPaletteEntries(compDesc);
 					if (newEntries != null && newEntries.size() > 1) {
 						sort(newEntries);
