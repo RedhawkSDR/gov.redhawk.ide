@@ -71,6 +71,10 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		DiagramTestUtils.dragFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
 
+		// IDE-984 Make sure device cannot be added from Target SDR
+		DiagramTestUtils.dragDeviceFromTargetSDRToDiagram(gefBot, editor, "GPP");
+		Assert.assertNull("Unexpected device found in diagram",editor.getEditPart("GPP"));
+
 		// Open the chalkboard with components already launched
 		editor.close();
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
