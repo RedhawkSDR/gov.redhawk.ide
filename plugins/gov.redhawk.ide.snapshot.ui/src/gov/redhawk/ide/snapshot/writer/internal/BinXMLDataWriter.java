@@ -40,7 +40,7 @@ public class BinXMLDataWriter extends BinDataWriter {
 	static final String SNAPSHOT_FILE_EXENSION = ".bin";
 	private static final String METADATA_FILE_EXENSION = "xml";
 
-	protected enum type {
+	protected enum TYPE {
 		STRUCT_SEQUENCE, STRUCT, SIMPLE_SEQUENCE, SIMPLE
 	};
 
