@@ -15,6 +15,9 @@ import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -110,5 +113,34 @@ public class SaveChalkboardTest extends AbstractGraphitiChalkboardTest {
 		ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(connection.getEnd());
 		Assert.assertEquals("Connect provides port not correct", providesPort, DUtil.getBusinessObject((ContainerShape) providesEditPart.part().getModel()));
 		
+	}
+	
+	/**
+	 * IDE-963
+	 * Testing key binding of Ctrl-S to Save As
+	 * @throws AWTException 
+	 */
+	@Test
+	public void saveAsHotkeyTest() throws AWTException {
+		final String WAVEFORM_NAME = "ChalkboardSaveHotkey";
+
+		// Open Chalkboard Graphiti Diagram
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
+		editor = gefBot.gefEditor(CHALKBOARD);
+		editor.setFocus();
+
+		// Add component to diagram from palette
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		
+		Robot robot = new Robot();
+		robot.keyPress(KeyEvent.VK_CONTROL);
+		robot.keyPress(KeyEvent.VK_S);
+		robot.keyRelease(KeyEvent.VK_S);
+		robot.keyRelease(KeyEvent.VK_CONTROL);
+		
+		SWTBotShell saveShell = bot.shell("Save Chalkboard");
+		Assert.assertNotNull("Save As dialog not found", saveShell);
+		saveShell.setFocus();
+		saveShell.bot().button("Cancel").click();
 	}
 }
