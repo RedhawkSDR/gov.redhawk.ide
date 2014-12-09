@@ -10,11 +10,16 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.runtime.chalkboard.tests;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.swtbot.ComponentUtils;
+import gov.redhawk.ide.swtbot.DeviceUtils;
 import gov.redhawk.ide.swtbot.MenuUtils;
+import gov.redhawk.ide.swtbot.ServiceUtils;
+import gov.redhawk.ide.swtbot.SoftpackageUtils;
+import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.FindByUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
@@ -27,6 +32,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotLabel;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -59,7 +65,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		// Add component to diagram from palette
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
-		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
+		DiagramTestUtils.releaseFromChalkboard(editor, editor.getEditPart(HARD_LIMIT));
 
 		// Add component to diagram from Target SDR
 		DiagramTestUtils.dragFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
@@ -126,6 +132,10 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	 */
 	@Test
 	public void checkWorkspaceComponents() {
+		// This must be done to ensure right shell is active for menu selection
+		StandardTestActions.configurePyDev();
+		bot.shell("SCA - REDHAWK IDE").activate();
+		
 		// create test Component in workspace
 		final String wkspComponentName = "testComponentInWorkspace";
 		ComponentUtils.createComponentProject(bot, wkspComponentName, "Python");
@@ -136,14 +146,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		editor.setFocus();
 
 		// validate that workspace Component is in Chalkboard palette
-		boolean isWkspCompInPalette;
-		try {
-			editor.activateTool(wkspComponentName);
-			isWkspCompInPalette = true;
-		} catch (WidgetNotFoundException ex) {
-			isWkspCompInPalette = false;
-		}
-		assertTrue("Workspace Component did not appear in Chalkboard Palette", isWkspCompInPalette);
+		assertTrue("Workspace Component did not appear in Chalkboard Palette", isToolInPalette(editor, wkspComponentName));
 
 		// cleanup
 		editor.close();
@@ -218,4 +221,52 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		Assert.assertEquals(componentShape.getUsesPortStubs().get(0).getUses().getInterface().getName(), "dataDouble");
 		Assert.assertEquals(componentShape.getProvidesPortStubs().get(0).getProvides().getInterface().getName(), "dataDouble");
 	}
+	
+	/**
+	 * IDE-976
+	 * Make sure devices, services, and softpackages are filtered out of Workspace compartment
+	 */
+	@Test
+	public void checkNoWorkspaceDevicesServicesSoftpackages() {
+		// This must be done to ensure right shell is active for menu selection
+		StandardTestActions.configurePyDev();
+		bot.shell("SCA - REDHAWK IDE").activate();
+
+		// create test Service in workspace
+		final String wkspServiceName = "testServiceInWorkspace";
+		ServiceUtils.createServiceProject(bot, wkspServiceName, null, "Python");
+		// create test Device in workspace
+		final String wkspDeviceName = "testDeviceInWorkspace";
+		DeviceUtils.createDeviceProject(bot, wkspDeviceName, "Python");
+		// create test Softpackage in workspace
+		final String wkspSftpkgName = "testSftpkgInWorkspace";
+		SoftpackageUtils.createSoftpackageProject(bot, wkspSftpkgName, null);
+
+		// Open Chalkboard Graphiti Diagram
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
+		editor = gefBot.gefEditor(CHALKBOARD);
+		editor.setFocus();
+
+		assertFalse("Workspace Service wrongly appeared in Chalkboard Palette", isToolInPalette(editor, wkspServiceName));
+		assertFalse("Workspace Device wrongly appeared in Chalkboard Palette", isToolInPalette(editor, wkspDeviceName));
+		assertFalse("Workspace Softpackage wrongly appeared in Chalkboard Palette", isToolInPalette(editor, wkspSftpkgName));
+
+		// cleanup
+		editor.close();
+		MenuUtils.deleteNodeInProjectExplorer(bot, wkspServiceName);
+		MenuUtils.deleteNodeInProjectExplorer(bot, wkspDeviceName);
+		MenuUtils.deleteNodeInProjectExplorer(bot, wkspSftpkgName);
+		
+	}
+	
+	private boolean isToolInPalette(SWTBotGefEditor editor, String toolName) {
+		try {
+			editor.activateTool(toolName);
+			return true;
+		} catch (WidgetNotFoundException ex) {
+			return false;
+		}
+		
+	}
+	
 }
