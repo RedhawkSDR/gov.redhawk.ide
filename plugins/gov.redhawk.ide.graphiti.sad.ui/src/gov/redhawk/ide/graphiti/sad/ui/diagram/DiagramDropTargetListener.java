@@ -25,6 +25,7 @@ import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTargetEvent;
 
 public class DiagramDropTargetListener extends AbstractTransferDropTargetListener {
 
@@ -71,7 +72,6 @@ public class DiagramDropTargetListener extends AbstractTransferDropTargetListene
 			if (((IStructuredSelection) selection).getFirstElement() instanceof SoftPkg) {
 				SoftPkg spd = (SoftPkg) ((IStructuredSelection) selection).getFirstElement();
 				ICreateFeature newFeature = new ComponentCreateFeature(diagramBehavior.getDiagramTypeProvider().getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
-				
 				return newFeature;
 			}
 			
@@ -93,5 +93,18 @@ public class DiagramDropTargetListener extends AbstractTransferDropTargetListene
 			getCurrentEvent().detail = DND.DROP_COPY;
 		}
 	}
-
+	
+	@Override
+	public boolean isEnabled(DropTargetEvent event) {
+		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
+		
+		if (((IStructuredSelection) selection).getFirstElement() instanceof SoftPkg) {
+			SoftPkg spd = (SoftPkg) ((IStructuredSelection) selection).getFirstElement();
+			// Only allow components to be dropped
+			if (!spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.RESOURCE.getLiteral())) {
+				return false;
+			}
+		}
+		return super.isEnabled(event);
+	}
 }
