@@ -26,8 +26,6 @@ import org.junit.Test;
 public class WaveformExplorerTest extends AbstractGraphitiDomainWaveformRuntimeTest {
 
 	private SWTBotGefEditor editor;
-	private static final String[] CHALKBOARD_PARENT_PATH = { "Sandbox" };
-	private static final String CHALKBOARD = "Chalkboard";
 	private static final String HARD_LIMIT = "HardLimit";
 	private static final String HARD_LIMIT_1 = "HardLimit_1";
 	private static final String DATA_READER = "DataReader";
