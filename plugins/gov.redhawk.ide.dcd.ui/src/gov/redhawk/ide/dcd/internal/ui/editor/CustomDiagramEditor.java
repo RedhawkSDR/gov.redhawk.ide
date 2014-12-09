@@ -49,7 +49,7 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
- * @since 1.1
+ * @since 1.2
  * 
  */
 public class CustomDiagramEditor extends DcdDiagramEditor implements IFormPage {

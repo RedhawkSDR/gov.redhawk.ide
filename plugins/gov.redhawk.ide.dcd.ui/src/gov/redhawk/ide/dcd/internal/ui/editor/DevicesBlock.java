@@ -25,7 +25,7 @@ import org.eclipse.ui.forms.IDetailsPageProvider;
 import org.eclipse.ui.forms.IManagedForm;
 
 /**
- * @since 1.1
+ * @since 1.2
  * 
  */
 public class DevicesBlock extends SCAMasterDetailsBlock {
