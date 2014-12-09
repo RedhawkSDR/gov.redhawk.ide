@@ -58,4 +58,45 @@ public class HotKeyTest extends AbstractGraphitiTest {
 		// Confirm component was removed from the waveform
 		Assert.assertNull("Unexpected component found", editor.getEditPart(SIGGEN));
 	}
+	
+	/**
+	 * IDE-678
+	 * Undo/Redo key bindings
+	 * @throws AWTException
+	 */
+	@Test
+	public void undoRedoHotkeyTest() throws AWTException {
+		waveformName = "UndoRedo_Hotkey";
+		final String HARDLIMIT = "HardLimit";
+
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+
+		// Add component to the diagram
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 0, 0);
+		
+		// Confirm component was added to waveform
+		Assert.assertNotNull("HardLimit component not found", editor.getEditPart(HARDLIMIT));
+		
+		Robot robot = new Robot();
+		robot.keyPress(KeyEvent.VK_CONTROL);
+		robot.keyPress(KeyEvent.VK_Z);
+		robot.keyRelease(KeyEvent.VK_Z);
+		robot.keyRelease(KeyEvent.VK_CONTROL);
+		
+		// Confirm add was undone
+		Assert.assertNull("Unexpected component found", editor.getEditPart(HARDLIMIT));
+
+		robot.keyPress(KeyEvent.VK_CONTROL);
+		robot.keyPress(KeyEvent.VK_SHIFT);
+		robot.keyPress(KeyEvent.VK_Z);
+		robot.keyRelease(KeyEvent.VK_Z);
+		robot.keyRelease(KeyEvent.VK_SHIFT);
+		robot.keyRelease(KeyEvent.VK_CONTROL);
+		
+		// Confirm add was redone
+		Assert.assertNotNull("HardLimit component not found", editor.getEditPart(HARDLIMIT));
+	}
+
 }
