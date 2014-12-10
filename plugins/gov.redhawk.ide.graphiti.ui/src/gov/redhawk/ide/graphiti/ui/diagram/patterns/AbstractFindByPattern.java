@@ -19,6 +19,8 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.DomainFinderType;
 import mil.jpeojtrs.sca.partitioning.FindBy;
@@ -215,6 +217,8 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 
+		final DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());
+
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
@@ -224,8 +228,13 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 			@Override
 			protected void doExecute() {
 
-				// delete component from SoftwareAssembly
-				deleteFindByConnections(findByToDelete, sad);
+				if (sad != null) {
+					// delete component from SoftwareAssembly
+					deleteFindByConnections(findByToDelete, sad);
+				} else if (dcd != null) {
+					// delete component from DeviceConfiguration
+					deleteFindByConnections(findByToDelete, dcd);
+				}
 
 			}
 		});
@@ -269,6 +278,32 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		// remove gathered connections
 		if (sad.getConnections() != null) {
 			sad.getConnections().getConnectInterface().removeAll(connectionsToRemove);
+		}
+	}
+
+	private void deleteFindByConnections(FindByStub findByToDelete, DeviceConfiguration dcd) {
+		// find and remove any attached connections
+		// gather connections
+		List<DcdConnectInterface> connectionsToRemove = new ArrayList<DcdConnectInterface>();
+		if (dcd.getConnections() == null) {
+			return;
+		}
+		for (DcdConnectInterface connection : dcd.getConnections().getConnectInterface()) {
+			if (connection.getProvidesPort().getFindBy() != null
+				&& connection.getProvidesPort().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
+				connectionsToRemove.add(connection);
+			}
+		}
+		for (DcdConnectInterface connection : dcd.getConnections().getConnectInterface()) {
+			if (connection.getUsesPort().getFindBy() != null
+				&& connection.getUsesPort().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
+				connectionsToRemove.add(connection);
+			}
+		}
+
+		// remove gathered connections
+		if (dcd.getConnections() != null) {
+			dcd.getConnections().getConnectInterface().removeAll(connectionsToRemove);
 		}
 	}
 
@@ -334,8 +369,6 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		}
 		return children;
 	}
-
-
 
 	/**
 	 * Add UsesPortStub to FindByStub

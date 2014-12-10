@@ -12,7 +12,6 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.providers;
 
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.DecrementStartOrderFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.FindByEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.IncrementStartOrderFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkExternalPortFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkNonExternalPortFeature;
@@ -27,14 +26,11 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.features.reconnect.SADReconnectFe
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.update.GraphitiWaveformDiagramUpdateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.update.SADConnectionInterfaceUpdateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByCORBANamePattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByDomainManagerPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByEventChannelPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByFileManagerPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByServicePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
+import gov.redhawk.ide.graphiti.ui.diagram.feature.custom.FindByEditFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 
 import java.util.ArrayList;
@@ -80,12 +76,11 @@ import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
-import org.eclipse.graphiti.pattern.DefaultFeatureProviderWithPatterns;
 import org.eclipse.graphiti.pattern.DirectEditingFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
-public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPatterns {
+public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 	public SADDiagramFeatureProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
@@ -94,11 +89,6 @@ public class SADDiagramFeatureProvider extends DefaultFeatureProviderWithPattern
 		addPattern(new ComponentPattern());
 		addConnectionPattern(new SADConnectInterfacePattern());
 		addPattern(new HostCollocationPattern());
-		addPattern(new FindByDomainManagerPattern());
-		addPattern(new FindByFileManagerPattern());
-		addPattern(new FindByEventChannelPattern());
-		addPattern(new FindByServicePattern());
-		addPattern(new FindByCORBANamePattern());
 	}
 
 	// the text we double click is nested inside of the pictogram element that links to our business object

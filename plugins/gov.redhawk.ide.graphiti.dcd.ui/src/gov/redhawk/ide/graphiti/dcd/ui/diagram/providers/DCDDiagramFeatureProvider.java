@@ -14,6 +14,7 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.ServicePattern;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
@@ -34,10 +35,9 @@ import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
 import org.eclipse.graphiti.features.impl.UpdateNoBoFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
-import org.eclipse.graphiti.pattern.DefaultFeatureProviderWithPatterns;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
-public class DCDDiagramFeatureProvider extends DefaultFeatureProviderWithPatterns {
+public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 	public DCDDiagramFeatureProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);

@@ -13,6 +13,7 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.ServicesContainer;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
@@ -36,9 +37,8 @@ import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.IToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.StackEntry;
-import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 
-public class GraphitiDCDToolBehaviorProvider extends DefaultToolBehaviorProvider {
+public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehaviorProvider {
 
 	public GraphitiDCDToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
@@ -72,7 +72,11 @@ public class GraphitiDCDToolBehaviorProvider extends DefaultToolBehaviorProvider
 		PaletteCompartmentEntry servicesCompartmentEntry = getCompartmentEntry(servicesContainer);
 		compartments.add(servicesCompartmentEntry);
 		
-		// FINDBY Compartment - TODO: this is the same implementation as the WaveformToolBehaviorProvider
+		
+		// FINDBY Compartment - get from super
+		for (IPaletteCompartmentEntry compartment : super.getPalette()) {
+			compartments.add(compartment);
+		}
 		
 		// BASE TYPES of CONNECTIONS Compartment
 		

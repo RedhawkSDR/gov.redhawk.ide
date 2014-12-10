@@ -23,14 +23,23 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.transaction,
  org.eclipse.zest.layouts,
  gov.redhawk.sca.util,
- mil.jpeojtrs.sca.dcd
+ mil.jpeojtrs.sca.dcd,
+ org.eclipse.core.databinding,
+ org.eclipse.jface.databinding,
+ org.eclipse.core.databinding.beans,
+ gov.redhawk.eclipsecorba.idl,
+ gov.redhawk.eclipsecorba.library.ui,
+ org.eclipse.core.databinding.property
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: gov.redhawk.ide.graphiti.ext,
  gov.redhawk.ide.graphiti.ext.impl,
  gov.redhawk.ide.graphiti.ext.util,
  gov.redhawk.ide.graphiti.ui.diagram,
+ gov.redhawk.ide.graphiti.ui.diagram.dialogs,
+ gov.redhawk.ide.graphiti.ui.diagram.feature.custom,
  gov.redhawk.ide.graphiti.ui.diagram.features.layout,
  gov.redhawk.ide.graphiti.ui.diagram.palette,
  gov.redhawk.ide.graphiti.ui.diagram.patterns,
+ gov.redhawk.ide.graphiti.ui.diagram.providers,
  gov.redhawk.ide.graphiti.ui.diagram.util
 Bundle-ActivationPolicy: lazy

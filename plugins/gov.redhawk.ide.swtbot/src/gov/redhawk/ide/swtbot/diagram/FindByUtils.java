@@ -11,11 +11,12 @@
 package gov.redhawk.ide.swtbot.diagram;
 
 
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByCORBANamePattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByDomainManagerPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByEventChannelPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByFileManagerPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByServicePattern;
+
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByFileManagerPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByServicePattern;
 
 import org.eclipse.swtbot.swt.finder.SWTBot;
 

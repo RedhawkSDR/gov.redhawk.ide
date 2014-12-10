@@ -16,16 +16,11 @@ import gov.redhawk.core.resourcefactory.ResourceDesc;
 import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.FindByEditFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByCORBANamePattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByDomainManagerPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByEventChannelPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByFileManagerPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.FindByServicePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.sad.ui.palette.RHGraphitiPaletteFilter;
 import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
@@ -61,8 +56,6 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.context.IDoubleClickContext;
-import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -72,10 +65,9 @@ import org.eclipse.graphiti.palette.impl.ConnectionCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.StackEntry;
-import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.ui.progress.WorkbenchJob;
 
-public class GraphitiSADToolBehaviorProvider extends DefaultToolBehaviorProvider {
+public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehaviorProvider {
 
 	private RHGraphitiPaletteFilter paletteFilter;
 
@@ -207,10 +199,9 @@ public class GraphitiSADToolBehaviorProvider extends DefaultToolBehaviorProvider
 		PaletteCompartmentEntry componentCompartmentEntry = getComponentCompartmentEntry(container);
 		compartments.add(componentCompartmentEntry);
 
-		// FINDBY Compartment
-		if (!DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
-			PaletteCompartmentEntry findByCompartmentEntry = getFindByCompartmentEntry();
-			compartments.add(findByCompartmentEntry);
+		// FINDBY Compartment - add from super
+		for (IPaletteCompartmentEntry compartment : super.getPalette()) {
+			compartments.add(compartment);
 		}
 
 		// BASE TYPES Compartment
@@ -260,30 +251,6 @@ public class GraphitiSADToolBehaviorProvider extends DefaultToolBehaviorProvider
 				compartmentEntry.addToolEntry(objectCreationToolEntry);
 			}
 		}
-		return compartmentEntry;
-	}
-
-	/**
-	 * Returns a populated CompartmentEntry containing all the Find By tools
-	 */
-	private PaletteCompartmentEntry getFindByCompartmentEntry() {
-
-		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Find By", null);
-//		compartmentEntry.setDescription("Contains Find By tooling.");
-
-		IFeatureProvider featureProvider = getFeatureProvider();
-		ICreateFeature[] createFeatures = featureProvider.getCreateFeatures();
-		for (ICreateFeature cf : createFeatures) {
-			if (FindByCORBANamePattern.NAME.equals(cf.getCreateName()) || FindByEventChannelPattern.NAME.equals(cf.getCreateName())
-				|| FindByServicePattern.NAME.equals(cf.getCreateName()) || FindByFileManagerPattern.NAME.equals(cf.getCreateName())
-				|| FindByDomainManagerPattern.NAME.equals(cf.getCreateName())) {
-				ObjectCreationToolEntry objectCreationToolEntry = new ObjectCreationToolEntry(cf.getCreateName(), cf.getCreateDescription(),
-					cf.getCreateImageId(), cf.getCreateLargeImageId(), cf);
-
-				compartmentEntry.addToolEntry(objectCreationToolEntry);
-			}
-		}
-
 		return compartmentEntry;
 	}
 
@@ -502,16 +469,6 @@ public class GraphitiSADToolBehaviorProvider extends DefaultToolBehaviorProvider
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public ICustomFeature getDoubleClickFeature(IDoubleClickContext context) {
-		ICustomFeature customFeature = new FindByEditFeature(getFeatureProvider());
-		if (customFeature.canExecute(context)) {
-			return customFeature;
-		}
-
-		return super.getDoubleClickFeature(context);
 	}
 
 	public void setFilter(RHGraphitiPaletteFilter filter) {
