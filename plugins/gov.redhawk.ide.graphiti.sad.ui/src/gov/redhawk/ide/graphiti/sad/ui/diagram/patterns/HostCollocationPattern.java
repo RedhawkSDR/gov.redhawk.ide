@@ -12,7 +12,7 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.ImageProvider;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -93,7 +93,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 
 	@Override
 	public String getCreateImageId() {
-		return ImageProvider.IMG_HOST_COLLOCATION;
+		return WaveformImageProvider.IMG_HOST_COLLOCATION;
 	}
 
 	// THE FOLLOWING THREE METHODS DETERMINE IF PATTERN IS APPLICABLE TO OBJECT

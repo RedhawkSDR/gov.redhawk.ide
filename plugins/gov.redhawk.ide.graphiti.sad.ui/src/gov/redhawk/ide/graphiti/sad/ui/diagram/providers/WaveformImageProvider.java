@@ -13,7 +13,7 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.providers;
 import org.eclipse.graphiti.ui.platform.AbstractImageProvider;
 import org.eclipse.graphiti.ui.platform.IImageProvider;
 
-public class ImageProvider extends AbstractImageProvider implements IImageProvider {
+public class WaveformImageProvider extends AbstractImageProvider implements IImageProvider {
 
 	// The prefix for all identifiers of this image provider
 	protected static final String PREFIX = "gov.redhawk.ide.sad.graphiti.ui.diagram.providers.imageProvider.";
@@ -29,7 +29,7 @@ public class ImageProvider extends AbstractImageProvider implements IImageProvid
 	public static final String IMG_FIND_BY = PREFIX + "findBy";
 	public static final String IMG_HOST_COLLOCATION = "hostCollocation";
 
-	public ImageProvider() {
+	public WaveformImageProvider() {
 	}
 
 	// register the path for each image identifier

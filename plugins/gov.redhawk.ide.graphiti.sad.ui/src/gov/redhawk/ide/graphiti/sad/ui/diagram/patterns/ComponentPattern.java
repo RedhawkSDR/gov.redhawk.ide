@@ -13,7 +13,7 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ext.RHSadGxFactory;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.ImageProvider;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
@@ -799,12 +799,12 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 
 	@Override
 	public String getOuterImageId() {
-		return ImageProvider.IMG_COMPONENT_PLACEMENT;
+		return WaveformImageProvider.IMG_COMPONENT_PLACEMENT;
 	}
 
 	@Override
 	public String getInnerImageId() {
-		return ImageProvider.IMG_COMPONENT_INSTANCE;
+		return WaveformImageProvider.IMG_COMPONENT_INSTANCE;
 	}
 
 	@Override

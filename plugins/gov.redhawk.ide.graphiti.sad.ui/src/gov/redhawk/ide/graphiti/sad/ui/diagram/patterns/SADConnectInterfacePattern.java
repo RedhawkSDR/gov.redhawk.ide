@@ -12,7 +12,7 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
 import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformDiagramEditor;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.ImageProvider;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
@@ -69,7 +69,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 
 	@Override
 	public String getCreateImageId() {
-		return ImageProvider.IMG_CONNECTION;
+		return WaveformImageProvider.IMG_CONNECTION;
 	}
 
 	/**

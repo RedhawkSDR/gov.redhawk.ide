@@ -306,13 +306,13 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 				
 				if (spd.getImplementation().size() > 1) {
 					StackEntry stackEntry = new StackEntry(spd.getName() + spd.getImplementation().get(0).getId(), spd.getDescription(),
-						ImageProvider.IMG_COMPONENT_PLACEMENT);
+						WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
 					compartmentEntry.addToolEntry(stackEntry);
 					List<IToolEntry> stackEntries = new ArrayList<IToolEntry>();
 					for (Implementation impl : spd.getImplementation()) {
 						ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), spd, impl.getId());
 						SpdToolEntry entry = new SpdToolEntry(spd.getName() + " (" + impl.getId() + ")", spd.getDescription(), EcoreUtil.getURI(spd),
-							spd.getId(), null, ImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
+							spd.getId(), null, WaveformImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
 						stackEntries.add(entry);
 					}
 					sort(stackEntries);
@@ -321,7 +321,7 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 					}
 				} else {
 					ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
-					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature, ImageProvider.IMG_COMPONENT_PLACEMENT);
+					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature, WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
 					compartmentEntry.addToolEntry(entry);
 				}
 			}
@@ -428,13 +428,13 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		if (desc.getImplementationIds().size() == 1) {
 			ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), desc.getSoftPkg(), desc.getImplementationIds().get(0));
 			SpdToolEntry entry = new SpdToolEntry(desc.getName(), desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(),
-				desc.getImplementationIds().get(0), ImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
+				desc.getImplementationIds().get(0), WaveformImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
 			retVal.add(entry);
 		} else {
 			for (String implID : desc.getImplementationIds()) {
 				ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), desc.getSoftPkg(), implID);
 				SpdToolEntry entry = new SpdToolEntry(desc.getName() + " (" + implID + ")", desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(),
-					implID, ImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
+					implID, WaveformImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
 				retVal.add(entry);
 			}
 		}
