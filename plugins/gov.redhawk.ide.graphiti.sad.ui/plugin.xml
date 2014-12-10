@@ -13,6 +13,9 @@
          <imageProvider
                id="gov.redhawk.ide.sad.graphiti.ui.diagram.providers.imageProvider">
          </imageProvider>
+         <imageProvider
+               id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
+         </imageProvider>
       </diagramTypeProvider>
    </extension>
    <extension

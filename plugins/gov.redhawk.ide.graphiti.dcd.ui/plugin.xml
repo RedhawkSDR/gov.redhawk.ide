@@ -14,6 +14,12 @@
          <diagramType
                id="gov.redhawk.ide.graphiti.dcd.ui.DCDDiagramEditor">
          </diagramType>
+         <imageProvider
+               id="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.deviceImageProvider">
+         </imageProvider>
+         <imageProvider
+               id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
+         </imageProvider>
       </diagramTypeProvider>
    </extension>
    <extension

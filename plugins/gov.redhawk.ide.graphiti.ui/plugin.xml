@@ -35,5 +35,12 @@
          </describer>
       </content-type>
    </extension>
+   <extension
+         point="org.eclipse.graphiti.ui.imageProviders">
+      <imageProvider
+            class="gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider"
+            id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
+      </imageProvider>
+   </extension>
 
 </plugin>
