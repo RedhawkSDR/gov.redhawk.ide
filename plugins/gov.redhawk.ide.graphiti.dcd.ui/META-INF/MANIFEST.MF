@@ -15,7 +15,6 @@ Require-Bundle: gov.redhawk.ide.dcd.ui,
  gov.redhawk.sca,
  gov.redhawk.sca.ui,
  gov.redhawk.ui,
- gov.redhawk.ui.sad.editor,
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.ecore.xcore,
@@ -28,7 +27,9 @@ Require-Bundle: gov.redhawk.ide.dcd.ui,
  org.eclipse.graphiti.pattern,
  org.eclipse.ui.views.properties.tabbed,
  org.eclipse.wst.sse.ui,
- org.eclipse.xtext.xbase.lib
+ org.eclipse.xtext.xbase.lib,
+ gov.redhawk.diagram,
+ gov.redhawk.sca.dcd.validation
 Bundle-ActivationPolicy: lazy
 Export-Package: gov.redhawk.ide.graphiti.dcd.internal.ui.editor,
  gov.redhawk.ide.graphiti.dcd.ui,

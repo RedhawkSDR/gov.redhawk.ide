@@ -12,6 +12,7 @@
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
 import gov.redhawk.ide.sdr.DevicesContainer;
@@ -32,9 +33,12 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
+import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
+import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.IToolEntry;
+import org.eclipse.graphiti.palette.impl.ConnectionCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.StackEntry;
 
@@ -61,33 +65,32 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 	@Override
 	public IPaletteCompartmentEntry[] getPalette() {
 		List<IPaletteCompartmentEntry> compartments = new ArrayList<IPaletteCompartmentEntry>();
-		
+
 		// DEVICES compartment
-		final DevicesContainer devicesContainer = SdrUiPlugin.getDefault().getTargetSdrRoot().getDevicesContainer(); 
+		final DevicesContainer devicesContainer = SdrUiPlugin.getDefault().getTargetSdrRoot().getDevicesContainer();
 		PaletteCompartmentEntry devicesCompartmentEntry = getCompartmentEntry(devicesContainer);
 		compartments.add(devicesCompartmentEntry);
-		
+
 		// SERVICES compartment
 		final ServicesContainer servicesContainer = SdrUiPlugin.getDefault().getTargetSdrRoot().getServicesContainer();
 		PaletteCompartmentEntry servicesCompartmentEntry = getCompartmentEntry(servicesContainer);
 		compartments.add(servicesCompartmentEntry);
-		
-		
+
 		// FINDBY Compartment - get from super
 		for (IPaletteCompartmentEntry compartment : super.getPalette()) {
 			compartments.add(compartment);
 		}
-		
-		// BASE TYPES of CONNECTIONS Compartment
-		
-		// TODO: Is there a workspace compartment?
-		
+
+		// BASE TYPES Compartment
+		PaletteCompartmentEntry baseTypesCompartmentEntry = getBaseTypesCompartmentEntry();
+		compartments.add(baseTypesCompartmentEntry);
+
 		return compartments.toArray(new IPaletteCompartmentEntry[compartments.size()]);
 	}
 
 	private PaletteCompartmentEntry getCompartmentEntry(SoftPkgRegistry container) {
-		
-		// TODO: in practice, will there ever be a device with multiple implementations? 
+
+		// TODO: in practice, will there ever be a device with multiple implementations?
 		final PaletteCompartmentEntry compartmentEntry;
 		if (container instanceof DevicesContainer) {
 			compartmentEntry = new PaletteCompartmentEntry("Devices", null);
@@ -96,18 +99,19 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		} else {
 			compartmentEntry = null;
 		}
-		
+
 		// add all palette entries into a entriesToRemove list.
 		final List<IToolEntry> entriesToRemove = new ArrayList<IToolEntry>();
 		for (final Object obj : compartmentEntry.getToolEntries()) {
-			// TODO: Confirm that devices are of type SpdToolEntry, which would then need to be refactored out of the graphiti.sad package
+			// TODO: Confirm that devices are of type SpdToolEntry, which would then need to be refactored out of the
+			// graphiti.sad package
 			if (obj instanceof SpdToolEntry || obj instanceof StackEntry) {
 				entriesToRemove.add((IToolEntry) obj);
 			}
 		}
-		
-		// Loop through all devices in the Target SDR.  When one is found, remove it from the entriesToRemove list.
-		// TODO: If we don't need to support multiple implementations for devices, remove the relevant logic 
+
+		// Loop through all devices in the Target SDR. When one is found, remove it from the entriesToRemove list.
+		// TODO: If we don't need to support multiple implementations for devices, remove the relevant logic
 		final EList<SoftPkg> components = container.getComponents();
 		final SoftPkg[] devicesArray = components.toArray(new SoftPkg[components.size()]);
 		spdLoop: for (final SoftPkg spd : devicesArray) {
@@ -142,7 +146,7 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 			if (!foundTool /*&& passesFilter(spd.getName())*/) {
 				// special way of instantiating create feature
 				// allows us to know which palette tool was used
-				
+
 				// TODO: Don't really like that the device image provider references components...
 				// TODO: Maybe refactor some shared items (findby, HC, Connections) out to a parent ImageProvider class?
 				if (spd.getImplementation().size() > 1) {
@@ -181,6 +185,31 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		sort(entries);
 		compartmentEntry.getToolEntries().clear();
 		compartmentEntry.getToolEntries().addAll(entries);
+
+		return compartmentEntry;
+	}
+
+	/**
+	 * Returns a populated CompartmentEntry containing all the Base Types
+	 */
+	private PaletteCompartmentEntry getBaseTypesCompartmentEntry() {
+
+		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Base Types", null);
+
+		IFeatureProvider featureProvider = getFeatureProvider();
+		// connection
+		ICreateConnectionFeature[] createConnectionFeatures = featureProvider.getCreateConnectionFeatures();
+		if (createConnectionFeatures.length > 0) {
+			for (ICreateConnectionFeature ccf : createConnectionFeatures) {
+				if (DCDConnectInterfacePattern.NAME.equals(ccf.getCreateName())) {
+					ConnectionCreationToolEntry ccTool = new ConnectionCreationToolEntry(ccf.getCreateName(), ccf.getCreateDescription(),
+						ccf.getCreateImageId(), ccf.getCreateLargeImageId());
+					ccTool.addCreateConnectionFeature(ccf);
+					compartmentEntry.addToolEntry(ccTool);
+				}
+			}
+
+		}
 
 		return compartmentEntry;
 	}
