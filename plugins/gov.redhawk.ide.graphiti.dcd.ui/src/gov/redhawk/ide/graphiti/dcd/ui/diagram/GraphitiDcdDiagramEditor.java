@@ -67,7 +67,6 @@ public class GraphitiDcdDiagramEditor extends DiagramEditor {
 		};
 	}
 	
-	// TODO - Will probably need to copy to setFocus hack that is used in the sad diagram 
-	// to check for updates when switching tabs.
+	// TODO: Bring in init() and context methods from GraphitiWaveformDiagramEditor
 	
 }

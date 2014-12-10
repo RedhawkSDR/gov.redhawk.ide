@@ -14,6 +14,7 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.DCDConnectionInterfaceDeleteFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.reconnect.DCDReconnectFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update.DCDConnectionInterfaceUpdateFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update.GraphitiDcdDiagramUpdateFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.ServicePattern;
@@ -78,8 +79,8 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 	public IUpdateFeature getUpdateFeature(IUpdateContext context) {
 		if (context.getPictogramElement() instanceof Connection) {
 			return new DCDConnectionInterfaceUpdateFeature(this);
-//		} else if (context.getPictogramElement() instanceof Diagram) {
-//			return new GraphitiDcdDiagramUpdateFeature(this);
+		} else if (context.getPictogramElement() instanceof Diagram) {
+			return new GraphitiDcdDiagramUpdateFeature(this);
 		}
 
 		// hide update icon for some pictogram elements

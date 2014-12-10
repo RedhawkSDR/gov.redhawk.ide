@@ -26,7 +26,9 @@ import mil.jpeojtrs.sca.partitioning.DomainFinderType;
 import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
+import mil.jpeojtrs.sca.partitioning.ProvidesPort;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPort;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadProvidesPort;
@@ -377,7 +379,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	 * @param featureProvider
 	 */
 
-	public static void addUsesPortStubToFindByStub(final FindByStub findByStub, final SadUsesPort usesPortStub, IFeatureProvider featureProvider) {
+	public static void addUsesPortStubToFindByStub(final FindByStub findByStub, final UsesPort< ? > usesPortStub, IFeatureProvider featureProvider) {
 
 		final String usesPortName = usesPortStub.getUsesIndentifier();
 
@@ -425,9 +427,9 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	 * @param sadUsesPort
 	 * @param featureProvider
 	 */
-	public static void addProvidesPortStubToFindByStub(final FindByStub findByStub, final SadProvidesPort sadProvidesPort, IFeatureProvider featureProvider) {
+	public static void addProvidesPortStubToFindByStub(final FindByStub findByStub, final ProvidesPort< ? > providesPortStub, IFeatureProvider featureProvider) {
 
-		final String providesPortName = sadProvidesPort.getProvidesIdentifier();
+		final String providesPortName = providesPortStub.getProvidesIdentifier();
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();

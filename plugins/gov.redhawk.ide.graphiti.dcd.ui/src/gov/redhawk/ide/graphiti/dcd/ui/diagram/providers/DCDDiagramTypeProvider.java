@@ -34,4 +34,22 @@ public class DCDDiagramTypeProvider extends AbstractDiagramTypeProvider {
 		}
 		return toolBehaviorProviders;
 	}
+	
+	/**
+	 * On startup scan the model and update our diagram using the registered update feature providers
+	 */
+	@Override
+	public boolean isAutoUpdateAtStartup() {
+		return true;
+	}
+
+	@Override
+	public boolean isAutoUpdateAtRuntime() {
+		return true;
+	}
+
+	@Override
+	public boolean isAutoUpdateAtReset() {
+		return true;
+	}
 }

@@ -34,13 +34,6 @@
       </imageProvider>
    </extension>
 
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated RHGraphiti -->
-      <package
-            uri="http://www.redhawk.gov/model/rhgext/1.0.0"
-            class="gov.redhawk.ide.graphiti.sad.ext.RHGxPackage"
-            genModel="model/RHGraphiti.xcore"/>
-   </extension>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated RHSadGraphiti -->
@@ -53,7 +46,7 @@
    <extension point="org.eclipse.emf.ecore.content_parser">
       <!-- @generated RHGraphiti -->
       <parser
-            contentTypeIdentifier="http://www.redhawk.gov/model/rhgext/1.0.0"
+            contentTypeIdentifier="http://www.redhawk.gov/model/rhsadgext/1.0.0"
             class="org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl"/>
    </extension>
 

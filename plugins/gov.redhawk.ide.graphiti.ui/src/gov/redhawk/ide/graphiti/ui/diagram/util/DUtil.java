@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -975,7 +976,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @param diagram
 	 * @return
 	 */
-	public static Anchor lookupSourceAnchor(SadConnectInterface sadConnectInterface, Diagram diagram) {
+	public static Anchor lookupSourceAnchor(ConnectInterface< ?, ?, ?> sadConnectInterface, Diagram diagram) {
 		// lookup sourceAnchor
 		PictogramElement sourceAnchorPe = DUtil.getPictogramElementForBusinessObject(diagram, sadConnectInterface.getSource(), Anchor.class);
 		if (sourceAnchorPe != null) {

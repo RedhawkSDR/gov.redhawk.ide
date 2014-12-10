@@ -3,21 +3,11 @@
 package gov.redhawk.ide.graphiti.dcd.ext.util;
 
 import gov.redhawk.ide.graphiti.dcd.ext.*;
-
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
-
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
-import org.eclipse.graphiti.mm.PropertyContainer;
-import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.mm.pictograms.Shape;
 
 /**
  * <!-- begin-user-doc -->
@@ -85,36 +75,6 @@ public class RHDeviceGxAdapterFactory extends AdapterFactoryImpl {
 		}
 
 		@Override
-		public Adapter casePropertyContainer(PropertyContainer object) {
-			return createPropertyContainerAdapter();
-		}
-
-		@Override
-		public Adapter caseGraphicsAlgorithmContainer(GraphicsAlgorithmContainer object) {
-			return createGraphicsAlgorithmContainerAdapter();
-		}
-
-		@Override
-		public Adapter casePictogramElement(PictogramElement object) {
-			return createPictogramElementAdapter();
-		}
-
-		@Override
-		public Adapter caseAnchorContainer(AnchorContainer object) {
-			return createAnchorContainerAdapter();
-		}
-
-		@Override
-		public Adapter caseShape(Shape object) {
-			return createShapeAdapter();
-		}
-
-		@Override
-		public Adapter caseContainerShape(ContainerShape object) {
-			return createContainerShapeAdapter();
-		}
-
-		@Override
 		public Adapter caseRHContainerShape(RHContainerShape object) {
 			return createRHContainerShapeAdapter();
 		}
@@ -163,90 +123,6 @@ public class RHDeviceGxAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createServiceShapeAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.graphiti.mm.PropertyContainer <em>Property Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.graphiti.mm.PropertyContainer
-	 * @generated
-	 */
-	public Adapter createPropertyContainerAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.graphiti.mm.GraphicsAlgorithmContainer <em>Graphics Algorithm Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.graphiti.mm.GraphicsAlgorithmContainer
-	 * @generated
-	 */
-	public Adapter createGraphicsAlgorithmContainerAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.graphiti.mm.pictograms.PictogramElement <em>Pictogram Element</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.graphiti.mm.pictograms.PictogramElement
-	 * @generated
-	 */
-	public Adapter createPictogramElementAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.graphiti.mm.pictograms.AnchorContainer <em>Anchor Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.graphiti.mm.pictograms.AnchorContainer
-	 * @generated
-	 */
-	public Adapter createAnchorContainerAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.graphiti.mm.pictograms.Shape <em>Shape</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.graphiti.mm.pictograms.Shape
-	 * @generated
-	 */
-	public Adapter createShapeAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.graphiti.mm.pictograms.ContainerShape <em>Container Shape</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.graphiti.mm.pictograms.ContainerShape
-	 * @generated
-	 */
-	public Adapter createContainerShapeAdapter() {
 		return null;
 	}
 

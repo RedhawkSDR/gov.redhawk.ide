@@ -47,6 +47,7 @@ import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
 
@@ -218,6 +219,25 @@ public class DevicePattern extends AbstractContainerPattern implements IPattern 
 
 		// perform update, redraw
 		updatePictogramElement(deviceShape);
+	}
+	
+	/**
+	 * Return all ComponentShape in Diagram (recursively)
+	 * @param containerShape
+	 * @return
+	 */
+	public static List<DeviceShape> getAllDeviceShapes(ContainerShape containerShape) {
+		List<DeviceShape> children = new ArrayList<DeviceShape>();
+		if (containerShape instanceof DeviceShape) {
+			children.add((DeviceShape) containerShape);
+		} else {
+			for (Shape s : containerShape.getChildren()) {
+				if (s instanceof ContainerShape) {
+					children.addAll(getAllDeviceShapes((ContainerShape) s));
+				}
+			}
+		}
+		return children;
 	}
 
 	@Override

@@ -19,10 +19,6 @@ import java.util.List;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.workspace.util.WorkspaceSynchronizer.Delegate;
-import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.IReason;
-import org.eclipse.graphiti.features.IUpdateFeature;
-import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.ui.editor.DefaultPaletteBehavior;
 import org.eclipse.graphiti.ui.editor.DefaultUpdateBehavior;
@@ -104,22 +100,6 @@ public class GraphitiWaveformDiagramEditor extends DiagramEditor {
 			}
 
 		};
-	}
-
-	// This is a major hack that lets the diagram update when changes are made in the overview tab
-	@Override
-	public void setFocus() {
-		super.setFocus();
-		Diagram diagram = getDiagramTypeProvider().getDiagram();
-		IFeatureProvider featureProvider = getDiagramTypeProvider().getFeatureProvider();
-		if (diagram != null && featureProvider != null) {
-			final UpdateContext updateContext = new UpdateContext(diagram);
-			final IUpdateFeature updateFeature = featureProvider.getUpdateFeature(new UpdateContext(diagram));
-			final IReason updateNeeded = updateFeature.updateNeeded(updateContext);
-			if (updateNeeded.toBoolean()) {
-				updateFeature.update(updateContext);
-			}
-		}
 	}
 
 	@Override
