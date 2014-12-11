@@ -110,4 +110,47 @@
          </includes>
       </viewerContentBinding>
    </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor
+            contributorId="DCDDiagram.PropertyContributor">
+         <propertyCategory
+               category="Graphiti">
+         </propertyCategory>
+      </propertyContributor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+      <propertyTabs
+            contributorId="DCDDiagram.PropertyContributor">
+         <propertyTab
+               category="Graphiti"
+               id="property.tab.advanced"
+               label="Core">
+         </propertyTab>
+         <propertyTab
+               category="Graphiti"
+               id="property.tab.ComponentProperties"
+               label="Component Properties">
+         </propertyTab>
+      </propertyTabs>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
+      <propertySections
+            contributorId="DCDDiagram.PropertyContributor">
+         <propertySection
+               class="gov.redhawk.ide.graphiti.dcd.ui.properties.ComponentPropertiesSection"
+               filter="gov.redhawk.ide.graphiti.dcd.ui.properties.ComponentFilter"
+               id="property.section.ComponentProperties"
+               tab="property.tab.ComponentProperties">
+         </propertySection>
+         <propertySection
+               class="org.eclipse.ui.views.properties.tabbed.AdvancedPropertySection"
+               filter="gov.redhawk.ide.graphiti.dcd.ui.properties.ComponentFilter"
+               id="graphiti.main.tab.emfreference.table"
+               tab="property.tab.advanced">
+         </propertySection>
+      </propertySections>
+   </extension>
 </plugin>
