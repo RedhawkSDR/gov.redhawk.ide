@@ -111,6 +111,21 @@
       </viewerContentBinding>
    </extension>
    <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            canFinishEarly="false"
+            category="gov.redhawk.ide.ui.wizards.category.sca"
+            class="gov.redhawk.ide.graphiti.dcd.ui.wizard.NewGraphitiNodeProjectWizard"
+            finalPerspective="gov.redhawk.ide.ui.perspectives.sca"
+            hasPages="true"
+            icon="icons/etool16/newprj_wiz.gif"
+            id="gov.redhawk.ide.graphiti.ui.wizards.newnode"
+            name="Graphiti SCA Node Project"
+            preferredPerspectives="gov.redhawk.ide.ui.wizards.category.sca"
+            project="true">
+      </wizard>
+   </extension>
+   <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
       <propertyContributor
             contributorId="DCDDiagram.PropertyContributor">

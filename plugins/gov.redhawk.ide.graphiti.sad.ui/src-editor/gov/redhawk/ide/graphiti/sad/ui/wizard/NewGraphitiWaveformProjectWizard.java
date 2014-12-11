@@ -64,7 +64,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
  * Wizard for creating new SCA waveform projects.
  */
 @SuppressWarnings("restriction")
-public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
+public class NewGraphitiWaveformProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
 
 	/** The configuration. */
 	private IConfigurationElement fConfig;
@@ -77,7 +77,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 
 	private IFile openEditorOn;
 
-	public NewScaWaveformProjectWizard() {
+	public NewGraphitiWaveformProjectWizard() {
 		this.setWindowTitle("New Waveform Project");
 		this.setNeedsProgressMonitor(true);
 	}
@@ -99,7 +99,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 			public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
 				final SdrRoot sdrRoot = SdrUiPlugin.getDefault().getTargetSdrRoot();
 				sdrRoot.load(monitor);
-				NewScaWaveformProjectWizard.this.waveformACpage.setComponents(sdrRoot.getComponentsContainer().getComponents());
+				NewGraphitiWaveformProjectWizard.this.waveformACpage.setComponents(sdrRoot.getComponentsContainer().getComponents());
 				return Status.OK_STATUS;
 			}
 		};
@@ -164,7 +164,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 						// If we're creating a new waveform (vs importing one)
 						if (isCreateNewResource) {
 							// Create the SCA XML files
-							NewScaWaveformProjectWizard.this.openEditorOn = WaveformProjectCreator.createWaveformFiles(project,
+							NewGraphitiWaveformProjectWizard.this.openEditorOn = WaveformProjectCreator.createWaveformFiles(project,
 							        id,
 							        assemblyController,
 							        progress.newChild(1));
@@ -195,7 +195,6 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 			final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			if ((this.openEditorOn != null) && this.openEditorOn.exists()) {
 
-				//opens the Graphiti editor
 				//create diagram instance
 				Diagram diagram = Graphiti.getPeCreateService().createDiagram(SADDiagramTypeProvider.DIAGRAM_TYPE_ID, projectName, true);
 				
@@ -204,38 +203,11 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 				
 				//uri for diagram file
 				URI uri = URI.createPlatformResourceURI(diagramFile.getFullPath().toString(), true);
-				//create resource for diagram file
-//				ResourceSet resourceSet = new ResourceSetImpl();
-//				TransactionalEditingDomain editingDomain = TransactionUtil.getEditingDomain(resourceSet);
-//				if(editingDomain == null){
-//					editingDomain = TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain(resourceSet);
-//				}
-//				Resource createdResource = resourceSet.createResource(uri);
-//				createdResource.getContents().add(diagram);
 				
 				FileService.createEmfFileForDiagram(uri, diagram);
 				
-//				String providerId = GraphitiUi.getExtensionManager().getDiagramTypeProviderId(diagram.getDiagramTypeId());
-//				
-//				DiagramEditorInput editorInput = new DiagramEditorInput(uri, providerId);
-//				
-//				try {
-//					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, DiagramEditor.DIAGRAM_EDITOR_ID);
-//				} catch (PartInitException e) {
-//					String error = "Error while opening SAD diagram editor";
-//					IStatus status = new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, error, e);
-//					ErrorDialog.openError(getShell(), "An error occured", null, status);
-//					return false;
-//				}
-				
-				//opens the GEF editor
-				final GraphitiWaveformMultiPageEditor sadPart = (GraphitiWaveformMultiPageEditor) IDE.openEditor(activePage, this.openEditorOn, GraphitiWaveformMultiPageEditor.ID, true);
-				
-				//TODO: bwhoff2 we probably need to handle this
-				//setCustomPreferences(sadPart);
-				
-				
-				
+				//opens the Graphiti
+				IDE.openEditor(activePage, this.openEditorOn, GraphitiWaveformMultiPageEditor.ID, true);
 			}
 
 			BasicNewProjectResourceWizard.updatePerspective(this.fConfig);
@@ -253,27 +225,6 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 		}
 		return true;
 	}
-
-//	/**
-//	 * Set custom viewing properties for the Sad Editor so that we can tell the difference between this editor and the Sad Explorer
-//	 * 
-//	 * @param sadPart The Sad Editor instance that we shall change the initial diagram style for
-//	 */
-//	private void setCustomPreferences(final SadEditor sadPart) {
-//		if (sadPart == null) {
-//			return;
-//		}
-//		final DiagramGraphicalViewer viewer = (DiagramGraphicalViewer) sadPart.getDiagramGraphicalViewer();
-//		final IPreferenceStore store = viewer.getWorkspaceViewerPreferenceStore();
-//
-//		store.setValue(WorkspaceViewerProperties.VIEWRULERS, true);
-//		store.setValue(WorkspaceViewerProperties.VIEWGRID, true);
-//		store.setValue(WorkspaceViewerProperties.GRIDSPACING, .5); // SUPPRESS CHECKSTYLE MagicNumber
-//		store.setValue(WorkspaceViewerProperties.GRIDORDER, false);
-//		store.setValue(WorkspaceViewerProperties.GRIDLINESTYLE, SWT.LINE_SOLID);
-//		store.setValue(WorkspaceViewerProperties.GRIDLINECOLOR, SWT.COLOR_BLACK);
-//	}
-
 
 	/**
 	 * {@inheritDoc}

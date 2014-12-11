@@ -209,7 +209,7 @@
       <wizard
             canFinishEarly="false"
             category="gov.redhawk.ide.ui.wizards.category.sca"
-            class="gov.redhawk.ide.graphiti.sad.ui.wizard.NewScaWaveformProjectWizard"
+            class="gov.redhawk.ide.graphiti.sad.ui.wizard.NewGraphitiWaveformProjectWizard"
             finalPerspective="gov.redhawk.ide.ui.perspectives.sca"
             hasPages="true"
             icon="icons/etool16/newprj_wiz.gif"
