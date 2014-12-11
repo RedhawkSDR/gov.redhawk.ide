@@ -232,7 +232,6 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 			return false;
 		}
 
-		// TODO: Another place that needs to be changed if supporting host collocation
 		if (context.getTargetContainer() instanceof Diagram) {
 			return true;
 		}
