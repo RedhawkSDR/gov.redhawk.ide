@@ -14,82 +14,32 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns;
 import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
 import gov.redhawk.ide.graphiti.dcd.ext.RHDeviceGxFactory;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.NodeImageProvider;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalCommandStack;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.features.context.IDirectEditingContext;
-import org.eclipse.graphiti.features.context.ILayoutContext;
-import org.eclipse.graphiti.features.context.IMoveShapeContext;
-import org.eclipse.graphiti.features.context.IResizeShapeContext;
-import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.mm.Property;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
 
-// TODO: This should extend AbstractContainerPattern, which is currently located in the graphiti.sad plugin.  
-// Waiting for that class to be refactored out before pointing it here
-public class DevicePattern extends AbstractContainerPattern implements IPattern {
+public class DevicePattern extends AbstractNodeComponentPattern implements IPattern {
 
 	public DevicePattern() {
-		super(null);
+		super();
 	}
 
 	@Override
 	public String getCreateName() {
 		return "Device";
-	}
-
-	// THE FOLLOWING THREE METHODS DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
-	@Override
-	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
-		return mainBusinessObject instanceof DcdComponentInstantiation;
-	}
-
-	@Override
-	protected boolean isPatternControlled(PictogramElement pictogramElement) {
-		Object domainObject = getBusinessObjectForPictogramElement(pictogramElement);
-		return isMainBusinessObjectApplicable(domainObject);
-	}
-
-	@Override
-	protected boolean isPatternRoot(PictogramElement pictogramElement) {
-		Object domainObject = getBusinessObjectForPictogramElement(pictogramElement);
-		return isMainBusinessObjectApplicable(domainObject);
-	}
-
-	@Override
-	public boolean canAdd(IAddContext context) {
-		if (context.getNewObject() instanceof DcdComponentInstantiation) {
-			if (context.getTargetContainer() instanceof Diagram) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -118,111 +68,8 @@ public class DevicePattern extends AbstractContainerPattern implements IPattern 
 		return deviceShape;
 	}
 
-	// TODO add canRemove, see Component Pattern
-	// TODO add canDelete, see Component Pattern
-	// TODO add delete, see Component Pattern
-
-	@Override
-	public boolean canResizeShape(IResizeShapeContext context) {
-		return true;
-	}
-
-	@Override
-	public boolean canLayout(ILayoutContext context) {
-		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
-		Object obj = DUtil.getBusinessObject(containerShape);
-		if (obj instanceof DeviceConfiguration) {
-			return true;
-		}
-		return false;
-	}
-
 	/**
-	 * Layout children of component
-	 */
-	@Override
-	public boolean layout(ILayoutContext context) {
-		// something is always changing.
-		((DeviceShape) context.getPictogramElement()).layout();
-		return true;
-	}
-
-	public boolean canMoveShape(IMoveShapeContext context) {
-		DcdComponentInstantiation dcdComponentInstantiation = (DcdComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());
-		if (dcdComponentInstantiation == null) {
-			return false;
-		}
-
-		// TODO: Another place that needs to be changed if supporting host collocation
-		if (context.getTargetContainer() instanceof Diagram) {
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public IReason updateNeeded(IUpdateContext context) {
-		return ((DeviceShape) context.getPictogramElement()).updateNeeded(context, this);
-	}
-
-	@Override
-	public boolean canDirectEdit(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		DeviceShape deviceShape = (DeviceShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		Object obj = getBusinessObjectForPictogramElement(deviceShape);
-		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
-
-		// allow if we've selected the inner Text for the component
-		if (obj instanceof DcdComponentInstantiation && ga instanceof Text) {
-			Text text = (Text) ga;
-			for (Property prop : text.getProperties()) {
-				if (prop.getValue().equals(RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public int getEditingType() {
-		return TYPE_TEXT;
-	}
-
-	@Override
-	public String getInitialValue(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		DeviceShape deviceShape = (DeviceShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		DcdComponentInstantiation ci = (DcdComponentInstantiation) getBusinessObjectForPictogramElement(deviceShape);
-		return ci.getUsageName();
-	}
-
-	@Override
-	public void setValue(final String value, IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		DeviceShape deviceShape = (DeviceShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		final DcdComponentInstantiation ci = (DcdComponentInstantiation) getBusinessObjectForPictogramElement(deviceShape);
-
-		// editing domain for our transaction
-		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
-		// Perform business object manipulation in a Command
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
-				// set usage name
-				ci.setUsageName(value);
-			}
-		});
-
-		// perform update, redraw
-		updatePictogramElement(deviceShape);
-	}
-	
-	/**
-	 * Return all ComponentShape in Diagram (recursively)
+	 * Return all DeviceShape in Diagram (recursively)
 	 * @param containerShape
 	 * @return
 	 */
@@ -238,50 +85,6 @@ public class DevicePattern extends AbstractContainerPattern implements IPattern 
 			}
 		}
 		return children;
-	}
-
-	@Override
-	public String getOuterTitle(EObject obj) {
-		if (obj instanceof DcdComponentInstantiation) {
-			try {
-				return ((DcdComponentInstantiation) obj).getPlacement().getComponentFileRef().getFile().getSoftPkg().getName();
-			} catch (NullPointerException e) {
-				return "< Component Bad Reference >";
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public String getInnerTitle(EObject obj) {
-		if (obj instanceof DcdComponentInstantiation) {
-			return ((DcdComponentInstantiation) obj).getUsageName();
-		}
-		return null;
-	}
-
-	@Override
-	public EList<UsesPortStub> getUses(EObject obj) {
-		if (obj instanceof DcdComponentInstantiation) {
-			return ((DcdComponentInstantiation) obj).getUses();
-		}
-		return null;
-	}
-
-	@Override
-	public EList<ProvidesPortStub> getProvides(EObject obj) {
-		if (obj instanceof DcdComponentInstantiation) {
-			return ((DcdComponentInstantiation) obj).getProvides();
-		}
-		return null;
-	}
-
-	@Override
-	public ComponentSupportedInterfaceStub getInterface(EObject obj) {
-		if (obj instanceof DcdComponentInstantiation) {
-			return ((DcdComponentInstantiation) obj).getInterfaceStub();
-		}
-		return null;
 	}
 
 	@Override
