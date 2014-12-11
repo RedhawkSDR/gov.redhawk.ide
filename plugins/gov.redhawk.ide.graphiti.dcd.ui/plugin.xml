@@ -33,7 +33,7 @@
    <extension
          point="org.eclipse.graphiti.ui.imageProviders">
       <imageProvider
-            class="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DeviceImageProvider"
+            class="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.NodeImageProvider"
             id="gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.deviceImageProvider">
       </imageProvider>
    </extension>

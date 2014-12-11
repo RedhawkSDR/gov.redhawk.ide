@@ -144,20 +144,17 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 				}
 			}
 			if (!foundTool /*&& passesFilter(spd.getName())*/) {
-				// special way of instantiating create feature
-				// allows us to know which palette tool was used
+				// special way of instantiating create feature, allows us to know which palette tool was used
 
-				// TODO: Don't really like that the device image provider references components...
-				// TODO: Maybe refactor some shared items (findby, HC, Connections) out to a parent ImageProvider class?
 				if (spd.getImplementation().size() > 1) {
 					StackEntry stackEntry = new StackEntry(spd.getName() + spd.getImplementation().get(0).getId(), spd.getDescription(),
-						DeviceImageProvider.IMG_COMPONENT_PLACEMENT);
+						NodeImageProvider.IMG_COMPONENT_PLACEMENT);
 					compartmentEntry.addToolEntry(stackEntry);
 					List<IToolEntry> stackEntries = new ArrayList<IToolEntry>();
 					for (Implementation impl : spd.getImplementation()) {
 						ICreateFeature createComponentFeature = new DeviceCreateFeature(getFeatureProvider(), spd, impl.getId());
 						SpdToolEntry entry = new SpdToolEntry(spd.getName() + " (" + impl.getId() + ")", spd.getDescription(), EcoreUtil.getURI(spd),
-							spd.getId(), null, DeviceImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
+							spd.getId(), null, NodeImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
 						stackEntries.add(entry);
 					}
 					sort(stackEntries);
@@ -166,7 +163,7 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 					}
 				} else {
 					ICreateFeature createComponentFeature = new DeviceCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
-					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature, DeviceImageProvider.IMG_COMPONENT_PLACEMENT);
+					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature, NodeImageProvider.IMG_COMPONENT_PLACEMENT);
 					compartmentEntry.addToolEntry(entry);
 				}
 			}

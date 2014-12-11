@@ -13,7 +13,7 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns;
 
 import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
 import gov.redhawk.ide.graphiti.dcd.ext.RHDeviceGxFactory;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DeviceImageProvider;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.NodeImageProvider;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -286,12 +286,12 @@ public class DevicePattern extends AbstractContainerPattern implements IPattern 
 
 	@Override
 	public String getOuterImageId() {
-		return DeviceImageProvider.IMG_COMPONENT_PLACEMENT;
+		return NodeImageProvider.IMG_COMPONENT_PLACEMENT;
 	}
 
 	@Override
 	public String getInnerImageId() {
-		return DeviceImageProvider.IMG_COMPONENT_INSTANCE;
+		return NodeImageProvider.IMG_COMPONENT_INSTANCE;
 	}
 
 	@Override

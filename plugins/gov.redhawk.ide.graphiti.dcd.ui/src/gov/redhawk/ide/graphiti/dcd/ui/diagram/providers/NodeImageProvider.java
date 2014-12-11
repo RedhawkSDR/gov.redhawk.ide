@@ -13,7 +13,7 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 import org.eclipse.graphiti.ui.platform.AbstractImageProvider;
 import org.eclipse.graphiti.ui.platform.IImageProvider;
 
-public class DeviceImageProvider extends AbstractImageProvider implements IImageProvider {
+public class NodeImageProvider extends AbstractImageProvider implements IImageProvider {
 
 	// The prefix for all identifiers of this image provider
 	protected static final String PREFIX = "gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.deviceImageProvider.";
@@ -29,7 +29,7 @@ public class DeviceImageProvider extends AbstractImageProvider implements IImage
 	public static final String IMG_FIND_BY = PREFIX + "findBy";
 	public static final String IMG_HOST_COLLOCATION = "hostCollocation";
 
-	public DeviceImageProvider() {
+	public NodeImageProvider() {
 	}
 
 	// register the path for each image identifier

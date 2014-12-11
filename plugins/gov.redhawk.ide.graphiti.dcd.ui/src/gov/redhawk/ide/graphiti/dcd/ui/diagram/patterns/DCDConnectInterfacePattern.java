@@ -12,7 +12,7 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns;
 
 import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDcdDiagramEditor;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DeviceImageProvider;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.NodeImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.dcd.validation.ConnectionsConstraint;
@@ -69,7 +69,7 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 
 	@Override
 	public String getCreateImageId() {
-		return DeviceImageProvider.IMG_CONNECTION;
+		return NodeImageProvider.IMG_CONNECTION;
 	}
 
 	/**
