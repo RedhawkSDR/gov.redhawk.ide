@@ -46,9 +46,11 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: gov.redhawk.ide.graphiti.sad.ext,
+Export-Package: gov.redhawk.ide.graphiti.sad.debug.internal.ui;x-internal:=true,
+ gov.redhawk.ide.graphiti.sad.ext,
  gov.redhawk.ide.graphiti.sad.ext.impl,
  gov.redhawk.ide.graphiti.sad.ext.util,
+ gov.redhawk.ide.graphiti.sad.internal.ui.editor,
  gov.redhawk.ide.graphiti.sad.ui,
  gov.redhawk.ide.graphiti.sad.ui.diagram,
  gov.redhawk.ide.graphiti.sad.ui.diagram.features.create,
@@ -62,8 +64,6 @@ Export-Package: gov.redhawk.ide.graphiti.sad.ext,
  gov.redhawk.ide.graphiti.sad.ui.diagram.util,
  gov.redhawk.ide.graphiti.sad.ui.palette,
  gov.redhawk.ide.graphiti.sad.ui.properties,
- gov.redhawk.ide.sad.graphiti.debug.internal.ui;x-internal:=true,
- gov.redhawk.ide.sad.graphiti.internal.ui.editor,
- gov.redhawk.ide.sad.graphiti.ui.wizard
+ gov.redhawk.ide.graphiti.sad.ui.wizard
 Import-Package: org.eclipse.wst.sse.ui;resolution:=optional
 

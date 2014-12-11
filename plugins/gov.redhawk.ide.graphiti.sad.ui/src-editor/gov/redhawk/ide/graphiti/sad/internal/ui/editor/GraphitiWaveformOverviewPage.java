@@ -8,22 +8,18 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.graphiti.internal.ui.editor;
+package gov.redhawk.ide.graphiti.sad.internal.ui.editor;
 
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.graphiti.ui.internal.editor.GFWorkspaceCommandStackImpl;
 
-import gov.redhawk.ide.sad.internal.ui.editor.SadPropertiesPage;
+import gov.redhawk.ide.sad.internal.ui.editor.SadOverviewPage;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
-public class GraphitiWaveformPropertiesPage extends SadPropertiesPage {
+public class GraphitiWaveformOverviewPage extends SadOverviewPage {
 
-	public GraphitiWaveformPropertiesPage(SCAFormEditor editor, String id, String title, boolean newStyleHeader) {
-		super(editor, id, title, newStyleHeader);
-	}
-
-	public GraphitiWaveformPropertiesPage(SCAFormEditor editor, String id, String title) {
-		super(editor, id, title);
+	public GraphitiWaveformOverviewPage(SCAFormEditor editor) {
+		super(editor);
 	}
 
 	/**

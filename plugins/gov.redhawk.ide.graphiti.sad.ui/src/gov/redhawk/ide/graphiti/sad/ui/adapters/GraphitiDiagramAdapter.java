@@ -11,10 +11,10 @@
 package gov.redhawk.ide.graphiti.sad.ui.adapters;
 
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
+import gov.redhawk.ide.graphiti.sad.debug.internal.ui.GraphitiModelMap;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ext.RHSadGxPackage;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.sad.graphiti.debug.internal.ui.GraphitiModelMap;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.emf.common.notify.Notification;

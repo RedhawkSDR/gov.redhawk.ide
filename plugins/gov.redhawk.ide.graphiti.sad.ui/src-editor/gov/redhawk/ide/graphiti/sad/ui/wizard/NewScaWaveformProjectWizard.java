@@ -8,14 +8,14 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.sad.graphiti.ui.wizard;
+package gov.redhawk.ide.graphiti.sad.ui.wizard;
 
 import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
+import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultiPageEditor;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramTypeProvider;
 import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
-import gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiWaveformMultiPageEditor;
 import gov.redhawk.ide.sad.ui.wizard.ScaWaveformProjectAssemblyControllerWizardPage;
 import gov.redhawk.ide.sad.ui.wizard.ScaWaveformProjectPropertiesWizardPage;
 import gov.redhawk.ide.sdr.SdrRoot;

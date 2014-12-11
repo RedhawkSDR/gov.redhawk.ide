@@ -180,8 +180,8 @@
             <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiWaveformMultiPageEditor"
-            contributorClass="gov.redhawk.ide.sad.graphiti.internal.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
+            class="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultiPageEditor"
+            contributorClass="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
             default="true"
             icon="icons/full/obj16/SadModelFile.gif"
             id="gov.redhawk.ide.sad.graphiti.ui.editor.presentation.SadEditorID"
@@ -189,7 +189,7 @@
          <contentTypeBinding contentTypeId="mil.jpeojtrs.sca.sad.content-type"/>
       </editor>
       <editor
-            class="gov.redhawk.ide.sad.graphiti.debug.internal.ui.GraphitiWaveformSandboxEditor"
+            class="gov.redhawk.ide.graphiti.sad.debug.internal.ui.GraphitiWaveformSandboxEditor"
             contributorClass="org.eclipse.graphiti.ui.editor.DiagramEditorActionBarContributor"
             default="false"
             icon="icons/redhawk16.gif"
@@ -197,7 +197,7 @@
             name="Graphiti Chalkboard">
       </editor>
       <editor
-            class="gov.redhawk.ide.sad.graphiti.debug.internal.ui.GraphitiWaveformExplorerEditor"
+            class="gov.redhawk.ide.graphiti.sad.debug.internal.ui.GraphitiWaveformExplorerEditor"
             default="false"
             icon="icons/redhawk16.gif"
             id="gov.redhawk.ide.sad.graphiti.ui.editor.waveformExplorer"
@@ -209,7 +209,7 @@
       <wizard
             canFinishEarly="false"
             category="gov.redhawk.ide.ui.wizards.category.sca"
-            class="gov.redhawk.ide.sad.graphiti.ui.wizard.NewScaWaveformProjectWizard"
+            class="gov.redhawk.ide.graphiti.sad.ui.wizard.NewScaWaveformProjectWizard"
             finalPerspective="gov.redhawk.ide.ui.perspectives.sca"
             hasPages="true"
             icon="icons/etool16/newprj_wiz.gif"
