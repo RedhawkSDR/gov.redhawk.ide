@@ -129,30 +129,6 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 	}
 
 	/**
-	 * Disable selection for PictogramElements that contain certain property values
-	 */
-	@Override
-	public PictogramElement getSelection(PictogramElement originalPe, PictogramElement[] oldSelection) {
-
-		if (originalPe instanceof FixPointAnchor
-			|| DUtil.doesPictogramContainProperty(originalPe, new String[] { RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE,
-				RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE, })) {
-			return null;
-		}
-
-		// Always select outerContainershape instead of its contents
-		if (DUtil.doesPictogramContainProperty(originalPe, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
-			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
-			RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
-			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE,
-			RHContainerShapeImpl.SHAPE_INNER_CONTAINER })) {
-			ContainerShape outerContainerShape = DUtil.findContainerShapeParentWithProperty(originalPe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-			return outerContainerShape;
-		}
-		return null;
-	}
-
-	/**
 	 * Add a refresh listener job that will refresh the palette of the provided diagramTypeProvider
 	 * every time Target SDR refreshes
 	 * @param diagramTypeProvider
