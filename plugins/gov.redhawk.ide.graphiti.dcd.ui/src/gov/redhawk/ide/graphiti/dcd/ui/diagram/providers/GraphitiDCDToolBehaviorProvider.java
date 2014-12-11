@@ -12,6 +12,7 @@
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.ServiceCreateFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
@@ -152,7 +153,12 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 					compartmentEntry.addToolEntry(stackEntry);
 					List<IToolEntry> stackEntries = new ArrayList<IToolEntry>();
 					for (Implementation impl : spd.getImplementation()) {
-						ICreateFeature createComponentFeature = new DeviceCreateFeature(getFeatureProvider(), spd, impl.getId());
+						ICreateFeature createComponentFeature = null;
+						if (container instanceof DevicesContainer) {
+							createComponentFeature = new DeviceCreateFeature(getFeatureProvider(), spd, impl.getId());
+						} else if (container instanceof ServicesContainer) {
+							createComponentFeature = new ServiceCreateFeature(getFeatureProvider(), spd, impl.getId());
+						}
 						SpdToolEntry entry = new SpdToolEntry(spd.getName() + " (" + impl.getId() + ")", spd.getDescription(), EcoreUtil.getURI(spd),
 							spd.getId(), null, NodeImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
 						stackEntries.add(entry);
@@ -162,7 +168,12 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 						stackEntry.addCreationToolEntry((SpdToolEntry) entry);
 					}
 				} else {
-					ICreateFeature createComponentFeature = new DeviceCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
+					ICreateFeature createComponentFeature = null;
+					if (container instanceof DevicesContainer) {
+						createComponentFeature = new DeviceCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
+					} else if (container instanceof ServicesContainer) {
+						createComponentFeature = new ServiceCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
+					}
 					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature, NodeImageProvider.IMG_COMPONENT_PLACEMENT);
 					compartmentEntry.addToolEntry(entry);
 				}

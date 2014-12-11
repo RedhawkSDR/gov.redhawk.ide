@@ -35,15 +35,13 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 
 public class ServiceCreateFeature extends AbstractCreateFeature {
 
-	// TODO: Device creation feature stub. Still needs to be implemented
-
 	private SoftPkg spd = null;
 	private String implId = null;
 
 	@Override
 	public String getDescription() {
 		// Provides the context menu Undo/Redo description
-		return "Add Device to Diagram";
+		return "Add Service to Diagram";
 	}
 
 	public ServiceCreateFeature(IFeatureProvider fp, String name, String description) {
@@ -56,7 +54,6 @@ public class ServiceCreateFeature extends AbstractCreateFeature {
 		this.implId = implId;
 	}
 
-	// TODO: Allow host collocation? Does that make sense for devices?
 	@Override
 	public boolean canCreate(ICreateContext context) {
 		if (context.getTargetContainer() instanceof Diagram) {
@@ -87,7 +84,7 @@ public class ServiceCreateFeature extends AbstractCreateFeature {
 		// container for new component instantiation, necessary for reference after command execution
 		final DcdComponentInstantiation[] componentInstantiations = new DcdComponentInstantiation[1];
 
-		// Create Device related objects in DCD model
+		// Create Service related objects in DCD model
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 		stack.execute(new RecordingCommand(editingDomain) {
 			@Override
@@ -151,10 +148,10 @@ public class ServiceCreateFeature extends AbstractCreateFeature {
 	private DcdComponentInstantiation createComponentInstantiation(final DeviceConfiguration dcd, DcdComponentPlacement componentPlacement, SoftPkg spd) {
 		DcdComponentInstantiation dcdComponentInstantiation = DcdFactory.eINSTANCE.createDcdComponentInstantiation();
 
-		String deviceName = DeviceConfiguration.Util.createDeviceUsageName(dcd, spd.getName());
-		String id = DeviceConfiguration.Util.createDeviceIdentifier(dcd, deviceName);
+		String serviceName = DeviceConfiguration.Util.createDeviceUsageName(dcd, spd.getName());
+		String id = DeviceConfiguration.Util.createDeviceIdentifier(dcd, serviceName);
 
-		dcdComponentInstantiation.setUsageName(deviceName);
+		dcdComponentInstantiation.setUsageName(serviceName);
 		dcdComponentInstantiation.setId(id);
 		dcdComponentInstantiation.setImplID(implId);
 

@@ -35,8 +35,6 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 
 public class DeviceCreateFeature extends AbstractCreateFeature {
 
-	// TODO: Device creation feature stub. Still needs to be implemented
-
 	private SoftPkg spd = null;
 	private String implId = null;
 
@@ -56,7 +54,6 @@ public class DeviceCreateFeature extends AbstractCreateFeature {
 		this.implId = implId;
 	}
 
-	// TODO: Allow host collocation? Does that make sense for devices?
 	@Override
 	public boolean canCreate(ICreateContext context) {
 		if (context.getTargetContainer() instanceof Diagram) {
