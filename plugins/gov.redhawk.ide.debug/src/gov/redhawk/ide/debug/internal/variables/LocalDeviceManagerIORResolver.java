@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal.variables;
 
-
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 
@@ -19,7 +18,7 @@ import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
 
 /**
- * 
+ * Provides the IDE sandbox device manager's IOR
  */
 public class LocalDeviceManagerIORResolver implements IDynamicVariableResolver {
 

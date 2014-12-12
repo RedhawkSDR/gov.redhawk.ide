@@ -28,7 +28,7 @@ import org.omg.CosNaming.NamingContextPackage.InvalidName;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 /**
- * 
+ * Provides a unique name binding within a naming context for a {@link SoftPkg} being launched.
  */
 public class NameBindingResolver extends AbstractLauncherResolver {
 
@@ -36,7 +36,8 @@ public class NameBindingResolver extends AbstractLauncherResolver {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected String resolveValue(String arg, final ILaunch launch, final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl) throws CoreException {
+	protected String resolveValue(String arg, final ILaunch launch, final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl)
+		throws CoreException {
 		final ILauncherVariableDesc desc = ScaDebugPlugin.getInstance().getLauncherVariableRegistry().getDesc(LaunchVariables.NAMING_CONTEXT_IOR);
 		return getUniqueName(spd, desc.resolveValue(null, spd, launch, config));
 	}
