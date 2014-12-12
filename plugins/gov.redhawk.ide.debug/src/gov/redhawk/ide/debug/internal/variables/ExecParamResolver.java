@@ -47,7 +47,7 @@ public class ExecParamResolver extends AbstractLauncherResolver {
 
 			final Map<String, Object> execParams = new HashMap<String, Object>();
 			for (final ScaAbstractProperty< ? > prop : tmp.getProperties()) {
-				if (prop instanceof ScaSimpleProperty && !prop.isDefaultValue() && prop.getDefinition().isKind(PropertyConfigurationType.EXECPARAM)) {
+				if (prop instanceof ScaSimpleProperty && prop.getDefinition() != null && prop.getDefinition().isKind(PropertyConfigurationType.EXECPARAM)) {
 					final ScaSimpleProperty simple = (ScaSimpleProperty) prop;
 					execParams.put(simple.getId(), simple.getValue());
 				}
