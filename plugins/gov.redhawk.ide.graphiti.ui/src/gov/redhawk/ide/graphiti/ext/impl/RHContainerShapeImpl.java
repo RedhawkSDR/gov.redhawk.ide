@@ -722,7 +722,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 											updateStatus = true;
 											// update style
 											fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForExternalProvidesPort(DUtil.findDiagram(this)));
-											featureProvider.link(fixPointAnchorRectangle.getPictogramElement(), findExternalPort(portObject, externalPorts)); // link
+											fixPointAnchorRectangle.getPictogramElement().getLink().getBusinessObjects().add(
+												findExternalPort(portObject, externalPorts));// link to externalPort so
 											// to externalPort so that update fires when it changes
 										} else {
 											return new Reason(true, "Port style requires update");
