@@ -11,12 +11,18 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.diagram;
 
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+
+import java.util.List;
+
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.workspace.util.WorkspaceSynchronizer.Delegate;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.ui.editor.DefaultUpdateBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
+import org.eclipse.jface.util.TransferDropTargetListener;
 
 public class GraphitiDcdDiagramEditor extends DiagramEditor {
 
@@ -64,9 +70,22 @@ public class GraphitiDcdDiagramEditor extends DiagramEditor {
 
 				};
 			}
+
+			@Override
+			protected List<TransferDropTargetListener> createBusinessObjectDropTargetListeners() {
+				List<TransferDropTargetListener> retVal = super.createBusinessObjectDropTargetListeners();
+				Diagram diagram = getDiagramBehavior().getDiagramTypeProvider().getDiagram();
+
+				// This check stops users from adding from the Target SDR to Graphiti Waveform Explorer
+				if (!DUtil.isDiagramWaveformExplorer(diagram)) {
+					retVal.add(0, new DiagramDropTargetListener(getDiagramContainer().getGraphicalViewer(), this));
+				}
+
+				return retVal;
+			}
 		};
 	}
-	
+
 	// TODO: Bring in init() and context methods from GraphitiWaveformDiagramEditor
-	
+
 }
