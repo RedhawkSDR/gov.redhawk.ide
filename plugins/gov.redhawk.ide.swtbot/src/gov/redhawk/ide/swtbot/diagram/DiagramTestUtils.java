@@ -103,16 +103,10 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		editor.drag(xTargetPosition, yTargetPosition, xTargetPosition, yTargetPosition);
 	}
 
-	/**
-	 * Drag a component onto the SAD diagram editor from the Target SDR.
-	 * @param gefBot
-	 * @param editor
-	 * @param componentName
-	 */
-	public static void dragComponentFromTargetSDRToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String componentName) {
+	private static void dragFromTargetSDRToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String componentName, String sdrLocation) {
 		SWTBotView scaExplorerView = gefBot.viewByTitle("SCA Explorer");
 		SWTBotTree scaTree = scaExplorerView.bot().tree();
-		SWTBotTreeItem componentTreeItem = scaTree.expandNode("Target SDR", "Components", componentName);
+		SWTBotTreeItem componentTreeItem = scaTree.expandNode("Target SDR", sdrLocation, componentName);
 
 		SWTBotGefViewer viewer = editor.getSWTBotGefViewer();
 		SWTBotGefFigureCanvas canvas = null;
@@ -135,34 +129,33 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	}
 
 	/**
+	 * Drag a component onto the SAD diagram editor from the Target SDR.
+	 * @param gefBot
+	 * @param editor
+	 * @param componentName
+	 */
+	public static void dragComponentFromTargetSDRToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String componentName) {
+		dragFromTargetSDRToDiagram(gefBot, editor, componentName, "Components");
+	}
+
+	/**
 	 * Drag a device onto the SAD diagram editor from the Target SDR.
 	 * @param gefBot
 	 * @param editor
 	 * @param deviceName
 	 */
 	public static void dragDeviceFromTargetSDRToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String deviceName) {
-		SWTBotView scaExplorerView = gefBot.viewByTitle("SCA Explorer");
-		SWTBotTree scaTree = scaExplorerView.bot().tree();
-		SWTBotTreeItem deviceTreeItem = scaTree.expandNode("Target SDR", "Devices", deviceName);
+		dragFromTargetSDRToDiagram(gefBot, editor, deviceName, "Devices");
+	}
 
-		SWTBotGefViewer viewer = editor.getSWTBotGefViewer();
-		SWTBotGefFigureCanvas canvas = null;
-
-		for (Field f : viewer.getClass().getDeclaredFields()) {
-			if ("canvas".equals(f.getName())) {
-				f.setAccessible(true);
-				try {
-					canvas = (SWTBotGefFigureCanvas) f.get(viewer);
-				} catch (IllegalArgumentException e) {
-					throw new IllegalStateException(e);
-				} catch (IllegalAccessException e) {
-					throw new IllegalStateException(e);
-				}
-			}
-		}
-
-		Assert.assertNotNull(canvas);
-		deviceTreeItem.dragAndDrop(canvas);
+	/**
+	 * Drag a service onto the SAD diagram editor from the Target SDR.
+	 * @param gefBot
+	 * @param editor
+	 * @param deviceName
+	 */
+	public static void dragServiceFromTargetSDRToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String deviceName) {
+		dragFromTargetSDRToDiagram(gefBot, editor, deviceName, "Services");
 	}
 
 	/**
