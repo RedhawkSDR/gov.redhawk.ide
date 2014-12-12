@@ -109,10 +109,10 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @param editor
 	 * @param componentName
 	 */
-	public static void dragFromTargetSDRToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String componentName) {
+	public static void dragComponentFromTargetSDRToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String componentName) {
 		SWTBotView scaExplorerView = gefBot.viewByTitle("SCA Explorer");
 		SWTBotTree scaTree = scaExplorerView.bot().tree();
-		SWTBotTreeItem hardLimitItem = scaTree.expandNode("Target SDR", "Components", componentName);
+		SWTBotTreeItem componentTreeItem = scaTree.expandNode("Target SDR", "Components", componentName);
 
 		SWTBotGefViewer viewer = editor.getSWTBotGefViewer();
 		SWTBotGefFigureCanvas canvas = null;
@@ -131,11 +131,11 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		}
 
 		Assert.assertNotNull(canvas);
-		hardLimitItem.dragAndDrop(canvas);
+		componentTreeItem.dragAndDrop(canvas);
 	}
 
 	/**
-	 * Drag a component onto the SAD diagram editor from the Target SDR.
+	 * Drag a device onto the SAD diagram editor from the Target SDR.
 	 * @param gefBot
 	 * @param editor
 	 * @param deviceName
@@ -143,7 +143,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	public static void dragDeviceFromTargetSDRToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String deviceName) {
 		SWTBotView scaExplorerView = gefBot.viewByTitle("SCA Explorer");
 		SWTBotTree scaTree = scaExplorerView.bot().tree();
-		SWTBotTreeItem treeDragItem = scaTree.expandNode("Target SDR", "Devices", deviceName);
+		SWTBotTreeItem deviceTreeItem = scaTree.expandNode("Target SDR", "Devices", deviceName);
 
 		SWTBotGefViewer viewer = editor.getSWTBotGefViewer();
 		SWTBotGefFigureCanvas canvas = null;
@@ -162,7 +162,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		}
 
 		Assert.assertNotNull(canvas);
-		treeDragItem.dragAndDrop(canvas);
+		deviceTreeItem.dragAndDrop(canvas);
 	}
 
 	/**

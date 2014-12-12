@@ -74,7 +74,7 @@ public class WaveformExplorerTest extends AbstractGraphitiDomainWaveformRuntimeT
 		ScaExplorerTestUtils.waitUntilComponentAppearsStoppedInScaExplorer(bot, DOMAIN_WAVEFORM_PARENT_PATH, getWaveFormFullName(), HARD_LIMIT_1);
 
 		// check that DnD does not work - From Target SDR
-		DiagramTestUtils.dragFromTargetSDRToDiagram(gefBot, editor, DATA_READER);
+		DiagramTestUtils.dragComponentFromTargetSDRToDiagram(gefBot, editor, DATA_READER);
 		editor.setFocus();
 		SWTBotGefEditPart dataReader = editor.getEditPart(DATA_READER);
 		Assert.assertNull(DATA_READER + " component should not have be drawn in diagram", dataReader);

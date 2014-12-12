@@ -17,6 +17,7 @@ import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.junit.Assert;
@@ -39,6 +40,12 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 
 		// Create an empty waveform project
 		NodeUtils.createNewNodeProject(gefBot, projectName, domainName);
+
+		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
+		// SWTBotGefEditor
+		SWTBotEditor nodeEditor = gefBot.editorByTitle(projectName);
+		nodeEditor.setFocus();
+		nodeEditor.bot().cTabItem("Diagram").activate();
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 
@@ -50,7 +57,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(GPP));
 
 		// Add component to diagram from Target SDR
-		DiagramTestUtils.dragFromTargetSDRToDiagram(gefBot, editor, GPP);
+		DiagramTestUtils.dragDeviceFromTargetSDRToDiagram(gefBot, editor, GPP);
 
 		// Confirm created component truly is HardLimit
 		assertGPP(editor.getEditPart(GPP));
@@ -350,8 +357,8 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 //	}
 
 	/**
-	 * Private helper method for {@link #checkNodePictogramElements()} 
-	 * Asserts the given SWTBotGefEditPart is a GPP device and is drawn correctly
+	 * Private helper method for {@link #checkNodePictogramElements()} Asserts the given SWTBotGefEditPart is a GPP
+	 * device and is drawn correctly
 	 * @param gefEditPart
 	 */
 	private static void assertGPP(SWTBotGefEditPart gefEditPart) {
@@ -372,7 +379,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		// GPP only has the one port
 		Assert.assertTrue(deviceShape.getUsesPortStubs().size() == 1 && deviceShape.getProvidesPortStubs().size() == 0);
 
-		// Both ports are of type dataDouble
-		Assert.assertEquals(deviceShape.getUsesPortStubs().get(0).getUses().getInterface().getName(), "propEvent");
+		// Port is of type propEvent
+		Assert.assertEquals("propEvent", deviceShape.getUsesPortStubs().get(0).getUses().getName());
 	}
 }

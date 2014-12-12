@@ -68,7 +68,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		DiagramTestUtils.releaseFromChalkboard(editor, editor.getEditPart(HARD_LIMIT));
 
 		// Add component to diagram from Target SDR
-		DiagramTestUtils.dragFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
+		DiagramTestUtils.dragComponentFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
 
 		// IDE-984 Make sure device cannot be added from Target SDR

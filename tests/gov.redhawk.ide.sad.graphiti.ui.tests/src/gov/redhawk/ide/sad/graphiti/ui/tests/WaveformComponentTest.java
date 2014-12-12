@@ -79,7 +79,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
 
 		// Add component to diagram from Target SDR
-		DiagramTestUtils.dragFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
+		DiagramTestUtils.dragComponentFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
 
 		// Confirm created component truly is HardLimit
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
