@@ -102,6 +102,12 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 	public static final String ID = "gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor";
 
 	public static final String EDITING_DOMAIN_ID = "mil.jpeojtrs.sca.dcd.diagram.EditingDomain";
+	
+	/**
+	 * This is used to manually override the dirty state. It can be used to avoid marking the editor as dirty on trivial
+	 * or hidden actions, such as linking the diagram to the sad.xml
+	 */
+	private boolean isDirtyAllowed = true;
 
 	/**
 	 * The graphical diagram editor embedded into this editor.
@@ -341,6 +347,22 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 		}
 		return super.isDirty();
 	}
+	
+	@Override
+	protected boolean computeDirtyState() {
+		if (!isDirtyAllowed()) {
+			setDirtyAllowed(true);
+			return false;
+		}
+		int activePage = getActivePage();
+		if (activePage == -1) {
+			return false;
+		} else if (activePage == getPageCount() - 1) {
+			return textEditor.isDirty();
+		}
+		BasicCommandStack commandStack = (BasicCommandStack) diagramEditor.getEditingDomain().getCommandStack();
+		return commandStack.isSaveNeeded();
+	}
 
 	/**
 	 * This implements {@link org.eclipse.jface.action.IMenuListener} to help
@@ -468,9 +490,8 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 		stack.execute(new RecordingCommand((TransactionalEditingDomain) getEditingDomain()) {
 			@Override
 			protected void doExecute() {
-				// TODO may need to implement logic to avoid dirty state, similar to WaveformMultiplPage editor
-//				// Evade dirty check - we DON'T want this action to mark the editor as dirty
-//				GraphitiWaveformMultiPageEditor.this.setDirtyAllowed(false);
+				// Evade dirty check - we DON'T want this action to mark the editor as dirty
+				GraphitiDcdMultipageEditor.this.setDirtyAllowed(false);
 
 				// set property specifying diagram context (design, local, domain)
 				Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CONTEXT, getDiagramContext(dcdResource));
@@ -650,5 +671,13 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 		localAdapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
 		((AdapterFactoryEditingDomain) domain).setAdapterFactory(localAdapterFactory);
 		return domain;
+	}
+
+	public boolean isDirtyAllowed() {
+		return isDirtyAllowed;
+	}
+
+	public void setDirtyAllowed(boolean isDirtyAllowed) {
+		this.isDirtyAllowed = isDirtyAllowed;
 	}
 }
