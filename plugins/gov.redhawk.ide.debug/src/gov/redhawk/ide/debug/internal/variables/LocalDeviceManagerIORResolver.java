@@ -31,8 +31,4 @@ public class LocalDeviceManagerIORResolver implements IDynamicVariableResolver {
 		return retVal;
 	}
 
-	public static String getProgramArgument() {
-		return "${" + LocalDeviceManagerIORResolver.VARIABLE_NAME + "}";
-	}
-
 }
