@@ -33,6 +33,7 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.IDeleteFeature;
+import org.eclipse.graphiti.features.IDirectEditingFeature;
 import org.eclipse.graphiti.features.IFeature;
 import org.eclipse.graphiti.features.IMoveShapeFeature;
 import org.eclipse.graphiti.features.IReconnectionFeature;
@@ -42,6 +43,7 @@ import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
+import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.IReconnectionContext;
@@ -56,6 +58,7 @@ import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.pattern.AddFeatureForPattern;
+import org.eclipse.graphiti.pattern.DirectEditingFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
@@ -166,6 +169,36 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		}
 
 		return super.getDeleteFeature(context);
+	}
+
+	// the text we double click is nested inside of the pictogram element that links to our business object
+	@Override
+	public IDirectEditingFeature getDirectEditingFeature(IDirectEditingContext context) {
+		if (context == null) {
+			throw new IllegalArgumentException("Argument context must not be null."); //$NON-NLS-1$
+		}
+		IDirectEditingFeature ret = null;
+		for (IPattern pattern : this.getPatterns()) {
+			if (checkPattern(pattern, getBusinessObjectForPictogramElement(DUtil.findContainerShapeParentWithProperty(context.getPictogramElement(),
+				RHContainerShapeImpl.SHAPE_OUTER_CONTAINER)))) {
+				IPattern chosenPattern = null;
+				IDirectEditingFeature f = new DirectEditingFeatureForPattern(this, pattern);
+				if (checkFeatureAndContext(f, context)) {
+					if (ret == null) {
+						ret = f;
+						chosenPattern = pattern;
+					} else {
+						traceWarning("getDirectEditingFeature", pattern, chosenPattern); //$NON-NLS-1$
+					}
+				}
+			}
+		}
+
+		if (ret == null) {
+			ret = getDirectEditingFeatureAdditional(context);
+		}
+
+		return ret;
 	}
 
 	@Override

@@ -14,16 +14,30 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns;
 import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
 import gov.redhawk.ide.graphiti.dcd.ext.RHDeviceGxFactory;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.NodeImageProvider;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalCommandStack;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.IDirectEditingContext;
+import org.eclipse.graphiti.features.context.ILayoutContext;
+import org.eclipse.graphiti.features.context.IResizeShapeContext;
+import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.features.impl.Reason;
+import org.eclipse.graphiti.mm.Property;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -120,4 +134,124 @@ public class DevicePattern extends AbstractNodeComponentPattern implements IPatt
 
 		return businessObjectsToLink;
 	}
+
+	@Override
+	public boolean canDirectEdit(IDirectEditingContext context) {
+		PictogramElement pe = context.getPictogramElement();
+		DeviceShape deviceShape = (DeviceShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		Object obj = getBusinessObjectForPictogramElement(deviceShape);
+		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
+
+		// allow if we've selected the inner Text for the component
+		if (obj instanceof DcdComponentInstantiation && ga instanceof Text) {
+			Text text = (Text) ga;
+			for (Property prop : text.getProperties()) {
+				if (prop.getValue().equals(RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int getEditingType() {
+		return TYPE_TEXT;
+	}
+
+	@Override
+	public String getInnerTitle(EObject obj) {
+		if (obj instanceof DcdComponentInstantiation) {
+			return getInnerTitle((DcdComponentInstantiation) obj);
+		}
+		return null;
+	}
+
+	/**
+	 * Provides the title of the inner shape
+	 * @param ci
+	 * @return
+	 */
+	public String getInnerTitle(DcdComponentInstantiation ci) {
+		return ci.getUsageName();
+	}
+
+	@Override
+	public void setValue(final String value, IDirectEditingContext context) {
+		PictogramElement pe = context.getPictogramElement();
+		DeviceShape deviceShape = (DeviceShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		final DcdComponentInstantiation ci = (DcdComponentInstantiation) getBusinessObjectForPictogramElement(deviceShape);
+
+		// editing domain for our transaction
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+
+		// Perform business object manipulation in a Command
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+				// set usage name
+				ci.setUsageName(value);
+			}
+		});
+
+		// perform update, redraw
+		updatePictogramElement(deviceShape);
+	}
+
+	/**
+	 * Determines whether we need to update the diagram from the model.
+	 */
+	@Override
+	public IReason updateNeeded(IUpdateContext context) {
+		return ((DeviceShape) context.getPictogramElement()).updateNeeded(context, this);
+	}
+
+	@Override
+	public String getInitialValue(IDirectEditingContext context) {
+		PictogramElement pe = context.getPictogramElement();
+		DeviceShape deviceShape = (DeviceShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		DcdComponentInstantiation ci = (DcdComponentInstantiation) getBusinessObjectForPictogramElement(deviceShape);
+		return ci.getUsageName();
+	}
+
+	@Override
+	public boolean update(IUpdateContext context) {
+		Reason updated = ((DeviceShape) context.getPictogramElement()).update(context, this);
+
+		// if we updated redraw
+		if (updated.toBoolean()) {
+			layoutPictogramElement(context.getPictogramElement());
+		}
+
+		return updated.toBoolean();
+	}
+
+	@Override
+	public boolean canResizeShape(IResizeShapeContext context) {
+		return true;
+	}
+
+	@Override
+	public boolean canLayout(ILayoutContext context) {
+		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
+		Object obj = DUtil.getBusinessObject(containerShape);
+		if (obj instanceof DcdComponentInstantiation) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Layout children of component
+	 */
+	@Override
+	public boolean layout(ILayoutContext context) {
+
+		((DeviceShape) context.getPictogramElement()).layout();
+
+		// something is always changing.
+		return true;
+	}
+
 }
