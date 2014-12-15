@@ -10,6 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gov.redhawk.ide.graphiti.dcd.ext.impl.DeviceShapeImpl;
 import gov.redhawk.ide.graphiti.dcd.ext.impl.ServiceShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -21,7 +24,9 @@ import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class NodeComponentTest extends AbstractGraphitiTest {
@@ -37,11 +42,12 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 	 * Create the pictogram shape in the node diagram that represents device/service business objects.
 	 * This includes ContainerShape, usage name, ID, port shapes and labels, and component supported interface.
 	 */
+	@Ignore
 	@Test
 	public void checkNodePictogramElements() {
 		projectName = "PictogramShapesNode";
 
-		// Create an empty waveform project
+		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, domainName);
 
 		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
@@ -96,65 +102,6 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 //			DiagramTestUtils.deleteFromDiagram(editor, gefEditPart);
 //			Assert.assertNull(editor.getEditPart(s));
 //		}
-//	}
-//
-//	/**
-//	 * IDE-881
-//	 * Ensure components that are located within host collocation are deleted both in the diagram and model when
-//	 * clicking the delete action (trashcan)
-//	 */
-//	@Test
-//	public void checkComponentInHostCollocationContextMenuDelete() {
-//		waveformName = "HC_Context_Menu_Delete";
-//		final String HOST_CO = "Host Collocation";
-//		final String HOST_CO_NAME = "HC1";
-//
-//		// Create a new empty waveform
-//		WaveformUtils.createNewWaveform(gefBot, waveformName);
-//		editor = gefBot.gefEditor(waveformName);
-//
-//		// Add host collocation to the waveform
-//		DiagramTestUtils.dragFromPaletteToDiagram(editor, HOST_CO, 0, 0);
-//		SWTBotShell hostCoShell = gefBot.shell("New " + HOST_CO);
-//		hostCoShell.setFocus();
-//		SWTBotText hostCoName = gefBot.textWithLabel(HOST_CO + ":");
-//		hostCoName.setFocus();
-//		hostCoName.typeText(HOST_CO_NAME);
-//		gefBot.button("OK").click();
-//
-//		// Add component to the host collocation
-//		editor.setFocus();
-//		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
-//		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 200);
-//
-//		// Check pictogram elements
-//		SWTBotGefEditPart hostCoEditPart = editor.getEditPart(HOST_CO_NAME);
-//		Assert.assertNotNull(HOST_CO_NAME + "edit part not found", hostCoEditPart);
-//		ContainerShape hostCollocationContainerShape = (ContainerShape) hostCoEditPart.part().getModel();
-//		String shapeType = Graphiti.getPeService().getPropertyValue(hostCollocationContainerShape, DUtil.SHAPE_TYPE);
-//		Assert.assertTrue("Host Collocation property is missing or wrong", shapeType.equals(HostCollocationPattern.HOST_COLLOCATION_OUTER_CONTAINER_SHAPE));
-//
-//		// Check model object values
-//		Object bo = DUtil.getBusinessObject(hostCollocationContainerShape);
-//		Assert.assertTrue("Business object should be instance of HostCollocation", bo instanceof HostCollocation);
-//
-//		HostCollocation hostCo = (HostCollocation) bo;
-//		EList<SadComponentPlacement> components = hostCo.getComponentPlacement();
-//		Assert.assertEquals("Expected component \'" + HARD_LIMIT + "_1\' was not found", HARD_LIMIT + "_1",
-//			components.get(0).getComponentInstantiation().get(0).getId());
-//		Assert.assertEquals("Expected component \'" + HARD_LIMIT + "_2\' was not found", HARD_LIMIT + "_2",
-//			components.get(1).getComponentInstantiation().get(0).getId());
-//
-//		// delete component
-//		SWTBotGefEditPart gefEditPart = editor.getEditPart(HARD_LIMIT);
-//		DiagramTestUtils.deleteFromDiagram(editor, gefEditPart);
-//
-//		// ensure HardLimit_2 shape still exists
-//		Assert.assertNotNull(editor.getEditPart("HardLimit_2"));
-//		// ensure HardLimit_1 component business object is deleted
-//		Assert.assertTrue("Expected there to be only 1 component left after deletion", hostCo.getComponentPlacement().size() == 1);
-//		Assert.assertNotNull("ComponentFile for " + HARD_LIMIT + " no longer exists", hostCo.getComponentPlacement().get(0).getComponentFileRef().getFile());
-//
 //	}
 //
 //	/**
@@ -270,37 +217,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 //		}
 //		return false;
 //	}
-//
-//	/**
-//	 * IDE-766
-//	 * The delete context menu should not appear when ports are selected
-//	 */
-//	@Test
-//	public void doNotDeletePortsTest() {
-//		waveformName = "IDE-766-Test";
-//		// Create an empty waveform project
-//		WaveformUtils.createNewWaveform(gefBot, waveformName);
-//		editor = gefBot.gefEditor(waveformName);
-//		editor.setFocus();
-//
-//		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
-//		SWTBotGefEditPart provides = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT);
-//		SWTBotGefEditPart uses = DiagramTestUtils.getDiagramUsesPort(editor, HARD_LIMIT);
-//
-//		List<SWTBotGefEditPart> anchors = new ArrayList<SWTBotGefEditPart>();
-//		anchors.add(DiagramTestUtils.getDiagramPortAnchor(provides));
-//		anchors.add(DiagramTestUtils.getDiagramPortAnchor(uses));
-//
-//		for (SWTBotGefEditPart anchor : anchors) {
-//			try {
-//				anchor.select();
-//				editor.clickContextMenu("Delete");
-//				Assert.fail();
-//			} catch (WidgetNotFoundException e) {
-//				Assert.assertEquals(e.getMessage(), "Delete", e.getMessage());
-//			}
-//		}
-//	}
+//	
 //
 //	static List<String> getTargetSdrComponents(final SWTWorkbenchBot bot) {
 //		LinkedList<String> list = new LinkedList<String>();
@@ -317,53 +234,39 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 //
 //		return Collections.unmodifiableList(list);
 //	}
-//	
-//	/**
-//	 * IDE-978, IDE-965
-//	 * Add an external port to the diagram via the sad.xml
-//	 */
-//	@Test
-//	public void addRemoveExternalPortsViaOverviewTest() {
-//		waveformName = "AddRemove_ExternalPort_Overview";
-//		final String HARDLIMIT = "HardLimit";
-//
-//		// Create a new empty waveform
-//		WaveformUtils.createNewWaveform(gefBot, waveformName);
-//		editor = gefBot.gefEditor(waveformName);
-//
-//		// Add component to the diagram
-//		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
-//		MenuUtils.save(editor);
-//
-//		//add port via Overview tab
-//		DiagramTestUtils.openTabInEditor(editor, "Overview");
-//		bot.button("Add").click();
-//		SWTBotShell addExternalPortShell = bot.shell("Add external Port");
-//		final SWTBot wizardBot = addExternalPortShell.bot();
-//		addExternalPortShell.activate();
-//		wizardBot.table(1).select(1);
-//		wizardBot.button("Finish").click();
-//		Assert.assertEquals("External ports not added", 1, bot.table(0).rowCount());
-//		
-//		// Confirm edits appear in the diagram
-//		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-//		//assert port set to external in diagram
-//		SWTBotGefEditPart hardLimitUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, HARDLIMIT);
-//		DiagramTestUtils.assertExternalPort(hardLimitUsesEditPart, true);
-//		
-//		//remove port via Overview tab
-//		DiagramTestUtils.openTabInEditor(editor, "Overview");
-//		bot.table(0).select(0);
-//		bot.button("Remove").click();
-//		Assert.assertEquals("External ports not removed", 0, bot.table(0).rowCount());
-//		
-//		// Confirm that no external ports exist in diagram
-//		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-//		hardLimitUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, HARDLIMIT);
-//		DiagramTestUtils.assertExternalPort(hardLimitUsesEditPart, false);
-//		
-//		
-//	}
+	/**
+	 * The delete context menu should not appear when ports are selected
+	 */
+	@Test
+	public void doNotDeletePortsTest() {
+		projectName = "No-Delete-Port-Test";
+		// Create an empty node project
+		NodeUtils.createNewNodeProject(gefBot, projectName, domainName);
+
+		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
+		// SWTBotGefEditor
+		SWTBotEditor nodeEditor = gefBot.editorByTitle(projectName);
+		nodeEditor.setFocus();
+		nodeEditor.bot().cTabItem("Diagram").activate();
+		editor = gefBot.gefEditor(projectName);
+		editor.setFocus();
+
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
+		SWTBotGefEditPart uses = DiagramTestUtils.getDiagramUsesPort(editor, GPP);
+
+		List<SWTBotGefEditPart> anchors = new ArrayList<SWTBotGefEditPart>();
+		anchors.add(DiagramTestUtils.getDiagramPortAnchor(uses));
+
+		for (SWTBotGefEditPart anchor : anchors) {
+			try {
+				anchor.select();
+				editor.clickContextMenu("Delete");
+				Assert.fail();
+			} catch (WidgetNotFoundException e) {
+				Assert.assertEquals(e.getMessage(), "Delete", e.getMessage());
+			}
+		}
+	}
 
 	/**
 	 * Private helper method for {@link #checkNodePictogramElements()} Asserts the given SWTBotGefEditPart is a GPP
@@ -375,7 +278,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		// Drill down to graphiti device shape
 		DeviceShapeImpl deviceShape = (DeviceShapeImpl) gefEditPart.part().getModel();
 
-		// Grab the associated business object and confirm it is a SadComponentInstantiation
+		// Grab the associated business object and confirm it is a DcdComponentInstantiation
 		Object bo = DUtil.getBusinessObject(deviceShape);
 		Assert.assertTrue("business object should be of type DcdComponentInstantiation", bo instanceof DcdComponentInstantiation);
 		DcdComponentInstantiation ci = (DcdComponentInstantiation) bo;
@@ -393,8 +296,8 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 	}
 
 	/**
-	 * Private helper method for {@link #checkNodePictogramElements()} Asserts the given SWTBotGefEditPart is a GPP
-	 * device and is drawn correctly
+	 * Private helper method for {@link #checkNodePictogramElements()} Asserts the given SWTBotGefEditPart is a
+	 * ServiceStub service and is drawn correctly
 	 * @param gefEditPart
 	 */
 	private static void assertServiceStub(SWTBotGefEditPart gefEditPart) {
@@ -402,7 +305,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		// Drill down to graphiti service shape
 		ServiceShapeImpl serviceShape = (ServiceShapeImpl) gefEditPart.part().getModel();
 
-		// Grab the associated business object and confirm it is a SadComponentInstantiation
+		// Grab the associated business object and confirm it is a DcdComponentInstantiation
 		Object bo = DUtil.getBusinessObject(serviceShape);
 		Assert.assertTrue("business object should be of type DcdComponentInstantiation", bo instanceof DcdComponentInstantiation);
 		DcdComponentInstantiation ci = (DcdComponentInstantiation) bo;
