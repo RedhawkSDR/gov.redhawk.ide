@@ -379,6 +379,108 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 	}
 
 	/**
+	 * IDE-965
+	 * Make sure correct ports get marked and unmarked as external
+	 */
+	@Test
+	public void addRemoveExternalPortsInDiagram() {
+		waveformName = "AddRemove_ExternalPort_Diagram";
+		final String HARDLIMIT = "HardLimit";
+
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+
+		// Add component to the diagram
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 200, 200);
+		MenuUtils.save(editor);
+		
+		// Make sure all 4 port anchors can be found
+		SWTBotGefEditPart hardLimit1UsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, HARDLIMIT + "_1");
+		Assert.assertNotNull(hardLimit1UsesEditPart);
+		SWTBotGefEditPart hardLimit2UsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, HARDLIMIT + "_2");
+		Assert.assertNotNull(hardLimit2UsesEditPart);
+		SWTBotGefEditPart hardLimit1ProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT + "_1");
+		Assert.assertNotNull(hardLimit1ProvidesEditPart);
+		SWTBotGefEditPart hardLimit2ProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT + "_2");
+		Assert.assertNotNull(hardLimit2ProvidesEditPart);
+		
+		SWTBotGefEditPart hardLimit1UsesAnchor = DiagramTestUtils.getDiagramPortAnchor(hardLimit1UsesEditPart);
+		Assert.assertNotNull(hardLimit1UsesAnchor);
+		SWTBotGefEditPart hardLimit2UsesAnchor = DiagramTestUtils.getDiagramPortAnchor(hardLimit2UsesEditPart);
+		Assert.assertNotNull(hardLimit2UsesAnchor);
+		SWTBotGefEditPart hardLimit1ProvidesAnchor = DiagramTestUtils.getDiagramPortAnchor(hardLimit1ProvidesEditPart);
+		Assert.assertNotNull(hardLimit1ProvidesAnchor);
+		SWTBotGefEditPart hardLimit2ProvidesAnchor = DiagramTestUtils.getDiagramPortAnchor(hardLimit2ProvidesEditPart);
+		Assert.assertNotNull(hardLimit2ProvidesAnchor);
+
+		// make sure all ports start as non-external
+		DiagramTestUtils.assertExternalPort(hardLimit1UsesEditPart, false);
+		DiagramTestUtils.assertExternalPort(hardLimit2UsesEditPart, false);
+		DiagramTestUtils.assertExternalPort(hardLimit1ProvidesEditPart, false);
+		DiagramTestUtils.assertExternalPort(hardLimit2ProvidesEditPart, false);
+
+		// make sure correct ports are marked and unmarked
+		hardLimit1UsesAnchor.select();
+		editor.clickContextMenu("Mark External Port");
+		DiagramTestUtils.assertExternalPort(hardLimit1UsesEditPart, true);
+		DiagramTestUtils.assertExternalPort(hardLimit2UsesEditPart, false);
+		DiagramTestUtils.assertExternalPort(hardLimit1ProvidesEditPart, false);
+		DiagramTestUtils.assertExternalPort(hardLimit2ProvidesEditPart, false);
+
+		hardLimit2UsesAnchor.select();
+		editor.clickContextMenu("Mark External Port");
+		DiagramTestUtils.assertExternalPort(hardLimit1UsesEditPart, true);
+		DiagramTestUtils.assertExternalPort(hardLimit2UsesEditPart, true);
+		DiagramTestUtils.assertExternalPort(hardLimit1ProvidesEditPart, false);
+		DiagramTestUtils.assertExternalPort(hardLimit2ProvidesEditPart, false);
+
+		hardLimit1ProvidesAnchor.select();
+		editor.clickContextMenu("Mark External Port");
+		DiagramTestUtils.assertExternalPort(hardLimit1UsesEditPart, true);
+		DiagramTestUtils.assertExternalPort(hardLimit2UsesEditPart, true);
+		DiagramTestUtils.assertExternalPort(hardLimit1ProvidesEditPart, true);
+		DiagramTestUtils.assertExternalPort(hardLimit2ProvidesEditPart, false);
+
+		hardLimit2ProvidesAnchor.select();
+		editor.clickContextMenu("Mark External Port");
+		DiagramTestUtils.assertExternalPort(hardLimit1UsesEditPart, true);
+		DiagramTestUtils.assertExternalPort(hardLimit2UsesEditPart, true);
+		DiagramTestUtils.assertExternalPort(hardLimit1ProvidesEditPart, true);
+		DiagramTestUtils.assertExternalPort(hardLimit2ProvidesEditPart, true);
+
+		hardLimit1UsesAnchor.select();
+		editor.clickContextMenu("Mark Non-External Port");
+		DiagramTestUtils.assertExternalPort(hardLimit1UsesEditPart, false);
+		DiagramTestUtils.assertExternalPort(hardLimit2UsesEditPart, true);
+		DiagramTestUtils.assertExternalPort(hardLimit1ProvidesEditPart, true);
+		DiagramTestUtils.assertExternalPort(hardLimit2ProvidesEditPart, true);
+
+		hardLimit2UsesAnchor.select();
+		editor.clickContextMenu("Mark Non-External Port");
+		DiagramTestUtils.assertExternalPort(hardLimit1UsesEditPart, false);
+		DiagramTestUtils.assertExternalPort(hardLimit2UsesEditPart, false);
+		DiagramTestUtils.assertExternalPort(hardLimit1ProvidesEditPart, true);
+		DiagramTestUtils.assertExternalPort(hardLimit2ProvidesEditPart, true);
+
+		hardLimit1ProvidesAnchor.select();
+		editor.clickContextMenu("Mark Non-External Port");
+		DiagramTestUtils.assertExternalPort(hardLimit1UsesEditPart, false);
+		DiagramTestUtils.assertExternalPort(hardLimit2UsesEditPart, false);
+		DiagramTestUtils.assertExternalPort(hardLimit1ProvidesEditPart, false);
+		DiagramTestUtils.assertExternalPort(hardLimit2ProvidesEditPart, true);
+
+		hardLimit2ProvidesAnchor.select();
+		editor.clickContextMenu("Mark Non-External Port");
+		DiagramTestUtils.assertExternalPort(hardLimit1UsesEditPart, false);
+		DiagramTestUtils.assertExternalPort(hardLimit2UsesEditPart, false);
+		DiagramTestUtils.assertExternalPort(hardLimit1ProvidesEditPart, false);
+		DiagramTestUtils.assertExternalPort(hardLimit2ProvidesEditPart, false);
+
+	}
+	
+	/**
 	 * Private helper method for {@link #checkComponentPictogramElements()} and
 	 * {@link #checkComponentPictogramElementsWithAssemblyController()}.
 	 * Asserts the given SWTBotGefEditPart is a HardLimit component and assembly controller
