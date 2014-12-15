@@ -11,6 +11,7 @@
 package gov.redhawk.ide.graphiti.dcd.ui.tests;
 
 import gov.redhawk.ide.graphiti.dcd.ext.impl.DeviceShapeImpl;
+import gov.redhawk.ide.graphiti.dcd.ext.impl.ServiceShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.NodeUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
@@ -29,8 +30,10 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 	private String projectName;
 	private String domainName = "REDHAWK_DEV";
 	private static final String GPP = "GPP";
+	private static final String SERVICE_STUB = "ServiceStub";
 
 	/**
+	 * IDE-988
 	 * Create the pictogram shape in the node diagram that represents device/service business objects.
 	 * This includes ContainerShape, usage name, ID, port shapes and labels, and component supported interface.
 	 */
@@ -49,18 +52,24 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 
-		// Add component to diagram from palette
+		// Add to diagram from palette
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SERVICE_STUB, 300, 200);
 
-		// Confirm created component truly is HardLimit
+		// Confirm created object is as expected
 		assertGPP(editor.getEditPart(GPP));
 		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(GPP));
+		assertServiceStub(editor.getEditPart(SERVICE_STUB));
+		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(SERVICE_STUB));
 
-		// Add component to diagram from Target SDR
+		// Add to diagram from Target SDR
 		DiagramTestUtils.dragDeviceFromTargetSDRToDiagram(gefBot, editor, GPP);
-
-		// Confirm created component truly is HardLimit
+		editor.drag(editor.getEditPart(GPP), 10, 50);
 		assertGPP(editor.getEditPart(GPP));
+
+		DiagramTestUtils.dragServiceFromTargetSDRToDiagram(gefBot, editor, SERVICE_STUB);
+		editor.select(editor.getEditPart(SERVICE_STUB));
+		assertServiceStub(editor.getEditPart(SERVICE_STUB));
 	}
 
 //	/**
@@ -363,7 +372,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 	 */
 	private static void assertGPP(SWTBotGefEditPart gefEditPart) {
 		Assert.assertNotNull(gefEditPart);
-		// Drill down to graphiti component shape
+		// Drill down to graphiti device shape
 		DeviceShapeImpl deviceShape = (DeviceShapeImpl) gefEditPart.part().getModel();
 
 		// Grab the associated business object and confirm it is a SadComponentInstantiation
@@ -381,5 +390,29 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 
 		// Port is of type propEvent
 		Assert.assertEquals("propEvent", deviceShape.getUsesPortStubs().get(0).getUses().getName());
+	}
+
+	/**
+	 * Private helper method for {@link #checkNodePictogramElements()} Asserts the given SWTBotGefEditPart is a GPP
+	 * device and is drawn correctly
+	 * @param gefEditPart
+	 */
+	private static void assertServiceStub(SWTBotGefEditPart gefEditPart) {
+		Assert.assertNotNull(gefEditPart);
+		// Drill down to graphiti service shape
+		ServiceShapeImpl serviceShape = (ServiceShapeImpl) gefEditPart.part().getModel();
+
+		// Grab the associated business object and confirm it is a SadComponentInstantiation
+		Object bo = DUtil.getBusinessObject(serviceShape);
+		Assert.assertTrue("business object should be of type DcdComponentInstantiation", bo instanceof DcdComponentInstantiation);
+		DcdComponentInstantiation ci = (DcdComponentInstantiation) bo;
+
+		// Run assertions on expected properties
+		Assert.assertEquals("outer text should match component type", SERVICE_STUB, serviceShape.getOuterText().getValue());
+		Assert.assertEquals("inner text should match component usage name", ci.getUsageName(), serviceShape.getInnerText().getValue());
+		Assert.assertNotNull("component supported interface graphic should not be null", serviceShape.getLollipop());
+
+		// SERVICE_STUB should not have a port
+		Assert.assertTrue(serviceShape.getUsesPortStubs().size() == 0 && serviceShape.getProvidesPortStubs().size() == 0);
 	}
 }
