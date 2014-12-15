@@ -193,7 +193,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		}
 		editor.getEditPart(HARD_LIMIT).click();
 		MenuUtils.save(editor);
-		String regex = DiagramTestUtils.regexStringForSadProperty((ComponentShapeImpl) editor.getEditPart(HARD_LIMIT).part().getModel(), propertyname, newValue);
+		String regex = DiagramTestUtils.regexStringForProperty(propertyname, newValue);
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		String editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The sad.xml should include HardLimit's changed property", editorText.matches(regex));

@@ -181,8 +181,8 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 					// if it's already there disable this feature
 					if (obj instanceof ProvidesPortStub) {
 						for (Port p : externalPortList) {
-							if (((ProvidesPortStub) obj).getName().equals(p.getProvidesIndentifier()) && 
-									((ProvidesPortStub) obj).eContainer().equals(p.getComponentInstantiationRef().getInstantiation())) {
+							if (((ProvidesPortStub) obj).getName().equals(p.getProvidesIndentifier())
+								&& ((ProvidesPortStub) obj).eContainer().equals(p.getComponentInstantiationRef().getInstantiation())) {
 								mark = false;
 							}
 						}
@@ -190,8 +190,8 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 					// if it's already there disable this feature
 					if (obj instanceof UsesPortStub) {
 						for (Port p : externalPortList) {
-							if (((UsesPortStub) obj).getName().equals(p.getUsesIdentifier()) && 
-									((UsesPortStub) obj).eContainer().equals(p.getComponentInstantiationRef().getInstantiation())) {
+							if (((UsesPortStub) obj).getName().equals(p.getUsesIdentifier())
+								&& ((UsesPortStub) obj).eContainer().equals(p.getComponentInstantiationRef().getInstantiation())) {
 								mark = false;
 							}
 						}

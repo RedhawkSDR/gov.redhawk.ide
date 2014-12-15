@@ -538,7 +538,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @param value
 	 * @return
 	 */
-	public static String regexStringForSadProperty(ComponentShapeImpl componentShape, String propertyname, String value) {
+	public static String regexStringForProperty(String propertyname, String value) {
 		return "(?s).*<componentproperties>.*<simpleref refid=\"" + propertyname + "\" value=\"" + value + "\"/>.*</componentproperties>.*";
 	}
 

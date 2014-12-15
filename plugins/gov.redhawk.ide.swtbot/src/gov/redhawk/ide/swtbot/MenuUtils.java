@@ -102,11 +102,13 @@ public class MenuUtils {
 	 * Opens the indicated view. If already open, brings view into focus.
 	 * @param bot
 	 * @param view
+	 * @return 
 	 */
-	public static void showView(SWTWorkbenchBot bot, String viewID) {
+	public static SWTBotView showView(SWTWorkbenchBot bot, String viewID) {
 		// Open the new waveform project wizard
 		SWTBotView viewToOpen = bot.viewById(viewID);
 		viewToOpen.show();
+		return viewToOpen;
 	}
 
 }
