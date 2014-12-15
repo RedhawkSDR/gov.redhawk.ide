@@ -12,8 +12,8 @@ package gov.redhawk.ide.sad.graphiti.ui.runtime.chalkboard.tests;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.ComponentUtils;
 import gov.redhawk.ide.swtbot.DeviceUtils;
 import gov.redhawk.ide.swtbot.MenuUtils;
@@ -32,7 +32,6 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotLabel;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -73,7 +72,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 
 		// IDE-984 Make sure device cannot be added from Target SDR
 		DiagramTestUtils.dragDeviceFromTargetSDRToDiagram(gefBot, editor, "GPP");
-		Assert.assertNull("Unexpected device found in diagram",editor.getEditPart("GPP"));
+		Assert.assertNull("Unexpected device found in diagram", editor.getEditPart("GPP"));
 
 		// Open the chalkboard with components already launched
 		editor.close();
@@ -139,7 +138,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		// This must be done to ensure right shell is active for menu selection
 		StandardTestActions.configurePyDev();
 		bot.shell("SCA - REDHAWK IDE").activate();
-		
+
 		// create test Component in workspace
 		final String wkspComponentName = "testComponentInWorkspace";
 		ComponentUtils.createComponentProject(bot, wkspComponentName, "Python");
@@ -156,7 +155,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		editor.close();
 		MenuUtils.deleteNodeInProjectExplorer(bot, wkspComponentName);
 	}
-	
+
 	/**
 	 * IDE-953
 	 * Verifies that when the user drags a component to the diagram of a particular implementation
@@ -164,7 +163,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	 */
 	@Test
 	public void checkCorrectImplementationAddedToDiagram() {
-		
+
 		// Open Chalkboard Diagram
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
 		editor = gefBot.gefEditor(CHALKBOARD);
@@ -176,22 +175,22 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, sourceComponent, 0, 0);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, targetComponent, 300, 0);
 
-		//verify sigGen is python
+		// verify sigGen is python
 		SWTBotGefEditPart sigGenEditPart = editor.getEditPart(SIGGEN);
-		//get graphiti shape
+		// get graphiti shape
 		ComponentShapeImpl sigGenComponentShape = (ComponentShapeImpl) sigGenEditPart.part().getModel();
 		// Grab the associated business object and confirm it is a SadComponentInstantiation
 		SadComponentInstantiation sigGenSadComponentInstantiation = (SadComponentInstantiation) DUtil.getBusinessObject(sigGenComponentShape);
 		Assert.assertEquals("SigGen implementation was not python", "python", sigGenSadComponentInstantiation.getImplID());
-		
-		//verify hardLimit is java
+
+		// verify hardLimit is java
 		SWTBotGefEditPart hardLimitEditPart = editor.getEditPart(HARD_LIMIT);
-		//get graphiti shape
+		// get graphiti shape
 		ComponentShapeImpl hardLimitComponentShape = (ComponentShapeImpl) hardLimitEditPart.part().getModel();
 		// Grab the associated business object and confirm it is a SadComponentInstantiation
 		SadComponentInstantiation hardLimitSadComponentInstantiation = (SadComponentInstantiation) DUtil.getBusinessObject(hardLimitComponentShape);
 		Assert.assertEquals("HardLimit implementation was not java", "java", hardLimitSadComponentInstantiation.getImplID());
-		
+
 	}
 
 	/**
@@ -225,7 +224,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		Assert.assertEquals(componentShape.getUsesPortStubs().get(0).getUses().getInterface().getName(), "dataDouble");
 		Assert.assertEquals(componentShape.getProvidesPortStubs().get(0).getProvides().getInterface().getName(), "dataDouble");
 	}
-	
+
 	/**
 	 * IDE-976
 	 * Make sure devices, services, and softpackages are filtered out of Workspace compartment
@@ -260,9 +259,9 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		MenuUtils.deleteNodeInProjectExplorer(bot, wkspServiceName);
 		MenuUtils.deleteNodeInProjectExplorer(bot, wkspDeviceName);
 		MenuUtils.deleteNodeInProjectExplorer(bot, wkspSftpkgName);
-		
+
 	}
-	
+
 	private boolean isToolInPalette(SWTBotGefEditor editor, String toolName) {
 		try {
 			editor.activateTool(toolName);
@@ -270,7 +269,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		} catch (WidgetNotFoundException ex) {
 			return false;
 		}
-		
+
 	}
-	
+
 }
