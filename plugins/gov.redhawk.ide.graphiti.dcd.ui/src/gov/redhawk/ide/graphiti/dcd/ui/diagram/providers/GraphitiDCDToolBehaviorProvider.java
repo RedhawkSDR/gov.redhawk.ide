@@ -61,7 +61,6 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 
 	}
 
-	// TODO: override get palette so that we can define our own compartments
 	/** This is where we define the different compartments in the palette, and populate the palette entries */
 	@Override
 	public IPaletteCompartmentEntry[] getPalette() {
@@ -104,15 +103,12 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		// add all palette entries into a entriesToRemove list.
 		final List<IToolEntry> entriesToRemove = new ArrayList<IToolEntry>();
 		for (final Object obj : compartmentEntry.getToolEntries()) {
-			// TODO: Confirm that devices are of type SpdToolEntry, which would then need to be refactored out of the
-			// graphiti.sad package
 			if (obj instanceof SpdToolEntry || obj instanceof StackEntry) {
 				entriesToRemove.add((IToolEntry) obj);
 			}
 		}
 
 		// Loop through all devices in the Target SDR. When one is found, remove it from the entriesToRemove list.
-		// TODO: If we don't need to support multiple implementations for devices, remove the relevant logic
 		final EList<SoftPkg> components = container.getComponents();
 		final SoftPkg[] devicesArray = components.toArray(new SoftPkg[components.size()]);
 		spdLoop: for (final SoftPkg spd : devicesArray) {
@@ -222,10 +218,6 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		return compartmentEntry;
 	}
 
-	// TODO: add compartment for connections. Should this be "Base Types" like in waveforms? Do we need host
-	// collocations too?
-
-	// TODO: This may be another good method for refactoring up
 	private void sort(List<IToolEntry> entries) {
 		Collections.sort(entries, new Comparator<IToolEntry>() {
 

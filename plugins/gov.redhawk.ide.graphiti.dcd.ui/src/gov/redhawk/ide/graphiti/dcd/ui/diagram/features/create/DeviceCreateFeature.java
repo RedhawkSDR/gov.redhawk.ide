@@ -37,6 +37,7 @@ public class DeviceCreateFeature extends AbstractCreateFeature {
 
 	private SoftPkg spd = null;
 	private String implId = null;
+	public static final String SHAPE_TYPE = "deviceShape";
 
 	@Override
 	public String getDescription() {
@@ -107,6 +108,7 @@ public class DeviceCreateFeature extends AbstractCreateFeature {
 		});
 
 		// Call add feature
+		context.putProperty("shapeType", SHAPE_TYPE);
 		addGraphicalRepresentation(context, componentInstantiations[0]);
 
 		return new Object[] { componentInstantiations[0] };

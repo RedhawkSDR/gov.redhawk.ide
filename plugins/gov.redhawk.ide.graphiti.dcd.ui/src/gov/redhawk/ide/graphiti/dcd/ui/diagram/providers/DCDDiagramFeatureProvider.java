@@ -15,16 +15,22 @@ import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.DCDConnectionInter
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.reconnect.DCDReconnectFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update.DCDConnectionInterfaceUpdateFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update.GraphitiDcdDiagramUpdateFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.ServiceCreateFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.ServicePattern;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+
+import java.util.List;
+
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
+import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeature;
@@ -33,6 +39,7 @@ import org.eclipse.graphiti.features.IReconnectionFeature;
 import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.IResizeShapeFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
+import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
@@ -48,6 +55,8 @@ import org.eclipse.graphiti.features.impl.UpdateNoBoFeature;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
+import org.eclipse.graphiti.pattern.AddFeatureForPattern;
+import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
 public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
@@ -58,6 +67,36 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		addPattern(new DevicePattern());
 		addPattern(new ServicePattern());
 		addConnectionPattern(new DCDConnectInterfacePattern());
+	}
+
+	@Override
+	public IAddFeature getAddFeature(IAddContext context) {
+		String shapeType = (String) context.getProperty("shapeType");
+		if (shapeType != null) {
+			List<IPattern> patterns = getPatterns();
+
+			// Insures the correct add feature is returned based on selection
+			switch (shapeType) {
+			case DeviceCreateFeature.SHAPE_TYPE:
+				for (IPattern pattern : patterns) {
+					if (pattern instanceof DevicePattern) {
+						return new AddFeatureForPattern(this, pattern);
+					}
+				}
+				break;
+			case ServiceCreateFeature.SHAPE_TYPE:
+				for (IPattern pattern : patterns) {
+					if (pattern instanceof ServicePattern) {
+						return new AddFeatureForPattern(this, pattern);
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		return super.getAddFeature(context);
 	}
 
 	@Override
