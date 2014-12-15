@@ -16,6 +16,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.util.EList;
@@ -89,13 +90,15 @@ public class MarkNonExternalPortFeature extends AbstractCustomFeature {
 				// set port identifier
 				if (obj instanceof ProvidesPortStub) {
 					for (Port p : externalPortList) {
-						if (p.getProvidesIndentifier().equals(((ProvidesPortStub) obj).getName())) {
+						if (((ProvidesPortStub) obj).getName().equals(p.getProvidesIndentifier()) && 
+								((ProvidesPortStub) obj).eContainer().equals(p.getComponentInstantiationRef().getInstantiation())) {
 							portToRemove = p;
 						}
 					}
 				} else if (obj instanceof UsesPortStub) {
 					for (Port p : externalPortList) {
-						if (p.getUsesIdentifier().equals(((UsesPortStub) obj).getName())) {
+						if (((UsesPortStub) obj).getName().equals(p.getUsesIdentifier()) && 
+								((UsesPortStub) obj).eContainer().equals(p.getComponentInstantiationRef().getInstantiation())) {
 							portToRemove = p;
 						}
 					}
