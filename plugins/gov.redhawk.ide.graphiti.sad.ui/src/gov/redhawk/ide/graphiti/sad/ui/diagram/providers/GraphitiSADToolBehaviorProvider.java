@@ -137,7 +137,7 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 
 				@Override
 				public IStatus runInUIThread(final IProgressMonitor monitor) {
-					// refresh palette which will call RHToolBehaviorProvider.getPalette()
+					// refresh palette which will call GraphitiSADToolBehaviorProvider.getPalette()
 					diagramTypeProvider.getDiagramBehavior().refreshPalette();
 					return Status.OK_STATUS;
 				}
