@@ -32,7 +32,6 @@ import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class NodeComponentTest extends AbstractGraphitiTest {
@@ -48,7 +47,6 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 	 * Create the pictogram shape in the node diagram that represents device/service business objects.
 	 * This includes ContainerShape, usage name, ID, port shapes and labels, and component supported interface.
 	 */
-	@Ignore
 	@Test
 	public void checkNodePictogramElements() {
 		projectName = "PictogramShapesNode";
@@ -87,7 +85,6 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 	/**
 	 * Use context menu to delete a device
 	 */
-	@Ignore
 	@Test
 	public void checkDeviceContextMenuDelete() {
 		projectName = "Context-Delete";
@@ -113,7 +110,6 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 	 * Devices selected in the diagram should have the properties of their corresponding
 	 * model objects correctly exposed in the default Eclipse properties view.
 	 */
-	@Ignore
 	@Test
 	public void checkChangesToPropertiesReflectedInSad() {
 		projectName = "ReflectProperties";
@@ -154,7 +150,6 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 	/**
 	 * The delete context menu should not appear when ports are selected
 	 */
-	@Ignore
 	@Test
 	public void doNotDeletePortsTest() {
 		projectName = "No-Delete-Port-Test";
