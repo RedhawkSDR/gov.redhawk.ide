@@ -11,6 +11,7 @@
 package gov.redhawk.ide.graphiti.dcd.ui.diagram;
 
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.ServiceCreateFeature;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.gef.EditPartViewer;
@@ -36,7 +37,7 @@ public class DiagramDropTargetListener extends AbstractTransferDropTargetListene
 		setEnablementDeterminedByCommand(true);
 		this.diagramBehavior = diagramBehavior;
 	}
-	
+
 	@Override
 	protected void handleDrop() {
 		super.handleDrop();
@@ -51,7 +52,7 @@ public class DiagramDropTargetListener extends AbstractTransferDropTargetListene
 	protected void updateTargetRequest() {
 		((CreateRequest) getTargetRequest()).setLocation(getDropLocation());
 	}
-	
+
 	@Override
 	protected Request createTargetRequest() {
 		CreateRequest request = new CreateRequest();
@@ -60,7 +61,7 @@ public class DiagramDropTargetListener extends AbstractTransferDropTargetListene
 		request.setLocation(getDropLocation());
 		return request;
 	}
-	
+
 	private class MyCreationFactory implements CreationFactory {
 
 		public MyCreationFactory() {
@@ -68,13 +69,20 @@ public class DiagramDropTargetListener extends AbstractTransferDropTargetListene
 
 		public Object getNewObject() {
 			ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
-			
+
 			if (((IStructuredSelection) selection).getFirstElement() instanceof SoftPkg) {
 				SoftPkg spd = (SoftPkg) ((IStructuredSelection) selection).getFirstElement();
-				ICreateFeature newFeature = new DeviceCreateFeature(diagramBehavior.getDiagramTypeProvider().getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
-				return newFeature;
+				ICreateFeature createFeature = null;
+				if (spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.DEVICE.getLiteral())) {
+					createFeature = new DeviceCreateFeature(diagramBehavior.getDiagramTypeProvider().getFeatureProvider(), spd,
+						spd.getImplementation().get(0).getId());
+				} else if (spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.SERVICE.getLiteral())) {
+					createFeature = new ServiceCreateFeature(diagramBehavior.getDiagramTypeProvider().getFeatureProvider(), spd,
+						spd.getImplementation().get(0).getId());
+				}
+				return createFeature;
 			}
-			
+
 			return LocalSelectionTransfer.getTransfer().getSelection();
 		}
 
@@ -93,16 +101,16 @@ public class DiagramDropTargetListener extends AbstractTransferDropTargetListene
 			getCurrentEvent().detail = DND.DROP_COPY;
 		}
 	}
-	
+
 	@Override
 	public boolean isEnabled(DropTargetEvent event) {
 		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
-		
+
 		if (((IStructuredSelection) selection).getFirstElement() instanceof SoftPkg) {
 			SoftPkg spd = (SoftPkg) ((IStructuredSelection) selection).getFirstElement();
 			// Only allow components to be dropped
-			if (!spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.DEVICE.getLiteral()) 
-					&& !spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.SERVICE.getLiteral())) {
+			if (!spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.DEVICE.getLiteral())
+				&& !spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.SERVICE.getLiteral())) {
 				return false;
 			}
 		}
