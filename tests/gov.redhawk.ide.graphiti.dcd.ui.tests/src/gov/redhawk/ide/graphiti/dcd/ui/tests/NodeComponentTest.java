@@ -38,7 +38,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 
 	private SWTBotGefEditor editor;
 	private String projectName;
-	private String domainName = "REDHAWK_DEV";
+	private static final String DOMAIN_NAME = "REDHAWK_DEV";
 	private static final String GPP = "GPP";
 	private static final String SERVICE_STUB = "ServiceStub";
 
@@ -52,7 +52,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		projectName = "PictogramShapesNode";
 
 		// Create an empty node project
-		NodeUtils.createNewNodeProject(gefBot, projectName, domainName);
+		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
 
 		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
 		// SWTBotGefEditor
@@ -90,7 +90,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		projectName = "Context-Delete";
 
 		// Create an empty node project
-		NodeUtils.createNewNodeProject(gefBot, projectName, domainName);
+		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
 
 		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
 		// SWTBotGefEditor
@@ -115,7 +115,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		projectName = "ReflectProperties";
 
 		// Create an empty node project
-		NodeUtils.createNewNodeProject(gefBot, projectName, domainName);
+		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
 
 		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
 		// SWTBotGefEditor
@@ -154,7 +154,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 	public void doNotDeletePortsTest() {
 		projectName = "No-Delete-Port-Test";
 		// Create an empty node project
-		NodeUtils.createNewNodeProject(gefBot, projectName, domainName);
+		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
 
 		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
 		// SWTBotGefEditor
