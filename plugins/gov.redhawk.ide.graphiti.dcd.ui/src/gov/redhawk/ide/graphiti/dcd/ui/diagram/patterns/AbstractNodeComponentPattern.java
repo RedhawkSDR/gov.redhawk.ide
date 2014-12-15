@@ -45,6 +45,7 @@ import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
+import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
@@ -210,7 +211,7 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 	public boolean canLayout(ILayoutContext context) {
 		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
 		Object obj = DUtil.getBusinessObject(containerShape);
-		if (obj instanceof DeviceConfiguration) {
+		if (obj instanceof DcdComponentInstantiation) {
 			return true;
 		}
 		return false;
@@ -343,4 +344,15 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 		return null;
 	}
 
+	@Override
+	public boolean update(IUpdateContext context) {
+		Reason updated = ((RHContainerShape) context.getPictogramElement()).update(context, this);
+
+		// if we updated redraw
+		if (updated.toBoolean()) {
+			layoutPictogramElement(context.getPictogramElement());
+		}
+
+		return updated.toBoolean();
+	}
 }
