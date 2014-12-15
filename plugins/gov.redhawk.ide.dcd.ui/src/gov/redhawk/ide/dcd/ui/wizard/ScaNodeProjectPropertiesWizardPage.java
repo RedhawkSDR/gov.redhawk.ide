@@ -88,6 +88,7 @@ public class ScaNodeProjectPropertiesWizardPage extends ScaProjectPropertiesWiza
 	 * Instantiates a new sca node project properties wizard page.
 	 * 
 	 * @param pageName the page name
+	 * @since 1.2
 	 */
 	public ScaNodeProjectPropertiesWizardPage(final String pageName) {
 		super(pageName, "Node", "DCD");
