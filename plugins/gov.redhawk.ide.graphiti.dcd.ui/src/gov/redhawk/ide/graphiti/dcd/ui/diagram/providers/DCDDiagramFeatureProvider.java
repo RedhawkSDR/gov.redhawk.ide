@@ -21,11 +21,15 @@ import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePatte
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.ServicePattern;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.feature.custom.FindByEditFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
@@ -42,6 +46,7 @@ import org.eclipse.graphiti.features.IResizeShapeFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IContext;
+import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
@@ -50,6 +55,7 @@ import org.eclipse.graphiti.features.context.IReconnectionContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.features.impl.DefaultMoveShapeFeature;
 import org.eclipse.graphiti.features.impl.DefaultRemoveFeature;
 import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
@@ -100,6 +106,31 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		}
 
 		return super.getAddFeature(context);
+	}
+
+	@Override
+	public ICustomFeature[] getCustomFeatures(ICustomContext context) {
+		ICustomFeature[] ret = super.getCustomFeatures(context);
+		List<ICustomFeature> retList = new ArrayList<ICustomFeature>();
+		for (int i = 0; i < ret.length; i++) {
+			retList.add(ret[i]);
+		}
+
+		// add zest layout feature if diagram selected
+		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0 && context.getPictogramElements()[0] instanceof Diagram) {
+			retList.add(new LayoutDiagramFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+		}
+
+		// add findBy edit feature if findByStub selected
+		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
+			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
+			if (obj instanceof FindByStub) {
+				retList.add(new FindByEditFeature(this));
+			}
+		}
+
+		ret = retList.toArray(ret);
+		return ret;
 	}
 
 	@Override
