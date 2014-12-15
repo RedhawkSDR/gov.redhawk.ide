@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
-import gov.redhawk.ide.graphiti.sad.ui.palette.RHGraphitiPaletteFilterFigure;
+import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteFilterFigure;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 

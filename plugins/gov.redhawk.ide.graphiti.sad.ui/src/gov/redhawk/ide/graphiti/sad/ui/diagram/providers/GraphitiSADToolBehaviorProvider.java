@@ -17,7 +17,6 @@ import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
-import gov.redhawk.ide.graphiti.sad.ui.palette.RHGraphitiPaletteFilter;
 import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -64,8 +63,6 @@ import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehaviorProvider {
-
-	private RHGraphitiPaletteFilter paletteFilter;
 
 	public GraphitiSADToolBehaviorProvider(final IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
@@ -434,17 +431,6 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 			}
 
 		});
-	}
-
-	private boolean passesFilter(String id) {
-		if (paletteFilter == null || paletteFilter.getFilter().isEmpty() || paletteFilter.matches(id)) {
-			return true;
-		}
-		return false;
-	}
-
-	public void setFilter(RHGraphitiPaletteFilter filter) {
-		paletteFilter = filter;
 	}
 
 	@Override

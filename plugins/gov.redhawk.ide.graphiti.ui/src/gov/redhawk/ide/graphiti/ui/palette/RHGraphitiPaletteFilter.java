@@ -8,18 +8,18 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.ui.palette;
+package gov.redhawk.ide.graphiti.ui.palette;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.palette.CombinedTemplateCreationEntry;
 import org.eclipse.gef.palette.PaletteContainer;
 import org.eclipse.gef.palette.PaletteEntry;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.palette.PaletteToolbar;
 import org.eclipse.gef.ui.palette.PaletteViewer;
-import org.eclipse.gmf.runtime.diagram.ui.internal.services.palette.PaletteToolEntry;
 import org.eclipse.graphiti.ui.editor.DefaultPaletteBehavior;
 
 /**
@@ -35,13 +35,13 @@ public class RHGraphitiPaletteFilter {
 
 	public RHGraphitiPaletteFilter(PaletteViewer viewer, GraphicalEditPart logicLabelEditPart) {
 		this.viewer = viewer;
-		this.editPart = logicLabelEditPart;
+		this.setEditPart(logicLabelEditPart);
 	}
 
 	/**
 	 * 
 	 */
-	private void refresh() {
+	public void refresh() {
 		PaletteRoot root = viewer.getPaletteRoot();
 		for (Object obj : root.getChildren()) {
 			if (obj instanceof PaletteToolbar) {
@@ -49,7 +49,6 @@ public class RHGraphitiPaletteFilter {
 			}
 			if (obj instanceof PaletteEntry) {
 				updateVisible((PaletteEntry) obj);
-//				((PaletteEntry) obj).setVisible(visible);
 			}
 		}
 	}
@@ -59,7 +58,7 @@ public class RHGraphitiPaletteFilter {
 	 * @return
 	 */
 	private void updateVisible(PaletteEntry obj) {
-		if (obj instanceof PaletteToolEntry) {
+		if (obj instanceof CombinedTemplateCreationEntry) {
 			boolean visible = matches(obj);
 			obj.setVisible(visible);
 		} else if (obj instanceof PaletteContainer) {
@@ -121,6 +120,14 @@ public class RHGraphitiPaletteFilter {
 		}
 //		viewer.getRootEditPart().refresh();
 //		editPart.refresh();
+	}
+
+	public GraphicalEditPart getEditPart() {
+		return editPart;
+	}
+
+	public void setEditPart(GraphicalEditPart editPart) {
+		this.editPart = editPart;
 	}
 	
 }

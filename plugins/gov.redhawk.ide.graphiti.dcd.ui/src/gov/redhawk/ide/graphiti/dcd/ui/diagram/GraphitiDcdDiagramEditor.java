@@ -12,6 +12,7 @@
 package gov.redhawk.ide.graphiti.dcd.ui.diagram;
 
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteBehavior;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.workspace.util.WorkspaceSynchronizer.Delegate;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.ui.editor.DefaultPaletteBehavior;
 import org.eclipse.graphiti.ui.editor.DefaultUpdateBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
@@ -69,6 +71,12 @@ public class GraphitiDcdDiagramEditor extends DiagramEditor {
 					}
 
 				};
+			}
+			
+			@Override
+			protected DefaultPaletteBehavior createPaletteBehaviour() {
+				final DefaultPaletteBehavior paletteBehavior = new RHGraphitiPaletteBehavior(this);
+				return paletteBehavior;
 			}
 
 			@Override

@@ -11,9 +11,6 @@
  */
 package gov.redhawk.ide.graphiti.ui.diagram.providers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.feature.custom.FindByEditFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
@@ -22,6 +19,10 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByFileManagerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByServicePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteFilter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateFeature;
@@ -38,7 +39,7 @@ import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 
 public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
-	// TODO: Make abstract
+	private RHGraphitiPaletteFilter paletteFilter;
 	
 	/**
 	 * @param diagramTypeProvider
@@ -115,6 +116,17 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 			return outerContainerShape;
 		}
 		return null;
+	}
+	
+	public boolean passesFilter(String id) {
+		if (paletteFilter == null || paletteFilter.getFilter().isEmpty() || paletteFilter.matches(id)) {
+			return true;
+		}
+		return false;
+	}
+
+	public void setFilter(RHGraphitiPaletteFilter filter) {
+		paletteFilter = filter;
 	}
 
 }

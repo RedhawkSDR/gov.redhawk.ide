@@ -27,4 +27,4 @@ Bundle-Vendor: REDHAWK
 Import-Package: gov.redhawk.ide.graphiti.sad.ext,
  gov.redhawk.ide.graphiti.sad.ext.impl,
  gov.redhawk.ide.graphiti.sad.ui.diagram.patterns,
- gov.redhawk.ide.graphiti.sad.ui.palette
+ gov.redhawk.ide.graphiti.ui.palette

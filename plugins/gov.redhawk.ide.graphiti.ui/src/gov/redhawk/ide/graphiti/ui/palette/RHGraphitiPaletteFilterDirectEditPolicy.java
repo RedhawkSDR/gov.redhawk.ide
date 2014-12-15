@@ -9,7 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html.
  *
  */
-package gov.redhawk.ide.graphiti.sad.ui.palette;
+package gov.redhawk.ide.graphiti.ui.palette;
 
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.DirectEditPolicy;

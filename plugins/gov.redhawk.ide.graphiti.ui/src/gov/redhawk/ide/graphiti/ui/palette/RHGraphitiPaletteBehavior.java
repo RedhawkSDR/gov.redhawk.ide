@@ -8,9 +8,9 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.ui.palette;
+package gov.redhawk.ide.graphiti.ui.palette;
 
-import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.GraphitiSADToolBehaviorProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
 
 import java.util.List;
 
@@ -79,7 +79,7 @@ public class RHGraphitiPaletteBehavior extends DefaultPaletteBehavior {
 									RHGraphitiPaletteFilterEditPart label = new RHGraphitiPaletteFilterEditPart(viewer);
 									paletteFilter = label.getPaletteFilter();
 									paletteFilter.setPaletteBehavior(RHGraphitiPaletteBehavior.this);
-									((GraphitiSADToolBehaviorProvider) diagramBehavior.getDiagramTypeProvider().getCurrentToolBehaviorProvider()).setFilter(paletteFilter);
+									((AbstractGraphitiToolBehaviorProvider) diagramBehavior.getDiagramTypeProvider().getCurrentToolBehaviorProvider()).setFilter(paletteFilter);
 									return label;
 								}
 								return super.createChild(model);
