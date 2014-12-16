@@ -47,7 +47,7 @@ public class ConnectionTest extends AbstractGraphitiTest {
 	 */
 	@Test
 	public void connectFeatureTest() {
-		projectName = "Connnection-Test";
+		projectName = "Connection-Test";
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);

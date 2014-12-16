@@ -36,7 +36,7 @@ import org.junit.Test;
 /**
  * 
  */
-public class DiagramPaletteTest extends AbstractGraphitiTest {
+public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 
 	private String waveformName;
 
