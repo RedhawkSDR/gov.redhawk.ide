@@ -23,7 +23,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 /**
- * 
+ * An Eclipse launch delegate which handles launching a SoftPkg (component, device, etc) locally.
  */
 public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 	public static final String ID = "gov.redhawk.ide.debug.localComponentProgram";
@@ -50,6 +50,15 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 		return true;
 	}
 
+	/**
+	 * Retrieves the command-line arguments for the executable from the launch configuration and expands variable
+	 * references. This ensures variables related to running the SoftPkg (naming context, exec params, etc) are expanded.
+	 *
+	 * @param spd The SoftPkg being executed
+	 * @param launch The launch that's about to occur
+	 * @param configuration A working copy of the launch's configuration
+	 * @throws CoreException
+	 */
 	protected void insertProgramArguments(final SoftPkg spd, final ILaunch launch, final ILaunchConfigurationWorkingCopy configuration) throws CoreException {
 		final String args = configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, "");
 		final String scaArgs = SpdLauncherUtil.insertProgramArguments(spd, args, launch, configuration);

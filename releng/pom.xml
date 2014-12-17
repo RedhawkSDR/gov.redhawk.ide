@@ -27,6 +27,7 @@
     <nxm>http://nextmidas.techma.com/p2/nxm/updates/nightly</nxm>
     <nxm-rcp>http://nextmidas.techma.com/p2/nxm.ui/updates/latest/</nxm-rcp>
     <jacorb>http://download.redhawksdr.org/jacorb/updates/stable</jacorb>
+    <logback>http://download.redhawksdr.org/logback/latest</logback>
     <mil.jpeojtrs.sca>http://download.redhawksdr.org/mil.jpeojtrs.sca/releases/1.11</mil.jpeojtrs.sca>
     <gov.redhawk.core>http://download.redhawksdr.org/gov.redhawk.core/releases/1.11</gov.redhawk.core>
     <swt-bot>http://download.eclipse.org/technology/swtbot/releases/latest/</swt-bot>
@@ -75,6 +76,12 @@
       <id>org.omg.jacorb</id>
       <layout>p2</layout>
       <url>${jacorb}</url>
+    </repository>
+
+    <repository>
+      <id>logback</id>
+      <layout>p2</layout>
+      <url>${logback}</url>
     </repository>
 
     <repository>

@@ -23,7 +23,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * 
+ * Provides a unique device name within the IDE's sandbox device manager
  */
 public class DeviceLabelVariableResolver extends AbstractLauncherResolver implements ILauncherVariableResolver {
 
@@ -31,7 +31,8 @@ public class DeviceLabelVariableResolver extends AbstractLauncherResolver implem
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected String resolveValue(String arg, final ILaunch launch, final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl) throws CoreException {
+	protected String resolveValue(String arg, final ILaunch launch, final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl)
+		throws CoreException {
 		return getDeviceUniqueName(spd);
 	}
 

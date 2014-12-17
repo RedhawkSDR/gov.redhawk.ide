@@ -59,6 +59,14 @@ public final class LaunchUtil {
 
 	}
 
+	/**
+	 * Presents the user with a dialog to choose which launch configuration to run.
+	 *
+	 * @param mode The string "run" or "debug" (displayed to user)
+	 * @param configs The launch configurations to present to the user
+	 * @param shell The window object
+	 * @return The selected launch configuration
+	 */
 	public static ILaunchConfiguration chooseConfiguration(final String mode, final ILaunchConfiguration[] configs, final Shell shell) {
 		if (configs == null || configs.length == 0) {
 			return null;
@@ -84,6 +92,14 @@ public final class LaunchUtil {
 		return null;
 	}
 
+	/**
+	 * Presents the user with a dialog to choose which implementation from an SPD to run.
+	 *
+	 * @param impls The implementations to present to the user
+	 * @param mode The string "run" or "debug" (displayed to user)
+	 * @param shell The window object
+	 * @return The selected implementation
+	 */
 	public static Implementation chooseImplementation(final Collection<Implementation> impls, final String mode, final Shell shell) {
 		Assert.isNotNull(impls);
 		Assert.isNotNull(mode);

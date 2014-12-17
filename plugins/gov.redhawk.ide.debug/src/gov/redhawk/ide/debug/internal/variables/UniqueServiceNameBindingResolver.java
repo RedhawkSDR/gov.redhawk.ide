@@ -19,7 +19,7 @@ import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
 
 /**
- * 
+ * Provides a unique service name within the IDE's sandbox device manager
  */
 public class UniqueServiceNameBindingResolver implements IDynamicVariableResolver {
 

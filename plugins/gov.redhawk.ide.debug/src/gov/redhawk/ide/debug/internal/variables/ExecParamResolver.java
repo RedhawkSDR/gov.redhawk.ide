@@ -29,11 +29,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
+/**
+ * Provides the command-line arguments for a {@link SoftPkg}'s exec param properties.
+ */
 public class ExecParamResolver extends AbstractLauncherResolver {
 
 	@Override
 	protected String resolveValue(String arg, final ILaunch launch, final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl)
-			throws CoreException {
+		throws CoreException {
 		if (spd.getPropertyFile() != null && spd.getPropertyFile().getProperties() != null) {
 			final ScaComponent tmp = ScaFactory.eINSTANCE.createScaComponent();
 			tmp.setProfileObj(spd);
@@ -44,8 +47,7 @@ public class ExecParamResolver extends AbstractLauncherResolver {
 
 			final Map<String, Object> execParams = new HashMap<String, Object>();
 			for (final ScaAbstractProperty< ? > prop : tmp.getProperties()) {
-				if (prop instanceof ScaSimpleProperty && !prop.isDefaultValue() && prop.getDefinition() != null
-						&& prop.getDefinition().isKind(PropertyConfigurationType.EXECPARAM)) {
+				if (prop instanceof ScaSimpleProperty && prop.getDefinition() != null && prop.getDefinition().isKind(PropertyConfigurationType.EXECPARAM)) {
 					final ScaSimpleProperty simple = (ScaSimpleProperty) prop;
 					execParams.put(simple.getId(), simple.getValue());
 				}

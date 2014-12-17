@@ -79,6 +79,8 @@ import CF.PropertySetPackage.PartialConfiguration;
 import CF.ResourcePackage.StartError;
 
 /**
+ * A collection of utility methods that help to launch a {@link SoftPkg}.
+ *
  * @since 4.0
  */
 public final class SpdLauncherUtil {
@@ -94,7 +96,17 @@ public final class SpdLauncherUtil {
 
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * Waits for a {@link SoftPkg} to finish launching locally, performs some model updates, and then performs
+	 * initial tasks like configure(), start().
+	 *
+	 * @param spd The {@link SoftPkg} profile that was launched
+	 * @param configuration The launch configuration
+	 * @param mode The launch mode (run/debug)
+	 * @param launch The launch object
+	 * @param monitor A progress monitor
+	 * @throws CoreException
+	 */
 	public static void postLaunch(final SoftPkg spd, final ILaunchConfiguration configuration, final String mode, final ILaunch launch,
 		final IProgressMonitor monitor) throws CoreException {
 
@@ -133,6 +145,7 @@ public final class SpdLauncherUtil {
 		final boolean autoStart = launch.getLaunchConfiguration().getAttribute(ScaLaunchConfigurationConstants.ATT_START,
 			ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
 
+		// Update the model with information about the details of the launch
 		final LocalAbstractComponent newComponent = comp;
 		ScaModelCommand.execute(newComponent, new ScaModelCommand() {
 
@@ -146,10 +159,12 @@ public final class SpdLauncherUtil {
 			}
 		});
 
+		// Fetch profile object, if applicable
 		if (newComponent instanceof ProfileObjectWrapper< ? >) {
 			((ProfileObjectWrapper< ? >) newComponent).fetchProfileObject(null);
 		}
 
+		// Refresh the model object, if applicable
 		if (newComponent instanceof IRefreshable) {
 			try {
 				((IRefreshable) newComponent).refresh(null, RefreshDepth.FULL);
@@ -158,6 +173,7 @@ public final class SpdLauncherUtil {
 			}
 		}
 
+		// Perform configure for properties as needed
 		if (newComponent instanceof ScaPropertyContainer< ? , ? >) {
 			final ScaPropertyContainer< ? , ? > scaComp = (ScaPropertyContainer< ? , ? >) newComponent;
 			final ScaComponent tmp = ScaFactory.eINSTANCE.createScaComponent();
@@ -183,6 +199,7 @@ public final class SpdLauncherUtil {
 			}
 		}
 
+		// Start the component, if requested
 		if (newComponent instanceof ResourceOperations) {
 			if (autoStart) {
 				try {
@@ -193,6 +210,7 @@ public final class SpdLauncherUtil {
 			}
 		}
 
+		// Perform a full refresh of the object, if applicable
 		if (newComponent instanceof IRefreshable) {
 			try {
 				((IRefreshable) newComponent).refresh(null, RefreshDepth.FULL);
@@ -202,6 +220,15 @@ public final class SpdLauncherUtil {
 		}
 	}
 
+	/**
+	 * Locates a component that was just launched locally. The naming context / name binding from the launch are used
+	 * to resolve an object reference, which is then matched against the CORBA object of a component in the sandbox or
+	 * a chalkboard waveform.
+	 *
+	 * @param launch The launch that just occurred
+	 * @return The newly launched component
+	 * @throws CoreException
+	 */
 	private static LocalAbstractComponent postLaunchComponent(final ILaunch launch) throws CoreException {
 		final String nameBinding = launch.getAttribute(LaunchVariables.NAME_BINDING);
 		final String namingContextIOR = launch.getAttribute(LaunchVariables.NAMING_CONTEXT_IOR);
@@ -213,6 +240,7 @@ public final class SpdLauncherUtil {
 				"No naming context or name binding to locate component with, post launch failed. " + compID, null));
 		}
 
+		// Wait for the component to be registered in the appropriate naming context of the naming service
 		final Future<LocalScaComponent> future = SpdLauncherUtil.EXECUTOR.submit(new Callable<LocalScaComponent>() {
 			@Override
 			public LocalScaComponent call() throws Exception {
@@ -322,6 +350,14 @@ public final class SpdLauncherUtil {
 
 	}
 
+	/**
+	 * Locates a service that was just launched locally. The service name form the launch is matched against services
+	 * in the sandbox device manager.
+	 *
+	 * @param launch The launch that just occurred
+	 * @return The newly launched service
+	 * @throws CoreException
+	 */
 	private static LocalAbstractComponent postLaunchService(final ILaunch launch) throws CoreException {
 		final String name = launch.getAttribute(LaunchVariables.SERVICE_NAME);
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
@@ -377,6 +413,14 @@ public final class SpdLauncherUtil {
 		}
 	}
 
+	/**
+	 * Locates a device that was just launched locally. The device label name form the launch is matched against
+	 * devices in the sandbox device manager.
+	 *
+	 * @param launch The launch that just occurred
+	 * @return The newly launched service
+	 * @throws CoreException
+	 */
 	private static LocalAbstractComponent postLaunchDevice(final ILaunch launch) throws CoreException {
 		final String deviceLabel = launch.getAttribute(LaunchVariables.DEVICE_LABEL);
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
@@ -437,6 +481,17 @@ public final class SpdLauncherUtil {
 
 	private static final Pattern VARIABLE_PATTERN = Pattern.compile("\\$\\{((\\w+)(:(\\w+))?)\\}");
 
+	/**
+	 * Finds and expands known variable references in the command-line args of a launch. Which variables get expanded
+	 * depends on the {@link ILauncherVariableDesc}s that are registered with the {@link ILauncherVariableRegistry}.
+	 *
+	 * @param spd The SoftPkg being launched
+	 * @param input The initial command-line arguments
+	 * @param launch The launch that is about to occur
+	 * @param configuration The launch configuration
+	 * @return The input command line with variables expanded
+	 * @throws CoreException
+	 */
 	public static String insertProgramArguments(final SoftPkg spd, String input, final ILaunch launch, final ILaunchConfiguration configuration)
 		throws CoreException {
 		if (input == null || input.trim().length() == 0) {
@@ -476,6 +531,12 @@ public final class SpdLauncherUtil {
 		return result;
 	}
 
+	/**
+	 * Create the default command-line arguments to launch a particular {@link SoftPkg}.
+	 *
+	 * @param type The {@link ComponentType} of the {@link SoftPkg}.
+	 * @return
+	 */
 	public static String getDefaultProgramArguments(final ComponentType type) {
 		if (type == null) {
 			return null;
@@ -491,6 +552,12 @@ public final class SpdLauncherUtil {
 		}
 	}
 
+	/**
+	 * Create the default command-line arguments for running a REDHAWK component. The arguments will contain variable
+	 * references which will be expanded at launch time.
+	 *
+	 * @return The default command-line arguments
+	 */
 	private static String createDefaultComponentProgramArgs() {
 		final IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		final StringBuilder retVal = new StringBuilder();
@@ -516,6 +583,12 @@ public final class SpdLauncherUtil {
 		return retVal.toString();
 	}
 
+	/**
+	 * Create the default command-line arguments for running a REDHAWK service. The arguments will contain variable
+	 * references which will be expanded at launch time.
+	 *
+	 * @return The default command-line arguments
+	 */
 	private static String createDefaultServiceProgramArgs() {
 		final IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		final StringBuilder retVal = new StringBuilder();
@@ -553,6 +626,12 @@ public final class SpdLauncherUtil {
 		return retVal.toString();
 	}
 
+	/**
+	 * Create the default command-line arguments for running a REDHAWK device. The arguments will contain variable
+	 * references which will be expanded at launch time.
+	 *
+	 * @return The default command-line arguments
+	 */
 	private static String createDefaultDeviceProgramArgs() {
 		final IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		final StringBuilder retVal = new StringBuilder();
@@ -625,6 +704,13 @@ public final class SpdLauncherUtil {
 		return retVal;
 	}
 
+	/**
+	 * Loads the {@link SoftPkg} specified in a launch configuration.
+	 *
+	 * @param configuration The launch configuration
+	 * @return The {@link SoftPkg} object
+	 * @throws CoreException
+	 */
 	public static SoftPkg getSpd(final ILaunchConfiguration configuration) throws CoreException {
 		final URI spdURI = ScaLaunchConfigurationUtil.getProfileURI(configuration);
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
