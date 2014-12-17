@@ -26,7 +26,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.emf.common.util.URI;
 
 /**
- * 
+ * Provides the profile name (path to the spd.xml file rooted in the domain/device manager file system).
  */
 public class ProfileNameVariableResolver extends AbstractLauncherResolver implements ILauncherVariableResolver {
 

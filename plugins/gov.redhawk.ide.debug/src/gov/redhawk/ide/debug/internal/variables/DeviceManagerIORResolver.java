@@ -21,7 +21,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * 
+ * Provides the IDE sandbox device manager's IOR
  */
 public class DeviceManagerIORResolver extends AbstractLauncherResolver implements ILauncherVariableResolver {
 
@@ -29,7 +29,8 @@ public class DeviceManagerIORResolver extends AbstractLauncherResolver implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected String resolveValue(String arg, final ILaunch launch, final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl) throws CoreException {
+	protected String resolveValue(String arg, final ILaunch launch, final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl)
+		throws CoreException {
 		return ScaDebugPlugin.getInstance().getLocalSca().getSandboxDeviceManager().getObj().toString();
 	}
 

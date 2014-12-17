@@ -21,7 +21,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * 
+ * Provides the command-line arguments for the debug level in the launch configuration.
  */
 public class DebugLevelResolver extends AbstractLauncherResolver implements ILauncherVariableResolver {
 
@@ -29,7 +29,8 @@ public class DebugLevelResolver extends AbstractLauncherResolver implements ILau
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected String resolveValue(String arg, final ILaunch launch, final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl) throws CoreException {
+	protected String resolveValue(String arg, final ILaunch launch, final ILaunchConfiguration config, final SoftPkg spd, final Implementation impl)
+		throws CoreException {
 		final String debugLevel = config.getAttribute(ScaDebugLaunchConstants.ATT_DEBUG_LEVEL, (String) null);
 		if (debugLevel != null) {
 			int level;
