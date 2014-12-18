@@ -11,16 +11,17 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.providers;
 
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.DecrementStartOrderFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.IncrementStartOrderFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkExternalPortFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkNonExternalPortFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.ShowConsoleFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.ReleaseComponentFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.StartComponentFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.StopComponentFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.TerminateComponentFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete.ReleaseComponentFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete.SADConnectionInterfaceDeleteFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.reconnect.SADReconnectFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.update.GraphitiWaveformDiagramUpdateFeature;
@@ -154,7 +155,6 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 					// Don't add ability to remove components to Graphiti Waveform Explorer
 					if (!DUtil.isDiagramWaveformExplorer(getDiagramTypeProvider().getDiagram())) {
-						retList.add(new ReleaseComponentFeature(this));
 						retList.add(new TerminateComponentFeature(this));
 					}
 				}
@@ -240,7 +240,8 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE,
 			RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER })) {
 			return new DefaultMoveShapeFeature(this) {
-				public boolean canMove(IContext context) {
+				@Override
+				public boolean canMoveShape(IMoveShapeContext context) {
 					return false;
 				}
 			};
@@ -308,6 +309,9 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 		// If the element is in the Chalkboard, it's removal will be handled by the Release and Terminate features
 		if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+			if (context.getPictogramElement() instanceof ComponentShapeImpl) {
+				return new ReleaseComponentFeature(this);
+			}
 			return null;
 		}
 

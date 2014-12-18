@@ -190,7 +190,7 @@
       </editor>
       <editor
             class="gov.redhawk.ide.graphiti.sad.debug.internal.ui.GraphitiWaveformSandboxEditor"
-            contributorClass="org.eclipse.graphiti.ui.editor.DiagramEditorActionBarContributor"
+            contributorClass="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
             default="false"
             icon="icons/redhawk16.gif"
             id="gov.redhawk.ide.sad.graphiti.ui..editor.localMultiPageSca"

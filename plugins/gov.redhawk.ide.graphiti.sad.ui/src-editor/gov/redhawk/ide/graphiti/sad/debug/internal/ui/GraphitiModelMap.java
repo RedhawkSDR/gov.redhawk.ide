@@ -12,16 +12,12 @@ package gov.redhawk.ide.graphiti.sad.debug.internal.ui;
 
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.ReleaseComponentFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.util.SadStyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
@@ -29,7 +25,6 @@ import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.sca.ui.actions.StartAction;
 import gov.redhawk.sca.ui.actions.StopAction;
-import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.SubMonitor;
 
 import java.util.ArrayList;
@@ -69,17 +64,13 @@ import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
-import org.eclipse.graphiti.features.context.impl.CustomContext;
 import org.eclipse.graphiti.features.context.impl.DeleteContext;
-import org.eclipse.graphiti.features.custom.ICustomFeature;
-import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.ui.progress.WorkbenchJob;
 import org.omg.CORBA.SystemException;
 
 import CF.DataType;
@@ -88,15 +79,12 @@ import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
 
 public class GraphitiModelMap {
-	private static final Debug DEBUG = new Debug(SADUIGraphitiPlugin.PLUGIN_ID, "modelMap");
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
 		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
 	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
 		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
 		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 	private final GraphitiWaveformSandboxEditor editor;
-	private final SoftwareAssembly sad;
-
 	// maps containing to uniquely identify component/connections, use with synchronized statement
 	private final Map<String, NodeMapEntry> nodes = Collections.synchronizedMap(new HashMap<String, NodeMapEntry>());
 	private final Map<String, ConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, ConnectionMapEntry>());
@@ -113,7 +101,6 @@ public class GraphitiModelMap {
 		Assert.isNotNull(editor, "Sandbox Editor must not be null");
 		Assert.isNotNull(sad, "Software Assembly must not be null");
 		this.waveform = waveform;
-		this.sad = sad;
 		this.editor = editor;
 	}
 
@@ -122,7 +109,6 @@ public class GraphitiModelMap {
 	 * a SadComponentInstiation to the SofwareAssembly of the Graphiti Diagram.
 	 * @param comp
 	 */
-	@SuppressWarnings("restriction")
 	public void add(@NonNull final LocalScaComponent comp) {
 
 		final NodeMapEntry nodeMapEntry = new NodeMapEntry();
@@ -156,11 +142,6 @@ public class GraphitiModelMap {
 				}
 			}
 
-			private SadComponentInstantiation create(LocalScaComponent comp) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
 		};
 		job.schedule();
 
@@ -171,7 +152,6 @@ public class GraphitiModelMap {
 	 * the corresponding LocalScaComponent
 	 * @param comp
 	 */
-	@SuppressWarnings("restriction")
 	public void add(@NonNull final SadComponentInstantiation comp) {
 		final NodeMapEntry nodeMapEntry = new NodeMapEntry();
 		nodeMapEntry.setProfile(comp);
@@ -316,7 +296,6 @@ public class GraphitiModelMap {
 	 * @return
 	 * @throws CoreException
 	 */
-	@SuppressWarnings("unchecked")
 	@NonNull
 	private SadComponentInstantiation create(@NonNull final LocalScaComponent newValue) throws CoreException {
 
@@ -435,7 +414,6 @@ public class GraphitiModelMap {
 	 * @return
 	 * @throws CoreException
 	 */
-	@SuppressWarnings("unchecked")
 	@Nullable
 	private SadConnectInterface create(@NonNull final ScaConnection newValue) throws CoreException {
 		UsesPortStub source = null;
@@ -547,13 +525,8 @@ public class GraphitiModelMap {
 			protected void doExecute() {
 
 				// delete shape & component
-				// We use release here instead of delete feature to control context menu options
-				CustomContext context = new CustomContext(peToRemove);
-				for (ICustomFeature feature : featureProvider.getCustomFeatures(context)) {
-					if (feature instanceof ReleaseComponentFeature) {
-						((ReleaseComponentFeature) feature).execute(context);
-					}
-				}
+				DeleteContext context = new DeleteContext(peToRemove[0]);
+				featureProvider.getDeleteFeature(context).execute(context);
 			}
 		});
 	}
@@ -850,49 +823,6 @@ public class GraphitiModelMap {
 			};
 			job.schedule();
 		}
-	}
-
-	private void paintComponent(final ComponentShape componentShape, final Boolean started) {
-		final WorkbenchJob job = new WorkbenchJob("Repainting Component") {
-
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor) {
-				if (componentShape.isActive()) {
-
-					// setup to perform diagram operations
-					final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-					final IFeatureProvider featureProvider = provider.getFeatureProvider();
-					TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
-					final RoundedRectangle innerRoundedRectangle = (RoundedRectangle) DUtil.findFirstPropertyContainer(componentShape,
-						RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE);
-					final Diagram diagram = DUtil.findDiagram(componentShape);
-
-					// Perform business object manipulation in a Command
-					TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-					stack.execute(new RecordingCommand(editingDomain) {
-						@Override
-						protected void doExecute() {
-
-							if (innerRoundedRectangle != null) {
-								if (started != null && started) {
-									// started
-									innerRoundedRectangle.setStyle(SadStyleUtil.createStyleForComponentInnerStarted(diagram));
-								} else {
-									// not started
-									innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInner(diagram));
-								}
-							}
-						}
-					});
-
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.setSystem(true);
-		job.setUser(false);
-		job.schedule();
 	}
 
 	/**
