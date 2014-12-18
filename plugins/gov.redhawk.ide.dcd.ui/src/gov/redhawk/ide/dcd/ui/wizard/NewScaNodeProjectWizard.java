@@ -52,6 +52,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -170,8 +171,10 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 			getContainer().run(false, false, op);
 			final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			if ((this.openEditorOn != null) && this.openEditorOn.exists()) {
-				final NodeEditor nodePart = (NodeEditor) IDE.openEditor(activePage, this.openEditorOn, true);
-				setCustomPreferences(nodePart);
+				IEditorPart nodePart = IDE.openEditor(activePage, this.openEditorOn, true);
+				if (nodePart instanceof NodeEditor) {
+					setCustomPreferences((NodeEditor) nodePart);
+				}
 			}
 		} catch (final InvocationTargetException x) {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, DcdUiActivator.PLUGIN_ID, x.getCause().getMessage(), x.getCause()),

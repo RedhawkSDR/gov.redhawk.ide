@@ -73,7 +73,7 @@
     <editor
           class="gov.redhawk.ide.dcd.internal.ui.editor.NodeEditor"
           contributorClass="gov.redhawk.ide.dcd.internal.ui.editor.NodeEditorActionBarContributor"
-          default="true"
+          default="false"
           icon="icons/obj16/SpdModelFile.gif"
           id="gov.redhawk.ide.ui.editors.NodeEditor"
           name="%editor.name">

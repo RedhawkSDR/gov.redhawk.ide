@@ -57,7 +57,7 @@
       <editor
             class="gov.redhawk.ide.sad.internal.ui.editor.SadEditor"
             contributorClass="gov.redhawk.ide.sad.internal.ui.editor.SadMultipageEditorActionBarContributor"
-            default="true"
+            default="false"
             icon="icons/full/obj16/SadModelFile.gif"
             id="gov.redhawk.ide.sad.ui.editor.presentation.SadEditorID"
             name="%editor.name.waveformEditor">

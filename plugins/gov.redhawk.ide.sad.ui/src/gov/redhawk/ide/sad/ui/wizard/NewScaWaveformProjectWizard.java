@@ -46,6 +46,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -161,10 +162,8 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 						// If we're creating a new waveform (vs importing one)
 						if (isCreateNewResource) {
 							// Create the SCA XML files
-							NewScaWaveformProjectWizard.this.openEditorOn = WaveformProjectCreator.createWaveformFiles(project,
-							        id,
-							        assemblyController,
-							        progress.newChild(1));
+							NewScaWaveformProjectWizard.this.openEditorOn = WaveformProjectCreator.createWaveformFiles(project, id, assemblyController,
+								progress.newChild(1));
 						} else {
 							openEditorOn = project.getFile(project.getName() + SadPackage.FILE_EXTENSION);
 							ProjectCreator.importFile(project, openEditorOn, existingSadPath, progress.newChild(1));
@@ -174,10 +173,10 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 							sad.setId(id);
 							sad.setName(project.getName());
 							try {
-	                            sad.eResource().save(null);
-                            } catch (IOException e) {
-                            	throw new CoreException(new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, "Failed to modify SAD File."));
-                            }
+								sad.eResource().save(null);
+							} catch (IOException e) {
+								throw new CoreException(new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, "Failed to modify SAD File."));
+							}
 							openEditorOn.refreshLocal(IResource.DEPTH_ONE, null);
 						}
 
@@ -191,14 +190,16 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 			getContainer().run(false, false, op);
 			final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			if ((this.openEditorOn != null) && this.openEditorOn.exists()) {
-				final SadEditor sadPart = (SadEditor) IDE.openEditor(activePage, this.openEditorOn, true);
-				setCustomPreferences(sadPart);
+				IEditorPart sadPart = IDE.openEditor(activePage, this.openEditorOn, true);
+				if (sadPart instanceof SadEditor) {
+					setCustomPreferences((SadEditor) sadPart);
+				}
 			}
 
 			BasicNewProjectResourceWizard.updatePerspective(this.fConfig);
 		} catch (final InvocationTargetException x) {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, SadUiActivator.PLUGIN_ID, x.getCause().getMessage(), x.getCause()),
-			        StatusManager.SHOW | StatusManager.LOG);
+				StatusManager.SHOW | StatusManager.LOG);
 			return false;
 		} catch (final InterruptedException x) {
 			return false;
@@ -212,7 +213,8 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 	}
 
 	/**
-	 * Set custom viewing properties for the Sad Editor so that we can tell the difference between this editor and the Sad Explorer
+	 * Set custom viewing properties for the Sad Editor so that we can tell the difference between this editor and the
+	 * Sad Explorer
 	 * 
 	 * @param sadPart The Sad Editor instance that we shall change the initial diagram style for
 	 */

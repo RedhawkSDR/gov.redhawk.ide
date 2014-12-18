@@ -43,6 +43,7 @@
       <editor
             class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditor"
             contributorClass="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditorActionBarContributor"
+            default="true"
             id="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor"
             name="Graphiti Node Editor">
          <contentTypeBinding
