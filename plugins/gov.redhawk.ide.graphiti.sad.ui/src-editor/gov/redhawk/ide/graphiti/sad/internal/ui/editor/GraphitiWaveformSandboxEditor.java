@@ -8,13 +8,17 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.debug.internal.ui;
+package gov.redhawk.ide.graphiti.sad.internal.ui.editor;
 
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
-import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultiPageEditor;
+import gov.redhawk.ide.graphiti.sad.debug.internal.ui.GraphitiModelMap;
+import gov.redhawk.ide.graphiti.sad.debug.internal.ui.GraphitiModelMapInitializerCommand;
+import gov.redhawk.ide.graphiti.sad.debug.internal.ui.SadGraphitiModelAdapter;
+import gov.redhawk.ide.graphiti.sad.debug.internal.ui.SadGraphitiModelInitializerCommand;
+import gov.redhawk.ide.graphiti.sad.debug.internal.ui.ScaGraphitiModelAdapter;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.adapters.GraphitiDiagramAdapter;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformDiagramEditor;

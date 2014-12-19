@@ -189,7 +189,7 @@
          <contentTypeBinding contentTypeId="mil.jpeojtrs.sca.sad.content-type"/>
       </editor>
       <editor
-            class="gov.redhawk.ide.graphiti.sad.debug.internal.ui.GraphitiWaveformSandboxEditor"
+            class="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformSandboxEditor"
             contributorClass="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
             default="false"
             icon="icons/redhawk16.gif"
@@ -197,7 +197,7 @@
             name="Graphiti Chalkboard">
       </editor>
       <editor
-            class="gov.redhawk.ide.graphiti.sad.debug.internal.ui.GraphitiWaveformExplorerEditor"
+            class="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformExplorerEditor"
             default="false"
             icon="icons/redhawk16.gif"
             id="gov.redhawk.ide.sad.graphiti.ui.editor.waveformExplorer"

@@ -152,7 +152,7 @@ public class ScaGraphitiModelAdapter extends EContentAdapter {
 	}
 
 	@Override
-	protected void addAdapter(final Notifier notifier) {
+	public void addAdapter(final Notifier notifier) {
 		if (notifier instanceof ScaWaveform || notifier instanceof ScaComponent || notifier instanceof ScaUsesPort) {
 			super.addAdapter(notifier);
 		}
