@@ -169,4 +169,12 @@
          </propertySection>
       </propertySections>
    </extension>
+   <extension
+         point="gov.redhawk.sca.ui.scaContentTypes">
+      <contentTypeBinding
+            contentTypeId="mil.jpeojtrs.sca.dcd.contentType"
+            editorId="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor"
+            priority="HIGHEST">
+      </contentTypeBinding>
+   </extension>
 </plugin>
