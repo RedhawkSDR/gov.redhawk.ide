@@ -195,8 +195,12 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		}
 
 		// If the element to be deleted is a connection, return the proper feature
-		if (context.getPictogramElement() instanceof Connection && !DUtil.isDiagramWaveformExplorer(getDiagramTypeProvider().getDiagram())) {
+		if (context.getPictogramElement() instanceof Connection && !DUtil.isDiagramExplorer(getDiagramTypeProvider().getDiagram())) {
 			return new DCDConnectionInterfaceDeleteFeature(this);
+		}
+
+		if (DUtil.isDiagramExplorer(getDiagramTypeProvider().getDiagram())) {
+			return null;
 		}
 
 		return super.getDeleteFeature(context);

@@ -111,7 +111,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String DIAGRAM_CONTEXT_DOMAIN = "domain";
 	public static final String DIAGRAM_CONTEXT_LOCAL = "local";
 	public static final String DIAGRAM_CONTEXT_TARGET_SDR = "target-sdr";
-	public static final String DIAGRAM_CONTEXT_WAVEFORM_EXPLORER = "waveform explorer";
+	public static final String DIAGRAM_CONTEXT_EXPLORER = "waveform explorer";
 
 	public static final int DIAGRAM_SHAPE_HORIZONTAL_PADDING = 100;
 	public static final int DIAGRAM_SHAPE_SIBLING_VERTICAL_PADDING = 5;
@@ -1208,14 +1208,14 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @return
 	 */
 	public static boolean isDiagramLocal(final Diagram diagram) {
-		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_LOCAL) || getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_WAVEFORM_EXPLORER);
+		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_LOCAL) || getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_EXPLORER);
 	}
 	
 	/**
-	 * Returns true is the diagram is running in waveform explorer mode
+	 * Returns true is the diagram is running in explorer mode
 	 */
-	public static boolean isDiagramWaveformExplorer(final Diagram diagram) {
-		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_WAVEFORM_EXPLORER);
+	public static boolean isDiagramExplorer(final Diagram diagram) {
+		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_EXPLORER);
 	}
 	
 	public static boolean isDiagramTargetSdr(final Diagram diagram) {

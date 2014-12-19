@@ -16,6 +16,7 @@ import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.ServiceCreateFeat
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
@@ -62,6 +63,14 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 
 		// sync palette with Target SDR contents
 		addTargetSdrRefreshJob(diagramTypeProvider);
+	}
+
+	@Override
+	public boolean isShowFlyoutPalette() {
+		if (DUtil.isDiagramExplorer(getFeatureProvider().getDiagramTypeProvider().getDiagram())) {
+			return false;
+		}
+		return super.isShowFlyoutPalette();
 	}
 
 	/**
@@ -131,7 +140,6 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 				}
 			}
 		});
-	
 
 	}
 

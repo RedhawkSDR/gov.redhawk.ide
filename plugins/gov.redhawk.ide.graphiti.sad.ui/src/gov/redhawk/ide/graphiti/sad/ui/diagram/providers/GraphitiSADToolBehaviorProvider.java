@@ -74,7 +74,7 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 
 	@Override
 	public boolean isShowFlyoutPalette() {
-		if (DUtil.isDiagramWaveformExplorer(getFeatureProvider().getDiagramTypeProvider().getDiagram())) {
+		if (DUtil.isDiagramExplorer(getFeatureProvider().getDiagramTypeProvider().getDiagram())) {
 			return false;
 		}
 		return super.isShowFlyoutPalette();

@@ -17,12 +17,11 @@ import org.eclipse.emf.ecore.resource.Resource;
 public class GraphitiWaveformExplorerEditor extends GraphitiWaveformSandboxEditor {
 
 	public GraphitiWaveformExplorerEditor() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	public String getDiagramContext(Resource sadResource) {
-		return DUtil.DIAGRAM_CONTEXT_WAVEFORM_EXPLORER;
+		return DUtil.DIAGRAM_CONTEXT_EXPLORER;
 	}
 
 }

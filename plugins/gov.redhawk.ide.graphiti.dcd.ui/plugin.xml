@@ -50,6 +50,12 @@
                contentTypeId="mil.jpeojtrs.sca.dcd.content-type">
          </contentTypeBinding>
       </editor>
+      <editor
+            class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdExplorerEditor"
+            default="true"
+            id="gov.redhawk.ide.graphiti.dcd.ui.editor.dcdExplorer"
+            name="Graphiti Node Explorer">
+      </editor>
    </extension>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
@@ -174,6 +180,11 @@
       <contentTypeBinding
             contentTypeId="mil.jpeojtrs.sca.dcd.contentType"
             editorId="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor"
+            priority="HIGHEST">
+      </contentTypeBinding>
+      <contentTypeBinding
+            contentTypeId="gov.redhawk.ui.dcd.contentType"
+            editorId="gov.redhawk.ide.graphiti.dcd.ui.editor.dcdExplorer"
             priority="HIGHEST">
       </contentTypeBinding>
    </extension>

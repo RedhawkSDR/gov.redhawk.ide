@@ -94,7 +94,7 @@ public class GraphitiWaveformDiagramEditor extends DiagramEditor {
 				Diagram diagram = getDiagramBehavior().getDiagramTypeProvider().getDiagram();
 
 				// This check stops users from adding from the Target SDR to Graphiti Waveform Explorer
-				if (!DUtil.isDiagramWaveformExplorer(diagram)) {
+				if (!DUtil.isDiagramExplorer(diagram)) {
 					retVal.add(0, new DiagramDropTargetListener(getDiagramContainer().getGraphicalViewer(), this));
 				}
 				
