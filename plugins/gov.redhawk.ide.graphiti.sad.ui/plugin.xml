@@ -191,14 +191,14 @@
       <editor
             class="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformSandboxEditor"
             contributorClass="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
-            default="false"
+            default="true"
             icon="icons/redhawk16.gif"
             id="gov.redhawk.ide.sad.graphiti.ui..editor.localMultiPageSca"
             name="Graphiti Chalkboard">
       </editor>
       <editor
             class="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformExplorerEditor"
-            default="false"
+            default="true"
             icon="icons/redhawk16.gif"
             id="gov.redhawk.ide.sad.graphiti.ui.editor.waveformExplorer"
             name="Graphiti Waveform Explorer">
@@ -241,7 +241,7 @@
             priority="HIGHEST">
       </contentTypeBinding>
       <contentTypeBinding
-            contentTypeId="gov.redhawk.ide.debug.ui.contentType.sca"
+            contentTypeId="gov.redhawk.ui.sad.contentType"
             editorId="gov.redhawk.ide.sad.graphiti.ui.editor.waveformExplorer"
             priority="HIGHEST">
       </contentTypeBinding>
