@@ -2,8 +2,10 @@
  */
 package gov.redhawk.ide.graphiti.ext;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 
 import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
@@ -168,13 +170,41 @@ public interface RHGxPackage extends EPackage {
 	int RH_CONTAINER_SHAPE__CHILDREN = PictogramsPackage.CONTAINER_SHAPE__CHILDREN;
 
 	/**
+	 * The feature id for the '<em><b>Started</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RH_CONTAINER_SHAPE__STARTED = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Event</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RH_CONTAINER_SHAPE__EVENT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>RH Container Shape</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 0;
+	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 2;
+
+	/**
+	 * The meta object id for the '{@link gov.redhawk.ide.graphiti.ext.Event <em>Event</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gov.redhawk.ide.graphiti.ext.Event
+	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getEvent()
+	 * @generated
+	 */
+	int EVENT = 2;
 
 	/**
 	 * The meta object id for the '<em>Component Supported Interface Stub</em>' data type.
@@ -184,7 +214,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getComponentSupportedInterfaceStub()
 	 * @generated
 	 */
-	int COMPONENT_SUPPORTED_INTERFACE_STUB = 2;
+	int COMPONENT_SUPPORTED_INTERFACE_STUB = 3;
 
 	/**
 	 * The meta object id for the '<em>IFeature Provider</em>' data type.
@@ -194,7 +224,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIFeatureProvider()
 	 * @generated
 	 */
-	int IFEATURE_PROVIDER = 3;
+	int IFEATURE_PROVIDER = 4;
 
 	/**
 	 * The meta object id for the '<em>Uses Port Stub</em>' data type.
@@ -204,7 +234,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getUsesPortStub()
 	 * @generated
 	 */
-	int USES_PORT_STUB = 4;
+	int USES_PORT_STUB = 5;
 
 	/**
 	 * The meta object id for the '<em>Provides Port Stub</em>' data type.
@@ -214,7 +244,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getProvidesPortStub()
 	 * @generated
 	 */
-	int PROVIDES_PORT_STUB = 5;
+	int PROVIDES_PORT_STUB = 6;
 
 	/**
 	 * The meta object id for the '<em>Port</em>' data type.
@@ -224,7 +254,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getPort()
 	 * @generated
 	 */
-	int PORT = 6;
+	int PORT = 7;
 
 	/**
 	 * The meta object id for the '<em>Assembly Controller</em>' data type.
@@ -234,7 +264,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAssemblyController()
 	 * @generated
 	 */
-	int ASSEMBLY_CONTROLLER = 7;
+	int ASSEMBLY_CONTROLLER = 8;
 
 	/**
 	 * The meta object id for the '<em>External Ports</em>' data type.
@@ -244,7 +274,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getExternalPorts()
 	 * @generated
 	 */
-	int EXTERNAL_PORTS = 8;
+	int EXTERNAL_PORTS = 9;
 
 	/**
 	 * The meta object id for the '<em>Reason</em>' data type.
@@ -254,7 +284,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getReason()
 	 * @generated
 	 */
-	int REASON = 9;
+	int REASON = 10;
 
 	/**
 	 * The meta object id for the '<em>List</em>' data type.
@@ -264,7 +294,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getList()
 	 * @generated
 	 */
-	int LIST = 10;
+	int LIST = 11;
 
 	/**
 	 * The meta object id for the '<em>Sad Component Instantiation</em>' data type.
@@ -274,7 +304,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getSadComponentInstantiation()
 	 * @generated
 	 */
-	int SAD_COMPONENT_INSTANTIATION = 11;
+	int SAD_COMPONENT_INSTANTIATION = 12;
 
 	/**
 	 * The meta object id for the '<em>IAdd Context</em>' data type.
@@ -284,7 +314,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIAddContext()
 	 * @generated
 	 */
-	int IADD_CONTEXT = 12;
+	int IADD_CONTEXT = 13;
 
 	/**
 	 * The meta object id for the '<em>Abstract Container Pattern</em>' data type.
@@ -294,7 +324,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAbstractContainerPattern()
 	 * @generated
 	 */
-	int ABSTRACT_CONTAINER_PATTERN = 13;
+	int ABSTRACT_CONTAINER_PATTERN = 14;
 
 	/**
 	 * The meta object id for the '<em>IUpdate Context</em>' data type.
@@ -304,7 +334,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIUpdateContext()
 	 * @generated
 	 */
-	int IUPDATE_CONTEXT = 14;
+	int IUPDATE_CONTEXT = 15;
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.graphiti.mm.pictograms.ContainerShape <em>Container Shape Impl</em>}'.
@@ -326,6 +356,38 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getRHContainerShape();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isStarted <em>Started</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Started</em>'.
+	 * @see gov.redhawk.ide.graphiti.ext.RHContainerShape#isStarted()
+	 * @see #getRHContainerShape()
+	 * @generated
+	 */
+	EAttribute getRHContainerShape_Started();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getEvent <em>Event</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Event</em>'.
+	 * @see gov.redhawk.ide.graphiti.ext.RHContainerShape#getEvent()
+	 * @see #getRHContainerShape()
+	 * @generated
+	 */
+	EAttribute getRHContainerShape_Event();
+
+	/**
+	 * Returns the meta object for enum '{@link gov.redhawk.ide.graphiti.ext.Event <em>Event</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Event</em>'.
+	 * @see gov.redhawk.ide.graphiti.ext.Event
+	 * @generated
+	 */
+	EEnum getEvent();
 
 	/**
 	 * Returns the meta object for data type '{@link mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub <em>Component Supported Interface Stub</em>}'.
@@ -511,6 +573,32 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EClass RH_CONTAINER_SHAPE = eINSTANCE.getRHContainerShape();
+
+		/**
+		 * The meta object literal for the '<em><b>Started</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RH_CONTAINER_SHAPE__STARTED = eINSTANCE.getRHContainerShape_Started();
+
+		/**
+		 * The meta object literal for the '<em><b>Event</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RH_CONTAINER_SHAPE__EVENT = eINSTANCE.getRHContainerShape_Event();
+
+		/**
+		 * The meta object literal for the '{@link gov.redhawk.ide.graphiti.ext.Event <em>Event</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see gov.redhawk.ide.graphiti.ext.Event
+		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getEvent()
+		 * @generated
+		 */
+		EEnum EVENT = eINSTANCE.getEvent();
 
 		/**
 		 * The meta object literal for the '<em>Component Supported Interface Stub</em>' data type.

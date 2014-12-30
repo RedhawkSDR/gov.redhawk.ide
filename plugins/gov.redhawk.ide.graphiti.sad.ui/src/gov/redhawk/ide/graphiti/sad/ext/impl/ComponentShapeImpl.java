@@ -10,9 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ext.impl;
 
+import gov.redhawk.ide.graphiti.ext.Event;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ext.Event;
 import gov.redhawk.ide.graphiti.sad.ext.RHSadGxPackage;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.util.SadStyleUtil;
@@ -176,14 +176,6 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Event getEvent() {
-		return event;
-	}
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -564,5 +556,6 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		}
 		return ciExternalPorts;
 	}
+
 
 } // ComponentShapeImpl

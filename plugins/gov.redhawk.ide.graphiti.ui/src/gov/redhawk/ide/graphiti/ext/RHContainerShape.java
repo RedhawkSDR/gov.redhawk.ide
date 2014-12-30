@@ -24,12 +24,74 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
  * A representation of the model object '<em><b>RH Container Shape</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <p>
+ * The following features are supported:
+ * <ul>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isStarted <em>Started</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getEvent <em>Event</em>}</li>
+ * </ul>
+ * </p>
  *
  * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape()
  * @model
  * @generated
  */
 public interface RHContainerShape extends ContainerShape {
+	/**
+	 * Returns the value of the '<em><b>Started</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Started</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Started</em>' attribute.
+	 * @see #setStarted(boolean)
+	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_Started()
+	 * @model unique="false"
+	 * @generated
+	 */
+	boolean isStarted();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isStarted <em>Started</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Started</em>' attribute.
+	 * @see #isStarted()
+	 * @generated
+	 */
+	void setStarted(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Event</b></em>' attribute.
+	 * The literals are from the enumeration {@link gov.redhawk.ide.graphiti.ext.Event}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Event</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Event</em>' attribute.
+	 * @see gov.redhawk.ide.graphiti.ext.Event
+	 * @see #setEvent(Event)
+	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_Event()
+	 * @model unique="false"
+	 * @generated
+	 */
+	Event getEvent();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getEvent <em>Event</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Event</em>' attribute.
+	 * @see gov.redhawk.ide.graphiti.ext.Event
+	 * @see #getEvent()
+	 * @generated
+	 */
+	void setEvent(Event value);
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

@@ -2,6 +2,7 @@
  */
 package gov.redhawk.ide.graphiti.sad.ext;
 
+import gov.redhawk.ide.graphiti.ext.Event;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 

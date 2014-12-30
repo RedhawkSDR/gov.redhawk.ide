@@ -1,6 +1,6 @@
 /**
  */
-package gov.redhawk.ide.graphiti.sad.ext;
+package gov.redhawk.ide.graphiti.ext;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,7 +13,7 @@ import org.eclipse.emf.common.util.Enumerator;
  * A representation of the literals of the enumeration '<em><b>Event</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * @see gov.redhawk.ide.graphiti.sad.ext.RHSadGxPackage#getEvent()
+ * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getEvent()
  * @model
  * @generated
  */

@@ -36,6 +36,10 @@ interface ContainerShapeImpl wraps org.eclipse.graphiti.mm.pictograms.ContainerS
 
 class RHContainerShape extends org.eclipse.graphiti.mm.pictograms.ContainerShape {
 	
+	boolean started
+	
+	Event event
+	
 	op void init(IAddContext context, AbstractContainerPattern pattern) 
 	op void init(IAddContext context, AbstractContainerPattern pattern, List<Port> externalPorts)
 	
@@ -65,4 +69,9 @@ class RHContainerShape extends org.eclipse.graphiti.mm.pictograms.ContainerShape
 	 */
 	op Reason updateNeeded(IUpdateContext context, AbstractContainerPattern pattern)
 	
+}
+
+enum Event {
+	RELEASE  //indicates user issued release action on component
+	TERMINATE //indicates user issued terminate action on component
 }

@@ -2,7 +2,10 @@
  */
 package gov.redhawk.ide.graphiti.sad.ext.impl;
 
-import gov.redhawk.ide.graphiti.sad.ext.*;
+import gov.redhawk.ide.graphiti.ext.Event;
+import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.ide.graphiti.sad.ext.RHSadGxFactory;
+import gov.redhawk.ide.graphiti.sad.ext.RHSadGxPackage;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 
 import java.util.List;

@@ -28,9 +28,7 @@ type IUpdateContext wraps org.eclipse.graphiti.features.context.IUpdateContext
 
 class ComponentShape extends gov.redhawk.ide.graphiti.ext.RHContainerShape{
 	
-	boolean started
-	
-	Event event
+
 	
 	op void init(IAddContext context, ComponentPattern pattern) 
 
@@ -45,10 +43,4 @@ class ComponentShape extends gov.redhawk.ide.graphiti.ext.RHContainerShape{
 	 * boolean value and message describing what needs to be updated
 	 */
 	 op Reason updateNeeded(IUpdateContext context, ComponentPattern pattern)
-}
-
-
-enum Event {
-	RELEASE  //indicates user issued release action on component
-	TERMINATE //indicates user issued terminate action on component
 }
