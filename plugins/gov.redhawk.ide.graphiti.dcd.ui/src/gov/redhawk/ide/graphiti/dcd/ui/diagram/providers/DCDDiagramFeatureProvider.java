@@ -11,6 +11,8 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.custom.runtime.StartFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.custom.runtime.StopFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.DCDConnectionInterfaceDeleteFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.reconnect.DCDReconnectFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update.DCDConnectionInterfaceUpdateFeature;
@@ -20,6 +22,7 @@ import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.ServiceCreateFeat
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.ServicePattern;
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.feature.custom.FindByEditFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
@@ -29,6 +32,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -126,6 +130,18 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 			if (obj instanceof FindByStub) {
 				retList.add(new FindByEditFeature(this));
+			}
+		}
+
+		// add runtime features - start/stop device
+		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
+			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
+			if (context.getPictogramElements()[0] instanceof RHContainerShape) {
+				Diagram diagram = DUtil.findDiagram((RHContainerShape) context.getPictogramElements()[0]);
+				if (obj instanceof DcdComponentInstantiation && (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
+					retList.add(new StartFeature(this));
+					retList.add(new StopFeature(this));
+				}
 			}
 		}
 

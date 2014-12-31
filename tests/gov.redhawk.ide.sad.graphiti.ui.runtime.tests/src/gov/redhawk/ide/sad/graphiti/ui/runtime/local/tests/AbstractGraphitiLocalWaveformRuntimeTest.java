@@ -42,7 +42,7 @@ public abstract class AbstractGraphitiLocalWaveformRuntimeTest extends UIRuntime
 
 		// Open Local Waveform Diagram
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, DiagramType.GRAPHITI_CHALKBOARD);
-		waveFormFullName = ScaExplorerTestUtils.getWaveformFullNameFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+		waveFormFullName = ScaExplorerTestUtils.getFullNameFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
 		
 	}
 	
@@ -50,7 +50,7 @@ public abstract class AbstractGraphitiLocalWaveformRuntimeTest extends UIRuntime
 	public void afterTest() {
 		
 		//does waveform exist
-		SWTBotTreeItem waveformEntry = ScaExplorerTestUtils.getWaveformTreeItemFromScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+		SWTBotTreeItem waveformEntry = ScaExplorerTestUtils.getTreeItemFromScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
 		
 		//release waveform, make sure it disappears
 		if (waveformEntry != null) {
