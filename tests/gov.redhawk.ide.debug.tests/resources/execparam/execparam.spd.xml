@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE softpkg PUBLIC "-//JTRS//DTD SCA V2.2.2 SPD//EN" "softpkg.dtd">
+<softpkg id="DCE:242afae5-e6fd-4cf9-bca2-a8e86c773a88" name="execparam" type="sca_compliant">
+  <propertyfile type="PRF">
+    <localfile name="execparam.prf.xml"/>
+  </propertyfile>
+  <descriptor>
+    <localfile name="execparam.scd.xml"/>
+  </descriptor>
+  <implementation id="cpp">
+    <code type="Executable">
+      <localfile name="execparam-entrypoint"/>
+      <entrypoint>execparam-entrypoint</entrypoint>
+    </code>
+    <os name="Linux"/>
+    <processor name="x86_64"/>
+  </implementation>
+</softpkg>
