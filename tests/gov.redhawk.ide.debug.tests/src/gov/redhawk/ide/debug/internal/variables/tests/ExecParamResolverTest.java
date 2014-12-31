@@ -1,4 +1,4 @@
-package gov.redhawk.ide.debug.internal.variables;
+package gov.redhawk.ide.debug.internal.variables.tests;
 
 import gov.redhawk.ide.debug.ILaunchConfigurationFactory;
 import gov.redhawk.ide.debug.ILaunchConfigurationFactoryRegistry;
