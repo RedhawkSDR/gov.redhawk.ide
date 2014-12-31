@@ -19,7 +19,6 @@ import gov.redhawk.sca.efs.ScaFileSystemPlugin;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
@@ -148,7 +147,7 @@ public class NotifyingNamingContextTest extends TestCase {
 		final File file = File.createTempFile("test", ".sad.xml", tempDir);
 		file.deleteOnExit();
 
-		Assert.assertNotNull(getFixture().getName(URI.createURI(file.toURI().toString())));
+		assertNotNull(getFixture().getName(URI.createURI(file.toURI().toString())));
 
 		// BEGIN GENERATED CODE
 	}
@@ -169,12 +168,12 @@ public class NotifyingNamingContextTest extends TestCase {
 		final URI expected = URI.createURI(file.toURI().toString());
 		final NameComponent[] context = getFixture().getName(expected);
 		URI uri = getFixture().getURI(context);
-		Assert.assertEquals(expected, uri);
+		assertEquals(expected, uri);
 
 		final String subContextStr = Name.toString(context);
 		final NameComponent[] subContext = Name.toName("hello/" + subContextStr + "/child");
 		uri = getFixture().getURI(subContext);
-		Assert.assertEquals(expected, uri);
+		assertEquals(expected, uri);
 		// BEGIN GENERATED CODE
 	}
 

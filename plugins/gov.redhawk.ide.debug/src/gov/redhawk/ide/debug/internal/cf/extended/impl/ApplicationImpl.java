@@ -277,12 +277,10 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	private final String name;
 	private final String identifier;
 	private final String profile;
-	private final URI profileURI;
 	private boolean started;
 
 	public ApplicationImpl(final LocalScaWaveform waveform, final String identifier, final String name) {
 		super();
-		this.profileURI = waveform.getProfileURI();
 		this.name = name;
 		this.waveformContext = waveform.getNamingContext();
 		this.identifier = identifier;

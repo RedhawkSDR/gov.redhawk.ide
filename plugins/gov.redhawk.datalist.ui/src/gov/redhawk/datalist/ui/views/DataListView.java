@@ -68,8 +68,6 @@ public class DataListView extends ViewPart {
 
 	private TableViewer viewer;
 
-	private BulkIOType type;
-
 	private DataBuffer buffer;
 
 	private Button chartButton, snapshotButton;
@@ -449,7 +447,6 @@ public class DataListView extends ViewPart {
 			this.buffer = new DataBuffer(port, newType);
 			this.buffer.addDataBufferListener(this.listener);
 
-			this.type = newType;
 			this.dataCourier.setType(newType);
 			if (this.viewer != null) {
 				this.viewer.setInput(this.buffer);
