@@ -145,6 +145,19 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 	
+	// updates component inner rectangle style
+	public static Style createStyleForComponentInnerStarted(Diagram diagram) {
+		final String styleId = "ComponentInnerStarted";
+		Style style = StyleUtil.findStyle(diagram, styleId);
+		if (style == null) {
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			gaService.setRenderingStyle(style, DeviceColoredAreas.getGreenWhiteAdaptions());
+			style.setLineWidth(2);
+		}
+		return style;
+	}
+	
 	// returns component inner rectangle style
 	public static Style getStyleForComponentInnerStarted(Diagram diagram) {
 		final String styleId = "ComponentInnerStarted";

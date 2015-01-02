@@ -33,7 +33,9 @@ Require-Bundle: gov.redhawk.ide.dcd.ui,
  gov.redhawk.ide.codegen,
  org.eclipse.graphiti.examples.common,
  gov.redhawk.ide.dcd,
- gov.redhawk.ide.debug
+ gov.redhawk.ide.debug,
+ mil.jpeojtrs.sca.spd,
+ gov.redhawk.ide.debug.ui.diagram
 Bundle-ActivationPolicy: lazy
 Export-Package: gov.redhawk.ide.graphiti.dcd.internal.ui.editor,
  gov.redhawk.ide.graphiti.dcd.ui,

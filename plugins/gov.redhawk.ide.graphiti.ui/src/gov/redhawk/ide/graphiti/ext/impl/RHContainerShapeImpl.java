@@ -11,16 +11,19 @@
 package gov.redhawk.ide.graphiti.ext.impl;
 
 import gov.redhawk.ide.graphiti.ext.Event;
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.RHGxPackage;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -165,13 +168,26 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	public void setStarted(boolean newStarted) {
 		boolean oldStarted = started;
 		started = newStarted;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__STARTED, oldStarted, started));
+		
+		// update color according to value
+		final Diagram diagram = DUtil.findDiagram(this);
+		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
+		if (innerRoundedRectangle != null) {
+			if (newStarted) {
+				// started
+				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInnerStarted(diagram));
+			} else {
+				// not started
+				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInner(diagram));
+			}
+		}
 	}
 
 	/**

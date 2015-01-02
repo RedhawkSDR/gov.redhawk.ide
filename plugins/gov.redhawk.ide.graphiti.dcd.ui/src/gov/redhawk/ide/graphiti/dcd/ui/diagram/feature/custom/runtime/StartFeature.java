@@ -10,10 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.custom.runtime;
 
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.util.DcdStyleUtil;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -63,7 +63,7 @@ public class StartFeature extends AbstractCustomFeature {
 					RHContainerShapeImpl shape = (RHContainerShapeImpl) modelObj;
 					RoundedRectangle innerRoundedRectangle = (RoundedRectangle) DUtil.findFirstPropertyContainer(shape,
 						RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE);
-					innerRoundedRectangle.setStyle(DcdStyleUtil.createStyleForComponentInnerStarted(getDiagram()));
+					innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInnerStarted(getDiagram()));
 					shape.setStarted(true); // GraphitiModelMap is listening
 				}
 			}
