@@ -44,8 +44,10 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String INNER_TEXT = "gov.redhawk.style.InnerText";
 	private static final String OUTER_TEXT = "gov.redhawk.style.OuterText";
 	private static final String FIND_BY_INNER = "gov.redhawk.style.FindByInner";
+	private static final String USES_DEVICE_INNER = "gov.redhawk.style.UsesDeviceInner";
 	private static final String HOST_COLLOCATION = "gov.redhawk.style.HostCollocation";
 	private static final String FIND_BY_OUTER = "gov.redhawk.style.FindByOuter";
+	private static final String USES_DEVICE_OUTER = "gov.redhawk.style.UsesDeviceOuter";
 	private static final String COMPONENT_INNER = "gov.redhawk.style.ComponentInner";
 	private static final String COMPONENT_OUTER = "gov.redhawk.style.ComponentOuter";
 	public static final IColorConstant TEXT_FOREGROUND = IColorConstant.BLACK;
@@ -175,6 +177,30 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
+	
+	// returns uses device outer rectangle style
+	public static Style getStyleForUsesDeviceOuter(Diagram diagram) {
+		final String styleId = USES_DEVICE_OUTER;
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns uses device outer rectangle style
+	public static Style createStyleForUsesDeviceOuter(Diagram diagram) {
+		final String styleId = USES_DEVICE_OUTER;
+		Style style = findStyle(diagram, styleId);
+		if (style == null) {
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			style.setForeground(gaService.manageColor(diagram, BLACK));
+			style.setTransparency(.99d);
+			style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
+			style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
+			style.setLineWidth(0);
+			style.setLineVisible(false);
+		}
+		return style;
+	}
 
 	// returns host collocation rectangle style
 	public static Style getStyleForHostCollocation(Diagram diagram) {
@@ -217,6 +243,28 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			style.setBackground(gaService.manageColor(diagram, new ColorConstant(255, 0, 0)));
 			style.setLineStyle(LineStyle.DASH);
 			gaService.setRenderingStyle(style, FindByColoredAreas.getCopperWhiteAdaptions());
+			style.setLineWidth(2);
+		}
+		return style;
+	}
+	
+	// returns uses device inner rectangle style
+	public static Style getStyleForUsesDeviceInner(Diagram diagram) {
+		final String styleId = USES_DEVICE_INNER;
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
+
+	// returns uses device inner rectangle style
+	public static Style createStyleForUsesDeviceInner(Diagram diagram) {
+		final String styleId = USES_DEVICE_INNER;
+		Style style = findStyle(diagram, styleId);
+		if (style == null) {
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			style.setBackground(gaService.manageColor(diagram, new ColorConstant(255, 0, 0)));
+			style.setLineStyle(LineStyle.DASH);
+			gaService.setRenderingStyle(style, FindByColoredAreas.getLightGrayAdaptions());
 			style.setLineWidth(2);
 		}
 		return style;

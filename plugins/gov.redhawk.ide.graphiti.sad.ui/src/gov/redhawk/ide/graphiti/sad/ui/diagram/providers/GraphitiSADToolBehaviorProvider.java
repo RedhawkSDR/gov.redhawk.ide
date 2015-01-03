@@ -17,6 +17,8 @@ import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndListenerPattern;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -172,6 +174,12 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		for (IPaletteCompartmentEntry compartment : super.getPalette()) {
 			compartments.add(compartment);
 		}
+		
+		//Uses Device Compartment
+		if (!DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+			PaletteCompartmentEntry usesDeviceCompartmentEntry = getUsesDeviceCompartmentEntry();
+			compartments.add(usesDeviceCompartmentEntry);
+		}
 
 		// BASE TYPES Compartment
 		PaletteCompartmentEntry baseTypesCompartmentEntry = getBaseTypesCompartmentEntry();
@@ -189,6 +197,27 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 
 	}
 
+	/**
+	 * Returns Palette Compartment Entry for Uses Device
+	 * @return
+	 */
+	private PaletteCompartmentEntry getUsesDeviceCompartmentEntry() {
+
+		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Uses Device", null);
+
+		IFeatureProvider featureProvider = getFeatureProvider();
+		ICreateFeature[] createFeatures = featureProvider.getCreateFeatures();
+		for (ICreateFeature cf : createFeatures) {
+			if (UsesDeviceFrontEndTunerPattern.NAME.equals(cf.getCreateName()) || UsesDeviceFrontEndListenerPattern.NAME.equals(cf.getCreateName())) {
+				ObjectCreationToolEntry objectCreationToolEntry = new ObjectCreationToolEntry(cf.getCreateName(), cf.getCreateDescription(),
+					cf.getCreateImageId(), cf.getCreateLargeImageId(), cf);
+				compartmentEntry.addToolEntry(objectCreationToolEntry);
+			}
+		}
+
+		return compartmentEntry;
+	}
+	
 	/**
 	 * Returns a populated CompartmentEntry containing all the Base Types
 	 */

@@ -41,7 +41,8 @@ Require-Bundle: gov.redhawk.validation;bundle-version="1.0.0",
  gov.redhawk.core.resourceFactory,
  gov.redhawk.ide.debug.ui,
  gov.redhawk.ide.debug.ui.diagram,
- gov.redhawk.ide.graphiti.ui;visibility:=reexport
+ gov.redhawk.ide.graphiti.ui;visibility:=reexport,
+ gov.redhawk.ide.codegen.frontend.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName

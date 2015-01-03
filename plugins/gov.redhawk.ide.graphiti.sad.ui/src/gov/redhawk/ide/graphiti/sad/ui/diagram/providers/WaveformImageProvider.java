@@ -28,6 +28,8 @@ public class WaveformImageProvider extends AbstractImageProvider implements IIma
 	public static final String IMG_FIND_BY_DOMAIN = PREFIX + "findByDomain";
 	public static final String IMG_FIND_BY = PREFIX + "findBy";
 	public static final String IMG_HOST_COLLOCATION = "hostCollocation";
+	public static final String IMG_USES_DEVICE_FRONTEND_TUNER = PREFIX + "usesDeviceFrontEndTuner";
+	public static final String IMG_USES_DEVICE_FRONTEND_LISTENER = PREFIX + "usesDeviceFrontEndListener";
 
 	public WaveformImageProvider() {
 	}
@@ -45,6 +47,8 @@ public class WaveformImageProvider extends AbstractImageProvider implements IIma
 		addImageFilePath(IMG_FIND_BY_SERVICE, "icons/full/obj16/DomainFinder.gif");
 		addImageFilePath(IMG_FIND_BY, "icons/full/obj16/FindBy.gif");
 		addImageFilePath(IMG_HOST_COLLOCATION, "icons/full/obj16/HostCollocation.gif");
+		addImageFilePath(IMG_USES_DEVICE_FRONTEND_TUNER, "icons/full/obj16/NamingService.gif");
+		addImageFilePath(IMG_USES_DEVICE_FRONTEND_LISTENER, "icons/full/obj16/NamingService.gif");
 	}
 
 }
