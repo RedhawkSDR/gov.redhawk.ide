@@ -10,13 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.wizards;
 
-import gov.redhawk.ide.codegen.frontend.ui.FrontEndDeviceUIUtils;
+import gov.redhawk.frontend.util.TunerProperties;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-
-import mil.jpeojtrs.sca.prf.Simple;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
@@ -225,95 +223,81 @@ public class UsesDeviceFrontEndTunerWizardPage extends WizardPage {
 		composite.setLayout(new GridLayout(1, false));
 
 		// Tuner Type
-		Simple simple = FrontEndDeviceUIUtils.INSTANCE.getAllTunerAllocationSimplesMap()
-				.get(FrontEndDeviceUIUtils.TUNER_ALLOCATION_TUNER_TYPE_ID);
 		Label tunerTypeLabel = new Label(composite, SWT.NONE);
 		tunerTypeLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		tunerTypeLabel.setText("Tuner Type:");
+		tunerTypeLabel.setText(TunerProperties.TunerAllocationProperties.TUNER_TYPE.getName() + ":");
 
 		tunerTypeCombo = new Combo(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		ComboViewer comboViewer = new ComboViewer(tunerTypeCombo);
 		tunerTypeCombo.setItems(new String[] {"TX", "RX", "CHANNELIZER", "DDC", "RX_DIGITIZER", "RX_DIGTIZIER_CHANNELIZER"});
 		tunerTypeCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		tunerTypeCombo.setToolTipText(simple.getDescription());
+		tunerTypeCombo.setToolTipText(TunerProperties.TunerAllocationProperties.TUNER_TYPE.getDescription());
 		dbc.bindValue(ViewersObservables.observeSingleSelection(comboViewer), 
 			BeansObservables.observeValue(model, Model.TUNER_TYPE));
 
 		// AllocationId
-		simple = FrontEndDeviceUIUtils.INSTANCE.getAllTunerAllocationSimplesMap()
-				.get(FrontEndDeviceUIUtils.TUNER_ALLOCATION_ALLOCATION_ID_ID);
 		Label allocationIdLabel = new Label(composite, SWT.NONE);
 		allocationIdLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		allocationIdLabel.setText("Allocation Id:");
+		allocationIdLabel.setText(TunerProperties.TunerAllocationProperties.ALLOCATION_ID.getName() + ":");
 
 		allocationIdText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		allocationIdText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		allocationIdText.setToolTipText(simple.getDescription());
+		allocationIdText.setToolTipText(TunerProperties.TunerAllocationProperties.ALLOCATION_ID.getDescription());
 		dbc.bindValue(SWTObservables.observeText(allocationIdText, SWT.Modify), 
 			BeansObservables.observeValue(model, Model.ALLOCATION_ID));
 		
 		// CenterFrequency
-		simple = FrontEndDeviceUIUtils.INSTANCE.getAllTunerAllocationSimplesMap()
-				.get(FrontEndDeviceUIUtils.TUNER_ALLOCATION_CENTER_FREQUENCY_ID);
 		Label centerFrequencyLabel = new Label(composite, SWT.NONE);
 		centerFrequencyLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		centerFrequencyLabel.setText("Center Frequency:");
+		centerFrequencyLabel.setText(TunerProperties.TunerAllocationProperties.CENTER_FREQUENCY.getName() + ":");
 
 		centerFrequencyText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		centerFrequencyText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		centerFrequencyText.setToolTipText(simple.getDescription());
+		centerFrequencyText.setToolTipText(TunerProperties.TunerAllocationProperties.CENTER_FREQUENCY.getDescription());
 		dbc.bindValue(SWTObservables.observeText(centerFrequencyText, SWT.Modify), 
 			BeansObservables.observeValue(model, Model.CENTER_FREQUENCY));
 		
 		// Bandwidth
-		simple = FrontEndDeviceUIUtils.INSTANCE.getAllTunerAllocationSimplesMap()
-				.get(FrontEndDeviceUIUtils.TUNER_ALLOCATION_BANDWIDTH_ID);
 		Label bandwidthLabel = new Label(composite, SWT.NONE);
 		bandwidthLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		bandwidthLabel.setText("Bandwidth:");
+		bandwidthLabel.setText(TunerProperties.TunerAllocationProperties.BANDWIDTH.getName() + ":");
 
 		bandwidthText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		bandwidthText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		bandwidthText.setToolTipText(simple.getDescription());
+		bandwidthText.setToolTipText(TunerProperties.TunerAllocationProperties.BANDWIDTH.getDescription());
 		dbc.bindValue(SWTObservables.observeText(bandwidthText, SWT.Modify), 
 			BeansObservables.observeValue(model, Model.BANDWIDTH));
 		
 		// Bandwidth Tolerance
-		simple = FrontEndDeviceUIUtils.INSTANCE.getAllTunerAllocationSimplesMap()
-				.get(FrontEndDeviceUIUtils.TUNER_ALLOCATION_BANDWIDTH_TOLERANCE_ID);
 		Label bandwidthToleranceLabel = new Label(composite, SWT.NONE);
 		bandwidthToleranceLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		bandwidthToleranceLabel.setText("Bandwidth Tolerance:");
+		bandwidthToleranceLabel.setText(TunerProperties.TunerAllocationProperties.BANDWIDTH_TOLERANCE.getName() + ":");
 
 		bandwidthToleranceText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		bandwidthToleranceText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		bandwidthToleranceText.setToolTipText(simple.getDescription());
+		bandwidthToleranceText.setToolTipText(TunerProperties.TunerAllocationProperties.BANDWIDTH_TOLERANCE.getDescription());
 		dbc.bindValue(SWTObservables.observeText(bandwidthToleranceText, SWT.Modify), 
 			BeansObservables.observeValue(model, Model.BANDWIDTH_TOLERANCE));
 		
 		// Sample Rate
-		simple = FrontEndDeviceUIUtils.INSTANCE.getAllTunerAllocationSimplesMap()
-				.get(FrontEndDeviceUIUtils.TUNER_ALLOCATION_SAMPLE_RATE_ID);
 		Label sampleRateLabel = new Label(composite, SWT.NONE);
 		sampleRateLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		sampleRateLabel.setText("Sample Rate:");
+		sampleRateLabel.setText(TunerProperties.TunerAllocationProperties.SAMPLE_RATE.getName() + ":");
 
 		sampleRateText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		sampleRateText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		sampleRateText.setToolTipText(simple.getDescription());
+		sampleRateText.setToolTipText(TunerProperties.TunerAllocationProperties.SAMPLE_RATE.getDescription());
 		dbc.bindValue(SWTObservables.observeText(sampleRateText, SWT.Modify), 
 			BeansObservables.observeValue(model, Model.SAMPLE_RATE));
 		
 		// Sample Rate Tolerance
-		simple = FrontEndDeviceUIUtils.INSTANCE.getAllTunerAllocationSimplesMap()
-				.get(FrontEndDeviceUIUtils.TUNER_ALLOCATION_SAMPLE_RATE_TOLERANCE_ID);
 		Label sampleRateToleranceLabel = new Label(composite, SWT.NONE);
 		sampleRateToleranceLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		sampleRateToleranceLabel.setText("Sample Rate Tolerance:");
+		sampleRateToleranceLabel.setText(TunerProperties.TunerAllocationProperties.SAMPLE_RATE_TOLERANCE.getName() + ":");
 
 		sampleRateToleranceText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		sampleRateToleranceText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		sampleRateToleranceText.setToolTipText(simple.getDescription());
+		sampleRateToleranceText.setToolTipText(TunerProperties.TunerAllocationProperties.SAMPLE_RATE_TOLERANCE.getDescription());
 		dbc.bindValue(SWTObservables.observeText(sampleRateToleranceText, SWT.Modify), 
 			BeansObservables.observeValue(model, Model.SAMPLE_RATE_TOLERANCE));
 		
@@ -322,41 +306,35 @@ public class UsesDeviceFrontEndTunerWizardPage extends WizardPage {
 		deviceComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		deviceComposite.setLayout(new GridLayout(2, false));
 		
-		simple = FrontEndDeviceUIUtils.INSTANCE.getAllTunerAllocationSimplesMap()
-				.get(FrontEndDeviceUIUtils.TUNER_ALLOCATION_DEVICE_CONTROL_ID);
 		Label deviceControlLabel = new Label(deviceComposite, SWT.NONE);
 		deviceControlLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		deviceControlLabel.setText("Device Control:");
+		deviceControlLabel.setText(TunerProperties.TunerAllocationProperties.DEVICE_CONTROL.getName() + ":");
 
 		deviceControlCheckbox = new Button(deviceComposite, SWT.CHECK | SWT.LEAD | SWT.BORDER);
 		deviceControlCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		deviceControlCheckbox.setToolTipText(simple.getDescription());
+		deviceControlCheckbox.setToolTipText(TunerProperties.TunerAllocationProperties.DEVICE_CONTROL.getDescription());
 		dbc.bindValue(WidgetProperties.selection().observe(deviceControlCheckbox), 
 			BeansObservables.observeValue(model, Model.DEVICE_CONTROL));
 		
 		// Group Id
-		simple = FrontEndDeviceUIUtils.INSTANCE.getAllTunerAllocationSimplesMap()
-				.get(FrontEndDeviceUIUtils.TUNER_ALLOCATION_GROUP_ID_ID);
 		Label groupIdLabel = new Label(composite, SWT.NONE);
 		groupIdLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		groupIdLabel.setText("Group Id:");
+		groupIdLabel.setText(TunerProperties.TunerAllocationProperties.GROUP_ID.getName() + ":");
 
 		groupIdText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		groupIdText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		groupIdText.setToolTipText(simple.getDescription());
+		groupIdText.setToolTipText(TunerProperties.TunerAllocationProperties.GROUP_ID.getDescription());
 		dbc.bindValue(SWTObservables.observeText(groupIdText, SWT.Modify), 
 			BeansObservables.observeValue(model, Model.GROUP_ID));
 		
 		// RF Flow Id
-		simple = FrontEndDeviceUIUtils.INSTANCE.getAllTunerAllocationSimplesMap()
-				.get(FrontEndDeviceUIUtils.TUNER_ALLOCATION_RF_FLOW_ID_ID);
 		Label rfFlowIdLabel = new Label(composite, SWT.NONE);
 		rfFlowIdLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		rfFlowIdLabel.setText("RF Flow Id:");
+		rfFlowIdLabel.setText(TunerProperties.TunerAllocationProperties.RF_FLOW_ID.getName() + ":");
 
 		rfFlowIdText = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		rfFlowIdText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		rfFlowIdText.setToolTipText(simple.getDescription());
+		rfFlowIdText.setToolTipText(TunerProperties.TunerAllocationProperties.RF_FLOW_ID.getDescription());
 		dbc.bindValue(SWTObservables.observeText(rfFlowIdText, SWT.Modify), 
 			BeansObservables.observeValue(model, Model.RF_FLOW_ID));
 		
