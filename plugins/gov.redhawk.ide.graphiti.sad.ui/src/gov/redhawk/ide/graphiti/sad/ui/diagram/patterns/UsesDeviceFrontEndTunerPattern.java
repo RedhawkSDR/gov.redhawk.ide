@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
-import gov.redhawk.ide.codegen.frontend.ui.FrontEndDeviceUIUtils;
+import gov.redhawk.frontend.util.TunerProperties;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.wizards.UsesDeviceFrontEndTunerWizardPage;
@@ -43,6 +43,10 @@ import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
+
+import ExtendedCF.WKP.DEVICEKIND;
+import ExtendedCF.WKP.DEVICEMODEL;
+import FRONTEND.FE_TUNER_DEVICE_KIND;
 
 public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern implements IPattern {
 
@@ -115,32 +119,30 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 				usesDevices[0].setType("newName");
 
 				PropertyRef deviceKindPropertyRef = SpdFactory.eINSTANCE.createPropertyRef();
-				//TODO: is this available somewhere else
-				deviceKindPropertyRef.setRefId("DCE:cdc5ee18-7ceb-4ae6-bf4c-31f983179b4d");
-				deviceKindPropertyRef.setValue("FRONTEND::TUNER");
+				deviceKindPropertyRef.setRefId(DEVICEKIND.value);
+				deviceKindPropertyRef.setValue(FE_TUNER_DEVICE_KIND.value);
 				usesDevices[0].getPropertyRef().add(deviceKindPropertyRef);
 				
 				PropertyRef deviceModelPropertyRef = SpdFactory.eINSTANCE.createPropertyRef();
-				//TODO: is this available somewhere else
-				deviceModelPropertyRef.setRefId("DCE:0f99b2e4-9903-4631-9846-ff349d18ecfb");
+				deviceModelPropertyRef.setRefId(DEVICEMODEL.value);
 				deviceModelPropertyRef.setValue("USB");  //TODO: this can change
 				usesDevices[0].getPropertyRef().add(deviceModelPropertyRef);
 				
 				StructRef tunerAllocationStructRef = PrfFactory.eINSTANCE.createStructRef();
-				tunerAllocationStructRef.setProperty(FrontEndDeviceUIUtils.INSTANCE.getTunerAllocationStruct());
+				tunerAllocationStructRef.setProperty(TunerProperties.TunerAllocationProperty.INSTANCE.createStruct());
 				usesDevices[0].getStructRef().add(tunerAllocationStructRef);
 				
 				//set values from wizard
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], FrontEndDeviceUIUtils.TUNER_ALLOCATION_TUNER_TYPE_ID, page.getModel().getTunerType());
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], FrontEndDeviceUIUtils.TUNER_ALLOCATION_ALLOCATION_ID_ID, page.getModel().getAllocationId());
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], FrontEndDeviceUIUtils.TUNER_ALLOCATION_CENTER_FREQUENCY_ID, String.valueOf(page.getModel().getCenterFrequency()));
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], FrontEndDeviceUIUtils.TUNER_ALLOCATION_BANDWIDTH_ID, String.valueOf(page.getModel().getBandwidth()));
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], FrontEndDeviceUIUtils.TUNER_ALLOCATION_BANDWIDTH_TOLERANCE_ID, String.valueOf(page.getModel().getBandwidthTolerance()));
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], FrontEndDeviceUIUtils.TUNER_ALLOCATION_SAMPLE_RATE_ID, String.valueOf(page.getModel().getSampleRate()));
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], FrontEndDeviceUIUtils.TUNER_ALLOCATION_SAMPLE_RATE_TOLERANCE_ID, String.valueOf(page.getModel().getSampleRateTolerance()));
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], FrontEndDeviceUIUtils.TUNER_ALLOCATION_DEVICE_CONTROL_ID, String.valueOf(page.getModel().getDeviceControl()));
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], FrontEndDeviceUIUtils.TUNER_ALLOCATION_GROUP_ID_ID, String.valueOf(page.getModel().getGroupId()));
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], FrontEndDeviceUIUtils.TUNER_ALLOCATION_RF_FLOW_ID_ID, String.valueOf(page.getModel().getRfFlowId()));
+				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.TUNER_TYPE.getId(), page.getModel().getTunerType());
+				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.ALLOCATION_ID.getId(), page.getModel().getAllocationId());
+				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.CENTER_FREQUENCY.getId(), String.valueOf(page.getModel().getCenterFrequency()));
+				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.BANDWIDTH.getId(), String.valueOf(page.getModel().getBandwidth()));
+				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.BANDWIDTH_TOLERANCE.getId(), String.valueOf(page.getModel().getBandwidthTolerance()));
+				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.SAMPLE_RATE.getId(), String.valueOf(page.getModel().getSampleRate()));
+				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.SAMPLE_RATE_TOLERANCE.getId(), String.valueOf(page.getModel().getSampleRateTolerance()));
+				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.DEVICE_CONTROL.getId(), String.valueOf(page.getModel().getDeviceControl()));
+				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.GROUP_ID.getId(), String.valueOf(page.getModel().getGroupId()));
+				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.RF_FLOW_ID.getId(), String.valueOf(page.getModel().getRfFlowId()));
 				
 				// add to diagram resource file
 				getDiagram().eResource().getContents().add(usesDevices[0]);
@@ -197,7 +199,7 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 		EList<SimpleRef> props = usesDevice.getStructRef().get(0).getSimpleRef();
 		
 		boolean found = false;
-		for (Iterator iter = props.iterator(); iter.hasNext();) {
+		for (Iterator<SimpleRef> iter = props.iterator(); iter.hasNext();) {
 			SimpleRef p = (SimpleRef) iter.next();
 			if (propRefId.equals(p.getRefID())) {
 				found = true;
@@ -236,16 +238,16 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 	
 	private static void fillWizardFieldsWithExistingProperties(UsesDeviceFrontEndTunerWizardPage page, UsesDevice usesDevice) {
 		// Grab existing properties from usesDevice
-		String tunerType = getFEUsesDeviceTunerAllocationProp(usesDevice, FrontEndDeviceUIUtils.TUNER_ALLOCATION_TUNER_TYPE_ID);
-		String allocationId = getFEUsesDeviceTunerAllocationProp(usesDevice, FrontEndDeviceUIUtils.TUNER_ALLOCATION_ALLOCATION_ID_ID);
-		String centerFrequency = getFEUsesDeviceTunerAllocationProp(usesDevice, FrontEndDeviceUIUtils.TUNER_ALLOCATION_CENTER_FREQUENCY_ID);
-		String bandwidth = getFEUsesDeviceTunerAllocationProp(usesDevice, FrontEndDeviceUIUtils.TUNER_ALLOCATION_BANDWIDTH_ID);
-		String bandwidthTolerance = getFEUsesDeviceTunerAllocationProp(usesDevice, FrontEndDeviceUIUtils.TUNER_ALLOCATION_BANDWIDTH_TOLERANCE_ID);
-		String sampleRate = getFEUsesDeviceTunerAllocationProp(usesDevice, FrontEndDeviceUIUtils.TUNER_ALLOCATION_SAMPLE_RATE_ID);
-		String sampleRateTolerance = getFEUsesDeviceTunerAllocationProp(usesDevice, FrontEndDeviceUIUtils.TUNER_ALLOCATION_SAMPLE_RATE_TOLERANCE_ID);
-		String deviceControl = getFEUsesDeviceTunerAllocationProp(usesDevice, FrontEndDeviceUIUtils.TUNER_ALLOCATION_DEVICE_CONTROL_ID);
-		String groupId = getFEUsesDeviceTunerAllocationProp(usesDevice, FrontEndDeviceUIUtils.TUNER_ALLOCATION_GROUP_ID_ID);
-		String rfFlowId = getFEUsesDeviceTunerAllocationProp(usesDevice, FrontEndDeviceUIUtils.TUNER_ALLOCATION_RF_FLOW_ID_ID);
+		String tunerType = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.TUNER_TYPE.getId());
+		String allocationId = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.ALLOCATION_ID.getId());
+		String centerFrequency = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.CENTER_FREQUENCY.getId());
+		String bandwidth = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.BANDWIDTH.getId());
+		String bandwidthTolerance = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.BANDWIDTH_TOLERANCE.getId());
+		String sampleRate = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.SAMPLE_RATE.getId());
+		String sampleRateTolerance = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.SAMPLE_RATE_TOLERANCE.getId());
+		String deviceControl = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.DEVICE_CONTROL.getId());
+		String groupId = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.GROUP_ID.getId());
+		String rfFlowId = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.RF_FLOW_ID.getId());
 
 		// Fill wizard fields with existing properties
 		page.getModel().setTunerType(tunerType);
