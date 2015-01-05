@@ -31,7 +31,6 @@ import CF.ResourceFactoryPackage.CreateResourceFailure;
 public class WorkspaceWaveformFactory extends AbstractResourceFactory {
 
 	private final SoftwareAssembly sad;
-	private final IFile profile;
 
 	public WorkspaceWaveformFactory(final IFile profile) throws IOException {
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
@@ -42,7 +41,6 @@ public class WorkspaceWaveformFactory extends AbstractResourceFactory {
 		} catch (WrappedException we) {
 			throw new IOException("Failed to load Waveform: " + profile.getFullPath(), we);
 		}
-		this.profile = profile;
 	}
 
 	/**

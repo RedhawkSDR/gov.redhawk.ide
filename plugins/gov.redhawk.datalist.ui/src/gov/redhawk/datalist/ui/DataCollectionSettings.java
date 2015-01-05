@@ -40,20 +40,32 @@ public class DataCollectionSettings {
 		pcs.removePropertyChangeListener(listener);
 	}
 
+	/**
+	 * @since 1.1
+	 */
 	public int getDimensions() {
 		return dimensions;
 	}
 
+	/**
+	 * @since 1.1
+	 */
 	public void setDimensions(int dimensions) {
 		int oldValue = this.dimensions;
 		this.dimensions = dimensions;
 		pcs.firePropertyChange("dimensions", oldValue, dimensions);
 	}
 
+	/**
+	 * @since 1.1
+	 */
 	public double getSamples() {
 		return samples;
 	}
 
+	/**
+	 * @since 1.1
+	 */
 	public void setSamples(double samples) {
 		double oldValue = this.samples;
 		this.samples = samples;

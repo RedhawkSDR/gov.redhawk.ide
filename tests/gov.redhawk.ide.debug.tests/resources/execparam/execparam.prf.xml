@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties PUBLIC "-//JTRS//DTD SCA V2.2.2 PRF//EN" "properties.dtd">
+<properties>
+  <simple id="no_value" mode="readwrite" type="string">
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="with_value" mode="readwrite" type="string">
+    <value>my string</value>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="no_value_config_too" mode="readwrite" type="string">
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+  <simple id="with_value_config_too" mode="readwrite" type="string">
+    <value>my other value</value>
+    <kind kindtype="configure"/>
+    <kind kindtype="execparam"/>
+    <action type="external"/>
+  </simple>
+</properties>
