@@ -37,41 +37,40 @@ import org.eclipse.swt.widgets.Text;
  * @since 1.1
  */
 public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPropertiesWizardPage {
-	
+
 	/**
 	 * The Class ServiceIdlValidator.
 	 */
 	private static final class ServiceIdlValidator implements IValidator {
-		
+
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
 		public IStatus validate(final Object value) {
-			// Project names are always stripped of whitespace
-			// (see the Java Project Wizard)
 			final String s = ((String) value).trim();
 			if ((s == null) || (s.length() == 0)) {
 				return ValidationStatus.error("You must select a service interface IDL.");
 			}
-			
+
 			return ValidationStatus.ok();
 		}
 	}
-	
-	
+
 	private class Model {
 		private String repID;
+
 		public String getRepID() {
 			return repID;
 		}
+
 		public void setRepID(String repID) {
 			this.repID = repID;
 		}
 	}
-	
+
 	private Model model = new Model();
-	
+
 	private Text serviceIdlText;
 	private ServiceIdlValidator serviceIdlValidator = new ServiceIdlValidator();
 	private DataBindingContext context = new DataBindingContext();
@@ -93,15 +92,15 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 	public void createControl(final Composite parent) {
 		super.createControl(parent);
 		getContentsGroup().setValidator(new SpdFileValidator());
-		
+
 	}
-	
+
 	@Override
 	protected boolean validatePage() {
 		if (!super.validatePage()) {
 			return false;
 		}
-		
+
 		IStatus status = this.serviceIdlValidator.validate(serviceIdlText.getText());
 		if (!status.isOK()) {
 			setMessage(status);
@@ -116,15 +115,15 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 	 */
 	@Override
 	public void customCreateControl(final Composite parent) {
-		// Device Group
+		// Service Group
 		final Group serviceGroup = new Group(parent, SWT.NONE);
 		serviceGroup.setText(getResourceType());
 		serviceGroup.setLayout(new GridLayout(3, false));
 		GridDataFactory.generate(serviceGroup, 3, 1);
-		
+
 		final Label idlLabel = new Label(serviceGroup, SWT.NONE);
 		idlLabel.setText("Service Interface");
-		
+
 		this.serviceIdlText = new Text(serviceGroup, SWT.BORDER | SWT.READ_ONLY);
 		this.serviceIdlText.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
 		this.serviceIdlText.addModifyListener(new ModifyListener() {
@@ -134,7 +133,7 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 			}
 		});
 		context.bindValue(SWTObservables.observeText(this.serviceIdlText, SWT.Modify), PojoObservables.observeValue(this.model, "repID"));
-		
+
 		final Button idlBrowseButton = new Button(serviceGroup, SWT.NONE);
 		idlBrowseButton.setText("Browse...");
 		idlBrowseButton.addSelectionListener(new SelectionAdapter() {
@@ -146,7 +145,7 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 					serviceIdlText.setText(result.getRepId());
 				}
 			}
-			
+
 		});
 	}
 
