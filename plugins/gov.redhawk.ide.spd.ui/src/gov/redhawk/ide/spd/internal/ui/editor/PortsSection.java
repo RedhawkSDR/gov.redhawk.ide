@@ -11,6 +11,10 @@
 package gov.redhawk.ide.spd.internal.ui.editor;
 
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
+import gov.redhawk.eclipsecorba.idl.Identifiable;
+import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
+import gov.redhawk.eclipsecorba.library.IdlLibrary;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.spd.internal.ui.handlers.EditPortHandler;
 import gov.redhawk.ide.spd.internal.ui.handlers.PortsHandlerUtil;
 import gov.redhawk.model.sca.util.ModelUtil;
@@ -301,13 +305,35 @@ public class PortsSection extends ScaSection {
 	 */
 	public boolean isPortSupplier() {
 		final SoftwareComponent softwareComponent = SoftwareComponent.Util.getSoftwareComponent(this.resource);
-		if (softwareComponent != null) {
-			for (final SupportsInterface si : softwareComponent.getComponentFeatures().getSupportsInterface()) {
-				if (si.getRepId().equals("IDL:CF/PortSupplier:1.0")) {
+		if (softwareComponent == null) {
+			return false;
+		}
+
+		// Find the CF/PortSupplier interface in our library if possible
+		IdlLibrary library = SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary();
+		IdlInterfaceDcl portSupplierIntf = null;
+		if (library != null) {
+			Identifiable identifiable = library.find("IDL:CF/PortSupplier:1.0");
+			if (identifiable != null && identifiable instanceof IdlInterfaceDcl) {
+				portSupplierIntf = (IdlInterfaceDcl) identifiable;
+			}
+		}
+
+		for (final SupportsInterface si : softwareComponent.getComponentFeatures().getSupportsInterface()) {
+			// Look for direct support of CF/PortSupplier
+			if ("IDL:CF/PortSupplier:1.0".equals(si.getRepId())) {
+				return true;
+			}
+
+			// If we have CF/PortSupplier and the current supported interface in our library, try an 'instanceof' check
+			if (portSupplierIntf != null) {
+				Identifiable identifiable = library.find(si.getRepId());
+				if (identifiable != null && identifiable instanceof IdlInterfaceDcl && ((IdlInterfaceDcl) identifiable).isInstance(portSupplierIntf)) {
 					return true;
 				}
 			}
 		}
+
 		return false;
 	}
 
