@@ -53,28 +53,6 @@ public class ServiceProjectCreator extends ProjectCreator {
 		return project;
 	}
 
-	
-	
-	/**
-	 * Creates the basic files for a service in an empty SCA resource project. Should be invoked in the context of a
-	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
-	 * 
-	 * @param project The project to generate files in
-	 * @param projectID The project's ID (DCE)
-	 * @param authorName The name of the service author
-	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
-	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be
-	 *  reported and that the operation cannot be canceled.
-	 * @return The newly created DCD file
-	 * @throws CoreException An error occurs while generating files
-	 * @deprecated This method is deprecated.  Please use the method which takes in the spdName and spdID
-	 */
-	@Deprecated
-	public static IFile createServiceFiles(final IProject project, final String projectID, final String authorName, final String serviceRepId, final IProgressMonitor monitor)
-	        throws CoreException {
-		return createServiceFiles(project, project.getName(), projectID, authorName, serviceRepId, monitor);
-	}
-	
 	/**
 	 * Creates the basic files for a service in an empty SCA resource project. Should be invoked in the context of a
 	 * {@link org.eclipse.ui.actions.WorkspaceModifyOperation WorkspaceModifyOperation}.
