@@ -54,7 +54,7 @@ public abstract class AbstractGraphitiLocalWaveformRuntimeTest extends UIRuntime
 		
 		//release waveform, make sure it disappears
 		if (waveformEntry != null) {
-			ScaExplorerTestUtils.releaseWaveformFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
+			ScaExplorerTestUtils.releaseFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
 			
 			//wait until waveform no longer exists!!!!
 			ScaExplorerTestUtils.waitUntilScaExplorerWaveformDisappears(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);

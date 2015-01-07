@@ -50,7 +50,8 @@ public class ScaExplorerTestUtils {
 	 * @param gefBot
 	 * @param editor
 	 * @param componentName
-	 * @param diagramType - enum stating which context menu option to choose when opening the diagram (chalkboard, explorer, etc)
+	 * @param diagramType - enum stating which context menu option to choose when opening the diagram (chalkboard,
+	 * explorer, etc)
 	 */
 	public static void openDiagramFromScaExplorer(SWTGefBot gefBot, String[] parentPath, String treeItemName, DiagramType diagramType) {
 		SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(gefBot, parentPath, treeItemName);
@@ -64,7 +65,7 @@ public class ScaExplorerTestUtils {
 		graphitiDiagram = openWith.menu(diagramType.getDiagramName());
 		graphitiDiagram.click();
 	}
-	
+
 	/**
 	 * Returns the Tree item from SCA Explorer
 	 */
@@ -318,26 +319,26 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Release Waveform via ScaExplorer.
+	 * Release node via ScaExplorer.
 	 */
-	public static void releaseWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform) {
+	public static void releaseFromScaExplorer(SWTWorkbenchBot bot, String[] nodeParentPath, String node) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem waveformEntry = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
-		waveformEntry.select();
-		SWTBotMenu release = waveformEntry.contextMenu("Release");
+		SWTBotTreeItem treeItemEntry = getTreeItemFromScaExplorer(bot, nodeParentPath, node);
+		treeItemEntry.select();
+		SWTBotMenu release = treeItemEntry.contextMenu("Release");
 		release.click();
 	}
 
 	/**
-	 * Start components in Diagram via ScaExplorer
+	 * Start container/component in Diagram via ScaExplorer
 	 */
-	public static void startWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform) {
+	public static void startWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] nodeParentPath, String node) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem waveformEntry = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
-		waveformEntry.select();
-		SWTBotMenu start = waveformEntry.contextMenu("Start");
+		SWTBotTreeItem treeItemEntry = getTreeItemFromScaExplorer(bot, nodeParentPath, node);
+		treeItemEntry.select();
+		SWTBotMenu start = treeItemEntry.contextMenu("Start");
 		start.click();
 	}
 

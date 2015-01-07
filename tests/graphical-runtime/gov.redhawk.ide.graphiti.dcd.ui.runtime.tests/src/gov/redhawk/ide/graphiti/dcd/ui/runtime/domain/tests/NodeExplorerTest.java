@@ -11,12 +11,10 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.runtime.domain.tests;
 
-import gov.redhawk.ide.swtbot.ViewUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
@@ -53,7 +51,7 @@ public class NodeExplorerTest extends AbstractGraphitiDomainNodeRuntimeTest {
 
 		// check that delete option does not appear
 		gpp.select();
-		String[] removedContextOptions = { "Delete" };
+		String[] removedContextOptions = { "Delete", "Release", "Terminate" };
 		for (String contextOption : removedContextOptions) {
 			try {
 				editor.clickContextMenu(contextOption);
@@ -64,21 +62,14 @@ public class NodeExplorerTest extends AbstractGraphitiDomainNodeRuntimeTest {
 		}
 
 		// check that start/stop works
-		DiagramTestUtils.startComponentFromDiagram(editor, gppFullName);
-		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, DOMAIN_NODE_PARENT_PATH, getNodeFullName(), gppFullName);
-
-		editor.setFocus();
-		DiagramTestUtils.plotPortDataOnComponentPort(editor, gppFullName, null);
-		SWTBotView plotView = ViewUtils.getPlotView(bot);
-		plotView.close();
-
 		DiagramTestUtils.stopComponentFromDiagram(editor, gppFullName);
 		ScaExplorerTestUtils.waitUntilComponentAppearsStoppedInScaExplorer(bot, DOMAIN_NODE_PARENT_PATH, getNodeFullName(), gppFullName);
 
-		// check that DnD does not work - From Target SDR
-		DiagramTestUtils.dragDeviceFromTargetSDRToDiagram(gefBot, editor, DEVICE_STUB);
-		editor.setFocus();
-		SWTBotGefEditPart deviceStub = editor.getEditPart(DEVICE_STUB);
-		Assert.assertNull(DEVICE_STUB + " device should not have be drawn in diagram", deviceStub);
+		DiagramTestUtils.startComponentFromDiagram(editor, gppFullName);
+		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, DOMAIN_NODE_PARENT_PATH, getNodeFullName(), gppFullName);
+
+		// check that device is removed from editor when released in the Sca Explorer
+		String[] GPP_PARENT_PATH = { DOMAIN_NODE_PARENT_PATH[0], DOMAIN_NODE_PARENT_PATH[1], getNodeFullName() };
+		ScaExplorerTestUtils.releaseFromScaExplorer(bot, GPP_PARENT_PATH, gppFullName);
 	}
 }

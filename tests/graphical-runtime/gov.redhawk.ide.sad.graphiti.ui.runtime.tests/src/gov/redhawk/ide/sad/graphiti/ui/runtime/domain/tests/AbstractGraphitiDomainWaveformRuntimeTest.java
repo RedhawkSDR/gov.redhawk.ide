@@ -65,7 +65,7 @@ public abstract class AbstractGraphitiDomainWaveformRuntimeTest extends UIRuntim
 		
 		//release waveform, make sure it disappears
 		if (waveformEntry != null) {
-			ScaExplorerTestUtils.releaseWaveformFromScaExplorer(gefBot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
+			ScaExplorerTestUtils.releaseFromScaExplorer(gefBot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
 			
 			//wait until waveform no longer exists!!!!
 			ScaExplorerTestUtils.waitUntilScaExplorerWaveformDisappears(gefBot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);

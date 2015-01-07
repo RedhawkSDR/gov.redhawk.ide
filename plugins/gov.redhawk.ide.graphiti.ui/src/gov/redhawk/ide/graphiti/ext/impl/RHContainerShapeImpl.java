@@ -175,7 +175,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		started = newStarted;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__STARTED, oldStarted, started));
-		
+
 		// update color according to value
 		final Diagram diagram = DUtil.findDiagram(this);
 		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();

@@ -34,7 +34,7 @@ public abstract class AbstractGraphitiChalkboardTest extends UIRuntimeTest {
 	
 	@After
 	public void afterTest() {
-		ScaExplorerTestUtils.releaseWaveformFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
+		ScaExplorerTestUtils.releaseFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
 		
 		//wait until waveform empty
 		ScaExplorerTestUtils.waitUntilScaExplorerWaveformEmpty(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
