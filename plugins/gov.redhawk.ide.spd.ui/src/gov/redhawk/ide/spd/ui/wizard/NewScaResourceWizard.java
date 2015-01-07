@@ -887,4 +887,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 		}
 	}
 
+	protected String getComponentType() {
+		return componentType;
+	}
 }
