@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.graphiti.ui.tests;
 
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
+import gov.redhawk.ide.swtbot.WaitForEditorCondition;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
@@ -132,6 +133,7 @@ public class ConnectionTest extends AbstractGraphitiTest {
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 
 		// Add components to diagram from palette
+		gefBot.waitUntil(new WaitForEditorCondition());
 		editor = gefBot.gefEditor(waveformName);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, sourceComponent, 0, 0);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, targetComponent, 300, 0);
@@ -147,7 +149,8 @@ public class ConnectionTest extends AbstractGraphitiTest {
 
 		// Open editor and confirm that error decorators are present
 		gefBot.tree().expandNode(waveformName);
-		gefBot.tree().getTreeItem(waveformName).getNode(waveformName + ".sad.xml").select().contextMenu("Open With").menu("Graphiti Waveform Editor").click();
+		gefBot.tree().getTreeItem(waveformName).getNode(waveformName + ".sad.xml").select().doubleClick();
+		gefBot.waitUntil(new WaitForEditorCondition());
 		editor = gefBot.gefEditor(waveformName);
 
 		// ...get target component edit parts and container shapes
