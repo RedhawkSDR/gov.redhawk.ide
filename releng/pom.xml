@@ -24,7 +24,7 @@
     <eclipse>http://download.eclipse.org/releases/luna</eclipse>
     <orbit>http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository</orbit>
     <nebula>http://download.eclipse.org/technology/nebula/archives/Q32014/release/</nebula>
-    <nxm>http://nextmidas.techma.com/p2/nxm/updates/nightly</nxm>
+    <nxm>http://nextmidas.techma.com/p2/nxm/updates/latest</nxm>
     <nxm-rcp>http://nextmidas.techma.com/p2/nxm.ui/updates/latest/</nxm-rcp>
     <jacorb>http://download.redhawksdr.org/jacorb/updates/stable</jacorb>
     <logback>http://download.redhawksdr.org/logback/latest</logback>
