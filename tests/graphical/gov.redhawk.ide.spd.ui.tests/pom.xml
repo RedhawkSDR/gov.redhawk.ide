@@ -16,7 +16,7 @@
     <groupId>gov.redhawk.ide</groupId>
     <artifactId>releng-swtbot-development</artifactId>
     <version>1.11.0-SNAPSHOT</version>
-    <relativePath>../../releng/swtbot/development</relativePath>
+    <relativePath>../../../releng/swtbot/development</relativePath>
   </parent>
   <groupId>gov.redhawk.ide</groupId>
   <artifactId>gov.redhawk.ide.spd.ui.tests</artifactId>
