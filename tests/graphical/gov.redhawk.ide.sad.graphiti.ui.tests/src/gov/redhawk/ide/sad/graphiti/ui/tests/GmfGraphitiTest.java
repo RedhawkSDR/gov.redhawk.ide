@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
+import gov.redhawk.ide.swtbot.SWTBotRadioMenu;
+import gov.redhawk.ide.swtbot.WaitForEditorCondition;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 
@@ -17,7 +19,7 @@ import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
-import org.junit.Assert;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Test;
 
 public class GmfGraphitiTest extends AbstractGraphitiTest {
@@ -29,8 +31,9 @@ public class GmfGraphitiTest extends AbstractGraphitiTest {
 
 		waveformName = "Diagram_Type";
 
-		// Create a new empty waveform
+		// Create a new empty waveform, close editor
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		gefBot.waitUntil(new WaitForEditorCondition());
 		SWTBotGefEditor editor = gefBot.gefEditor(waveformName);
 		editor.close();
 
@@ -38,29 +41,24 @@ public class GmfGraphitiTest extends AbstractGraphitiTest {
 		SWTBotView projectView = gefBot.viewById("org.eclipse.ui.navigator.ProjectExplorer");
 		projectView.setFocus();
 		SWTBotTree projectTree = projectView.bot().tree();
-		projectTree.expandNode(waveformName);
-		
+		SWTBotTreeItem sadFileTreeItem = projectTree.expandNode(waveformName).getNode(waveformName + ".sad.xml");
+
 		// Open Graphiti editor
-		projectTree.getTreeItem(waveformName).getNode(waveformName + ".sad.xml").select().contextMenu("Open With").menu("Graphiti Waveform Editor").click();
-		
+		SWTBotMenu menu = sadFileTreeItem.select().contextMenu("Open With").menu("Graphiti Waveform Editor");
+		new SWTBotRadioMenu(menu).click();
+
+		// Find the editor by name to ensure it opened, then close it
+		gefBot.waitUntil(new WaitForEditorCondition());
 		editor = gefBot.gefEditor(waveformName);
-		Assert.assertNotNull(editor);
 		editor.close();
-		
-		projectView.setFocus();
 
 		// Open GMF editor
-		SWTBotMenu openWith = projectTree.getTreeItem(waveformName).getNode(waveformName + ".sad.xml").select().contextMenu("Open With");
-		SWTBotMenu menuItem = openWith.menu("Waveform Editor");
-		menuItem.click();
+		menu = sadFileTreeItem.select().contextMenu("Open With").menu("Waveform Editor");
+		new SWTBotRadioMenu(menu).click();
 
+		// Find the editor by name to ensure it opened, then close it
+		gefBot.waitUntil(new WaitForEditorCondition());
 		editor = gefBot.gefEditor(waveformName);
-		Assert.assertNotNull(editor);
 		editor.close();
-		
-		projectView.setFocus();
-
-		// Open Graphiti editor
-		projectTree.getTreeItem(waveformName).getNode(waveformName + ".sad.xml").select().contextMenu("Open With").menu("Graphiti Waveform Editor").click();
 	}
 }
