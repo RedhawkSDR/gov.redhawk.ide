@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Overview Tab Tests
+Bundle-Name: Tests for the overview tab of the component editor
 Bundle-SymbolicName: gov.redhawk.ide.ui.tests.overview
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: gov.redhawk.ide.ui.tests.overview.OverviewTabTestsActivator

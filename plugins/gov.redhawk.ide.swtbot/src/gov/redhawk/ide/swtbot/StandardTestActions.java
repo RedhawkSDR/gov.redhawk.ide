@@ -130,6 +130,9 @@ public final class StandardTestActions {
 		}
 	}
 
+	/**
+	 * Closes the workbench introduction screen and maximizes the window.
+	 */
 	public static void closeIntro() {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
@@ -139,7 +142,7 @@ public final class StandardTestActions {
 				if (introManager != null) {
 					IIntroPart part = introManager.getIntro();
 					if (part != null) {
-						introManager.closeIntro(part);
+						Assert.assertTrue(introManager.closeIntro(part));
 					}
 				}
 
@@ -154,6 +157,11 @@ public final class StandardTestActions {
 		});
 	}
 
+	/**
+	 * Activates the SCA perspective and resets it to defaults.
+	 *
+	 * @param bot
+	 */
 	public static void switchToScaPerspective(SWTWorkbenchBot bot) {
 		SWTBotPerspective perspective = bot.perspectiveById("gov.redhawk.ide.ui.perspectives.sca");
 		perspective.activate();
@@ -184,6 +192,11 @@ public final class StandardTestActions {
 		}
 	}
 
+	/**
+	 * Delete all proejcts in the workspace.
+	 *
+	 * @throws CoreException
+	 */
 	public static void clearWorkspace() throws CoreException {
 		for (IProject p : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 			p.delete(true, true, null);
@@ -233,7 +246,7 @@ public final class StandardTestActions {
 
 	/**
 	 * Create the project described in record. If it is successful return true.
-	 * 
+	 *
 	 * @param record
 	 * @return boolean <code>true</code> if successful
 	 * @throws InterruptedException
@@ -328,6 +341,12 @@ public final class StandardTestActions {
 		bot.sleep(100);
 	}
 
+	/**
+	 * Close all dialogs and editors. Delete any projects in the workspace.
+	 *
+	 * @param bot
+	 * @throws CoreException
+	 */
 	public static void cleanup(SWTWorkbenchBot bot) throws CoreException {
 		if (bot == null) {
 			bot = new SWTWorkbenchBot();
