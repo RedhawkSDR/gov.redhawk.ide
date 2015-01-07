@@ -16,10 +16,29 @@
     <groupId>gov.redhawk.ide</groupId>
     <artifactId>releng</artifactId>
     <version>1.11.0-SNAPSHOT</version>
-    <relativePath>../../releng/</relativePath>
+    <relativePath>../../../releng/</relativePath>
   </parent>
   <groupId>gov.redhawk.ide</groupId>
-  <artifactId>gov.redhawk.ide.prf.tests</artifactId>
+  <artifactId>gov.redhawk.ide.sdr.tests</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-surefire-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <configuration>
+          <dependencies>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>gov.redhawk.sca.efs</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+          </dependencies>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
