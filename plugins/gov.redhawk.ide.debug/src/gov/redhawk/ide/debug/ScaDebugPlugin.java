@@ -106,6 +106,13 @@ public class ScaDebugPlugin extends Plugin {
 		return LauncherVariableRegistry.INSTANCE;
 	}
 
+	/**
+	 * @since 7.0
+	 */
+	public static void logWarning(final String msg, final Throwable e) {
+		ScaDebugPlugin.instance.getLog().log(new Status(IStatus.WARNING, ScaDebugPlugin.ID, msg, e));
+	}
+
 	public static void logError(final String msg, final Throwable e) {
 		ScaDebugPlugin.instance.getLog().log(new Status(IStatus.ERROR, ScaDebugPlugin.ID, msg, e));
 	}
