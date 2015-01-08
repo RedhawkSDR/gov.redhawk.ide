@@ -15,35 +15,35 @@ import gov.redhawk.ide.swtbot.UITest;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.junit.Test;
 
 public class WaveformNamingRaceConditionTest extends UITest {
 
+	/**
+	 * Tests a race condition - it was possible to enter an illegal character in the waveform name while completing
+	 * the new SCA waveform wizard.
+	 *  
+	 * @throws Exception
+	 */
 	@Test
 	public void test_IDE_826() throws Exception {
-		SWTBotMenu fileMenu = bot.menu("File");
-		SWTBotMenu newMenu = fileMenu.menu("New");
-		SWTBotMenu otherMenu = newMenu.menu("Other...");
-		otherMenu.click();
+		bot.menu("File").menu("New").menu("Other...").click();
+		
 		SWTBotShell wizardShell = bot.shell("New");
 		wizardShell.activate();
-		wizardShell.setFocus();
 		bot.tree().getTreeItem("SCA").expand().getNode("SCA Waveform Project").select();
 		bot.button("Next >").click();
 
 		SWTBotText projectNameField = bot.textWithLabel("Project name:");
 		projectNameField.setText("test_IDE_826");
 
-		SWTBotButton finishButton = bot.button("Finish");
-		finishButton.click();
-
+		bot.button("Finish").click();
+		
 		projectNameField.setText("test_IDE_826_bad");
 
-		bot.waitUntil(Conditions.shellCloses(wizardShell), 10000);
+		bot.waitUntil(Conditions.shellCloses(wizardShell));
 
 		SWTBotView navigatorView = bot.viewById("org.eclipse.ui.navigator.ProjectExplorer");
 		navigatorView.show();
