@@ -19,6 +19,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -209,12 +210,23 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @return
 	 */
 	public static ComponentShapeImpl getComponentShape(SWTBotGefEditor editor, String componentName) {
+		return (ComponentShapeImpl) getRHContainerShape(editor, componentName);
+	}
 
-		SWTBotGefEditPart swtBotGefEditPart = editor.getEditPart(componentName);
-		if (swtBotGefEditPart == null) {
+	/**
+	 * Utility method to extract business object from a device in the Graphiti diagram.
+	 * Returns null if object not found
+	 * @param editor
+	 * @param deviceName
+	 * @return
+	 */
+	public static DcdComponentInstantiation getDeviceObject(SWTBotGefEditor editor, String deviceName) {
+		RHContainerShapeImpl deviceShape = getRHContainerShape(editor, deviceName);
+		if (deviceShape == null) {
 			return null;
 		}
-		return (ComponentShapeImpl) swtBotGefEditPart.part().getModel();
+		DcdComponentInstantiation businessObject = (DcdComponentInstantiation) DUtil.getBusinessObject(deviceShape);
+		return businessObject;
 	}
 
 	/**
@@ -226,28 +238,12 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 */
 	public static FindByStub getFindByObject(SWTBotGefEditor editor, String findByName) {
 
-		RHContainerShapeImpl findByShape = getFindByShape(editor, findByName);
+		RHContainerShapeImpl findByShape = getRHContainerShape(editor, findByName);
 		if (findByShape == null) {
 			return null;
 		}
 		FindByStub businessObject = (FindByStub) DUtil.getBusinessObject(findByShape);
 		return businessObject;
-	}
-
-	/**
-	 * Utility method to extract RHContainerShapeImpl from the Graphiti diagram with the provided findByName.
-	 * Returns null if object not found
-	 * @param editor
-	 * @param findByName
-	 * @return
-	 */
-	public static RHContainerShapeImpl getFindByShape(SWTBotGefEditor editor, String findByName) {
-
-		SWTBotGefEditPart swtBotGefEditPart = editor.getEditPart(findByName);
-		if (swtBotGefEditPart == null) {
-			return null;
-		}
-		return (RHContainerShapeImpl) swtBotGefEditPart.part().getModel();
 	}
 
 	/**
@@ -281,6 +277,22 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			return null;
 		}
 		return (ContainerShape) swtBotGefEditPart.part().getModel();
+	}
+
+	/**
+	 * Utility method to extract RHContainerShapeImpl from the Graphiti diagram with the provided objectName.
+	 * Returns null if object not found
+	 * @param editor
+	 * @param findByName
+	 * @return
+	 */
+	public static RHContainerShapeImpl getRHContainerShape(SWTBotGefEditor editor, String objectName) {
+
+		SWTBotGefEditPart swtBotGefEditPart = editor.getEditPart(objectName);
+		if (swtBotGefEditPart == null) {
+			return null;
+		}
+		return (RHContainerShapeImpl) swtBotGefEditPart.part().getModel();
 	}
 
 	/**

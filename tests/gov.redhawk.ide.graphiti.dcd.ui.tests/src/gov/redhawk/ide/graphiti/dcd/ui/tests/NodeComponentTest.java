@@ -24,7 +24,6 @@ import java.util.List;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 
 import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
@@ -53,12 +52,6 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-
-		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
-		// SWTBotGefEditor
-		SWTBotEditor nodeEditor = gefBot.editorByTitle(projectName);
-		nodeEditor.setFocus();
-		nodeEditor.bot().cTabItem("Diagram").activate();
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 
@@ -91,12 +84,6 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-
-		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
-		// SWTBotGefEditor
-		SWTBotEditor nodeEditor = gefBot.editorByTitle(projectName);
-		nodeEditor.setFocus();
-		nodeEditor.bot().cTabItem("Diagram").activate();
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 
@@ -116,12 +103,6 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-
-		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
-		// SWTBotGefEditor
-		SWTBotEditor nodeEditor = gefBot.editorByTitle(projectName);
-		nodeEditor.setFocus();
-		nodeEditor.bot().cTabItem("Diagram").activate();
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 
@@ -155,12 +136,6 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		projectName = "No-Delete-Port-Test";
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-
-		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
-		// SWTBotGefEditor
-		SWTBotEditor nodeEditor = gefBot.editorByTitle(projectName);
-		nodeEditor.setFocus();
-		nodeEditor.bot().cTabItem("Diagram").activate();
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 

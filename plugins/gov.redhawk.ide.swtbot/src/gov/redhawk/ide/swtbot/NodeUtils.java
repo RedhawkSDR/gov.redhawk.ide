@@ -11,6 +11,8 @@
  */
 package gov.redhawk.ide.swtbot;
 
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
+import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
@@ -20,13 +22,13 @@ public class NodeUtils {
 
 	protected NodeUtils() {
 	}
-	
+
 	/**
 	 * Creates a new node project using File > New > Other... > Graphiti SCA Node Project wizard
 	 * @param bot - the executing SWTBot
 	 * @param waveformName
 	 */
-	public static void createNewNodeProject(SWTBot bot, String projectName, String domainName) {
+	public static void createNewNodeProject(SWTGefBot bot, String projectName, String domainName) {
 		// Open the new waveform project wizard
 		SWTBotMenu fileMenu = bot.menu("File");
 		SWTBotMenu newMenu = fileMenu.menu("New");
@@ -40,13 +42,18 @@ public class NodeUtils {
 
 		// Enter the name for the new waveform
 		wizardBot.textWithLabel("Project name:").setText(projectName);
-		
+
 		// Enter a domain manager
 		wizardBot.comboBoxWithLabel("Domain Manager:").setText(domainName);
 
 		// Close wizard
 		SWTBotButton finishButton = wizardBot.button("Finish");
 		finishButton.click();
+
+		// Set focus to Node
+		SWTBotEditor nodeEditor = bot.editorByTitle(projectName);
+		nodeEditor.setFocus();
+		nodeEditor.bot().cTabItem("Diagram").activate();
 	}
 
 }

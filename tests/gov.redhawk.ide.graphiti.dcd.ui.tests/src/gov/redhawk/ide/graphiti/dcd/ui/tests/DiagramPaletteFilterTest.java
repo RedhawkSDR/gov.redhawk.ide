@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
@@ -131,12 +130,6 @@ public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-
-		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
-		// SWTBotGefEditor
-		SWTBotEditor nodeEditor = gefBot.editorByTitle(projectName);
-		nodeEditor.setFocus();
-		nodeEditor.bot().cTabItem("Diagram").activate();
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 

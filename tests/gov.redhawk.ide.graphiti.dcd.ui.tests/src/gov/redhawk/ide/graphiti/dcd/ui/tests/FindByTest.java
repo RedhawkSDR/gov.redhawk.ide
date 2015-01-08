@@ -25,7 +25,6 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
@@ -60,12 +59,6 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-
-		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
-		// SWTBotGefEditor
-		SWTBotEditor nodeEditor = gefBot.editorByTitle(projectName);
-		nodeEditor.setFocus();
-		nodeEditor.bot().cTabItem("Diagram").activate();
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 
@@ -109,12 +102,6 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-
-		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
-		// SWTBotGefEditor
-		SWTBotEditor nodeEditor = gefBot.editorByTitle(projectName);
-		nodeEditor.setFocus();
-		nodeEditor.bot().cTabItem("Diagram").activate();
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 
@@ -143,12 +130,6 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-
-		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
-		// SWTBotGefEditor
-		SWTBotEditor nodeEditor = gefBot.editorByTitle(projectName);
-		nodeEditor.setFocus();
-		nodeEditor.bot().cTabItem("Diagram").activate();
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 
@@ -208,12 +189,6 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-
-		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
-		// SWTBotGefEditor
-		SWTBotEditor nodeEditor = gefBot.editorByTitle(projectName);
-		nodeEditor.setFocus();
-		nodeEditor.bot().cTabItem("Diagram").activate();
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 
@@ -293,12 +268,6 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-
-		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
-		// SWTBotGefEditor
-		SWTBotEditor nodeEditor = gefBot.editorByTitle(projectName);
-		nodeEditor.setFocus();
-		nodeEditor.bot().cTabItem("Diagram").activate();
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 
