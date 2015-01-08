@@ -27,8 +27,6 @@ import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.OrbSession;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -77,10 +75,6 @@ import CF.ResourcePackage.StartError;
  * @since 4.0
  */
 public final class SpdLauncherUtil {
-	/**
-	 * @since 3.0
-	 */
-	public static final String LAUNCH_ATT_PROGRAM_ARGUMENT_MAP = ScaDebugPlugin.ID + ".programArgumentMap";
 
 	private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
 	private static final Debug DEBUG_ARGS = new Debug(ScaDebugPlugin.getInstance(), "LauncherArgs");
@@ -102,16 +96,40 @@ public final class SpdLauncherUtil {
 	 */
 	public static void postLaunch(final SoftPkg spd, final ILaunchConfiguration configuration, final String mode, final ILaunch launch,
 		final IProgressMonitor monitor) throws CoreException {
-		Map< ? , ? > programArgs = configuration.getAttribute(LAUNCH_ATT_PROGRAM_ARGUMENT_MAP, Collections.EMPTY_MAP);
+		final ComponentType type;
+		if (spd.getDescriptor() == null || spd.getDescriptor().getComponent() == null) {
+			String errorMsg = String.format("Unable to determine the component type for %s during post-launch in the sandbox.", spd.getName());
+			ScaDebugPlugin.logWarning(errorMsg, null);
+			type = ComponentType.OTHER;
+		} else {
+			type = SoftwareComponent.Util.getWellKnownComponentType(spd.getDescriptor().getComponent());
+		}
+
+		// Do an initial wait to give the resource an opportunity to start
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e1) {
+			// PASS
+		}
 
 		LocalAbstractComponent comp = null;
 		try {
-			if (programArgs.containsKey(LaunchVariables.DEVICE_LABEL)) {
+			switch (type) {
+			case DEVICE:
 				comp = SpdLauncherUtil.postLaunchDevice(launch);
-			} else if (programArgs.containsKey(LaunchVariables.SERVICE_NAME)) {
+				break;
+			case EVENT_SERVICE:
+			case SERVICE:
 				comp = SpdLauncherUtil.postLaunchService(launch);
-			} else {
+				break;
+			case RESOURCE:
 				comp = SpdLauncherUtil.postLaunchComponent(launch);
+				break;
+			default:
+				String errorMsg = String.format("Unsupported component type during post-launch in the sandbox (%s) - treating as component", spd.getName());
+				ScaDebugPlugin.logWarning(errorMsg, null);
+				comp = SpdLauncherUtil.postLaunchComponent(launch);
+				break;
 			}
 		} catch (final CoreException e) {
 			// If there is a problem with the component terminate it
@@ -517,7 +535,11 @@ public final class SpdLauncherUtil {
 		case EVENT_SERVICE:
 		case SERVICE:
 			return SpdLauncherUtil.createDefaultServiceProgramArgs();
+		case RESOURCE:
+			return SpdLauncherUtil.createDefaultComponentProgramArgs();
 		default:
+			String errorMsg = String.format("Unsupported component type (%s) while launching in the sandbox. It will be treated as a component.", type.getName());
+			ScaDebugPlugin.logWarning(errorMsg, null);
 			return SpdLauncherUtil.createDefaultComponentProgramArgs();
 		}
 	}
@@ -644,18 +666,6 @@ public final class SpdLauncherUtil {
 			return null;
 		}
 
-	}
-
-	/**
-	 * @since 3.0
-	 */
-	public static Map<String, String> createMap(String programArguments) {
-		String[] split = programArguments.split(" ");
-		Map<String, String> retVal = new HashMap<String, String>(split.length / 2);
-		for (int i = 0; i + 1 < split.length; i += 2) {
-			retVal.put(split[i], split[i + 1]);
-		}
-		return retVal;
 	}
 
 	/**
