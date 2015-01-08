@@ -42,6 +42,7 @@ public class ShowConsoleFeature extends AbstractCustomFeature {
 	}
 	
 	public static final String NAME = "Show Console";
+	public static final String DESCRIPTION = "Bring up this component's Console View";
 
 	@Override
 	public String getName() {
@@ -85,5 +86,16 @@ public class ShowConsoleFeature extends AbstractCustomFeature {
 				consoleManager.showConsoleView(console);
 			}
 		}
+	}
+	
+	@Override
+	public String getImageId() {
+		// IDE-1021: Overridden to return non-null so it will show up in button pad
+		return gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider.IMG_CONSOLE_VIEW;
+	}
+	
+	@Override
+	public String getDescription() {
+		return DESCRIPTION;
 	}
 }

@@ -60,6 +60,22 @@ public class StopComponentFeature extends AbstractCustomFeature {
 	
 	@Override
 	public void execute(ICustomContext context) {
+		// IDE-1021: Check context in case we were called by hover context pad button on unselected component
+		boolean executed = false;
+		for (PictogramElement pe: context.getPictogramElements()) {
+			if (pe instanceof ComponentShapeImpl) {
+				ComponentShapeImpl shape = (ComponentShapeImpl) pe;
+				RoundedRectangle innerRoundedRectangle = (RoundedRectangle) DUtil.findFirstPropertyContainer(shape,
+					RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE);
+				innerRoundedRectangle.setStyle(StyleUtil.getStyleForComponentInner(getDiagram()));
+				shape.setStarted(false);  //GraphitiModelMap is listening
+				executed = true;
+			}
+		}
+		if (executed) {
+			// Don't process selection if called from button pad
+			return;
+		}
 		Object[] selection = DUtil.getSelectedEditParts();
 		for (Object obj : selection) {
 			if (obj instanceof ContainerShapeEditPart) {
@@ -73,21 +89,10 @@ public class StopComponentFeature extends AbstractCustomFeature {
 				}
 			}
 		}
-		// IDE-1021: Check context in case we were called by hover context pad button on unselected component
-		for (PictogramElement pe: context.getPictogramElements()) {
-			if (pe instanceof ComponentShapeImpl) {
-				ComponentShapeImpl shape = (ComponentShapeImpl) pe;
-				RoundedRectangle innerRoundedRectangle = (RoundedRectangle) DUtil.findFirstPropertyContainer(shape,
-					RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE);
-				innerRoundedRectangle.setStyle(StyleUtil.getStyleForComponentInner(getDiagram()));
-				shape.setStarted(false);  //GraphitiModelMap is listening
-			}
-		}
 	}
 
 	@Override
 	public String getImageId() {
-		// TODO Auto-generated method stub
 		return gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider.IMG_STOP;
 	}
 }

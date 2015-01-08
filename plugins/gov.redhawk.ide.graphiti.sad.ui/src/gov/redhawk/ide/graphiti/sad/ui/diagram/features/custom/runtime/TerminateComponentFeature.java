@@ -111,4 +111,12 @@ public class TerminateComponentFeature extends AbstractCustomFeature {
 			}
 		});
 	}
+	
+	@Override
+	public String getImageId() {
+		// Decided not to include this feature in the component button pad, but 
+		// leaving code in place in case it becomes relevant later
+//		return gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider.IMG_TERMINATE;
+		return null;
+	}
 }
