@@ -203,7 +203,7 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 										add = false;
 										break out;
 									} 
-									switch(type) {
+									switch (type) {
 									case EXECUTABLE:
 										add = true;
 										break out;
@@ -215,7 +215,7 @@ public class SandboxDiagramEditor extends CustomDiagramEditor {
 								if (spd.getDescriptor() != null) {
 									SoftwareComponent comp = spd.getDescriptor().getComponent();
 									ComponentType type = SoftwareComponent.Util.getWellKnownComponentType(comp);
-									switch(type) {
+									switch (type) {
 									case RESOURCE:
 										break;
 									default:

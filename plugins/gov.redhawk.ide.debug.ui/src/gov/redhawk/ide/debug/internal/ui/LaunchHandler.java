@@ -108,7 +108,7 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 	    	Code code = impl.getCode();
 	    	CodeFileType type = code.getType();
 	    	if (type != null) {
-	    		switch(type) {
+	    		switch (type) {
 	    		case EXECUTABLE:
 	    			return true;
 	    		case DRIVER:

@@ -115,7 +115,7 @@ public class SadPaletteProvider extends DefaultPaletteProvider {
 				if (type == null) {
 					continue spdLoop;
 				} 
-				switch(type) {
+				switch (type) {
 				case EXECUTABLE:
 					break;
 				default:
