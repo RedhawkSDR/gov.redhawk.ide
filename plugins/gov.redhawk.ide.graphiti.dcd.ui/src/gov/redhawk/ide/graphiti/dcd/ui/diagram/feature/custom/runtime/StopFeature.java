@@ -73,4 +73,10 @@ public class StopFeature extends AbstractCustomFeature {
 		}
 	}
 
+	@Override
+	public String getImageId() {
+		// IDE-1021: Return non-null so feature appears in button pad
+		return gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider.IMG_STOP;
+	}
+
 }

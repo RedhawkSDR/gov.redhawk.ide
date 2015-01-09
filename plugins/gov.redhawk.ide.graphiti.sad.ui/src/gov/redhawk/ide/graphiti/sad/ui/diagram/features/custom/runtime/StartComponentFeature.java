@@ -92,7 +92,6 @@ public class StartComponentFeature extends AbstractCustomFeature {
 
 	@Override
 	public String getImageId() {
-		// TODO Auto-generated method stub
 		return gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider.IMG_START;
 	}
 }
