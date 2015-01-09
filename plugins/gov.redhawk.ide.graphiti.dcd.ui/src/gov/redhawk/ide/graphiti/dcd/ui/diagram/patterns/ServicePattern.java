@@ -94,7 +94,7 @@ public class ServicePattern extends AbstractNodeComponentPattern implements IPat
 
 	@Override
 	public String getInnerImageId() {
-		return NodeImageProvider.IMG_COMPONENT_INSTANCE;
+		return NodeImageProvider.IMG_SCA_SERVICE;
 	}
 
 	@Override

@@ -228,10 +228,16 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 			}
 			if (!foundTool && passesFilter(spd.getName())) {
 				// special way of instantiating create feature, allows us to know which palette tool was used
+				String iconId = NodeImageProvider.IMG_COMPONENT_PLACEMENT;
+				if ("Devices".equals(compartmentEntry.getLabel())) {
+					iconId = NodeImageProvider.IMG_SCA_DEVICE;
+				} else if ("Services".equals(compartmentEntry.getLabel())) {
+					iconId = NodeImageProvider.IMG_SCA_SERVICE;
+				}
 
 				if (spd.getImplementation().size() > 1) {
 					StackEntry stackEntry = new StackEntry(spd.getName() + spd.getImplementation().get(0).getId(), spd.getDescription(),
-						NodeImageProvider.IMG_COMPONENT_PLACEMENT);
+						iconId);
 					compartmentEntry.addToolEntry(stackEntry);
 					List<IToolEntry> stackEntries = new ArrayList<IToolEntry>();
 					for (Implementation impl : spd.getImplementation()) {
@@ -242,7 +248,7 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 							createComponentFeature = new ServiceCreateFeature(getFeatureProvider(), spd, impl.getId());
 						}
 						SpdToolEntry entry = new SpdToolEntry(spd.getName() + " (" + impl.getId() + ")", spd.getDescription(), EcoreUtil.getURI(spd),
-							spd.getId(), null, NodeImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
+							spd.getId(), null, iconId, createComponentFeature);
 						stackEntries.add(entry);
 					}
 					sort(stackEntries);
@@ -256,7 +262,7 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 					} else if (container instanceof ServicesContainer) {
 						createComponentFeature = new ServiceCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
 					}
-					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature, NodeImageProvider.IMG_COMPONENT_PLACEMENT);
+					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature, iconId);
 					compartmentEntry.addToolEntry(entry);
 				}
 			}

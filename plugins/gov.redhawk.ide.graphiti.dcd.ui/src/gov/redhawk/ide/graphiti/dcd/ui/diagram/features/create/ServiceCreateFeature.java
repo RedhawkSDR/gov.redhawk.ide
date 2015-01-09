@@ -163,4 +163,9 @@ public class ServiceCreateFeature extends AbstractCreateFeature {
 		return dcdComponentInstantiation;
 	}
 
+	@Override
+	public String getCreateImageId() {
+		return gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.NodeImageProvider.IMG_SCA_SERVICE;
+	}
+
 }
