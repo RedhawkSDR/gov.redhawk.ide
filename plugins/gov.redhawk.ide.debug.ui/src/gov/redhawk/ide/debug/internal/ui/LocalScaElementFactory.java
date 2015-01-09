@@ -25,9 +25,34 @@ import org.eclipse.ui.IPersistableElement;
 public class LocalScaElementFactory implements IElementFactory {
 
 	public static final String ID = "gov.redhawk.ide.debug.ui.localSca.factory";
-	
+
 	public static IEditorInput getLocalScaInput() {
 		return new URIEditorInput(ScaDebugInstance.getLocalSandboxWaveformURI()) {
+			@Override
+			public boolean exists() {
+				return true;
+			}
+
+			@Override
+			public IPersistableElement getPersistable() {
+				return new IPersistableElement() {
+
+					@Override
+					public void saveState(final IMemento memento) {
+
+					}
+
+					@Override
+					public String getFactoryId() {
+						return LocalScaElementFactory.ID;
+					}
+				};
+			}
+		};
+	}
+
+	public static IEditorInput getLocalDeviceManagerInput() {
+		return new URIEditorInput(ScaDebugInstance.getLocalSandboxDeviceManagerURI()) {
 			@Override
 			public boolean exists() {
 				return true;

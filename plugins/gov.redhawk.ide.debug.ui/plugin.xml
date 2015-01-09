@@ -622,6 +622,14 @@
                class="gov.redhawk.ide.debug.internal.ui.ScaChalkboardContentDescriber">
          </describer>
       </contentType>
+      <contentType
+            id="gov.redhawk.ide.debug.ui.contentType.localDcd"
+            name="Node Sandbox"
+            priority="NORMAL">
+         <describer
+               class="gov.redhawk.ide.debug.internal.ui.LocalScaDeviceManagerContentDescriber">
+         </describer>
+      </contentType>
    </extension>
    <extension
          point="gov.redhawk.core.resourceFactory.resourceFactories">

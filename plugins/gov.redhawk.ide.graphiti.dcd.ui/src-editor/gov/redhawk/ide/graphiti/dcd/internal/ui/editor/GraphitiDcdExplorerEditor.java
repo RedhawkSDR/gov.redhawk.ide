@@ -37,7 +37,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 
-public class GraphitiDcdExplorerEditor extends GraphitiDcdMultipageEditor {
+public class GraphitiDcdExplorerEditor extends GraphitiDcdSandboxEditor {
 
 	private ScaDeviceManager deviceManager;
 	private ScaGraphitiModelAdapter scaListener;

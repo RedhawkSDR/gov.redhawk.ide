@@ -102,7 +102,7 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 	public static final String ID = "gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor";
 
 	public static final String EDITING_DOMAIN_ID = "mil.jpeojtrs.sca.dcd.diagram.EditingDomain";
-	
+
 	/**
 	 * This is used to manually override the dirty state. It can be used to avoid marking the editor as dirty on trivial
 	 * or hidden actions, such as linking the diagram to the sad.xml
@@ -347,7 +347,7 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 		}
 		return super.isDirty();
 	}
-	
+
 	@Override
 	protected boolean computeDirtyState() {
 		if (!isDirtyAllowed()) {
@@ -518,6 +518,11 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 		}
 
 		return DUtil.DIAGRAM_CONTEXT_DESIGN;
+	}
+
+	protected DiagramEditor createDiagramEditor() {
+		GraphitiDcdDiagramEditor d = new GraphitiDcdDiagramEditor((TransactionalEditingDomain) getEditingDomain());
+		return d;
 	}
 
 	protected void handleDocumentChange(final Resource resource) {

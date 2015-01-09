@@ -14,6 +14,7 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteBehavior;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -25,10 +26,17 @@ import org.eclipse.graphiti.ui.editor.DefaultUpdateBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.jface.util.TransferDropTargetListener;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 
 public class GraphitiDcdDiagramEditor extends DiagramEditor {
 
 	private EditingDomain editingDomain;
+	private List<String> contexts = new ArrayList<String>();
+	private List<IContextActivation> contextActivations = new ArrayList<IContextActivation>();
 
 	public GraphitiDcdDiagramEditor(EditingDomain editingDomain) {
 		this.editingDomain = editingDomain;
@@ -72,7 +80,7 @@ public class GraphitiDcdDiagramEditor extends DiagramEditor {
 
 				};
 			}
-			
+
 			@Override
 			protected DefaultPaletteBehavior createPaletteBehaviour() {
 				final DefaultPaletteBehavior paletteBehavior = new RHGraphitiPaletteBehavior(this);
@@ -94,6 +102,44 @@ public class GraphitiDcdDiagramEditor extends DiagramEditor {
 		};
 	}
 
-	// TODO: Bring in init() and context methods from GraphitiWaveformDiagramEditor
+	@Override
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+		super.init(site, input);
+		activateContext("gov.redhawk.ide.dcd.graphiti.ui.contexts.diagram");
+		// Activate contexts specified pre-init()
+		for (String context : contexts) {
+			activateContext(context);
+		}
+	}
 
+	@Override
+	public void dispose() {
+		deactivateAllContexts();
+		super.dispose();
+	}
+
+	private void deactivateAllContexts() {
+		if (!contextActivations.isEmpty()) {
+			IContextService contextService = (IContextService) getSite().getService(IContextService.class);
+			for (IContextActivation activation : contextActivations) {
+				contextService.deactivateContext(activation);
+			}
+		}
+	}
+
+	/* 
+	 * For use before init()
+	 */
+	public void addContext(String context) {
+		contexts.add(context);
+	}
+
+	public void activateContext(String context) {
+		IContextService contextService = (IContextService) getSite().getService(IContextService.class);
+		if (contextService != null) {
+			IContextActivation activation = contextService.activateContext(context);
+			contextActivations.add(activation);
+		}
+
+	}
 }

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.internal.ui;
 
-import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdExplorerEditor;
+import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdSandboxEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDDiagramFeatureProvider;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
@@ -50,7 +50,7 @@ public class GraphitiDcdModelMap {
 //		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
 //		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 
-	private final GraphitiDcdExplorerEditor editor;
+	private final GraphitiDcdSandboxEditor editor;
 	private final ScaDeviceManager deviceManager;
 
 	// maps containing to uniquely identify component/connections, use with synchronized statement
@@ -61,7 +61,7 @@ public class GraphitiDcdModelMap {
 	private final StartAction startAction = new StartAction();
 	private final StopAction stopAction = new StopAction();
 
-	public GraphitiDcdModelMap(final GraphitiDcdExplorerEditor editor, final DeviceConfiguration dcd, final ScaDeviceManager deviceManager) {
+	public GraphitiDcdModelMap(final GraphitiDcdSandboxEditor editor, final DeviceConfiguration dcd, final ScaDeviceManager deviceManager) {
 		Assert.isNotNull(deviceManager, "Device Manager must not be null");
 		Assert.isNotNull(editor, "Node Explorer editor must not be null");
 		Assert.isNotNull(dcd, "Device Configuration must not be null");
@@ -190,7 +190,9 @@ public class GraphitiDcdModelMap {
 							@Override
 							protected void doExecute() {
 								// paint component
-								shape.setStarted(true);
+								if (shape != null) {
+									shape.setStarted(true);
+								}
 							}
 						});
 					}

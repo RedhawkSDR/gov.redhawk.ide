@@ -41,6 +41,13 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
+            class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdSandboxEditor"
+            contributorClass="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditorActionBarContributor"
+            default="true"
+            id="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdSandbox"
+            name="Graphiti Node Sandbox Editor">
+      </editor>
+      <editor
             class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditor"
             contributorClass="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditorActionBarContributor"
             default="true"
@@ -187,5 +194,25 @@
             editorId="gov.redhawk.ide.graphiti.dcd.ui.editor.dcdExplorer"
             priority="HIGHEST">
       </contentTypeBinding>
+      <contentTypeBinding
+            contentTypeId="gov.redhawk.ide.debug.ui.contentType.localDcd"
+            editorId="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdSandbox"
+            priority="HIGHEST">
+      </contentTypeBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            description="In a REDHAWK Graphiti DCD Diagram editor"
+            id="gov.redhawk.ide.dcd.graphiti.ui.contexts.diagram"
+            name="RH Graphiti DCD Diagram"
+            parentId="org.eclipse.graphiti.ui.diagramEditor">
+      </context>
+      <context
+            description="In the REDHAWK Graphiti DCD Sandbox editor"
+            id="gov.redhawk.ide.dcd.graphiti.ui.contexts.sandbox"
+            name="RH Graphiti DCD Sandbox"
+            parentId="gov.redhawk.ide.dcd.graphiti.ui.contexts.diagram">
+      </context>
    </extension>
 </plugin>
