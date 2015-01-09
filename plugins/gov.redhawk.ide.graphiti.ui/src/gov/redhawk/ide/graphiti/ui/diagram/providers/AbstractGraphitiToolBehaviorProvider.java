@@ -13,6 +13,7 @@ package gov.redhawk.ide.graphiti.ui.diagram.providers;
 
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.feature.custom.FindByEditFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByCORBANamePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByDomainManagerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.FindByEventChannelPattern;
@@ -35,6 +36,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
+import org.eclipse.graphiti.pattern.CreateFeatureForPattern;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 
 public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBehaviorProvider {
@@ -71,9 +73,11 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		IFeatureProvider featureProvider = getFeatureProvider();
 		ICreateFeature[] createFeatures = featureProvider.getCreateFeatures();
 		for (ICreateFeature cf : createFeatures) {
-			if (FindByCORBANamePattern.NAME.equals(cf.getCreateName()) || FindByEventChannelPattern.NAME.equals(cf.getCreateName())
+			// IDE-1020: instanceof conditions added to exclude similarly-named non-findby create features
+			if ((cf instanceof CreateFeatureForPattern && ((CreateFeatureForPattern) cf).getPattern() instanceof AbstractFindByPattern) 
+					&& (FindByCORBANamePattern.NAME.equals(cf.getCreateName()) || FindByEventChannelPattern.NAME.equals(cf.getCreateName())
 				|| FindByServicePattern.NAME.equals(cf.getCreateName()) || FindByFileManagerPattern.NAME.equals(cf.getCreateName())
-				|| FindByDomainManagerPattern.NAME.equals(cf.getCreateName())) {
+				|| FindByDomainManagerPattern.NAME.equals(cf.getCreateName()))) {
 				ObjectCreationToolEntry objectCreationToolEntry = new ObjectCreationToolEntry(cf.getCreateName(), cf.getCreateDescription(),
 					cf.getCreateImageId(), cf.getCreateLargeImageId(), cf);
 
