@@ -22,6 +22,7 @@ import gov.redhawk.sca.ui.actions.StopAction;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
@@ -42,6 +43,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.DeleteFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
+import org.eclipse.graphiti.services.Graphiti;
 
 public class GraphitiDcdModelMap {
 //	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
@@ -232,25 +234,27 @@ public class GraphitiDcdModelMap {
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		final IFeatureProvider featureProvider = provider.getFeatureProvider();
 		final Diagram diagram = provider.getDiagram();
-
+		List<PictogramElement> pes = Graphiti.getLinkService().getPictogramElements(diagram, dcdComponentInstantiation);
 		// get pictogram for component
 		final PictogramElement[] peToRemove = { DUtil.getPictogramElementForBusinessObject(diagram, dcdComponentInstantiation, RHContainerShapeImpl.class) };
 
 		// Delete Component in transaction
 		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		stack.execute(new RecordingCommand(editingDomain) {
-			@Override
-			protected void doExecute() {
+		if (peToRemove.length > 0 && peToRemove[0] != null) {
+			stack.execute(new RecordingCommand(editingDomain) {
+				@Override
+				protected void doExecute() {
 
-				// delete shape & component
-				DeleteContext context = new DeleteContext(peToRemove[0]);
-				DCDDiagramFeatureProvider fp = (DCDDiagramFeatureProvider) featureProvider;
-				IPattern pattern = fp.getPatternForPictogramElement(peToRemove[0]);
-				DeleteFeatureForPattern deleteFeature = new DeleteFeatureForPattern(fp, pattern);
-				deleteFeature.delete(context);
-			}
-		});
+					// delete shape & component
+					DeleteContext context = new DeleteContext(peToRemove[0]);
+					DCDDiagramFeatureProvider fp = (DCDDiagramFeatureProvider) featureProvider;
+					IPattern pattern = fp.getPatternForPictogramElement(peToRemove[0]);
+					DeleteFeatureForPattern deleteFeature = new DeleteFeatureForPattern(fp, pattern);
+					deleteFeature.delete(context);
+				}
+			});
+		}
 	}
 
 //	/**

@@ -58,7 +58,6 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 	private static final Debug DEBUG = new Debug(DCDUIGraphitiPlugin.PLUGIN_ID, "editor");
 
 	private ScaDeviceManager deviceManager;
-	private boolean isLocalSca;
 	private Resource mainResource;
 	private ScaGraphitiModelAdapter scaListener;
 	private DcdGraphitiModelAdapter dcdListener;
@@ -76,35 +75,29 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 
 	@Override
 	protected void createModel() {
-		if (isLocalSca) {
-			mainResource = getEditingDomain().getResourceSet().createResource(ScaDebugInstance.getLocalSandboxDeviceManagerURI());
-			dcd = DcdFactory.eINSTANCE.createDeviceConfiguration();
-			getEditingDomain().getCommandStack().execute(new ScaModelCommand() {
+		mainResource = getEditingDomain().getResourceSet().createResource(ScaDebugInstance.getLocalSandboxDeviceManagerURI());
+		setDcd(DcdFactory.eINSTANCE.createDeviceConfiguration());
+		getEditingDomain().getCommandStack().execute(new ScaModelCommand() {
 
-				@Override
-				public void execute() {
-					mainResource.getContents().add(dcd);
-				}
-			});
-		} else {
-			super.createModel();
-			dcd = DeviceConfiguration.Util.getDeviceConfiguration(super.getMainResource());
-		}
+			@Override
+			public void execute() {
+				mainResource.getContents().add(getDcd());
+			}
+		});
+
 		initModelMap();
 	}
 
 	@Override
 	protected void setInput(IEditorInput input) {
 		if (input instanceof ScaFileStoreEditorInput) {
-			// Should only get here if the input is from a domain device
 			ScaFileStoreEditorInput scaInput = (ScaFileStoreEditorInput) input;
 			if (scaInput.getScaObject() instanceof ScaDeviceManager) {
 				deviceManager = (ScaDeviceManager) scaInput.getScaObject();
 			} else {
-				throw new IllegalStateException("Node Explorer opened on invalid sca input " + scaInput.getScaObject());
+				throw new IllegalStateException("Node Diagram opened on invalid sca input " + scaInput.getScaObject());
 			}
 		} else if (input instanceof URIEditorInput) {
-			// Should only get here if the input is the Sandbox Device Manager
 			URIEditorInput uriInput = (URIEditorInput) input;
 			if (uriInput.getURI().equals(ScaDebugInstance.getLocalSandboxDeviceManagerURI())) {
 				final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
@@ -133,7 +126,7 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 					}
 				}
 
-				this.deviceManager = localSca.getSandboxDeviceManager();
+				deviceManager = localSca.getSandboxDeviceManager();
 				if (deviceManager == null) {
 					ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
 					try {
@@ -155,24 +148,19 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 					} catch (InterruptedException e) {
 						throw new IllegalStateException("Sandbox setup canceled, can not load editor.");
 					}
-					this.deviceManager = localSca.getSandboxDeviceManager();
+					deviceManager = localSca.getSandboxDeviceManager();
 					if (deviceManager == null) {
 						throw new IllegalStateException("Failed to setup sandbox, null device manager.", null);
 					}
 				}
 			}
-
 		} else {
-			throw new IllegalStateException("Node Explorer opened on invalid input " + input);
-		}
-
-		if (ScaDebugPlugin.getInstance().getLocalSca().getSandboxDeviceManager() == deviceManager || this.deviceManager == null) {
-			isLocalSca = true;
+			throw new IllegalStateException("Node Diagram opened on invalid input " + input);
 		}
 
 		super.setInput(input);
 	}
-	
+
 	@Override
 	public Resource getMainResource() {
 		if (mainResource == null) {
@@ -181,12 +169,12 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 		return mainResource;
 	}
 
-	private void initModelMap() {
+	protected void initModelMap() {
 		if (deviceManager == null) {
 			throw new IllegalStateException("Can not initialize the Model Map with null local device manager");
 		}
 
-		if (dcd == null) {
+		if (getDcd() == null) {
 			throw new IllegalStateException("Can not initialize the Model Map with null dcd");
 		}
 
@@ -229,8 +217,8 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 
 		}
 
-		modelMap = new GraphitiDcdModelMap(this, dcd, deviceManager);
-		getEditingDomain().getCommandStack().execute(new GraphitiDcdModelMapInitializerCommand(modelMap, dcd, deviceManager));
+		modelMap = new GraphitiDcdModelMap(this, getDcd(), deviceManager);
+		getEditingDomain().getCommandStack().execute(new GraphitiDcdModelMapInitializerCommand(modelMap, getDcd(), deviceManager));
 		getEditingDomain().getCommandStack().flush();
 
 		this.graphitiDiagramListener = new GraphitiDcdDiagramAdapter(modelMap);
@@ -264,11 +252,11 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 			}
 		});
 
-		dcd.eAdapters().add(this.dcdListener);
+		getDcd().eAdapters().add(this.dcdListener);
 
 		if (GraphitiDcdSandboxEditor.DEBUG.enabled) {
 			try {
-				dcd.eResource().save(null);
+				getDcd().eResource().save(null);
 			} catch (final IOException e) {
 				GraphitiDcdSandboxEditor.DEBUG.catching("Failed to save local diagram.", e);
 			}
@@ -278,8 +266,8 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 	@Override
 	public void dispose() {
 		if (this.dcdListener != null) {
-			if (dcd != null) {
-				dcd.eAdapters().remove(this.dcdListener);
+			if (getDcd() != null) {
+				getDcd().eAdapters().remove(this.dcdListener);
 			}
 			this.dcdListener = null;
 		}
@@ -318,7 +306,11 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 				final IEditorInput input = createDiagramInput(dcdResource);
 				pageIndex = addPage(editor, input);
 				setPageText(pageIndex, "Diagram");
-				setPartName("Device Manager");
+				if (DUtil.isDiagramExplorer(getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram())) {
+					setPartName("Device Manager");
+				} else {
+					setPartName("Sandbox Device Manager");
+				}
 
 				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
 
@@ -343,11 +335,20 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 			}
 		}
 	}
-	
+
 	@Override
 	protected DiagramEditor createDiagramEditor() {
 		GraphitiDcdDiagramEditor editor = new GraphitiDcdDiagramEditor((TransactionalEditingDomain) getEditingDomain());
 		editor.addContext("gov.redhawk.ide.dcd.graphiti.ui.contexts.sandbox");
 		return editor;
 	}
+
+	protected DeviceConfiguration getDcd() {
+		return dcd;
+	}
+
+	protected void setDcd(DeviceConfiguration dcd) {
+		this.dcd = dcd;
+	}
+
 }
