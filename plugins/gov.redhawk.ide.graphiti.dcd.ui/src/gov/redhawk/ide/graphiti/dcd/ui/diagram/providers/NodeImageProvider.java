@@ -27,7 +27,9 @@ public class NodeImageProvider extends AbstractImageProvider implements IImagePr
 	public static final String IMG_FIND_BY_FILE_MANAGER = PREFIX + "findByFileManager";
 	public static final String IMG_FIND_BY_DOMAIN = PREFIX + "findByDomain";
 	public static final String IMG_FIND_BY = PREFIX + "findBy";
-	public static final String IMG_HOST_COLLOCATION = "hostCollocation";
+	public static final String IMG_HOST_COLLOCATION = PREFIX + "hostCollocation";
+	public static final String IMG_SCA_DEVICE = PREFIX + "scaDevice";
+	public static final String IMG_SCA_SERVICE = PREFIX + "scaService";
 
 	public NodeImageProvider() {
 	}
@@ -45,6 +47,8 @@ public class NodeImageProvider extends AbstractImageProvider implements IImagePr
 		addImageFilePath(IMG_FIND_BY_SERVICE, "icons/full/obj16/DomainFinder.gif");
 		addImageFilePath(IMG_FIND_BY, "icons/full/obj16/FindBy.gif");
 		addImageFilePath(IMG_HOST_COLLOCATION, "icons/full/obj16/HostCollocation.gif");
+		addImageFilePath(IMG_SCA_DEVICE, "icons/full/obj16/ScaDevice.gif");
+		addImageFilePath(IMG_SCA_SERVICE, "icons/full/obj16/ScaService.gif");
 	}
 
 }
