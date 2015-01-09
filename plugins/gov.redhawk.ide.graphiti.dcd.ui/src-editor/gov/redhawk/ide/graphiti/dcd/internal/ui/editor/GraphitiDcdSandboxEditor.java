@@ -11,7 +11,6 @@
  */
 package gov.redhawk.ide.graphiti.dcd.internal.ui.editor;
 
-import gov.redhawk.ide.dcd.ui.DcdUiActivator;
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
@@ -333,13 +332,13 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 				DUtil.layout(editor);
 
 			} catch (final PartInitException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, DcdUiActivator.getPluginId(), "Failed to create editor parts.", e),
+				StatusManager.getManager().handle(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
 					StatusManager.LOG | StatusManager.SHOW);
 			} catch (final IOException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, DcdUiActivator.getPluginId(), "Failed to create editor parts.", e),
+				StatusManager.getManager().handle(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
 					StatusManager.LOG | StatusManager.SHOW);
 			} catch (final CoreException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, DcdUiActivator.getPluginId(), "Failed to create editor parts.", e),
+				StatusManager.getManager().handle(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
 					StatusManager.LOG | StatusManager.SHOW);
 			}
 		}

@@ -50,5 +50,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: gov.redhawk.ide.dcd.internal.ui.editor;x-internal:=true,
- gov.redhawk.ide.dcd.ui,
  gov.redhawk.ide.dcd.ui.wizard
