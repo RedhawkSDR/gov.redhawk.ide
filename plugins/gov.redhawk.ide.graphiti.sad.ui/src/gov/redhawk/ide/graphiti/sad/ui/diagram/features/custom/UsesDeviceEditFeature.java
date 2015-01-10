@@ -10,28 +10,18 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom;
 
-import gov.redhawk.frontend.ui.FrontEndUIActivator.AllocationMode;
-import gov.redhawk.frontend.util.TunerProperties;
-import gov.redhawk.frontend.util.TunerProperties.ListenerAllocationProperties;
-import gov.redhawk.frontend.util.TunerProperties.TunerAllocationProperties;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.wizards.UsesDeviceFrontEndTunerWizard;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDevicePattern;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.wizards.UsesDeviceWizard;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.model.sca.ScaStructProperty;
 
 import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
-import mil.jpeojtrs.sca.prf.PrfFactory;
-import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.spd.PropertyRef;
-import mil.jpeojtrs.sca.spd.SpdFactory;
 import mil.jpeojtrs.sca.spd.UsesDevice;
 
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -40,16 +30,14 @@ import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
-import ExtendedCF.WKP.DEVICEMODEL;
-
-public class UsesFrontEndDeviceEditFeature extends AbstractCustomFeature {
+public class UsesDeviceEditFeature extends AbstractCustomFeature {
 
 	private final IFeatureProvider featureProvider;
 	
 	/*
 	 * Constructor
 	 */
-	public UsesFrontEndDeviceEditFeature(IFeatureProvider fp) {
+	public UsesDeviceEditFeature(IFeatureProvider fp) {
 		super(fp);
 		this.featureProvider = fp;
 	}
@@ -60,7 +48,7 @@ public class UsesFrontEndDeviceEditFeature extends AbstractCustomFeature {
 	 */
 	@Override
 	public String getDescription() {
-		return "Edit Uses FrontEnd Device";
+		return "Edit Uses Device";
 	}
 
 	/*
@@ -69,7 +57,7 @@ public class UsesFrontEndDeviceEditFeature extends AbstractCustomFeature {
 	 */
 	@Override
 	public String getName() {
-		return "&Edit Uses FrontEnd Device";
+		return "&Edit Uses Device";
 	}
 
 	/*
@@ -84,9 +72,7 @@ public class UsesFrontEndDeviceEditFeature extends AbstractCustomFeature {
 		if (pes != null && pes.length == 1) {
 			Object obj = DUtil.getBusinessObject(pes[0]);
 			if (obj instanceof UsesDeviceStub) {
-				if (UsesDeviceFrontEndTunerPattern.isFrontEndDevice(((UsesDeviceStub) obj).getUsesDevice())) {
-					return true;
-				}
+				return true;
 			}
 		}
 		return false;
@@ -118,18 +104,14 @@ public class UsesFrontEndDeviceEditFeature extends AbstractCustomFeature {
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
 		
 		// prompt user for 
-		final UsesDeviceFrontEndTunerWizard wizard = (UsesDeviceFrontEndTunerWizard) UsesDeviceFrontEndTunerPattern.openWizard(
-			new UsesDeviceFrontEndTunerWizard(sad, usesDeviceStub));
+		final UsesDeviceWizard wizard = (UsesDeviceWizard) UsesDevicePattern.openWizard(
+			new UsesDeviceWizard(sad, usesDeviceStub));
 		if (wizard == null) {
 			return;
 		}
 		
 		//extract values from wizard
 		final String usesDeviceId = wizard.getNamePage().getModel().getUsesDeviceId();
-		final String deviceModel = wizard.getNamePage().getModel().getDeviceModel();
-		final AllocationMode allocationMode = wizard.getAllocationPage().getAllocationMode();
-		final ScaStructProperty tunerAllocationStruct = wizard.getAllocationPage().getTunerAllocationStruct();
-		final ScaStructProperty listenerAllocationStruct = wizard.getAllocationPage().getListenerAllocationStruct();
 		final List<String> usesPortNames = wizard.getPortsWizardPage().getModel().getUsesPortNames();
 		final List<String> providesPortNames = wizard.getPortsWizardPage().getModel().getProvidesPortNames();
 		
@@ -146,50 +128,8 @@ public class UsesFrontEndDeviceEditFeature extends AbstractCustomFeature {
 				//uses device id
 				usesDevice.setId(usesDeviceId);
 				
-				//device model
-				PropertyRef deviceModelPropertyRef = null;
-				for (PropertyRef propRef: usesDevice.getPropertyRef()) {
-					if (DEVICEMODEL.value.equals(propRef.getRefId())) {
-						deviceModelPropertyRef = propRef;
-					}
-				}
-				if (deviceModel == null || deviceModel.isEmpty()) {
-					if (deviceModelPropertyRef != null) {
-						//delete PropertyRef containing deviceModel
-						EcoreUtil.delete(deviceModelPropertyRef);
-					}
-				} else if (deviceModelPropertyRef == null) {
-					deviceModelPropertyRef = SpdFactory.eINSTANCE.createPropertyRef();
-					usesDevice.getPropertyRef().add(deviceModelPropertyRef);
-					deviceModelPropertyRef.setRefId(DEVICEMODEL.value);
-					deviceModelPropertyRef.setValue(deviceModel);
-				} else {
-					deviceModelPropertyRef.setValue(deviceModel);
-				}
-				
 				//clear existing structs
 				usesDevice.getStructRef().clear();
-				//create new struct
-				StructRef allocationStructRef = PrfFactory.eINSTANCE.createStructRef();
-				usesDevice.getStructRef().add(allocationStructRef);
-				//populate usesDevice from wizard values
-				if (allocationMode == AllocationMode.TUNER) {
-					//set tuner allocation struct
-					
-					allocationStructRef.setProperty(TunerProperties.TunerAllocationProperty.INSTANCE.createStruct());
-					for (TunerAllocationProperties prop : TunerAllocationProperties.values()) {
-						String propertyValue = String.valueOf(tunerAllocationStruct.getSimple(prop.getId()).getValue());
-						UsesDeviceFrontEndTunerPattern.setFEUsesDeviceTunerAllocationProp(usesDevice, prop.getId(), propertyValue); 
-					}
-				} else if (allocationMode == AllocationMode.LISTENER) {
-					//set listener allocation struct
-					
-					allocationStructRef.setProperty(TunerProperties.ListenerAllocationProperty.INSTANCE.createStruct());
-					for (ListenerAllocationProperties prop : ListenerAllocationProperties.values()) {
-						String propertyValue = String.valueOf(listenerAllocationStruct.getSimple(prop.getId()).getValue());
-						UsesDeviceFrontEndTunerPattern.setFEUsesDeviceTunerAllocationProp(usesDevice, prop.getId(), propertyValue); 
-					}
-				}
 				
 				//update ports
 				AbstractUsesDevicePattern.updatePorts(featureProvider, usesDeviceStub, usesDeviceShape, usesPortNames, providesPortNames);
@@ -198,4 +138,8 @@ public class UsesFrontEndDeviceEditFeature extends AbstractCustomFeature {
 		});
 	}
 	
+
+	
+
+
 }

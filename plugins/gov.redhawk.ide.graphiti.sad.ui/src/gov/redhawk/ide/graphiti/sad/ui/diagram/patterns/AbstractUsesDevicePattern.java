@@ -19,8 +19,10 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.DeviceUsedByApplication;
@@ -30,14 +32,18 @@ import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.sad.UsesDeviceDependencies;
 import mil.jpeojtrs.sca.spd.UsesDevice;
 
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.features.ICreateConnectionFeature;
+import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
@@ -46,11 +52,15 @@ import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
+import org.eclipse.graphiti.features.context.impl.DeleteContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -565,6 +575,199 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Create unique device id from provided prefix
+	 * @param sad
+	 * @param idPrefix
+	 * @return
+	 */
+	public static String getUniqueUsesDeviceId(SoftwareAssembly sad, String idPrefix) {
+		int suffixNum = 1;
+		String proposedDeviceId = idPrefix + String.valueOf(suffixNum);
+		UsesDeviceDependencies usesDeviceDependencies = sad.getUsesDeviceDependencies();
+		if (usesDeviceDependencies == null || usesDeviceDependencies.getUsesdevice().size() < 1) {
+			return proposedDeviceId;
+		}
+		
+		
+		while (true) {
+			boolean found = false;
+			for (UsesDevice usesDevice: usesDeviceDependencies.getUsesdevice()) {
+				if (usesDevice.getId().equals(proposedDeviceId)) {
+					found = true;
+					break;
+				}
+			}
+			if (found) {
+				suffixNum++;
+				proposedDeviceId = idPrefix + String.valueOf(suffixNum);
+			} else {
+				break;
+			}
+		}
+		
+		return proposedDeviceId;
+	}
+	
+	/**
+	 * Remove all old ports, add new names
+	 * Perform layout
+	 * @param diagram
+	 * @param usesDeviceStub
+	 * @param usesDeviceShape
+	 * @param usesPortNames
+	 */
+	public static void updatePorts(final IFeatureProvider featureProvider, final UsesDeviceStub usesDeviceStub, final RHContainerShapeImpl usesDeviceShape, final List<String> usesPortNames,
+		final List<String> providesPortNames) {
+		
+		updateUsesPortStubs(featureProvider, usesDeviceStub, usesDeviceShape, usesPortNames);
+		
+		updateProvidesPortStubs(featureProvider, usesDeviceStub, usesDeviceShape, providesPortNames);
+		
+		// Update the shape layout to account for any changes
+		usesDeviceShape.layout();
+	}
+	
+	/**
+	 * Remove all old UsesPortStubs ports and add new port names
+	 * @param diagram
+	 * @param usesDeviceStub
+	 * @param usesDeviceShape
+	 * @param usesPortNames
+	 */
+	public static void updateUsesPortStubs(final IFeatureProvider featureProvider, final UsesDeviceStub usesDeviceStub, 
+		final RHContainerShapeImpl usesDeviceShape, final List<String> usesPortNames) {
+
+		final Diagram diagram = featureProvider.getDiagramTypeProvider().getDiagram();
+		
+		// Mark the ports to delete
+		List<UsesPortStub> portsToDelete = new ArrayList<UsesPortStub>();
+		for (UsesPortStub uses : usesDeviceStub.getUsesPortStubs()) {
+			portsToDelete.add(uses);
+		}
+
+		// Capture the existing connection information and delete the connection
+		HashMap<Connection, String> oldConnectionMap = new HashMap<Connection, String>();
+		for (UsesPortStub portStub : portsToDelete) {
+			Anchor portStubPe = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, (EObject) portStub, Anchor.class);
+			EList<Connection> connections = portStubPe.getOutgoingConnections();
+			if (!connections.isEmpty()) {
+				for (Connection connection : connections) {
+					oldConnectionMap.put(connection, portStub.getName());
+				}
+			}
+		}
+
+		// Add new ports to the element
+		EList<UsesPortStub> usesPortStubs = new BasicEList<UsesPortStub>();
+		for (String usesPortName : usesPortNames) {
+			// Add the new port to the Domain model
+			UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
+			usesPortStub.setName(usesPortName);
+			usesPortStubs.add(usesPortStub);
+		}
+
+		// Add the new ports to the Diagram model
+		usesDeviceShape.addNewUsesPorts(usesPortStubs, featureProvider, null);
+		usesDeviceStub.getUsesPortStubs().addAll(usesPortStubs);
+
+		// Build the new connections using the reconnect feature
+		for (Map.Entry<Connection, String> cursor : oldConnectionMap.entrySet()) {
+			// First check if port still even exists
+			Anchor sourceAnchor = DUtil.getUsesAnchor(diagram, usesPortStubs, cursor.getValue());
+			if (sourceAnchor != null) {
+				CreateConnectionContext createContext = new CreateConnectionContext();
+				createContext.setSourceAnchor(sourceAnchor);
+				createContext.setTargetAnchor(cursor.getKey().getEnd());
+
+				ICreateConnectionFeature[] createConnectionFeatures = featureProvider.getCreateConnectionFeatures();
+				for (ICreateConnectionFeature createConnectionFeature : createConnectionFeatures) {
+					if (createConnectionFeature.canCreate(createContext)) {
+						createConnectionFeature.create(createContext);
+					}
+				}
+			}
+
+			// Delete the old connection
+			for (int i = 0; i < oldConnectionMap.size(); i++) {
+				DeleteContext deleteContext = new DeleteContext(cursor.getKey());
+				featureProvider.getDeleteFeature(deleteContext).delete(deleteContext);
+			}
+		}
+		// Delete all ports and rebuild from the list provided by the wizard
+		usesDeviceStub.getUsesPortStubs().removeAll(portsToDelete);
+	}
+	
+	/**
+	 * Remove all old UsesPortStubs ports and add new port names
+	 * @param diagram
+	 * @param usesDeviceStub
+	 * @param usesDeviceShape
+	 * @param usesPortNames
+	 */
+	public static void updateProvidesPortStubs(final IFeatureProvider featureProvider, final UsesDeviceStub usesDeviceStub, 
+		final RHContainerShapeImpl usesDeviceShape, final List<String> providesPortNames) {
+		
+		final Diagram diagram = featureProvider.getDiagramTypeProvider().getDiagram();
+		
+		// Mark the ports to delete
+		List<ProvidesPortStub> portsToDelete = new ArrayList<ProvidesPortStub>();
+		for (ProvidesPortStub provides : usesDeviceStub.getProvidesPortStubs()) {
+			portsToDelete.add(provides);
+		}
+
+		// Capture the existing connection information and delete the connection
+		HashMap<Connection, String> oldConnectionMap = new HashMap<Connection, String>();
+		for (ProvidesPortStub portStub : portsToDelete) {
+			Anchor portStubPe = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, (EObject) portStub, Anchor.class);
+			EList<Connection> connections = portStubPe.getIncomingConnections();
+			if (!connections.isEmpty()) {
+				for (Connection connection : connections) {
+					oldConnectionMap.put(connection, portStub.getName());
+				}
+			}
+		}
+
+		// Add new ports to the element
+		EList<ProvidesPortStub> providesPortStubs = new BasicEList<ProvidesPortStub>();
+		for (String providesPortName : providesPortNames) {
+			// Add the new port to the Domain model
+			ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
+			providesPortStub.setName(providesPortName);
+			providesPortStubs.add(providesPortStub);
+		}
+
+		// Add the new ports to the Diagram model
+		usesDeviceShape.addNewProvidesPorts(providesPortStubs, featureProvider, null);
+		usesDeviceStub.getProvidesPortStubs().addAll(providesPortStubs);
+
+		// Build the new connections using the reconnect feature
+		for (Map.Entry<Connection, String> cursor : oldConnectionMap.entrySet()) {
+			// First check if port still even exists
+			Anchor targetAnchor = DUtil.getProvidesAnchor(diagram, providesPortStubs, cursor.getValue());
+			if (targetAnchor != null) {
+				CreateConnectionContext createContext = new CreateConnectionContext();
+				createContext.setSourceAnchor(cursor.getKey().getStart());
+				createContext.setTargetAnchor(targetAnchor);
+
+				ICreateConnectionFeature[] createConnectionFeatures = featureProvider.getCreateConnectionFeatures();
+				for (ICreateConnectionFeature createConnectionFeature : createConnectionFeatures) {
+					if (createConnectionFeature.canCreate(createContext)) {
+						createConnectionFeature.create(createContext);
+					}
+				}
+			}
+
+			// Delete the old connection
+			for (int i = 0; i < oldConnectionMap.size(); i++) {
+				DeleteContext deleteContext = new DeleteContext(cursor.getKey());
+				featureProvider.getDeleteFeature(deleteContext).delete(deleteContext);
+			}
+		}
+		// Delete all ports and rebuild from the list provided by the wizard
+		usesDeviceStub.getProvidesPortStubs().removeAll(portsToDelete);
 	}
 
 }

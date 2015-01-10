@@ -15,6 +15,7 @@ import gov.redhawk.frontend.util.TunerProperties.ListenerAllocationProperties;
 import gov.redhawk.frontend.util.TunerProperties.ListenerAllocationProperty;
 import gov.redhawk.frontend.util.TunerProperties.TunerAllocationProperties;
 import gov.redhawk.frontend.util.TunerProperties.TunerAllocationProperty;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
 import gov.redhawk.model.sca.ScaFactory;
 import gov.redhawk.model.sca.ScaSimpleProperty;
@@ -68,7 +69,7 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 		
 		if (existingUsesDeviceStub == null) {
 
-			String deviceId = getUniqueUsesDeviceId(sad, "FrontEndTuner_");
+			String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, "FrontEndTuner_");
 			
 			namePage = new UsesDeviceFrontEndTunerWizardPage(deviceId);
 			allocationPage = new TunerAllocationWizardPage();

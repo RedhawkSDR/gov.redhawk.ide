@@ -19,6 +19,8 @@ public class ImageProvider extends AbstractImageProvider implements IImageProvid
 	public static final String IMG_CONSOLE_VIEW = PREFIX + "consoleView";
 	public static final String IMG_TERMINATE = PREFIX + "terminate";
 	public static final String IMG_USES_DEVICE_FRONTEND_TUNER = PREFIX + "usesDeviceFrontEndTuner";
+	public static final String IMG_USES_DEVICE = PREFIX + "usesDevice";
+	
 	@Override
 	protected void addAvailableImages() {
 		
@@ -34,6 +36,7 @@ public class ImageProvider extends AbstractImageProvider implements IImageProvid
 		addImageFilePath(IMG_CONSOLE_VIEW, "icons/full/obj16/ConsoleView.gif");
 		addImageFilePath(IMG_TERMINATE, "icons/full/obj16/Terminate.gif");
 		addImageFilePath(IMG_USES_DEVICE_FRONTEND_TUNER, "icons/full/obj16/ScaDevice.gif");
+		addImageFilePath(IMG_USES_DEVICE, "icons/full/obj16/ScaDevice.gif");
 	}
 
 }

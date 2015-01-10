@@ -31,6 +31,7 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDevicePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.feature.custom.FindByEditFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
@@ -94,7 +95,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		addConnectionPattern(new SADConnectInterfacePattern());
 		addPattern(new HostCollocationPattern());
 		addPattern(new UsesDeviceFrontEndTunerPattern());
-		//addPattern(new UsesDeviceFrontEndListenerPattern());
+		addPattern(new UsesDevicePattern());
 	}
 
 	// the text we double click is nested inside of the pictogram element that links to our business object
