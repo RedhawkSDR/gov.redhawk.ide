@@ -38,6 +38,9 @@ public class DeviceCreateFeature extends AbstractCreateFeature {
 	private SoftPkg spd = null;
 	private String implId = null;
 	public static final String SHAPE_TYPE = "deviceShape";
+	public static final String OVERRIDE_USAGE_NAME = "OverrideUsageName";
+	public static final String OVERRIDE_INSTANTIATION_ID = "OverrideInstantiationId";
+	
 
 	@Override
 	public String getDescription() {

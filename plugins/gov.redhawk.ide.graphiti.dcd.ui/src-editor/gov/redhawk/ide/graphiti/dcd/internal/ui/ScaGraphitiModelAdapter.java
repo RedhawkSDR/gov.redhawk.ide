@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.internal.ui;
 
+import gov.redhawk.ide.debug.LocalAbstractComponent;
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.model.sca.IDisposable;
 import gov.redhawk.model.sca.ScaDevice;
@@ -52,12 +53,21 @@ public class ScaGraphitiModelAdapter extends EContentAdapter {
 				break;
 			}
 
-		} else if (notification.getNotifier() instanceof ScaDevice) {
-			switch (notification.getFeatureID(LocalSca.class)) {
+		} else if (notification.getNotifier() instanceof ScaDevice && notification.getNotifier() instanceof LocalAbstractComponent) {
+			switch (notification.getFeatureID(ScaDevice.class)) {
+			case ScaPackage.SCA_DEVICE__IDENTIFIER:
+				switch (notification.getEventType()) {
+				case Notification.SET:
+					this.modelMap.add((ScaDevice< ? >) notification.getNotifier());
+					break;
+				default:
+					break;
+				}
+				break;
 			case ScaPackage.SCA_DEVICE__STARTED:
 				ScaDevice< ? > scaDevice = (ScaDevice< ? >) notification.getNotifier();
 				final Boolean started = (Boolean) notification.getNewValue();
-				this.modelMap.startStopComponent(scaDevice, started);
+				this.modelMap.startStopDevice(scaDevice, started);
 				break;
 			default:
 				break;

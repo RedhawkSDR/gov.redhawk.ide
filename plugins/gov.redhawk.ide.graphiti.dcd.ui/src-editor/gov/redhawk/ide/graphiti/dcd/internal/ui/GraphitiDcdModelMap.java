@@ -10,7 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.internal.ui;
 
+import gov.redhawk.ide.debug.LocalAbstractComponent;
 import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdSandboxEditor;
+import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDDiagramFeatureProvider;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
@@ -19,16 +22,18 @@ import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaDeviceManager;
 import gov.redhawk.sca.ui.actions.StartAction;
 import gov.redhawk.sca.ui.actions.StopAction;
+import gov.redhawk.sca.util.SubMonitor;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -38,12 +43,12 @@ import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.impl.CreateContext;
 import org.eclipse.graphiti.features.context.impl.DeleteContext;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.DeleteFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
-import org.eclipse.graphiti.services.Graphiti;
 
 public class GraphitiDcdModelMap {
 //	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
@@ -55,11 +60,11 @@ public class GraphitiDcdModelMap {
 	private final GraphitiDcdSandboxEditor editor;
 	private final ScaDeviceManager deviceManager;
 
-	// maps containing to uniquely identify component/connections, use with synchronized statement
+	// maps containing to uniquely identify devices/connections, use with synchronized statement
 	private final Map<String, DcdNodeMapEntry> nodes = Collections.synchronizedMap(new HashMap<String, DcdNodeMapEntry>());
 //	private final Map<String, ConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, ConnectionMapEntry>());
 
-	// actions for starting/stopping components
+	// actions for starting/stopping devices
 	private final StartAction startAction = new StartAction();
 	private final StopAction stopAction = new StopAction();
 
@@ -71,13 +76,104 @@ public class GraphitiDcdModelMap {
 		this.editor = editor;
 	}
 
+	/********************** SCA EXPLORER TO DIAGRAM *****************************/
+	/*	These actions are fired when interacting with a shape in the SCA		*/
+	/*	Explorer View and the results are reflected in the Graphiti Diagram		*/
+	/****************************************************************************/
+
 	/**
-	 * Paints the Chalkboard diagram component appropriate color
+	 * New ScaDevice was recently added and this method will now add
+	 * a DcdComponentInstiation to the DeviceConfiguration of the Graphiti Diagram.
+	 */
+	public void add(final ScaDevice< ? > device) {
+
+		final DcdNodeMapEntry nodeMapEntry = new DcdNodeMapEntry();
+		nodeMapEntry.setScaDevice(device);
+		synchronized (nodes) {
+			if (nodes.get(nodeMapEntry.getKey()) != null) {
+				return;
+			} else {
+				nodes.put(nodeMapEntry.getKey(), nodeMapEntry);
+			}
+		}
+		Job job = new Job("Adding device: " + device.getIdentifier()) {
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				SubMonitor subMonitor = SubMonitor.convert(monitor, "Adding device: " + device.getIdentifier(), IProgressMonitor.UNKNOWN);
+				DcdComponentInstantiation newDevice = null;
+				try {
+					newDevice = GraphitiDcdModelMap.this.create(device);
+					nodeMapEntry.setProfile(newDevice);
+
+					return Status.OK_STATUS;
+				} catch (CoreException e) {
+					nodes.remove(nodeMapEntry.getKey());
+					return new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to add device " + device.getIdentifier(), e);
+				} finally {
+					if (nodes.get(nodeMapEntry.getKey()) == null) {
+						delete(newDevice);
+					}
+					subMonitor.done();
+				}
+			}
+
+		};
+		job.schedule();
+	}
+
+	/**
+	 * Create DcdComponentInstantiation from the provided ScaDevice.
+	 * Add the DcdComponentInstantiation to the diagram
+	 * @param newValue
+	 * @return new DcdComponentInstantiation
+	 * @throws CoreException
+	 */
+	private DcdComponentInstantiation create(final ScaDevice< ? > newValue) throws CoreException {
+
+		// get SoftPkg
+		newValue.fetchAttributes(null);
+		final SoftPkg spd = newValue.fetchProfileObject(null);
+		if (spd == null) {
+			throw new IllegalStateException("Unable to load new devices spd");
+		}
+
+		// setup for transaction in diagram
+		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+		final IFeatureProvider featureProvider = provider.getFeatureProvider();
+		final Diagram diagram = provider.getDiagram();
+		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
+
+		// Create Device in transaction
+		final DcdComponentInstantiation[] dcdComponentInstantiations = new DcdComponentInstantiation[1];
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+
+				// create device feature
+				String implId = ((LocalAbstractComponent) newValue).getImplementationID();
+
+				DeviceCreateFeature createDeviceFeature = new DeviceCreateFeature(featureProvider, spd, implId);
+				CreateContext createContext = new CreateContext();
+				createContext.putProperty(DeviceCreateFeature.OVERRIDE_USAGE_NAME, newValue.getLabel());
+				createContext.putProperty(DeviceCreateFeature.OVERRIDE_INSTANTIATION_ID, newValue.getIdentifier());
+				createContext.setTargetContainer(diagram);
+				final Object[] objects = createDeviceFeature.create(createContext);
+				dcdComponentInstantiations[0] = (DcdComponentInstantiation) objects[0];
+			}
+		});
+
+		return dcdComponentInstantiations[0];
+	}
+
+	/**
+	 * Paints the Chalkboard diagram device appropriate color
 	 * Fired when a device is started/stopped in the SCA Explorer
-	 * @param localScaComponent
+	 * @param ScaDevice
 	 * @param started
 	 */
-	public void startStopComponent(ScaDevice< ? > scaDevice, final Boolean started) {
+	public void startStopDevice(ScaDevice< ? > scaDevice, final Boolean started) {
 		final DcdNodeMapEntry nodeMapEntry = nodes.get(DcdNodeMapEntry.getKey(scaDevice));
 		if (nodeMapEntry == null) {
 			return;
@@ -91,7 +187,7 @@ public class GraphitiDcdModelMap {
 
 		final Diagram diagram = provider.getDiagram();
 
-		// get pictogram for component
+		// get pictogram for device
 		final RHContainerShape rhContainerShape = (RHContainerShape) DUtil.getPictogramElementForBusinessObject(diagram, dcdComponentInstantiation,
 			RHContainerShapeImpl.class);
 
@@ -104,7 +200,7 @@ public class GraphitiDcdModelMap {
 					stack.execute(new RecordingCommand(editingDomain) {
 						@Override
 						protected void doExecute() {
-							// paint component
+							// paint device
 							rhContainerShape.setStarted(started);
 						}
 					});
@@ -116,12 +212,113 @@ public class GraphitiDcdModelMap {
 	}
 
 	/**
-	 * Starts/Stops the component in the ScaExplorer as a result of the user
+	 * Modifies the diagram to reflect runtime status of the SCA Explorer
+	 * Fires when the diagram is first launched
+	 */
+	public void reflectRuntimeStatus() {
+
+		// setup to perform diagram operations
+		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+		final Diagram diagram = provider.getDiagram();
+		final IFeatureProvider featureProvider = provider.getFeatureProvider();
+		final TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+
+		Job job = new Job("Syncronizing device started status") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				for (String nodeKey : nodes.keySet()) {
+					final DcdNodeMapEntry nodeMapEntry = nodes.get(nodeKey);
+
+					// get pictogram for device
+					final RHContainerShape shape = (RHContainerShape) DUtil.getPictogramElementForBusinessObject(diagram, nodeMapEntry.getProfile(),
+						RHContainerShapeImpl.class);
+
+					final boolean started = nodeMapEntry.getScaDevice().getStarted();
+					if (started) {
+
+						// Perform business object manipulation in a Command
+						TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+						stack.execute(new RecordingCommand(editingDomain) {
+							@Override
+							protected void doExecute() {
+								// paint device
+								if (shape != null) {
+									shape.setStarted(true);
+								}
+							}
+						});
+					}
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
+
+	/**
+	 * Called when we release a device in the SCA Explorer
+	 * This method removes DcdComponentInstantiation from the diagram
+	 * @param comp
+	 */
+	public void remove(final ScaDevice< ? > device) {
+		final DcdNodeMapEntry nodeMapEntry = nodes.remove(DcdNodeMapEntry.getKey(device));
+		if (nodeMapEntry == null) {
+			return;
+		}
+
+		final DcdComponentInstantiation oldDevice = nodeMapEntry.getProfile();
+		if (oldDevice != null) {
+			delete(oldDevice);
+		}
+	}
+
+	/**
+	 * Deletes a DcdComponentInstantiation from diagram
+	 * @param oldValue
+	 */
+	private void delete(final DcdComponentInstantiation dcdComponentInstantiation) {
+		if (dcdComponentInstantiation == null || editor.isDisposed()) {
+			return;
+		}
+		// setup to perform diagram operations
+		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+		final IFeatureProvider featureProvider = provider.getFeatureProvider();
+		final Diagram diagram = provider.getDiagram();
+
+		// get pictogram for device
+		final PictogramElement[] peToRemove = { DUtil.getPictogramElementForBusinessObject(diagram, dcdComponentInstantiation, RHContainerShapeImpl.class) };
+
+		// Delete Device in transaction
+		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		if (peToRemove.length > 0 && peToRemove[0] != null) {
+			stack.execute(new RecordingCommand(editingDomain) {
+				@Override
+				protected void doExecute() {
+
+					// delete shape & device
+					DeleteContext context = new DeleteContext(peToRemove[0]);
+					DCDDiagramFeatureProvider fp = (DCDDiagramFeatureProvider) featureProvider;
+					IPattern pattern = fp.getPatternForPictogramElement(peToRemove[0]);
+					DeleteFeatureForPattern deleteFeature = new DeleteFeatureForPattern(fp, pattern);
+					deleteFeature.delete(context);
+				}
+			});
+		}
+	}
+
+	/********************** DIAGRAM TO SCA EXPLORER *****************************/
+	/*	These actions are fired when interacting with a shape in the diagram	*/
+	/*	and the results are reflected in the SCA Explorer view					*/
+	/****************************************************************************/
+
+	/**
+	 * Starts/Stops the device in the ScaExplorer as a result of the user
 	 * stopping/starting the component in the diagram
 	 * @param comp
 	 * @param started
 	 */
-	public void startStopComponent(final DcdComponentInstantiation comp, final Boolean started) {
+	public void startStopDevice(final DcdComponentInstantiation comp, final Boolean started) {
 		if (comp == null) {
 			return;
 		}
@@ -162,101 +359,45 @@ public class GraphitiDcdModelMap {
 		}
 	}
 
-	/**
-	 * Modifies the diagram to reflect component runtime status
-	 */
-	public void reflectRuntimeStatus() {
+	// TODO: remove and delete in SCA Explorer when terminating/releasing in the diagram
+	// will require a new release feature probably
+	// TODO: add to SCA Explorer when adding to diagram
 
-		// setup to perform diagram operations
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final Diagram diagram = provider.getDiagram();
-		final IFeatureProvider featureProvider = provider.getFeatureProvider();
-		final TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
-		Job job = new Job("Syncronizing device started status") {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				for (String nodeKey : nodes.keySet()) {
-					final DcdNodeMapEntry nodeMapEntry = nodes.get(nodeKey);
-
-					// get pictogram for device
-					final RHContainerShape shape = (RHContainerShape) DUtil.getPictogramElementForBusinessObject(diagram, nodeMapEntry.getProfile(),
-						RHContainerShapeImpl.class);
-
-					final boolean started = nodeMapEntry.getScaDevice().getStarted();
-					if (started) {
-
-						// Perform business object manipulation in a Command
-						TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-						stack.execute(new RecordingCommand(editingDomain) {
-							@Override
-							protected void doExecute() {
-								// paint component
-								if (shape != null) {
-									shape.setStarted(true);
-								}
-							}
-						});
-					}
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
-
-	/**
-	 * Called when we remove LocalScaComponent from the local waveform.
-	 * This method removes SadComponentInstantiation from the diagram
-	 * @param comp
-	 */
-	public void remove(final ScaDevice< ? > device) {
-		final DcdNodeMapEntry nodeMapEntry = nodes.remove(DcdNodeMapEntry.getKey(device));
-		if (nodeMapEntry == null) {
-			return;
-		}
-
-		final DcdComponentInstantiation oldDevice = nodeMapEntry.getProfile();
-		if (oldDevice != null) {
-			delete(oldDevice);
-		}
-	}
-
-	/**
-	 * Delete DcdComponentInstantiation from diagram
-	 * @param oldValue
-	 */
-	private void delete(final DcdComponentInstantiation dcdComponentInstantiation) {
-		if (dcdComponentInstantiation == null || editor.isDisposed()) {
-			return;
-		}
-		// setup to perform diagram operations
-		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final IFeatureProvider featureProvider = provider.getFeatureProvider();
-		final Diagram diagram = provider.getDiagram();
-		List<PictogramElement> pes = Graphiti.getLinkService().getPictogramElements(diagram, dcdComponentInstantiation);
-		// get pictogram for component
-		final PictogramElement[] peToRemove = { DUtil.getPictogramElementForBusinessObject(diagram, dcdComponentInstantiation, RHContainerShapeImpl.class) };
-
-		// Delete Component in transaction
-		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
-		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-		if (peToRemove.length > 0 && peToRemove[0] != null) {
-			stack.execute(new RecordingCommand(editingDomain) {
-				@Override
-				protected void doExecute() {
-
-					// delete shape & component
-					DeleteContext context = new DeleteContext(peToRemove[0]);
-					DCDDiagramFeatureProvider fp = (DCDDiagramFeatureProvider) featureProvider;
-					IPattern pattern = fp.getPatternForPictogramElement(peToRemove[0]);
-					DeleteFeatureForPattern deleteFeature = new DeleteFeatureForPattern(fp, pattern);
-					deleteFeature.delete(context);
-				}
-			});
-		}
-	}
-
+//	/**
+//	 * Called when we remove SadComponentInstantiation from the diagram.
+//	 * This method removes LocalScaComponent from the local waveform
+//	 * @param comp
+//	 */
+//	public void remove(final SadComponentInstantiation comp) {
+//		if (comp == null) {
+//			return;
+//		}
+//
+//		final NodeMapEntry nodeMapEntry = nodes.remove(NodeMapEntry.getKey(comp));
+//		if (nodeMapEntry == null) {
+//			return;
+//		}
+//		final LocalScaComponent oldComp = nodeMapEntry.getLocalScaComponent();
+//		if (oldComp != null) {
+//			Job job = new Job("Releasing " + comp.getUsageName()) {
+//
+//				@Override
+//				protected IStatus run(IProgressMonitor monitor) {
+//					SubMonitor subMonitor = SubMonitor.convert(monitor, "Releasing " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
+//					try {
+//						delete(oldComp);
+//						return Status.OK_STATUS;
+//					} catch (ReleaseError e) {
+//						return new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Problems while removing component " + comp.getId(), e);
+//					} finally {
+//						subMonitor.done();
+//					}
+//				}
+//
+//			};
+//			job.schedule();
+//		}
+//	}
 //	/**
 //	 * @param oldComp
 //	 * @throws ReleaseError
@@ -295,42 +436,7 @@ public class GraphitiDcdModelMap {
 //			return null;
 //		}
 //	}
-//
-//	/**
-//	 * Called when we remove SadComponentInstantiation from the diagram.
-//	 * This method removes LocalScaComponent from the local waveform
-//	 * @param comp
-//	 */
-//	public void remove(final SadComponentInstantiation comp) {
-//		if (comp == null) {
-//			return;
-//		}
-//
-//		final NodeMapEntry nodeMapEntry = nodes.remove(NodeMapEntry.getKey(comp));
-//		if (nodeMapEntry == null) {
-//			return;
-//		}
-//		final LocalScaComponent oldComp = nodeMapEntry.getLocalScaComponent();
-//		if (oldComp != null) {
-//			Job job = new Job("Releasing " + comp.getUsageName()) {
-//
-//				@Override
-//				protected IStatus run(IProgressMonitor monitor) {
-//					SubMonitor subMonitor = SubMonitor.convert(monitor, "Releasing " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
-//					try {
-//						delete(oldComp);
-//						return Status.OK_STATUS;
-//					} catch (ReleaseError e) {
-//						return new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Problems while removing component " + comp.getId(), e);
-//					} finally {
-//						subMonitor.done();
-//					}
-//				}
-//
-//			};
-//			job.schedule();
-//		}
-//	}
+
 //
 //	/**
 //	 * @param con
@@ -344,6 +450,7 @@ public class GraphitiDcdModelMap {
 //	}
 //
 	/**
+	 * Adds a new model object/diagram object pairing to the nodes map
 	 * @param device
 	 * @param inst
 	 */

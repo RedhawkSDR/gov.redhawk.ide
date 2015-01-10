@@ -49,7 +49,7 @@ public class GraphitiDcdDiagramAdapter extends EContentAdapter {
 				if (notification.getNotifier() instanceof RHContainerShape) {
 					final RHContainerShape rhContainerShape = (RHContainerShape) notification.getNotifier();
 					DcdComponentInstantiation ci = (DcdComponentInstantiation) DUtil.getBusinessObject(rhContainerShape);
-					this.modelMap.startStopComponent(ci, (Boolean) notification.getNewValue());
+					this.modelMap.startStopDevice(ci, (Boolean) notification.getNewValue());
 				}
 			}
 			break;
