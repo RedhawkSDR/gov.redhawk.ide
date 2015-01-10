@@ -75,7 +75,7 @@ import CF.PropertySetPackage.InvalidConfiguration;
 import CF.PropertySetPackage.PartialConfiguration;
 
 /**
- * 
+ * This is the implementation of the sandbox's device manager. It is represented in the SCA model by a {@link LocalScaDeviceManager}.
  */
 public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOperations {
 
@@ -83,26 +83,34 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	private final String identifier;
 	private final String name;
 	private final FileSystem fileSystem;
+
+	/**
+	 * The list of devices that have registered with the device manager.
+	 */
 	private List<Device> devices = Collections.synchronizedList(new ArrayList<Device>());
+
+	/**
+	 * The list of service that have registered with the device manager.
+	 */
 	private List<ServiceType> services = Collections.synchronizedList(new ArrayList<ServiceType>());
 
 	private final Job refreshJob;
-	private LocalScaDeviceManager devMgr;
+	private LocalScaDeviceManager devMgrModelObj;
 
-	public DeviceManagerImpl(final String profile, final String identifier, final String name, final LocalScaDeviceManager devMgr,
+	public DeviceManagerImpl(final String profile, final String identifier, final String name, final LocalScaDeviceManager devMgrModelObj,
 		final FileSystem fileSystem) {
 		super();
 		this.profile = profile;
 		this.identifier = identifier;
 		this.name = name;
 		this.fileSystem = fileSystem;
-		this.devMgr = devMgr;
+		this.devMgrModelObj = devMgrModelObj;
 		refreshJob = new Job("Refreshing Device Manager") {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					devMgr.refresh(monitor, RefreshDepth.FULL);
+					devMgrModelObj.refresh(monitor, RefreshDepth.FULL);
 				} catch (InterruptedException e) {
 					return Status.CANCEL_STATUS;
 				}
@@ -110,14 +118,6 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 			}
 
 		};
-	}
-
-	public void setDevMgr(LocalScaDeviceManager devMgr) {
-		this.devMgr = devMgr;
-	}
-
-	public LocalScaDeviceManager getDevMgr() {
-		return devMgr;
 	}
 
 	/**
@@ -358,7 +358,6 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 		return "";
 	}
 	
-
 	private String createExecParamStr(final DataType[] execParams) {
 		if (execParams == null || execParams.length == 0) {
 			return "";
@@ -444,7 +443,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 
 		for (int tries = 0; tries < 100; tries++) {
 			if (type == ComponentType.DEVICE) {
-				for (final ScaDevice< ? > comp : devMgr.fetchDevices(null)) {
+				for (final ScaDevice< ? > comp : devMgrModelObj.fetchDevices(null)) {
 					comp.fetchAttributes(null);
 					final String id = comp.getIdentifier();
 					if (id.equals(compId)) {
@@ -453,7 +452,7 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 				}
 			}
 			if (type == ComponentType.SERVICE) {
-				for (final ScaService comp : devMgr.fetchServices(null)) {
+				for (final ScaService comp : devMgrModelObj.fetchServices(null)) {
 					comp.fetchAttributes(null);
 					final String id = comp.getName();
 					if (id.equals(usageName)) {
