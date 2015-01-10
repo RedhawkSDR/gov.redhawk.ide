@@ -11,6 +11,7 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.wizards;
 
 import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
+import gov.redhawk.ide.graphiti.sad.ui.images.SadWizardImages;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -22,6 +23,7 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -29,11 +31,13 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class PortsWizardPage extends WizardPage {
@@ -93,6 +97,8 @@ public class PortsWizardPage extends WizardPage {
 	private DataBindingContext dbc;
 	private Button usesPortAddBtn, usesPortDeleteBtn, providesPortAddBtn, providesPortDeleteBtn;
 	private Text usesPortNameText, providesPortNameText;
+	private Image addImage;
+	private Image removeImage;
 
 	public PortsWizardPage() {
 		super("portWizardPage", "Identify Ports", TITLE_IMAGE);
@@ -100,6 +106,8 @@ public class PortsWizardPage extends WizardPage {
 
 		model = new Model();
 		dbc = new DataBindingContext();
+		addImage = SadWizardImages.ADD.createImage();
+		removeImage = SadWizardImages.REMOVE.createImage();
 	}
 	
 	public PortsWizardPage(List<String> providesPortNames, List<String> usesPortNames) {
@@ -123,17 +131,22 @@ public class PortsWizardPage extends WizardPage {
 
 		// provides port composite
 		final Composite providesPortComposite = createPortComposite(portOptions);
+		Label providesPortsLabel = new Label(providesPortComposite, SWT.NONE);
+		providesPortsLabel.setText("Provides Ports");
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(providesPortsLabel);
 		// add provides port name text
 		providesPortNameText = addPortNameText(providesPortComposite);
 		providesPortNameText.setToolTipText("The specified provides port on the component will be located to make connections");
 		// add provides port "Add" button
 		providesPortAddBtn = new Button(providesPortComposite, SWT.PUSH);
-		providesPortAddBtn.setText("Add Provides Port");
+		providesPortAddBtn.setImage(addImage);
+		//providesPortAddBtn.setText("Add Provides Port");
 		// add provides port list
 		final org.eclipse.swt.widgets.List providesPortList = addPortList(providesPortComposite, Model.PROVIDES_PORT_NAMES);
 		// add provides port "Delete" button
 		providesPortDeleteBtn = new Button(providesPortComposite, SWT.PUSH);
-		providesPortDeleteBtn.setText("Delete");
+		providesPortDeleteBtn.setImage(removeImage);
+		//providesPortDeleteBtn.setText("Delete");
 		if (providesPortList.getItemCount() <= 0) {
 			providesPortDeleteBtn.setEnabled(false);
 		}
@@ -143,17 +156,22 @@ public class PortsWizardPage extends WizardPage {
 
 		// uses port composite
 		final Composite usesPortComposite = createPortComposite(portOptions);
+		Label usesPortsLabel = new Label(usesPortComposite, SWT.NONE);
+		usesPortsLabel.setText("Uses Ports");
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(usesPortsLabel);
 		// add uses port name text
 		usesPortNameText = addPortNameText(usesPortComposite);
 		usesPortNameText.setToolTipText("The specified uses port on the component will be located to make connections");
 		// add uses port "Add" button
 		usesPortAddBtn = new Button(usesPortComposite, SWT.PUSH);
-		usesPortAddBtn.setText("Add Uses Port");
+		usesPortAddBtn.setImage(addImage);
+		//usesPortAddBtn.setText("Add Uses Port");
 		// add uses port list
 		final org.eclipse.swt.widgets.List usesPortList = addPortList(usesPortComposite, Model.USES_PORT_NAMES);
 		// add uses port "Delete" button
 		usesPortDeleteBtn = new Button(usesPortComposite, SWT.PUSH);
-		usesPortDeleteBtn.setText("Delete");
+		usesPortDeleteBtn.setImage(removeImage);
+		//usesPortDeleteBtn.setText("Delete");
 		if (usesPortList.getItemCount() <= 0) {
 			usesPortDeleteBtn.setEnabled(false);
 		}
@@ -303,5 +321,12 @@ public class PortsWizardPage extends WizardPage {
 
 	public Model getModel() {
 		return model;
+	}
+	
+	@Override
+	public void dispose() {
+		removeImage.dispose();
+		addImage.dispose();
+		super.dispose();
 	}
 }
