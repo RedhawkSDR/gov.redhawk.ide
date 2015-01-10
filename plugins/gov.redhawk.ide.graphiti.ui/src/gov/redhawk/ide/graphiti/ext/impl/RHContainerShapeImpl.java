@@ -594,13 +594,17 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Rectangle providesPortsRectangle = Graphiti.getCreateService().createRectangle(providesPortsContainerShape);
 		providesPortsRectangle.setTransparency(1d);
 		Graphiti.getPeService().setPropertyValue(providesPortsRectangle, DUtil.GA_TYPE, GA_PROVIDES_PORT_RECTANGLE);
-		Graphiti.getGaLayoutService().setLocationAndSize(providesPortsRectangle, PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING,
-			PORT_SHAPE_WIDTH + providesPortNameLength, providesPortStubs.size() * (PORT_ROW_HEIGHT + PORT_ROW_PADDING_HEIGHT));
-		featureProvider.link(providesPortsContainerShape, providesPortStubs.toArray());
+		int width = PORT_SHAPE_WIDTH + providesPortNameLength;
+		int height = (providesPortStubs != null) ? providesPortStubs.size() * (PORT_ROW_HEIGHT + PORT_ROW_PADDING_HEIGHT) : 0;
+		Graphiti.getGaLayoutService().setLocationAndSize(providesPortsRectangle, PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING, width, height);
 
-		// iterate over all provides ports
-		for (ProvidesPortStub p : providesPortStubs) {
-			addProvidesPortContainerShape(p, providesPortsContainerShape, providesPortNameLength, featureProvider, findExternalPort(p, externalPorts));
+		if (providesPortStubs != null) {
+			featureProvider.link(providesPortsContainerShape, providesPortStubs.toArray());
+
+			// iterate over all provides ports
+			for (ProvidesPortStub p : providesPortStubs) {
+				addProvidesPortContainerShape(p, providesPortsContainerShape, providesPortNameLength, featureProvider, findExternalPort(p, externalPorts));
+			}
 		}
 	}
 
@@ -625,13 +629,17 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Rectangle providesPortsRectangle = Graphiti.getCreateService().createRectangle(providesPortsContainerShape);
 		providesPortsRectangle.setTransparency(1d);
 		Graphiti.getPeService().setPropertyValue(providesPortsRectangle, DUtil.GA_TYPE, GA_PROVIDES_PORT_RECTANGLE);
-		Graphiti.getGaLayoutService().setLocationAndSize(providesPortsRectangle, PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING,
-			PORT_SHAPE_WIDTH + providesPortNameLength, providesPortStubs.size() * (PORT_ROW_HEIGHT + PORT_ROW_PADDING_HEIGHT));
 
-		// Reset links
-		featureProvider.link(providesPortsContainerShape, providesPortStubs.toArray());
-		for (ProvidesPortStub p : providesPortStubs) {
-			addProvidesPortContainerShape(p, providesPortsContainerShape, providesPortNameLength, featureProvider, findExternalPort(p, externalPorts));
+		int height = (providesPortStubs != null) ? providesPortStubs.size() * (PORT_ROW_HEIGHT + PORT_ROW_PADDING_HEIGHT) : 0;
+		Graphiti.getGaLayoutService().setLocationAndSize(providesPortsRectangle, PROVIDES_PORTS_LEFT_PADDING, PORTS_CONTAINER_SHAPE_TOP_PADDING,
+			PORT_SHAPE_WIDTH + providesPortNameLength, height);
+
+		if (providesPortStubs != null) {
+			// Reset links
+			featureProvider.link(providesPortsContainerShape, providesPortStubs.toArray());
+			for (ProvidesPortStub p : providesPortStubs) {
+				addProvidesPortContainerShape(p, providesPortsContainerShape, providesPortNameLength, featureProvider, findExternalPort(p, externalPorts));
+			}
 		}
 	}
 
@@ -713,13 +721,16 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Rectangle usesPortsRectangle = Graphiti.getCreateService().createRectangle(usesPortsContainerShape);
 		usesPortsRectangle.setTransparency(1d);
 		Graphiti.getPeService().setPropertyValue(usesPortsRectangle, DUtil.GA_TYPE, GA_USES_PORTS_RECTANGLE);
-		Graphiti.getGaLayoutService().setSize(usesPortsRectangle, PORT_SHAPE_WIDTH + usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING,
-			usesPortStubs.size() * (PORT_SHAPE_HEIGHT));
-		featureProvider.link(usesPortsContainerShape, usesPortStubs.toArray());
 
-		// add uses ports
-		for (UsesPortStub p : usesPortStubs) {
-			addUsesPortContainerShape(p, usesPortsContainerShape, usesPortNameLength, featureProvider, findExternalPort(p, externalPorts));
+		int height = (usesPortStubs != null) ? usesPortStubs.size() * (PORT_SHAPE_HEIGHT) : 0;
+		Graphiti.getGaLayoutService().setSize(usesPortsRectangle, PORT_SHAPE_WIDTH + usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING, height);
+
+		if (usesPortStubs != null) {
+			featureProvider.link(usesPortsContainerShape, usesPortStubs.toArray());
+			// add uses ports
+			for (UsesPortStub p : usesPortStubs) {
+				addUsesPortContainerShape(p, usesPortsContainerShape, usesPortNameLength, featureProvider, findExternalPort(p, externalPorts));
+			}
 		}
 	}
 
@@ -744,13 +755,16 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Rectangle usesPortsRectangle = Graphiti.getCreateService().createRectangle(usesPortsContainerShape);
 		usesPortsRectangle.setTransparency(1d);
 		Graphiti.getPeService().setPropertyValue(usesPortsRectangle, DUtil.GA_TYPE, GA_USES_PORTS_RECTANGLE);
-		Graphiti.getGaLayoutService().setSize(usesPortsRectangle, PORT_SHAPE_WIDTH + usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING,
-			usesPortStubs.size() * (PORT_SHAPE_HEIGHT));
 
-		// Reset links
-		featureProvider.link(usesPortsContainerShape, usesPortStubs.toArray());
-		for (UsesPortStub p : usesPortStubs) {
-			addUsesPortContainerShape(p, usesPortsContainerShape, usesPortNameLength, featureProvider, findExternalPort(p, externalPorts));
+		int height = (usesPortStubs != null) ? usesPortStubs.size() * (PORT_SHAPE_HEIGHT) : 0;
+		Graphiti.getGaLayoutService().setSize(usesPortsRectangle, PORT_SHAPE_WIDTH + usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING, height);
+
+		if (usesPortStubs != null) {
+			// Reset links
+			featureProvider.link(usesPortsContainerShape, usesPortStubs.toArray());
+			for (UsesPortStub p : usesPortStubs) {
+				addUsesPortContainerShape(p, usesPortsContainerShape, usesPortNameLength, featureProvider, findExternalPort(p, externalPorts));
+			}
 		}
 	}
 
@@ -773,7 +787,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@SuppressWarnings("unchecked")
 	public EList<UsesPortStub> getUsesPortStubs() {
-		return (EList<UsesPortStub>) (EList< ? >) getUsesPortsContainerShape().getLink().getBusinessObjects();
+		ContainerShape usesPortsContainerShape = getUsesPortsContainerShape();
+		if (usesPortsContainerShape.getLink() != null) {
+			return (EList<UsesPortStub>) (EList< ? >) usesPortsContainerShape.getLink().getBusinessObjects();
+		}
+		return null;
 	}
 
 	/**
@@ -781,7 +799,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	@SuppressWarnings("unchecked")
 	public EList<ProvidesPortStub> getInternalProvidesPortStubs() {
-		return (EList<ProvidesPortStub>) (EList< ? >) getProvidesPortsContainerShape().getLink().getBusinessObjects();
+		ContainerShape providesPortsContainerShape = getProvidesPortsContainerShape();
+		if (providesPortsContainerShape.getLink() != null) {
+			return (EList<ProvidesPortStub>) (EList< ? >) providesPortsContainerShape.getLink().getBusinessObjects();
+		}
+		return null;
 	}
 
 	/**
@@ -1159,9 +1181,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @return int Return the length by which we need to expand the height of the associated Shape
 	 */
 	private static int getAdjustedHeight(final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs) {
-		;
+		int providesPortStubsSize = (providesPortStubs != null) ? providesPortStubs.size() : 0;
+		int usesPortStubsSize = (usesPortStubs != null) ? usesPortStubs.size() : 0;
 
-		int numPorts = Math.max(providesPortStubs.size(), usesPortStubs.size());
+		int numPorts = Math.max(providesPortStubsSize, usesPortStubsSize);
 
 		return numPorts;
 	}

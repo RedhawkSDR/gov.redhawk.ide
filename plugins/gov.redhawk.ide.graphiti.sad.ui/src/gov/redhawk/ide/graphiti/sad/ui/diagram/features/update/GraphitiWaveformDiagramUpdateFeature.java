@@ -13,6 +13,7 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.features.update;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
@@ -28,12 +29,14 @@ import java.util.List;
 import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.spd.UsesDevice;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -108,6 +111,21 @@ public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFe
 					iter.remove();
 				}
 			}
+			
+			// model UsesDevice
+			List<UsesDevice> usesDevices = new ArrayList<UsesDevice>();
+			if (sad != null && sad.getUsesDeviceDependencies() != null && sad.getUsesDeviceDependencies().getUsesdevice() != null) {
+				// Get list of UsesDeviceStub from model
+				Collections.addAll(usesDevices,
+					(UsesDevice[]) sad.getUsesDeviceDependencies().getUsesdevice().toArray(new UsesDevice[0]));
+			}
+			// shape UsesDeviceStub
+			List<RHContainerShape> usesDeviceStubShapes = AbstractUsesDevicePattern.getAllUsesDeviceStubShapes(d);
+			for (Iterator<RHContainerShape> iter = usesDeviceStubShapes.iterator(); iter.hasNext();) {
+				if (!(iter.next().eContainer() instanceof Diagram)) {
+					iter.remove();
+				}
+			}
 
 			// model connections
 			List<SadConnectInterface> sadConnectInterfaces = new ArrayList<SadConnectInterface>();
@@ -161,6 +179,19 @@ public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFe
 				if (componentShapes.size() != componentInstantiations.size() || !componentsResolved(componentShapes)) {
 					Collections.addAll(pesToRemove, (PictogramElement[]) componentShapes.toArray(new PictogramElement[0]));
 					Collections.addAll(objsToAdd, (Object[]) componentInstantiations.toArray(new Object[0]));
+					layoutNeeded = true;
+				}
+				if (usesDeviceStubShapes.size() != usesDevices.size() || !usesDeviceStubsResolved(usesDeviceStubShapes)) {
+					Collections.addAll(pesToRemove, (PictogramElement[]) usesDeviceStubShapes.toArray(new PictogramElement[0]));
+					List<UsesDeviceStub> usesDeviceStubsToAdd = new ArrayList<UsesDeviceStub>();
+					for (UsesDevice usesDevice: usesDevices) {
+						usesDeviceStubsToAdd.add(AbstractUsesDevicePattern.createUsesDeviceStub(usesDevice));
+					}
+					//add ports to model
+					AbstractUsesDevicePattern.addUsesDeviceStubPorts(sadConnectInterfaces, usesDeviceStubsToAdd);
+					//VERY IMPORTANT, store copy in diagram file
+					getDiagram().eResource().getContents().addAll(usesDeviceStubsToAdd);
+					Collections.addAll(objsToAdd, (Object[]) usesDeviceStubsToAdd.toArray(new Object[0]));
 					layoutNeeded = true;
 				}
 
@@ -220,6 +251,17 @@ public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFe
 	private boolean componentsResolved(List<ComponentShape> componentShapes) {
 		for (ComponentShape componentShape : componentShapes) {
 			if (!(DUtil.getBusinessObject(componentShape) instanceof SadComponentInstantiation)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/** Checks if rhContainerShape has lost its reference to the UsesDeviceStub model object */
+	private boolean usesDeviceStubsResolved(List<RHContainerShape> usesDeviceStubShapes) {
+		for (RHContainerShape usesDeviceStubShape : usesDeviceStubShapes) {
+			Object obj = DUtil.getBusinessObject(usesDeviceStubShape, UsesDeviceStub.class);
+			if (obj == null) {
 				return false;
 			}
 		}
@@ -362,6 +404,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFe
 		}
 	}
 
+
 	/**
 	 * Removes invalid connections where start/end points no longer exist
 	 * TODO:Consider moving this method to another class
@@ -434,10 +477,24 @@ public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFe
 					if (usesPortStub != null) {
 						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, (EObject) usesPortStub, Anchor.class);
 						sourceAnchor = (Anchor) pe;
-					} else {
-						System.out.println("our source port is not getting set"); // SUPPRESS CHECKSTYLE INLINE
-						// TODO: this means the provides port didn't exist in the existing findByStub..we need
-						// to add it
+					}
+				} else if (sadConnectInterface.getUsesPort() != null && sadConnectInterface.getUsesPort().getDeviceUsedByApplication() != null) {
+					
+					UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(sadConnectInterface.getUsesPort().getDeviceUsedByApplication(), diagram);
+					
+					// determine which usesPortStub we are targeting
+					UsesPortStub usesPortStub = null;
+					for (UsesPortStub p : usesDeviceStub.getUsesPortStubs()) {
+						if (p != null && sadConnectInterface.getUsesPort().getUsesIndentifier() != null
+							&& p.getName().equals(sadConnectInterface.getUsesPort().getUsesIndentifier())) {
+							usesPortStub = p;
+						}
+					}
+
+					// determine port anchor for usesDeviceStub
+					if (usesPortStub != null) {
+						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, usesPortStub, Anchor.class);
+						sourceAnchor = (Anchor) pe;
 					}
 				}
 			}
@@ -521,6 +578,24 @@ public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFe
 						// TODO: this means the provides port didn't exist in the existing findByStub..we need
 						// to add it
 					}
+				} else if (sadConnectInterface.getProvidesPort() != null && sadConnectInterface.getProvidesPort().getDeviceUsedByApplication() != null) {
+
+					UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(sadConnectInterface.getProvidesPort().getDeviceUsedByApplication(), diagram);
+					
+					// determine which providesPortStub we are targeting
+					ProvidesPortStub providesPortStub = null;
+					for (ProvidesPortStub p : usesDeviceStub.getProvidesPortStubs()) {
+						if (p != null && sadConnectInterface.getProvidesPort().getProvidesIdentifier() != null
+							&& p.getName().equals(sadConnectInterface.getProvidesPort().getProvidesIdentifier())) {
+							providesPortStub = p;
+						}
+					}
+
+					// determine port anchor for usesDeviceStub
+					if (providesPortStub != null) {
+						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, providesPortStub, Anchor.class);
+						targetAnchor = (Anchor) pe;
+					}
 				}
 			}
 
@@ -549,5 +624,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFe
 		}
 		return null;
 	}
+	
+
 
 }

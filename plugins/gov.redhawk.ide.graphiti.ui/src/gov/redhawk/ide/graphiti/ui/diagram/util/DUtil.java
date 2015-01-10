@@ -1012,7 +1012,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 						}
 					}
 				}
-
 			}
 		}
 		return null;
@@ -1256,6 +1255,38 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		// TODO Auto-generated method stub
 
+	}
+	
+	/**
+	 * If a provides port with the port name still exists, return the new anchor so the connection can be redrawn
+	 * @param providesPortStubs
+	 * @param oldPortName
+	 * @return Anchor object that is associated with the port
+	 */
+	public static Anchor getProvidesAnchor(Diagram diagram, EList<ProvidesPortStub> providesPortStubs, String oldPortName) {
+		for (ProvidesPortStub port : providesPortStubs) {
+			if (port.getName().equals(oldPortName)) {
+				Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, (EObject) port, Anchor.class);
+				return anchor;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * If a uses port with the port name still exists, return the new anchor so the connection can be redrawn
+	 * @param usesPortStubs
+	 * @param oldPortName
+	 * @return Anchor object that is associated with the port
+	 */
+	public static Anchor getUsesAnchor(Diagram diagram, EList<UsesPortStub> usesPortStubs, String oldPortName) {
+		for (UsesPortStub port : usesPortStubs) {
+			if (port.getName().equals(oldPortName)) {
+				Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, (EObject) port, Anchor.class);
+				return anchor;
+			}
+		}
+		return null;
 	}
 
 }

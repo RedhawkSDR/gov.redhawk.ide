@@ -14,18 +14,27 @@ import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
+import mil.jpeojtrs.sca.partitioning.DeviceUsedByApplication;
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.SadConnectInterface;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.UsesDevice;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -38,10 +47,14 @@ import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
+import org.eclipse.graphiti.mm.Property;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
 
@@ -69,7 +82,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 	// DIAGRAM FEATURES
 	@Override
 	public boolean canAdd(IAddContext context) {
-		if (context.getNewObject() instanceof UsesDevice) {
+		if (context.getNewObject() instanceof UsesDeviceStub) {
 			if (context.getTargetContainer() instanceof Diagram) {
 				return true;
 			}
@@ -79,43 +92,39 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 
 	@Override
 	public String getOuterTitle(EObject obj) {
-		if (obj instanceof UsesDevice) {
-			return getOuterTitle((UsesDevice) obj);
+		if (obj instanceof UsesDeviceStub) {
+			return getOuterTitle((UsesDeviceStub) obj);
 		}
 		return null;
 	}
 
 	/**
 	 * Provides the title of the outer shape
-	 * @param usesDevice
+	 * @param usesDeviceStub
 	 * @return
 	 */
-	public String getOuterTitle(UsesDevice usesDevice) {
+	public String getOuterTitle(UsesDeviceStub usesDeviceStub) {
 		return getCreateName();
 	}
-
+	
 	@Override
 	public String getInnerTitle(EObject obj) {
-		if (obj instanceof UsesDevice) {
-			return getInnerTitle((UsesDevice) obj);
+		if (obj instanceof UsesDeviceStub) {
+			return getInnerTitle((UsesDeviceStub) obj);
 		}
 		return null;
 	}
-
-	/**
-	 * Provides the title of the inner shape
-	 * @param usesDevice
-	 * @return
-	 */
-	public abstract String getInnerTitle(UsesDevice usesDevice);
-
-	/**
-	 * Sets the title of the inner shape
-	 * @param usesDevice
-	 * @return
-	 */
-	public void setInnerTitle(UsesDevice usesDevice, String value) {
+	
+	
+	public String getInnerTitle(UsesDeviceStub usesDeviceStub) {
+		return usesDeviceStub.getUsesDevice().getId();
 	}
+
+	
+	public void setInnerTitle(UsesDeviceStub usesDeviceStub, String value) {
+		usesDeviceStub.getUsesDevice().setId(value);
+	}
+
 
 	@Override
 	public PictogramElement add(IAddContext context) {
@@ -151,7 +160,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 	public boolean canLayout(ILayoutContext context) {
 		ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
 		Object obj = DUtil.getBusinessObject(containerShape);
-		if (obj instanceof UsesDevice) {
+		if (obj instanceof UsesDeviceStub) {
 			return true;
 		}
 		return false;
@@ -191,7 +200,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 	@Override
 	public boolean canDelete(IDeleteContext context) {
 		Object obj = DUtil.getBusinessObject(context.getPictogramElement());
-		if (obj instanceof UsesDevice) {
+		if (obj instanceof UsesDeviceStub) {
 			return true;
 		}
 		return super.canDelete(context);
@@ -199,48 +208,83 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 
 	@Override
 	public void delete(IDeleteContext context) {
-//		// set Find By to delete
-//		final FindByStub findByToDelete = (FindByStub) DUtil.getBusinessObject(context.getPictogramElement());
-//
-//		// get sad from diagram
-//		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
-//
-//		final DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());
-//
-//		// editing domain for our transaction
-//		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-//
-//		// Perform business object manipulation in a Command
-//		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-//		stack.execute(new RecordingCommand(editingDomain) {
-//			@Override
-//			protected void doExecute() {
-//
-//				if (sad != null) {
-//					// delete component from SoftwareAssembly
-//					deleteFindByConnections(findByToDelete, sad);
-//				} else if (dcd != null) {
-//					// delete component from DeviceConfiguration
-//					deleteFindByConnections(findByToDelete, dcd);
-//				}
-//
-//			}
-//		});
-//
-//		PictogramElement pe = context.getPictogramElement();
-//		Object[] businessObjects = getFeatureProvider().getAllBusinessObjectsForPictogramElement(pe);
-//
-//		preDelete(context);
-//		if (businessObjects != null) {
-//			for (Object bo : businessObjects) {
-//				if (bo instanceof EObject) {
-//					EcoreUtil.delete((EObject) bo, true);
-//				}
-//			}
-//		}
-//		postDelete(context);
-//
-//		super.delete(context);
+		// set UsesDeviceStub to delete
+		final UsesDeviceStub usesDeviceStub = (UsesDeviceStub) DUtil.getBusinessObject(context.getPictogramElement());
+
+		// get sad from diagram
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+
+		// editing domain for our transaction
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+
+		// Perform business object manipulation in a Command
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+				
+				//remove device connections
+				deleteUsesDeviceStubConnections(usesDeviceStub, sad);
+				
+				//remove device
+				for (Iterator iter = sad.getUsesDeviceDependencies().getUsesdevice().iterator(); iter.hasNext();) {
+					UsesDevice s = (UsesDevice) iter.next();
+					if (usesDeviceStub.getUsesDevice().getId().equals(s.getId())) {
+						iter.remove();
+					}
+				}
+				
+				//remove usesdevicedependencies if there are none left
+				if (sad.getUsesDeviceDependencies().getUsesdevice().size() < 1) {
+					EcoreUtil.delete(sad.getUsesDeviceDependencies());
+				}
+				
+			}
+		});
+
+		PictogramElement pe = context.getPictogramElement();
+		Object[] businessObjects = getFeatureProvider().getAllBusinessObjectsForPictogramElement(pe);
+
+		preDelete(context);
+		if (businessObjects != null) {
+			for (Object bo : businessObjects) {
+				if (bo instanceof EObject) {
+					EcoreUtil.delete((EObject) bo, true);
+				}
+			}
+		}
+		postDelete(context);
+
+		super.delete(context);
+	}
+	
+	private void deleteUsesDeviceStubConnections(UsesDeviceStub usesDeviceStubToDelete, SoftwareAssembly sad) {
+		// find and remove any attached connections
+		// gather connections
+		List<SadConnectInterface> connectionsToRemove = new ArrayList<SadConnectInterface>();
+		if (sad.getConnections() == null) {
+			return;
+		}
+		
+		
+		for (SadConnectInterface connection : sad.getConnections().getConnectInterface()) {
+			if (connection.getProvidesPort() != null && connection.getProvidesPort().getDeviceUsedByApplication() != null
+				&& connection.getProvidesPort().getDeviceUsedByApplication().getUsesRefId().equals(usesDeviceStubToDelete.getUsesDevice().getId())) {
+				connectionsToRemove.add(connection);
+			} else if (connection.getComponentSupportedInterface() != null && connection.getComponentSupportedInterface().getDeviceUsedByApplication() != null
+					&& connection.getComponentSupportedInterface().getDeviceUsedByApplication().getUsesRefId().equals(usesDeviceStubToDelete.getUsesDevice().getId())) {
+					connectionsToRemove.add(connection);
+			} else if (connection.getUsesPort().getDeviceUsedByApplication() != null
+					&& connection.getUsesPort().getDeviceUsedByApplication().getUsesRefId().equals(usesDeviceStubToDelete.getUsesDevice().getId())) {
+				connectionsToRemove.add(connection);
+			}
+		}
+		
+
+		// remove gathered connections
+		if (sad.getConnections() != null) {
+			sad.getConnections().getConnectInterface().removeAll(connectionsToRemove);
+		}
 	}
 
 
@@ -258,15 +302,15 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 	public String getInitialValue(IDirectEditingContext context) {
 		PictogramElement pe = context.getPictogramElement();
 		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		UsesDevice usesDevice = (UsesDevice) getBusinessObjectForPictogramElement(rhContainerShape);
-		return getInnerTitle(usesDevice);
+		UsesDeviceStub usesDeviceStub = (UsesDeviceStub) getBusinessObjectForPictogramElement(rhContainerShape);
+		return getInnerTitle(usesDeviceStub);
 	}
 
 	@Override
 	public void setValue(final String value, IDirectEditingContext context) {
 		PictogramElement pe = context.getPictogramElement();
 		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		final UsesDevice usesDevice = (UsesDevice) getBusinessObjectForPictogramElement(rhContainerShape);
+		final UsesDeviceStub usesDeviceStub = (UsesDeviceStub) getBusinessObjectForPictogramElement(rhContainerShape);
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
@@ -277,12 +321,34 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 			@Override
 			protected void doExecute() {
 				// set usage name
-				setInnerTitle(usesDevice, value);
+				setInnerTitle(usesDeviceStub, value);
 			}
 		});
 
 		// perform update, redraw
 		updatePictogramElement(rhContainerShape);
+	}
+	
+
+	
+	
+	@Override
+	public boolean canDirectEdit(IDirectEditingContext context) {
+		PictogramElement pe = context.getPictogramElement();
+		RHContainerShape containerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+		Object obj = getBusinessObjectForPictogramElement(containerShape);
+		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
+
+		// allow if we've selected the inner Text for the component
+		if (obj instanceof UsesDeviceStub && ga instanceof Text) {
+			Text text = (Text) ga;
+			for (Property prop : text.getProperties()) {
+				if (prop.getValue().equals(RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 
@@ -297,11 +363,13 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 
 
 	@Override
-	public abstract String getOuterImageId();
+	public String getOuterImageId() {
+		return ImageProvider.IMG_FIND_BY;
+	}
 
 	@Override
 	public String getInnerImageId() {
-		return getCreateImageId();
+		return ImageProvider.IMG_USES_DEVICE_FRONTEND_TUNER;
 	}
 
 	@Override
@@ -321,23 +389,182 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 		return businessObjectsToLink;
 	}
 	
-	/**
-	 * Provides list of UsesPortStubs (if applicable)
-	 * @param obj
-	 * @return
-	 */
+	@Override
 	public EList<UsesPortStub> getUses(EObject obj) {
-		//TODO: fix this.  problem is RHContainerSHape can't handle null list and we can't create Elist on our own
-		return (EList<UsesPortStub>) new ArrayList<UsesPortStub>();
+		if (obj instanceof UsesDeviceStub) {
+			return ((UsesDeviceStub) obj).getUsesPortStubs();
+		}
+		return null;
+	}
+
+	@Override
+	public EList<ProvidesPortStub> getProvides(EObject obj) {
+		if (obj instanceof UsesDeviceStub) {
+			return ((UsesDeviceStub) obj).getProvidesPortStubs();
+		}
+		return null;
+	}
+	
+	@Override
+	public ComponentSupportedInterfaceStub getInterface(EObject obj) {
+		if (obj instanceof UsesDeviceStub) {
+			return ((UsesDeviceStub) obj).getInterface();
+		}
+		return null;
 	}
 	
 	/**
-	 * Provides list of ProvidesPortStubs (if applicable)
-	 * @param obj
+	 * Return true if containerShape is linked to UsesDeviceStub
+	 * @param containerShape
 	 * @return
 	 */
-	public EList<ProvidesPortStub> getProvides(EObject obj) {
-		//TODO: fix this.  problem is RHContainerSHape can't handle null list and we can't create Elist on our own
-		return (EList<ProvidesPortStub>) new ArrayList<ProvidesPortStub>();
+	public static boolean isUsesDeviceStubShape(ContainerShape containerShape) {
+		if (containerShape instanceof RHContainerShape) {
+			Object obj = DUtil.getBusinessObject(containerShape, UsesDeviceStub.class);
+			if (obj != null && obj instanceof UsesDeviceStub) {
+				return true;
+			}
+		}
+		return false;
 	}
+ 	
+	/**
+	 * Returns all containerShapes linked to UsesDeviceStub
+	 * @param containerShape
+	 * @return
+	 */
+	public static List<RHContainerShape> getAllUsesDeviceStubShapes(ContainerShape containerShape) {
+		List<RHContainerShape> children = new ArrayList<RHContainerShape>();
+		if (containerShape instanceof RHContainerShape
+				&& isUsesDeviceStubShape(containerShape)) {
+			children.add((RHContainerShape) containerShape);
+		} else {
+			for (Shape s : containerShape.getChildren()) {
+				if (s instanceof ContainerShape) {
+					children.addAll(getAllUsesDeviceStubShapes((ContainerShape) s));
+				}
+			}
+		}
+		return children;
+
+	}
+	
+	
+
+	
+	/**
+	 * Create UsesDeviceStrub from UsesDevice
+	 * Initializes componentSupportedInterface, be sure to set ports afterwards if applicable
+	 * @param usesDevice
+	 * @return
+	 */
+	public static UsesDeviceStub createUsesDeviceStub(UsesDevice usesDevice) {
+		
+		UsesDeviceStub usesDeviceStrub = PartitioningFactory.eINSTANCE.createUsesDeviceStub();
+		usesDeviceStrub.setUsesDevice(usesDevice);
+		usesDeviceStrub.setInterface(PartitioningFactory.eINSTANCE.createComponentSupportedInterfaceStub());
+		return usesDeviceStrub;
+	}
+
+	/**
+	 * Returns true if the deviceUsedByApplication's usesref id matches the device id of usesDeviceStub
+	 * @param deviceUsedByApplication
+	 * @param usesDeviceStub
+	 * @return
+	 */
+	public static boolean doDeviceUsedByApplicationObjectsMatch(DeviceUsedByApplication deviceUsedByApplication, UsesDeviceStub usesDeviceStub) {
+
+		if (deviceUsedByApplication.getUsesRefId().equals(usesDeviceStub.getUsesDevice().getId())) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Add necessary ports to UsesDeviceStub based on connections in model
+	 * @return
+	 */
+	public static void addUsesDeviceStubPorts(List<SadConnectInterface> sadConnectInterfaces, List<UsesDeviceStub> usesDeviceStubs) {
+		
+		// look for usesdevice in connections to add
+		for (SadConnectInterface sadConnectInterface : sadConnectInterfaces) {
+
+			// usesdevice is always used inside usesPort
+			if (sadConnectInterface.getUsesPort() != null && sadConnectInterface.getUsesPort().getDeviceUsedByApplication() != null) {
+
+				// get usesdevice model object
+				DeviceUsedByApplication deviceUsedByApplication = (DeviceUsedByApplication) sadConnectInterface.getUsesPort().getDeviceUsedByApplication();
+
+				// search for usesdevicestub in the list
+				UsesDeviceStub usesDeviceStub = findUsesDeviceStub(deviceUsedByApplication, usesDeviceStubs);
+
+				// add provides port to stub if doesn't already exist
+				boolean uPFound = false;
+				for (UsesPortStub p : usesDeviceStub.getUsesPortStubs()) {
+					if (p.equals(sadConnectInterface.getUsesPort())) {
+						uPFound = true;
+					}
+				}
+				if (!uPFound) {
+					UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
+					usesPortStub.setName(sadConnectInterface.getUsesPort().getUsesIndentifier());
+					usesDeviceStub.getUsesPortStubs().add(usesPortStub);
+				}
+			} else if (sadConnectInterface.getProvidesPort() != null && sadConnectInterface.getProvidesPort().getDeviceUsedByApplication() != null) {
+
+				DeviceUsedByApplication deviceUsedByApplication = (DeviceUsedByApplication) sadConnectInterface.getProvidesPort().getDeviceUsedByApplication();
+
+				// search for findByStub in the list
+				UsesDeviceStub usesDeviceStub = findUsesDeviceStub(deviceUsedByApplication, usesDeviceStubs);
+
+				// add provides port to stub if doesn't already exist
+				boolean ppFound = false;
+				for (ProvidesPortStub p : usesDeviceStub.getProvidesPortStubs()) {
+					if (p.equals(sadConnectInterface.getProvidesPort())) {
+						ppFound = true;
+					}
+				}
+				if (!ppFound) {
+					ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
+					providesPortStub.setName(sadConnectInterface.getProvidesPort().getProvidesIdentifier());
+					usesDeviceStub.getProvidesPortStubs().add(providesPortStub);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Search for the UsesDeviceStub in the diagram given the DeviceUsedByApplication object
+	 * @param findBy
+	 * @param diagram
+	 * @return
+	 */
+	public static UsesDeviceStub findUsesDeviceStub(DeviceUsedByApplication deviceUsedByApplication, List<UsesDeviceStub> usesDeviceStubs) {
+		for (UsesDeviceStub usesDeviceStub : usesDeviceStubs) {
+			if (AbstractUsesDevicePattern.doDeviceUsedByApplicationObjectsMatch(deviceUsedByApplication, usesDeviceStub)) {
+				// it matches
+				return usesDeviceStub;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns matching UsesDeviceStub for provided DeviceUsedByApplication
+	 * @param deviceUsedByApplication
+	 * @param containerShape - diagram
+	 * @return
+	 */
+	public static UsesDeviceStub findUsesDeviceStub(DeviceUsedByApplication deviceUsedByApplication, ContainerShape containerShape) {
+		
+		for (RHContainerShape usesDeviceStubShape:  getAllUsesDeviceStubShapes(containerShape)) {
+			UsesDeviceStub usesDeviceStub = (UsesDeviceStub) DUtil.getBusinessObject(usesDeviceStubShape);
+			if (doDeviceUsedByApplicationObjectsMatch(deviceUsedByApplication, usesDeviceStub)) {
+				return usesDeviceStub;
+			}
+		}
+		
+		return null;
+	}
+
 }

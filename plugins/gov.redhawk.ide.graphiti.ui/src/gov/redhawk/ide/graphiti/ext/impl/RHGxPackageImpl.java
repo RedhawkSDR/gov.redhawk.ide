@@ -7,7 +7,9 @@ import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+
 import java.util.List;
+
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -15,6 +17,7 @@ import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -30,6 +33,7 @@ import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.MmPackage;
 import org.eclipse.graphiti.mm.algorithms.AlgorithmsPackage;
+import org.eclipse.graphiti.mm.algorithms.styles.StylesPackage;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
 
@@ -204,6 +208,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		AlgorithmsPackage.eINSTANCE.eClass();
 		MmPackage.eINSTANCE.eClass();
 		EcorePackage.eINSTANCE.eClass();
+		StylesPackage.eINSTANCE.eClass();
+		MmPackage.eINSTANCE.eClass();
 
 		// Create package meta-data objects
 		theRHGxPackage.createPackageContents();
@@ -495,6 +501,12 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		op = addEOperation(rhContainerShapeEClass, null, "getProvidesPortStubs", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(theEcorePackage.getEEList());
 		g2 = createEGenericType(this.getProvidesPortStub());
+		g1.getETypeArguments().add(g2);
+		initEOperation(op, g1);
+
+		op = addEOperation(rhContainerShapeEClass, null, "getUsesPortStubs", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(theEcorePackage.getEEList());
+		g2 = createEGenericType(this.getUsesPortStub());
 		g1.getETypeArguments().add(g2);
 		initEOperation(op, g1);
 

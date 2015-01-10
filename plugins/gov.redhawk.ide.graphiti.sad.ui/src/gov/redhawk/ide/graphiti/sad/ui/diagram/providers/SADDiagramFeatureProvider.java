@@ -18,6 +18,7 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkExternalPortF
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkNonExternalPortFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.ShowConsoleFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.StartComponentFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.StopComponentFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.TerminateComponentFeature;
@@ -40,6 +41,7 @@ import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -143,6 +145,16 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 			if (obj instanceof FindByStub) {
 				retList.add(new FindByEditFeature(this));
+			}
+		}
+		
+		// add usesDeviceEdit feature if usesDevice selected
+		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
+			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
+			if (obj instanceof UsesDeviceStub) {
+				if (UsesDeviceFrontEndTunerPattern.isFrontEndDevice(((UsesDeviceStub) obj).getUsesDevice())) {
+					retList.add(new UsesFrontEndDeviceEditFeature(this));
+				}
 			}
 		}
 
@@ -324,6 +336,8 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 	@Override
 	public IRemoveFeature getRemoveFeature(IRemoveContext context) {
 		return new DefaultRemoveFeature(this) {
+			//overridding the method below causes Remove to NOT show up in context menus but still allows
+			//us to getRemoveFeature and execute it.
 			public boolean isAvailable(IContext context) {
 				return false;
 			}

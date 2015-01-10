@@ -8,6 +8,7 @@ import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
 
 import org.eclipse.emf.common.util.EList;
@@ -118,6 +119,17 @@ public interface RHContainerShape extends ContainerShape {
 	 * @generated
 	 */
 	EList<ProvidesPortStub> getProvidesPortStubs();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Returns providesPortsStubs business object list linked to getUsesPortsContainerShape()
+	 * <!-- end-model-doc -->
+	 * @model kind="operation" unique="false" many="false"
+	 * @generated
+	 */
+	EList<UsesPortStub> getUsesPortStubs();
 
 	/**
 	 * <!-- begin-user-doc -->

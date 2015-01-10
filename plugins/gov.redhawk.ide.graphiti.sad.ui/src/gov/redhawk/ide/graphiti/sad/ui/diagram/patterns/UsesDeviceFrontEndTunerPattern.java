@@ -10,15 +10,22 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
+import gov.redhawk.frontend.ui.FrontEndUIActivator.AllocationMode;
 import gov.redhawk.frontend.util.TunerProperties;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.wizards.UsesDeviceFrontEndTunerWizardPage;
+import gov.redhawk.frontend.util.TunerProperties.ListenerAllocationProperties;
+import gov.redhawk.frontend.util.TunerProperties.TunerAllocationProperties;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.wizards.UsesDeviceFrontEndTunerWizard;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.model.sca.ScaStructProperty;
 
 import java.util.Iterator;
+import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.StructRef;
@@ -34,11 +41,6 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.ICreateContext;
-import org.eclipse.graphiti.features.context.IDirectEditingContext;
-import org.eclipse.graphiti.mm.Property;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Text;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -50,7 +52,7 @@ import FRONTEND.FE_TUNER_DEVICE_KIND;
 
 public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern implements IPattern {
 
-	public static final String NAME = "FrontEnd Tuner";
+	public static final String NAME = "Uses FrontEnd Tuner Device";
 
 	public UsesDeviceFrontEndTunerPattern() {
 		super();
@@ -74,9 +76,9 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 	// THE FOLLOWING METHOD DETERMINE IF PATTERN IS APPLICABLE TO OBJECT
 	@Override
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
-		if (mainBusinessObject instanceof UsesDevice) {
-			UsesDevice usesDevice = (UsesDevice) mainBusinessObject;
-			if (usesDevice != null) {
+		if (mainBusinessObject instanceof UsesDeviceStub) {
+			UsesDeviceStub usesDeviceStub = (UsesDeviceStub) mainBusinessObject;
+			if (usesDeviceStub != null && isFrontEndDevice(usesDeviceStub.getUsesDevice())) {
 				return true;
 			}
 		}
@@ -86,16 +88,27 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 	// DIAGRAM FEATURES
 	@Override
 	public Object[] create(ICreateContext context) {
-		// prompt user for CORBA Name
-		final UsesDeviceFrontEndTunerWizardPage page = openWizard();
-		if (page == null) {
-			return null;
-		}
 		
 		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		
+		// prompt user for 
+		final UsesDeviceFrontEndTunerWizard wizard = (UsesDeviceFrontEndTunerWizard) openWizard(
+			new UsesDeviceFrontEndTunerWizard(sad));
+		if (wizard == null) {
+			return null;
+		}
+		
+		//extract values from wizard
+		final String usesDeviceId = wizard.getNamePage().getModel().getUsesDeviceId();
+		final String deviceModel = wizard.getNamePage().getModel().getDeviceModel();
+		final AllocationMode allocationMode = wizard.getAllocationPage().getAllocationMode();
+		final ScaStructProperty tunerAllocationStruct = wizard.getAllocationPage().getTunerAllocationStruct();
+		final ScaStructProperty listenerAllocationStruct = wizard.getAllocationPage().getListenerAllocationStruct();
+		final List<String> usesPortNames = wizard.getPortsWizardPage().getModel().getUsesPortNames();
+		final List<String> providesPortNames = wizard.getPortsWizardPage().getModel().getProvidesPortNames();
 
-		final UsesDevice[] usesDevices = new UsesDevice[1];
+		final UsesDeviceStub[] usesDeviceStubs = new UsesDeviceStub[1];
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
@@ -113,80 +126,101 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 					sad.setUsesDeviceDependencies(usesDeviceDependencies);
 				}
 				
-				//create device				
-				usesDevices[0] = SpdFactory.eINSTANCE.createUsesDevice();
-				
-				usesDevices[0].setType("newName");
+				//create device	
+				//WE ADD DEVICE TO BOTH UsesDeviceStub & UsesDeviceDependencies
+				//UsesDeviceStub is contained in the Graphiti diagram file, UsesDeviceDependencies is stored in the sad file
+				UsesDevice usesDevice = SpdFactory.eINSTANCE.createUsesDevice();
+				usesDeviceDependencies.getUsesdevice().add(usesDevice);
+				usesDevice.setId(usesDeviceId);
+				//usesDevice.setType(); //not using this type on purpose, no value according to Core Framework team
 
 				PropertyRef deviceKindPropertyRef = SpdFactory.eINSTANCE.createPropertyRef();
 				deviceKindPropertyRef.setRefId(DEVICEKIND.value);
 				deviceKindPropertyRef.setValue(FE_TUNER_DEVICE_KIND.value);
-				usesDevices[0].getPropertyRef().add(deviceKindPropertyRef);
+				usesDevice.getPropertyRef().add(deviceKindPropertyRef);
 				
-				PropertyRef deviceModelPropertyRef = SpdFactory.eINSTANCE.createPropertyRef();
-				deviceModelPropertyRef.setRefId(DEVICEMODEL.value);
-				deviceModelPropertyRef.setValue("USB");  //TODO: this can change
-				usesDevices[0].getPropertyRef().add(deviceModelPropertyRef);
+				if (deviceModel != null && !deviceModel.isEmpty()) {
+					//add deviceModel if set
+					PropertyRef deviceModelPropertyRef = SpdFactory.eINSTANCE.createPropertyRef();
+					deviceModelPropertyRef.setRefId(DEVICEMODEL.value);
+					deviceModelPropertyRef.setValue(deviceModel);
+					usesDevice.getPropertyRef().add(deviceModelPropertyRef);
+				}
 				
-				StructRef tunerAllocationStructRef = PrfFactory.eINSTANCE.createStructRef();
-				tunerAllocationStructRef.setProperty(TunerProperties.TunerAllocationProperty.INSTANCE.createStruct());
-				usesDevices[0].getStructRef().add(tunerAllocationStructRef);
+				StructRef allocationStructRef = PrfFactory.eINSTANCE.createStructRef();
+				allocationStructRef.setProperty(TunerProperties.TunerAllocationProperty.INSTANCE.createStruct());
+				usesDevice.getStructRef().add(allocationStructRef);
 				
-				//set values from wizard
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.TUNER_TYPE.getId(), page.getModel().getTunerType());
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.ALLOCATION_ID.getId(), page.getModel().getAllocationId());
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.CENTER_FREQUENCY.getId(), String.valueOf(page.getModel().getCenterFrequency()));
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.BANDWIDTH.getId(), String.valueOf(page.getModel().getBandwidth()));
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.BANDWIDTH_TOLERANCE.getId(), String.valueOf(page.getModel().getBandwidthTolerance()));
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.SAMPLE_RATE.getId(), String.valueOf(page.getModel().getSampleRate()));
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.SAMPLE_RATE_TOLERANCE.getId(), String.valueOf(page.getModel().getSampleRateTolerance()));
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.DEVICE_CONTROL.getId(), String.valueOf(page.getModel().getDeviceControl()));
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.GROUP_ID.getId(), String.valueOf(page.getModel().getGroupId()));
-				setFEUsesDeviceTunerAllocationProp(usesDevices[0], TunerProperties.TunerAllocationProperties.RF_FLOW_ID.getId(), String.valueOf(page.getModel().getRfFlowId()));
+				//set tuner allocation struct in device from tuner allocation struct in wizard
+				if (allocationMode == AllocationMode.TUNER) {
+					allocationStructRef.setProperty(TunerProperties.TunerAllocationProperty.INSTANCE.createStruct());
+					for (TunerAllocationProperties prop : TunerAllocationProperties.values()) {
+						setFEUsesDeviceTunerAllocationProp(usesDevice, prop.getId(), String.valueOf(tunerAllocationStruct.getSimple(prop.getId()).getValue()));
+					}
+				} else if (allocationMode == AllocationMode.LISTENER) {
+					allocationStructRef.setProperty(TunerProperties.ListenerAllocationProperty.INSTANCE.createStruct());
+					for (ListenerAllocationProperties prop : ListenerAllocationProperties.values()) {
+						setFEUsesDeviceTunerAllocationProp(usesDevice, prop.getId(), String.valueOf(listenerAllocationStruct.getSimple(prop.getId()).getValue()));
+					}
+				}
 				
-				// add to diagram resource file
-				getDiagram().eResource().getContents().add(usesDevices[0]);
+				//UsesDeviceStub
+				usesDeviceStubs[0] = createUsesDeviceStub(usesDevice);
+				
+				// if applicable add uses port stub(s)
+				if (usesPortNames != null) {
+					for (String usesPortName : usesPortNames) {
+						UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
+						usesPortStub.setName(usesPortName);
+						usesDeviceStubs[0].getUsesPortStubs().add(usesPortStub);
+					}
+				}
 
+				// if applicable add provides port stub(s)
+				if (providesPortNames != null) {
+					for (String providesPortName : providesPortNames) {
+						ProvidesPortStub providesPortStub = PartitioningFactory.eINSTANCE.createProvidesPortStub();
+						providesPortStub.setName(providesPortName);
+						usesDeviceStubs[0].getProvidesPortStubs().add(providesPortStub);
+					}
+				}
+				
 			}
 		});
+		
+		//store UsesDeviceStub in graphiti diagram
+		getDiagram().eResource().getContents().add(usesDeviceStubs[0]);
 
-		addGraphicalRepresentation(context, usesDevices[0]);
+		addGraphicalRepresentation(context, usesDeviceStubs[0]);
 
-		return new Object[] { usesDevices[0] };
+		return new Object[] { usesDeviceStubs[0] };
 	}
 
-
-	@Override
-	public String getInnerTitle(UsesDevice usesDevice) {
-		return usesDevice.getType();
-	}
 	
-	@Override
-	public void setInnerTitle(UsesDevice usesDevice, String value) {
-		usesDevice.setType(value);
-	}
-
-	protected static UsesDeviceFrontEndTunerWizardPage openWizard() {
-		return openWizard(null, new Wizard() {
-			public boolean performFinish() {
+	/**
+	 * Return true if device is FrontEnd Tuner
+	 * @param usesDevice
+	 * @return
+	 */
+	public static boolean isFrontEndDevice(UsesDevice usesDevice) {
+		
+		for (PropertyRef refs: usesDevice.getPropertyRef()) {
+			if (DEVICEKIND.value.equals(refs.getRefId()) && FE_TUNER_DEVICE_KIND.value.equals(refs.getValue())) {
 				return true;
 			}
-		});
-	}
-
-	public static UsesDeviceFrontEndTunerWizardPage openWizard(UsesDevice existingUsesDevice, Wizard wizard) {
-		UsesDeviceFrontEndTunerWizardPage page = new UsesDeviceFrontEndTunerWizardPage();
-		wizard.addPage(page);
-		if (existingUsesDevice != null) {
-			fillWizardFieldsWithExistingProperties(page, existingUsesDevice);
 		}
+		return false;
+	}
+	
+	
+	public static Wizard openWizard(Wizard wizard) {
 		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
 		if (dialog.open() == WizardDialog.CANCEL) {
 			return null;
 		}
-		return page;
+		return wizard;
 	}
-
+	
 	/**
 	 * Sets FrontEnd Uses Device Tuner Allocation Property
 	 * if propValue null, remove property
@@ -194,7 +228,7 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 	 * @param propRefId
 	 * @param propValue
 	 */
-	private static void setFEUsesDeviceTunerAllocationProp(UsesDevice usesDevice, String propRefId, String propValue) {
+	public static void setFEUsesDeviceTunerAllocationProp(UsesDevice usesDevice, String propRefId, String propValue) {
 		
 		EList<SimpleRef> props = usesDevice.getStructRef().get(0).getSimpleRef();
 		
@@ -226,7 +260,7 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 	 * @param usesDevice
 	 * @param propRefId
 	 */
-	private static String getFEUsesDeviceTunerAllocationProp(UsesDevice usesDevice, String propRefId) {
+	public static String getFEUsesDeviceTunerAllocationProp(UsesDevice usesDevice, String propRefId) {
 		EList<SimpleRef> props = usesDevice.getStructRef().get(0).getSimpleRef();
 		for (SimpleRef p: props) {
 			if (propRefId.equals(p.getRefID())) {
@@ -235,55 +269,7 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 		}
 		return null;
 	}
-	
-	private static void fillWizardFieldsWithExistingProperties(UsesDeviceFrontEndTunerWizardPage page, UsesDevice usesDevice) {
-		// Grab existing properties from usesDevice
-		String tunerType = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.TUNER_TYPE.getId());
-		String allocationId = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.ALLOCATION_ID.getId());
-		String centerFrequency = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.CENTER_FREQUENCY.getId());
-		String bandwidth = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.BANDWIDTH.getId());
-		String bandwidthTolerance = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.BANDWIDTH_TOLERANCE.getId());
-		String sampleRate = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.SAMPLE_RATE.getId());
-		String sampleRateTolerance = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.SAMPLE_RATE_TOLERANCE.getId());
-		String deviceControl = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.DEVICE_CONTROL.getId());
-		String groupId = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.GROUP_ID.getId());
-		String rfFlowId = getFEUsesDeviceTunerAllocationProp(usesDevice, TunerProperties.TunerAllocationProperties.RF_FLOW_ID.getId());
 
-		// Fill wizard fields with existing properties
-		page.getModel().setTunerType(tunerType);
-		page.getModel().setAllocationId(allocationId);
-		page.getModel().setCenterFrequency(Double.valueOf(centerFrequency));
-		page.getModel().setBandwidth(Double.valueOf(bandwidth));
-		page.getModel().setBandwidthTolerance(Double.valueOf(bandwidthTolerance));
-		page.getModel().setSampleRate(Double.valueOf(sampleRate));
-		page.getModel().setSampleRateTolerance(Double.valueOf(sampleRateTolerance));
-		page.getModel().setDeviceControl(Boolean.valueOf(deviceControl));
-		page.getModel().setGroupId(groupId);
-		page.getModel().setRfFlowId(rfFlowId);
-		
-	}
 	
-	@Override
-	public boolean canDirectEdit(IDirectEditingContext context) {
-		PictogramElement pe = context.getPictogramElement();
-		RHContainerShape containerShape = (RHContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		Object obj = getBusinessObjectForPictogramElement(containerShape);
-		GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
 
-		// allow if we've selected the inner Text for the component
-		if (obj instanceof UsesDevice && ga instanceof Text) {
-			Text text = (Text) ga;
-			for (Property prop : text.getProperties()) {
-				if (prop.getValue().equals(RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE_TEXT)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	@Override
-	public String getOuterImageId() {
-		return ImageProvider.IMG_FIND_BY;
-	}
 }

@@ -259,7 +259,7 @@ public class FindByEditFeature extends AbstractCustomFeature {
 			// Build the new connections using the reconnect feature
 			for (Map.Entry<Connection, String> cursor : oldConnectionMap.entrySet()) {
 				// First check if port still even exists
-				Anchor sourceAnchor = getUsesAnchor(diagram, usesPortStubs, cursor.getValue());
+				Anchor sourceAnchor = DUtil.getUsesAnchor(diagram, usesPortStubs, cursor.getValue());
 				if (sourceAnchor != null) {
 					CreateConnectionContext createContext = new CreateConnectionContext();
 					createContext.setSourceAnchor(sourceAnchor);
@@ -320,7 +320,7 @@ public class FindByEditFeature extends AbstractCustomFeature {
 			// Build the new connections using the reconnect feature
 			for (Map.Entry<Connection, String> cursor : oldConnectionMap.entrySet()) {
 				// First check if port still even exists
-				Anchor targetAnchor = getProvidesAnchor(diagram, providesPortStubs, cursor.getValue());
+				Anchor targetAnchor = DUtil.getProvidesAnchor(diagram, providesPortStubs, cursor.getValue());
 				if (targetAnchor != null) {
 					CreateConnectionContext createContext = new CreateConnectionContext();
 					createContext.setSourceAnchor(cursor.getKey().getStart());
@@ -349,35 +349,5 @@ public class FindByEditFeature extends AbstractCustomFeature {
 		findByShape.layout();
 	}
 
-	/**
-	 * If a provides port with the port name still exists, return the new anchor so the connection can be redrawn
-	 * @param providesPortStubs
-	 * @param oldPortName
-	 * @return Anchor object that is associated with the port
-	 */
-	private Anchor getProvidesAnchor(Diagram diagram, EList<ProvidesPortStub> providesPortStubs, String oldPortName) {
-		for (ProvidesPortStub port : providesPortStubs) {
-			if (port.getName().equals(oldPortName)) {
-				Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, (EObject) port, Anchor.class);
-				return anchor;
-			}
-		}
-		return null;
-	}
 
-	/**
-	 * If a uses port with the port name still exists, return the new anchor so the connection can be redrawn
-	 * @param usesPortStubs
-	 * @param oldPortName
-	 * @return Anchor object that is associated with the port
-	 */
-	private Anchor getUsesAnchor(Diagram diagram, EList<UsesPortStub> usesPortStubs, String oldPortName) {
-		for (UsesPortStub port : usesPortStubs) {
-			if (port.getName().equals(oldPortName)) {
-				Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, (EObject) port, Anchor.class);
-				return anchor;
-			}
-		}
-		return null;
-	}
 }

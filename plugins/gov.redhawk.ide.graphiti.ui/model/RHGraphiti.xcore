@@ -45,7 +45,9 @@ class RHContainerShape extends org.eclipse.graphiti.mm.pictograms.ContainerShape
 	
 	/*Returns providesPortsStubs business object list linked to getProvidesPortsContainerShape()*/
 	op EEList<ProvidesPortStub> getProvidesPortStubs()
-
+	
+	/*Returns providesPortsStubs business object list linked to getUsesPortsContainerShape()*/
+	op EEList<UsesPortStub> getUsesPortStubs()
 	
 	/*performs a layout on the contents of this shape */
 	op void layout()

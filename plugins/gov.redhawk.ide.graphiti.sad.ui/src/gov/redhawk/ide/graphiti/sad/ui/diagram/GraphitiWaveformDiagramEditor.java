@@ -113,6 +113,8 @@ public class GraphitiWaveformDiagramEditor extends DiagramEditor {
 		};
 	}
 
+
+	
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		super.init(site, input);

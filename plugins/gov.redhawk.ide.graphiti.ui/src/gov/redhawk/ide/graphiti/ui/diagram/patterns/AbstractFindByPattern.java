@@ -31,7 +31,6 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPort;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
-import mil.jpeojtrs.sca.sad.SadProvidesPort;
 import mil.jpeojtrs.sca.sad.SadUsesPort;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
@@ -265,14 +264,15 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 			return;
 		}
 		for (SadConnectInterface connection : sad.getConnections().getConnectInterface()) {
-			if (connection.getProvidesPort().getFindBy() != null
+			if (connection.getProvidesPort() != null && connection.getProvidesPort().getFindBy() != null && connection.getProvidesPort().getFindBy().getNamingService() != null
 				&& connection.getProvidesPort().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
 				connectionsToRemove.add(connection);
-			}
-		}
-		for (SadConnectInterface connection : sad.getConnections().getConnectInterface()) {
-			if (connection.getUsesPort().getFindBy() != null
-				&& connection.getUsesPort().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
+			} else if (connection.getComponentSupportedInterface() != null && connection.getComponentSupportedInterface().getFindBy() != null
+					&& connection.getComponentSupportedInterface().getFindBy().getNamingService() != null
+					&& connection.getComponentSupportedInterface().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
+					connectionsToRemove.add(connection);
+			} else if (connection.getUsesPort().getFindBy() != null && connection.getUsesPort().getFindBy().getNamingService() != null
+					&& connection.getUsesPort().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
 				connectionsToRemove.add(connection);
 			}
 		}
@@ -291,14 +291,15 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 			return;
 		}
 		for (DcdConnectInterface connection : dcd.getConnections().getConnectInterface()) {
-			if (connection.getProvidesPort().getFindBy() != null
+			if (connection.getProvidesPort() != null && connection.getProvidesPort().getFindBy() != null && connection.getProvidesPort().getFindBy().getNamingService() != null
 				&& connection.getProvidesPort().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
 				connectionsToRemove.add(connection);
-			}
-		}
-		for (DcdConnectInterface connection : dcd.getConnections().getConnectInterface()) {
-			if (connection.getUsesPort().getFindBy() != null
-				&& connection.getUsesPort().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
+			} else if (connection.getComponentSupportedInterface() != null && connection.getComponentSupportedInterface().getFindBy() != null
+					&& connection.getComponentSupportedInterface().getFindBy().getNamingService() != null
+					&& connection.getComponentSupportedInterface().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
+					connectionsToRemove.add(connection);
+			} else if (connection.getUsesPort().getFindBy() != null && connection.getUsesPort().getFindBy().getNamingService() != null
+					&& connection.getUsesPort().getFindBy().getNamingService().getName().equals(findByToDelete.getNamingService().getName())) {
 				connectionsToRemove.add(connection);
 			}
 		}
