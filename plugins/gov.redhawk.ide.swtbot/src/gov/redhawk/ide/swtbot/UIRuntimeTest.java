@@ -18,7 +18,7 @@ import org.junit.BeforeClass;
 public class UIRuntimeTest extends UITest {
 
 	@BeforeClass
-	public static void supportsRuntimeEnvirornment() {
-		StandardTestActions.assumeRuntimeEnvirornment();
+	public static void assertRuntimeEnvirornment() {
+		StandardTestActions.assertRuntimeEnvirornment();
 	}
 }

@@ -80,7 +80,6 @@ import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.osgi.framework.Bundle;
 import org.python.pydev.ui.pythonpathconf.AutoConfigMaker;
 import org.python.pydev.ui.pythonpathconf.IInterpreterProviderFactory.InterpreterType;
@@ -212,7 +211,6 @@ public final class StandardTestActions {
 	 * @throws URISyntaxException
 	 */
 	public static void setTargetSdr(String pluginId, String path) throws IOException, URISyntaxException {
-		// XXX NOTE: SDR is loaded from the environment variables in the pom.xml not need to change it here.
 		final URL url = FileLocator.find(Platform.getBundle(pluginId), new Path(path), null);
 		final SdrRoot root = SdrUiPlugin.getDefault().getTargetSdrRoot();
 		root.load(null);
@@ -224,7 +222,7 @@ public final class StandardTestActions {
 	}
 
 	public static void importProject(Bundle bundle, IPath path, Map< ? , ? > override) throws CoreException {
-		if (!path.lastSegment().equals(".project")) {
+		if (!".project".equals(path.lastSegment())) {
 			path = path.append(".project");
 		}
 		URL bundleUrl = FileLocator.find(bundle, path, override);
@@ -442,30 +440,31 @@ public final class StandardTestActions {
 
 	private static Boolean supportsRuntime = null;
 
-	public static void assumeRuntimeEnvirornment() {
+	public static void assertRuntimeEnvirornment() {
 		if (supportsRuntime != null) {
-			Assume.assumeTrue("Envirornment does not support runtime tests.", supportsRuntime);
+			Assert.assertTrue("Envirornment does not support runtime tests.", supportsRuntime);
 		}
 
 		try {
 			String ossieHome = System.getenv("OSSIEHOME");
 			String sdrRoot = System.getenv("SDRROOT");
 
-			Assume.assumeNotNull(ossieHome, sdrRoot);
+			Assert.assertNotNull("OSSIEHOME environment variable is not set", ossieHome);
+			Assert.assertNotNull("SDRROOT environment variable is not set", sdrRoot);
 
 			File ossieHomeFile = new File(ossieHome);
 			File sdrRootFile = new File(sdrRoot);
 
-			Assume.assumeTrue("OSSIEHOME is not directory: " + ossieHome, ossieHomeFile.isDirectory());
-			Assume.assumeTrue("SDRROOT is not directory: " + sdrRootFile, sdrRootFile.isDirectory());
+			Assert.assertTrue("OSSIEHOME is not directory: " + ossieHome, ossieHomeFile.isDirectory());
+			Assert.assertTrue("SDRROOT is not directory: " + sdrRootFile, sdrRootFile.isDirectory());
 
 			File nodeBooter = new File(ossieHome, "bin/nodeBooter");
-			Assume.assumeTrue("nodeBooter is not file: " + nodeBooter, nodeBooter.isFile());
-			Assume.assumeTrue("nodeBooter not executable: " + nodeBooter, nodeBooter.canExecute());
+			Assert.assertTrue("nodeBooter is not file: " + nodeBooter, nodeBooter.isFile());
+			Assert.assertTrue("nodeBooter not executable: " + nodeBooter, nodeBooter.canExecute());
 
 			Map<String, String> initRefs = OrbSession.getOmniORBInitRefs();
-			Assume.assumeTrue("NameService init ref not defined in /etc/omniORB.cfg", initRefs.get("NameService") != null);
-			Assume.assumeTrue("EventService init ref not defined in /etc/omniORB.cfg", initRefs.get("EventService") != null);
+			Assert.assertNotNull("NameService init ref not defined in /etc/omniORB.cfg", initRefs.get("NameService"));
+			Assert.assertNotNull("EventService init ref not defined in /etc/omniORB.cfg", initRefs.get("EventService"));
 
 			Properties props = OrbSession.getOmniORBInitRefsAsProperties();
 			final OrbSession session = OrbSession.createSession("testSession", Platform.getApplicationArgs(), props);
@@ -483,7 +482,7 @@ public final class StandardTestActions {
 				try {
 					future.get(30, TimeUnit.SECONDS);
 				} catch (InterruptedException | ExecutionException | java.util.concurrent.TimeoutException e) {
-					Assume.assumeNoException("Failed to connect to NameService", e);
+					Assert.fail(String.format("Failed to connect to NameService: %s", e.toString()));
 				}
 
 				future = executor.submit(new Callable<Object>() {
@@ -497,14 +496,14 @@ public final class StandardTestActions {
 				try {
 					future.get(30, TimeUnit.SECONDS);
 				} catch (InterruptedException | ExecutionException | java.util.concurrent.TimeoutException e) {
-					Assume.assumeNoException("Failed to connect to EventService", e);
+					Assert.fail(String.format("Failed to connect to EventService: %s", e.toString()));
 				}
 			} finally {
 				session.dispose();
 			}
 
 			supportsRuntime = true;
-		} catch (RuntimeException e) {
+		} catch (RuntimeException e) { // SUPPRESS CHECKSTYLE IllegalCatch - it's re-thrown
 			supportsRuntime = false;
 			throw e;
 		}
