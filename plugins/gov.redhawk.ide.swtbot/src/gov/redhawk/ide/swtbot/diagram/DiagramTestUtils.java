@@ -69,12 +69,12 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		editor.clickContextMenu("Delete");
 	}
 
-	public static void releaseFromChalkboard(SWTBotGefEditor editor, SWTBotGefEditPart part) {
+	public static void releaseFromDiagram(SWTBotGefEditor editor, SWTBotGefEditPart part) {
 		part.select();
 		editor.clickContextMenu("Release");
 	}
 
-	public static void terminateFromChalkboard(SWTBotGefEditor editor, SWTBotGefEditPart part) {
+	public static void terminateFromDiagram(SWTBotGefEditor editor, SWTBotGefEditPart part) {
 		part.select();
 		editor.clickContextMenu("Terminate");
 	}

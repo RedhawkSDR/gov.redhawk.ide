@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @RunWith(SWTBotJunit4ClassRunner.class)
 public class UITest {
 	
-	protected SWTWorkbenchBot bot;
+	protected SWTWorkbenchBot bot; // SUPPRESS CHECKSTYLE VisibilityModifier
 	
 	@BeforeClass
 	public static void beforeClass() throws Exception {

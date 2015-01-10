@@ -10,13 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
-import java.util.List;
-
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.matchers.AbstractMatcher;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
 import org.hamcrest.Description;
@@ -25,11 +24,10 @@ import org.hamcrest.Matcher;
 public class ConsoleUtils {
 
 	protected ConsoleUtils() {
-		
+
 	}
 
-	
-	public static class AnyMenuItemMatcher<T extends MenuItem> extends AbstractMatcher<T> {
+	public static class AnyMenuItemMatcher< T extends MenuItem > extends AbstractMatcher<T> {
 
 		AnyMenuItemMatcher() {
 		}
@@ -43,33 +41,47 @@ public class ConsoleUtils {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Terminate process in console
 	 * @param bot
 	 * @param processName
 	 */
-	public static void terminateProcess(SWTWorkbenchBot bot, String processName) {
+	public static void terminateProcess(SWTWorkbenchBot bot, final String processName) {
 		SWTBotView view = ViewUtils.getConsoleView(bot);
-		
+		view.show();
+
 		final Matcher<MenuItem> matcher = new AnyMenuItemMatcher<MenuItem>();
-		
-		//switch to the desired process
-		for (SWTBotToolbarButton button: view.getToolbarButtons()) {
-			if ("Display Selected Console".equalsIgnoreCase(button.getToolTipText())) {
-				SWTBotToolbarDropDownButton dropDownButton = (SWTBotToolbarDropDownButton) button;
-				List< ? extends SWTBotMenu> menuItems = dropDownButton.menuItems(matcher);
-				for (SWTBotMenu swtBotMenu: menuItems) {
-					if (swtBotMenu.getText().contains(processName)) {
-						swtBotMenu.click();
-						view.getToolbarButtons().get(0).click(); //terminate button
-						return;
-					}
-				}
+
+		// Switch consoles until we hit the right one
+		SWTBotToolbarDropDownButton consoleButton = (SWTBotToolbarDropDownButton) view.toolbarButton("Display Selected Console");
+		int consoles = consoleButton.menuItems(matcher).size();
+		boolean found = false;
+		for (int i = 0; i < consoles; i++) {
+			if (view.bot().label(0).getText().contains(processName)) {
+				found = true;
+				break;
 			}
+			consoleButton.click();
 		}
-		
-		
+		if (!found) {
+			throw new WidgetNotFoundException(String.format("Can't find console for %s", processName));
+		}
+
+		// Click terminate, wait for it to disable (indicating process ended)
+		final SWTBotToolbarButton terminateButton = view.toolbarButton("Terminate");
+		terminateButton.click();
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public boolean test() throws Exception {
+				return !terminateButton.isEnabled();
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return String.format("Process %s failed to terminate", processName);
+			}
+		});
 	}
-	
+
 }

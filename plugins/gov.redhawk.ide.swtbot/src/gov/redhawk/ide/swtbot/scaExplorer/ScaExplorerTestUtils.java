@@ -12,7 +12,6 @@ package gov.redhawk.ide.swtbot.scaExplorer;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
-import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
@@ -46,24 +45,21 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Open specified Graphiti Diagram from ScaExplorer.
-	 * @param gefBot
+	 * Open the specified Graphiti Diagram from ScaExplorer.
+	 * @param bot
 	 * @param editor
 	 * @param componentName
 	 * @param diagramType - enum stating which context menu option to choose when opening the diagram (chalkboard,
 	 * explorer, etc)
 	 */
-	public static void openDiagramFromScaExplorer(SWTGefBot gefBot, String[] parentPath, String treeItemName, DiagramType diagramType) {
-		SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(gefBot, parentPath, treeItemName);
+	public static void openDiagramFromScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String treeItemName, DiagramType diagramType) {
+		SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(bot, parentPath, treeItemName);
 		if (treeItem == null) {
 			throw new WidgetNotFoundException("Tree item " + treeItemName + " not found in SCA Explorer");
 		}
 
 		treeItem.select();
-		SWTBotMenu openWith = treeItem.contextMenu("Open With");
-		SWTBotMenu graphitiDiagram = null;
-		graphitiDiagram = openWith.menu(diagramType.getDiagramName());
-		graphitiDiagram.click();
+		treeItem.contextMenu("Open With").menu(diagramType.getDiagramName()).click();
 	}
 
 	/**
@@ -86,12 +82,12 @@ public class ScaExplorerTestUtils {
 	/**
 	 * Returns the full name of the tree item found in SCA Explorer.
 	 * You can pass this method a prefix for the waveform/node/etc that you are trying to find
-	 * @param gefBot
+	 * @param bot
 	 * @param parentPath
 	 * @param treeItemName
 	 */
-	public static String getFullNameFromScaExplorer(SWTGefBot gefBot, String[] parentPath, String treeItemName) {
-		SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(gefBot, parentPath, treeItemName);
+	public static String getFullNameFromScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String treeItemName) {
+		SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(bot, parentPath, treeItemName);
 		if (treeItem == null) {
 			throw new WidgetNotFoundException("Tree item not found in Sandbox");
 		}
@@ -411,7 +407,7 @@ public class ScaExplorerTestUtils {
 				}
 				return false;
 			}
-		}, 10000);
+		});
 	}
 
 	/**
@@ -650,9 +646,7 @@ public class ScaExplorerTestUtils {
 		scaExplorerView.setFocus();
 		SWTBotTreeItem waveformEntry = scaExplorerView.bot().tree().expandNode("Target SDR", "Waveforms", waveformName);
 		waveformEntry.select();
-		SWTBotMenu launchInSandbox = waveformEntry.contextMenu("Launch in Sandbox");
-		SWTBotMenu defaultItem = launchInSandbox.menu("Default");
-		defaultItem.click();
+		waveformEntry.contextMenu("Launch in Sandbox").menu("Default").click();
 	}
 
 	/**
