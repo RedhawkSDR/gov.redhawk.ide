@@ -71,7 +71,7 @@ public class ComponentOverviewTabTest extends UITest {
 		view.bot().tree().getTreeItem("CppComTest").expand();
 		view.bot().tree().getTreeItem("CppComTest").getNode("CppComTest.spd.xml").doubleClick();
 		
-		bot.waitUntil(new WaitForEditorCondition(), 30000);
+		bot.waitUntil(new WaitForEditorCondition());
 
 		editor = bot.activeEditor();
 		editor.setFocus();
