@@ -158,6 +158,7 @@ public class GraphitiDcdModelMap {
 				CreateContext createContext = new CreateContext();
 				createContext.putProperty(DeviceCreateFeature.OVERRIDE_USAGE_NAME, newValue.getLabel());
 				createContext.putProperty(DeviceCreateFeature.OVERRIDE_INSTANTIATION_ID, newValue.getIdentifier());
+				createContext.putProperty(DeviceCreateFeature.OVERRIDE_IMPLEMENTATION_ID, implId);
 				createContext.setTargetContainer(diagram);
 				final Object[] objects = createDeviceFeature.create(createContext);
 				dcdComponentInstantiations[0] = (DcdComponentInstantiation) objects[0];

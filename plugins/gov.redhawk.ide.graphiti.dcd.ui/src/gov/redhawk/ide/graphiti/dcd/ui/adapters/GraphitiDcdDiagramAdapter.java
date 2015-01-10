@@ -30,9 +30,9 @@ public class GraphitiDcdDiagramAdapter extends EContentAdapter {
 	public GraphitiDcdDiagramAdapter(final GraphitiDcdModelMap modelMap) {
 		this.modelMap = modelMap;
 	}
-	
+
 	// TODO: This only handles starting/stopping via the Node Explorer
-		// Will need to expand behavior here once we start working on the Node Chalkboard diagram
+	// Will need to expand behavior here once we start working on the Node Chalkboard diagram
 
 	/**
 	 * Listen for events in Graphiti Shapes model
@@ -43,19 +43,22 @@ public class GraphitiDcdDiagramAdapter extends EContentAdapter {
 	@Override
 	public void notifyChanged(final Notification notification) {
 		super.notifyChanged(notification);
-		switch (notification.getEventType()) {
-		case Notification.SET:
-			if (RHGxPackage.RH_CONTAINER_SHAPE__STARTED == notification.getFeatureID(RHGxPackage.class)) {
-				if (notification.getNotifier() instanceof RHContainerShape) {
+		if (notification.getNotifier() instanceof RHContainerShape) {
+			switch (notification.getFeatureID(RHGxPackage.class)) {
+			case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
+				switch (notification.getEventType()) {
+				case Notification.SET:
 					final RHContainerShape rhContainerShape = (RHContainerShape) notification.getNotifier();
 					DcdComponentInstantiation ci = (DcdComponentInstantiation) DUtil.getBusinessObject(rhContainerShape);
 					this.modelMap.startStopDevice(ci, (Boolean) notification.getNewValue());
+					break;
+				default:
+					break;
 				}
+				break;
+			default:
+				break;
 			}
-			break;
-		default:
-			break;
 		}
 	}
-
 }

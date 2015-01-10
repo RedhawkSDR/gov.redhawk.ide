@@ -40,7 +40,7 @@ public class DeviceCreateFeature extends AbstractCreateFeature {
 	public static final String SHAPE_TYPE = "deviceShape";
 	public static final String OVERRIDE_USAGE_NAME = "OverrideUsageName";
 	public static final String OVERRIDE_INSTANTIATION_ID = "OverrideInstantiationId";
-	
+	public static final String OVERRIDE_IMPLEMENTATION_ID = "OverrideImplementationId";
 
 	@Override
 	public String getDescription() {
@@ -74,7 +74,10 @@ public class DeviceCreateFeature extends AbstractCreateFeature {
 			return null;
 		}
 
-		// TODO: ComponentCreateFeature uses Overrides? What's that about?
+		// collect overrides (currently used by GraphitiDcdModelMap)
+		final String usageName = (String) context.getProperty(OVERRIDE_USAGE_NAME);
+		final String instantiationId = (String) context.getProperty(OVERRIDE_INSTANTIATION_ID);
+		final String implementationId = (String) context.getProperty(OVERRIDE_IMPLEMENTATION_ID);
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
@@ -106,7 +109,7 @@ public class DeviceCreateFeature extends AbstractCreateFeature {
 				componentPlacement.setComponentFileRef(ref);
 
 				// component instantiation
-				componentInstantiations[0] = createComponentInstantiation(dcd, componentPlacement, spd);
+				componentInstantiations[0] = createComponentInstantiation(dcd, componentPlacement, spd, usageName, instantiationId, implementationId);
 			}
 		});
 
@@ -150,15 +153,17 @@ public class DeviceCreateFeature extends AbstractCreateFeature {
 	}
 
 	// create ComponentInstantiation
-	private DcdComponentInstantiation createComponentInstantiation(final DeviceConfiguration dcd, DcdComponentPlacement componentPlacement, SoftPkg spd) {
+	private DcdComponentInstantiation createComponentInstantiation(final DeviceConfiguration dcd, DcdComponentPlacement componentPlacement, SoftPkg spd,
+		final String providedUsageName, final String providedInstantiationId, final String providedImplId) {
 		DcdComponentInstantiation dcdComponentInstantiation = DcdFactory.eINSTANCE.createDcdComponentInstantiation();
 
-		String deviceName = DeviceConfiguration.Util.createDeviceUsageName(dcd, spd.getName());
-		String id = DeviceConfiguration.Util.createDeviceIdentifier(dcd, deviceName);
+		String deviceName = (providedUsageName != null) ? providedUsageName : DeviceConfiguration.Util.createDeviceUsageName(dcd, spd.getName());
+		String id = (providedInstantiationId != null) ? providedInstantiationId : DeviceConfiguration.Util.createDeviceIdentifier(dcd, deviceName);
+		String implementationId = (providedImplId != null) ? providedImplId : implId;
 
 		dcdComponentInstantiation.setUsageName(deviceName);
 		dcdComponentInstantiation.setId(id);
-		dcdComponentInstantiation.setImplID(implId);
+		dcdComponentInstantiation.setImplID(implementationId);
 
 		// add to placement
 		componentPlacement.getComponentInstantiation().add(dcdComponentInstantiation);
