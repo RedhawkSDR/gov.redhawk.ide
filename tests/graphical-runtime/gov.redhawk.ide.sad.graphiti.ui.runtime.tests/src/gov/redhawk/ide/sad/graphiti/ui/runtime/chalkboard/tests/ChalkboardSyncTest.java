@@ -52,7 +52,7 @@ public class ChalkboardSyncTest extends AbstractGraphitiChalkboardTest {
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, HARD_LIMIT_1);
 
 		// RELEASE component from diagram
-		DiagramTestUtils.releaseFromChalkboard(editor, editor.getEditPart(HARD_LIMIT));
+		DiagramTestUtils.releaseFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
 
 		// wait until hard limit component not present in ScaExplorer Chalkboard & Diagram
 		ScaExplorerTestUtils.waitUntilComponentDisappearsInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, HARD_LIMIT_1);
@@ -61,7 +61,7 @@ public class ChalkboardSyncTest extends AbstractGraphitiChalkboardTest {
 	
 	/**
 	 * IDE-659
-	 * Adds, then terminates a component via chalkboard diagram. Verify its no
+	 * Adds, then terminates a component via chalkboard diagram. Verify it's no
 	 * longer present in ScaExplorer Chalkboard or Diagram
 	 */
 	@Test
@@ -79,7 +79,7 @@ public class ChalkboardSyncTest extends AbstractGraphitiChalkboardTest {
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, HARD_LIMIT_1);
 
 		// TERMINATE component from diagram
-		DiagramTestUtils.terminateFromChalkboard(editor, editor.getEditPart(HARD_LIMIT));
+		DiagramTestUtils.terminateFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
 
 		// wait until hard limit component not present in ScaExplorer Chalkboard & Diagram
 		ScaExplorerTestUtils.waitUntilComponentDisappearsInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, HARD_LIMIT_1);

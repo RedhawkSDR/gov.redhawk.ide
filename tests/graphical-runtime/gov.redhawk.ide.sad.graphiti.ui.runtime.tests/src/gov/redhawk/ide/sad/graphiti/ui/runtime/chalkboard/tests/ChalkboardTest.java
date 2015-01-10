@@ -20,6 +20,7 @@ import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.ServiceUtils;
 import gov.redhawk.ide.swtbot.SoftpackageUtils;
 import gov.redhawk.ide.swtbot.StandardTestActions;
+import gov.redhawk.ide.swtbot.ViewUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.FindByUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
@@ -40,9 +41,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	private static final String[] CHALKBOARD_PARENT_PATH = { "Sandbox" };
 	private static final String CHALKBOARD = "Chalkboard";
 	private static final String HARD_LIMIT = "HardLimit";
-	private static final String HARD_LIMIT_1 = "HardLimit_1";
 	private static final String SIGGEN = "SigGen";
-	private static final String SIG_GEN_1 = "SigGen_1";
 	private SWTBotGefEditor editor;
 
 	/**
@@ -64,7 +63,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		// Add component to diagram from palette
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
-		DiagramTestUtils.releaseFromChalkboard(editor, editor.getEditPart(HARD_LIMIT));
+		DiagramTestUtils.releaseFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
 
 		// Add component to diagram from Target SDR
 		DiagramTestUtils.dragComponentFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
@@ -87,8 +86,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		for (String component : components) {
 			editor.getEditPart(component).click();
 			editor.clickContextMenu("Show Console");
-			bot.sleep(1000);
-			final SWTBotView consoleView = gefBot.viewByPartName("Console");
+			final SWTBotView consoleView = ViewUtils.getConsoleView(gefBot);
 			bot.waitUntil(new DefaultCondition() {
 
 				@Override

@@ -20,6 +20,10 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.junit.Test;
 
+/**
+ * Tests that actions performed on a local sandbox waveform in the diagram get reflected in the SCA Explorer view, and
+ * vice versa.
+ */
 public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformRuntimeTest {
 	
 	private SWTBotGefEditor editor;
@@ -31,12 +35,10 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 	private static final String SIG_GEN_1 = "SigGen_1";
 
 	/**
-	 * Adds, then removes a component via diagram.  Verify its no
-	 * longer present in ScaExplorer Waveform
+	 * Adds, then removes a component via diagram. Verify the SCA Explorer reflects actions.
 	 */
 	@Test
 	public void addRemoveComponentInDiagram() {
-
 		editor = gefBot.gefEditor(getWaveFormFullName());
 		editor.setFocus();
 		
@@ -47,7 +49,7 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, HARD_LIMIT_1);
 				
 		//delete component from diagram
-		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
+		DiagramTestUtils.releaseFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
 		
 		//wait until hard limit component not present in ScaExplorer
 		ScaExplorerTestUtils.waitUntilComponentDisappearsInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, HARD_LIMIT_1);
@@ -55,12 +57,10 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 	
 	/**
 	 * IDE-659
-	 * Adds, then removes a component connections via chalkboard diagram.  Verify its no
-	 * longer present in ScaExplorer
+	 * Adds, then removes a port connection via chalkboard diagram. Verify the SCA Explorer reflects actions.
 	 */
 	@Test
 	public void addRemoveComponentConnectionInDiagram() {
-
 		editor = gefBot.gefEditor(getWaveFormFullName());
 		editor.setFocus();
 
@@ -96,13 +96,10 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 	
 	/**
 	 * IDE-659
-	 * Adds components, starts/stops them from Diagram and verifies
-	 * components in ScaExplorer reflect changes
-	 * 
+	 * Adds components, starts/stops them from Diagram. Verify the SCA Explorer reflects actions.
 	 */
 	@Test
 	public void startStopComponentsFromDiagram() {
-		
 		editor = gefBot.gefEditor(getWaveFormFullName());
 		editor.setFocus();
 
@@ -127,7 +124,7 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 		//start SigGen
 		DiagramTestUtils.startComponentFromDiagram(editor, SIG_GEN);
 		
-		//verify SigGen started but siggen did not
+		//verify SigGen started
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, SIG_GEN_1);
 		
 		//stop hard limit
@@ -150,10 +147,6 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 		//verify both started
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, HARD_LIMIT_1);
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, SIG_GEN_1);
-		
-		//cleanup
-		ScaExplorerTestUtils.terminateWaveformFromScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		
 	}
 	
 	/**
@@ -163,7 +156,6 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 	 */
 	@Test
 	public void addRemoveComponentConnectionInScaExplorer() {
-
 		editor = gefBot.gefEditor(getWaveFormFullName());
 		editor.setFocus();
 
@@ -197,7 +189,6 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 	 */
 	@Test
 	public void startStopComponentsFromScaExplorer() {
-		
 		editor = gefBot.gefEditor(getWaveFormFullName());
 		editor.setFocus();
 
@@ -259,15 +250,5 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 		//verify both components started
 		DiagramTestUtils.waitUntilComponentAppearsStartedInDiagram(bot, editor, HARD_LIMIT);
 		DiagramTestUtils.waitUntilComponentAppearsStartedInDiagram(bot, editor, SIG_GEN);
-		
-		//terminate waveform
-		ScaExplorerTestUtils.terminateWaveformFromScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		
-		//wait until waveform no longer exists!!!!
-		ScaExplorerTestUtils.waitUntilScaExplorerWaveformDisappears(gefBot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
-		
 	}
-	
-
-	
 }

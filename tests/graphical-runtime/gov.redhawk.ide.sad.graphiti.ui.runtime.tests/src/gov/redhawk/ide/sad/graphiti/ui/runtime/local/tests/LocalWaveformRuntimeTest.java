@@ -49,7 +49,7 @@ public class LocalWaveformRuntimeTest extends AbstractGraphitiLocalWaveformRunti
 		// Add component to diagram from palette
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
-		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
+		DiagramTestUtils.releaseFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
 
 		// Add component to diagram from Target SDR
 		DiagramTestUtils.dragComponentFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);

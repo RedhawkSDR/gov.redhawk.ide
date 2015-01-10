@@ -12,8 +12,8 @@ package gov.redhawk.ide.sad.graphiti.ui.runtime.domain.tests;
 
 import gov.redhawk.ide.swtbot.ConsoleUtils;
 import gov.redhawk.ide.swtbot.UIRuntimeTest;
+import gov.redhawk.ide.swtbot.WaitForEditorCondition;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
-import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
@@ -21,69 +21,63 @@ import org.junit.After;
 import org.junit.Before;
 
 /**
- * 
+ * Before: Starts a domain, dev mgr, launches a waveform, and opens the waveform's Graphiti runtime editor.
+ * After: Releases the waveform if it's still running and ensures it shuts down.
  */
 public abstract class AbstractGraphitiDomainWaveformRuntimeTest extends UIRuntimeTest {
 
-	public static final String[] DOMAIN_WAVEFORM_PARENT_PATH = {"REDHAWK_DEV CONNECTED", "Waveforms"};
+	public static final String[] DOMAIN_WAVEFORM_PARENT_PATH = { "REDHAWK_DEV CONNECTED", "Waveforms" };
 	public static final String DOMAIN_WAVEFORM = "ExampleWaveform06";
 	public static final String DOMAIN = "REDHAWK_DEV";
 	public static final String DOMAIN_MANAGER_PROCESS = "Domain Manager";
 	public static final String DEVICE_MANAGER_PROCESS = "Device Manager";
 	public static final String DEVICE_MANAGER = "DevMgr";
-	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE INLINE
-	private String waveFormFullName; //full name of waveform that is launched
+	protected SWTGefBot gefBot = new SWTGefBot(); // SUPPRESS CHECKSTYLE INLINE
+	private String waveFormFullName; // full name of waveform that is launched
 
 	@Before
 	public void beforeTest() throws Exception {
-		gefBot = new SWTGefBot();
-		super.before();
-		
-		//Launch Domain
-		ScaExplorerTestUtils.launchDomain(gefBot, DOMAIN, DEVICE_MANAGER);
-		
-		//wait until Domain launched and connected
-		ScaExplorerTestUtils.waitUntilScaExplorerDomainConnects(gefBot, DOMAIN);
-		
-		//Launch Domain Waveform From Domain
-		ScaExplorerTestUtils.launchWaveformFromDomain(gefBot, DOMAIN, DOMAIN_WAVEFORM);
+		// Launch domain
+		ScaExplorerTestUtils.launchDomain(bot, DOMAIN, DEVICE_MANAGER);
 
-		//wait until domain waveform appears in ScaExplorer Domain
-		ScaExplorerTestUtils.waitUntilWaveformAppearsInScaExplorer(gefBot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
+		// Wait until domain launched and connected
+		ScaExplorerTestUtils.waitUntilScaExplorerDomainConnects(bot, DOMAIN);
 
-		// Open Domain Waveform Diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM, DiagramType.GRAPHITI_CHALKBOARD);
-		waveFormFullName = ScaExplorerTestUtils.getFullNameFromScaExplorer(gefBot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
-				
+		// Launch waveform in domain
+		ScaExplorerTestUtils.launchWaveformFromDomain(bot, DOMAIN, DOMAIN_WAVEFORM);
+
+		// Wait until the editor opens and the waveform appears in the SCA Explorer view
+		bot.waitUntil(new WaitForEditorCondition());
+		ScaExplorerTestUtils.waitUntilWaveformAppearsInScaExplorer(bot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
+
+		// Record the waveform's full name
+		waveFormFullName = ScaExplorerTestUtils.getFullNameFromScaExplorer(bot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
 	}
-	
+
 	@After
 	public void afterTest() {
-		
-		//does waveform exist
+		// does waveform exist
 		SWTBotTreeItem waveformEntry = ScaExplorerTestUtils.getTreeItemFromScaExplorer(bot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
-		
-		//release waveform, make sure it disappears
+
+		// release waveform, make sure it disappears
 		if (waveformEntry != null) {
-			ScaExplorerTestUtils.releaseFromScaExplorer(gefBot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
-			
-			//wait until waveform no longer exists!!!!
-			ScaExplorerTestUtils.waitUntilScaExplorerWaveformDisappears(gefBot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
+			ScaExplorerTestUtils.releaseFromScaExplorer(bot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
+
+			// wait until waveform no longer exists!!!!
+			ScaExplorerTestUtils.waitUntilScaExplorerWaveformDisappears(bot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM);
 		}
-		
-		//delete domain instance from sca explorer
+
+		// delete domain instance from sca explorer
 		ScaExplorerTestUtils.deleteDomainInstance(bot, DOMAIN);
-		
-		//Stop domain manager and device manager
-		//TODO: Noticed that the first time this runs everything works great.  After the second test however the console's drop down menu
-		//for switching between processes throws exceptions.  I think this may actually be an Eclipse bug.
+
+		// Stop domain manager and device manager
+		// TODO: Noticed that the first time this runs everything works great. After the second test however the
+		// console's drop down menu
+		// for switching between processes throws exceptions. I think this may actually be an Eclipse bug.
 		ConsoleUtils.terminateProcess(bot, DEVICE_MANAGER_PROCESS);
 		ConsoleUtils.terminateProcess(bot, DOMAIN_MANAGER_PROCESS);
-		
-		
-		
 	}
-	
+
 	public String getWaveFormFullName() {
 		return waveFormFullName;
 	}

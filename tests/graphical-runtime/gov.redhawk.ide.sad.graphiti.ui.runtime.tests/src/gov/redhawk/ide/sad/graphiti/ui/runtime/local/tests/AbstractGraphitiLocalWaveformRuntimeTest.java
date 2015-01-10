@@ -20,7 +20,8 @@ import org.junit.After;
 import org.junit.Before;
 
 /**
- * 
+ * Before: Starts a waveform locally in the sandbox and opens the Graphiti editor for it.
+ * After: Releases the waveform if it's still running and ensures it shuts down.
  */
 public abstract class AbstractGraphitiLocalWaveformRuntimeTest extends UIRuntimeTest {
 
@@ -32,7 +33,6 @@ public abstract class AbstractGraphitiLocalWaveformRuntimeTest extends UIRuntime
 	@Before
 	public void beforeTest() throws Exception {
 		gefBot = new SWTGefBot();
-		super.before();
 		
 		//Launch Local Waveform From Target SDR
 		ScaExplorerTestUtils.launchWaveformFromTargetSDR(gefBot, LOCAL_WAVEFORM);
@@ -48,7 +48,6 @@ public abstract class AbstractGraphitiLocalWaveformRuntimeTest extends UIRuntime
 	
 	@After
 	public void afterTest() {
-		
 		//does waveform exist
 		SWTBotTreeItem waveformEntry = ScaExplorerTestUtils.getTreeItemFromScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM);
 		

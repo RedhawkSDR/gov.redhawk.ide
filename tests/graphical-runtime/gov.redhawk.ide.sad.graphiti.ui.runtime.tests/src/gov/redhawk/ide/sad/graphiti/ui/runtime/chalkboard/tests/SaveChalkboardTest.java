@@ -11,6 +11,7 @@
 package gov.redhawk.ide.sad.graphiti.ui.runtime.chalkboard.tests;
 
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.swtbot.SWTBotRadioMenu;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
@@ -31,6 +32,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
@@ -92,7 +94,8 @@ public class SaveChalkboardTest extends AbstractGraphitiChalkboardTest {
 		SWTBotView projectView = gefBot.viewById("org.eclipse.ui.navigator.ProjectExplorer");
 		SWTBotTreeItem waveformNode = projectView.bot().tree().getTreeItem(WAVEFORM_NAME);
 		SWTBotTreeItem waveformSadXml = waveformNode.expand().getNode(WAVEFORM_NAME + ".sad.xml").select();
-		waveformSadXml.contextMenu("Open With").menu("Graphiti Waveform Editor").click();
+		SWTBotMenu menu = waveformSadXml.contextMenu("Open With").menu("Graphiti Waveform Editor");
+		new SWTBotRadioMenu(menu).click();
 		
 		// confirm that components and connection exist
 		editor = gefBot.gefEditor(WAVEFORM_NAME);
@@ -122,8 +125,6 @@ public class SaveChalkboardTest extends AbstractGraphitiChalkboardTest {
 	 */
 	@Test
 	public void saveAsHotkeyTest() throws AWTException {
-		final String WAVEFORM_NAME = "ChalkboardSaveHotkey";
-
 		// Open Chalkboard Graphiti Diagram
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
 		editor = gefBot.gefEditor(CHALKBOARD);
@@ -131,6 +132,7 @@ public class SaveChalkboardTest extends AbstractGraphitiChalkboardTest {
 
 		// Add component to diagram from palette
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.waitUntilComponentDisplaysInDiagram(bot, editor, SIGGEN);
 		
 		Robot robot = new Robot();
 		robot.keyPress(KeyEvent.VK_CONTROL);

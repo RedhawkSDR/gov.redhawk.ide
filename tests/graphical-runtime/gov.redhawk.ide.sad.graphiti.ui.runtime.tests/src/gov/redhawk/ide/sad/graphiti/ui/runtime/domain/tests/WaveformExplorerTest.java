@@ -14,7 +14,6 @@ package gov.redhawk.ide.sad.graphiti.ui.runtime.domain.tests;
 import gov.redhawk.ide.swtbot.ViewUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
-import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
@@ -25,7 +24,6 @@ import org.junit.Test;
 
 public class WaveformExplorerTest extends AbstractGraphitiDomainWaveformRuntimeTest {
 
-	private SWTBotGefEditor editor;
 	private static final String HARD_LIMIT = "HardLimit";
 	private static final String HARD_LIMIT_1 = "HardLimit_1";
 	private static final String DATA_READER = "DataReader";
@@ -34,18 +32,14 @@ public class WaveformExplorerTest extends AbstractGraphitiDomainWaveformRuntimeT
 	 * IDE-969
 	 * Opens Graphiti diagram using the Waveform Explorer editor
 	 * This editor is "look but don't touch". All design functionality should be disabled.
-	 * Runtime funcationality (start/stop, plot, etc) should still work.
+	 * Runtime functionality (start/stop, plot, etc) should still work.
 	 */
 	@Test
 	public void waveformExplorerTest() {
-		gefBot.closeAllEditors();
-
-		// Open waveform explorer
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, DOMAIN_WAVEFORM_PARENT_PATH, DOMAIN_WAVEFORM, DiagramType.GRAPHITI_WAVEFORM_EXPLORER);
+		SWTBotGefEditor editor = gefBot.gefEditor(getWaveFormFullName());
+		editor.setFocus();
 
 		// check for components
-		editor = gefBot.gefEditor(getWaveFormFullName());
-		editor.setFocus();
 		SWTBotGefEditPart hardLimit = editor.getEditPart(HARD_LIMIT);
 		Assert.assertNotNull(HARD_LIMIT + " component not found in diagram", hardLimit);
 
