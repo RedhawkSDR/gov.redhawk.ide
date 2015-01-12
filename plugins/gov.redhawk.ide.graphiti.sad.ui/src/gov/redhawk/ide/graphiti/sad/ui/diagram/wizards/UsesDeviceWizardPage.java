@@ -10,11 +10,16 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.wizards;
 
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
@@ -71,6 +76,7 @@ public class UsesDeviceWizardPage extends WizardPage {
 
 	private Text usesDeviceIdText;
 
+	private SoftwareAssembly sad;
 	private Model model;
 	private DataBindingContext dbc;
 	
@@ -83,14 +89,15 @@ public class UsesDeviceWizardPage extends WizardPage {
 	
 	}
 	
-	public UsesDeviceWizardPage(String usesDeviceId) {
+	public UsesDeviceWizardPage(String usesDeviceId, SoftwareAssembly sad) {
 		this();
+		this.sad = sad;
 		model.setUsesDeviceId(usesDeviceId);
 	
 	}
 	
-	public UsesDeviceWizardPage(String usesDeviceId, String deviceModel) {
-		this(usesDeviceId);
+	public UsesDeviceWizardPage(String usesDeviceId, SoftwareAssembly sad, String deviceModel) {
+		this(usesDeviceId, sad);
 	}
 
 	
@@ -110,7 +117,9 @@ public class UsesDeviceWizardPage extends WizardPage {
 		usesDeviceIdText.setEnabled(true);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(usesDeviceIdText);
 		dbc.bindValue(SWTObservables.observeText(usesDeviceIdText, SWT.Modify), 
-			BeansObservables.observeValue(model, Model.USES_DEVICE_ID));
+			BeansObservables.observeValue(model, Model.USES_DEVICE_ID),  
+			new UpdateValueStrategy().setAfterGetValidator(new AbstractUsesDevicePattern.UsesDeviceIdValidator(sad, model.getUsesDeviceId())),
+			null);
 		
 		setControl(composite);
 
@@ -122,6 +131,8 @@ public class UsesDeviceWizardPage extends WizardPage {
 	public Model getModel() {
 		return model;
 	}
+	
+	
 	
 	
 

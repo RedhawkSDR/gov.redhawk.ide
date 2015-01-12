@@ -10,11 +10,16 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.wizards;
 
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
@@ -82,27 +87,29 @@ public class UsesDeviceFrontEndTunerWizardPage extends WizardPage {
 
 	private Text usesDeviceIdText;
 	private Text deviceModelText;
-
+	
+	private SoftwareAssembly sad;
 	private Model model;
 	private DataBindingContext dbc;
 	
-	public UsesDeviceFrontEndTunerWizardPage() {
+	public UsesDeviceFrontEndTunerWizardPage(SoftwareAssembly sad) {
 		super("UsesDeviceFrontEndTunerWizardPage", "Allocate Tuner", TITLE_IMAGE);
 		this.setDescription("Provide an ID for the device and optionally provide the device model");
 
 		model = new Model();
 		dbc = new DataBindingContext();
 	
+		this.sad = sad;
 	}
 	
-	public UsesDeviceFrontEndTunerWizardPage(String usesDeviceId) {
-		this();
+	public UsesDeviceFrontEndTunerWizardPage(SoftwareAssembly sad, String usesDeviceId) {
+		this(sad);
 		model.setUsesDeviceId(usesDeviceId);
 	
 	}
 	
-	public UsesDeviceFrontEndTunerWizardPage(String usesDeviceId, String deviceModel) {
-		this(usesDeviceId);
+	public UsesDeviceFrontEndTunerWizardPage(SoftwareAssembly sad, String usesDeviceId, String deviceModel) {
+		this(sad, usesDeviceId);
 		model.setDeviceModel(deviceModel);
 	}
 
@@ -123,7 +130,9 @@ public class UsesDeviceFrontEndTunerWizardPage extends WizardPage {
 		usesDeviceIdText.setEnabled(true);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(usesDeviceIdText);
 		dbc.bindValue(SWTObservables.observeText(usesDeviceIdText, SWT.Modify), 
-			BeansObservables.observeValue(model, Model.USES_DEVICE_ID));
+			BeansObservables.observeValue(model, Model.USES_DEVICE_ID),  
+			new UpdateValueStrategy().setAfterGetValidator(new AbstractUsesDevicePattern.UsesDeviceIdValidator(sad, model.getUsesDeviceId())),
+			null);
 		
 		Label deviceModelLabel = new Label(composite, SWT.NONE);
 		deviceModelLabel.setText("Device Model");

@@ -71,7 +71,7 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 
 			String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, "FrontEndTuner_");
 			
-			namePage = new UsesDeviceFrontEndTunerWizardPage(deviceId);
+			namePage = new UsesDeviceFrontEndTunerWizardPage(sad, deviceId);
 			allocationPage = new TunerAllocationWizardPage();
 			portsWizardPage = new PortsWizardPage();
 		} else {
@@ -84,7 +84,7 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 			}
 			
 			//create name page for wizard
-			namePage = new UsesDeviceFrontEndTunerWizardPage(existingUsesDeviceStub.getUsesDevice().getId(), deviceModel);
+			namePage = new UsesDeviceFrontEndTunerWizardPage(sad, existingUsesDeviceStub.getUsesDevice().getId(), deviceModel);
 			
 			//ports
 			List<String> providesPortNames = new ArrayList<String>();

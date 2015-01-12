@@ -36,6 +36,10 @@ import mil.jpeojtrs.sca.sad.UsesDeviceDependencies;
 import mil.jpeojtrs.sca.spd.PropertyRef;
 import mil.jpeojtrs.sca.spd.UsesDevice;
 
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -582,6 +586,33 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 	}
 	
 	/**
+	 * Return true if the proposedId is unique device in the sad file
+	 * @param sad
+	 * @param proposedDeviceId
+	 * @return
+	 */
+	public static boolean isUsesDeviceIdUnique(SoftwareAssembly sad, String existingId, String proposedDeviceId) {
+
+		if (existingId.equals(proposedDeviceId)) {
+			//if existing name return true;
+			return true;
+		}
+		
+		UsesDeviceDependencies usesDeviceDependencies = sad.getUsesDeviceDependencies();
+		if (usesDeviceDependencies == null || usesDeviceDependencies.getUsesdevice().size() < 1) {
+			return true;
+		}
+		
+		for (UsesDevice usesDevice: usesDeviceDependencies.getUsesdevice()) {
+			if (usesDevice.getId().equals(proposedDeviceId)) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
 	 * Create unique device id from provided prefix
 	 * @param sad
 	 * @param idPrefix
@@ -787,6 +818,24 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 			}
 		}
 		return false;
+	}
+	
+	//Device must not be blank and be unique within sad
+	public static class UsesDeviceIdValidator implements IValidator {
+		private SoftwareAssembly sad;
+		private String existingId;
+		public UsesDeviceIdValidator(SoftwareAssembly sad, String existingId) {
+			this.sad = sad;
+			this.existingId = existingId;
+		}
+		public IStatus validate(Object value) {
+			if ("".equals(value)) {
+				return ValidationStatus.error("Device ID must not be null");
+			} else if (!AbstractUsesDevicePattern.isUsesDeviceIdUnique(sad, existingId, (String) value)) {
+				return ValidationStatus.error("Device ID must be unique");
+			}
+			return Status.OK_STATUS;
+		}
 	}
 
 }

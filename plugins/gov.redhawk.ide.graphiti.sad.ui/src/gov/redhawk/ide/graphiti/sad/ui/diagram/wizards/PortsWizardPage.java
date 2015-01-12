@@ -99,6 +99,8 @@ public class PortsWizardPage extends WizardPage {
 	private Text usesPortNameText, providesPortNameText;
 	private Image addImage;
 	private Image removeImage;
+	private org.eclipse.swt.widgets.List providesPortList;
+	private org.eclipse.swt.widgets.List usesPortList;
 
 	public PortsWizardPage() {
 		super("portWizardPage", "Identify Ports", TITLE_IMAGE);
@@ -135,14 +137,14 @@ public class PortsWizardPage extends WizardPage {
 		providesPortsLabel.setText("Provides Ports");
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(providesPortsLabel);
 		// add provides port name text
-		providesPortNameText = addPortNameText(providesPortComposite);
+		providesPortNameText = addPortNameText(providesPortComposite, providesPortList);
 		providesPortNameText.setToolTipText("The specified provides port on the component will be located to make connections");
 		// add provides port "Add" button
 		providesPortAddBtn = new Button(providesPortComposite, SWT.PUSH);
 		providesPortAddBtn.setImage(addImage);
 		//providesPortAddBtn.setText("Add Provides Port");
 		// add provides port list
-		final org.eclipse.swt.widgets.List providesPortList = addPortList(providesPortComposite, Model.PROVIDES_PORT_NAMES);
+		providesPortList = addPortList(providesPortComposite, Model.PROVIDES_PORT_NAMES);
 		// add provides port "Delete" button
 		providesPortDeleteBtn = new Button(providesPortComposite, SWT.PUSH);
 		providesPortDeleteBtn.setImage(removeImage);
@@ -160,14 +162,14 @@ public class PortsWizardPage extends WizardPage {
 		usesPortsLabel.setText("Uses Ports");
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(usesPortsLabel);
 		// add uses port name text
-		usesPortNameText = addPortNameText(usesPortComposite);
+		usesPortNameText = addPortNameText(usesPortComposite, usesPortList);
 		usesPortNameText.setToolTipText("The specified uses port on the component will be located to make connections");
 		// add uses port "Add" button
 		usesPortAddBtn = new Button(usesPortComposite, SWT.PUSH);
 		usesPortAddBtn.setImage(addImage);
 		//usesPortAddBtn.setText("Add Uses Port");
 		// add uses port list
-		final org.eclipse.swt.widgets.List usesPortList = addPortList(usesPortComposite, Model.USES_PORT_NAMES);
+		usesPortList = addPortList(usesPortComposite, Model.USES_PORT_NAMES);
 		// add uses port "Delete" button
 		usesPortDeleteBtn = new Button(usesPortComposite, SWT.PUSH);
 		usesPortDeleteBtn.setImage(removeImage);
@@ -191,7 +193,7 @@ public class PortsWizardPage extends WizardPage {
 		return composite;
 	}
 
-	private Text addPortNameText(Composite portComposite) {
+	private Text addPortNameText(Composite portComposite, final org.eclipse.swt.widgets.List portList) {
 		final Text portNameText = new Text(portComposite, SWT.BORDER);
 		GridData layoutData = new GridData(SWT.FILL, SWT.DEFAULT, true, true, 1, 1);
 		layoutData.minimumWidth = 200;
@@ -200,12 +202,7 @@ public class PortsWizardPage extends WizardPage {
 		portNameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				String err = validText("Port", portNameText);
-				if (err != null) {
-					setErrorMessage(err);
-				} else {
-					setErrorMessage(validateAll());
-				}
+				setErrorMessage(validateAll());
 			}
 		});
 		return portNameText;
@@ -214,31 +211,45 @@ public class PortsWizardPage extends WizardPage {
 	private String validateAll() {
 		String err = null;
 		if (usesPortNameText != null) {
-			err = validText("Port", usesPortNameText);
+			err = validPortNameText("Uses port", usesPortList, usesPortNameText);
 			if (err != null) {
 				return err;
 			}
 		}
 		if (providesPortNameText != null) {
-			return validText("Port", providesPortNameText);
+			err = validPortNameText("Provides port", providesPortList, providesPortNameText);
+			if (err != null) {
+				return err;
+			}
 		}
 		return null;
 	}
 
 	/**
 	 * If returns null, that means the value is valid/has no spaces.
+	 * Verifies string is unique
 	 * @param valueType
 	 * @param value
 	 * @return
 	 */
-	public static String validText(String valueType, Text valueText) {
+	public static String validPortNameText(String valueType, final org.eclipse.swt.widgets.List portList, Text valueText) {
 		if (valueText != null && valueText.getText().contains(" ")) {
 			return valueType + " must not include spaces";
 		}
+		
+		//verify unique
+		if (portList != null) {
+			for (String portName: portList.getItems()) {
+				if (portName.equals(valueText.getText())) {
+					return valueType + " must be unique within the port list";
+				}
+			}
+		}
+		
 		return null;
 	}
 	
-	public static String validText(String valueType, String value) {
+	public static String validPortName(String valueType, String value) {
 		if (value.contains(" ")) {
 			return valueType + " must not include spaces";
 		}
@@ -258,10 +269,11 @@ public class PortsWizardPage extends WizardPage {
 		SelectionListener listener = new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String portName = portNameText.getText();
-				if (portName.contains(" ")) {
+				String err = validPortNameText("Port", portList, providesPortNameText);
+				if (err != null) {
 					return;
 				}
+				String portName = portNameText.getText();
 				if (portName != null && !portName.isEmpty() && !("").equals(portName)) {
 					portList.add(portName);
 					portNameText.setText("");

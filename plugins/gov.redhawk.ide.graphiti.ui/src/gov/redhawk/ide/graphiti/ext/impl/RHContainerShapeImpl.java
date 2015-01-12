@@ -1163,7 +1163,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// outer title
 		IDimension outerTitleDimension = GraphitiUi.getUiLayoutService().calculateTextSize(outerTitle, StyleUtil.getOuterTitleFont(diagram));
 		outerTitleWidth = INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING + outerTitleDimension.getWidth() + INTERFACE_SHAPE_WIDTH
-			+ OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING;
+			+ OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING + 4;
 
 		// return the largest
 		int largestWidth = portsWidth;

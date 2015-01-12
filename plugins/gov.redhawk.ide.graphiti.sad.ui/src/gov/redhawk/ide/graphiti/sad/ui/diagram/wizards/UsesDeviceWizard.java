@@ -48,12 +48,12 @@ public class UsesDeviceWizard extends Wizard {
 
 			String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, "Device_");
 			
-			namePage = new UsesDeviceWizardPage(deviceId);
+			namePage = new UsesDeviceWizardPage(deviceId, sad);
 			portsWizardPage = new PortsWizardPage();
 		} else {
 			
 			//create name page for wizard
-			namePage = new UsesDeviceWizardPage(existingUsesDeviceStub.getUsesDevice().getId());
+			namePage = new UsesDeviceWizardPage(existingUsesDeviceStub.getUsesDevice().getId(), sad);
 			
 			//ports
 			List<String> providesPortNames = new ArrayList<String>();
