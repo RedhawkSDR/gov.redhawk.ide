@@ -23,6 +23,7 @@ import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.internal.parts.ContainerShapeEditPart;
 
 @SuppressWarnings("restriction")
@@ -58,6 +59,22 @@ public class StopFeature extends AbstractCustomFeature {
 	
 	@Override
 	public void execute(ICustomContext context) {
+		// IDE-1021: Check context in case we were called by hover context pad button on unselected component
+		boolean executed = false;
+		for (PictogramElement pe: context.getPictogramElements()) {
+			if (pe instanceof RHContainerShapeImpl) {
+				RHContainerShapeImpl shape = (RHContainerShapeImpl) pe;
+				RoundedRectangle innerRoundedRectangle = (RoundedRectangle) DUtil.findFirstPropertyContainer(shape,
+					RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE);
+				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInnerStarted(getDiagram()));
+				shape.setStarted(false);  //GraphitiModelMap is listening
+				executed = true;
+			}
+		}
+		if (executed) {
+			// Don't process selection if called from button pad
+			return;
+		}
 		Object[] selection = DUtil.getSelectedEditParts();
 		for (Object obj : selection) {
 			if (obj instanceof ContainerShapeEditPart) {
