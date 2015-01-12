@@ -12,9 +12,11 @@
 package gov.redhawk.ide.graphiti.dcd.internal.ui.editor;
 
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 
 public class GraphitiDcdExplorerEditor extends GraphitiDcdSandboxEditor {
 
@@ -31,5 +33,18 @@ public class GraphitiDcdExplorerEditor extends GraphitiDcdSandboxEditor {
 		super.createModel();
 		setDcd(DeviceConfiguration.Util.getDeviceConfiguration(super.getMainResource()));
 		initModelMap();
+	}
+	
+	@Override
+	protected void addPages() {
+		super.addPages();
+
+		final Diagram diagram = this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram();
+		ScaModelCommand.execute(diagram, new ScaModelCommand() {
+			@Override
+			public void execute() {
+				diagram.setGridUnit(-1); // hide grid on diagram by setting grid units to -1
+			}
+		});
 	}
 }
