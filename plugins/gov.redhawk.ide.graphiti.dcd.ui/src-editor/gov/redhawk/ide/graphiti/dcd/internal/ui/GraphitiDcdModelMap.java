@@ -114,6 +114,10 @@ public class GraphitiDcdModelMap {
 					if (nodes.get(nodeMapEntry.getKey()) == null) {
 						delete(newDevice);
 					}
+
+					// Make sure device is started/stopped as appropriate
+					reflectRuntimeStatus();
+
 					subMonitor.done();
 				}
 			}
