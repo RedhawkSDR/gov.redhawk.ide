@@ -41,7 +41,6 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.ICreateContext;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -79,17 +78,17 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
 		if (mainBusinessObject instanceof UsesDeviceStub) {
 			UsesDeviceStub usesDeviceStub = (UsesDeviceStub) mainBusinessObject;
-			if (usesDeviceStub != null && isFrontEndDevice(usesDeviceStub.getUsesDevice())) {
+			if (usesDeviceStub != null && AbstractUsesDevicePattern.isFrontEndDevice(usesDeviceStub.getUsesDevice())) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
-	@Override
-	protected boolean isPatternRoot(PictogramElement pictogramElement) {
-		return false;
-	}
+//	
+//	@Override
+//	protected boolean isPatternRoot(PictogramElement pictogramElement) {
+//		return false;
+//	}
 
 	// DIAGRAM FEATURES
 	@Override
@@ -203,20 +202,7 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 	}
 
 	
-	/**
-	 * Return true if device is FrontEnd Tuner
-	 * @param usesDevice
-	 * @return
-	 */
-	public static boolean isFrontEndDevice(UsesDevice usesDevice) {
-		
-		for (PropertyRef refs: usesDevice.getPropertyRef()) {
-			if (DEVICEKIND.value.equals(refs.getRefId()) && FE_TUNER_DEVICE_KIND.value.equals(refs.getValue())) {
-				return true;
-			}
-		}
-		return false;
-	}
+
 	
 	
 	public static Wizard openWizard(Wizard wizard) {

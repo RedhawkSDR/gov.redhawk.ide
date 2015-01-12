@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
-import gov.redhawk.frontend.util.TunerProperties;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.wizards.UsesDeviceWizard;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -21,12 +20,9 @@ import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.prf.PrfFactory;
-import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.sad.UsesDeviceDependencies;
-import mil.jpeojtrs.sca.spd.PropertyRef;
 import mil.jpeojtrs.sca.spd.SpdFactory;
 import mil.jpeojtrs.sca.spd.UsesDevice;
 
@@ -34,14 +30,10 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.context.ICreateContext;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
-
-import ExtendedCF.WKP.DEVICEKIND;
-import FRONTEND.FE_TUNER_DEVICE_KIND;
 
 public class UsesDevicePattern extends AbstractUsesDevicePattern implements IPattern {
 
@@ -71,17 +63,17 @@ public class UsesDevicePattern extends AbstractUsesDevicePattern implements IPat
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
 		if (mainBusinessObject instanceof UsesDeviceStub) {
 			UsesDeviceStub usesDeviceStub = (UsesDeviceStub) mainBusinessObject;
-			if (usesDeviceStub != null) {
+			if (usesDeviceStub != null && !AbstractUsesDevicePattern.isFrontEndDevice(usesDeviceStub.getUsesDevice())) {
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	@Override
-	protected boolean isPatternRoot(PictogramElement pictogramElement) {
-		return true;
-	}
+//	@Override
+//	protected boolean isPatternRoot(PictogramElement pictogramElement) {
+//		return true;
+//	}
 
 	// DIAGRAM FEATURES
 	@Override
@@ -128,16 +120,6 @@ public class UsesDevicePattern extends AbstractUsesDevicePattern implements IPat
 				usesDevice.setId(usesDeviceId);
 				//usesDevice.setType(); //not using this type on purpose, no value according to Core Framework team
 
-				PropertyRef deviceKindPropertyRef = SpdFactory.eINSTANCE.createPropertyRef();
-				deviceKindPropertyRef.setRefId(DEVICEKIND.value);
-				deviceKindPropertyRef.setValue(FE_TUNER_DEVICE_KIND.value);
-				usesDevice.getPropertyRef().add(deviceKindPropertyRef);
-				
-				
-				StructRef allocationStructRef = PrfFactory.eINSTANCE.createStructRef();
-				allocationStructRef.setProperty(TunerProperties.TunerAllocationProperty.INSTANCE.createStruct());
-				usesDevice.getStructRef().add(allocationStructRef);
-				
 				//UsesDeviceStub
 				usesDeviceStubs[0] = createUsesDeviceStub(usesDevice);
 				

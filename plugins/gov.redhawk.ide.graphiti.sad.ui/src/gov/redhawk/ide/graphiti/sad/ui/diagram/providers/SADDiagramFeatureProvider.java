@@ -18,6 +18,7 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkExternalPortF
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkNonExternalPortFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.ShowConsoleFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.StartComponentFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.StopComponentFeature;
@@ -155,6 +156,8 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			if (obj instanceof UsesDeviceStub) {
 				if (UsesDeviceFrontEndTunerPattern.isFrontEndDevice(((UsesDeviceStub) obj).getUsesDevice())) {
 					retList.add(new UsesFrontEndDeviceEditFeature(this));
+				} else {
+					retList.add(new UsesDeviceEditFeature(this));
 				}
 			}
 		}

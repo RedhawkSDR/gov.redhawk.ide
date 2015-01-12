@@ -12,6 +12,7 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom;
 
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDevicePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.wizards.UsesDeviceWizard;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -72,6 +73,9 @@ public class UsesDeviceEditFeature extends AbstractCustomFeature {
 		if (pes != null && pes.length == 1) {
 			Object obj = DUtil.getBusinessObject(pes[0]);
 			if (obj instanceof UsesDeviceStub) {
+				if (UsesDeviceFrontEndTunerPattern.isFrontEndDevice(((UsesDeviceStub) obj).getUsesDevice())) {
+					return false;
+				}
 				return true;
 			}
 		}

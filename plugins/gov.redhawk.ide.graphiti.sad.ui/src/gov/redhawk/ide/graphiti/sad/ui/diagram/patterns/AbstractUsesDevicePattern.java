@@ -33,6 +33,7 @@ import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.sad.UsesDeviceDependencies;
+import mil.jpeojtrs.sca.spd.PropertyRef;
 import mil.jpeojtrs.sca.spd.UsesDevice;
 
 import org.eclipse.emf.common.util.BasicEList;
@@ -67,6 +68,9 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
+
+import ExtendedCF.WKP.DEVICEKIND;
+import FRONTEND.FE_TUNER_DEVICE_KIND;
 
 public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern implements IPattern {
 
@@ -768,6 +772,21 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 		}
 		// Delete all ports and rebuild from the list provided by the wizard
 		usesDeviceStub.getProvidesPortStubs().removeAll(portsToDelete);
+	}
+	
+	/**
+	 * Return true if device is FrontEnd Tuner
+	 * @param usesDevice
+	 * @return
+	 */
+	public static boolean isFrontEndDevice(UsesDevice usesDevice) {
+		
+		for (PropertyRef refs: usesDevice.getPropertyRef()) {
+			if (DEVICEKIND.value.equals(refs.getRefId()) && FE_TUNER_DEVICE_KIND.value.equals(refs.getValue())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
