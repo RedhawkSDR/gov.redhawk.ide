@@ -76,12 +76,12 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 	@Override
 	protected void createModel() {
 		mainResource = getEditingDomain().getResourceSet().createResource(ScaDebugInstance.getLocalSandboxDeviceManagerURI());
-		setDcd(DcdFactory.eINSTANCE.createDeviceConfiguration());
+		dcd = DcdFactory.eINSTANCE.createDeviceConfiguration();
 		getEditingDomain().getCommandStack().execute(new ScaModelCommand() {
 
 			@Override
 			public void execute() {
-				mainResource.getContents().add(getDcd());
+				mainResource.getContents().add(dcd);
 			}
 		});
 
@@ -174,7 +174,7 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 			throw new IllegalStateException("Can not initialize the Model Map with null local device manager");
 		}
 
-		if (getDcd() == null) {
+		if (dcd == null) {
 			throw new IllegalStateException("Can not initialize the Model Map with null dcd");
 		}
 
@@ -217,8 +217,8 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 
 		}
 
-		modelMap = new GraphitiDcdModelMap(this, getDcd(), deviceManager);
-		getEditingDomain().getCommandStack().execute(new GraphitiDcdModelMapInitializerCommand(modelMap, getDcd(), deviceManager));
+		modelMap = new GraphitiDcdModelMap(this, dcd, deviceManager);
+		getEditingDomain().getCommandStack().execute(new GraphitiDcdModelMapInitializerCommand(modelMap, dcd, deviceManager));
 		getEditingDomain().getCommandStack().flush();
 
 		this.graphitiDiagramListener = new GraphitiDcdDiagramAdapter(modelMap);
@@ -252,11 +252,11 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 			}
 		});
 
-		getDcd().eAdapters().add(this.dcdListener);
+		dcd.eAdapters().add(this.dcdListener);
 
 		if (GraphitiDcdSandboxEditor.DEBUG.enabled) {
 			try {
-				getDcd().eResource().save(null);
+				dcd.eResource().save(null);
 			} catch (final IOException e) {
 				GraphitiDcdSandboxEditor.DEBUG.catching("Failed to save local diagram.", e);
 			}
@@ -266,8 +266,8 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 	@Override
 	public void dispose() {
 		if (this.dcdListener != null) {
-			if (getDcd() != null) {
-				getDcd().eAdapters().remove(this.dcdListener);
+			if (dcd != null) {
+				dcd.eAdapters().remove(this.dcdListener);
 			}
 			this.dcdListener = null;
 		}

@@ -158,7 +158,7 @@ public class DeviceCreateFeature extends AbstractCreateFeature {
 		DcdComponentInstantiation dcdComponentInstantiation = DcdFactory.eINSTANCE.createDcdComponentInstantiation();
 
 		String deviceName = (providedUsageName != null) ? providedUsageName : DeviceConfiguration.Util.createDeviceUsageName(dcd, spd.getName());
-		String id = (providedInstantiationId != null) ? providedInstantiationId : DeviceConfiguration.Util.createDeviceIdentifier(dcd, deviceName);
+		String id = (providedInstantiationId != null) ? providedInstantiationId : deviceName;
 		String implementationId = (providedImplId != null) ? providedImplId : implId;
 
 		dcdComponentInstantiation.setUsageName(deviceName);

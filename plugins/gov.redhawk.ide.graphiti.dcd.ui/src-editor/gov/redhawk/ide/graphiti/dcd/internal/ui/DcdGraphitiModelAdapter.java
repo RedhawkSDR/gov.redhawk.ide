@@ -10,9 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.internal.ui;
 
-import gov.redhawk.ide.debug.LocalSca;
-import gov.redhawk.ide.debug.LocalScaComponent;
-import gov.redhawk.model.sca.ScaPackage;
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.util.EContentAdapter;
@@ -26,20 +25,32 @@ public class DcdGraphitiModelAdapter extends EContentAdapter {
 	}
 
 	// TODO: Add cases to this adapter and the dcd model map to handle when a device is released via the SCA Explorer
-	
+
 	@Override
 	public void notifyChanged(final Notification notification) {
 		super.notifyChanged(notification);
-		if (notification.getNotifier() instanceof LocalScaComponent) {
-			switch (notification.getFeatureID(LocalSca.class)) {
-			case ScaPackage.SCA_COMPONENT__STARTED:
-				LocalScaComponent localScaComponent = (LocalScaComponent) notification.getNotifier();
-				final Boolean started = (Boolean) notification.getNewValue();
-//				this.modelMap.startStopComponent(localScaComponent, started);
-				break;
-			default:
-				break;
+		switch (notification.getEventType()) {
+		case Notification.ADD:
+			Object newValue = notification.getNewValue();
+			if (newValue instanceof DcdComponentInstantiation) {
+				final DcdComponentInstantiation object = (DcdComponentInstantiation) notification.getNewValue();
+				this.modelMap.add(object);
 			}
+			break;
+		case Notification.REMOVE:
+			Object oldValue = notification.getOldValue();
+			if (oldValue instanceof DcdComponentInstantiation) {
+				final DcdComponentInstantiation object = (DcdComponentInstantiation) oldValue;
+				this.modelMap.remove(object);
+			} else if (oldValue instanceof DcdComponentPlacement) {
+				final DcdComponentPlacement object = (DcdComponentPlacement) oldValue;
+				for (DcdComponentInstantiation i : object.getComponentInstantiation()) {
+					this.modelMap.remove(i);
+				}
+			}
+			break;
+		default:
+			break;
 		}
 	}
 }

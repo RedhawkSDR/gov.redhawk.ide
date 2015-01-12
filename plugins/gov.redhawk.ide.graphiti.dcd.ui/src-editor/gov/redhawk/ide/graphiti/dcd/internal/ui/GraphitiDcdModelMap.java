@@ -11,6 +11,7 @@
 package gov.redhawk.ide.graphiti.dcd.internal.ui;
 
 import gov.redhawk.ide.debug.LocalAbstractComponent;
+import gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl;
 import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdSandboxEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
@@ -24,13 +25,19 @@ import gov.redhawk.sca.ui.actions.StartAction;
 import gov.redhawk.sca.ui.actions.StopAction;
 import gov.redhawk.sca.util.SubMonitor;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.dcd.impl.DcdComponentInstantiationImpl;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -38,6 +45,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -49,13 +60,19 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.DeleteFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
+import org.eclipse.ui.statushandlers.StatusManager;
+import org.omg.CORBA.SystemException;
+
+import CF.DataType;
+import CF.ExecutableDevicePackage.ExecuteFail;
+import CF.LifeCyclePackage.ReleaseError;
 
 public class GraphitiDcdModelMap {
 //	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
 //		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
-//	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
-//		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
-//		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
+	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
+		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
+		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 
 	private final GraphitiDcdSandboxEditor editor;
 	private final ScaDeviceManager deviceManager;
@@ -90,7 +107,16 @@ public class GraphitiDcdModelMap {
 		final DcdNodeMapEntry nodeMapEntry = new DcdNodeMapEntry();
 		nodeMapEntry.setScaDevice(device);
 		synchronized (nodes) {
+			// Do a merge of the nodeMapEntry to populate missing ScaDevice content
+			// This occurs when adding from the diagram palette
 			if (nodes.get(nodeMapEntry.getKey()) != null) {
+				if (nodes.get(nodeMapEntry.getKey()).getScaDevice() == null) {
+					nodes.get(nodeMapEntry.getKey()).setScaDevice(device);
+				} else {
+					StatusManager.getManager().handle(
+						new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Duplicate device should not be added: " + device.getIdentifier()),
+						StatusManager.LOG);
+				}
 				return;
 			} else {
 				nodes.put(nodeMapEntry.getKey(), nodeMapEntry);
@@ -318,6 +344,89 @@ public class GraphitiDcdModelMap {
 	/****************************************************************************/
 
 	/**
+	 * New DcdComponentInstantiation was recently added to the diagram and this method will now launch
+	 * the corresponding ScaDevice
+	 * @param comp
+	 */
+	public void add(final DcdComponentInstantiation device) {
+		final DcdNodeMapEntry nodeMapEntry = new DcdNodeMapEntry();
+		nodeMapEntry.setProfile(device);
+		synchronized (nodes) {
+			if (nodes.get(nodeMapEntry.getKey()) != null) {
+				return;
+			} else {
+				nodes.put(nodeMapEntry.getKey(), nodeMapEntry);
+			}
+		}
+
+		final String implID = ((DcdComponentInstantiationImpl) device).getImplID();
+		Job job = new Job("Launching " + device.getUsageName()) {
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+
+				SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching " + device.getUsageName(), IProgressMonitor.UNKNOWN);
+				try {
+					GraphitiDcdModelMap.this.create(device, implID);
+					// The device is added to the nodeMapEntry via the add(ScaDevice< ? >) method call, which is called
+					// on refresh of the LoaclScaDomainManagerImpl
+
+					return Status.OK_STATUS;
+				} catch (final CoreException e) {
+					delete(device);
+					nodes.remove(nodeMapEntry.getKey());
+					return e.getStatus();
+				} finally {
+					if (nodes.get(nodeMapEntry.getKey()) == null) {
+						try {
+							delete(device);
+						} catch (SystemException e) {
+							// PASS
+						}
+					}
+					subMonitor.done();
+				}
+			}
+
+		};
+		job.schedule();
+	}
+
+	/**
+	 * Launch ScaDevice for corresponding DcdComponentInstantiation
+	 * @param device
+	 * @param implID
+	 * @return
+	 * @return
+	 * @throws CoreException
+	 */
+	private void create(final DcdComponentInstantiation device, final String implID) throws CoreException {
+		DataType[] execParams = null;
+		if (device.getComponentProperties() != null) {
+			final List<DataType> params = new ArrayList<DataType>(device.getComponentProperties().getProperties().size());
+			for (final Entry entry : device.getComponentProperties().getProperties()) {
+				if (entry.getValue() instanceof AbstractPropertyRef) {
+					final AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
+					params.add(new DataType(ref.getRefID(), ref.toAny()));
+				}
+			}
+			execParams = params.toArray(new DataType[params.size()]);
+		}
+		final SoftPkg spd = ScaEcoreUtils.getFeature(device, GraphitiDcdModelMap.SPD_PATH);
+		if (spd == null) {
+			throw new CoreException(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to resolve SPD.", null));
+		}
+		final URI spdURI = spd.eResource().getURI();
+
+		try {
+			LocalScaDeviceManagerImpl temp = (LocalScaDeviceManagerImpl) deviceManager;
+			temp.launch(device.getId(), execParams, spdURI.toString(), implID, ILaunchManager.RUN_MODE);
+		} catch (ExecuteFail e) {
+			throw new CoreException(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to launch device: " + e.msg, e));
+		}
+	}
+
+	/**
 	 * Starts/Stops the device in the ScaExplorer as a result of the user
 	 * stopping/starting the component in the diagram
 	 * @param comp
@@ -364,58 +473,60 @@ public class GraphitiDcdModelMap {
 		}
 	}
 
-	// TODO: remove and delete in SCA Explorer when terminating/releasing in the diagram
-	// will require a new release feature probably
+	// TODO: remove and delete in SCA Explorer when terminating/releasing in the diagram will probably require a new
+	// release feature
+
+	/**
+	 * Called when we remove DcdComponentInstantiation from the diagram.
+	 * This method removes ScaDevice from the local device manager
+	 * @param device
+	 */
+	public void remove(final DcdComponentInstantiation device) {
+		if (device == null) {
+			return;
+		}
+
+		final DcdNodeMapEntry nodeMapEntry = nodes.remove(DcdNodeMapEntry.getKey(device));
+		if (nodeMapEntry == null) {
+			return;
+		}
+		final ScaDevice< ? > oldDevice = nodeMapEntry.getScaDevice();
+		if (oldDevice != null) {
+			Job job = new Job("Releasing " + device.getUsageName()) {
+
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					SubMonitor subMonitor = SubMonitor.convert(monitor, "Releasing " + device.getUsageName(), IProgressMonitor.UNKNOWN);
+					try {
+						delete(oldDevice);
+						return Status.OK_STATUS;
+					} catch (ReleaseError e) {
+						return new Status(IStatus.WARNING, DCDUIGraphitiPlugin.PLUGIN_ID, "Problems while removing component " + device.getId(), e);
+					} finally {
+						subMonitor.done();
+					}
+				}
+
+			};
+			job.schedule();
+		}
+	}
+
+	/**
+	 * @param oldComp
+	 * @throws ReleaseError
+	 */
+	private void delete(final ScaDevice< ? > oldDevice) throws ReleaseError {
+		if (oldDevice == null) {
+			return;
+		}
+		if (!oldDevice.isDisposed()) {
+			oldDevice.releaseObject();
+		}
+	}
+
 	// TODO: add to SCA Explorer when adding to diagram
 
-//	/**
-//	 * Called when we remove SadComponentInstantiation from the diagram.
-//	 * This method removes LocalScaComponent from the local waveform
-//	 * @param comp
-//	 */
-//	public void remove(final SadComponentInstantiation comp) {
-//		if (comp == null) {
-//			return;
-//		}
-//
-//		final NodeMapEntry nodeMapEntry = nodes.remove(NodeMapEntry.getKey(comp));
-//		if (nodeMapEntry == null) {
-//			return;
-//		}
-//		final LocalScaComponent oldComp = nodeMapEntry.getLocalScaComponent();
-//		if (oldComp != null) {
-//			Job job = new Job("Releasing " + comp.getUsageName()) {
-//
-//				@Override
-//				protected IStatus run(IProgressMonitor monitor) {
-//					SubMonitor subMonitor = SubMonitor.convert(monitor, "Releasing " + comp.getUsageName(), IProgressMonitor.UNKNOWN);
-//					try {
-//						delete(oldComp);
-//						return Status.OK_STATUS;
-//					} catch (ReleaseError e) {
-//						return new Status(IStatus.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Problems while removing component " + comp.getId(), e);
-//					} finally {
-//						subMonitor.done();
-//					}
-//				}
-//
-//			};
-//			job.schedule();
-//		}
-//	}
-//	/**
-//	 * @param oldComp
-//	 * @throws ReleaseError
-//	 */
-//	private void delete(final LocalScaComponent oldComp) throws ReleaseError {
-//		if (oldComp == null) {
-//			return;
-//		}
-//		if (!oldComp.isDisposed()) {
-//			oldComp.releaseObject();
-//		}
-//	}
-//
 //	@Nullable
 //	public SadComponentInstantiation get(@Nullable final LocalScaComponent comp) {
 //		if (comp == null) {
