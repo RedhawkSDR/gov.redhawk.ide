@@ -20,7 +20,7 @@
   </parent>
 
   <properties>
-    <SDRROOT>${basedir}/../../releng/swtbot/runtime/sdr</SDRROOT>
+    <SDRROOT>${basedir}/../../../releng/swtbot/runtime/sdr</SDRROOT>
   </properties>
 
   <build>
