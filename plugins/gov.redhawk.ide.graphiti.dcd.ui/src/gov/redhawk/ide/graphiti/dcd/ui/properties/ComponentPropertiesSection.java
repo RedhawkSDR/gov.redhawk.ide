@@ -11,20 +11,18 @@
 package gov.redhawk.ide.graphiti.dcd.ui.properties;
 
 import gov.redhawk.diagram.sheet.properties.ComponentInstantiationPropertyViewerAdapter;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.IDisposable;
+import gov.redhawk.model.sca.ScaPropertyContainer;
 import gov.redhawk.sca.ui.ScaComponentFactory;
 import gov.redhawk.sca.ui.properties.ScaPropertiesAdapterFactory;
-import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.platform.GFPropertySection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -71,15 +69,17 @@ public class ComponentPropertiesSection extends GFPropertySection implements ITa
 	@Override
 	public final void setInput(final IWorkbenchPart part, final ISelection selection) {
 		super.setInput(part, selection);
-		PictogramElement pe = getSelectedPictogramElement();
-		ContainerShape containerShape = (ContainerShape) DUtil.findContainerShapeParentWithProperty(pe, RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-		Object obj = DUtil.getBusinessObject(containerShape);
-		if (obj instanceof ComponentInstantiation) {
-			final ComponentInstantiation newInput = (ComponentInstantiation) obj;
-			this.adapter.setInput(newInput);
-		} else {
-			this.adapter.setInput(null);
+		Object newInput = null;
+		if (selection instanceof IStructuredSelection) {
+			final IStructuredSelection ss = (IStructuredSelection) selection;
+			final Object obj = ss.getFirstElement();
+			final Object theAdapter = Platform.getAdapterManager().getAdapter(obj, ScaPropertyContainer.class);
+			if (theAdapter instanceof ScaPropertyContainer< ? , ? >) {
+				final ScaPropertyContainer< ? , ? > comps = (ScaPropertyContainer< ? , ? >) theAdapter;
+				newInput = comps;
+			}
 		}
+		getViewer().setInput(newInput);
 	}
 
 	@Override
