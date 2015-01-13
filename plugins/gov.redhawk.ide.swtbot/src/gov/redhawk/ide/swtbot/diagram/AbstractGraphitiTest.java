@@ -20,13 +20,11 @@ import org.junit.Before;
  */
 public abstract class AbstractGraphitiTest extends UITest {
 
-	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE INLINE
-
+	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE VisibilityModifier
 
 	@Before
 	public void beforeTest() throws Exception {
 		gefBot = new SWTGefBot();
-		super.before();
 	}
 
 }
