@@ -192,7 +192,7 @@ public final class StandardTestActions {
 	}
 
 	/**
-	 * Delete all proejcts in the workspace.
+	 * Delete all projects in the workspace.
 	 *
 	 * @throws CoreException
 	 */
