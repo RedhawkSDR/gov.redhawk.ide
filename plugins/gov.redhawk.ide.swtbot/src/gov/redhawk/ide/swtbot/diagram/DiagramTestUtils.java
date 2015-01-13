@@ -213,6 +213,15 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		return (ComponentShapeImpl) getRHContainerShape(editor, componentName);
 	}
 
+	/** Utility method to get Diagram from the Gef Editor */
+	public static Diagram getDiagram(SWTBotGefEditor editor) {
+		Object model = editor.mainEditPart().part().getModel();
+		if (model instanceof Diagram) {
+			return (Diagram) model;
+		}
+		return null;
+	}
+
 	/**
 	 * Utility method to extract business object from a device in the Graphiti diagram.
 	 * Returns null if object not found
