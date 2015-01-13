@@ -11,9 +11,13 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 
+import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
+import gov.redhawk.ide.graphiti.dcd.ext.ServiceShape;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.custom.runtime.StartFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.custom.runtime.StopFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.custom.runtime.TerminateShapeFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.DCDConnectionInterfaceDeleteFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.ReleaseShapeFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.reconnect.DCDReconnectFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update.DCDConnectionInterfaceUpdateFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update.GraphitiDcdDiagramUpdateFeature;
@@ -141,6 +145,11 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 				if (obj instanceof DcdComponentInstantiation && (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
 					retList.add(new StartFeature(this));
 					retList.add(new StopFeature(this));
+
+					// Don't add ability to remove components to Graphiti Waveform Explorer
+					if (!DUtil.isDiagramExplorer(getDiagramTypeProvider().getDiagram())) {
+						retList.add(new TerminateShapeFeature(this));
+					}
 				}
 			}
 		}
@@ -216,6 +225,14 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		}
 
 		if (DUtil.isDiagramExplorer(getDiagramTypeProvider().getDiagram())) {
+			return null;
+		}
+
+		// If the element is in the Chalkboard, it's removal will be handled by the Release and Terminate features
+		if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+			if (context.getPictogramElement() instanceof DeviceShape || context.getPictogramElement() instanceof ServiceShape) {
+				return new ReleaseShapeFeature(this);
+			}
 			return null;
 		}
 

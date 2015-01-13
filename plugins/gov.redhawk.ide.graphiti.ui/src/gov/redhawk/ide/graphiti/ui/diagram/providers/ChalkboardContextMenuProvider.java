@@ -8,9 +8,9 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.ui.diagram.providers;
+package gov.redhawk.ide.graphiti.ui.diagram.providers;
 
-import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.ui.actions.ActionRegistry;
@@ -53,7 +53,7 @@ public class ChalkboardContextMenuProvider extends DiagramEditorContextMenuProvi
 						&& this.getViewer().getSelection() instanceof StructuredSelection) {
 					StructuredSelection selection = (StructuredSelection) this.getViewer().getSelection();
 					if (selection.getFirstElement() instanceof GraphitiShapeEditPart 
-							&& ((GraphitiShapeEditPart) selection.getFirstElement()).getModel() instanceof ComponentShapeImpl) {
+							&& ((GraphitiShapeEditPart) selection.getFirstElement()).getModel() instanceof RHContainerShape) {
 						action.setText("Release");
 						// Move Terminate action up below Release
 						ActionContributionItem terminateAction = findTerminateAction(items);

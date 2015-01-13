@@ -11,6 +11,7 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.diagram;
 
+import gov.redhawk.ide.graphiti.ui.diagram.providers.ChalkboardContextMenuProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteBehavior;
 
@@ -20,6 +21,7 @@ import java.util.List;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.workspace.util.WorkspaceSynchronizer.Delegate;
+import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.ui.editor.DefaultPaletteBehavior;
 import org.eclipse.graphiti.ui.editor.DefaultUpdateBehavior;
@@ -98,6 +100,15 @@ public class GraphitiDcdDiagramEditor extends DiagramEditor {
 				}
 
 				return retVal;
+			}
+
+			@Override
+			protected ContextMenuProvider createContextMenuProvider() {
+				if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+					return new ChalkboardContextMenuProvider(getDiagramContainer().getGraphicalViewer(), getDiagramContainer().getActionRegistry(),
+						getConfigurationProvider());
+				}
+				return super.createContextMenuProvider();
 			}
 		};
 	}

@@ -149,7 +149,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 				retList.add(new FindByEditFeature(this));
 			}
 		}
-		
+
 		// add usesDeviceEdit feature if usesDevice selected
 		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
@@ -326,6 +326,10 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			return new SADConnectionInterfaceDeleteFeature(this);
 		}
 
+		if (DUtil.isDiagramExplorer(getDiagramTypeProvider().getDiagram())) {
+			return null;
+		}
+
 		// If the element is in the Chalkboard, it's removal will be handled by the Release and Terminate features
 		if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
 			if (context.getPictogramElement() instanceof ComponentShapeImpl) {
@@ -340,8 +344,8 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 	@Override
 	public IRemoveFeature getRemoveFeature(IRemoveContext context) {
 		return new DefaultRemoveFeature(this) {
-			//overridding the method below causes Remove to NOT show up in context menus but still allows
-			//us to getRemoveFeature and execute it.
+			// overridding the method below causes Remove to NOT show up in context menus but still allows
+			// us to getRemoveFeature and execute it.
 			public boolean isAvailable(IContext context) {
 				return false;
 			}
