@@ -11,13 +11,14 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
 import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
@@ -52,6 +53,7 @@ import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.pattern.IPattern;
 
 public abstract class AbstractNodeComponentPattern extends AbstractContainerPattern implements IPattern {
@@ -147,7 +149,7 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 			removeFeature.remove(rc);
 		}
 	}
-	
+
 	/**
 	 * Delete DcdComponentInstantiation and corresponding DcdComponentPlacement business object from DeviceConfiguration
 	 * This method should be executed within a RecordingCommand.
@@ -156,7 +158,8 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 	 */
 	public static void deleteComponentInstantiation(final DcdComponentInstantiation ciToDelete, final DeviceConfiguration dcd) {
 
-		// get placement for instantiation and delete it from dcd partitioning after we look at removing the component file ref
+		// get placement for instantiation and delete it from dcd partitioning after we look at removing the component
+		// file ref
 		DcdComponentPlacement placement = (DcdComponentPlacement) ciToDelete.getPlacement();
 
 		// find and remove any attached connections
@@ -201,7 +204,7 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 		// delete component placement
 		EcoreUtil.delete(placement);
 	}
-	
+
 	@Override
 	public boolean canResizeShape(IResizeShapeContext context) {
 		return true;
@@ -354,5 +357,52 @@ public abstract class AbstractNodeComponentPattern extends AbstractContainerPatt
 		}
 
 		return updated.toBoolean();
+	}
+
+	/**
+	 * Checks to make sure the new component is not being stacked on top of an existing component
+	 * @param componentShape
+	 */
+	protected void adjustShapeLocation(RHContainerShape shape) {
+		final int BUFFER_WIDTH = 20;
+
+		// if any overlap occurs (can happen when launching using the SCA Explorer) adjust x/y-coords
+		Diagram diagram = getFeatureProvider().getDiagramTypeProvider().getDiagram();
+		EList<Shape> children = diagram.getChildren();
+		for (Shape child : children) {
+			boolean xAdjusted = false;
+			int xAdjustment = 0;
+
+			// Avoid infinite loop by checking a shape against itself
+			if (child.equals(shape)) {
+				continue;
+			}
+
+			// Don't adjust if the target shape is in a Host Collocation
+			if (child instanceof ContainerShape && DUtil.getHostCollocation((ContainerShape) child) != null) {
+				continue;
+			}
+			GraphicsAlgorithm childGa = child.getGraphicsAlgorithm();
+			int componentWidth = shape.getGraphicsAlgorithm().getWidth();
+			int componentHeight = shape.getGraphicsAlgorithm().getHeight();
+
+			int componentX = shape.getGraphicsAlgorithm().getX();
+			int componentY = shape.getGraphicsAlgorithm().getY();
+
+			boolean xOverlapped = componentX >= childGa.getX() && componentX <= (childGa.getX() + childGa.getWidth()) || childGa.getX() >= componentX
+				&& childGa.getX() <= componentX + componentWidth;
+			boolean yOverlapped = componentY >= childGa.getY() && componentY <= (childGa.getY() + childGa.getHeight()) || childGa.getY() >= componentY
+				&& childGa.getY() <= componentY + componentHeight;
+			// If there is any overlap, then move new component all the way to the right of the old component.
+			if (xOverlapped && yOverlapped) {
+				xAdjustment += childGa.getX() + childGa.getWidth() + BUFFER_WIDTH;
+				xAdjusted = true;
+			}
+			if (xAdjusted) {
+				shape.getGraphicsAlgorithm().setX(xAdjustment);
+				// If we've made any adjustments, make a recursive call to make sure we do not create a new collision
+				adjustShapeLocation(shape);
+			}
+		}
 	}
 }

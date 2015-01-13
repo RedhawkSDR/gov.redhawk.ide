@@ -62,8 +62,7 @@ public class DevicePattern extends AbstractNodeComponentPattern implements IPatt
 		deviceShape.layout();
 
 		// Check for any needed location adjustments, avoids accidentally stacking shapes
-		// TODO: Implement this method, see ComponentPattern
-		// adjustDeviceLocation(deviceShape);
+		adjustShapeLocation(deviceShape);
 
 		return deviceShape;
 	}

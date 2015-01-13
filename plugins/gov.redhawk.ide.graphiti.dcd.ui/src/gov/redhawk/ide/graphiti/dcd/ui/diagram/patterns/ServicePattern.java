@@ -62,8 +62,7 @@ public class ServicePattern extends AbstractNodeComponentPattern implements IPat
 		serviceShape.layout();
 
 		// Check for any needed location adjustments, avoids accidentally stacking shapes
-		// TODO: Implement this method, see ComponentPattern
-		// adjustServiceLocation(serviceShape);
+		adjustShapeLocation(serviceShape);
 
 		return serviceShape;
 	}
