@@ -60,7 +60,6 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.DeleteFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
-import org.eclipse.ui.statushandlers.StatusManager;
 import org.omg.CORBA.SystemException;
 
 import CF.DataType;
@@ -112,10 +111,6 @@ public class GraphitiDcdModelMap {
 			if (nodes.get(nodeMapEntry.getKey()) != null) {
 				if (nodes.get(nodeMapEntry.getKey()).getScaDevice() == null) {
 					nodes.get(nodeMapEntry.getKey()).setScaDevice(device);
-				} else {
-					StatusManager.getManager().handle(
-						new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Duplicate device should not be added: " + device.getIdentifier()),
-						StatusManager.LOG);
 				}
 				return;
 			} else {
@@ -394,17 +389,17 @@ public class GraphitiDcdModelMap {
 
 	/**
 	 * Launch ScaDevice for corresponding DcdComponentInstantiation
-	 * @param device
+	 * @param ci
 	 * @param implID
 	 * @return
 	 * @return
 	 * @throws CoreException
 	 */
-	private void create(final DcdComponentInstantiation device, final String implID) throws CoreException {
+	private void create(final DcdComponentInstantiation ci, final String implID) throws CoreException {
 		DataType[] execParams = null;
-		if (device.getComponentProperties() != null) {
-			final List<DataType> params = new ArrayList<DataType>(device.getComponentProperties().getProperties().size());
-			for (final Entry entry : device.getComponentProperties().getProperties()) {
+		if (ci.getComponentProperties() != null) {
+			final List<DataType> params = new ArrayList<DataType>(ci.getComponentProperties().getProperties().size());
+			for (final Entry entry : ci.getComponentProperties().getProperties()) {
 				if (entry.getValue() instanceof AbstractPropertyRef) {
 					final AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
 					params.add(new DataType(ref.getRefID(), ref.toAny()));
@@ -412,15 +407,16 @@ public class GraphitiDcdModelMap {
 			}
 			execParams = params.toArray(new DataType[params.size()]);
 		}
-		final SoftPkg spd = ScaEcoreUtils.getFeature(device, GraphitiDcdModelMap.SPD_PATH);
+		final SoftPkg spd = ScaEcoreUtils.getFeature(ci, GraphitiDcdModelMap.SPD_PATH);
 		if (spd == null) {
 			throw new CoreException(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to resolve SPD.", null));
 		}
+
 		final URI spdURI = spd.eResource().getURI();
 
 		try {
-			LocalScaDeviceManagerImpl temp = (LocalScaDeviceManagerImpl) deviceManager;
-			temp.launch(device.getId(), execParams, spdURI.toString(), implID, ILaunchManager.RUN_MODE);
+			LocalScaDeviceManagerImpl localDeviceManager = (LocalScaDeviceManagerImpl) deviceManager;
+			localDeviceManager.launch(ci.getId(), execParams, spdURI.toString(), implID, ILaunchManager.RUN_MODE);
 		} catch (ExecuteFail e) {
 			throw new CoreException(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to launch device: " + e.msg, e));
 		}

@@ -25,6 +25,9 @@ import org.eclipse.ui.IPersistableElement;
 public class LocalScaElementFactory implements IElementFactory {
 
 	public static final String ID = "gov.redhawk.ide.debug.ui.localSca.factory";
+	private static final String EDITOR_TYPE = "editorType";
+	private static final String LOCAL_WAVEFORM = "localWaveform";
+	private static final String LOCAL_DEVICE_MANAGER = "localDeviceManager";
 
 	public static IEditorInput getLocalScaInput() {
 		return new URIEditorInput(ScaDebugInstance.getLocalSandboxWaveformURI()) {
@@ -39,7 +42,7 @@ public class LocalScaElementFactory implements IElementFactory {
 
 					@Override
 					public void saveState(final IMemento memento) {
-
+						memento.putString(EDITOR_TYPE, LOCAL_WAVEFORM);
 					}
 
 					@Override
@@ -64,7 +67,7 @@ public class LocalScaElementFactory implements IElementFactory {
 
 					@Override
 					public void saveState(final IMemento memento) {
-
+						memento.putString(EDITOR_TYPE, LOCAL_DEVICE_MANAGER);
 					}
 
 					@Override
@@ -81,7 +84,12 @@ public class LocalScaElementFactory implements IElementFactory {
 	 */
 	@Override
 	public IAdaptable createElement(final IMemento memento) {
-		return LocalScaElementFactory.getLocalScaInput();
+		String editorType = memento.getString(EDITOR_TYPE);
+		if (editorType.equals(LOCAL_WAVEFORM)) {
+			return LocalScaElementFactory.getLocalScaInput();
+		} else {
+			return LocalScaElementFactory.getLocalDeviceManagerInput();
+		}
 	}
 
 }
