@@ -24,12 +24,11 @@ public abstract class AbstractGraphitiChalkboardTest extends UIRuntimeTest {
 
 	private static final String[] CHALKBOARD_PARENT_PATH = {"Sandbox"};
 	private static final String CHALKBOARD = "Chalkboard";
-	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE INLINE
+	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE VisibilityModifier
 
 	@Before
 	public void beforeTest() throws Exception {
 		gefBot = new SWTGefBot();
-		super.before();
 	}
 	
 	@After
@@ -41,6 +40,8 @@ public abstract class AbstractGraphitiChalkboardTest extends UIRuntimeTest {
 		
 		//close editors
 		gefBot.closeAllEditors();
+		
+		gefBot = null;
 	}
 
 }
