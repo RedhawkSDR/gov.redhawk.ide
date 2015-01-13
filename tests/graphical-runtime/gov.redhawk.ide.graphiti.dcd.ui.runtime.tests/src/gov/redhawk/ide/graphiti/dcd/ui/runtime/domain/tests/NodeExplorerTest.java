@@ -11,9 +11,11 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.runtime.domain.tests;
 
+import static org.junit.Assert.assertEquals;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
@@ -28,10 +30,10 @@ public class NodeExplorerTest extends AbstractGraphitiDomainNodeRuntimeTest {
 	private static final String DEVICE_STUB = "DeviceStub";
 
 	/**
-	 * IDE-998
-	 * Opens Graphiti Node Explorer diagram
-	 * This editor is "look but don't touch". All design functionality should be disabled.
-	 * Runtime functionality (start/stop, plot, etc) should still work.
+	 * IDE-998  Opens Graphiti Node Explorer diagram.
+	 *          This editor is "look but don't touch". All design functionality should be disabled.
+	 *          Runtime functionality (start/stop, plot, etc) should still work.
+	 * IDE-1001 Hide grid on runtime diagram.
 	 */
 	@Test
 	public void nodeExplorerTest() {
@@ -71,5 +73,11 @@ public class NodeExplorerTest extends AbstractGraphitiDomainNodeRuntimeTest {
 		// check that device is removed from editor when released in the Sca Explorer
 		String[] GPP_PARENT_PATH = { DOMAIN_NODE_PARENT_PATH[0], DOMAIN_NODE_PARENT_PATH[1], getNodeFullName() };
 		ScaExplorerTestUtils.releaseFromScaExplorer(bot, GPP_PARENT_PATH, gppFullName);
+		
+		// IDE-1001 check that grid is hidden on runtime diagram
+		Diagram diagram = DiagramTestUtils.getDiagram(editor);
+		Assert.assertNotNull("Found in Diagram (model object) on editor", diagram);
+		int gridUnit = diagram.getGridUnit();
+		assertEquals("Grid is hidden on runtime Node/DeviceMgr diagram", -1, gridUnit); // -1 means it is hidden
 	}
 }
