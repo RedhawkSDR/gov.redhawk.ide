@@ -469,9 +469,6 @@ public class GraphitiDcdModelMap {
 		}
 	}
 
-	// TODO: remove and delete in SCA Explorer when terminating/releasing in the diagram will probably require a new
-	// release feature
-
 	/**
 	 * Called when we remove DcdComponentInstantiation from the diagram.
 	 * This method removes ScaDevice from the local device manager
@@ -521,8 +518,7 @@ public class GraphitiDcdModelMap {
 		}
 	}
 
-	// TODO: add to SCA Explorer when adding to diagram
-
+	// TODO: Do we need these?
 //	@Nullable
 //	public SadComponentInstantiation get(@Nullable final LocalScaComponent comp) {
 //		if (comp == null) {
