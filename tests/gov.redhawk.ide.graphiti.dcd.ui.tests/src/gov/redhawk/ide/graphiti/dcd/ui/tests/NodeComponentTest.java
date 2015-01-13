@@ -98,7 +98,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 	 * model objects correctly exposed in the default Eclipse properties view.
 	 */
 	@Test
-	public void checkChangesToPropertiesReflectedInSad() {
+	public void checkChangesToPropertiesReflectedInDcd() {
 		projectName = "ReflectProperties";
 
 		// Create an empty node project
