@@ -53,6 +53,8 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 	private static final String HARD_LIMIT = "HardLimit";
 	private static final String[] COMPONENTS = { "DataConverter", "HardLimit", "SigGen" };
 
+	private static final String[] TARGET_SDR_ITEMS_NOT_IN_PALETTE = { "fftlib", "RedhawkDevUtils"};
+
 	/**
 	 * IDE-726
 	 * Create the pictogram shape in the waveform diagram that represents the component business object.
@@ -238,8 +240,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 	}
 
 	/**
-	 * IDE-741
-	 * Palette has all Components in Target SDR.
+	 * IDE-741 Palette has all Components in Target SDR.
 	 */
 	@Test
 	public void checkTargetSDRComponentsInPalete() {
@@ -250,6 +251,9 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		editor.setFocus();
 
 		List<String> sdrComponents = WaveformComponentTest.getTargetSdrComponents(gefBot);
+		for (String item : TARGET_SDR_ITEMS_NOT_IN_PALETTE) { // remove SharedLibrary from list
+			sdrComponents.remove(item);
+		}
 		LinkedList<String> paletteComponents = new LinkedList<String>();
 		LinkedList<String> missingSdrComponentSet = new LinkedList<String>();
 		for (String compName : sdrComponents) {
@@ -328,7 +332,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 			list.add(compName);
 		}
 
-		return Collections.unmodifiableList(list);
+		return list;
 	}
 	
 	/**
