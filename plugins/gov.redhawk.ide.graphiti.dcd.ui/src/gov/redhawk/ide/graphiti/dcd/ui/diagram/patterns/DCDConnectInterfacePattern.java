@@ -115,7 +115,7 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 		line.setForeground(gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(), StyleUtil.BLACK));
 
 		// add any decorators
-//		decorateConnection(connectionPE, connectInterface, getDiagram());
+		decorateConnection(connectionPE, connectInterface, getDiagram());
 
 		// link ports to connection
 		getFeatureProvider().link(connectionPE, new Object[] { connectInterface, source, target });
