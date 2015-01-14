@@ -44,6 +44,7 @@
             class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdSandboxEditor"
             contributorClass="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditorActionBarContributor"
             default="true"
+            icon="icons/full/obj16/ScaDeviceManager.gif"
             id="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdSandbox"
             name="Graphiti Node Sandbox Editor">
       </editor>

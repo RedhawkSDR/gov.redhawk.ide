@@ -309,7 +309,7 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 				if (DUtil.isDiagramExplorer(getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram())) {
 					setPartName("Device Manager");
 				} else {
-					setPartName("Sandbox Device Manager");
+					setPartName("Device Manager Chalkboard");
 				}
 
 				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
