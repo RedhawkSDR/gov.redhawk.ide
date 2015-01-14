@@ -62,11 +62,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
-public abstract class AbstractGraphitiMultipageEditor extends SCAFormEditor implements ITabbedPropertySheetPageContributor, IViewerProvider {
-
-	public static final String ID = "gov.redhawk.ide.sad.graphiti.ui.editor.presentation.SadEditorID";
-
-	public static final String EDITING_DOMAIN_ID = "mil.jpeojtrs.sca.sad.diagram.EditingDomain";
+public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor implements ITabbedPropertySheetPageContributor, IViewerProvider {
 
 	private static final String DIAGRAM_PAGE_ID = "2";
 
@@ -102,7 +98,7 @@ public abstract class AbstractGraphitiMultipageEditor extends SCAFormEditor impl
 	/**
 	 * This creates a model editor.
 	 */
-	public AbstractGraphitiMultipageEditor() {
+	public AbstractGraphitiMultiPageEditor() {
 		super();
 		this.selectionProvider = new MultiPageSelectionProvider(this);
 		this.selectionProvider.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -136,8 +132,6 @@ public abstract class AbstractGraphitiMultipageEditor extends SCAFormEditor impl
 	public Viewer getViewer() {
 		return this.currentViewer;
 	}
-	
-	abstract public Object getAdapter(@SuppressWarnings("rawtypes") final Class key);
 	
 	@Override
 	protected String getPropertyEditorPageKey(final IFileEditorInput input) {
@@ -238,8 +232,6 @@ public abstract class AbstractGraphitiMultipageEditor extends SCAFormEditor impl
 	public void menuAboutToShow(final IMenuManager menuManager) {
 		((IMenuListener) getEditorSite().getActionBarContributor()).menuAboutToShow(menuManager);
 	}
-
-	abstract public void dispose();
 	
 	/*
 	 * (non-Javadoc)
@@ -264,7 +256,21 @@ public abstract class AbstractGraphitiMultipageEditor extends SCAFormEditor impl
 		return propertiesPage;
 	}
 	
+	public void setPropertiesPage(IFormPage propertiesPage) {
+		this.propertiesPage = propertiesPage;
+	}
+	
 	abstract protected IFormPage createPropertiesPage(Resource resource);
+	
+	
+
+	public IEditorPart getTextEditor() {
+		return textEditor;
+	}
+
+	public void setTextEditor(IEditorPart textEditor) {
+		this.textEditor = textEditor;
+	}
 
 	protected IEditorPart createTextEditor() {
 		// StructuredTextEditors only work on workspace entries
@@ -309,6 +315,10 @@ public abstract class AbstractGraphitiMultipageEditor extends SCAFormEditor impl
 	
 	abstract protected IFormPage createOverviewPage(final Resource resource);
 	
+	public IFormPage getOverviewPage() {
+		return this.overviewPage;
+	}
+	
 	protected void setOverviewPage(final IFormPage overviewPage) {
 		this.overviewPage = overviewPage;
 	}
@@ -322,8 +332,6 @@ public abstract class AbstractGraphitiMultipageEditor extends SCAFormEditor impl
 	}
 	
 	abstract public List<Object> getOutlineItems();
-	
-	abstract public boolean isPersisted(final Resource resource);
 
 	/**
 	 * The Text editor always stays in sync with other editor changes therefore always save it.
