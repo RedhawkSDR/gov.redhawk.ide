@@ -28,7 +28,7 @@ import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.ServicePattern;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.ui.diagram.feature.custom.FindByEditFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.FindByEditFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
