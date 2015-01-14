@@ -121,7 +121,7 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 	}
 
 	private void addTargetSdrRefreshJob(final IDiagramTypeProvider diagramTypeProvider) {
-		final ComponentsContainer container = SdrUiPlugin.getDefault().getTargetSdrRoot().getComponentsContainer();
+		final DevicesContainer container = SdrUiPlugin.getDefault().getTargetSdrRoot().getDevicesContainer();
 		container.eAdapters().add(new AdapterImpl() {
 			private final WorkbenchJob refreshPalletteJob = new WorkbenchJob("Refresh Pallette") {
 
