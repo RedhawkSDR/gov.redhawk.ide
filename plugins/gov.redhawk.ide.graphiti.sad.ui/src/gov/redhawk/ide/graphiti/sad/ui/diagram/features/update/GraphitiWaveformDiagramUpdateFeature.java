@@ -247,10 +247,17 @@ public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFe
 		return new Reason(false, "No updates required");
 	}
 
-	/** Checks if componentShape has lost its reference to the model object */
+	/** Checks if componentShape has lost its reference to the model object 
+	 * Very important to also check that component ports are still linked to the correct parent
+	 * Bad things can happen because port links use index based references (0, 1, 2 etc.*/
 	private boolean componentsResolved(List<ComponentShape> componentShapes) {
 		for (ComponentShape componentShape : componentShapes) {
-			if (!(DUtil.getBusinessObject(componentShape) instanceof SadComponentInstantiation)) {
+			SadComponentInstantiation sadComponentInstantiation = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape, SadComponentInstantiation.class);
+			if (sadComponentInstantiation == null) {
+				return false;
+			} else if (componentShape.getProvidesPortStubs().size() > 0 && !componentShape.getProvidesPortStubs().get(0).eContainer().equals(sadComponentInstantiation)) {
+				return false;
+			} else if (componentShape.getUsesPortStubs().size() > 0 && !componentShape.getUsesPortStubs().get(0).eContainer().equals(sadComponentInstantiation)) {
 				return false;
 			}
 		}

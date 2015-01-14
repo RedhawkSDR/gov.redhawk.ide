@@ -1,41 +1,15 @@
-/*******************************************************************************
- * This file is protected by Copyright. 
- * Please refer to the COPYRIGHT file distributed with this source distribution.
- *
- * This file is part of REDHAWK IDE.
- *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.internal.ui.editor;
+package gov.redhawk.ide.graphiti.ui.editor;
 
-import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformDiagramEditor;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.SadDiagramUtilHelper;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramTypeProvider;
+import gov.redhawk.ide.graphiti.ui.Activator;
 import gov.redhawk.ide.graphiti.ui.diagram.RHCommandStackImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
-import gov.redhawk.model.sca.ScaWaveform;
-import gov.redhawk.model.sca.commands.NonDirtyingCommand;
-import gov.redhawk.model.sca.util.ModelUtil;
-import gov.redhawk.sca.util.PluginUtil;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import mil.jpeojtrs.sca.prf.provider.PrfItemProviderAdapterFactory;
-import mil.jpeojtrs.sca.sad.SadPackage;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.sad.provider.SadItemProviderAdapterFactory;
-import mil.jpeojtrs.sca.scd.provider.ScdItemProviderAdapterFactory;
-import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.resources.IMarker;
@@ -47,13 +21,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.notify.AdapterFactory;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EValidator;
-import org.eclipse.emf.ecore.provider.EcoreItemProviderAdapterFactory;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -66,12 +37,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.impl.TransactionalEditingDomainImpl;
 import org.eclipse.emf.workspace.IWorkspaceCommandStack;
 import org.eclipse.emf.workspace.WorkspaceEditingDomainFactory;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.PictogramLink;
-import org.eclipse.graphiti.mm.pictograms.PictogramsFactory;
-import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
-import org.eclipse.graphiti.ui.editor.DiagramEditorInput;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -82,7 +48,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
@@ -91,19 +56,13 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
-import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageSelectionProvider;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
-import CF.Application;
-
-/**
- * This is an example of a Sad model editor.
- */
-public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements ITabbedPropertySheetPageContributor, IViewerProvider {
+public abstract class AbstractGraphitiMultipageEditor extends SCAFormEditor implements ITabbedPropertySheetPageContributor, IViewerProvider {
 
 	public static final String ID = "gov.redhawk.ide.sad.graphiti.ui.editor.presentation.SadEditorID";
 
@@ -134,87 +93,16 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 	 */
 	private final MultiPageSelectionProvider selectionProvider;
 
-	private ResourceListener nameListener;
-
 	private IFormPage overviewPage;
 
 	private IFormPage propertiesPage;
 
 	private IEditorPart textEditor;
-
-	private class ResourceListener extends AdapterImpl {
-		private SoftwareAssembly sad;
-		private final Resource sadResource;
-
-		public ResourceListener(final Resource spdResource) {
-			this.sadResource = spdResource;
-			if (this.sadResource != null) {
-				this.sadResource.eAdapters().add(this);
-				this.sad = getSoftwareAssembly();
-				if (this.sad != null) {
-					this.sad.eAdapters().add(this);
-					updateTitle();
-				}
-			}
-		}
-
-		/**
-		 * Gets the soft pkg.
-		 * 
-		 * @return the soft pkg
-		 */
-		private SoftwareAssembly getSoftwareAssembly() {
-			return ModelUtil.getSoftwareAssembly(this.sadResource);
-		}
-
-		public void dispose() {
-			if (this.sad != null) {
-				this.sad.eAdapters().remove(this);
-			}
-			if (this.sadResource != null) {
-				this.sadResource.eAdapters().remove(this);
-			}
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void notifyChanged(final Notification msg) {
-			if (msg.getNotifier() instanceof Resource) {
-				switch (msg.getFeatureID(Resource.class)) {
-				case Resource.RESOURCE__IS_LOADED:
-					if (this.sad != null) {
-						this.sad.eAdapters().remove(this);
-						this.sad = null;
-					}
-					if (this.sadResource.isLoaded()) {
-						this.sad = getSoftwareAssembly();
-						if (this.sad != null) {
-							this.sad.eAdapters().add(this);
-							updateTitle();
-						}
-					}
-					break;
-				default:
-					break;
-				}
-			} else if (msg.getNotifier() instanceof SoftwareAssembly) {
-				final int featureID = msg.getFeatureID(SoftwareAssembly.class);
-
-				if (featureID == SadPackage.SOFTWARE_ASSEMBLY__NAME) {
-					if (msg.getEventType() == Notification.SET) {
-						updateTitle();
-					}
-				}
-			}
-		}
-	}
-
+	
 	/**
 	 * This creates a model editor.
 	 */
-	public GraphitiWaveformMultiPageEditor() {
+	public AbstractGraphitiMultipageEditor() {
 		super();
 		this.selectionProvider = new MultiPageSelectionProvider(this);
 		this.selectionProvider.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -224,37 +112,9 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 			}
 		});
 	}
-
-	/**
-	 * This sets the selection into whichever viewer is active.
-	 */
-	@Override
-	public void setSelectionToViewer(final Collection< ? > collection) {
-		final Collection< ? > theSelection = collection;
-		// Make sure it's okay.
-		//
-		if (theSelection != null && !theSelection.isEmpty()) {
-			// I don't know if this should be run this deferred
-			// because we might have to give the editor a chance to process the
-			// viewer update events
-			// and hence to update the views first.
-			//
-			//
-			final Runnable runnable = new Runnable() {
-				@Override
-				public void run() {
-					// Try to select the items in the current content viewer of
-					// the editor.
-					//
-					if (GraphitiWaveformMultiPageEditor.this.currentViewer != null) {
-						GraphitiWaveformMultiPageEditor.this.currentViewer.setSelection(new StructuredSelection(theSelection.toArray()), true);
-					}
-				}
-			};
-			runnable.run();
-		}
-	}
-
+	
+	abstract public void setSelectionToViewer(final Collection< ? > collection);
+	
 	/**
 	 * This makes sure that one content viewer, either for the current page or
 	 * the outline view, if it has focus, is the current one.
@@ -268,7 +128,7 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 			this.currentViewer = viewer;
 		}
 	}
-
+	
 	/**
 	 * This returns the viewer as required by the {@link IViewerProvider} interface.
 	 */
@@ -276,31 +136,9 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 	public Viewer getViewer() {
 		return this.currentViewer;
 	}
-
-	/**
-	 * This is how the framework determines which interfaces we implement.
-	 */
-	@SuppressWarnings({ "unchecked" })
-	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") final Class key) {
-		if (key.equals(IGotoMarker.class)) {
-			return this;
-		} else if (key.equals(ScaWaveform.class)) {
-			return PluginUtil.adapt(ScaWaveform.class, getSoftwareAssembly());
-		} else if (key.isAssignableFrom(Application.class)) {
-			return PluginUtil.adapt(ScaWaveform.class, getSoftwareAssembly());
-		} else {
-			return super.getAdapter(key);
-		}
-	}
-
-//	/**
-//	 * This accesses a cached version of the property sheet.
-//	 */
-//	public IPropertySheetPage getPropertySheetPage() {
-//		return new PropertiesBrowserPage(this);
-//	}
-
+	
+	abstract public Object getAdapter(@SuppressWarnings("rawtypes") final Class key);
+	
 	@Override
 	protected String getPropertyEditorPageKey(final IFileEditorInput input) {
 		final String retVal = super.getPropertyEditorPageKey(input);
@@ -324,7 +162,7 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 				}
 			}
 		} catch (final CoreException exception) {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to go to marker.", exception),
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Failed to go to marker.", exception),
 				StatusManager.LOG | StatusManager.SHOW);
 		}
 	}
@@ -332,7 +170,7 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 	private Object getWrapper(final EObject eObject) {
 		return AdapterFactoryEditingDomain.getWrapper(eObject, getEditingDomain());
 	}
-
+	
 	public void setStatusLineManager(final ISelection selection) {
 		final IStatusLineManager statusLineManager;
 
@@ -358,7 +196,7 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 			}
 		}
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -391,7 +229,7 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 		BasicCommandStack commandStack = (BasicCommandStack) diagramEditor.getEditingDomain().getCommandStack();
 		return commandStack.isSaveNeeded();
 	}
-
+	
 	/**
 	 * This implements {@link org.eclipse.jface.action.IMenuListener} to help
 	 * fill the context menus with contributions from the Edit menu.
@@ -401,16 +239,8 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 		((IMenuListener) getEditorSite().getActionBarContributor()).menuAboutToShow(menuManager);
 	}
 
-	@Override
-	public void dispose() {
-
-		if (this.nameListener != null) {
-			this.nameListener.dispose();
-			this.nameListener = null;
-		}
-		super.dispose();
-	}
-
+	abstract public void dispose();
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -425,94 +255,16 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 		}
 		return this.diagramEditor.getContributorId();
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getTitle() {
-		String name = null;
-		final SoftwareAssembly sad = getSoftwareAssembly();
-		if (sad != null) {
-			name = sad.getName();
-			if (name == null) {
-				name = getEditorInput().getName();
-			}
-		}
-		if (name != null) {
-			return name;
-		} else {
-			return super.getTitle();
-		}
-	}
-
-	/**
-	 * @return
-	 */
-	private SoftwareAssembly getSoftwareAssembly() {
-		return ModelUtil.getSoftwareAssembly(getMainResource());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void addPages() {
-		// Only creates the other pages if there is something that can be edited
-
-		if (!getEditingDomain().getResourceSet().getResources().isEmpty()
-			&& !(getEditingDomain().getResourceSet().getResources().get(0)).getContents().isEmpty()) {
-			try {
-				int pageIndex = 0;
-
-				final Resource sadResource = getMainResource();
-
-				addNameListener(sadResource);
-
-				final IFormPage page = createOverviewPage(sadResource);
-				setOverviewPage(page);
-				this.addPage(page);
-
-				this.propertiesPage = createPropertiesPage(sadResource);
-				addPage(propertiesPage);
-
-				final DiagramEditor editor = createDiagramEditor();
-				setDiagramEditor(editor);
-				final IEditorInput diagramInput = createDiagramInput(sadResource);
-				pageIndex = addPage(editor, diagramInput);
-				setPageText(pageIndex, "Diagram");
-
-				// set layout for target-sdr editors
-				DUtil.layout(editor);
-
-				textEditor = createTextEditor();
-				if (textEditor != null) {
-					final int sadSourcePageNum = addPage(-1, textEditor, getEditorInput(), sadResource);
-					this.setPageText(sadSourcePageNum, getEditorInput().getName());
-				}
-
-			} catch (final PartInitException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
-					StatusManager.LOG | StatusManager.SHOW);
-			} catch (final IOException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
-					StatusManager.LOG | StatusManager.SHOW);
-			} catch (final CoreException e) {
-				StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
-					StatusManager.LOG | StatusManager.SHOW);
-			}
-		}
-	}
+	
+	abstract public String getTitle();
+	
+	abstract protected void addPages();
 
 	public IFormPage getPropertiesPage() {
 		return propertiesPage;
 	}
-
-	protected IFormPage createPropertiesPage(Resource sadResource) {
-		GraphitiWaveformPropertiesPage retVal = new GraphitiWaveformPropertiesPage(this, "propertiesPage", "Properties", true);
-		retVal.setInput(sadResource);
-		return retVal;
-	}
+	
+	abstract protected IFormPage createPropertiesPage(Resource resource);
 
 	protected IEditorPart createTextEditor() {
 		// StructuredTextEditors only work on workspace entries
@@ -531,55 +283,11 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 
 		return null;
 	}
-
-	protected void addNameListener(final Resource sadResource) {
-		this.nameListener = new ResourceListener(sadResource);
-	}
-
-	/**
-	 * Given the sad resource (sad.xml) create a Diagram resource, associate it with the sad resource and return
-	 * diagram editor input
-	 * @param sadResource
-	 * @return
-	 * @throws IOException
-	 * @throws CoreException
-	 */
-	protected IEditorInput createDiagramInput(final Resource sadResource) throws IOException, CoreException {
-
-		final URI diagramURI = DUtil.getDiagramResourceURI(SadDiagramUtilHelper.INSTANCE, sadResource);
-
-		DUtil.initializeDiagramResource(SadDiagramUtilHelper.INSTANCE, SADDiagramTypeProvider.DIAGRAM_TYPE_ID,
-			SADDiagramTypeProvider.PROVIDER_ID, diagramURI, sadResource);
-
-		Resource diagramResource = getEditingDomain().getResourceSet().getResource(diagramURI, true);
-
-		// load diagram from resource
-		final Diagram diagram = (Diagram) diagramResource.getContents().get(0);
-
-		// load sad from resource
-		final SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(sadResource);
-
-		// link diagram with SoftwareAssembly
-		NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
-			public void execute() {
-				// Evade dirty check - we DON'T want this action to mark the editor as dirty
-				//GraphitiWaveformMultiPageEditor.this.setDirtyAllowed(false);
-
-				// set property specifying diagram context (design, local, domain)
-				Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CONTEXT, getDiagramContext(sadResource));
-
-				// link diagram and sad
-				PictogramLink link = PictogramsFactory.eINSTANCE.createPictogramLink();
-				link.getBusinessObjects().add(sad);
-				diagram.setLink(link);
-			}
-		});
-
-		// return editor input from diagram with sad diagram type
-		return DiagramEditorInput.createEditorInput(diagram, SADDiagramTypeProvider.PROVIDER_ID);
-
-	}
-
+	
+	abstract protected void addNameListener(final Resource resource);
+	
+	abstract protected IEditorInput createDiagramInput(final Resource resource) throws IOException, CoreException;
+	
 	/**
 	 * Returns the property value that should be set for the Diagram container's DIAGRAM_CONTEXT property.
 	 * Indicates the mode the diagram is operating in.
@@ -592,72 +300,30 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 
 		return DUtil.DIAGRAM_CONTEXT_DESIGN;
 	}
-
-	protected DiagramEditor createDiagramEditor() {
-		GraphitiWaveformDiagramEditor d = new GraphitiWaveformDiagramEditor((TransactionalEditingDomain) getEditingDomain());
-		return d;
-
-	}
-
+	
+	abstract protected DiagramEditor createDiagramEditor();
+	
 	protected void setDiagramEditor(final DiagramEditor diagramEditor) {
 		this.diagramEditor = diagramEditor;
 	}
-
-	/**
-	 * 
-	 */
-	protected IFormPage createOverviewPage(final Resource sadResource) {
-		final GraphitiWaveformOverviewPage retVal = new GraphitiWaveformOverviewPage(this);
-		retVal.setInput(sadResource);
-		return retVal;
-	}
-
+	
+	abstract protected IFormPage createOverviewPage(final Resource resource);
+	
 	protected void setOverviewPage(final IFormPage overviewPage) {
 		this.overviewPage = overviewPage;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getEditingDomainId() {
-		return GraphitiWaveformMultiPageEditor.EDITING_DOMAIN_ID;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected AdapterFactory getSpecificAdapterFactory() {
-		final ComposedAdapterFactory factory = new ComposedAdapterFactory();
-		factory.addAdapterFactory(new SadItemProviderAdapterFactory());
-		factory.addAdapterFactory(new EcoreItemProviderAdapterFactory());
-		factory.addAdapterFactory(new SpdItemProviderAdapterFactory());
-		factory.addAdapterFactory(new ScdItemProviderAdapterFactory());
-		factory.addAdapterFactory(new PrfItemProviderAdapterFactory());
-		return factory;
-	}
-
+	
+	abstract public String getEditingDomainId();
+	
+	abstract protected AdapterFactory getSpecificAdapterFactory();
+	
 	public IActionBars getActionBars() {
 		return getActionBarContributor().getActionBars();
 	}
-
-	@Override
-	public List<Object> getOutlineItems() {
-		final List<Object> myList = new ArrayList<Object>();
-		if (this.overviewPage != null) {
-			myList.add(this.overviewPage);
-		}
-		if (getSoftwareAssembly().getPartitioning() != null) {
-			myList.add(getSoftwareAssembly().getPartitioning());
-		}
-		return myList;
-	}
-
-	@Override
-	public boolean isPersisted(final Resource resource) {
-		return resource.getURI().equals(getSoftwareAssembly().eResource().getURI()) && super.isPersisted(resource);
-	}
+	
+	abstract public List<Object> getOutlineItems();
+	
+	abstract public boolean isPersisted(final Resource resource);
 
 	/**
 	 * The Text editor always stays in sync with other editor changes therefore always save it.
@@ -665,10 +331,6 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 	 */
 	@Override
 	public void doSave(final IProgressMonitor monitor) {
-		final CleanUpComponentFilesAction cleanAction = new CleanUpComponentFilesAction();
-		cleanAction.setRoot(getSoftwareAssembly());
-		cleanAction.run();
-
 		try {
 			this.editorSaving = true;
 			if (textEditor.isDirty()) {
@@ -713,7 +375,7 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Override
 	@SuppressWarnings("restriction")
 	protected TransactionalEditingDomain createEditingDomain() {
@@ -754,7 +416,6 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 	 * @param resource the resource to associate with the editor
 	 * @return the index of the page in the editor
 	 * @throws PartInitException
-	 * @since 6.0
 	 */
 	public int addPage(int index, final IEditorPart editor, final IEditorInput input, final Resource resource) throws PartInitException {
 		if (index == -1) {
@@ -784,5 +445,5 @@ public class GraphitiWaveformMultiPageEditor extends SCAFormEditor implements IT
 		}
 		return index;
 	}
-
+	
 }

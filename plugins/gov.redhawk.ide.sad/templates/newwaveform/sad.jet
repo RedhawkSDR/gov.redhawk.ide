@@ -20,44 +20,35 @@
 %>
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE softwareassembly PUBLIC "-//JTRS//DTD SCA V2.2.2 SAD//EN" "softwareassembly.dtd">
-<softwareassembly name="<%=args.getWaveformName()%>" id="<%=args.getWaveformId()%>">
-    <componentfiles>
+<softwareassembly id="<%=args.getWaveformId()%>" name="<%=args.getWaveformName()%>">
 <%
 	if (assemblyController != null) {
 %>
-		<componentfile type="SPD" id="<%=comToId.get(assemblyController)%>">
-			<localfile name="<%=assemblyController.eResource().getURI().path()%>">
-			</localfile>
-		</componentfile>
+  <componentfiles>
+    <componentfile id="<%=comToId.get(assemblyController)%>" type="SPD">
+      <localfile name="<%=assemblyController.eResource().getURI().path()%>"/>
+    </componentfile>
+  </componentfiles>
+  <partitioning>
+    <componentplacement>
+      <componentfileref refid="<%=comToId.get(assemblyController)%>"/>
+      <componentinstantiation id="<%=assemblyId%>">
+        <usagename><%=assemblyController.getName()%>_1</usagename>
+        <findcomponent>
+          <namingservice name="<%=assemblyController.getName()%>_1"/>
+        </findcomponent>
+      </componentinstantiation>
+    </componentplacement>
+  </partitioning>
+  <assemblycontroller>
+    <componentinstantiationref refid="<%=assemblyId%>"/>
+  </assemblycontroller>
 <%
-	}
+} else {
 %>
-    </componentfiles>
-    <partitioning>
+  <partitioning/>
+  <assemblycontroller/>
 <%
-	if (assemblyController != null) {
+}
 %>
-	<componentplacement>
-		<componentfileref refid="<%=comToId.get(assemblyController)%>">
-		</componentfileref>
-		<componentinstantiation id="<%=assemblyId%>">
-			<usagename><%=assemblyController.getName()%>_1</usagename>
-			<findcomponent>
-				<namingservice name="<%=assemblyController.getName()%>_1"/>
-			</findcomponent>
-		</componentinstantiation>
-	</componentplacement>
-<%
-	}
-%>
-    </partitioning>
-    <assemblycontroller>
-<%
-	if (assemblyController != null) {
-%>
-		<componentinstantiationref refid="<%=assemblyId%>"/>
-<%
-	}
-%>
-    </assemblycontroller>
 </softwareassembly>

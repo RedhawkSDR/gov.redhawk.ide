@@ -1,37 +1,39 @@
 /**
  */
-package gov.redhawk.ide.graphiti.ext.impl;
+package gov.redhawk.ide.sad.graphiti.ext.impl;
 
-import gov.redhawk.ide.graphiti.ext.Event;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
+
+import gov.redhawk.ide.sad.graphiti.ext.ComponentShape;
+import gov.redhawk.ide.sad.graphiti.ext.RHSadGxFactory;
+import gov.redhawk.ide.sad.graphiti.ext.RHSadGxPackage;
+
 import java.util.List;
+
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import org.eclipse.emf.ecore.EAttribute;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EcorePackage;
+
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+
 import org.eclipse.graphiti.features.IFeatureProvider;
+
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
+
 import org.eclipse.graphiti.features.impl.Reason;
-import org.eclipse.graphiti.mm.MmPackage;
-import org.eclipse.graphiti.mm.algorithms.AlgorithmsPackage;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
 
 /**
  * <!-- begin-user-doc -->
@@ -39,27 +41,13 @@ import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
  * <!-- end-user-doc -->
  * @generated
  */
-public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
+public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass containerShapeImplEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass rhContainerShapeEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EEnum eventEEnum = null;
+	private EClass componentShapeEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -143,7 +131,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EDataType abstractContainerPatternEDataType = null;
+	private EDataType componentPatternEDataType = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -163,12 +151,12 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.emf.ecore.EPackage.Registry
-	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#eNS_URI
+	 * @see gov.redhawk.ide.sad.graphiti.ext.RHSadGxPackage#eNS_URI
 	 * @see #init()
 	 * @generated
 	 */
-	private RHGxPackageImpl() {
-		super(eNS_URI, RHGxFactory.eINSTANCE);
+	private RHSadGxPackageImpl() {
+		super(eNS_URI, RHSadGxFactory.eINSTANCE);
 	}
 
 	/**
@@ -181,7 +169,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
 	 * 
-	 * <p>This method is used to initialize {@link RHGxPackage#eINSTANCE} when that field is accessed.
+	 * <p>This method is used to initialize {@link RHSadGxPackage#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -190,34 +178,31 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * @see #initializePackageContents()
 	 * @generated
 	 */
-	public static RHGxPackage init() {
+	public static RHSadGxPackage init() {
 		if (isInited)
-			return (RHGxPackage) EPackage.Registry.INSTANCE.getEPackage(RHGxPackage.eNS_URI);
+			return (RHSadGxPackage) EPackage.Registry.INSTANCE.getEPackage(RHSadGxPackage.eNS_URI);
 
 		// Obtain or create and register package
-		RHGxPackageImpl theRHGxPackage = (RHGxPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof RHGxPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI)
-			: new RHGxPackageImpl());
+		RHSadGxPackageImpl theRHSadGxPackage = (RHSadGxPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof RHSadGxPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI)
+			: new RHSadGxPackageImpl());
 
 		isInited = true;
 
 		// Initialize simple dependencies
-		AlgorithmsPackage.eINSTANCE.eClass();
-		EcorePackage.eINSTANCE.eClass();
-		PictogramsPackage.eINSTANCE.eClass();
-		MmPackage.eINSTANCE.eClass();
+		RHGxPackage.eINSTANCE.eClass();
 
 		// Create package meta-data objects
-		theRHGxPackage.createPackageContents();
+		theRHSadGxPackage.createPackageContents();
 
 		// Initialize created meta-data
-		theRHGxPackage.initializePackageContents();
+		theRHSadGxPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
-		theRHGxPackage.freeze();
+		theRHSadGxPackage.freeze();
 
 		// Update the registry and return the package
-		EPackage.Registry.INSTANCE.put(RHGxPackage.eNS_URI, theRHGxPackage);
-		return theRHGxPackage;
+		EPackage.Registry.INSTANCE.put(RHSadGxPackage.eNS_URI, theRHSadGxPackage);
+		return theRHSadGxPackage;
 	}
 
 	/**
@@ -225,44 +210,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getContainerShapeImpl() {
-		return containerShapeImplEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getRHContainerShape() {
-		return rhContainerShapeEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getRHContainerShape_Started() {
-		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getRHContainerShape_Event() {
-		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EEnum getEvent() {
-		return eventEEnum;
+	public EClass getComponentShape() {
+		return componentShapeEClass;
 	}
 
 	/**
@@ -369,8 +318,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EDataType getAbstractContainerPattern() {
-		return abstractContainerPatternEDataType;
+	public EDataType getComponentPattern() {
+		return componentPatternEDataType;
 	}
 
 	/**
@@ -387,8 +336,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public RHGxFactory getRHGxFactory() {
-		return (RHGxFactory) getEFactoryInstance();
+	public RHSadGxFactory getRHSadGxFactory() {
+		return (RHSadGxFactory) getEFactoryInstance();
 	}
 
 	/**
@@ -411,14 +360,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		isCreated = true;
 
 		// Create classes and their features
-		containerShapeImplEClass = createEClass(CONTAINER_SHAPE_IMPL);
-
-		rhContainerShapeEClass = createEClass(RH_CONTAINER_SHAPE);
-		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__STARTED);
-		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__EVENT);
-
-		// Create enums
-		eventEEnum = createEEnum(EVENT);
+		componentShapeEClass = createEClass(COMPONENT_SHAPE);
 
 		// Create data types
 		componentSupportedInterfaceStubEDataType = createEDataType(COMPONENT_SUPPORTED_INTERFACE_STUB);
@@ -432,7 +374,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		listEDataType = createEDataType(LIST);
 		sadComponentInstantiationEDataType = createEDataType(SAD_COMPONENT_INSTANTIATION);
 		iAddContextEDataType = createEDataType(IADD_CONTEXT);
-		abstractContainerPatternEDataType = createEDataType(ABSTRACT_CONTAINER_PATTERN);
+		componentPatternEDataType = createEDataType(COMPONENT_PATTERN);
 		iUpdateContextEDataType = createEDataType(IUPDATE_CONTEXT);
 	}
 
@@ -461,8 +403,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
-		PictogramsPackage thePictogramsPackage = (PictogramsPackage) EPackage.Registry.INSTANCE.getEPackage(PictogramsPackage.eNS_URI);
-		EcorePackage theEcorePackage = (EcorePackage) EPackage.Registry.INSTANCE.getEPackage(EcorePackage.eNS_URI);
+		RHGxPackage theRHGxPackage = (RHGxPackage) EPackage.Registry.INSTANCE.getEPackage(RHGxPackage.eNS_URI);
 
 		// Create type parameters
 		addETypeParameter(listEDataType, "Port");
@@ -470,71 +411,24 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		rhContainerShapeEClass.getESuperTypes().add(thePictogramsPackage.getContainerShape());
+		componentShapeEClass.getESuperTypes().add(theRHGxPackage.getRHContainerShape());
 
 		// Initialize classes and features; add operations and parameters
-		initEClass(containerShapeImplEClass, ContainerShape.class, "ContainerShapeImpl", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+		initEClass(componentShapeEClass, ComponentShape.class, "ComponentShape", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(rhContainerShapeEClass, RHContainerShape.class, "RHContainerShape", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getRHContainerShape_Started(), theEcorePackage.getEBoolean(), "started", null, 0, 1, RHContainerShape.class, !IS_TRANSIENT,
-			!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getRHContainerShape_Event(), this.getEvent(), "event", null, 0, 1, RHContainerShape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
-			!IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		EOperation op = addEOperation(rhContainerShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		EOperation op = addEOperation(componentShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIAddContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getComponentPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
-		op = addEOperation(rhContainerShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIAddContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		EGenericType g1 = createEGenericType(this.getList());
-		EGenericType g2 = createEGenericType(this.getPort());
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "externalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEOperation(componentShapeEClass, null, "layout", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
-		op = addEOperation(rhContainerShapeEClass, null, "getProvidesPortStubs", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(theEcorePackage.getEEList());
-		g2 = createEGenericType(this.getProvidesPortStub());
-		g1.getETypeArguments().add(g2);
-		initEOperation(op, g1);
-
-		op = addEOperation(rhContainerShapeEClass, null, "getUsesPortStubs", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(theEcorePackage.getEEList());
-		g2 = createEGenericType(this.getUsesPortStub());
-		g1.getETypeArguments().add(g2);
-		initEOperation(op, g1);
-
-		addEOperation(rhContainerShapeEClass, null, "layout", 0, 1, !IS_UNIQUE, IS_ORDERED);
-
-		op = addEOperation(rhContainerShapeEClass, this.getReason(), "update", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		op = addEOperation(componentShapeEClass, this.getReason(), "update", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(this.getList());
-		g2 = createEGenericType(this.getPort());
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "externalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getComponentPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
-		op = addEOperation(rhContainerShapeEClass, this.getReason(), "update", 0, 1, !IS_UNIQUE, IS_ORDERED);
+		op = addEOperation(componentShapeEClass, this.getReason(), "updateNeeded", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
-
-		op = addEOperation(rhContainerShapeEClass, this.getReason(), "updateNeeded", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(this.getList());
-		g2 = createEGenericType(this.getPort());
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "externalPorts", 0, 1, !IS_UNIQUE, IS_ORDERED);
-
-		op = addEOperation(rhContainerShapeEClass, this.getReason(), "updateNeeded", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
-
-		// Initialize enums and add enum literals
-		initEEnum(eventEEnum, Event.class, "Event");
-		addEEnumLiteral(eventEEnum, Event.RELEASE);
-		addEEnumLiteral(eventEEnum, Event.TERMINATE);
+		addEParameter(op, this.getComponentPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(componentSupportedInterfaceStubEDataType, ComponentSupportedInterfaceStub.class, "ComponentSupportedInterfaceStub", IS_SERIALIZABLE,
@@ -550,8 +444,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		initEDataType(sadComponentInstantiationEDataType, SadComponentInstantiation.class, "SadComponentInstantiation", IS_SERIALIZABLE,
 			!IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iAddContextEDataType, IAddContext.class, "IAddContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(abstractContainerPatternEDataType, AbstractContainerPattern.class, "AbstractContainerPattern", IS_SERIALIZABLE,
-			!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(componentPatternEDataType, ComponentPattern.class, "ComponentPattern", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iUpdateContextEDataType, IUpdateContext.class, "IUpdateContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
@@ -573,4 +466,4 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		addAnnotation(this, source, new String[] { "GenModel", "http://www.eclipse.org/emf/2002/GenModel", "Ecore", "http://www.eclipse.org/emf/2002/Ecore" });
 	}
 
-} //RHGxPackageImpl
+} //RHSadGxPackageImpl

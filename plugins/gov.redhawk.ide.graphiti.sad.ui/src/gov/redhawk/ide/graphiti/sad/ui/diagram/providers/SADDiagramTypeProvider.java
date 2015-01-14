@@ -26,6 +26,10 @@ public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider implemen
 	public static final String PROVIDER_ID = "gov.redhawk.ide.sad.graphiti.ui.FactoryProvider";
 
 	private IToolBehaviorProvider[] toolBehaviorProviders;
+	
+	//Enable events to determine when diagram automatically updates 
+	//(current happens when showing diagram)
+	private boolean autoUpdateAtRuntime = false;
 
 	public SADDiagramTypeProvider() {
 		super();
@@ -60,11 +64,17 @@ public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider implemen
 
 	@Override
 	public boolean isAutoUpdateAtRuntime() {
-		return true;
+		return autoUpdateAtRuntime;
 	}
 
 	@Override
 	public boolean isAutoUpdateAtReset() {
 		return true;
 	}
+
+	public void setAutoUpdateAtRuntime(boolean autoUpdateAtRuntime) {
+		this.autoUpdateAtRuntime = autoUpdateAtRuntime;
+	}
+
+	
 }
