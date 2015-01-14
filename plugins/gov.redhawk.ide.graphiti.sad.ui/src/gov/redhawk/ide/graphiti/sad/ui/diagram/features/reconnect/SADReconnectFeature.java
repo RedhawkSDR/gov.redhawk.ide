@@ -11,6 +11,7 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.reconnect;
 
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -51,7 +52,7 @@ public class SADReconnectFeature extends DefaultReconnectionFeature {
 			}
 		} else {
 			// Make sure connection is made to a valid port
-			if (newAnchorObject instanceof ProvidesPortStub) {
+			if (newAnchorObject instanceof ProvidesPortStub || newAnchorObject instanceof ComponentSupportedInterfaceStub) {
 				return true;
 			}
 		}

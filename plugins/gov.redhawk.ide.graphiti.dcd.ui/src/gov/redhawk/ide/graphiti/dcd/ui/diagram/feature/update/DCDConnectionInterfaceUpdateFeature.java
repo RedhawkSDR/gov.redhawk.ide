@@ -49,14 +49,14 @@ public class DCDConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 	public IReason updateNeeded(IUpdateContext context) {
 		Connection connectionPE = null;
 		DcdConnectInterface sadConnectInterface = null;
-		
+
 		if (context.getPictogramElement() instanceof Connection) {
 			connectionPE = (Connection) context.getPictogramElement();
 		}
 		if (DUtil.getBusinessObject(context.getPictogramElement()) instanceof DcdConnectInterface) {
 			sadConnectInterface = (DcdConnectInterface) DUtil.getBusinessObject(context.getPictogramElement());
 		}
-		
+
 		Reason requiresUpdate = internalUpdate(connectionPE, sadConnectInterface, getFeatureProvider(), false);
 
 		return requiresUpdate;
@@ -87,7 +87,6 @@ public class DCDConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 		if (connectInterface == null) {
 			return new Reason(false, "No updates required");
 		}
-		
 
 		// imgConnectionDecorator
 		ConnectionDecorator imgConnectionDecorator = (ConnectionDecorator) DUtil.findFirstPropertyContainer(connectionPE,
@@ -96,12 +95,12 @@ public class DCDConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 		ConnectionDecorator textConnectionDecorator = (ConnectionDecorator) DUtil.findFirstPropertyContainer(connectionPE,
 			DCDConnectInterfacePattern.SHAPE_TEXT_CONNECTION_DECORATOR);
 
-		//problem if either source or target not present, unless dealing with a findby element
-		if ((connectInterface.getSource() == null || connectInterface.getTarget() == null) 
-				&& (connectInterface.getUsesPort().getFindBy() == null && (connectInterface.getProvidesPort() != null && connectInterface.getProvidesPort().getFindBy() == null))) {
+		// problem if either source or target not present, unless dealing with a findby element
+		if ((connectInterface.getSource() == null || connectInterface.getTarget() == null)
+			&& (connectInterface.getUsesPort().getFindBy() == null && (connectInterface.getProvidesPort() != null && connectInterface.getProvidesPort().getFindBy() == null))) {
 			if (performUpdate) {
 				updateStatus = true;
-				//remove the connection (handles pe and business object)
+				// remove the connection (handles pe and business object)
 				DeleteContext dc = new DeleteContext(connectionPE);
 				IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
 				if (deleteFeature != null) {
@@ -114,16 +113,16 @@ public class DCDConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 				}
 				return new Reason(true, tmpMsg + " endpoint for connection is null");
 			}
-			
 
-		// check if not compatible draw error/warning decorator
+			// check if not compatible draw error/warning decorator
 		} else {
 			// connection validation
 			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
 
-			// don't check compatibility if connection includes a Find By element or Lollipop
+			// don't check compatibility if connection includes a Find By element
 			boolean compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
-			if (connectInterface.getComponentSupportedInterface() != null || (connectInterface.getUsesPort().getFindBy() != null || connectInterface.getProvidesPort().getFindBy() != null)) {
+			if (connectInterface.getUsesPort().getFindBy() != null
+				|| (connectInterface.getProvidesPort() != null && connectInterface.getProvidesPort().getFindBy() != null)) {
 				compatibleConnection = true;
 			}
 
@@ -144,7 +143,8 @@ public class DCDConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 			} else if ((compatibleConnection || uniqueConnection) && (imgConnectionDecorator != null || textConnectionDecorator != null)) {
 				if (performUpdate) {
 					updateStatus = true;
-					// Compatible connection with an inappropriate error decorator! We need to remove the error decorator
+					// Compatible connection with an inappropriate error decorator! We need to remove the error
+					// decorator
 					IRemoveContext rc = new RemoveContext(imgConnectionDecorator);
 					IRemoveFeature removeFeature = featureProvider.getRemoveFeature(rc);
 					if (removeFeature != null) {
@@ -159,7 +159,7 @@ public class DCDConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 					return new Reason(true, "Error Decorator needs to be removed from Connection");
 				}
 			}
-			
+
 //			if (connectInterface.getProvidesPort().getFindBy() != null || connectInterface.getUsesPort().getFindBy() != null) {
 //				SADConnectInterfacePattern.decorateConnection(connectionPE, connectInterface, getDiagram());
 //			}
@@ -171,5 +171,4 @@ public class DCDConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 
 		return new Reason(false, "No updates required");
 	}
-
 }

@@ -49,14 +49,14 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 	public IReason updateNeeded(IUpdateContext context) {
 		Connection connectionPE = null;
 		SadConnectInterface sadConnectInterface = null;
-		
+
 		if (context.getPictogramElement() instanceof Connection) {
 			connectionPE = (Connection) context.getPictogramElement();
 		}
 		if (DUtil.getBusinessObject(context.getPictogramElement()) instanceof SadConnectInterface) {
 			sadConnectInterface = (SadConnectInterface) DUtil.getBusinessObject(context.getPictogramElement());
 		}
-		
+
 		Reason requiresUpdate = internalUpdate(connectionPE, sadConnectInterface, getFeatureProvider(), false);
 
 		return requiresUpdate;
@@ -87,7 +87,6 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 		if (connectInterface == null) {
 			return new Reason(false, "No updates required");
 		}
-		
 
 		// imgConnectionDecorator
 		ConnectionDecorator imgConnectionDecorator = (ConnectionDecorator) DUtil.findFirstPropertyContainer(connectionPE,
@@ -96,13 +95,13 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 		ConnectionDecorator textConnectionDecorator = (ConnectionDecorator) DUtil.findFirstPropertyContainer(connectionPE,
 			SADConnectInterfacePattern.SHAPE_TEXT_CONNECTION_DECORATOR);
 
-		//problem if either source or target not present, unless dealing with a findby element or usesdevice
-		if ((connectInterface.getSource() == null || connectInterface.getTarget() == null) 
-				&& (connectInterface.getUsesPort().getFindBy() == null && (connectInterface.getProvidesPort() != null && connectInterface.getProvidesPort().getFindBy() == null))
-				&& (connectInterface.getUsesPort().getDeviceUsedByApplication() == null && (connectInterface.getProvidesPort() != null & connectInterface.getProvidesPort().getDeviceUsedByApplication() == null))) {
+		// problem if either source or target not present, unless dealing with a findby element or usesdevice
+		if ((connectInterface.getSource() == null || connectInterface.getTarget() == null)
+			&& (connectInterface.getUsesPort().getFindBy() == null && (connectInterface.getProvidesPort() != null && connectInterface.getProvidesPort().getFindBy() == null))
+			&& (connectInterface.getUsesPort().getDeviceUsedByApplication() == null && (connectInterface.getProvidesPort() != null & connectInterface.getProvidesPort().getDeviceUsedByApplication() == null))) {
 			if (performUpdate) {
 				updateStatus = true;
-				//remove the connection (handles pe and business object)
+				// remove the connection (handles pe and business object)
 				DeleteContext dc = new DeleteContext(connectionPE);
 				IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
 				if (deleteFeature != null) {
@@ -115,17 +114,19 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 				}
 				return new Reason(true, tmpMsg + " endpoint for connection is null");
 			}
-			
 
-		// check if not compatible draw error/warning decorator
+			// check if not compatible draw error/warning decorator
 		} else {
 			// connection validation
 			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
 
-			// don't check compatibility if connection includes a FindBy, UsesDevice elements or Lollipop
+			// don't check compatibility if connection includes FindBy or UsesDevice elements
 			boolean compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
-			if (connectInterface.getComponentSupportedInterface() != null || (connectInterface.getUsesPort().getFindBy() != null || connectInterface.getProvidesPort().getFindBy() != null)
-					|| (connectInterface.getUsesPort().getDeviceUsedByApplication() != null || connectInterface.getProvidesPort().getDeviceUsedByApplication() != null)) {
+			if (connectInterface.getUsesPort().getFindBy() != null
+				|| (connectInterface.getProvidesPort() != null && connectInterface.getProvidesPort().getFindBy() != null)) {
+				compatibleConnection = true;
+			} else if (connectInterface.getUsesPort().getDeviceUsedByApplication() != null
+				|| (connectInterface.getProvidesPort() != null && connectInterface.getProvidesPort().getDeviceUsedByApplication() != null)) {
 				compatibleConnection = true;
 			}
 
@@ -146,7 +147,8 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 			} else if ((compatibleConnection || uniqueConnection) && (imgConnectionDecorator != null || textConnectionDecorator != null)) {
 				if (performUpdate) {
 					updateStatus = true;
-					// Compatible connection with an inappropriate error decorator! We need to remove the error decorator
+					// Compatible connection with an inappropriate error decorator! We need to remove the error
+					// decorator
 					IRemoveContext rc = new RemoveContext(imgConnectionDecorator);
 					IRemoveFeature removeFeature = featureProvider.getRemoveFeature(rc);
 					if (removeFeature != null) {
@@ -161,7 +163,7 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 					return new Reason(true, "Error Decorator needs to be removed from Connection");
 				}
 			}
-			
+
 //			if (connectInterface.getProvidesPort().getFindBy() != null || connectInterface.getUsesPort().getFindBy() != null) {
 //				SADConnectInterfacePattern.decorateConnection(connectionPE, connectInterface, getDiagram());
 //			}

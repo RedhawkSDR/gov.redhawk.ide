@@ -12,6 +12,7 @@ package gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.reconnect;
 
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
 import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -51,7 +52,7 @@ public class DCDReconnectFeature extends DefaultReconnectionFeature {
 			}
 		} else {
 			// Make sure connection is made to a valid port
-			if (newAnchorObject instanceof ProvidesPortStub) {
+			if (newAnchorObject instanceof ProvidesPortStub || newAnchorObject instanceof ComponentSupportedInterfaceStub) {
 				return true;
 			}
 		}

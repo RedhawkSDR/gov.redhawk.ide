@@ -115,7 +115,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		line.setForeground(gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(), StyleUtil.BLACK));
 
 		// add any decorators
-		decorateConnection(connectionPE, connectInterface, getDiagram());
+//		decorateConnection(connectionPE, connectInterface, getDiagram());
 
 		// link ports to connection
 		getFeatureProvider().link(connectionPE, new Object[] { connectInterface, source, target });
@@ -141,18 +141,13 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 			}
 		}
 		
-		boolean isLollipopConnection = false;
-		if (connectInterface.getProvidesPort() == null && connectInterface.getComponentSupportedInterface() != null) {
-			isLollipopConnection = true;
-		}
-		
-		if (connectInterface.getSource() != null && connectInterface.getTarget() != null || isFindByConnection || isLollipopConnection) {
+		if (connectInterface.getSource() != null && connectInterface.getTarget() != null || isFindByConnection) {
 			// Connection validation
 			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
 			
 			// don't check for compatibility if this is a FindBy connection
 			boolean compatibleConnection = true;
-			if (!isFindByConnection && !isLollipopConnection) {
+			if (!isFindByConnection) {
 				compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
 			}
 			

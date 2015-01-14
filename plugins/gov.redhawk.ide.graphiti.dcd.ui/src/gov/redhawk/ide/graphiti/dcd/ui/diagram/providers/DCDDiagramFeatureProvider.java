@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -304,9 +305,13 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 	@Override
 	public IReconnectionFeature getReconnectionFeature(IReconnectionContext context) {
-		// Call the SADReconnectFeature if the original anchor is a uses or provides port
+		if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+			// We don't currently support reconnect actions for runtime
+			return null;
+		}
+
 		Object businessObject = getBusinessObjectForPictogramElement(context.getOldAnchor());
-		if (businessObject instanceof UsesPortStub || businessObject instanceof ProvidesPortStub) {
+		if (businessObject instanceof UsesPortStub || businessObject instanceof ProvidesPortStub || businessObject instanceof ComponentSupportedInterfaceStub) {
 			return new DCDReconnectFeature(this);
 		}
 		return super.getReconnectionFeature(context);
