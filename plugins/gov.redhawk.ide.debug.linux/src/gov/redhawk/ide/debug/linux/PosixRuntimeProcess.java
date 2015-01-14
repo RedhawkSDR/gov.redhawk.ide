@@ -30,10 +30,10 @@ public class PosixRuntimeProcess extends RuntimeProcess {
 	 * @param attributes
 	 * @since 2.0
 	 */
-	public PosixRuntimeProcess(ILaunch launch, Process process, String name, @SuppressWarnings("rawtypes") Map attributes) {
+	public PosixRuntimeProcess(ILaunch launch, Process process, String name, Map<String, String> attributes) {
 		super(launch, process, name, attributes);
 	}
-	
+
 	@Override
 	public synchronized void terminate() throws DebugException {
 		if (isTerminated()) {
@@ -52,12 +52,12 @@ public class PosixRuntimeProcess extends RuntimeProcess {
 			tree.killAll(String.valueOf(pid));
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Catch system errors
 			error = e;
-		} 
+		}
 		super.terminate();
 		if (error != null) {
 			throw new DebugException(new Status(Status.ERROR, "gov.redhawk.ide.debug.linux", "Failed to terminate all sub processes", error));
 		}
-		
+
 	}
 
 }
