@@ -18,6 +18,7 @@ import gov.redhawk.ide.debug.SpdLauncherUtil;
 import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.adapters.GraphitiAdapterUtil;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.NonUndoableCustomFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -31,9 +32,8 @@ import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
-import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 
-public class TerminateComponentFeature extends AbstractCustomFeature {
+public class TerminateComponentFeature extends NonUndoableCustomFeature {
 
 	public TerminateComponentFeature(IFeatureProvider fp) {
 		super(fp);
