@@ -327,6 +327,18 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
+	 * Release node via ScaExplorer.
+	 */
+	public static void terminateFromScaExplorer(SWTWorkbenchBot bot, String[] nodeParentPath, String node) {
+		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
+		scaExplorerView.setFocus();
+		SWTBotTreeItem treeItemEntry = getTreeItemFromScaExplorer(bot, nodeParentPath, node);
+		treeItemEntry.select();
+		SWTBotMenu terminate = treeItemEntry.contextMenu("Terminate");
+		terminate.click();
+	}
+
+	/**
 	 * Start container/component in Diagram via ScaExplorer
 	 */
 	public static void startWaveformFromScaExplorer(SWTWorkbenchBot bot, String[] nodeParentPath, String node) {
@@ -557,6 +569,30 @@ public class ScaExplorerTestUtils {
 					return true;
 				}
 				return false;
+			}
+		});
+	}
+
+	/**
+	 * Waits until Sandbox Device manager has no device items
+	 * @param componentName
+	 */
+	public static void waitUntilSandboxDeviceManagerEmpty(SWTWorkbenchBot bot, String[] parentPath, String deviceManager) {
+		final SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(bot, parentPath, deviceManager);
+
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public boolean test() throws Exception {
+				// Will not get to zero items because the File System item will always be present
+				if (treeItem.getItems().length <= 1) {
+					return true;
+				}
+				return false;
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "All devices were not removed from Sandbox Device Manager";
 			}
 		});
 	}
