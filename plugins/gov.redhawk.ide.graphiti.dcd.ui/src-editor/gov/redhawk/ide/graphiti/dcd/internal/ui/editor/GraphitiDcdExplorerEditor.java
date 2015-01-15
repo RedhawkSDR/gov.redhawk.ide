@@ -12,7 +12,7 @@
 package gov.redhawk.ide.graphiti.dcd.internal.ui.editor;
 
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 
 import org.eclipse.emf.ecore.resource.Resource;
@@ -40,7 +40,7 @@ public class GraphitiDcdExplorerEditor extends GraphitiDcdSandboxEditor {
 		super.addPages();
 
 		final Diagram diagram = this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram();
-		ScaModelCommand.execute(diagram, new ScaModelCommand() {
+		NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
 			@Override
 			public void execute() {
 				diagram.setGridUnit(-1); // hide grid on diagram by setting grid units to -1

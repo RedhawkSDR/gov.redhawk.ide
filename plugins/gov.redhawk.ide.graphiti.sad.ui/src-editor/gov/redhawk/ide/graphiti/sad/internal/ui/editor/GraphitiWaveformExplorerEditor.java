@@ -11,7 +11,7 @@
 package gov.redhawk.ide.graphiti.sad.internal.ui.editor;
 
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -32,7 +32,7 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformSandboxEdito
 
 		final Diagram diagram = this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram();
 		setPartName("Waveform Explorer");
-		ScaModelCommand.execute(diagram, new ScaModelCommand() {
+		NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
 			@Override
 			public void execute() {
 				diagram.setGridUnit(-1); // hide grid on diagram by setting grid units to -1
