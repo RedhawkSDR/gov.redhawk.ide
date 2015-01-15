@@ -20,7 +20,7 @@ import org.eclipse.graphiti.util.IGradientType;
 import org.eclipse.graphiti.util.IPredefinedRenderingStyle;
 import org.eclipse.graphiti.util.PredefinedColoredAreas;
 
-public class DeviceColoredAreas extends PredefinedColoredAreas implements DeviceRenderingStyle {
+public class RHContainerColoredAreas extends PredefinedColoredAreas implements RHContainerRenderingStyle {
 
 	private static GradientColoredAreas getGreenWhiteDefaultAreas() {
 		final GradientColoredAreas gradientColoredAreas = StylesFactory.eINSTANCE.createGradientColoredAreas();
@@ -58,6 +58,45 @@ public class DeviceColoredAreas extends PredefinedColoredAreas implements Device
 		agca.getAdaptedGradientColoredAreas().add(IPredefinedRenderingStyle.STYLE_ADAPTATION_DEFAULT, getGreenWhiteDefaultAreas());
 		agca.getAdaptedGradientColoredAreas().add(IPredefinedRenderingStyle.STYLE_ADAPTATION_PRIMARY_SELECTED, getGreenWhitePrimarySelectedAreas());
 		agca.getAdaptedGradientColoredAreas().add(IPredefinedRenderingStyle.STYLE_ADAPTATION_SECONDARY_SELECTED, getGreenWhiteSecondarySelectedAreas());
+		return agca;
+	}
+	
+	private static GradientColoredAreas getYellowWhiteDefaultAreas() {
+		final GradientColoredAreas gradientColoredAreas = StylesFactory.eINSTANCE.createGradientColoredAreas();
+		final EList<GradientColoredArea> gcas = gradientColoredAreas.getGradientColor();
+
+		addGradientColoredArea(gcas, "FFFAB2", 0, LocationType.LOCATION_TYPE_ABSOLUTE_START, "FFFAB2", 1, LocationType.LOCATION_TYPE_ABSOLUTE_START);
+		addGradientColoredArea(gcas, "FFF233", 1, LocationType.LOCATION_TYPE_ABSOLUTE_START, "F5F0E8", 1, LocationType.LOCATION_TYPE_ABSOLUTE_END);
+		addGradientColoredArea(gcas, "FFF566", 2, LocationType.LOCATION_TYPE_ABSOLUTE_END, "FFF566", 0, LocationType.LOCATION_TYPE_ABSOLUTE_END);
+		gradientColoredAreas.setStyleAdaption(IPredefinedRenderingStyle.STYLE_ADAPTATION_DEFAULT);
+		return gradientColoredAreas;
+	}
+
+	private static GradientColoredAreas getYellowWhitePrimarySelectedAreas() {
+		final GradientColoredAreas gradientColoredAreas = StylesFactory.eINSTANCE.createGradientColoredAreas();
+		gradientColoredAreas.setStyleAdaption(IPredefinedRenderingStyle.STYLE_ADAPTATION_PRIMARY_SELECTED);
+		final EList<GradientColoredArea> gcas = gradientColoredAreas.getGradientColor();
+
+		addGradientColoredArea(gcas, "FFEF00", 0, LocationType.LOCATION_TYPE_ABSOLUTE_START, "FFEF00", 0, LocationType.LOCATION_TYPE_ABSOLUTE_END);
+		return gradientColoredAreas;
+	}
+
+	private static GradientColoredAreas getYellowWhiteSecondarySelectedAreas() {
+		final GradientColoredAreas gradientColoredAreas = StylesFactory.eINSTANCE.createGradientColoredAreas();
+		gradientColoredAreas.setStyleAdaption(IPredefinedRenderingStyle.STYLE_ADAPTATION_SECONDARY_SELECTED);
+		final EList<GradientColoredArea> gcas = gradientColoredAreas.getGradientColor();
+
+		addGradientColoredArea(gcas, "FFF233", 0, LocationType.LOCATION_TYPE_ABSOLUTE_START, "FFF233", 0, LocationType.LOCATION_TYPE_ABSOLUTE_END);
+		return gradientColoredAreas;
+	}
+
+	public static AdaptedGradientColoredAreas getYellowWhiteAdaptions() {
+		final AdaptedGradientColoredAreas agca = StylesFactory.eINSTANCE.createAdaptedGradientColoredAreas();
+		agca.setDefinedStyleId(YELLOW_WHITE_ID);
+		agca.setGradientType(IGradientType.VERTICAL);
+		agca.getAdaptedGradientColoredAreas().add(IPredefinedRenderingStyle.STYLE_ADAPTATION_DEFAULT, getYellowWhiteDefaultAreas());
+		agca.getAdaptedGradientColoredAreas().add(IPredefinedRenderingStyle.STYLE_ADAPTATION_PRIMARY_SELECTED, getYellowWhitePrimarySelectedAreas());
+		agca.getAdaptedGradientColoredAreas().add(IPredefinedRenderingStyle.STYLE_ADAPTATION_SECONDARY_SELECTED, getYellowWhiteSecondarySelectedAreas());
 		return agca;
 	}
 }

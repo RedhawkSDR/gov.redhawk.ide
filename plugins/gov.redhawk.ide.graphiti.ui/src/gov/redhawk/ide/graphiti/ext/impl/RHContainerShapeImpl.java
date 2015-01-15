@@ -24,6 +24,7 @@ import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -65,6 +66,7 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  * The following features are implemented:
  * <ul>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isStarted <em>Started</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getIStatusErrorState <em>IStatus Error State</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getEvent <em>Event</em>}</li>
  * </ul>
  * </p>
@@ -92,6 +94,26 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @ordered
 	 */
 	protected boolean started = STARTED_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getIStatusErrorState() <em>IStatus Error State</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getIStatusErrorState()
+	 * @generated NOT
+	 * @ordered
+	 */
+	protected static final int ISTATUS_ERROR_STATE_EDEFAULT = IStatus.OK;
+
+	/**
+	 * The cached value of the '{@link #getIStatusErrorState() <em>IStatus Error State</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getIStatusErrorState()
+	 * @generated
+	 * @ordered
+	 */
+	protected int iStatusErrorState = ISTATUS_ERROR_STATE_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getEvent() <em>Event</em>}' attribute.
@@ -185,6 +207,40 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInnerStarted(diagram));
 			} else {
 				// not started
+				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInner(diagram));
+			}
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public int getIStatusErrorState() {
+		return iStatusErrorState;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public void setIStatusErrorState(int newIStatusErrorState) {
+		int oldIStatusErrorState = iStatusErrorState;
+		iStatusErrorState = newIStatusErrorState;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE, oldIStatusErrorState, iStatusErrorState));
+		
+		// update color according to value
+		final Diagram diagram = DUtil.findDiagram(this);
+		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
+		if (innerRoundedRectangle != null) {
+			if (iStatusErrorState == IStatus.ERROR) {
+				// errored
+				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInnerError(diagram));
+			} else {
+				// not errored
 				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInner(diagram));
 			}
 		}
@@ -363,6 +419,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		switch (featureID) {
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			return isStarted();
+		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
+			return getIStatusErrorState();
 		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
 			return getEvent();
 		}
@@ -379,6 +437,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		switch (featureID) {
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			setStarted((Boolean) newValue);
+			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
+			setIStatusErrorState((Integer) newValue);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
 			setEvent((Event) newValue);
@@ -398,6 +459,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			setStarted(STARTED_EDEFAULT);
 			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
+			setIStatusErrorState(ISTATUS_ERROR_STATE_EDEFAULT);
+			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
 			setEvent(EVENT_EDEFAULT);
 			return;
@@ -415,6 +479,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		switch (featureID) {
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			return started != STARTED_EDEFAULT;
+		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
+			return iStatusErrorState != ISTATUS_ERROR_STATE_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
 			return event != EVENT_EDEFAULT;
 		}
@@ -434,6 +500,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (started: ");
 		result.append(started);
+		result.append(", iStatusErrorState: ");
+		result.append(iStatusErrorState);
 		result.append(", event: ");
 		result.append(event);
 		result.append(')');

@@ -96,8 +96,7 @@ public class GraphitiModelMap {
 
 	private final LocalScaWaveform waveform;
 
-	public GraphitiModelMap(@NonNull final GraphitiWaveformSandboxEditor editor, @NonNull final SoftwareAssembly sad,
-		@NonNull final LocalScaWaveform waveform) {
+	public GraphitiModelMap(@NonNull final GraphitiWaveformSandboxEditor editor, @NonNull final SoftwareAssembly sad, @NonNull final LocalScaWaveform waveform) {
 		Assert.isNotNull(waveform, "Sandbox Waveform must not be null");
 		Assert.isNotNull(editor, "Sandbox Editor must not be null");
 		Assert.isNotNull(sad, "Software Assembly must not be null");
@@ -516,7 +515,7 @@ public class GraphitiModelMap {
 		final Diagram diagram = provider.getDiagram();
 
 		// get pictogram for component
-		final PictogramElement[] peToRemove = {DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation, ComponentShapeImpl.class)};
+		final PictogramElement[] peToRemove = { DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation, ComponentShapeImpl.class) };
 
 		// Delete Component in transaction
 		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
@@ -865,6 +864,48 @@ public class GraphitiModelMap {
 			}
 		};
 		job.schedule();
+	}
+
+	/**
+	 * Updates the color of the component shape to reflect error state
+	 * @param scaComponent
+	 * @param status
+	 */
+	public void reflectErrorState(ScaComponent scaComponent, final IStatus status) {
+		final NodeMapEntry nodeMapEntry = nodes.get(NodeMapEntry.getKey((LocalScaComponent) scaComponent));
+		if (nodeMapEntry == null) {
+			return;
+		}
+		final SadComponentInstantiation sadComponentInstantiation = nodeMapEntry.getProfile();
+
+		// get pictogram for component
+		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+		final Diagram diagram = provider.getDiagram();
+		final ComponentShape componentShape = (ComponentShape) DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation,
+			ComponentShapeImpl.class);
+
+		// setup to perform diagram operations
+		final IFeatureProvider featureProvider = provider.getFeatureProvider();
+		final TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+
+		if (componentShape != null) {
+			Job job = new Job("Syncronizing diagram start/stop status: " + scaComponent.getInstantiationIdentifier()) {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					// Perform business object manipulation in a Command
+					TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+					stack.execute(new RecordingCommand(editingDomain) {
+						@Override
+						protected void doExecute() {
+							// paint component
+							componentShape.setIStatusErrorState(status.getSeverity());
+						}
+					});
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule();
+		}
 	}
 
 	/**

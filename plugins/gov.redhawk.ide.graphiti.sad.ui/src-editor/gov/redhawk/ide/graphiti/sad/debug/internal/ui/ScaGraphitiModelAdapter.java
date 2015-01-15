@@ -23,6 +23,7 @@ import gov.redhawk.model.sca.ScaWaveform;
 
 import java.util.Collection;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.util.EContentAdapter;
@@ -79,17 +80,30 @@ public class ScaGraphitiModelAdapter extends EContentAdapter {
 				break;
 			}
 		} else if (notification.getNotifier() instanceof LocalScaComponent) {
-			switch (notification.getFeatureID(LocalSca.class)) {
+			switch (notification.getFeatureID(LocalScaComponent.class)) {
 			case ScaPackage.SCA_COMPONENT__STARTED:
 				LocalScaComponent localScaComponent = (LocalScaComponent) notification.getNotifier();
 				final Boolean started = (Boolean) notification.getNewValue();
-				this.modelMap.startStopComponent(localScaComponent, started);
+				if (started != null) {
+					this.modelMap.startStopComponent(localScaComponent, started);
+				}
+				break;
+			case ScaPackage.SCA_COMPONENT__STATUS:
+				IStatus status = (IStatus) notification.getNewValue();
+				switch (status.getSeverity()) {
+				case IStatus.ERROR:
+					ScaComponent scaComponent = (ScaComponent) notification.getNotifier();
+					this.modelMap.reflectErrorState(scaComponent, status);
+					break;
+				default:
+					break;
+				}
 				break;
 			default:
 				break;
 			}
 
-			//enable when device diagram uses model map
+			// enable when device diagram uses model map
 //			switch (notification.getFeatureID(ScaDevice.class)) {
 //			case ScaPackage.SCA_DEVICE__STARTED:
 //				if (notification.getNotifier() instanceof ScaDevice) {

@@ -12,6 +12,7 @@ package gov.redhawk.ide.graphiti.ui.diagram.util;
 
 import org.eclipse.graphiti.util.IPredefinedRenderingStyle;
 
-public interface DeviceRenderingStyle extends IPredefinedRenderingStyle {
+public interface RHContainerRenderingStyle extends IPredefinedRenderingStyle {
 	public static final String GREEN_WHITE_ID = "green_white";
+	public static final String YELLOW_WHITE_ID = "yellow_white";
 }

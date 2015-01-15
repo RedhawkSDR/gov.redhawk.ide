@@ -179,13 +179,22 @@ public interface RHGxPackage extends EPackage {
 	int RH_CONTAINER_SHAPE__STARTED = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>IStatus Error State</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 1;
+
+	/**
 	 * The feature id for the '<em><b>Event</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__EVENT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 1;
+	int RH_CONTAINER_SHAPE__EVENT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of structural features of the '<em>RH Container Shape</em>' class.
@@ -194,7 +203,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 2;
+	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 3;
 
 	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.graphiti.ext.Event <em>Event</em>}' enum.
@@ -367,6 +376,17 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getRHContainerShape_Started();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusErrorState <em>IStatus Error State</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>IStatus Error State</em>'.
+	 * @see gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusErrorState()
+	 * @see #getRHContainerShape()
+	 * @generated
+	 */
+	EAttribute getRHContainerShape_IStatusErrorState();
 
 	/**
 	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getEvent <em>Event</em>}'.
@@ -581,6 +601,14 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute RH_CONTAINER_SHAPE__STARTED = eINSTANCE.getRHContainerShape_Started();
+
+		/**
+		 * The meta object literal for the '<em><b>IStatus Error State</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE = eINSTANCE.getRHContainerShape_IStatusErrorState();
 
 		/**
 		 * The meta object literal for the '<em><b>Event</b></em>' attribute feature.

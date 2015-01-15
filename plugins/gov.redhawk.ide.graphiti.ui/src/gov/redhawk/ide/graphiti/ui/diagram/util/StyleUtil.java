@@ -152,7 +152,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		if (style == null) {
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
-			gaService.setRenderingStyle(style, DeviceColoredAreas.getGreenWhiteAdaptions());
+			gaService.setRenderingStyle(style, RHContainerColoredAreas.getGreenWhiteAdaptions());
 			style.setLineWidth(2);
 		}
 		return style;
@@ -165,7 +165,25 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return style;
 	}
 	
-
+	// updates component inner rectangle style when it is in an error state
+	public static Style createStyleForComponentInnerError(Diagram diagram) {
+		final String styleId = "ComponentInnerError";
+		Style style = StyleUtil.findStyle(diagram, styleId);
+		if (style == null) {
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			gaService.setRenderingStyle(style, RHContainerColoredAreas.getYellowWhiteAdaptions());
+			style.setLineWidth(2);
+		}
+		return style;
+	}
+	
+	// returns component inner rectangle style for when it is in an error state
+	public static Style getStyleForComponentInnerError(Diagram diagram) {
+		final String styleId = "ComponentInnerError";
+		Style style = findStyle(diagram, styleId);
+		return style;
+	}
 	
 	// returns findby outer rectangle style
 	public static Style getStyleForFindByOuter(Diagram diagram) {
