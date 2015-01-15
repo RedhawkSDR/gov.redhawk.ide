@@ -218,8 +218,11 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 		
 		//state of resources in command stack diagram file,
 		//sad file is taken care of above with text editor
+		if (diagramEditor != null && diagramEditor.getEditingDomain() != null && diagramEditor.getEditingDomain().getCommandStack() != null) {
 		BasicCommandStack commandStack = (BasicCommandStack) diagramEditor.getEditingDomain().getCommandStack();
-		return commandStack.isSaveNeeded();
+			return commandStack.isSaveNeeded();
+		}
+		return false;
 	}
 	
 	/**
