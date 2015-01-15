@@ -253,7 +253,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFe
 	private boolean componentsResolved(List<ComponentShape> componentShapes) {
 		for (ComponentShape componentShape : componentShapes) {
 			SadComponentInstantiation sadComponentInstantiation = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape, SadComponentInstantiation.class);
-			if (sadComponentInstantiation == null || sadComponentInstantiation.getPlacement() != null || sadComponentInstantiation.getPlacement().getComponentFileRef() != null) {
+			if (sadComponentInstantiation == null || sadComponentInstantiation.getPlacement() == null || sadComponentInstantiation.getPlacement().getComponentFileRef() == null) {
 				return false;
 			} else if (componentShape.getProvidesPortStubs().size() > 0 && !componentShape.getProvidesPortStubs().get(0).eContainer().equals(sadComponentInstantiation)) {
 				return false;

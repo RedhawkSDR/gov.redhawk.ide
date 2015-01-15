@@ -175,7 +175,7 @@ public class GraphitiDcdDiagramUpdateFeature extends DefaultUpdateDiagramFeature
 	private boolean devicesResolved(List<DeviceShape> deviceShapes) {
 		for (DeviceShape deviceShape : deviceShapes) {
 			DcdComponentInstantiation dcdComponentInstantiation = (DcdComponentInstantiation) DUtil.getBusinessObject(deviceShape, DcdComponentInstantiation.class);
-			if (dcdComponentInstantiation == null || dcdComponentInstantiation.getPlacement() != null || dcdComponentInstantiation.getPlacement().getComponentFileRef() != null) {
+			if (dcdComponentInstantiation == null || dcdComponentInstantiation.getPlacement() == null || dcdComponentInstantiation.getPlacement().getComponentFileRef() == null) {
 				return false;
 			} else if (deviceShape.getProvidesPortStubs().size() > 0 && !deviceShape.getProvidesPortStubs().get(0).eContainer().equals(dcdComponentInstantiation)) {
 				return false;
