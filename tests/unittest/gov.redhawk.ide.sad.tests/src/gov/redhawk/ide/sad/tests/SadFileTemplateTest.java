@@ -17,7 +17,9 @@ import gov.redhawk.ide.sad.generator.newwaveform.SadFileTemplate;
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
@@ -27,22 +29,21 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.junit.Test;
 
 /**
- * A class to test {@link SadFileTemplate}.
+ * A class to test SAD XML (Waveform) file generation of SadFileTemplate.
  */
 public class SadFileTemplateTest {
 
 	/**
-	 * Tests generating a PRF file
-	 * 
-	 * @throws IOException
+	 * Tests generating a SAD file
 	 */
+	@SuppressWarnings("restriction")
 	@Test
-	public void test() throws IOException {
+	public void testGenerate() throws IOException {
 		// Generate XML using the template
 		final SadFileTemplate sadTemplate = SadFileTemplate.create(null);
 		final GeneratorArgs args = new GeneratorArgs();
-		args.setWaveformId("MyID");
-		args.setWaveformName("MyName");
+		args.setWaveformId("TestWaveformID");
+		args.setWaveformName("TestWaveformName");
 		
 		final String prfContent = sadTemplate.generate(args);
 
@@ -52,10 +53,11 @@ public class SadFileTemplateTest {
 		// Try to create a model from the file
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final SoftwareAssembly assembly = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(URI.createFileURI(sadFile.toString()), true));
-		Assert.assertEquals(args.getWaveformId(), assembly.getId());
-		Assert.assertEquals(args.getWaveformName(), assembly.getName());
-		Assert.assertNotNull(assembly.getComponentFiles());
-		Assert.assertNotNull(assembly.getPartitioning());
-		Assert.assertNotNull(assembly.getAssemblyController());
+		assertEquals("ID", args.getWaveformId(), assembly.getId());
+		assertEquals("Name", args.getWaveformName(), assembly.getName());
+		// <componentfiles> tag is no longer included on initial Waveform creation when an Assembly Controller is not selected for 1.11
+//		assertNotNull("componentfiles", assembly.getComponentFiles()); 
+		assertNotNull("partitioning", assembly.getPartitioning());
+		assertNotNull("assemblycontroller", assembly.getAssemblyController());
 	}
 }
