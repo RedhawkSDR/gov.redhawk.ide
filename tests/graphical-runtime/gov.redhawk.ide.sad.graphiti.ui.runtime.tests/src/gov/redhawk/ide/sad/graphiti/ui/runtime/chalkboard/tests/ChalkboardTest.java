@@ -32,7 +32,6 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotLabel;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,6 +41,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	static final String ROOT_SHELL_NAME = "SCA - Eclipse Platform";
 	private static final String[] CHALKBOARD_PARENT_PATH = { "Sandbox" };
 	private static final String CHALKBOARD = "Chalkboard";
+	private static final String CHALKBOARD_TITLE = "Waveform Chalkboard";
 	private static final String HARD_LIMIT = "HardLimit";
 	private static final String SIGGEN = "SigGen";
 
@@ -56,7 +56,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	/** Helper method to open Chalkboard "Graphiti" Diagram */
 	private void openChalkboardDiagram() {
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
-		editor = gefBot.gefEditor(CHALKBOARD);
+		editor = gefBot.gefEditor(CHALKBOARD_TITLE);
 		editor.setFocus();
 	}
 
@@ -74,43 +74,43 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
 		DiagramTestUtils.releaseFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
 
-		// Add component to diagram from Target SDR
-		DiagramTestUtils.dragComponentFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
-		assertHardLimit(editor.getEditPart(HARD_LIMIT));
-
 		// IDE-984 Make sure device cannot be added from Target SDR
 		DiagramTestUtils.dragDeviceFromTargetSDRToDiagram(gefBot, editor, "GPP");
 		Assert.assertNull("Unexpected device found in diagram", editor.getEditPart("GPP"));
 
+		// Add component to diagram from Target SDR
+		DiagramTestUtils.dragComponentFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
+		assertHardLimit(editor.getEditPart(HARD_LIMIT));
+		
 		// Open the chalkboard with components already launched
 		editor.close();
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
-		editor = gefBot.gefEditor(CHALKBOARD);
+		openChalkboardDiagram();
 		Assert.assertNotNull(editor.getEditPart(HARD_LIMIT));
 
 		// Check 'Show Console' context menu option functionality
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		String[] components = { HARD_LIMIT, SIGGEN };
 
-		for (String component : components) {
-			editor.getEditPart(component).click();
+		for (final String component : components) {
+			editor.getEditPart(component).select();
 			editor.clickContextMenu("Show Console");
 			final SWTBotView consoleView = ViewUtils.getConsoleView(gefBot);
 			bot.waitUntil(new DefaultCondition() {
 
 				@Override
 				public boolean test() throws Exception {
-					consoleView.bot().label(0);
-					return true;
+					String text = consoleView.bot().label(0).getText();
+					return text.matches(".*" + component + ".*");
 				}
 
 				@Override
 				public String getFailureMessage() {
-					return "Console view label never loaded";
+					return "Console view label never loaded for " + component;
 				}
 			});
-			SWTBotLabel consoleLabel = consoleView.bot().label(0);
-			Assert.assertTrue("Console view for " + component + " did not display", consoleLabel.getText().matches(".*" + component + ".*"));
+			String consoleLabelText = consoleView.bot().label(0).getText();
+			Assert.assertNotNull("console label text for " + component, consoleLabelText);
+//			Assert.assertTrue("Console view for " + component + " did not display", consoleLabelText.matches(".*" + component + ".*"));
 		}
 	}
 
