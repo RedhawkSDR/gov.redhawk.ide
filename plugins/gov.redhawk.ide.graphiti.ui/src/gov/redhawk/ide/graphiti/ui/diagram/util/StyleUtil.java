@@ -52,10 +52,10 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String COMPONENT_OUTER = "gov.redhawk.style.ComponentOuter";
 	public static final IColorConstant TEXT_FOREGROUND = IColorConstant.BLACK;
 	public static final IColorConstant WHITE = IColorConstant.WHITE;
-	public static final IColorConstant GOLD = new ColorConstant(255, 218, 105);
 	public static final IColorConstant BLACK = IColorConstant.BLACK;
 	public static final IColorConstant RED = IColorConstant.RED;
 	public static final IColorConstant BLUE = new ColorConstant(0, 0, 194);
+	public static final IColorConstant GOLD = new ColorConstant(255, 218, 105);
 	public static final IColorConstant COMPONENT_FOREGROUND = new ColorConstant(98, 131, 167);
 	public static final IColorConstant COMPONENT_BACKGROUND = new ColorConstant(187, 218, 247);
 	public static final IColorConstant OUTER_CONTAINER_BACKGROUND = new ColorConstant(250, 250, 250);
@@ -63,21 +63,17 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	// COMPONENT
 	public static final int DEFAULT_LINE_WIDTH = 2;
 	public static final int ASSEMBLY_CONTROLLER_LINE_WIDTH = 3;
-	public static final Color FOREGROUND_COLOR = new Color(null, 116, 130, 141); // TODO shouldn't we be disposing of
-																					// these correctly?
-	public static final Color COMPONENT_IDLE_COLOR = new Color(null, 219, 233, 246); // TODO shouldn't we be disposing
-																						// of these correctly?
-	public static final Color COMPONENT_STARTED_COLOR = new Color(null, 186, 234, 173); // TODO shouldn't we be
-																						// disposing of these correctly?
-	public static final Color DEFAULT_COMPONENT_COLOR = new Color(null, 176, 176, 176); // TODO shouldn't we be
-																						// disposing of these correctly?
-	public static final Color ASSEMBLY_CONTROLLER_COLOR = new Color(null, 255, 218, 105); // TODO shouldn't we be
-																							// disposing of these
-																							// correctly?
-	// public static final Font START_ORDER_FONT = new Font(null, "Arial", 12, SWT.BOLD); // TODO shouldn't we be
-	// disposing of these correctly?
+	
+	// COLORS
+	// TODO shouldn't we be disposing of these Colors correctly?
+	public static final Color FOREGROUND_COLOR = new Color(null, 116, 130, 141); // TODO dispose?
+	public static final Color COMPONENT_IDLE_COLOR = new Color(null, 219, 233, 246); // TODO dispose?
+	public static final Color COMPONENT_STARTED_COLOR = new Color(null, 186, 234, 173); // TODO dispose?
+	public static final Color DEFAULT_COMPONENT_COLOR = new Color(null, 176, 176, 176); // TODO dispose?
+	public static final Color ASSEMBLY_CONTROLLER_COLOR = new Color(null, 255, 218, 105); // TODO dispose?
 
 	// FONTS
+	// public static final Font START_ORDER_FONT = new Font(null, "Arial", 12, SWT.BOLD); // TODO dispose?
 	// private final static String ARIAL_FONT = "Arial";
 	private static final String SANS_FONT = "Sans";
 	private static final String DEFAULT_FONT = SANS_FONT;
@@ -116,7 +112,6 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
 			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setTransparency(.09d);
 			style.setBackground(gaService.manageColor(diagram, OUTER_CONTAINER_BACKGROUND));
 			style.setFont(gaService.manageFont(diagram, DEFAULT_FONT, 8, false, false));
 			style.setLineWidth(0);
