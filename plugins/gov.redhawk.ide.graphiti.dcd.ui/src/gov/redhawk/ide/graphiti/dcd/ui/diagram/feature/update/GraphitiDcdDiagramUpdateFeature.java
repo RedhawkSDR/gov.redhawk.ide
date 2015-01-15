@@ -174,7 +174,12 @@ public class GraphitiDcdDiagramUpdateFeature extends DefaultUpdateDiagramFeature
 	/** Checks if componentShape has lost its reference to the model object */
 	private boolean devicesResolved(List<DeviceShape> deviceShapes) {
 		for (DeviceShape deviceShape : deviceShapes) {
-			if (!(DUtil.getBusinessObject(deviceShape) instanceof DcdComponentInstantiation)) {
+			DcdComponentInstantiation dcdComponentInstantiation = (DcdComponentInstantiation) DUtil.getBusinessObject(deviceShape, DcdComponentInstantiation.class);
+			if (dcdComponentInstantiation == null || dcdComponentInstantiation.getPlacement() != null || dcdComponentInstantiation.getPlacement().getComponentFileRef() != null) {
+				return false;
+			} else if (deviceShape.getProvidesPortStubs().size() > 0 && !deviceShape.getProvidesPortStubs().get(0).eContainer().equals(dcdComponentInstantiation)) {
+				return false;
+			} else if (deviceShape.getUsesPortStubs().size() > 0 && !deviceShape.getUsesPortStubs().get(0).eContainer().equals(dcdComponentInstantiation)) {
 				return false;
 			}
 		}

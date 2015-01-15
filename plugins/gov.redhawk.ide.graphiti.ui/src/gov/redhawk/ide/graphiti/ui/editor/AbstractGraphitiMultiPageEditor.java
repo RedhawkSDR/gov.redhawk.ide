@@ -91,8 +91,6 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 
 	private IFormPage overviewPage;
 
-	private IFormPage propertiesPage;
-
 	private IEditorPart textEditor;
 	
 	/**
@@ -251,19 +249,7 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 	abstract public String getTitle();
 	
 	abstract protected void addPages();
-
-	public IFormPage getPropertiesPage() {
-		return propertiesPage;
-	}
 	
-	public void setPropertiesPage(IFormPage propertiesPage) {
-		this.propertiesPage = propertiesPage;
-	}
-	
-	abstract protected IFormPage createPropertiesPage(Resource resource);
-	
-	
-
 	public IEditorPart getTextEditor() {
 		return textEditor;
 	}

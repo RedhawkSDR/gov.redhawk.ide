@@ -13,29 +13,25 @@ java.util.UUID"
 %>
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE deviceconfiguration PUBLIC "-//JTRS//DTD SCA V2.2.2 DCD//EN" "deviceconfiguration.dtd">
-<deviceconfiguration name="<%=args.getNodeName()%>" id="<%=args.getNodeId()%>">
-    <devicemanagersoftpkg>
-    	<localfile name="/mgr/DeviceManager.spd.xml">
-    	</localfile>
-    </devicemanagersoftpkg>
+<deviceconfiguration id="<%=args.getNodeId()%>" name="<%=args.getNodeName()%>">
+  <devicemanagersoftpkg>
+    <localfile name="/mgr/DeviceManager.spd.xml"/>
+  </devicemanagersoftpkg>
 <%	
 	HashMap<SoftPkg, String> devToId = new HashMap<SoftPkg, String>(); 
 	if (args.getDevices() != null && args.getDevices().length > 0) { %>
-    <componentfiles> 
+  <componentfiles> 
     <%
     	
     	for (SoftPkg device : args.getDevices()) { 
         	devToId.put(device, device.getName() + "_" + UUID.randomUUID());
 %>
-    	<componentfile type="SPD" id="<%=devToId.get(device)%>">
-    		<localfile name="<%=device.eResource().getURI().path()%>">
-    		</localfile>
-    	</componentfile>
+    <componentfile type="SPD" id="<%=devToId.get(device)%>">
+      <localfile name="<%=device.eResource().getURI().path()%>"/>
+    </componentfile>
 <% 		} %>
-    </componentfiles>
-<%  } 
-%>    
-    <partitioning>
+  </componentfiles>
+  <partitioning>
 <%
     for (SoftPkg device : args.getDevices()) {
         int devNum = 1;
@@ -44,17 +40,17 @@ java.util.UUID"
         }
         deviceList.add(device.getName() + "_" + devNum);
 %>
-		<componentplacement>
-	    	<componentfileref refid="<%=devToId.get(device)%>">
-    		</componentfileref>
-	     	<componentinstantiation id="<%=DceUuidUtil.createDceUUID()%>">
-	     		<usagename><%=device.getName()%>_<%=devNum%></usagename>
-	     	</componentinstantiation>
-    	</componentplacement>
+    <componentplacement>
+      <componentfileref refid="<%=devToId.get(device)%>"/>
+      <componentinstantiation id="<%=DceUuidUtil.createDceUUID()%>">
+        <usagename><%=device.getName()%>_<%=devNum%>/>
+      </componentinstantiation>
+    </componentplacement>
+  </partitioning>
+<% }} else {%>
+  <partitioning/>
 <% } %>
-    </partitioning>
-    <domainmanager>
-    	<namingservice name="<%=args.getDomainManagerName()%>/<%=args.getDomainManagerName()%>">
-    	</namingservice>
-    </domainmanager>
+  <domainmanager>
+    <namingservice name="<%=args.getDomainManagerName()%>/<%=args.getDomainManagerName()%>"/>
+  </domainmanager>
 </deviceconfiguration>

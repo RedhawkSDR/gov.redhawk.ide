@@ -16,15 +16,13 @@ import gov.redhawk.ide.graphiti.dcd.ui.diagram.DcdDiagramUtilHelper;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.GraphitiDcdDiagramEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDDiagramTypeProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.editor.AbstractGraphitiMultiPageEditor;
 import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
 import gov.redhawk.model.sca.util.ModelUtil;
-import gov.redhawk.ui.editor.SCAFormEditor;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import mil.jpeojtrs.sca.dcd.DcdPackage;
@@ -34,107 +32,46 @@ import mil.jpeojtrs.sca.prf.provider.PrfItemProviderAdapterFactory;
 import mil.jpeojtrs.sca.scd.provider.ScdItemProviderAdapterFactory;
 import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
-import org.eclipse.core.commands.operations.DefaultOperationHistory;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.provider.EcoreItemProviderAdapterFactory;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
-import org.eclipse.emf.edit.provider.AdapterFactoryItemDelegator;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
-import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
-import org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.emf.transaction.impl.TransactionalEditingDomainImpl;
-import org.eclipse.emf.workspace.IWorkspaceCommandStack;
-import org.eclipse.emf.workspace.WorkspaceEditingDomainFactory;
-import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.PictogramsFactory;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.editor.DiagramEditorInput;
-import org.eclipse.graphiti.ui.internal.editor.GFWorkspaceCommandStackImpl;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IGotoMarker;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.part.MultiPageSelectionProvider;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
-import org.eclipse.wst.sse.ui.StructuredTextEditor;
 
-public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbedPropertySheetPageContributor, IViewerProvider {
+public class GraphitiDcdMultipageEditor extends AbstractGraphitiMultiPageEditor implements ITabbedPropertySheetPageContributor, IViewerProvider {
 
 	public static final String ID = "gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor";
 
 	public static final String EDITING_DOMAIN_ID = "mil.jpeojtrs.sca.dcd.diagram.EditingDomain";
 
-	/**
-	 * This is used to manually override the dirty state. It can be used to avoid marking the editor as dirty on trivial
-	 * or hidden actions, such as linking the diagram to the sad.xml
-	 */
-	private boolean isDirtyAllowed = true;
-
-	/**
-	 * The graphical diagram editor embedded into this editor.
-	 */
-	private DiagramEditor diagramEditor;
-
-	/**
-	 * This keeps track of the active content viewer, which may be either one of
-	 * the viewers in the pages or the content outline viewer.
-	 */
-	private Viewer currentViewer;
-
-	/**
-	 * This selection provider coordinates the selections of the various editor
-	 * parts.
-	 */
-	private final MultiPageSelectionProvider selectionProvider;
-
-	private GraphitiDcdOverviewPage overviewPage;
-
 	private ResourceListener nameListener;
-
-	private GraphitiDcdDevicesPage devicesPage;
-
-	private IEditorPart textEditor;
-
-	private int dcdSourcePageNum;
+	private GraphitiDcdDevicesPage dcdDevicesPage;
 
 	private class ResourceListener extends AdapterImpl {
 		private DeviceConfiguration dcd;
@@ -208,13 +145,6 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 
 	public GraphitiDcdMultipageEditor() {
 		super();
-		this.selectionProvider = new MultiPageSelectionProvider(this);
-		this.selectionProvider.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(final SelectionChangedEvent event) {
-				setStatusLineManager(event.getSelection());
-			}
-		});
 	}
 
 	/**
@@ -238,8 +168,8 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 					// Try to select the items in the current content viewer of
 					// the editor.
 					//
-					if (GraphitiDcdMultipageEditor.this.currentViewer != null) {
-						GraphitiDcdMultipageEditor.this.currentViewer.setSelection(new StructuredSelection(theSelection.toArray()), true);
+					if (getViewer() != null) {
+						getViewer().setSelection(new StructuredSelection(theSelection.toArray()), true);
 					}
 				}
 			};
@@ -248,42 +178,11 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 	}
 
 	/**
-	 * This makes sure that one content viewer, either for the current page or
-	 * the outline view, if it has focus, is the current one.
-	 */
-	public void setCurrentViewer(final Viewer viewer) {
-		// If it is changing...
-		//
-		if (this.currentViewer != viewer) {
-			// Remember it.
-			//
-			this.currentViewer = viewer;
-		}
-	}
-
-	/**
-	 * This returns the viewer as required by the {@link IViewerProvider} interface.
-	 */
-	@Override
-	public Viewer getViewer() {
-		return this.currentViewer;
-	}
-
-	/**
 	 * This is how the framework determines which interfaces we implement.
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(final Class key) {
-		// TODO: do we not need a property sheet page?
-//		if (key.equals(IPropertySheetPage.class)) {
-//			return getPropertySheetPage();
-//		} else if (key.equals(IGotoMarker.class)) {
-//			return this;
-//		} else {
-//			return super.getAdapter(key);
-//		}
-
 		if (key.equals(IGotoMarker.class)) {
 			return this;
 		} else {
@@ -291,78 +190,7 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 		}
 	}
 
-	@Override
-	public void gotoMarker(final IMarker marker) {
-		try {
-			if (marker.getType().equals(EValidator.MARKER)) {
-				final String uriAttribute = marker.getAttribute(EValidator.URI_ATTRIBUTE, null);
-				if (uriAttribute != null) {
-					final URI uri = URI.createURI(uriAttribute);
-					final EObject eObject = getEditingDomain().getResourceSet().getEObject(uri, true);
-					if (eObject != null) {
-						setSelectionToViewer(Collections.singleton(getWrapper(eObject)));
-					}
-				}
-			}
-		} catch (final CoreException exception) {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to go to marker.", exception),
-				StatusManager.LOG | StatusManager.SHOW);
-		}
-	}
 
-	private Object getWrapper(final EObject eObject) {
-		return AdapterFactoryEditingDomain.getWrapper(eObject, getEditingDomain());
-	}
-
-	public void setStatusLineManager(final ISelection selection) {
-		final IStatusLineManager statusLineManager;
-
-		statusLineManager = getActionBars().getStatusLineManager();
-
-		if (statusLineManager != null) {
-			if (selection instanceof IStructuredSelection) {
-				final Collection< ? > collection = ((IStructuredSelection) selection).toList();
-				switch (collection.size()) {
-				case 0:
-					statusLineManager.setMessage("Selected Nothing");
-					break;
-				case 1:
-					final String text = new AdapterFactoryItemDelegator(getAdapterFactory()).getText(collection.iterator().next());
-					statusLineManager.setMessage(MessageFormat.format("Selected Object: {0}", text));
-					break;
-				default:
-					statusLineManager.setMessage(MessageFormat.format("Selected {0} Objects", Integer.toString(collection.size())));
-					break;
-				}
-			} else {
-				statusLineManager.setMessage("");
-			}
-		}
-	}
-
-	@Override
-	public boolean isDirty() {
-		if (this.getMainResource() != null && !this.getMainResource().getURI().isPlatform()) {
-			return false;
-		}
-		return super.isDirty();
-	}
-
-	@Override
-	protected boolean computeDirtyState() {
-		if (!isDirtyAllowed()) {
-			setDirtyAllowed(true);
-			return false;
-		}
-		int activePage = getActivePage();
-		if (activePage == -1) {
-			return false;
-		} else if (activePage == getPageCount() - 1) {
-			return textEditor.isDirty();
-		}
-		BasicCommandStack commandStack = (BasicCommandStack) diagramEditor.getEditingDomain().getCommandStack();
-		return commandStack.isSaveNeeded();
-	}
 
 	/**
 	 * This implements {@link org.eclipse.jface.action.IMenuListener} to help
@@ -384,14 +212,6 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 	}
 
 	@Override
-	public String getContributorId() {
-		if (this.diagramEditor == null) {
-			return null;
-		}
-		return this.diagramEditor.getContributorId();
-	}
-
-	@Override
 	public String getTitle() {
 		String name = null;
 		final DeviceConfiguration dcd = getDeviceConfiguration();
@@ -404,7 +224,7 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 		if (name != null) {
 			return name;
 		} else {
-			return super.getTitle();
+			return "";
 		}
 	}
 
@@ -423,18 +243,18 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 
 				final Resource dcdResource = getMainResource();
 
-				this.nameListener = new ResourceListener(dcdResource);
+				addNameListener(dcdResource);
 
-				this.overviewPage = new GraphitiDcdOverviewPage(this);
-				this.overviewPage.setInput(dcdResource);
-				this.addPage(this.overviewPage);
+				final IFormPage overviewPage = createOverviewPage(dcdResource);
+				setOverviewPage(overviewPage);
+				this.addPage(overviewPage);
 
-				this.devicesPage = new GraphitiDcdDevicesPage(this);
-				this.devicesPage.setInput(dcdResource);
-				addPage(this.devicesPage);
+				dcdDevicesPage = new GraphitiDcdDevicesPage(this);
+				dcdDevicesPage.setInput(dcdResource);
+				addPage(dcdDevicesPage);
 
 				// This is the page for the graphical diagram viewer
-				final DiagramEditor editor = new GraphitiDcdDiagramEditor((TransactionalEditingDomain) getEditingDomain());
+				final DiagramEditor editor = createDiagramEditor();
 				setDiagramEditor(editor);
 				final IEditorInput diagramInput = createDiagramInput(dcdResource);
 				pageIndex = addPage(editor, diagramInput);
@@ -444,22 +264,12 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 				// set layout for target-sdr editors
 				// DUtil.layout(editor);
 
-				// StructuredTextEditors only work on workspace entries because
-				// org.eclipse.wst.sse.core.FileBufferModelManager:bufferCreated()
-				// assumes that the editor input is in the workspace.
-				if (getEditorInput() instanceof FileEditorInput) {
-					try {
-						textEditor = new StructuredTextEditor();
-						this.dcdSourcePageNum = addPage(textEditor, this.getEditorInput());
-					} catch (final NoClassDefFoundError e) {
-						textEditor = new TextEditor();
-						this.dcdSourcePageNum = addPage(textEditor, this.getEditorInput());
-					}
-				} else {
-					textEditor = new TextEditor();
-					this.dcdSourcePageNum = addPage(textEditor, this.getEditorInput());
+				IEditorPart textEditor = createTextEditor();
+				setTextEditor(textEditor);
+				if (textEditor != null) {
+					final int dcdSourcePageNum = addPage(-1, textEditor, getEditorInput(), dcdResource);
+					this.setPageText(dcdSourcePageNum, getEditorInput().getName());
 				}
-				this.setPageText(this.dcdSourcePageNum, this.getEditorInput().getName());
 
 			} catch (final PartInitException e) {
 				StatusManager.getManager().handle(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to add pages.", e));
@@ -471,6 +281,10 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 		}
 	}
 
+	protected void addNameListener(final Resource dcdResource) {
+		this.nameListener = new ResourceListener(dcdResource);
+	}
+	
 	protected IEditorInput createDiagramInput(final Resource dcdResource) throws IOException, CoreException {
 		final URI diagramURI = DUtil.getDiagramResourceURI(DcdDiagramUtilHelper.INSTANCE, dcdResource);
 
@@ -507,41 +321,21 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 		return DiagramEditorInput.createEditorInput(diagram, DCDDiagramTypeProvider.PROVIDER_ID);
 	}
 
-	/**
-	 * Returns the property value that should be set for the Diagram container's DIAGRAM_CONTEXT property.
-	 * Indicates the mode the diagram is operating in.
-	 * @return
-	 */
-	public String getDiagramContext(Resource dcdResource) {
-		if (dcdResource.getURI().toString().matches(".*" + System.getenv("SDRROOT") + ".*")) {
-			return DUtil.DIAGRAM_CONTEXT_TARGET_SDR;
-		}
-
-		return DUtil.DIAGRAM_CONTEXT_DESIGN;
-	}
-
 	protected DiagramEditor createDiagramEditor() {
 		GraphitiDcdDiagramEditor d = new GraphitiDcdDiagramEditor((TransactionalEditingDomain) getEditingDomain());
 		return d;
 	}
 
-	protected void handleDocumentChange(final Resource resource) {
-		super.handleDocumentChange(resource);
-		for (final Object part : this.getDiagramEditor().getDiagramBehavior().getContentEditPart().getChildren()) {
-			if (part instanceof EditPart) {
-				((EditPart) part).refresh();
-			}
-		}
+	protected IFormPage createOverviewPage(final Resource dcdResource) {
+		final GraphitiDcdOverviewPage retVal = new GraphitiDcdOverviewPage(this);
+		retVal.setInput(dcdResource);
+		return retVal;
 	}
-
-	public DiagramEditor getDiagramEditor() {
-		return this.diagramEditor;
-	}
-
-	@Override
-	protected IContentOutlinePage createContentOutline() {
-		// TODO what should we implement here? Anything?
-		return null;
+	
+	protected IFormPage createDcdDevicesPage(final Resource dcdResource) {
+		final GraphitiDcdDevicesPage retVal = new GraphitiDcdDevicesPage(this);
+		retVal.setInput(dcdResource);
+		return retVal;
 	}
 
 	@Override
@@ -564,25 +358,12 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 		return factory;
 	}
 
-	public IActionBars getActionBars() {
-		return getActionBarContributor().getActionBars();
-	}
-
 	@Override
 	public List<Object> getOutlineItems() {
 		final List<Object> myList = new ArrayList<Object>();
-		myList.add(this.overviewPage);
+		myList.add(getOverviewPage());
 		myList.add(getDeviceConfiguration().getPartitioning());
 		return myList;
-	}
-
-	protected void setDiagramEditor(final DiagramEditor diagramEditor) {
-		this.diagramEditor = diagramEditor;
-	}
-
-	@Override
-	protected void emfDoSave(IProgressMonitor progressMonitor) {
-		diagramEditor.doSave(progressMonitor);
 	}
 
 	@Override
@@ -602,87 +383,6 @@ public class GraphitiDcdMultipageEditor extends SCAFormEditor implements ITabbed
 		cleanAction.setRoot(getDeviceConfiguration());
 		cleanAction.run();
 
-		try {
-			this.editorSaving = true;
-			int activePage = getActivePage();
-			if (textEditor.isDirty() && activePage == getPageCount() - 1) {
-				textEditor.doSave(monitor);
-				reload();
-				emfDoSave(new SubProgressMonitor(monitor, 1));
-			} else {
-				commitPages(true);
-				monitor.beginTask("Saving " + this.getTitle(), this.getPageCount() + 2);
-				emfDoSave(new SubProgressMonitor(monitor, 1));
-			}
-			BasicCommandStack commandStack = (BasicCommandStack) diagramEditor.getEditingDomain().getCommandStack();
-			commandStack.saveIsDone();
-			editorDirtyStateChanged();
-		} catch (final OperationCanceledException e) {
-			// PASS
-		} finally {
-			monitor.done();
-			this.editorSaving = false;
-		}
-	}
-
-	@Override
-	protected void resourceChanged(final IResource resource, final IResourceDelta delta) {
-		// Make sure we don't call resource changed on a non sad resource
-		if (this.isValidDcdResource(resource) && !delta.getResource().getWorkspace().isAutoBuilding()) {
-			super.resourceChanged(resource, delta);
-		}
-		validate();
-	}
-
-	@Override
-	public void reload() {
-		super.reload();
-		diagramEditor.getDiagramBehavior().getUpdateBehavior().setResourceChanged(true);
-		diagramEditor.getDiagramBehavior().getUpdateBehavior().handleActivate();
-	}
-
-	/**
-	 * Evaluate the given resource to determine if it is a resource that can be associated with the NodeEditor.
-	 * 
-	 * @param resource The IResource to evaluate
-	 * @return <code> true </code> if this is a dcd resource; <code> false </code> otherwise
-	 */
-	private boolean isValidDcdResource(final IResource resource) {
-		final String path = resource.getFullPath().toOSString();
-		if (path.endsWith("dcd.xml")) {
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	@SuppressWarnings("restriction")
-	protected TransactionalEditingDomain createEditingDomain() {
-
-		final ResourceSet resourceSet = new ResourceSetImpl();
-		final IWorkspaceCommandStack workspaceCommandStack = new GFWorkspaceCommandStackImpl(new DefaultOperationHistory());
-
-		TransactionalEditingDomain domain = new TransactionalEditingDomainImpl(new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE),
-			workspaceCommandStack, resourceSet);
-		WorkspaceEditingDomainFactory.INSTANCE.mapResourceSet((TransactionalEditingDomain) domain);
-		domain.setID(getEditingDomainId());
-
-		// Create an adapter factory that yields item providers.
-		//
-		final ComposedAdapterFactory localAdapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
-
-		localAdapterFactory.addAdapterFactory(new ResourceItemProviderAdapterFactory());
-		localAdapterFactory.addAdapterFactory(getSpecificAdapterFactory());
-		localAdapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
-		((AdapterFactoryEditingDomain) domain).setAdapterFactory(localAdapterFactory);
-		return domain;
-	}
-
-	public boolean isDirtyAllowed() {
-		return isDirtyAllowed;
-	}
-
-	public void setDirtyAllowed(boolean isDirtyAllowed) {
-		this.isDirtyAllowed = isDirtyAllowed;
+		super.doSave(monitor);
 	}
 }

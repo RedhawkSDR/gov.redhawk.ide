@@ -57,10 +57,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IGotoMarker;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
@@ -76,6 +74,7 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 	public static final String EDITING_DOMAIN_ID = "mil.jpeojtrs.sca.sad.diagram.EditingDomain";
 
 	private ResourceListener nameListener;
+	private IFormPage propertiesPage;
 
 	private class ResourceListener extends AdapterImpl {
 		private SoftwareAssembly sad;
@@ -258,9 +257,8 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 				setOverviewPage(page);
 				this.addPage(page);
 
-				IFormPage propertiesPage = createPropertiesPage(sadResource);
-				setPropertiesPage(propertiesPage);
-				addPage(getPropertiesPage());
+				propertiesPage = createPropertiesPage(sadResource);
+				addPage(propertiesPage);
 
 				final DiagramEditor editor = createDiagramEditor();
 				setDiagramEditor(editor);
@@ -297,23 +295,6 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 		return retVal;
 	}
 
-	protected IEditorPart createTextEditor() {
-		// StructuredTextEditors only work on workspace entries
-		// because
-		// org.eclipse.wst.sse.core.FileBufferModelManager:bufferCreated()
-		// assumes that the editor input is in the workspace.
-		if (getEditorInput() instanceof FileEditorInput) {
-			try {
-				return new org.eclipse.wst.sse.ui.StructuredTextEditor();
-			} catch (final NoClassDefFoundError e) {
-				return new TextEditor();
-			}
-		} else if (!getMainResource().getURI().isPlatformPlugin()) {
-			return new TextEditor();
-		}
-
-		return null;
-	}
 
 	protected void addNameListener(final Resource sadResource) {
 		this.nameListener = new ResourceListener(sadResource);
