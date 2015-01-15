@@ -51,10 +51,10 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String COMPONENT_INNER = "gov.redhawk.style.ComponentInner";
 	private static final String COMPONENT_OUTER = "gov.redhawk.style.ComponentOuter";
 	public static final IColorConstant TEXT_FOREGROUND = IColorConstant.BLACK;
-	public static final IColorConstant WHITE = new ColorConstant(255, 255, 255);
+	public static final IColorConstant WHITE = IColorConstant.WHITE;
 	public static final IColorConstant GOLD = new ColorConstant(255, 218, 105);
-	public static final IColorConstant BLACK = new ColorConstant(0, 0, 0);
-	public static final IColorConstant RED = new ColorConstant(255, 0, 0);
+	public static final IColorConstant BLACK = IColorConstant.BLACK;
+	public static final IColorConstant RED = IColorConstant.RED;
 	public static final IColorConstant BLUE = new ColorConstant(0, 0, 194);
 	public static final IColorConstant COMPONENT_FOREGROUND = new ColorConstant(98, 131, 167);
 	public static final IColorConstant COMPONENT_BACKGROUND = new ColorConstant(187, 218, 247);
