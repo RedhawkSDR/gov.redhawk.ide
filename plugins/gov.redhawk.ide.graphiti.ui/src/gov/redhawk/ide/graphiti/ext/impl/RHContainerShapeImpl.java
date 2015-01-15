@@ -641,8 +641,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
 		if (externalPort != null) {
 			fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForExternalProvidesPort(diagram));
-			featureProvider.link(fixPointAnchor, externalPort); // link to externalPort so that update fires when it
-			// changes
+			fixPointAnchor.getLink().getBusinessObjects().add(externalPort); // link to externalPort so that update fires when it changes
 		} else {
 			fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForProvidesPort(diagram));
 		}
@@ -768,8 +767,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
 		if (externalPort != null) {
 			fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForExternalUsesPort(diagram));
-			featureProvider.link(fixPointAnchor, externalPort); // link to externalPort so that update fires when it
-			// changes
+			fixPointAnchor.getLink().getBusinessObjects().add(externalPort); // link to externalPort so that update fires when it changes
 		} else {
 			fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForUsesPort(diagram));
 		}
