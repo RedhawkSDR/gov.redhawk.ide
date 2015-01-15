@@ -42,6 +42,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefViewer;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.swtbot.swt.finder.utils.SWTUtils;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
@@ -53,11 +54,16 @@ import org.junit.Assert;
 @SuppressWarnings("restriction")
 public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility method is intended to be public
 
-	protected DiagramTestUtils() {
-
+	/** hide constructor, since all functions are static. */
+	private DiagramTestUtils() {
 	}
 
-	public static final String OVERVIEW_TAB = "Overview", PROPERTIES_TAB = "Properties", DIAGRAM_TAB = "Diagram", XML_TAB = ".sad.xml";
+	public static final String OVERVIEW_TAB = "Overview";
+	public static final String PROPERTIES_TAB = "Properties";
+	public static final String DIAGRAM_TAB = "Diagram";
+	public static final String XML_TAB = ".sad.xml";
+
+	static final long DELAY_MS = 100;
 
 	/**
 	 * Deletes the provided part from the diagram. Part must have a context menu option for "Delete"
@@ -67,16 +73,19 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	public static void deleteFromDiagram(SWTBotGefEditor editor, SWTBotGefEditPart part) {
 		part.select();
 		editor.clickContextMenu("Delete");
+		SWTUtils.sleep(DELAY_MS);
 	}
 
 	public static void releaseFromDiagram(SWTBotGefEditor editor, SWTBotGefEditPart part) {
 		part.select();
 		editor.clickContextMenu("Release");
+		SWTUtils.sleep(DELAY_MS);
 	}
 
 	public static void terminateFromDiagram(SWTBotGefEditor editor, SWTBotGefEditPart part) {
 		part.select();
 		editor.clickContextMenu("Terminate");
+		SWTUtils.sleep(DELAY_MS);
 	}
 
 	/**
@@ -213,7 +222,9 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		return (ComponentShapeImpl) getRHContainerShape(editor, componentName);
 	}
 
-	/** Utility method to get Diagram from the Gef Editor */
+	/** Utility method to get {@link Diagram} from the GEF Editor.
+	 *  @return the {@link Diagram} from the main editor's part's model or null if not found
+	 */
 	public static Diagram getDiagram(SWTBotGefEditor editor) {
 		Object model = editor.mainEditPart().part().getModel();
 		if (model instanceof Diagram) {
