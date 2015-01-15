@@ -32,7 +32,7 @@ public abstract class AbstractGraphitiDomainWaveformRuntimeTest extends UIRuntim
 	public static final String DOMAIN_MANAGER_PROCESS = "Domain Manager";
 	public static final String DEVICE_MANAGER_PROCESS = "Device Manager";
 	public static final String DEVICE_MANAGER = "DevMgr";
-	protected SWTGefBot gefBot = new SWTGefBot(); // SUPPRESS CHECKSTYLE INLINE
+	protected SWTGefBot gefBot = new SWTGefBot(); // SUPPRESS CHECKSTYLE VisibilityModifier
 	private String waveFormFullName; // full name of waveform that is launched
 
 	@Before
