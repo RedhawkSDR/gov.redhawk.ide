@@ -31,6 +31,7 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformSandboxEdito
 		super.addPages();
 
 		final Diagram diagram = this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram();
+		setPartName("Waveform Explorer");
 		ScaModelCommand.execute(diagram, new ScaModelCommand() {
 			@Override
 			public void execute() {
