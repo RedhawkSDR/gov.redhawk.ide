@@ -34,16 +34,16 @@ public class DcdFileTemplate
   protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<!DOCTYPE deviceconfiguration PUBLIC \"-//JTRS//DTD SCA V2.2.2 DCD//EN\" \"deviceconfiguration.dtd\">" + NL + "<deviceconfiguration id=\"";
   protected final String TEXT_2 = "\" name=\"";
   protected final String TEXT_3 = "\">" + NL + "  <devicemanagersoftpkg>" + NL + "    <localfile name=\"/mgr/DeviceManager.spd.xml\"/>" + NL + "  </devicemanagersoftpkg>";
-  protected final String TEXT_4 = NL + "  <componentfiles> ";
-  protected final String TEXT_5 = NL + "    <componentfile type=\"SPD\" id=\"";
-  protected final String TEXT_6 = "\">" + NL + "      <localfile name=\"";
+  protected final String TEXT_4 = NL + "  <componentfiles>";
+  protected final String TEXT_5 = NL + "    <componentfile id=\"";
+  protected final String TEXT_6 = "\" type=\"SPD\">" + NL + "      <localfile name=\"";
   protected final String TEXT_7 = "\"/>" + NL + "    </componentfile>";
   protected final String TEXT_8 = NL + "  </componentfiles>" + NL + "  <partitioning>";
   protected final String TEXT_9 = NL + "    <componentplacement>" + NL + "      <componentfileref refid=\"";
   protected final String TEXT_10 = "\"/>" + NL + "      <componentinstantiation id=\"";
   protected final String TEXT_11 = "\">" + NL + "        <usagename>";
   protected final String TEXT_12 = "_";
-  protected final String TEXT_13 = "/>" + NL + "      </componentinstantiation>" + NL + "    </componentplacement>" + NL + "  </partitioning>";
+  protected final String TEXT_13 = "</usagename>" + NL + "      </componentinstantiation>" + NL + "    </componentplacement>" + NL + "  </partitioning>";
   protected final String TEXT_14 = NL + "  <partitioning/>";
   protected final String TEXT_15 = NL + "  <domainmanager>" + NL + "    <namingservice name=\"";
   protected final String TEXT_16 = "/";
@@ -65,12 +65,11 @@ public class DcdFileTemplate
     stringBuffer.append(TEXT_2);
     stringBuffer.append(args.getNodeName());
     stringBuffer.append(TEXT_3);
-    	
+    
 	HashMap<SoftPkg, String> devToId = new HashMap<SoftPkg, String>(); 
 	if (args.getDevices() != null && args.getDevices().length > 0) { 
     stringBuffer.append(TEXT_4);
     
-    	
     	for (SoftPkg device : args.getDevices()) { 
         	devToId.put(device, device.getName() + "_" + UUID.randomUUID());
 
