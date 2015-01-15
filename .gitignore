@@ -1,4 +1,5 @@
 bin/
 target/
 screenshots/
+plugins/gov.redhawk.ide.sad.graphiti.ui/
 *.pyc
