@@ -15,6 +15,8 @@ import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
 import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
@@ -56,6 +58,7 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.IDoubleClickContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.impl.CustomContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
@@ -490,5 +493,24 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 			}
 		}
 		return pad;
+	}
+	
+	
+	@Override
+	public ICustomFeature getDoubleClickFeature(IDoubleClickContext context) {
+		//UsesFrontEndDeviceEditFeature
+		ICustomFeature usesFrontEndDeviceEditFeature = new UsesFrontEndDeviceEditFeature(getFeatureProvider());
+		if (usesFrontEndDeviceEditFeature.canExecute(context)) {
+			return usesFrontEndDeviceEditFeature;
+		}
+		
+		//UsesDeviceEditFeature
+		ICustomFeature usesDeviceEditFeature = new UsesDeviceEditFeature(getFeatureProvider());
+		if (usesDeviceEditFeature.canExecute(context)) {
+			return usesDeviceEditFeature;
+		}
+
+
+		return super.getDoubleClickFeature(context);
 	}
 }
