@@ -13,8 +13,6 @@ package gov.redhawk.ide.sad.graphiti.ui.runtime.chalkboard.tests;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.SWTBotRadioMenu;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
-import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
-import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 
 import java.awt.AWTException;
 import java.awt.Robot;
@@ -40,10 +38,6 @@ import org.junit.Test;
 
 public class SaveChalkboardTest extends AbstractGraphitiChalkboardTest {
 
-	private static final String[] CHALKBOARD_PARENT_PATH = { "Sandbox" };
-	private static final String CHALKBOARD = "Chalkboard";
-	private static final String HARD_LIMIT = "HardLimit";
-	private static final String SIGGEN = "SigGen";
 	private SWTBotGefEditor editor;
 
 	/**
@@ -52,12 +46,7 @@ public class SaveChalkboardTest extends AbstractGraphitiChalkboardTest {
 	 */
 	@Test
 	public void saveChalkboardAsWaveform() {
-		final String WAVEFORM_NAME = "ChalkboardAsWaveform";
-
-		// Open Chalkboard Graphiti Diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
-		editor = gefBot.gefEditor(CHALKBOARD);
-		editor.setFocus();
+		editor = openChalkboardDiagram(gefBot);
 
 		// Add component to diagram from palette
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
@@ -67,6 +56,7 @@ public class SaveChalkboardTest extends AbstractGraphitiChalkboardTest {
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
 
 		// Save waveform
+		final String WAVEFORM_NAME = "ChalkboardAsWaveform";
 		bot.menu("File").menu("Save As...").click();
 		SWTBotShell saveShell = bot.shell("Save Chalkboard");
 		saveShell.setFocus();
@@ -125,10 +115,7 @@ public class SaveChalkboardTest extends AbstractGraphitiChalkboardTest {
 	 */
 	@Test
 	public void saveAsHotkeyTest() throws AWTException {
-		// Open Chalkboard Graphiti Diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
-		editor = gefBot.gefEditor(CHALKBOARD);
-		editor.setFocus();
+		editor = openChalkboardDiagram(gefBot);
 
 		// Add component to diagram from palette
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);

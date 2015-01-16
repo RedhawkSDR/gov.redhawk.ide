@@ -10,21 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.runtime.chalkboard.tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.swtbot.ComponentUtils;
-import gov.redhawk.ide.swtbot.DeviceUtils;
-import gov.redhawk.ide.swtbot.MenuUtils;
-import gov.redhawk.ide.swtbot.ServiceUtils;
-import gov.redhawk.ide.swtbot.SoftpackageUtils;
-import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.ViewUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.FindByUtils;
-import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
-import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
@@ -33,32 +23,11 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 
-	static final String ROOT_SHELL_NAME = "SCA - Eclipse Platform";
-	private static final String[] CHALKBOARD_PARENT_PATH = { "Sandbox" };
-	private static final String CHALKBOARD = "Chalkboard";
-	private static final String CHALKBOARD_TITLE = "Waveform Chalkboard";
-	private static final String HARD_LIMIT = "HardLimit";
-	private static final String SIGGEN = "SigGen";
-
 	private SWTBotGefEditor editor;
-
-	@BeforeClass
-	public static void beforeClassSetup() {
-		// PyDev needs to be configured before running New SCA * Project Wizards in some of the test cases
-		StandardTestActions.configurePyDev();
-	}
-	
-	/** Helper method to open Chalkboard "Graphiti" Diagram */
-	private void openChalkboardDiagram() {
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
-		editor = gefBot.gefEditor(CHALKBOARD_TITLE);
-		editor.setFocus();
-	}
 
 	/**
 	 * IDE-884 Create the chalkboard waveform diagram. Add components to diagram from palette and TargetSDR.
@@ -67,7 +36,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	 */
 	@Test
 	public void checkChalkboardComponents() {
-		openChalkboardDiagram();
+		editor = openChalkboardDiagram(gefBot);
 
 		// Add component to diagram from palette
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
@@ -84,7 +53,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		
 		// Open the chalkboard with components already launched
 		editor.close();
-		openChalkboardDiagram();
+		editor = openChalkboardDiagram(gefBot);
 		Assert.assertNotNull(editor.getEditPart(HARD_LIMIT));
 
 		// Check 'Show Console' context menu option functionality
@@ -94,13 +63,18 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		for (final String component : components) {
 			editor.getEditPart(component).select();
 			editor.clickContextMenu("Show Console");
-			final SWTBotView consoleView = ViewUtils.getConsoleView(gefBot);
+			final String[] consoleLabelTexts = { null };
 			bot.waitUntil(new DefaultCondition() {
 
 				@Override
 				public boolean test() throws Exception {
+					SWTBotView consoleView = ViewUtils.getConsoleView(gefBot);
 					String text = consoleView.bot().label(0).getText();
-					return text.matches(".*" + component + ".*");
+					if (text.matches(".*" + component + ".*")) {
+						consoleLabelTexts[0] = text;
+						return true;
+					}
+					return false;
 				}
 
 				@Override
@@ -108,9 +82,9 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 					return "Console view label never loaded for " + component;
 				}
 			});
-			String consoleLabelText = consoleView.bot().label(0).getText();
+			String consoleLabelText = consoleLabelTexts[0];
 			Assert.assertNotNull("console label text for " + component, consoleLabelText);
-//			Assert.assertTrue("Console view for " + component + " did not display", consoleLabelText.matches(".*" + component + ".*"));
+			Assert.assertTrue("Console view for " + component + " did not display", consoleLabelText.matches(".*" + component + ".*"));
 		}
 	}
 
@@ -119,7 +93,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	 */
 	@Test
 	public void checkFindByNotInSandbox() {
-		openChalkboardDiagram();
+		editor = openChalkboardDiagram(gefBot);
 		String[] findByList = { FindByUtils.FIND_BY_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, FindByUtils.FIND_BY_EVENT_CHANNEL,
 			FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
 
@@ -134,32 +108,13 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	}
 
 	/**
-	 * IDE-660 Chalkboard Palette contains Workspace Components
-	 */
-	@Test
-	public void checkHasWorkspaceComponents() {
-		// create test Component in workspace
-		final String wkspComponentName = "testComponentInWorkspace";
-		ComponentUtils.createComponentProject(bot, wkspComponentName, "Python");
-
-		openChalkboardDiagram();
-
-		// validate that workspace Component is in Chalkboard palette
-		assertTrue("Workspace Component did not appear in Chalkboard Palette", isToolInPalette(editor, wkspComponentName));
-
-		// cleanup
-		editor.close();
-		MenuUtils.deleteNodeInProjectExplorer(bot, wkspComponentName);
-	}
-
-	/**
 	 * IDE-953
 	 * Verifies that when the user drags a component to the diagram of a particular implementation
 	 * that it in fact the correct implementation was added.
 	 */
 	@Test
 	public void checkCorrectImplementationAddedToDiagram() {
-		openChalkboardDiagram();
+		editor = openChalkboardDiagram(gefBot);
 
 		// Add two components to diagram from palette
 		final String sourceComponent = SIGGEN + " (python)";
@@ -215,68 +170,4 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		Assert.assertEquals(componentShape.getUsesPortStubs().get(0).getUses().getInterface().getName(), "dataDouble");
 		Assert.assertEquals(componentShape.getProvidesPortStubs().get(0).getProvides().getInterface().getName(), "dataDouble");
 	}
-
-	/**
-	 * IDE-976 Make sure devices are filtered out of Palette's Workspace compartment
-	 */
-	@Test
-	public void checkNoWorkspaceDevices() {
-		// create test Device in workspace
-		final String wkspDeviceName = "testDeviceInWorkspace";
-		DeviceUtils.createDeviceProject(bot, wkspDeviceName, "Python");
-
-		openChalkboardDiagram();
-
-		assertFalse("Workspace Device wrongly appeared in Chalkboard Palette", isToolInPalette(editor, wkspDeviceName));
-
-		// cleanup
-		editor.close();
-		MenuUtils.deleteNodeInProjectExplorer(bot, wkspDeviceName);
-	}
-
-	/**
-	 * IDE-976 Make sure services are filtered out of Palette's Workspace compartment
-	 */
-	@Test
-	public void checkNoWorkspaceServices() {
-		// create test Service in workspace
-		final String wkspServiceName = "testServiceInWorkspace";
-		ServiceUtils.createServiceProject(bot, wkspServiceName, null, "Python");
-
-		openChalkboardDiagram();
-
-		assertFalse("Workspace Service wrongly appeared in Chalkboard Palette", isToolInPalette(editor, wkspServiceName));
-
-		// cleanup
-		editor.close();
-		MenuUtils.deleteNodeInProjectExplorer(bot, wkspServiceName);
-	}
-	
-	/**
-	 * IDE-976 Make sure softpackages are filtered out of Palette's Workspace compartment
-	 */
-	@Test
-	public void checkNoWorkspaceSoftpackages() {
-		// create test Softpackage in workspace
-		final String wkspSftpkgName = "testSftpkgInWorkspace";
-		SoftpackageUtils.createSoftpackageProject(bot, wkspSftpkgName, null);
-
-		openChalkboardDiagram();
-
-		assertFalse("Workspace Softpackage wrongly appeared in Chalkboard Palette", isToolInPalette(editor, wkspSftpkgName));
-
-		// cleanup
-		editor.close();
-		MenuUtils.deleteNodeInProjectExplorer(bot, wkspSftpkgName);
-	}
-
-	private static boolean isToolInPalette(SWTBotGefEditor editor, String toolName) {
-		try {
-			editor.activateTool(toolName);
-			return true;
-		} catch (WidgetNotFoundException ex) {
-			return false;
-		}
-	}
-
 }

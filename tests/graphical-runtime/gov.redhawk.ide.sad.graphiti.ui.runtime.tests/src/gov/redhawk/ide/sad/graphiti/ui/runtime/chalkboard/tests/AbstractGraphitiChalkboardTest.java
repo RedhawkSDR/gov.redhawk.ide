@@ -12,8 +12,10 @@ package gov.redhawk.ide.sad.graphiti.ui.runtime.chalkboard.tests;
 
 import gov.redhawk.ide.swtbot.UIRuntimeTest;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
+import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.junit.After;
 import org.junit.Before;
 
@@ -22,8 +24,14 @@ import org.junit.Before;
  */
 public abstract class AbstractGraphitiChalkboardTest extends UIRuntimeTest {
 
-	private static final String[] CHALKBOARD_PARENT_PATH = {"Sandbox"};
-	private static final String CHALKBOARD = "Chalkboard";
+	static final String[] CHALKBOARD_PARENT_PATH = { "Sandbox" };
+	static final String CHALKBOARD = "Chalkboard";
+	static final String CHALKBOARD_TAB_TITLE = "Waveform Chalkboard";
+
+	// Common Test Component Names
+	static final String HARD_LIMIT = "HardLimit";
+	static final String SIGGEN = "SigGen";
+
 	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE VisibilityModifier
 
 	@Before
@@ -40,8 +48,15 @@ public abstract class AbstractGraphitiChalkboardTest extends UIRuntimeTest {
 		
 		//close editors
 		gefBot.closeAllEditors();
-		
 		gefBot = null;
+	}
+
+	/** Helper method to open Sandbox "Waveform" Chalkboard Graphiti Diagram */
+	static SWTBotGefEditor openChalkboardDiagram(SWTGefBot gefBot) {
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
+		SWTBotGefEditor editor = gefBot.gefEditor(CHALKBOARD_TAB_TITLE);
+		editor.setFocus();
+		return editor;
 	}
 
 }

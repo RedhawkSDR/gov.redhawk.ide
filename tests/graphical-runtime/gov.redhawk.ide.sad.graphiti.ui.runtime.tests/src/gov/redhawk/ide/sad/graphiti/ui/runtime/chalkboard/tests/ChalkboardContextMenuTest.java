@@ -26,9 +26,6 @@ import org.junit.Test;
 public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 
 	private SWTBotGefEditor editor;
-	private static final String[] CHALKBOARD_PARENT_PATH = {"Sandbox"};
-	private static final String CHALKBOARD = "Chalkboard";
-	private static final String SIGGEN = "SigGen";
 	private static final String SIGGEN_1 = SIGGEN + "_1";
 
 	/**
@@ -38,11 +35,9 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 	 */
 	@Test
 	public void runtimeContextMenuTest() {
-		// Prepare Graphiti diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
-		editor = gefBot.gefEditor(CHALKBOARD);
-		editor.setFocus();
+		editor = openChalkboardDiagram(gefBot);
 
+		// Prepare Graphiti diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		
 		//wait for SIGGEN_1 to show up in Sca Explorer
@@ -119,11 +114,9 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 	 */
 	@Test
 	public void removeDevelopmentContextOptionsTest() {
-		// Prepare Graphiti diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
-		editor = gefBot.gefEditor(CHALKBOARD);
-		editor.setFocus();
+		editor = openChalkboardDiagram(gefBot);
 
+		// Prepare Graphiti diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN + "_1");
 		

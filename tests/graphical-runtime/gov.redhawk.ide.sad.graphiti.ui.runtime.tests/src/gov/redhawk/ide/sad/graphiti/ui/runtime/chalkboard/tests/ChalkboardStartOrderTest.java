@@ -14,7 +14,6 @@ package gov.redhawk.ide.sad.graphiti.ui.runtime.chalkboard.tests;
 import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
-import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
@@ -24,25 +23,17 @@ import org.junit.Test;
 public class ChalkboardStartOrderTest extends AbstractGraphitiChalkboardTest {
 
 	private SWTBotGefEditor editor;
-	private static final String[] CHALKBOARD_PARENT_PATH = {"Sandbox"};
-	private static final String CHALKBOARD = "Chalkboard";
-	private static final String SIGGEN = "SigGen";
 
 	/**
-	 * IDE-326
-	 * Test to make sure the Start Order ellipse doesn't not get drawn in the sandbox
+	 * IDE-326 Test to make sure the Start Order ellipse doesn't not get drawn in the sandbox
 	 */
 	@Test
 	public void removeStartOrderIconTest() {
-		// open chalkboard diagram
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
-		editor = gefBot.gefEditor(CHALKBOARD);
-		editor.setFocus();
+		editor = openChalkboardDiagram(gefBot);
 
-		//drag SigGen to diagram and verify loaded in sca explorer
+		// drag SigGen to diagram and verify loaded in SCA explorer
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN + "_1");
-		
 
 		SWTBotGefEditPart sigGenEditPart = editor.getEditPart(SIGGEN);
 		ComponentShapeImpl componentShape = (ComponentShapeImpl) sigGenEditPart.part().getModel();
