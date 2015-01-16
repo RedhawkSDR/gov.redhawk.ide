@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.providers;
 
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.DecrementStartOrderFeature;
@@ -33,6 +34,10 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDevicePattern;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseAllShapesFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseShapeFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandAllShapesFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandShapeFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.FindByEditFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
@@ -138,9 +143,27 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			retList.add(ret[i]);
 		}
 
-		// add zest layout feature if diagram selected
+		// if diagram selected
 		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0 && context.getPictogramElements()[0] instanceof Diagram) {
+			
+			//zest layout feature 
 			retList.add(new LayoutDiagramFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+			
+			//expand all shapes
+			retList.add(new ExpandAllShapesFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+			
+			//collapse all shapes
+			retList.add(new CollapseAllShapesFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+		}
+		
+		// if diagram selected
+		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0 && context.getPictogramElements()[0] instanceof RHContainerShape) {
+
+			//expand shape
+			retList.add(new ExpandShapeFeature(this.getDiagramTypeProvider().getFeatureProvider()));
+			
+			//collapse shape
+			retList.add(new CollapseShapeFeature(this.getDiagramTypeProvider().getFeatureProvider()));
 		}
 
 		// add findBy edit feature if findByStub selected

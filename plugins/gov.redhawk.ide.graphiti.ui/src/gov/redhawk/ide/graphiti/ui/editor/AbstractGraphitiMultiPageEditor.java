@@ -1,6 +1,6 @@
 package gov.redhawk.ide.graphiti.ui.editor;
 
-import gov.redhawk.ide.graphiti.ui.Activator;
+import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.RHCommandStackImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ui.editor.SCAFormEditor;
@@ -154,7 +154,7 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 				}
 			}
 		} catch (final CoreException exception) {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Failed to go to marker.", exception),
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, GraphitiUIPlugin.PLUGIN_ID, "Failed to go to marker.", exception),
 				StatusManager.LOG | StatusManager.SHOW);
 		}
 	}

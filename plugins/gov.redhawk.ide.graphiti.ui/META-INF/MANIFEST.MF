@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-Activator: gov.redhawk.ide.graphiti.ui.Activator
+Bundle-Activator: gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
@@ -38,12 +38,14 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: gov.redhawk.ide.graphiti.ext,
  gov.redhawk.ide.graphiti.ext.impl,
  gov.redhawk.ide.graphiti.ext.util,
+ gov.redhawk.ide.graphiti.ui,
  gov.redhawk.ide.graphiti.ui.diagram,
  gov.redhawk.ide.graphiti.ui.diagram.dialogs,
  gov.redhawk.ide.graphiti.ui.diagram.features.custom,
  gov.redhawk.ide.graphiti.ui.diagram.features.layout,
  gov.redhawk.ide.graphiti.ui.diagram.palette,
  gov.redhawk.ide.graphiti.ui.diagram.patterns,
+ gov.redhawk.ide.graphiti.ui.diagram.preferences,
  gov.redhawk.ide.graphiti.ui.diagram.providers,
  gov.redhawk.ide.graphiti.ui.diagram.util,
  gov.redhawk.ide.graphiti.ui.editor,

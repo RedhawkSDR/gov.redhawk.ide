@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -112,11 +113,47 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String DIAGRAM_CONTEXT_LOCAL = "local";
 	public static final String DIAGRAM_CONTEXT_TARGET_SDR = "target-sdr";
 	public static final String DIAGRAM_CONTEXT_EXPLORER = "waveform explorer";
+	
+	//Shape options boolean string
+	public static final String DIAGRAM_CREATE_RHCONTAINER_SUPER_PORTS = "createRHContainerSuperPorts";
+	public static final String DIAGRAM_CREATE_RHCONTAINER_PORTS = "createRHContainerPorts";
+	public static final String DIAGRAM_HIDE_RHCONTAINER_UNUSED_PORTS = "HideRHContainerUnusedPorts";
+	
 
 	public static final int DIAGRAM_SHAPE_HORIZONTAL_PADDING = 100;
 	public static final int DIAGRAM_SHAPE_SIBLING_VERTICAL_PADDING = 5;
 	public static final int DIAGRAM_SHAPE_ROOT_VERTICAL_PADDING = 50;
 
+	//returns true if we should create super ports
+	public static boolean isCreateRHContainerSuperPorts(Diagram diagram) {
+		return Boolean.valueOf(Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_CREATE_RHCONTAINER_SUPER_PORTS));
+	}
+	public static void setCreateRHContainerSuperPorts(Diagram diagram, boolean value) {
+		Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CREATE_RHCONTAINER_SUPER_PORTS, Boolean.valueOf(value).toString());
+	}
+	
+	//returns true if we should create ports
+	//if diagram doesn't have property return true
+	public static boolean isCreateRHContainerPorts(Diagram diagram) {
+		Boolean value = Boolean.valueOf(Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_CREATE_RHCONTAINER_PORTS));
+		if(value == null || value) {
+			return true;
+		}
+		return false;
+	}
+	public static void setCreateRHContainerPorts(Diagram diagram, boolean value) {
+		Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CREATE_RHCONTAINER_PORTS, Boolean.valueOf(value).toString());
+	}
+	
+	//returns true if we should hide unused ports
+	public static boolean isHideRHContainerUnusedPorts(Diagram diagram) {
+		return Boolean.valueOf(Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_HIDE_RHCONTAINER_UNUSED_PORTS));
+	}
+	public static void setHideRHContainerUnusedPorts(Diagram diagram, boolean value) {
+		Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_HIDE_RHCONTAINER_UNUSED_PORTS, Boolean.valueOf(value).toString());
+	}
+	
+	
 	// do this because we need to pass it to layout diagram, assumes we already have shapes drawn of a certain
 	// size and that we are just moving them
 	public static IDimension calculateDiagramBounds(Diagram diagram) {
@@ -374,6 +411,30 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		// remove link
 		for (PictogramElement pe : pictogramElements) {
 			pe.getLink().getBusinessObjects().remove(eObject);
+		}
+	}
+	
+	public static void addLink(IFeatureProvider featureProvider, PictogramElement pe, EObject eObject) {
+		if(eObject == null) {
+			return;
+		}
+		
+		if (pe.getLink() == null) {
+			featureProvider.link(pe, eObject);
+		} else {
+			pe.getLink().getBusinessObjects().add(eObject);
+		}
+	}
+	
+	public static void addLinks(IFeatureProvider featureProvider, PictogramElement pe, Collection<? extends EObject> eObjects) {
+		if(eObjects == null || eObjects.size() < 1) {
+			return;
+		}
+		
+		if (pe.getLink() == null) {
+			featureProvider.link(pe, eObjects.toArray());
+		} else {
+			pe.getLink().getBusinessObjects().addAll(eObjects);
 		}
 	}
 

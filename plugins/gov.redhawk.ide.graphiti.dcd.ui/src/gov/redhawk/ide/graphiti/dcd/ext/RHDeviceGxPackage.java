@@ -192,6 +192,33 @@ public interface RHDeviceGxPackage extends EPackage {
 	int DEVICE_SHAPE__EVENT = RHGxPackage.RH_CONTAINER_SHAPE__EVENT;
 
 	/**
+	 * The feature id for the '<em><b>Create Super Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DEVICE_SHAPE__CREATE_SUPER_PORTS_CONTAINER_SHAPE = RHGxPackage.RH_CONTAINER_SHAPE__CREATE_SUPER_PORTS_CONTAINER_SHAPE;
+
+	/**
+	 * The feature id for the '<em><b>Create Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DEVICE_SHAPE__CREATE_PORTS_CONTAINER_SHAPE = RHGxPackage.RH_CONTAINER_SHAPE__CREATE_PORTS_CONTAINER_SHAPE;
+
+	/**
+	 * The feature id for the '<em><b>Hide Unused Ports</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DEVICE_SHAPE__HIDE_UNUSED_PORTS = RHGxPackage.RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS;
+
+	/**
 	 * The number of structural features of the '<em>Device Shape</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -326,6 +353,33 @@ public interface RHDeviceGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int SERVICE_SHAPE__EVENT = RHGxPackage.RH_CONTAINER_SHAPE__EVENT;
+
+	/**
+	 * The feature id for the '<em><b>Create Super Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SERVICE_SHAPE__CREATE_SUPER_PORTS_CONTAINER_SHAPE = RHGxPackage.RH_CONTAINER_SHAPE__CREATE_SUPER_PORTS_CONTAINER_SHAPE;
+
+	/**
+	 * The feature id for the '<em><b>Create Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SERVICE_SHAPE__CREATE_PORTS_CONTAINER_SHAPE = RHGxPackage.RH_CONTAINER_SHAPE__CREATE_PORTS_CONTAINER_SHAPE;
+
+	/**
+	 * The feature id for the '<em><b>Hide Unused Ports</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SERVICE_SHAPE__HIDE_UNUSED_PORTS = RHGxPackage.RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS;
 
 	/**
 	 * The number of structural features of the '<em>Service Shape</em>' class.

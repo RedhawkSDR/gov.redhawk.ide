@@ -28,6 +28,9 @@ import org.eclipse.graphiti.util.IColorConstant;
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusErrorState <em>IStatus Error State</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionMap <em>Connection Map</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getEvent <em>Event</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isCreateSuperPortsContainerShape <em>Create Super Ports Container Shape</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isCreatePortsContainerShape <em>Create Ports Container Shape</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHideUnusedPorts <em>Hide Unused Ports</em>}</li>
  * </ul>
  * </p>
  *
@@ -168,6 +171,84 @@ public interface RHContainerShape extends ContainerShape {
 	 * @generated
 	 */
 	void setEvent(Event value);
+
+	/**
+	 * Returns the value of the '<em><b>Create Super Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Create Super Ports Container Shape</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Create Super Ports Container Shape</em>' attribute.
+	 * @see #setCreateSuperPortsContainerShape(boolean)
+	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_CreateSuperPortsContainerShape()
+	 * @model unique="false"
+	 * @generated
+	 */
+	boolean isCreateSuperPortsContainerShape();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isCreateSuperPortsContainerShape <em>Create Super Ports Container Shape</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Create Super Ports Container Shape</em>' attribute.
+	 * @see #isCreateSuperPortsContainerShape()
+	 * @generated
+	 */
+	void setCreateSuperPortsContainerShape(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Create Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Create Ports Container Shape</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Create Ports Container Shape</em>' attribute.
+	 * @see #setCreatePortsContainerShape(boolean)
+	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_CreatePortsContainerShape()
+	 * @model unique="false"
+	 * @generated
+	 */
+	boolean isCreatePortsContainerShape();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isCreatePortsContainerShape <em>Create Ports Container Shape</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Create Ports Container Shape</em>' attribute.
+	 * @see #isCreatePortsContainerShape()
+	 * @generated
+	 */
+	void setCreatePortsContainerShape(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Hide Unused Ports</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Hide Unused Ports</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Hide Unused Ports</em>' attribute.
+	 * @see #setHideUnusedPorts(boolean)
+	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_HideUnusedPorts()
+	 * @model unique="false"
+	 * @generated
+	 */
+	boolean isHideUnusedPorts();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHideUnusedPorts <em>Hide Unused Ports</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Hide Unused Ports</em>' attribute.
+	 * @see #isHideUnusedPorts()
+	 * @generated
+	 */
+	void setHideUnusedPorts(boolean value);
 
 	/**
 	 * <!-- begin-user-doc -->

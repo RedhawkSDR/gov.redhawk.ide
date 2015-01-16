@@ -14,6 +14,8 @@ import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformDiagramEditor;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.SadDiagramUtilHelper;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramTypeProvider;
+import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
+import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.editor.AbstractGraphitiMultiPageEditor;
 import gov.redhawk.ide.internal.ui.handlers.CleanUpComponentFilesAction;
@@ -326,11 +328,29 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 		// link diagram with SoftwareAssembly
 		NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
 			public void execute() {
+				//TODO: I THINK WE CAN TAKE THIS OUT
 				// Evade dirty check - we DON'T want this action to mark the editor as dirty
 				//GraphitiWaveformMultiPageEditor.this.setDirtyAllowed(false);
 
 				// set property specifying diagram context (design, local, domain)
 				Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CONTEXT, getDiagramContext(sadResource));
+				
+				//specify shape display preferences (if not already set)
+				//super ports
+				if (Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_CREATE_RHCONTAINER_SUPER_PORTS) == null) {
+					boolean value = !GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_DETAILS);
+					DUtil.setCreateRHContainerSuperPorts(diagram, value);
+				}
+				//individual ports
+				if (Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_CREATE_RHCONTAINER_PORTS) == null) {
+					boolean value = GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_DETAILS);
+					DUtil.setCreateRHContainerPorts(diagram, value);
+				}
+				//hide unused ports
+				if (Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_HIDE_RHCONTAINER_UNUSED_PORTS) == null) {
+					boolean value = GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_UNUSED_PORTS);
+					DUtil.setHideRHContainerUnusedPorts(diagram, value);
+				}
 
 				// link diagram and sad
 				PictogramLink link = PictogramsFactory.eINSTANCE.createPictogramLink();

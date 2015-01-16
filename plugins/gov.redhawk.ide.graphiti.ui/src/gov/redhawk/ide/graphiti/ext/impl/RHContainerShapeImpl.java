@@ -13,16 +13,20 @@ package gov.redhawk.ide.graphiti.ext.impl;
 import gov.redhawk.ide.graphiti.ext.Event;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
+import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
@@ -74,6 +78,9 @@ import org.eclipse.graphiti.util.IColorConstant;
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getIStatusErrorState <em>IStatus Error State</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getConnectionMap <em>Connection Map</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getEvent <em>Event</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isCreateSuperPortsContainerShape <em>Create Super Ports Container Shape</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isCreatePortsContainerShape <em>Create Ports Container Shape</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isHideUnusedPorts <em>Hide Unused Ports</em>}</li>
  * </ul>
  * </p>
  *
@@ -174,6 +181,66 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	protected Event event = EVENT_EDEFAULT;
 
+	/**
+	 * The default value of the '{@link #isCreateSuperPortsContainerShape() <em>Create Super Ports Container Shape</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isCreateSuperPortsContainerShape()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean CREATE_SUPER_PORTS_CONTAINER_SHAPE_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isCreateSuperPortsContainerShape() <em>Create Super Ports Container Shape</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isCreateSuperPortsContainerShape()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean createSuperPortsContainerShape = CREATE_SUPER_PORTS_CONTAINER_SHAPE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isCreatePortsContainerShape() <em>Create Ports Container Shape</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isCreatePortsContainerShape()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean CREATE_PORTS_CONTAINER_SHAPE_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isCreatePortsContainerShape() <em>Create Ports Container Shape</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isCreatePortsContainerShape()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean createPortsContainerShape = CREATE_PORTS_CONTAINER_SHAPE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isHideUnusedPorts() <em>Hide Unused Ports</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isHideUnusedPorts()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean HIDE_UNUSED_PORTS_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isHideUnusedPorts() <em>Hide Unused Ports</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isHideUnusedPorts()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean hideUnusedPorts = HIDE_UNUSED_PORTS_EDEFAULT;
+
 	// These are property key/value pairs that help us resize an existing shape by properly identifying
 	// graphicsAlgorithms
 	public static final String GA_OUTER_ROUNDED_RECTANGLE = "outerRoundedRectangle", GA_INNER_ROUNDED_RECTANGLE = "innerRoundedRectangle",
@@ -189,7 +256,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			SHAPE_USES_PORTS_CONTAINER = "usesPortsContainerShape", SHAPE_PROVIDES_PORTS_CONTAINER = "providesPortsContainerShape",
 			SHAPE_USES_PORT_CONTAINER = "usesPortContainerShape", SHAPE_PROVIDES_PORT_CONTAINER = "providesPortContainerShape",
 			SHAPE_USES_PORT_RECTANGLE = "usesPortRectangleShape", SHAPE_PROVIDES_PORT_RECTANGLE = "providesPortRectangleShape",
-			SHAPE_INTERFACE_CONTAINER = "interfaceContainerShape", SHAPE_INTERFACE_ELLIPSE = "interfaceEllipseShape";
+			SHAPE_INTERFACE_CONTAINER = "interfaceContainerShape", SHAPE_INTERFACE_ELLIPSE = "interfaceEllipseShape",
+			SUPER_PROVIDES_PORTS_CONTAINER = "superProvidesPortsContainer", SUPER_USES_PORTS_CONTAINER = "superUsesPortsContainer";
 
 	// Shape size constants
 	public static final int OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING = 10, INNER_CONTAINER_SHAPE_TOP_PADDING = 20,
@@ -197,8 +265,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
 			PORTS_CONTAINER_SHAPE_TOP_PADDING = 60, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING = 8, INNER_ROUNDED_RECTANGLE_LINE_Y = 28, NAME_CHAR_WIDTH = 7,
 			LABEL_CHAR_WIDTH = 7, PORT_NAME_HORIZONTAL_PADDING = 5, PORT_ROW_HEIGHT = 15, PORT_ROW_PADDING_HEIGHT = 5, PORT_SHAPE_HEIGHT = 15,
-			PORT_SHAPE_WIDTH = 15, PORT_CHAR_WIDTH = 7, LOLLIPOP_ELLIPSE_DIAMETER = 10, INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING
-				+ PROVIDES_PORTS_LEFT_PADDING, INTERFACE_SHAPE_HEIGHT = 10, REQ_PADDING_BETWEEN_PORT_TYPES = 0, ICON_IMAGE_LENGTH = 16;
+			SUPER_PORT_SHAPE_HEIGHT = 5, SUPER_PORT_SHAPE_WIDTH = 5, PORT_SHAPE_WIDTH = 15, PORT_CHAR_WIDTH = 7, LOLLIPOP_ELLIPSE_DIAMETER = 10,
+			INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING, INTERFACE_SHAPE_HEIGHT = 10,
+			REQ_PADDING_BETWEEN_PORT_TYPES = 0, ICON_IMAGE_LENGTH = 16;
 
 	/**
 	 * 
@@ -355,6 +424,71 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isCreateSuperPortsContainerShape() {
+		return createSuperPortsContainerShape;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCreateSuperPortsContainerShape(boolean newCreateSuperPortsContainerShape) {
+		boolean oldCreateSuperPortsContainerShape = createSuperPortsContainerShape;
+		createSuperPortsContainerShape = newCreateSuperPortsContainerShape;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__CREATE_SUPER_PORTS_CONTAINER_SHAPE,
+				oldCreateSuperPortsContainerShape, createSuperPortsContainerShape));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isCreatePortsContainerShape() {
+		return createPortsContainerShape;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCreatePortsContainerShape(boolean newCreatePortsContainerShape) {
+		boolean oldCreatePortsContainerShape = createPortsContainerShape;
+		createPortsContainerShape = newCreatePortsContainerShape;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__CREATE_PORTS_CONTAINER_SHAPE, oldCreatePortsContainerShape,
+				createPortsContainerShape));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isHideUnusedPorts() {
+		return hideUnusedPorts;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setHideUnusedPorts(boolean newHideUnusedPorts) {
+		boolean oldHideUnusedPorts = hideUnusedPorts;
+		hideUnusedPorts = newHideUnusedPorts;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS, oldHideUnusedPorts, hideUnusedPorts));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 */
 	public void init(IAddContext context, AbstractContainerPattern pattern) {
 		init(context, pattern, null);
@@ -371,6 +505,12 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		setVisible(true);
 		setActive(true);
 		setContainer(targetContainerShape);
+
+		//configure preferences
+		final Diagram diagram = DUtil.findDiagram(this);
+		setCreateSuperPortsContainerShape(DUtil.isCreateRHContainerSuperPorts(diagram));
+		setCreatePortsContainerShape(DUtil.isCreateRHContainerPorts(diagram));
+		setHideUnusedPorts(DUtil.isHideRHContainerUnusedPorts(diagram));
 
 		// add property for this shape
 		Graphiti.getPeService().setPropertyValue(this, DUtil.GA_TYPE, SHAPE_OUTER_CONTAINER);
@@ -396,9 +536,27 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		featureProvider.link(this, pattern.getBusinessObjectsToLink(newObject).toArray());
 
 		addInnerContainer(pattern.getInnerTitle(newObject), pattern.getInnerImageId(), pattern.createStyleForInner());
-		addLollipop(pattern.getInterface(newObject), featureProvider);
-		addProvidesPorts(pattern.getProvides(newObject), featureProvider, externalPorts);
-		addUsesPorts(pattern.getUses(newObject), featureProvider, externalPorts);
+
+		EList<ProvidesPortStub> provides = pattern.getProvides(newObject);
+		EList<UsesPortStub> uses = pattern.getUses(newObject);
+		ComponentSupportedInterfaceStub interfaceStub = pattern.getInterface(newObject);
+
+		if (isCreateSuperPortsContainerShape()) {
+			//hide shape details (only hides ports for now)
+
+			if (provides != null && provides.size() > 0 || interfaceStub != null) {
+				addSuperProvidesPortContainerShape(provides, interfaceStub, featureProvider, externalPorts);
+			}
+			if (uses != null && uses.size() > 0) {
+				addSuperUsesPortContainerShape(uses, featureProvider, externalPorts);
+			}
+		}
+		if (isCreatePortsContainerShape()) {
+			//draw all shape details (only ports)
+			addLollipop(interfaceStub, featureProvider);
+			addProvidesPorts(provides, featureProvider, externalPorts);
+			addUsesPorts(uses, featureProvider, externalPorts);
+		}
 	}
 
 	/**
@@ -416,12 +574,18 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		ContainerShape containerShape = (ContainerShape) this;
 		RoundedRectangle outerRoundedRectangle = (RoundedRectangle) this.getGraphicsAlgorithm();
 		Diagram diagram = Graphiti.getPeService().getDiagramForPictogramElement(this);
-		EList<ProvidesPortStub> provides = getProvidesPortStubs();
-		EList<UsesPortStub> uses = getUsesPortStubs();
+		EList<ProvidesPortStub> provides = null;
+		EList<UsesPortStub> uses = null;
+		if (isCreatePortsContainerShape()) {
+			//no need to layout ports, they don't exist in shape
+			provides = getProvidesPortStubs();
+			uses = getUsesPortStubs();
+		}
 
 		// height
 		int minimumHeight = getMinimumHeight(provides, uses);
-		if (outerRoundedRectangle.getHeight() < minimumHeight) {
+		if (outerRoundedRectangle.getHeight() < minimumHeight
+			|| GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_DETAILS)) {
 			outerRoundedRectangle.setHeight(minimumHeight);
 		}
 
@@ -455,12 +619,33 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			innerRoundedRectangleTextSize.getWidth() + 10, innerRoundedRectangleTextSize.getHeight());
 		getInnerPolyline().getPoints().get(1).setX(innerContainerShapeWidth);
 
-		// usesPortsRectangle
-		if (uses != null && getUsesPortsContainerShape() != null) {
-			int usesPortNameLength = DUtil.getLongestUsesPortWidth(uses, diagram);
-			int intPortTextX = outerRoundedRectangle.getWidth() - (usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_WIDTH);
-			gaLayoutService.setLocationAndSize(getUsesPortsContainerShape().getGraphicsAlgorithm(), intPortTextX, PORTS_CONTAINER_SHAPE_TOP_PADDING,
-				PORT_SHAPE_WIDTH + usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING, uses.size() * (PORT_ROW_HEIGHT + PORT_ROW_PADDING_HEIGHT));
+		if (isCreateSuperPortsContainerShape()) {
+			//position across from inner container text
+			int spaceAboveInnerShape = getGraphicsAlgorithm().getHeight() - getInnerContainerShape().getGraphicsAlgorithm().getHeight();
+			int y = spaceAboveInnerShape + innerRoundedRectangleTextSize.getHeight();
+
+			//superProvidesPorts
+			if (getSuperProvidesPortsContainerShape() != null) {
+				gaLayoutService.setLocationAndSize(getSuperProvidesPortsContainerShape().getGraphicsAlgorithm(), 0, y, SUPER_PORT_SHAPE_WIDTH,
+					SUPER_PORT_SHAPE_HEIGHT);
+			}
+			//superUsesPorts
+			if (getSuperUsesPortsContainerShape() != null) {
+				int intPortTextX = outerRoundedRectangle.getWidth() - SUPER_PORT_SHAPE_WIDTH;
+				gaLayoutService.setLocationAndSize(getSuperUsesPortsContainerShape().getGraphicsAlgorithm(), intPortTextX, y, SUPER_PORT_SHAPE_WIDTH
+					+ PORT_NAME_HORIZONTAL_PADDING, SUPER_PORT_SHAPE_HEIGHT);
+			}
+			getInnerPolyline().setTransparency(1d); //hide line
+		}
+		if (isCreatePortsContainerShape()) {
+			// usesPortsRectangle
+			if (uses != null && getUsesPortsContainerShape() != null) {
+				int usesPortNameLength = DUtil.getLongestUsesPortWidth(uses, diagram);
+				int intPortTextX = outerRoundedRectangle.getWidth() - (usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING + PORT_SHAPE_WIDTH);
+				gaLayoutService.setLocationAndSize(getUsesPortsContainerShape().getGraphicsAlgorithm(), intPortTextX, PORTS_CONTAINER_SHAPE_TOP_PADDING,
+					PORT_SHAPE_WIDTH + usesPortNameLength + PORT_NAME_HORIZONTAL_PADDING, uses.size() * (PORT_ROW_HEIGHT + PORT_ROW_PADDING_HEIGHT));
+			}
+			getInnerPolyline().setTransparency(0d); //hide line
 		}
 	}
 
@@ -512,6 +697,12 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return getConnectionMap();
 		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
 			return getEvent();
+		case RHGxPackage.RH_CONTAINER_SHAPE__CREATE_SUPER_PORTS_CONTAINER_SHAPE:
+			return isCreateSuperPortsContainerShape();
+		case RHGxPackage.RH_CONTAINER_SHAPE__CREATE_PORTS_CONTAINER_SHAPE:
+			return isCreatePortsContainerShape();
+		case RHGxPackage.RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS:
+			return isHideUnusedPorts();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -540,6 +731,15 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
 			setEvent((Event) newValue);
 			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__CREATE_SUPER_PORTS_CONTAINER_SHAPE:
+			setCreateSuperPortsContainerShape((Boolean) newValue);
+			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__CREATE_PORTS_CONTAINER_SHAPE:
+			setCreatePortsContainerShape((Boolean) newValue);
+			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS:
+			setHideUnusedPorts((Boolean) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -567,6 +767,15 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
 			setEvent(EVENT_EDEFAULT);
 			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__CREATE_SUPER_PORTS_CONTAINER_SHAPE:
+			setCreateSuperPortsContainerShape(CREATE_SUPER_PORTS_CONTAINER_SHAPE_EDEFAULT);
+			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__CREATE_PORTS_CONTAINER_SHAPE:
+			setCreatePortsContainerShape(CREATE_PORTS_CONTAINER_SHAPE_EDEFAULT);
+			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS:
+			setHideUnusedPorts(HIDE_UNUSED_PORTS_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -589,6 +798,12 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return connectionMap != null;
 		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
 			return event != EVENT_EDEFAULT;
+		case RHGxPackage.RH_CONTAINER_SHAPE__CREATE_SUPER_PORTS_CONTAINER_SHAPE:
+			return createSuperPortsContainerShape != CREATE_SUPER_PORTS_CONTAINER_SHAPE_EDEFAULT;
+		case RHGxPackage.RH_CONTAINER_SHAPE__CREATE_PORTS_CONTAINER_SHAPE:
+			return createPortsContainerShape != CREATE_PORTS_CONTAINER_SHAPE_EDEFAULT;
+		case RHGxPackage.RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS:
+			return hideUnusedPorts != HIDE_UNUSED_PORTS_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -614,6 +829,12 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		result.append(connectionMap);
 		result.append(", event: ");
 		result.append(event);
+		result.append(", createSuperPortsContainerShape: ");
+		result.append(createSuperPortsContainerShape);
+		result.append(", createPortsContainerShape: ");
+		result.append(createPortsContainerShape);
+		result.append(", hideUnusedPorts: ");
+		result.append(hideUnusedPorts);
 		result.append(')');
 		return result.toString();
 	}
@@ -637,7 +858,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		ciText.setStyle(StyleUtil.createStyleForInnerText(DUtil.findDiagram(this)));
 		Graphiti.getPeService().setPropertyValue(ciText, DUtil.GA_TYPE, GA_INNER_ROUNDED_RECTANGLE_TEXT);
 
-		// line
+		// draw line if showing shape details (ports)
 		Polyline polyline = Graphiti.getGaCreateService().createPolyline(innerRoundedRectangle,
 			new int[] { 0, INNER_ROUNDED_RECTANGLE_LINE_Y, innerRoundedRectangle.getWidth(), INNER_ROUNDED_RECTANGLE_LINE_Y });
 		polyline.setLineWidth(1);
@@ -695,6 +916,84 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	/**
+	 * Adds Super Uses Port to shape
+	 * @param usesPortStubs
+	 * @param featureProvider
+	 * @param externalPorts
+	 */
+	private void addSuperUsesPortContainerShape(EList<UsesPortStub> usesPortStubs, IFeatureProvider featureProvider, List<Port> externalPorts) {
+
+		Diagram diagram = DUtil.findDiagram(this);
+
+		// port shape
+		ContainerShape superUsesPortsRectangleShape = Graphiti.getCreateService().createContainerShape(this, true);
+		Graphiti.getPeService().setPropertyValue(superUsesPortsRectangleShape, DUtil.SHAPE_TYPE, SUPER_USES_PORTS_CONTAINER);// ref
+		// prevent
+		// move
+		Rectangle superUsesPortsRectangle = Graphiti.getCreateService().createRectangle(superUsesPortsRectangleShape);
+		DUtil.addLinks(featureProvider, superUsesPortsRectangleShape, usesPortStubs);
+		superUsesPortsRectangle.setStyle(StyleUtil.createStyleForUsesPort(diagram));
+		Graphiti.getGaLayoutService().setSize(superUsesPortsRectangle, SUPER_PORT_SHAPE_WIDTH + SUPER_PORT_SHAPE_HEIGHT + PORT_NAME_HORIZONTAL_PADDING, 0);
+
+		// fix point anchor
+		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(superUsesPortsRectangleShape);
+		Point point = StylesFactory.eINSTANCE.createPoint();
+		point.setX(0);
+		point.setY(SUPER_PORT_SHAPE_HEIGHT / 2);
+		fixPointAnchor.setLocation(point);
+		DUtil.addLinks(featureProvider, fixPointAnchor, usesPortStubs);
+		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
+		fixPointAnchor.setReferencedGraphicsAlgorithm(superUsesPortsRectangle);
+		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
+		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
+		if (externalPorts != null && externalPorts.size() > 0) {
+			fixPointAnchor.getLink().getBusinessObjects().addAll(externalPorts);
+		}
+		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, 0, -SUPER_PORT_SHAPE_HEIGHT / 2, SUPER_PORT_SHAPE_WIDTH,
+			SUPER_PORT_SHAPE_HEIGHT);
+	}
+
+	/**
+	 * Adds Super Provides Port to shape
+	 * @param providesPortStubs
+	 * @param featureProvider
+	 * @param externalPorts
+	 */
+	private void addSuperProvidesPortContainerShape(EList<ProvidesPortStub> providesPortStubs, ComponentSupportedInterfaceStub interfaceStub,
+		IFeatureProvider featureProvider, List<Port> externalPorts) {
+
+		Diagram diagram = DUtil.findDiagram(this);
+
+		// port shape
+		ContainerShape superProvidesPortsRectangleShape = Graphiti.getCreateService().createContainerShape(this, true);
+		Graphiti.getPeService().setPropertyValue(superProvidesPortsRectangleShape, DUtil.SHAPE_TYPE, SUPER_PROVIDES_PORTS_CONTAINER);// ref
+
+		Rectangle superProvidesPortsRectangle = Graphiti.getCreateService().createRectangle(superProvidesPortsRectangleShape);
+		DUtil.addLinks(featureProvider, superProvidesPortsRectangleShape, providesPortStubs);
+		DUtil.addLink(featureProvider, superProvidesPortsRectangleShape, interfaceStub);
+		superProvidesPortsRectangle.setStyle(StyleUtil.createStyleForProvidesPort(diagram));
+		Graphiti.getGaLayoutService().setSize(superProvidesPortsRectangle, SUPER_PORT_SHAPE_WIDTH, SUPER_PORT_SHAPE_HEIGHT);
+
+		// fix point anchor
+		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(superProvidesPortsRectangleShape);
+		Point point = StylesFactory.eINSTANCE.createPoint();
+		point.setX(0);
+		point.setY(SUPER_PORT_SHAPE_HEIGHT / 2);
+		fixPointAnchor.setLocation(point);
+		DUtil.addLinks(featureProvider, fixPointAnchor, providesPortStubs);
+		DUtil.addLink(featureProvider, fixPointAnchor, interfaceStub);
+		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
+		fixPointAnchor.setReferencedGraphicsAlgorithm(superProvidesPortsRectangle);
+		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
+		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
+		if (externalPorts != null && externalPorts.size() > 0) {
+			fixPointAnchor.getLink().getBusinessObjects().addAll(externalPorts);
+		}
+		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, 0, -SUPER_PORT_SHAPE_HEIGHT / 2, SUPER_PORT_SHAPE_WIDTH,
+			SUPER_PORT_SHAPE_HEIGHT);
+	}
+
+	/**
 	 * Adds a ProvidesPortStub shape to the providesPortsContainerShape
 	 */
 	private void addProvidesPortContainerShape(ProvidesPortStub p, ContainerShape providesPortsContainerShape, int providesPortNameLength,
@@ -726,7 +1025,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		// prevent
 		// move
 		Rectangle providesPortRectangle = Graphiti.getCreateService().createRectangle(providesPortRectangleShape);
-		featureProvider.link(providesPortRectangleShape, p);
+		DUtil.addLink(featureProvider, providesPortRectangleShape, p);
 		providesPortRectangle.setStyle(StyleUtil.createStyleForProvidesPort(diagram));
 		Graphiti.getGaLayoutService().setLocationAndSize(providesPortRectangle, 0, 0, PORT_SHAPE_WIDTH, PORT_SHAPE_HEIGHT);
 
@@ -744,14 +1043,14 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		point.setX(0);
 		point.setY(PORT_SHAPE_HEIGHT / 2);
 		fixPointAnchor.setLocation(point);
-		featureProvider.link(fixPointAnchor, p);
+		DUtil.addLink(featureProvider, fixPointAnchor, p);
 		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
 		fixPointAnchor.setReferencedGraphicsAlgorithm(providesPortRectangle);
 		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
 		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
 		if (externalPort != null) {
 			fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForExternalProvidesPort(diagram));
-			fixPointAnchor.getLink().getBusinessObjects().add(externalPort); // link to externalPort so that update fires when it changes
+			DUtil.addLink(featureProvider, fixPointAnchor, externalPort);
 		} else {
 			fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForProvidesPort(diagram));
 		}
@@ -965,7 +1264,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	@SuppressWarnings("unchecked")
 	public EList<UsesPortStub> getUsesPortStubs() {
 		ContainerShape usesPortsContainerShape = getUsesPortsContainerShape();
-		if (usesPortsContainerShape.getLink() != null) {
+		if (usesPortsContainerShape != null && usesPortsContainerShape.getLink() != null) {
 			return (EList<UsesPortStub>) (EList< ? >) usesPortsContainerShape.getLink().getBusinessObjects();
 		}
 		return null;
@@ -977,7 +1276,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	@SuppressWarnings("unchecked")
 	public EList<ProvidesPortStub> getInternalProvidesPortStubs() {
 		ContainerShape providesPortsContainerShape = getProvidesPortsContainerShape();
-		if (providesPortsContainerShape.getLink() != null) {
+		if (providesPortsContainerShape != null && providesPortsContainerShape.getLink() != null) {
 			return (EList<ProvidesPortStub>) (EList< ? >) providesPortsContainerShape.getLink().getBusinessObjects();
 		}
 		return null;
@@ -1034,38 +1333,26 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	}
 
 	/**
-	 * handles both determining whether an update is needed and performing an update for the shape.
+	 * Return Super Provides Ports ContainerShape
 	 * @return
 	 */
-	public Reason internalUpdate(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts, boolean performUpdate) {
+	public ContainerShape getSuperProvidesPortsContainerShape() {
+		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SUPER_PROVIDES_PORTS_CONTAINER);
+	}
 
-		boolean updateStatus = false;
+	/**
+	 * Return Super Uses Ports ContainerShape
+	 * @return
+	 */
+	public ContainerShape getSuperUsesPortsContainerShape() {
+		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SUPER_USES_PORTS_CONTAINER);
+	}
+
+	//Updates Provides Ports Container Shape
+	public Reason internalUpdateProvidesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
+		EList<ProvidesPortStub> provides, Diagram diagram, boolean performUpdate, boolean updateStatus) {
 
 		IFeatureProvider featureProvider = pattern.getFeatureProvider();
-		Diagram diagram = DUtil.findDiagram(this);
-
-		EList<ProvidesPortStub> provides = pattern.getProvides(businessObject);
-		EList<UsesPortStub> uses = pattern.getUses(businessObject);
-
-		// outerText
-		Text outerTextGA = getOuterText();
-		String outerText = pattern.getOuterTitle(businessObject);
-		if (outerTextGA != null && !outerTextGA.getValue().equals(outerText)) {
-			if (performUpdate) {
-				outerTextGA.setValue(outerText);
-			}
-			return new Reason(true, "Outer title requires update");
-		}
-
-		// innerText
-		Text innerTextGA = getInnerText();
-		String innerText = pattern.getInnerTitle(businessObject);
-		if (innerTextGA != null && innerTextGA.getValue() != null && !innerTextGA.getValue().equals(innerText)) {
-			if (performUpdate) {
-				innerTextGA.setValue(innerText);
-			}
-			return new Reason(true, "Inner title requires update");
-		}
 
 		// providesPortsContainerShape
 		ContainerShape providesPortsContainerShape = getProvidesPortsContainerShape();
@@ -1163,6 +1450,19 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				}
 			}
 		}
+
+		if (updateStatus && performUpdate) {
+			return new Reason(true, "Update Provides Ports successful");
+		}
+
+		return new Reason(false, "No updates required");
+	}
+
+	//Updates Uses Ports Container Shape
+	public Reason internalUpdateUsesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
+		EList<UsesPortStub> uses, Diagram diagram, boolean performUpdate, boolean updateStatus) {
+
+		IFeatureProvider featureProvider = pattern.getFeatureProvider();
 
 		// usesPortsContainerShape
 		ContainerShape usesPortsContainerShape = getUsesPortsContainerShape();
@@ -1265,6 +1565,296 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		}
 
 		if (updateStatus && performUpdate) {
+			return new Reason(true, "Update Uses Ports successful");
+		}
+
+		return new Reason(false, "No updates required");
+	}
+
+	public Reason internalUpdateSuperProvidesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
+		EList<ProvidesPortStub> provides, ComponentSupportedInterfaceStub interfaceStub, Diagram diagram, boolean performUpdate, boolean updateStatus) {
+
+		IFeatureProvider featureProvider = pattern.getFeatureProvider();
+
+		// port shape
+		ContainerShape superProvidesPortsRectangleShape = getSuperProvidesPortsContainerShape();
+
+		//update Anchor links
+		FixPointAnchor fixPointAnchor = (FixPointAnchor) superProvidesPortsRectangleShape.getAnchors().get(0);
+
+		List<EObject> eObjects = new ArrayList<EObject>();
+		Collections.addAll(eObjects, provides.toArray(new ProvidesPortStub[0]));
+		if (externalPorts != null && externalPorts.size() > 0) {
+			Collections.addAll(eObjects, externalPorts.toArray(new Port[0]));
+		}
+		if (interfaceStub != null) {
+			eObjects.add(interfaceStub);
+		}
+
+		//add all objects that aren't already there
+		for (EObject o : eObjects) {
+			if (fixPointAnchor.getLink() == null || !fixPointAnchor.getLink().getBusinessObjects().contains(o)) {
+				if (performUpdate) {
+					updateStatus = true;
+					DUtil.addLink(featureProvider, fixPointAnchor, o);
+				} else {
+					return new Reason(true, "Super Provides Ports requires update");
+				}
+			}
+		}
+
+		//remove any out-dated objects
+		if (fixPointAnchor.getLink() != null) {
+			for (Iterator<EObject> iter = fixPointAnchor.getLink().getBusinessObjects().iterator(); iter.hasNext();) {
+				if (!eObjects.contains(iter.next())) {
+					if (performUpdate) {
+						updateStatus = true;
+						iter.remove();
+					} else {
+						return new Reason(true, "Super Provides Ports requires update");
+					}
+				}
+			}
+		}
+
+		if (updateStatus && performUpdate) {
+			return new Reason(true, "Update Super Provides Ports successful");
+		}
+
+		return new Reason(false, "No updates required");
+
+	}
+
+	public Reason internalUpdateSuperUsesPortsContainerShape(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts,
+		EList<UsesPortStub> uses, Diagram diagram, boolean performUpdate, boolean updateStatus) {
+
+		IFeatureProvider featureProvider = pattern.getFeatureProvider();
+
+		// port shape
+		ContainerShape superUsesPortsRectangleShape = getSuperUsesPortsContainerShape();
+
+		//update Anchor links
+		FixPointAnchor fixPointAnchor = (FixPointAnchor) superUsesPortsRectangleShape.getAnchors().get(0);
+
+		List<EObject> eObjects = new ArrayList<EObject>();
+		Collections.addAll(eObjects, uses.toArray(new UsesPortStub[0]));
+		if (externalPorts != null && externalPorts.size() > 0) {
+			Collections.addAll(eObjects, externalPorts.toArray(new Port[0]));
+		}
+
+		//add all objects that aren't already there
+		for (EObject o : eObjects) {
+			if (fixPointAnchor.getLink() == null || !fixPointAnchor.getLink().getBusinessObjects().contains(o)) {
+				if (performUpdate) {
+					updateStatus = true;
+					DUtil.addLink(featureProvider, fixPointAnchor, o);
+				} else {
+					return new Reason(true, "Super Uses Ports requires update");
+				}
+			}
+		}
+
+		//remove any out-dated objects
+		if (fixPointAnchor.getLink() != null) {
+			for (Iterator<EObject> iter = fixPointAnchor.getLink().getBusinessObjects().iterator(); iter.hasNext();) {
+				if (!eObjects.contains(iter.next())) {
+					if (performUpdate) {
+						updateStatus = true;
+						iter.remove();
+					} else {
+						return new Reason(true, "Super Uses Ports requires update");
+					}
+				}
+			}
+		}
+
+		if (updateStatus && performUpdate) {
+			return new Reason(true, "Update Super Uses Ports successful");
+		}
+
+		return new Reason(false, "No updates required");
+
+	}
+
+	/**
+	 * handles both determining whether an update is needed and performing an update for the shape.
+	 * @return
+	 */
+	public Reason internalUpdate(AbstractContainerPattern pattern, EObject businessObject, List<Port> externalPorts, boolean performUpdate) {
+
+		boolean updateStatus = false;
+
+		Diagram diagram = DUtil.findDiagram(this);
+
+		EList<ProvidesPortStub> provides = pattern.getProvides(businessObject);
+		ComponentSupportedInterfaceStub interfaceStub = pattern.getInterface(businessObject);
+		EList<UsesPortStub> uses = pattern.getUses(businessObject);
+
+		// outerText
+		Text outerTextGA = getOuterText();
+		String outerText = pattern.getOuterTitle(businessObject);
+		if (outerTextGA != null && !outerTextGA.getValue().equals(outerText)) {
+			if (performUpdate) {
+				updateStatus = true;
+				outerTextGA.setValue(outerText);
+			}
+			return new Reason(true, "Outer title requires update");
+		}
+
+		// innerText
+		Text innerTextGA = getInnerText();
+		String innerText = pattern.getInnerTitle(businessObject);
+		if (innerTextGA != null && innerTextGA.getValue() != null && !innerTextGA.getValue().equals(innerText)) {
+			if (performUpdate) {
+				updateStatus = true;
+				innerTextGA.setValue(innerText);
+			}
+			return new Reason(true, "Inner title requires update");
+		}
+
+		if (isCreateSuperPortsContainerShape()) {
+			//hide shape details (only hides ports for now)
+
+			//if details were already created we must delete them
+			if (getProvidesPortsContainerShape() != null) {
+				if (performUpdate) {
+					updateStatus = true;
+					EcoreUtil.delete(getProvidesPortsContainerShape());
+				} else {
+					return new Reason(true, "Provides Ports Shape requires deletion");
+				}
+			}
+			if (getUsesPortsContainerShape() != null) {
+				if (performUpdate) {
+					updateStatus = true;
+					EcoreUtil.delete(getUsesPortsContainerShape());
+				} else {
+					return new Reason(true, "Uses Ports Shape requires deletion");
+				}
+			}
+			if (getLollipop() != null) {
+				if (performUpdate) {
+					updateStatus = true;
+					EcoreUtil.delete(getLollipop());
+				} else {
+					return new Reason(true, "Lollipop Shape requires deletion");
+				}
+			}
+
+			if (getSuperProvidesPortsContainerShape() != null) {
+				//update super ports if they exist
+				Reason updateSuperProvidesPortsReason = internalUpdateSuperProvidesPortsContainerShape(pattern, businessObject, externalPorts, provides,
+					interfaceStub, diagram, performUpdate, updateStatus);
+				if (updateSuperProvidesPortsReason.toBoolean()) {
+					//if updates required return true
+					return updateSuperProvidesPortsReason;
+				}
+			} else if (getSuperProvidesPortsContainerShape() == null && (provides != null && provides.size() > 0) || interfaceStub != null) {
+				if (performUpdate) {
+					updateStatus = true;
+					EObject eObject = this.getLink().getBusinessObjects().get(0);
+					//create super ports
+					addSuperProvidesPortContainerShape(pattern.getProvides(eObject), pattern.getInterface(eObject), pattern.getFeatureProvider(), externalPorts);
+				} else {
+					return new Reason(true, "Super Provides Ports require creation");
+				}
+			}
+
+			if (getSuperUsesPortsContainerShape() != null) {
+				//update super ports if they exist
+				Reason updateSuperUsesPortsReason = internalUpdateSuperUsesPortsContainerShape(pattern, businessObject, externalPorts, uses, diagram,
+					performUpdate, updateStatus);
+				if (updateSuperUsesPortsReason.toBoolean()) {
+					//if updates required return true
+					return updateSuperUsesPortsReason;
+				}
+			} else if (getSuperUsesPortsContainerShape() == null && uses != null && uses.size() > 0) {
+				if (performUpdate) {
+					updateStatus = true;
+					EObject eObject = this.getLink().getBusinessObjects().get(0);
+					//create super ports
+					addSuperUsesPortContainerShape(pattern.getUses(eObject), pattern.getFeatureProvider(), externalPorts);
+				} else {
+					return new Reason(true, "Super Uses Ports require creation");
+				}
+			}
+		}
+		if (isCreatePortsContainerShape()) {
+
+			//if super ports were already created we must delete them
+			if (getSuperProvidesPortsContainerShape() != null) {
+				if (performUpdate) {
+					updateStatus = true;
+					EcoreUtil.delete(getSuperProvidesPortsContainerShape());
+				} else {
+					return new Reason(true, "Super Provides Ports Shape requires deletion");
+				}
+			}
+			if (getSuperUsesPortsContainerShape() != null) {
+				if (performUpdate) {
+					updateStatus = true;
+					EcoreUtil.delete(getSuperUsesPortsContainerShape());
+				} else {
+					return new Reason(true, "Super Uses Ports Shape requires deletion");
+				}
+			}
+
+			if (getProvidesPortsContainerShape() != null) {
+				//draw all shape details (only ports)
+				//update provides ports
+				Reason updateProvidesPortsReason = internalUpdateProvidesPortsContainerShape(pattern, businessObject, externalPorts, provides, diagram,
+					performUpdate, updateStatus);
+				if (updateProvidesPortsReason.toBoolean()) {
+					//if updates required return true
+					return updateProvidesPortsReason;
+				}
+			} else {
+				if (performUpdate) {
+					updateStatus = true;
+					EObject eObject = this.getLink().getBusinessObjects().get(0);
+
+					//draw all shape details (only ports)
+					addProvidesPorts(pattern.getProvides(eObject), pattern.getFeatureProvider(), externalPorts);
+
+				} else {
+					return new Reason(true, "Provides Ports ContainerShape require creation");
+				}
+			}
+			if (getUsesPortsContainerShape() != null) {
+
+				//update uses ports
+				Reason updateUsesPortsReason = internalUpdateUsesPortsContainerShape(pattern, businessObject, externalPorts, uses, diagram, performUpdate,
+					updateStatus);
+				if (updateUsesPortsReason.toBoolean()) {
+					//if updates required return true
+					return updateUsesPortsReason;
+				}
+			} else {
+				if (performUpdate) {
+					updateStatus = true;
+					EObject eObject = this.getLink().getBusinessObjects().get(0);
+
+					//draw all shape details (only ports)
+					addUsesPorts(pattern.getUses(eObject), pattern.getFeatureProvider(), externalPorts);
+				} else {
+					return new Reason(true, "Provides Ports ContainerShape require creation");
+				}
+			}
+			if (getLollipop() == null) {
+				if (performUpdate) {
+					updateStatus = true;
+					EObject eObject = this.getLink().getBusinessObjects().get(0);
+
+					//draw lollipop details
+					addLollipop(pattern.getInterface(eObject), pattern.getFeatureProvider());
+				} else {
+					return new Reason(true, "Lollipop shape requires creation");
+				}
+			}
+		}
+
+		if (updateStatus && performUpdate) {
+			layout();
 			return new Reason(true, "Update successful");
 		}
 
@@ -1371,8 +1961,16 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @param ci
 	 * @return
 	 */
-	private static int getMinimumHeight(final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs) {
-		return getAdjustedHeight(providesPortStubs, usesPortStubs) * (PORT_ROW_HEIGHT + PORT_ROW_PADDING_HEIGHT) + PORTS_CONTAINER_SHAPE_TOP_PADDING + 10;
+	private int getMinimumHeight(final EList<ProvidesPortStub> providesPortStubs, final EList<UsesPortStub> usesPortStubs) {
+
+		if (isCreateSuperPortsContainerShape()) {
+			//hiding details
+			return PORTS_CONTAINER_SHAPE_TOP_PADDING;
+		} else if (isCreatePortsContainerShape()) {
+			//show details
+			return getAdjustedHeight(providesPortStubs, usesPortStubs) * (PORT_ROW_HEIGHT + PORT_ROW_PADDING_HEIGHT) + PORTS_CONTAINER_SHAPE_TOP_PADDING + 10;
+		}
+		return PORTS_CONTAINER_SHAPE_TOP_PADDING;
 	}
 
 	/**

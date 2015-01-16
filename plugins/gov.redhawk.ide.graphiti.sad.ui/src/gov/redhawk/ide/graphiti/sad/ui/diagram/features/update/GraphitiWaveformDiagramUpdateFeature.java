@@ -16,8 +16,10 @@ import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
+import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.FindByUtil;
 
@@ -258,11 +260,17 @@ public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFe
 			SadComponentInstantiation sadComponentInstantiation = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape, SadComponentInstantiation.class);
 			if (sadComponentInstantiation == null || sadComponentInstantiation.getPlacement() == null || sadComponentInstantiation.getPlacement().getComponentFileRef() == null) {
 				return false;
-			} else if (componentShape.getProvidesPortStubs().size() > 0 && !componentShape.getProvidesPortStubs().get(0).eContainer().equals(sadComponentInstantiation)) {
-				return false;
-			} else if (componentShape.getUsesPortStubs().size() > 0 && !componentShape.getUsesPortStubs().get(0).eContainer().equals(sadComponentInstantiation)) {
-				return false;
 			}
+			
+			if (!GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_DETAILS)) {
+				//applies only if we are showing the component shape details (ports)
+				if (componentShape.getProvidesPortStubs().size() > 0 && !componentShape.getProvidesPortStubs().get(0).eContainer().equals(sadComponentInstantiation)) {
+					return false;
+				} else if (componentShape.getUsesPortStubs().size() > 0 && !componentShape.getUsesPortStubs().get(0).eContainer().equals(sadComponentInstantiation)) {
+					return false;
+				}
+			}
+			
 		}
 		return true;
 	}

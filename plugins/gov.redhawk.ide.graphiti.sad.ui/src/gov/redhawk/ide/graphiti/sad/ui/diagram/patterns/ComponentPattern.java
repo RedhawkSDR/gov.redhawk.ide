@@ -270,6 +270,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		// create shape
 		ComponentShape componentShape = RHSadGxFactory.eINSTANCE.createComponentShape();
 		componentShape.init(context, this);
+	
 
 		// set shape location to user's selection
 		Graphiti.getGaLayoutService().setLocation(componentShape.getGraphicsAlgorithm(), context.getX(), context.getY());

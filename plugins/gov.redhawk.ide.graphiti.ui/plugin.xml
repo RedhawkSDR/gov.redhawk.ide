@@ -52,5 +52,20 @@
             id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
       </imageProvider>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="gov.redhawk.ui.preferences"
+            class="gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferencePage"
+            id="gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferencePage"
+            name="Graphiti Diagram Preferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>
