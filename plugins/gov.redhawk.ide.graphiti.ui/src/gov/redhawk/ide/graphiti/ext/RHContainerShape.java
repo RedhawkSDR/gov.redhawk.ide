@@ -4,6 +4,7 @@ package gov.redhawk.ide.graphiti.ext;
 
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import java.util.List;
+import java.util.Map;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
@@ -12,6 +13,7 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.util.IColorConstant;
 
 /**
  * <!-- begin-user-doc -->
@@ -24,6 +26,7 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isStarted <em>Started</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isUpdatePorts <em>Update Ports</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusErrorState <em>IStatus Error State</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionMap <em>Connection Map</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getEvent <em>Event</em>}</li>
  * </ul>
  * </p>
@@ -110,6 +113,32 @@ public interface RHContainerShape extends ContainerShape {
 	 * @generated
 	 */
 	void setIStatusErrorState(int value);
+
+	/**
+	 * Returns the value of the '<em><b>Connection Map</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Connection Map</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Connection Map</em>' attribute.
+	 * @see #setConnectionMap(Map)
+	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_ConnectionMap()
+	 * @model unique="false" dataType="gov.redhawk.ide.graphiti.ext.Map"
+	 * @generated
+	 */
+	Map<String, IColorConstant> getConnectionMap();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionMap <em>Connection Map</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Connection Map</em>' attribute.
+	 * @see #getConnectionMap()
+	 * @generated
+	 */
+	void setConnectionMap(Map<String, IColorConstant> value);
 
 	/**
 	 * Returns the value of the '<em><b>Event</b></em>' attribute.

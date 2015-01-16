@@ -18,7 +18,10 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -57,6 +60,7 @@ import org.eclipse.graphiti.mm.pictograms.impl.ContainerShapeImpl;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaLayoutService;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
+import org.eclipse.graphiti.util.IColorConstant;
 
 /**
  * <!-- begin-user-doc -->
@@ -68,6 +72,7 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isStarted <em>Started</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isUpdatePorts <em>Update Ports</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getIStatusErrorState <em>IStatus Error State</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getConnectionMap <em>Connection Map</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getEvent <em>Event</em>}</li>
  * </ul>
  * </p>
@@ -135,6 +140,19 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @ordered
 	 */
 	protected int iStatusErrorState = ISTATUS_ERROR_STATE_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getConnectionMap() <em>Connection Map</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * This map is used to store color information for connections between redraws.  
+	 * This matters for instances such as when monitor ports is active, where a connection may need to have a 
+	 * specific color set at creation.
+	 * <!-- end-user-doc -->
+	 * @see #getConnectionMap()
+	 * @generated NOT
+	 * @ordered
+	 */
+	protected Map<String, IColorConstant> connectionMap = Collections.synchronizedMap(new HashMap<String, IColorConstant>());
 
 	/**
 	 * The default value of the '{@link #getEvent() <em>Event</em>}' attribute.
@@ -287,6 +305,30 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInner(diagram));
 			}
 		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * This map is used to store color information for connections between redraws.  
+	 * This matters for instances such as when monitor ports is active, where a connection may need to have a 
+	 * specific color set at creation.
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Map<String, IColorConstant> getConnectionMap() {
+		return connectionMap;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setConnectionMap(Map<String, IColorConstant> newConnectionMap) {
+		Map<String, IColorConstant> oldConnectionMap = connectionMap;
+		connectionMap = newConnectionMap;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP, oldConnectionMap, connectionMap));
 	}
 
 	/**
@@ -466,6 +508,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return isUpdatePorts();
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
 			return getIStatusErrorState();
+		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
+			return getConnectionMap();
 		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
 			return getEvent();
 		}
@@ -477,6 +521,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -488,6 +533,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
 			setIStatusErrorState((Integer) newValue);
+			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
+			setConnectionMap((Map<String, IColorConstant>) newValue);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
 			setEvent((Event) newValue);
@@ -513,6 +561,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
 			setIStatusErrorState(ISTATUS_ERROR_STATE_EDEFAULT);
 			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
+			setConnectionMap((Map<String, IColorConstant>) null);
+			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
 			setEvent(EVENT_EDEFAULT);
 			return;
@@ -534,6 +585,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			return updatePorts != UPDATE_PORTS_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
 			return iStatusErrorState != ISTATUS_ERROR_STATE_EDEFAULT;
+		case RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP:
+			return connectionMap != null;
 		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
 			return event != EVENT_EDEFAULT;
 		}
@@ -557,6 +610,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		result.append(updatePorts);
 		result.append(", iStatusErrorState: ");
 		result.append(iStatusErrorState);
+		result.append(", connectionMap: ");
+		result.append(connectionMap);
 		result.append(", event: ");
 		result.append(event);
 		result.append(')');

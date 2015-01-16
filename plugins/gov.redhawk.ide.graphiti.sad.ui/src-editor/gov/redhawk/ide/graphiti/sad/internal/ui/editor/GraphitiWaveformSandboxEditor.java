@@ -33,6 +33,8 @@ import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.monitor.MonitorPlugin;
+import gov.redhawk.monitor.MonitorPortAdapter;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 import gov.redhawk.sca.ui.editors.ScaObjectWrapperContentDescriber;
 import gov.redhawk.sca.util.Debug;
@@ -75,9 +77,9 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 	public static final String EDITOR_ID = "gov.redhawk.ide.sad.graphiti.ui.editor.localMultiPageSca";
 	private static final Debug DEBUG = new Debug(SADUIGraphitiPlugin.PLUGIN_ID, "editor");
 	private ScaGraphitiModelAdapter scaListener;
-
 	private SadGraphitiModelAdapter sadlistener;
 	private GraphitiDiagramAdapter graphitiDiagramListener;
+	private MonitorPortAdapter portStatisticsAdapter;
 	private LocalScaWaveform waveform;
 	private boolean isLocalSca;
 	private Resource mainResource;
@@ -102,6 +104,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 		}
 
 		initModelMap();
+		initPortStatListener();
 	}
 
 	@Override
@@ -336,9 +339,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 							}
 						}
 					});
-				} catch (InvocationTargetException e) {
-					// PASS
-				} catch (InterruptedException e) {
+				} catch (InvocationTargetException | InterruptedException e) {
 					// PASS
 				}
 			} else {
@@ -353,8 +354,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 		modelMap = new GraphitiModelMap(this, sad, waveform);
 
 		if (isLocalSca) {
-			// Use the SCA Model are source to build the SAD when we are in the chalkboard since the SAD file isn't
-			// modified
+			// Use the SCA Model source to build the SAD when in the chalkboard since the SAD file isn't modified
 			getEditingDomain().getCommandStack().execute(new SadGraphitiModelInitializerCommand(modelMap, sad, waveform));
 		} else {
 			// Use the existing SAD file as a template when initializing the modeling map
@@ -385,6 +385,10 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 			}
 		};
 
+		// Add port statistics listener
+		portStatisticsAdapter = new MonitorPortAdapter(modelMap);
+		MonitorPlugin.getDefault().getMonitorRegistry().eAdapters().add(portStatisticsAdapter);
+
 		ScaModelCommand.execute(this.waveform, new ScaModelCommand() {
 
 			@Override
@@ -401,6 +405,10 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 				GraphitiWaveformSandboxEditor.DEBUG.catching("Failed to save local diagram.", e);
 			}
 		}
+
+	}
+
+	private void initPortStatListener() {
 
 	}
 
@@ -426,7 +434,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 				@Override
 				public void execute() {
 					waveform.eAdapters().remove(GraphitiWaveformSandboxEditor.this.scaListener);
-					// localSca.eAdapters().remove(LocalGraphitiSadMultiPageScaEditor.this.scaListener);
+					MonitorPlugin.getDefault().getMonitorRegistry().eAdapters().remove(portStatisticsAdapter);
 				}
 			});
 			this.scaListener = null;

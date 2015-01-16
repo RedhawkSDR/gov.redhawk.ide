@@ -197,13 +197,22 @@ public interface RHGxPackage extends EPackage {
 	int RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Connection Map</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RH_CONTAINER_SHAPE__CONNECTION_MAP = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 3;
+
+	/**
 	 * The feature id for the '<em><b>Event</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__EVENT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 3;
+	int RH_CONTAINER_SHAPE__EVENT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of structural features of the '<em>RH Container Shape</em>' class.
@@ -212,7 +221,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 4;
+	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 5;
 
 	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.graphiti.ext.Event <em>Event</em>}' enum.
@@ -355,6 +364,26 @@ public interface RHGxPackage extends EPackage {
 	int IUPDATE_CONTEXT = 15;
 
 	/**
+	 * The meta object id for the '<em>Map</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see java.util.Map
+	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getMap()
+	 * @generated
+	 */
+	int MAP = 17;
+
+	/**
+	 * The meta object id for the '<em>IColor Constant</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.graphiti.util.IColorConstant
+	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIColorConstant()
+	 * @generated
+	 */
+	int ICOLOR_CONSTANT = 16;
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.graphiti.mm.pictograms.ContainerShape <em>Container Shape Impl</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -407,6 +436,17 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getRHContainerShape_IStatusErrorState();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionMap <em>Connection Map</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Connection Map</em>'.
+	 * @see gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionMap()
+	 * @see #getRHContainerShape()
+	 * @generated
+	 */
+	EAttribute getRHContainerShape_ConnectionMap();
 
 	/**
 	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getEvent <em>Event</em>}'.
@@ -573,6 +613,28 @@ public interface RHGxPackage extends EPackage {
 	EDataType getIUpdateContext();
 
 	/**
+	 * Returns the meta object for data type '{@link java.util.Map <em>Map</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Map</em>'.
+	 * @see java.util.Map
+	 * @model instanceClass="java.util.Map<java.lang.String, org.eclipse.graphiti.util.IColorConstant>"
+	 * @generated
+	 */
+	EDataType getMap();
+
+	/**
+	 * Returns the meta object for data type '{@link org.eclipse.graphiti.util.IColorConstant <em>IColor Constant</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>IColor Constant</em>'.
+	 * @see org.eclipse.graphiti.util.IColorConstant
+	 * @model instanceClass="org.eclipse.graphiti.util.IColorConstant"
+	 * @generated
+	 */
+	EDataType getIColorConstant();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -637,6 +699,14 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE = eINSTANCE.getRHContainerShape_IStatusErrorState();
+
+		/**
+		 * The meta object literal for the '<em><b>Connection Map</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RH_CONTAINER_SHAPE__CONNECTION_MAP = eINSTANCE.getRHContainerShape_ConnectionMap();
 
 		/**
 		 * The meta object literal for the '<em><b>Event</b></em>' attribute feature.
@@ -785,6 +855,26 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType IUPDATE_CONTEXT = eINSTANCE.getIUpdateContext();
+
+		/**
+		 * The meta object literal for the '<em>Map</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see java.util.Map
+		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getMap()
+		 * @generated
+		 */
+		EDataType MAP = eINSTANCE.getMap();
+
+		/**
+		 * The meta object literal for the '<em>IColor Constant</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.graphiti.util.IColorConstant
+		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIColorConstant()
+		 * @generated
+		 */
+		EDataType ICOLOR_CONSTANT = eINSTANCE.getIColorConstant();
 
 	}
 

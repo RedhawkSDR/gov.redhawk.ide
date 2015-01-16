@@ -30,6 +30,8 @@ type SadComponentInstantiation wraps mil.jpeojtrs.sca.sad.SadComponentInstantiat
 type IAddContext wraps org.eclipse.graphiti.features.context.IAddContext
 type AbstractContainerPattern wraps AbstractContainerPattern
 type IUpdateContext wraps org.eclipse.graphiti.features.context.IUpdateContext
+type IColorConstant wraps org.eclipse.graphiti.util.IColorConstant
+type Map wraps java.util.Map< String , org.eclipse.graphiti.util.IColorConstant >
 
 interface ContainerShapeImpl wraps org.eclipse.graphiti.mm.pictograms.ContainerShape {}
 
@@ -39,6 +41,7 @@ class RHContainerShape extends org.eclipse.graphiti.mm.pictograms.ContainerShape
 	boolean started
 	boolean updatePorts
 	int iStatusErrorState
+	Map connectionMap 
 	Event event
 	
 	op void init(IAddContext context, AbstractContainerPattern pattern) 

@@ -11,6 +11,7 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
 import gov.redhawk.diagram.util.InterfacesUtil;
+import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformDiagramEditor;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -20,6 +21,7 @@ import gov.redhawk.sca.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
@@ -99,6 +101,11 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		UsesPortStub source = getUsesPortStub(context);
 		ConnectionTarget target = getConnectionTarget(context);
 
+		// check and see if the connection has any special color requirements, such as during a monitor port call
+		ComponentShape componentShape = (ComponentShape) DUtil.getPictogramElementForBusinessObject(getDiagram(), source.eContainer(), ComponentShape.class);
+		Map< String , IColorConstant > connectionMap = componentShape.getConnectionMap();
+		IColorConstant defaultColor = (IColorConstant) connectionMap.get(connectInterface.getId());
+
 		// Create connection (handle user selecting source or target)
 		Connection connectionPE = peCreateService.createFreeFormConnection(getFeatureProvider().getDiagramTypeProvider().getDiagram());
 		if (source == getUsesPortStub(context.getSourceAnchor()) && target == getConnectionTarget(context.getTargetAnchor())) {
@@ -112,15 +119,25 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		// create line
 		Polyline line = gaService.createPolyline(connectionPE);
 		line.setLineWidth(2);
-		line.setForeground(gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(), StyleUtil.BLACK));
+		IColorConstant style = (defaultColor != null) ?  defaultColor : StyleUtil.BLACK;
+		line.setForeground(gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(), style));
 
 		// add any decorators
-		decorateConnection(connectionPE, connectInterface, getDiagram());
+		decorateConnection(connectionPE, connectInterface, getDiagram(), style);
 
 		// link ports to connection
 		getFeatureProvider().link(connectionPE, new Object[] { connectInterface, source, target });
 		
 		return connectionPE;
+	}
+	
+	/**
+	 * Add decorators to connection if applicable
+	 * Note: Unfortunately Graphiti doesn't support ConnectionDecorators with tooltips like it does with Shape Decorators (see RHToolBehaviorProvider)
+	 * @param connectionPE
+	 */
+	public static void decorateConnection(Connection connectionPE, SadConnectInterface connectInterface, Diagram diagram) {
+		decorateConnection(connectionPE, connectInterface, diagram, null);
 	}
 
 	/**
@@ -128,7 +145,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	 * Note: Unfortunately Graphiti doesn't support ConnectionDecorators with tooltips like it does with Shape Decorators (see RHToolBehaviorProvider)
 	 * @param connectionPE
 	 */
-	public static void decorateConnection(Connection connectionPE, SadConnectInterface connectInterface, Diagram diagram) {
+	public static void decorateConnection(Connection connectionPE, SadConnectInterface connectInterface, Diagram diagram, IColorConstant defaultColor) {
 		// Clear any existing connection decorators
 		connectionPE.getConnectionDecorators().clear();
 		
@@ -164,7 +181,9 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 
 			// add graphical arrow to end of the connection
 			IColorConstant arrowColor;
-			if (!compatibleConnection || !uniqueConnection) {
+			if (defaultColor != null) {
+				arrowColor = defaultColor;
+			} else if (!compatibleConnection || !uniqueConnection) {
 				arrowColor = IColorConstant.RED;
 			} else {
 				arrowColor = IColorConstant.BLACK;

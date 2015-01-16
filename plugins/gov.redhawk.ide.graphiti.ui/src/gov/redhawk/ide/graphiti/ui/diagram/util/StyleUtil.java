@@ -54,16 +54,25 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final IColorConstant WHITE = IColorConstant.WHITE;
 	public static final IColorConstant BLACK = IColorConstant.BLACK;
 	public static final IColorConstant RED = IColorConstant.RED;
+	public static final IColorConstant YELLOW = IColorConstant.YELLOW;
+	public static final IColorConstant GREEN = IColorConstant.GREEN;
 	public static final IColorConstant BLUE = new ColorConstant(0, 0, 194);
 	public static final IColorConstant GOLD = new ColorConstant(255, 218, 105);
 	public static final IColorConstant COMPONENT_FOREGROUND = new ColorConstant(98, 131, 167);
 	public static final IColorConstant COMPONENT_BACKGROUND = new ColorConstant(187, 218, 247);
 	public static final IColorConstant OUTER_CONTAINER_BACKGROUND = new ColorConstant(250, 250, 250);
 
+	// Colors for port statistics feature
+	public static final IColorConstant PROVIDES_OK = GREEN;
+	public static final IColorConstant PROVIDES_WARNING_1 = YELLOW;
+	public static final IColorConstant PROVIDES_WARNING_2 = new ColorConstant(255, 170, 0);
+	public static final IColorConstant PROVIDES_WARNING_3 = new ColorConstant(255, 85, 0);
+	public static final IColorConstant PROVIDES_WARNING_4 = IColorConstant.RED;
+
 	// COMPONENT
 	public static final int DEFAULT_LINE_WIDTH = 2;
 	public static final int ASSEMBLY_CONTROLLER_LINE_WIDTH = 3;
-	
+
 	// COLORS
 	// TODO shouldn't we be disposing of these Colors correctly?
 	public static final Color FOREGROUND_COLOR = new Color(null, 116, 130, 141); // TODO dispose?
@@ -139,7 +148,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
-	
+
 	// updates component inner rectangle style
 	public static Style createStyleForComponentInnerStarted(Diagram diagram) {
 		final String styleId = "ComponentInnerStarted";
@@ -152,14 +161,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
-	
+
 	// returns component inner rectangle style
 	public static Style getStyleForComponentInnerStarted(Diagram diagram) {
 		final String styleId = "ComponentInnerStarted";
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
-	
+
 	// updates component inner rectangle style when it is in an error state
 	public static Style createStyleForComponentInnerError(Diagram diagram) {
 		final String styleId = "ComponentInnerError";
@@ -172,14 +181,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
-	
+
 	// returns component inner rectangle style for when it is in an error state
 	public static Style getStyleForComponentInnerError(Diagram diagram) {
 		final String styleId = "ComponentInnerError";
 		Style style = findStyle(diagram, styleId);
 		return style;
 	}
-	
+
 	// returns findby outer rectangle style
 	public static Style getStyleForFindByOuter(Diagram diagram) {
 		final String styleId = FIND_BY_OUTER;
@@ -203,7 +212,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
-	
+
 	// returns uses device outer rectangle style
 	public static Style getStyleForUsesDeviceOuter(Diagram diagram) {
 		final String styleId = USES_DEVICE_OUTER;
@@ -273,7 +282,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
-	
+
 	// returns uses device inner rectangle style
 	public static Style getStyleForUsesDeviceInner(Diagram diagram) {
 		final String styleId = USES_DEVICE_INNER;
@@ -385,6 +394,20 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			style.setLineWidth(2);
 			style.setLineVisible(true);
 		}
+		return style;
+	}
+
+	// returns style for provides port statistics
+	public static Style createStyleForProvidesPortStatistics(Diagram diagram, IColorConstant warningLevel) {
+		final String styleId = "gov.redhawk.style.ProvidesPortStatistics";
+		Style style = findStyle(diagram, styleId);
+		IGaService gaService = Graphiti.getGaService();
+		style = gaService.createStyle(diagram, styleId);
+		style.setForeground(gaService.manageColor(diagram, BLACK));
+		style.setBackground(gaService.manageColor(diagram, warningLevel));
+		style.setFont(getPortFont(diagram));
+		style.setLineWidth(2);
+		style.setLineVisible(true);
 		return style;
 	}
 

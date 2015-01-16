@@ -19,11 +19,15 @@ import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
+import gov.redhawk.model.sca.ScaPortContainer;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
+import gov.redhawk.model.sca.commands.NonDirtyingCommand;
+import gov.redhawk.monitor.IPortStatListener;
 import gov.redhawk.sca.ui.actions.StartAction;
 import gov.redhawk.sca.ui.actions.StopAction;
 import gov.redhawk.sca.util.SubMonitor;
@@ -53,6 +57,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
@@ -66,20 +71,25 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
 import org.eclipse.graphiti.features.context.impl.DeleteContext;
+import org.eclipse.graphiti.mm.algorithms.Polyline;
+import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.omg.CORBA.SystemException;
 
+import BULKIO.PortStatistics;
 import CF.DataType;
 import CF.LifeCyclePackage.ReleaseError;
 import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
 
-public class GraphitiModelMap {
+public class GraphitiModelMap implements IPortStatListener {
 	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
 		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
 	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
@@ -930,4 +940,205 @@ public class GraphitiModelMap {
 		nodes.put(nodeMapEntry.getKey(), nodeMapEntry);
 	}
 
+	/*****************************************************************************************************************/
+	/******* These methods handle changing the color of the Graphiti port shape objects to reflect port status *******/
+	/*****************************************************************************************************************/
+
+	/* (non-Javadoc)
+	 * @see gov.redhawk.monitor.IPortStatListener#newStatistics(gov.redhawk.model.sca.ScaPort, BULKIO.PortStatistics)
+	 */
+	@Override
+	public void newStatistics(ScaPort< ? , ? > port, PortStatistics stats) {
+		ScaPortContainer container = port.getPortContainer();
+		float queueDepth = stats.averageQueueDepth;
+
+		if (container instanceof ScaComponent) {
+			ScaComponent component = (ScaComponent) container;
+
+			final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
+			if (nodeMapEntry != null) {
+				SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
+
+				if (this.editor.getDiagramEditor() == null) {
+					return;
+				}
+				final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+				final Diagram diagram = provider.getDiagram();
+
+				ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
+				toggleUpdatePort(componentShape, false);
+				EList<ProvidesPortStub> providesStubs = componentShape.getProvidesPortStubs();
+				for (ProvidesPortStub portStub : providesStubs) {
+					if (portStub.getName().equals(port.getName())) {
+						Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, portStub, Anchor.class);
+						Rectangle anchorGa = (Rectangle) anchor.getGraphicsAlgorithm();
+						if (queueDepth < 0.60) {
+							updatePortStyle(port, anchorGa, diagram, StyleUtil.PROVIDES_OK);
+						} else if (queueDepth < 0.70) {
+							updatePortStyle(port, anchorGa, diagram, StyleUtil.PROVIDES_WARNING_1);
+						} else if (queueDepth < 0.80) {
+							updatePortStyle(port, anchorGa, diagram, StyleUtil.PROVIDES_WARNING_2);
+						} else if (queueDepth < 0.90) {
+							updatePortStyle(port, anchorGa, diagram, StyleUtil.PROVIDES_WARNING_3);
+						} else {
+							updatePortStyle(port, anchorGa, diagram, StyleUtil.PROVIDES_WARNING_4);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see gov.redhawk.monitor.IPortStatListener#newStatistics(gov.redhawk.model.sca.ScaPort, java.lang.String, BULKIO.PortStatistics)
+	 */
+	@Override
+	public void newStatistics(ScaPort< ? , ? > port, String connectionId, PortStatistics stats) {
+		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+		final Diagram diagram = provider.getDiagram();
+		if (this.editor.getDiagramEditor() == null) {
+			return;
+		}
+
+		// Get the component shape
+		ScaPortContainer container = port.getPortContainer();
+		ScaComponent component = (ScaComponent) container;
+		final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
+		if (nodeMapEntry == null) {
+			return;
+		}
+		SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
+		ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
+
+		// Get the connection interface
+		ConnectionMapEntry connectionMap = connections.get(connectionId);
+		if (connectionMap == null) {
+			return;
+		}
+		float timeSinceLastCall = stats.timeSinceLastCall;
+		SadConnectInterface connInterface = connectionMap.getProfile();
+
+		Connection connection = (Connection) DUtil.getPictogramElementForBusinessObject(diagram, connInterface, Connection.class);
+		Polyline line = (Polyline) connection.getGraphicsAlgorithm();
+		if (timeSinceLastCall < 1) {
+			updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.GREEN);
+		} else {
+			updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.YELLOW);
+		}
+	}
+
+	/**
+	 * Changes the port color to reflect appropriate state
+	 * @param port - Used to determine which style update method to use
+	 * @param anchorGa - the port that is being modified
+	 * @param diagram
+	 * @param style - static reference to a color in the StyleUtil class
+	 */
+	private void updatePortStyle(final ScaPort< ? , ? > port, final Rectangle anchorGa, final Diagram diagram, final IColorConstant style) {
+		TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new NonDirtyingCommand() {
+			@Override
+			public void execute() {
+				if (style != null) {
+					anchorGa.setStyle(StyleUtil.createStyleForProvidesPortStatistics(diagram, style));
+				} else {
+					anchorGa.setStyle(StyleUtil.createStyleForProvidesPort(diagram));
+				}
+			}
+		});
+	}
+
+	private void updateConnectionStyle(final ComponentShapeImpl componentShape, final Connection connection, final SadConnectInterface connInterface,
+		final String connectionId, final Polyline line, final Diagram diagram, final IColorConstant style) {
+		TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new NonDirtyingCommand() {
+			@Override
+			public void execute() {
+				if (style == null) {
+					componentShape.getConnectionMap().remove(connectionId);
+					line.setForeground(Graphiti.getGaService().manageColor(diagram, StyleUtil.BLACK));
+					SADConnectInterfacePattern.decorateConnection(connection, connInterface, diagram, StyleUtil.BLACK);
+				} else {
+					componentShape.getConnectionMap().put(connectionId, style);
+					line.setForeground(Graphiti.getGaService().manageColor(diagram, style));
+					SADConnectInterfacePattern.decorateConnection(connection, connInterface, diagram, style);
+				}
+			}
+		});
+	}
+
+	/**
+	 * Toggles whether or not the update/internal update methods should run on a port
+	 * This should be set to false while monitoring the port, and set to true when done monitoring
+	 */
+	private void toggleUpdatePort(final ComponentShapeImpl componentShape, final boolean shouldUpdate) {
+		TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new NonDirtyingCommand() {
+			@Override
+			public void execute() {
+				componentShape.setUpdatePorts(shouldUpdate);
+			}
+		});
+	}
+
+	/* (non-Javadoc)
+	 * @see gov.redhawk.monitor.IPortStatListener#noStatistics(gov.redhawk.model.sca.ScaPort)
+	 */
+	@Override
+	public void noStatistics(ScaPort< ? , ? > port) {
+		ScaPortContainer container = port.getPortContainer();
+		ScaComponent component = (ScaComponent) container;
+
+		final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
+		if (nodeMapEntry != null) {
+			SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
+			final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+			final Diagram diagram = provider.getDiagram();
+
+			ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
+			toggleUpdatePort(componentShape, true);
+			if (port instanceof ScaProvidesPort) {
+				EList<ProvidesPortStub> providesStubs = componentShape.getProvidesPortStubs();
+				for (ProvidesPortStub portStub : providesStubs) {
+					if (portStub.getName().equals(port.getName())) {
+						Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, portStub, Anchor.class);
+						Rectangle anchorGa = (Rectangle) anchor.getGraphicsAlgorithm();
+						updatePortStyle(port, anchorGa, diagram, null);
+					}
+				}
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see gov.redhawk.monitor.IPortStatListener#noStatistics(gov.redhawk.model.sca.ScaPort, java.lang.String)
+	 */
+	@Override
+	public void noStatistics(ScaPort< ? , ? > port, String connectionId) {
+		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+		final Diagram diagram = provider.getDiagram();
+
+		// Get the component shape
+		ScaPortContainer container = port.getPortContainer();
+		ScaComponent component = (ScaComponent) container;
+		final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
+		if (nodeMapEntry == null) {
+			return;
+		}
+		SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
+		ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
+
+		// Get the connection interface
+		ConnectionMapEntry connectionMap = connections.get(connectionId);
+		if (connectionMap == null) {
+			return;
+		}
+		SadConnectInterface connInterface = connectionMap.getProfile();
+		Connection connection = (Connection) DUtil.getPictogramElementForBusinessObject(diagram, connInterface, Connection.class);
+		Polyline line = (Polyline) connection.getGraphicsAlgorithm();
+		updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, null);
+	}
 }
