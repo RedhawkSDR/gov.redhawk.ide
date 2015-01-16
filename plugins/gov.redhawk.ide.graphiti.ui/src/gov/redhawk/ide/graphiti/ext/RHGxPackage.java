@@ -179,13 +179,22 @@ public interface RHGxPackage extends EPackage {
 	int RH_CONTAINER_SHAPE__STARTED = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Update Ports</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RH_CONTAINER_SHAPE__UPDATE_PORTS = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 1;
+
+	/**
 	 * The feature id for the '<em><b>IStatus Error State</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 1;
+	int RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Event</b></em>' attribute.
@@ -194,7 +203,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__EVENT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 2;
+	int RH_CONTAINER_SHAPE__EVENT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of structural features of the '<em>RH Container Shape</em>' class.
@@ -203,7 +212,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 3;
+	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 4;
 
 	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.graphiti.ext.Event <em>Event</em>}' enum.
@@ -376,6 +385,17 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getRHContainerShape_Started();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isUpdatePorts <em>Update Ports</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Update Ports</em>'.
+	 * @see gov.redhawk.ide.graphiti.ext.RHContainerShape#isUpdatePorts()
+	 * @see #getRHContainerShape()
+	 * @generated
+	 */
+	EAttribute getRHContainerShape_UpdatePorts();
 
 	/**
 	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusErrorState <em>IStatus Error State</em>}'.
@@ -601,6 +621,14 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute RH_CONTAINER_SHAPE__STARTED = eINSTANCE.getRHContainerShape_Started();
+
+		/**
+		 * The meta object literal for the '<em><b>Update Ports</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RH_CONTAINER_SHAPE__UPDATE_PORTS = eINSTANCE.getRHContainerShape_UpdatePorts();
 
 		/**
 		 * The meta object literal for the '<em><b>IStatus Error State</b></em>' attribute feature.

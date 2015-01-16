@@ -37,6 +37,7 @@ interface ContainerShapeImpl wraps org.eclipse.graphiti.mm.pictograms.ContainerS
 class RHContainerShape extends org.eclipse.graphiti.mm.pictograms.ContainerShape {
 	
 	boolean started
+	boolean updatePorts
 	int iStatusErrorState
 	Event event
 	

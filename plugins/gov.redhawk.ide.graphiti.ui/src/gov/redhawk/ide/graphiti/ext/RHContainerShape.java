@@ -22,6 +22,7 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
  * The following features are supported:
  * <ul>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isStarted <em>Started</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isUpdatePorts <em>Update Ports</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusErrorState <em>IStatus Error State</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getEvent <em>Event</em>}</li>
  * </ul>
@@ -57,6 +58,32 @@ public interface RHContainerShape extends ContainerShape {
 	 * @generated
 	 */
 	void setStarted(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Update Ports</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Update Ports</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Update Ports</em>' attribute.
+	 * @see #setUpdatePorts(boolean)
+	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_UpdatePorts()
+	 * @model unique="false"
+	 * @generated
+	 */
+	boolean isUpdatePorts();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isUpdatePorts <em>Update Ports</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Update Ports</em>' attribute.
+	 * @see #isUpdatePorts()
+	 * @generated
+	 */
+	void setUpdatePorts(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>IStatus Error State</b></em>' attribute.

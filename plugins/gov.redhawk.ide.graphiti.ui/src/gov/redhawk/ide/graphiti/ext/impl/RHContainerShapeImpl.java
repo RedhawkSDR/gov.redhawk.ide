@@ -66,6 +66,7 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  * The following features are implemented:
  * <ul>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isStarted <em>Started</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#isUpdatePorts <em>Update Ports</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getIStatusErrorState <em>IStatus Error State</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl#getEvent <em>Event</em>}</li>
  * </ul>
@@ -94,6 +95,26 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @ordered
 	 */
 	protected boolean started = STARTED_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isUpdatePorts() <em>Update Ports</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isUpdatePorts()
+	 * @generated NOT
+	 * @ordered
+	 */
+	protected static final boolean UPDATE_PORTS_EDEFAULT = true;
+
+	/**
+	 * The cached value of the '{@link #isUpdatePorts() <em>Update Ports</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isUpdatePorts()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean updatePorts = UPDATE_PORTS_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getIStatusErrorState() <em>IStatus Error State</em>}' attribute.
@@ -214,6 +235,28 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * Should be true by default.  This flag can be used to stop the automatic update check if needed.
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isUpdatePorts() {
+		return updatePorts;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setUpdatePorts(boolean newUpdatePorts) {
+		boolean oldUpdatePorts = updatePorts;
+		updatePorts = newUpdatePorts;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__UPDATE_PORTS, oldUpdatePorts, updatePorts));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -231,7 +274,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		iStatusErrorState = newIStatusErrorState;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE, oldIStatusErrorState, iStatusErrorState));
-		
+
 		// update color according to value
 		final Diagram diagram = DUtil.findDiagram(this);
 		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
@@ -419,6 +462,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		switch (featureID) {
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			return isStarted();
+		case RHGxPackage.RH_CONTAINER_SHAPE__UPDATE_PORTS:
+			return isUpdatePorts();
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
 			return getIStatusErrorState();
 		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
@@ -437,6 +482,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		switch (featureID) {
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			setStarted((Boolean) newValue);
+			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__UPDATE_PORTS:
+			setUpdatePorts((Boolean) newValue);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
 			setIStatusErrorState((Integer) newValue);
@@ -459,6 +507,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			setStarted(STARTED_EDEFAULT);
 			return;
+		case RHGxPackage.RH_CONTAINER_SHAPE__UPDATE_PORTS:
+			setUpdatePorts(UPDATE_PORTS_EDEFAULT);
+			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
 			setIStatusErrorState(ISTATUS_ERROR_STATE_EDEFAULT);
 			return;
@@ -479,6 +530,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		switch (featureID) {
 		case RHGxPackage.RH_CONTAINER_SHAPE__STARTED:
 			return started != STARTED_EDEFAULT;
+		case RHGxPackage.RH_CONTAINER_SHAPE__UPDATE_PORTS:
+			return updatePorts != UPDATE_PORTS_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE:
 			return iStatusErrorState != ISTATUS_ERROR_STATE_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
@@ -500,6 +553,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (started: ");
 		result.append(started);
+		result.append(", updatePorts: ");
+		result.append(updatePorts);
 		result.append(", iStatusErrorState: ");
 		result.append(iStatusErrorState);
 		result.append(", event: ");
@@ -959,7 +1014,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// providesPortsContainerShape
 		ContainerShape providesPortsContainerShape = getProvidesPortsContainerShape();
-		if (providesPortsContainerShape != null && provides != null) {
+		if (updatePorts && providesPortsContainerShape != null && provides != null) {
 
 			List<Text> providesPortTexts = new ArrayList<Text>();
 
@@ -1056,7 +1111,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// usesPortsContainerShape
 		ContainerShape usesPortsContainerShape = getUsesPortsContainerShape();
-		if (usesPortsContainerShape != null && uses != null && uses.size() > 0) {
+		if (updatePorts && usesPortsContainerShape != null && uses != null && uses.size() > 0) {
 
 			List<Text> usesPortTexts = new ArrayList<Text>();
 

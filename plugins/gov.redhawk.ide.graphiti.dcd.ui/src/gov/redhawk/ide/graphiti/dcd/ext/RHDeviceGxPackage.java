@@ -156,6 +156,15 @@ public interface RHDeviceGxPackage extends EPackage {
 	int DEVICE_SHAPE__STARTED = RHGxPackage.RH_CONTAINER_SHAPE__STARTED;
 
 	/**
+	 * The feature id for the '<em><b>Update Ports</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DEVICE_SHAPE__UPDATE_PORTS = RHGxPackage.RH_CONTAINER_SHAPE__UPDATE_PORTS;
+
+	/**
 	 * The feature id for the '<em><b>IStatus Error State</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -272,6 +281,15 @@ public interface RHDeviceGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int SERVICE_SHAPE__STARTED = RHGxPackage.RH_CONTAINER_SHAPE__STARTED;
+
+	/**
+	 * The feature id for the '<em><b>Update Ports</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SERVICE_SHAPE__UPDATE_PORTS = RHGxPackage.RH_CONTAINER_SHAPE__UPDATE_PORTS;
 
 	/**
 	 * The feature id for the '<em><b>IStatus Error State</b></em>' attribute.

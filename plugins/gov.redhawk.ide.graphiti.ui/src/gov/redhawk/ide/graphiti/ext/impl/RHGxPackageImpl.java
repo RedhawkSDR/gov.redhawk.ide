@@ -29,6 +29,8 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.MmPackage;
+import org.eclipse.graphiti.mm.algorithms.AlgorithmsPackage;
+import org.eclipse.graphiti.mm.algorithms.styles.StylesPackage;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
 
@@ -200,7 +202,9 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		isInited = true;
 
 		// Initialize simple dependencies
+		StylesPackage.eINSTANCE.eClass();
 		PictogramsPackage.eINSTANCE.eClass();
+		AlgorithmsPackage.eINSTANCE.eClass();
 		EcorePackage.eINSTANCE.eClass();
 		MmPackage.eINSTANCE.eClass();
 
@@ -250,7 +254,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getRHContainerShape_IStatusErrorState() {
+	public EAttribute getRHContainerShape_UpdatePorts() {
 		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -259,8 +263,17 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getRHContainerShape_Event() {
+	public EAttribute getRHContainerShape_IStatusErrorState() {
 		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getRHContainerShape_Event() {
+		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -422,6 +435,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 
 		rhContainerShapeEClass = createEClass(RH_CONTAINER_SHAPE);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__STARTED);
+		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__UPDATE_PORTS);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__EVENT);
 
@@ -485,6 +499,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 
 		initEClass(rhContainerShapeEClass, RHContainerShape.class, "RHContainerShape", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getRHContainerShape_Started(), theEcorePackage.getEBoolean(), "started", null, 0, 1, RHContainerShape.class, !IS_TRANSIENT,
+			!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRHContainerShape_UpdatePorts(), theEcorePackage.getEBoolean(), "updatePorts", null, 0, 1, RHContainerShape.class, !IS_TRANSIENT,
 			!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_IStatusErrorState(), theEcorePackage.getEInt(), "iStatusErrorState", null, 0, 1, RHContainerShape.class,
 			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
