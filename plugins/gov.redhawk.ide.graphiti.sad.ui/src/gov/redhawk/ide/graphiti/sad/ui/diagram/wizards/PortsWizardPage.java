@@ -104,7 +104,7 @@ public class PortsWizardPage extends WizardPage {
 
 	public PortsWizardPage() {
 		super("portWizardPage", "Identify Ports", TITLE_IMAGE);
-		this.setDescription("Enter uses and provides ports");
+		this.setDescription("Enter any uses and provides ports from the device you want to use");
 
 		model = new Model();
 		dbc = new DataBindingContext();

@@ -170,7 +170,7 @@ public class FindByServiceWizardPage extends WizardPage {
 
 	public FindByServiceWizardPage() {
 		super("findByService", "Find By Service", TITLE_IMAGE);
-		this.setDescription("Enter Service Identification Information");
+		this.setDescription("Enter the details of a service you want to make connections to");
 
 		model = new Model();
 		dbc = new DataBindingContext();

@@ -82,7 +82,7 @@ public class UsesDeviceWizardPage extends WizardPage {
 	
 	public UsesDeviceWizardPage() {
 		super("UsesDeviceWizardPage", "Allocate Device", TITLE_IMAGE);
-		this.setDescription("Provide an ID for the device");
+		this.setDescription("Provide the ID of the device you want to allocate and use");
 
 		model = new Model();
 		dbc = new DataBindingContext();

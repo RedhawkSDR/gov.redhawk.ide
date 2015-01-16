@@ -201,7 +201,7 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	
 	public AbstractInputValidationDialog getDialog() {
 		return new AbstractInputValidationDialog(
-			NAME, "Enter " + NAME + " name", NAME) {
+			NAME, "Enter the name of the event channel to find", "Name") {
 			@Override
 			public String inputValidity(String value) {
 				return checkValueValid(value, null);

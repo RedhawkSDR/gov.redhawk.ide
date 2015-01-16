@@ -570,14 +570,14 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 	}
 
 	/**
-	 * Creates a dialog which prompts the user for an event channel name.
+	 * Creates a dialog which prompts the user for a host collocation name.
 	 * Will return <code>null</code> if the user terminates the dialog via
 	 * 'Cancel' or otherwise.
 	 * @return host collocation name
 	 */
 	private String getUserInput() {
 		// prompt user for Host Collocation name
-		AbstractInputValidationDialog dialog = new AbstractInputValidationDialog(NAME, "Enter " + NAME + " name", NAME) {
+		AbstractInputValidationDialog dialog = new AbstractInputValidationDialog(NAME, "Enter a name for this host collocation", "Name") {
 			@Override
 			public String inputValidity(String value) {
 				return checkValueValid(value, null);
