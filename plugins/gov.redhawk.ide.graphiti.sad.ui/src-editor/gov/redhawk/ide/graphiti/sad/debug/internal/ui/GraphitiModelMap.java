@@ -81,6 +81,8 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.ui.statushandlers.StatusManager;
+import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.SystemException;
 
 import BULKIO.PortStatistics;
@@ -951,6 +953,22 @@ public class GraphitiModelMap implements IPortStatListener {
 	public void newStatistics(ScaPort< ? , ? > port, PortStatistics stats) {
 		ScaPortContainer container = port.getPortContainer();
 		float queueDepth = stats.averageQueueDepth;
+		double lastFlush = Double.MAX_VALUE;
+
+		DataType[] keywords = stats.keywords;
+		if (keywords != null) {
+			for (DataType keyword : keywords) {
+				if ("timeSinceLastFlush".equals(keyword.id)) {
+					try {
+						lastFlush = keyword.value.extract_double();
+					} catch (BAD_OPERATION e) {
+						// PASS
+						StatusManager.getManager().handle(
+							new Status(Status.WARNING, SADUIGraphitiPlugin.PLUGIN_ID, "Expected double value for last flush: " + keyword.value, e));
+					}
+				}
+			}
+		}
 
 		if (container instanceof ScaComponent) {
 			ScaComponent component = (ScaComponent) container;
@@ -972,7 +990,9 @@ public class GraphitiModelMap implements IPortStatListener {
 					if (portStub.getName().equals(port.getName())) {
 						Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, portStub, Anchor.class);
 						Rectangle anchorGa = (Rectangle) anchor.getGraphicsAlgorithm();
-						if (queueDepth < 0.60) {
+						if (lastFlush < 10.0) {
+							updatePortStyle(port, anchorGa, diagram, StyleUtil.PROVIDES_WARNING_4);
+						} else if (queueDepth < 0.60) {
 							updatePortStyle(port, anchorGa, diagram, StyleUtil.PROVIDES_OK);
 						} else if (queueDepth < 0.70) {
 							updatePortStyle(port, anchorGa, diagram, StyleUtil.PROVIDES_WARNING_1);
