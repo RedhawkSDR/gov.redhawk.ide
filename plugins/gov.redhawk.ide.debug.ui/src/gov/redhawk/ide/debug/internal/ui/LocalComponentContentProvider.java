@@ -48,7 +48,7 @@ public class LocalComponentContentProvider extends ScaContentProvider {
 		public void notifyChanged(org.eclipse.emf.common.notify.Notification notification) {
 			super.notifyChanged(notification);
 			if (notification.getNotifier() instanceof ScaWaveform) {
-				switch(notification.getFeatureID(ScaWaveform.class)) {
+				switch (notification.getFeatureID(ScaWaveform.class)) {
 				case ScaPackage.SCA_WAVEFORM__COMPONENTS:
 					final ScaWaveform remoteWaveform = findDomainWaveform((ScaWaveform) notification.getNotifier());
 					if (remoteWaveform != null && !viewer.getControl().isDisposed()) {
