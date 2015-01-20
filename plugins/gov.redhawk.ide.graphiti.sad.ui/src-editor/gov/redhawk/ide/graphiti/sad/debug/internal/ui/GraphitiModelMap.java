@@ -18,6 +18,7 @@ import gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformSandboxEd
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.model.sca.ScaComponent;
@@ -77,6 +78,8 @@ import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.pattern.DeleteFeatureForPattern;
+import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.jdt.annotation.NonNull;
@@ -538,7 +541,10 @@ public class GraphitiModelMap implements IPortStatListener {
 
 				// delete shape & component
 				DeleteContext context = new DeleteContext(peToRemove[0]);
-				featureProvider.getDeleteFeature(context).execute(context);
+				SADDiagramFeatureProvider fp = (SADDiagramFeatureProvider) featureProvider;
+				IPattern pattern = fp.getPatternForPictogramElement(peToRemove[0]);
+				DeleteFeatureForPattern deleteFeature = new DeleteFeatureForPattern(fp, pattern);
+				deleteFeature.delete(context);
 			}
 		});
 	}
