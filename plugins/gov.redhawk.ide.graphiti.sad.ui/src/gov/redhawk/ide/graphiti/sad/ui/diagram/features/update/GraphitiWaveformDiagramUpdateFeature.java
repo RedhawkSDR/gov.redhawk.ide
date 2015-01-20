@@ -146,7 +146,10 @@ public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFe
 			if (hostCollocations.size() == hostCollocationShapes.size()) {
 				for (int i = 0; i < hostCollocations.size(); i++) {
 					valuesMatch = HostCollocationPattern.compareHostCoText(hostCollocationShapes.get(i), hostCollocations.get(i));
-					break;
+					// IDE-1021: Added condition that was supposed to be here
+					if (!valuesMatch) {
+						break;
+					}
 				}
 			}
 
