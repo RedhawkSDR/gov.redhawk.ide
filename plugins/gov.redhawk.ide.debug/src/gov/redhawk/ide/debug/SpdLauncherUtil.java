@@ -119,13 +119,6 @@ public final class SpdLauncherUtil {
 			// PASS
 		}
 
-		// Do an initial wait to give the resource an opportunity to start
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e1) {
-			// PASS
-		}
-
 		LocalAbstractComponent comp = null;
 		try {
 			switch (type) {
