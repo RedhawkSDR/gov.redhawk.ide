@@ -1,5 +1,4 @@
 /**
-/**
  * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
@@ -8,9 +7,6 @@
  * All rights reserved.  This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- *
- */
- * 
  */
 package $packageName$;
 
@@ -36,9 +32,9 @@ import org.eclipse.swt.widgets.Text;
 
 public class $compositeName$ extends Composite {
 
-	
+
 	private $resourceClassName$ input;
-%if viewer 
+%if viewer
 	private ScaItemProviderAdapterFactory adapterFactory = new ScaItemProviderAdapterFactory();
 	private TreeViewer viewer;
 %endif
@@ -56,9 +52,6 @@ $propertyFields$
 		createPartControl(this);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public void createPartControl(final Composite main) {
 		main.setLayout(new GridLayout(2, false));
 
@@ -81,7 +74,7 @@ $propertyFields$
 	private void createControlGroup(Composite parent) {
 		parent.setLayout(new GridLayout(2, false));
 		Label label;
-		
+
 $controlGroupCode$
 	}
 %endif
@@ -105,7 +98,7 @@ $controlGroupCode$
 	}
 %endif
 
-	
+
 	@Override
 	public void dispose() {
 %if propertyStubs
@@ -114,7 +107,7 @@ $controlGroupCode$
 			context = null;
 		}
 %endif
-%if viewer 
+%if viewer
 		if (this.adapterFactory != null) {
 			this.adapterFactory.dispose();
 			this.adapterFactory = null;
@@ -135,7 +128,7 @@ $controlGroupCode$
 			addBindings();
 		}
 %endif
-		
+
 %if viewer
 		viewer.setInput(input);
 % endif

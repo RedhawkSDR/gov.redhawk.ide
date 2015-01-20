@@ -1,5 +1,4 @@
 /**
-/**
  * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
@@ -8,9 +7,6 @@
  * All rights reserved.  This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- *
- */
- * 
  */
 package $packageName$;
 
@@ -31,9 +27,6 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 public class $sectionClassName$ extends AbstractPropertySection {
 	private $compositeName$ composite;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void createControls(Composite parent, TabbedPropertySheetPage aTabbedPropertySheetPage) {
 		Composite c = new Composite(parent, SWT.NONE);

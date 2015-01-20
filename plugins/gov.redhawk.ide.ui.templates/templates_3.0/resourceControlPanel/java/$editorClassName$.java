@@ -1,5 +1,4 @@
 /**
-/**
  * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
@@ -8,9 +7,6 @@
  * All rights reserved.  This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- *
- */
- * 
  */
 package $packageName$;
 
@@ -27,19 +23,13 @@ import org.eclipse.ui.PartInitException;
  */
 public class $editorClassName$ extends AbstractScaContentEditor<$resourceClassNameNoGeneric$> {
 	private $compositeName$ composite;
-	
-	/**
-	 * {@inheritDoc}
-	 */
+
 	@Override
 	public void createPartControl(final Composite main) {
 		this.composite = new $compositeName$(main, SWT.None);
 		this.composite.setInput(getInput());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setFocus() {
 		if (this.composite != null) {
@@ -53,9 +43,6 @@ public class $editorClassName$ extends AbstractScaContentEditor<$resourceClassNa
 		super.init(site, input);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected Class<$resourceClassNameNoGeneric$> getInputType() {
 		return $resourceClassNameNoGeneric$.class;
