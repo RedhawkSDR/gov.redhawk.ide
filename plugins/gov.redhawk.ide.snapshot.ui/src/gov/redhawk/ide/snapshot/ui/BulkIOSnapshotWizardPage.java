@@ -120,7 +120,7 @@ public class BulkIOSnapshotWizardPage extends SnapshotWizardPage {
 	}
 
 	protected void updateControls(CaptureMethod method) {
-		switch(method) {
+		switch (method) {
 		case INDEFINITELY:
 			samplesTxt.setText("-1");
 			unitsLabel.setText("");

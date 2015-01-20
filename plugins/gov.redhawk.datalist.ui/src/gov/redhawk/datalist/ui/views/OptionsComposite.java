@@ -315,7 +315,7 @@ public abstract class OptionsComposite {
 	}
 
 	public void showSamples(int count) {
-		switch(CaptureMethod.stringToValue(settings.getProcessType())) {
+		switch (CaptureMethod.stringToValue(settings.getProcessType())) {
 		case NUMBER: 
 			return;
 		default:

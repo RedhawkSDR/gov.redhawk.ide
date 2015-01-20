@@ -216,7 +216,7 @@ public class EventViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	private String toString(ResourceStateChangeType stateChangeFrom) {
-		switch(stateChangeFrom.value()) {
+		switch (stateChangeFrom.value()) {
 		case ResourceStateChangeType._STARTED:
 			return "STARTED";
 		case ResourceStateChangeType._STOPPED:
@@ -227,7 +227,7 @@ public class EventViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	private String toString(StateChangeType stateChangeFrom) {
-		switch(stateChangeFrom.value()) {
+		switch (stateChangeFrom.value()) {
 		case StateChangeType._ACTIVE:
 			return "ACTIVE";
 		case StateChangeType._BUSY:
@@ -250,7 +250,7 @@ public class EventViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	private String toString(StateChangeCategoryType stateChangeCategory) {
-		switch(stateChangeCategory.value()) {
+		switch (stateChangeCategory.value()) {
 		case StateChangeCategoryType._ADMINISTRATIVE_STATE_EVENT:
 			return "ADMINISTRATIVE_STATE_EVENT"; 
 		case StateChangeCategoryType._OPERATIONAL_STATE_EVENT:
@@ -263,7 +263,7 @@ public class EventViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	private String toString(SourceCategoryType sourceCategory) {
-		switch(sourceCategory.value()) {
+		switch (sourceCategory.value()) {
 		case SourceCategoryType._APPLICATION:
 			return "APPLICATION";
 		case SourceCategoryType._APPLICATION_FACTORY:

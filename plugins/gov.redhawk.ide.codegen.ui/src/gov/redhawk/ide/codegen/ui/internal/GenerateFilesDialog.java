@@ -339,7 +339,7 @@ public class GenerateFilesDialog extends Dialog {
 	}
 
 	protected boolean checkFile(boolean newValue, FileStatus element) {
-		switch(element.getType()) {
+		switch (element.getType()) {
 		case USER:
 			return checkUserFile(newValue, element);
 		case SYSTEM:

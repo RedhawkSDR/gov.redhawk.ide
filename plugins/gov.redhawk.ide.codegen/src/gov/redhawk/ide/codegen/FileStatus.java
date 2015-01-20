@@ -39,7 +39,7 @@ public class FileStatus {
 		this.desiredAction = desiredAction;
 		this.type = type;
 		this.state = state;
-		switch(desiredAction) {
+		switch (desiredAction) {
 		case ADDING:
 			this.doIt = true;
 			break;
