@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * This file is protected by Copyright. 
+ * Please refer to the COPYRIGHT file distributed with this source distribution.
+ *
+ * This file is part of REDHAWK IDE.
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under 
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package gov.redhawk.ide.debug.internal.variables.tests;
 
 import gov.redhawk.ide.debug.ILaunchConfigurationFactory;
@@ -18,9 +28,9 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 
 public class ExecParamResolverTest extends TestCase {
 
-	protected ILauncherVariableDesc fixture = null;
+	protected ILauncherVariableDesc fixture = null; // SUPPRESS CHECKSTYLE VisibilityModifier
 
-	private final String PLUGIN_ID = "gov.redhawk.ide.debug.tests";
+	private static final String PLUGIN_ID = "gov.redhawk.ide.debug.tests";
 
 	protected void setUp() throws Exception {
 		ILauncherVariableRegistry registry = ScaDebugPlugin.getInstance().getLauncherVariableRegistry();
