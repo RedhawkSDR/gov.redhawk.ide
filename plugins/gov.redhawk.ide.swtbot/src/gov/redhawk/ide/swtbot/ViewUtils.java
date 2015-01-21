@@ -10,12 +10,15 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
+import java.util.List;
+
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
@@ -28,7 +31,8 @@ public class ViewUtils {
 	/**
 	 * Check to see if a specified tree item exists
 	 * @param treeItem - The base tree object
-	 * @param treePath - Array of strings to define path to tree item to be checked. Ex: "tree root", "node parent", "node to check for")
+	 * @param treePath - Array of strings to define path to tree item to be checked. Ex: "tree root", "node parent",
+	 * "node to check for")
 	 * @returns true if entire treePath exists, false if one or more elements in the treePath does not exist
 	 */
 	public static boolean checkIfTreeItemExistsEntry(SWTBotTree treeItem, String... treePath) {
@@ -47,7 +51,27 @@ public class ViewUtils {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Stop the Console View from popping up every time it gets pinged
+	 * Makes assumption on location of 'Show Standard Out' and 'Show Standard Error' buttons
+	 * @param bot
+	 * @return
+	 */
+	public static void disableConsoleView(SWTWorkbenchBot bot) {
+		final String stdOutTT = "Show Console When Standard Out Changes";
+		final String errOutTT = "Show Console When Standard Error Changes";
+		SWTBotView view = getConsoleView(bot);
+		view.setFocus();
+		List<SWTBotToolbarButton> buttons = view.getToolbarButtons();
+		for (SWTBotToolbarButton button : buttons) {
+			if (stdOutTT.equals(button.getToolTipText()) || errOutTT.equals(button.getToolTipText())) {
+				button.click();
+			}
+		}
+		view.close();
+	}
+
 	public static SWTBotView getConsoleView(SWTWorkbenchBot bot) {
 		return bot.viewById("org.eclipse.ui.console.ConsoleView");
 	}
@@ -60,7 +84,7 @@ public class ViewUtils {
 	public static SWTBotView getPlotView(SWTWorkbenchBot bot) {
 		return bot.viewById("gov.redhawk.ui.port.nxmplot.PlotView2");
 	}
-	
+
 	/**
 	 * Return SRI View
 	 * @param bot
@@ -69,7 +93,7 @@ public class ViewUtils {
 	public static SWTBotView getSRIView(SWTWorkbenchBot bot) {
 		return bot.viewById("gov.redhawk.bulkio.ui.sridata.view");
 	}
-	
+
 	/**
 	 * Return Audio View
 	 * @param bot
@@ -78,7 +102,7 @@ public class ViewUtils {
 	public static SWTBotView getAudioView(SWTWorkbenchBot bot) {
 		return bot.viewById("gov.redhawk.ui.port.playaudio.view");
 	}
-	
+
 	/**
 	 * Return Data List View
 	 * @param bot
@@ -87,7 +111,7 @@ public class ViewUtils {
 	public static SWTBotView getDataListView(SWTWorkbenchBot bot) {
 		return bot.viewById("gov.redhawk.datalist.ui.views.DataListView");
 	}
-	
+
 	/**
 	 * Return Snapshot dialog
 	 * @param bot
@@ -96,7 +120,7 @@ public class ViewUtils {
 	public static SWTBotShell getSnapshotDialog(SWTWorkbenchBot bot) {
 		return bot.shell("Snapshot");
 	}
-	
+
 	/**
 	 * Return Port Monitor View
 	 * @param bot
@@ -105,7 +129,7 @@ public class ViewUtils {
 	public static SWTBotView getPortMonitorView(SWTWorkbenchBot bot) {
 		return bot.viewById("gov.redhawk.ui.views.monitor.ports.PortMonitorView");
 	}
-	
+
 	/**
 	 * Presses the 'Start Acquire button on the Data List View
 	 */
@@ -114,7 +138,7 @@ public class ViewUtils {
 		SWTBotButton startButton = dataListView.bot().buttonWithTooltip("Start Acquire");
 		startButton.click();
 	}
-	
+
 	/**
 	 * Waits until SRI Plot View displays and is populated
 	 * @param bot
@@ -133,7 +157,7 @@ public class ViewUtils {
 			}
 		});
 	}
-	
+
 	/**
 	 * Waits until Audio View displays and is populated
 	 * @param bot
@@ -152,7 +176,7 @@ public class ViewUtils {
 			}
 		});
 	}
-	
+
 	/**
 	 * Waits until Data List View displays
 	 * @param bot
@@ -170,7 +194,7 @@ public class ViewUtils {
 			}
 		});
 	}
-	
+
 	/**
 	 * Waits until Data List View populates
 	 * @param bot
@@ -189,7 +213,7 @@ public class ViewUtils {
 			}
 		});
 	}
-	
+
 	/**
 	 * Waits until Snapshot dialog displays
 	 * @param bot

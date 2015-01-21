@@ -276,6 +276,15 @@ public class ScaExplorerTestUtils {
 		disconnect.click(); // disconnects connection
 	}
 
+	public static void montiorWaveformPortsFromScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform) {
+		SWTBotView scaExplorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
+		scaExplorerView.setFocus();
+		SWTBotTreeItem treeItemEntry = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
+		treeItemEntry.select();
+		SWTBotMenu start = treeItemEntry.contextMenu("Monitor Ports");
+		start.click();
+	}
+
 	/**
 	 * Start component from ScaExplorer
 	 * @param componentName
