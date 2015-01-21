@@ -28,7 +28,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 
 public class ExecParamResolverTest extends TestCase {
 
-	protected ILauncherVariableDesc fixture = null;
+	protected ILauncherVariableDesc fixture = null; // SUPPRESS CHECKSTYLE VisibilityModifier
 
 	private static final String PLUGIN_ID = "gov.redhawk.ide.debug.tests";
 
