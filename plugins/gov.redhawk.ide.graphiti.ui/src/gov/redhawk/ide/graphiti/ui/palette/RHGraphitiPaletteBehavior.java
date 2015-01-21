@@ -12,6 +12,7 @@ package gov.redhawk.ide.graphiti.ui.palette;
 
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef.EditPart;
@@ -90,11 +91,11 @@ public class RHGraphitiPaletteBehavior extends DefaultPaletteBehavior {
 							 */
 							@Override
 							public List<Object> getModelChildren() {
-								List<Object> retVal =  super.getModelChildren();
-								// Stick in placeholder for filter and separator at the top
-								retVal.add(0, "Text");
-								retVal.add(1, new PaletteSeparator());
-								return retVal;
+								// IDE-1057: We don't want the default "Select" and "Marquee" tools
+								List<Object> newRetVal = new ArrayList <Object> ();
+								// Stick in placeholder for filter at the top
+								newRetVal.add("Text");
+								return newRetVal;
 							}
 						};
 						retVal.setParent(parentEditPart);

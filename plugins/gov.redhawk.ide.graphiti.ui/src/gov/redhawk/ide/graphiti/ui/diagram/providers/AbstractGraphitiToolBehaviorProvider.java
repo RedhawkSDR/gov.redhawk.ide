@@ -42,6 +42,7 @@ import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
 	private RHGraphitiPaletteFilter paletteFilter;
+	private PaletteCompartmentEntry findByCompartmentEntry;
 	
 	/**
 	 * @param diagramTypeProvider
@@ -66,9 +67,18 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		return compartments.toArray(new IPaletteCompartmentEntry[compartments.size()]);
 	}
 
+	protected PaletteCompartmentEntry initializeCompartment(PaletteCompartmentEntry existing, String label) {
+		if (existing != null) {
+			existing.getToolEntries().clear();
+			return existing;
+		}
+		return new PaletteCompartmentEntry(label, null);
+	}
+	
 	private PaletteCompartmentEntry getFindByCompartmentEntry() {
 
-		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Find By", null);
+		findByCompartmentEntry = initializeCompartment(findByCompartmentEntry, "Find By");
+		final PaletteCompartmentEntry compartmentEntry = findByCompartmentEntry;
 
 		IFeatureProvider featureProvider = getFeatureProvider();
 		ICreateFeature[] createFeatures = featureProvider.getCreateFeatures();

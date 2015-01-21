@@ -64,6 +64,10 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehaviorProvider {
 
+	private PaletteCompartmentEntry deviceCompartment;
+	private PaletteCompartmentEntry serviceCompartment;
+	private PaletteCompartmentEntry advancedCompartment;
+	
 	public GraphitiDCDToolBehaviorProvider(IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
 
@@ -170,7 +174,7 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		}
 
 		// BASE TYPES Compartment
-		PaletteCompartmentEntry baseTypesCompartmentEntry = getBaseTypesCompartmentEntry();
+		PaletteCompartmentEntry baseTypesCompartmentEntry = getAdvancedCompartmentEntry();
 		compartments.add(baseTypesCompartmentEntry);
 
 		return compartments.toArray(new IPaletteCompartmentEntry[compartments.size()]);
@@ -180,9 +184,11 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 
 		final PaletteCompartmentEntry compartmentEntry;
 		if (container instanceof DevicesContainer) {
-			compartmentEntry = new PaletteCompartmentEntry("Devices", null);
+			deviceCompartment = initializeCompartment(deviceCompartment, "Devices");
+			compartmentEntry = deviceCompartment;
 		} else if (container instanceof ServicesContainer) {
-			compartmentEntry = new PaletteCompartmentEntry("Services", null);
+			serviceCompartment = initializeCompartment(serviceCompartment, "Services");
+			compartmentEntry = serviceCompartment;
 		} else {
 			compartmentEntry = null;
 		}
@@ -288,9 +294,10 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 	/**
 	 * Returns a populated CompartmentEntry containing all the Base Types
 	 */
-	private PaletteCompartmentEntry getBaseTypesCompartmentEntry() {
+	private PaletteCompartmentEntry getAdvancedCompartmentEntry() {
 
-		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Base Types", null);
+		advancedCompartment = initializeCompartment(advancedCompartment, "Advanced");
+		final PaletteCompartmentEntry compartmentEntry = advancedCompartment;
 
 		IFeatureProvider featureProvider = getFeatureProvider();
 		// connection

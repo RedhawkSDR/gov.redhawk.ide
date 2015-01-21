@@ -11,7 +11,6 @@
 package gov.redhawk.ide.graphiti.ui.palette;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.gef.palette.CombinedTemplateCreationEntry;
@@ -23,7 +22,6 @@ import org.eclipse.gef.palette.PaletteGroup;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.palette.PaletteSeparator;
 import org.eclipse.gef.palette.PaletteStack;
-import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.gef.requests.CreationFactory;
 import org.eclipse.gef.tools.AbstractTool;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
@@ -40,8 +38,6 @@ import org.eclipse.graphiti.ui.editor.IEclipseImageDescriptor;
 import org.eclipse.graphiti.ui.internal.Messages;
 import org.eclipse.graphiti.ui.internal.editor.GFConnectionCreationTool;
 import org.eclipse.graphiti.ui.internal.editor.GFCreationTool;
-import org.eclipse.graphiti.ui.internal.editor.GFMarqueeToolEntry;
-import org.eclipse.graphiti.ui.internal.editor.GFPanningSelectionToolEntry;
 import org.eclipse.graphiti.ui.internal.util.gef.MultiCreationFactory;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -69,6 +65,20 @@ public class RHGraphitiPaletteRoot extends PaletteRoot {
 		updatePaletteEntries();
 	}
 
+	private PaletteDrawer getEmptyDrawer(String label) {
+		for (Object obj: this.getChildren()) {
+			if (obj instanceof PaletteDrawer) {
+				PaletteDrawer drawer = (PaletteDrawer) obj;
+				if (drawer.getLabel().equals(label)) {
+					// Can't just clear(), doesn't send property change 
+					// notification to update GUI
+					drawer.setChildren(new ArrayList<Object>());
+					return (PaletteDrawer) obj;
+				}
+			}
+		}
+		return null;
+	}
 	/**
 	 * Creates resp. updates the PaletteEntries. All old PaletteEntries will be
 	 * removed and new ones will be created by calling the corresponding
@@ -77,32 +87,31 @@ public class RHGraphitiPaletteRoot extends PaletteRoot {
 	public void updatePaletteEntries() {
 		// remove old entries
 		setDefaultEntry(null);
-		@SuppressWarnings("unchecked")
-		List<PaletteEntry> allEntries = new ArrayList<PaletteEntry>(getChildren());
-		// MUST make a copy
-		for (Iterator<PaletteEntry> iter = allEntries.iterator(); iter.hasNext();) {
-			PaletteEntry entry = iter.next();
-			if (entry != paletteTools) {
-				remove(entry);
-			}
-		}
 
+		boolean setInitialDrawerState = false;
 		// create new entries
 		if (paletteTools == null) {
 			paletteTools = createModelIndependentTools();
 			add(paletteTools);
+			setInitialDrawerState = true;
 		}
 
 		IToolBehaviorProvider currentToolBehaviorProvider = diagramTypeProvider.getCurrentToolBehaviorProvider();
 
 		IPaletteCompartmentEntry[] paletteCompartments = currentToolBehaviorProvider.getPalette();
 
+		List <String> compartmentLabels = new ArrayList<String>();
+		
 		for (IPaletteCompartmentEntry compartmentEntry : paletteCompartments) {
-			PaletteDrawer drawer = new PaletteDrawer(compartmentEntry.getLabel(), getImageDescriptor(compartmentEntry));
-			if (!compartmentEntry.isInitiallyOpen()) {
-				drawer.setInitialState(PaletteDrawer.INITIAL_STATE_CLOSED);
+			compartmentLabels.add(compartmentEntry.getLabel());
+			PaletteDrawer drawer = getEmptyDrawer(compartmentEntry.getLabel());
+			if (drawer == null) {
+				drawer = new PaletteDrawer(compartmentEntry.getLabel(), getImageDescriptor(compartmentEntry));
+				if (setInitialDrawerState && !compartmentEntry.isInitiallyOpen()) {
+					drawer.setInitialState(PaletteDrawer.INITIAL_STATE_CLOSED);
+				}
+				add(drawer);
 			}
-			add(drawer);
 
 			List<IToolEntry> toolEntries = compartmentEntry.getToolEntries();
 
@@ -133,37 +142,28 @@ public class RHGraphitiPaletteRoot extends PaletteRoot {
 				}
 			}
 		}
+		
+		// Hide the drawers for which no compartment entry was returned (empty)
+		for (Object obj: getChildren()) {
+			if (obj instanceof PaletteDrawer) {
+				PaletteDrawer drawer = (PaletteDrawer) obj;
+				if (!compartmentLabels.contains(drawer.getLabel())) {
+					// Can't just call clear(), doesn't send property change 
+					// notification to update the GUI
+					drawer.setChildren(new ArrayList<Object>());
+				}
+			}
+		}
 	}
 
 	/**
 	 * Creates and adds the model-independent tools to a new PaletteContainer.
-	 * Those are the selection-tool and the marquee-tool. Both tools are only
-	 * added in case the methods
-	 * {@link IToolBehaviorProvider#isShowSelectionTool()} respectively
-	 * {@link IToolBehaviorProvider#isShowMarqueeTool()} allow it. The selection
-	 * tool will be set as the default tool in case it is added.
+	 * This currently includes only the component/device filter.
 	 * 
 	 * @return The PaletteContainer with the model-independent tools.
 	 */
 	protected PaletteContainer createModelIndependentTools() {
 		PaletteGroup controlGroup = new PaletteGroup(Messages.GraphicsPaletteRoot_0_xmen);
-		List<PaletteEntry> entries = new ArrayList<PaletteEntry>();
-		IToolBehaviorProvider toolBehaviorProvider = diagramTypeProvider.getCurrentToolBehaviorProvider();
-
-		// Selection tool
-		if (toolBehaviorProvider.isShowSelectionTool()) {
-			ToolEntry tool = new GFPanningSelectionToolEntry();
-			entries.add(tool);
-			setDefaultEntry(tool);
-		}
-
-		// Marquee tool
-		if (toolBehaviorProvider.isShowMarqueeTool()) {
-			ToolEntry tool = new GFMarqueeToolEntry();
-			entries.add(tool);
-		}
-
-		controlGroup.addAll(entries);
 		return controlGroup;
 	}
 

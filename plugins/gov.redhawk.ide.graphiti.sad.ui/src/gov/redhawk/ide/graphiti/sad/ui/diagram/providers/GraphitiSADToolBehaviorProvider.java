@@ -18,7 +18,6 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFe
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDevicePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
@@ -55,7 +54,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.palette.PaletteEntry;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
-import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IDoubleClickContext;
@@ -65,7 +63,6 @@ import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.IToolEntry;
-import org.eclipse.graphiti.palette.impl.ConnectionCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.StackEntry;
@@ -75,6 +72,10 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehaviorProvider {
 
+	private PaletteCompartmentEntry componentCompartmentEntry;
+	private PaletteCompartmentEntry workspaceCompartmentEntry;
+	private PaletteCompartmentEntry advancedCompartmentEntry;
+	
 	public GraphitiSADToolBehaviorProvider(final IDiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
 
@@ -176,78 +177,41 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 
 		// COMPONENT Compartment
 		final ComponentsContainer container = SdrUiPlugin.getDefault().getTargetSdrRoot().getComponentsContainer();
-		PaletteCompartmentEntry componentCompartmentEntry = getComponentCompartmentEntry(container);
-		compartments.add(componentCompartmentEntry);
+		PaletteCompartmentEntry componentsEntry = getComponentCompartmentEntry(container);
+		componentsEntry.setInitiallyOpen(true);
+		compartments.add(componentsEntry);
 
 		// FINDBY Compartment - add from super
 		for (IPaletteCompartmentEntry compartment : super.getPalette()) {
+			compartment.setInitiallyOpen(false);
 			compartments.add(compartment);
 		}
 		
-		//Uses Device Compartment
-		if (!DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
-			PaletteCompartmentEntry usesDeviceCompartmentEntry = getUsesDeviceCompartmentEntry();
-			compartments.add(usesDeviceCompartmentEntry);
-		}
-
-		// BASE TYPES Compartment
-		PaletteCompartmentEntry baseTypesCompartmentEntry = getBaseTypesCompartmentEntry();
-		compartments.add(baseTypesCompartmentEntry);
-
 		// WORKSPACE Compartment
 		if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
-			PaletteCompartmentEntry workspaceCompartmentEntry = getWorkspaceCompartmentEntry();
-			if (!workspaceCompartmentEntry.getToolEntries().isEmpty()) {
-				compartments.add(workspaceCompartmentEntry);
-			}
+			PaletteCompartmentEntry workspaceEntry = getWorkspaceCompartmentEntry();
+			workspaceEntry.setInitiallyOpen(true);
+			compartments.add(workspaceEntry);
 		}
+
+		// ADVANCED Compartment
+		PaletteCompartmentEntry advancedEntry = getAdvancedCompartmentEntry();
+		advancedEntry.setInitiallyOpen(false);
+		compartments.add(advancedEntry);
 
 		return compartments.toArray(new IPaletteCompartmentEntry[compartments.size()]);
 
 	}
 
 	/**
-	 * Returns Palette Compartment Entry for Uses Device
-	 * @return
+	 * Returns a populated CompartmentEntry containing all the Base Types and Uses Device tools
 	 */
-	private PaletteCompartmentEntry getUsesDeviceCompartmentEntry() {
+	private PaletteCompartmentEntry getAdvancedCompartmentEntry() {
 
-		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Uses Device", null);
+		advancedCompartmentEntry = initializeCompartment(advancedCompartmentEntry, "Advanced");
+		final PaletteCompartmentEntry compartmentEntry = advancedCompartmentEntry;
 
 		IFeatureProvider featureProvider = getFeatureProvider();
-		ICreateFeature[] createFeatures = featureProvider.getCreateFeatures();
-		for (ICreateFeature cf : createFeatures) {
-			if (UsesDeviceFrontEndTunerPattern.NAME.equals(cf.getCreateName()) || UsesDevicePattern.NAME.equals(cf.getCreateName())) {
-				ObjectCreationToolEntry objectCreationToolEntry = new ObjectCreationToolEntry(cf.getCreateName(), cf.getCreateDescription(),
-					cf.getCreateImageId(), cf.getCreateLargeImageId(), cf);
-				compartmentEntry.addToolEntry(objectCreationToolEntry);
-			}
-		}
-
-		return compartmentEntry;
-	}
-	
-	/**
-	 * Returns a populated CompartmentEntry containing all the Base Types
-	 */
-	private PaletteCompartmentEntry getBaseTypesCompartmentEntry() {
-
-		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Base Types", null);
-
-		IFeatureProvider featureProvider = getFeatureProvider();
-		// connection
-		ICreateConnectionFeature[] createConnectionFeatures = featureProvider.getCreateConnectionFeatures();
-		if (createConnectionFeatures.length > 0) {
-			for (ICreateConnectionFeature ccf : createConnectionFeatures) {
-				if (SADConnectInterfacePattern.NAME.equals(ccf.getCreateName())) {
-					ConnectionCreationToolEntry ccTool = new ConnectionCreationToolEntry(ccf.getCreateName(), ccf.getCreateDescription(),
-						ccf.getCreateImageId(), ccf.getCreateLargeImageId());
-					ccTool.addCreateConnectionFeature(ccf);
-					compartmentEntry.addToolEntry(ccTool);
-				}
-			}
-
-		}
 		// host collocation
 		ICreateFeature[] createFeatures = featureProvider.getCreateFeatures();
 		for (ICreateFeature cf : createFeatures) {
@@ -258,6 +222,17 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 				compartmentEntry.addToolEntry(objectCreationToolEntry);
 			}
 		}
+		// Uses Device
+		if (!DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+			for (ICreateFeature cf : createFeatures) {
+				if (UsesDeviceFrontEndTunerPattern.NAME.equals(cf.getCreateName()) || UsesDevicePattern.NAME.equals(cf.getCreateName())) {
+					ObjectCreationToolEntry objectCreationToolEntry = new ObjectCreationToolEntry(cf.getCreateName(), cf.getCreateDescription(),
+						cf.getCreateImageId(), cf.getCreateLargeImageId(), cf);
+					compartmentEntry.addToolEntry(objectCreationToolEntry);
+				}
+			}
+		}
+
 		return compartmentEntry;
 	}
 
@@ -266,7 +241,8 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 	 * @param container
 	 */
 	private PaletteCompartmentEntry getComponentCompartmentEntry(final ComponentsContainer container) {
-		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Components", null);
+		componentCompartmentEntry = initializeCompartment(componentCompartmentEntry, "Components");
+		final PaletteCompartmentEntry compartmentEntry = componentCompartmentEntry;
 
 		// add all palette entries into a entriesToRemove list.
 		final List<IToolEntry> entriesToRemove = new ArrayList<IToolEntry>();
@@ -356,7 +332,8 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 	 * @param container
 	 */
 	private PaletteCompartmentEntry getWorkspaceCompartmentEntry() {
-		final PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Workspace", null);
+		workspaceCompartmentEntry = initializeCompartment(workspaceCompartmentEntry, "Workspace");
+		final PaletteCompartmentEntry compartmentEntry = workspaceCompartmentEntry;
 
 		Map<String, List<PaletteEntry>> containerMap = new HashMap<String, List<PaletteEntry>>();
 
