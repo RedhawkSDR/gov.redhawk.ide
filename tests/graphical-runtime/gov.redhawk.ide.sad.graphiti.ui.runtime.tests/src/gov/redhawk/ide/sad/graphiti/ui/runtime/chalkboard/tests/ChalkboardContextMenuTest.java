@@ -16,6 +16,7 @@ import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
@@ -28,7 +29,7 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 	private static final String SIGGEN_1 = SIGGEN + "_1";
 
 	/**
-	 * IDE-661, IDE-662, IDE-663, IDE-664, IDE-665, IDE-666, IDE-667
+	 * IDE-661, IDE-662, IDE-663, IDE-664, IDE-665, IDE-666, IDE-667, IDE-1038
 	 * Test that context menu options appear in Graphiti during runtime,
 	 * ensures that the proper views appear based on selection and that views are interactive
 	 */
@@ -46,6 +47,8 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 		DiagramTestUtils.startComponentFromDiagram(editor, SIGGEN);
 		//wait until its started
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN_1);
+		Assert.assertFalse("IDE-1038: Not Undo Start Command context menu item", hasContentMenuItem(editor, SIGGEN, "Undo Start Command"));
+		
 		//plot port data for SIGGEN
 		editor.setFocus();
 		DiagramTestUtils.plotPortDataOnComponentPort(editor, SIGGEN, null);
@@ -72,7 +75,6 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 		Assert.assertTrue("SigGen not found in Audio Port Playback", item.matches(SIGGEN + ".*"));
 		audioView.close();
 
-		
 		//open data list view
 		DiagramTestUtils.displayDataListViewOnComponentPort(editor, SIGGEN, null);
 		//verify data list view opens
@@ -105,6 +107,8 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 		//stop component
 		DiagramTestUtils.stopComponentFromDiagram(editor, SIGGEN);
 		ScaExplorerTestUtils.waitUntilComponentAppearsStoppedInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN_1);
+		
+		Assert.assertFalse("IDE-1038: No Undo Stop Command context menu item", hasContentMenuItem(editor, SIGGEN, "Undo Stop Command"));
 	}
 
 	/**
@@ -131,5 +135,19 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 				Assert.assertEquals(e.getMessage(), contextOption, e.getMessage());
 			}
 		}
+	}
+	
+	private boolean hasContentMenuItem(SWTBotGefEditor editor, String componentName, String menuItem) {
+		editor.setFocus();
+		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
+		componentPart.select();
+		boolean foundMenuItem;
+		try {
+			editor.clickContextMenu(menuItem);
+			foundMenuItem = true;
+		} catch (WidgetNotFoundException e) {
+			foundMenuItem = false;
+		}
+		return foundMenuItem;
 	}
 }
