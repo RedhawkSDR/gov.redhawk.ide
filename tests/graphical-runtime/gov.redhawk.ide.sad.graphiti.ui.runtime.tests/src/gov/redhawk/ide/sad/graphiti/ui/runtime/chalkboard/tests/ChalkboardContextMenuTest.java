@@ -47,7 +47,7 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 		DiagramTestUtils.startComponentFromDiagram(editor, SIGGEN);
 		//wait until its started
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN_1);
-		Assert.assertFalse("IDE-1038: Not Undo Start Command context menu item", hasContentMenuItem(editor, SIGGEN, "Undo Start Command"));
+		Assert.assertFalse("IDE-1038 No Undo Start Command context menu item", hasContentMenuItem(editor, SIGGEN, "Undo Start Command"));
 		
 		//plot port data for SIGGEN
 		editor.setFocus();
@@ -108,7 +108,7 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 		DiagramTestUtils.stopComponentFromDiagram(editor, SIGGEN);
 		ScaExplorerTestUtils.waitUntilComponentAppearsStoppedInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN_1);
 		
-		Assert.assertFalse("IDE-1038: No Undo Stop Command context menu item", hasContentMenuItem(editor, SIGGEN, "Undo Stop Command"));
+		Assert.assertFalse("IDE-1038 No Undo Stop Command context menu item", hasContentMenuItem(editor, SIGGEN, "Undo Stop Command"));
 	}
 
 	/**
@@ -122,22 +122,17 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 		// Prepare Graphiti diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN + "_1");
-		
 
 		// Make sure start order and assembly controller context options don't exist
 		editor.getEditPart(SIGGEN).select();
 		String[] removedContextOptions = { "Set As Assembly Controller", "Move Start Order Earlier", "Move Start Order Later" };
 		for (String contextOption : removedContextOptions) {
-			try {
-				editor.clickContextMenu(contextOption);
-				Assert.fail(); // The only way to get here is if the undesired context menu option appears
-			} catch (WidgetNotFoundException e) {
-				Assert.assertEquals(e.getMessage(), contextOption, e.getMessage());
-			}
+			Assert.assertFalse("IDE-326 No context menu item " + contextOption, hasContentMenuItem(editor, SIGGEN, contextOption));
 		}
 	}
 	
-	private boolean hasContentMenuItem(SWTBotGefEditor editor, String componentName, String menuItem) {
+	/** NOTE: Unfortunately, if the context menu item exists, it will be clicked */
+	static boolean hasContentMenuItem(SWTBotGefEditor editor, String componentName, String menuItem) {
 		editor.setFocus();
 		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
 		componentPart.select();
