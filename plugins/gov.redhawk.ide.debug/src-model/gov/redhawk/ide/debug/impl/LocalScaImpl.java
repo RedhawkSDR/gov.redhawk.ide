@@ -444,8 +444,6 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 
 	};
 	
-	private CheckupJob checkupJob = new CheckupJob(this);
-
 	private final ILaunchesListener2 launchListener = new ILaunchesListener2() {
 		
 		public void launchesRemoved(final ILaunch[] launches) {
@@ -728,7 +726,6 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 		setSandboxWaveform(LocalScaImpl.createSandboxWaveform(getResourceSet(), poa, getRootContext()));
 		setSandboxDeviceManager(LocalScaImpl.createSandboxDeviceManager(getResourceSet(), getFileManager().getObj(), poa, getRootContext()));
 		setSandbox(LocalScaImpl.createSandbox(this, poa));
-		this.checkupJob.schedule();
 		eAdapters().add(this.adapter);
 		// BEGIN GENERATED CODE
 	}
@@ -762,10 +759,6 @@ public class LocalScaImpl extends EObjectImpl implements LocalSca {
 				setRootContext(null);
 			}
 		});
-		if (this.checkupJob != null) {
-			this.checkupJob.cancel();
-			this.checkupJob = null;
-		}
 		// BEGIN GENERATED CODE
 	}
 
