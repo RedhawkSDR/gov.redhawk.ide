@@ -26,9 +26,9 @@ public class ScaExplorerTestUtils {
 
 	// TODO: Do we want to extend this to handle GMF diagrams as well?
 	public static enum DiagramType {
-		GRAPHITI_CHALKBOARD("Graphiti Chalkboard"),
-		GRAPHITI_WAVEFORM_EXPLORER("Graphiti Waveform Explorer"),
-		GRAPHITI_NODE_EXPLORER("Graphiti Node Explorer");
+		GRAPHITI_CHALKBOARD("Chalkboard"),
+		GRAPHITI_WAVEFORM_EXPLORER("Waveform Explorer"),
+		GRAPHITI_NODE_EXPLORER("Node Explorer");
 
 		private final String diagramName;
 

@@ -84,7 +84,7 @@ public class SaveChalkboardTest extends AbstractGraphitiChalkboardTest {
 		SWTBotView projectView = gefBot.viewById("org.eclipse.ui.navigator.ProjectExplorer");
 		SWTBotTreeItem waveformNode = projectView.bot().tree().getTreeItem(WAVEFORM_NAME);
 		SWTBotTreeItem waveformSadXml = waveformNode.expand().getNode(WAVEFORM_NAME + ".sad.xml").select();
-		SWTBotMenu menu = waveformSadXml.contextMenu("Open With").menu("Graphiti Waveform Editor");
+		SWTBotMenu menu = waveformSadXml.contextMenu("Open With").menu("Waveform Editor");
 		new SWTBotRadioMenu(menu).click();
 		
 		// confirm that components and connection exist

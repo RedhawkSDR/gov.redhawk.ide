@@ -44,7 +44,7 @@ public class GmfGraphitiTest extends AbstractGraphitiTest {
 		SWTBotTreeItem sadFileTreeItem = projectTree.expandNode(waveformName).getNode(waveformName + ".sad.xml");
 
 		// Open Graphiti editor
-		SWTBotMenu menu = sadFileTreeItem.select().contextMenu("Open With").menu("Graphiti Waveform Editor");
+		SWTBotMenu menu = sadFileTreeItem.select().contextMenu("Open With").menu("Waveform Editor");
 		new SWTBotRadioMenu(menu).click();
 
 		// Find the editor by name to ensure it opened, then close it
@@ -53,7 +53,7 @@ public class GmfGraphitiTest extends AbstractGraphitiTest {
 		editor.close();
 
 		// Open GMF editor
-		menu = sadFileTreeItem.select().contextMenu("Open With").menu("Waveform Editor");
+		menu = sadFileTreeItem.select().contextMenu("Open With").menu("Legacy Waveform Editor");
 		new SWTBotRadioMenu(menu).click();
 
 		// Find the editor by name to ensure it opened, then close it
