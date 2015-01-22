@@ -60,6 +60,8 @@ public class ExpandShapeFeature extends AbstractCustomFeature {
 			for (PictogramElement p: pes) {
 				if (!(p instanceof RHContainerShape)) {
 					return false;
+				} else if (((RHContainerShape) p).isHasPortsContainerShape()) {
+					return false;
 				} else {
 					foundRHContainerShape = true;
 				}
@@ -81,8 +83,8 @@ public class ExpandShapeFeature extends AbstractCustomFeature {
 		//expand all selected shapes
 		for (PictogramElement p: context.getPictogramElements()) {
 			RHContainerShape rhContainerShape = (RHContainerShape) p;
-			rhContainerShape.setCreateSuperPortsContainerShape(false);
-			rhContainerShape.setCreatePortsContainerShape(true);
+			rhContainerShape.setHasSuperPortsContainerShape(false);
+			rhContainerShape.setHasPortsContainerShape(true);
 			
 			final UpdateContext updateContext = new UpdateContext(rhContainerShape);
 			final IUpdateFeature updateFeature = getFeatureProvider().getUpdateFeature(updateContext);

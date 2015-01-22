@@ -30,6 +30,8 @@ import org.eclipse.graphiti.util.IColorConstant;
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getEvent <em>Event</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isCreateSuperPortsContainerShape <em>Create Super Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isCreatePortsContainerShape <em>Create Ports Container Shape</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasPortsContainerShape <em>Has Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHideUnusedPorts <em>Hide Unused Ports</em>}</li>
  * </ul>
  * </p>
@@ -223,6 +225,58 @@ public interface RHContainerShape extends ContainerShape {
 	 * @generated
 	 */
 	void setCreatePortsContainerShape(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Has Super Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Has Super Ports Container Shape</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Has Super Ports Container Shape</em>' attribute.
+	 * @see #setHasSuperPortsContainerShape(boolean)
+	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_HasSuperPortsContainerShape()
+	 * @model unique="false"
+	 * @generated
+	 */
+	boolean isHasSuperPortsContainerShape();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Has Super Ports Container Shape</em>' attribute.
+	 * @see #isHasSuperPortsContainerShape()
+	 * @generated
+	 */
+	void setHasSuperPortsContainerShape(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Has Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Has Ports Container Shape</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Has Ports Container Shape</em>' attribute.
+	 * @see #setHasPortsContainerShape(boolean)
+	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_HasPortsContainerShape()
+	 * @model unique="false"
+	 * @generated
+	 */
+	boolean isHasPortsContainerShape();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasPortsContainerShape <em>Has Ports Container Shape</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Has Ports Container Shape</em>' attribute.
+	 * @see #isHasPortsContainerShape()
+	 * @generated
+	 */
+	void setHasPortsContainerShape(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Hide Unused Ports</b></em>' attribute.

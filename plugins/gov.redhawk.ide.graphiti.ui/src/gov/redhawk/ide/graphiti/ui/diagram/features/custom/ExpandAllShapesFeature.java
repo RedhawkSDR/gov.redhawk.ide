@@ -76,8 +76,8 @@ public class ExpandAllShapesFeature extends AbstractCustomFeature {
 		//expand existing shapes in diagram
 		for (PictogramElement p: diagram.getChildren()) { //TODO: need to handle inside host collocation
 			RHContainerShape rhContainerShape = (RHContainerShape) p;
-			rhContainerShape.setCreateSuperPortsContainerShape(false);
-			rhContainerShape.setCreatePortsContainerShape(true);
+			rhContainerShape.setHasSuperPortsContainerShape(false);
+			rhContainerShape.setHasPortsContainerShape(true);
 			
 			final UpdateContext updateContext = new UpdateContext(rhContainerShape);
 			final IUpdateFeature updateFeature = getFeatureProvider().getUpdateFeature(updateContext);

@@ -222,7 +222,6 @@ public interface RHGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int RH_CONTAINER_SHAPE__CREATE_SUPER_PORTS_CONTAINER_SHAPE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 5;
-
 	/**
 	 * The feature id for the '<em><b>Create Ports Container Shape</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -233,13 +232,31 @@ public interface RHGxPackage extends EPackage {
 	int RH_CONTAINER_SHAPE__CREATE_PORTS_CONTAINER_SHAPE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 6;
 
 	/**
+	 * The feature id for the '<em><b>Has Super Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Has Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 8;
+
+	/**
 	 * The feature id for the '<em><b>Hide Unused Ports</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 7;
+	int RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 9;
 
 	/**
 	 * The number of structural features of the '<em>RH Container Shape</em>' class.
@@ -248,7 +265,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 8;
+	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 10;
 
 	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.graphiti.ext.Event <em>Event</em>}' enum.
@@ -507,6 +524,28 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getRHContainerShape_CreatePortsContainerShape();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Has Super Ports Container Shape</em>'.
+	 * @see gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasSuperPortsContainerShape()
+	 * @see #getRHContainerShape()
+	 * @generated
+	 */
+	EAttribute getRHContainerShape_HasSuperPortsContainerShape();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasPortsContainerShape <em>Has Ports Container Shape</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Has Ports Container Shape</em>'.
+	 * @see gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasPortsContainerShape()
+	 * @see #getRHContainerShape()
+	 * @generated
+	 */
+	EAttribute getRHContainerShape_HasPortsContainerShape();
 
 	/**
 	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHideUnusedPorts <em>Hide Unused Ports</em>}'.
@@ -791,6 +830,22 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute RH_CONTAINER_SHAPE__CREATE_PORTS_CONTAINER_SHAPE = eINSTANCE.getRHContainerShape_CreatePortsContainerShape();
+
+		/**
+		 * The meta object literal for the '<em><b>Has Super Ports Container Shape</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE = eINSTANCE.getRHContainerShape_HasSuperPortsContainerShape();
+
+		/**
+		 * The meta object literal for the '<em><b>Has Ports Container Shape</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE = eINSTANCE.getRHContainerShape_HasPortsContainerShape();
 
 		/**
 		 * The meta object literal for the '<em><b>Hide Unused Ports</b></em>' attribute feature.

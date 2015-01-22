@@ -210,6 +210,24 @@ public interface RHDeviceGxPackage extends EPackage {
 	int DEVICE_SHAPE__CREATE_PORTS_CONTAINER_SHAPE = RHGxPackage.RH_CONTAINER_SHAPE__CREATE_PORTS_CONTAINER_SHAPE;
 
 	/**
+	 * The feature id for the '<em><b>Has Super Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DEVICE_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE = RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE;
+
+	/**
+	 * The feature id for the '<em><b>Has Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DEVICE_SHAPE__HAS_PORTS_CONTAINER_SHAPE = RHGxPackage.RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE;
+
+	/**
 	 * The feature id for the '<em><b>Hide Unused Ports</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -371,6 +389,24 @@ public interface RHDeviceGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int SERVICE_SHAPE__CREATE_PORTS_CONTAINER_SHAPE = RHGxPackage.RH_CONTAINER_SHAPE__CREATE_PORTS_CONTAINER_SHAPE;
+
+	/**
+	 * The feature id for the '<em><b>Has Super Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SERVICE_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE = RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE;
+
+	/**
+	 * The feature id for the '<em><b>Has Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SERVICE_SHAPE__HAS_PORTS_CONTAINER_SHAPE = RHGxPackage.RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE;
 
 	/**
 	 * The feature id for the '<em><b>Hide Unused Ports</b></em>' attribute.

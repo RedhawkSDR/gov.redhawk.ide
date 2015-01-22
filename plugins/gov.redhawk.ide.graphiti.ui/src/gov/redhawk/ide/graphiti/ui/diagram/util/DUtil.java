@@ -125,7 +125,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final int DIAGRAM_SHAPE_ROOT_VERTICAL_PADDING = 50;
 
 	//returns true if we should create super ports
-	public static boolean isCreateRHContainerSuperPorts(Diagram diagram) {
+	public static boolean getCreateRHContainerSuperPorts(Diagram diagram) {
 		return Boolean.valueOf(Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_CREATE_RHCONTAINER_SUPER_PORTS));
 	}
 	public static void setCreateRHContainerSuperPorts(Diagram diagram, boolean value) {
@@ -134,7 +134,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	
 	//returns true if we should create ports
 	//if diagram doesn't have property return true
-	public static boolean isCreateRHContainerPorts(Diagram diagram) {
+	public static boolean getCreateRHContainerPorts(Diagram diagram) {
 		Boolean value = Boolean.valueOf(Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_CREATE_RHCONTAINER_PORTS));
 		if(value == null || value) {
 			return true;

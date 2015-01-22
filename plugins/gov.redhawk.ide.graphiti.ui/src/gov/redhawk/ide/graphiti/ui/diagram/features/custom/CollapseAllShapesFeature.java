@@ -77,8 +77,8 @@ public class CollapseAllShapesFeature extends AbstractCustomFeature {
 		//collapse existing shapes in diagram
 		for (PictogramElement p: diagram.getChildren()) { //TODO: need to handle inside host collocation
 			RHContainerShape rhContainerShape = (RHContainerShape) p;
-			rhContainerShape.setCreateSuperPortsContainerShape(true);
-			rhContainerShape.setCreatePortsContainerShape(false);
+			rhContainerShape.setHasSuperPortsContainerShape(true);
+			rhContainerShape.setHasPortsContainerShape(false);
 			
 			final UpdateContext updateContext = new UpdateContext(rhContainerShape);
 			final IUpdateFeature updateFeature = getFeatureProvider().getUpdateFeature(updateContext);
@@ -87,6 +87,8 @@ public class CollapseAllShapesFeature extends AbstractCustomFeature {
 				updateFeature.update(updateContext);
 			}
 			
+			rhContainerShape.getGraphicsAlgorithm().setHeight(0); //forces layout to use min height
+			rhContainerShape.getGraphicsAlgorithm().setWidth(0); //forces layout to use min width
 			rhContainerShape.layout();
 		}
 		
