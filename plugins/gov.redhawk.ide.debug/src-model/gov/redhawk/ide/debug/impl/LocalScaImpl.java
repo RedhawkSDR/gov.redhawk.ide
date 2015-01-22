@@ -462,8 +462,6 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 
 	};
 
-	private CheckupJob checkupJob = new CheckupJob(this);
-
 	private final ILaunchesListener2 launchListener = new ILaunchesListener2() {
 
 		@Override
@@ -649,7 +647,6 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		getWaveforms().add(sandboxWaveformRef);
 		setSandboxWaveform(sandboxWaveformRef);
 		setSandboxDeviceManager(sandboxDeviceManagerRef);
-		this.checkupJob.schedule();
 		eAdapters().add(this.adapter);
 		// BEGIN GENERATED CODE
 	}
@@ -687,16 +684,11 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 				setRootContext(null);
 			}
 		});
-		if (this.checkupJob != null) {
-			this.checkupJob.cancel();
-			this.checkupJob = null;
-		}
 		if (session != null) {
 			session.dispose();
 			session = null;
 		}
 		sandbox = null;
-
 		// BEGIN GENERATED CODE
 	}
 

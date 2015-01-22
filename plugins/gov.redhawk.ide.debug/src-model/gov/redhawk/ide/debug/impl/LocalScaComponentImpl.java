@@ -16,7 +16,13 @@ import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.model.sca.impl.ScaComponentImpl;
+import gov.redhawk.sca.util.SilentJob;
 
+import java.util.Collection;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.common.notify.Notification;
@@ -404,11 +410,23 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	@Override
 	public void dispose() {
 		// END GENERATED CODE
-		try {
-			releaseObject();
-		} catch (final ReleaseError e) {
-			// PASS
-		}
+		Job job = new SilentJob("Local Component Release job") {
+
+			@Override
+			protected IStatus runSilent(IProgressMonitor monitor) {
+				try {
+					releaseObject();
+				} catch (final ReleaseError e) {
+					// PASS
+				}
+				return Status.OK_STATUS;
+			}
+
+		};
+		job.setUser(false);
+		job.setSystem(true);
+		job.schedule();
+
 		super.dispose();
 		// BEGIN GENERATED CODE
 	}
@@ -446,7 +464,6 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	public void unsetIdentifier() {
 		// END GENERATED CODE
 		// BEGIN GENERATED CODE
-
 	}
 
-} //LocalScaComponentImpl
+} // LocalScaComponentImpl
