@@ -185,7 +185,7 @@
             default="true"
             icon="icons/full/obj16/SadModelFile.gif"
             id="gov.redhawk.ide.sad.graphiti.ui.editor.presentation.SadEditorID"
-            name="Graphiti Waveform Editor">
+            name="Waveform Editor">
          <contentTypeBinding contentTypeId="mil.jpeojtrs.sca.sad.content-type"/>
       </editor>
       <editor
@@ -194,14 +194,14 @@
             default="true"
             icon="icons/redhawk16.gif"
             id="gov.redhawk.ide.sad.graphiti.ui..editor.localMultiPageSca"
-            name="Graphiti Chalkboard">
+            name="Chalkboard">
       </editor>
       <editor
             class="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformExplorerEditor"
             default="true"
             icon="icons/redhawk16.gif"
             id="gov.redhawk.ide.sad.graphiti.ui.editor.waveformExplorer"
-            name="Graphiti Waveform Explorer">
+            name="Waveform Explorer">
       </editor>
    </extension>
    	<extension

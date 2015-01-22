@@ -46,14 +46,14 @@
             default="true"
             icon="icons/full/obj16/ScaDeviceManager.gif"
             id="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdSandbox"
-            name="Graphiti Node Sandbox Editor">
+            name="Chalkboard">
       </editor>
       <editor
             class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditor"
             contributorClass="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditorActionBarContributor"
             default="true"
             id="gov.redhawk.ide.graphiti.dcd.ui.editor.DcdEditor"
-            name="Graphiti Node Editor">
+            name="Node Editor">
          <contentTypeBinding
                contentTypeId="mil.jpeojtrs.sca.dcd.content-type">
          </contentTypeBinding>
@@ -62,7 +62,7 @@
             class="gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdExplorerEditor"
             default="true"
             id="gov.redhawk.ide.graphiti.dcd.ui.editor.dcdExplorer"
-            name="Graphiti Node Explorer">
+            name="Node Explorer">
       </editor>
    </extension>
 
