@@ -19,6 +19,7 @@ import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramFeatureProvider;
+import gov.redhawk.ide.graphiti.sad.ui.preferences.GraphitiSadPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.model.sca.ScaComponent;
@@ -84,6 +85,7 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.SystemException;
@@ -957,10 +959,14 @@ public class GraphitiModelMap implements IPortStatListener {
 	 */
 	@Override
 	public void newStatistics(ScaPort< ? , ? > port, PortStatistics stats) {
-		// TODO: CHECKSTYLE:OFF
 		ScaPortContainer container = port.getPortContainer();
+		IPreferenceStore store = SADUIGraphitiPlugin.getDefault().getPreferenceStore();
 		float queueDepth = stats.averageQueueDepth;
+		double queueDepthWarningLevel = store.getDouble(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_QUEUE_LEVEL) / 100;
+		double queueDepthIncrement = (1.0 - queueDepthWarningLevel) / 4;
+
 		double lastFlush = Double.MAX_VALUE;
+		double lastFlushResetTime = store.getDouble(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_QUEUE_FLUSH_DISPLAY);
 
 		DataType[] keywords = stats.keywords;
 		if (keywords != null) {
@@ -999,19 +1005,23 @@ public class GraphitiModelMap implements IPortStatListener {
 				if (portStub.getName().equals(port.getName())) {
 					Anchor anchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, portStub, Anchor.class);
 					Rectangle anchorGa = (Rectangle) anchor.getGraphicsAlgorithm();
-					if (lastFlush < 30.0) {
+
+					// CHECKSTYLE:OFF
+					if (lastFlush < lastFlushResetTime || (lastFlush != Double.MAX_VALUE && lastFlushResetTime < 0)) {
+						// If last flush reset time is set to -1, never reset the color if a flush has occurred
 						updatePortStyle(port, anchorGa, diagram, StyleUtil.PROVIDES_WARNING_4);
-					} else if (queueDepth < 0.60) {
+					} else if (queueDepth < queueDepthWarningLevel) {
 						updatePortStyle(port, anchorGa, diagram, StyleUtil.PROVIDES_OK);
-					} else if (queueDepth < 0.70) {
+					} else if (queueDepth < (queueDepthWarningLevel += queueDepthIncrement)) {
 						updatePortStyle(port, anchorGa, diagram, StyleUtil.PROVIDES_WARNING_1);
-					} else if (queueDepth < 0.80) {
+					} else if (queueDepth < (queueDepthWarningLevel += queueDepthIncrement)) {
 						updatePortStyle(port, anchorGa, diagram, StyleUtil.PROVIDES_WARNING_2);
-					} else if (queueDepth < 0.90) {
+					} else if (queueDepth < (queueDepthWarningLevel += queueDepthIncrement)) {
 						updatePortStyle(port, anchorGa, diagram, StyleUtil.PROVIDES_WARNING_3);
 					} else {
 						updatePortStyle(port, anchorGa, diagram, StyleUtil.PROVIDES_WARNING_4);
 					}
+					// CHECKSTYLE:ON
 				}
 			}
 		}
@@ -1022,6 +1032,8 @@ public class GraphitiModelMap implements IPortStatListener {
 	 */
 	@Override
 	public void newStatistics(ScaPort< ? , ? > port, String connectionId, PortStatistics stats) {
+		IPreferenceStore store = SADUIGraphitiPlugin.getDefault().getPreferenceStore();
+
 		if (editor.getDiagramEditor() == null) {
 			return;
 		}
@@ -1048,12 +1060,15 @@ public class GraphitiModelMap implements IPortStatListener {
 		if (connectionMap == null) {
 			return;
 		}
+
 		float timeSinceLastCall = stats.timeSinceLastCall;
+		double lastCallWarningLevel = store.getDouble(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_NO_DATA_PUSHED_SECONDS);
+
 		SadConnectInterface connInterface = connectionMap.getProfile();
 
 		Connection connection = (Connection) DUtil.getPictogramElementForBusinessObject(diagram, connInterface, Connection.class);
 		Polyline line = (Polyline) connection.getGraphicsAlgorithm();
-		if (timeSinceLastCall < 1) {
+		if (timeSinceLastCall < lastCallWarningLevel) {
 			updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.GREEN);
 		} else {
 			updateConnectionStyle(componentShape, connection, connInterface, connectionId, line, diagram, StyleUtil.YELLOW);
