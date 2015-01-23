@@ -11,6 +11,8 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug;
 
+import gov.redhawk.model.sca.ScaWaveform;
+
 import org.eclipse.emf.ecore.EFactory;
 
 /**
@@ -67,6 +69,16 @@ public interface ScaDebugFactory extends EFactory {
 	 * @generated
 	 */
 	LocalScaWaveform createLocalScaWaveform();
+
+	/**
+	 * Creates a new proxy waveform for a domain waveform. The proxy is suitable for use with the chalkboard diagram,
+	 * etc.
+	 *
+	 * @param domainWaveform The domain waveform to be proxied
+	 * @return A proxy object for the domain waveform
+	 * @since 7.0
+	 */
+	LocalScaWaveform createLocalScaWaveform(ScaWaveform domainWaveform);
 
 	/**
 	 * Returns a new object of class '<em>Local Sca Component</em>'.

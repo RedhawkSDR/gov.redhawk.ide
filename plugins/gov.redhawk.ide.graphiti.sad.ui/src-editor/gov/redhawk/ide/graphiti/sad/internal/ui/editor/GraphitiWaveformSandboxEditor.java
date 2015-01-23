@@ -12,7 +12,6 @@ package gov.redhawk.ide.graphiti.sad.internal.ui.editor;
 
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
@@ -30,13 +29,11 @@ import gov.redhawk.ide.graphiti.sad.ui.wizard.NewGraphitiWaveformFromLocalWizard
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.model.sca.RefreshDepth;
-import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.monitor.MonitorPlugin;
 import gov.redhawk.monitor.MonitorPortAdapter;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
-import gov.redhawk.sca.ui.editors.ScaObjectWrapperContentDescriber;
 import gov.redhawk.sca.util.Debug;
 
 import java.io.IOException;
@@ -49,15 +46,12 @@ import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.CorbaUtils;
 
-import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.ui.URIEditorInput;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
@@ -195,50 +189,26 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 	}
 
 	private LocalScaWaveform getLocalScaWaveform(final ScaWaveform remoteWaveform) {
-		LocalScaWaveform proxy = null;
-		LocalScaWaveform tempWaveform = null;
+		// Try to find a LocalScaWaveform object with the same identifier as the domain waveform. If found, it's
+		// the proxy
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 		for (ScaWaveform localWaveform : localSca.getWaveforms()) {
 			if (localWaveform.getIdentifier().equals(remoteWaveform.getIdentifier()) && localWaveform instanceof LocalScaWaveform) {
-				proxy = (LocalScaWaveform) localWaveform;
-				return proxy;
+				return (LocalScaWaveform) localWaveform;
 			}
 		}
 
-		tempWaveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
-
-		final NotifyingNamingContext rootContext = localSca.getRootContext();
-
-		final NotifyingNamingContext context;
-		try {
-			context = LocalApplicationFactory.createWaveformContext(rootContext, remoteWaveform.getIdentifier());
-		} catch (CoreException e) {
-			throw new IllegalStateException("Failed to create waveform naming context", e);
-		}
-
-		tempWaveform.setNamingContext(context);
-		tempWaveform.setProfile(remoteWaveform.getProfile());
-		final ApplicationImpl app = new ApplicationImpl(tempWaveform, remoteWaveform.getIdentifier(), remoteWaveform.getName(), remoteWaveform.getObj());
-		tempWaveform.setLocalApp(app);
-		tempWaveform.setProfileURI(remoteWaveform.getProfileURI());
-		try {
-			// Set the profile to the new URI generated with the new proxy local application object
-			IFileStore store = ScaObjectWrapperContentDescriber.getFileStore(tempWaveform);
-			tempWaveform.setProfileURI(URI.createURI(store.toURI().toString()));
-		} catch (CoreException e) {
-			throw new IllegalStateException("Failed to create waveform uri", e);
-		}
-
-		final LocalScaWaveform tmpLocalScaWaveform = tempWaveform;
-		// Create local copy
+		// Create a new ScaLocalWaveform from the ScaWaveform
+		final LocalScaWaveform localWaveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform(remoteWaveform);
 		ScaModelCommand.execute(localSca, new ScaModelCommand() {
 
 			@Override
 			public void execute() {
-				localSca.getWaveforms().add(tmpLocalScaWaveform);
+				localSca.getWaveforms().add(localWaveform);
 			}
 		});
 
+		// Bind the application
 		if (Display.getCurrent() != null) {
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
 			try {
@@ -251,7 +221,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 
 								@Override
 								public Object call() throws Exception {
-									LocalApplicationFactory.bindApp(app);
+									LocalApplicationFactory.bindApp((ApplicationImpl) localWaveform.getLocalApp());
 									return null;
 								}
 
@@ -269,33 +239,13 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 			}
 		} else {
 			try {
-				LocalApplicationFactory.bindApp(app);
+				LocalApplicationFactory.bindApp((ApplicationImpl) localWaveform.getLocalApp());
 			} catch (CoreException e) {
 				throw new IllegalStateException("Failed to bind waveform", e);
 			}
 		}
 
-		ScaModelCommand.execute(remoteWaveform, new ScaModelCommand() {
-
-			@Override
-			public void execute() {
-				remoteWaveform.eAdapters().add(new AdapterImpl() {
-					@Override
-					public void notifyChanged(Notification msg) {
-						switch (msg.getFeatureID(ScaWaveform.class)) {
-						case ScaPackage.SCA_WAVEFORM__DISPOSED:
-							if (msg.getNewBooleanValue()) {
-								tmpLocalScaWaveform.dispose();
-							}
-							break;
-						default:
-							break;
-						}
-					}
-				});
-			}
-		});
-		return tempWaveform;
+		return localWaveform;
 	}
 
 	/**

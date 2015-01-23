@@ -23,7 +23,21 @@ import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPackage;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
+import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
+import gov.redhawk.model.sca.ScaPackage;
+import gov.redhawk.model.sca.ScaWaveform;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.model.sca.util.ScaFileSystemUtil;
+
 import java.util.Map.Entry;
+
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -32,6 +46,8 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.jacorb.naming.Name;
 import org.omg.CosNaming.NamingContext;
+
+import CF.Application;
 
 /**
  * <!-- begin-user-doc -->
@@ -201,6 +217,69 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	@Override
 	public LocalScaWaveform createLocalScaWaveform() {
 		LocalScaWaveformImpl localScaWaveform = new LocalScaWaveformImpl();
+		return localScaWaveform;
+	}
+
+	/**
+	 * Creates a {@link LocalScaWaveform} from a {@link ScaWaveform}. This new object is intended to serve as a
+	 * 'proxy' to the actual domain waveform. This is used to 'duplicate' a waveform into the sandbox.
+	 *
+	 * @since 7.0
+	 */
+	@Override
+	public LocalScaWaveform createLocalScaWaveform(final ScaWaveform domainWaveform) {
+		// Get information from the domain waveform
+		final String identifier = domainWaveform.getIdentifier();
+		final String name = domainWaveform.getName();
+		final Application application = domainWaveform.getObj();
+		final String profile = domainWaveform.getProfile();
+		final URI profileURI = domainWaveform.getProfileURI();
+
+		// Create a naming context
+		final NotifyingNamingContext rootContext = ScaDebugPlugin.getInstance().getLocalSca().getRootContext();
+		final NotifyingNamingContext context;
+		try {
+			context = LocalApplicationFactory.createWaveformContext(rootContext, identifier);
+		} catch (CoreException e) {
+			throw new IllegalStateException("Failed to create waveform naming context", e);
+		}
+
+		// Create the new local proxy for the waveform
+		final LocalScaWaveform localScaWaveform = createLocalScaWaveform();
+		localScaWaveform.setNamingContext(context);
+		localScaWaveform.setProfile(profile);
+		final ApplicationImpl localApp = new ApplicationImpl(localScaWaveform, identifier, name, application);
+		localScaWaveform.setLocalApp(localApp);
+		localScaWaveform.setProfileURI(profileURI);
+		try {
+			// Set the profile to the new URI generated with the new proxy local application object
+			IFileStore store = ScaFileSystemUtil.getFileStore(localScaWaveform);
+			localScaWaveform.setProfileURI(URI.createURI(store.toURI().toString()));
+		} catch (CoreException e) {
+			throw new IllegalStateException("Failed to create waveform profile URI", e);
+		}
+
+		// Dispose the local model object if the domain model object is disposed
+		ScaModelCommand.execute(domainWaveform, new ScaModelCommand() {
+			@Override
+			public void execute() {
+				domainWaveform.eAdapters().add(new AdapterImpl() {
+					@Override
+					public void notifyChanged(Notification msg) {
+						switch (msg.getFeatureID(ScaWaveform.class)) {
+						case ScaPackage.SCA_WAVEFORM__DISPOSED:
+							if (msg.getNewBooleanValue()) {
+								localScaWaveform.dispose();
+							}
+							break;
+						default:
+							break;
+						}
+					}
+				});
+			}
+		});
+
 		return localScaWaveform;
 	}
 

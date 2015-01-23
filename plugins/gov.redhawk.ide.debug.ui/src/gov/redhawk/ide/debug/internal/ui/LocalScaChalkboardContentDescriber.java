@@ -12,9 +12,9 @@ package gov.redhawk.ide.debug.internal.ui;
 
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.model.sca.util.ScaFileSystemUtil;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 import gov.redhawk.sca.ui.editors.IScaContentDescriber;
-import gov.redhawk.sca.ui.editors.ScaObjectWrapperContentDescriber;
 
 import java.io.IOException;
 
@@ -37,7 +37,7 @@ public class LocalScaChalkboardContentDescriber implements IScaContentDescriber 
 			return LocalScaElementFactory.getLocalScaInput();
 		} else if (contents instanceof LocalScaWaveform) {
 			try {
-				return new ScaFileStoreEditorInput((LocalScaWaveform) contents, ScaObjectWrapperContentDescriber.getFileStore((LocalScaWaveform) contents));
+				return new ScaFileStoreEditorInput((LocalScaWaveform) contents, ScaFileSystemUtil.getFileStore((LocalScaWaveform) contents));
 			} catch (CoreException e) {
 				return null;
 			}

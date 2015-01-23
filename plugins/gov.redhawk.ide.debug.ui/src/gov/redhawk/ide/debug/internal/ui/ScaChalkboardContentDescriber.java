@@ -12,18 +12,16 @@ package gov.redhawk.ide.debug.internal.ui;
 
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
 import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
-import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.model.sca.util.ScaFileSystemUtil;
 import gov.redhawk.sca.ui.ScaFileStoreEditorInput;
 import gov.redhawk.sca.ui.editors.IScaContentDescriber;
-import gov.redhawk.sca.ui.editors.ScaObjectWrapperContentDescriber;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -35,14 +33,15 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 
+/**
+ * This {@link IScaContentDescriber} describes {@link ScaWaveform}s, but returns a {@link LocalScaWaveform} that
+ * serves as a proxy for it. This makes it suitable for use as input to the chalkboard diagram.
+ */
 public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 
 	private static class DelayedEditorInput extends ScaFileStoreEditorInput {
@@ -50,7 +49,7 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 		private LocalScaWaveform proxy;
 
 		public DelayedEditorInput(ScaWaveform scaElement) throws CoreException {
-			super(scaElement, ScaObjectWrapperContentDescriber.getFileStore(scaElement));
+			super(scaElement, ScaFileSystemUtil.getFileStore(scaElement));
 		}
 
 		@Override
@@ -67,7 +66,7 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 		public java.net.URI getURI() {
 			LocalScaWaveform scaObject = getScaObject();
 			try {
-				IFileStore store = ScaObjectWrapperContentDescriber.getFileStore(scaObject);
+				IFileStore store = ScaFileSystemUtil.getFileStore(scaObject);
 				return store.toURI();
 			} catch (CoreException e) {
 				// PASS
@@ -76,10 +75,13 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 		}
 
 		private LocalScaWaveform getLocalScaWaveform(final ScaWaveform remoteWaveform) {
+			// If we've already cached the proxy object, return it
 			if (proxy != null) {
 				return proxy;
 			}
-			LocalScaWaveform waveform = null;
+
+			// Try to find a LocalScaWaveform object with the same identifier as the domain waveform. If found, it's
+			// the proxy
 			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 			for (ScaWaveform localWaveform : localSca.getWaveforms()) {
 				if (localWaveform.getIdentifier().equals(remoteWaveform.getIdentifier()) && localWaveform instanceof LocalScaWaveform) {
@@ -88,41 +90,17 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 				}
 			}
 
-			waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
-
-			final NotifyingNamingContext rootContext = localSca.getRootContext();
-
-			final NotifyingNamingContext context;
-			try {
-				context = LocalApplicationFactory.createWaveformContext(rootContext, remoteWaveform.getIdentifier());
-			} catch (CoreException e) {
-				throw new IllegalStateException("Failed to create waveform naming context", e);
-			}
-
-			waveform.setNamingContext(context);
-			waveform.setProfile(remoteWaveform.getProfile());
-			@SuppressWarnings("restriction")
-			final ApplicationImpl app = new ApplicationImpl(waveform, remoteWaveform.getIdentifier(), remoteWaveform.getName(), remoteWaveform.getObj());
-			waveform.setLocalApp(app);
-			waveform.setProfileURI(remoteWaveform.getProfileURI());
-			try {
-				// Set the profile to the new URI generated with the new proxy local application object
-				IFileStore store = ScaObjectWrapperContentDescriber.getFileStore(waveform);
-				waveform.setProfileURI(URI.createURI(store.toURI().toString()));
-			} catch (CoreException e) {
-				throw new IllegalStateException("Failed to create waveform uri", e);
-			}
-
-			final LocalScaWaveform tmpLocalScaWaveform = waveform;
-			// Create local copy
+			// Create a new ScaLocalWaveform from the ScaWaveform
+			final LocalScaWaveform waveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform(remoteWaveform);
 			ScaModelCommand.execute(localSca, new ScaModelCommand() {
 
 				@Override
 				public void execute() {
-					localSca.getWaveforms().add(tmpLocalScaWaveform);
+					localSca.getWaveforms().add(waveform);
 				}
 			});
 
+			// Bind the application
 			if (Display.getCurrent() != null) {
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
 				try {
@@ -135,7 +113,7 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 
 									@Override
 									public Object call() throws Exception {
-										LocalApplicationFactory.bindApp(app);
+										LocalApplicationFactory.bindApp((ApplicationImpl) waveform.getLocalApp());
 										return null;
 									}
 
@@ -153,32 +131,13 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 				}
 			} else {
 				try {
-					LocalApplicationFactory.bindApp(app);
+					LocalApplicationFactory.bindApp((ApplicationImpl) waveform.getLocalApp());
 				} catch (CoreException e) {
 					throw new IllegalStateException("Failed to bind waveform", e);
 				}
 			}
 
-			ScaModelCommand.execute(remoteWaveform, new ScaModelCommand() {
-
-				@Override
-				public void execute() {
-					remoteWaveform.eAdapters().add(new AdapterImpl() {
-						@Override
-						public void notifyChanged(Notification msg) {
-							switch (msg.getFeatureID(ScaWaveform.class)) {
-							case ScaPackage.SCA_WAVEFORM__DISPOSED:
-								if (msg.getNewBooleanValue()) {
-									tmpLocalScaWaveform.dispose();
-								}
-								break;
-							default:
-								break;
-							}
-						}
-					});
-				}
-			});
+			// Cache the proxy and return it
 			proxy = waveform;
 			return waveform;
 		}
