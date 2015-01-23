@@ -11,9 +11,10 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
 import gov.redhawk.diagram.util.InterfacesUtil;
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformDiagramEditor;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
@@ -102,8 +103,8 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		ConnectionTarget target = getConnectionTarget(context);
 
 		// check and see if the connection has any special color requirements, such as during a monitor port call
-		ComponentShape componentShape = (ComponentShape) DUtil.getPictogramElementForBusinessObject(getDiagram(), source.eContainer(), ComponentShape.class);
-		Map< String , IColorConstant > connectionMap = componentShape.getConnectionMap();
+		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.getPictogramElementForBusinessObject(getDiagram(), source.eContainer(), RHContainerShape.class);
+		Map< String , IColorConstant > connectionMap = rhContainerShape.getConnectionMap();
 		IColorConstant defaultColor = (IColorConstant) connectionMap.get(connectInterface.getId());
 
 		// Create connection (handle user selecting source or target)
@@ -140,6 +141,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		decorateConnection(connectionPE, connectInterface, diagram, null);
 	}
 
+	
 	/**
 	 * Add decorators to connection if applicable
 	 * Note: Unfortunately Graphiti doesn't support ConnectionDecorators with tooltips like it does with Shape Decorators (see RHToolBehaviorProvider)
@@ -151,20 +153,20 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		
 		IGaService gaService = Graphiti.getGaService();
 		IPeCreateService peCreateService = Graphiti.getPeCreateService();
-		boolean isFindByConnection = false;
-		if (connectInterface.getProvidesPort() != null && connectInterface.getUsesPort() != null) {
-			if (connectInterface.getProvidesPort().getFindBy() != null || connectInterface.getUsesPort().getFindBy() != null) {
-				isFindByConnection = true;
-			}
-		}
 		
-		if (connectInterface.getSource() != null && connectInterface.getTarget() != null || isFindByConnection) {
+		//involve find by?
+		boolean isFindByConnection = AbstractFindByPattern.isFindByConnection(connectInterface);
+		
+		//involve uses device?
+		boolean isUsesDeviceConnection = AbstractUsesDevicePattern.isUsesDeviceConnection(connectInterface);
+		
+		if (connectInterface.getSource() != null && connectInterface.getTarget() != null || isFindByConnection || isUsesDeviceConnection) {
 			// Connection validation
 			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
 			
 			// don't check for compatibility if this is a FindBy connection
 			boolean compatibleConnection = true;
-			if (!isFindByConnection) {
+			if (!isFindByConnection && !isUsesDeviceConnection) {
 				compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
 			}
 			

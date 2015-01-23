@@ -552,4 +552,20 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		businessObjectsToLink.add(obj);
 		return businessObjectsToLink;
 	}
+	
+	
+	/**
+	 * Return true if connection involves find by
+	 * @param connectInterface
+	 * @return
+	 */
+	public static boolean isFindByConnection(SadConnectInterface connectInterface) {
+		boolean isFindByConnection = false;
+		if ((connectInterface.getComponentSupportedInterface() != null && connectInterface.getComponentSupportedInterface().getFindBy() != null)
+				|| (connectInterface.getProvidesPort() != null  && connectInterface.getProvidesPort().getFindBy() != null) 
+				|| (connectInterface.getUsesPort() != null && connectInterface.getUsesPort().getFindBy() != null)) {
+				isFindByConnection = true;
+		}
+		return isFindByConnection;
+	}
 }

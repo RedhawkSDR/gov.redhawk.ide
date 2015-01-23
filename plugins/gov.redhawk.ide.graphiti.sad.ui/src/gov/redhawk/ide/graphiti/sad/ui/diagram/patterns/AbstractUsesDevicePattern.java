@@ -837,5 +837,20 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 			return Status.OK_STATUS;
 		}
 	}
+	
+	/**
+	 * Return true if connection involves uses device
+	 * @param connectInterface
+	 * @return
+	 */
+	public static boolean isUsesDeviceConnection(SadConnectInterface connectInterface) {
+		boolean isUsesDeviceConnection = false;
+		if ((connectInterface.getComponentSupportedInterface() != null && connectInterface.getComponentSupportedInterface().getDeviceUsedByApplication() != null)
+				|| (connectInterface.getProvidesPort() != null  && connectInterface.getProvidesPort().getDeviceUsedByApplication() != null)
+				|| (connectInterface.getUsesPort() != null && connectInterface.getUsesPort().getDeviceUsedByApplication() != null)) {
+			isUsesDeviceConnection = true;
+		}
+		return isUsesDeviceConnection;
+	}
 
 }
