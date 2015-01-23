@@ -52,7 +52,7 @@ import FRONTEND.FE_TUNER_DEVICE_KIND;
 
 public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern implements IPattern {
 
-	public static final String NAME = "Uses FrontEnd Tuner Device";
+	public static final String NAME = "Use FrontEnd Tuner Device";
 
 	public UsesDeviceFrontEndTunerPattern() {
 		super();

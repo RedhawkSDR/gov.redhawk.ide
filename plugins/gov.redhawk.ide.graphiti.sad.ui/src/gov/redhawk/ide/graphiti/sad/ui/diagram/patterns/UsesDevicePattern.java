@@ -37,7 +37,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class UsesDevicePattern extends AbstractUsesDevicePattern implements IPattern {
 
-	public static final String NAME = "Uses Device";
+	public static final String NAME = "Use Device";
 
 	public UsesDevicePattern() {
 		super();

@@ -19,7 +19,6 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFea
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDevicePattern;
 import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -225,7 +224,7 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		// Uses Device
 		if (!DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
 			for (ICreateFeature cf : createFeatures) {
-				if (UsesDeviceFrontEndTunerPattern.NAME.equals(cf.getCreateName()) || UsesDevicePattern.NAME.equals(cf.getCreateName())) {
+				if (UsesDeviceFrontEndTunerPattern.NAME.equals(cf.getCreateName())) {
 					ObjectCreationToolEntry objectCreationToolEntry = new ObjectCreationToolEntry(cf.getCreateName(), cf.getCreateDescription(),
 						cf.getCreateImageId(), cf.getCreateLargeImageId(), cf);
 					compartmentEntry.addToolEntry(objectCreationToolEntry);

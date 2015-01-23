@@ -606,6 +606,17 @@ public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFe
 						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, providesPortStub, Anchor.class);
 						targetAnchor = (Anchor) pe;
 					}
+				} else if (sadConnectInterface.getComponentSupportedInterface() != null
+						&& sadConnectInterface.getComponentSupportedInterface().getSupportedIdentifier() != null
+						&& sadConnectInterface.getComponentSupportedInterface().getDeviceUsedByApplication() != null) {
+
+					UsesDeviceStub usesDeviceStub = AbstractUsesDevicePattern.findUsesDeviceStub(sadConnectInterface.getComponentSupportedInterface().getDeviceUsedByApplication(), diagram);
+					
+					// determine port anchor for UsesDevice
+					if (usesDeviceStub.getInterface() != null) {
+						PictogramElement pe = DUtil.getPictogramElementForBusinessObject(diagram, usesDeviceStub.getInterface(), Anchor.class);
+						targetAnchor = (Anchor) pe;
+					}
 				}
 			}
 

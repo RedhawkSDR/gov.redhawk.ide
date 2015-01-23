@@ -27,16 +27,24 @@ import java.util.List;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.PropertyValueType;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.sad.UsesDeviceDependencies;
+import mil.jpeojtrs.sca.scd.ComponentFeatures;
+import mil.jpeojtrs.sca.scd.Ports;
+import mil.jpeojtrs.sca.scd.Provides;
+import mil.jpeojtrs.sca.scd.ScdFactory;
+import mil.jpeojtrs.sca.scd.SoftwareComponent;
+import mil.jpeojtrs.sca.scd.Uses;
+import mil.jpeojtrs.sca.spd.Descriptor;
 import mil.jpeojtrs.sca.spd.PropertyRef;
-import mil.jpeojtrs.sca.spd.UsesDevice;
+import mil.jpeojtrs.sca.spd.SoftPkg;
 
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
 import ExtendedCF.WKP.DEVICEMODEL;
@@ -46,9 +54,11 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 
 	private SoftwareAssembly sad;
 	private UsesDeviceStub existingUsesDeviceStub;
+	private SelectFrontEndTunerWizardPage selectFrontEndTunerWizardPage;
 	private UsesDeviceFrontEndTunerWizardPage namePage;
 	private TunerAllocationWizardPage allocationPage;
 	private PortsWizardPage portsWizardPage;
+	private static final String DEFAULT_DEVICE_ID_PREFIX = "FrontEndTuner_";
 
 	public UsesDeviceFrontEndTunerWizard(SoftwareAssembly sad) {
 		this.sad = sad;
@@ -69,8 +79,9 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 		
 		if (existingUsesDeviceStub == null) {
 
-			String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, "FrontEndTuner_");
-			
+			selectFrontEndTunerWizardPage = new SelectFrontEndTunerWizardPage();
+			addPage(selectFrontEndTunerWizardPage);
+			String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, DEFAULT_DEVICE_ID_PREFIX);
 			namePage = new UsesDeviceFrontEndTunerWizardPage(sad, deviceId);
 			allocationPage = new TunerAllocationWizardPage();
 			portsWizardPage = new PortsWizardPage();
@@ -100,7 +111,10 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 			//determine which struct was set in Device, tuner_allocation or listener_allocation
 			String structRefId = getFrontEndTunerStructRefId(existingUsesDeviceStub);
 			
-			if (TunerAllocationProperty.INSTANCE.getId().equals(structRefId)) {
+			if (structRefId == null) {
+				//no allocation structure found in sad
+				allocationPage = new TunerAllocationWizardPage();
+			} else if (TunerAllocationProperty.INSTANCE.getId().equals(structRefId)) {
 			
 				// populate StructRef with tuner_allocation properties
 				tunerAllocationStruct = ScaFactory.eINSTANCE.createScaStructProperty();
@@ -155,50 +169,98 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 		addPage(portsWizardPage);
 	}
 	
+    @Override
+	public IWizardPage getNextPage(IWizardPage page) {
+ 
+    	if (page instanceof SelectFrontEndTunerWizardPage
+    			&& selectFrontEndTunerWizardPage != null && selectFrontEndTunerWizardPage.getSelectedDevice() != null) {
+    		
+    		SoftPkg spd = selectFrontEndTunerWizardPage.getSelectedDevice();
+    		
+    		if (spd.getId() == null) {
+    			//device model
+    			String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, DEFAULT_DEVICE_ID_PREFIX);
+    			namePage.getModel().setUsesDeviceId(deviceId);
+    			// device model
+    			namePage.getModel().setDeviceModel("");
+    			// ports
+    			portsWizardPage.getModel().setProvidesPortNames(new ArrayList<String>());
+    			portsWizardPage.getModel().setUsesPortNames(new ArrayList<String>());
+    			
+    		} else {
+    			//real frontEnd device selected
+    			
+        		final Descriptor desc = spd.getDescriptor();
+        		final SoftwareComponent scd = desc.getComponent();
+        		ComponentFeatures features = scd.getComponentFeatures();
+    			if (features == null) {
+    				features = ScdFactory.eINSTANCE.createComponentFeatures();
+    				scd.setComponentFeatures(features);
+    			}
+    			Ports ports = features.getPorts();
+    			
+    			//pre-populate deviceId
+    			String deviceId = AbstractUsesDevicePattern.getUniqueUsesDeviceId(sad, spd.getName() + "_");
+    			namePage.getModel().setUsesDeviceId(deviceId);
+    			
+    			//pre-populate device_model
+    			AbstractProperty property = spd.getPropertyFile().getProperties().getProperty(DEVICEMODEL.value);
+				if (property != null && !"null".equals(property.toAny().toString())) {
+					namePage.getModel().setDeviceModel(property.toAny().toString());
+				}
+    			
+    			//pre-set ports
+    			List<String> providesPortNames = new ArrayList<String>();
+    			for (Provides p: ports.getProvides()) {
+    				providesPortNames.add(p.getName());
+    			}
+    			List<String> usesPortNames = new ArrayList<String>();
+    			for (Uses p: ports.getUses()) {
+    				usesPortNames.add(p.getName());
+    			}
+    			portsWizardPage.getModel().setProvidesPortNames(providesPortNames);
+    			portsWizardPage.getModel().setUsesPortNames(usesPortNames);
+
+//    			Interfaces interfaces = scd.getInterfaces();
+//    			boolean found = false;
+//    			if (interfaces != null) {
+//    				for (final Interface i : interfaces.getInterface()) {
+//    					if (EventChannelHelper.id().equals(i.getRepid())) {
+//    						found = true;
+//    						break;
+//    					}
+//    				}
+//    			}
+    		}
+    	}
+    	
+        return super.getNextPage(page);
+    }
+	
 	@Override
 	public boolean performFinish() {
 		return true;
 	}
-
+	
+	/**
+	 * Return the first struct ref id
+	 * @param usesDeviceStub
+	 * @return
+	 */
 	private static String getFrontEndTunerStructRefId(UsesDeviceStub usesDeviceStub) {
+		if (usesDeviceStub.getUsesDevice().getStructRef() == null
+				|| usesDeviceStub.getUsesDevice().getStructRef().size() < 1) {
+			return null;
+		}
+		
 		StructRef structRef = usesDeviceStub.getUsesDevice().getStructRef().get(0);
 		return structRef.getRefID();
 	}
 	
-	/**
-	 * Create unique device id from provided prefix
-	 * @param sad
-	 * @param idPrefix
-	 * @return
-	 */
-	private static String getUniqueUsesDeviceId(SoftwareAssembly sad, String idPrefix) {
-		int suffixNum = 1;
-		String proposedDeviceId = idPrefix + String.valueOf(suffixNum);
-		UsesDeviceDependencies usesDeviceDependencies = sad.getUsesDeviceDependencies();
-		if (usesDeviceDependencies == null || usesDeviceDependencies.getUsesdevice().size() < 1) {
-			return proposedDeviceId;
-		}
-		
-		
-		while (true) {
-			boolean found = false;
-			for (UsesDevice usesDevice: usesDeviceDependencies.getUsesdevice()) {
-				if (usesDevice.getId().equals(proposedDeviceId)) {
-					found = true;
-					break;
-				}
-			}
-			if (found) {
-				suffixNum++;
-				proposedDeviceId = idPrefix + String.valueOf(suffixNum);
-			} else {
-				break;
-			}
-		}
-		
-		return proposedDeviceId;
-	}
 
+	public SelectFrontEndTunerWizardPage getSelectFrontEndTunerWizardPage() {
+		return selectFrontEndTunerWizardPage;
+	}
 
 	public UsesDeviceFrontEndTunerWizardPage getNamePage() {
 		return namePage;
@@ -211,4 +273,6 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 	public PortsWizardPage getPortsWizardPage() {
 		return portsWizardPage;
 	}
+	
+	
 }

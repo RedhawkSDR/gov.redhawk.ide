@@ -15,12 +15,15 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePatter
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.List;
 
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -45,6 +48,7 @@ public class UsesDeviceFrontEndTunerWizardPage extends WizardPage {
 
 		private String usesDeviceId;
 		private String deviceModel;
+		private List<EObject> properties = new ArrayList<EObject>();
 		
 
 		public Model() {
@@ -70,6 +74,14 @@ public class UsesDeviceFrontEndTunerWizardPage extends WizardPage {
 			this.pcs.firePropertyChange(new PropertyChangeEvent(this, Model.DEVICE_MODEL, oldValue, deviceModel));
 		}
 		
+		public List<EObject> getProperties() {
+			return properties;
+		}
+
+		public void setProperties(List<EObject> properties) {
+			this.properties = properties;
+		}
+
 		public void addPropertyChangeListener(final PropertyChangeListener listener) {
 			this.pcs.addPropertyChangeListener(listener);
 		}
@@ -84,7 +96,7 @@ public class UsesDeviceFrontEndTunerWizardPage extends WizardPage {
 	};
 
 	private static final ImageDescriptor TITLE_IMAGE = null;
-
+	
 	private Text usesDeviceIdText;
 	private Text deviceModelText;
 	
@@ -133,28 +145,23 @@ public class UsesDeviceFrontEndTunerWizardPage extends WizardPage {
 			BeansObservables.observeValue(model, Model.USES_DEVICE_ID),  
 			new UpdateValueStrategy().setAfterGetValidator(new AbstractUsesDevicePattern.UsesDeviceIdValidator(sad, model.getUsesDeviceId())),
 			null);
-		
+	
 		Label deviceModelLabel = new Label(composite, SWT.NONE);
-		deviceModelLabel.setText("Device Model");
+		deviceModelLabel.setText("Device Model (optional)");
 		deviceModelText = new Text(composite, SWT.BORDER);
 		deviceModelText.setToolTipText("The device's model (optional)");
 		deviceModelText.setEnabled(true);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(deviceModelText);
 		dbc.bindValue(SWTObservables.observeText(deviceModelText, SWT.Modify), 
 			BeansObservables.observeValue(model, Model.DEVICE_MODEL));
-		
-		
+
 		setControl(composite);
 
 		dbc.updateModels();
 
 	}
-
-
+	
 	public Model getModel() {
 		return model;
 	}
-	
-	
-
 }
