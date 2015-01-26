@@ -29,7 +29,7 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 	private static final String SIGGEN_1 = SIGGEN + "_1";
 
 	/**
-	 * IDE-661, IDE-662, IDE-663, IDE-664, IDE-665, IDE-666, IDE-667, IDE-1038
+	 * IDE-661, IDE-662, IDE-663, IDE-664, IDE-665, IDE-666, IDE-667, IDE-1038, IDE-1065
 	 * Test that context menu options appear in Graphiti during runtime,
 	 * ensures that the proper views appear based on selection and that views are interactive
 	 */
@@ -48,6 +48,7 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 		//wait until its started
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN_1);
 		Assert.assertFalse("IDE-1038 No Undo Start Command context menu item", hasContentMenuItem(editor, SIGGEN, "Undo Start Command"));
+		Assert.assertFalse("IDE-1065 No Undo Do Command context menu item", hasContentMenuItem(editor, SIGGEN, "Undo Do Command"));
 		
 		//plot port data for SIGGEN
 		editor.setFocus();
@@ -109,6 +110,7 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 		ScaExplorerTestUtils.waitUntilComponentAppearsStoppedInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN_1);
 		
 		Assert.assertFalse("IDE-1038 No Undo Stop Command context menu item", hasContentMenuItem(editor, SIGGEN, "Undo Stop Command"));
+		Assert.assertFalse("IDE-1065 No Undo Do Command context menu item", hasContentMenuItem(editor, SIGGEN, "Undo Do Command"));
 	}
 
 	/**
