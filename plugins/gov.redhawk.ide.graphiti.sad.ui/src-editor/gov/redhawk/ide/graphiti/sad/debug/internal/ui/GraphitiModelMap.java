@@ -1139,6 +1139,9 @@ public class GraphitiModelMap implements IPortStatListener {
 	public void noStatistics(ScaPort< ? , ? > port) {
 		ScaPortContainer container = port.getPortContainer();
 		ScaComponent component = (ScaComponent) container;
+		if (component == null) {
+			return;
+		}
 
 		final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
 		if (nodeMapEntry != null) {
@@ -1172,6 +1175,9 @@ public class GraphitiModelMap implements IPortStatListener {
 		// Get the component shape
 		ScaPortContainer container = port.getPortContainer();
 		ScaComponent component = (ScaComponent) container;
+		if (component == null) {
+			return;
+		}
 		final NodeMapEntry nodeMapEntry = nodes.get(component.getInstantiationIdentifier());
 		if (nodeMapEntry == null) {
 			return;
