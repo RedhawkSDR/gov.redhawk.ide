@@ -21,6 +21,7 @@ import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaDeviceManager;
+import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import gov.redhawk.sca.ui.actions.StartAction;
 import gov.redhawk.sca.ui.actions.StopAction;
 import gov.redhawk.sca.util.SubMonitor;
@@ -208,9 +209,6 @@ public class GraphitiDcdModelMap {
 
 		// setup to perform diagram operations
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final IFeatureProvider featureProvider = provider.getFeatureProvider();
-		final TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
 		final Diagram diagram = provider.getDiagram();
 
 		// get pictogram for device
@@ -218,17 +216,17 @@ public class GraphitiDcdModelMap {
 			RHContainerShapeImpl.class);
 
 		if (rhContainerShape != null) {
-			Job job = new Job("Syncronizing diagram start/stop status: " + scaDevice.getIdentifier()) {
+			Job job = new Job("Syncronizing Device diagram start/stop status: " + scaDevice.getIdentifier()) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					// Perform business object manipulation in a Command
-					TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-					stack.execute(new RecordingCommand(editingDomain) {
+					NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
+
 						@Override
-						protected void doExecute() {
+						public void execute() {
 							// paint device
 							rhContainerShape.setStarted(started);
 						}
+
 					});
 					return Status.OK_STATUS;
 				}
@@ -242,14 +240,11 @@ public class GraphitiDcdModelMap {
 	 * Fires when the diagram is first launched
 	 */
 	public void reflectRuntimeStatus() {
-
 		// setup to perform diagram operations
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		final Diagram diagram = provider.getDiagram();
-		final IFeatureProvider featureProvider = provider.getFeatureProvider();
-		final TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
-		Job job = new Job("Syncronizing device started status") {
+		Job job = new Job("Syncronizing Device started status") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				for (String nodeKey : nodes.keySet()) {
@@ -261,17 +256,14 @@ public class GraphitiDcdModelMap {
 
 					final boolean started = nodeMapEntry.getScaDevice().getStarted();
 					if (started) {
+						NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
 
-						// Perform business object manipulation in a Command
-						TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-						stack.execute(new RecordingCommand(editingDomain) {
 							@Override
-							protected void doExecute() {
+							public void execute() {
 								// paint device
-								if (shape != null) {
-									shape.setStarted(true);
-								}
+								shape.setStarted(started);
 							}
+
 						});
 					}
 				}
