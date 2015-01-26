@@ -320,7 +320,7 @@ public class GraphitiModelMap implements IPortStatListener {
 		newValue.fetchAttributes(null);
 		final SoftPkg spd = newValue.fetchProfileObject(null);
 		if (spd == null) {
-			throw new IllegalStateException("Unable to load New components spd");
+			throw new IllegalStateException("Unable to load New Component's SPD");
 		}
 
 		// setup for transaction in diagram
@@ -772,9 +772,6 @@ public class GraphitiModelMap implements IPortStatListener {
 
 		// setup to perform diagram operations
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
-		final IFeatureProvider featureProvider = provider.getFeatureProvider();
-		final TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
 		final Diagram diagram = provider.getDiagram();
 
 		// get pictogram for component
@@ -782,18 +779,18 @@ public class GraphitiModelMap implements IPortStatListener {
 			ComponentShapeImpl.class);
 
 		if (componentShape != null) {
-			Job job = new Job("Syncronizing diagram start/stop status: " + localScaComponent.getInstantiationIdentifier()) {
+			Job job = new Job("Syncronizing Waveform diagram start/stop status: " + localScaComponent.getInstantiationIdentifier()) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					// Perform business object manipulation in a Command
-					TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-					stack.execute(new RecordingCommand(editingDomain) {
+					NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
+
 						@Override
-						protected void doExecute() {
-							// paint component
+						public void execute() {
 							componentShape.setStarted(started);
 						}
+
 					});
+
 					return Status.OK_STATUS;
 				}
 			};
@@ -825,7 +822,6 @@ public class GraphitiModelMap implements IPortStatListener {
 					startAction.setContext(localComp);
 					startAction.run();
 					return Status.OK_STATUS;
-
 				}
 
 			};
@@ -853,10 +849,8 @@ public class GraphitiModelMap implements IPortStatListener {
 		// setup to perform diagram operations
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
 		final Diagram diagram = provider.getDiagram();
-		final IFeatureProvider featureProvider = provider.getFeatureProvider();
-		final TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
-		Job job = new Job("Syncronizing component started status") {
+		Job job = new Job("Syncronizing Component started status") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				for (String nodeKey : nodes.keySet()) {
@@ -868,15 +862,13 @@ public class GraphitiModelMap implements IPortStatListener {
 
 					final boolean started = nodeMapEntry.getLocalScaComponent().getStarted();
 					if (started) {
+						NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
 
-						// Perform business object manipulation in a Command
-						TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-						stack.execute(new RecordingCommand(editingDomain) {
 							@Override
-							protected void doExecute() {
-								// paint component
-								componentShape.setStarted(true);
+							public void execute() {
+								componentShape.setStarted(started);
 							}
+
 						});
 					}
 				}
@@ -904,23 +896,19 @@ public class GraphitiModelMap implements IPortStatListener {
 		final ComponentShape componentShape = (ComponentShape) DUtil.getPictogramElementForBusinessObject(diagram, sadComponentInstantiation,
 			ComponentShapeImpl.class);
 
-		// setup to perform diagram operations
-		final IFeatureProvider featureProvider = provider.getFeatureProvider();
-		final TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-
 		if (componentShape != null) {
-			Job job = new Job("Syncronizing diagram start/stop status: " + scaComponent.getInstantiationIdentifier()) {
+			Job job = new Job("Syncronizing diagram error state: " + scaComponent.getInstantiationIdentifier()) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					// Perform business object manipulation in a Command
-					TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
-					stack.execute(new RecordingCommand(editingDomain) {
+					NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
+
 						@Override
-						protected void doExecute() {
-							// paint component
+						public void execute() {
 							componentShape.setIStatusErrorState(status.getSeverity());
 						}
+
 					});
+
 					return Status.OK_STATUS;
 				}
 			};
