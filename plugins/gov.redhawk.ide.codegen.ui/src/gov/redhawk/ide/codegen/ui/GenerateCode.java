@@ -237,8 +237,17 @@ public class GenerateCode {
 				final WorkspaceJob buildJob = new WorkspaceJob("Build generated code") {
 					@Override
 					public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
-						project.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
-						return new Status(IStatus.OK, RedhawkCodegenUiActivator.PLUGIN_ID, "");
+						final int CLEAN_WORK = 15;
+						final int BUILD_WORK = 85;
+						SubMonitor progress = SubMonitor.convert(monitor, CLEAN_WORK + BUILD_WORK);
+
+						project.build(IncrementalProjectBuilder.CLEAN_BUILD, progress.newChild(CLEAN_WORK));
+						if (monitor.isCanceled()) {
+							return Status.CANCEL_STATUS;
+						}
+
+						project.build(IncrementalProjectBuilder.FULL_BUILD, progress.newChild(BUILD_WORK));
+						return Status.OK_STATUS;
 					}
 				};
 				buildJob.setPriority(Job.LONG);
