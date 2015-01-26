@@ -31,12 +31,15 @@ public class GraphitiSadMessages extends NLS {
 	public static String PortStatPreference_errorGroupToolTip;
 	public static String PortStatPreference_errorQueueFlush;
 	public static String PortStatPreference_errorQueueFlushToolTip;
+	public static String PortStatPreference_errorQueueFlushError;
 	
 	public static String PortStatPreference_warningGroupTitle;
 	public static String PortStatPreference_warningGroupToolTip;
 	public static String PortStatPreference_warningQueueLevel; 
 	public static String PortStatPreference_warningQueueLevelToolTip;
+	public static String PortStatPreference_warningQueueLevelError;
 	public static String PortStatPreference_warningNoData;
 	public static String PortStatPreference_warningNoDataToolTip;
+	public static String PortStatPreference_warningNoDataError;
 
 }

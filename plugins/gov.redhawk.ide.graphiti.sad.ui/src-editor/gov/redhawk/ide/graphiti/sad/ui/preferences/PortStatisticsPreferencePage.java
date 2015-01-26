@@ -74,18 +74,17 @@ public class PortStatisticsPreferencePage extends PreferencePage implements IWor
 		queueLevel.getTextControl(prefComposite).setToolTipText(GraphitiSadMessages.PortStatPreference_warningQueueLevelToolTip);
 		queueLevel.setPreferenceStore(getPreferenceStore());
 		queueLevel.setPage(this);
-		// TODO: Validation, including textLimit, ErrorMessage, ValidationStategy, and ValidRange (1-100)
+		queueLevel.setErrorMessage(GraphitiSadMessages.PortStatPreference_warningQueueLevelError);
+		queueLevel.setValidRange(0.0, 100.0);
 		queueLevel.load();
-		// TODO: create a property change listener, does it need one for validation?
 
 		timeSinceLastPush = new DoubleFieldEditor(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_NO_DATA_PUSHED_SECONDS,
 			GraphitiSadMessages.PortStatPreference_warningNoData, prefComposite);
 		timeSinceLastPush.getTextControl(prefComposite).setToolTipText(GraphitiSadMessages.PortStatPreference_warningNoDataToolTip);
 		timeSinceLastPush.setPreferenceStore(getPreferenceStore());
 		timeSinceLastPush.setPage(this);
-		// TODO: Validation, including textLimit, ErrorMessage, ValidationStategy, and ValidRange (1-100)
+		timeSinceLastPush.setErrorMessage(GraphitiSadMessages.PortStatPreference_warningNoDataError);
 		timeSinceLastPush.load();
-		// TODO: create a property change listener, does it need one for validation?
 	}
 
 	/**
@@ -108,9 +107,8 @@ public class PortStatisticsPreferencePage extends PreferencePage implements IWor
 		queueFlush.getTextControl(prefComposite).setToolTipText(GraphitiSadMessages.PortStatPreference_errorQueueFlushToolTip);
 		queueFlush.setPreferenceStore(getPreferenceStore());
 		queueFlush.setPage(this);
-		// TODO: Validation, including textLimit, ErrorMessage, ValidationStategy, and ValidRange (1-100)
+		queueFlush.setErrorMessage(GraphitiSadMessages.PortStatPreference_errorQueueFlushError);
 		queueFlush.load();
-		// TODO: create a property change listener, does it need one for validation?
 	}
 	/**
 	 * The default button has been pressed.
