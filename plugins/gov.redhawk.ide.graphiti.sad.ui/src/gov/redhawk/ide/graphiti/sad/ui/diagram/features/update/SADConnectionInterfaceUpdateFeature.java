@@ -104,7 +104,7 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 		boolean isUsesDeviceConnection = AbstractUsesDevicePattern.isUsesDeviceConnection(connectInterface);
 		
 		// problem if either source or target not present, unless dealing with a findby element or usesdevice
-		if (!isFindByConnection && !isUsesDeviceConnection) {
+		if ((connectInterface.getSource() == null || connectInterface.getTarget() == null) && (!isFindByConnection && !isUsesDeviceConnection)) {
 			if (performUpdate) {
 				updateStatus = true;
 				// remove the connection (handles pe and business object)
