@@ -33,11 +33,6 @@ public class StartFeature extends NonUndoableCustomFeature {
 	}
 
 	@Override
-	public String getDescription() {
-		return "Start component";
-	}
-
-	@Override
 	public String getName() {
 		return "Start";
 	}

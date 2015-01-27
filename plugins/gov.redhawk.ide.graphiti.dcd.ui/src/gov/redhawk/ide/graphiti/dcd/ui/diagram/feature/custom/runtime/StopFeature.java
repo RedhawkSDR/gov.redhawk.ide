@@ -28,19 +28,14 @@ import org.eclipse.graphiti.ui.internal.parts.ContainerShapeEditPart;
 
 @SuppressWarnings("restriction")
 public class StopFeature extends NonUndoableCustomFeature {
-	
-	@Override
-	public String getDescription() {
-		return "Stop component";
+
+	public StopFeature(IFeatureProvider fp) {
+		super(fp);
 	}
-	
+
 	@Override
 	public String getName() {
 		return "Stop";
-	}
-	
-	public StopFeature(IFeatureProvider fp) {
-		super(fp);
 	}
 
 	@Override
@@ -56,7 +51,7 @@ public class StopFeature extends NonUndoableCustomFeature {
 		
 		return super.canExecute(context);
 	}
-	
+
 	@Override
 	public void execute(ICustomContext context) {
 		// IDE-1021: Check context in case we were called by hover context pad button on unselected component
