@@ -102,4 +102,9 @@ public class ExpandShapeFeature extends AbstractCustomFeature {
 			updateFeature.update(updateContext);
 		}
 	}
+	
+	@Override
+	public String getImageId() {
+		return gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider.IMG_EXPAND;
+	}
 }

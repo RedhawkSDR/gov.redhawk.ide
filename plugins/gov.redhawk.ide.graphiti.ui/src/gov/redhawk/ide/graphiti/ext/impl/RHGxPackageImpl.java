@@ -220,6 +220,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		PictogramsPackage.eINSTANCE.eClass();
 		AlgorithmsPackage.eINSTANCE.eClass();
 		EcorePackage.eINSTANCE.eClass();
+		AlgorithmsPackage.eINSTANCE.eClass();
 		MmPackage.eINSTANCE.eClass();
 
 		// Create package meta-data objects
