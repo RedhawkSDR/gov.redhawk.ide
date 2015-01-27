@@ -18,8 +18,6 @@ import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.model.sca.impl.ScaComponentImpl;
 import gov.redhawk.sca.util.SilentJob;
 
-import java.util.Collection;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -409,24 +407,29 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 
 	@Override
 	public void dispose() {
-		// END GENERATED CODE
-		Job job = new SilentJob("Local Component Release job") {
+		// If we have a launch object (i.e. this IDE launched the object locally)
+		if (getLaunch() != null) {
+			// Call releaseObject() in a job. The dispose method may be called by UI / model threads, and thus cannot
+			// block.
+			Job job = new SilentJob("Local Component Release job") {
 
-			@Override
-			protected IStatus runSilent(IProgressMonitor monitor) {
-				try {
-					releaseObject();
-				} catch (final ReleaseError e) {
-					// PASS
+				@Override
+				protected IStatus runSilent(IProgressMonitor monitor) {
+					try {
+						releaseObject();
+					} catch (final ReleaseError e) {
+						// PASS
+					}
+					return Status.OK_STATUS;
 				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.setUser(false);
-		job.setSystem(true);
-		job.schedule();
+
+			};
+			job.setUser(false);
+			job.setSystem(true);
+			job.schedule();
+		}
+
 		super.dispose();
-		// BEGIN GENERATED CODE
 	}
 
 	@Override

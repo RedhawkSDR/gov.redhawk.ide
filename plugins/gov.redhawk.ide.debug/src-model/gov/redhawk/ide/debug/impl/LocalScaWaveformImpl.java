@@ -768,22 +768,28 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			return;
 		}
 
-		Job releaseJob = new SilentJob("Sandbox Waveform Release") {
+		// If we have a launch object (i.e. this IDE launched the object locally)
+		if (getLaunch() != null) {
+			// Call releaseObject() in a job. The dispose method may be called by UI / model threads, and thus cannot
+			// block.
+			Job releaseJob = new SilentJob("Local Waveform Release") {
 
-			@Override
-			protected IStatus runSilent(IProgressMonitor monitor) {
-				try {
-					releaseObject();
-				} catch (ReleaseError e) {
-					return new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Failed to release local waveform: " + getName(), e);
-				}
-				return Status.OK_STATUS;
-			}
+				@Override
+				protected IStatus runSilent(IProgressMonitor monitor) {
+			        try {
+		                releaseObject();
+	                } catch (ReleaseError e) {
+		                return new Status(Status.ERROR, ScaDebugPlugin.ID, "Failed to release local waveform: " + getName(), e);
+	                }
+	                return Status.OK_STATUS;
+	            }
 
-		};
-		releaseJob.setSystem(true);
-		releaseJob.setUser(false);
-		releaseJob.schedule();
+			};
+			releaseJob.setSystem(true);
+			releaseJob.setUser(false);
+			releaseJob.schedule();
+		}
+
 		super.dispose();
 		if (namingContext != null) {
 			namingContext.dispose();
