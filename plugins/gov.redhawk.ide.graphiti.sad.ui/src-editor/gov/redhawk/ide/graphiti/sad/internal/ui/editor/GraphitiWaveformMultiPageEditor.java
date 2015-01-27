@@ -338,12 +338,12 @@ public class GraphitiWaveformMultiPageEditor extends AbstractGraphitiMultiPageEd
 				//specify shape display preferences (if not already set)
 				//super ports
 				if (Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_CREATE_RHCONTAINER_SUPER_PORTS) == null) {
-					boolean value = !GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_DETAILS);
+					boolean value = GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_DETAILS);
 					DUtil.setCreateRHContainerSuperPorts(diagram, value);
 				}
 				//individual ports
 				if (Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_CREATE_RHCONTAINER_PORTS) == null) {
-					boolean value = GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_DETAILS);
+					boolean value = !GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_DETAILS);
 					DUtil.setCreateRHContainerPorts(diagram, value);
 				}
 				//hide unused ports

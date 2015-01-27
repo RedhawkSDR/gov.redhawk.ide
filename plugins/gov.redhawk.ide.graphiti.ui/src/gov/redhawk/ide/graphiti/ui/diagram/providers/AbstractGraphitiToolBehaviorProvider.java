@@ -116,7 +116,8 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 
 		if (originalPe instanceof FixPointAnchor
 			|| DUtil.doesPictogramContainProperty(originalPe, new String[] { RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE,
-				RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE, })) {
+				RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE, RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE,
+				RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE})) {
 			return null;
 		}
 

@@ -54,6 +54,7 @@ import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
@@ -298,7 +299,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			SHAPE_USES_PORT_CONTAINER = "usesPortContainerShape", SHAPE_PROVIDES_PORT_CONTAINER = "providesPortContainerShape",
 			SHAPE_USES_PORT_RECTANGLE = "usesPortRectangleShape", SHAPE_PROVIDES_PORT_RECTANGLE = "providesPortRectangleShape",
 			SHAPE_INTERFACE_CONTAINER = "interfaceContainerShape", SHAPE_INTERFACE_ELLIPSE = "interfaceEllipseShape",
-			SUPER_PROVIDES_PORTS_CONTAINER = "superProvidesPortsContainer", SUPER_USES_PORTS_CONTAINER = "superUsesPortsContainer";
+			SUPER_PROVIDES_PORTS_RECTANGLE = "superProvidesPortsContainer", SUPER_USES_PORTS_RECTANGLE = "superUsesPortsContainer";
 
 	// Shape size constants
 	public static final int OUTER_CONTAINER_SHAPE_TITLE_HORIZONTAL_RIGHT_PADDING = 10, INNER_CONTAINER_SHAPE_TOP_PADDING = 20,
@@ -306,7 +307,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
 			PORTS_CONTAINER_SHAPE_TOP_PADDING = 60, INNER_ROUNDED_RECTANGLE_TEXT_TOP_PADDING = 8, INNER_ROUNDED_RECTANGLE_LINE_Y = 28, NAME_CHAR_WIDTH = 7,
 			LABEL_CHAR_WIDTH = 7, PORT_NAME_HORIZONTAL_PADDING = 5, PORT_ROW_HEIGHT = 15, PORT_ROW_PADDING_HEIGHT = 5, PORT_SHAPE_HEIGHT = 15,
-			SUPER_PORT_SHAPE_HEIGHT = 5, SUPER_PORT_SHAPE_WIDTH = 5, PORT_SHAPE_WIDTH = 15, PORT_CHAR_WIDTH = 7, LOLLIPOP_ELLIPSE_DIAMETER = 10,
+			SUPER_PORT_SHAPE_HEIGHT = 25, SUPER_PORT_SHAPE_WIDTH = 10, SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5, PORT_SHAPE_WIDTH = 15, PORT_CHAR_WIDTH = 7, LOLLIPOP_ELLIPSE_DIAMETER = 10,
 			INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING, INTERFACE_SHAPE_HEIGHT = 10,
 			REQ_PADDING_BETWEEN_PORT_TYPES = 0, ICON_IMAGE_LENGTH = 16;
 
@@ -663,18 +664,34 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		if (isHasSuperPortsContainerShape()) {
 			//position across from inner container text
 			int spaceAboveInnerShape = getGraphicsAlgorithm().getHeight() - getInnerContainerShape().getGraphicsAlgorithm().getHeight();
-			int y = spaceAboveInnerShape + innerRoundedRectangleTextSize.getHeight();
+			int y = spaceAboveInnerShape+SUPER_PORT_SHAPE_HEIGHT_MARGIN;
 
 			//superProvidesPorts
 			if (getSuperProvidesPortsContainerShape() != null) {
-				gaLayoutService.setLocationAndSize(getSuperProvidesPortsContainerShape().getGraphicsAlgorithm(), 0, y, SUPER_PORT_SHAPE_WIDTH,
-					SUPER_PORT_SHAPE_HEIGHT);
+				ContainerShape superProvidesPortsContainerShape = getSuperProvidesPortsContainerShape();
+				
+				//anchor container
+				gaLayoutService.setLocationAndSize(superProvidesPortsContainerShape.getGraphicsAlgorithm(), INNER_CONTAINER_SHAPE_HORIZONTAL_LEFT_PADDING-SUPER_PORT_SHAPE_WIDTH, y, SUPER_PORT_SHAPE_WIDTH,
+					innerContainerShapeHeight-SUPER_PORT_SHAPE_HEIGHT_MARGIN*2);
+				
+				//anchor
+				Rectangle fixPointAnchorRectangle = (Rectangle) superProvidesPortsContainerShape.getAnchors().get(0).getGraphicsAlgorithm();
+				gaLayoutService.setLocationAndSize(fixPointAnchorRectangle, 0, -SUPER_PORT_SHAPE_HEIGHT_MARGIN*2, SUPER_PORT_SHAPE_WIDTH,
+					innerContainerShapeHeight-SUPER_PORT_SHAPE_HEIGHT_MARGIN*2);
+				
 			}
 			//superUsesPorts
 			if (getSuperUsesPortsContainerShape() != null) {
-				int intPortTextX = outerRoundedRectangle.getWidth() - SUPER_PORT_SHAPE_WIDTH;
-				gaLayoutService.setLocationAndSize(getSuperUsesPortsContainerShape().getGraphicsAlgorithm(), intPortTextX, y, SUPER_PORT_SHAPE_WIDTH
-					+ PORT_NAME_HORIZONTAL_PADDING, SUPER_PORT_SHAPE_HEIGHT);
+				ContainerShape superUsesPortsContainerShape = getSuperUsesPortsContainerShape();
+				
+				int intPortTextX = getInnerContainerShape().getGraphicsAlgorithm().getX() + innerContainerShapeWidth;
+				
+				//anchor container
+				gaLayoutService.setLocationAndSize(superUsesPortsContainerShape.getGraphicsAlgorithm(), intPortTextX, y, SUPER_PORT_SHAPE_WIDTH, innerContainerShapeHeight-SUPER_PORT_SHAPE_HEIGHT_MARGIN*2);
+				
+				//anchor
+				Rectangle fixPointAnchorRectangle = (Rectangle) superUsesPortsContainerShape.getAnchors().get(0).getGraphicsAlgorithm();
+				gaLayoutService.setLocationAndSize(fixPointAnchorRectangle, 0, -SUPER_PORT_SHAPE_HEIGHT_MARGIN*2, SUPER_PORT_SHAPE_WIDTH, innerContainerShapeHeight-SUPER_PORT_SHAPE_HEIGHT_MARGIN*2);
 			}
 			getInnerPolyline().setTransparency(1d); //hide line
 		}
@@ -993,13 +1010,13 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// port shape
 		ContainerShape superUsesPortsRectangleShape = Graphiti.getCreateService().createContainerShape(this, true);
-		Graphiti.getPeService().setPropertyValue(superUsesPortsRectangleShape, DUtil.SHAPE_TYPE, SUPER_USES_PORTS_CONTAINER);// ref
+		Graphiti.getPeService().setPropertyValue(superUsesPortsRectangleShape, DUtil.SHAPE_TYPE, SUPER_USES_PORTS_RECTANGLE);// ref
 		// prevent
 		// move
 		Rectangle superUsesPortsRectangle = Graphiti.getCreateService().createRectangle(superUsesPortsRectangleShape);
 		DUtil.addLinks(featureProvider, superUsesPortsRectangleShape, usesPortStubs);
-		superUsesPortsRectangle.setStyle(StyleUtil.createStyleForUsesPort(diagram));
-		Graphiti.getGaLayoutService().setSize(superUsesPortsRectangle, SUPER_PORT_SHAPE_WIDTH + SUPER_PORT_SHAPE_HEIGHT + PORT_NAME_HORIZONTAL_PADDING, 0);
+		superUsesPortsRectangle.setStyle(StyleUtil.createStyleForSuperUsesPort(diagram));
+		Graphiti.getGaLayoutService().setSize(superUsesPortsRectangle, SUPER_PORT_SHAPE_WIDTH, SUPER_PORT_SHAPE_HEIGHT);
 
 		// fix point anchor
 		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(superUsesPortsRectangleShape);
@@ -1012,10 +1029,11 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		fixPointAnchor.setReferencedGraphicsAlgorithm(superUsesPortsRectangle);
 		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
 		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
+		fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForSuperProvidesPort(diagram));
 		if (externalPorts != null && externalPorts.size() > 0) {
 			fixPointAnchor.getLink().getBusinessObjects().addAll(externalPorts);
 		}
-		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, 0, -SUPER_PORT_SHAPE_HEIGHT / 2, SUPER_PORT_SHAPE_WIDTH,
+		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, 0, 0, SUPER_PORT_SHAPE_WIDTH,
 			SUPER_PORT_SHAPE_HEIGHT);
 	}
 
@@ -1032,12 +1050,12 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// port shape
 		ContainerShape superProvidesPortsRectangleShape = Graphiti.getCreateService().createContainerShape(this, true);
-		Graphiti.getPeService().setPropertyValue(superProvidesPortsRectangleShape, DUtil.SHAPE_TYPE, SUPER_PROVIDES_PORTS_CONTAINER);// ref
+		Graphiti.getPeService().setPropertyValue(superProvidesPortsRectangleShape, DUtil.SHAPE_TYPE, SUPER_PROVIDES_PORTS_RECTANGLE);// ref
 
 		Rectangle superProvidesPortsRectangle = Graphiti.getCreateService().createRectangle(superProvidesPortsRectangleShape);
 		DUtil.addLinks(featureProvider, superProvidesPortsRectangleShape, providesPortStubs);
 		DUtil.addLink(featureProvider, superProvidesPortsRectangleShape, interfaceStub);
-		superProvidesPortsRectangle.setStyle(StyleUtil.createStyleForProvidesPort(diagram));
+		superProvidesPortsRectangle.setStyle(StyleUtil.createStyleForSuperProvidesPort(diagram));
 		Graphiti.getGaLayoutService().setSize(superProvidesPortsRectangle, SUPER_PORT_SHAPE_WIDTH, SUPER_PORT_SHAPE_HEIGHT);
 
 		// fix point anchor
@@ -1055,7 +1073,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		if (externalPorts != null && externalPorts.size() > 0) {
 			fixPointAnchor.getLink().getBusinessObjects().addAll(externalPorts);
 		}
-		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, 0, -SUPER_PORT_SHAPE_HEIGHT / 2, SUPER_PORT_SHAPE_WIDTH,
+		fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForSuperProvidesPort(diagram));
+		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, 0, 0, SUPER_PORT_SHAPE_WIDTH,
 			SUPER_PORT_SHAPE_HEIGHT);
 	}
 
@@ -1425,7 +1444,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @return
 	 */
 	public ContainerShape getSuperProvidesPortsContainerShape() {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SUPER_PROVIDES_PORTS_CONTAINER);
+		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SUPER_PROVIDES_PORTS_RECTANGLE);
 	}
 
 	/**
@@ -1433,7 +1452,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @return
 	 */
 	public ContainerShape getSuperUsesPortsContainerShape() {
-		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SUPER_USES_PORTS_CONTAINER);
+		return (ContainerShape) DUtil.findFirstPropertyContainer(this, SUPER_USES_PORTS_RECTANGLE);
 	}
 
 	//Updates Provides Ports Container Shape
@@ -1451,7 +1470,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 				if (performUpdate) {
 					updateStatus = true;
-					EcoreUtil.delete(providesPortsContainerShape);
+					Graphiti.getPeService().deletePictogramElement(providesPortsContainerShape);
 				} else {
 					return new Reason(true, "Provides Ports Shape requires deletion");
 				}
@@ -1500,7 +1519,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 									if (performUpdate) {
 										updateStatus = true;
 										// delete shape
-										EcoreUtil.delete(providesPortContainerShape);
+										Graphiti.getPeService().deletePictogramElement((PictogramElement) providesPortContainerShape);
 									} else {
 										return new Reason(true, "Provides ports requires update");
 									}
@@ -1586,7 +1605,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			if (getLollipop() != null) {
 				if (performUpdate) {
 					updateStatus = true;
-					EcoreUtil.delete(getLollipop());
+					ContainerShape lollipopContainerShape = getLollipop();
+					Graphiti.getPeService().deletePictogramElement(lollipopContainerShape);
 				} else {
 					return new Reason(true, "Lollipop Shape requires deletion");
 				}
@@ -1630,7 +1650,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 				if (performUpdate) {
 					updateStatus = true;
-					EcoreUtil.delete(usesPortsContainerShape);
+					Graphiti.getPeService().deletePictogramElement(usesPortsContainerShape);
 				} else {
 					return new Reason(true, "Uses Ports Shape requires deletion");
 				}
@@ -1679,7 +1699,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 									if (performUpdate) {
 										updateStatus = true;
 										// delete shape
-										EcoreUtil.delete(usesPortContainerShape);
+										Graphiti.getPeService().deletePictogramElement((PictogramElement) usesPortContainerShape);
 									} else {
 										return new Reason(true, "Uses ports requires update");
 									}
@@ -1773,7 +1793,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				//super ports exist, delete them
 				if (performUpdate) {
 					updateStatus = true;
-					EcoreUtil.delete(superProvidesPortsRectangleShape);
+					Graphiti.getPeService().deletePictogramElement(superProvidesPortsRectangleShape);
 				} else {
 					return new Reason(true, "Super Provides Ports Shape requires deletion");
 				}
@@ -1858,7 +1878,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				//super ports exist, delete them
 				if (performUpdate) {
 					updateStatus = true;
-					EcoreUtil.delete(superUsesPortsRectangleShape);
+					Graphiti.getPeService().deletePictogramElement(superUsesPortsRectangleShape);
 				} else {
 					return new Reason(true, "Super Uses Ports Shape requires deletion");
 				}

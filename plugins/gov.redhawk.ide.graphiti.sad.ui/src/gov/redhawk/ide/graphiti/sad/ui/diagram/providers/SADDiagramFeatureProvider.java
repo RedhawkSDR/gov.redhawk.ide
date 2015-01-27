@@ -281,7 +281,8 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 	public IMoveShapeFeature getMoveShapeFeature(IMoveShapeContext context) {
 		// Search for shapes that we don't want the user to have move capability
 		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE,
-			RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER })) {
+			RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
+			RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE, RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE })) {
 			return new DefaultMoveShapeFeature(this) {
 				@Override
 				public boolean canMoveShape(IMoveShapeContext context) {
@@ -311,7 +312,8 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
 			RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
 			RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE,
-			RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE })) {
+			RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE,
+			RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE, RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE})) {
 			return new UpdateNoBoFeature(this) {
 				public boolean isAvailable(IContext context) {
 					return false;
@@ -331,7 +333,9 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			|| DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORTS_CONTAINER,
 				RHContainerShapeImpl.SHAPE_USES_PORTS_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER,
 				RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE,
-				RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER, RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE })) {
+				RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
+				RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE, RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE,
+				RHContainerShapeImpl.SHAPE_INTERFACE_ELLIPSE })) {
 			return new DefaultDeleteFeature(this) {
 				@Override
 				public boolean canDelete(IDeleteContext context) {
@@ -386,7 +390,8 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 	public IResizeShapeFeature getResizeShapeFeature(IResizeShapeContext context) {
 		// Search for shapes that we don't want the user to have resize capability
 		if (DUtil.doesPictogramContainProperty(context, new String[] { RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE,
-			RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER })) {
+			RHContainerShapeImpl.SHAPE_USES_PORT_RECTANGLE, RHContainerShapeImpl.SHAPE_INTERFACE_CONTAINER,
+			RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE, RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE})) {
 			return new DefaultResizeShapeFeature(this) {
 				public boolean canResizeShape(IResizeShapeContext context) {
 					return false;

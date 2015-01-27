@@ -37,9 +37,11 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	private static final String LOLLIPOP_ELLIPSE = "gov.redhawk.style.LollipopEllipse";
 	private static final String USES_PORT_ANCHOR = "gov.redhawk.style.UsesPortAnchor";
 	private static final String USES_EXTERNAL_PORT = "gov.redhawk.style.UsesExternalPort";
+	private static final String SUPER_USES_PORT = "gov.redhawk.style.SuperUsesPort";
 	private static final String USES_PORT = "gov.redhawk.style.UsesPort";
 	private static final String EXTERNAL_PROVIDES_PORT = "gov.redhawk.style.ExternalProvidesPort";
 	private static final String PROVIDES_PORT = "gov.redhawk.style.ProvidesPort";
+	private static final String SUPER_PROVIDES_PORT = "gov.redhawk.style.SuperProvidesPort";
 	private static final String ERROR_TEXT_CONNECTIONS = "gov.redhawk.style.ErrorTextConnections";
 	private static final String INNER_TEXT = "gov.redhawk.style.InnerText";
 	private static final String OUTER_TEXT = "gov.redhawk.style.OuterText";
@@ -465,6 +467,36 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			style.setForeground(gaService.manageColor(diagram, BLACK));
 			style.setBackground(gaService.manageColor(diagram, BLACK));
 			style.setFont(getPortFont(diagram));
+			style.setLineWidth(2);
+			style.setLineVisible(true);
+		}
+		return style;
+	}
+	
+	// returns style for super uses port
+	public static Style createStyleForSuperUsesPort(Diagram diagram) {
+		final String styleId = SUPER_USES_PORT;
+		Style style = findStyle(diagram, styleId);
+		if (style == null) {
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			style.setForeground(gaService.manageColor(diagram, BLACK));
+			style.setBackground(gaService.manageColor(diagram, BLACK));
+			style.setLineWidth(2);
+			style.setLineVisible(true);
+		}
+		return style;
+	}
+	
+	// returns style for super uses port
+	public static Style createStyleForSuperProvidesPort(Diagram diagram) {
+		final String styleId = SUPER_PROVIDES_PORT;
+		Style style = findStyle(diagram, styleId);
+		if (style == null) {
+			IGaService gaService = Graphiti.getGaService();
+			style = gaService.createStyle(diagram, styleId);
+			style.setForeground(gaService.manageColor(diagram, BLACK));
+			style.setBackground(gaService.manageColor(diagram, BLACK));
 			style.setLineWidth(2);
 			style.setLineVisible(true);
 		}
