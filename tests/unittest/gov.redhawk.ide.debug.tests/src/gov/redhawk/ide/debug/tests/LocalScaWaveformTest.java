@@ -12,37 +12,28 @@
  // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.tests;
 
-import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.ide.debug.internal.ScaDebugInstance;
-import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
-import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.CoreException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.debug.core.Launch;
 
-import CF.ExecutableDevicePackage.ExecuteFail;
+import CF._ApplicationStub;
 import CF.LifeCyclePackage.ReleaseError;
 
 /**
  * <!-- begin-user-doc -->
  * A test case for the model object '<em><b>Local Sca Waveform</b></em>'.
  * <!-- end-user-doc -->
- * <p>
- * The following operations are tested:
- * <ul>
- *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String) <em>Launch</em>}</li>
- * </ul>
- * </p>
  * @generated
  */
-@SuppressWarnings("restriction")
 public class LocalScaWaveformTest extends TestCase {
 
 	/**
@@ -96,12 +87,11 @@ public class LocalScaWaveformTest extends TestCase {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see junit.framework.TestCase#setUp()
-	 * @generated NOT
+	 * @generated
 	 */
 	@Override
 	protected void setUp() throws Exception {
-		ScaDebugInstance.INSTANCE.init(null);
-		setFixture(ScaDebugPlugin.getInstance().getLocalSca().getSandboxWaveform());
+		setFixture(ScaDebugFactory.eINSTANCE.createLocalScaWaveform());
 	}
 
 	/**
@@ -116,77 +106,95 @@ public class LocalScaWaveformTest extends TestCase {
 	}
 
 	/**
-	 * Tests the '{@link gov.redhawk.ide.debug.LocalScaWaveform#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String) <em>Launch</em>}' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.debug.LocalScaWaveform#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String)
-	 * @generated
+	 * For IDE-1085. Test that disposing the object calls releaseObject() if it has an ILaunch.
+	 *
+	 * @see #testDisposeWithoutILaunch()
+	 * @throws CoreException
 	 */
-	public void testLaunch__String_DataType_URI_String_String() throws CoreException {
+	public void testDisposeWithILaunch() throws CoreException {
+		// Ensure the local SCA initializes fully
+		ScaDebugPlugin.getInstance().getLocalSca(new NullProgressMonitor());
+
+		// Listen to the job manager for changes
+		ReleaseJobListener jobListener = new ReleaseJobListener();
+		Job.getJobManager().addJobChangeListener(jobListener);
+
 		try {
-			getFixture().launch(null, null, null, null, null);
-			fail();
-		} catch (AssertionFailedException e) {
-			
+			// Setup the LocalScaWaveform object
+			FakeApplication resource = new FakeApplication();
+			fixture.setObj(resource);
+			fixture.setLaunch(new FakeILaunch());
+
+			// Call dispose
+			fixture.dispose();
+
+			// Ensure the job to call releaseObject() is scheduled
+			assertTrue(jobListener.jobScheduled);
+		} finally {
+			Job.getJobManager().removeJobChangeListener(jobListener);
 		}
-		// TODO Add more tests
 	}
 
 	/**
-	 * Tests the '{@link ExtendedCF.ApplicationExtOperations#launch(java.lang.String, CF.DataType[], java.lang.String, java.lang.String, java.lang.String) <em>Launch</em>}' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @throws ExecuteFail 
-	 * @see ExtendedCF.ApplicationExtOperations#launch(java.lang.String, CF.DataType[], java.lang.String, java.lang.String, java.lang.String)
-	 * @generated NOT
+	 * For IDE-1085. Test that disposing the object doesn't call releaseObject() if it has no ILaunch.
+	 *
+	 * @see #testDisposeWithILaunch()
+	 * @throws CoreException
 	 */
-	public void testLaunch__String_DataType_String_String_String() throws ExecuteFail {
-		// TODO Add more tests
+	public void testDisposeWithoutILaunch() throws CoreException {
+		// Ensure the local SCA initializes fully
+		ScaDebugPlugin.getInstance().getLocalSca(new NullProgressMonitor());
+
+		// Listen to the job manager for changes
+		ReleaseJobListener jobListener = new ReleaseJobListener();
+		Job.getJobManager().addJobChangeListener(jobListener);
+
+		try {
+			// Setup the LocalScaWaveform object
+			FakeApplication resource = new FakeApplication();
+			fixture.setObj(resource);
+
+			// Call dispose
+			fixture.dispose();
+
+			// Ensure the job to call releaseObject() is NOT scheduled
+			assertFalse(jobListener.jobScheduled);
+		} finally {
+			Job.getJobManager().removeJobChangeListener(jobListener);
+		}
 	}
 
-	/**
-	 * Tests the '{@link ExtendedCF.ApplicationExtOperations#reset(java.lang.String) <em>Reset</em>}' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @throws ExecuteFail 
-	 * @throws ReleaseError 
-	 * @see ExtendedCF.ApplicationExtOperations#reset(java.lang.String)
-	 * @generated NOT
-	 */
-	public void testReset__String() throws ReleaseError, ExecuteFail {
-		try {
-			((ApplicationImpl) getFixture().getLocalApp()).reset(null);
-			fail();
-		} catch (ReleaseError e) {
-			
+	private class FakeApplication extends _ApplicationStub {
+
+		@Override
+		public void releaseObject() throws ReleaseError {
 		}
-		// TODO Add more tests
-		try {
-			((ApplicationImpl) getFixture().getLocalApp()).reset("");
-			fail();
-		} catch (ReleaseError e) {
-			
+
+		@Override
+		public void _release() {
 		}
-		
-		// TODO Add more tests
+
 	}
-	
-	@Test
-	public void test_IDE_824() throws Exception {
-		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
-		final LocalScaWaveform localWaveform = ScaDebugFactory.eINSTANCE.createLocalScaWaveform();
-		localWaveform.setName("TestWaveform");
-		ScaModelCommand.execute(localSca, new ScaModelCommand() {
-			
-			@Override
-			public void execute() {
-				localSca.getWaveforms().add(localWaveform);
+
+	private class FakeILaunch extends Launch {
+
+		public FakeILaunch() {
+			super(null, null, null);
+		}
+
+	}
+
+	private class ReleaseJobListener extends JobChangeAdapter {
+
+		public volatile boolean jobScheduled = false;
+
+		@Override
+		public void scheduled(IJobChangeEvent event) {
+			if ("Local Waveform Release".equals(event.getJob().getName())) {
+				jobScheduled = true;
 			}
-		});
-		Assert.assertEquals(2, localSca.getWaveforms().size());
-		localWaveform.releaseObject();
-		Assert.assertEquals(1, localSca.getWaveforms().size());
-	}
+		}
 
+	}
 
 } //LocalScaWaveformTest
