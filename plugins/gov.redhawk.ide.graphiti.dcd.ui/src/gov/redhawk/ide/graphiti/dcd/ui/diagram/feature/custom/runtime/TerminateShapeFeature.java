@@ -20,6 +20,7 @@ import gov.redhawk.ide.graphiti.dcd.ext.ServiceShape;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.ServicePattern;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.NonUndoableCustomFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaService;
@@ -34,9 +35,8 @@ import org.eclipse.graphiti.features.IRemoveFeature;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
-import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 
-public class TerminateShapeFeature extends AbstractCustomFeature {
+public class TerminateShapeFeature extends NonUndoableCustomFeature {
 
 	public TerminateShapeFeature(IFeatureProvider fp) {
 		super(fp);
