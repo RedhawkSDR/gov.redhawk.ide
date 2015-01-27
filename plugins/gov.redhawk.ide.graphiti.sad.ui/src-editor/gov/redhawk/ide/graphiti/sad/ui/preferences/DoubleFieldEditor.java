@@ -67,7 +67,7 @@ public class DoubleFieldEditor extends StringFieldEditor {
 		minValidValue = min;
 		maxValidValue = max;
 		
-		setErrorMessage(JFaceResources.format("Value must be a value between {1} and {2}", //$NON-NLS-1$
+		setErrorMessage(JFaceResources.format("Entry must be a value between {1} and {2}", //$NON-NLS-1$
 			new Object[] { getLabelText(), min, max }));
 	}
 

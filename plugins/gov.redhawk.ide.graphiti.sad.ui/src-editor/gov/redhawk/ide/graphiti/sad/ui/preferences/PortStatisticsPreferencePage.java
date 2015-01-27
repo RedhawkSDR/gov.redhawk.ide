@@ -12,8 +12,11 @@ package gov.redhawk.ide.graphiti.sad.ui.preferences;
 
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -35,7 +38,7 @@ public class PortStatisticsPreferencePage extends PreferencePage implements IWor
 	@Override
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(SADUIGraphitiPlugin.getDefault().getPreferenceStore());
-		setDescription("Set preferences relating to diagram behavior when port monitor view is active");
+		setDescription("Graphical port monitoring preferences");
 
 	}
 
@@ -55,7 +58,7 @@ public class PortStatisticsPreferencePage extends PreferencePage implements IWor
 	}
 
 	/**
-	 * Controls for warning events when port statistics are running 
+	 * Controls for warning events when port statistics are running
 	 */
 	private void createWarningGroup(Composite composite) {
 		Group warningGroup = new Group(composite, SWT.LEFT);
@@ -77,6 +80,15 @@ public class PortStatisticsPreferencePage extends PreferencePage implements IWor
 		queueLevel.setErrorMessage(GraphitiSadMessages.PortStatPreference_warningQueueLevelError);
 		queueLevel.setValidRange(0.0, 100.0);
 		queueLevel.load();
+		queueLevel.setPropertyChangeListener(new IPropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+					setValid(validateFields());
+				}
+			}
+		});
 
 		timeSinceLastPush = new DoubleFieldEditor(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_NO_DATA_PUSHED_SECONDS,
 			GraphitiSadMessages.PortStatPreference_warningNoData, prefComposite);
@@ -85,10 +97,19 @@ public class PortStatisticsPreferencePage extends PreferencePage implements IWor
 		timeSinceLastPush.setPage(this);
 		timeSinceLastPush.setErrorMessage(GraphitiSadMessages.PortStatPreference_warningNoDataError);
 		timeSinceLastPush.load();
+		timeSinceLastPush.setPropertyChangeListener(new IPropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+					setValid(validateFields());
+				}
+			}
+		});
 	}
 
 	/**
-	 * Controls for warning events when port statistics are running 
+	 * Controls for warning events when port statistics are running
 	 */
 	private void createErrorGroup(Composite composite) {
 		Group errorGroup = new Group(composite, SWT.LEFT);
@@ -109,7 +130,17 @@ public class PortStatisticsPreferencePage extends PreferencePage implements IWor
 		queueFlush.setPage(this);
 		queueFlush.setErrorMessage(GraphitiSadMessages.PortStatPreference_errorQueueFlushError);
 		queueFlush.load();
+		queueFlush.setPropertyChangeListener(new IPropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+					setValid(validateFields());
+				}
+			}
+		});
 	}
+
 	/**
 	 * The default button has been pressed.
 	 */
@@ -132,8 +163,19 @@ public class PortStatisticsPreferencePage extends PreferencePage implements IWor
 		store.setValue(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_QUEUE_LEVEL, queueLevel.getDoubleValue());
 		store.setValue(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_NO_DATA_PUSHED_SECONDS, timeSinceLastPush.getDoubleValue());
 		store.setValue(GraphitiSadPreferenceConstants.PREF_SAD_PORT_STATISTICS_QUEUE_FLUSH_DISPLAY, queueFlush.getDoubleValue());
-		
+
 		return super.performOk();
+	}
+
+	/*
+	 * Only return true if all fields all valid.
+	 * Determines whether preference page can be applied/submitted
+	 */
+	private boolean validateFields() {
+		if (queueFlush.isValid() && queueLevel.isValid() && timeSinceLastPush.isValid()) {
+			return true;
+		}
+		return false;
 	}
 
 }
