@@ -16,7 +16,7 @@ import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
+//import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
@@ -34,15 +34,16 @@ public class NodeExplorerTest extends AbstractGraphitiDomainNodeRuntimeTest {
 	 *          This editor is "look but don't touch". All design functionality should be disabled.
 	 *          Runtime functionality (start/stop, plot, etc) should still work.
 	 * IDE-1001 Hide grid on runtime diagram.
+	 * IDE-1038, IDE-1064 No Undo Start|Stop|Terminate|Do Command
 	 */
 	@Test
 	public void nodeExplorerTest() {
-		// Need to make a temp editor since the default launch page (Overview) is a SWTBotEditor and not a
-		// SWTBotGefEditor
-		SWTBotEditor nodeEditor = gefBot.editorByTitle(getNodeFullName());
-		nodeEditor.setFocus();
-		nodeEditor.bot().cTabItem("Diagram").activate();
-		editor = gefBot.gefEditor(getNodeFullName());
+		// IDE-1089 test
+//		SWTBotEditor nodeEditor = gefBot.editorByTitle(getNodeFullName());
+//		nodeEditor.setFocus();
+//		nodeEditor.bot().cTabItem("Diagram").activate();
+//		editor = gefBot.gefEditor(getNodeFullName());
+		editor = gefBot.gefEditor(DEVICE_MANAGER_PROCESS); // uncomment above ~4 lines and remove this line after IDE-1089 is fixed 
 		editor.setFocus();
 
 		// check for devices
@@ -66,9 +67,13 @@ public class NodeExplorerTest extends AbstractGraphitiDomainNodeRuntimeTest {
 		// check that start/stop works
 		DiagramTestUtils.stopComponentFromDiagram(editor, gppFullName);
 		ScaExplorerTestUtils.waitUntilComponentAppearsStoppedInScaExplorer(bot, DOMAIN_NODE_PARENT_PATH, getNodeFullName(), gppFullName);
+		Assert.assertFalse("IDE-1038 No Undo Stop Command context menu item", DiagramTestUtils.hasContentMenuItem(editor, gppFullName, "Undo Stop Command"));
+		Assert.assertFalse("IDE-1065 No Undo Do Command context menu item", DiagramTestUtils.hasContentMenuItem(editor, gppFullName, "Undo Do Command"));
 
 		DiagramTestUtils.startComponentFromDiagram(editor, gppFullName);
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, DOMAIN_NODE_PARENT_PATH, getNodeFullName(), gppFullName);
+		Assert.assertFalse("IDE-1038 No Undo Start Command context menu item", DiagramTestUtils.hasContentMenuItem(editor, gppFullName, "Undo Start Command"));
+		Assert.assertFalse("IDE-1065 No Undo Do Command context menu item", DiagramTestUtils.hasContentMenuItem(editor, gppFullName, "Undo Do Command"));
 
 		// check that device is removed from editor when released in the Sca Explorer
 		String[] GPP_PARENT_PATH = { DOMAIN_NODE_PARENT_PATH[0], DOMAIN_NODE_PARENT_PATH[1], getNodeFullName() };

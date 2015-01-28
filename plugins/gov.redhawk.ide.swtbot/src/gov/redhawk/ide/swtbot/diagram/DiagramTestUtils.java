@@ -773,4 +773,19 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			}
 		}
 	}
+	
+	/** NOTE: Unfortunately, if the context menu item exists, it will be clicked */
+	public static boolean hasContentMenuItem(SWTBotGefEditor editor, String componentName, String menuItem) {
+		editor.setFocus();
+		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
+		componentPart.select();
+		boolean foundMenuItem;
+		try {
+			editor.clickContextMenu(menuItem);
+			foundMenuItem = true;
+		} catch (WidgetNotFoundException e) {
+			foundMenuItem = false;
+		}
+		return foundMenuItem;
+	}
 }

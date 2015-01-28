@@ -24,12 +24,12 @@ import org.junit.Before;
  */
 public abstract class AbstractGraphitiDomainNodeRuntimeTest extends UIRuntimeTest {
 
-	public static final String[] DOMAIN_NODE_PARENT_PATH = {"REDHAWK_DEV CONNECTED", "Device Managers"};
-	public static final String DOMAIN = "REDHAWK_DEV";
-	public static final String DOMAIN_MANAGER_PROCESS = "Domain Manager";
-	public static final String DEVICE_MANAGER_PROCESS = "Device Manager";
-	public static final String DEVICE_MANAGER = "DevMgr";
-	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE INLINE
+	static final String DOMAIN = "SWTBOT_TEST_" + (int) (100.0 * Math.random());
+	static final String[] DOMAIN_NODE_PARENT_PATH = { DOMAIN + " CONNECTED", "Device Managers"};
+	static final String DOMAIN_MANAGER_PROCESS = "Domain Manager";
+	static final String DEVICE_MANAGER_PROCESS = "Device Manager";
+	static final String DEVICE_MANAGER = "DevMgr";
+	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE VisibilityModifier
 	private String nodeFullName; //full name of device node that is launched
 
 	@Before
@@ -46,7 +46,6 @@ public abstract class AbstractGraphitiDomainNodeRuntimeTest extends UIRuntimeTes
 		// Open Node Explorer Diagram
 		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, DOMAIN_NODE_PARENT_PATH, DEVICE_MANAGER, DiagramType.GRAPHITI_NODE_EXPLORER);
 		nodeFullName = ScaExplorerTestUtils.getFullNameFromScaExplorer(gefBot, DOMAIN_NODE_PARENT_PATH, DEVICE_MANAGER);
-				
 	}
 	
 	@After
