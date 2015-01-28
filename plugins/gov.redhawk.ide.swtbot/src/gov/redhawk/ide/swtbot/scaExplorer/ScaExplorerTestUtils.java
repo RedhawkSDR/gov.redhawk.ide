@@ -113,7 +113,7 @@ public class ScaExplorerTestUtils {
 		wizardShell.activate();
 
 		// Enter the Domain Name text
-		wizardBot.text(0).setText("REDHAWK_DEV");
+		wizardBot.text(0).setText(domainName);
 
 		// select waveform to launch
 		for (SWTBotTreeItem treeItem : wizardBot.tree().getAllItems()) {
