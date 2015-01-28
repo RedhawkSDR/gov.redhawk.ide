@@ -31,6 +31,8 @@ import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -261,10 +263,141 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	}
 
 	/**
+	 * Create SadConnectInterface from provided anchors
+	 * assume UsesPortStub is the first anchor, ConnectionTarget for second anchor
+	 * @param anchor1
+	 * @param anchor2
+	 * @return
+	 */
+	public SadConnectInterface createAnchorToAnchor(Anchor anchor1, Anchor anchor2) {
+		SadConnectInterface sadConnectInterface = SadFactory.eINSTANCE.createSadConnectInterface();
+
+		//get business objects for both anchors
+		EList<EObject> anchorObjects1 = anchor1.getParent().getLink().getBusinessObjects();
+		EList<EObject> anchorObjects2 = anchor2.getParent().getLink().getBusinessObjects();
+		
+		UsesPortStub source = null;
+		ConnectionTarget target = null;
+		
+		if (!(anchorObjects1.size() > 0 && anchorObjects1.get(0) instanceof UsesPortStub)
+				&& !(anchorObjects2.size() > 0 && anchorObjects2.get(0) instanceof ConnectionTarget)) {
+			//either first anchor wasn't UsesPortStub or second anchor wasn't ConnectionTarget
+			return null;
+		}
+
+		if (anchorObjects1.size() == 1) {
+			//only one source object, set it
+			source = (UsesPortStub) anchorObjects1.get(0);
+		}
+		if (anchorObjects2.size() == 1) {
+			//only one target object, set it
+			target = (ConnectionTarget) anchorObjects2.get(0);
+		}
+		
+		if (anchorObjects1.size() > 1 && anchorObjects2.size() > 1) {
+			for (EObject sourceObj: anchorObjects1) {
+				for (EObject targetObj: anchorObjects2) {
+					if (InterfacesUtil.areCompatible(sourceObj, targetObj)) {
+						source = (UsesPortStub) sourceObj;
+						target = (ConnectionTarget) targetObj;
+					}
+				}
+			}
+		} else if (anchorObjects1.size() > 1) {
+			//we know the target, look for a source with matching type
+			for (EObject sourceObj: anchorObjects1) {
+				if (InterfacesUtil.areCompatible(sourceObj, target)) {
+					source = (UsesPortStub) sourceObj;
+				}
+			}
+		} else if (anchorObjects2.size() > 1) {
+			//we know the source, look for a target with matching type
+			for (EObject targetObj: anchorObjects2) {
+				if (InterfacesUtil.areCompatible(source, targetObj)) {
+					target = (ConnectionTarget) targetObj;
+				}
+			}
+		}
+		
+		// source
+		sadConnectInterface.setSource(source);
+		// target
+		sadConnectInterface.setTarget(target);
+		
+		//only return if we have source/target set
+		if (source == null || target == null) {
+			return null;
+		}
+		
+		return sadConnectInterface;
+		
+	}
+	
+	
+	/**
 	 * Creates a new connection between the selected usesPortStub and ConnectionTarget
 	 */
 	@Override
 	public Connection create(ICreateConnectionContext context) {
+
+		Connection newConnection = null;
+
+		SadConnectInterface sadConnectInterface = createAnchorToAnchor(context.getSourceAnchor(), context.getTargetAnchor());
+		if (sadConnectInterface == null) {
+			//switch source/target direction and try again
+			sadConnectInterface = createAnchorToAnchor(context.getTargetAnchor(), context.getSourceAnchor());
+		}
+		if (sadConnectInterface == null) {
+			//can't make a connection
+			return null;
+		}
+		
+
+		// editing domain for our transaction
+		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
+
+		// get sad from diagram
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		
+		//create connectionId first check if provided in context (currently used by GraphitiModelMap), otherwise generate unique connection id
+		final String connectionId = (context.getProperty(OVERRIDE_CONNECTION_ID) != null) ? (String) context.getProperty(OVERRIDE_CONNECTION_ID)
+						: createConnectionId(sad);
+		// set connection id
+		sadConnectInterface.setId(connectionId);
+		
+		// container for new SadConnectInterface, necessary for reference after command execution
+		final SadConnectInterface[] sadConnectInterfaces = new SadConnectInterface[1];
+		sadConnectInterfaces[0] = sadConnectInterface;
+
+		// Create Connect Interface & related objects
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+
+				// create connections if necessary
+				if (sad.getConnections() == null) {
+					sad.setConnections(SadFactory.eINSTANCE.createSadConnections());
+				}
+
+				// add to connections
+				sad.getConnections().getConnectInterface().add(sadConnectInterfaces[0]);
+			}
+		});
+
+		// add connection for business object
+		AddConnectionContext addContext = new AddConnectionContext(context.getSourceAnchor(), context.getTargetAnchor());
+		addContext.setNewObject(sadConnectInterfaces[0]);
+		newConnection = (Connection) getFeatureProvider().addIfPossible(addContext);
+
+		return newConnection;
+	}
+	
+	
+	/**
+	 * Creates a new connection between the selected usesPortStub and ConnectionTarget
+	 */
+	public Connection createBackup(ICreateConnectionContext context) {
 
 		Connection newConnection = null;
 
