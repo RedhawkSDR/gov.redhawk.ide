@@ -45,6 +45,7 @@ class RHContainerShape extends org.eclipse.graphiti.mm.pictograms.ContainerShape
 	boolean hasPortsContainerShape //creates a container that displays an anchor per port
 	boolean hideUnusedPorts //hides all ports without connection
 	
+	
 	op void init(IAddContext context, AbstractContainerPattern pattern) 
 	op void init(IAddContext context, AbstractContainerPattern pattern, List<Port> externalPorts)
 	

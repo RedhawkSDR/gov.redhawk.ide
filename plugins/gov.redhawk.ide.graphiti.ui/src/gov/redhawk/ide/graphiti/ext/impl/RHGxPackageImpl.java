@@ -30,7 +30,6 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.MmPackage;
-import org.eclipse.graphiti.mm.algorithms.AlgorithmsPackage;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
 import org.eclipse.graphiti.util.IColorConstant;
@@ -42,131 +41,115 @@ import org.eclipse.graphiti.util.IColorConstant;
  * @generated
  */
 public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EClass containerShapeImplEClass = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EClass rhContainerShapeEClass = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EEnum eventEEnum = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EDataType componentSupportedInterfaceStubEDataType = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EDataType iFeatureProviderEDataType = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EDataType usesPortStubEDataType = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EDataType providesPortStubEDataType = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EDataType portEDataType = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EDataType assemblyControllerEDataType = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EDataType externalPortsEDataType = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EDataType reasonEDataType = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EDataType listEDataType = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EDataType sadComponentInstantiationEDataType = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EDataType iAddContextEDataType = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EDataType abstractContainerPatternEDataType = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EDataType iUpdateContextEDataType = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType mapEDataType = null;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private EDataType iColorConstantEDataType = null;
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType mapEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -217,8 +200,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		isInited = true;
 
 		// Initialize simple dependencies
-		PictogramsPackage.eINSTANCE.eClass();
-		AlgorithmsPackage.eINSTANCE.eClass();
 		MmPackage.eINSTANCE.eClass();
 		EcorePackage.eINSTANCE.eClass();
 
@@ -279,6 +260,42 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 */
 	public EAttribute getRHContainerShape_IStatusErrorState() {
 		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getRHContainerShape_ConnectionMap() {
+		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getRHContainerShape_Event() {
+		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getRHContainerShape_HasSuperPortsContainerShape() {
+		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getRHContainerShape_HasPortsContainerShape() {
+		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -421,8 +438,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EDataType getMap() {
-		return mapEDataType;
+	public EDataType getIColorConstant() {
+		return iColorConstantEDataType;
 	}
 
 	/**
@@ -430,8 +447,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EDataType getIColorConstant() {
-		return iColorConstantEDataType;
+	public EDataType getMap() {
+		return mapEDataType;
 	}
 
 	/**
@@ -646,30 +663,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	protected void createXcoreAnnotations() {
 		String source = "http://www.eclipse.org/emf/2011/Xcore";
 		addAnnotation(this, source, new String[] { "GenModel", "http://www.eclipse.org/emf/2002/GenModel", "Ecore", "http://www.eclipse.org/emf/2002/Ecore" });
-	}
-
-	@Override
-	public EAttribute getRHContainerShape_ConnectionMap() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public EAttribute getRHContainerShape_Event() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public EAttribute getRHContainerShape_HasSuperPortsContainerShape() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public EAttribute getRHContainerShape_HasPortsContainerShape() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 } //RHGxPackageImpl

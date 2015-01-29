@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EFactory;
  * @generated
  */
 public interface RHSadGxFactory extends EFactory {
+
 	/**
 	 * The singleton instance of the factory.
 	 * <!-- begin-user-doc -->

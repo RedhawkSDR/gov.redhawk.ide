@@ -39,6 +39,7 @@ import org.eclipse.graphiti.util.IColorConstant;
  * @generated
  */
 public interface RHContainerShape extends ContainerShape {
+
 	/**
 	 * Returns the value of the '<em><b>Started</b></em>' attribute.
 	 * <!-- begin-user-doc -->

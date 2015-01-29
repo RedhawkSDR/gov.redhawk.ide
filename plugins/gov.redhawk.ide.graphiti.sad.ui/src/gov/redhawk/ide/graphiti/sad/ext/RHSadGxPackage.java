@@ -20,11 +20,12 @@ import org.eclipse.emf.ecore.EPackage;
  * <!-- end-user-doc -->
  * @see gov.redhawk.ide.graphiti.sad.ext.RHSadGxFactory
  * @model kind="package"
- *        annotation="http://www.eclipse.org/emf/2002/GenModel prefix='RHSadGx' codeFormatting='true' basePackage='gov.redhawk.ide.graphiti.sad' modelPluginVariables='org.eclipse.xtext.xbase.lib' contentTypeIdentifier='http://www.redhawk.gov/model/rhsadgext/1.0.0' operationReflection='false' modelDirectory='/gov.redhawk.ide.graphiti.sad.ui/src'"
+ *        annotation="http://www.eclipse.org/emf/2002/GenModel prefix='RHSadGx' codeFormatting='true' modelPluginVariables='org.eclipse.xtext.xbase.lib' contentTypeIdentifier='http://www.redhawk.gov/model/rhsadgext/1.0.0' operationReflection='false' modelDirectory='/gov.redhawk.ide.graphiti.sad.ui/src' basePackage='gov.redhawk.ide.graphiti.sad'"
  *        annotation="http://www.eclipse.org/emf/2011/Xcore GenModel='http://www.eclipse.org/emf/2002/GenModel' Ecore='http://www.eclipse.org/emf/2002/Ecore'"
  * @generated
  */
 public interface RHSadGxPackage extends EPackage {
+
 	/**
 	 * The package name.
 	 * <!-- begin-user-doc -->
@@ -32,7 +33,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	String eNAME = "ext";
-
 	/**
 	 * The package namespace URI.
 	 * <!-- begin-user-doc -->
@@ -40,7 +40,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	String eNS_URI = "http://www.redhawk.gov/model/rhsadgext/1.0.0";
-
 	/**
 	 * The package namespace name.
 	 * <!-- begin-user-doc -->
@@ -48,7 +47,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	String eNS_PREFIX = "ext";
-
 	/**
 	 * The package content type ID.
 	 * <!-- begin-user-doc -->
@@ -56,7 +54,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	String eCONTENT_TYPE = "http://www.redhawk.gov/model/rhsadgext/1.0.0";
-
 	/**
 	 * The singleton instance of the package.
 	 * <!-- begin-user-doc -->
@@ -64,7 +61,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	RHSadGxPackage eINSTANCE = gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl.init();
-
 	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl <em>Component Shape</em>}' class.
 	 * <!-- begin-user-doc -->
@@ -74,7 +70,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	int COMPONENT_SHAPE = 0;
-
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -83,7 +78,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__PROPERTIES = RHGxPackage.RH_CONTAINER_SHAPE__PROPERTIES;
-
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -92,7 +86,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__VISIBLE = RHGxPackage.RH_CONTAINER_SHAPE__VISIBLE;
-
 	/**
 	 * The feature id for the '<em><b>Graphics Algorithm</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
@@ -101,7 +94,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__GRAPHICS_ALGORITHM = RHGxPackage.RH_CONTAINER_SHAPE__GRAPHICS_ALGORITHM;
-
 	/**
 	 * The feature id for the '<em><b>Active</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -110,7 +102,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__ACTIVE = RHGxPackage.RH_CONTAINER_SHAPE__ACTIVE;
-
 	/**
 	 * The feature id for the '<em><b>Link</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
@@ -119,7 +110,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__LINK = RHGxPackage.RH_CONTAINER_SHAPE__LINK;
-
 	/**
 	 * The feature id for the '<em><b>Anchors</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -128,7 +118,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__ANCHORS = RHGxPackage.RH_CONTAINER_SHAPE__ANCHORS;
-
 	/**
 	 * The feature id for the '<em><b>Container</b></em>' container reference.
 	 * <!-- begin-user-doc -->
@@ -137,7 +126,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__CONTAINER = RHGxPackage.RH_CONTAINER_SHAPE__CONTAINER;
-
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -146,7 +134,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__CHILDREN = RHGxPackage.RH_CONTAINER_SHAPE__CHILDREN;
-
 	/**
 	 * The feature id for the '<em><b>Started</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -155,7 +142,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__STARTED = RHGxPackage.RH_CONTAINER_SHAPE__STARTED;
-
 	/**
 	 * The feature id for the '<em><b>Update Ports</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -164,7 +150,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__UPDATE_PORTS = RHGxPackage.RH_CONTAINER_SHAPE__UPDATE_PORTS;
-
 	/**
 	 * The feature id for the '<em><b>IStatus Error State</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -173,7 +158,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__ISTATUS_ERROR_STATE = RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE;
-
 	/**
 	 * The feature id for the '<em><b>Connection Map</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -182,7 +166,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__CONNECTION_MAP = RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP;
-
 	/**
 	 * The feature id for the '<em><b>Event</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -191,7 +174,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__EVENT = RHGxPackage.RH_CONTAINER_SHAPE__EVENT;
-
 	/**
 	 * The feature id for the '<em><b>Has Super Ports Container Shape</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -200,7 +182,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE = RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE;
-
 	/**
 	 * The feature id for the '<em><b>Has Ports Container Shape</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -209,7 +190,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__HAS_PORTS_CONTAINER_SHAPE = RHGxPackage.RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE;
-
 	/**
 	 * The feature id for the '<em><b>Hide Unused Ports</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -218,7 +198,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE__HIDE_UNUSED_PORTS = RHGxPackage.RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS;
-
 	/**
 	 * The number of structural features of the '<em>Component Shape</em>' class.
 	 * <!-- begin-user-doc -->
@@ -227,7 +206,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT_SHAPE_FEATURE_COUNT = RHGxPackage.RH_CONTAINER_SHAPE_FEATURE_COUNT + 0;
-
 	/**
 	 * The meta object id for the '<em>Component Supported Interface Stub</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -237,7 +215,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	int COMPONENT_SUPPORTED_INTERFACE_STUB = 1;
-
 	/**
 	 * The meta object id for the '<em>IFeature Provider</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -247,7 +224,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	int IFEATURE_PROVIDER = 2;
-
 	/**
 	 * The meta object id for the '<em>Uses Port Stub</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -257,7 +233,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	int USES_PORT_STUB = 3;
-
 	/**
 	 * The meta object id for the '<em>Provides Port Stub</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -267,7 +242,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	int PROVIDES_PORT_STUB = 4;
-
 	/**
 	 * The meta object id for the '<em>Port</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -277,7 +251,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	int PORT = 5;
-
 	/**
 	 * The meta object id for the '<em>Assembly Controller</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -287,7 +260,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	int ASSEMBLY_CONTROLLER = 6;
-
 	/**
 	 * The meta object id for the '<em>External Ports</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -297,7 +269,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	int EXTERNAL_PORTS = 7;
-
 	/**
 	 * The meta object id for the '<em>Reason</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -307,7 +278,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	int REASON = 8;
-
 	/**
 	 * The meta object id for the '<em>List</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -317,7 +287,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	int LIST = 9;
-
 	/**
 	 * The meta object id for the '<em>Sad Component Instantiation</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -327,7 +296,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	int SAD_COMPONENT_INSTANTIATION = 10;
-
 	/**
 	 * The meta object id for the '<em>IAdd Context</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -337,7 +305,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	int IADD_CONTEXT = 11;
-
 	/**
 	 * The meta object id for the '<em>Component Pattern</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -347,7 +314,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	int COMPONENT_PATTERN = 12;
-
 	/**
 	 * The meta object id for the '<em>IUpdate Context</em>' data type.
 	 * <!-- begin-user-doc -->

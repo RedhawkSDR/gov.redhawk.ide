@@ -32,6 +32,7 @@ import org.eclipse.graphiti.util.IColorConstant;
  * @generated
  */
 public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
+
 	/**
 	 * Creates the default factory implementation.
 	 * <!-- begin-user-doc -->
@@ -435,6 +436,24 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public IColorConstant createIColorConstantFromString(EDataType eDataType, String initialValue) {
+		return (IColorConstant) super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertIColorConstantToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, IColorConstant> createMapFromString(EDataType eDataType, String initialValue) {
 		return (Map<String, IColorConstant>) super.createFromString(initialValue);
@@ -447,24 +466,6 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 */
 	public String convertMapToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public IColorConstant createIColorConstantFromString(EDataType eDataType, String initialValue) {
-		return (IColorConstant) super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertIColorConstantToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
 	}
 
 	/**
