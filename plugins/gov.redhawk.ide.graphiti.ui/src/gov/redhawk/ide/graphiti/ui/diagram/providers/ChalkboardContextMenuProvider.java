@@ -45,33 +45,40 @@ public class ChalkboardContextMenuProvider extends DiagramEditorContextMenuProvi
 	public void buildContextMenu(IMenuManager manager) {
 		super.buildContextMenu(manager);
 		IContributionItem[] items = manager.getItems();
-		for (IContributionItem item: items) {
+
+		ActionContributionItem actionItem = null;
+		for (IContributionItem item : items) {
 			if (item instanceof ActionContributionItem) {
-				ActionContributionItem actionItem = (ActionContributionItem) item;
+				actionItem = (ActionContributionItem) item;
 				IAction action = actionItem.getAction();
-				if (action != null && action.getId() != null && action.getId().equals(ActionFactory.DELETE.getId()) 
-						&& this.getViewer().getSelection() instanceof StructuredSelection) {
+				if (action != null && action.getId() != null && action.getId().equals(ActionFactory.DELETE.getId())
+					&& this.getViewer().getSelection() instanceof StructuredSelection) {
 					StructuredSelection selection = (StructuredSelection) this.getViewer().getSelection();
-					if (selection.getFirstElement() instanceof GraphitiShapeEditPart 
-							&& ((GraphitiShapeEditPart) selection.getFirstElement()).getModel() instanceof RHContainerShape) {
+					if (selection.getFirstElement() instanceof GraphitiShapeEditPart
+						&& ((GraphitiShapeEditPart) selection.getFirstElement()).getModel() instanceof RHContainerShape) {
 						action.setText("Release");
-						// Move Terminate action up below Release
-						ActionContributionItem terminateAction = findTerminateAction(items);
-						if (terminateAction != null) {
-							manager.remove(terminateAction);
-							manager.insertAfter(action.getId(), terminateAction);
-						}
+						break;
 					} else {
 						action.setText("Delete");
+						break;
 					}
-					return;
 				}
 			}
 		}
+
+		// Move Release and Terminate to the bottom of the context menu
+		if (actionItem != null && "Release".equals(actionItem.getAction().getText())) {
+			ActionContributionItem terminateAction = findTerminateAction(items);
+			terminateAction.setId("terminate");
+			if (terminateAction != null) {
+				manager.remove(actionItem);
+				manager.insertBefore(terminateAction.getId(), actionItem);
+			}
+		}
 	}
-	
+
 	private ActionContributionItem findTerminateAction(IContributionItem[] items) {
-		for (IContributionItem item: items) {
+		for (IContributionItem item : items) {
 			if (item instanceof ActionContributionItem) {
 				ActionContributionItem actionItem = (ActionContributionItem) item;
 				IAction action = actionItem.getAction();
