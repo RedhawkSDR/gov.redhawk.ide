@@ -8,30 +8,36 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.ui.properties;
+package gov.redhawk.ide.graphiti.ui.properties;
 
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.platform.AbstractPropertySectionFilter;
 
-public class ComponentFilter extends AbstractPropertySectionFilter {
+/**
+ * 
+ */
+public class ProvidesPortFilter extends AbstractPropertySectionFilter {
 
+	/**
+	 * 
+	 */
+	public ProvidesPortFilter() {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.graphiti.ui.platform.AbstractPropertySectionFilter#accept(org.eclipse.graphiti.mm.pictograms.PictogramElement)
+	 */
 	@Override
 	protected boolean accept(PictogramElement pictogramElement) {
-		Object whatIsIt = DUtil.getBusinessObject(pictogramElement);
-		if (whatIsIt instanceof ProvidesPortStub || whatIsIt instanceof UsesPortStub) {
-			return false;
-		}
 		ContainerShape containerShape = (ContainerShape) DUtil.findContainerShapeParentWithProperty(pictogramElement,
-			RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+			RHContainerShapeImpl.SHAPE_PROVIDES_PORT_RECTANGLE);
 		Object obj = DUtil.getBusinessObject(containerShape);
-		if (containerShape != null && obj != null && obj instanceof SadComponentInstantiation) {
+		if (containerShape != null && obj != null && obj instanceof ProvidesPortStub) {
 			return true;
 		}
 		return false;

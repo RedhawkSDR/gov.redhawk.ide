@@ -83,7 +83,9 @@
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
       <propertyContributor
-            contributorId="SADDiagram.PropertyContributor">
+            contributorId="SADDiagram.PropertyContributor"
+            labelProvider="gov.redhawk.ide.graphiti.ui.diagram.providers.RHGraphitiDiagramLabelProvider"
+            typeMapper="org.eclipse.graphiti.examples.common.property.TypeMapper">
          <propertyCategory
                category="Graphiti">
          </propertyCategory>
@@ -105,6 +107,16 @@
              category="Graphiti"
              id="property.tab.ComponentProperties"
              label="Component Properties"/>
+         <propertyTab
+               category="Graphiti"
+               id="property.tab.ProvidesPort"
+               label="Provides Interface">
+         </propertyTab>
+         <propertyTab
+               category="Graphiti"
+               id="property.tab.UsesPort"
+               label="Uses Interface">
+         </propertyTab>
 
      </propertyTabs>
    </extension>
@@ -124,9 +136,21 @@
 
          <propertySection
          	class="org.eclipse.ui.views.properties.tabbed.AdvancedPropertySection"
-         	filter="gov.redhawk.ide.graphiti.sad.ui.properties.ComponentFilter"
+         	filter="gov.redhawk.ide.graphiti.sad.ui.properties.AdvancedFilter"
          	id="graphiti.main.tab.emfreference.tableddd"
          	tab="property.tab.advanced">
+         </propertySection>
+         <propertySection
+               class="gov.redhawk.ide.graphiti.sad.ui.properties.PortInterfacePropertiesSection"
+               filter="gov.redhawk.ide.graphiti.ui.properties.ProvidesPortFilter"
+               id="property.section.ProvidesPort"
+               tab="property.tab.ProvidesPort">
+         </propertySection>
+         <propertySection
+               class="gov.redhawk.ide.graphiti.sad.ui.properties.PortInterfacePropertiesSection"
+               filter="gov.redhawk.ide.graphiti.ui.properties.UsesPortFilter"
+               id="property.section.UsesPort"
+               tab="property.tab.UsesPort">
          </propertySection>
 
       </propertySections>
@@ -174,6 +198,12 @@
                    </adapter>
                    <adapter
                          type="gov.redhawk.model.sca.ScaPort">
+                   </adapter>
+                   <adapter
+                         type="org.eclipse.emf.edit.provider.IItemPropertySource">
+                   </adapter>
+                   <adapter
+                         type="org.eclipse.emf.edit.provider.ITableItemLabelProvider">
                    </adapter>
                 </factory>
         </extension>

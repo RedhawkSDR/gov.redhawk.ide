@@ -47,6 +47,7 @@ Export-Package: gov.redhawk.ide.graphiti.ext,
  gov.redhawk.ide.graphiti.ui.diagram.providers,
  gov.redhawk.ide.graphiti.ui.diagram.util,
  gov.redhawk.ide.graphiti.ui.editor,
- gov.redhawk.ide.graphiti.ui.palette
+ gov.redhawk.ide.graphiti.ui.palette,
+ gov.redhawk.ide.graphiti.ui.properties
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.wst.sse.ui
