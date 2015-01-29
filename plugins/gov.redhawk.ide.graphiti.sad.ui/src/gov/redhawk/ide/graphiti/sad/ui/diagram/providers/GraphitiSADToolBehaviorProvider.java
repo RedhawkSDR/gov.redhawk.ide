@@ -55,6 +55,7 @@ import org.eclipse.gef.palette.PaletteEntry;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDoubleClickContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.impl.CustomContext;
@@ -66,7 +67,9 @@ import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.graphiti.tb.ContextButtonEntry;
+import org.eclipse.graphiti.tb.ContextMenuEntry;
 import org.eclipse.graphiti.tb.IContextButtonPadData;
+import org.eclipse.graphiti.tb.IContextMenuEntry;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehaviorProvider {
@@ -454,6 +457,30 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		super.dispose();
 	}
 	
+	@Override
+	public IContextMenuEntry[] getContextMenu(ICustomContext context) {
+		List<IContextMenuEntry> contextMenuItems = new ArrayList<IContextMenuEntry>();
+
+		// Create a sub-menu for logging
+		ContextMenuEntry loggingSubMenu = new ContextMenuEntry(null, context);
+		loggingSubMenu.setText("Logging");
+		loggingSubMenu.setDescription("Logging");
+		loggingSubMenu.setSubmenu(true);
+        contextMenuItems.add(loggingSubMenu);
+
+		ICustomFeature[] customFeatures = getFeatureProvider().getCustomFeatures(context);
+		for (ICustomFeature customFeature : customFeatures) {
+			ContextMenuEntry entry = new ContextMenuEntry(customFeature, context);
+			//if (customFeature instanceof SomeLoggingFeature) {
+			//	loggingSubMenu.add(entry);
+			//} else {
+			contextMenuItems.add(entry);
+			//}
+		}
+
+        return contextMenuItems.toArray(new IContextMenuEntry[contextMenuItems.size()]);
+	}
+
 	/**
 	 * IDE-1021: Adds start/stop/etc. buttons to hover context button pad of component as applicable.
 	 */
