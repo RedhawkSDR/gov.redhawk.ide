@@ -2,14 +2,11 @@
  */
 package gov.redhawk.ide.graphiti.sad.ext.impl;
 
-import gov.redhawk.ide.graphiti.ext.Event;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ext.RHSadGxFactory;
 import gov.redhawk.ide.graphiti.sad.ext.RHSadGxPackage;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
-
 import java.util.List;
-
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -17,7 +14,6 @@ import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -87,8 +83,6 @@ public class RHSadGxFactoryImpl extends EFactoryImpl implements RHSadGxFactory {
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-		case RHSadGxPackage.EVENT:
-			return createEventFromString(eDataType, initialValue);
 		case RHSadGxPackage.COMPONENT_SUPPORTED_INTERFACE_STUB:
 			return createComponentSupportedInterfaceStubFromString(eDataType, initialValue);
 		case RHSadGxPackage.IFEATURE_PROVIDER:
@@ -128,8 +122,6 @@ public class RHSadGxFactoryImpl extends EFactoryImpl implements RHSadGxFactory {
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-		case RHSadGxPackage.EVENT:
-			return convertEventToString(eDataType, instanceValue);
 		case RHSadGxPackage.COMPONENT_SUPPORTED_INTERFACE_STUB:
 			return convertComponentSupportedInterfaceStubToString(eDataType, instanceValue);
 		case RHSadGxPackage.IFEATURE_PROVIDER:
@@ -169,27 +161,6 @@ public class RHSadGxFactoryImpl extends EFactoryImpl implements RHSadGxFactory {
 	public ComponentShape createComponentShape() {
 		ComponentShapeImpl componentShape = new ComponentShapeImpl();
 		return componentShape;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Event createEventFromString(EDataType eDataType, String initialValue) {
-		Event result = Event.get(initialValue);
-		if (result == null)
-			throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-		return result;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertEventToString(EDataType eDataType, Object instanceValue) {
-		return instanceValue == null ? null : instanceValue.toString();
 	}
 
 	/**

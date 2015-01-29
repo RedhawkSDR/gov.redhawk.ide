@@ -2,15 +2,12 @@
  */
 package gov.redhawk.ide.graphiti.sad.ext.impl;
 
-import gov.redhawk.ide.graphiti.ext.Event;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ext.RHSadGxFactory;
 import gov.redhawk.ide.graphiti.sad.ext.RHSadGxPackage;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
-
 import java.util.List;
-
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -18,14 +15,10 @@ import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -45,13 +38,6 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 	 * @generated
 	 */
 	private EClass componentShapeEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EEnum eventEEnum = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -223,33 +209,6 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getComponentShape_Started() {
-		return (EAttribute) componentShapeEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getComponentShape_Event() {
-		return (EAttribute) componentShapeEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EEnum getEvent() {
-		return eventEEnum;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EDataType getComponentSupportedInterfaceStub() {
 		return componentSupportedInterfaceStubEDataType;
 	}
@@ -392,11 +351,6 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 
 		// Create classes and their features
 		componentShapeEClass = createEClass(COMPONENT_SHAPE);
-		createEAttribute(componentShapeEClass, COMPONENT_SHAPE__STARTED);
-		createEAttribute(componentShapeEClass, COMPONENT_SHAPE__EVENT);
-
-		// Create enums
-		eventEEnum = createEEnum(EVENT);
 
 		// Create data types
 		componentSupportedInterfaceStubEDataType = createEDataType(COMPONENT_SUPPORTED_INTERFACE_STUB);
@@ -440,7 +394,6 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 
 		// Obtain other dependent packages
 		RHGxPackage theRHGxPackage = (RHGxPackage) EPackage.Registry.INSTANCE.getEPackage(RHGxPackage.eNS_URI);
-		EcorePackage theEcorePackage = (EcorePackage) EPackage.Registry.INSTANCE.getEPackage(EcorePackage.eNS_URI);
 
 		// Create type parameters
 		addETypeParameter(listEDataType, "Port");
@@ -452,10 +405,6 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(componentShapeEClass, ComponentShape.class, "ComponentShape", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getComponentShape_Started(), theEcorePackage.getEBoolean(), "started", null, 0, 1, ComponentShape.class, !IS_TRANSIENT, !IS_VOLATILE,
-			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getComponentShape_Event(), this.getEvent(), "event", null, 0, 1, ComponentShape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
-			!IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		EOperation op = addEOperation(componentShapeEClass, null, "init", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIAddContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
@@ -470,11 +419,6 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 		op = addEOperation(componentShapeEClass, this.getReason(), "updateNeeded", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getComponentPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
-
-		// Initialize enums and add enum literals
-		initEEnum(eventEEnum, Event.class, "Event");
-		addEEnumLiteral(eventEEnum, Event.RELEASE);
-		addEEnumLiteral(eventEEnum, Event.TERMINATE);
 
 		// Initialize data types
 		initEDataType(componentSupportedInterfaceStubEDataType, ComponentSupportedInterfaceStub.class, "ComponentSupportedInterfaceStub", IS_SERIALIZABLE,

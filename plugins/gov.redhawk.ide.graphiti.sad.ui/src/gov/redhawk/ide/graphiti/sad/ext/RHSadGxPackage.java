@@ -3,11 +3,8 @@
 package gov.redhawk.ide.graphiti.sad.ext;
 
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
-
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 
 /**
@@ -23,7 +20,7 @@ import org.eclipse.emf.ecore.EPackage;
  * <!-- end-user-doc -->
  * @see gov.redhawk.ide.graphiti.sad.ext.RHSadGxFactory
  * @model kind="package"
- *        annotation="http://www.eclipse.org/emf/2002/GenModel prefix='RHSadGx' codeFormatting='true' modelPluginVariables='org.eclipse.xtext.xbase.lib' contentTypeIdentifier='http://www.redhawk.gov/model/rhsadgext/1.0.0' operationReflection='false' modelDirectory='/gov.redhawk.ide.sad.graphiti.ui/src' basePackage='gov.redhawk.ide.sad.graphiti'"
+ *        annotation="http://www.eclipse.org/emf/2002/GenModel prefix='RHSadGx' codeFormatting='true' basePackage='gov.redhawk.ide.graphiti.sad' modelPluginVariables='org.eclipse.xtext.xbase.lib' contentTypeIdentifier='http://www.redhawk.gov/model/rhsadgext/1.0.0' operationReflection='false' modelDirectory='/gov.redhawk.ide.graphiti.sad.ui/src'"
  *        annotation="http://www.eclipse.org/emf/2011/Xcore GenModel='http://www.eclipse.org/emf/2002/GenModel' Ecore='http://www.eclipse.org/emf/2002/Ecore'"
  * @generated
  */
@@ -157,7 +154,34 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_SHAPE__STARTED = RHGxPackage.RH_CONTAINER_SHAPE_FEATURE_COUNT + 0;
+	int COMPONENT_SHAPE__STARTED = RHGxPackage.RH_CONTAINER_SHAPE__STARTED;
+
+	/**
+	 * The feature id for the '<em><b>Update Ports</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_SHAPE__UPDATE_PORTS = RHGxPackage.RH_CONTAINER_SHAPE__UPDATE_PORTS;
+
+	/**
+	 * The feature id for the '<em><b>IStatus Error State</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_SHAPE__ISTATUS_ERROR_STATE = RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE;
+
+	/**
+	 * The feature id for the '<em><b>Connection Map</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_SHAPE__CONNECTION_MAP = RHGxPackage.RH_CONTAINER_SHAPE__CONNECTION_MAP;
 
 	/**
 	 * The feature id for the '<em><b>Event</b></em>' attribute.
@@ -166,7 +190,34 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_SHAPE__EVENT = RHGxPackage.RH_CONTAINER_SHAPE_FEATURE_COUNT + 1;
+	int COMPONENT_SHAPE__EVENT = RHGxPackage.RH_CONTAINER_SHAPE__EVENT;
+
+	/**
+	 * The feature id for the '<em><b>Has Super Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE = RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE;
+
+	/**
+	 * The feature id for the '<em><b>Has Ports Container Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_SHAPE__HAS_PORTS_CONTAINER_SHAPE = RHGxPackage.RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE;
+
+	/**
+	 * The feature id for the '<em><b>Hide Unused Ports</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_SHAPE__HIDE_UNUSED_PORTS = RHGxPackage.RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS;
 
 	/**
 	 * The number of structural features of the '<em>Component Shape</em>' class.
@@ -175,17 +226,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_SHAPE_FEATURE_COUNT = RHGxPackage.RH_CONTAINER_SHAPE_FEATURE_COUNT + 2;
-
-	/**
-	 * The meta object id for the '{@link gov.redhawk.ide.graphiti.sad.ext.Event <em>Event</em>}' enum.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see gov.redhawk.ide.graphiti.sad.ext.Event
-	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getEvent()
-	 * @generated
-	 */
-	int EVENT = 1;
+	int COMPONENT_SHAPE_FEATURE_COUNT = RHGxPackage.RH_CONTAINER_SHAPE_FEATURE_COUNT + 0;
 
 	/**
 	 * The meta object id for the '<em>Component Supported Interface Stub</em>' data type.
@@ -195,7 +236,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getComponentSupportedInterfaceStub()
 	 * @generated
 	 */
-	int COMPONENT_SUPPORTED_INTERFACE_STUB = 2;
+	int COMPONENT_SUPPORTED_INTERFACE_STUB = 1;
 
 	/**
 	 * The meta object id for the '<em>IFeature Provider</em>' data type.
@@ -205,7 +246,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getIFeatureProvider()
 	 * @generated
 	 */
-	int IFEATURE_PROVIDER = 3;
+	int IFEATURE_PROVIDER = 2;
 
 	/**
 	 * The meta object id for the '<em>Uses Port Stub</em>' data type.
@@ -215,7 +256,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getUsesPortStub()
 	 * @generated
 	 */
-	int USES_PORT_STUB = 4;
+	int USES_PORT_STUB = 3;
 
 	/**
 	 * The meta object id for the '<em>Provides Port Stub</em>' data type.
@@ -225,7 +266,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getProvidesPortStub()
 	 * @generated
 	 */
-	int PROVIDES_PORT_STUB = 5;
+	int PROVIDES_PORT_STUB = 4;
 
 	/**
 	 * The meta object id for the '<em>Port</em>' data type.
@@ -235,7 +276,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getPort()
 	 * @generated
 	 */
-	int PORT = 6;
+	int PORT = 5;
 
 	/**
 	 * The meta object id for the '<em>Assembly Controller</em>' data type.
@@ -245,7 +286,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getAssemblyController()
 	 * @generated
 	 */
-	int ASSEMBLY_CONTROLLER = 7;
+	int ASSEMBLY_CONTROLLER = 6;
 
 	/**
 	 * The meta object id for the '<em>External Ports</em>' data type.
@@ -255,7 +296,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getExternalPorts()
 	 * @generated
 	 */
-	int EXTERNAL_PORTS = 8;
+	int EXTERNAL_PORTS = 7;
 
 	/**
 	 * The meta object id for the '<em>Reason</em>' data type.
@@ -265,7 +306,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getReason()
 	 * @generated
 	 */
-	int REASON = 9;
+	int REASON = 8;
 
 	/**
 	 * The meta object id for the '<em>List</em>' data type.
@@ -275,7 +316,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getList()
 	 * @generated
 	 */
-	int LIST = 10;
+	int LIST = 9;
 
 	/**
 	 * The meta object id for the '<em>Sad Component Instantiation</em>' data type.
@@ -285,7 +326,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getSadComponentInstantiation()
 	 * @generated
 	 */
-	int SAD_COMPONENT_INSTANTIATION = 11;
+	int SAD_COMPONENT_INSTANTIATION = 10;
 
 	/**
 	 * The meta object id for the '<em>IAdd Context</em>' data type.
@@ -295,7 +336,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getIAddContext()
 	 * @generated
 	 */
-	int IADD_CONTEXT = 12;
+	int IADD_CONTEXT = 11;
 
 	/**
 	 * The meta object id for the '<em>Component Pattern</em>' data type.
@@ -305,7 +346,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getComponentPattern()
 	 * @generated
 	 */
-	int COMPONENT_PATTERN = 13;
+	int COMPONENT_PATTERN = 12;
 
 	/**
 	 * The meta object id for the '<em>IUpdate Context</em>' data type.
@@ -315,7 +356,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getIUpdateContext()
 	 * @generated
 	 */
-	int IUPDATE_CONTEXT = 14;
+	int IUPDATE_CONTEXT = 13;
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.graphiti.sad.ext.ComponentShape <em>Component Shape</em>}'.
@@ -326,38 +367,6 @@ public interface RHSadGxPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getComponentShape();
-
-	/**
-	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.sad.ext.ComponentShape#isStarted <em>Started</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Started</em>'.
-	 * @see gov.redhawk.ide.graphiti.sad.ext.ComponentShape#isStarted()
-	 * @see #getComponentShape()
-	 * @generated
-	 */
-	EAttribute getComponentShape_Started();
-
-	/**
-	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.sad.ext.ComponentShape#getEvent <em>Event</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Event</em>'.
-	 * @see gov.redhawk.ide.graphiti.sad.ext.ComponentShape#getEvent()
-	 * @see #getComponentShape()
-	 * @generated
-	 */
-	EAttribute getComponentShape_Event();
-
-	/**
-	 * Returns the meta object for enum '{@link gov.redhawk.ide.graphiti.sad.ext.Event <em>Event</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for enum '<em>Event</em>'.
-	 * @see gov.redhawk.ide.graphiti.sad.ext.Event
-	 * @generated
-	 */
-	EEnum getEvent();
 
 	/**
 	 * Returns the meta object for data type '{@link mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub <em>Component Supported Interface Stub</em>}'.
@@ -486,7 +495,7 @@ public interface RHSadGxPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>Component Pattern</em>'.
 	 * @see gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern
-	 * @model instanceClass="gov.redhawk.ide.sad.graphiti.ui.diagram.patterns.ComponentPattern"
+	 * @model instanceClass="gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern"
 	 * @generated
 	 */
 	EDataType getComponentPattern();
@@ -533,32 +542,6 @@ public interface RHSadGxPackage extends EPackage {
 		 * @generated
 		 */
 		EClass COMPONENT_SHAPE = eINSTANCE.getComponentShape();
-
-		/**
-		 * The meta object literal for the '<em><b>Started</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMPONENT_SHAPE__STARTED = eINSTANCE.getComponentShape_Started();
-
-		/**
-		 * The meta object literal for the '<em><b>Event</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMPONENT_SHAPE__EVENT = eINSTANCE.getComponentShape_Event();
-
-		/**
-		 * The meta object literal for the '{@link gov.redhawk.ide.graphiti.sad.ext.Event <em>Event</em>}' enum.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see gov.redhawk.ide.graphiti.sad.ext.Event
-		 * @see gov.redhawk.ide.graphiti.sad.ext.impl.RHSadGxPackageImpl#getEvent()
-		 * @generated
-		 */
-		EEnum EVENT = eINSTANCE.getEvent();
 
 		/**
 		 * The meta object literal for the '<em>Component Supported Interface Stub</em>' data type.

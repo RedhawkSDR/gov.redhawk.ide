@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ext.impl;
 
-import gov.redhawk.ide.graphiti.ext.Event;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ext.RHSadGxPackage;
@@ -18,11 +17,9 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.util.SadStyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.AssemblyController;
@@ -30,7 +27,6 @@ import mil.jpeojtrs.sca.sad.ExternalPorts;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -56,53 +52,12 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  * An implementation of the model object '<em><b>Component Shape</b></em>'.
  * <!-- end-user-doc -->
  * <p>
- * The following features are implemented:
- * <ul>
- *   <li>{@link gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl#isStarted <em>Started</em>}</li>
- *   <li>{@link gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl#getEvent <em>Event</em>}</li>
- * </ul>
  * </p>
  *
  * @generated
  */
 public class ComponentShapeImpl extends RHContainerShapeImpl implements ComponentShape {
 
-	/**
-	 * The default value of the '{@link #isStarted() <em>Started</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isStarted()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean STARTED_EDEFAULT = false;
-	/**
-	 * The cached value of the '{@link #isStarted() <em>Started</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isStarted()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean started = STARTED_EDEFAULT;
-	/**
-	 * The default value of the '{@link #getEvent() <em>Event</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getEvent()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Event EVENT_EDEFAULT = Event.RELEASE;
-	/**
-	 * The cached value of the '{@link #getEvent() <em>Event</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getEvent()
-	 * @generated
-	 * @ordered
-	 */
-	protected Event event = EVENT_EDEFAULT;
 	// These are property key/value pairs that help us resize an existing shape by properly identifying
 	// graphicsAlgorithms
 	public static final String GA_START_ORDER_ELLIPSE = "startOrderEllipse";
@@ -144,15 +99,6 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public boolean isStarted() {
-		return started;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	public void setStarted(boolean newStarted) {
@@ -174,19 +120,6 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			}
 		}
 
-	}
-
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setEvent(Event newEvent) {
-		Event oldEvent = event;
-		event = newEvent == null ? EVENT_EDEFAULT : newEvent;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RHSadGxPackage.COMPONENT_SHAPE__EVENT, oldEvent, event));
 	}
 
 	/**
@@ -240,93 +173,6 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	public Reason updateNeeded(final IUpdateContext context, ComponentPattern pattern) {
 		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());
 		return this.internalUpdate(pattern, ci, false);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-		case RHSadGxPackage.COMPONENT_SHAPE__STARTED:
-			return isStarted();
-		case RHSadGxPackage.COMPONENT_SHAPE__EVENT:
-			return getEvent();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-		case RHSadGxPackage.COMPONENT_SHAPE__STARTED:
-			setStarted((Boolean) newValue);
-			return;
-		case RHSadGxPackage.COMPONENT_SHAPE__EVENT:
-			setEvent((Event) newValue);
-			return;
-		}
-		super.eSet(featureID, newValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void eUnset(int featureID) {
-		switch (featureID) {
-		case RHSadGxPackage.COMPONENT_SHAPE__STARTED:
-			setStarted(STARTED_EDEFAULT);
-			return;
-		case RHSadGxPackage.COMPONENT_SHAPE__EVENT:
-			setEvent(EVENT_EDEFAULT);
-			return;
-		}
-		super.eUnset(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-		case RHSadGxPackage.COMPONENT_SHAPE__STARTED:
-			return started != STARTED_EDEFAULT;
-		case RHSadGxPackage.COMPONENT_SHAPE__EVENT:
-			return event != EVENT_EDEFAULT;
-		}
-		return super.eIsSet(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public String toString() {
-		if (eIsProxy())
-			return super.toString();
-
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (started: ");
-		result.append(started);
-		result.append(", event: ");
-		result.append(event);
-		result.append(')');
-		return result.toString();
 	}
 
 	/**
@@ -556,6 +402,5 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		}
 		return ciExternalPorts;
 	}
-
 
 } // ComponentShapeImpl

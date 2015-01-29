@@ -41,8 +41,6 @@ class RHContainerShape extends org.eclipse.graphiti.mm.pictograms.ContainerShape
 	Map connectionMap 
 	Event event
 	
-	boolean createSuperPortsContainerShape  //creates a single anchor on each side of container to represent ports
-	boolean createPortsContainerShape //creates a container that displays an anchor per port
 	boolean hasSuperPortsContainerShape  //creates a single anchor on each side of container to represent ports
 	boolean hasPortsContainerShape //creates a container that displays an anchor per port
 	boolean hideUnusedPorts //hides all ports without connection
