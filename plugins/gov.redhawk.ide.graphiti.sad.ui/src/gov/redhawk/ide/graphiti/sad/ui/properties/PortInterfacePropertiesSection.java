@@ -120,10 +120,10 @@ public class PortInterfacePropertiesSection extends GFPropertySection implements
 			EditPart ep = (EditPart) obj;
 			PictogramElement pe = (PictogramElement) ep.getModel();
 			Object bo = pe.getLink().getBusinessObjects().get(0);
-			if (bo instanceof ProvidesPortStub) {
+			if (bo instanceof ProvidesPortStub && ((ProvidesPortStub) bo).getProvides() != null) {
 				repId = ((ProvidesPortStub) bo).getProvides().getRepID();
 			}
-			if (bo instanceof UsesPortStub) {
+			if (bo instanceof UsesPortStub && ((UsesPortStub) bo).getUses() != null) {
 				repId = ((UsesPortStub) bo).getUses().getRepID();
 			}
 			if (repId != null) {

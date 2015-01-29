@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.util;
 
+import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.IDiagramUtilHelper;
@@ -29,6 +30,7 @@ import java.util.List;
 
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
+import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -1348,6 +1350,83 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Add source and target values to ConnectInterface and return
+	 * assume UsesPortStub is the first anchor, ConnectionTarget for second anchor
+	 * return null if either source or target not found
+	 * @param anchor1
+	 * @param anchor2
+	 * @return
+	 */
+	public static ConnectInterface assignAnchorObjectsToConnection(ConnectInterface connectInterface, Anchor anchor1, Anchor anchor2) {
+		
+		if (anchor1 == null || anchor2 == null) {
+			return null;
+		}
+		
+		//get business objects for both anchors
+		EList<EObject> anchorObjects1 = anchor1.getParent().getLink().getBusinessObjects();
+		EList<EObject> anchorObjects2 = anchor2.getParent().getLink().getBusinessObjects();
+		
+		UsesPortStub source = null;
+		ConnectionTarget target = null;
+		
+		if (!(anchorObjects1.size() > 0 && anchorObjects1.get(0) instanceof UsesPortStub)
+				&& !(anchorObjects2.size() > 0 && anchorObjects2.get(0) instanceof ConnectionTarget)) {
+			//either first anchor wasn't UsesPortStub or second anchor wasn't ConnectionTarget
+			return null;
+		}
+
+		if (anchorObjects1.size() == 1) {
+			//only one source object, set it
+			source = (UsesPortStub) anchorObjects1.get(0);
+		}
+		if (anchorObjects2.size() == 1) {
+			//only one target object, set it
+			target = (ConnectionTarget) anchorObjects2.get(0);
+		}
+		
+		if (anchorObjects1.size() > 1 && anchorObjects2.size() > 1) {
+			for (EObject sourceObj: anchorObjects1) {
+				for (EObject targetObj: anchorObjects2) {
+					if (InterfacesUtil.areCompatible(sourceObj, targetObj)) {
+						source = (UsesPortStub) sourceObj;
+						target = (ConnectionTarget) targetObj;
+						break;
+					}
+				}
+			}
+		} else if (anchorObjects1.size() > 1) {
+			//we know the target, look for a source with matching type
+			for (EObject sourceObj: anchorObjects1) {
+				if (InterfacesUtil.areCompatible(sourceObj, target)) {
+					source = (UsesPortStub) sourceObj;
+					break;
+				}
+			}
+		} else if (anchorObjects2.size() > 1) {
+			//we know the source, look for a target with matching type
+			for (EObject targetObj: anchorObjects2) {
+				if (InterfacesUtil.areCompatible(source, targetObj)) {
+					target = (ConnectionTarget) targetObj;
+					break;
+				}
+			}
+		}
+		
+		// source
+		connectInterface.setSource(source);
+		// target
+		connectInterface.setTarget(target);
+		
+		//only return if we have source/target set
+		if (source == null || target == null) {
+			return null;
+		}
+		
+		return connectInterface;
 	}
 
 }

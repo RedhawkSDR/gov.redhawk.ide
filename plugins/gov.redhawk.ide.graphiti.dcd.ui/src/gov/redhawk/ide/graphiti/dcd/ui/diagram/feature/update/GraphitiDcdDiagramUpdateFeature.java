@@ -15,8 +15,10 @@ import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
 import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.FindByUtil;
 
@@ -177,10 +179,15 @@ public class GraphitiDcdDiagramUpdateFeature extends DefaultUpdateDiagramFeature
 			DcdComponentInstantiation dcdComponentInstantiation = (DcdComponentInstantiation) DUtil.getBusinessObject(deviceShape, DcdComponentInstantiation.class);
 			if (dcdComponentInstantiation == null || dcdComponentInstantiation.getPlacement() == null || dcdComponentInstantiation.getPlacement().getComponentFileRef() == null) {
 				return false;
-			} else if (deviceShape.getProvidesPortStubs().size() > 0 && !deviceShape.getProvidesPortStubs().get(0).eContainer().equals(dcdComponentInstantiation)) {
-				return false;
-			} else if (deviceShape.getUsesPortStubs().size() > 0 && !deviceShape.getUsesPortStubs().get(0).eContainer().equals(dcdComponentInstantiation)) {
-				return false;
+			}
+			
+			if (!GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_DETAILS)) {
+				//applies only if we are showing the component shape details (ports)
+				if (deviceShape.getProvidesPortStubs().size() > 0 && !deviceShape.getProvidesPortStubs().get(0).eContainer().equals(dcdComponentInstantiation)) {
+					return false;
+				} else if (deviceShape.getUsesPortStubs().size() > 0 && !deviceShape.getUsesPortStubs().get(0).eContainer().equals(dcdComponentInstantiation)) {
+					return false;
+				}
 			}
 		}
 		return true;

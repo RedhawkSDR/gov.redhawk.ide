@@ -15,7 +15,10 @@ import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePatte
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.sca.dcd.validation.ConnectionsConstraint;
 import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
+import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
@@ -94,10 +97,21 @@ public class DCDConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 		// textConnectionDecorator
 		ConnectionDecorator textConnectionDecorator = (ConnectionDecorator) DUtil.findFirstPropertyContainer(connectionPE,
 			DCDConnectInterfacePattern.SHAPE_TEXT_CONNECTION_DECORATOR);
+		
+		//establish source/target for connection
+		EObject source = connectInterface.getSource();
+		EObject target = connectInterface.getTarget();
+		
+		//source and target will be null if findBy or usesDevice is used, in this case pull stubs from diagram
+		if (source == null) {
+			source = DUtil.getBusinessObject(connectionPE.getStart(), UsesPortStub.class);
+		}
+		if (target == null) {
+			target = DUtil.getBusinessObject(connectionPE.getEnd(), ConnectionTarget.class);
+		}
 
 		// problem if either source or target not present, unless dealing with a findby element
-		if ((connectInterface.getSource() == null || connectInterface.getTarget() == null)
-			&& (connectInterface.getUsesPort().getFindBy() == null && (connectInterface.getProvidesPort() != null && connectInterface.getProvidesPort().getFindBy() == null))) {
+		if (source == null || target == null) {
 			if (performUpdate) {
 				updateStatus = true;
 				// remove the connection (handles pe and business object)
@@ -120,11 +134,7 @@ public class DCDConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
 
 			// don't check compatibility if connection includes a Find By element
-			boolean compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
-			if (connectInterface.getUsesPort().getFindBy() != null
-				|| (connectInterface.getProvidesPort() != null && connectInterface.getProvidesPort().getFindBy() != null)) {
-				compatibleConnection = true;
-			}
+			boolean compatibleConnection = InterfacesUtil.areCompatible(source, target);
 
 			if ((!compatibleConnection || !uniqueConnection) && (imgConnectionDecorator == null || textConnectionDecorator == null)) {
 				if (performUpdate) {

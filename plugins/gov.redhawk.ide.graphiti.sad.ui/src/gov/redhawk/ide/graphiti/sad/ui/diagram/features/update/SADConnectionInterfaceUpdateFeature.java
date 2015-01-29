@@ -11,13 +11,14 @@
 package gov.redhawk.ide.graphiti.sad.ui.diagram.features.update;
 
 import gov.redhawk.diagram.util.InterfacesUtil;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.AbstractUsesDevicePattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
-import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
+import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
@@ -96,15 +97,21 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 		// textConnectionDecorator
 		ConnectionDecorator textConnectionDecorator = (ConnectionDecorator) DUtil.findFirstPropertyContainer(connectionPE,
 			SADConnectInterfacePattern.SHAPE_TEXT_CONNECTION_DECORATOR);
-
-		//involve find by?
-		boolean isFindByConnection = AbstractFindByPattern.isFindByConnection(connectInterface);
 		
-		//involve uses device?
-		boolean isUsesDeviceConnection = AbstractUsesDevicePattern.isUsesDeviceConnection(connectInterface);
+		//establish source/target for connection
+		EObject source = connectInterface.getSource();
+		EObject target = connectInterface.getTarget();
+		
+		//source and target will be null if findBy or usesDevice is used, in this case pull stubs from diagram
+		if (source == null) {
+			source = DUtil.getBusinessObject(connectionPE.getStart(), UsesPortStub.class);
+		}
+		if (target == null) {
+			target = DUtil.getBusinessObject(connectionPE.getEnd(), ConnectionTarget.class);
+		}
 		
 		// problem if either source or target not present, unless dealing with a findby element or usesdevice
-		if ((connectInterface.getSource() == null || connectInterface.getTarget() == null) && (!isFindByConnection && !isUsesDeviceConnection)) {
+		if (source == null || target == null) {
 			if (performUpdate) {
 				updateStatus = true;
 				// remove the connection (handles pe and business object)
@@ -127,11 +134,7 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
 
 			// don't check compatibility if connection includes FindBy or UsesDevice elements
-			boolean compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
-			
-			if (isFindByConnection || isUsesDeviceConnection) {
-				compatibleConnection = true;
-			}
+			boolean compatibleConnection = InterfacesUtil.areCompatible(source, target);
 
 			if ((!compatibleConnection || !uniqueConnection) && (imgConnectionDecorator == null || textConnectionDecorator == null)) {
 				if (performUpdate) {

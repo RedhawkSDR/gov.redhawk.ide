@@ -247,12 +247,16 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 
 		Connection newConnection = null;
 
-		// source and destination targets
-		final UsesPortStub source = getUsesPortStub(context);
-		final ConnectionTarget target = getConnectionTarget(context);
-
-		// TODO: handle bad situations
-		if (source == null || target == null) {
+		DcdConnectInterface dcdConnectInterface = (DcdConnectInterface) DUtil.assignAnchorObjectsToConnection(
+			DcdFactory.eINSTANCE.createDcdConnectInterface(), 
+			context.getSourceAnchor(), context.getTargetAnchor());
+		if (dcdConnectInterface == null) {
+			//switch source/target direction and try again
+			dcdConnectInterface = (DcdConnectInterface) DUtil.assignAnchorObjectsToConnection(
+				DcdFactory.eINSTANCE.createDcdConnectInterface(), context.getTargetAnchor(), context.getSourceAnchor());
+		}
+		if (dcdConnectInterface == null) {
+			//can't make a connection
 			return null;
 		}
 
@@ -265,10 +269,12 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 		//create connectionId first check if provided in context (currently used by GraphitiModelMap), otherwise generate unique connection id
 		final String connectionId = (context.getProperty(OVERRIDE_CONNECTION_ID) != null) ? (String) context.getProperty(OVERRIDE_CONNECTION_ID)
 						: createConnectionId(dcd);
-		
-
-		// container for new SadConnectInterface, necessary for reference after command execution
-		final DcdConnectInterface[] sadConnectInterfaces = new DcdConnectInterface[1];
+		// set connection id
+		dcdConnectInterface.setId(connectionId);
+				
+		// container for new DcdConnectInterface, necessary for reference after command execution
+		final DcdConnectInterface[] dcdConnectInterfaces = new DcdConnectInterface[1];
+		dcdConnectInterfaces[0] = dcdConnectInterface;
 
 		// Create Connect Interface & related objects
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
@@ -281,30 +287,15 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 					dcd.setConnections(DcdFactory.eINSTANCE.createDcdConnections());
 				}
 
-				// create connect interface
-				sadConnectInterfaces[0] = DcdFactory.eINSTANCE.createDcdConnectInterface();
-
 				// add to connections
-				dcd.getConnections().getConnectInterface().add(sadConnectInterfaces[0]);
-
-				// set connection id
-				sadConnectInterfaces[0].setId(connectionId);
-				// source
-				sadConnectInterfaces[0].setSource(source);
-				// target
-				sadConnectInterfaces[0].setTarget(target);
-
-				// TODO: evaluate when and where these should be set
-				// sadConnectInterfaces[0].setProvidesPort(value);
-				// sadConnectInterfaces[0].setFindBy(value);
-				// sadConnectInterfaces[0].setComponentSupportedInterface(value);
+				dcd.getConnections().getConnectInterface().add(dcdConnectInterfaces[0]);
 
 			}
 		});
 
 		// add connection for business object
 		AddConnectionContext addContext = new AddConnectionContext(context.getSourceAnchor(), context.getTargetAnchor());
-		addContext.setNewObject(sadConnectInterfaces[0]);
+		addContext.setNewObject(dcdConnectInterfaces[0]);
 		newConnection = (Connection) getFeatureProvider().addIfPossible(addContext);
 
 		return newConnection;
