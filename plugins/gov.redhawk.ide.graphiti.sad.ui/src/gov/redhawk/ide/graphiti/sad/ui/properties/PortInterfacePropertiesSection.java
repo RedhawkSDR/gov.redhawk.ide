@@ -16,19 +16,22 @@ import gov.redhawk.eclipsecorba.idl.operations.provider.OperationsItemProviderAd
 import gov.redhawk.eclipsecorba.idl.provider.IdlItemProviderAdapterFactory;
 import gov.redhawk.eclipsecorba.idl.types.provider.TypesItemProviderAdapterFactory;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.model.sca.ScaPort;
 import gov.redhawk.sca.ui.ScaComponentFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.gef.EditPart;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.platform.GFPropertySection;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -113,11 +116,15 @@ public class PortInterfacePropertiesSection extends GFPropertySection implements
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection ss = (IStructuredSelection) selection;
 			final Object obj = ss.getFirstElement();
-			final Object theAdapter = Platform.getAdapterManager().getAdapter(obj, ScaPort.class);
 			String repId = null;
-			if (theAdapter instanceof ScaPort) {
-				ScaPort<?, ?> port = (ScaPort<?, ?>) theAdapter;
-				repId = port.getProfileObj().getRepID();
+			EditPart ep = (EditPart) obj;
+			PictogramElement pe = (PictogramElement) ep.getModel();
+			Object bo = pe.getLink().getBusinessObjects().get(0);
+			if (bo instanceof ProvidesPortStub) {
+				repId = ((ProvidesPortStub) bo).getProvides().getRepID();
+			}
+			if (bo instanceof UsesPortStub) {
+				repId = ((UsesPortStub) bo).getUses().getRepID();
 			}
 			if (repId != null) {
 				this.label.setText(repId);
@@ -145,7 +152,7 @@ public class PortInterfacePropertiesSection extends GFPropertySection implements
 	
 	@Override
 	public void aboutToBeShown() {
-		if (expandedPaths != null) {
+		if (expandedPaths != null && !this.viewer.getControl().isDisposed()) {
 			this.viewer.setExpandedTreePaths(expandedPaths);
 		}
 		super.aboutToBeShown();

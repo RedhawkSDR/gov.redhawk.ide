@@ -89,6 +89,9 @@
          <propertyCategory
                category="Graphiti">
          </propertyCategory>
+         <propertyCategory
+               category="advanced">
+         </propertyCategory>
       </propertyContributor>
    </extension>
    
@@ -116,6 +119,11 @@
                category="Graphiti"
                id="property.tab.UsesPort"
                label="Uses Interface">
+         </propertyTab>
+         <propertyTab
+               category="advanced"
+               id="property.tab.ScaAdvanced"
+               label="Advanced">
          </propertyTab>
 
      </propertyTabs>
@@ -151,6 +159,12 @@
                filter="gov.redhawk.ide.graphiti.ui.properties.UsesPortFilter"
                id="property.section.UsesPort"
                tab="property.tab.UsesPort">
+         </propertySection>
+         <propertySection
+               class="gov.redhawk.ide.graphiti.sad.ui.properties.AdvancedEditPartPropertySection"
+               filter="gov.redhawk.ide.graphiti.sad.ui.properties.AdvancedFilter"
+               id="property.section.ScaAdvanced"
+               tab="property.tab.ScaAdvanced">
          </propertySection>
 
       </propertySections>
