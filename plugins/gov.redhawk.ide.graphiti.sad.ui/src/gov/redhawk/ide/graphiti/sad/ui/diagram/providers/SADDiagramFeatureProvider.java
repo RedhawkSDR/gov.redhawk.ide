@@ -21,6 +21,7 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.SetAsAssemblyCont
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.ShowConsoleFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.SetLogLevelFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.StartComponentFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.StopComponentFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.TerminateComponentFeature;
@@ -195,6 +196,11 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 					retList.add(new StartComponentFeature(this));
 					retList.add(new StopComponentFeature(this));
 					retList.add(new ShowConsoleFeature(this));
+					
+					// Only allow logging if a sginle element is selected
+					if (context.getPictogramElements().length == 1) {
+						retList.add(new SetLogLevelFeature(this));
+					}
 
 					// Don't add ability to remove components to Graphiti Waveform Explorer
 					if (!DUtil.isDiagramExplorer(getDiagramTypeProvider().getDiagram())) {

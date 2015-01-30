@@ -210,6 +210,9 @@
                    <adapter
                          type="CF.ResourceOperations">
                    </adapter>
+                   <adapter
+                         type="CF.LoggingOperations">
+                   </adapter>
                 </factory>
                 <factory
                       adaptableType="org.eclipse.graphiti.ui.internal.parts.IAnchorEditPart"

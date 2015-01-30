@@ -17,6 +17,7 @@ import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.SetLogLevelFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
@@ -471,11 +472,11 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		ICustomFeature[] customFeatures = getFeatureProvider().getCustomFeatures(context);
 		for (ICustomFeature customFeature : customFeatures) {
 			ContextMenuEntry entry = new ContextMenuEntry(customFeature, context);
-			//if (customFeature instanceof SomeLoggingFeature) {
-			//	loggingSubMenu.add(entry);
-			//} else {
-			contextMenuItems.add(entry);
-			//}
+			if (customFeature instanceof SetLogLevelFeature) {
+				loggingSubMenu.add(entry);
+			} else {
+				contextMenuItems.add(entry);
+			}
 		}
 
         return contextMenuItems.toArray(new IContextMenuEntry[contextMenuItems.size()]);
