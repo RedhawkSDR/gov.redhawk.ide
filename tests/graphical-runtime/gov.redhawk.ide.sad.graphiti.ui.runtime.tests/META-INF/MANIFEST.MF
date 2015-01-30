@@ -20,6 +20,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views.properties.tabbed,
  gov.redhawk.sca.ui,
  gov.redhawk.ui,
- org.eclipse.emf.workspace;bundle-version="1.5.1"
+ org.eclipse.emf.workspace;bundle-version="1.5.1",
+ gov.redhawk.logging.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: gov.redhawk.ide.graphiti.sad.ext.impl

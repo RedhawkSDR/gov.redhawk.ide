@@ -15,6 +15,7 @@ import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.util.SadStyleUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.logging.ui.LogLevels;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -41,9 +42,13 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefViewer;
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.utils.SWTUtils;
+import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotCombo;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotLabel;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
@@ -665,13 +670,65 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		componentPart.select();
 		editor.clickContextMenu("Stop");
 	}
+	
+	/**
+	 * Change the component log level from the Chalkboard Diagram
+	 * @param componentName
+	 * @param logLevel 
+	 */
+	public static void changeLogLevelFromDiagram(SWTBotGefEditor editor, String componentName, LogLevels logLevel) {
+		editor.setFocus();
+		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
+		componentPart.select();
+		editor.clickContextMenu("Logging");
+		editor.clickContextMenu("Log Level");
+		
+		final SWTBot editorBot = editor.bot();
+		
+		// Make sure the dialog comes up.
+		editorBot.waitUntil(Conditions.shellIsActive("Set Debug Level"));
+		
+		editorBot.shell("Set Debug Level").setFocus();
+		SWTBot dialogBot = editorBot.shell("Set Debug Level").bot();
+		
+		SWTBotCombo newLogLevelCombo = dialogBot.comboBox();
+		newLogLevelCombo.setSelection(logLevel.getLabel());
+		
+		dialogBot.button("OK").click();
+	}
+	
+	/**
+	 * Change the component log level from the Chalkboard Diagram
+	 * @param componentName
+	 * @param logLevel 
+	 */
+	public static void confirmLogLevelFromDiagram(SWTBotGefEditor editor, String componentName, LogLevels logLevel) {
+		editor.setFocus();
+		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
+		componentPart.select();
+		editor.clickContextMenu("Logging");
+		editor.clickContextMenu("Log Level");
+		
+		final SWTBot editorBot = editor.bot();
+		
+		// Make sure the dialog comes up.
+		editorBot.waitUntil(Conditions.shellIsActive("Set Debug Level"));
+		
+		editorBot.shell("Set Debug Level").setFocus();
+		SWTBot dialogBot = editorBot.shell("Set Debug Level").bot();
+		
+		SWTBotLabel currentLogLevelLabel = dialogBot.label(2);
+		Assert.assertTrue("Current Log Level is not the expected value: " + logLevel.getLabel(), logLevel.getLabel().equals(currentLogLevelLabel.getText()));
+		
+		dialogBot.button("Cancel").click();
+	}
 
 	/**
 	 * Waits until Component displays in Chalkboard Diagram
 	 * @param componentName
 	 */
 	public static void waitUntilComponentDisappearsInChalkboardDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, final String componentName) {
-
+		
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {

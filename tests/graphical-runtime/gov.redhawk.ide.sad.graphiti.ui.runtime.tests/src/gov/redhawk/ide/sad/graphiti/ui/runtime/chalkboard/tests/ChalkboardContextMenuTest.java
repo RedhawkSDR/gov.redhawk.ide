@@ -14,6 +14,7 @@ package gov.redhawk.ide.sad.graphiti.ui.runtime.chalkboard.tests;
 import gov.redhawk.ide.swtbot.ViewUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
+import gov.redhawk.logging.ui.LogLevels;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
@@ -47,6 +48,13 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN_1);
 		Assert.assertFalse("IDE-1038 No Undo Start Command context menu item", DiagramTestUtils.hasContentMenuItem(editor, SIGGEN, "Undo Start Command"));
 		Assert.assertFalse("IDE-1065 No Undo Do Command context menu item", DiagramTestUtils.hasContentMenuItem(editor, SIGGEN, "Undo Do Command"));
+		
+		// Test Log Levels
+		DiagramTestUtils.changeLogLevelFromDiagram(editor, SIGGEN, LogLevels.TRACE);
+		DiagramTestUtils.confirmLogLevelFromDiagram(editor, SIGGEN, LogLevels.TRACE);
+		
+		DiagramTestUtils.changeLogLevelFromDiagram(editor, SIGGEN, LogLevels.FATAL);
+		DiagramTestUtils.confirmLogLevelFromDiagram(editor, SIGGEN, LogLevels.FATAL);
 		
 		//plot port data for SIGGEN
 		editor.setFocus();
