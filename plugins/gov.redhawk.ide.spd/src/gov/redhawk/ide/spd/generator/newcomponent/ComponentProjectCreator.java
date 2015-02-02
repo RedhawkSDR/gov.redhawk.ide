@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.SubMonitor;
  */
 public class ComponentProjectCreator extends ProjectCreator {
 
-	private ComponentProjectCreator() {
+	protected ComponentProjectCreator() {
 	}
 
 	/**
