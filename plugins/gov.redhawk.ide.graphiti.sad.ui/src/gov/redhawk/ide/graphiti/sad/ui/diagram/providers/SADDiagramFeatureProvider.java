@@ -57,6 +57,7 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
@@ -212,10 +213,10 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 		// add external port menu item if we clicked on a port
 		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
-			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
+			EObject obj = (EObject) DUtil.getBusinessObject(context.getPictogramElements()[0]);
 
-			// make sure business object is port stub
-			if (obj instanceof ProvidesPortStub || obj instanceof UsesPortStub) {
+			// make sure business object is port stub and container is a component
+			if ((obj instanceof ProvidesPortStub || obj instanceof UsesPortStub) && obj.eContainer() instanceof SadComponentInstantiation) {
 
 				boolean mark = true;
 

@@ -61,6 +61,7 @@ public class UsesDeviceFrontEndTunerWizard extends Wizard {
 	private static final String DEFAULT_DEVICE_ID_PREFIX = "FrontEndTuner_";
 
 	public UsesDeviceFrontEndTunerWizard(SoftwareAssembly sad) {
+		this.setWindowTitle("Allocate Tuner");
 		this.sad = sad;
 	}
 	
