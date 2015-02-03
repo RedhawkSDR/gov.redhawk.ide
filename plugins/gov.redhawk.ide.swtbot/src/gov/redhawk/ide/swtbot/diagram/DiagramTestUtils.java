@@ -23,7 +23,6 @@ import java.util.List;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.Port;
@@ -576,19 +575,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 
 	}
 	
-	/**
-	 * Checks sad.xml for uses device code
-	 * @param componentShape
-	 * @return
-	 */
-	public static String regexStringForUseDevice(RHContainerShapeImpl rhContainerShape) {
-		Object bo = DUtil.getBusinessObject(rhContainerShape);
-		UsesDeviceStub usesDeviceStub = (UsesDeviceStub) bo;
-		String usesDevice = "<usesdevice id=\"" + usesDeviceStub.getUsesDevice().getId() + "\">";
 
-		return "(?s).*" + usesDevice + ".*";
-
-	}
 
 	/**
 	 * Checks sad.xml for component property code
