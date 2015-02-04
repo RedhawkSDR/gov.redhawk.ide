@@ -192,10 +192,14 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		SWTBotGefEditPart usesDeviceUsesDouble2Part = DiagramTestUtils.getDiagramUsesPort(editor, USE_FRONTEND_TUNER_DEVICE, "dataDouble2_out");
 
 		//draw 4 connections
-		DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenUsesPart, usesDeviceProvidesDoublePart);
-		DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenUsesPart, usesDeviceProvidesDouble2Part);
-		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesDeviceUsesDoublePart, hardLimitProvidesPart);
-		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesDeviceUsesDouble2Part, hardLimitProvidesPart);
+		Assert.assertTrue("Failed to make connection to Uses Device provides port 1", 
+			DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenUsesPart, usesDeviceProvidesDoublePart));
+		Assert.assertTrue("Failed to make connection to Uses Device provides port 2", 
+			DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenUsesPart, usesDeviceProvidesDouble2Part));
+		Assert.assertTrue("Failed to make connection from Uses Device uses port 1", 
+			DiagramTestUtils.drawConnectionBetweenPorts(editor, usesDeviceUsesDoublePart, hardLimitProvidesPart));
+		Assert.assertTrue("Failed to make connection from Uses Device uses port 2", 
+			DiagramTestUtils.drawConnectionBetweenPorts(editor, usesDeviceUsesDouble2Part, hardLimitProvidesPart));
 
 		MenuUtils.save(editor);
 

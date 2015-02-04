@@ -256,13 +256,14 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			Rectangle bounds = agep.getFigure().getBounds();
 			int posX = bounds.x + bounds.width / 2;
 			int posY = bounds.y + bounds.height / 2;
-			EditPart diagramEditPart = agep.getParent();
-			while (!(diagramEditPart.getModel() instanceof Diagram)) {
-				diagramEditPart = diagramEditPart.getParent();
-			}
-			AbstractGraphicalEditPart dep = (AbstractGraphicalEditPart) diagramEditPart;
-			Rectangle diagramBounds = dep.getFigure().getBounds();
-			return new Point(posX - diagramBounds.x, posY - diagramBounds.y);
+			return new Point(posX + 1, posY + 1);
+//			EditPart diagramEditPart = agep.getParent();
+//			while (!(diagramEditPart.getModel() instanceof Diagram)) {
+//				diagramEditPart = diagramEditPart.getParent();
+//			}
+//			AbstractGraphicalEditPart dep = (AbstractGraphicalEditPart) diagramEditPart;
+//			Rectangle diagramBounds = dep.getFigure().getBounds();
+//			return new Point(posX - diagramBounds.x, posY - diagramBounds.y);
 		}
 		return null;
 	}
