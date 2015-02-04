@@ -28,8 +28,13 @@ import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.Port;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
+import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.EditPart;
+import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -47,12 +52,14 @@ import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.utils.SWTUtils;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotCombo;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotLabel;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.junit.Assert;
 
@@ -200,11 +207,66 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @param usesEditPart - SWTBotGefEditPart for the uses/source port
 	 * @param providesEditPart - SWTBotGefEditPart for the provides/target port
 	 */
-	public static void drawConnectionBetweenPorts(SWTBotGefEditor editor, SWTBotGefEditPart usesEditPart, SWTBotGefEditPart providesEditPart) {
-		editor.activateTool("Connection");
-		getDiagramPortAnchor(usesEditPart).click();
-		getDiagramPortAnchor(providesEditPart).click();
+	public static boolean drawConnectionBetweenPorts(SWTBotGefEditor editor, SWTBotGefEditPart usesEditPart, SWTBotGefEditPart providesEditPart) {
+		final SWTBotGefEditPart usesAnchor = getDiagramPortAnchor(usesEditPart);
+		final SWTBotGefEditPart providesAnchor = getDiagramPortAnchor(providesEditPart);
+
+		// Count original number of connections on each port for comparison
+		final int numTargetConnections = providesAnchor.targetConnections().size();
+		final int numSourceConnections = usesAnchor.sourceConnections().size();
+		
+		final Point providesPos = getDiagramRelativeCenter(providesAnchor);
+		final Point usesPos = getDiagramRelativeCenter(usesAnchor);
+		editor.drag(usesPos.x, usesPos.y, providesPos.x, providesPos.y);
+		
+		// Wait to see if new connection appears for both ports
+		try {
+		editor.bot().waitWhile(new ICondition() {
+			@Override
+			public boolean test() throws Exception {
+				if (providesAnchor.targetConnections().size() <= numTargetConnections 
+						|| usesAnchor.sourceConnections().size() <= numSourceConnections) {
+					return true;
+				}
+				return false;
+			}
+			@Override
+			public void init(SWTBot bot) {
+			}
+			@Override
+			public String getFailureMessage() {
+				return "Failed to create connection";
+			}
+			}, 2000, 500);
+		} catch (TimeoutException e) {
+			return false;
+		}
+		return true;
 	}
+	
+	/**
+	 * Returns the center of the edit part, relative to the diagram
+	 * @param part The edit part for which to find the center
+	 * @return The center of the part
+	 */
+	public static Point getDiagramRelativeCenter(SWTBotGefEditPart part) {
+		EditPart ep = part.part();
+		if (ep instanceof AbstractGraphicalEditPart) {
+			AbstractGraphicalEditPart agep = (AbstractGraphicalEditPart) part.part();
+			Rectangle bounds = agep.getFigure().getBounds();
+			int posX = bounds.x + bounds.width / 2;
+			int posY = bounds.y + bounds.height / 2;
+			EditPart diagramEditPart = agep.getParent();
+			while (!(diagramEditPart.getModel() instanceof Diagram)) {
+				diagramEditPart = diagramEditPart.getParent();
+			}
+			AbstractGraphicalEditPart dep = (AbstractGraphicalEditPart) diagramEditPart;
+			Rectangle diagramBounds = dep.getFigure().getBounds();
+			return new Point(posX - diagramBounds.x, posY - diagramBounds.y);
+		}
+		return null;
+	}
+	
 
 	/**
 	 * Utility method to extract business object from a component in the Graphiti diagram.
@@ -345,13 +407,21 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 
 	/**
 	 * Drills down into the ports GEF children to return the anchor point
-	 * Primarily uses for making connections. Makes assumptions as to how deep the anchor is.
-	 * TODO: Figure out how to grab the anchor without assuming depth, maybe a recursive loop and type check?
+	 * Primarily uses for making connections. Does depth-first search to arbitrary depth.
 	 * @param portEditPart - The SWTBotGefEditPart of the port you are trying to get the anchor for
 	 * @return
 	 */
 	public static SWTBotGefEditPart getDiagramPortAnchor(SWTBotGefEditPart portEditPart) {
-		return portEditPart.children().get(0).children().get(0);
+		if (portEditPart.part().getModel() instanceof Anchor) {
+			return portEditPart;
+		}
+		for (SWTBotGefEditPart child: portEditPart.children()) {
+			SWTBotGefEditPart anchor = getDiagramPortAnchor(child);
+			if (anchor != null) {
+				return anchor;
+			}
+		}
+		return null;
 	}
 
 	/**

@@ -264,8 +264,10 @@ public class FindByTest extends AbstractGraphitiTest {
 	public void findByConnectionTest() {
 		waveformName = "FindBy_Connection";
 		final String SIGGEN = "SigGen";
+		final String HARDLIMIT = "HardLimit";
 		final String findByName = "FindBy";
 		final String[] provides = { "data_in" };
+		final String[] uses = { "data_out" };
 
 		// Create a new empty waveform
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
@@ -274,13 +276,18 @@ public class FindByTest extends AbstractGraphitiTest {
 		// Add component to the diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
-		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_NAME, findByName, provides, null);
+		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_NAME, findByName, provides, uses);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 0, 300);
 		MenuUtils.save(editor);
 
 		// Create connection on diagram
 		SWTBotGefEditPart sigGenUsesPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		SWTBotGefEditPart findByProvidesPart = DiagramTestUtils.getDiagramProvidesPort(editor, findByName);
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenUsesPart, findByProvidesPart);
+		SWTBotGefEditPart findByUsesPart = DiagramTestUtils.getDiagramUsesPort(editor, findByName);
+		SWTBotGefEditPart hardLimitProvidesPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
+		Assert.assertTrue("Failed to draw connection from FindBy uses port", 
+			DiagramTestUtils.drawConnectionBetweenPorts(editor, findByUsesPart, hardLimitProvidesPart));
 		MenuUtils.save(editor);
 
 		// Check sad.xml for connection

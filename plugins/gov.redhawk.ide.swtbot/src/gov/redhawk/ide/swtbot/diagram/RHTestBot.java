@@ -10,21 +10,19 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.diagram;
 
-import gov.redhawk.ide.swtbot.UITest;
-
+import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
-import org.junit.Before;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
+import org.eclipse.ui.IEditorReference;
 
 /**
- * 
+ * Uses RHTestBotEditor for improved connection drawing in Graphiti diagram
  */
-public abstract class AbstractGraphitiTest extends UITest {
+public class RHTestBot extends SWTGefBot {
 
-	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE VisibilityModifier
-
-	@Before
-	public void beforeTest() throws Exception {
-		gefBot = new RHTestBot();
+	@Override
+	protected SWTBotGefEditor createEditor(IEditorReference reference, SWTWorkbenchBot bot) {
+		return new RHTestBotEditor(reference, bot);
 	}
 
 }
