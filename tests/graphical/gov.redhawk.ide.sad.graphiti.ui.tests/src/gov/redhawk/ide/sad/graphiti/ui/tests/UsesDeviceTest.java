@@ -34,6 +34,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 
 	private SWTBotGefEditor editor;
 	private String waveformName;
+	private static final String USE_DEVICE = "Use Device";
 	private static final String USE_FRONTEND_TUNER_DEVICE = "Use FrontEnd Tuner Device";
 
 
@@ -57,13 +58,13 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		String existingAllocationId = "12345";
 		String newAllocationId = "678910";
 		createGenericFrontEndTunerDeviceListenById(existingAllocationId, newAllocationId);
-		
+
 		editor.setFocus();
 
 		// Confirm created component truly is Generic FrontEnd Tuner
 		SWTBotGefEditPart frontEndTunerGefEditPart = editor.getEditPart(USE_FRONTEND_TUNER_DEVICE);
 		assertFrontEndTuner(frontEndTunerGefEditPart);
-		
+
 		RHContainerShapeImpl rhContainerShape = (RHContainerShapeImpl) frontEndTunerGefEditPart.part().getModel();
 
 		// two provides ports, two uses ports
@@ -74,7 +75,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		Assert.assertEquals(rhContainerShape.getUsesPortStubs().get(1).getName(), "dataDouble2_out");
 		Assert.assertEquals(rhContainerShape.getProvidesPortStubs().get(0).getName(), "dataDouble_in");
 		Assert.assertEquals(rhContainerShape.getProvidesPortStubs().get(1).getName(), "dataDouble2_in");
-		
+
 		// Check to see if xml is correct in the sad.xml
 		final String usesDeviceXML = regexStringForGenericUseFrontEndTunerDeviceListenById(
 			usesDeviceId, existingAllocationId, newAllocationId);
@@ -82,14 +83,14 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		String editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The sad.xml should include UsesDevice", editorText.matches(usesDeviceXML));
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		
+
 		//delete
 		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(USE_FRONTEND_TUNER_DEVICE));
-		
+
 		//verify deleted
 		Assert.assertNull(editor.getEditPart(USE_FRONTEND_TUNER_DEVICE));
 	}
-	
+
 	/**
 	 * IDE-124
 	 * Create the pictogram shape in the waveform diagram that represents the generic use frontend tuner device.
@@ -118,13 +119,13 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		String rfFlowId = "";
 		String mhz = "000000.0";
 		create_sim_rx_digitizer_FrontEndTunerDeviceControlTuner(tunerType, newAllocationId, centerFreqency, bandwidth, sampleRate);
-		
+
 		editor.setFocus();
 
 		// Confirm created component truly is Generic FrontEnd Tuner
 		SWTBotGefEditPart frontEndTunerGefEditPart = editor.getEditPart(USE_FRONTEND_TUNER_DEVICE);
 		assertFrontEndTuner(frontEndTunerGefEditPart);
-		
+
 		RHContainerShapeImpl rhContainerShape = (RHContainerShapeImpl) frontEndTunerGefEditPart.part().getModel();
 
 		// two provides ports, one uses ports
@@ -134,7 +135,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		Assert.assertEquals(rhContainerShape.getProvidesPortStubs().get(0).getName(), "RFInfo_in");
 		Assert.assertEquals(rhContainerShape.getProvidesPortStubs().get(1).getName(), "DigitalTuner_in");
 		Assert.assertEquals(rhContainerShape.getUsesPortStubs().get(0).getName(), "dataShort_out");
-		
+
 		// Check to see if xml is correct in the sad.xml
 		final String usesDeviceXML = regexStringFor_sim_rx_digitizer_UseFrontEndTunerDeviceControlTuner(usesDeviceId, tunerType, newAllocationId,
 			centerFreqency + mhz, bandwidth + mhz, bandwidthTolerance, sampleRate + mhz, sampleRateTolerance, deviceControl,
@@ -143,14 +144,14 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		String editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The sad.xml should include UsesDevice", editorText.matches(usesDeviceXML));
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-		
+
 		//delete
 		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(USE_FRONTEND_TUNER_DEVICE));
-		
+
 		//verify deleted
 		Assert.assertNull(editor.getEditPart(USE_FRONTEND_TUNER_DEVICE));
 	}
-	
+
 	/**
 	 * IDE-124
 	 * Edit existing UsesFrontEndTuner name, model and ports
@@ -171,15 +172,15 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		final String newAllocationId = "678910";
 		final String SIGGEN = "SigGen";
 		final String HARD_LIMIT = "HardLimit";
-		
+
 
 		// Add components to diagram
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 200, 0);
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 500, 300);
-		
+
 		// Add Uses Generic FrontEnd Device
 		createGenericFrontEndTunerDeviceListenById(existingAllocationId, newAllocationId);
-		
+
 		editor.setFocus();
 
 		// Get a handle on ports
@@ -189,7 +190,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		SWTBotGefEditPart usesDeviceProvidesDouble2Part = DiagramTestUtils.getDiagramProvidesPort(editor, USE_FRONTEND_TUNER_DEVICE, "dataDouble2_in");
 		SWTBotGefEditPart usesDeviceUsesDoublePart = DiagramTestUtils.getDiagramUsesPort(editor, USE_FRONTEND_TUNER_DEVICE, "dataDouble_out");
 		SWTBotGefEditPart usesDeviceUsesDouble2Part = DiagramTestUtils.getDiagramUsesPort(editor, USE_FRONTEND_TUNER_DEVICE, "dataDouble2_out");
-		
+
 		//draw 4 connections
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenUsesPart, usesDeviceProvidesDoublePart);
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenUsesPart, usesDeviceProvidesDouble2Part);
@@ -204,13 +205,119 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 
 		// Change Name
 		gefBot.textWithLabel("Uses Device Id").setText(usesDeviceId + "x");
-		
+
 		//set model
 		gefBot.textWithLabel("Device Model (optional)").setText("someModel");
 		gefBot.button("&Next >").click();
-		
+
 		//change existing tuner allocation ID
 		gefBot.textWithLabel("Existing Tuner Allocation ID").setText(existingAllocationId + "x");
+		gefBot.button("&Next >").click();
+
+		// Delete existing provides port
+		gefBot.list(0).select(0); //dataDouble_in
+		gefBot.button(1).click();
+
+		// Add new provides port
+		gefBot.textInGroup("Port(s) to use for connections", 0).setText("newProvides");
+		gefBot.button(0).click();
+
+		// Delete existing provides port
+		gefBot.list(1).select(0); //dataDouble_out
+		gefBot.button(3).click();
+
+		// Add new uses port
+		gefBot.textInGroup("Port(s) to use for connections", 1).setText("newUses");
+		gefBot.button(2).click();
+
+		gefBot.button("Finish").click();
+
+		// Confirm that changes were made
+		// Confirm created component truly is Generic FrontEnd Tuner
+		SWTBotGefEditPart frontEndTunerGefEditPart = editor.getEditPart(USE_FRONTEND_TUNER_DEVICE);
+		assertFrontEndTuner(frontEndTunerGefEditPart);
+
+		RHContainerShapeImpl rhContainerShape = (RHContainerShapeImpl) frontEndTunerGefEditPart.part().getModel();
+
+		// two provides ports, two uses ports
+		Assert.assertTrue(rhContainerShape.getUsesPortStubs().size() == 2 && rhContainerShape.getProvidesPortStubs().size() == 2);
+
+		// Verify ports
+		Assert.assertEquals(rhContainerShape.getUsesPortStubs().get(0).getName(), "dataDouble2_out");
+		Assert.assertEquals(rhContainerShape.getUsesPortStubs().get(1).getName(), "newUses");
+		Assert.assertEquals(rhContainerShape.getProvidesPortStubs().get(0).getName(), "dataDouble2_in");
+		Assert.assertEquals(rhContainerShape.getProvidesPortStubs().get(1).getName(), "newProvides");
+
+		// Check to see if xml is correct in the sad.xml
+		final String usesDeviceXML = regexStringForGenericUseFrontEndTunerDeviceListenById(
+			usesDeviceId + "x", existingAllocationId + "x", newAllocationId);
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		String editorText = editor.toTextEditor().getText();
+		Assert.assertTrue("The sad.xml should include UsesDevice", editorText.matches(usesDeviceXML));
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+
+		// Confirm that connections properly removed
+		sigGenUsesPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		List<SWTBotGefConnectionEditPart> connections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesPart);
+		Assert.assertTrue("SigGen connection should have been removed", connections.size() == 0);
+
+		hardLimitProvidesPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT);
+		connections = DiagramTestUtils.getTargetConnectionsFromPort(editor, hardLimitProvidesPart);
+		Assert.assertTrue("HardLimit connection should have been removed", connections.size() == 0);
+
+		// Confirm that connections still exist
+		sigGenUsesPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		connections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesPart);
+		Assert.assertTrue("DataReader connection should still exist", connections.size() == 1);
+
+		hardLimitProvidesPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT);
+		connections = DiagramTestUtils.getTargetConnectionsFromPort(editor, hardLimitProvidesPart);
+		Assert.assertTrue("DataWriter connection should still exist", connections.size() == 1);
+
+	}
+	
+	
+	/**
+	 * IDE-124
+	 * Modify XML of FrontEndDevice and take out portion that identifies it as FrontEnd, 
+	 * then use the edit wizard for the device
+	 * Change name, add & remove ports
+	 * This test ensures the allocation wizard page no longer shows when the FrontEnd propery is missing
+	 */
+	@Test
+	public void editDevice() {
+		waveformName = "IDE-124-editUsesDevice";
+
+		// Create an empty waveform project
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+		editor.setFocus();
+
+		//generate generic use frontent tuner device with listen by id
+		final String usesDeviceId = "FrontEndTuner_1"; //auto generated by wizard
+		final String existingAllocationId = "12345";
+		final String newAllocationId = "678910";
+		
+		// Add Uses Generic FrontEnd Device
+		createGenericFrontEndTunerDeviceListenById(existingAllocationId, newAllocationId);
+		
+		editor.setFocus();
+
+		// Remove FRONTENT::TUNER from sad.xml
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		String editorText = editor.toTextEditor().getText();
+		editorText = editorText.replace("<propertyref refid=\"DCE:cdc5ee18-7ceb-4ae6-bf4c-31f983179b4d\" value=\"FRONTEND::TUNER\"/>", "");
+		editor.toTextEditor().setText(editorText);
+		
+		//display diagram tab
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		
+		// Open edit wizard and change name, remove existing port, and add a new one
+		editor.getEditPart(USE_DEVICE).select();
+		editor.clickContextMenu("Edit Uses Device");
+
+		// Change Name
+		gefBot.textWithLabel("Uses Device Id").setText(usesDeviceId + "x");
 		gefBot.button("&Next >").click();
 
 		// Delete existing provides port
@@ -230,13 +337,12 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		gefBot.button(2).click();
 
 		gefBot.button("Finish").click();
-
-		// Confirm that changes were made
-		// Confirm created component truly is Generic FrontEnd Tuner
-		SWTBotGefEditPart frontEndTunerGefEditPart = editor.getEditPart(USE_FRONTEND_TUNER_DEVICE);
-		assertFrontEndTuner(frontEndTunerGefEditPart);
 		
-		RHContainerShapeImpl rhContainerShape = (RHContainerShapeImpl) frontEndTunerGefEditPart.part().getModel();
+		// Confirm that changes were made
+		SWTBotGefEditPart useDeviceEditPart = editor.getEditPart(USE_DEVICE);
+		assertUsesDevice(useDeviceEditPart);
+
+		RHContainerShapeImpl rhContainerShape = (RHContainerShapeImpl) useDeviceEditPart.part().getModel();
 
 		// two provides ports, two uses ports
 		Assert.assertTrue(rhContainerShape.getUsesPortStubs().size() == 2 && rhContainerShape.getProvidesPortStubs().size() == 2);
@@ -246,35 +352,29 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		Assert.assertEquals(rhContainerShape.getUsesPortStubs().get(1).getName(), "newUses");
 		Assert.assertEquals(rhContainerShape.getProvidesPortStubs().get(0).getName(), "dataDouble2_in");
 		Assert.assertEquals(rhContainerShape.getProvidesPortStubs().get(1).getName(), "newProvides");
-		
-		// Check to see if xml is correct in the sad.xml
-		final String usesDeviceXML = regexStringForGenericUseFrontEndTunerDeviceListenById(
-			usesDeviceId + "x", existingAllocationId + "x", newAllocationId);
-		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
-		String editorText = editor.toTextEditor().getText();
-		Assert.assertTrue("The sad.xml should include UsesDevice", editorText.matches(usesDeviceXML));
-		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-
-		// Confirm that connections properly removed
-		sigGenUsesPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
-		List<SWTBotGefConnectionEditPart> connections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesPart);
-		Assert.assertTrue("SigGen connection should have been removed", connections.size() == 0);
-
-		hardLimitProvidesPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT);
-		connections = DiagramTestUtils.getTargetConnectionsFromPort(editor, hardLimitProvidesPart);
-		Assert.assertTrue("HardLimit connection should have been removed", connections.size() == 0);
-		
-		// Confirm that connections still exist
-		sigGenUsesPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
-		connections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesPart);
-		Assert.assertTrue("DataReader connection should still exist", connections.size() == 1);
-
-		hardLimitProvidesPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT);
-		connections = DiagramTestUtils.getTargetConnectionsFromPort(editor, hardLimitProvidesPart);
-		Assert.assertTrue("DataWriter connection should still exist", connections.size() == 1);
 
 	}
 
+	/**
+	 * Assert UsesDevice
+	 * @param gefEditPart
+	 */
+	private static void assertUsesDevice(SWTBotGefEditPart gefEditPart) {
+		Assert.assertNotNull(gefEditPart);
+		// Drill down to graphiti component shape
+		RHContainerShapeImpl rhContainerShape = (RHContainerShapeImpl) gefEditPart.part().getModel();
+
+		// Grab the associated business object and confirm it is a UsesDeviceStub
+		Object bo = DUtil.getBusinessObject(rhContainerShape);
+		Assert.assertTrue("business object should be of type UsesDeviceStub", bo instanceof UsesDeviceStub);
+		UsesDeviceStub usesDeviceStub = (UsesDeviceStub) bo;
+
+		// Run assertions on expected properties
+		Assert.assertEquals("outer text should match shape type", USE_DEVICE, rhContainerShape.getOuterText().getValue());
+		Assert.assertEquals("inner text should match usesdevice id", usesDeviceStub.getUsesDevice().getId(), rhContainerShape.getInnerText().getValue());
+		Assert.assertNotNull("component supported interface graphic should not be null", rhContainerShape.getLollipop());
+
+	}
 
 	/**
 	 * Assert FrontEnd Tuner
@@ -291,8 +391,8 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		UsesDeviceStub usesDeviceStub = (UsesDeviceStub) bo;
 
 		// Run assertions on expected properties
-		Assert.assertEquals("outer text should match component type", USE_FRONTEND_TUNER_DEVICE, rhContainerShape.getOuterText().getValue());
-		Assert.assertEquals("inner text should match component usage name", usesDeviceStub.getUsesDevice().getId(), rhContainerShape.getInnerText().getValue());
+		Assert.assertEquals("outer text should match shape type", USE_FRONTEND_TUNER_DEVICE, rhContainerShape.getOuterText().getValue());
+		Assert.assertEquals("inner text should match usesdevice id", usesDeviceStub.getUsesDevice().getId(), rhContainerShape.getInnerText().getValue());
 		Assert.assertNotNull("component supported interface graphic should not be null", rhContainerShape.getLollipop());
 
 	}
