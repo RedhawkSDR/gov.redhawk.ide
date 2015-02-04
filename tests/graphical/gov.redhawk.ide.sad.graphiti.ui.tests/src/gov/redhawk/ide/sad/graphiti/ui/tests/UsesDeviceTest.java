@@ -34,8 +34,8 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 
 	private SWTBotGefEditor editor;
 	private String waveformName;
-	private static final String USE_DEVICE = "Use Device";
-	private static final String USE_FRONTEND_TUNER_DEVICE = "Use FrontEnd Tuner Device";
+	public static final String USE_DEVICE = "Use Device";
+	public static final String USE_FRONTEND_TUNER_DEVICE = "Use FrontEnd Tuner Device";
 
 
 	
@@ -359,7 +359,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 	 * Assert UsesDevice
 	 * @param gefEditPart
 	 */
-	private static void assertUsesDevice(SWTBotGefEditPart gefEditPart) {
+	public static void assertUsesDevice(SWTBotGefEditPart gefEditPart) {
 		Assert.assertNotNull(gefEditPart);
 		// Drill down to graphiti component shape
 		RHContainerShapeImpl rhContainerShape = (RHContainerShapeImpl) gefEditPart.part().getModel();
@@ -380,7 +380,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 	 * Assert FrontEnd Tuner
 	 * @param gefEditPart
 	 */
-	private static void assertFrontEndTuner(SWTBotGefEditPart gefEditPart) {
+	public static void assertFrontEndTuner(SWTBotGefEditPart gefEditPart) {
 		Assert.assertNotNull(gefEditPart);
 		// Drill down to graphiti component shape
 		RHContainerShapeImpl rhContainerShape = (RHContainerShapeImpl) gefEditPart.part().getModel();

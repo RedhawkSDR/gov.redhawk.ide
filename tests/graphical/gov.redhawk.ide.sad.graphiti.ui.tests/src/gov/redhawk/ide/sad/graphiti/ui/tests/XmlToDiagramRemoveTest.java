@@ -225,4 +225,45 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 		Assert.assertEquals("There are external ports", 0, bot.table(0).rowCount());
 		
 	}
+	
+	/**
+	 * IDE-124
+	 * Edit use device to the diagram via the sad.xml
+	 */
+	@Test
+	public void removeUseDeviceInXmlTest() {
+		waveformName = "Edit_UseDevice_Xml";
+
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+
+		// Edit content of sad.xml
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		String editorText = editor.toTextEditor().getText();
+
+		//add uses device
+		String usesDevice = "<assemblycontroller/><usesdevicedependencies><usesdevice id=\"FrontEndTuner_1\"/></usesdevicedependencies>";
+		editorText = editorText.replace("<assemblycontroller/>", usesDevice);
+		editor.toTextEditor().setText(editorText);
+
+		// Confirm edits appear in the diagram
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+
+		SWTBotGefEditPart useDeviceEditPart = editor.getEditPart(UsesDeviceTest.USE_DEVICE);
+		UsesDeviceTest.assertUsesDevice(useDeviceEditPart);
+
+		//remove device id via xml
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		editorText = editor.toTextEditor().getText();
+
+		editorText = editorText.replace("<usesdevice id=\"FrontEndTuner_1\"/>", "");
+		editor.toTextEditor().setText(editorText);
+
+		// Confirm use device shape disappears
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+
+		useDeviceEditPart = editor.getEditPart(UsesDeviceTest.USE_DEVICE);
+		Assert.assertNull("Uses device exists but should have disappeared", useDeviceEditPart);
+	}
 }

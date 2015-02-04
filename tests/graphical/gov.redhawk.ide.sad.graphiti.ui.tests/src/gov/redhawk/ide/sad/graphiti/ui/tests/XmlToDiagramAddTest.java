@@ -10,8 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
@@ -315,6 +315,33 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		//switch to overview tab and verify there are external ports
 		DiagramTestUtils.openTabInEditor(editor, "Overview");
 		Assert.assertEquals("There are no external ports", 1, bot.table(0).rowCount());
+	}
+	
+	/**
+	 * IDE-124
+	 * Add use device to the diagram via the sad.xml
+	 */
+	@Test
+	public void addUseDeviceInXmlTest() {
+		waveformName = "Add_UseDevice_Xml";
+
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+
+		// Edit content of sad.xml
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		String editorText = editor.toTextEditor().getText();
+
+		String usesDevice = "<assemblycontroller/><usesdevicedependencies><usesdevice id=\"FrontEndTuner_1\"></usesdevicedependencies>";
+		editorText = editorText.replace("<assemblycontroller/>", usesDevice);
+		editor.toTextEditor().setText(editorText);
+
+		// Confirm edits appear in the diagram
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+
+		SWTBotGefEditPart useDeviceEditPart = editor.getEditPart(UsesDeviceTest.USE_DEVICE);
+		UsesDeviceTest.assertUsesDevice(useDeviceEditPart);
 	}
 
 }

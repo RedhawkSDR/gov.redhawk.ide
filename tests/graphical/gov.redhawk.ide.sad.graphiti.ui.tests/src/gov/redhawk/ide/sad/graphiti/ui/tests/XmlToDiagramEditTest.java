@@ -10,9 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
 import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
@@ -329,5 +329,46 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 				return "Host Collocation " + HOST_CO_NAME + "_1" + " does not exist";
 			}
 		}, 10000, 1000);
+	}
+	
+	/**
+	 * IDE-124
+	 * Edit use device to the diagram via the sad.xml
+	 */
+	@Test
+	public void editUseDeviceInXmlTest() {
+		waveformName = "Edit_UseDevice_Xml";
+
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+
+		// Edit content of sad.xml
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		String editorText = editor.toTextEditor().getText();
+
+		String usesDevice = "<assemblycontroller/><usesdevicedependencies><usesdevice id=\"FrontEndTuner_1\"></usesdevicedependencies>";
+		editorText = editorText.replace("<assemblycontroller/>", usesDevice);
+		editor.toTextEditor().setText(editorText);
+
+		// Confirm edits appear in the diagram
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+
+		SWTBotGefEditPart useDeviceEditPart = editor.getEditPart(UsesDeviceTest.USE_DEVICE);
+		UsesDeviceTest.assertUsesDevice(useDeviceEditPart);
+
+		//edit device id via xml
+		// Edit content of sad.xml
+		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
+		editorText = editor.toTextEditor().getText();
+
+		editorText = editorText.replace("<usesdevice id=\"FrontEndTuner_1\">", "<usesdevice id=\"FrontEndTuner_2\">");
+		editor.toTextEditor().setText(editorText);
+
+		// Confirm edits appear in the diagram
+		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+
+		useDeviceEditPart = editor.getEditPart(UsesDeviceTest.USE_DEVICE);
+		UsesDeviceTest.assertUsesDevice(useDeviceEditPart);
 	}
 }
