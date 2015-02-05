@@ -22,7 +22,7 @@ import org.eclipse.swtbot.swt.finder.finders.UIThreadRunnable;
 import org.eclipse.swtbot.swt.finder.results.VoidResult;
 
 /**
- * Viewer class to use RHTestBotCanvas for better dragging functionality
+ * Viewer class to use RHTestBotCanvas for better dragging functionality with Graphiti diagrams.
  */
 public class RHTestBotViewer extends SWTBotGefViewer {
 

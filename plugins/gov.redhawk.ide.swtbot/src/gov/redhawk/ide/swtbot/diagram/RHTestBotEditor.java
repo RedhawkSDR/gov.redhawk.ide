@@ -21,7 +21,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 
 /**
- * 
+ * Bot editor class to use RHTestBotEditor for better dragging functionality with Graphiti diagrams.
  */
 public class RHTestBotEditor extends SWTBotGefEditor {
 

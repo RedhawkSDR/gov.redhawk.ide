@@ -16,7 +16,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.ui.IEditorReference;
 
 /**
- * Uses RHTestBotEditor for improved connection drawing in Graphiti diagram
+ * Uses RHTestBotEditor for improved connection drawing in Graphiti diagrams
  */
 public class RHTestBot extends SWTGefBot {
 

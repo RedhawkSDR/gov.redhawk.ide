@@ -193,7 +193,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		gefBot.button("OK").click();
 		editor.setFocus();
 	}
-	
+
 	/**
 	 * Drag a Use FrontEnd Tuner Device onto the SAD diagram editor
 	 */
@@ -202,7 +202,8 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	}
 
 	/**
-	 * 
+	 * Draws a connection between two ports using drag-and-drop on the editor.
+	 *
 	 * @param editor - SWTBotGefEditor
 	 * @param usesEditPart - SWTBotGefEditPart for the uses/source port
 	 * @param providesEditPart - SWTBotGefEditPart for the provides/target port
@@ -214,36 +215,34 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		// Count original number of connections on each port for comparison
 		final int numTargetConnections = providesAnchor.targetConnections().size();
 		final int numSourceConnections = usesAnchor.sourceConnections().size();
-		
+
 		final Point providesPos = getDiagramRelativeCenter(providesAnchor);
 		final Point usesPos = getDiagramRelativeCenter(usesAnchor);
 		editor.drag(usesPos.x, usesPos.y, providesPos.x, providesPos.y);
-		
+
 		// Wait to see if new connection appears for both ports
 		try {
-		editor.bot().waitWhile(new ICondition() {
-			@Override
-			public boolean test() throws Exception {
-				if (providesAnchor.targetConnections().size() <= numTargetConnections 
-						|| usesAnchor.sourceConnections().size() <= numSourceConnections) {
-					return true;
+			editor.bot().waitWhile(new ICondition() {
+				@Override
+				public boolean test() throws Exception {
+					return providesAnchor.targetConnections().size() <= numTargetConnections || usesAnchor.sourceConnections().size() <= numSourceConnections;
 				}
-				return false;
-			}
-			@Override
-			public void init(SWTBot bot) {
-			}
-			@Override
-			public String getFailureMessage() {
-				return "Failed to create connection";
-			}
+
+				@Override
+				public void init(SWTBot bot) {
+				}
+
+				@Override
+				public String getFailureMessage() {
+					return "Failed to create connection";
+				}
 			}, 2000, 500);
 		} catch (TimeoutException e) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Returns the center of the edit part, relative to the diagram
 	 * @param part The edit part for which to find the center
@@ -257,17 +256,9 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			int posX = bounds.x + bounds.width / 2;
 			int posY = bounds.y + bounds.height / 2;
 			return new Point(posX + 1, posY + 1);
-//			EditPart diagramEditPart = agep.getParent();
-//			while (!(diagramEditPart.getModel() instanceof Diagram)) {
-//				diagramEditPart = diagramEditPart.getParent();
-//			}
-//			AbstractGraphicalEditPart dep = (AbstractGraphicalEditPart) diagramEditPart;
-//			Rectangle diagramBounds = dep.getFigure().getBounds();
-//			return new Point(posX - diagramBounds.x, posY - diagramBounds.y);
 		}
 		return null;
 	}
-	
 
 	/**
 	 * Utility method to extract business object from a component in the Graphiti diagram.
@@ -297,8 +288,9 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		return (ComponentShapeImpl) getRHContainerShape(editor, componentName);
 	}
 
-	/** Utility method to get {@link Diagram} from the GEF Editor.
-	 *  @return the {@link Diagram} from the main editor's part's model or null if not found
+	/**
+	 * Utility method to get {@link Diagram} from the GEF Editor.
+	 * @return the {@link Diagram} from the main editor's part's model or null if not found
 	 */
 	public static Diagram getDiagram(SWTBotGefEditor editor) {
 		Object model = editor.mainEditPart().part().getModel();
@@ -416,7 +408,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		if (portEditPart.part().getModel() instanceof Anchor) {
 			return portEditPart;
 		}
-		for (SWTBotGefEditPart child: portEditPart.children()) {
+		for (SWTBotGefEditPart child : portEditPart.children()) {
 			SWTBotGefEditPart anchor = getDiagramPortAnchor(child);
 			if (anchor != null) {
 				return anchor;
@@ -645,8 +637,6 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		return "(?s).*" + componentinstantiation + ".*" + usagename + ".*" + namingservice + ".*";
 
 	}
-	
-
 
 	/**
 	 * Checks sad.xml for component property code
@@ -750,11 +740,11 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		componentPart.select();
 		editor.clickContextMenu("Stop");
 	}
-	
+
 	/**
 	 * Change the component log level from the Chalkboard Diagram
 	 * @param componentName
-	 * @param logLevel 
+	 * @param logLevel
 	 */
 	public static void changeLogLevelFromDiagram(SWTBotGefEditor editor, String componentName, LogLevels logLevel) {
 		editor.setFocus();
@@ -762,25 +752,25 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		componentPart.select();
 		editor.clickContextMenu("Logging");
 		editor.clickContextMenu("Log Level");
-		
+
 		final SWTBot editorBot = editor.bot();
-		
+
 		// Make sure the dialog comes up.
 		editorBot.waitUntil(Conditions.shellIsActive("Set Debug Level"));
-		
+
 		editorBot.shell("Set Debug Level").setFocus();
 		SWTBot dialogBot = editorBot.shell("Set Debug Level").bot();
-		
+
 		SWTBotCombo newLogLevelCombo = dialogBot.comboBox();
 		newLogLevelCombo.setSelection(logLevel.getLabel());
-		
+
 		dialogBot.button("OK").click();
 	}
-	
+
 	/**
 	 * Change the component log level from the Chalkboard Diagram
 	 * @param componentName
-	 * @param logLevel 
+	 * @param logLevel
 	 */
 	public static void confirmLogLevelFromDiagram(SWTBotGefEditor editor, String componentName, LogLevels logLevel) {
 		editor.setFocus();
@@ -788,18 +778,18 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		componentPart.select();
 		editor.clickContextMenu("Logging");
 		editor.clickContextMenu("Log Level");
-		
+
 		final SWTBot editorBot = editor.bot();
-		
+
 		// Make sure the dialog comes up.
 		editorBot.waitUntil(Conditions.shellIsActive("Set Debug Level"));
-		
+
 		editorBot.shell("Set Debug Level").setFocus();
 		SWTBot dialogBot = editorBot.shell("Set Debug Level").bot();
-		
+
 		SWTBotLabel currentLogLevelLabel = dialogBot.label(2);
 		Assert.assertTrue("Current Log Level is not the expected value: " + logLevel.getLabel(), logLevel.getLabel().equals(currentLogLevelLabel.getText()));
-		
+
 		dialogBot.button("Cancel").click();
 	}
 
@@ -808,7 +798,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @param componentName
 	 */
 	public static void waitUntilComponentDisappearsInChalkboardDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, final String componentName) {
-		
+
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
@@ -910,7 +900,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			}
 		}
 	}
-	
+
 	/** NOTE: Unfortunately, if the context menu item exists, it will be clicked */
 	public static boolean hasContentMenuItem(SWTBotGefEditor editor, String componentName, String menuItem) {
 		editor.setFocus();

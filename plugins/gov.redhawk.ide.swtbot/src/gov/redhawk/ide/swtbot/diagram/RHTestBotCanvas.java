@@ -21,7 +21,7 @@ import org.eclipse.swtbot.swt.finder.finders.UIThreadRunnable;
 import org.eclipse.swtbot.swt.finder.results.VoidResult;
 
 /**
- * This class exists to help make dragging connections in the Graphiti diagram 
+ * This class exists to help make dragging connections in the Graphiti diagram
  * work properly.
  */
 public class RHTestBotCanvas extends SWTBotGefFigureCanvas {
@@ -44,32 +44,43 @@ public class RHTestBotCanvas extends SWTBotGefFigureCanvas {
 	}
 
 	/**
-	 * As defined in SWTBotGefFigureCanvas, but adds another move event, to the 
-	 * midpoint between the two ends, after pressing the button and before moving 
-	 * to the end.
+	 * Simulate a drag-drop. For Graphiti, it's important that there be an intermediate mouse movement event. In the
+	 * original SWTBot drag code it performs 4 actions:
+	 * <ol>
+	 * <li>mouse-down source</li>
+	 * <li>mouse-move source</li>
+	 * <li>mouse-move target</li>
+	 * <li>mouse-up target</li>
+	 * </ol>
+	 * Graphiti's code double-checks that the mouse has moved far enough away from the original mouse-down point that
+	 * it can be considered a drag operation (see {@link AbstractTool#movedPastThreshold()}). However, Graphiti doesn't
+	 * update the 'current location' of the mouse until AFTER it checks the threshold during a drag (see
+	 * {@link AbstractTool#mouseDrag(MouseEvent, EditPartViewer)}). If Graphiti doesn't think the mouse has moved far
+	 * enough, it never sets the drag-drop target, and essentially it's like the drag-drop didn't happen. We solve this
+	 * by issuing a mouse movement event halfway to the target.
+	 *
+	 * @see org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas#mouseDrag(int, int, int, int)
 	 */
 	@Override
 	public void mouseDrag(final int fromXPosition, final int fromYPosition, final int toXPosition, final int toYPosition) {
 		final int middleXPosition = (fromXPosition + toXPosition) / 2;
 		final int middleYPosition = (fromYPosition + toYPosition) / 2;
-        UIThreadRunnable.asyncExec(new VoidResult() {
-            public void run() {
-            	org.eclipse.swt.events.MouseEvent meMove = new MouseEvent(createMouseEvent(fromXPosition, 
-            				fromYPosition, 0, 0, 0));
-            	eventDispatcher.dispatchMouseMoved(meMove);
-            	org.eclipse.swt.events.MouseEvent meDown = new MouseEvent(createMouseEvent(fromXPosition, 
-            				fromYPosition, 1, SWT.BUTTON1, 1));
-            	eventDispatcher.dispatchMousePressed(meDown);
-            	org.eclipse.swt.events.MouseEvent meMoveMiddle = new MouseEvent(createMouseEvent(middleXPosition, 
-            				middleYPosition, 1, SWT.BUTTON1, 0));
-            	eventDispatcher.dispatchMouseMoved(meMoveMiddle);
-            	org.eclipse.swt.events.MouseEvent meMoveTarget = new MouseEvent(createMouseEvent(toXPosition, 
-            				toYPosition, 1, SWT.BUTTON1, 0));
-            	eventDispatcher.dispatchMouseMoved(meMoveTarget);
-            	org.eclipse.swt.events.MouseEvent meUp = new MouseEvent(createMouseEvent(toXPosition, 
-            				toYPosition, 1 , SWT.BUTTON1, 1));
-            	eventDispatcher.dispatchMouseReleased(meUp);
-            }
-        });
+		UIThreadRunnable.asyncExec(new VoidResult() {
+			public void run() {
+				org.eclipse.swt.events.MouseEvent meMove = new MouseEvent(createMouseEvent(fromXPosition, fromYPosition, 0, 0, 0));
+				eventDispatcher.dispatchMouseMoved(meMove);
+				org.eclipse.swt.events.MouseEvent meDown = new MouseEvent(createMouseEvent(fromXPosition, fromYPosition, 1, SWT.BUTTON1, 1));
+				eventDispatcher.dispatchMousePressed(meDown);
+
+				// The half-way mouse drag event
+				org.eclipse.swt.events.MouseEvent meMoveMiddle = new MouseEvent(createMouseEvent(middleXPosition, middleYPosition, 1, SWT.BUTTON1, 0));
+				eventDispatcher.dispatchMouseMoved(meMoveMiddle);
+
+				org.eclipse.swt.events.MouseEvent meMoveTarget = new MouseEvent(createMouseEvent(toXPosition, toYPosition, 1, SWT.BUTTON1, 0));
+				eventDispatcher.dispatchMouseMoved(meMoveTarget);
+				org.eclipse.swt.events.MouseEvent meUp = new MouseEvent(createMouseEvent(toXPosition, toYPosition, 1, SWT.BUTTON1, 1));
+				eventDispatcher.dispatchMouseReleased(meUp);
+			}
+		});
 	}
 }
