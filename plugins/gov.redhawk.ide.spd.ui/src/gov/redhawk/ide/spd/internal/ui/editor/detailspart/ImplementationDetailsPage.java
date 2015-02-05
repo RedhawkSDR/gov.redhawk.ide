@@ -152,11 +152,11 @@ public class ImplementationDetailsPage extends ScaDetails {
 	 */
 	private void createCodeSection(final FormToolkit toolkit, final Composite parent) {
 		final Section section = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
-		        | ExpandableComposite.COMPACT);
+			| ExpandableComposite.COMPACT);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText("Code");
 		section.setDescription("The code element will be used to indicate the" + " local filename of the code that is described by the softpkg element,"
-		        + " for a specific implementation of the software component.");
+			+ " for a specific implementation of the software component.");
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 
@@ -206,7 +206,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 	private void createCodeGenerationDetailsSection(final FormToolkit toolkit, final Composite parent, final String generatorId) {
 		if (this.codegenSection == null) {
 			this.codegenSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
-			        | ExpandableComposite.COMPACT);
+				| ExpandableComposite.COMPACT);
 			this.codegenSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 			this.codegenSection.setText("Code Generation Details");
 			this.codegenSection.setDescription("Set configuration values of this implementation's code generation properties.");
@@ -215,7 +215,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 		}
 
 		this.codeGenerationComposite = RedhawkCodegenUiActivator.getCodeGeneratorsRegistry().findCompositeByGeneratorId(generatorId, this.codegenSection,
-		        SWT.None, toolkit)[0];
+			SWT.None, toolkit)[0];
 
 		toolkit.adapt((Composite) this.codeGenerationComposite);
 		this.codegenSection.setClient((Composite) this.codeGenerationComposite);
@@ -231,7 +231,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 	 */
 	private void createImplementationSection(final FormToolkit toolkit, final Composite parent) {
 		final Section section = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
-		        | ExpandableComposite.EXPANDED);
+			| ExpandableComposite.EXPANDED);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText("Implementation");
 		section.setDescription("The implementation element contains descriptive information about the particular implementation template for a software component contained in the softpkg element.");
@@ -242,32 +242,34 @@ public class ImplementationDetailsPage extends ScaDetails {
 		// by section toolbar icons)
 		getPage().alignSectionHeaders(this.fSection.getSection(), section);
 
-		this.implementationComposite = new ImplementationComposite(section, SWT.NONE, toolkit);
+		this.implementationComposite = new ImplementationComposite(section, SWT.NONE, toolkit, getPage().isSoftpackageLibrary());
 		toolkit.adapt(this.implementationComposite);
 
-		this.implementationComposite.getPrfEntry().setFormEntryListener(new FormEntryAdapter() {
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void buttonSelected(final FormEntry entry) {
-				final IProject project = getProject();
-				if (project != null) {
-					final String newPath = EntryUtil.browse(project, getPrfFile(), PrfPackage.FILE_EXTENSION);
-					if (newPath != null && (getPrfFile() == null || !newPath.equals(getPrfFile().getName()))) {
-						setPrfFileName(newPath);
+		if (this.implementationComposite.getPrfEntry() != null) {
+			this.implementationComposite.getPrfEntry().setFormEntryListener(new FormEntryAdapter() {
+				/**
+				 * {@inheritDoc}
+				 */
+				@Override
+				public void buttonSelected(final FormEntry entry) {
+					final IProject project = getProject();
+					if (project != null) {
+						final String newPath = EntryUtil.browse(project, getPrfFile(), PrfPackage.FILE_EXTENSION);
+						if (newPath != null && (getPrfFile() == null || !newPath.equals(getPrfFile().getName()))) {
+							setPrfFileName(newPath);
+						}
 					}
 				}
-			}
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void linkActivated(final HyperlinkEvent e) {
-				handlePrfLinkSelected();
-			}
-		});
+				/**
+				 * {@inheritDoc}
+				 */
+				@Override
+				public void linkActivated(final HyperlinkEvent e) {
+					handlePrfLinkSelected();
+				}
+			});
+		}
 
 		section.setClient(this.implementationComposite);
 
@@ -310,7 +312,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 	 */
 	private void createDependencySection(final FormToolkit toolkit, final Composite parent) {
 		final Section section = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
-		        | ExpandableComposite.EXPANDED);
+			| ExpandableComposite.EXPANDED);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText("Dependencies");
 		section.setDescription("Dependencies are used to assign a component to a suitable device and to allocate capacity on a device.  You must specify at least one dependency.");
@@ -497,7 +499,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 
 		if (dialog.open() == Window.OK) {
 			final Command command = ReplaceCommand.create(getEditingDomain(), this.input, SpdPackage.Literals.IMPLEMENTATION__PROCESSOR, obj,
-			        Collections.singleton(wizard.getProcessor()));
+				Collections.singleton(wizard.getProcessor()));
 			getEditingDomain().getCommandStack().execute(command);
 		}
 	}
@@ -542,7 +544,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 
 		if (dialog.open() == Window.OK) {
 			final Command command = ReplaceCommand.create(getEditingDomain(), this.input, SpdPackage.Literals.IMPLEMENTATION__DEPENDENCY, obj,
-			        Collections.singleton(wizard.getDependency()));
+				Collections.singleton(wizard.getDependency()));
 			getEditingDomain().getCommandStack().execute(command);
 		}
 	}
@@ -613,7 +615,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 
 		if (dialog.open() == Window.OK) {
 			final Command command = ReplaceCommand.create(getEditingDomain(), this.input, SpdPackage.Literals.IMPLEMENTATION__OS, obj,
-			        Collections.singleton(wizard.getOs()));
+				Collections.singleton(wizard.getOs()));
 			execute(command);
 		}
 	}
@@ -642,16 +644,22 @@ public class ImplementationDetailsPage extends ScaDetails {
 		}
 		if (obj instanceof Compiler) {
 			final Compiler compiler = (Compiler) obj;
-			return compiler.getName() + ((compiler.getVersion() == null) ? "" : " (" + compiler.getVersion() + ")"); // SUPPRESS CHECKSTYLE AvoidInLine
+			return compiler.getName() + ((compiler.getVersion() == null) ? "" : " (" + compiler.getVersion() + ")"); // SUPPRESS
+																														// CHECKSTYLE
+																														// AvoidInLine
 		} else if (obj instanceof HumanLanguage) {
 			final HumanLanguage lang = (HumanLanguage) obj;
 			return lang.getName();
 		} else if (obj instanceof ProgrammingLanguage) {
 			final ProgrammingLanguage lang = (ProgrammingLanguage) obj;
-			return lang.getName() + ((lang.getVersion() == null) ? "" : " (" + lang.getVersion() + ")"); // SUPPRESS CHECKSTYLE AvoidInLine
+			return lang.getName() + ((lang.getVersion() == null) ? "" : " (" + lang.getVersion() + ")"); // SUPPRESS
+																											// CHECKSTYLE
+																											// AvoidInLine
 		} else if (obj instanceof Runtime) {
 			final Runtime runtime = (Runtime) obj;
-			return runtime.getName() + ((runtime.getVersion() == null) ? "" : " (" + runtime.getVersion() + ")"); // SUPPRESS CHECKSTYLE AvoidInLine
+			return runtime.getName() + ((runtime.getVersion() == null) ? "" : " (" + runtime.getVersion() + ")"); // SUPPRESS
+																													// CHECKSTYLE
+																													// AvoidInLine
 		}
 
 		final IItemLabelProvider lp = (IItemLabelProvider) getAdapterFactory().adapt(obj, IItemLabelProvider.class);
@@ -673,7 +681,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 		this.input = (Implementation) obj;
 		if (this.input.getCode() == null) {
 			final Command command = SetCommand.create(getEditingDomain(), this.input, SpdPackage.Literals.IMPLEMENTATION__CODE,
-			        SpdFactory.eINSTANCE.createCode());
+				SpdFactory.eINSTANCE.createCode());
 			execute(command);
 		}
 
@@ -715,27 +723,28 @@ public class ImplementationDetailsPage extends ScaDetails {
 		this.implementationComposite.getRuntimeEntry().setValue(getText(this.input.getRuntime()));
 
 		retVal.add(FormEntryBindingFactory.bind(context, this.implementationComposite.getDescriptionEntry(), getEditingDomain(),
-		        SpdPackage.Literals.IMPLEMENTATION__DESCRIPTION, obj, new EMFEmptyStringToNullUpdateValueStrategy(), null));
+			SpdPackage.Literals.IMPLEMENTATION__DESCRIPTION, obj, new EMFEmptyStringToNullUpdateValueStrategy(), null));
 		retVal.add(FormEntryBindingFactory.bind(context, this.implementationComposite.getIdEntry(), getEditingDomain(), SpdPackage.Literals.IMPLEMENTATION__ID,
-		        obj, new EMFEmptyStringToNullUpdateValueStrategy(), null));
+			obj, new EMFEmptyStringToNullUpdateValueStrategy(), null));
 
-		retVal.add(FormEntryBindingFactory.bind(context, this.implementationComposite.getPrfEntry(), getEditingDomain(),
-		        SpdPackage.Literals.IMPLEMENTATION__PROPERTY_FILE, obj, createPrfTargetToModel(), createPrfModelToTarget()));
-
+		if (!this.getPage().isSoftpackageLibrary()) {
+			retVal.add(FormEntryBindingFactory.bind(context, this.implementationComposite.getPrfEntry(), getEditingDomain(),
+				SpdPackage.Literals.IMPLEMENTATION__PROPERTY_FILE, obj, createPrfTargetToModel(), createPrfModelToTarget()));
+		}
 		this.dependencyComposite.getOsViewer().setInput(this.input);
 		this.dependencyComposite.getProcessorViewer().setInput(this.input);
 		this.dependencyComposite.getDependencyViewer().setInput(this.input);
 
 		retVal.add(FormEntryBindingFactory.bind(context, this.codeComposite.getCodePriority(), getEditingDomain(), SpdPackage.Literals.CODE__PRIORITY,
-		        this.input.getCode(), new EMFEmptyStringToNullUpdateValueStrategy(), null));
+			this.input.getCode(), new EMFEmptyStringToNullUpdateValueStrategy(), null));
 		retVal.add(FormEntryBindingFactory.bind(context, this.codeComposite.getCodeStackSize(), getEditingDomain(), SpdPackage.Literals.CODE__STACK_SIZE,
-		        this.input.getCode(), new EMFEmptyStringToNullUpdateValueStrategy(), null));
+			this.input.getCode(), new EMFEmptyStringToNullUpdateValueStrategy(), null));
 		retVal.add(FormEntryBindingFactory.bind(context, this.codeComposite.getEntryPoint(), getEditingDomain(), SpdPackage.Literals.CODE__ENTRY_POINT,
-		        this.input.getCode(), new EMFEmptyStringToNullUpdateValueStrategy(), null));
+			this.input.getCode(), new EMFEmptyStringToNullUpdateValueStrategy(), null));
 		retVal.add(context.bindValue(ViewersObservables.observeSingleSelection(this.codeComposite.getCodeTypeViewer()),
-		        EMFEditObservables.observeValue(getEditingDomain(), this.input.getCode(), SpdPackage.Literals.CODE__TYPE), null, null));
+			EMFEditObservables.observeValue(getEditingDomain(), this.input.getCode(), SpdPackage.Literals.CODE__TYPE), null, null));
 		retVal.add(FormEntryBindingFactory.bind(context, this.codeComposite.getLocalFile(), getEditingDomain(), SpdPackage.Literals.CODE__LOCAL_FILE,
-		        this.input.getCode(), createCodeLocalFileTargetToModel(), createCodeLocalFileModelToTarget()));
+			this.input.getCode(), createCodeLocalFileTargetToModel(), createCodeLocalFileModelToTarget()));
 
 		this.codeComposite.setFieldsEditable(implSettings);
 
@@ -919,7 +928,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 		final CompoundCommand command = new CompoundCommand(commandName);
 		if (dir != null) {
 			command.append(SetCommand.create(getEditingDomain(), settings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR, outputDir,
-			        CommandParameter.NO_INDEX));
+				CommandParameter.NO_INDEX));
 		}
 
 		final ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(settings.getGeneratorId());
@@ -932,13 +941,13 @@ public class ImplementationDetailsPage extends ScaDetails {
 			code = generator.getGenerator().getInitialCodeSettings(impl.getSoftPkg(), tmpSettings, impl);
 		} catch (final CoreException e) {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, ComponentUiPlugin.PLUGIN_ID, e.getMessage(), e.getCause()),
-			        StatusManager.LOG | StatusManager.SHOW);
+				StatusManager.LOG | StatusManager.SHOW);
 			return;
 		}
 		command.append(SetCommand.create(getEditingDomain(), impl.getCode(), SpdPackage.Literals.CODE__ENTRY_POINT, code.getEntryPoint(),
-		        CommandParameter.NO_INDEX));
+			CommandParameter.NO_INDEX));
 		command.append(SetCommand.create(getEditingDomain(), impl.getCode(), SpdPackage.Literals.CODE__LOCAL_FILE, code.getLocalFile(),
-		        CommandParameter.NO_INDEX));
+			CommandParameter.NO_INDEX));
 		getEditingDomain().getCommandStack().execute(command);
 	}
 
@@ -946,7 +955,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 		this.editable = SCAEditorUtil.isEditableResource(getPage(), this.input.eResource());
 		this.implementationComposite.setEditable(this.editable);
 		this.codeComposite.setEditable(this.editable);
-		//		this.codeGenerationComposite.setEditable(editable);
+		// this.codeGenerationComposite.setEditable(editable);
 		this.dependencyComposite.setEditable(this.editable);
 	}
 

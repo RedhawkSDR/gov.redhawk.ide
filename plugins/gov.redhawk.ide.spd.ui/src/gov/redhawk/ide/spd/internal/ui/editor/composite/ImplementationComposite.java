@@ -34,6 +34,8 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
  */
 public class ImplementationComposite extends Composite implements IScaComposite {
 	private static final int NUM_COLUMNS = 3;
+	
+	private boolean isLibrary; // Let's us know if the resource is a Softpackage Library
 
 	private final FormToolkit toolkit;
 	private ComposedAdapterFactory adapterFactory;
@@ -50,9 +52,10 @@ public class ImplementationComposite extends Composite implements IScaComposite 
 	 * @param parent
 	 * @param style
 	 */
-	public ImplementationComposite(final Composite parent, final int style, final FormToolkit toolkit) {
+	public ImplementationComposite(final Composite parent, final int style, final FormToolkit toolkit, final boolean isLibrary) {
 		super(parent, style);
 		this.toolkit = toolkit;
+		this.isLibrary = isLibrary;
 
 		this.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, ImplementationComposite.NUM_COLUMNS));
 
@@ -66,7 +69,9 @@ public class ImplementationComposite extends Composite implements IScaComposite 
 
 		createHumanLangEntry();
 
-		createPropertyFileEntry();
+		if (!isLibrary) {
+			createPropertyFileEntry();
+		}
 
 		createDescriptionEntry();
 		toolkit.paintBordersFor(this);
@@ -261,7 +266,9 @@ public class ImplementationComposite extends Composite implements IScaComposite 
 	public void setEditable(final boolean editable) {
 		this.descriptionEntry.setEditable(editable);
 		this.idEntry.setEditable(editable);
-		this.prfEntry.setEditable(editable);
+		if (!isLibrary) {
+			this.prfEntry.setEditable(editable);
+		}
 	}
 
 }

@@ -84,6 +84,9 @@ public class GeneralInfoSection extends ScaSection {
 	private Resource spdResource;
 	private final Collection<Binding> bindings = new ArrayList<Binding>();
 
+	// Let's us know if the resource is a Softpackage Library
+	private boolean isLibrary;
+
 	/**
 	 * Instantiates a new general info section.
 	 * 
@@ -92,14 +95,10 @@ public class GeneralInfoSection extends ScaSection {
 	 */
 	public GeneralInfoSection(final ComponentOverviewPage page, final Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
-		createClient(getSection(), page.getEditor().getToolkit());
+		createClient(getSection(), page.getEditor().getToolkit(), page);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createClient(final Section section, final FormToolkit toolkit) {
+	protected void createClient(final Section section, final FormToolkit toolkit, ComponentOverviewPage page) {
 		section.setText("General Information");
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		final TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
@@ -108,7 +107,7 @@ public class GeneralInfoSection extends ScaSection {
 		section.setDescription("This section describes general information about this component.");
 
 		final IActionBars actionBars = getPage().getEditor().getEditorSite().getActionBars();
-		this.client = new GeneralInformationComposite(section, SWT.None, toolkit, actionBars);
+		this.client = new GeneralInformationComposite(section, SWT.None, toolkit, actionBars, page.isSoftpackageLibrary());
 		section.setClient(this.client);
 
 		addListeners(actionBars);
@@ -118,49 +117,65 @@ public class GeneralInfoSection extends ScaSection {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void createClient(final Section section, final FormToolkit toolkit) {
+		createClient(section, toolkit, null);
+	}
+
+	/**
 	 * Add Listeners to handle Control Events
 	 * 
 	 * @param actionBars
 	 */
 	private void addListeners(final IActionBars actionBars) {
-		this.client.getScdEntry().setFormEntryListener(new FormEntryAdapter(actionBars) {
-			@Override
-			public void buttonSelected(final FormEntry entry) {
-				final IProject project = getProject();
-				if (project != null) {
-					final IResource file = ModelUtil.getResource(getSoftPkg());
-					if (file != null) {
-						final String newPath = EntryUtil.browse(project, getScdFile(), ScdPackage.FILE_EXTENSION);
-						if (newPath != null && (getScdFile() == null || !newPath.equals(getScdFile().getName()))) {
-							setScdFileName(newPath);
+		if (this.getPage() instanceof ComponentOverviewPage) {
+			isLibrary = ((ComponentOverviewPage) this.getPage()).isSoftpackageLibrary();
+		}
+
+		// Don't add the following listeners is the resource is a Softpackage Library
+		if (!isLibrary) {
+			this.client.getScdEntry().setFormEntryListener(new FormEntryAdapter(actionBars) {
+				@Override
+				public void buttonSelected(final FormEntry entry) {
+					final IProject project = getProject();
+					if (project != null) {
+						final IResource file = ModelUtil.getResource(getSoftPkg());
+						if (file != null) {
+							final String newPath = EntryUtil.browse(project, getScdFile(), ScdPackage.FILE_EXTENSION);
+							if (newPath != null && (getScdFile() == null || !newPath.equals(getScdFile().getName()))) {
+								setScdFileName(newPath);
+							}
 						}
 					}
 				}
-			}
 
-			@Override
-			public void linkActivated(final HyperlinkEvent e) {
-				handleScdLinkActivated();
-			}
-		});
-		this.client.getPrfEntry().setFormEntryListener(new FormEntryAdapter(actionBars) {
-			@Override
-			public void buttonSelected(final FormEntry entry) {
-				final IProject project = getProject();
-				if (project != null) {
-					final String newPath = EntryUtil.browse(project, getPrfFile(), PrfPackage.FILE_EXTENSION);
-					if (newPath != null && (getPrfFile() == null || !newPath.equals(getPrfFile().getName()))) {
-						setPrfFileName(newPath);
-					}
-
+				@Override
+				public void linkActivated(final HyperlinkEvent e) {
+					handleScdLinkActivated();
 				}
-			}
+			});
+			this.client.getPrfEntry().setFormEntryListener(new FormEntryAdapter(actionBars) {
+				@Override
+				public void buttonSelected(final FormEntry entry) {
+					final IProject project = getProject();
+					if (project != null) {
+						final String newPath = EntryUtil.browse(project, getPrfFile(), PrfPackage.FILE_EXTENSION);
+						if (newPath != null && (getPrfFile() == null || !newPath.equals(getPrfFile().getName()))) {
+							setPrfFileName(newPath);
+						}
 
-			@Override
-			public void linkActivated(final HyperlinkEvent e) {
-				handlePrfLinkActivated();
-			}
-		});
+					}
+				}
+
+				@Override
+				public void linkActivated(final HyperlinkEvent e) {
+					handlePrfLinkActivated();
+				}
+			});
+		}
+
 		final FormEntryAdapter fIdEntryAdapter = new FormEntryAdapter(actionBars) {
 			@Override
 			public void buttonSelected(final FormEntry entry) {
@@ -444,55 +459,46 @@ public class GeneralInfoSection extends ScaSection {
 
 		final DataBindingContext context = this.getPage().getEditor().getDataBindingContext();
 
-		this.bindings.add(context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(),
-		        this.client.getIdEntry().getText()),
-		        EMFEditObservables.observeValue(getEditingDomain(), model, SpdPackage.Literals.SOFT_PKG__ID),
-		        new EMFEmptyStringToNullUpdateValueStrategy(),
-		        null));
+		this.bindings.add(context.bindValue(
+			WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(), this.client.getIdEntry().getText()),
+			EMFEditObservables.observeValue(getEditingDomain(), model, SpdPackage.Literals.SOFT_PKG__ID), new EMFEmptyStringToNullUpdateValueStrategy(), null));
 
-		this.bindings.add(context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(),
-		        this.client.getVersionEntry().getText()),
-		        EMFEditObservables.observeValue(getEditingDomain(), model, SpdPackage.Literals.SOFT_PKG__VERSION),
-		        new EMFEmptyStringToNullUpdateValueStrategy(),
-		        null));
+		this.bindings.add(context.bindValue(
+			WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(), this.client.getVersionEntry().getText()),
+			EMFEditObservables.observeValue(getEditingDomain(), model, SpdPackage.Literals.SOFT_PKG__VERSION), new EMFEmptyStringToNullUpdateValueStrategy(),
+			null));
 
-		this.bindings.add(context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(),
-		        this.client.getNameEntry().getText()),
-		        EMFEditObservables.observeValue(getEditingDomain(), model, SpdPackage.Literals.SOFT_PKG__NAME),
-		        new EMFEmptyStringToNullUpdateValueStrategy(),
-		        null));
+		this.bindings.add(context.bindValue(
+			WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(), this.client.getNameEntry().getText()),
+			EMFEditObservables.observeValue(getEditingDomain(), model, SpdPackage.Literals.SOFT_PKG__NAME), new EMFEmptyStringToNullUpdateValueStrategy(), null));
 		SWTObservables.observeText(this.client.getNameEntry().getText(), SWT.Modify);
 
-		this.bindings.add(context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(),
-		        this.client.getTitleEntry().getText()),
-		        EMFEditObservables.observeValue(getEditingDomain(), model, SpdPackage.Literals.SOFT_PKG__TITLE),
-		        new EMFEmptyStringToNullUpdateValueStrategy(),
-		        null));
+		this.bindings.add(context.bindValue(
+			WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(), this.client.getTitleEntry().getText()),
+			EMFEditObservables.observeValue(getEditingDomain(), model, SpdPackage.Literals.SOFT_PKG__TITLE), new EMFEmptyStringToNullUpdateValueStrategy(),
+			null));
 
-		this.bindings.add(context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(),
-		        this.client.getDescriptionEntry().getText()),
-		        EMFEditObservables.observeValue(getEditingDomain(), model, SpdPackage.Literals.SOFT_PKG__DESCRIPTION),
-		        new EMFEmptyStringToNullUpdateValueStrategy(),
-		        null));
+		this.bindings.add(context.bindValue(
+			WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(), this.client.getDescriptionEntry().getText()),
+			EMFEditObservables.observeValue(getEditingDomain(), model, SpdPackage.Literals.SOFT_PKG__DESCRIPTION),
+			new EMFEmptyStringToNullUpdateValueStrategy(), null));
 
-		this.bindings.add(context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(),
-		        this.client.getPrfEntry().getText()),
-		        EMFEditProperties.value(getEditingDomain(),
-		                FeaturePath.fromList(SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
-		                        SpdPackage.Literals.PROPERTY_FILE__LOCAL_FILE,
-		                        SpdPackage.Literals.LOCAL_FILE__NAME)).observe(model),
-		        null,
-		        null));
+		if (!isLibrary) {
+			this.bindings.add(context.bindValue(
+				WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(), this.client.getPrfEntry().getText()),
+				EMFEditProperties.value(
+					getEditingDomain(),
+					FeaturePath.fromList(SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE, SpdPackage.Literals.PROPERTY_FILE__LOCAL_FILE,
+						SpdPackage.Literals.LOCAL_FILE__NAME)).observe(model), null, null));
 
-		this.bindings.add(context.bindValue(WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(),
-		        this.client.getScdEntry().getText()),
-		        EMFEditProperties.value(getEditingDomain(),
-		                FeaturePath.fromList(SpdPackage.Literals.SOFT_PKG__DESCRIPTOR,
-		                        SpdPackage.Literals.DESCRIPTOR__LOCALFILE,
-		                        SpdPackage.Literals.LOCAL_FILE__NAME)).observe(model),
-		        null,
-		        null));
-
+			this.bindings.add(context.bindValue(
+				WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(), this.client.getScdEntry().getText()),
+				EMFEditProperties.value(
+					getEditingDomain(),
+					FeaturePath.fromList(SpdPackage.Literals.SOFT_PKG__DESCRIPTOR, SpdPackage.Literals.DESCRIPTOR__LOCALFILE,
+						SpdPackage.Literals.LOCAL_FILE__NAME)).observe(model), null, null));
+		}
+		
 		this.client.getTypeEntry().setValue(String.valueOf(model.getType()));
 	}
 

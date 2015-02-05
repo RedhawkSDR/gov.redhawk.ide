@@ -27,6 +27,8 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 public class GeneralInformationComposite extends Composite implements IScaComposite {
 	private static final int NUM_COLUMNS = 3;
 
+	private boolean isLibrary; // Let's us know if the resource is a Softpackage Library
+	
 	private FormEntry typeEntry;
 	private FormEntry descriptionEntry;
 	private FormEntry scdEntry;
@@ -42,9 +44,10 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 	 * @param toolkit
 	 * @param actionBars
 	 */
-	public GeneralInformationComposite(final Composite parent, final int style, final FormToolkit toolkit, final IActionBars actionBars) {
+	public GeneralInformationComposite(final Composite parent, final int style, final FormToolkit toolkit, final IActionBars actionBars, final boolean isLibrary) {
 		super(parent, style);
 		this.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, GeneralInformationComposite.NUM_COLUMNS));
+		this.isLibrary = isLibrary;
 
 		createTypeEntry(this, toolkit, actionBars);
 
@@ -56,10 +59,12 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 
 		createTitleEntry(this, toolkit, actionBars);
 
-		createPrfFileEntry(this, toolkit, actionBars);
-
-		createScdFileEntry(this, toolkit, actionBars);
-
+		if (!this.isLibrary) {
+			// Don't include these fields if the resource is a Softpackage Library
+			createPrfFileEntry(this, toolkit, actionBars);
+			createScdFileEntry(this, toolkit, actionBars);
+		}
+		
 		createDescriptionEntry(this, toolkit, actionBars);
 	}
 
@@ -232,8 +237,10 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 		this.descriptionEntry.setEditable(editable);
 		this.idEntry.setEditable(editable);
 		this.nameEntry.setEditable(editable);
-		this.prfEntry.setEditable(editable);
-		this.scdEntry.setEditable(editable);
+		if (!this.isLibrary) {
+			this.prfEntry.setEditable(editable);
+			this.scdEntry.setEditable(editable);
+		}
 		this.titleEntry.setEditable(editable);
 		// this.typeEntry.setEditable(editable);
 		this.versionEntry.setEditable(editable);

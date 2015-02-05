@@ -19,6 +19,8 @@ import gov.redhawk.ide.spd.ui.editor.AuthorsSection;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
 import gov.redhawk.ui.editor.AbstractOverviewPage;
+import mil.jpeojtrs.sca.spd.CodeFileType;
+import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.resources.IProject;
@@ -34,6 +36,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -142,13 +145,16 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		right.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 
-		createPortSection(managedForm, right, toolkit);
+		// The following sections don't make sense for libraries, since the don't have .prf or .scd
+		if (!isSoftpackageLibrary()) {
+			createPortSection(managedForm, right, toolkit);
 
-		createInterfaceSection(managedForm, right, toolkit);
+			createInterfaceSection(managedForm, right, toolkit);
 
-		createComponentContentSection(managedForm, right, toolkit);
+			createComponentContentSection(managedForm, right, toolkit);
 
-		createTestingSection(managedForm, right, toolkit);
+			createTestingSection(managedForm, right, toolkit);
+		}
 
 		createExportingSection(managedForm, right, toolkit);
 
@@ -253,21 +259,21 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	}
 
 	private void launch(final String mode) {
-        try {
-            ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(SoftPkg.Util.getSoftPkg(spdResource), getEditorSite().getShell());
-            if (spdResource.getURI().isPlatform()) {
-            	ILaunchConfiguration config = LaunchUtil.chooseConfiguration(mode, LaunchUtil.findLaunchConfigurations(newConfig), getEditorSite().getShell());
-            	if (config == null) {
-            		config = newConfig.doSave();
-            	}
-    			DebugUITools.launch(config, mode);
-    		} else {
-    			LaunchUtil.launch(newConfig, mode);
-    		}
-        } catch (CoreException e) {
-        	final Status status = new Status(e.getStatus().getSeverity(), ComponentUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e);
+		try {
+			ILaunchConfigurationWorkingCopy newConfig = LaunchUtil.createLaunchConfiguration(SoftPkg.Util.getSoftPkg(spdResource), getEditorSite().getShell());
+			if (spdResource.getURI().isPlatform()) {
+				ILaunchConfiguration config = LaunchUtil.chooseConfiguration(mode, LaunchUtil.findLaunchConfigurations(newConfig), getEditorSite().getShell());
+				if (config == null) {
+					config = newConfig.doSave();
+				}
+				DebugUITools.launch(config, mode);
+			} else {
+				LaunchUtil.launch(newConfig, mode);
+			}
+		} catch (CoreException e) {
+			final Status status = new Status(e.getStatus().getSeverity(), ComponentUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e);
 			StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
-        }
+		}
 	}
 
 	/**
@@ -283,7 +289,7 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 			addResourceListener(this.scdResource);
 			refresh(this.scdResource);
 		}
-		// Adding the wavDev to the list of tracked resources.  This will allow it to be updated when external
+		// Adding the wavDev to the list of tracked resources. This will allow it to be updated when external
 		// forces (From the Generate Code methods) update the CRC32s contained within the File.
 		// This was to fix Bug # 21
 		final URI wavDevUri = CodegenUtil.getSettingsURI(spd);
@@ -329,6 +335,23 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 			}
 		}
 	}
+	
+	/**
+	 * Checks to see if the resource is a Softpackage Library
+	 * Important because a number of entry fields are omitted in the case of libraries 
+	 */
+	public boolean isSoftpackageLibrary() {
+		for (EObject i : spdResource.getContents()) {
+			if (i instanceof SoftPkg) {
+				for (Implementation impl : ((SoftPkg) i).getImplementation()) {
+					if (CodeFileType.SHARED_LIBRARY.equals(impl.getCode().getType())) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * @return the scdResource
@@ -336,9 +359,19 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	public Resource getScdResource() {
 		return this.scdResource;
 	}
+	
+	/**
+	 * @return the spdResource
+	 */
+	public Resource getSpdResource() {
+		return this.spdResource;
+	}
 
 	@Override
 	public Viewer getViewer() {
-		return this.fPortsSection.getViewer();
+		if (this.fPortsSection != null) {
+			return this.fPortsSection.getViewer();
+		}
+		return null;
 	}
 }
