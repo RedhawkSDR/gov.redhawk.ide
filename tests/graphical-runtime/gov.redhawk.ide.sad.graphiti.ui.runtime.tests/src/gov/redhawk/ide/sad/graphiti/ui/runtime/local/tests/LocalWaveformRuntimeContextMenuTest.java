@@ -14,6 +14,7 @@ package gov.redhawk.ide.sad.graphiti.ui.runtime.local.tests;
 import gov.redhawk.ide.swtbot.ViewUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
+import gov.redhawk.logging.ui.LogLevels;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
@@ -31,7 +32,7 @@ public class LocalWaveformRuntimeContextMenuTest extends AbstractGraphitiLocalWa
 	private static final String SIGGEN_1 = SIGGEN + "_1";
 
 	/**
-	 * IDE-661, IDE-662, IDE-663, IDE-664, IDE-665, IDE-666, IDE-667
+	 * IDE-661, IDE-662, IDE-663, IDE-664, IDE-665, IDE-666, IDE-667, IDE-1038, IDE-1065
 	 * Test that context menu options appear in Graphiti during runtime,
 	 * ensures that the proper views appear based on selection and that views are interactive
 	 */
@@ -48,8 +49,15 @@ public class LocalWaveformRuntimeContextMenuTest extends AbstractGraphitiLocalWa
 
 		// Start the component
 		DiagramTestUtils.startComponentFromDiagram(editor, SIGGEN);
-		//wait until its started
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, SIGGEN_1);
+
+		// Test Log Levels
+		DiagramTestUtils.changeLogLevelFromDiagram(editor, SIGGEN, LogLevels.TRACE);
+		DiagramTestUtils.confirmLogLevelFromDiagram(editor, SIGGEN, LogLevels.TRACE);
+
+		DiagramTestUtils.changeLogLevelFromDiagram(editor, SIGGEN, LogLevels.FATAL);
+		DiagramTestUtils.confirmLogLevelFromDiagram(editor, SIGGEN, LogLevels.FATAL);
+
 		//plot port data for SIGGEN
 		editor.setFocus();
 		DiagramTestUtils.plotPortDataOnComponentPort(editor, SIGGEN, null);

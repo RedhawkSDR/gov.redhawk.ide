@@ -44,18 +44,19 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 
 		// Start the component
 		DiagramTestUtils.startComponentFromDiagram(editor, SIGGEN);
-		//wait until its started
 		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN_1);
+
+		// Check that we can't undo certain actions
 		Assert.assertFalse("IDE-1038 No Undo Start Command context menu item", DiagramTestUtils.hasContentMenuItem(editor, SIGGEN, "Undo Start Command"));
 		Assert.assertFalse("IDE-1065 No Undo Do Command context menu item", DiagramTestUtils.hasContentMenuItem(editor, SIGGEN, "Undo Do Command"));
-		
+
 		// Test Log Levels
 		DiagramTestUtils.changeLogLevelFromDiagram(editor, SIGGEN, LogLevels.TRACE);
 		DiagramTestUtils.confirmLogLevelFromDiagram(editor, SIGGEN, LogLevels.TRACE);
-		
+
 		DiagramTestUtils.changeLogLevelFromDiagram(editor, SIGGEN, LogLevels.FATAL);
 		DiagramTestUtils.confirmLogLevelFromDiagram(editor, SIGGEN, LogLevels.FATAL);
-		
+
 		//plot port data for SIGGEN
 		editor.setFocus();
 		DiagramTestUtils.plotPortDataOnComponentPort(editor, SIGGEN, null);
