@@ -176,7 +176,6 @@
         <module>../features/gov.redhawk.ide.feature</module>
         <module>../features/gov.redhawk.ide.sdk</module>
         <module>../features/gov.redhawk.ide.ui.feature</module>
-        <module>../features/gov.redhawk.ide.tools</module>
         <module>../features/gov.redhawk.ide.swtbot.feature</module>
         <module>../features/gov.redhawk.ide.ui.sdk</module>
         <module>../plugins/gov.redhawk.codegen.validation</module>

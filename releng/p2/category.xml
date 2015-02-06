@@ -15,9 +15,6 @@
    <feature url="features/gov.redhawk.ide.ui.sdk_1.11.0.qualifier.jar" id="gov.redhawk.ide.ui.sdk" version="1.11.0.qualifier">
       <category name="gov.redhawk.ide"/>
    </feature>
-   <feature url="features/gov.redhawk.ide.tools_1.11.0.qualifier.jar" id="gov.redhawk.ide.tools" version="1.11.0.qualifier">
-      <category name="gov.redhawk.ide"/>
-   </feature>
    <feature url="features/gov.redhawk.ide.swtbot_1.11.0.qualifier.jar" id="gov.redhawk.ide.swtbot" version="1.11.0.qualifier">
       <category name="gov.redhawk.ide"/>
    </feature>
