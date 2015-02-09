@@ -194,7 +194,9 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
 			PaletteCompartmentEntry workspaceEntry = getWorkspaceCompartmentEntry();
 			workspaceEntry.setInitiallyOpen(true);
-			compartments.add(workspaceEntry);
+			if (!workspaceEntry.getToolEntries().isEmpty()) {
+				compartments.add(workspaceEntry);
+			}
 		}
 
 		// ADVANCED Compartment
@@ -361,7 +363,7 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 			if (desc instanceof ComponentDesc) {
 				ComponentDesc compDesc = (ComponentDesc) desc;
 				// Filter out devices and services, and apply name filter
-				if (compDesc.getComponentType().equals(componentType) && passesFilter(compDesc.getName())) {
+				if ((compDesc.getComponentType() != null) && compDesc.getComponentType().equals(componentType) && passesFilter(compDesc.getName())) {
 					newEntries = createPaletteEntries(compDesc);
 					if (newEntries != null && newEntries.size() > 1) {
 						sort(newEntries);
