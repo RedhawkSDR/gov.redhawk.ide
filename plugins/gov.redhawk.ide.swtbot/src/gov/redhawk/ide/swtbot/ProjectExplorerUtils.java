@@ -13,6 +13,7 @@ package gov.redhawk.ide.swtbot;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class ProjectExplorerUtils {
 
@@ -29,8 +30,8 @@ public class ProjectExplorerUtils {
 	public static void selectNode(SWTWorkbenchBot bot, String... nodes) {
 		SWTBotView view = bot.viewById(PROJECT_EXPLORER_VIEW_ID);
 		view.setFocus();
-		view.bot().tree().expandNode(nodes);
-		view.bot().tree().select(nodes[nodes.length - 1]);
+		SWTBotTreeItem node = view.bot().tree().expandNode(nodes);
+		node.select();
 	}
 
 }
