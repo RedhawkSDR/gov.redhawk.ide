@@ -26,12 +26,12 @@ public class SoftpackageUtils {
 	private SoftpackageUtils() {
 	}
 
-	public static void createSoftpackageProject(SWTBot bot, String softpackageProjectName, String variantName) {
+	public static void createSoftpackageProject(SWTBot bot, String softpackageProjectName, String projectType) {
 		SWTBotShell origShell = bot.activeShell();
 		StandardTestActions.configurePyDev();
 
-		if (variantName == null) {
-			variantName = "default";
+		if (projectType == null) {
+			projectType = "C++ Library";
 		}
 
 		bot.menu("File").menu("New").menu("Project...").click();
@@ -59,11 +59,9 @@ public class SoftpackageUtils {
 		wizardBot.button("Next >").click();
 
 		wizardBot.textWithLabel("Project name:").setText(softpackageProjectName);
-		wizardBot.button("Next >").click();
-
-		wizardBot.textWithLabel("Variant:").setText(variantName);
+		wizardBot.comboBoxWithLabel("Type:").setSelection(projectType);
 		wizardBot.button("Finish").click();
-		
+
 		origShell.activate();
 	}
 }
