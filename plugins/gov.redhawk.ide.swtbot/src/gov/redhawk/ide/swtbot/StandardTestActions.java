@@ -440,7 +440,7 @@ public final class StandardTestActions {
 
 	private static Boolean supportsRuntime = null;
 
-	public static void assertRuntimeEnvirornment() {
+	public static void assertRuntimeEnvironment() {
 		if (supportsRuntime != null) {
 			Assert.assertTrue("Envirornment does not support runtime tests.", supportsRuntime);
 		}

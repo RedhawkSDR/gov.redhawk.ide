@@ -116,10 +116,8 @@ public class PortStatsPrefPageTest extends AbstractGraphitiTest {
 		prefShell.close();
 	}
 
-	// Have to do some fancy dancing to get the preference page title
-	// Also returns the error message, if one is present
-	private String getErrorMessage(SWTBotShell prefShell) {
-		final SWTBotShell shell = prefShell;
+	// Have to do some fancy dancing to get the preference page error message
+	private String getErrorMessage(final SWTBotShell shell) {
 		Display.getDefault().syncExec(new Runnable() {
 
 			@Override

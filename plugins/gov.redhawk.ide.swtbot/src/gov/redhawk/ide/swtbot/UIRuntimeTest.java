@@ -19,6 +19,6 @@ public class UIRuntimeTest extends UITest {
 
 	@BeforeClass
 	public static void assertRuntimeEnvirornment() {
-		StandardTestActions.assertRuntimeEnvirornment();
+		StandardTestActions.assertRuntimeEnvironment();
 	}
 }
