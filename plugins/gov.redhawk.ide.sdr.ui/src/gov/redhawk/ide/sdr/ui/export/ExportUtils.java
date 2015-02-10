@@ -67,8 +67,11 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * @since 3.1
@@ -167,7 +170,7 @@ public class ExportUtils {
 			return;
 		}
 
-		if (isBuildSH(proj)) {
+		if (useBuildSH(proj)) {
 			buildSH(monitor, proj);
 			return;
 		}
@@ -506,13 +509,47 @@ public class ExportUtils {
 		return false;
 	}
 
-	private static boolean isBuildSH(IProject project) {
+	private static boolean useBuildSH(IProject project) {
 		if (project.getFile(new Path("build.sh")).exists()) {
 			IScopeContext projectScope = new ProjectScope(project);
 			IEclipsePreferences node = projectScope.getNode(SdrUiPlugin.PLUGIN_ID);
 			return node.getBoolean("useBuild.sh", false);
 		}
 		return false;
+	}
+
+	/**
+	 * Make sure top level build.sh exists.
+	 * Then check generated files list to make sure "../build.sh" (which is top level build.sh since it is relative to implementation dir)
+	 * and additionalRequiredFile (when not null) (e.g. for C++, the implementation level build.sh) exists in list.
+	 * @since 3.4
+	 */
+	public static void setUseBuildSH(@NonNull IProject project, @NonNull String[] generateFiles, @Nullable String additionalRequiredFile) {
+		if (project.getFile(new Path("build.sh")).exists()) {
+			boolean foundTopLevelBuildSh = false;
+			boolean foundAdditionalFile = (additionalRequiredFile == null); // allow null additionalRequiredFile
+			for (String file : generateFiles) {
+				if ("../build.sh".equals(file)) {
+					foundTopLevelBuildSh = true;
+				} else if (foundAdditionalFile || additionalRequiredFile.equals(file)) {
+					foundAdditionalFile = true;
+				}
+				if (foundTopLevelBuildSh && foundAdditionalFile) {
+					break; // found all necessary generated files, so break out of loop
+				}
+			}
+
+			if (foundTopLevelBuildSh && foundAdditionalFile) {
+				IScopeContext projectScope = new ProjectScope(project);
+				IEclipsePreferences node = projectScope.getNode(SdrUiPlugin.PLUGIN_ID);
+				node.putBoolean("useBuild.sh", true);
+				try {
+					node.flush();
+				} catch (BackingStoreException e) {
+					SdrUiPlugin.getDefault().logError("Unable to enable useBuild.sh project preference for " + project, e);
+				}
+			}
+		}
 	}
 
 	private static void buildSH(final IProgressMonitor progress, IProject project) throws CoreException, IOException, DebugException {
@@ -562,7 +599,7 @@ public class ExportUtils {
 	/**
 	 * Checks the implementations within the soft pkg provided to see if any implementations have not been generated.
 	 * If an implementation has not been generated, or no implementations exist at all, the user is asked whether or not
-	 * to continue. True is returned if the user wishes to continue or all impelmenations were found, false is returned
+	 * to continue. True is returned if the user wishes to continue or all implementations were found, false is returned
 	 * if the user has chosen to cancel the export.
 	 * 
 	 * @param softPkg The Soft Pkg for this project
