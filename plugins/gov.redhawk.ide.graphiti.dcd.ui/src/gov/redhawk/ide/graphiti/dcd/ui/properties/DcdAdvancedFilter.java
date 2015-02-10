@@ -8,25 +8,21 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.ui.properties;
+package gov.redhawk.ide.graphiti.dcd.ui.properties;
 
-import gov.redhawk.ide.graphiti.ui.properties.CompoundFilter;
-import gov.redhawk.ide.graphiti.ui.properties.ProvidesPortFilter;
-import gov.redhawk.ide.graphiti.ui.properties.UsesPortFilter;
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import gov.redhawk.ide.graphiti.ui.properties.AdvancedFilter;
 
 /**
  * 
  */
-public class AdvancedFilter extends CompoundFilter {
+public class DcdAdvancedFilter extends AdvancedFilter {
 
 	/**
 	 * 
 	 */
-	public AdvancedFilter() {
-		super();
-		addFilter(new ComponentFilter());
-		addFilter(new ProvidesPortFilter());
-		addFilter(new UsesPortFilter());
+	public DcdAdvancedFilter() {
+		super(DcdComponentInstantiation.class);
 	}
 
 }

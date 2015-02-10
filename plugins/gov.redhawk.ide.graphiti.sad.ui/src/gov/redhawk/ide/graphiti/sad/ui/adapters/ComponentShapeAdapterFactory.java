@@ -12,6 +12,7 @@
 package gov.redhawk.ide.graphiti.sad.ui.adapters;
 
 import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
+import gov.redhawk.ide.graphiti.ui.adapters.GraphitiAdapterUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaModelPlugin;
@@ -25,16 +26,18 @@ import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.graphiti.ui.internal.parts.ContainerShapeEditPart;
+import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
-@SuppressWarnings({ "restriction" })
 public class ComponentShapeAdapterFactory implements IAdapterFactory {
 	private static final Class< ? >[] LIST = new Class< ? >[] { ScaComponent.class };
 
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		Object object = ((ContainerShapeEditPart) adaptableObject).getModel();
+		Object object = adaptableObject;
+		if (object instanceof AbstractGraphicalEditPart) {
+			object = ((AbstractGraphicalEditPart) object).getModel();
+		}
 		SadComponentInstantiation ci = null;
 		if (object instanceof ComponentShapeImpl) {
 			ci = (SadComponentInstantiation) DUtil.getBusinessObject((ComponentShapeImpl) object);

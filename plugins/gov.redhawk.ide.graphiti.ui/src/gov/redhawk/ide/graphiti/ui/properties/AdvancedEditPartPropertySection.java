@@ -8,12 +8,9 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.ui.properties;
+package gov.redhawk.ide.graphiti.ui.properties;
 
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ui.adapters.ComponentShapeAdapterFactory;
-import gov.redhawk.ide.graphiti.sad.ui.adapters.PortEditPartAdapterFactory;
-import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.ide.graphiti.ui.adapters.PortEditPartAdapterFactory;
 import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -31,12 +28,6 @@ import org.eclipse.ui.views.properties.tabbed.AdvancedPropertySection;
  * 
  */
 public class AdvancedEditPartPropertySection extends AdvancedPropertySection {
-
-	/**
-	 * 
-	 */
-	public AdvancedEditPartPropertySection() {
-	}
 
 	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
@@ -64,11 +55,6 @@ public class AdvancedEditPartPropertySection extends AdvancedPropertySection {
 				newClass = ScaProvidesPort.class;
 			} else if (obj instanceof UsesPortStub) {
 				newClass = ScaUsesPort.class;
-			}
-		} else {
-			if (obj instanceof ComponentShape) {
-				af = new ComponentShapeAdapterFactory();
-				newClass = ScaComponent.class;
 			}
 		}
 		if (newClass != null) {

@@ -138,9 +138,13 @@
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
       <propertyContributor
-            contributorId="DCDDiagram.PropertyContributor">
+            contributorId="DCDDiagram.PropertyContributor"
+            labelProvider="gov.redhawk.ide.graphiti.ui.diagram.providers.RHGraphitiDiagramLabelProvider">
          <propertyCategory
                category="Graphiti">
+         </propertyCategory>
+         <propertyCategory
+               category="advanced">
          </propertyCategory>
       </propertyContributor>
    </extension>
@@ -150,13 +154,18 @@
             contributorId="DCDDiagram.PropertyContributor">
          <propertyTab
                category="Graphiti"
-               id="property.tab.advanced"
-               label="Core">
+               id="property.tab.DeviceProperties"
+               label="Device Properties">
          </propertyTab>
          <propertyTab
                category="Graphiti"
-               id="property.tab.ComponentProperties"
-               label="Component Properties">
+               id="property.tab.ServiceProperties"
+               label="Service Properties">
+         </propertyTab>
+         <propertyTab
+               category="advanced"
+               id="property.tab.ScaAdvanced"
+               label="Advanced">
          </propertyTab>
       </propertyTabs>
    </extension>
@@ -165,16 +174,22 @@
       <propertySections
             contributorId="DCDDiagram.PropertyContributor">
          <propertySection
-               class="gov.redhawk.ide.graphiti.dcd.ui.properties.ComponentPropertiesSection"
-               filter="gov.redhawk.ide.graphiti.dcd.ui.properties.ComponentFilter"
-               id="property.section.ComponentProperties"
-               tab="property.tab.ComponentProperties">
+               class="gov.redhawk.ide.graphiti.ui.properties.ComponentPropertiesSection"
+               filter="gov.redhawk.ide.graphiti.dcd.ui.properties.DeviceFilter"
+               id="property.section.DeviceProperties"
+               tab="property.tab.DeviceProperties">
          </propertySection>
          <propertySection
-               class="org.eclipse.ui.views.properties.tabbed.AdvancedPropertySection"
-               filter="gov.redhawk.ide.graphiti.dcd.ui.properties.ComponentFilter"
-               id="graphiti.main.tab.emfreference.table"
-               tab="property.tab.advanced">
+               class="gov.redhawk.ide.graphiti.ui.properties.ComponentPropertiesSection"
+               filter="gov.redhawk.ide.graphiti.dcd.ui.properties.ServiceFilter"
+               id="property.section.ServiceProperties"
+               tab="property.tab.ServiceProperties">
+         </propertySection>
+         <propertySection
+               class="gov.redhawk.ide.graphiti.dcd.ui.properties.DcdAdvancedEditPartPropertySection"
+               filter="gov.redhawk.ide.graphiti.dcd.ui.properties.DcdAdvancedFilter"
+               id="property.section.ScaAdvanced"
+               tab="property.tab.ScaAdvanced">
          </propertySection>
       </propertySections>
    </extension>

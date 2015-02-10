@@ -8,17 +8,21 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.ui.properties;
+package gov.redhawk.ide.graphiti.sad.ui.properties;
 
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.ide.graphiti.ui.properties.AdvancedFilter;
 
 /**
  * 
  */
-public class ProvidesPortFilter extends BusinessObjectFilter {
+public class ComponentAdvancedFilter extends AdvancedFilter {
 
-	public ProvidesPortFilter() {
-		super(ProvidesPortStub.class);
+	/**
+	 * @param shapeClass
+	 */
+	public ComponentAdvancedFilter() {
+		super(ComponentShape.class);
 	}
 
 }

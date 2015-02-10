@@ -110,11 +110,6 @@
       <propertyTabs
             contributorId="SADDiagram.PropertyContributor">
 
-        <propertyTab
-                category="Graphiti"
-                id="property.tab.advanced"
-                label="Core">
-        </propertyTab>
            
          <propertyTab
              category="Graphiti"
@@ -145,19 +140,13 @@
       
          
          <propertySection
-         	   class="gov.redhawk.ide.graphiti.sad.ui.properties.ComponentPropertiesSection"
+         	   class="gov.redhawk.ide.graphiti.ui.properties.ComponentPropertiesSection"
                filter="gov.redhawk.ide.graphiti.sad.ui.properties.ComponentFilter"
                id="property.section.ComponentProperties"
                tab="property.tab.ComponentProperties">
          </propertySection>
 
 
-         <propertySection
-         	class="org.eclipse.ui.views.properties.tabbed.AdvancedPropertySection"
-         	filter="gov.redhawk.ide.graphiti.sad.ui.properties.AdvancedFilter"
-         	id="graphiti.main.tab.emfreference.tableddd"
-         	tab="property.tab.advanced">
-         </propertySection>
          <propertySection
                class="gov.redhawk.ide.graphiti.sad.ui.properties.PortInterfacePropertiesSection"
                filter="gov.redhawk.ide.graphiti.ui.properties.ProvidesPortFilter"
@@ -171,8 +160,8 @@
                tab="property.tab.UsesPort">
          </propertySection>
          <propertySection
-               class="gov.redhawk.ide.graphiti.sad.ui.properties.AdvancedEditPartPropertySection"
-               filter="gov.redhawk.ide.graphiti.sad.ui.properties.AdvancedFilter"
+               class="gov.redhawk.ide.graphiti.sad.ui.properties.SadAdvancedEditPartPropertySection"
+               filter="gov.redhawk.ide.graphiti.sad.ui.properties.SadAdvancedFilter"
                id="property.section.ScaAdvanced"
                tab="property.tab.ScaAdvanced">
          </propertySection>
@@ -190,7 +179,7 @@
        point="org.eclipse.core.runtime.adapters">
                 <factory
                         adaptableType="org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart"
-                        class="gov.redhawk.ide.graphiti.sad.ui.properties.GraphitiEditPartToIPropertySourceAdapterFactory">
+                        class="gov.redhawk.ide.graphiti.ui.adapters.GraphitiEditPartToIPropertySourceAdapterFactory">
                         <adapter
                                 type="org.eclipse.ui.views.properties.IPropertySource">
                         </adapter>
@@ -216,7 +205,7 @@
                 </factory>
                 <factory
                       adaptableType="org.eclipse.graphiti.ui.internal.parts.IAnchorEditPart"
-                      class="gov.redhawk.ide.graphiti.sad.ui.adapters.PortEditPartAdapterFactory">
+                      class="gov.redhawk.ide.graphiti.ui.adapters.PortEditPartAdapterFactory">
                    <adapter
                          type="gov.redhawk.model.sca.ScaProvidesPort">
                    </adapter>

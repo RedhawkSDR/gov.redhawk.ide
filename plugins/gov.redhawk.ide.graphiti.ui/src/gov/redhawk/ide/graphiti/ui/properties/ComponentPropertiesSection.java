@@ -8,20 +8,21 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.ui.properties;
+package gov.redhawk.ide.graphiti.ui.properties;
 
+import gov.redhawk.diagram.sheet.properties.ComponentInstantiationPropertyViewerAdapter;
 import gov.redhawk.model.sca.IDisposable;
-import gov.redhawk.model.sca.ScaPropertyContainer;
 import gov.redhawk.sca.ui.ScaComponentFactory;
 import gov.redhawk.sca.ui.properties.ScaPropertiesAdapterFactory;
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.graphiti.ui.platform.GFPropertySection;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -29,58 +30,78 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
-public class ComponentPropertiesSection extends GFPropertySection implements ITabbedPropertyConstants, IEditingDomainProvider {
+public class ComponentPropertiesSection extends RHDiagramElementPropertySection implements ITabbedPropertyConstants, IEditingDomainProvider {
+
 	private AdapterFactory adapterFactory;
 	private final ComponentInstantiationPropertyViewerAdapter adapter = new ComponentInstantiationPropertyViewerAdapter(this);
 
 	public ComponentPropertiesSection() {
+		
 	}
-
+	
+	/**
+	 * @since 6.0
+	 */
 	protected AdapterFactory createAdapterFactory() {
 		return new ScaPropertiesAdapterFactory();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final void createControls(final Composite parent, final TabbedPropertySheetPage tabbedPropertySheetPage) {
 		super.createControls(parent, tabbedPropertySheetPage);
 		this.adapterFactory = createAdapterFactory();
-
+		
 		final TreeViewer viewer = createTreeViewer(parent);
 		this.adapter.setViewer(viewer);
 	}
-
+	
+	/**
+	 * @since 6.0
+	 */
 	public TreeViewer getViewer() {
 		return adapter.getViewer();
 	}
-
+	
+	/**
+	 * @since 6.0
+	 */
 	public AdapterFactory getAdapterFactory() {
 		return adapterFactory;
 	}
 
+	/**
+	 * @since 6.0
+	 */
 	protected TreeViewer createTreeViewer(final Composite parent) {
 		return ScaComponentFactory.createPropertyTable(getWidgetFactory(), parent, SWT.SINGLE, this.adapterFactory);
 	}
 
+	@Override
 	public TransactionalEditingDomain getEditingDomain() {
-		return super.getDiagramContainer().getDiagramBehavior().getEditingDomain();
+		return super.getEditingDomain();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final void setInput(final IWorkbenchPart part, final ISelection selection) {
 		super.setInput(part, selection);
-		Object newInput = null;
-		if (selection instanceof IStructuredSelection) {
-			final IStructuredSelection ss = (IStructuredSelection) selection;
-			final Object obj = ss.getFirstElement();
-			final Object theAdapter = Platform.getAdapterManager().getAdapter(obj, ScaPropertyContainer.class);
-			if (theAdapter instanceof ScaPropertyContainer< ? , ? >) {
-				final ScaPropertyContainer< ? , ? > comps = (ScaPropertyContainer< ? , ? >) theAdapter;
-				newInput = comps;
-			}
+		final EObject eObj = getEObject();
+		if (eObj instanceof ComponentInstantiation) {
+			final ComponentInstantiation newInput = (ComponentInstantiation) eObj;
+			this.adapter.setInput(newInput);
+		} else {
+			this.adapter.setInput(null);
 		}
-		getViewer().setInput(newInput);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final void dispose() {
 		if (this.adapterFactory != null) {
@@ -90,13 +111,26 @@ public class ComponentPropertiesSection extends GFPropertySection implements ITa
 			this.adapterFactory = null;
 
 		}
+		this.input = null;
 		super.dispose();
 	}
 
-	// TODO: delete this two methods
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final boolean shouldUseExtraSpace() {
 		return true;
 	}
 
+	@Override
+	protected EObject unwrap(Object object) {
+		if (object instanceof GraphitiShapeEditPart) {
+			object = ((GraphitiShapeEditPart) object).getModel();
+		}
+		if (object instanceof PictogramElement) {
+			return ((PictogramElement) object).getLink().getBusinessObjects().get(0);
+		}
+		return super.unwrap(object);
+	}
 }

@@ -8,12 +8,12 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.ui.properties;
+package gov.redhawk.ide.graphiti.ui.adapters;
 
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.provider.SadItemProviderAdapterFactory;
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
+import mil.jpeojtrs.sca.profile.provider.ProfileItemProviderAdapterFactory;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
@@ -36,10 +36,10 @@ public class GraphitiEditPartToIPropertySourceAdapterFactory implements IAdapter
 				ContainerShape containerShape = (ContainerShape) DUtil.findContainerShapeParentWithProperty(pictogramElement,
 					RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
 				Object obj = DUtil.getBusinessObject(containerShape);
-				if (containerShape != null && obj != null && obj instanceof SadComponentInstantiation) {
+				if (containerShape != null && obj != null && obj instanceof ComponentInstantiation) {
 
 					// get sca property source
-					final SadItemProviderAdapterFactory factory = new SadItemProviderAdapterFactory();
+					final ProfileItemProviderAdapterFactory factory = new ProfileItemProviderAdapterFactory();
 					IItemPropertySource obj2 = (IItemPropertySource) factory.adapt(obj, IItemPropertySource.class);
 					return new gov.redhawk.sca.ui.RedhawkUiAdapterFactory.ScaPropertySource(obj, obj2);
 				}

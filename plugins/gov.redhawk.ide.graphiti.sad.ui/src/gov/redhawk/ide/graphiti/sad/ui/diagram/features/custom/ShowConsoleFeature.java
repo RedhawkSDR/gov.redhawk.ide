@@ -13,7 +13,7 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom;
 
 import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
-import gov.redhawk.ide.graphiti.sad.ui.adapters.GraphitiAdapterUtil;
+import gov.redhawk.ide.graphiti.ui.adapters.GraphitiAdapterUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaModelPlugin;

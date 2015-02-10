@@ -9,7 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html.
  *
  */
-package gov.redhawk.ide.graphiti.sad.ui.adapters;
+package gov.redhawk.ide.graphiti.ui.adapters;
 
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaComponent;
@@ -21,9 +21,9 @@ import gov.redhawk.model.sca.ScaWaveform;
 
 import java.util.Map;
 
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.util.QueryParser;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
@@ -52,7 +52,7 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 			if (portObject instanceof UsesPortStub) {
 				UsesPortStub uses = (UsesPortStub) portObject;
 
-				if (uses.eResource() == null || !(uses.eContainer() instanceof SadComponentInstantiation)) {
+				if (uses.eResource() == null || !(uses.eContainer() instanceof ComponentInstantiation)) {
 					return null;
 				}
 
@@ -61,7 +61,7 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 					final Map<String, String> query = QueryParser.parseQuery(uri.query());
 					final String wfRef = query.get(ScaFileSystemConstants.QUERY_PARAM_WF);
 					final ScaWaveform waveform = ScaModelPlugin.getDefault().findEObject(ScaWaveform.class, wfRef);
-					final String myId = ((SadComponentInstantiation) uses.eContainer()).getId();
+					final String myId = ((ComponentInstantiation) uses.eContainer()).getId();
 					for (final ScaComponent component : GraphitiAdapterUtil.safeFetchComponents(waveform)) {
 						final String scaComponentId = component.identifier();
 						if (scaComponentId.startsWith(myId)) {
@@ -81,7 +81,7 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 
 			if (portObject instanceof ProvidesPortStub) {
 				ProvidesPortStub provides = (ProvidesPortStub) portObject;
-				if (provides == null || provides.eResource() == null || !(provides.eContainer() instanceof SadComponentInstantiation)) {
+				if (provides == null || provides.eResource() == null || !(provides.eContainer() instanceof ComponentInstantiation)) {
 					return null;
 				}
 				if (ScaPort.class.isAssignableFrom(adapterType)) {
@@ -89,7 +89,7 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 					final Map<String, String> query = QueryParser.parseQuery(uri.query());
 					final String wfRef = query.get(ScaFileSystemConstants.QUERY_PARAM_WF);
 					final ScaWaveform waveform = ScaModelPlugin.getDefault().findEObject(ScaWaveform.class, wfRef);
-					final String myId = ((SadComponentInstantiation) provides.eContainer()).getId();
+					final String myId = ((ComponentInstantiation) provides.eContainer()).getId();
 					final String providesName = provides.getName();
 					for (final ScaComponent component : GraphitiAdapterUtil.safeFetchComponents(waveform)) {
 						final String scaComponentId = component.identifier();

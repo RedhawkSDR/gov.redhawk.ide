@@ -34,12 +34,15 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.gmf.runtime.diagram.ui,
  org.eclipse.emf.common.ui,
  gov.redhawk.ui,
- gov.redhawk.diagram
+ gov.redhawk.diagram,
+ idl.bulkio;bundle-version="1.11.0",
+ gov.redhawk.sca.ui;bundle-version="10.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: gov.redhawk.ide.graphiti.ext,
  gov.redhawk.ide.graphiti.ext.impl,
  gov.redhawk.ide.graphiti.ext.util,
  gov.redhawk.ide.graphiti.ui,
+ gov.redhawk.ide.graphiti.ui.adapters,
  gov.redhawk.ide.graphiti.ui.diagram,
  gov.redhawk.ide.graphiti.ui.diagram.dialogs,
  gov.redhawk.ide.graphiti.ui.diagram.features.custom,
@@ -53,4 +56,9 @@ Export-Package: gov.redhawk.ide.graphiti.ext,
  gov.redhawk.ide.graphiti.ui.palette,
  gov.redhawk.ide.graphiti.ui.properties
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.wst.sse.ui
+Import-Package: gov.redhawk.model.sca,
+ gov.redhawk.model.sca.commands,
+ gov.redhawk.sca.ui,
+ gov.redhawk.sca.ui.properties,
+ mil.jpeojtrs.sca.profile.provider,
+ org.eclipse.wst.sse.ui
