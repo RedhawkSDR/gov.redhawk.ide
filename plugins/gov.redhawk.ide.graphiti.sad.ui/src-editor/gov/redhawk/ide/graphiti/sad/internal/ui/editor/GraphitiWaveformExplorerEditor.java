@@ -10,11 +10,17 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.internal.ui.editor;
 
+import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 public class GraphitiWaveformExplorerEditor extends GraphitiWaveformSandboxEditor {
 
@@ -29,9 +35,26 @@ public class GraphitiWaveformExplorerEditor extends GraphitiWaveformSandboxEdito
 	@Override
 	protected void addPages() {
 		super.addPages();
+		try {
+			IEditorPart textEditor = createTextEditor();
+			setTextEditor(textEditor);
+			if (textEditor != null) {
+				final int sadSourcePageNum = addPage(-1, textEditor, getEditorInput(), getMainResource());
+				for (String s : getWaveform().getProfile().split("/")) {
+					if (s.contains(".xml")) {
+						this.setPageText(sadSourcePageNum, s);
+						break;
+					}
+					this.setPageText(sadSourcePageNum, getWaveform().getName());
+				}
+			}
+		} catch (PartInitException e) {
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Failed to create editor parts.", e),
+				StatusManager.LOG | StatusManager.SHOW);
+		}
 
 		final Diagram diagram = this.getDiagramEditor().getDiagramBehavior().getDiagramTypeProvider().getDiagram();
-		setPartName("Waveform Explorer");
+		setPartName(getWaveform().getName());
 		NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
 			@Override
 			public void execute() {

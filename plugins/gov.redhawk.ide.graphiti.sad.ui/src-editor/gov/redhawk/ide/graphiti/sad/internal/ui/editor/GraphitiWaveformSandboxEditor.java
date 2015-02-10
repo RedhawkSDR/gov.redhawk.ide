@@ -415,6 +415,9 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 				setPageText(pageIndex, "Diagram");
 				setPartName("Waveform Chalkboard");
 
+				// set layout for diagram editors
+				DUtil.layout(editor);
+
 				getEditingDomain().getCommandStack().removeCommandStackListener(getCommandStackListener());
 
 				// register graphitiDiagramListener
@@ -490,5 +493,12 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 		} else {
 			return "Chalkboard dynamic waveform";
 		}
+	}
+
+	/**
+	 * @return the waveform instance
+	 */
+	public LocalScaWaveform getWaveform() {
+		return waveform;
 	}
 }

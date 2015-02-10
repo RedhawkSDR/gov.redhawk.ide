@@ -351,4 +351,8 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 		this.dcd = dcd;
 	}
 
+	public ScaDeviceManager getDeviceManager() {
+		return deviceManager;
+	}
+
 }
