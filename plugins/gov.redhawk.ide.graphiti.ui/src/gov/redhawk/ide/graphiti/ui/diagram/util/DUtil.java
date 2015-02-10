@@ -114,7 +114,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String DIAGRAM_CONTEXT_DOMAIN = "domain";
 	public static final String DIAGRAM_CONTEXT_LOCAL = "local";
 	public static final String DIAGRAM_CONTEXT_TARGET_SDR = "target-sdr";
-	public static final String DIAGRAM_CONTEXT_EXPLORER = "waveform explorer";
+	public static final String DIAGRAM_CONTEXT_EXPLORER = "explorer";
 	
 	//Shape options boolean string
 	public static final String DIAGRAM_CREATE_RHCONTAINER_SUPER_PORTS = "createRHContainerSuperPorts";

@@ -11,19 +11,36 @@
 package gov.redhawk.ide.graphiti.sad.internal.ui.editor;
 
 import gov.redhawk.ide.sad.internal.ui.editor.SadActionBarContributor;
+import gov.redhawk.sca.ui.actions.ReleaseAction;
+import gov.redhawk.sca.ui.actions.StartAction;
+import gov.redhawk.sca.ui.actions.StopAction;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaMultipageActionBarContributor;
 
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.editor.DiagramEditorActionBarContributor;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.editors.text.TextEditor;
 
 /**
  * 
  */
 public class GraphitiWaveformMultipageEditorActionBarContributor extends ScaMultipageActionBarContributor {
+
+	private final StartAction startAction = new StartAction();
+	private final StopAction stopAction = new StopAction();
+	private final ReleaseAction releaseAction = new ReleaseAction();
+
+	public GraphitiWaveformMultipageEditorActionBarContributor() {
+		this.startAction.setToolTipText("Start Waveform");
+		this.stopAction.setToolTipText("Stop Waveform");
+		this.releaseAction.setToolTipText("Release Waveform");
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -32,8 +49,7 @@ public class GraphitiWaveformMultipageEditorActionBarContributor extends ScaMult
 	protected IEditorActionBarContributor getSubActionBarContributor(final IEditorPart activeEditor) {
 		if (activeEditor instanceof DiagramEditor) {
 			return new DiagramEditorActionBarContributor();
-		}
-		if (activeEditor instanceof SCAFormEditor) {
+		} else if (activeEditor instanceof SCAFormEditor) {
 			return new SadActionBarContributor();
 		}
 		return super.getSubActionBarContributor(activeEditor);
@@ -62,4 +78,33 @@ public class GraphitiWaveformMultipageEditorActionBarContributor extends ScaMult
 		return "";
 	}
 
+	@Override
+	public void setActiveEditor(final IEditorPart part) {
+		super.setActiveEditor(part);
+		this.startAction.setContext(part);
+		this.stopAction.setContext(part);
+		this.releaseAction.setContext(part);
+	}
+
+	@Override
+	public void contributeToToolBar(final IToolBarManager toolBarManager) {
+		super.contributeToToolBar(toolBarManager);
+
+		toolBarManager.add(this.startAction);
+		toolBarManager.add(this.stopAction);
+		toolBarManager.add(this.releaseAction);
+	}
+
+	@Override
+	public void contributeToMenu(final IMenuManager menuManager) {
+		super.contributeToMenu(menuManager);
+
+		final IMenuManager waveformMenu = new MenuManager("W&aveform", "waveform");
+
+		waveformMenu.add(this.startAction);
+		waveformMenu.add(this.stopAction);
+		waveformMenu.add(this.releaseAction);
+
+		menuManager.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, waveformMenu);
+	}
 }

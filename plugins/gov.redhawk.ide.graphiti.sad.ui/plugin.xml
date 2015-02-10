@@ -255,6 +255,7 @@
       </editor>
       <editor
             class="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformExplorerEditor"
+            contributorClass="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
             default="true"
             icon="icons/redhawk16.gif"
             id="gov.redhawk.ide.sad.graphiti.ui.editor.waveformExplorer"
