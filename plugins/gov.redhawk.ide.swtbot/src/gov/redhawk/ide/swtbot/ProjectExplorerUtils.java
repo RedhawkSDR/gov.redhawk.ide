@@ -18,20 +18,27 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 public class ProjectExplorerUtils {
 
 	public static final String PROJECT_EXPLORER_VIEW_ID = "org.eclipse.ui.navigator.ProjectExplorer";
-	
+
 	private ProjectExplorerUtils() {
 	}
-	
+
 	/**
-	 *  Expands nodes in the project explorer to the given point, and selects the lowest level tree item
-	 * @param bot
-	 * @param nodes
+	 * Expands nodes in the project explorer to the given point, and selects the lowest level tree item
+	 * @return 
 	 */
-	public static void selectNode(SWTWorkbenchBot bot, String... nodes) {
+	public static SWTBotTreeItem selectNode(SWTWorkbenchBot bot, String... nodes) {
 		SWTBotView view = bot.viewById(PROJECT_EXPLORER_VIEW_ID);
 		view.setFocus();
 		SWTBotTreeItem node = view.bot().tree().expandNode(nodes);
 		node.select();
+		return node;
 	}
 
+	/**
+	 * Double-clicks a project file to open it in it's default editor view
+	 */
+	public static void openProjectInEditor(SWTWorkbenchBot bot, String... nodes) {
+		SWTBotTreeItem projectItem = selectNode(bot, nodes);
+		projectItem.doubleClick();
+	}
 }

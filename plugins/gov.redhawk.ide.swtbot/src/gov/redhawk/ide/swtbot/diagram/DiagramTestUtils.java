@@ -40,6 +40,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
@@ -72,6 +73,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 
 	public static final String OVERVIEW_TAB = "Overview";
 	public static final String PROPERTIES_TAB = "Properties";
+	public static final String IMPLEMENTATIONS = "Implementations";
 	public static final String DIAGRAM_TAB = "Diagram";
 	public static final String XML_TAB = ".sad.xml";
 
@@ -617,7 +619,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @param editor - the editor within which to open the tab
 	 * @param tabName - name of the tab to be opened
 	 */
-	public static void openTabInEditor(SWTBotGefEditor editor, String tabName) {
+	public static void openTabInEditor(SWTBotEditor editor, String tabName) {
 		editor.bot().cTabItem(tabName).activate();
 	}
 
