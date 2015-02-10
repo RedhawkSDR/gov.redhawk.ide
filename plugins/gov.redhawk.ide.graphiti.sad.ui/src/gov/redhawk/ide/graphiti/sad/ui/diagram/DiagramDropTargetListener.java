@@ -101,10 +101,10 @@ public class DiagramDropTargetListener extends AbstractTransferDropTargetListene
 		if (((IStructuredSelection) selection).getFirstElement() instanceof SoftPkg) {
 			SoftPkg spd = (SoftPkg) ((IStructuredSelection) selection).getFirstElement();
 			// Only allow components to be dropped
-			if (!spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.RESOURCE.getLiteral())) {
-				return false;
-			}
+			if (spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.RESOURCE.getLiteral())) {
+				return true;
+			} 
 		}
-		return super.isEnabled(event);
+		return false;
 	}
 }
