@@ -24,9 +24,9 @@
             languageVersion="0"
             name="Stub C++ Code Generator"
             notDefaultable="false"
-            priority="high">
+            priority="low">
          <description>
-            Stub Service code generator.  SHOULD NEVER BE USED!
+            Stub C++ code generator for testing.  SHOULD NEVER BE USED!
          </description>
          <operatingSystem
                default="true"
@@ -69,7 +69,7 @@
             selectable="true"
             usesPortTemplates="false">
          <description>
-            Stub code generator.  SHOULD NEVER BE USED!
+            Stub C++ Pull Port Data code generator for testing.  SHOULD NEVER BE USED!
          </description>
          <componenttype
                type="resource">
@@ -97,7 +97,7 @@
                type="service">
          </componenttype>
          <description>
-            Stub Service code generator.  SHOULD NEVER BE USED!
+            Stub C++ Service code generator for testing.  SHOULD NEVER BE USED!
          </description>
       </template>
    </extension>
@@ -114,11 +114,11 @@
             languageVersion="1.5"
             name="Stub Java Code Generator"
             notDefaultable="false"
-            priority="high"
+            priority="low"
             runtime="/usr/bin/java"
             runtimeVersion="1.5">
          <description>
-            Stub Service code generator.  SHOULD NEVER BE USED!
+            Stub Java code generator for testing.  SHOULD NEVER BE USED!
          </description>
          <operatingSystem
                default="true"
@@ -153,7 +153,7 @@
             selectable="true"
             usesPortTemplates="false">
          <description>
-            Stub Service code generator.  SHOULD NEVER BE USED!
+            Stub Java Pull Port Data code generator for testing.  SHOULD NEVER BE USED!
          </description>
          <componenttype
                type="resource">
@@ -190,7 +190,7 @@
                type="service">
          </componenttype>
          <description>
-            Stub Service code generator.  SHOULD NEVER BE USED!
+            Stub Java Service code generator for testing.  SHOULD NEVER BE USED!
          </description>
          <property
                default_value=""
@@ -214,11 +214,11 @@
             languageVersion="2.4"
             name="Stub Python Code Generator"
             notDefaultable="false"
-            priority="high"
+            priority="low"
             runtime="python"
             runtimeVersion="2.4.4">
          <description>
-            Stub Service code generator.  SHOULD NEVER BE USED!
+            Stub Python code generator for testing.  SHOULD NEVER BE USED!
          </description>
          <operatingSystem
                default="true"
@@ -253,7 +253,7 @@
             selectable="true"
             usesPortTemplates="false">
          <description>
-            Stub Service code generator.  SHOULD NEVER BE USED!
+            Stub Python Pull Port Data code generator for testing.  SHOULD NEVER BE USED!
          </description>
          <componenttype
                type="resource">
@@ -281,7 +281,7 @@
                type="service">
          </componenttype>
          <description>
-            Stub Service code generator.  SHOULD NEVER BE USED!
+            Stub Python Service code generator for testing.  SHOULD NEVER BE USED!
          </description>
       </template>
    </extension>
