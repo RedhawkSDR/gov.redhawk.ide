@@ -1391,7 +1391,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		if (anchorObjects1.size() > 1 && anchorObjects2.size() > 1) {
 			for (EObject sourceObj: anchorObjects1) {
 				for (EObject targetObj: anchorObjects2) {
-					if (InterfacesUtil.areCompatible(sourceObj, targetObj)) {
+					if (InterfacesUtil.areSuggestedMatch(sourceObj, targetObj)) {
 						source = (UsesPortStub) sourceObj;
 						target = (ConnectionTarget) targetObj;
 						break;
@@ -1401,7 +1401,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		} else if (anchorObjects1.size() > 1) {
 			//we know the target, look for a source with matching type
 			for (EObject sourceObj: anchorObjects1) {
-				if (InterfacesUtil.areCompatible(sourceObj, target)) {
+				if (InterfacesUtil.areSuggestedMatch(sourceObj, target)) {
 					source = (UsesPortStub) sourceObj;
 					break;
 				}
@@ -1409,7 +1409,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		} else if (anchorObjects2.size() > 1) {
 			//we know the source, look for a target with matching type
 			for (EObject targetObj: anchorObjects2) {
-				if (InterfacesUtil.areCompatible(source, targetObj)) {
+				if (InterfacesUtil.areSuggestedMatch(source, targetObj)) {
 					target = (ConnectionTarget) targetObj;
 					break;
 				}
