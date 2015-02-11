@@ -37,6 +37,7 @@ import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
@@ -534,10 +535,43 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 				}
 
 				// Other wise, check for a matching port name
-				ProvidesPortStub portStub = (ProvidesPortStub) DUtil.getBusinessObject((ContainerShape) portEditPart.part().getModel());
-				if (portName != null && portName.equals(portStub.getName())) {
-					return portEditPart;
+				if (portEditPart.part().getModel() instanceof ContainerShape) {
+					Object businessObject = DUtil.getBusinessObject((ContainerShape) portEditPart.part().getModel());
+					if (businessObject instanceof ProvidesPortStub) {
+						ProvidesPortStub portStub = (ProvidesPortStub) businessObject;
+						if (portName != null && portName.equals(portStub.getName())) {
+							return portEditPart;
+						}
+					}
 				}
+			}
+		}
+		// If you get here, no matching provides port was found
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param editor - SWTBotGefEditor
+	 * @param componentName - Component being searched
+	 * @return Returns SWTBotGefEditPart for the specified provides super port, or null if none found
+	 */
+	public static SWTBotGefEditPart getDiagramProvidesSuperPort(SWTBotGefEditor editor, String componentName) {
+		SWTBotGefEditPart componentEditPart = editor.getEditPart(componentName);
+
+		for (SWTBotGefEditPart child : componentEditPart.children()) {
+			ContainerShape containerShape = (ContainerShape) child.part().getModel();
+			Object bo = DUtil.getBusinessObject(containerShape);
+
+			// Only return objects of type ProvidesPortStub
+			if (bo == null || !(bo instanceof ProvidesPortStub)) {
+				continue;
+			}
+
+			List<SWTBotGefEditPart> providesPortsEditParts = child.children();
+			if (providesPortsEditParts != null && providesPortsEditParts.size() > 0
+					&& providesPortsEditParts.get(0).part().getModel() instanceof FixPointAnchor) {
+				return providesPortsEditParts.get(0);
 			}
 		}
 		// If you get here, no matching provides port was found
@@ -581,14 +615,47 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 				}
 
 				// Other wise, check for a matching port name
-				UsesPortStub portStub = (UsesPortStub) DUtil.getBusinessObject((ContainerShape) portEditPart.part().getModel());
-				if (portName != null && portName.equals(portStub.getName())) {
-					return portEditPart;
+				if (portEditPart.part().getModel() instanceof ContainerShape) {
+					Object businessObject = DUtil.getBusinessObject((ContainerShape) portEditPart.part().getModel());
+					if (businessObject instanceof UsesPortStub) {
+						UsesPortStub portStub = (UsesPortStub) businessObject;
+						if (portName != null && portName.equals(portStub.getName())) {
+							return portEditPart;
+						}
+					}
 				}
 			}
 		}
 		return null;
 	}
+	
+	/**
+	 * 
+	 * @param editor - SWTBotGefEditor
+	 * @param componentName - Component being searched
+	 * @return Returns SWTBotGefEditPart for the specified uses super port, or null if none found
+	 */
+	public static SWTBotGefEditPart getDiagramUsesSuperPort(SWTBotGefEditor editor, String componentName) {
+		SWTBotGefEditPart componentEditPart = editor.getEditPart(componentName);
+		Assert.assertNotNull(componentEditPart);
+		for (SWTBotGefEditPart child : componentEditPart.children()) {
+			ContainerShape containerShape = (ContainerShape) child.part().getModel();
+			Object bo = DUtil.getBusinessObject(containerShape);
+
+			// Only return objects of type UsesPortStub
+			if (bo == null || !(bo instanceof UsesPortStub)) {
+				continue;
+			}
+
+			List<SWTBotGefEditPart> usesPortsEditParts = child.children();
+			if (usesPortsEditParts != null && usesPortsEditParts.size() > 0
+					&& usesPortsEditParts.get(0).part().getModel() instanceof FixPointAnchor) {
+				return usesPortsEditParts.get(0);
+			}
+		}
+		return null;
+	}
+
 
 	/**
 	 * 
