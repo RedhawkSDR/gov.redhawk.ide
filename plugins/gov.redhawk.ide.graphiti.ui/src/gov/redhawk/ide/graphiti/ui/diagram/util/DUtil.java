@@ -1374,7 +1374,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		ConnectionTarget target = null;
 		
 		if (!(anchorObjects1.size() > 0 && anchorObjects1.get(0) instanceof UsesPortStub)
-				&& !(anchorObjects2.size() > 0 && anchorObjects2.get(0) instanceof ConnectionTarget)) {
+				|| !(anchorObjects2.size() > 0 && anchorObjects2.get(0) instanceof ConnectionTarget)) {
 			//either first anchor wasn't UsesPortStub or second anchor wasn't ConnectionTarget
 			return null;
 		}
