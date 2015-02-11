@@ -16,7 +16,9 @@ import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 
@@ -114,10 +116,11 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		String sampleRate = "1";
 		String sampleRateTolerance = "20.0";
 		String deviceControl = "true";
-		String groupId = "";
+		// IDE-1060 added group ID
+		String groupId = "group1";
 		String rfFlowId = "";
 		String mhz = "000000.0";
-		create_sim_rx_digitizer_FrontEndTunerDeviceControlTuner(tunerType, newAllocationId, centerFreqency, bandwidth, sampleRate);
+		create_sim_rx_digitizer_FrontEndTunerDeviceControlTuner(tunerType, newAllocationId, centerFreqency, bandwidth, sampleRate, groupId);
 
 		editor.setFocus();
 
@@ -136,9 +139,19 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		Assert.assertEquals(rhContainerShape.getUsesPortStubs().get(0).getName(), "dataShort_out");
 
 		// Check to see if xml is correct in the sad.xml
-		final String usesDeviceXML = regexStringFor_sim_rx_digitizer_UseFrontEndTunerDeviceControlTuner(usesDeviceId, tunerType, newAllocationId,
-			centerFreqency + mhz, bandwidth + mhz, bandwidthTolerance, sampleRate + mhz, sampleRateTolerance, deviceControl,
-			groupId, rfFlowId);
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("usesDeviceId", usesDeviceId);
+		params.put("tunerType", tunerType);
+		params.put("newAllocationId", newAllocationId);
+		params.put("centerFreqency", centerFreqency + mhz);
+		params.put("bandwidth", bandwidth + mhz);
+		params.put("bandwidthTolerance", bandwidthTolerance);
+		params.put("sampleRate", sampleRate + mhz);
+		params.put("sampleRateTolerance", sampleRateTolerance);
+		params.put("deviceControl", deviceControl);
+		params.put("groupId", groupId);
+		params.put("rfFlowId", rfFlowId);
+		final String usesDeviceXML = regexStringFor_sim_rx_digitizer_UseFrontEndTunerDeviceControlTuner(params);
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		String editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The sad.xml should include UsesDevice", editorText.matches(usesDeviceXML));
@@ -476,17 +489,17 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 	 * @param existingAllocationId
 	 * @param newAllocationId
 	 */
-	public void create_sim_rx_digitizer_FrontEndTunerDeviceControlTuner(String tunerType, String newAllocationId, String centerFrequency, String bandwidth, String sampleRate) {
+	public void create_sim_rx_digitizer_FrontEndTunerDeviceControlTuner(String tunerType, String newAllocationId, String centerFrequency, String bandwidth, String sampleRate, String groupId) {
 		
 		DiagramTestUtils.dragUseFrontEndTunerDeviceToDiagram(gefBot, editor);
 		
 		SWTBotShell allocateTunerShell = gefBot.shell("Allocate Tuner");
 		allocateTunerShell.setFocus();
 		//select sim_RX_DIGITIZER
-		gefBot.table(0).getTableItem("sim_RX_DIGITIZER (/devices/sim_RX_DIGITIZER/)").select(); //sim_RX_DIGITIZER
+		gefBot.table(0).getTableItem("Generic FrontEnd Device").select(); //sim_RX_DIGITIZER
 		gefBot.button("&Next >").click();
 		//assert device model set
-		Assert.assertEquals("Device Model should be set to RX_DIGITIZER simulator", "RX_DIGITIZER simulator", gefBot.textWithLabel("Device Model (optional)").getText());
+		Assert.assertEquals("Device Model should be set to RX_DIGITIZER simulator", "", gefBot.textWithLabel("Device Model (optional)").getText());
 		//stick with the default values
 		gefBot.button("&Next >").click();
 		//control tuner already set by default
@@ -511,10 +524,17 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		sampleRateText.setFocus();
 		sampleRateText.setText(""); //clear first because the focus method caused the wizard to pre-populate the field
 		sampleRateText.typeText(sampleRate);
+		// IDE-1060 added group ID
+		SWTBotText groupIdText = gefBot.textWithLabel("Group ID");
+		groupIdText.setFocus();
+		groupIdText.setText(""); //clear first because the focus method caused the wizard to pre-populate the field
+		groupIdText.typeText(groupId);
+		
 		gefBot.button("&Next >").click();
+		
 		//add two uses and two provides ports
 		//provides
-		Assert.assertEquals("Provides Port RFInfo_n not pre-populated", "RFInfo_in", gefBot.list(0).itemAt(0));
+		Assert.assertEquals("Provides Port RFInfo_in not pre-populated", "RFInfo_in", gefBot.list(0).itemAt(0));
 		Assert.assertEquals("Provides Port DigitalTuner_in not pre-populated", "DigitalTuner_in", gefBot.list(0).itemAt(1));
 		//uses
 		Assert.assertEquals("Uses Port dataShort_out not pre-populated", "dataShort_out", gefBot.list(1).itemAt(0));
@@ -528,9 +548,19 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 	 * @param componentShape
 	 * @return
 	 */
-	public static String regexStringFor_sim_rx_digitizer_UseFrontEndTunerDeviceControlTuner(String usesDeviceId, String tunerType, String allocationId,
-			String centerFrequency, String bandwidth, String bandwidthTolerance, String sampleRate, String sampleRateTolerance, String deviceControl,
-			String groupId, String rfFlowId) {
+	public static String regexStringFor_sim_rx_digitizer_UseFrontEndTunerDeviceControlTuner(final Map<String, String> params) {
+		final String usesDeviceId = params.get("usesDeviceId");
+		final String tunerType = params.get("tunerType");
+		final String allocationId = params.get("allocationId");
+		final String centerFrequency = params.get("centerFrequency");
+		final String bandwidth = params.get("bandwidth");
+		final String bandwidthTolerance = params.get("bandwidthTolerance");
+		final String sampleRate = params.get("sampleRate");
+		final String sampleRateTolerance = params.get("sampleRateTolerance");
+		final String deviceControl = params.get("deviceControl");
+		final String groupId = params.get("groupId");
+		final String rfFlowId = params.get("rfFlowId");
+		
 		String usesDevice = "<usesdevice id=\"" + usesDeviceId + "\">";
 		String propertyRef = "<propertyref refid=\"DCE:cdc5ee18-7ceb-4ae6-bf4c-31f983179b4d\" value=\"FRONTEND::TUNER\"/>";
 		String deviceModel = "<propertyref refid=\"DCE:0f99b2e4-9903-4631-9846-ff349d18ecfb\" value=\"RX_DIGITIZER simulator\"/>";
