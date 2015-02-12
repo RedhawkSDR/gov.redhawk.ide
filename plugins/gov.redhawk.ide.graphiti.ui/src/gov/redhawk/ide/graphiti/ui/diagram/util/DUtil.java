@@ -108,54 +108,55 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	// Property key/value pairs help us identify Shapes to enable/disable user actions (move, resize, delete, remove
 	// etc.)
 	public static final String SHAPE_TYPE = "ShapeType"; // key for Shape types
-	
+
 	public static final String DIAGRAM_CONTEXT = "DiagramContext"; // key for Diagram contexts
 	public static final String DIAGRAM_CONTEXT_DESIGN = "design";
 	public static final String DIAGRAM_CONTEXT_DOMAIN = "domain";
 	public static final String DIAGRAM_CONTEXT_LOCAL = "local";
 	public static final String DIAGRAM_CONTEXT_TARGET_SDR = "target-sdr";
 	public static final String DIAGRAM_CONTEXT_EXPLORER = "explorer";
-	
-	//Shape options boolean string
+
+	// Shape options boolean string
 	public static final String DIAGRAM_CREATE_RHCONTAINER_SUPER_PORTS = "createRHContainerSuperPorts";
 	public static final String DIAGRAM_CREATE_RHCONTAINER_PORTS = "createRHContainerPorts";
 	public static final String DIAGRAM_HIDE_RHCONTAINER_UNUSED_PORTS = "HideRHContainerUnusedPorts";
-	
 
 	public static final int DIAGRAM_SHAPE_HORIZONTAL_PADDING = 100;
 	public static final int DIAGRAM_SHAPE_SIBLING_VERTICAL_PADDING = 5;
 	public static final int DIAGRAM_SHAPE_ROOT_VERTICAL_PADDING = 50;
 
-	//returns true if we should create super ports
+	// returns true if we should create super ports
 	public static boolean getCreateRHContainerSuperPorts(Diagram diagram) {
 		return Boolean.valueOf(Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_CREATE_RHCONTAINER_SUPER_PORTS));
 	}
+
 	public static void setCreateRHContainerSuperPorts(Diagram diagram, boolean value) {
 		Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CREATE_RHCONTAINER_SUPER_PORTS, Boolean.valueOf(value).toString());
 	}
-	
-	//returns true if we should create ports
-	//if diagram doesn't have property return true
+
+	// returns true if we should create ports
+	// if diagram doesn't have property return true
 	public static boolean getCreateRHContainerPorts(Diagram diagram) {
 		Boolean value = Boolean.valueOf(Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_CREATE_RHCONTAINER_PORTS));
-		if(value == null || value) {
+		if (value == null || value) {
 			return true;
 		}
 		return false;
 	}
+
 	public static void setCreateRHContainerPorts(Diagram diagram, boolean value) {
 		Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_CREATE_RHCONTAINER_PORTS, Boolean.valueOf(value).toString());
 	}
-	
-	//returns true if we should hide unused ports
+
+	// returns true if we should hide unused ports
 	public static boolean isHideRHContainerUnusedPorts(Diagram diagram) {
 		return Boolean.valueOf(Graphiti.getPeService().getPropertyValue(diagram, DUtil.DIAGRAM_HIDE_RHCONTAINER_UNUSED_PORTS));
 	}
+
 	public static void setHideRHContainerUnusedPorts(Diagram diagram, boolean value) {
 		Graphiti.getPeService().setPropertyValue(diagram, DUtil.DIAGRAM_HIDE_RHCONTAINER_UNUSED_PORTS, Boolean.valueOf(value).toString());
 	}
-	
-	
+
 	// do this because we need to pass it to layout diagram, assumes we already have shapes drawn of a certain
 	// size and that we are just moving them
 	public static IDimension calculateDiagramBounds(Diagram diagram) {
@@ -278,7 +279,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 //		
 //		return sad;
 	}
-	
+
 	/**
 	 * Returns the DeviceConfiguration for the provided diagram
 	 * @param featureProvider
@@ -287,6 +288,41 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 */
 	public static DeviceConfiguration getDiagramDCD(Diagram diagram) {
 		return (DeviceConfiguration) DUtil.getBusinessObject(diagram, DeviceConfiguration.class);
+	}
+
+	/**
+	 * @return A list of all provides ports found in the diagram
+	 */
+	public static List<ContainerShape> getDiagramProvidesPorts(ContainerShape diagram) {
+		return getDiagramPorts(diagram, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER);
+	}
+
+	/**
+	 * @return A list of all uses ports found in the diagram
+	 */
+	public static List<ContainerShape> getDiagramUsesPorts(ContainerShape diagram) {
+		return getDiagramPorts(diagram, RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER);
+	}
+
+	/**
+	 * Returns all of the ports that exist on the diagram as a List.
+	 * Does a recursive search through all children or the provided shape
+	 * @param shape - The parent shape that you want to find ports of
+	 * @param portType - property value of the desired port type
+	 * @see {@link RHContainerShapeImpl} static property strings
+	 */
+	public static List<ContainerShape> getDiagramPorts(ContainerShape shape, String portType) {
+		List<ContainerShape> portsList = new ArrayList<ContainerShape>();
+
+		for (Shape child : shape.getChildren()) {
+			String shapeType = Graphiti.getPeService().getPropertyValue(child, DUtil.SHAPE_TYPE);
+			if (shapeType != null && portType == shapeType) {
+				portsList.add((ContainerShape) child);
+			} else if (child instanceof ContainerShape && !((ContainerShape) child).getChildren().isEmpty()) {
+				portsList.addAll(getDiagramPorts((ContainerShape) child, portType));
+			}
+		}
+		return portsList;
 	}
 
 	/**
@@ -415,24 +451,24 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 			pe.getLink().getBusinessObjects().remove(eObject);
 		}
 	}
-	
+
 	public static void addLink(IFeatureProvider featureProvider, PictogramElement pe, EObject eObject) {
-		if(eObject == null) {
+		if (eObject == null) {
 			return;
 		}
-		
+
 		if (pe.getLink() == null) {
 			featureProvider.link(pe, eObject);
 		} else {
 			pe.getLink().getBusinessObjects().add(eObject);
 		}
 	}
-	
-	public static void addLinks(IFeatureProvider featureProvider, PictogramElement pe, Collection<? extends EObject> eObjects) {
-		if(eObjects == null || eObjects.size() < 1) {
+
+	public static void addLinks(IFeatureProvider featureProvider, PictogramElement pe, Collection< ? extends EObject> eObjects) {
+		if (eObjects == null || eObjects.size() < 1) {
 			return;
 		}
-		
+
 		if (pe.getLink() == null) {
 			featureProvider.link(pe, eObjects.toArray());
 		} else {
@@ -1031,15 +1067,13 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		return new Reason(false, "No updates required");
 	}
 
-
-
 	/**
 	 * Lookup SourceAnchor for connection. Examines uses ports on Components as well as FindBys
 	 * @param sadConnectInterface
 	 * @param diagram
 	 * @return
 	 */
-	public static Anchor lookupSourceAnchor(ConnectInterface< ?, ?, ?> sadConnectInterface, Diagram diagram) {
+	public static Anchor lookupSourceAnchor(ConnectInterface< ? , ? , ? > sadConnectInterface, Diagram diagram) {
 		// lookup sourceAnchor
 		PictogramElement sourceAnchorPe = DUtil.getPictogramElementForBusinessObject(diagram, sadConnectInterface.getSource(), Anchor.class);
 		if (sourceAnchorPe != null) {
@@ -1190,8 +1224,8 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	/**
 	 * 
 	 */
-	public static void initializeDiagramResource(final IDiagramUtilHelper options, final String diagramTypeId, final String diagramTypeProviderId, final URI diagramURI, final Resource sadResource) throws IOException,
-		CoreException {
+	public static void initializeDiagramResource(final IDiagramUtilHelper options, final String diagramTypeId, final String diagramTypeProviderId,
+		final URI diagramURI, final Resource sadResource) throws IOException, CoreException {
 		if (diagramURI.isPlatform()) {
 			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(diagramURI.toPlatformString(true)));
 
@@ -1222,8 +1256,8 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	// creates new diagram from provided model resource
-	private static void populateDiagram(final IDiagramUtilHelper options, final String diagramTypeId, final String diagramTypeProviderId, final URI diagramURI, final Resource resource, final OutputStream buffer)
-		throws IOException {
+	private static void populateDiagram(final IDiagramUtilHelper options, final String diagramTypeId, final String diagramTypeProviderId, final URI diagramURI,
+		final Resource resource, final OutputStream buffer) throws IOException {
 
 		// Create a resource set
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
@@ -1262,8 +1296,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static boolean isDiagramLocalSandbox(final Resource resource) {
 		return ".LocalSca.sad.xml".equals(resource.getURI().lastSegment());
 	}
-	
-	
+
 	/**
 	 * Returns true if the diagram is running in local mode
 	 * @param diagram
@@ -1272,18 +1305,18 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static boolean isDiagramLocal(final Diagram diagram) {
 		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_LOCAL) || getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_EXPLORER);
 	}
-	
+
 	/**
 	 * Returns true is the diagram is running in explorer mode
 	 */
 	public static boolean isDiagramExplorer(final Diagram diagram) {
 		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_EXPLORER);
 	}
-	
+
 	public static boolean isDiagramTargetSdr(final Diagram diagram) {
 		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_TARGET_SDR);
 	}
-	
+
 	/**
 	 * Returns the property value that indicates the mode the diagram is operating in.
 	 * @param diagram
@@ -1294,19 +1327,19 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	public static void layout(DiagramEditor diagramEditor) {
 		Diagram diagram = diagramEditor.getDiagramTypeProvider().getDiagram();
-		if (isDiagramTargetSdr(diagram) || isDiagramLocal(diagram)) {	
+		if (isDiagramTargetSdr(diagram) || isDiagramLocal(diagram)) {
 			DiagramBehavior diagramBehavior = diagramEditor.getDiagramBehavior();
 			IFeatureProvider featureProvider = diagramEditor.getDiagramTypeProvider().getFeatureProvider();
-			
+
 			if (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram)) {
-				final ICustomContext context = new CustomContext(new PictogramElement[]{diagram});
+				final ICustomContext context = new CustomContext(new PictogramElement[] { diagram });
 				ICustomFeature[] features = featureProvider.getCustomFeatures(context);
 				for (final ICustomFeature feature : features) {
 					if (feature instanceof LayoutDiagramFeature) {
 						TransactionalEditingDomain ed = diagramBehavior.getEditingDomain();
 						TransactionalCommandStack cs = (TransactionalCommandStack) ed.getCommandStack();
 						cs.execute(new RecordingCommand(ed) {
-							
+
 							@Override
 							protected void doExecute() {
 								((LayoutDiagramFeature) feature).execute(context);
@@ -1319,7 +1352,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	/**
 	 * If a provides port with the port name still exists, return the new anchor so the connection can be redrawn
 	 * @param providesPortStubs
@@ -1351,7 +1384,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Add source and target values to ConnectInterface and return
 	 * assume UsesPortStub is the first anchor, ConnectionTarget for second anchor
@@ -1361,36 +1394,36 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @return
 	 */
 	public static ConnectInterface assignAnchorObjectsToConnection(ConnectInterface connectInterface, Anchor anchor1, Anchor anchor2) {
-		
+
 		if (anchor1 == null || anchor2 == null) {
 			return null;
 		}
-		
-		//get business objects for both anchors
+
+		// get business objects for both anchors
 		EList<EObject> anchorObjects1 = anchor1.getParent().getLink().getBusinessObjects();
 		EList<EObject> anchorObjects2 = anchor2.getParent().getLink().getBusinessObjects();
-		
+
 		UsesPortStub source = null;
 		ConnectionTarget target = null;
-		
+
 		if (!(anchorObjects1.size() > 0 && anchorObjects1.get(0) instanceof UsesPortStub)
-				|| !(anchorObjects2.size() > 0 && anchorObjects2.get(0) instanceof ConnectionTarget)) {
-			//either first anchor wasn't UsesPortStub or second anchor wasn't ConnectionTarget
+			|| !(anchorObjects2.size() > 0 && anchorObjects2.get(0) instanceof ConnectionTarget)) {
+			// either first anchor wasn't UsesPortStub or second anchor wasn't ConnectionTarget
 			return null;
 		}
 
 		if (anchorObjects1.size() == 1) {
-			//only one source object, set it
+			// only one source object, set it
 			source = (UsesPortStub) anchorObjects1.get(0);
 		}
 		if (anchorObjects2.size() == 1) {
-			//only one target object, set it
+			// only one target object, set it
 			target = (ConnectionTarget) anchorObjects2.get(0);
 		}
-		
+
 		if (anchorObjects1.size() > 1 && anchorObjects2.size() > 1) {
-			for (EObject sourceObj: anchorObjects1) {
-				for (EObject targetObj: anchorObjects2) {
+			for (EObject sourceObj : anchorObjects1) {
+				for (EObject targetObj : anchorObjects2) {
 					if (InterfacesUtil.areSuggestedMatch(sourceObj, targetObj)) {
 						source = (UsesPortStub) sourceObj;
 						target = (ConnectionTarget) targetObj;
@@ -1399,33 +1432,33 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 				}
 			}
 		} else if (anchorObjects1.size() > 1) {
-			//we know the target, look for a source with matching type
-			for (EObject sourceObj: anchorObjects1) {
+			// we know the target, look for a source with matching type
+			for (EObject sourceObj : anchorObjects1) {
 				if (InterfacesUtil.areSuggestedMatch(sourceObj, target)) {
 					source = (UsesPortStub) sourceObj;
 					break;
 				}
 			}
 		} else if (anchorObjects2.size() > 1) {
-			//we know the source, look for a target with matching type
-			for (EObject targetObj: anchorObjects2) {
+			// we know the source, look for a target with matching type
+			for (EObject targetObj : anchorObjects2) {
 				if (InterfacesUtil.areSuggestedMatch(source, targetObj)) {
 					target = (ConnectionTarget) targetObj;
 					break;
 				}
 			}
 		}
-		
+
 		// source
 		connectInterface.setSource(source);
 		// target
 		connectInterface.setTarget(target);
-		
-		//only return if we have source/target set
+
+		// only return if we have source/target set
 		if (source == null || target == null) {
 			return null;
 		}
-		
+
 		return connectInterface;
 	}
 
