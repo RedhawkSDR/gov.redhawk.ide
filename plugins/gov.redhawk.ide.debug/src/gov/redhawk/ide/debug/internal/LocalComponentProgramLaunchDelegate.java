@@ -11,6 +11,7 @@
 package gov.redhawk.ide.debug.internal;
 
 import gov.redhawk.ide.debug.SpdLauncherUtil;
+import gov.redhawk.ide.debug.variables.LaunchVariables;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
@@ -21,10 +22,14 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.Launch;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.ISourceLocator;
 
 /**
  * An Eclipse launch delegate which handles launching a SoftPkg (component, device, etc) locally.
  */
+@SuppressWarnings("restriction")
 public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 	public static final String ID = "gov.redhawk.ide.debug.localComponentProgram";
 
@@ -65,4 +70,55 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 		configuration.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, scaArgs);
 	}
 
+	/**
+	 * IDE-1054 Added special class to override process label in console of waveform components
+	 */
+	public class ComponentLaunch extends Launch {
+
+		private IProcess parent;
+		private String label;
+		
+		public ComponentLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
+			super(launchConfiguration, mode, locator);
+			try {
+				// Ideally, the console should be labeled with the usage name of the component
+				label = launchConfiguration.getAttribute(LaunchVariables.NAME_BINDING, launchConfiguration.getName());
+			} catch (CoreException e) {
+				label = launchConfiguration.getName();
+			}
+		}
+		
+		@Override
+		public void addProcess(IProcess process) {
+			super.addProcess(process);
+			setProcessLabel(process);
+		}
+		
+		private void setProcessLabel(IProcess process) {
+			process.setAttribute(IProcess.ATTR_PROCESS_LABEL, label + getParentName() + process.getLabel());
+		}
+		
+		private String getParentName() {
+			if (parent == null) {
+				return " [Sandbox Component] ";
+			}
+			return " [" + parent.getLabel() + "] ";
+		}
+		
+		public void setParent(IProcess parentProcess) {
+			parent = parentProcess;
+			for (IProcess process: this.getProcesses()) {
+				setProcessLabel(process);
+			}
+		}
+	}
+	
+	/**
+	 * IDE-1054 Overridden to handle labels of process consoles the way we want
+	 */
+	@Override
+	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
+		return new ComponentLaunch(configuration, mode, null);
+	}
+	
 }
