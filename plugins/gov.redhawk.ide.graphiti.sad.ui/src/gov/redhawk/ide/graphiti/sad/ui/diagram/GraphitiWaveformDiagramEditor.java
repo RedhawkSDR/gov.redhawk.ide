@@ -10,9 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram;
 
-import gov.redhawk.ide.graphiti.ui.diagram.providers.ChalkboardContextMenuProvider;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramTypeProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.ChalkboardContextMenuProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteBehavior;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
@@ -58,24 +58,22 @@ public class GraphitiWaveformDiagramEditor extends DiagramEditor {
 	protected DiagramBehavior createDiagramBehavior() {
 		return new DiagramBehavior(this) {
 
-			
-			//Override Marker behavior because it modifies the underlying sad resource
-			//and the user will be prompted if they would like to replace their file with what's on disk
+			// Override Marker behavior because it modifies the underlying sad resource
+			// and the user will be prompted if they would like to replace their file with what's on disk
 			@Override
 			public DefaultMarkerBehavior createMarkerBehavior() {
 				return new DefaultMarkerBehavior(this) {
 					protected void updateProblemIndication() {
 						return;
 					}
+
 					public Diagnostic analyzeResourceProblems(Resource resource, Exception exception) {
 						return Diagnostic.OK_INSTANCE;
 					}
 				};
-					
+
 			};
-			
-			
-			
+
 			@Override
 			protected DefaultUpdateBehavior createUpdateBehavior() {
 				return new DefaultUpdateBehavior(this) {
@@ -108,7 +106,7 @@ public class GraphitiWaveformDiagramEditor extends DiagramEditor {
 
 				};
 			}
-			
+
 			@Override
 			protected DefaultPaletteBehavior createPaletteBehaviour() {
 				final DefaultPaletteBehavior paletteBehavior = new RHGraphitiPaletteBehavior(this);
@@ -124,43 +122,43 @@ public class GraphitiWaveformDiagramEditor extends DiagramEditor {
 				if (!DUtil.isDiagramExplorer(diagram)) {
 					retVal.add(0, new DiagramDropTargetListener(getDiagramContainer().getGraphicalViewer(), this));
 				}
-				
+
 				return retVal;
 			}
-			
+
 			@Override
 			protected ContextMenuProvider createContextMenuProvider() {
 				if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
-					return new ChalkboardContextMenuProvider(getDiagramContainer().getGraphicalViewer(),
-						getDiagramContainer().getActionRegistry(),
+					return new ChalkboardContextMenuProvider(getDiagramContainer().getGraphicalViewer(), getDiagramContainer().getActionRegistry(),
 						getConfigurationProvider());
 				}
 				return super.createContextMenuProvider();
 			}
 		};
 	}
-	
+
 	/**
 	 * Every time the diagram receives focus update the diagram's components and connections
 	 */
 	@Override
 	public void setFocus() {
 		super.setFocus();
-		
-		//briefly turn on graphiti runtime auto update (turn off at end of method)
-		//this will allow graphiti to update the contents of the diagram automatically
-		//We don't want this value true all the time because edits in the text editor would cause diagram changes constantly
+
+		// briefly turn on graphiti runtime auto update (turn off at end of method)
+		// this will allow graphiti to update the contents of the diagram automatically
+		// We don't want this value true all the time because edits in the text editor would cause diagram changes
+		// constantly
 		((SADDiagramTypeProvider) getDiagramTypeProvider()).setAutoUpdateAtRuntime(true);
 
 		final Diagram diagram = getDiagramTypeProvider().getDiagram();
 		NonDirtyingCommand.execute(diagram, new NonDirtyingCommand() {
 			public void execute() {
-				
+
 				Diagram diagram = getDiagramTypeProvider().getDiagram();
 				IFeatureProvider featureProvider = getDiagramTypeProvider().getFeatureProvider();
-				
-				//update all components if necessary
-				for (Shape s: getDiagramTypeProvider().getDiagram().getChildren()) {
+
+				// update all components if necessary
+				for (Shape s : getDiagramTypeProvider().getDiagram().getChildren()) {
 					if (s instanceof RHContainerShape) {
 						if (s != null && featureProvider != null) {
 							final UpdateContext updateContext = new UpdateContext(s);
@@ -172,8 +170,8 @@ public class GraphitiWaveformDiagramEditor extends DiagramEditor {
 						}
 					}
 				}
-				
-				//update diagram, don't ask if it should update because we want to redraw all connections each time
+
+				// update diagram, don't ask if it should update because we want to redraw all connections each time
 				if (diagram != null && featureProvider != null) {
 					final UpdateContext updateContext = new UpdateContext(diagram);
 					final IUpdateFeature updateFeature = featureProvider.getUpdateFeature(updateContext);
@@ -181,7 +179,7 @@ public class GraphitiWaveformDiagramEditor extends DiagramEditor {
 				}
 			}
 		});
-		
+
 		((SADDiagramTypeProvider) getDiagramTypeProvider()).setAutoUpdateAtRuntime(false);
 	}
 
@@ -190,40 +188,40 @@ public class GraphitiWaveformDiagramEditor extends DiagramEditor {
 		super.init(site, input);
 		activateContext("gov.redhawk.ide.sad.graphiti.ui.contexts.diagram");
 		// Activate contexts specified pre-init()
-		for (String context: contexts) {
+		for (String context : contexts) {
 			activateContext(context);
 		}
 	}
-	
+
 	@Override
 	public void dispose() {
 		deactivateAllContexts();
 		super.dispose();
 	}
-	
+
 	private void deactivateAllContexts() {
 		if (!contextActivations.isEmpty()) {
 			IContextService contextService = (IContextService) getSite().getService(IContextService.class);
-			for (IContextActivation activation: contextActivations) {
+			for (IContextActivation activation : contextActivations) {
 				contextService.deactivateContext(activation);
 			}
 		}
 	}
-	
+
 	/* 
 	 * For use before init()
 	 */
 	public void addContext(String context) {
 		contexts.add(context);
 	}
-	
+
 	public void activateContext(String context) {
 		IContextService contextService = (IContextService) getSite().getService(IContextService.class);
 		if (contextService != null) {
 			IContextActivation activation = contextService.activateContext(context);
 			contextActivations.add(activation);
 		}
-		
+
 	}
-	
+
 }
