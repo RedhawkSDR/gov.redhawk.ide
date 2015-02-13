@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
+import gov.redhawk.diagram.util.FindByStubUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider;
 import mil.jpeojtrs.sca.partitioning.DomainFinder;
@@ -55,9 +56,7 @@ public class FindByDomainManagerPattern extends AbstractFindByPattern implements
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
 		if (mainBusinessObject instanceof FindByStub) {
 			FindByStub findByStub = (FindByStub) mainBusinessObject;
-			if (findByStub.getDomainFinder() != null && findByStub.getDomainFinder().getType().equals(DomainFinderType.DOMAINMANAGER)) {
-				return true;
-			}
+			return FindByStubUtil.isFindByStubDomainManager(findByStub);
 		}
 		return false;
 	}

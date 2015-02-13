@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
+import gov.redhawk.diagram.util.FindByStubUtil;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.dialogs.AbstractInputValidationDialog;
@@ -62,9 +63,7 @@ public class FindByEventChannelPattern extends AbstractFindByPattern implements 
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
 		if (mainBusinessObject instanceof FindByStub) {
 			FindByStub findByStub = (FindByStub) mainBusinessObject;
-			if (findByStub.getDomainFinder() != null && findByStub.getDomainFinder().getType().equals(DomainFinderType.EVENTCHANNEL)) {
-				return true;
-			}
+			return FindByStubUtil.isFindByStubEventChannel(findByStub);
 		}
 		return false;
 	}

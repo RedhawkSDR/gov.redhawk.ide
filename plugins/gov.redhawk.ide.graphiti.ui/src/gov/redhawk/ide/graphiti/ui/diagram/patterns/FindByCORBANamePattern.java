@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.patterns;
 
+import gov.redhawk.diagram.util.FindByStubUtil;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
@@ -70,9 +71,7 @@ public class FindByCORBANamePattern extends AbstractFindByPattern implements IPa
 	public boolean isMainBusinessObjectApplicable(Object mainBusinessObject) {
 		if (mainBusinessObject instanceof FindByStub) {
 			FindByStub findByStub = (FindByStub) mainBusinessObject;
-			if (findByStub.getNamingService() != null) {
-				return true;
-			}
+			return FindByStubUtil.isFindByStubName(findByStub);
 		}
 		return false;
 	}
