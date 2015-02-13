@@ -754,7 +754,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		stack.execute(new NonDirtyingCommand() {
 			@Override
 			public void execute() {
-				PortUpdateStatus portUpdateStatus = containerShape.getPortUpdateStatus().get(0);
+				PortUpdateStatus portUpdateStatus = containerShape.getPortUpdateStatus();
 				portUpdateStatus.setPortsUpdatable(canUpdate);
 				
 				// if we are unlocking, then we don't care about the settingObject

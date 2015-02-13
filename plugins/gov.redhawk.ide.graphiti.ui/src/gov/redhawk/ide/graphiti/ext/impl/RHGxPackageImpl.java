@@ -209,6 +209,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		isInited = true;
 
 		// Initialize simple dependencies
+		PictogramsPackage.eINSTANCE.eClass();
 		AlgorithmsPackage.eINSTANCE.eClass();
 		MmPackage.eINSTANCE.eClass();
 		EcorePackage.eINSTANCE.eClass();
@@ -602,7 +603,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_Event(), this.getEvent(), "event", null, 0, 1, RHContainerShape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
 			!IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getRHContainerShape_PortUpdateStatus(), this.getPortUpdateStatus(), null, "portUpdateStatus", null, 0, -1, RHContainerShape.class,
+		initEReference(getRHContainerShape_PortUpdateStatus(), this.getPortUpdateStatus(), null, "portUpdateStatus", null, 0, 1, RHContainerShape.class,
 			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_HasSuperPortsContainerShape(), theEcorePackage.getEBoolean(), "hasSuperPortsContainerShape", null, 0, 1,
 			RHContainerShape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

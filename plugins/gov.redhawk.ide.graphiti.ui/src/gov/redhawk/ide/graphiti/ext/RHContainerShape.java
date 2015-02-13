@@ -148,20 +148,30 @@ public interface RHContainerShape extends ContainerShape {
 	void setEvent(Event value);
 
 	/**
-	 * Returns the value of the '<em><b>Port Update Status</b></em>' containment reference list.
-	 * The list contents are of type {@link gov.redhawk.ide.graphiti.ext.PortUpdateStatus}.
+	 * Returns the value of the '<em><b>Port Update Status</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Port Update Status</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Port Update Status</em>' containment reference list.
+	 * @return the value of the '<em>Port Update Status</em>' containment reference.
+	 * @see #setPortUpdateStatus(PortUpdateStatus)
 	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_PortUpdateStatus()
 	 * @model containment="true"
 	 * @generated
 	 */
-	EList<PortUpdateStatus> getPortUpdateStatus();
+	PortUpdateStatus getPortUpdateStatus();
+
+	/**
+	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getPortUpdateStatus <em>Port Update Status</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Port Update Status</em>' containment reference.
+	 * @see #getPortUpdateStatus()
+	 * @generated
+	 */
+	void setPortUpdateStatus(PortUpdateStatus value);
 
 	/**
 	 * Returns the value of the '<em><b>Has Super Ports Container Shape</b></em>' attribute.

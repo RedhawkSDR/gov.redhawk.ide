@@ -39,7 +39,7 @@ class RHContainerShape extends org.eclipse.graphiti.mm.pictograms.ContainerShape
 	int iStatusErrorState
 	Map connectionMap 
 	Event event
-	contains PortUpdateStatus[] portUpdateStatus
+	contains PortUpdateStatus portUpdateStatus
 	
 	boolean hasSuperPortsContainerShape  //creates a single anchor on each side of container to represent ports
 	boolean hasPortsContainerShape //creates a container that displays an anchor per port

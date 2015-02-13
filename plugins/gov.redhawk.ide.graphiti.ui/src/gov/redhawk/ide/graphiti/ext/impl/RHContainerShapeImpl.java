@@ -18,7 +18,6 @@ import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,9 +36,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -164,7 +161,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	protected Event event = EVENT_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getPortUpdateStatus() <em>Port Update Status</em>}' containment reference list.
+	 * The cached value of the '{@link #getPortUpdateStatus() <em>Port Update Status</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * There should only ever be a single portUpdateStatus object which is initialized when the container shape is created.  
 	 * <!-- end-user-doc -->
@@ -172,7 +169,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<PortUpdateStatus> portUpdateStatus;
+	protected PortUpdateStatus portUpdateStatus;
 
 	/**
 	 * The default value of the '{@link #isHasSuperPortsContainerShape() <em>Has Super Ports Container Shape</em>}' attribute.
@@ -268,12 +265,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	protected RHContainerShapeImpl() {
 		super();
-		
-		// Initialize portUpdateStatus
-		PortUpdateStatus pUpdateStatus = RHGxFactoryImpl.eINSTANCE.createPortUpdateStatus();
-		pUpdateStatus.setPortsUpdatable(true);
-		pUpdateStatus.setSettingObject(this);
-		getPortUpdateStatus().add(pUpdateStatus);
 	}
 
 	/**
@@ -403,11 +394,48 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<PortUpdateStatus> getPortUpdateStatus() {
-		if (portUpdateStatus == null) {
-			portUpdateStatus = new EObjectContainmentEList<PortUpdateStatus>(PortUpdateStatus.class, this, RHGxPackage.RH_CONTAINER_SHAPE__PORT_UPDATE_STATUS);
-		}
+	public PortUpdateStatus getPortUpdateStatus() {
 		return portUpdateStatus;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetPortUpdateStatus(PortUpdateStatus newPortUpdateStatus, NotificationChain msgs) {
+		PortUpdateStatus oldPortUpdateStatus = portUpdateStatus;
+		portUpdateStatus = newPortUpdateStatus;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__PORT_UPDATE_STATUS,
+				oldPortUpdateStatus, newPortUpdateStatus);
+			if (msgs == null)
+				msgs = notification;
+			else
+				msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setPortUpdateStatus(PortUpdateStatus newPortUpdateStatus) {
+		if (newPortUpdateStatus != portUpdateStatus) {
+			NotificationChain msgs = null;
+			if (portUpdateStatus != null)
+				msgs = ((InternalEObject) portUpdateStatus).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RHGxPackage.RH_CONTAINER_SHAPE__PORT_UPDATE_STATUS,
+					null, msgs);
+			if (newPortUpdateStatus != null)
+				msgs = ((InternalEObject) newPortUpdateStatus).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RHGxPackage.RH_CONTAINER_SHAPE__PORT_UPDATE_STATUS,
+					null, msgs);
+			msgs = basicSetPortUpdateStatus(newPortUpdateStatus, msgs);
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__PORT_UPDATE_STATUS, newPortUpdateStatus, newPortUpdateStatus));
 	}
 
 	/**
@@ -696,7 +724,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 		case RHGxPackage.RH_CONTAINER_SHAPE__PORT_UPDATE_STATUS:
-			return ((InternalEList< ? >) getPortUpdateStatus()).basicRemove(otherEnd, msgs);
+			return basicSetPortUpdateStatus(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -751,8 +779,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			setEvent((Event) newValue);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__PORT_UPDATE_STATUS:
-			getPortUpdateStatus().clear();
-			getPortUpdateStatus().addAll((Collection< ? extends PortUpdateStatus>) newValue);
+			setPortUpdateStatus((PortUpdateStatus) newValue);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			setHasSuperPortsContainerShape((Boolean) newValue);
@@ -788,7 +815,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			setEvent(EVENT_EDEFAULT);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__PORT_UPDATE_STATUS:
-			getPortUpdateStatus().clear();
+			setPortUpdateStatus((PortUpdateStatus) null);
 			return;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			setHasSuperPortsContainerShape(HAS_SUPER_PORTS_CONTAINER_SHAPE_EDEFAULT);
@@ -820,7 +847,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		case RHGxPackage.RH_CONTAINER_SHAPE__EVENT:
 			return event != EVENT_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__PORT_UPDATE_STATUS:
-			return portUpdateStatus != null && !portUpdateStatus.isEmpty();
+			return portUpdateStatus != null;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE:
 			return hasSuperPortsContainerShape != HAS_SUPER_PORTS_CONTAINER_SHAPE_EDEFAULT;
 		case RHGxPackage.RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE:
@@ -1428,8 +1455,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			//provides ports container exists, update it
 
 			IFeatureProvider featureProvider = pattern.getFeatureProvider();
-			boolean canUpdate = getPortUpdateStatus().get(0).isPortsUpdatable();
-			
+			boolean canUpdate = getPortUpdateStatus().isPortsUpdatable();
+
 			if (canUpdate && providesPortsContainerShape != null && provides != null) {
 
 				List<Text> providesPortTexts = new ArrayList<Text>();
@@ -1609,7 +1636,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			//provides ports container exists, update it
 
 			IFeatureProvider featureProvider = pattern.getFeatureProvider();
-			boolean canUpdate = getPortUpdateStatus().get(0).isPortsUpdatable(); 
+			boolean canUpdate = getPortUpdateStatus().isPortsUpdatable();
 
 			if (canUpdate && usesPortsContainerShape != null && uses != null && uses.size() > 0) {
 

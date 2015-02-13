@@ -188,7 +188,7 @@ public interface RHGxPackage extends EPackage {
 	 */
 	int RH_CONTAINER_SHAPE__EVENT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 3;
 	/**
-	 * The feature id for the '<em><b>Port Update Status</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Port Update Status</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -471,10 +471,10 @@ public interface RHGxPackage extends EPackage {
 	EAttribute getRHContainerShape_Event();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getPortUpdateStatus <em>Port Update Status</em>}'.
+	 * Returns the meta object for the containment reference '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getPortUpdateStatus <em>Port Update Status</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Port Update Status</em>'.
+	 * @return the meta object for the containment reference '<em>Port Update Status</em>'.
 	 * @see gov.redhawk.ide.graphiti.ext.RHContainerShape#getPortUpdateStatus()
 	 * @see #getRHContainerShape()
 	 * @generated
@@ -796,7 +796,7 @@ public interface RHGxPackage extends EPackage {
 		EAttribute RH_CONTAINER_SHAPE__EVENT = eINSTANCE.getRHContainerShape_Event();
 
 		/**
-		 * The meta object literal for the '<em><b>Port Update Status</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>Port Update Status</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

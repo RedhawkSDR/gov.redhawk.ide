@@ -167,7 +167,7 @@ public interface RHSadGxPackage extends EPackage {
 	 */
 	int COMPONENT_SHAPE__EVENT = RHGxPackage.RH_CONTAINER_SHAPE__EVENT;
 	/**
-	 * The feature id for the '<em><b>Port Update Status</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Port Update Status</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

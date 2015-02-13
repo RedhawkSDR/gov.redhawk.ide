@@ -991,7 +991,7 @@ public class GraphitiModelMap implements IPortStatListener {
 			// If something else has already locked updates to the port style, then disregard and return out.
 			// Otherwise, lock it ourselves.
 			ComponentShapeImpl componentShape = (ComponentShapeImpl) DUtil.getPictogramElementForBusinessObject(diagram, sadCi, ComponentShapeImpl.class);
-			PortUpdateStatus portUpdateStatus = componentShape.getPortUpdateStatus().get(0);
+			PortUpdateStatus portUpdateStatus = componentShape.getPortUpdateStatus();
 			if (!portUpdateStatus.isPortsUpdatable() && !this.equals(portUpdateStatus.getSettingObject())) {
 				return;
 			} else {
