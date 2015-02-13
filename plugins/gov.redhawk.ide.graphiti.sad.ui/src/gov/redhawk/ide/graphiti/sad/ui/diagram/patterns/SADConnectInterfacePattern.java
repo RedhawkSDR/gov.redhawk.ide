@@ -189,10 +189,10 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 
 			// add graphical arrow to end of the connection
 			IColorConstant arrowColor;
-			if (defaultColor != null) {
-				arrowColor = defaultColor;
-			} else if (!compatibleConnection || !uniqueConnection) {
+			if (!compatibleConnection || !uniqueConnection) {
 				arrowColor = IColorConstant.RED;
+			} else if (defaultColor != null)  {
+				arrowColor = defaultColor;
 			} else {
 				arrowColor = IColorConstant.BLACK;
 			}
