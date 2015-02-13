@@ -156,15 +156,6 @@ public interface RHDeviceGxPackage extends EPackage {
 	int DEVICE_SHAPE__STARTED = RHGxPackage.RH_CONTAINER_SHAPE__STARTED;
 
 	/**
-	 * The feature id for the '<em><b>Update Ports</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DEVICE_SHAPE__UPDATE_PORTS = RHGxPackage.RH_CONTAINER_SHAPE__UPDATE_PORTS;
-
-	/**
 	 * The feature id for the '<em><b>IStatus Error State</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -190,6 +181,15 @@ public interface RHDeviceGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int DEVICE_SHAPE__EVENT = RHGxPackage.RH_CONTAINER_SHAPE__EVENT;
+
+	/**
+	 * The feature id for the '<em><b>Port Update Status</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DEVICE_SHAPE__PORT_UPDATE_STATUS = RHGxPackage.RH_CONTAINER_SHAPE__PORT_UPDATE_STATUS;
 
 	/**
 	 * The feature id for the '<em><b>Has Super Ports Container Shape</b></em>' attribute.
@@ -319,15 +319,6 @@ public interface RHDeviceGxPackage extends EPackage {
 	int SERVICE_SHAPE__STARTED = RHGxPackage.RH_CONTAINER_SHAPE__STARTED;
 
 	/**
-	 * The feature id for the '<em><b>Update Ports</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SERVICE_SHAPE__UPDATE_PORTS = RHGxPackage.RH_CONTAINER_SHAPE__UPDATE_PORTS;
-
-	/**
 	 * The feature id for the '<em><b>IStatus Error State</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -353,6 +344,15 @@ public interface RHDeviceGxPackage extends EPackage {
 	 * @ordered
 	 */
 	int SERVICE_SHAPE__EVENT = RHGxPackage.RH_CONTAINER_SHAPE__EVENT;
+
+	/**
+	 * The feature id for the '<em><b>Port Update Status</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SERVICE_SHAPE__PORT_UPDATE_STATUS = RHGxPackage.RH_CONTAINER_SHAPE__PORT_UPDATE_STATUS;
 
 	/**
 	 * The feature id for the '<em><b>Has Super Ports Container Shape</b></em>' attribute.

@@ -71,6 +71,8 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 		switch (eClass.getClassifierID()) {
 		case RHGxPackage.RH_CONTAINER_SHAPE:
 			return createRHContainerShape();
+		case RHGxPackage.PORT_UPDATE_STATUS:
+			return createPortUpdateStatus();
 		default:
 			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -174,6 +176,16 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	public RHContainerShape createRHContainerShape() {
 		RHContainerShapeImpl rhContainerShape = new RHContainerShapeImpl();
 		return rhContainerShape;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public PortUpdateStatus createPortUpdateStatus() {
+		PortUpdateStatusImpl portUpdateStatus = new PortUpdateStatusImpl();
+		return portUpdateStatus;
 	}
 
 	/**

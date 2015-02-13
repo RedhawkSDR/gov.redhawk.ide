@@ -8,6 +8,7 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
 
 /**
@@ -163,21 +164,13 @@ public interface RHGxPackage extends EPackage {
 	 */
 	int RH_CONTAINER_SHAPE__STARTED = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 0;
 	/**
-	 * The feature id for the '<em><b>Update Ports</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int RH_CONTAINER_SHAPE__UPDATE_PORTS = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 1;
-	/**
 	 * The feature id for the '<em><b>IStatus Error State</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 2;
+	int RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 1;
 	/**
 	 * The feature id for the '<em><b>Connection Map</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -185,7 +178,7 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__CONNECTION_MAP = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 3;
+	int RH_CONTAINER_SHAPE__CONNECTION_MAP = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 2;
 	/**
 	 * The feature id for the '<em><b>Event</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -193,7 +186,15 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RH_CONTAINER_SHAPE__EVENT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 4;
+	int RH_CONTAINER_SHAPE__EVENT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 3;
+	/**
+	 * The feature id for the '<em><b>Port Update Status</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RH_CONTAINER_SHAPE__PORT_UPDATE_STATUS = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 4;
 	/**
 	 * The feature id for the '<em><b>Has Super Ports Container Shape</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -227,6 +228,39 @@ public interface RHGxPackage extends EPackage {
 	 */
 	int RH_CONTAINER_SHAPE_FEATURE_COUNT = PictogramsPackage.CONTAINER_SHAPE_FEATURE_COUNT + 8;
 	/**
+	 * The meta object id for the '{@link gov.redhawk.ide.graphiti.ext.impl.PortUpdateStatusImpl <em>Port Update Status</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gov.redhawk.ide.graphiti.ext.impl.PortUpdateStatusImpl
+	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getPortUpdateStatus()
+	 * @generated
+	 */
+	int PORT_UPDATE_STATUS = 2;
+	/**
+	 * The feature id for the '<em><b>Ports Updatable</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PORT_UPDATE_STATUS__PORTS_UPDATABLE = 0;
+	/**
+	 * The feature id for the '<em><b>Setting Object</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PORT_UPDATE_STATUS__SETTING_OBJECT = 1;
+	/**
+	 * The number of structural features of the '<em>Port Update Status</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PORT_UPDATE_STATUS_FEATURE_COUNT = 2;
+	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.graphiti.ext.Event <em>Event</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -234,7 +268,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getEvent()
 	 * @generated
 	 */
-	int EVENT = 2;
+	int EVENT = 3;
 	/**
 	 * The meta object id for the '<em>Component Supported Interface Stub</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -243,7 +277,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getComponentSupportedInterfaceStub()
 	 * @generated
 	 */
-	int COMPONENT_SUPPORTED_INTERFACE_STUB = 3;
+	int COMPONENT_SUPPORTED_INTERFACE_STUB = 4;
 	/**
 	 * The meta object id for the '<em>IFeature Provider</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -252,7 +286,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIFeatureProvider()
 	 * @generated
 	 */
-	int IFEATURE_PROVIDER = 4;
+	int IFEATURE_PROVIDER = 5;
 	/**
 	 * The meta object id for the '<em>Uses Port Stub</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -261,7 +295,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getUsesPortStub()
 	 * @generated
 	 */
-	int USES_PORT_STUB = 5;
+	int USES_PORT_STUB = 6;
 	/**
 	 * The meta object id for the '<em>Provides Port Stub</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -270,7 +304,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getProvidesPortStub()
 	 * @generated
 	 */
-	int PROVIDES_PORT_STUB = 6;
+	int PROVIDES_PORT_STUB = 7;
 	/**
 	 * The meta object id for the '<em>Port</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -279,7 +313,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getPort()
 	 * @generated
 	 */
-	int PORT = 7;
+	int PORT = 8;
 	/**
 	 * The meta object id for the '<em>Assembly Controller</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -288,7 +322,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAssemblyController()
 	 * @generated
 	 */
-	int ASSEMBLY_CONTROLLER = 8;
+	int ASSEMBLY_CONTROLLER = 9;
 	/**
 	 * The meta object id for the '<em>External Ports</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -297,7 +331,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getExternalPorts()
 	 * @generated
 	 */
-	int EXTERNAL_PORTS = 9;
+	int EXTERNAL_PORTS = 10;
 	/**
 	 * The meta object id for the '<em>Reason</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -306,7 +340,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getReason()
 	 * @generated
 	 */
-	int REASON = 10;
+	int REASON = 11;
 	/**
 	 * The meta object id for the '<em>List</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -315,7 +349,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getList()
 	 * @generated
 	 */
-	int LIST = 11;
+	int LIST = 12;
 	/**
 	 * The meta object id for the '<em>Sad Component Instantiation</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -324,7 +358,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getSadComponentInstantiation()
 	 * @generated
 	 */
-	int SAD_COMPONENT_INSTANTIATION = 12;
+	int SAD_COMPONENT_INSTANTIATION = 13;
 	/**
 	 * The meta object id for the '<em>IAdd Context</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -333,7 +367,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIAddContext()
 	 * @generated
 	 */
-	int IADD_CONTEXT = 13;
+	int IADD_CONTEXT = 14;
 	/**
 	 * The meta object id for the '<em>Abstract Container Pattern</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -342,7 +376,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getAbstractContainerPattern()
 	 * @generated
 	 */
-	int ABSTRACT_CONTAINER_PATTERN = 14;
+	int ABSTRACT_CONTAINER_PATTERN = 15;
 	/**
 	 * The meta object id for the '<em>IUpdate Context</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -351,7 +385,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIUpdateContext()
 	 * @generated
 	 */
-	int IUPDATE_CONTEXT = 15;
+	int IUPDATE_CONTEXT = 16;
 	/**
 	 * The meta object id for the '<em>IColor Constant</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -360,7 +394,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getIColorConstant()
 	 * @generated
 	 */
-	int ICOLOR_CONSTANT = 16;
+	int ICOLOR_CONSTANT = 17;
 	/**
 	 * The meta object id for the '<em>Map</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -369,7 +403,7 @@ public interface RHGxPackage extends EPackage {
 	 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getMap()
 	 * @generated
 	 */
-	int MAP = 17;
+	int MAP = 18;
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.graphiti.mm.pictograms.ContainerShape <em>Container Shape Impl</em>}'.
@@ -402,17 +436,6 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getRHContainerShape_Started();
-
-	/**
-	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isUpdatePorts <em>Update Ports</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Update Ports</em>'.
-	 * @see gov.redhawk.ide.graphiti.ext.RHContainerShape#isUpdatePorts()
-	 * @see #getRHContainerShape()
-	 * @generated
-	 */
-	EAttribute getRHContainerShape_UpdatePorts();
 
 	/**
 	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusErrorState <em>IStatus Error State</em>}'.
@@ -448,6 +471,17 @@ public interface RHGxPackage extends EPackage {
 	EAttribute getRHContainerShape_Event();
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getPortUpdateStatus <em>Port Update Status</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Port Update Status</em>'.
+	 * @see gov.redhawk.ide.graphiti.ext.RHContainerShape#getPortUpdateStatus()
+	 * @see #getRHContainerShape()
+	 * @generated
+	 */
+	EReference getRHContainerShape_PortUpdateStatus();
+
+	/**
 	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -479,6 +513,38 @@ public interface RHGxPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getRHContainerShape_HideUnusedPorts();
+
+	/**
+	 * Returns the meta object for class '{@link gov.redhawk.ide.graphiti.ext.PortUpdateStatus <em>Port Update Status</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Port Update Status</em>'.
+	 * @see gov.redhawk.ide.graphiti.ext.PortUpdateStatus
+	 * @generated
+	 */
+	EClass getPortUpdateStatus();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.PortUpdateStatus#isPortsUpdatable <em>Ports Updatable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Ports Updatable</em>'.
+	 * @see gov.redhawk.ide.graphiti.ext.PortUpdateStatus#isPortsUpdatable()
+	 * @see #getPortUpdateStatus()
+	 * @generated
+	 */
+	EAttribute getPortUpdateStatus_PortsUpdatable();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gov.redhawk.ide.graphiti.ext.PortUpdateStatus#getSettingObject <em>Setting Object</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Setting Object</em>'.
+	 * @see gov.redhawk.ide.graphiti.ext.PortUpdateStatus#getSettingObject()
+	 * @see #getPortUpdateStatus()
+	 * @generated
+	 */
+	EAttribute getPortUpdateStatus_SettingObject();
 
 	/**
 	 * Returns the meta object for enum '{@link gov.redhawk.ide.graphiti.ext.Event <em>Event</em>}'.
@@ -706,14 +772,6 @@ public interface RHGxPackage extends EPackage {
 		EAttribute RH_CONTAINER_SHAPE__STARTED = eINSTANCE.getRHContainerShape_Started();
 
 		/**
-		 * The meta object literal for the '<em><b>Update Ports</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute RH_CONTAINER_SHAPE__UPDATE_PORTS = eINSTANCE.getRHContainerShape_UpdatePorts();
-
-		/**
 		 * The meta object literal for the '<em><b>IStatus Error State</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -738,6 +796,14 @@ public interface RHGxPackage extends EPackage {
 		EAttribute RH_CONTAINER_SHAPE__EVENT = eINSTANCE.getRHContainerShape_Event();
 
 		/**
+		 * The meta object literal for the '<em><b>Port Update Status</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference RH_CONTAINER_SHAPE__PORT_UPDATE_STATUS = eINSTANCE.getRHContainerShape_PortUpdateStatus();
+
+		/**
 		 * The meta object literal for the '<em><b>Has Super Ports Container Shape</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -760,6 +826,32 @@ public interface RHGxPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS = eINSTANCE.getRHContainerShape_HideUnusedPorts();
+
+		/**
+		 * The meta object literal for the '{@link gov.redhawk.ide.graphiti.ext.impl.PortUpdateStatusImpl <em>Port Update Status</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see gov.redhawk.ide.graphiti.ext.impl.PortUpdateStatusImpl
+		 * @see gov.redhawk.ide.graphiti.ext.impl.RHGxPackageImpl#getPortUpdateStatus()
+		 * @generated
+		 */
+		EClass PORT_UPDATE_STATUS = eINSTANCE.getPortUpdateStatus();
+
+		/**
+		 * The meta object literal for the '<em><b>Ports Updatable</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PORT_UPDATE_STATUS__PORTS_UPDATABLE = eINSTANCE.getPortUpdateStatus_PortsUpdatable();
+
+		/**
+		 * The meta object literal for the '<em><b>Setting Object</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PORT_UPDATE_STATUS__SETTING_OBJECT = eINSTANCE.getPortUpdateStatus_SettingObject();
 
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.graphiti.ext.Event <em>Event</em>}' enum.

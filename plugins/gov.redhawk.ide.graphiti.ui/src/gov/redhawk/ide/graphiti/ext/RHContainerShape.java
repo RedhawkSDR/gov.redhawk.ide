@@ -24,10 +24,10 @@ import org.eclipse.graphiti.util.IColorConstant;
  * The following features are supported:
  * <ul>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isStarted <em>Started</em>}</li>
- *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isUpdatePorts <em>Update Ports</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getIStatusErrorState <em>IStatus Error State</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getConnectionMap <em>Connection Map</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getEvent <em>Event</em>}</li>
+ *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#getPortUpdateStatus <em>Port Update Status</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasSuperPortsContainerShape <em>Has Super Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHasPortsContainerShape <em>Has Ports Container Shape</em>}</li>
  *   <li>{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isHideUnusedPorts <em>Hide Unused Ports</em>}</li>
@@ -65,32 +65,6 @@ public interface RHContainerShape extends ContainerShape {
 	 * @generated
 	 */
 	void setStarted(boolean value);
-
-	/**
-	 * Returns the value of the '<em><b>Update Ports</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Update Ports</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Update Ports</em>' attribute.
-	 * @see #setUpdatePorts(boolean)
-	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_UpdatePorts()
-	 * @model unique="false"
-	 * @generated
-	 */
-	boolean isUpdatePorts();
-
-	/**
-	 * Sets the value of the '{@link gov.redhawk.ide.graphiti.ext.RHContainerShape#isUpdatePorts <em>Update Ports</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Update Ports</em>' attribute.
-	 * @see #isUpdatePorts()
-	 * @generated
-	 */
-	void setUpdatePorts(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>IStatus Error State</b></em>' attribute.
@@ -172,6 +146,22 @@ public interface RHContainerShape extends ContainerShape {
 	 * @generated
 	 */
 	void setEvent(Event value);
+
+	/**
+	 * Returns the value of the '<em><b>Port Update Status</b></em>' containment reference list.
+	 * The list contents are of type {@link gov.redhawk.ide.graphiti.ext.PortUpdateStatus}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Port Update Status</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Port Update Status</em>' containment reference list.
+	 * @see gov.redhawk.ide.graphiti.ext.RHGxPackage#getRHContainerShape_PortUpdateStatus()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<PortUpdateStatus> getPortUpdateStatus();
 
 	/**
 	 * Returns the value of the '<em><b>Has Super Ports Container Shape</b></em>' attribute.

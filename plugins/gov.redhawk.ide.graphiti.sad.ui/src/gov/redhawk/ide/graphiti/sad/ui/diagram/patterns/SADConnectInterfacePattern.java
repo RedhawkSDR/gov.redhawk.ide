@@ -12,6 +12,7 @@ package gov.redhawk.ide.graphiti.sad.ui.diagram.patterns;
 
 import gov.redhawk.diagram.util.InterfacesUtil;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformDiagramEditor;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -25,6 +26,7 @@ import java.util.Map;
 
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadFactory;
@@ -40,9 +42,11 @@ import org.eclipse.graphiti.features.context.IConnectionContext;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
+import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.AbstractConnectionPattern;
@@ -57,8 +61,10 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	public static final String NAME = "Connection";
 	public static final String SHAPE_IMG_CONNECTION_DECORATOR = "imgConnectionDecorator";
 	public static final String SHAPE_TEXT_CONNECTION_DECORATOR = "textConnectionDecorator";
-	
+
 	public static final String OVERRIDE_CONNECTION_ID = "OverrideConnectionId";
+	private UsesPortStub sourcePort;
+	private ConnectionTarget targetPort;
 
 	@Override
 	public String getCreateName() {
@@ -80,7 +86,6 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	 */
 	@Override
 	public boolean canAdd(IAddContext context) {
-
 		if (context instanceof IAddConnectionContext && context.getNewObject() instanceof SadConnectInterface) {
 			return true;
 		}
@@ -103,8 +108,9 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		ConnectionTarget target = getConnectionTarget(context);
 
 		// check and see if the connection has any special color requirements, such as during a monitor port call
-		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.getPictogramElementForBusinessObject(getDiagram(), source.eContainer(), RHContainerShape.class);
-		Map< String , IColorConstant > connectionMap = rhContainerShape.getConnectionMap();
+		RHContainerShape rhContainerShape = (RHContainerShape) DUtil.getPictogramElementForBusinessObject(getDiagram(), source.eContainer(),
+			RHContainerShape.class);
+		Map<String, IColorConstant> connectionMap = rhContainerShape.getConnectionMap();
 		IColorConstant defaultColor = (IColorConstant) connectionMap.get(connectInterface.getId());
 
 		// Create connection (handle user selecting source or target)
@@ -120,7 +126,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		// create line
 		Polyline line = gaService.createPolyline(connectionPE);
 		line.setLineWidth(2);
-		IColorConstant style = (defaultColor != null) ?  defaultColor : StyleUtil.BLACK;
+		IColorConstant style = (defaultColor != null) ? defaultColor : StyleUtil.BLACK;
 		line.setForeground(gaService.manageColor(getFeatureProvider().getDiagramTypeProvider().getDiagram(), style));
 
 		// add any decorators
@@ -128,56 +134,55 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 
 		// link ports to connection
 		getFeatureProvider().link(connectionPE, new Object[] { connectInterface, source, target });
-		
+
 		return connectionPE;
 	}
-	
+
 	/**
 	 * Add decorators to connection if applicable
-	 * Note: Unfortunately Graphiti doesn't support ConnectionDecorators with tooltips like it does with Shape Decorators (see RHToolBehaviorProvider)
+	 * Note: Unfortunately Graphiti doesn't support ConnectionDecorators with tooltips like it does with Shape
+	 * Decorators (see RHToolBehaviorProvider)
 	 * @param connectionPE
 	 */
 	public static void decorateConnection(Connection connectionPE, SadConnectInterface connectInterface, Diagram diagram) {
 		decorateConnection(connectionPE, connectInterface, diagram, null);
 	}
 
-	
 	/**
 	 * Add decorators to connection if applicable
-	 * Note: Unfortunately Graphiti doesn't support ConnectionDecorators with tooltips like it does with Shape Decorators (see RHToolBehaviorProvider)
+	 * provides a default color option for decorating connections
 	 * @param connectionPE
 	 */
 	public static void decorateConnection(Connection connectionPE, SadConnectInterface connectInterface, Diagram diagram, IColorConstant defaultColor) {
 		// Clear any existing connection decorators
 		connectionPE.getConnectionDecorators().clear();
-		
+
 		IGaService gaService = Graphiti.getGaService();
 		IPeCreateService peCreateService = Graphiti.getPeCreateService();
-		
-		//establish source/target for connection
+
+		// establish source/target for connection
 		EObject source = connectInterface.getSource();
 		EObject target = connectInterface.getTarget();
-		
-		//source and target will be null if findBy or usesDevice is used, in this case pull stubs from diagram
+
+		// source and target will be null if findBy or usesDevice is used, in this case pull stubs from diagram
 		if (source == null) {
 			source = DUtil.getBusinessObject(connectionPE.getStart(), UsesPortStub.class);
 		}
 		if (target == null) {
 			target = DUtil.getBusinessObject(connectionPE.getEnd(), ConnectionTarget.class);
 		}
-		
+
 		if (source != null && target != null) {
 			// Connection validation
 			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
 			boolean compatibleConnection = InterfacesUtil.areCompatible(source, target);
-			
-			
+
 			// Add error decorator if necessary
 			if (!compatibleConnection || !uniqueConnection) {
-				
+
 				// add graphical X to the middle of the erroneous connection
 				ConnectionDecorator errorDecorator = peCreateService.createConnectionDecorator(connectionPE, false, 0.5, true);
-				Polyline errPolyline = gaService.createPolyline(errorDecorator, new int[] { -7, 7, 0, 0, -7, -7, 0, 0, 7, -7, 0, 0, 7, 7});
+				Polyline errPolyline = gaService.createPolyline(errorDecorator, new int[] { -7, 7, 0, 0, -7, -7, 0, 0, 7, -7, 0, 0, 7, 7 });
 				errPolyline.setForeground(gaService.manageColor(diagram, IColorConstant.RED));
 				errPolyline.setLineWidth(2);
 			}
@@ -190,7 +195,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 				arrowColor = IColorConstant.RED;
 			} else {
 				arrowColor = IColorConstant.BLACK;
-			}			
+			}
 			ConnectionDecorator arrowDecorator = peCreateService.createConnectionDecorator(connectionPE, false, 1.0, true);
 			Polyline polyline = gaService.createPolyline(arrowDecorator, new int[] { -15, 10, 0, 0, -15, -10 });
 			polyline.setForeground(gaService.manageColor(diagram, arrowColor));
@@ -211,17 +216,108 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		UsesPortStub source = getUsesPortStub(context);
 		ConnectionTarget target = getConnectionTarget(context);
 
-		if (sad != null && (source != null || target != null)) {
-			return true;
+		if (sad != null) {
+			if (source != null) {
+				this.sourcePort = source;
+				return true;
+			} else if (target != null) {
+				this.targetPort = target;
+				return true;
+			}
 		}
 
 		return false;
 	}
-	
+
+	@Override
+	public void startConnecting() {
+		super.startConnecting();
+
+		// Handles the highlighting of compatible ports during connection attempt
+		if (this.sourcePort != null) {
+			highlightCompatiblePorts(sourcePort, true);
+		} else if (this.targetPort != null) {
+			highlightCompatiblePorts(targetPort, true);
+		}
+	}
+
+	@Override
+	public void endConnecting() {
+		super.endConnecting();
+
+		// Turns off the highlighting of compatible ports post-connection attempt
+		if (this.sourcePort != null) {
+			highlightCompatiblePorts(sourcePort, false);
+			this.sourcePort = null;
+		} else if (this.targetPort != null) {
+			highlightCompatiblePorts(targetPort, false);
+			this.targetPort = null;
+		}
+	}
+
+	// Utility method to either highlight compatible ports, or return them to default styling
+	private void highlightCompatiblePorts(Object portStub, boolean shouldHighlight) {
+
+		setPortStyleLock(shouldHighlight);
+
+		TransactionalEditingDomain editingDomain = getDiagramBehavior().getEditingDomain();
+		List<ContainerShape> diagramPorts = null;
+		// Build the list of compatible ports
+		if (portStub instanceof UsesPortStub) {
+			diagramPorts = DUtil.getDiagramProvidesPorts(getDiagram());
+			for (int i = 0; i < diagramPorts.size(); i++) {
+				ContainerShape port = diagramPorts.get(i);
+				ProvidesPortStub providesStub = (ProvidesPortStub) DUtil.getBusinessObject(port);
+				if (!InterfacesUtil.areCompatible((UsesPortStub) portStub, providesStub)) {
+					diagramPorts.remove(port);
+				}
+			}
+		} else if (portStub instanceof ConnectionTarget) {
+			diagramPorts = DUtil.getDiagramUsesPorts(getDiagram());
+			for (int i = 0; i < diagramPorts.size(); i++) {
+				ContainerShape port = diagramPorts.get(i);
+				UsesPortStub usesStub = (UsesPortStub) DUtil.getBusinessObject(port);
+				if (!InterfacesUtil.areCompatible(usesStub, (ConnectionTarget) portStub)) {
+					diagramPorts.remove(port);
+				}
+			}
+		}
+
+		for (ContainerShape port : diagramPorts) {
+			Rectangle anchorGa = (Rectangle) port.getChildren().get(0).getAnchors().get(0).getGraphicsAlgorithm();
+			if (shouldHighlight) {
+				StyleUtil.updatePortStyle(anchorGa, getDiagram(), StyleUtil.COMPATIBLE_PORT, editingDomain);
+			} else {
+				StyleUtil.updatePortStyle(anchorGa, getDiagram(), null, editingDomain);
+			}
+		}
+	}
+
+	/**
+	 * Connection highlighting takes precident over all other styling options, so wipe them out and
+	 * block future style updates until after the connection attempt completes.
+	 */
+	private void setPortStyleLock(boolean shouldLock) {
+		TransactionalEditingDomain editingDomain = getDiagramBehavior().getEditingDomain();
+
+		List<ContainerShape> allPorts = new ArrayList<ContainerShape>();
+		allPorts.addAll(DUtil.getDiagramProvidesPorts(getDiagram()));
+		allPorts.addAll(DUtil.getDiagramUsesPorts(getDiagram()));
+		for (ContainerShape port : allPorts) {
+			if (shouldLock) {
+				Rectangle anchorGa = (Rectangle) port.getChildren().get(0).getAnchors().get(0).getGraphicsAlgorithm();
+				StyleUtil.updatePortStyle(anchorGa, getDiagram(), null, getDiagramBehavior().getEditingDomain());
+				StyleUtil.toggleUpdatePort(((RHContainerShapeImpl) port.eContainer().eContainer()), false, editingDomain, this);
+			} else {
+				StyleUtil.toggleUpdatePort(((RHContainerShapeImpl) port.eContainer().eContainer()), true, editingDomain, null);
+			}
+		}
+	}
+
 	/**
 	 * Determines whether creation of an interface connection is possible between source and destination anchors.
 	 * User can begin drawing connection from either direction.
-	 * Source anchor of connection must be UsesPort. 
+	 * Source anchor of connection must be UsesPort.
 	 * Target Anchor must be ConnectionTarget which is the parent class for a variety of types.
 	 */
 	@Override
@@ -231,7 +327,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		if (sad == null) {
 			return false;
 		}
-		
+
 		// doing the null check because it breaks when loading a findby without a diagram
 		if (((GraphitiWaveformDiagramEditor) getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer()).getGraphicalViewer() != null) {
 			// force selection of shape so that we can then right click for contextual options
@@ -241,7 +337,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 					new PictogramElement[] { context.getSourcePictogramElement() });
 			}
 		}
-		
+
 		// determine source
 		UsesPortStub source = getUsesPortStub(context);
 		if (source == null) {
@@ -268,32 +364,32 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	public Connection create(ICreateConnectionContext context) {
 
 		Connection newConnection = null;
-		
-		SadConnectInterface sadConnectInterface = (SadConnectInterface) DUtil.assignAnchorObjectsToConnection(
-			SadFactory.eINSTANCE.createSadConnectInterface(), 
+
+		SadConnectInterface sadConnectInterface = (SadConnectInterface) DUtil.assignAnchorObjectsToConnection(SadFactory.eINSTANCE.createSadConnectInterface(),
 			context.getSourceAnchor(), context.getTargetAnchor());
 		if (sadConnectInterface == null) {
-			//switch source/target direction and try again
-			sadConnectInterface = (SadConnectInterface) DUtil.assignAnchorObjectsToConnection(
-				SadFactory.eINSTANCE.createSadConnectInterface(), context.getTargetAnchor(), context.getSourceAnchor());
+			// switch source/target direction and try again
+			sadConnectInterface = (SadConnectInterface) DUtil.assignAnchorObjectsToConnection(SadFactory.eINSTANCE.createSadConnectInterface(),
+				context.getTargetAnchor(), context.getSourceAnchor());
 		}
 		if (sadConnectInterface == null) {
-			//can't make a connection
+			// can't make a connection
 			return null;
 		}
-		
+
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
-		
-		//create connectionId first check if provided in context (currently used by GraphitiModelMap), otherwise generate unique connection id
+
+		// create connectionId first check if provided in context (currently used by GraphitiModelMap), otherwise
+		// generate unique connection id
 		final String connectionId = (context.getProperty(OVERRIDE_CONNECTION_ID) != null) ? (String) context.getProperty(OVERRIDE_CONNECTION_ID)
-						: createConnectionId(sad);
+			: createConnectionId(sad);
 		// set connection id
 		sadConnectInterface.setId(connectionId);
-		
+
 		// container for new SadConnectInterface, necessary for reference after command execution
 		final SadConnectInterface[] sadConnectInterfaces = new SadConnectInterface[1];
 		sadConnectInterfaces[0] = sadConnectInterface;
@@ -322,7 +418,6 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		return newConnection;
 	}
 
-
 	// Return UsesPortStub from either the source or target anchor. Depends on how user drew connection.
 	private UsesPortStub getUsesPortStub(IConnectionContext context) {
 		UsesPortStub source = getUsesPortStub(context.getSourceAnchor());
@@ -332,7 +427,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		source = getUsesPortStub(context.getTargetAnchor());
 		return source;
 	}
-	
+
 	private UsesPortStub getUsesPortStub(Anchor anchor) {
 		if (anchor != null) {
 			Object object = getBusinessObjectForPictogramElement(anchor.getParent());

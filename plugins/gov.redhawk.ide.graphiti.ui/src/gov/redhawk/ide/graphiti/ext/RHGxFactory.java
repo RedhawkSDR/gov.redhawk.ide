@@ -32,6 +32,15 @@ public interface RHGxFactory extends EFactory {
 	RHContainerShape createRHContainerShape();
 
 	/**
+	 * Returns a new object of class '<em>Port Update Status</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Port Update Status</em>'.
+	 * @generated
+	 */
+	PortUpdateStatus createPortUpdateStatus();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

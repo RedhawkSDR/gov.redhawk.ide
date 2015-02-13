@@ -10,11 +10,21 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.util;
 
+import gov.redhawk.ide.graphiti.ext.PortUpdateStatus;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import gov.redhawk.sca.util.PluginUtil;
 
 import java.util.Collection;
 
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.transaction.TransactionalCommandStack;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.mm.StyleContainer;
+import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.styles.Font;
 import org.eclipse.graphiti.mm.algorithms.styles.LineStyle;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
@@ -70,6 +80,9 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final IColorConstant PROVIDES_WARNING_2 = new ColorConstant(255, 170, 0);
 	public static final IColorConstant PROVIDES_WARNING_3 = new ColorConstant(255, 85, 0);
 	public static final IColorConstant PROVIDES_WARNING_4 = IColorConstant.RED;
+
+	// Colors for port connection helpers
+	public static final IColorConstant COMPATIBLE_PORT = GREEN;
 
 	// COMPONENT
 	public static final int DEFAULT_LINE_WIDTH = 2;
@@ -472,7 +485,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
-	
+
 	// returns style for super uses port
 	public static Style createStyleForSuperUsesPort(Diagram diagram) {
 		final String styleId = SUPER_USES_PORT;
@@ -487,7 +500,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		}
 		return style;
 	}
-	
+
 	// returns style for super uses port
 	public static Style createStyleForSuperProvidesPort(Diagram diagram) {
 		final String styleId = SUPER_PROVIDES_PORT;
@@ -730,8 +743,56 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		return null;
 	}
 
-	private static Diagram findDiagram(ContainerShape containerShape) {
-		return Graphiti.getPeService().getDiagramForShape(containerShape);
+	/**
+	 * Toggles whether or not the update/internal update methods should run on a port
+	 * Only blocks automated updates.  Explicitly changing port styles will still work.
+	 * @param canUpdate - Setting to false locks port styles from being changed
+	 * @param settingObject - Used in cases of conflict to determine priority for locking/unlocking style edits.
+	 */
+	public static void toggleUpdatePort(final RHContainerShapeImpl containerShape, final boolean canUpdate, final TransactionalEditingDomain editingDomain, final Object settingObject) {
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new NonDirtyingCommand() {
+			@Override
+			public void execute() {
+				PortUpdateStatus portUpdateStatus = containerShape.getPortUpdateStatus().get(0);
+				portUpdateStatus.setPortsUpdatable(canUpdate);
+				
+				// if we are unlocking, then we don't care about the settingObject
+				if (canUpdate) {
+					portUpdateStatus.setSettingObject(null);
+				} else {
+					portUpdateStatus.setSettingObject(settingObject);
+				}
+			}
+		});
+	}
+
+	/**
+	 * Changes the port color to reflect appropriate state
+	 * 
+	 * @param anchorGa - the port that is being modified
+	 * @param diagram
+	 * @param style - static reference to a color in the StyleUtil class, if null sets color to default
+	 */
+	public static void updatePortStyle(final Rectangle anchorGa, final Diagram diagram, final IColorConstant style,
+		final TransactionalEditingDomain editingDomain) {
+		final Object portObj = DUtil.getBusinessObject((ContainerShape) anchorGa.getPictogramElement().eContainer());
+
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new NonDirtyingCommand() {
+			@Override
+			public void execute() {
+				if (style != null) {
+					anchorGa.setStyle(StyleUtil.createStyleForProvidesPortStatistics(diagram, style));
+				} else {
+					if (portObj instanceof ProvidesPortStub) {
+						anchorGa.setStyle(StyleUtil.createStyleForProvidesPort(diagram));
+					} else if (portObj instanceof UsesPortStub) {
+						anchorGa.setStyle(StyleUtil.createStyleForUsesPort(diagram));
+					}
+				}
+			}
+		});
 	}
 
 }

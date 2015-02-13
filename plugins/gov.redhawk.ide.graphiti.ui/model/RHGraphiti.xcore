@@ -36,10 +36,10 @@ interface ContainerShapeImpl wraps org.eclipse.graphiti.mm.pictograms.ContainerS
 class RHContainerShape extends org.eclipse.graphiti.mm.pictograms.ContainerShape {
 	
 	boolean started
-	boolean updatePorts
 	int iStatusErrorState
 	Map connectionMap 
 	Event event
+	contains PortUpdateStatus[] portUpdateStatus
 	
 	boolean hasSuperPortsContainerShape  //creates a single anchor on each side of container to represent ports
 	boolean hasPortsContainerShape //creates a container that displays an anchor per port
@@ -77,6 +77,14 @@ class RHContainerShape extends org.eclipse.graphiti.mm.pictograms.ContainerShape
 	 */
 	op Reason updateNeeded(IUpdateContext context, AbstractContainerPattern pattern)
 	
+}
+
+/**
+ * Used to enable/disable style updates on ports, such as highlighting ports during certain events
+ */
+class PortUpdateStatus {
+	boolean portsUpdatable
+	Object settingObject  // Need this to determine priority when there is conflict
 }
 
 enum Event {
