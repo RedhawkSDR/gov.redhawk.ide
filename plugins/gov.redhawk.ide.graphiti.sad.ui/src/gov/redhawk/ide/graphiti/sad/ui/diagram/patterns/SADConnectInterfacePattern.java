@@ -259,30 +259,27 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	private void highlightCompatiblePorts(Object portStub, boolean shouldHighlight) {
 
 		setPortStyleLock(shouldHighlight);
-
 		TransactionalEditingDomain editingDomain = getDiagramBehavior().getEditingDomain();
+
 		List<ContainerShape> diagramPorts = null;
-		// Build the list of compatible ports
 		if (portStub instanceof UsesPortStub) {
 			diagramPorts = DUtil.getDiagramProvidesPorts(getDiagram());
-			for (int i = 0; i < diagramPorts.size(); i++) {
-				ContainerShape port = diagramPorts.get(i);
-				ProvidesPortStub providesStub = (ProvidesPortStub) DUtil.getBusinessObject(port);
-				if (!InterfacesUtil.areCompatible((UsesPortStub) portStub, providesStub)) {
-					diagramPorts.remove(port);
-				}
-			}
 		} else if (portStub instanceof ConnectionTarget) {
 			diagramPorts = DUtil.getDiagramUsesPorts(getDiagram());
-			for (int i = 0; i < diagramPorts.size(); i++) {
-				ContainerShape port = diagramPorts.get(i);
-				UsesPortStub usesStub = (UsesPortStub) DUtil.getBusinessObject(port);
-				if (!InterfacesUtil.areCompatible(usesStub, (ConnectionTarget) portStub)) {
-					diagramPorts.remove(port);
-				}
+		}
+
+		List<ContainerShape> incompatiblePorts = new ArrayList<ContainerShape>();
+		for (int i = 0; i < diagramPorts.size(); i++) {
+			ContainerShape port = diagramPorts.get(i);
+			ProvidesPortStub providesStub = (ProvidesPortStub) DUtil.getBusinessObject(port);
+			if (!InterfacesUtil.areCompatible((UsesPortStub) portStub, providesStub)) {
+				incompatiblePorts.add(port);
 			}
 		}
 
+		diagramPorts.removeAll(incompatiblePorts);
+
+		// Change style to highlight or default, depending on passed boolean
 		for (ContainerShape port : diagramPorts) {
 			Rectangle anchorGa = (Rectangle) port.getChildren().get(0).getAnchors().get(0).getGraphicsAlgorithm();
 			if (shouldHighlight) {
