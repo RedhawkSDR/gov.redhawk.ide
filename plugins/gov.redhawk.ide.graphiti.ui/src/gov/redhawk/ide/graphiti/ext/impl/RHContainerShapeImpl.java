@@ -13,20 +13,24 @@ package gov.redhawk.ide.graphiti.ext.impl;
 import gov.redhawk.ide.graphiti.ext.Event;
 import gov.redhawk.ide.graphiti.ext.PortUpdateStatus;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.Port;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -166,10 +170,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * There should only ever be a single portUpdateStatus object which is initialized when the container shape is created.  
 	 * <!-- end-user-doc -->
 	 * @see #getPortUpdateStatus()
-	 * @generated
+	 * @generated NOT
 	 * @ordered
 	 */
-	protected PortUpdateStatus portUpdateStatus;
+	protected PortUpdateStatus portUpdateStatus = RHGxFactory.eINSTANCE.createPortUpdateStatus();
 
 	/**
 	 * The default value of the '{@link #isHasSuperPortsContainerShape() <em>Has Super Ports Container Shape</em>}' attribute.
@@ -265,6 +269,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	protected RHContainerShapeImpl() {
 		super();
+		
 	}
 
 	/**
