@@ -59,4 +59,5 @@ public class RHTestBotEditor extends SWTBotGefEditor {
 	public void drag(final int fromXPosition, final int fromYPosition, final int toXPosition, final int toYPosition) {
 		getDragViewer().drag(fromXPosition, fromYPosition, toXPosition, toYPosition);
 	}
+	
 }

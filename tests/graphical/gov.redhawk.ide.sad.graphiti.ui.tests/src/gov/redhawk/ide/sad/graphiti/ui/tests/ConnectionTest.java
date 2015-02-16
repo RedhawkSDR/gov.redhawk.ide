@@ -10,23 +10,30 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.graphiti.ui.tests;
 
+import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.WaitForEditorCondition;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+import gov.redhawk.ide.swtbot.diagram.RHTestBotCanvas;
 
 import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
+import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
+import org.eclipse.graphiti.mm.algorithms.styles.Color;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.util.IColorConstant;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
@@ -37,6 +44,9 @@ public class ConnectionTest extends AbstractGraphitiTest {
 
 	private SWTBotGefEditor editor;
 	private String waveformName;
+	private static final String SIGGEN = "SigGen";
+	private static final String HARD_LIMIT = "HardLimit";
+	private static final String DATA_CONVERTER = "DataConverter";
 
 	/**
 	 * IDE-731
@@ -45,26 +55,24 @@ public class ConnectionTest extends AbstractGraphitiTest {
 	@Test
 	public void connectFeatureTest() {
 		waveformName = "IDE-731-Test";
-		final String sourceComponent = "SigGen";
-		final String targetComponent = "HardLimit";
 
 		// Create an empty waveform project
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 
 		// Add components to diagram from palette
 		editor = gefBot.gefEditor(waveformName);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, sourceComponent, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, targetComponent, 300, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
 
 		// Get component edit parts and container shapes
-		SWTBotGefEditPart sourceComponentEditPart = editor.getEditPart(sourceComponent);
+		SWTBotGefEditPart sourceComponentEditPart = editor.getEditPart(SIGGEN);
 		ContainerShape sourceContainerShape = (ContainerShape) sourceComponentEditPart.part().getModel();
-		SWTBotGefEditPart targetComponentEditPart = editor.getEditPart(targetComponent);
+		SWTBotGefEditPart targetComponentEditPart = editor.getEditPart(HARD_LIMIT);
 		ContainerShape targetContainerShape = (ContainerShape) targetComponentEditPart.part().getModel();
 
 		// Get port edit parts
-		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, sourceComponent);
-		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, targetComponent);
+		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT);
 
 		// Confirm that no connections currently exist
 		Diagram diagram = DUtil.findDiagram(sourceContainerShape);
@@ -75,7 +83,7 @@ public class ConnectionTest extends AbstractGraphitiTest {
 		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.DIAGRAM_TAB);
 
 		// (IDE-657) Attempt to make an illegal connection and confirm that it was not actually made
-		SWTBotGefEditPart illegalTarget = DiagramTestUtils.getDiagramUsesPort(editor, targetComponent);
+		SWTBotGefEditPart illegalTarget = DiagramTestUtils.getDiagramUsesPort(editor, HARD_LIMIT);
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, illegalTarget);
 		Assert.assertTrue("Illegal connection should not have been drawn", diagram.getConnections().isEmpty());
 
@@ -126,8 +134,6 @@ public class ConnectionTest extends AbstractGraphitiTest {
 	@Test
 	public void redundantConnectionTest() {
 		waveformName = "IDE-679-Test";
-		final String sourceComponent = "SigGen";
-		final String targetComponent = "HardLimit";
 
 		// Create an empty waveform project
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
@@ -135,12 +141,12 @@ public class ConnectionTest extends AbstractGraphitiTest {
 		// Add components to diagram from palette
 		gefBot.waitUntil(new WaitForEditorCondition());
 		editor = gefBot.gefEditor(waveformName);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, sourceComponent, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, targetComponent, 300, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
 
 		// Get port edit parts
-		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, sourceComponent);
-		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, targetComponent);
+		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT);
 
 		// Draw redundant connections, save and close the editor
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
@@ -154,11 +160,11 @@ public class ConnectionTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// ...get target component edit parts and container shapes
-		SWTBotGefEditPart targetComponentEditPart = editor.getEditPart(targetComponent);
+		SWTBotGefEditPart targetComponentEditPart = editor.getEditPart(HARD_LIMIT);
 		ContainerShape targetContainerShape = (ContainerShape) targetComponentEditPart.part().getModel();
 
 		// ...update uses port edit part references, since this is technically a new editor
-		usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, sourceComponent);
+		usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		Connection connection = DUtil.getIncomingConnectionsContainedInContainerShape(targetContainerShape).get(0);
 		Assert.assertTrue("Error decorator should have been added", connection.getConnectionDecorators().size() == 2);
 
@@ -180,20 +186,18 @@ public class ConnectionTest extends AbstractGraphitiTest {
 	@Test
 	public void incompatibleConnectionTest() {
 		waveformName = "IDE-657-Test";
-		final String sourceComponent = "SigGen";
-		final String targetComponent = "DataConverter";
 
 		// Create an empty waveform project
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 
 		// Add components to diagram from palette
 		editor = gefBot.gefEditor(waveformName);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, sourceComponent, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, targetComponent, 300, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, DATA_CONVERTER, 300, 0);
 
 		// Get port edit parts
-		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, sourceComponent);
-		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, targetComponent, "dataOctet");
+		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, DATA_CONVERTER, "dataOctet");
 
 		// Draw incompatible connection and confirm error decorator exists
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
@@ -202,5 +206,66 @@ public class ConnectionTest extends AbstractGraphitiTest {
 
 		Connection connection = (Connection) connections.get(0).part().getModel();
 		Assert.assertTrue("Error decorator should have been added", connection.getConnectionDecorators().size() == 2);
+	}
+
+	/**
+	 * IDE-1058
+	 * Test the compatible port highlight behavior
+	 */
+	@Test
+	public void highlightTest() {
+		waveformName = "HighlightTestWF";
+		String sigGenPort = "dataFloat_out";
+		String dataConPort = "dataFloat";
+
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+
+		// Add components to diagram from palette
+		editor = gefBot.gefEditor(waveformName);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, DATA_CONVERTER, 300, 0);
+		SWTBotGefEditPart usesPort = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN, sigGenPort).children().get(0);
+		usesPort.select();
+
+		// Mouse down on target port
+		RHTestBotCanvas canvas = DiagramTestUtils.getCanvas(editor);
+		Point point = DiagramTestUtils.getDiagramRelativeCenter(usesPort);
+		canvas.mouseDown(point.x(), point.y());
+
+		// Check data converter ports for color change - (it's actually the anchor that changes color)
+		SWTBotGefEditPart dataConEditPart = editor.getEditPart(DATA_CONVERTER);
+		ComponentShapeImpl dataConShape = (ComponentShapeImpl) dataConEditPart.part().getModel();
+		List<ContainerShape> dataConPorts = DUtil.getDiagramProvidesPorts(dataConShape);
+		for (ContainerShape port : dataConPorts) {
+			GraphicsAlgorithm portGa = port.getChildren().get(0).getAnchors().get(0).getGraphicsAlgorithm();
+			if (dataConPort.equals(((ProvidesPortStub) DUtil.getBusinessObject(port)).getName())) {
+				Assert.assertTrue(compareColors(StyleUtil.GREEN, portGa.getStyle().getBackground()));
+			} else {
+				Assert.assertTrue(compareColors(StyleUtil.WHITE, portGa.getStyle().getBackground()));
+			}
+		}
+
+		// Mouse up on target port
+		canvas.mouseUp(point.x(), point.y());
+
+		// Confirm ports return to default color
+		dataConEditPart = editor.getEditPart(DATA_CONVERTER);
+		dataConShape = (ComponentShapeImpl) dataConEditPart.part().getModel();
+		dataConPorts = DUtil.getDiagramProvidesPorts(dataConShape);
+		for (ContainerShape port : dataConPorts) {
+			GraphicsAlgorithm portGa = port.getChildren().get(0).getAnchors().get(0).getGraphicsAlgorithm();
+			Assert.assertTrue(compareColors(StyleUtil.WHITE, portGa.getStyle().getBackground()));
+		}
+	}
+
+	private boolean compareColors(IColorConstant expectedColor, Color actualColor) {
+		int[] expectedRGB = { expectedColor.getRed(), expectedColor.getGreen(), expectedColor.getBlue() };
+		int[] actualRGB = { actualColor.getRed(), actualColor.getGreen(), actualColor.getBlue() };
+		for (int i = 0; i < expectedRGB.length; i++) {
+			if (expectedRGB[i] != actualRGB[i]) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

@@ -41,7 +41,7 @@ public class RHTestBotViewer extends SWTBotGefViewer {
 				final Control control = graphicalViewer.getControl();
 				if (control instanceof FigureCanvas) {
 					canvas = new RHTestBotCanvas((FigureCanvas) control);
-				}  else if (control instanceof Canvas) {
+				} else if (control instanceof Canvas) {
 					if (control instanceof IAdaptable) {
 						IAdaptable adaptable = (IAdaptable) control;
 						Object adapter = adaptable.getAdapter(LightweightSystem.class);
@@ -49,7 +49,7 @@ public class RHTestBotViewer extends SWTBotGefViewer {
 							canvas = new RHTestBotCanvas((Canvas) control, (LightweightSystem) adapter);
 						}
 					}
-                }	
+				}
 				editDomain = graphicalViewer.getEditDomain();
 			}
 		});
@@ -57,5 +57,9 @@ public class RHTestBotViewer extends SWTBotGefViewer {
 		if (graphicalViewer == null) {
 			throw new WidgetNotFoundException("Editor does not adapt to a GraphicalViewer");
 		}
+	}
+
+	public RHTestBotCanvas getCanvas() {
+		return (RHTestBotCanvas) canvas;
 	}
 }

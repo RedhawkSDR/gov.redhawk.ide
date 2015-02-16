@@ -83,4 +83,33 @@ public class RHTestBotCanvas extends SWTBotGefFigureCanvas {
 			}
 		});
 	}
+
+	/**
+	 * Cause a mouse-down event. Code will act as those mouse button (1) is being pressed until
+	 * {@link RHTestBotCanvas#mouseUp()} is called
+	 */
+	public void mouseDown(final int xPosition, final int yPosition) {
+		UIThreadRunnable.asyncExec(new VoidResult() {
+			public void run() {
+				org.eclipse.swt.events.MouseEvent meMove = new MouseEvent(createMouseEvent(xPosition, yPosition, 0, 0, 0));
+				eventDispatcher.dispatchMouseMoved(meMove);
+				org.eclipse.swt.events.MouseEvent meDown = new MouseEvent(createMouseEvent(xPosition, yPosition, 1, SWT.BUTTON1, 1));
+				eventDispatcher.dispatchMousePressed(meDown);
+			}
+		});
+	}
+
+	/**
+	 * Cause a mouse-up event.
+	 */
+	public void mouseUp(final int xPosition, final int yPosition) {
+		UIThreadRunnable.asyncExec(new VoidResult() {
+			public void run() {
+				org.eclipse.swt.events.MouseEvent meMoveTarget = new MouseEvent(createMouseEvent(xPosition, yPosition, 1, SWT.BUTTON1, 0));
+				eventDispatcher.dispatchMouseMoved(meMoveTarget);
+				org.eclipse.swt.events.MouseEvent meUp = new MouseEvent(createMouseEvent(xPosition, yPosition, 1, SWT.BUTTON1, 1));
+				eventDispatcher.dispatchMouseReleased(meUp);
+			}
+		});
+	}
 }
