@@ -230,7 +230,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 		final UsesDeviceStub usesDeviceStub = (UsesDeviceStub) DUtil.getBusinessObject(context.getPictogramElement());
 
 		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();

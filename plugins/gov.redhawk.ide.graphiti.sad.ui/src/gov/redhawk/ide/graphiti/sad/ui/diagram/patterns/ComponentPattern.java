@@ -158,7 +158,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 		// Perform business object manipulation in a Command
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
@@ -390,7 +390,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 	public void moveShape(IMoveShapeContext context) {
 		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(context.getPictogramElement());
 
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 		// if moving inside the same container
 		if (context.getSourceContainer() == context.getTargetContainer()) {
@@ -617,7 +617,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 
 	// returns the assembly controller for this waveform
 	private static AssemblyController getAssemblyController(IFeatureProvider featureProvider, Diagram diagram) {
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
 		if (sad.getAssemblyController() != null && sad.getAssemblyController().getComponentInstantiationRef() != null) {
 			return sad.getAssemblyController();
 		}
@@ -633,7 +633,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 
 	// returns the assembly controller for this waveform if it happens to be the passed in Component
 	public AssemblyController getComponentAssemblyController(SadComponentInstantiation ci) {
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 		if (sad.getAssemblyController() != null && sad.getAssemblyController().getComponentInstantiationRef() != null
 			&& sad.getAssemblyController().getComponentInstantiationRef().getRefid().equals(ci.getId())) {
 			return sad.getAssemblyController();
@@ -823,12 +823,12 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 	 */
 	public List<EObject> getBusinessObjectsToLink(EObject componentInstantiation) {
 		// get external ports
-		ExternalPorts externalPorts = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram()).getExternalPorts();
+		ExternalPorts externalPorts = DUtil.getDiagramSAD(getDiagram()).getExternalPorts();
 
 		// get sad from diagram, we need to link it to all shapes so the diagram will update when changes occur to
 		// assembly controller and external ports
 		List<EObject> businessObjectsToLink = new ArrayList<EObject>();
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 		// ORDER MATTERS, CI must be first
 		businessObjectsToLink.add(componentInstantiation);
 		businessObjectsToLink.add(sad);

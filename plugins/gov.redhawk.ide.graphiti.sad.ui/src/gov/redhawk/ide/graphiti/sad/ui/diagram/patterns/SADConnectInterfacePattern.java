@@ -210,7 +210,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	public boolean canStartConnection(ICreateConnectionContext context) {
 
 		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 		// source anchor (allow creating connection by starting from either direction)
 		UsesPortStub source = getUsesPortStub(context);
@@ -328,7 +328,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	@Override
 	public boolean canCreate(ICreateConnectionContext context) {
 		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 		if (sad == null) {
 			return false;
 		}
@@ -386,7 +386,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 		// create connectionId first check if provided in context (currently used by GraphitiModelMap), otherwise
 		// generate unique connection id

@@ -95,7 +95,7 @@ public class UsesDeviceFrontEndTunerPattern extends AbstractUsesDevicePattern im
 	public Object[] create(ICreateContext context) {
 		
 		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 		
 		// prompt user for 
 		final UsesDeviceFrontEndTunerWizard wizard = (UsesDeviceFrontEndTunerWizard) openWizard(

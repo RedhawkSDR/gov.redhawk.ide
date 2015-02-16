@@ -80,7 +80,7 @@ public class UsesDevicePattern extends AbstractUsesDevicePattern implements IPat
 	public Object[] create(ICreateContext context) {
 		
 		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 		
 		// prompt user for 
 		final UsesDeviceWizard wizard = (UsesDeviceWizard) openWizard(

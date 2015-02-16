@@ -83,7 +83,7 @@ public class TerminateComponentFeature extends NonUndoableCustomFeature {
 		}
 
 		// We need to remove the component from the sad.xml
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 		ComponentPattern.deleteComponentInstantiation(ci, sad);
 
 		// We need to manually remove the graphical representation of the component

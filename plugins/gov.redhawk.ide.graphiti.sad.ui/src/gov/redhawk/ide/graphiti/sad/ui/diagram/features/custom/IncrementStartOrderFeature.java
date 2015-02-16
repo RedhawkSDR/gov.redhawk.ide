@@ -56,7 +56,7 @@ public class IncrementStartOrderFeature extends AbstractCustomFeature {
 				SadComponentInstantiation ci = (SadComponentInstantiation) obj;
 
 				// get sad from diagram
-				final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+				final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 				// don't allow increment if there is not already a start order assigned
 				if (ci.getStartOrder() == null) {
@@ -88,7 +88,7 @@ public class IncrementStartOrderFeature extends AbstractCustomFeature {
 		final SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 
 		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 		// get current we are swapping start order with
 		final SadComponentInstantiation swapCI = ComponentPattern.getComponentInstantiationViaStartOrder(sad, ci.getStartOrder().add(BigInteger.ONE));

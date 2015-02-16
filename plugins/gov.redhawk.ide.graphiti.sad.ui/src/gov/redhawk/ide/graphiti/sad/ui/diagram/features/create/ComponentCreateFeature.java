@@ -86,7 +86,7 @@ public class ComponentCreateFeature extends AbstractCreateFeature {
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 		// determine if target is HostCollocation ContainerShape
 		HostCollocation hostCollocation = DUtil.getHostCollocation(context.getTargetContainer());

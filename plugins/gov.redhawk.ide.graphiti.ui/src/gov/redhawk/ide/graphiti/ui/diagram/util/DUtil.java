@@ -263,21 +263,8 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @param diagram
 	 * @return
 	 */
-	public static SoftwareAssembly getDiagramSAD(IFeatureProvider featureProvider, Diagram diagram) {
-
+	public static SoftwareAssembly getDiagramSAD(Diagram diagram) {
 		return (SoftwareAssembly) DUtil.getBusinessObject(diagram, SoftwareAssembly.class);
-
-//		//Used to use this, doesn't work for all cases.  Keep around for other potential cases for now.
-//		//You must use the same transactionalEditingDomain and associated resourceSet if you want save/undo/redo to work
-//		//properly.  The Graphiti editor will try saving the resourceSet and therefore we want our model to be in the same resourceSet.
-//		//The editingDomain below isn't associated with Graphiti model and so it doesn't save the model when the diagram editor saves.
-//		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
-//		ResourceSet resourceSet = editingDomain.getResourceSet();
-//		URI uri = diagram.eResource().getURI();
-//		uri = uri.trimFragment().trimFileExtension().appendFileExtension("sad.xml");
-//		SoftwareAssembly sad = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(uri, true));
-//		
-//		return sad;
 	}
 
 	/**

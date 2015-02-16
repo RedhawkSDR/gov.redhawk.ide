@@ -216,7 +216,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 		final FindByStub findByToDelete = (FindByStub) DUtil.getBusinessObject(context.getPictogramElement());
 
 		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 		final DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());
 

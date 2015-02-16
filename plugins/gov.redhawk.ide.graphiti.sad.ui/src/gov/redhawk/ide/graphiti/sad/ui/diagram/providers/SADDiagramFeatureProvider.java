@@ -221,7 +221,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 				boolean mark = true;
 
 				// get sad from diagram
-				final SoftwareAssembly sad = DUtil.getDiagramSAD(this.getDiagramTypeProvider().getFeatureProvider(), this.getDiagramTypeProvider().getDiagram());
+				final SoftwareAssembly sad = DUtil.getDiagramSAD(this.getDiagramTypeProvider().getDiagram());
 
 				if (sad.getExternalPorts() != null) {
 

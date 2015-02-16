@@ -55,7 +55,7 @@ public class DecrementStartOrderFeature extends AbstractCustomFeature {
 				SadComponentInstantiation ci = (SadComponentInstantiation) obj;
 				
 				// get sad from diagram
-				final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+				final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 				// don't allow decrement if its already the lowest
 				EList<SadComponentInstantiation> sortedComponents = sad.getComponentInstantiationsInStartOrder();
@@ -83,7 +83,7 @@ public class DecrementStartOrderFeature extends AbstractCustomFeature {
 		SadComponentInstantiation ci = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
 
 		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 		// get current we are swapping start order with
 		SadComponentInstantiation swapCI = ComponentPattern.getComponentInstantiationViaStartOrder(sad, ci.getStartOrder().subtract(BigInteger.ONE));

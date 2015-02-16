@@ -63,7 +63,7 @@ public class SetAsAssemblyControllerFeature extends AbstractCustomFeature {
 			if (obj instanceof SadComponentInstantiation) {
 
 				// get sad from diagram
-				final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+				final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 				// get AssemblyController
 				final AssemblyController assemblyController = sad.getAssemblyController();
@@ -89,7 +89,7 @@ public class SetAsAssemblyControllerFeature extends AbstractCustomFeature {
 		TransactionalEditingDomain editingDomain = getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
 
 		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 		// get AssemblyController
 		final AssemblyController assemblyController = sad.getAssemblyController();

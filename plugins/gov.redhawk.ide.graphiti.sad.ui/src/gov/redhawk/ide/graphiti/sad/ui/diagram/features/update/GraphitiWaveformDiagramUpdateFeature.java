@@ -83,7 +83,7 @@ public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFe
 			Diagram d = (Diagram) pe;
 
 			// get sad from diagram
-			final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+			final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
 			// TODO: ensure our SAD has an assembly controller
 			// set one if necessary, why bother the user?

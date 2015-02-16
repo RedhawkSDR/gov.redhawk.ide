@@ -269,7 +269,6 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	protected RHContainerShapeImpl() {
 		super();
-		
 	}
 
 	/**

@@ -133,10 +133,10 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		IFeatureProvider featureProvider = pattern.getFeatureProvider();
 		Diagram diagram = featureProvider.getDiagramTypeProvider().getDiagram();
 		AssemblyController assemblyController = pattern.getComponentAssemblyController(ci);
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
 
 		// get external ports
-		ExternalPorts externalPorts = DUtil.getDiagramSAD(featureProvider, diagram).getExternalPorts();
+		ExternalPorts externalPorts = DUtil.getDiagramSAD(diagram).getExternalPorts();
 
 		// get external ports relevant to component instantiation
 		final List<Port> ciExternalPorts = getComponentExternalPorts(ci, externalPorts);
@@ -259,8 +259,8 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	public Reason internalUpdate(ComponentPattern pattern, SadComponentInstantiation ci, boolean performUpdate) {
 		Diagram diagram = DUtil.findDiagram(this);
 		IFeatureProvider featureProvider = pattern.getFeatureProvider();
-		SoftwareAssembly sad = DUtil.getDiagramSAD(featureProvider, diagram);
-		ExternalPorts externalPorts = DUtil.getDiagramSAD(featureProvider, diagram).getExternalPorts();
+		SoftwareAssembly sad = DUtil.getDiagramSAD(diagram);
+		ExternalPorts externalPorts = DUtil.getDiagramSAD(diagram).getExternalPorts();
 		AssemblyController assemblyController = pattern.getComponentAssemblyController(ci);
 
 		// get external ports relevant to component instantiation

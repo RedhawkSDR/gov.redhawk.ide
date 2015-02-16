@@ -115,7 +115,7 @@ public class UsesFrontEndDeviceEditFeature extends AbstractCustomFeature {
 	private void editUsesDevice(final UsesDeviceStub usesDeviceStub, final RHContainerShapeImpl usesDeviceShape) {
 		
 		// get sad from diagram
-		final SoftwareAssembly sad = DUtil.getDiagramSAD(getFeatureProvider(), getDiagram());
+		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 		
 		// prompt user for 
 		final UsesDeviceFrontEndTunerWizard wizard = (UsesDeviceFrontEndTunerWizard) UsesDeviceFrontEndTunerPattern.openWizard(
