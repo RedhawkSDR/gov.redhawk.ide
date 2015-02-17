@@ -345,7 +345,7 @@
                category="gov.redhawk.ui.preferences"
                class="gov.redhawk.ide.graphiti.sad.ui.preferences.PortStatisticsPreferencePage"
                id="gov.redhawk.ide.graphiti.sad.ui.PortStatisticsPreferencePage"
-               name="SAD Port Statistics">
+               name="Port Statistics">
          </page>
       </extension>
       <extension
