@@ -28,18 +28,15 @@ import org.hamcrest.Matcher;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * 
- */
 @SuppressWarnings("restriction")
 public class PortPropertiesTest extends AbstractGraphitiTest {
 
-	/**
-	 * 
-	 */
 	public PortPropertiesTest() {
 	}
 
+	/**
+	 * Ensure that after selecting a port the IDL hierarchy for it is shown in the properties view.
+	 */
 	@Test
 	public void checkPortProperties() {
 		final String waveformName = "IDE-1050-test";
