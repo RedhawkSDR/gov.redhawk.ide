@@ -26,7 +26,9 @@ import java.util.Map;
 
 import mil.jpeojtrs.sca.partitioning.ConnectInterface;
 import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
+import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadFactory;
@@ -191,7 +193,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 			IColorConstant arrowColor;
 			if (!compatibleConnection || !uniqueConnection) {
 				arrowColor = IColorConstant.RED;
-			} else if (defaultColor != null)  {
+			} else if (defaultColor != null) {
 				arrowColor = defaultColor;
 			} else {
 				arrowColor = IColorConstant.BLACK;
@@ -256,31 +258,47 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	}
 
 	// Utility method to either highlight compatible ports, or return them to default styling
-	private void highlightCompatiblePorts(Object portStub, boolean shouldHighlight) {
+	private void highlightCompatiblePorts(Object originatingPort, boolean shouldHighlight) {
 
 		setPortStyleLock(shouldHighlight);
 
 		TransactionalEditingDomain editingDomain = getDiagramBehavior().getEditingDomain();
 		List<ContainerShape> diagramPorts = null;
-		// Build the list of compatible ports
-		if (portStub instanceof UsesPortStub) {
+
+		if (originatingPort instanceof UsesPortStub) {
+
+			// If the originating port is a uses, build a list of compatible provides
 			diagramPorts = DUtil.getDiagramProvidesPorts(getDiagram());
 			List<ContainerShape> incompatiblePorts = new ArrayList<ContainerShape>();
 			for (int i = 0; i < diagramPorts.size(); i++) {
 				ContainerShape port = diagramPorts.get(i);
 				ProvidesPortStub providesStub = (ProvidesPortStub) DUtil.getBusinessObject(port);
-				if (!InterfacesUtil.areCompatible((UsesPortStub) portStub, providesStub)) {
+
+				// Remove from port list all FindBy and incompatible ports
+				if (providesStub.eContainer() instanceof FindByStub) {
+					incompatiblePorts.add(port);
+				} else if (providesStub.eContainer() instanceof UsesDeviceStub
+					&& !InterfacesUtil.areSuggestedMatch((UsesPortStub) originatingPort, providesStub)) {
+					incompatiblePorts.add(port);
+				} else if (!InterfacesUtil.areCompatible((UsesPortStub) originatingPort, providesStub)) {
 					incompatiblePorts.add(port);
 				}
 			}
 			diagramPorts.removeAll(incompatiblePorts);
-		} else if (portStub instanceof ConnectionTarget) {
+		} else if (originatingPort instanceof ProvidesPortStub) {
+			// If the originating port is a provides, build a list of compatible uses
 			diagramPorts = DUtil.getDiagramUsesPorts(getDiagram());
 			List<ContainerShape> incompatiblePorts = new ArrayList<ContainerShape>();
 			for (int i = 0; i < diagramPorts.size(); i++) {
 				ContainerShape port = diagramPorts.get(i);
 				UsesPortStub usesStub = (UsesPortStub) DUtil.getBusinessObject(port);
-				if (!InterfacesUtil.areCompatible(usesStub, (ConnectionTarget) portStub)) {
+
+				// Remove from port list all FindBy and incompatible ports
+				if (usesStub.eContainer() instanceof FindByStub) {
+					incompatiblePorts.add(port);
+				} else if (usesStub.eContainer() instanceof UsesDeviceStub && !InterfacesUtil.areSuggestedMatch(usesStub, (ProvidesPortStub) originatingPort)) {
+					incompatiblePorts.add(port);
+				} else if (!InterfacesUtil.areCompatible(usesStub, (ProvidesPortStub) originatingPort)) {
 					incompatiblePorts.add(port);
 				}
 			}
