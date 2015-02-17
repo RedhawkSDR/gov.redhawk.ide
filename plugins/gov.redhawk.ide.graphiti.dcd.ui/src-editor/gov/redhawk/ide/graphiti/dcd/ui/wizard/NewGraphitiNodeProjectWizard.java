@@ -19,6 +19,7 @@ import gov.redhawk.ide.dcd.ui.wizard.ScaNodeProjectPropertiesWizardPage;
 import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdMultipageEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDDiagramTypeProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.util.FileService;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
@@ -46,7 +47,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.graphiti.examples.common.FileService;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
