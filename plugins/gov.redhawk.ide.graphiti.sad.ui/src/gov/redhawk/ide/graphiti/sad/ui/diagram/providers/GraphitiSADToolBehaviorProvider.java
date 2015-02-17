@@ -14,7 +14,7 @@ import gov.redhawk.core.resourcefactory.ComponentDesc;
 import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
 import gov.redhawk.core.resourcefactory.ResourceDesc;
 import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
@@ -496,7 +496,7 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		// IDE-1061 allow button pad to appear when cursor is anywhere 
 		// inside the ComponentShape
 		if (pe instanceof Shape) {
-			while (!(pe instanceof ComponentShape || pe == null)) {
+			while (!(pe instanceof RHContainerShapeImpl || pe == null)) {
 				pe = (PictogramElement) pe.eContainer();
 			}
 			if (pe == null) {

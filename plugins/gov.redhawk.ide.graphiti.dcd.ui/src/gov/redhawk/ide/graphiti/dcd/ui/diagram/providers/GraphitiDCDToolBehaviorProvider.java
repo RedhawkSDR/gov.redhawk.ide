@@ -16,6 +16,7 @@ import gov.redhawk.ide.graphiti.dcd.ext.ServiceShape;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.ServiceCreateFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -354,7 +355,7 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		// IDE-1061 allow button pad to appear when cursor is anywhere 
 		// inside the ComponentShape
 		if (pe instanceof Shape) {
-			while (!(pe instanceof DeviceShape || pe instanceof ServiceShape || pe == null)) {
+			while (!(pe instanceof RHContainerShapeImpl || pe == null)) {
 				pe = (PictogramElement) pe.eContainer();
 			}
 			if (pe == null) {
