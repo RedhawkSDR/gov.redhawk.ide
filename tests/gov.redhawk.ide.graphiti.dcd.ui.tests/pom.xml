@@ -20,7 +20,7 @@
     <relativePath>../../releng/swtbot/development</relativePath>
   </parent>
   <groupId>gov.redhawk.ide</groupId>
-  <artifactId>gov.redhawk.ide.sad.graphiti.ui.tests</artifactId>
+  <artifactId>gov.redhawk.ide.graphiti.dcd.ui.tests</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
 
