@@ -145,6 +145,12 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
+               <and>
+                  <test
+                        forcePluginActivation="false"
+                        property="gov.redhawk.ide.ui.templates.isSharedLibrary">
+                  </test>
+               </and>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -158,12 +164,6 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <and>
-                  <test
-                        forcePluginActivation="true"
-                        property="gov.redhawk.ide.ui.templates.isSharedLibrary">
-                  </test>
-               </and>
             </visibleWhen>
          </command>
       </menuContribution>
