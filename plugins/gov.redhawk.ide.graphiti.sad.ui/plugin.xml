@@ -94,8 +94,7 @@
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
       <propertyContributor
             contributorId="SADDiagram.PropertyContributor"
-            labelProvider="gov.redhawk.ide.graphiti.ui.diagram.providers.RHGraphitiDiagramLabelProvider"
-            typeMapper="org.eclipse.graphiti.examples.common.property.TypeMapper">
+            labelProvider="gov.redhawk.ide.graphiti.ui.diagram.providers.RHGraphitiDiagramLabelProvider">
          <propertyCategory
                category="Graphiti">
          </propertyCategory>
