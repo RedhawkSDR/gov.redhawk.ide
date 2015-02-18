@@ -3,6 +3,7 @@ plugins/gov.redhawk.ide.sad.graphiti.ui/
 screenshots/
 target/
 tests/graphical/gov.redhawk.ide.sad.graphiti.ui.tests/
+tests/graphical-runtime/gov.redhawk.ide.sad.graphiti.ui.runtime.tests/
 tests/gov.redhawk.ide.sad.tests/
 tests/gov.redhawk.ide.tests.ui/
 *.pyc

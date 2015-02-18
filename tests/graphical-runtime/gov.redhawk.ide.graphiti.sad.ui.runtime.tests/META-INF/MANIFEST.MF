@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Runtime SAD Graphiti Tests
+Bundle-SymbolicName: gov.redhawk.ide.graphiti.sad.ui.runtime.tests;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Eclipse-BundleShape: dir
+Bundle-Activator: gov.redhawk.ide.graphiti.sad.ui.runtime.tests.SadGraphitiRuntimeTestsActivator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.graphiti,
+ org.eclipse.graphiti.ui,
+ org.eclipse.graphiti.pattern,
+ org.eclipse.gef,
+ org.eclipse.swtbot.go;bundle-version="2.2.1",
+ org.eclipse.swtbot.eclipse.gef.finder;bundle-version="2.2.1",
+ gov.redhawk.sca,
+ gov.redhawk.ide.graphiti.sad.ui,
+ gov.redhawk.ide.swtbot,
+ org.eclipse.emf.common.ui,
+ org.eclipse.ui.views.properties.tabbed,
+ gov.redhawk.sca.ui,
+ gov.redhawk.ui,
+ org.eclipse.emf.workspace;bundle-version="1.5.1",
+ gov.redhawk.logging.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: gov.redhawk.ide.graphiti.sad.ext.impl
