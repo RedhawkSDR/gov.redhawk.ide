@@ -234,6 +234,9 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	@Override
 	public void startConnecting() {
 		super.startConnecting();
+		if (DUtil.DIAGRAM_CONTEXT_EXPLORER.equals(DUtil.getDiagramContext(getDiagram()))) {
+			return;
+		}
 
 		// Handles the highlighting of compatible ports during connection attempt
 		if (this.sourcePort != null) {
@@ -246,6 +249,9 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	@Override
 	public void endConnecting() {
 		super.endConnecting();
+		if (DUtil.DIAGRAM_CONTEXT_EXPLORER.equals(DUtil.getDiagramContext(getDiagram()))) {
+			return;
+		}
 
 		// Turns off the highlighting of compatible ports post-connection attempt
 		if (this.sourcePort != null) {
