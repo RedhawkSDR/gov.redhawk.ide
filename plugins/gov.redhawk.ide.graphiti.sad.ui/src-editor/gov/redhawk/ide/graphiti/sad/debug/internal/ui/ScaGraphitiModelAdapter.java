@@ -103,18 +103,6 @@ public class ScaGraphitiModelAdapter extends EContentAdapter {
 				break;
 			}
 
-			// enable when device diagram uses model map
-//			switch (notification.getFeatureID(ScaDevice.class)) {
-//			case ScaPackage.SCA_DEVICE__STARTED:
-//				if (notification.getNotifier() instanceof ScaDevice) {
-//					final Boolean started = (Boolean) notification.getNewValue();
-//					//this.modelMap.paintComponent(componentShape, started);
-//				}
-//				break;
-//			default:
-//				break;
-//			}
-
 			switch (notification.getFeatureID(IDisposable.class)) {
 			case ScaPackage.IDISPOSABLE__DISPOSED:
 				if (notification.getNotifier() instanceof Notifier) {

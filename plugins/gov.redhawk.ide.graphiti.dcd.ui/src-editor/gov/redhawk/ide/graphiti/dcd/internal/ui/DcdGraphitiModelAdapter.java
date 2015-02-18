@@ -10,8 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.internal.ui;
 
+import java.util.Collection;
+
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.dcd.DcdComponentPlacement;
+import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.util.EContentAdapter;
@@ -24,21 +27,39 @@ public class DcdGraphitiModelAdapter extends EContentAdapter {
 		this.modelMap = modelMap;
 	}
 
-	// TODO: Add cases to this adapter and the dcd model map to handle when a device is released via the SCA Explorer
-
 	@Override
 	public void notifyChanged(final Notification notification) {
 		super.notifyChanged(notification);
+		Object newValue = notification.getNewValue();
+		Object oldValue = notification.getOldValue();
 		switch (notification.getEventType()) {
 		case Notification.ADD:
-			Object newValue = notification.getNewValue();
 			if (newValue instanceof DcdComponentInstantiation) {
 				final DcdComponentInstantiation object = (DcdComponentInstantiation) notification.getNewValue();
 				this.modelMap.add(object);
+			} else if (newValue instanceof DcdConnectInterface) {
+				final DcdConnectInterface object = (DcdConnectInterface) newValue;
+				if (object.getSource() == null || object.getTarget() == null || object.getId() == null) {
+					return;
+				}
+				this.modelMap.add(object);
+			}
+			break;
+		case Notification.ADD_MANY:
+			for (Object obj : ((Collection< ? >) newValue)) {
+				if (obj instanceof DcdComponentInstantiation) {
+					final DcdComponentInstantiation object = (DcdComponentInstantiation) obj;
+					this.modelMap.add(object);
+				} else if (newValue instanceof DcdConnectInterface) {
+					final DcdConnectInterface object = (DcdConnectInterface) newValue;
+					if (object.getSource() == null || object.getTarget() == null || object.getId() == null) {
+						return;
+					}
+					this.modelMap.add(object);
+				}
 			}
 			break;
 		case Notification.REMOVE:
-			Object oldValue = notification.getOldValue();
 			if (oldValue instanceof DcdComponentInstantiation) {
 				final DcdComponentInstantiation object = (DcdComponentInstantiation) oldValue;
 				this.modelMap.remove(object);
@@ -46,6 +67,25 @@ public class DcdGraphitiModelAdapter extends EContentAdapter {
 				final DcdComponentPlacement object = (DcdComponentPlacement) oldValue;
 				for (DcdComponentInstantiation i : object.getComponentInstantiation()) {
 					this.modelMap.remove(i);
+				}
+			} else if (oldValue instanceof DcdConnectInterface) {
+				final DcdConnectInterface object = (DcdConnectInterface) oldValue;
+				this.modelMap.remove(object);
+			}
+			break;
+		case Notification.REMOVE_MANY:
+			for (Object obj : ((Collection< ? >) oldValue)) {
+				if (obj instanceof DcdComponentInstantiation) {
+					final DcdComponentInstantiation object = (DcdComponentInstantiation) obj;
+					this.modelMap.remove(object);
+				} else if (oldValue instanceof DcdComponentPlacement) {
+					final DcdComponentPlacement object = (DcdComponentPlacement) oldValue;
+					for (DcdComponentInstantiation i : object.getComponentInstantiation()) {
+						this.modelMap.remove(i);
+					}
+				} else if (obj instanceof DcdConnectInterface) {
+					final DcdConnectInterface object = (DcdConnectInterface) obj;
+					this.modelMap.remove(object);
 				}
 			}
 			break;

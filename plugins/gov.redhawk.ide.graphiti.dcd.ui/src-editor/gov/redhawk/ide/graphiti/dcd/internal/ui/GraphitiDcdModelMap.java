@@ -15,12 +15,17 @@ import gov.redhawk.ide.debug.impl.LocalScaDeviceManagerImpl;
 import gov.redhawk.ide.graphiti.dcd.internal.ui.editor.GraphitiDcdSandboxEditor;
 import gov.redhawk.ide.graphiti.dcd.ui.DCDUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.providers.DCDDiagramFeatureProvider;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaDeviceManager;
+import gov.redhawk.model.sca.ScaPort;
+import gov.redhawk.model.sca.ScaProvidesPort;
+import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import gov.redhawk.sca.ui.actions.StartAction;
 import gov.redhawk.sca.ui.actions.StopAction;
@@ -33,9 +38,13 @@ import java.util.List;
 import java.util.Map;
 
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import mil.jpeojtrs.sca.dcd.DcdConnectInterface;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import mil.jpeojtrs.sca.dcd.impl.DcdComponentInstantiationImpl;
+import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
@@ -54,9 +63,14 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
+import org.eclipse.graphiti.features.ICreateConnectionFeature;
+import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
 import org.eclipse.graphiti.features.context.impl.DeleteContext;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.pattern.DeleteFeatureForPattern;
@@ -66,10 +80,12 @@ import org.omg.CORBA.SystemException;
 import CF.DataType;
 import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.ReleaseError;
+import CF.PortPackage.InvalidPort;
+import CF.PortPackage.OccupiedPort;
 
 public class GraphitiDcdModelMap {
-//	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
-//		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
+	private static final EStructuralFeature[] CONN_INST_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.CONNECT_INTERFACE__USES_PORT,
+		PartitioningPackage.Literals.USES_PORT__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION };
 	private static final EStructuralFeature[] SPD_PATH = new EStructuralFeature[] { PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
 		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
 		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
@@ -79,7 +95,7 @@ public class GraphitiDcdModelMap {
 
 	// maps containing to uniquely identify devices/connections, use with synchronized statement
 	private final Map<String, DcdNodeMapEntry> nodes = Collections.synchronizedMap(new HashMap<String, DcdNodeMapEntry>());
-//	private final Map<String, ConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, ConnectionMapEntry>());
+	private final Map<String, DcdConnectionMapEntry> connections = Collections.synchronizedMap(new HashMap<String, DcdConnectionMapEntry>());
 
 	// actions for starting/stopping devices
 	private final StartAction startAction = new StartAction();
@@ -325,6 +341,54 @@ public class GraphitiDcdModelMap {
 		}
 	}
 
+	/**
+	 * Delete DcdConnectInterface from diagram
+	 * @param connection
+	 */
+	private void delete(final DcdConnectInterface connection) {
+		if (connection == null || editor.isDisposed()) {
+			return;
+		}
+
+		// setup to perform diagram operations
+		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+		final IFeatureProvider featureProvider = provider.getFeatureProvider();
+		final Diagram diagram = provider.getDiagram();
+
+		// get pictogram for connection
+		final PictogramElement peToRemove = DUtil.getPictogramElementForBusinessObject(diagram, connection, Connection.class);
+
+		// Delete Component in transaction
+		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+
+				// delete connection shape & connection business object
+				DeleteContext dc = new DeleteContext(peToRemove);
+				IDeleteFeature deleteFeature = featureProvider.getDeleteFeature(dc);
+				if (deleteFeature != null) {
+					deleteFeature.delete(dc);
+				}
+			}
+		});
+	}
+
+	/**
+	 * Delete ScaConnection from local device manager
+	 * @param oldConnection
+	 * @throws InvalidPort
+	 */
+	private void delete(final ScaConnection oldConnection) throws InvalidPort {
+		if (oldConnection == null) {
+			return;
+		}
+		if (oldConnection.getPort() != null && !oldConnection.getPort().isDisposed()) {
+			oldConnection.getPort().disconnectPort(oldConnection);
+		}
+	}
+
 	/********************** DIAGRAM TO SCA EXPLORER *****************************/
 	/*	These actions are fired when interacting with a shape in the diagram	*/
 	/*	and the results are reflected in the SCA Explorer view					*/
@@ -380,6 +444,94 @@ public class GraphitiDcdModelMap {
 	}
 
 	/**
+	 * New DcdConnectInterface was recently added to the diagram and this method will now launch
+	 * the corresponding ScaConnection
+	 * @param conn
+	 */
+	public void add(final DcdConnectInterface conn) {
+		final DcdConnectionMapEntry connectionMap = new DcdConnectionMapEntry();
+		connectionMap.setProfile(conn);
+		synchronized (connections) {
+			if (connections.get(connectionMap.getKey()) != null) {
+				return;
+			} else {
+				connections.put(connectionMap.getKey(), connectionMap);
+			}
+		}
+		Job job = new Job("Connecting " + conn.getId()) {
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				SubMonitor subMonitor = SubMonitor.convert(monitor, "Connecting " + conn.getId(), IProgressMonitor.UNKNOWN);
+				try {
+					ScaConnection newConnection = GraphitiDcdModelMap.this.create(conn);
+					connectionMap.setScaConnection(newConnection);
+					return Status.OK_STATUS;
+				} catch (final InvalidPort e) {
+					delete(conn);
+					connections.remove(connectionMap.getKey());
+					return new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
+				} catch (final OccupiedPort e) {
+					delete(conn);
+					connections.remove(connectionMap.getKey());
+					return new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
+				} finally {
+					if (connections.get(connectionMap.getKey()) == null) {
+						delete(conn);
+					}
+					subMonitor.done();
+				}
+			}
+
+		};
+		job.schedule();
+	}
+
+	/**
+	 * New ScaConnection was recently added and this method will now add
+	 * a DcdConnectInterface to the DeviceConfiguration of the Graphiti Diagram.
+	 * @param conn
+	 */
+	public void add(final ScaConnection conn) {
+		final DcdConnectionMapEntry connectionMap = new DcdConnectionMapEntry();
+		connectionMap.setScaConnection(conn);
+		synchronized (connections) {
+			if (connections.get(connectionMap.getKey()) != null) {
+				return;
+			} else {
+				connections.put(connectionMap.getKey(), connectionMap);
+			}
+		}
+		Job job = new Job("Adding connection " + conn.getId()) {
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				SubMonitor subMonitor = SubMonitor.convert(monitor, "Adding connection " + conn.getId(), IProgressMonitor.UNKNOWN);
+				DcdConnectInterface newDcdInterface = null;
+				try {
+					newDcdInterface = GraphitiDcdModelMap.this.create(conn);
+					if (newDcdInterface == null) {
+						connections.remove(connectionMap.getKey());
+						return Status.CANCEL_STATUS;
+					}
+					connectionMap.setProfile(newDcdInterface);
+					return Status.OK_STATUS;
+				} catch (CoreException e) {
+					connections.remove(connectionMap.getKey());
+					return new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to add connection " + conn.getId(), e);
+				} finally {
+					if (connections.get(connectionMap.getKey()) == null) {
+						delete(newDcdInterface);
+					}
+					subMonitor.done();
+				}
+			}
+
+		};
+		job.schedule();
+	}
+
+	/**
 	 * Launch ScaDevice for corresponding DcdComponentInstantiation
 	 * @param ci
 	 * @param implID
@@ -412,6 +564,131 @@ public class GraphitiDcdModelMap {
 		} catch (ExecuteFail e) {
 			throw new CoreException(new Status(IStatus.ERROR, DCDUIGraphitiPlugin.PLUGIN_ID, "Failed to launch device: " + e.msg, e));
 		}
+	}
+
+	/**
+	 * Create ScaDevice< ? > for corresponding DcdConnectInterface
+	 * @param conn
+	 * @return
+	 * @throws InvalidPort
+	 * @throws OccupiedPort
+	 */
+	private ScaConnection create(final DcdConnectInterface conn) throws InvalidPort, OccupiedPort {
+		DcdComponentInstantiation inst = ScaEcoreUtils.getFeature(conn, GraphitiDcdModelMap.CONN_INST_PATH);
+		final ScaDevice< ? > sourceDevice = get(inst);
+		if (sourceDevice == null) {
+			return null;
+		}
+		sourceDevice.fetchPorts(null);
+		final ScaUsesPort usesPort = (ScaUsesPort) sourceDevice.getScaPort(conn.getUsesPort().getUsesIndentifier());
+		org.omg.CORBA.Object targetObj = null;
+		if (conn.getComponentSupportedInterface() != null) {
+			final ScaDevice< ? > targetDevice = get((DcdComponentInstantiation) conn.getComponentSupportedInterface().getComponentInstantiationRef().getInstantiation());
+			if (targetDevice != null) {
+				targetObj = targetDevice.getCorbaObj();
+			}
+		} else if (conn.getProvidesPort() != null) {
+			final ScaDevice< ? > targetDevice = get(conn.getProvidesPort().getComponentInstantiationRef().getInstantiation());
+			if (targetDevice != null) {
+				targetDevice.fetchPorts(null);
+				final ScaPort< ? , ? > targetPort = targetDevice.getScaPort(conn.getProvidesPort().getProvidesIdentifier());
+				if (targetPort != null) {
+					targetObj = targetPort.getCorbaObj();
+				}
+			}
+		}
+		final String connId = conn.getId();
+
+		if (connId != null) {
+			if (targetObj != null) {
+				usesPort.connectPort(targetObj, connId);
+			}
+			for (final ScaConnection newConn : usesPort.fetchConnections(null)) {
+				if (connId.equals(newConn.getId())) {
+					return newConn;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Create DcdConnectInterface for corresponding ScaConnection
+	 * @param newValue
+	 * @return
+	 * @throws CoreException
+	 */
+	private DcdConnectInterface create(final ScaConnection newValue) throws CoreException {
+		UsesPortStub source = null;
+		final DcdComponentInstantiation sourceDevice = get((ScaDevice< ? >) newValue.getPort().eContainer());
+		if (sourceDevice != null) {
+			for (final UsesPortStub stub : sourceDevice.getUses()) {
+				if (stub.getName() != null && stub.getName().equals(newValue.getPort().getName())) {
+					source = stub;
+					break;
+				}
+			}
+		}
+
+		ConnectionTarget target = null;
+		out: for (final ScaDevice< ? > c : this.deviceManager.getAllDevices()) {
+			if (c.getObj()._is_equivalent(newValue.getData().port)) {
+				DcdComponentInstantiation sci = get((ScaDevice< ? >) c);
+				if (sci != null) {
+					target = sci.getInterfaceStub();
+				}
+				break;
+			}
+			for (final ScaPort< ? , ? > p : c.fetchPorts(null)) {
+				if (p instanceof ScaProvidesPort && p.getObj()._is_equivalent(newValue.getData().port)) {
+					final DcdComponentInstantiation comp = get((ScaDevice< ? >) c);
+					if (comp != null) {
+						for (final ProvidesPortStub provides : comp.getProvides()) {
+							if (provides.getName().equals(p.getName())) {
+								target = provides;
+								break out;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// setup for transaction in diagram
+		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
+		final IFeatureProvider featureProvider = provider.getFeatureProvider();
+		final Diagram diagram = provider.getDiagram();
+		final TransactionalEditingDomain editingDomain = (TransactionalEditingDomain) editor.getEditingDomain();
+
+		// get anchors from business objects
+		final Anchor sourceAnchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, source, Anchor.class);
+		final Anchor targetAnchor = (Anchor) DUtil.getPictogramElementForBusinessObject(diagram, target, Anchor.class);
+
+		// Create Component in transaction
+		final DcdConnectInterface[] dcdConnectInterfaces = new DcdConnectInterface[1];
+		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
+		stack.execute(new RecordingCommand(editingDomain) {
+			@Override
+			protected void doExecute() {
+				// create connection feature
+				CreateConnectionContext createConnectionContext = new CreateConnectionContext();
+				createConnectionContext.putProperty(DCDConnectInterfacePattern.OVERRIDE_CONNECTION_ID, newValue.getId());
+				createConnectionContext.setSourceAnchor(sourceAnchor);
+				createConnectionContext.setTargetAnchor(targetAnchor);
+				ICreateConnectionFeature[] createConnectionFeatures = featureProvider.getCreateConnectionFeatures();
+				for (ICreateConnectionFeature createConnectionFeature : createConnectionFeatures) {
+					if (createConnectionFeature.canCreate(createConnectionContext)) {
+						Connection connection = createConnectionFeature.create(createConnectionContext);
+						// get business object for newly created diagram connection
+						dcdConnectInterfaces[0] = (DcdConnectInterface) DUtil.getBusinessObject(connection);
+						break;
+					}
+				}
+
+			}
+		});
+
+		return dcdConnectInterfaces[0];
 	}
 
 	/**
@@ -461,6 +738,54 @@ public class GraphitiDcdModelMap {
 		}
 	}
 
+	public DcdComponentInstantiation get(final ScaDevice< ? > comp) {
+		if (comp == null) {
+			return null;
+		}
+		DcdNodeMapEntry nodeMapEntry = nodes.get(DcdNodeMapEntry.getKey(comp));
+		if (nodeMapEntry != null) {
+			return nodeMapEntry.getProfile();
+		} else {
+			return null;
+		}
+	}
+
+	public ScaDevice< ? > get(final DcdComponentInstantiation compInst) {
+		if (compInst == null) {
+			return null;
+		}
+		DcdNodeMapEntry nodeMapEntry = nodes.get(DcdNodeMapEntry.getKey(compInst));
+		if (nodeMapEntry != null) {
+			return nodeMapEntry.getScaDevice();
+		} else {
+			return null;
+		}
+	}
+
+	public ScaConnection get(final DcdConnectInterface conn) {
+		if (conn == null) {
+			return null;
+		}
+		DcdConnectionMapEntry connectionMap = connections.get(DcdConnectionMapEntry.getKey(conn));
+		if (connectionMap != null) {
+			return connectionMap.getScaConnection();
+		} else {
+			return null;
+		}
+	}
+
+	public DcdConnectInterface get(final ScaConnection conn) {
+		if (conn == null) {
+			return null;
+		}
+		DcdConnectionMapEntry connectionMap = connections.get(DcdConnectionMapEntry.getKey(conn));
+		if (connectionMap != null) {
+			return connectionMap.getProfile();
+		} else {
+			return null;
+		}
+	}
+
 	/**
 	 * Called when we remove DcdComponentInstantiation from the diagram.
 	 * This method removes ScaDevice from the local device manager
@@ -498,6 +823,55 @@ public class GraphitiDcdModelMap {
 	}
 
 	/**
+	 * Called when we remove DcdConnectInterface from the diagram.
+	 * This method removes ScaConnection from the local waveform
+	 * @param conn
+	 */
+	public void remove(final DcdConnectInterface conn) {
+		final DcdConnectionMapEntry connectionMap = connections.remove(DcdConnectionMapEntry.getKey(conn));
+		if (connectionMap == null) {
+			return;
+		}
+		final ScaConnection oldConnection = connectionMap.getScaConnection();
+		if (oldConnection != null) {
+			Job job = new Job("Disconnect connection " + conn.getId()) {
+
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					SubMonitor subMonitor = SubMonitor.convert(monitor, "Disconnect connection " + conn.getId(), IProgressMonitor.UNKNOWN);
+					try {
+						delete(oldConnection);
+						return Status.OK_STATUS;
+					} catch (InvalidPort e) {
+						return new Status(IStatus.WARNING, DCDUIGraphitiPlugin.PLUGIN_ID, "Problems while removing connection " + conn.getId(), e);
+					} finally {
+						subMonitor.done();
+					}
+				}
+
+			};
+			job.schedule();
+		}
+	}
+
+	/**
+	 * Called when we remove ScaConnection from the local waveform.
+	 * This method removes DcdConnectInterface from the diagram
+	 * @param conn
+	 */
+	public void remove(final ScaConnection conn) {
+		final DcdConnectionMapEntry connectionMap = connections.remove(DcdConnectionMapEntry.getKey(conn));
+		if (connectionMap == null) {
+			return;
+		}
+		final DcdConnectInterface oldDcdInterface = connectionMap.getProfile();
+		if (oldDcdInterface != null) {
+			delete(oldDcdInterface);
+		}
+
+	}
+
+	/**
 	 * @param oldComp
 	 * @throws ReleaseError
 	 */
@@ -510,45 +884,6 @@ public class GraphitiDcdModelMap {
 		}
 	}
 
-	// TODO: Do we need these?
-//	@Nullable
-//	public SadComponentInstantiation get(@Nullable final LocalScaComponent comp) {
-//		if (comp == null) {
-//			return null;
-//		}
-//		NodeMapEntry nodeMapEntry = nodes.get(NodeMapEntry.getKey(comp));
-//		if (nodeMapEntry != null) {
-//			return nodeMapEntry.getProfile();
-//		} else {
-//			return null;
-//		}
-//	}
-//
-//	@Nullable
-//	public LocalScaComponent get(@Nullable final SadComponentInstantiation compInst) {
-//		if (compInst == null) {
-//			return null;
-//		}
-//		NodeMapEntry nodeMapEntry = nodes.get(NodeMapEntry.getKey(compInst));
-//		if (nodeMapEntry != null) {
-//			return nodeMapEntry.getLocalScaComponent();
-//		} else {
-//			return null;
-//		}
-//	}
-
-//
-//	/**
-//	 * @param con
-//	 * @param sadCon
-//	 */
-//	public void put(@NonNull ScaConnection con, @NonNull SadConnectInterface sadCon) {
-//		ConnectionMapEntry connectionMap = new ConnectionMapEntry();
-//		connectionMap.setScaConnection(con);
-//		connectionMap.setProfile(sadCon);
-//		connections.put(connectionMap.getKey(), connectionMap);
-//	}
-//
 	/**
 	 * Adds a new model object/diagram object pairing to the nodes map
 	 * @param device
