@@ -193,7 +193,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 		// the proxy
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 		for (ScaWaveform localWaveform : localSca.getWaveforms()) {
-			if (localWaveform.getIdentifier().equals(remoteWaveform.getIdentifier()) && localWaveform instanceof LocalScaWaveform) {
+			if (localWaveform.getIdentifier() != null && localWaveform.getIdentifier().equals(remoteWaveform.getIdentifier()) && localWaveform instanceof LocalScaWaveform) {
 				return (LocalScaWaveform) localWaveform;
 			}
 		}
