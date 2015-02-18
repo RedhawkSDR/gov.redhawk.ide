@@ -16,7 +16,9 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
  org.apache.commons.lang;bundle-version="2.6.0",
  gov.redhawk.ui,
  gov.redhawk.sca.model,
- org.eclipse.jdt.launching
+ org.eclipse.jdt.launching,
+ org.eclipse.core.expressions,
+ gov.redhawk.ide.spd.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %Bundle-Vendor
