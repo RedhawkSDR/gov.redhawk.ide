@@ -1,7 +1,8 @@
 bin/
-target/
-screenshots/
 plugins/gov.redhawk.ide.sad.graphiti.ui/
+screenshots/
+target/
+tests/graphical/gov.redhawk.ide.sad.graphiti.ui.tests/
 tests/gov.redhawk.ide.sad.tests/
 tests/gov.redhawk.ide.tests.ui/
 *.pyc
