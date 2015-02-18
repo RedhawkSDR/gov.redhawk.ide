@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.dnd.TemplateTransferDragSourceListener;
 import org.eclipse.gef.internal.ui.palette.editparts.GroupEditPart;
 import org.eclipse.gef.palette.PaletteGroup;
 import org.eclipse.gef.palette.PaletteRoot;
-import org.eclipse.gef.palette.PaletteSeparator;
 import org.eclipse.gef.ui.palette.PaletteEditPartFactory;
 import org.eclipse.gef.ui.palette.PaletteViewer;
 import org.eclipse.gef.ui.palette.PaletteViewerProvider;
@@ -32,36 +32,39 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class RHGraphitiPaletteBehavior extends DefaultPaletteBehavior {
 
-	private DiagramBehavior diagramBehavior;
 	private RHGraphitiPaletteFilter paletteFilter;
-	
+
 	/**
 	 * @param diagramBehavior
 	 */
 	public RHGraphitiPaletteBehavior(DiagramBehavior diagramBehavior) {
 		super(diagramBehavior);
-		this.diagramBehavior = diagramBehavior;
 	}
-	
+
 	@Override
 	protected PaletteRoot createPaletteRoot() {
 		return new RHGraphitiPaletteRoot(diagramBehavior.getDiagramTypeProvider());
 	}
-	
+
 	@Override
 	public void refreshPalette() {
 		RHGraphitiPaletteRoot root = (RHGraphitiPaletteRoot) this.getPaletteRoot();
 		root.updatePaletteEntries();
 	}
-	
+
 	@Override
 	protected PaletteViewerProvider createPaletteViewerProvider() {
 		return new PaletteViewerProvider(diagramBehavior.getEditDomain()) {
-			
+
+			protected void configurePaletteViewer(PaletteViewer viewer) {
+				super.configurePaletteViewer(viewer);
+				viewer.addDragSourceListener(new TemplateTransferDragSourceListener(viewer));
+			}
+
 			public PaletteViewer createPaletteViewer(Composite parent) {
 				final PaletteViewer viewer = new PaletteViewer();
 				viewer.setEditPartFactory(new PaletteEditPartFactory() {
-					
+
 					/*
 					 * @see org.eclipse.gef.ui.palette.PaletteEditPartFactory#createToolbarEditPart(org.eclipse.gef.EditPart, java.lang.Object)
 					 */
@@ -69,7 +72,7 @@ public class RHGraphitiPaletteBehavior extends DefaultPaletteBehavior {
 					@Override
 					protected EditPart createGroupEditPart(EditPart parentEditPart, final Object model) {
 						GroupEditPart retVal = new GroupEditPart((PaletteGroup) model) {
-							
+
 							/*
 							 * @see org.eclipse.gef.editparts.AbstractEditPart#createChild(java.lang.Object)
 							 */
@@ -85,14 +88,14 @@ public class RHGraphitiPaletteBehavior extends DefaultPaletteBehavior {
 								}
 								return super.createChild(model);
 							}
-							
+
 							/*
 							 * @see org.eclipse.gef.ui.palette.editparts.PaletteEditPart#getModelChildren()
 							 */
 							@Override
 							public List<Object> getModelChildren() {
 								// IDE-1057: We don't want the default "Select" and "Marquee" tools
-								List<Object> newRetVal = new ArrayList <Object> ();
+								List<Object> newRetVal = new ArrayList<Object>();
 								// Stick in placeholder for filter at the top
 								newRetVal.add("Text");
 								return newRetVal;
