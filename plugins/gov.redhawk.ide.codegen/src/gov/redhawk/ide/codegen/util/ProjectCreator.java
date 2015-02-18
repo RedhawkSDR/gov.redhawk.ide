@@ -379,6 +379,28 @@ public abstract class ProjectCreator {
 	}
 
 	/**
+	 * IDE-1111: Make usable file/class names out of project names
+	 * @param project The project for which to generate file names
+	 * @return The base name to be used for files and classes in the project
+	 */
+	protected static String getBaseFileName(IProject project) {
+		return getBaseFileName(project.getName());
+	}
+	
+	/**
+	 * IDE-1111: Make usable file/class names out of project names
+	 * @param name The original project name
+	 * @return The base name to be used for files and classes in the project
+	 */
+	public static String getBaseFileName(String name) {
+		if (name == null) {
+			return null;
+		}
+		String[] tokens = name.split("\\.");
+		return tokens[tokens.length - 1];
+	}
+	
+	/**
 	 * Makes sure that a project has been cleaned out.
 	 * @param project
 	 * @throws CoreException
@@ -386,9 +408,8 @@ public abstract class ProjectCreator {
 	public static void resetProject(final IProject project, final IProgressMonitor monitor) throws CoreException {
 		final SubMonitor progress = SubMonitor.convert(monitor, 1);
 
-		String[] tokens = project.getName().split("\\.");
-
-		final IFile spdFile = project.getFile(tokens[tokens.length - 1] + SpdPackage.FILE_EXTENSION);
+		// IDE-1111 Make sure we are looking for correct file names
+		final IFile spdFile = project.getFile(getBaseFileName(project) + SpdPackage.FILE_EXTENSION);
 		final URI spdUri = URI.createPlatformResourceURI(spdFile.getFullPath().toString(), true).appendFragment(SoftPkg.EOBJECT_PATH);
 		final IFile waveDevFile = project.getFile(CodegenUtil.getWaveDevSettingsURI(spdUri).lastSegment());
 		if (waveDevFile.exists()) {
@@ -499,9 +520,10 @@ public abstract class ProjectCreator {
 	public static void addImplementation(final IProject project, final String spdName, final Implementation impl, final ImplementationSettings settings,
 		final IProgressMonitor monitor) throws CoreException {
 
-		String spdFileName = (spdName == null) ? project.getName() + SpdPackage.FILE_EXTENSION : spdName + SpdPackage.FILE_EXTENSION; // SUPPRESS
-																																		// CHECKSTYLE
-																																		// AvoidInLine
+		// IDE-1111: Make sure correct file names are being used
+		String spdFileBaseName = (spdName == null) ? getBaseFileName(project) : spdName;
+		String spdFileName = spdFileBaseName + SpdPackage.FILE_EXTENSION; // SUPPRESS
+
 		final SubMonitor progress = SubMonitor.convert(monitor, 2);
 
 		final IFile spdFile = project.getFile(spdFileName);

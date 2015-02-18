@@ -650,9 +650,11 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 						// If we're creating a new component (vs importing one)
 						if (isCreateNewResource) {
 							// Create the SCA XML files
-							setOpenEditorOn(createComponentFiles(project, projectName, getSoftPkg().getId(), null, progress.newChild(1)));
+							// IDE-1111: only use part of project name after last dot, if any, for file names
+							String spdName = getBaseFileName(projectName);
+							setOpenEditorOn(createComponentFiles(project, spdName, getSoftPkg().getId(), null, progress.newChild(1)));
 
-							ProjectCreator.addImplementation(project, projectName, pageImpl, settings, progress.newChild(1));
+							ProjectCreator.addImplementation(project, spdName, pageImpl, settings, progress.newChild(1));
 						} else {
 							setOpenEditorOn(ProjectCreator.importFiles(project, existingResourceLocation, getImplList(), getImportedSettingsMap(),
 								progress.newChild(2), getSoftPkg().getId()));
@@ -893,4 +895,14 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	protected String getComponentType() {
 		return componentType;
 	}
+	
+	/**
+	 * IDE-1111 Support namespaces by making usable file/class names out of projects with dots in their names
+	 * @param projectName The name as originally supplied
+	 * @return The name that should be used for the actual project files
+	 */
+	protected String getBaseFileName(String projectName) {
+		return ProjectCreator.getBaseFileName(projectName);
+	}
+	
 }
