@@ -15,13 +15,13 @@
          point="org.eclipse.graphiti.ui.diagramTypeProviders">
       <diagramTypeProvider
             class="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.SADDiagramTypeProvider"
-            id="gov.redhawk.ide.sad.graphiti.ui.FactoryProvider"
+            id="gov.redhawk.ide.graphiti.sad.ui.FactoryProvider"
             name="FactoryProvider">
          <diagramType
-               id="gov.redhawk.ide.sad.graphiti.ui.SADDiagramEditor">
+               id="gov.redhawk.ide.graphiti.sad.ui.SADDiagramEditor">
          </diagramType>
          <imageProvider
-               id="gov.redhawk.ide.sad.graphiti.ui.diagram.providers.imageProvider">
+               id="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.imageProvider">
          </imageProvider>
          <imageProvider
                id="gov.redhawk.ide.graphiti.ui.diagram.providers.imageProvider">
@@ -31,7 +31,7 @@
    <extension
          point="org.eclipse.graphiti.ui.diagramTypes">
       <diagramType
-            id="gov.redhawk.ide.sad.graphiti.ui.SADDiagramEditor"
+            id="gov.redhawk.ide.graphiti.sad.ui.SADDiagramEditor"
             name="SAD Diagram"
             type="SADDiagram">
       </diagramType>
@@ -40,7 +40,7 @@
          point="org.eclipse.graphiti.ui.imageProviders">
       <imageProvider
             class="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.WaveformImageProvider"
-            id="gov.redhawk.ide.sad.graphiti.ui.diagram.providers.imageProvider">
+            id="gov.redhawk.ide.graphiti.sad.ui.diagram.providers.imageProvider">
       </imageProvider>
    </extension>
 
@@ -89,7 +89,7 @@
          </describer>
       </content-type>
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
       <propertyContributor
@@ -103,13 +103,13 @@
          </propertyCategory>
       </propertyContributor>
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
       <propertyTabs
             contributorId="SADDiagram.PropertyContributor">
 
-           
+
          <propertyTab
              category="Graphiti"
              id="property.tab.ComponentProperties"
@@ -136,8 +136,8 @@
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertySections">
       <propertySections contributorId="SADDiagram.PropertyContributor">
-      
-         
+
+
          <propertySection
          	   class="gov.redhawk.ide.graphiti.ui.properties.ComponentPropertiesSection"
                filter="gov.redhawk.ide.graphiti.sad.ui.properties.ComponentFilter"
@@ -167,8 +167,8 @@
 
       </propertySections>
    </extension>
-   
-      
+
+
    <!--
         Registers an Eclipse adapter factory to provide IPropertySource objects for the GraphitiShapeEditPart
         that gets selected in the DiagramEditor to provide a standard (table format) property sheet for EReference
@@ -229,7 +229,7 @@
             contributorClass="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
             default="true"
             icon="icons/full/obj16/SadModelFile.gif"
-            id="gov.redhawk.ide.sad.graphiti.ui.editor.presentation.SadEditorID"
+            id="gov.redhawk.ide.graphiti.sad.ui.editor.presentation.SadEditorID"
             name="Waveform Editor">
          <contentTypeBinding contentTypeId="mil.jpeojtrs.sca.sad.content-type"/>
       </editor>
@@ -238,7 +238,7 @@
             contributorClass="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
             default="true"
             icon="icons/redhawk16.gif"
-            id="gov.redhawk.ide.sad.graphiti.ui..editor.localMultiPageSca"
+            id="gov.redhawk.ide.graphiti.sad.ui..editor.localMultiPageSca"
             name="Chalkboard">
       </editor>
       <editor
@@ -246,34 +246,34 @@
             contributorClass="gov.redhawk.ide.graphiti.sad.internal.ui.editor.GraphitiWaveformMultipageEditorActionBarContributor"
             default="true"
             icon="icons/redhawk16.gif"
-            id="gov.redhawk.ide.sad.graphiti.ui.editor.waveformExplorer"
+            id="gov.redhawk.ide.graphiti.sad.ui.editor.waveformExplorer"
             name="Waveform Explorer">
       </editor>
    </extension>
-   
-   
-   
+
+
+
       <extension
             name="Graphiti Content Types"
             point="gov.redhawk.sca.ui.scaContentTypes">
          <contentTypeBinding
                contentTypeId="mil.jpeojtrs.sca.sad.contentType"
-               editorId="gov.redhawk.ide.sad.graphiti.ui.editor.presentation.SadEditorID"
+               editorId="gov.redhawk.ide.graphiti.sad.ui.editor.presentation.SadEditorID"
                priority="HIGHEST">
          </contentTypeBinding>
       <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.localSca"
-            editorId="gov.redhawk.ide.sad.graphiti.ui..editor.localMultiPageSca"
+            editorId="gov.redhawk.ide.graphiti.sad.ui..editor.localMultiPageSca"
             priority="HIGHEST">
       </contentTypeBinding>
       <contentTypeBinding
             contentTypeId="gov.redhawk.ide.debug.ui.contentType.sca"
-            editorId="gov.redhawk.ide.sad.graphiti.ui..editor.localMultiPageSca"
+            editorId="gov.redhawk.ide.graphiti.sad.ui..editor.localMultiPageSca"
             priority="HIGHEST">
       </contentTypeBinding>
       <contentTypeBinding
             contentTypeId="gov.redhawk.ui.sad.contentType"
-            editorId="gov.redhawk.ide.sad.graphiti.ui.editor.waveformExplorer"
+            editorId="gov.redhawk.ide.graphiti.sad.ui.editor.waveformExplorer"
             priority="HIGHEST">
       </contentTypeBinding>
    </extension>
@@ -282,7 +282,7 @@
          <commonFilter
                activeByDefault="true"
                description="Filters .sad_GDiagram resources"
-               id="gov.redhawk.ide.sad.graphiti.ui.commonfilter.gdiagram"
+               id="gov.redhawk.ide.graphiti.sad.ui.commonfilter.gdiagram"
                name=".sad_GDiagram resources">
             <filterExpression>
                <and>
@@ -303,7 +303,7 @@
                viewerId="org.eclipse.ui.navigator.ProjectExplorer">
             <includes>
                <contentExtension
-                     pattern="gov.redhawk.ide.sad.graphiti.ui.commonfilter.gdiagram">
+                     pattern="gov.redhawk.ide.graphiti.sad.ui.commonfilter.gdiagram">
                </contentExtension>
             </includes>
          </viewerContentBinding>
@@ -312,28 +312,28 @@
             point="org.eclipse.ui.contexts">
          <context
                description="In a REDHAWK Graphiti diagram editor"
-               id="gov.redhawk.ide.sad.graphiti.ui.contexts.diagram"
+               id="gov.redhawk.ide.graphiti.sad.ui.contexts.diagram"
                name="RH Graphiti Diagram"
                parentId="org.eclipse.graphiti.ui.diagramEditor">
          </context>
          <context
                description="In the REDHAWK Graphiti Chalkboard editor"
-               id="gov.redhawk.ide.sad.graphiti.ui.contexts.sandbox"
+               id="gov.redhawk.ide.graphiti.sad.ui.contexts.sandbox"
                name="RH Graphiti Chalkboard"
-               parentId="gov.redhawk.ide.sad.graphiti.ui.contexts.diagram">
+               parentId="gov.redhawk.ide.graphiti.sad.ui.contexts.diagram">
          </context>
       </extension>
       <extension
             point="org.eclipse.ui.bindings">
          <key
                commandId="org.eclipse.gef.zoom_in"
-               contextId="gov.redhawk.ide.sad.graphiti.ui.contexts.diagram"
+               contextId="gov.redhawk.ide.graphiti.sad.ui.contexts.diagram"
                schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
                sequence="CTRL++">
          </key>
          <key
                commandId="org.eclipse.ui.file.saveAs"
-               contextId="gov.redhawk.ide.sad.graphiti.ui.contexts.sandbox"
+               contextId="gov.redhawk.ide.graphiti.sad.ui.contexts.sandbox"
                schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
                sequence="CTRL+S">
          </key>
@@ -353,5 +353,5 @@
                class="gov.redhawk.ide.graphiti.sad.ui.preferences.PreferenceInitializer">
          </initializer>
       </extension>
-   
+
 </plugin>

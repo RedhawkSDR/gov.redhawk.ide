@@ -1,11 +1,11 @@
 /*******************************************************************************
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.providers;
@@ -23,11 +23,11 @@ public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider implemen
 
 	public static final String DIAGRAM_TYPE_ID = "SADDiagram";
 	public static final String DIAGRAM_EXT = ".sad_GDiagram";
-	public static final String PROVIDER_ID = "gov.redhawk.ide.sad.graphiti.ui.FactoryProvider";
+	public static final String PROVIDER_ID = "gov.redhawk.ide.graphiti.sad.ui.FactoryProvider";
 
 	private IToolBehaviorProvider[] toolBehaviorProviders;
-	
-	//Enable events to determine when diagram automatically updates 
+
+	//Enable events to determine when diagram automatically updates
 	//(current happens when showing diagram)
 	private boolean autoUpdateAtRuntime = false;
 
@@ -76,5 +76,5 @@ public class SADDiagramTypeProvider extends AbstractDiagramTypeProvider implemen
 		this.autoUpdateAtRuntime = autoUpdateAtRuntime;
 	}
 
-	
+
 }

@@ -1,11 +1,11 @@
 /*******************************************************************************
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.internal.ui.editor;
@@ -64,11 +64,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
- * 
+ *
  */
 @SuppressWarnings("restriction")
 public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEditor {
-	public static final String EDITOR_ID = "gov.redhawk.ide.sad.graphiti.ui.editor.localMultiPageSca";
+	public static final String EDITOR_ID = "gov.redhawk.ide.graphiti.sad.ui.editor.localMultiPageSca";
 	private static final Debug DEBUG = new Debug(SADUIGraphitiPlugin.PLUGIN_ID, "editor");
 	private ScaGraphitiModelAdapter scaListener;
 	private SadGraphitiModelAdapter sadlistener;
@@ -450,7 +450,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 	@Override
 	protected DiagramEditor createDiagramEditor() {
 		GraphitiWaveformDiagramEditor editor = new GraphitiWaveformDiagramEditor((TransactionalEditingDomain) getEditingDomain());
-		editor.addContext("gov.redhawk.ide.sad.graphiti.ui.contexts.sandbox");
+		editor.addContext("gov.redhawk.ide.graphiti.sad.ui.contexts.sandbox");
 		return editor;
 	}
 
