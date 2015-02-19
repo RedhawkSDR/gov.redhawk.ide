@@ -84,7 +84,7 @@ public class ScaChalkboardContentDescriber implements IScaContentDescriber {
 			// the proxy
 			final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca();
 			for (ScaWaveform localWaveform : localSca.getWaveforms()) {
-				if (localWaveform.getIdentifier().equals(remoteWaveform.getIdentifier()) && localWaveform instanceof LocalScaWaveform) {
+				if (remoteWaveform.getIdentifier().equals(localWaveform.getIdentifier()) && localWaveform instanceof LocalScaWaveform) {
 					proxy = (LocalScaWaveform) localWaveform;
 					return proxy;
 				}
