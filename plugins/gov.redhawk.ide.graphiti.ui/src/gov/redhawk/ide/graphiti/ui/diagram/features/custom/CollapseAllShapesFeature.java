@@ -11,7 +11,6 @@
 package gov.redhawk.ide.graphiti.ui.diagram.features.custom;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
@@ -71,8 +70,6 @@ public class CollapseAllShapesFeature extends AbstractCustomFeature {
 		
 		//set preference for diagram
 		final Diagram diagram = getDiagram();
-		DUtil.setCreateRHContainerSuperPorts(diagram, true);
-		DUtil.setCreateRHContainerPorts(diagram, false);
 		
 		//collapse existing shapes in diagram
 		for (PictogramElement p: diagram.getChildren()) { //TODO: need to handle inside host collocation

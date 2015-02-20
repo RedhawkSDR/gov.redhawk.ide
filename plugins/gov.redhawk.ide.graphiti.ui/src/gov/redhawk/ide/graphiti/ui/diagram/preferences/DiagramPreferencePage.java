@@ -45,7 +45,8 @@ public class DiagramPreferencePage extends FieldEditorPreferencePage implements 
 
 		final Composite parent = getFieldEditorParent();
 		addField(new BooleanFieldEditor(DiagramPreferenceConstants.HIDE_DETAILS, "Hide Shape Details", parent));
-		addField(new BooleanFieldEditor(DiagramPreferenceConstants.HIDE_UNUSED_PORTS, "Hide Unused Ports", parent));
+		//TODO:IDE-1147
+		//addField(new BooleanFieldEditor(DiagramPreferenceConstants.HIDE_UNUSED_PORTS, "Hide Unused Ports", parent));
 		
 	}
 

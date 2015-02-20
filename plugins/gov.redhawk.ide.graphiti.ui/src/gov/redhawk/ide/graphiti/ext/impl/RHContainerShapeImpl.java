@@ -15,7 +15,9 @@ import gov.redhawk.ide.graphiti.ext.PortUpdateStatus;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
+import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.preferences.DiagramPreferenceConstants;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 
@@ -528,10 +530,12 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		setContainer(targetContainerShape);
 
 		//configure preferences
-		final Diagram diagram = DUtil.findDiagram(this);
-		setHasSuperPortsContainerShape(DUtil.getCreateRHContainerSuperPorts(diagram));
-		setHasPortsContainerShape(DUtil.getCreateRHContainerPorts(diagram));
-		setHideUnusedPorts(DUtil.isHideRHContainerUnusedPorts(diagram));
+		boolean hideDetailsPref = GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_DETAILS);
+		boolean hidePortsPref = GraphitiUIPlugin.getDefault().getPreferenceStore().getBoolean(DiagramPreferenceConstants.HIDE_UNUSED_PORTS);
+		setHasSuperPortsContainerShape(hideDetailsPref);
+		setHasPortsContainerShape(!hideDetailsPref);
+		setHideUnusedPorts(hidePortsPref);
+		
 
 		// add property for this shape
 		Graphiti.getPeService().setPropertyValue(this, DUtil.GA_TYPE, SHAPE_OUTER_CONTAINER);

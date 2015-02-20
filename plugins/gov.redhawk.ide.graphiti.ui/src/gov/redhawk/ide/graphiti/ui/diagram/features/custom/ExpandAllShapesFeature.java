@@ -11,7 +11,6 @@
 package gov.redhawk.ide.graphiti.ui.diagram.features.custom;
 
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
@@ -70,8 +69,6 @@ public class ExpandAllShapesFeature extends AbstractCustomFeature {
 	public void execute(ICustomContext context) {
 		//set preference for diagram
 		final Diagram diagram = getDiagram();
-		DUtil.setCreateRHContainerSuperPorts(diagram, false);
-		DUtil.setCreateRHContainerPorts(diagram, true);
 		
 		//expand existing shapes in diagram
 		for (PictogramElement p: diagram.getChildren()) { //TODO: need to handle inside host collocation
