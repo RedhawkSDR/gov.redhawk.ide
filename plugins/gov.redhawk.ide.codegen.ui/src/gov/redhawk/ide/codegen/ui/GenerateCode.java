@@ -46,6 +46,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.NamedThreadFactory;
@@ -552,6 +553,7 @@ public final class GenerateCode {
 	 */
 	private static IStatus validate(final IProject project, final SoftPkg softPkg, Implementation impl, final WaveDevSettings waveDev) {
 		final MultiStatus retStatus = new MultiStatus(RedhawkCodegenUiActivator.PLUGIN_ID, IStatus.OK, "Validation problems prior to generating code", null);
+		CodeFileType projectType = softPkg.getImplementation().get(0).getCode().getType();
 
 		if (project == null) {
 			return new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Project does not exist");
@@ -577,35 +579,39 @@ public final class GenerateCode {
 				}
 			}
 
-			// Check SCD file
-			final String scdFileName = ModelUtil.getScdFileName(softPkg);
-			if (scdFileName == null) {
-				retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to determine SCD filename"));
-			} else {
-				final IFile file = project.getFile(scdFileName);
-				if (!file.exists()) {
-					retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Cannot locate SCD file"));
+			// Don't validate SCD or PRF if project is a Shared Library
+			if (!CodeFileType.SHARED_LIBRARY.equals(projectType)) {
+				// Check SCD file
+				final String scdFileName = ModelUtil.getScdFileName(softPkg);
+				if (scdFileName == null) {
+					retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unable to determine SCD filename"));
 				} else {
-					for (final IMarker mark : file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)) {
-						if (mark.getAttribute(IMarker.SEVERITY, 0) == IMarker.SEVERITY_ERROR) {
-							retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "The SCD file contains errors"));
-							break;
+					final IFile file = project.getFile(scdFileName);
+					if (!file.exists()) {
+						retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Cannot locate SCD file"));
+					} else {
+						for (final IMarker mark : file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)) {
+							if (mark.getAttribute(IMarker.SEVERITY, 0) == IMarker.SEVERITY_ERROR) {
+								retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "The SCD file contains errors"));
+								break;
+							}
 						}
+					
 					}
 				}
-			}
-
-			// Check PRF file
-			final String prfFileName = ModelUtil.getPrfFileName(softPkg.getPropertyFile());
-			if (prfFileName != null) {
-				final IFile file = project.getFile(prfFileName);
-				if (!file.exists()) {
-					retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Cannot locate PRF file"));
-				} else {
-					for (final IMarker mark : file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)) {
-						if (mark.getAttribute(IMarker.SEVERITY, 0) == IMarker.SEVERITY_ERROR) {
-							retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "The PRF file contains errors"));
-							break;
+			
+				// Check PRF file
+				final String prfFileName = ModelUtil.getPrfFileName(softPkg.getPropertyFile());
+				if (prfFileName != null) {
+					final IFile file = project.getFile(prfFileName);
+					if (!file.exists()) {
+						retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Cannot locate PRF file"));
+					} else {
+						for (final IMarker mark : file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)) {
+							if (mark.getAttribute(IMarker.SEVERITY, 0) == IMarker.SEVERITY_ERROR) {
+								retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "The PRF file contains errors"));
+								break;
+							}
 						}
 					}
 				}
