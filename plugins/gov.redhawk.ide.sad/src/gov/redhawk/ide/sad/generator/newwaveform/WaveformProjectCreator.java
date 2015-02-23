@@ -77,8 +77,7 @@ public class WaveformProjectCreator extends ProjectCreator {
 		args.setProjectName(project.getName());
 		args.setWaveformId(waveformID);
 		
-		String[] tokens = project.getName().split("\\.");
-		args.setWaveformName(tokens[tokens.length - 1]);
+		args.setWaveformName(project.getName());
 		
 		args.setAssemblyConroller(assemblyController);
 
@@ -87,7 +86,7 @@ public class WaveformProjectCreator extends ProjectCreator {
 		progress.worked(1);
 
 		// Check that files/folders don't exist already
-		final IFile sadFile = project.getFile(args.getWaveformName() + SadPackage.FILE_EXTENSION);
+		final IFile sadFile = project.getFile(getBaseFileName(project) + SadPackage.FILE_EXTENSION);
 		if (sadFile.exists()) {
 			throw new CoreException(new Status(IStatus.ERROR, IdeSadPlugin.PLUGIN_ID, "File " + sadFile.getName() + " already exists.", null));
 		}

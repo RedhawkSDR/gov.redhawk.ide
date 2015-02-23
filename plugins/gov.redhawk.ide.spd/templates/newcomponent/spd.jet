@@ -10,9 +10,9 @@
         <name><%=args.getAuthorName()%></name> 
     </author>
     <propertyfile type="PRF">
-        <localfile name="<%=args.getSoftPkgName()%>.prf.xml"/>
+        <localfile name="<%=args.getPrfFile()%>"/>
     </propertyfile>
     <descriptor>
-        <localfile name="<%=args.getSoftPkgName()%>.scd.xml"/>
+        <localfile name="<%=args.getScdFile()%>"/>
     </descriptor>
 </softpkg>

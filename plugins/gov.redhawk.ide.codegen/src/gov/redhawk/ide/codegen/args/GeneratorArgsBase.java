@@ -22,6 +22,9 @@ public class GeneratorArgsBase {
 	public static final String PROJECT_NAME_KEY = "project_name";
 	public static final String SOFTPKG_FILE_KEY = "softpkg_file";
 	public static final String AUTHOR_NAME_KEY = "author_name";
+	public static final String PRF_FILE_KEY = "prf_file";
+	public static final String SCD_FILE_KEY = "scd_file";
+	
 	/**
 	 * @since 10.0
 	 */
@@ -99,4 +102,21 @@ public class GeneratorArgsBase {
 	public String getSoftPkgId() {
 		return this.getProperty(SOFT_PKG_ID_KEY);
 	}
+	
+	public void setPrfFile(String prfFile) {
+		this.setProperty(PRF_FILE_KEY, prfFile);
+	}
+
+	public String getPrfFile() {
+		return this.getProperty(PRF_FILE_KEY);
+	}
+	
+	public void setScdFile(String scdFile) {
+		this.setProperty(SCD_FILE_KEY, scdFile);
+	}
+
+	public String getScdFile() {
+		return this.getProperty(SCD_FILE_KEY);
+	}
+	
 }

@@ -78,6 +78,7 @@ public class ServiceProjectCreator extends ProjectCreator {
 		args.setSoftPkgName(spdName);
 		args.setAuthorName(authorName);
 		args.setProperty("service_repid", serviceRepId);
+		args.setScdFile(spdName + ScdPackage.FILE_EXTENSION);
 
 		// Generate file content from templates
 		final String spdContent = new SpdFileTemplate().generate(args);

@@ -29,7 +29,7 @@ public class SpdFileTemplate
   protected final String TEXT_2 = "\" id=\"";
   protected final String TEXT_3 = "\">" + NL + "    <title/>" + NL + "    <author>" + NL + "        <name>";
   protected final String TEXT_4 = "</name> " + NL + "    </author>" + NL + "    <descriptor>" + NL + "        <localfile name=\"";
-  protected final String TEXT_5 = ".scd.xml\"/>" + NL + "    </descriptor>" + NL + "</softpkg>";
+  protected final String TEXT_5 = "\"/>" + NL + "    </descriptor>" + NL + "</softpkg>";
   protected final String TEXT_6 = NL;
 
     /**
@@ -46,7 +46,7 @@ public class SpdFileTemplate
     stringBuffer.append(TEXT_3);
     stringBuffer.append(args.getAuthorName());
     stringBuffer.append(TEXT_4);
-    stringBuffer.append(args.getSoftPkgName());
+    stringBuffer.append(args.getScdFile());
     stringBuffer.append(TEXT_5);
     stringBuffer.append(TEXT_6);
     return stringBuffer.toString();

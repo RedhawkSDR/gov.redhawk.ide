@@ -73,8 +73,7 @@ public class NodeProjectCreator extends ProjectCreator {
 		args.setProjectName(project.getName());
 		args.setNodeId(nodeID);
 		
-		String[] tokens = project.getName().split("\\.");
-		args.setNodeName(tokens[tokens.length - 1]);
+		args.setNodeName(project.getName());
 		
 		args.setAuthorName(authorName);
 		args.setDomainManagerName(domainManagerName);

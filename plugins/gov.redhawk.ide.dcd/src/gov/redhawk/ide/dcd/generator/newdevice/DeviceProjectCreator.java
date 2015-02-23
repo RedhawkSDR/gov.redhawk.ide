@@ -104,11 +104,13 @@ public class DeviceProjectCreator extends ProjectCreator {
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setProjectName(project.getName());
 		args.setSoftPkgId(spdID);
-		args.setSoftPkgName(spdName);
+		args.setSoftPkgName(project.getName());
 		args.setAuthorName(authorName);
 		args.setDeviceType(deviceType);
 		args.setAggregateDevice(aggregateDevice);
 		args.setSoftPkgFile(spdName + SpdPackage.FILE_EXTENSION);
+		args.setPrfFile(spdName + PrfPackage.FILE_EXTENSION);
+		args.setScdFile(spdName + ScdPackage.FILE_EXTENSION);
 
 		// Generate file content from templates
 		final String spdContent = new SpdFileTemplate().generate(args);
