@@ -50,6 +50,7 @@ public class SpdFileTemplateTest {
 		args.setSoftPkgId("MyIdentifier");
 		args.setProjectName("MyProject");
 		args.setSoftPkgName("MySpdName");
+		args.setScdFile("MyScdName" + ScdPackage.FILE_EXTENSION);
 		final String spdContent = spdTemplate.generate(args);
 
 		// Create an XML file with the content
@@ -64,7 +65,7 @@ public class SpdFileTemplateTest {
 		Assert.assertEquals("", softpkg.getTitle());
 		Assert.assertEquals(args.getAuthorName(), softpkg.getAuthor().get(0).getName().get(0));
 		Assert.assertNull(softpkg.getPropertyFile());
-		Assert.assertEquals(args.getSoftPkgName() + ScdPackage.FILE_EXTENSION, softpkg.getDescriptor().getLocalfile().getName());
+		Assert.assertEquals(args.getScdFile(), softpkg.getDescriptor().getLocalfile().getName());
 	}
 
 }
