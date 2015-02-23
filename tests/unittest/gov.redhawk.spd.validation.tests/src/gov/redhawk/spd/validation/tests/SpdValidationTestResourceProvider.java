@@ -68,14 +68,16 @@ public class SpdValidationTestResourceProvider {
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setSoftPkgName("Name");
 		args.setSoftPkgId(project.getName());
+		args.setPrfFile("PrfName" + PrfPackage.FILE_EXTENSION);
+		args.setScdFile("ScdName" + ScdPackage.FILE_EXTENSION);
 
 		final String spd = new SpdFileTemplate().generate(args);
 		final String prf = new PrfFileTemplate().generate(null);
 		final String scd = new ScdFileTemplate().generate(null);
 
 		final IFile spdFile = project.getFile(args.getSoftPkgName() + SpdPackage.FILE_EXTENSION);
-		final IFile prfFile = project.getFile(args.getSoftPkgName() + PrfPackage.FILE_EXTENSION);
-		final IFile scdFile = project.getFile(args.getSoftPkgName() + ScdPackage.FILE_EXTENSION);
+		final IFile prfFile = project.getFile(args.getPrfFile());
+		final IFile scdFile = project.getFile(args.getScdFile());
 
 		try {
 			spdFile.create(new ByteArrayInputStream(spd.getBytes("UTF-8")), true, null);
