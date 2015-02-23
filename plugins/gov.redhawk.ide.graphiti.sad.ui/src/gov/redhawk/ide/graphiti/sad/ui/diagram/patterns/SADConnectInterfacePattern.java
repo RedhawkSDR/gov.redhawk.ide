@@ -210,11 +210,6 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	 */
 	@Override
 	public boolean canStartConnection(ICreateConnectionContext context) {
-		// Don't allow connections to be drawn in the waveform explorer
-		if (DUtil.DIAGRAM_CONTEXT_EXPLORER.equals(DUtil.getDiagramContext(getDiagram()))) {
-			return false;
-		}
-		
 		// get sad from diagram
 		final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
@@ -395,6 +390,10 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	 */
 	@Override
 	public Connection create(ICreateConnectionContext context) {
+		// Don't allow connections to be drawn in the waveform explorer
+		if (DUtil.DIAGRAM_CONTEXT_EXPLORER.equals(DUtil.getDiagramContext(getDiagram()))) {
+			return null;
+		}
 
 		Connection newConnection = null;
 
