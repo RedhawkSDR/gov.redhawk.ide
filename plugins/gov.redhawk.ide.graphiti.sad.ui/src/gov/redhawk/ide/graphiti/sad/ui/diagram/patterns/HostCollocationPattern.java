@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.FindByStub;
+import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
@@ -283,7 +284,7 @@ public class HostCollocationPattern extends AbstractContainerPattern implements 
 			context.getY(), GA_OUTER_ROUNDED_RECTANGLE);
 		for (Shape shape : shapesToAddToHostCollocation) {
 			for (EObject obj : shape.getLink().getBusinessObjects()) {
-				if (obj instanceof FindByStub) {
+				if (obj instanceof FindByStub || obj instanceof UsesDeviceStub) {
 					return false;
 				}
 			}
