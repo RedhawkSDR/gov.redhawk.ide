@@ -190,7 +190,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		dragFromPaletteToDiagram(editor, "Host Collocation", 0, 0);
 		SWTBotShell hostCoShell = gefBot.shell("New Host Collocation");
 		hostCoShell.setFocus();
-		SWTBotText textField = gefBot.textWithLabel("Host Collocation:");
+		SWTBotText textField = gefBot.textWithLabel("Name:");
 		textField.setFocus();
 		textField.typeText(hostCoName);
 		gefBot.button("OK").click();
@@ -201,7 +201,14 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * Drag a Use FrontEnd Tuner Device onto the SAD diagram editor
 	 */
 	public static void dragUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor) {
-		dragFromPaletteToDiagram(editor, "Use FrontEnd Tuner Device", 0, 0);
+		dragUseFrontEndTunerDeviceToDiagram(gefBot, editor, 0, 0);
+	}
+	
+	/**
+	 * Drag a Use FrontEnd Tuner Device onto the SAD diagram editor at specificed coordinates
+	 */
+	public static void dragUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, int xPosition, int yPosition) {
+		dragFromPaletteToDiagram(editor, "Use FrontEnd Tuner Device", xPosition, yPosition);
 	}
 
 	/**

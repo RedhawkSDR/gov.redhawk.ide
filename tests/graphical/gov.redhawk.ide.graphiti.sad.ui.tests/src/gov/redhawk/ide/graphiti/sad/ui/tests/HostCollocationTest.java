@@ -17,6 +17,7 @@ import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.FindByUtils;
+import gov.redhawk.ide.swtbot.diagram.UsesDeviceTestUtils;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 
@@ -541,6 +542,56 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		Assert.assertEquals("Host collocation width not have changed size", oldX, hostCollocationGa.getX() + hostCollocationGa.getWidth());
 
 		// Assert that FindBy Element is not contained within host collocation
+		Assert.assertTrue("Number of components should be 1, instead there are " + hostCo.getComponentPlacement().size(), 
+			hostCo.getComponentPlacement().size() == 1);
+		Assert.assertEquals("Expected component \'" + SIGGEN + "\' was not found", SIGGEN + "_1",
+			hostCo.getComponentPlacement().get(0).getComponentInstantiation().get(0).getId());
+	}
+	
+	/**
+	 * IDE-698
+	 * Host Collocation resize should not execute if a Find By object would end up inside the contained
+	 */
+	@Test
+	public void hostCollocationResizeOverUsesDevice() {
+		waveformName = "HC_Resize_FindBy";
+		final String SIGGEN = "SigGen";
+		final String HOST_CO_NAME = "HC1";
+
+		// Create a new empty waveform
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+		
+		
+		//maximize window
+		DiagramTestUtils.maximizeActiveWindow(gefBot);
+		
+		// Add host collocation to the waveform
+		DiagramTestUtils.dragHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
+				
+		// Add component/findby to the host collocation
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 20, 150);
+		DiagramTestUtils.dragUseFrontEndTunerDeviceToDiagram(gefBot, editor, 450, 150);
+		UsesDeviceTestUtils.completeUsesDeviceWizard(gefBot, "existingAllocId", "newAllocId", new String[]{"provides"}, new String[]{"uses"});
+		MenuUtils.save(editor);
+		
+		//HostCOllocation objects
+		HostCollocation hostCo = DiagramTestUtils.getHostCollocationObject(editor, HOST_CO_NAME);
+		GraphicsAlgorithm hostCollocationGa = DiagramTestUtils.getHostCollocationShape(editor, HOST_CO_NAME).getGraphicsAlgorithm();
+
+		// Attempt to expand host collocation right to cover the FindBy object
+		editor.getEditPart(HOST_CO_NAME).click();
+		int oldX = hostCollocationGa.getX() + hostCollocationGa.getWidth();
+		int oldY = (hostCollocationGa.getY() + hostCollocationGa.getHeight()) / 2;
+		int newX = oldX + 1000;
+		int newY = oldY;
+		editor.drag(oldX + 5, oldY + 2, newX, newY);
+		
+		// Assert that the host collocation resize was rejected
+		Assert.assertFalse(editor.isDirty());
+		Assert.assertEquals("Host collocation width not have changed size", oldX, hostCollocationGa.getX() + hostCollocationGa.getWidth());
+
+		// Assert that Uses Device Element is not contained within host collocation
 		Assert.assertTrue("Number of components should be 1, instead there are " + hostCo.getComponentPlacement().size(), 
 			hostCo.getComponentPlacement().size() == 1);
 		Assert.assertEquals("Expected component \'" + SIGGEN + "\' was not found", SIGGEN + "_1",

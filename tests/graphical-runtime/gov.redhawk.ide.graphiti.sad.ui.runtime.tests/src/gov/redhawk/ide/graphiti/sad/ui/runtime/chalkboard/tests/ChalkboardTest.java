@@ -90,9 +90,12 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 
 	/**
 	 * IDE-928 Check to make sure FindBy elements do not appear in the RHToolBar when in the Graphiti sandbox
+	 * IDE-124 Check to make sure UsesDevice tool does not appear in the Palette when in the Graphiti sandbox
 	 */
 	@Test
-	public void checkFindByNotInSandbox() {
+	public void checkNotInSandbox() {
+		
+		// Check for Find Bys
 		editor = openChalkboardDiagram(gefBot);
 		String[] findByList = { FindByUtils.FIND_BY_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, FindByUtils.FIND_BY_EVENT_CHANNEL,
 			FindByUtils.FIND_BY_FILE_MANAGER, FindByUtils.FIND_BY_SERVICE };
@@ -104,6 +107,15 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 			} catch (WidgetNotFoundException e) {
 				Assert.assertTrue(e.getMessage(), e.getMessage().matches(".*" + findByType + ".*"));
 			}
+		}
+		
+		// Check for Uses Devices
+		String usesDevice = "Use FrontEnd Tuner Device";
+		try {
+			DiagramTestUtils.dragFromPaletteToDiagram(editor, usesDevice, 0, 0);
+			Assert.fail(); // The only way to get here is if the FindBy type appears in the Palette
+		} catch (WidgetNotFoundException e) {
+			Assert.assertTrue(e.getMessage(), e.getMessage().matches(".*" + usesDevice + ".*"));
 		}
 	}
 
