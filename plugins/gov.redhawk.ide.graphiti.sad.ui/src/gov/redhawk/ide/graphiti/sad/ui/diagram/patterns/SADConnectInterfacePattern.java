@@ -264,6 +264,9 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 
 	// Utility method to either highlight compatible ports, or return them to default styling
 	private void highlightCompatiblePorts(Object originatingPort, boolean shouldHighlight) {
+		if (originatingPort == null) {
+			return;
+		}
 
 		setPortStyleLock(shouldHighlight);
 
@@ -404,6 +407,11 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 			sadConnectInterface = (SadConnectInterface) DUtil.assignAnchorObjectsToConnection(SadFactory.eINSTANCE.createSadConnectInterface(),
 				context.getTargetAnchor(), context.getSourceAnchor());
 		}
+		
+		// TODO: Hack to make sure ports revert to default color after connection attempt 
+		highlightCompatiblePorts(sourcePort, false);
+		highlightCompatiblePorts(targetPort, false);
+		
 		if (sadConnectInterface == null) {
 			// can't make a connection
 			return null;

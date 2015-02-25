@@ -16,6 +16,7 @@ import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.IDiagramUtilHelper;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractFindByPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.wizards.SuperPortConnectionWizard;
 import gov.redhawk.sca.efs.ScaFileSystemPlugin;
 
 import java.io.ByteArrayInputStream;
@@ -47,6 +48,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.emf.common.util.EList;
@@ -96,6 +98,9 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
@@ -116,12 +121,9 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static final String DIAGRAM_CONTEXT_TARGET_SDR = "target-sdr";
 	public static final String DIAGRAM_CONTEXT_EXPLORER = "explorer";
 
-
 	public static final int DIAGRAM_SHAPE_HORIZONTAL_PADDING = 100;
 	public static final int DIAGRAM_SHAPE_SIBLING_VERTICAL_PADDING = 5;
 	public static final int DIAGRAM_SHAPE_ROOT_VERTICAL_PADDING = 50;
-
-
 
 	// do this because we need to pass it to layout diagram, assumes we already have shapes drawn of a certain
 	// size and that we are just moving them
@@ -269,7 +271,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 
 		for (Shape child : shape.getChildren()) {
 			String shapeType = Graphiti.getPeService().getPropertyValue(child, DUtil.SHAPE_TYPE);
-			if (shapeType != null && portType == shapeType) {
+			if (shapeType != null && portType.equals(shapeType)) {
 				portsList.add((ContainerShape) child);
 			} else if (child instanceof ContainerShape && !((ContainerShape) child).getChildren().isEmpty()) {
 				portsList.addAll(getDiagramPorts((ContainerShape) child, portType));
@@ -857,7 +859,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @param performUpdate
 	 * @return
 	 */
-	public static Reason removeUpdatePictogramElement(List<PictogramElement> pes, List<EObject> objects, Class objectClass, String pictogramLabel,
+	public static Reason removeUpdatePictogramElement(List<PictogramElement> pes, List<EObject> objects, Class< ? > objectClass, String pictogramLabel,
 		IFeatureProvider featureProvider, boolean performUpdate) {
 
 		boolean updateStatus = false;
@@ -1302,8 +1304,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 				}
 			}
 		}
-		// TODO Auto-generated method stub
-
 	}
 
 	/**
@@ -1346,7 +1346,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @param anchor2
 	 * @return
 	 */
-	public static ConnectInterface assignAnchorObjectsToConnection(ConnectInterface connectInterface, Anchor anchor1, Anchor anchor2) {
+	public static ConnectInterface< ? , ? , ? > assignAnchorObjectsToConnection(ConnectInterface< ? , ? , ? > connectInterface, Anchor anchor1, Anchor anchor2) {
 
 		if (anchor1 == null || anchor2 == null) {
 			return null;
@@ -1365,41 +1365,40 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 			return null;
 		}
 
-		if (anchorObjects1.size() == 1) {
-			// only one source object, set it
-			source = (UsesPortStub) anchorObjects1.get(0);
-		}
-		if (anchorObjects2.size() == 1) {
-			// only one target object, set it
-			target = (ConnectionTarget) anchorObjects2.get(0);
-		}
+		List<UsesPortStub> possibleSources = new ArrayList<UsesPortStub>();
+		List<ConnectionTarget> possibleTargets = new ArrayList<ConnectionTarget>();
 
-		if (anchorObjects1.size() > 1 && anchorObjects2.size() > 1) {
-			for (EObject sourceObj : anchorObjects1) {
-				for (EObject targetObj : anchorObjects2) {
-					if (InterfacesUtil.areSuggestedMatch(sourceObj, targetObj)) {
-						source = (UsesPortStub) sourceObj;
-						target = (ConnectionTarget) targetObj;
-						break;
+		for (EObject sourceObj : anchorObjects1) {
+			for (EObject targetObj : anchorObjects2) {
+				if (InterfacesUtil.areSuggestedMatch(sourceObj, targetObj)) {
+					if (!possibleSources.contains(sourceObj)) {
+						possibleSources.add((UsesPortStub) sourceObj);
+					}
+					if (!possibleTargets.contains(targetObj)) {
+						possibleTargets.add((ConnectionTarget) targetObj);
 					}
 				}
 			}
-		} else if (anchorObjects1.size() > 1) {
-			// we know the target, look for a source with matching type
-			for (EObject sourceObj : anchorObjects1) {
-				if (InterfacesUtil.areSuggestedMatch(sourceObj, target)) {
-					source = (UsesPortStub) sourceObj;
-					break;
+		}
+
+		if (possibleSources.size() > 1 || possibleTargets.size() > 1) {
+				SuperPortConnectionWizard wizard = new SuperPortConnectionWizard(possibleSources, possibleTargets);
+				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+				WizardDialog dialog = new WizardDialog(shell, wizard);
+				int retVal = dialog.open();
+
+				if (retVal == Window.OK) {
+					// Get user selections
+					source = wizard.getPage().getSource();
+					target = wizard.getPage().getTarget();
+				} else {
+					return null;
+//					throw new OperationCanceledException("Connection creation cancelled by user");
 				}
-			}
-		} else if (anchorObjects2.size() > 1) {
-			// we know the source, look for a target with matching type
-			for (EObject targetObj : anchorObjects2) {
-				if (InterfacesUtil.areSuggestedMatch(source, targetObj)) {
-					target = (ConnectionTarget) targetObj;
-					break;
-				}
-			}
+			
+		} else {
+			source = (UsesPortStub) possibleSources.get(0);
+			target = (ConnectionTarget) possibleTargets.get(0);
 		}
 
 		// source
