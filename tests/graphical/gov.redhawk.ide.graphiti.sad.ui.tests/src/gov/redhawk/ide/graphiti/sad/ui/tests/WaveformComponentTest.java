@@ -131,7 +131,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		DiagramTestUtils.dragFromPaletteToDiagram(editor, HOST_CO, 0, 0);
 		SWTBotShell hostCoShell = gefBot.shell("New " + HOST_CO);
 		hostCoShell.setFocus();
-		SWTBotText hostCoName = gefBot.textWithLabel(HOST_CO + ":");
+		SWTBotText hostCoName = gefBot.textWithLabel("Name:");
 		hostCoName.setFocus();
 		hostCoName.typeText(HOST_CO_NAME);
 		gefBot.button("OK").click();
@@ -158,11 +158,15 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 			components.get(0).getComponentInstantiation().get(0).getId());
 		Assert.assertEquals("Expected component \'" + HARD_LIMIT + "_2\' was not found", HARD_LIMIT + "_2",
 			components.get(1).getComponentInstantiation().get(0).getId());
+		Assert.assertNotNull("ComponentFile for " + HARD_LIMIT + " should exist", hostCo.getComponentPlacement().get(1).getComponentFileRef().getFile());
 
 		// delete component
 		SWTBotGefEditPart gefEditPart = editor.getEditPart(HARD_LIMIT);
 		DiagramTestUtils.deleteFromDiagram(editor, gefEditPart);
 
+		// IMPORTANT: We must do this step over because model has now been rebuilt from documents
+		hostCo = (HostCollocation) DUtil.getBusinessObject(hostCollocationContainerShape);
+		
 		// ensure HardLimit_2 shape still exists
 		Assert.assertNotNull(editor.getEditPart("HardLimit_2"));
 		// ensure HardLimit_1 component business object is deleted

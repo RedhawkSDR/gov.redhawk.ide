@@ -239,6 +239,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		for (SadComponentPlacement p : sad.getPartitioning().getComponentPlacement()) {
 			if (p != placement && p.getComponentFileRef().getRefid().equals(placement.getComponentFileRef().getRefid())) {
 				componentFileToRemove = null;
+				break;
 			}
 		}
 		// check components in host collocation
@@ -246,7 +247,11 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 			for (SadComponentPlacement p : hc.getComponentPlacement()) {
 				if (p != placement && p.getComponentFileRef().getRefid().equals(placement.getComponentFileRef().getRefid())) {
 					componentFileToRemove = null;
+					break;
 				}
+			}
+			if (componentFileToRemove == null) {
+				break;
 			}
 		}
 		if (componentFileToRemove != null) {
