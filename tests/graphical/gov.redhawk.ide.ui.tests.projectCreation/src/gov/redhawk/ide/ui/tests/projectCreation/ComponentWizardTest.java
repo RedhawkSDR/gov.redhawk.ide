@@ -74,25 +74,30 @@ public class ComponentWizardTest extends AbstractCreationWizardTest {
 		wizardBot.button("Next >").click();
 
 		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection(lang);
-		wizardBot.comboBoxWithLabel("Code Generator:").setSelection(generator);
+		if (generator != null) {
+			wizardBot.comboBoxWithLabel("Code Generator:").setSelection(generator);
+		}
 		Assert.assertFalse(wizardBot.textWithLabel("ID:").getText().isEmpty());
 		wizardBot.textWithLabel("ID:").setText("customImplID");
 		Assert.assertFalse(wizardBot.textWithLabel("Description:").getText().isEmpty());
 		wizardBot.textWithLabel("Description:").setText("custom description");
 		wizardBot.button("Next >").click();
 
-		wizardBot.comboBoxWithLabel("Template:").setSelection(template);
+		if (template != null) {
+			wizardBot.comboBoxWithLabel("Template:").setSelection(template);
+		}
 		Assert.assertFalse(wizardBot.textWithLabel("Output Directory:").getText().isEmpty());
 		wizardBot.textWithLabel("Output Directory:").setText("customOutput");
 		wizardBot.button("Finish").click();
 
+		String baseFilename = getBaseFilename(name);
 		// Ensure SPD file was created
 		SWTBotView view = bot.viewById("org.eclipse.ui.navigator.ProjectExplorer");
 		view.show();
 		view.bot().tree().setFocus();
 		view.bot().tree().getTreeItem(name).select();
 		view.bot().tree().getTreeItem(name).expand();
-		view.bot().tree().getTreeItem(name).getNode(name + ".spd.xml");
+		view.bot().tree().getTreeItem(name).getNode(baseFilename + ".spd.xml");
 
 		bot.waitUntil(new WaitForEditorCondition(), 30000, 500);
 
@@ -177,4 +182,18 @@ public class ComponentWizardTest extends AbstractCreationWizardTest {
 		wizardShell.close();
 	}
 
+	/**
+	 * IDE-1111: test creation of component with dots in project name
+	 */
+	@Test
+	public void testNamespacedObjectCreation() {
+		testProjectCreation("namespaced.component.IDE1111", "Python", null, null);
+		verifyEditorTabPresent("IDE1111.prf.xml");
+		verifyEditorTabPresent("IDE1111.scd.xml");
+	}
+	
+	protected void verifyEditorTabPresent(String tabName) {
+		Assert.assertNotNull(tabName + " editor tab is missing", bot.activeEditor().bot().cTabItem(tabName));
+	}
+	
 }

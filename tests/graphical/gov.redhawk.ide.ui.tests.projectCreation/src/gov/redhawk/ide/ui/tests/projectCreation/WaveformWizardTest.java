@@ -36,23 +36,29 @@ public class WaveformWizardTest extends AbstractCreationWizardTest {
 
 	@Test
 	public void testBasicCreate() {
-		bot.textWithLabel("&Project name:").setText("WaveformProj01");
+		testBasicCreate("WaveformProj01");
+	}
+	
+	protected void testBasicCreate(String projectName) {
+		bot.textWithLabel("&Project name:").setText(projectName);
 		bot.button("Finish").click();
 
+		String baseFilename = getBaseFilename(projectName);
+		
 		// Ensure SAD file was created
 		SWTBotView view = bot.viewById("org.eclipse.ui.navigator.ProjectExplorer");
 		view.show();
 		view.bot().tree().setFocus();
-		view.bot().tree().getTreeItem("WaveformProj01").select();
-		view.bot().tree().getTreeItem("WaveformProj01").expand();
-		view.bot().tree().getTreeItem("WaveformProj01").getNode("WaveformProj01.sad.xml");
+		view.bot().tree().getTreeItem(projectName).select();
+		view.bot().tree().getTreeItem(projectName).expand();
+		view.bot().tree().getTreeItem(projectName).getNode(baseFilename + ".sad.xml");
 
 		bot.waitUntil(new WaitForEditorCondition(), 30000, 500);
 
 		SWTBotEditor editorBot = bot.activeEditor();
 		editorBot.bot().cTabItem("Overview").activate();
 
-		Assert.assertEquals("WaveformProj01", editorBot.bot().textWithLabel("Name:").getText());
+		Assert.assertEquals(projectName, editorBot.bot().textWithLabel("Name:").getText());
 	}
 
 	@Test
@@ -117,4 +123,12 @@ public class WaveformWizardTest extends AbstractCreationWizardTest {
 			sad.getAssemblyController().getComponentInstantiationRef().getInstantiation());
 	}
 
+	/**
+	 * IDE-1111: Test creation of waveform with dots in the name
+	 */
+	@Test
+	public void testNamespacedWaveformCreation() {
+		testBasicCreate("namespaced.waveform.IDE1111");
+	}
+	
 }

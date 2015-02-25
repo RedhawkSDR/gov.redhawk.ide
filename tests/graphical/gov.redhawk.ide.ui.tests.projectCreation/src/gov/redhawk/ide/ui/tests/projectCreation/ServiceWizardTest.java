@@ -82,4 +82,15 @@ public class ServiceWizardTest extends ComponentWizardTest {
 		setServiceInWizard();
 		super.testUUID();
 	}
+	
+	/**
+	 * IDE-1111: Test creation of service with dots in the name
+	 */
+	@Test
+	@Override
+	public void testNamespacedObjectCreation() {
+		testProjectCreation("namespaced.service.IDE1111", "Python", null, null);
+		verifyEditorTabPresent("IDE1111.scd.xml");
+	}
+	
 }

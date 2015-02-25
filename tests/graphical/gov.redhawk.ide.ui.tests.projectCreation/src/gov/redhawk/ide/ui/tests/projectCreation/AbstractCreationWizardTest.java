@@ -109,4 +109,15 @@ public abstract class AbstractCreationWizardTest extends UITest {
 		Assert.assertEquals(createdFolder.getAbsolutePath(), location.toOSString());
 	}
 
+	protected String getBaseFilename(String projectName) {
+		if (projectName == null) {
+			return null;
+		}
+		if (!projectName.contains(".")) {
+			return projectName;
+		}
+		String[] segments = projectName.split("\\.");
+		return segments[segments.length - 1];
+	}
+	
 }

@@ -75,7 +75,7 @@ public class ServiceProjectCreator extends ProjectCreator {
 		final GeneratorArgs args = new GeneratorArgs();
 		args.setProjectName(project.getName());
 		args.setSoftPkgId(spdID);
-		args.setSoftPkgName(spdName);
+		args.setSoftPkgName(project.getName());
 		args.setAuthorName(authorName);
 		args.setProperty("service_repid", serviceRepId);
 		args.setScdFile(spdName + ScdPackage.FILE_EXTENSION);

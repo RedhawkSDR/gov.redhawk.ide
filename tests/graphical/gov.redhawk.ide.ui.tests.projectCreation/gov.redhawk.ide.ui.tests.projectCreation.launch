@@ -21,7 +21,7 @@
 </listAttribute>
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
 <mapEntry key="OSSIEHOME" value="${resource_loc:/gov.redhawk.ide.ui.tests.projectCreation/ossie}"/>
-<mapEntry key="SDRROOT" value="${resource_loc:/gov.redhawk.ide.ui.tests.projectCreation/sdr}"/>
+<mapEntry key="SDRROOT" value="${resource_loc:/gov.redhawk.ide-releng/swtbot/runtime/sdr}"/>
 </mapAttribute>
 <stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value="=gov.redhawk.ide.ui.tests.projectCreation"/>
 <booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
@@ -34,7 +34,7 @@
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xms40m&#10;-XX:MaxPermSize=256m&#10;-Xmx512m&#10;-Dcom.sun.CORBA.transport.ORBUseNIOSelectToWait=false&#10;-Djava.net.preferIPv4Stack=true&#10;-Dorg.omg.CORBA.ORBClass=org.jacorb.orb.ORB&#10;-Dorg.omg.CORBA.ORBSingletonClass=org.jacorb.orb.ORBSingleton&#10;-Dorg.omg.PortableInterceptor.ORBInitializerClass.standard_init=org.jacorb.orb.standardInterceptors.IORInterceptorInitializer&#10;-DORBInitialPort=2908"/>
 <stringAttribute key="pde.version" value="3.3"/>
-<stringAttribute key="product" value="org.eclipse.platform.ide"/>
+<stringAttribute key="product" value="gov.redhawk.e4.platform.ide"/>
 <booleanAttribute key="run_in_ui_thread" value="false"/>
 <booleanAttribute key="show_selected_only" value="false"/>
 <booleanAttribute key="tracing" value="false"/>

@@ -76,4 +76,15 @@ public class DeviceCreationWizardTest extends ComponentWizardTest {
 		assertDeviceInterface("IDL:CF/LoadableDevice:1.0");
 	}
 
+	/**
+	 * IDE-1111: Test creation of device with dots in the name
+	 */
+	@Test
+	@Override
+	public void testNamespacedObjectCreation() {
+		super.testProjectCreation("namespaced.device.IDE1111", "Python", null, null);
+		verifyEditorTabPresent("IDE1111.prf.xml");
+		verifyEditorTabPresent("IDE1111.scd.xml");
+	}
+	
 }
