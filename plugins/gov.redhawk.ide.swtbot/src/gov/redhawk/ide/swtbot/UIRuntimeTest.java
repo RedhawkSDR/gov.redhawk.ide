@@ -15,7 +15,7 @@ import org.junit.BeforeClass;
 /**
  * 
  */
-public class UIRuntimeTest extends UITest {
+public abstract class UIRuntimeTest extends UITest {
 
 	@BeforeClass
 	public static void assertRuntimeEnvirornment() {

@@ -19,7 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class UITest {
+public abstract class UITest {
 	
 	protected SWTWorkbenchBot bot; // SUPPRESS CHECKSTYLE VisibilityModifier
 	
