@@ -509,7 +509,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 			IGaService gaService = Graphiti.getGaService();
 			style = gaService.createStyle(diagram, styleId);
 			style.setForeground(gaService.manageColor(diagram, BLACK));
-			style.setBackground(gaService.manageColor(diagram, BLACK));
+			style.setBackground(gaService.manageColor(diagram, WHITE));
 			style.setLineWidth(2);
 			style.setLineVisible(true);
 		}

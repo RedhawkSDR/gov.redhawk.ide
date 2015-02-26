@@ -995,14 +995,14 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(superUsesPortsRectangleShape);
 		Point point = StylesFactory.eINSTANCE.createPoint();
 		point.setX(0);
-		point.setY(SUPER_PORT_SHAPE_HEIGHT / 2);
+		point.setY((SUPER_PORT_SHAPE_HEIGHT / 2) - 2);  // Needs to slide up, or appears layered on rectangel shape
 		fixPointAnchor.setLocation(point);
 		DUtil.addLinks(featureProvider, fixPointAnchor, usesPortStubs);
 		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
 		fixPointAnchor.setReferencedGraphicsAlgorithm(superUsesPortsRectangle);
 		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
 		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
-		fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForSuperProvidesPort(diagram));
+		fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForSuperUsesPort(diagram));
 		if (externalPorts != null && externalPorts.size() > 0) {
 			fixPointAnchor.getLink().getBusinessObjects().addAll(externalPorts);
 		}
@@ -1034,7 +1034,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		FixPointAnchor fixPointAnchor = Graphiti.getCreateService().createFixPointAnchor(superProvidesPortsRectangleShape);
 		Point point = StylesFactory.eINSTANCE.createPoint();
 		point.setX(0);
-		point.setY(SUPER_PORT_SHAPE_HEIGHT / 2);
+		point.setY((SUPER_PORT_SHAPE_HEIGHT / 2) - 2);  // Needs to slide up, or appears layered on rectangel shape
 		fixPointAnchor.setLocation(point);
 		DUtil.addLinks(featureProvider, fixPointAnchor, providesPortStubs);
 		DUtil.addLink(featureProvider, fixPointAnchor, interfaceStub);
@@ -1042,10 +1042,10 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		fixPointAnchor.setReferencedGraphicsAlgorithm(superProvidesPortsRectangle);
 		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
 		Graphiti.getPeService().setPropertyValue(fixPointAnchorRectangle, DUtil.GA_TYPE, GA_FIX_POINT_ANCHOR_RECTANGLE);
+		fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForSuperProvidesPort(diagram));
 		if (externalPorts != null && externalPorts.size() > 0) {
 			fixPointAnchor.getLink().getBusinessObjects().addAll(externalPorts);
 		}
-		fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForSuperProvidesPort(diagram));
 		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, 0, 0, SUPER_PORT_SHAPE_WIDTH, SUPER_PORT_SHAPE_HEIGHT);
 	}
 
