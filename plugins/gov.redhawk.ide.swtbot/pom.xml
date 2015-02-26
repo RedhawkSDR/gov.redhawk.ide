@@ -14,11 +14,12 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>gov.redhawk.ide</groupId>
-    <artifactId>releng</artifactId>
+    <artifactId>releng-swtbot-development</artifactId>
     <version>1.11.0-SNAPSHOT</version>
-    <relativePath>../../releng/</relativePath>
+    <relativePath>../../../releng/swtbot/development</relativePath>
   </parent>
   <artifactId>gov.redhawk.ide.swtbot</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <packaging>eclipse-plugin</packaging>
+  <groupId>gov.redhawk.ide</groupId>
+  <packaging>eclipse-test-plugin</packaging>
 </project>
