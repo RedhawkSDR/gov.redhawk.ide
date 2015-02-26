@@ -777,6 +777,14 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static void updatePortStyle(final Rectangle anchorGa, final Diagram diagram, final IColorConstant style,
 		final TransactionalEditingDomain editingDomain) {
 		final Object portObj = DUtil.getBusinessObject((ContainerShape) anchorGa.getPictogramElement().eContainer());
+		
+		// don't change style color for super ports
+		ContainerShape portContainer = (ContainerShape) anchorGa.eContainer().eContainer();
+		boolean isSuperProvides = DUtil.doesPictogramContainProperty(portContainer, new String[]{RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE});
+		boolean isSuperUses= DUtil.doesPictogramContainProperty(portContainer, new String[]{RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE});
+		if (isSuperProvides || isSuperUses) {
+			return;
+		}
 
 		TransactionalCommandStack stack = (TransactionalCommandStack) editingDomain.getCommandStack();
 		stack.execute(new NonDirtyingCommand() {

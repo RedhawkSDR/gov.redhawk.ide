@@ -263,8 +263,15 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 	}
 
 	// Utility method to either highlight compatible ports, or return them to default styling
-	private void highlightCompatiblePorts(Object originatingPort, boolean shouldHighlight) {
+	private void highlightCompatiblePorts(EObject originatingPort, boolean shouldHighlight) {
 		if (originatingPort == null) {
+			return;
+		}
+		
+		// Don't execute highlighting if a super port is involved.
+		PictogramElement portContainer = DUtil.getPictogramElementForBusinessObject(getDiagram(), originatingPort, ContainerShape.class);
+		if (DUtil.doesPictogramContainProperty(portContainer, new String[]{RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE}) 
+				|| DUtil.doesPictogramContainProperty(portContainer, new String[]{RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE})) {
 			return;
 		}
 
@@ -311,6 +318,9 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 				}
 			}
 			diagramPorts.removeAll(incompatiblePorts);
+		} else {
+			// Most likely user clicked a component supported interface shape
+			return;
 		}
 
 		// Change style to highlight or default, depending on passed boolean
