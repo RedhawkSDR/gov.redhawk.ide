@@ -780,9 +780,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 		
 		// don't change style color for super ports
 		ContainerShape portContainer = (ContainerShape) anchorGa.eContainer().eContainer();
-		boolean isSuperProvides = DUtil.doesPictogramContainProperty(portContainer, new String[]{RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE});
-		boolean isSuperUses= DUtil.doesPictogramContainProperty(portContainer, new String[]{RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE});
-		if (isSuperProvides || isSuperUses) {
+		if (DUtil.isSuperPort(portContainer)) {
 			return;
 		}
 

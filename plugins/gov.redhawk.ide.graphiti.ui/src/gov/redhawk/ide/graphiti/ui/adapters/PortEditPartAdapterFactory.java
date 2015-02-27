@@ -29,7 +29,9 @@ import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.ui.internal.parts.AdvancedAnchorEditPart;
 
 @SuppressWarnings({ "restriction" })
@@ -44,7 +46,13 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 		if (adaptableObject instanceof AdvancedAnchorEditPart) {
 			Object portObject = null;
 
-			Object object = ((AdvancedAnchorEditPart) adaptableObject).getModel();
+			EObject object = (EObject) ((AdvancedAnchorEditPart) adaptableObject).getModel();
+			
+			// Disallow context menu options for super ports
+			if (DUtil.isSuperPort((ContainerShape)object.eContainer())) {
+				return null;
+			}
+			
 			if (object instanceof Anchor) {
 				portObject = DUtil.getBusinessObject((Anchor) object);
 			}

@@ -1271,6 +1271,17 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static boolean isDiagramTargetSdr(final Diagram diagram) {
 		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_TARGET_SDR);
 	}
+	
+	/**
+	 * Returns true if the portContainer is a super port
+	 * @param portContainer - The port container to be tested
+	 * @return
+	 */
+	public static boolean isSuperPort(ContainerShape portContainer) {
+		boolean isSuperProvides = DUtil.doesPictogramContainProperty(portContainer, new String[]{RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE});
+		boolean isSuperUses= DUtil.doesPictogramContainProperty(portContainer, new String[]{RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE});
+		return (isSuperProvides || isSuperUses);
+	}
 
 	/**
 	 * Returns the property value that indicates the mode the diagram is operating in.

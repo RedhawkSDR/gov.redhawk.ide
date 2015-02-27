@@ -269,9 +269,8 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		}
 		
 		// Don't execute highlighting if a super port is involved.
-		PictogramElement portContainer = DUtil.getPictogramElementForBusinessObject(getDiagram(), originatingPort, ContainerShape.class);
-		if (DUtil.doesPictogramContainProperty(portContainer, new String[]{RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE}) 
-				|| DUtil.doesPictogramContainProperty(portContainer, new String[]{RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE})) {
+		ContainerShape portContainer = (ContainerShape) DUtil.getPictogramElementForBusinessObject(getDiagram(), originatingPort, ContainerShape.class);
+		if (DUtil.isSuperPort(portContainer)) {
 			return;
 		}
 
