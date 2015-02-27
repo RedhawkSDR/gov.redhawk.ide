@@ -1396,7 +1396,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 //					throw new OperationCanceledException("Connection creation cancelled by user");
 				}
 			
-		} else {
+		} else if (!possibleSources.isEmpty() && !possibleTargets.isEmpty()){
 			source = (UsesPortStub) possibleSources.get(0);
 			target = (ConnectionTarget) possibleTargets.get(0);
 		}
