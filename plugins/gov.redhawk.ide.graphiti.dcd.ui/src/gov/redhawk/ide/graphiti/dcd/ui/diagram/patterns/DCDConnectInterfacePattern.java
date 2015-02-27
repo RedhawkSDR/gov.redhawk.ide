@@ -208,9 +208,9 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 	 */
 	@Override
 	public boolean canCreate(ICreateConnectionContext context) {
-		// get sad from diagram
-		final DeviceConfiguration sad = DUtil.getDiagramDCD(getDiagram());
-		if (sad == null) {
+		// get dcd from diagram
+		final DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());
+		if (dcd == null) {
 			return false;
 		}
 		
