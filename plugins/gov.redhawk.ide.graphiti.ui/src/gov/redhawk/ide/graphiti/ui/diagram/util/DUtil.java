@@ -1271,15 +1271,15 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	public static boolean isDiagramTargetSdr(final Diagram diagram) {
 		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_TARGET_SDR);
 	}
-	
+
 	/**
 	 * Returns true if the portContainer is a super port
 	 * @param portContainer - The port container to be tested
 	 * @return
 	 */
 	public static boolean isSuperPort(ContainerShape portContainer) {
-		boolean isSuperProvides = DUtil.doesPictogramContainProperty(portContainer, new String[]{RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE});
-		boolean isSuperUses= DUtil.doesPictogramContainProperty(portContainer, new String[]{RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE});
+		boolean isSuperProvides = DUtil.doesPictogramContainProperty(portContainer, new String[] { RHContainerShapeImpl.SUPER_PROVIDES_PORTS_RECTANGLE });
+		boolean isSuperUses = DUtil.doesPictogramContainProperty(portContainer, new String[] { RHContainerShapeImpl.SUPER_USES_PORTS_RECTANGLE });
 		return (isSuperProvides || isSuperUses);
 	}
 
@@ -1379,35 +1379,42 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		List<UsesPortStub> possibleSources = new ArrayList<UsesPortStub>();
 		List<ConnectionTarget> possibleTargets = new ArrayList<ConnectionTarget>();
 
-		for (EObject sourceObj : anchorObjects1) {
-			for (EObject targetObj : anchorObjects2) {
-				if (InterfacesUtil.areSuggestedMatch(sourceObj, targetObj)) {
-					if (!possibleSources.contains(sourceObj)) {
-						possibleSources.add((UsesPortStub) sourceObj);
-					}
-					if (!possibleTargets.contains(targetObj)) {
-						possibleTargets.add((ConnectionTarget) targetObj);
+		if (anchorObjects1.size() == 1 && anchorObjects2.size() == 1) {
+			// Always attempt to honor direct connections
+			possibleSources.add((UsesPortStub) anchorObjects1.get(0));
+			possibleTargets.add((ConnectionTarget) anchorObjects2.get(0));
+		} else {
+			// If either side is a super port, then build a list of possible connections
+			for (EObject sourceObj : anchorObjects1) {
+				for (EObject targetObj : anchorObjects2) {
+					if (InterfacesUtil.areSuggestedMatch(sourceObj, targetObj)) {
+						if (!possibleSources.contains(sourceObj)) {
+							possibleSources.add((UsesPortStub) sourceObj);
+						}
+						if (!possibleTargets.contains(targetObj)) {
+							possibleTargets.add((ConnectionTarget) targetObj);
+						}
 					}
 				}
 			}
 		}
 
 		if (possibleSources.size() > 1 || possibleTargets.size() > 1) {
-				SuperPortConnectionWizard wizard = new SuperPortConnectionWizard(possibleSources, possibleTargets);
-				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-				WizardDialog dialog = new WizardDialog(shell, wizard);
-				int retVal = dialog.open();
+			// If more than one connection is possible, display a wizard to complete the action
+			SuperPortConnectionWizard wizard = new SuperPortConnectionWizard(possibleSources, possibleTargets);
+			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			WizardDialog dialog = new WizardDialog(shell, wizard);
+			int retVal = dialog.open();
 
-				if (retVal == Window.OK) {
-					// Get user selections
-					source = wizard.getPage().getSource();
-					target = wizard.getPage().getTarget();
-				} else {
-					return null;
-//					throw new OperationCanceledException("Connection creation cancelled by user");
-				}
-			
-		} else if (!possibleSources.isEmpty() && !possibleTargets.isEmpty()){
+			if (retVal == Window.OK) {
+				// Get user selections
+				source = wizard.getPage().getSource();
+				target = wizard.getPage().getTarget();
+			} else {
+				return null;
+			}
+		} else if (!possibleSources.isEmpty() && !possibleTargets.isEmpty()) {
+			// If only one connection is possible, just go ahead and do it
 			source = (UsesPortStub) possibleSources.get(0);
 			target = (ConnectionTarget) possibleTargets.get(0);
 		}
