@@ -24,7 +24,9 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotCheckBox;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotList;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
 import org.junit.Test;
@@ -256,6 +258,51 @@ public class CollapseShapeTest extends AbstractGraphitiTest {
 		SWTBotGefEditPart dataConverterSuperUses = DiagramTestUtils.getDiagramUsesSuperPort(editor, DATA_CONVERTER);
 		Assert.assertTrue("DataConverter Super Provides shape should not exist", dataConverterSuperProvides == null);
 		Assert.assertTrue("DataConverter Super Uses port shape should not exist", dataConverterSuperUses == null);
+
+	}
+
+	/**
+	 * IDE-1026
+	 */
+	@Test
+	public void superPortWizardTest() {
+		waveformName = "IDE-1026-superPortWizard";
+		WaveformUtils.createNewWaveform(gefBot, waveformName);
+		editor = gefBot.gefEditor(waveformName);
+		final String DATA_CONVERTER = "DataConverter";
+
+		setPortCollapsePreference(true);
+
+		DiagramTestUtils.dragFromPaletteToDiagram(editor, DATA_CONVERTER, 0, 0);
+
+		SWTBotGefEditPart dataConverterSuperProvides = DiagramTestUtils.getDiagramProvidesSuperPort(editor, DATA_CONVERTER);
+		SWTBotGefEditPart dataConverterSuperUses = DiagramTestUtils.getDiagramUsesSuperPort(editor, DATA_CONVERTER);
+
+		DiagramTestUtils.drawConnectionBetweenPorts(editor, dataConverterSuperUses, dataConverterSuperProvides);
+
+		bot.waitUntil(Conditions.shellIsActive("Connect"));
+		SWTBot connectBot = bot.shell("Connect").bot();
+		String[] ports = { "dataChar", "dataOctet", "dataShort", "dataUshort", "dataFloat", "dataDouble" };
+		SWTBotButton finishButton = connectBot.button("Finish");
+
+		Assert.assertTrue("Finish Button should not be enabled unless source and target are selected", !finishButton.isEnabled());
+
+		SWTBotList sourceGroup = connectBot.listInGroup(DATA_CONVERTER + "_1 (Source)");
+		for (String port : ports) {
+			sourceGroup.select(port + "_out");
+		}
+
+		SWTBotList targetGroup = connectBot.listInGroup(DATA_CONVERTER + "_1 (Target)");
+		for (String port : ports) {
+			targetGroup.select(port);
+		}
+
+		Assert.assertTrue("Finish Button is not enabled", finishButton.isEnabled());
+		finishButton.click();
+
+		SWTBotGefEditPart dataConverterOut = DiagramTestUtils.getDiagramUsesPort(editor, DATA_CONVERTER);
+		List<SWTBotGefConnectionEditPart> sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, dataConverterOut);
+		Assert.assertTrue("Data Converter DataDouble_out doesn't have a connection", sourceConnections.size() == 1);
 
 	}
 
