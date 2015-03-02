@@ -17,15 +17,29 @@ import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
+import mil.jpeojtrs.sca.partitioning.FindBy;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-
+import mil.jpeojtrs.sca.sad.SadConnectInterface;
+import mil.jpeojtrs.sca.sad.SadFactory;
+import mil.jpeojtrs.sca.sad.SadPackage;
+import mil.jpeojtrs.sca.sad.SadProvidesPort;
+import mil.jpeojtrs.sca.sad.SadUsesPort;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
@@ -194,42 +208,70 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 	}
 
 	/**
-	 * IDE-847
-	 * Add a component to the diagram via the sad.xml
+	 * IDE-837
+	 * Add two FindBy's connected to the component via the sad.xml. Ensure the diagram gets updated.
+	 * @throws IOException
 	 */
 	@Test
-	public void addFindByInXmlTest() {
+	public void addFindByInXmlTest() throws IOException {
 		waveformName = "Add_FindBy_Xml";
-		final String SIGGEN = "SigGen";
-		final String SIGGEN_PORT = "out";
+		final String SIGGEN_NAME = "SigGen";
+		final String SIGGEN_REF = SIGGEN_NAME + "_1";
+		final String SIGGEN_PORT = "dataFloat_out";
 		final String FIND_BY_NAME = "FindByName";
-		final String NAME_PORT = "NamePort";
+		final String FBN_PORT_NAME = "NamePort";
 		final String FIND_BY_SERVICE = "FindByService";
-		final String SERVICE_PORT = "ServicePort";
+		final String FBS_PORT_NAME = "ServicePort";
 
 		// Create a new empty waveform
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN_NAME, 0, 0);
 		MenuUtils.save(editor);
 
-		// Edit content of sad.xml
+		// Switch to the XML tab and get contents
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		String editorText = editor.toTextEditor().getText();
 
-		String newFindByConnections = "</assemblycontroller> <connections> <connectinterface id=\"connection_1\"> <usesport> "
-			+ "<usesidentifier>out</usesidentifier> <componentinstantiationref refid=\"SigGen_1\"/> " + "</usesport> <providesport> <providesidentifier>"
-			+ NAME_PORT + "</providesidentifier> <findby> " + "<namingservice name=\"" + FIND_BY_NAME + "\"/> </findby> </providesport> </connectinterface> "
-			+ "<connectinterface id=\"connection_2\"> <usesport> <usesidentifier>out</usesidentifier> "
-			+ "<componentinstantiationref refid=\"SigGen_1\"/> </usesport> <providesport> " + "<providesidentifier>" + SERVICE_PORT
-			+ "</providesidentifier> <findby> " + "<domainfinder name=\"" + FIND_BY_SERVICE + "\" type=\"servicename\"/> </findby> </providesport> "
-			+ "</connectinterface> </connections>";
+		// Parse the XML with EMF
+		ResourceSet resourceSet = new ResourceSetImpl();
+		Resource resource = resourceSet.createResource(URI.createURI(waveformName + ".sad.xml"), SadPackage.eCONTENT_TYPE);
+		resource.load(new ByteArrayInputStream(editorText.getBytes()), null);
+		SoftwareAssembly sad = (SoftwareAssembly) resource.getContents().get(0);
 
-		editorText = editorText.replace("</assemblycontroller>", newFindByConnections);
-		editor.toTextEditor().setText(editorText);
+		// Create a connection from SigGen to a findby naming service
+		SadConnectInterface connection1 = SadFactory.eINSTANCE.createSadConnectInterface();
+		connection1.setId("connection_1");
+		SadUsesPort usesPort = SadFactory.eINSTANCE.createSadUsesPort(SIGGEN_PORT, SIGGEN_REF);
+		SadProvidesPort providesPort = SadFactory.eINSTANCE.createSadProvidesPort();
+		providesPort.setProvidesIdentifier(FBN_PORT_NAME);
+		FindBy findBy = PartitioningFactory.eINSTANCE.createFindByNamingServiceName(FIND_BY_NAME);
+		providesPort.setFindBy(findBy);
+		connection1.setUsesPort(usesPort);
+		connection1.setProvidesPort(providesPort);
+
+		// Create a connection from SigGen to a findby service name
+		SadConnectInterface connection2 = SadFactory.eINSTANCE.createSadConnectInterface();
+		connection2.setId("connection_2");
+		usesPort = SadFactory.eINSTANCE.createSadUsesPort(SIGGEN_PORT, SIGGEN_REF);
+		providesPort = SadFactory.eINSTANCE.createSadProvidesPort();
+		providesPort.setProvidesIdentifier(FBS_PORT_NAME);
+		findBy = PartitioningFactory.eINSTANCE.createFindByServiceName(FIND_BY_SERVICE);
+		providesPort.setFindBy(findBy);
+		connection2.setUsesPort(usesPort);
+		connection2.setProvidesPort(providesPort);
+
+		// Add the connections and serialize
+		sad.setConnections(SadFactory.eINSTANCE.createSadConnections());
+		sad.getConnections().getConnectInterface().add(connection1);
+		sad.getConnections().getConnectInterface().add(connection2);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		resource.save(outputStream, null);
+
 		// Need to allow the editor to get the changes
+		editor.toTextEditor().setText(outputStream.toString());
 		MenuUtils.save(editor);
 
 		// Confirm edits appear in the diagram
@@ -238,35 +280,36 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		FindByStub findByServiceObject = DiagramTestUtils.getFindByObject(editor, FIND_BY_SERVICE);
 
 		// Check find by object names
-		Assert.assertNotNull(findByNameObject);
-		Assert.assertNotNull(findByNameObject.getNamingService());
-		Assert.assertEquals("Naming Service did not create correctly", FIND_BY_NAME, findByNameObject.getNamingService().getName());
+		Assert.assertNotNull("FindBy Naming Service did not create correctly", findByNameObject);
+		Assert.assertNotNull("FindBy Naming Service did not create correctly", findByNameObject.getNamingService());
+		Assert.assertEquals("FindBy Naming Service did not create correctly", FIND_BY_NAME, findByNameObject.getNamingService().getName());
+		Assert.assertNotNull("Domain Finder did not create correctly", findByServiceObject);
+		Assert.assertNotNull("Domain Finder did not create correctly", findByServiceObject.getDomainFinder());
 		Assert.assertEquals("Domain Finder did not create correctly", FIND_BY_SERVICE, findByServiceObject.getDomainFinder().getName());
 
 		// Check port names
-		Assert.assertEquals("FindBy Name provides port did not create as expected", NAME_PORT, findByNameObject.getProvides().get(0).getName());
-		Assert.assertEquals("FindBy Service provides port did not create as expected", SERVICE_PORT, findByServiceObject.getProvides().get(0).getName());
+		Assert.assertEquals("FindBy Name provides port did not create as expected", FBN_PORT_NAME, findByNameObject.getProvides().get(0).getName());
+		Assert.assertEquals("FindBy Service provides port did not create as expected", FBS_PORT_NAME, findByServiceObject.getProvides().get(0).getName());
 
 		// Check that connections were made
-		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN_NAME);
 		List<SWTBotGefConnectionEditPart> connections = DiagramTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
+		Assert.assertEquals("The expected number of connections are not present", 2, connections.size());
 
 		SWTBotGefConnectionEditPart nameConnectionPart = connections.get(0);
 		Connection nameConnection = (Connection) nameConnectionPart.part().getModel();
 		UsesPortStub nameConnectionSource = (UsesPortStub) DUtil.getBusinessObject(nameConnection.getStart());
 		ProvidesPortStub nameConnectionTarget = (ProvidesPortStub) DUtil.getBusinessObject(nameConnection.getEnd());
 		Assert.assertEquals("FindByName connection source incorrect", SIGGEN_PORT, nameConnectionSource.getName());
-		Assert.assertEquals("FindByName connection target incorrect", NAME_PORT, nameConnectionTarget.getName());
+		Assert.assertEquals("FindByName connection target incorrect", FBN_PORT_NAME, nameConnectionTarget.getName());
 
 		SWTBotGefConnectionEditPart serviceConnectionPart = connections.get(1);
 		Connection serviceConnection = (Connection) serviceConnectionPart.part().getModel();
 		UsesPortStub serviceConnectionSource = (UsesPortStub) DUtil.getBusinessObject(serviceConnection.getStart());
 		ProvidesPortStub serviceConnectionTarget = (ProvidesPortStub) DUtil.getBusinessObject(serviceConnection.getEnd());
 		Assert.assertEquals("FindByService connection source incorrect", SIGGEN_PORT, serviceConnectionSource.getName());
-		Assert.assertEquals("FindByService connection target incorrect", SERVICE_PORT, serviceConnectionTarget.getName());
+		Assert.assertEquals("FindByService connection target incorrect", FBS_PORT_NAME, serviceConnectionTarget.getName());
 	}
-	
-	
 
 	/**
 	 * IDE-978, IDE-965
