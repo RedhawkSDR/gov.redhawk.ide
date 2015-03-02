@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.ui.runtime.chalkboard.tests;
+package gov.redhawk.ide.graphiti.dcd.ui.runtime.sandbox.tests;
 
 import gov.redhawk.ide.swtbot.UIRuntimeTest;
 import gov.redhawk.ide.swtbot.diagram.RHTestBot;
@@ -23,15 +23,18 @@ import org.junit.Before;
 /**
  * 
  */
-public abstract class AbstractGraphitiChalkboardTest extends UIRuntimeTest {
+public abstract class AbstractDeviceManagerSandboxTest extends UIRuntimeTest {
 
 	static final String[] CHALKBOARD_PARENT_PATH = { "Sandbox" };
-	static final String CHALKBOARD = "Chalkboard";
-	static final String CHALKBOARD_TAB_TITLE = "Waveform Chalkboard";
+	static final String DEVICE_MANAGER = "Device Manager";
+	static final String DIAGRAM_TAB_TITLE = "Device Manager Chalkboard";
 
 	// Common Test Component Names
-	static final String HARD_LIMIT = "HardLimit";
-	static final String SIGGEN = "SigGen";
+	static final String GPP = "GPP";
+	static final String GPP_1 = "GPP_1";
+	static final String DEVICE_STUB = "DeviceStub";
+	static final String DEVICE_STUB_1 = "DeviceStub_1";
+	static final String DEVICE_STUB_2 = "DeviceStub_2";
 
 	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE VisibilityModifier
 
@@ -42,20 +45,20 @@ public abstract class AbstractGraphitiChalkboardTest extends UIRuntimeTest {
 	
 	@After
 	public void afterTest() {
-		ScaExplorerTestUtils.releaseFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
+		ScaExplorerTestUtils.terminateFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER);
 		
 		//wait until waveform empty
-		ScaExplorerTestUtils.waitUntilScaExplorerWaveformEmpty(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD);
+		ScaExplorerTestUtils.waitUntilSandboxDeviceManagerEmpty(gefBot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER);
 		
 		//close editors
 		gefBot.closeAllEditors();
 		gefBot = null;
 	}
 
-	/** Helper method to open Sandbox "Waveform" Chalkboard Graphiti Diagram */
-	static SWTBotGefEditor openChalkboardDiagram(SWTGefBot gefBot) {
-		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, CHALKBOARD, DiagramType.GRAPHITI_CHALKBOARD);
-		SWTBotGefEditor editor = gefBot.gefEditor(CHALKBOARD_TAB_TITLE);
+	/** Helper method to open Sandbox Device Manager Graphiti Chalkboard Diagram */
+	static SWTBotGefEditor openNodeChalkboardDiagram(SWTGefBot gefBot) {
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, DiagramType.GRAPHITI_CHALKBOARD);
+		SWTBotGefEditor editor = gefBot.gefEditor(DIAGRAM_TAB_TITLE);
 		editor.setFocus();
 		return editor;
 	}

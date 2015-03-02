@@ -213,6 +213,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 
 	/**
 	 * Draws a connection between two ports using drag-and-drop on the editor.
+	 * Provided editor MUST use RHTestBot subclass of SWTGefBot
 	 *
 	 * @param editor - SWTBotGefEditor
 	 * @param usesEditPart - SWTBotGefEditPart for the uses/source port
@@ -228,7 +229,8 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 
 		final Point providesPos = getDiagramRelativeCenter(providesAnchor);
 		final Point usesPos = getDiagramRelativeCenter(usesAnchor);
-		editor.drag(usesPos.x, usesPos.y, providesPos.x, providesPos.y);
+		RHTestBotCanvas canvas = DiagramTestUtils.getCanvas(editor);
+		canvas.mouseDrag(providesPos.x, providesPos.y, usesPos.x, usesPos.y);
 
 		// Wait to see if new connection appears for both ports
 		try {
@@ -916,7 +918,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 
 			@Override
 			public boolean test() throws Exception {
-				ComponentShapeImpl componentShape = (ComponentShapeImpl) editor.getEditPart(componentName).part().getModel();
+				RHContainerShapeImpl componentShape = (RHContainerShapeImpl) editor.getEditPart(componentName).part().getModel();
 				RoundedRectangle innerRoundedRectangle = (RoundedRectangle) componentShape.getInnerContainerShape().getGraphicsAlgorithm();
 				Diagram diagram = DUtil.findDiagram(componentShape);
 				return innerRoundedRectangle.getStyle().equals(SadStyleUtil.createStyleForComponentInnerStarted(diagram));
@@ -938,7 +940,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 
 			@Override
 			public boolean test() throws Exception {
-				ComponentShapeImpl componentShape = (ComponentShapeImpl) editor.getEditPart(componentName).part().getModel();
+				RHContainerShapeImpl componentShape = (RHContainerShapeImpl) editor.getEditPart(componentName).part().getModel();
 				RoundedRectangle innerRoundedRectangle = (RoundedRectangle) componentShape.getInnerContainerShape().getGraphicsAlgorithm();
 				Diagram diagram = DUtil.findDiagram(componentShape);
 				return innerRoundedRectangle.getStyle().equals(StyleUtil.createStyleForComponentInner(diagram));

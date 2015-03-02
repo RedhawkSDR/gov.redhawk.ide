@@ -11,6 +11,7 @@
 package gov.redhawk.ide.graphiti.sad.ui.runtime.local.tests;
 
 import gov.redhawk.ide.swtbot.UIRuntimeTest;
+import gov.redhawk.ide.swtbot.diagram.RHTestBot;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils.DiagramType;
 
@@ -32,7 +33,7 @@ public abstract class AbstractGraphitiLocalWaveformRuntimeTest extends UIRuntime
 
 	@Before
 	public void beforeTest() throws Exception {
-		gefBot = new SWTGefBot();
+		gefBot = new RHTestBot();
 		
 		//Launch Local Waveform From Target SDR
 		ScaExplorerTestUtils.launchWaveformFromTargetSDR(gefBot, LOCAL_WAVEFORM);

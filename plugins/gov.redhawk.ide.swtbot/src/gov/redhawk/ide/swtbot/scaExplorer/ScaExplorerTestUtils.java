@@ -207,6 +207,20 @@ public class ScaExplorerTestUtils {
 		SWTBotMenu terminate = componentEntry.contextMenu("Terminate");
 		terminate.click();
 	}
+	
+	/**
+	 * Terminates component via ScaExplorer
+	 * @param componentName
+	 */
+	public static void terminateDeviceInScaExplorer(SWTWorkbenchBot bot, String[] deviceManagerParentPath, String deviceManager, String deviceName) {
+		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
+		scaExplorerView.setFocus();
+		SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer(bot, deviceManagerParentPath, deviceManager);
+		SWTBotTreeItem componentEntry = waveformTreeItem.expandNode(deviceName);
+		componentEntry.select();
+		SWTBotMenu terminate = componentEntry.contextMenu("Terminate");
+		terminate.click();
+	}
 
 	/**
 	 * Connect component ports via SCA Explorer Chalkboard
@@ -678,6 +692,21 @@ public class ScaExplorerTestUtils {
 		componentEntry.select();
 		SWTBotMenu launchInSandbox = componentEntry.contextMenu("Launch in Sandbox");
 		SWTBotMenu python = launchInSandbox.menu(componentLanguage);
+		python.click();
+	}
+	
+	/**
+	 * Launch component from ScaExplorer TargetSDR
+	 * @param componentName
+	 * @param componentLanguage
+	 */
+	public static void launchDeviceFromTargetSDR(SWTWorkbenchBot bot, String deviceName, String deviceLanguage) {
+		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
+		scaExplorerView.setFocus();
+		SWTBotTreeItem deviceEntry = scaExplorerView.bot().tree().expandNode("Target SDR", "Devices", deviceName);
+		deviceEntry.select();
+		SWTBotMenu launchInSandbox = deviceEntry.contextMenu("Launch in Sandbox");
+		SWTBotMenu python = launchInSandbox.menu(deviceLanguage);
 		python.click();
 	}
 
