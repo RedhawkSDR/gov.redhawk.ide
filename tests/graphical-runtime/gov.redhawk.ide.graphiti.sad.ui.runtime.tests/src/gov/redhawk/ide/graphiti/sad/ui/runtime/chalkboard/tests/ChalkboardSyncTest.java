@@ -38,7 +38,7 @@ public class ChalkboardSyncTest extends AbstractGraphitiChalkboardTest {
 		editor = openChalkboardDiagram(gefBot);
 
 		// Add component to diagram from palette
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
 
 		// wait for component to show up in ScaExplorer Chalkboard
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, HARD_LIMIT_1);
@@ -61,7 +61,7 @@ public class ChalkboardSyncTest extends AbstractGraphitiChalkboardTest {
 		editor = openChalkboardDiagram(gefBot);
 
 		// Add component to diagram from palette
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
 
 		// wait for component to show up in ScaExplorer Chalkboard
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, HARD_LIMIT_1);
@@ -86,8 +86,8 @@ public class ChalkboardSyncTest extends AbstractGraphitiChalkboardTest {
 		// Add two components to diagram from palette
 		final String sourceComponent = SIG_GEN;
 		final String targetComponent = HARD_LIMIT;
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, sourceComponent, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, targetComponent, 300, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, sourceComponent, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, targetComponent, 300, 0);
 
 		// wait for component to show up in ScaExplorer Chalkboard (connections don't always work correctly if you don't
 		// wait.
@@ -125,8 +125,8 @@ public class ChalkboardSyncTest extends AbstractGraphitiChalkboardTest {
 		editor = openChalkboardDiagram(gefBot);
 
 		// Add two components to diagram from palette
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIG_GEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIG_GEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
 
 		// wait for component to show up in ScaExplorer Chalkboard
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIG_GEN_1);

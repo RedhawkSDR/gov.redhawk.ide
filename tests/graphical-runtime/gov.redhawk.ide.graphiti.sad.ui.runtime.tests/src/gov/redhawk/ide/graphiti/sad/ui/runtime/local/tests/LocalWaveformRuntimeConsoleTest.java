@@ -41,7 +41,7 @@ public class LocalWaveformRuntimeConsoleTest extends AbstractGraphitiLocalWavefo
 		editor = gefBot.gefEditor(WAVEFORM_EDITOR_TITLE);
 		editor.setFocus();
 
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		
 		//wait for SIGGEN_1 to show up in Sca Explorer
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, SIGGEN_1);

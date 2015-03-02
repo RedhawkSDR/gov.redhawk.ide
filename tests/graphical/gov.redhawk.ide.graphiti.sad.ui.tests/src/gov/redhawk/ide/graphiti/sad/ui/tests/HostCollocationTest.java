@@ -54,10 +54,10 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add host collocation to the waveform
-		DiagramTestUtils.dragHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
+		DiagramTestUtils.addHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
 
 		// Add component to the host collocation
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
 
 		MenuUtils.save(editor);
 
@@ -95,10 +95,10 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add host collocation to the waveform
-		DiagramTestUtils.dragHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
+		DiagramTestUtils.addHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
 
 		// Add component to the host collocation
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
 		MenuUtils.save(editor);
 
 		// Store host collocation and component relative location
@@ -138,11 +138,11 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add host collocation to the waveform
-		DiagramTestUtils.dragHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
+		DiagramTestUtils.addHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
 
 		// Add component to the host collocation
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 20, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 20, 150);
 
 		MenuUtils.save(editor);
 
@@ -182,7 +182,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add host collocation to the waveform
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HOST_CO, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HOST_CO, 0, 0);
 		SWTBotShell hostCoShell = gefBot.shell("New " + HOST_CO);
 		hostCoShell.setFocus();
 		SWTBotText hostCoName = gefBot.textWithLabel(HOST_CO + ":");
@@ -192,7 +192,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 
 		// Add component to the host collocation
 		editor.setFocus();
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
 
 		MenuUtils.save(editor);
 
@@ -245,11 +245,11 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		DiagramTestUtils.maximizeActiveWindow(gefBot);
 
 		// Add host collocation to the waveform
-		DiagramTestUtils.dragHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
+		DiagramTestUtils.addHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
 				
 		// Add component to the host collocation
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 20, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 20, 150);
 
 		MenuUtils.save(editor);
 
@@ -518,11 +518,11 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		DiagramTestUtils.maximizeActiveWindow(gefBot);
 		
 		// Add host collocation to the waveform
-		DiagramTestUtils.dragHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
+		DiagramTestUtils.addHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
 				
 		// Add component/findby to the host collocation
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 20, 150);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_DOMAIN_MANAGER, 450, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 20, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, FindByUtils.FIND_BY_DOMAIN_MANAGER, 450, 150);
 		MenuUtils.save(editor);
 		
 		//HostCOllocation objects
@@ -567,11 +567,11 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		DiagramTestUtils.maximizeActiveWindow(gefBot);
 		
 		// Add host collocation to the waveform
-		DiagramTestUtils.dragHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
+		DiagramTestUtils.addHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
 				
 		// Add component/findby to the host collocation
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 20, 150);
-		DiagramTestUtils.dragUseFrontEndTunerDeviceToDiagram(gefBot, editor, 450, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 20, 150);
+		DiagramTestUtils.addUseFrontEndTunerDeviceToDiagram(gefBot, editor, 450, 150);
 		UsesDeviceTestUtils.completeUsesDeviceWizard(gefBot, "existingAllocId", "newAllocId", new String[]{"provides"}, new String[]{"uses"});
 		MenuUtils.save(editor);
 		

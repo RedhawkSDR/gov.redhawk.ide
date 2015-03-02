@@ -50,8 +50,8 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 300, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARDLIMIT, 300, 0);
 		// Get port edit parts
 		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
@@ -95,8 +95,8 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 300, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARDLIMIT, 300, 0);
 		// Get port edit parts
 		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
@@ -143,13 +143,13 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add host collocation to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HOSTCOLLOCATION_PALETTE, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HOSTCOLLOCATION_PALETTE, 0, 0);
 
 		gefBot.waitUntil(Conditions.shellIsActive("New Host Collocation"));
 		gefBot.textWithLabel("Host Collocation:").setText("AAA");
 		gefBot.button("OK").click();
 		//add component inside host collocation (so host collocation is valid)
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 5, 5);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 5, 5);
 
 		//save
 		MenuUtils.save(editor);
@@ -184,7 +184,7 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
 		MenuUtils.save(editor);
 
 		// Edit content of (add external port) sad.xml

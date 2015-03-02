@@ -56,8 +56,8 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		editor.setFocus();
 
 		// Add devices to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DEVICE_STUB, 300, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 300, 0);
 		MenuUtils.save(editor);
 
 		// Edit content of dcd.xml
@@ -104,8 +104,8 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		editor.setFocus();
 
 		// Add devices to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DEVICE_STUB, 300, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 300, 0);
 		MenuUtils.save(editor);
 
 		// Get port edit parts

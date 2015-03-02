@@ -47,7 +47,7 @@ public class LocalWaveformRuntimeTest extends AbstractGraphitiLocalWaveformRunti
 		Assert.assertNotNull(editor.getEditPart("ExamplePythonComponent"));
 
 		// Add component to diagram from palette
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
 		DiagramTestUtils.releaseFromDiagram(editor, editor.getEditPart(HARD_LIMIT));
 
@@ -77,7 +77,7 @@ public class LocalWaveformRuntimeTest extends AbstractGraphitiLocalWaveformRunti
 		
 		for (String findByType : findByList) {
 			try {
-				DiagramTestUtils.dragFromPaletteToDiagram(editor, findByType, 0, 0);
+				DiagramTestUtils.addFromPaletteToDiagram(editor, findByType, 0, 0);
 				Assert.fail(); // The only way to get here is if the FindBy type appears in the Palette
 			} catch (WidgetNotFoundException e) {
 				Assert.assertTrue(e.getMessage(), e.getMessage().matches(".*" + findByType + ".*"));

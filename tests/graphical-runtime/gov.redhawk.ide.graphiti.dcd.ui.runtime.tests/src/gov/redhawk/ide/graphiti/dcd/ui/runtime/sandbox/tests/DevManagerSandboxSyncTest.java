@@ -37,7 +37,7 @@ public class DevManagerSandboxSyncTest extends AbstractDeviceManagerSandboxTest 
 		editor = openNodeChalkboardDiagram(gefBot);
 
 		// Add component to diagram from palette
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DEVICE_STUB, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 0, 0);
 
 		// wait for component to show up in ScaExplorer Chalkboard
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, DEVICE_STUB_1);
@@ -60,7 +60,7 @@ public class DevManagerSandboxSyncTest extends AbstractDeviceManagerSandboxTest 
 		editor = openNodeChalkboardDiagram(gefBot);
 
 		// Add component to diagram from palette
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DEVICE_STUB, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 0, 0);
 
 		// wait for component to show up in ScaExplorer Chalkboard
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, DEVICE_STUB_1);
@@ -83,7 +83,7 @@ public class DevManagerSandboxSyncTest extends AbstractDeviceManagerSandboxTest 
 		editor = openNodeChalkboardDiagram(gefBot);
 
 		// Add a device stub to diagram from palette, which will connect to itself for this test
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DEVICE_STUB, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 0, 0);
 
 		// wait for component to show up in ScaExplorer Chalkboard (connections don't always work correctly if you don't
 		// wait.
@@ -121,8 +121,8 @@ public class DevManagerSandboxSyncTest extends AbstractDeviceManagerSandboxTest 
 		editor = openNodeChalkboardDiagram(gefBot);
 
 		// Add two devices to diagram from palette
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DEVICE_STUB, 300, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 300, 0);
 		DiagramTestUtils.stopComponentFromDiagram(editor, GPP_1); // GPP starts when launched
 
 		// wait for device to show up in ScaExplorer Dev Manager Chalkboard

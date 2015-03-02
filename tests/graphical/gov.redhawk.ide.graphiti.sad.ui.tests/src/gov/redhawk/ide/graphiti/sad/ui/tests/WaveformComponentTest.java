@@ -73,7 +73,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		editor.activateTool(HARD_LIMIT + " (java)");
 
 		// Add component to diagram from palette
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
 
 		// Confirm created component truly is HardLimit
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
@@ -101,7 +101,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 
 		for (String s : COMPONENTS) {
 			// Add component to diagram from palette
-			DiagramTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);
+			DiagramTestUtils.addFromPaletteToDiagram(editor, s, 0, 0);
 		}
 
 		for (String s : COMPONENTS) {
@@ -128,7 +128,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add host collocation to the waveform
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HOST_CO, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HOST_CO, 0, 0);
 		SWTBotShell hostCoShell = gefBot.shell("New " + HOST_CO);
 		hostCoShell.setFocus();
 		SWTBotText hostCoName = gefBot.textWithLabel("Name:");
@@ -138,8 +138,8 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 
 		// Add component to the host collocation
 		editor.setFocus();
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 200);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 20, 20);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 20, 200);
 
 		// Check pictogram elements
 		SWTBotGefEditPart hostCoEditPart = editor.getEditPart(HOST_CO_NAME);
@@ -217,11 +217,11 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add a SigGen component instantiation to the diagram and save
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, "SigGen", 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, "SigGen", 0, 0);
 		MenuUtils.save(editor);
 
 		// Add a HardLimit component instantiation to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, "HardLimit", 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, "HardLimit", 0, 0);
 
 		// Find expected xml string for SigGen and HardLimit components
 		final String sigGenSad = DiagramTestUtils.regexStringForSadComponent((ComponentShapeImpl) editor.getEditPart("SigGen").part().getModel());
@@ -303,7 +303,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 		editor.setFocus();
 
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
 		SWTBotGefEditPart provides = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT);
 		SWTBotGefEditPart uses = DiagramTestUtils.getDiagramUsesPort(editor, HARD_LIMIT);
 
@@ -352,7 +352,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
 		MenuUtils.save(editor);
 
 		//add port via Overview tab
@@ -399,8 +399,8 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 200, 200);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARDLIMIT, 200, 200);
 		MenuUtils.save(editor);
 		
 		// Make sure all 4 port anchors can be found

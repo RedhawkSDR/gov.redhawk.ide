@@ -44,7 +44,7 @@ public class HotKeyTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		
 		// Confirm component was added to waveform
 		Assert.assertNotNull("SigGen component not found", editor.getEditPart(SIGGEN));
@@ -74,7 +74,7 @@ public class HotKeyTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARDLIMIT, 0, 0);
 		
 		// Confirm component was added to waveform
 		Assert.assertNotNull("HardLimit component not found", editor.getEditPart(HARDLIMIT));

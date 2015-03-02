@@ -56,8 +56,8 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		editor.setFocus();
 
 		// Add to diagram from palette
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SERVICE_STUB, 300, 200);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SERVICE_STUB, 300, 200);
 
 		// Confirm created object is as expected
 		assertGPP(editor.getEditPart(GPP));
@@ -87,7 +87,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
 		SWTBotGefEditPart gefEditPart = editor.getEditPart(GPP);
 		DiagramTestUtils.deleteFromDiagram(editor, gefEditPart);
 		Assert.assertNull(editor.getEditPart(GPP));
@@ -107,7 +107,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		editor.setFocus();
 
 		SWTBotView view = MenuUtils.showView(gefBot, "org.eclipse.ui.views.PropertySheet");
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
 		editor.getEditPart(GPP).click();
 		view.setFocus();
 		String propertyname = gefBot.viewByTitle("Properties").bot().tree().cell(0, "Property").toString();
@@ -139,7 +139,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
 		SWTBotGefEditPart uses = DiagramTestUtils.getDiagramUsesPort(editor, GPP);
 
 		List<SWTBotGefEditPart> anchors = new ArrayList<SWTBotGefEditPart>();

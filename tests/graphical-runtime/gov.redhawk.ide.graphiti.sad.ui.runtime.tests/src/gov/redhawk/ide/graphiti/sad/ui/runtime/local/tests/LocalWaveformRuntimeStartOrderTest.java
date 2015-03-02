@@ -38,7 +38,7 @@ public class LocalWaveformRuntimeStartOrderTest extends AbstractGraphitiLocalWav
 		editor.setFocus();
 
 		//drag SigGen to diagram and verify loaded in sca explorer
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, SIGGEN + "_1");
 		
 

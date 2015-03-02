@@ -58,8 +58,8 @@ public class FindByTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
 		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_NAME, findByName, provides, uses);
 		MenuUtils.save(editor);
 
@@ -104,7 +104,7 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		for (String s : findByList) {
 			// Add component to diagram from palette
-			DiagramTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);
+			DiagramTestUtils.addFromPaletteToDiagram(editor, s, 0, 0);
 			FindByUtils.completeFindByWizard(gefBot, s, null, new String[] { "p1", "p2" }, new String[] { "u1", "u2" });
 		}
 
@@ -131,8 +131,8 @@ public class FindByTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
 		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_NAME, FIND_BY_NAME, provides, null);
 		MenuUtils.save(editor);
 
@@ -192,9 +192,9 @@ public class FindByTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 200, 20);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 200, 20);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
 		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_NAME, FIND_BY_NAME, provides, uses);
 		MenuUtils.save(editor);
 
@@ -274,10 +274,10 @@ public class FindByTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
 		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_NAME, findByName, provides, uses);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 0, 300);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARDLIMIT, 0, 300);
 		MenuUtils.save(editor);
 
 		// Create connection on diagram

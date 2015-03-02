@@ -43,7 +43,7 @@ public class PortPropertiesTest extends AbstractGraphitiTest {
 		final String onlyComponent = "HardLimit";
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		final SWTBotGefEditor editor = gefBot.gefEditor(waveformName);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, onlyComponent, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, onlyComponent, 0, 0);
 		SWTBotGefEditPart part;
 		SWTBotTree tree;
 		

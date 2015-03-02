@@ -186,8 +186,8 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 
 
 		// Add components to diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 200, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 500, 300);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 200, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 500, 300);
 
 		// Add Uses Generic FrontEnd Device
 		createGenericFrontEndTunerDeviceListenById(existingAllocationId, newAllocationId);
@@ -427,7 +427,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 	 */
 	public void createGenericFrontEndTunerDeviceListenById(String existingAllocationId, String newAllocationId) {
 		
-		DiagramTestUtils.dragUseFrontEndTunerDeviceToDiagram(gefBot, editor);
+		DiagramTestUtils.addUseFrontEndTunerDeviceToDiagram(gefBot, editor);
 		
 		SWTBotShell allocateTunerShell = gefBot.shell("Allocate Tuner");
 		allocateTunerShell.setFocus();
@@ -481,7 +481,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 	 */
 	public void create_sim_rx_digitizer_FrontEndTunerDeviceControlTuner(String tunerType, String newAllocationId, String centerFrequency, String bandwidth, String sampleRate, String groupId) {
 		
-		DiagramTestUtils.dragUseFrontEndTunerDeviceToDiagram(gefBot, editor);
+		DiagramTestUtils.addUseFrontEndTunerDeviceToDiagram(gefBot, editor);
 		
 		SWTBotShell allocateTunerShell = gefBot.shell("Allocate Tuner");
 		allocateTunerShell.setFocus();

@@ -37,7 +37,7 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 		editor = openChalkboardDiagram(gefBot);
 
 		// Prepare Graphiti diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		
 		//wait for SIGGEN_1 to show up in Sca Explorer
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN_1);
@@ -129,7 +129,7 @@ public class ChalkboardContextMenuTest extends AbstractGraphitiChalkboardTest {
 		editor = openChalkboardDiagram(gefBot);
 
 		// Prepare Graphiti diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, CHALKBOARD, SIGGEN + "_1");
 
 		// Make sure start order and assembly controller context options don't exist

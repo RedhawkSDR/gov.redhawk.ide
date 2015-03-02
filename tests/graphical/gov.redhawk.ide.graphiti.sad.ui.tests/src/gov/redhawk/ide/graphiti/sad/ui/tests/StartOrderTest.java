@@ -44,8 +44,8 @@ public class StartOrderTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add components to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentOne, 100, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentTwo, 100, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, componentOne, 100, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, componentTwo, 100, 150);
 
 		// Get component objects
 		SadComponentInstantiation componentOneObj = DiagramTestUtils.getComponentObject(editor, componentOne);
@@ -109,8 +109,8 @@ public class StartOrderTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add additional components to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentOne, 100, 100);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentTwo, 100, 250);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, componentOne, 100, 100);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, componentTwo, 100, 250);
 
 		// Get component objects
 		SadComponentInstantiation compNoStartOrderObj = DiagramTestUtils.getComponentObject(editor, compNoStartOrder);
@@ -199,9 +199,9 @@ public class StartOrderTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add components to diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[0], 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[1], 250, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[2], 300, 200);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, component[0], 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, component[1], 250, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, component[2], 300, 200);
 
 		// Check initial assembly controller
 		MenuUtils.save(editor);
@@ -238,9 +238,9 @@ public class StartOrderTest extends AbstractGraphitiTest {
 		final String[] component = { "DataConverter", "HardLimit", "SigGen" };
 
 		// Add components to diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[0], 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[1], 250, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, component[2], 300, 200);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, component[0], 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, component[1], 250, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, component[2], 300, 200);
 
 		// Check initial assembly controller
 		MenuUtils.save(editor);
@@ -282,7 +282,7 @@ public class StartOrderTest extends AbstractGraphitiTest {
 		// Add and check start order
 		int xCoord = 0;
 		for (int i = 0; i < component.length; i++) {
-			DiagramTestUtils.dragFromPaletteToDiagram(editor, component[i], xCoord, 0);
+			DiagramTestUtils.addFromPaletteToDiagram(editor, component[i], xCoord, 0);
 			Assert.assertEquals(i, ComponentUtils.getStartOrder(editor, component[i]));
 			xCoord += 250;
 		}

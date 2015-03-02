@@ -49,8 +49,8 @@ public class SaveChalkboardTest extends AbstractGraphitiChalkboardTest {
 		editor = openChalkboardDiagram(gefBot);
 
 		// Add component to diagram from palette
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 200, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 200, 0);
 		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT);
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
@@ -118,7 +118,7 @@ public class SaveChalkboardTest extends AbstractGraphitiChalkboardTest {
 		editor = openChalkboardDiagram(gefBot);
 
 		// Add component to diagram from palette
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		DiagramTestUtils.waitUntilComponentDisplaysInDiagram(bot, editor, SIGGEN);
 		
 		Robot robot = new Robot();

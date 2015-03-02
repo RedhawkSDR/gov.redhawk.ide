@@ -45,7 +45,7 @@ public class DeleteProjectTest extends AbstractGraphitiTest {
 		Assert.assertEquals("Editor not found", 1, editors.size());
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		
 		// Delete project from the project explorer
 		SWTBotView projectExplorerView = gefBot.viewById("org.eclipse.ui.navigator.ProjectExplorer");

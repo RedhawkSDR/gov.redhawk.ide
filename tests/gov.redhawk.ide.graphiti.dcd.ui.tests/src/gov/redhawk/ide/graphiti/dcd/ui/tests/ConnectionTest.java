@@ -54,8 +54,8 @@ public class ConnectionTest extends AbstractGraphitiTest {
 		editor.setFocus();
 
 		// Add to diagram from palette
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DEVICE_STUB, 300, 200);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 300, 200);
 
 		// Get component edit parts and container shapes
 		SWTBotGefEditPart gppEditPart = editor.getEditPart(GPP);

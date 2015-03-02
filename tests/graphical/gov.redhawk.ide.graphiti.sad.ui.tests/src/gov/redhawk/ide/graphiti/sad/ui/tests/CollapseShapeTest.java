@@ -59,11 +59,11 @@ public class CollapseShapeTest extends AbstractGraphitiTest {
 
 		// Add components to diagram from palette
 		editor = gefBot.gefEditor(waveformName);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DATA_READER, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 150);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DATA_CONVERTER, 300, 150);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DATA_WRITER, 500, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 500, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_READER, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_CONVERTER, 300, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_WRITER, 500, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 500, 150);
 
 		// Get gefEditParts for port shapes
 		// SWTBotGefEditPart dataReaderDataFloatOut = DiagramTestUtils.getDiagramUsesPort(editor, DATA_READER,
@@ -227,7 +227,7 @@ public class CollapseShapeTest extends AbstractGraphitiTest {
 		setPortCollapsePreference(true);
 
 		// Add component to waveform and make sure it is collapsed
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
 
 		SWTBotGefEditPart hardLimitDataFloatIn = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT, "dataFloat_in");
 		SWTBotGefEditPart hardLimitDataFloatOut = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT, "dataFloat_out");
@@ -243,7 +243,7 @@ public class CollapseShapeTest extends AbstractGraphitiTest {
 		setPortCollapsePreference(false);
 
 		// Add component to waveform and make sure it is not collapsed
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DATA_CONVERTER, 200, 200);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_CONVERTER, 200, 200);
 
 		SWTBotGefEditPart dataConverterDataFloat = DiagramTestUtils.getDiagramProvidesPort(editor, DATA_CONVERTER, "dataFloat");
 		SWTBotGefEditPart dataConverterDataDouble = DiagramTestUtils.getDiagramProvidesPort(editor, DATA_CONVERTER, "dataDouble");
@@ -273,7 +273,7 @@ public class CollapseShapeTest extends AbstractGraphitiTest {
 
 		setPortCollapsePreference(true);
 
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DATA_CONVERTER, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_CONVERTER, 0, 0);
 
 		SWTBotGefEditPart dataConverterSuperProvides = DiagramTestUtils.getDiagramProvidesSuperPort(editor, DATA_CONVERTER);
 		SWTBotGefEditPart dataConverterSuperUses = DiagramTestUtils.getDiagramUsesSuperPort(editor, DATA_CONVERTER);

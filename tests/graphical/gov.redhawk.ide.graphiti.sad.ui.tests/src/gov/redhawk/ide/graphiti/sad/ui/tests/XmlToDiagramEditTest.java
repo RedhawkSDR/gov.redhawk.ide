@@ -59,9 +59,9 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 200, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DATA_CONVETER, 0, 200);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 200, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_CONVETER, 0, 200);
 		MenuUtils.save(editor);
 
 		// Edit content of sad.xml
@@ -115,9 +115,9 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add components to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DATA_CONVERTER, 0, 100);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_CONVERTER, 0, 100);
 
 		// Get port edit parts
 		SWTBotGefEditPart sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
@@ -171,8 +171,8 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 200, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 200, 0);
 		MenuUtils.save(editor);
 
 		// Verify componentOne is set as assembly Controller
@@ -224,11 +224,11 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add host collocation to the waveform
-		DiagramTestUtils.dragHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
+		DiagramTestUtils.addHostCollocationToDiagram(gefBot, editor, HOST_CO_NAME);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 20, 20);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 20, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 20, 20);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 20, 150);
 		MenuUtils.save(editor);
 
 		// Verify that the host collocation has two components

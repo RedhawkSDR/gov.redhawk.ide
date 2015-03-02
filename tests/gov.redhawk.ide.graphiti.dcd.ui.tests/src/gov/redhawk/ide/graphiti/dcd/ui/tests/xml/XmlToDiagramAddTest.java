@@ -57,7 +57,7 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		editor.setFocus();
 
 		// Add device to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
 		MenuUtils.save(editor);
 
 		// Edit content of dcd.xml
@@ -96,8 +96,8 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		editor.setFocus();
 
 		// Add device to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DEVICE_STUB, 200, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 200, 0);
 		MenuUtils.save(editor);
 
 		// Confirm that no connections currently exist

@@ -43,7 +43,7 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 		editor.setFocus();
 		
 		// Add component to diagram from palette
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
 		
 		//wait for component to show up in ScaExplorer
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, HARD_LIMIT_1);
@@ -67,8 +67,8 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 		// Add two components to diagram from palette
 		final String sourceComponent = SIG_GEN;
 		final String targetComponent = HARD_LIMIT;
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, sourceComponent, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, targetComponent, 300, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, sourceComponent, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, targetComponent, 300, 0);
 		
 		//wait for component to show up in ScaExplorer (connections don't always work correctly if you don't wait.
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, SIG_GEN_1);
@@ -104,8 +104,8 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 		editor.setFocus();
 
 		// Add two components to diagram from palette
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIG_GEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIG_GEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
 
 		//wait for component to show up in ScaExplorer
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, SIG_GEN_1);
@@ -160,8 +160,8 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 		editor.setFocus();
 
 		// Add two components to diagram from palette
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIG_GEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIG_GEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
 
 		//verify components were added to sca explorer
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, LOCAL_WAVEFORM_PARENT_PATH, LOCAL_WAVEFORM, HARD_LIMIT_1);
@@ -193,8 +193,8 @@ public class LocalWaveformRuntimeSyncTest extends AbstractGraphitiLocalWaveformR
 		editor.setFocus();
 
 		// Launch two components from TargetSDR
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIG_GEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIG_GEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
 
 		//verify components were added to the diagram
 		DiagramTestUtils.waitUntilComponentDisplaysInDiagram(bot, editor, HARD_LIMIT);

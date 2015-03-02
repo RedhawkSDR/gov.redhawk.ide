@@ -63,8 +63,8 @@ public class FindByTest extends AbstractGraphitiTest {
 		editor.setFocus();
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
 		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_NAME, findByName, provides, uses);
 		MenuUtils.save(editor);
 
@@ -107,7 +107,7 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		for (String s : findByList) {
 			// Add component to diagram from palette
-			DiagramTestUtils.dragFromPaletteToDiagram(editor, s, 0, 0);
+			DiagramTestUtils.addFromPaletteToDiagram(editor, s, 0, 0);
 			FindByUtils.completeFindByWizard(gefBot, s, null, new String[] { "p1", "p2" }, new String[] { "u1", "u2" });
 		}
 
@@ -134,8 +134,8 @@ public class FindByTest extends AbstractGraphitiTest {
 		editor.setFocus();
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
 		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_NAME, FIND_BY_NAME, provides, null);
 		MenuUtils.save(editor);
 
@@ -193,9 +193,9 @@ public class FindByTest extends AbstractGraphitiTest {
 		editor.setFocus();
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DEVICE_STUB, 200, 20);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 200, 20);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
 		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_NAME, FIND_BY_NAME, provides, uses);
 		MenuUtils.save(editor);
 
@@ -272,8 +272,8 @@ public class FindByTest extends AbstractGraphitiTest {
 		editor.setFocus();
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, GPP, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
 		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_NAME, findByName, provides, null);
 		MenuUtils.save(editor);
 

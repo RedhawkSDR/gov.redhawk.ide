@@ -104,14 +104,14 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	}
 
 	/**
-	 * Drag a component onto the SAD diagram editor from the Palette.
+	 * Adds a component onto the SAD diagram editor from the palette
 	 * Position is determined relative to the last item dropped on the diagram.
 	 * @param editor - SWTBotGefEditor
 	 * @param componentName - Component to grab from palette
 	 * @param xTargetPosition - x coordinate for drop location
 	 * @param yTargetPosition - y coordinate for drop location
 	 */
-	public static void dragFromPaletteToDiagram(SWTBotGefEditor editor, String componentName, int xTargetPosition, int yTargetPosition) {
+	public static void addFromPaletteToDiagram(SWTBotGefEditor editor, String componentName, int xTargetPosition, int yTargetPosition) {
 		String[] impls = { " (python)", " (cpp)", " (java)", "" };
 		for (int i = 0; i < impls.length; i++) {
 			try {
@@ -125,7 +125,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 				}
 			}
 		}
-		editor.drag(xTargetPosition, yTargetPosition, xTargetPosition, yTargetPosition);
+		editor.click(xTargetPosition, yTargetPosition);
 	}
 
 	private static void dragFromTargetSDRToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String componentName, String sdrLocation) {
@@ -184,10 +184,10 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	}
 
 	/**
-	 * Drag a HostCollocation onto the SAD diagram editor
+	 * Add a HostCollocation to the SAD diagram editor
 	 */
-	public static void dragHostCollocationToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String hostCoName) {
-		dragFromPaletteToDiagram(editor, "Host Collocation", 0, 0);
+	public static void addHostCollocationToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String hostCoName) {
+		addFromPaletteToDiagram(editor, "Host Collocation", 0, 0);
 		SWTBotShell hostCoShell = gefBot.shell("New Host Collocation");
 		hostCoShell.setFocus();
 		SWTBotText textField = gefBot.textWithLabel("Name:");
@@ -198,17 +198,17 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	}
 
 	/**
-	 * Drag a Use FrontEnd Tuner Device onto the SAD diagram editor
+	 * Add a Use FrontEnd Tuner Device to the SAD diagram editor
 	 */
-	public static void dragUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor) {
-		dragUseFrontEndTunerDeviceToDiagram(gefBot, editor, 0, 0);
+	public static void addUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor) {
+		addUseFrontEndTunerDeviceToDiagram(gefBot, editor, 0, 0);
 	}
 	
 	/**
-	 * Drag a Use FrontEnd Tuner Device onto the SAD diagram editor at specificed coordinates
+	 * Add a Use FrontEnd Tuner Device to the SAD diagram editor at the specified coordinates
 	 */
-	public static void dragUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, int xPosition, int yPosition) {
-		dragFromPaletteToDiagram(editor, "Use FrontEnd Tuner Device", xPosition, yPosition);
+	public static void addUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, int xPosition, int yPosition) {
+		addFromPaletteToDiagram(editor, "Use FrontEnd Tuner Device", xPosition, yPosition);
 	}
 
 	/**

@@ -58,7 +58,7 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, componentOne, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, componentOne, 0, 0);
 		MenuUtils.save(editor);
 
 		// Edit content of sad.xml
@@ -103,8 +103,8 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
 		MenuUtils.save(editor);
 
 		// Confirm that no connections currently exist
@@ -160,7 +160,7 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		// Create a new empty waveform
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 400, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARDLIMIT, 400, 0);
 		MenuUtils.save(editor);
 
 		// Edit content of sad.xml
@@ -212,7 +212,7 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		MenuUtils.save(editor);
 
 		// Edit content of sad.xml
@@ -282,7 +282,7 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add component to the diagram
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARDLIMIT, 200, 0);
 		MenuUtils.save(editor);
 
 		// Confirm that no external ports exist in diagram

@@ -61,8 +61,8 @@ public class ConnectionTest extends AbstractGraphitiTest {
 
 		// Add components to diagram from palette
 		editor = gefBot.gefEditor(waveformName);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
 
 		// Get component edit parts and container shapes
 		SWTBotGefEditPart sourceComponentEditPart = editor.getEditPart(SIGGEN);
@@ -141,8 +141,8 @@ public class ConnectionTest extends AbstractGraphitiTest {
 		// Add components to diagram from palette
 		gefBot.waitUntil(new WaitForEditorCondition());
 		editor = gefBot.gefEditor(waveformName);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
 
 		// Get port edit parts
 		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
@@ -192,8 +192,8 @@ public class ConnectionTest extends AbstractGraphitiTest {
 
 		// Add components to diagram from palette
 		editor = gefBot.gefEditor(waveformName);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DATA_CONVERTER, 300, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_CONVERTER, 300, 0);
 
 		// Get port edit parts
 		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
@@ -222,8 +222,8 @@ public class ConnectionTest extends AbstractGraphitiTest {
 
 		// Add components to diagram from palette
 		editor = gefBot.gefEditor(waveformName);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, SIGGEN, 0, 0);
-		DiagramTestUtils.dragFromPaletteToDiagram(editor, DATA_CONVERTER, 300, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_CONVERTER, 300, 0);
 		SWTBotGefEditPart usesPort = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN, sigGenPort).children().get(0);
 		usesPort.select();
 
