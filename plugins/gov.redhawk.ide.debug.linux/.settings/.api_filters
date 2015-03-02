@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="gov.redhawk.ide.debug.linux" version="2">
+    <resource path="src/gov/redhawk/ide/debug/linux/PosixRuntimeProcess.java" type="gov.redhawk.ide.debug.linux.PosixRuntimeProcess">
+        <filter id="338849923">
+            <message_arguments>
+                <message_argument value="gov.redhawk.ide.debug.linux.PosixRuntimeProcess"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
