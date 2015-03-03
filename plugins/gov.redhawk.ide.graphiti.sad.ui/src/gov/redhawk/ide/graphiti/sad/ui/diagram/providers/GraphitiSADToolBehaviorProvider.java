@@ -31,8 +31,6 @@ import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -292,29 +290,30 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 				}
 			}
 			if (!foundTool && passesFilter(spd.getName())) {
+				addToolToCompartment(compartmentEntry, spd, WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
 				// special way of instantiating create feature
 				// allows us to know which palette tool was used
 				
-				if (spd.getImplementation().size() > 1) {
-					StackEntry stackEntry = new StackEntry(spd.getName() + spd.getImplementation().get(0).getId(), spd.getDescription(),
-						WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
-					compartmentEntry.addToolEntry(stackEntry);
-					List<IToolEntry> stackEntries = new ArrayList<IToolEntry>();
-					for (Implementation impl : spd.getImplementation()) {
-						ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), spd, impl.getId());
-						SpdToolEntry entry = new SpdToolEntry(spd.getName() + " (" + impl.getId() + ")", spd.getDescription(), EcoreUtil.getURI(spd),
-							spd.getId(), null, WaveformImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
-						stackEntries.add(entry);
-					}
-					sort(stackEntries);
-					for (IToolEntry entry : stackEntries) {
-						stackEntry.addCreationToolEntry((SpdToolEntry) entry);
-					}
-				} else {
-					ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
-					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature, WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
-					compartmentEntry.addToolEntry(entry);
-				}
+//				if (spd.getImplementation().size() > 1) {
+//					StackEntry stackEntry = new StackEntry(spd.getName() + spd.getImplementation().get(0).getId(), spd.getDescription(),
+//						WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
+//					compartmentEntry.addToolEntry(stackEntry);
+//					List<IToolEntry> stackEntries = new ArrayList<IToolEntry>();
+//					for (Implementation impl : spd.getImplementation()) {
+//						ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), spd, impl.getId());
+//						SpdToolEntry entry = new SpdToolEntry(spd.getName() + " (" + impl.getId() + ")", spd.getDescription(), EcoreUtil.getURI(spd),
+//							spd.getId(), null, WaveformImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
+//						stackEntries.add(entry);
+//					}
+//					sort(stackEntries);
+//					for (IToolEntry entry : stackEntries) {
+//						stackEntry.addCreationToolEntry((SpdToolEntry) entry);
+//					}
+//				} else {
+//					ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
+//					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature, WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
+//					compartmentEntry.addToolEntry(entry);
+//				}
 			}
 		}
 		for (final IToolEntry entry : entriesToRemove) {
@@ -328,10 +327,10 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 				entries.add((IToolEntry) entry);
 			}
 		}
-		sort(entries);
+//		sort(entries);
 		compartmentEntry.getToolEntries().clear();
 		compartmentEntry.getToolEntries().addAll(entries);
-
+		sort(compartmentEntry.getToolEntries());
 		return compartmentEntry;
 	}
 
@@ -362,31 +361,90 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 				containerList = new ArrayList<PaletteEntry>();
 				containerMap.put(category, containerList);
 			}
-			List<IToolEntry> newEntries = new ArrayList<IToolEntry>();
+//			List<IToolEntry> newEntries = new ArrayList<IToolEntry>();
 			if (desc instanceof ComponentDesc) {
 				ComponentDesc compDesc = (ComponentDesc) desc;
 				// Filter out devices and services, and apply name filter
 				if ((compDesc.getComponentType() != null) && compDesc.getComponentType().equals(componentType) && passesFilter(compDesc.getName())) {
-					newEntries = createPaletteEntries(compDesc);
-					if (newEntries != null && newEntries.size() > 1) {
-						sort(newEntries);
-						IToolEntry firstEntry = newEntries.get(0);
-						StackEntry stackEntry = new StackEntry(firstEntry.getLabel(), ((SpdToolEntry) firstEntry).getDescription(), firstEntry.getIconId());
-						entries.add(stackEntry);
-						for (IToolEntry entry : newEntries) {
-							stackEntry.addCreationToolEntry((SpdToolEntry) entry);
-						}
-					} else {
-						entries.addAll(newEntries);
-					}
+					addToolToCompartment(compartmentEntry, compDesc.getSoftPkg(), WaveformImageProvider.IMG_COMPONENT_PLACEMENT);
+//					newEntries = createPaletteEntries(compDesc);
+//					if (newEntries != null && newEntries.size() > 1) {
+//						sort(newEntries);
+//						IToolEntry firstEntry = newEntries.get(0);
+//						StackEntry stackEntry = new StackEntry(firstEntry.getLabel(), ((SpdToolEntry) firstEntry).getDescription(), firstEntry.getIconId());
+//						entries.add(stackEntry);
+//						for (IToolEntry entry : newEntries) {
+//							stackEntry.addCreationToolEntry((SpdToolEntry) entry);
+//						}
+//					} else {
+//						entries.addAll(newEntries);
+//					}
 				}
 			}
 		}
 
-		sort(entries);
+//		sort(entries);
 		compartmentEntry.getToolEntries().addAll(entries);
+		sort(compartmentEntry.getToolEntries());
 		return compartmentEntry;
 	}
+
+//	private String getLastSegment(String[] segments) {
+//		if (segments == null || segments.length < 1) {
+//			return "";
+//		}
+//		return segments[segments.length - 1];
+//	}
+//	
+//	private PaletteTreeEntry getSegmentEntry(PaletteCompartmentEntry parent, String label) {
+//		if (label == null) {
+//			return null;
+//		}
+//		if (parent == null) {
+//			return new PaletteTreeEntry(label);
+//		}
+//		for (IToolEntry entry: parent.getToolEntries()) {
+//			if (entry instanceof PaletteTreeEntry && label.equals(entry.getLabel())) {
+//				return (PaletteTreeEntry) entry;
+//			}
+//		}
+//		return new PaletteTreeEntry(label, parent);
+//	}
+//	
+//	protected void addToolToCompartment(PaletteCompartmentEntry compartment, SoftPkg spd) {
+//		Assert.isNotNull(compartment, "Cannot add tool to non-existent compartment");
+//		String[] segments = getNameSegments(spd);
+//		PaletteCompartmentEntry folder = compartment;
+//		for (int index = 0; index < segments.length - 1; ++index) {
+//			folder = getSegmentEntry(folder, segments[index]);
+//		}
+//		folder.addToolEntry(makeTool(spd));
+//	}
+//	
+//	private IToolEntry makeTool(SoftPkg spd) {
+//		List<IToolEntry> newEntries = createPaletteEntries(spd);
+//		if (newEntries != null && newEntries.size() > 1) {
+//			sort(newEntries);
+//			IToolEntry firstEntry = newEntries.get(0);
+//			StackEntry stackEntry = new StackEntry(firstEntry.getLabel(), ((SpdToolEntry) firstEntry).getDescription(), firstEntry.getIconId());
+//			for (IToolEntry entry : newEntries) {
+//				stackEntry.addCreationToolEntry((SpdToolEntry) entry);
+//			}
+//			return stackEntry;
+//		}
+//		return newEntries.get(0);
+//	}
+//
+//	private String[] getNameSegments(SoftPkg spd) {
+//		String fullName = spd.getName();
+//		if (fullName == null) {
+//			return new String[] {""};
+//		}
+//		if (!fullName.contains(".")) {
+//			return new String[] {fullName};
+//		}
+//		return fullName.split("\\.");
+//	}
 
 	/**
 	 * Returns a listener that refreshes the palette
@@ -410,51 +468,6 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 			}
 		}
 	};
-
-	/**
-	 * Creates a new SpdToolEntry for each implementation in the component description.
-	 * Also assigns the createComponentFeature to the palette entry so that the diagram knows which shape to create.
-	 */
-	private List<IToolEntry> createPaletteEntries(ComponentDesc desc) {
-		List<IToolEntry> retVal = new ArrayList<IToolEntry>(desc.getImplementationIds().size());
-		if (desc.getImplementationIds().size() == 1) {
-			ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), desc.getSoftPkg(), desc.getImplementationIds().get(0));
-			SpdToolEntry entry = new SpdToolEntry(desc.getName(), desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(),
-				desc.getImplementationIds().get(0), WaveformImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
-			retVal.add(entry);
-		} else {
-			for (String implID : desc.getImplementationIds()) {
-				ICreateFeature createComponentFeature = new ComponentCreateFeature(getFeatureProvider(), desc.getSoftPkg(), implID);
-				SpdToolEntry entry = new SpdToolEntry(desc.getName() + " (" + implID + ")", desc.getDescription(), desc.getResourceURI(), desc.getIdentifier(),
-					implID, WaveformImageProvider.IMG_COMPONENT_PLACEMENT, createComponentFeature);
-				retVal.add(entry);
-			}
-		}
-		return retVal;
-	}
-
-	private void sort(List<IToolEntry> entries) {
-		Collections.sort(entries, new Comparator<IToolEntry>() {
-
-			@Override
-			public int compare(final IToolEntry o1, final IToolEntry o2) {
-				final String str1 = o1.getLabel();
-				final String str2 = o2.getLabel();
-				if (str1 == null) {
-					if (str2 == null) {
-						return 0;
-					} else {
-						return 1;
-					}
-				} else if (str2 == null) {
-					return -1;
-				} else {
-					return str1.compareToIgnoreCase(str2);
-				}
-			}
-
-		});
-	}
 
 	@Override
 	public void dispose() {
@@ -531,7 +544,12 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 			return usesDeviceEditFeature;
 		}
 
-
 		return super.getDoubleClickFeature(context);
 	}
+
+	@Override
+	protected ICreateFeature getCreateFeature(SoftPkg spd, String implId, String iconId) {
+		return new ComponentCreateFeature(getFeatureProvider(), spd, implId);
+	}
+	
 }

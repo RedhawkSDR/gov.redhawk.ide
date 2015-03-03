@@ -92,7 +92,13 @@ public class RHGraphitiPaletteRoot extends PaletteRoot {
 		// create new entries
 		if (paletteTools == null) {
 			paletteTools = createModelIndependentTools();
-			add(paletteTools);
+//			add(paletteTools);
+			add(new PaletteEntry(null, null) {
+				@Override
+				public Object getType() {
+					return "paletteFilter";
+				}
+			});
 			setInitialDrawerState = true;
 		}
 
@@ -112,35 +118,34 @@ public class RHGraphitiPaletteRoot extends PaletteRoot {
 				}
 				add(drawer);
 			}
-
 			List<IToolEntry> toolEntries = compartmentEntry.getToolEntries();
-
-			for (IToolEntry toolEntry : toolEntries) {
-
-				if (toolEntry instanceof ICreationToolEntry) {
-					ICreationToolEntry creationToolEntry = (ICreationToolEntry) toolEntry;
-
-					PaletteEntry createTool = createTool(creationToolEntry);
-					if (createTool != null) {
-						drawer.add(createTool);
-					}
-				} else if (toolEntry instanceof IStackToolEntry) {
-					IStackToolEntry stackToolEntry = (IStackToolEntry) toolEntry;
-					PaletteStack stack = new PaletteStack(stackToolEntry.getLabel(), stackToolEntry.getDescription(),
-							GraphitiUi.getImageService().getImageDescriptorForId(diagramTypeProvider.getProviderId(),
-									stackToolEntry.getIconId()));
-					drawer.add(stack);
-					List<ICreationToolEntry> creationToolEntries = stackToolEntry.getCreationToolEntries();
-					for (ICreationToolEntry creationToolEntry : creationToolEntries) {
-						PaletteEntry createTool = createTool(creationToolEntry);
-						if (createTool != null) {
-							stack.add(createTool);
-						}
-					}
-				} else if (toolEntry instanceof IPaletteSeparatorEntry) {
-					drawer.add(new PaletteSeparator());
-				}
-			}
+			fillContainer(drawer, toolEntries);
+//			for (IToolEntry toolEntry : toolEntries) {
+//
+//				if (toolEntry instanceof ICreationToolEntry) {
+//					ICreationToolEntry creationToolEntry = (ICreationToolEntry) toolEntry;
+//
+//					PaletteEntry createTool = createTool(creationToolEntry);
+//					if (createTool != null) {
+//						drawer.add(createTool);
+//					}
+//				} else if (toolEntry instanceof IStackToolEntry) {
+//					IStackToolEntry stackToolEntry = (IStackToolEntry) toolEntry;
+//					PaletteStack stack = new PaletteStack(stackToolEntry.getLabel(), stackToolEntry.getDescription(),
+//							GraphitiUi.getImageService().getImageDescriptorForId(diagramTypeProvider.getProviderId(),
+//									stackToolEntry.getIconId()));
+//					drawer.add(stack);
+//					List<ICreationToolEntry> creationToolEntries = stackToolEntry.getCreationToolEntries();
+//					for (ICreationToolEntry creationToolEntry : creationToolEntries) {
+//						PaletteEntry createTool = createTool(creationToolEntry);
+//						if (createTool != null) {
+//							stack.add(createTool);
+//						}
+//					}
+//				} else if (toolEntry instanceof IPaletteSeparatorEntry) {
+//					drawer.add(new PaletteSeparator());
+//				}
+//			}
 		}
 		
 		// Hide the drawers for which no compartment entry was returned (empty)
@@ -156,6 +161,36 @@ public class RHGraphitiPaletteRoot extends PaletteRoot {
 		}
 	}
 
+	protected PaletteEntry produceEntry(IToolEntry model) {
+		if (model instanceof ICreationToolEntry) {
+			return createTool((ICreationToolEntry) model);
+		}
+		if (model instanceof IStackToolEntry) {
+			IStackToolEntry stackToolEntry = (IStackToolEntry) model;
+			PaletteStack stack = new PaletteStack(stackToolEntry.getLabel(), stackToolEntry.getDescription(),
+				GraphitiUi.getImageService().getImageDescriptorForId(diagramTypeProvider.getProviderId(),
+						stackToolEntry.getIconId()));
+			fillContainer(stack, stackToolEntry.getCreationToolEntries());
+			return stack;
+		}
+		if (model instanceof IPaletteSeparatorEntry) {
+			return new PaletteSeparator();
+		}
+		if (model instanceof PaletteTreeEntry) {
+			PaletteTreeEntry treeEntry = (PaletteTreeEntry) model;
+			PaletteContainer folder = new PaletteNamespaceFolder(treeEntry.getLabel());
+			fillContainer(folder, treeEntry.getToolEntries());
+			return folder;
+		}
+		return null;
+	}
+	
+	protected void fillContainer(PaletteContainer container, List<? extends IToolEntry> entries) {
+		for (IToolEntry entry: entries) {
+			container.add(produceEntry(entry));
+		}
+	}
+	
 	/**
 	 * Creates and adds the model-independent tools to a new PaletteContainer.
 	 * This currently includes only the component/device filter.
@@ -254,4 +289,11 @@ public class RHGraphitiPaletteRoot extends PaletteRoot {
 		return imageDescriptor;
 	}
 
+	@Override
+	public boolean acceptsType(Object type) {
+		if (type.equals("paletteFilter")) {
+			return true;
+		}
+		return super.acceptsType(type);
+	}
 }

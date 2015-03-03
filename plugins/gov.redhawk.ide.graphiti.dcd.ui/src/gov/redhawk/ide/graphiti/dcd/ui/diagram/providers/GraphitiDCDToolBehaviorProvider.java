@@ -26,8 +26,6 @@ import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
@@ -243,37 +241,38 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 				} else if ("Services".equals(compartmentEntry.getLabel())) {
 					iconId = NodeImageProvider.IMG_SCA_SERVICE;
 				}
+				this.addToolToCompartment(deviceCompartment, spd, iconId);
 
-				if (spd.getImplementation().size() > 1) {
-					StackEntry stackEntry = new StackEntry(spd.getName() + spd.getImplementation().get(0).getId(), spd.getDescription(),
-						iconId);
-					compartmentEntry.addToolEntry(stackEntry);
-					List<IToolEntry> stackEntries = new ArrayList<IToolEntry>();
-					for (Implementation impl : spd.getImplementation()) {
-						ICreateFeature createComponentFeature = null;
-						if (container instanceof DevicesContainer) {
-							createComponentFeature = new DeviceCreateFeature(getFeatureProvider(), spd, impl.getId());
-						} else if (container instanceof ServicesContainer) {
-							createComponentFeature = new ServiceCreateFeature(getFeatureProvider(), spd, impl.getId());
-						}
-						SpdToolEntry entry = new SpdToolEntry(spd.getName() + " (" + impl.getId() + ")", spd.getDescription(), EcoreUtil.getURI(spd),
-							spd.getId(), null, iconId, createComponentFeature);
-						stackEntries.add(entry);
-					}
-					sort(stackEntries);
-					for (IToolEntry entry : stackEntries) {
-						stackEntry.addCreationToolEntry((SpdToolEntry) entry);
-					}
-				} else {
-					ICreateFeature createComponentFeature = null;
-					if (container instanceof DevicesContainer) {
-						createComponentFeature = new DeviceCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
-					} else if (container instanceof ServicesContainer) {
-						createComponentFeature = new ServiceCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
-					}
-					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature, iconId);
-					compartmentEntry.addToolEntry(entry);
-				}
+//				if (spd.getImplementation().size() > 1) {
+//					StackEntry stackEntry = new StackEntry(spd.getName() + spd.getImplementation().get(0).getId(), spd.getDescription(),
+//						iconId);
+//					compartmentEntry.addToolEntry(stackEntry);
+//					List<IToolEntry> stackEntries = new ArrayList<IToolEntry>();
+//					for (Implementation impl : spd.getImplementation()) {
+//						ICreateFeature createComponentFeature = null;
+//						if (container instanceof DevicesContainer) {
+//							createComponentFeature = new DeviceCreateFeature(getFeatureProvider(), spd, impl.getId());
+//						} else if (container instanceof ServicesContainer) {
+//							createComponentFeature = new ServiceCreateFeature(getFeatureProvider(), spd, impl.getId());
+//						}
+//						SpdToolEntry entry = new SpdToolEntry(spd.getName() + " (" + impl.getId() + ")", spd.getDescription(), EcoreUtil.getURI(spd),
+//							spd.getId(), null, iconId, createComponentFeature);
+//						stackEntries.add(entry);
+//					}
+//					sort(stackEntries);
+//					for (IToolEntry entry : stackEntries) {
+//						stackEntry.addCreationToolEntry((SpdToolEntry) entry);
+//					}
+//				} else {
+//					ICreateFeature createComponentFeature = null;
+//					if (container instanceof DevicesContainer) {
+//						createComponentFeature = new DeviceCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
+//					} else if (container instanceof ServicesContainer) {
+//						createComponentFeature = new ServiceCreateFeature(getFeatureProvider(), spd, spd.getImplementation().get(0).getId());
+//					}
+//					final SpdToolEntry entry = new SpdToolEntry(spd, createComponentFeature, iconId);
+//					compartmentEntry.addToolEntry(entry);
+//				}
 			}
 		}
 		for (final IToolEntry entry : entriesToRemove) {
@@ -320,30 +319,6 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		return compartmentEntry;
 	}
 
-	private void sort(List<IToolEntry> entries) {
-		Collections.sort(entries, new Comparator<IToolEntry>() {
-
-			@Override
-			public int compare(final IToolEntry o1, final IToolEntry o2) {
-				final String str1 = o1.getLabel();
-				final String str2 = o2.getLabel();
-				if (str1 == null) {
-					if (str2 == null) {
-						return 0;
-					} else {
-						return 1;
-					}
-				} else if (str2 == null) {
-					return -1;
-				} else {
-					return str1.compareToIgnoreCase(str2);
-				}
-			}
-
-		});
-	}
-
-	
 	/**
 	 * IDE-1021: Adds start/stop/etc. buttons to hover context button pad of component as applicable.
 	 */
@@ -372,4 +347,15 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		return pad;
 	}
 	// TODO: reimplement the filter. May be able to refactor this backwards out of the WaveformToolBehaviorProvider?
+	
+	@Override
+	protected ICreateFeature getCreateFeature(SoftPkg spd, String implId, String iconId) {
+		if (iconId == NodeImageProvider.IMG_SCA_DEVICE) {
+			return new DeviceCreateFeature(getFeatureProvider(), spd, implId);
+		}
+		if (iconId == NodeImageProvider.IMG_SCA_SERVICE) {
+			return new ServiceCreateFeature(getFeatureProvider(), spd, implId);
+		}
+		return null;
+	}
 }
