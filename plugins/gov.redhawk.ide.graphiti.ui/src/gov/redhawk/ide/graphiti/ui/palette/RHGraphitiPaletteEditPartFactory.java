@@ -31,6 +31,7 @@ public class RHGraphitiPaletteEditPartFactory extends PaletteEditPartFactory {
 	public RHGraphitiPaletteEditPartFactory(DefaultPaletteBehavior newPaletteBehavior, DiagramBehavior theDiagramBehavior, PaletteViewer theViewer) {
 		paletteBehavior = newPaletteBehavior;
 		diagramBehavior = theDiagramBehavior;
+		viewer = theViewer;
 	}
 	
 	@Override
