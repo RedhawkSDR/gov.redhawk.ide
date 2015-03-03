@@ -900,6 +900,7 @@ public abstract class NewScaResourceWizard extends Wizard implements INewWizard,
 	 * IDE-1111 Support namespaces by making usable file/class names out of projects with dots in their names
 	 * @param projectName The name as originally supplied
 	 * @return The name that should be used for the actual project files
+	 * @since 8.2
 	 */
 	protected String getBaseFileName(String projectName) {
 		return ProjectCreator.getBaseFileName(projectName);
