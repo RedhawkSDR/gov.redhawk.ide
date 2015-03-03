@@ -11,6 +11,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.util;
 
+import gov.redhawk.ide.sdr.*;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.NodesContainer;
@@ -39,7 +40,7 @@ import org.eclipse.emf.ecore.util.Switch;
  * @see gov.redhawk.ide.sdr.SdrPackage
  * @generated
  */
-public class SdrSwitch<T> extends Switch<T> {
+public class SdrSwitch< T > extends Switch<T> {
 
 	/**
 	 * The cached model package
@@ -84,68 +85,97 @@ public class SdrSwitch<T> extends Switch<T> {
 	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
-			case SdrPackage.SDR_ROOT: {
-				SdrRoot sdrRoot = (SdrRoot)theEObject;
-				T result = caseSdrRoot(sdrRoot);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SdrPackage.COMPONENTS_CONTAINER: {
-				ComponentsContainer componentsContainer = (ComponentsContainer)theEObject;
-				T result = caseComponentsContainer(componentsContainer);
-				if (result == null) result = caseSoftPkgRegistry(componentsContainer);
-				if (result == null) result = casePropertyRegistry(componentsContainer);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SdrPackage.WAVEFORMS_CONTAINER: {
-				WaveformsContainer waveformsContainer = (WaveformsContainer)theEObject;
-				T result = caseWaveformsContainer(waveformsContainer);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SdrPackage.DEVICES_CONTAINER: {
-				DevicesContainer devicesContainer = (DevicesContainer)theEObject;
-				T result = caseDevicesContainer(devicesContainer);
-				if (result == null) result = caseSoftPkgRegistry(devicesContainer);
-				if (result == null) result = casePropertyRegistry(devicesContainer);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SdrPackage.SERVICES_CONTAINER: {
-				ServicesContainer servicesContainer = (ServicesContainer)theEObject;
-				T result = caseServicesContainer(servicesContainer);
-				if (result == null) result = caseSoftPkgRegistry(servicesContainer);
-				if (result == null) result = casePropertyRegistry(servicesContainer);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SdrPackage.NODES_CONTAINER: {
-				NodesContainer nodesContainer = (NodesContainer)theEObject;
-				T result = caseNodesContainer(nodesContainer);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SdrPackage.STRING_TO_ABSTRACT_PROPERTY: {
-				@SuppressWarnings("unchecked") Map.Entry<String, AbstractProperty> stringToAbstractProperty = (Map.Entry<String, AbstractProperty>)theEObject;
-				T result = caseStringToAbstractProperty(stringToAbstractProperty);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SdrPackage.PROPERTY_REGISTRY: {
-				PropertyRegistry propertyRegistry = (PropertyRegistry)theEObject;
-				T result = casePropertyRegistry(propertyRegistry);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SdrPackage.SOFT_PKG_REGISTRY: {
-				SoftPkgRegistry softPkgRegistry = (SoftPkgRegistry)theEObject;
-				T result = caseSoftPkgRegistry(softPkgRegistry);
-				if (result == null) result = casePropertyRegistry(softPkgRegistry);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			default: return defaultCase(theEObject);
+		case SdrPackage.SDR_ROOT: {
+			SdrRoot sdrRoot = (SdrRoot) theEObject;
+			T result = caseSdrRoot(sdrRoot);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case SdrPackage.COMPONENTS_CONTAINER: {
+			ComponentsContainer componentsContainer = (ComponentsContainer) theEObject;
+			T result = caseComponentsContainer(componentsContainer);
+			if (result == null)
+				result = caseSoftPkgRegistry(componentsContainer);
+			if (result == null)
+				result = casePropertyRegistry(componentsContainer);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case SdrPackage.COMPONENTS_SUB_CONTAINER: {
+			ComponentsSubContainer componentsSubContainer = (ComponentsSubContainer) theEObject;
+			T result = caseComponentsSubContainer(componentsSubContainer);
+			if (result == null)
+				result = caseSoftPkgRegistry(componentsSubContainer);
+			if (result == null)
+				result = casePropertyRegistry(componentsSubContainer);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case SdrPackage.WAVEFORMS_CONTAINER: {
+			WaveformsContainer waveformsContainer = (WaveformsContainer) theEObject;
+			T result = caseWaveformsContainer(waveformsContainer);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case SdrPackage.DEVICES_CONTAINER: {
+			DevicesContainer devicesContainer = (DevicesContainer) theEObject;
+			T result = caseDevicesContainer(devicesContainer);
+			if (result == null)
+				result = caseSoftPkgRegistry(devicesContainer);
+			if (result == null)
+				result = casePropertyRegistry(devicesContainer);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case SdrPackage.SERVICES_CONTAINER: {
+			ServicesContainer servicesContainer = (ServicesContainer) theEObject;
+			T result = caseServicesContainer(servicesContainer);
+			if (result == null)
+				result = caseSoftPkgRegistry(servicesContainer);
+			if (result == null)
+				result = casePropertyRegistry(servicesContainer);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case SdrPackage.NODES_CONTAINER: {
+			NodesContainer nodesContainer = (NodesContainer) theEObject;
+			T result = caseNodesContainer(nodesContainer);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case SdrPackage.STRING_TO_ABSTRACT_PROPERTY: {
+			@SuppressWarnings("unchecked")
+			Map.Entry<String, AbstractProperty> stringToAbstractProperty = (Map.Entry<String, AbstractProperty>) theEObject;
+			T result = caseStringToAbstractProperty(stringToAbstractProperty);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case SdrPackage.PROPERTY_REGISTRY: {
+			PropertyRegistry propertyRegistry = (PropertyRegistry) theEObject;
+			T result = casePropertyRegistry(propertyRegistry);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case SdrPackage.SOFT_PKG_REGISTRY: {
+			SoftPkgRegistry softPkgRegistry = (SoftPkgRegistry) theEObject;
+			T result = caseSoftPkgRegistry(softPkgRegistry);
+			if (result == null)
+				result = casePropertyRegistry(softPkgRegistry);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		default:
+			return defaultCase(theEObject);
 		}
 	}
 
@@ -176,6 +206,21 @@ public class SdrSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseComponentsContainer(ComponentsContainer object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Components Sub Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Components Sub Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseComponentsSubContainer(ComponentsSubContainer object) {
 		return null;
 	}
 

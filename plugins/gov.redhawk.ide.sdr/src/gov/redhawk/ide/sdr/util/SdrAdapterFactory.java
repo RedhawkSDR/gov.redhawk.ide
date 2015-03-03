@@ -11,6 +11,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.util;
 
+import gov.redhawk.ide.sdr.*;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.NodesContainer;
@@ -71,7 +72,7 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 			return true;
 		}
 		if (object instanceof EObject) {
-			return ((EObject)object).eClass().getEPackage() == modelPackage;
+			return ((EObject) object).eClass().getEPackage() == modelPackage;
 		}
 		return false;
 	}
@@ -82,49 +83,62 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected SdrSwitch<Adapter> modelSwitch =
-		new SdrSwitch<Adapter>() {
-			@Override
-			public Adapter caseSdrRoot(SdrRoot object) {
-				return createSdrRootAdapter();
-			}
-			@Override
-			public Adapter caseComponentsContainer(ComponentsContainer object) {
-				return createComponentsContainerAdapter();
-			}
-			@Override
-			public Adapter caseWaveformsContainer(WaveformsContainer object) {
-				return createWaveformsContainerAdapter();
-			}
-			@Override
-			public Adapter caseDevicesContainer(DevicesContainer object) {
-				return createDevicesContainerAdapter();
-			}
-			@Override
-			public Adapter caseServicesContainer(ServicesContainer object) {
-				return createServicesContainerAdapter();
-			}
-			@Override
-			public Adapter caseNodesContainer(NodesContainer object) {
-				return createNodesContainerAdapter();
-			}
-			@Override
-			public Adapter caseStringToAbstractProperty(Map.Entry<String, AbstractProperty> object) {
-				return createStringToAbstractPropertyAdapter();
-			}
-			@Override
-			public Adapter casePropertyRegistry(PropertyRegistry object) {
-				return createPropertyRegistryAdapter();
-			}
-			@Override
-			public Adapter caseSoftPkgRegistry(SoftPkgRegistry object) {
-				return createSoftPkgRegistryAdapter();
-			}
-			@Override
-			public Adapter defaultCase(EObject object) {
-				return createEObjectAdapter();
-			}
-		};
+	protected SdrSwitch<Adapter> modelSwitch = new SdrSwitch<Adapter>() {
+		@Override
+		public Adapter caseSdrRoot(SdrRoot object) {
+			return createSdrRootAdapter();
+		}
+
+		@Override
+		public Adapter caseComponentsContainer(ComponentsContainer object) {
+			return createComponentsContainerAdapter();
+		}
+
+		@Override
+		public Adapter caseComponentsSubContainer(ComponentsSubContainer object) {
+			return createComponentsSubContainerAdapter();
+		}
+
+		@Override
+		public Adapter caseWaveformsContainer(WaveformsContainer object) {
+			return createWaveformsContainerAdapter();
+		}
+
+		@Override
+		public Adapter caseDevicesContainer(DevicesContainer object) {
+			return createDevicesContainerAdapter();
+		}
+
+		@Override
+		public Adapter caseServicesContainer(ServicesContainer object) {
+			return createServicesContainerAdapter();
+		}
+
+		@Override
+		public Adapter caseNodesContainer(NodesContainer object) {
+			return createNodesContainerAdapter();
+		}
+
+		@Override
+		public Adapter caseStringToAbstractProperty(Map.Entry<String, AbstractProperty> object) {
+			return createStringToAbstractPropertyAdapter();
+		}
+
+		@Override
+		public Adapter casePropertyRegistry(PropertyRegistry object) {
+			return createPropertyRegistryAdapter();
+		}
+
+		@Override
+		public Adapter caseSoftPkgRegistry(SoftPkgRegistry object) {
+			return createSoftPkgRegistryAdapter();
+		}
+
+		@Override
+		public Adapter defaultCase(EObject object) {
+			return createEObjectAdapter();
+		}
+	};
 
 	/**
 	 * Creates an adapter for the <code>target</code>.
@@ -136,7 +150,7 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 	 */
 	@Override
 	public Adapter createAdapter(Notifier target) {
-		return modelSwitch.doSwitch((EObject)target);
+		return modelSwitch.doSwitch((EObject) target);
 	}
 
 	/**
@@ -164,6 +178,20 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createComponentsContainerAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.ComponentsSubContainer <em>Components Sub Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see gov.redhawk.ide.sdr.ComponentsSubContainer
+	 * @generated
+	 */
+	public Adapter createComponentsSubContainerAdapter() {
 		return null;
 	}
 

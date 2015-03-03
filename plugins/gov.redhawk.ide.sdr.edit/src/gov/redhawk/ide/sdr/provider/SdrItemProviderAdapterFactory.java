@@ -125,6 +125,29 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link gov.redhawk.ide.sdr.ComponentsSubContainer} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ComponentsSubContainerItemProvider componentsSubContainerItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link gov.redhawk.ide.sdr.ComponentsSubContainer}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createComponentsSubContainerAdapter() {
+		if (componentsSubContainerItemProvider == null) {
+			componentsSubContainerItemProvider = new ComponentsSubContainerItemProvider(this);
+		}
+
+		return componentsSubContainerItemProvider;
+	}
+
+	/**
 	 * This keeps track of the one adapter used for all {@link gov.redhawk.ide.sdr.WaveformsContainer} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -291,7 +314,7 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 	public Object adapt(Object object, Object type) {
 		if (isFactoryForType(type)) {
 			Object adapter = super.adapt(object, type);
-			if (!(type instanceof Class<?>) || (((Class<?>)type).isInstance(adapter))) {
+			if (!(type instanceof Class< ? >) || (((Class< ? >) type).isInstance(adapter))) {
 				return adapter;
 			}
 		}
@@ -344,13 +367,22 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 	 */
 	@Override
 	public void dispose() {
-		if (sdrRootItemProvider != null) sdrRootItemProvider.dispose();
-		if (componentsContainerItemProvider != null) componentsContainerItemProvider.dispose();
-		if (waveformsContainerItemProvider != null) waveformsContainerItemProvider.dispose();
-		if (devicesContainerItemProvider != null) devicesContainerItemProvider.dispose();
-		if (servicesContainerItemProvider != null) servicesContainerItemProvider.dispose();
-		if (nodesContainerItemProvider != null) nodesContainerItemProvider.dispose();
-		if (stringToAbstractPropertyItemProvider != null) stringToAbstractPropertyItemProvider.dispose();
+		if (sdrRootItemProvider != null)
+			sdrRootItemProvider.dispose();
+		if (componentsContainerItemProvider != null)
+			componentsContainerItemProvider.dispose();
+		if (componentsSubContainerItemProvider != null)
+			componentsSubContainerItemProvider.dispose();
+		if (waveformsContainerItemProvider != null)
+			waveformsContainerItemProvider.dispose();
+		if (devicesContainerItemProvider != null)
+			devicesContainerItemProvider.dispose();
+		if (servicesContainerItemProvider != null)
+			servicesContainerItemProvider.dispose();
+		if (nodesContainerItemProvider != null)
+			nodesContainerItemProvider.dispose();
+		if (stringToAbstractPropertyItemProvider != null)
+			stringToAbstractPropertyItemProvider.dispose();
 	}
 
 }

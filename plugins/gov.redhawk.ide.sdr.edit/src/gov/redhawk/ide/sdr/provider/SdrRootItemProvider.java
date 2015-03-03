@@ -49,7 +49,7 @@ import org.eclipse.ui.PlatformUI;
  * @generated
  */
 public class SdrRootItemProvider extends ItemProviderAdapter implements IEditingDomainItemProvider, IStructuredItemContentProvider, ITreeItemContentProvider,
-        IItemLabelProvider, IItemPropertySource {
+		IItemLabelProvider, IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
@@ -93,10 +93,9 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 			loadStatus = Status.OK_STATUS;
 		}
 		final ItemPropertyDescriptor propDescriptor = createItemPropertyDescriptor(((ComposeableAdapterFactory) this.adapterFactory).getRootAdapterFactory(),
-		        getResourceLocator(), getString("_UI_SdrRoot_loadStatus_feature"),
-		        getString("_UI_PropertyDescriptor_description", "_UI_SdrRoot_loadStatus_feature", "_UI_SdrRoot_type"),
-		        SdrPackage.Literals.SDR_ROOT__LOAD_STATUS, !loadStatus.isOK(), true, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-		        null, null);
+			getResourceLocator(), getString("_UI_SdrRoot_loadStatus_feature"),
+			getString("_UI_PropertyDescriptor_description", "_UI_SdrRoot_loadStatus_feature", "_UI_SdrRoot_type"), SdrPackage.Literals.SDR_ROOT__LOAD_STATUS,
+			!loadStatus.isOK(), true, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null);
 		final ItemPropertyDescriptorDecorator decorator = new ItemPropertyDescriptorDecorator(object, propDescriptor) {
 			@Override
 			public IItemLabelProvider getLabelProvider(final Object thisObject) {
@@ -145,19 +144,9 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 	 * @generated
 	 */
 	protected void addStatePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_SdrRoot_state_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_SdrRoot_state_feature", "_UI_SdrRoot_type"),
-				 SdrPackage.Literals.SDR_ROOT__STATE,
-				 false,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
+		itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+			getString("_UI_SdrRoot_state_feature"), getString("_UI_PropertyDescriptor_description", "_UI_SdrRoot_state_feature", "_UI_SdrRoot_type"),
+			SdrPackage.Literals.SDR_ROOT__STATE, false, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
 	}
 
 	/**
@@ -167,19 +156,10 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 	 * @generated
 	 */
 	protected void addDomainConfigurationPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_SdrRoot_domainConfiguration_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_SdrRoot_domainConfiguration_feature", "_UI_SdrRoot_type"),
-				 SdrPackage.Literals.SDR_ROOT__DOMAIN_CONFIGURATION,
-				 false,
-				 false,
-				 true,
-				 null,
-				 null,
-				 null));
+		itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+			getString("_UI_SdrRoot_domainConfiguration_feature"),
+			getString("_UI_PropertyDescriptor_description", "_UI_SdrRoot_domainConfiguration_feature", "_UI_SdrRoot_type"),
+			SdrPackage.Literals.SDR_ROOT__DOMAIN_CONFIGURATION, false, false, true, null, null, null));
 	}
 
 	/**
@@ -190,29 +170,21 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 	 * @generated NOT
 	 */
 	protected void addDevFileSystemRootPropertyDescriptor(Object object) {
-		ItemPropertyDescriptor desc = createItemPropertyDescriptor
-		(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-		 getResourceLocator(),
-		 getString("_UI_SdrRoot_devFileSystemRoot_feature"),
-		 getString("_UI_PropertyDescriptor_description", "_UI_SdrRoot_devFileSystemRoot_feature", "_UI_SdrRoot_type"),
-		 SdrPackage.Literals.SDR_ROOT__DEV_FILE_SYSTEM_ROOT,
-		 false,
-		 false,
-		 false,
-		 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-		 null,
-		 null);
+		ItemPropertyDescriptor desc = createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+			getString("_UI_SdrRoot_devFileSystemRoot_feature"),
+			getString("_UI_PropertyDescriptor_description", "_UI_SdrRoot_devFileSystemRoot_feature", "_UI_SdrRoot_type"),
+			SdrPackage.Literals.SDR_ROOT__DEV_FILE_SYSTEM_ROOT, false, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null);
 		ItemPropertyDescriptorDecorator decorator = new ItemPropertyDescriptorDecorator(object, desc) {
 			@Override
 			public IItemLabelProvider getLabelProvider(final Object thisObject) {
 				return new IItemLabelProvider() {
-					
+
 					@Override
 					public String getText(Object object) {
 						SdrRoot root = (SdrRoot) thisObject;
 						return QueryParser.parseQuery(root.getDevFileSystemRoot().query()).get(ScaFileSystemConstants.QUERY_PARAM_FS);
 					}
-					
+
 					@Override
 					public Object getImage(Object object) {
 						return null;
@@ -231,29 +203,21 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 	 * @generated NOT
 	 */
 	protected void addDomFileSystemRootPropertyDescriptor(Object object) {
-		ItemPropertyDescriptor desc = createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_SdrRoot_domFileSystemRoot_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_SdrRoot_domFileSystemRoot_feature", "_UI_SdrRoot_type"),
-				 SdrPackage.Literals.SDR_ROOT__DOM_FILE_SYSTEM_ROOT,
-				 false,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null);
+		ItemPropertyDescriptor desc = createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+			getString("_UI_SdrRoot_domFileSystemRoot_feature"),
+			getString("_UI_PropertyDescriptor_description", "_UI_SdrRoot_domFileSystemRoot_feature", "_UI_SdrRoot_type"),
+			SdrPackage.Literals.SDR_ROOT__DOM_FILE_SYSTEM_ROOT, false, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null);
 		ItemPropertyDescriptorDecorator decorator = new ItemPropertyDescriptorDecorator(object, desc) {
 			@Override
 			public IItemLabelProvider getLabelProvider(final Object thisObject) {
 				return new IItemLabelProvider() {
-					
+
 					@Override
 					public String getText(Object object) {
 						SdrRoot root = (SdrRoot) thisObject;
 						return QueryParser.parseQuery(root.getDomFileSystemRoot().query()).get(ScaFileSystemConstants.QUERY_PARAM_FS);
 					}
-					
+
 					@Override
 					public Object getImage(Object object) {
 						return null;
@@ -273,7 +237,7 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 	 * @generated
 	 */
 	@Override
-	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
+	public Collection< ? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(SdrPackage.Literals.SDR_ROOT__COMPONENTS_CONTAINER);
@@ -317,11 +281,9 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 	 * @generated
 	 */
 	public String getTextGen(Object object) {
-		IStatus labelValue = ((SdrRoot)object).getLoadStatus();
+		IStatus labelValue = ((SdrRoot) object).getLoadStatus();
 		String label = labelValue == null ? null : labelValue.toString();
-		return label == null || label.length() == 0 ?
-			getString("_UI_SdrRoot_type") :
-			getString("_UI_SdrRoot_type") + " " + label;
+		return label == null || label.length() == 0 ? getString("_UI_SdrRoot_type") : getString("_UI_SdrRoot_type") + " " + label;
 	}
 
 	/**
@@ -349,20 +311,20 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(SdrRoot.class)) {
-			case SdrPackage.SDR_ROOT__LOAD_STATUS:
-			case SdrPackage.SDR_ROOT__STATE:
-			case SdrPackage.SDR_ROOT__DEV_FILE_SYSTEM_ROOT:
-			case SdrPackage.SDR_ROOT__DOM_FILE_SYSTEM_ROOT:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-				return;
-			case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
-			case SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER:
-			case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
-			case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
-			case SdrPackage.SDR_ROOT__NODES_CONTAINER:
-			case SdrPackage.SDR_ROOT__IDL_LIBRARY:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
-				return;
+		case SdrPackage.SDR_ROOT__LOAD_STATUS:
+		case SdrPackage.SDR_ROOT__STATE:
+		case SdrPackage.SDR_ROOT__DEV_FILE_SYSTEM_ROOT:
+		case SdrPackage.SDR_ROOT__DOM_FILE_SYSTEM_ROOT:
+			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
+			return;
+		case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
+		case SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER:
+		case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
+		case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
+		case SdrPackage.SDR_ROOT__NODES_CONTAINER:
+		case SdrPackage.SDR_ROOT__IDL_LIBRARY:
+			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
+			return;
 		}
 		super.notifyChanged(notification);
 	}
@@ -378,15 +340,9 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
 
-		newChildDescriptors.add
-			(createChildParameter
-				(SdrPackage.Literals.SDR_ROOT__SERVICES_CONTAINER,
-				 SdrFactory.eINSTANCE.createServicesContainer()));
+		newChildDescriptors.add(createChildParameter(SdrPackage.Literals.SDR_ROOT__SERVICES_CONTAINER, SdrFactory.eINSTANCE.createServicesContainer()));
 
-		newChildDescriptors.add
-			(createChildParameter
-				(SdrPackage.Literals.SDR_ROOT__IDL_LIBRARY,
-				 LibraryFactory.eINSTANCE.createIdlLibrary()));
+		newChildDescriptors.add(createChildParameter(SdrPackage.Literals.SDR_ROOT__IDL_LIBRARY, LibraryFactory.eINSTANCE.createIdlLibrary()));
 	}
 
 	/**

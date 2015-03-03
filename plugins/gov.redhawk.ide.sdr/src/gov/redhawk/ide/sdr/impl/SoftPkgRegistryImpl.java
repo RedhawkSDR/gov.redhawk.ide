@@ -217,8 +217,8 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
-				return getComponents();
+		case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
+			return getComponents();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -232,10 +232,10 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
-				getComponents().clear();
-				getComponents().addAll((Collection<? extends SoftPkg>)newValue);
-				return;
+		case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
+			getComponents().clear();
+			getComponents().addAll((Collection< ? extends SoftPkg>) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -248,9 +248,9 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
-				getComponents().clear();
-				return;
+		case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
+			getComponents().clear();
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -263,8 +263,8 @@ public abstract class SoftPkgRegistryImpl extends PropertyRegistryImpl implement
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
-				return components != null && !components.isEmpty();
+		case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
+			return components != null && !components.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

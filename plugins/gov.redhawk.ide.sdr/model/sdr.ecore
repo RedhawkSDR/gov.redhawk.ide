@@ -9,10 +9,8 @@
     the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
     http://www.eclipse.org/legal/epl-v10.html.
 -->
-<ecore:EPackage xmi:version="2.0"
-    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="sdr"
-    nsURI="http://www.redhawk.gov/model/ide/sdr" nsPrefix="sdr">
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="sdr" nsURI="http://www.redhawk.gov/model/ide/sdr" nsPrefix="sdr">
   <eClassifiers xsi:type="ecore:EClass" name="SdrRoot">
     <eOperations name="load">
       <eParameters name="monitor" eType="ecore:EDataType ../../gov.redhawk.eclipsecorba.library/model/library.ecore#//IProgressMonitor"/>
@@ -107,6 +105,11 @@
         <details key="suppressedUnsetVisibility" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ComponentsSubContainer" eSuperTypes="#//SoftPkgRegistry">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="subContainers" upperBound="-1"
+        eType="#//ComponentsSubContainer"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="containerName" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="WaveformsContainer">
     <eStructuralFeatures xsi:type="ecore:EReference" name="sdrRoot" eType="#//SdrRoot"

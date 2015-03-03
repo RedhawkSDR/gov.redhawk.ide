@@ -51,6 +51,15 @@ public interface SdrFactory extends EFactory {
 	ComponentsContainer createComponentsContainer();
 
 	/**
+	 * Returns a new object of class '<em>Components Sub Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Components Sub Container</em>'.
+	 * @generated
+	 */
+	ComponentsSubContainer createComponentsSubContainer();
+
+	/**
 	 * Returns a new object of class '<em>Waveforms Container</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

@@ -233,10 +233,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @ordered
 	 */
 	protected URI domFileSystemRoot = DOM_FILE_SYSTEM_ROOT_EDEFAULT;
-	private static final EStructuralFeature [] DESC_PATH = new EStructuralFeature[] {
-		SpdPackage.Literals.SOFT_PKG__DESCRIPTOR,
-		SpdPackage.Literals.DESCRIPTOR__COMPONENT
-	};
+	private static final EStructuralFeature[] DESC_PATH = new EStructuralFeature[] { SpdPackage.Literals.SOFT_PKG__DESCRIPTOR,
+		SpdPackage.Literals.DESCRIPTOR__COMPONENT };
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -326,8 +324,12 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		ComponentsContainer oldComponentsContainer = componentsContainer;
 		componentsContainer = newComponentsContainer;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER, oldComponentsContainer, newComponentsContainer);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER, oldComponentsContainer,
+				newComponentsContainer);
+			if (msgs == null)
+				msgs = notification;
+			else
+				msgs.add(notification);
 		}
 		return msgs;
 	}
@@ -341,13 +343,13 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		if (newComponentsContainer != componentsContainer) {
 			NotificationChain msgs = null;
 			if (componentsContainer != null)
-				msgs = ((InternalEObject)componentsContainer).eInverseRemove(this, SdrPackage.COMPONENTS_CONTAINER__SDR_ROOT, ComponentsContainer.class, msgs);
+				msgs = ((InternalEObject) componentsContainer).eInverseRemove(this, SdrPackage.COMPONENTS_CONTAINER__SDR_ROOT, ComponentsContainer.class, msgs);
 			if (newComponentsContainer != null)
-				msgs = ((InternalEObject)newComponentsContainer).eInverseAdd(this, SdrPackage.COMPONENTS_CONTAINER__SDR_ROOT, ComponentsContainer.class, msgs);
+				msgs = ((InternalEObject) newComponentsContainer).eInverseAdd(this, SdrPackage.COMPONENTS_CONTAINER__SDR_ROOT, ComponentsContainer.class, msgs);
 			msgs = basicSetComponentsContainer(newComponentsContainer, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER, newComponentsContainer, newComponentsContainer));
 	}
 
@@ -370,8 +372,12 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		WaveformsContainer oldWaveformsContainer = waveformsContainer;
 		waveformsContainer = newWaveformsContainer;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER, oldWaveformsContainer, newWaveformsContainer);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER, oldWaveformsContainer,
+				newWaveformsContainer);
+			if (msgs == null)
+				msgs = notification;
+			else
+				msgs.add(notification);
 		}
 		return msgs;
 	}
@@ -385,13 +391,13 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		if (newWaveformsContainer != waveformsContainer) {
 			NotificationChain msgs = null;
 			if (waveformsContainer != null)
-				msgs = ((InternalEObject)waveformsContainer).eInverseRemove(this, SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT, WaveformsContainer.class, msgs);
+				msgs = ((InternalEObject) waveformsContainer).eInverseRemove(this, SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT, WaveformsContainer.class, msgs);
 			if (newWaveformsContainer != null)
-				msgs = ((InternalEObject)newWaveformsContainer).eInverseAdd(this, SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT, WaveformsContainer.class, msgs);
+				msgs = ((InternalEObject) newWaveformsContainer).eInverseAdd(this, SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT, WaveformsContainer.class, msgs);
 			msgs = basicSetWaveformsContainer(newWaveformsContainer, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER, newWaveformsContainer, newWaveformsContainer));
 	}
 
@@ -414,8 +420,12 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		DevicesContainer oldDevicesContainer = devicesContainer;
 		devicesContainer = newDevicesContainer;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__DEVICES_CONTAINER, oldDevicesContainer, newDevicesContainer);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__DEVICES_CONTAINER, oldDevicesContainer,
+				newDevicesContainer);
+			if (msgs == null)
+				msgs = notification;
+			else
+				msgs.add(notification);
 		}
 		return msgs;
 	}
@@ -429,13 +439,13 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		if (newDevicesContainer != devicesContainer) {
 			NotificationChain msgs = null;
 			if (devicesContainer != null)
-				msgs = ((InternalEObject)devicesContainer).eInverseRemove(this, SdrPackage.DEVICES_CONTAINER__SDR_ROOT, DevicesContainer.class, msgs);
+				msgs = ((InternalEObject) devicesContainer).eInverseRemove(this, SdrPackage.DEVICES_CONTAINER__SDR_ROOT, DevicesContainer.class, msgs);
 			if (newDevicesContainer != null)
-				msgs = ((InternalEObject)newDevicesContainer).eInverseAdd(this, SdrPackage.DEVICES_CONTAINER__SDR_ROOT, DevicesContainer.class, msgs);
+				msgs = ((InternalEObject) newDevicesContainer).eInverseAdd(this, SdrPackage.DEVICES_CONTAINER__SDR_ROOT, DevicesContainer.class, msgs);
 			msgs = basicSetDevicesContainer(newDevicesContainer, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__DEVICES_CONTAINER, newDevicesContainer, newDevicesContainer));
 	}
 
@@ -458,8 +468,12 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		ServicesContainer oldServicesContainer = servicesContainer;
 		servicesContainer = newServicesContainer;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__SERVICES_CONTAINER, oldServicesContainer, newServicesContainer);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__SERVICES_CONTAINER, oldServicesContainer,
+				newServicesContainer);
+			if (msgs == null)
+				msgs = notification;
+			else
+				msgs.add(notification);
 		}
 		return msgs;
 	}
@@ -473,13 +487,13 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		if (newServicesContainer != servicesContainer) {
 			NotificationChain msgs = null;
 			if (servicesContainer != null)
-				msgs = ((InternalEObject)servicesContainer).eInverseRemove(this, SdrPackage.SERVICES_CONTAINER__SDR_ROOT, ServicesContainer.class, msgs);
+				msgs = ((InternalEObject) servicesContainer).eInverseRemove(this, SdrPackage.SERVICES_CONTAINER__SDR_ROOT, ServicesContainer.class, msgs);
 			if (newServicesContainer != null)
-				msgs = ((InternalEObject)newServicesContainer).eInverseAdd(this, SdrPackage.SERVICES_CONTAINER__SDR_ROOT, ServicesContainer.class, msgs);
+				msgs = ((InternalEObject) newServicesContainer).eInverseAdd(this, SdrPackage.SERVICES_CONTAINER__SDR_ROOT, ServicesContainer.class, msgs);
 			msgs = basicSetServicesContainer(newServicesContainer, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__SERVICES_CONTAINER, newServicesContainer, newServicesContainer));
 	}
 
@@ -502,8 +516,12 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		NodesContainer oldNodesContainer = nodesContainer;
 		nodesContainer = newNodesContainer;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__NODES_CONTAINER, oldNodesContainer, newNodesContainer);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__NODES_CONTAINER, oldNodesContainer,
+				newNodesContainer);
+			if (msgs == null)
+				msgs = notification;
+			else
+				msgs.add(notification);
 		}
 		return msgs;
 	}
@@ -517,13 +535,13 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		if (newNodesContainer != nodesContainer) {
 			NotificationChain msgs = null;
 			if (nodesContainer != null)
-				msgs = ((InternalEObject)nodesContainer).eInverseRemove(this, SdrPackage.NODES_CONTAINER__SDR_ROOT, NodesContainer.class, msgs);
+				msgs = ((InternalEObject) nodesContainer).eInverseRemove(this, SdrPackage.NODES_CONTAINER__SDR_ROOT, NodesContainer.class, msgs);
 			if (newNodesContainer != null)
-				msgs = ((InternalEObject)newNodesContainer).eInverseAdd(this, SdrPackage.NODES_CONTAINER__SDR_ROOT, NodesContainer.class, msgs);
+				msgs = ((InternalEObject) newNodesContainer).eInverseAdd(this, SdrPackage.NODES_CONTAINER__SDR_ROOT, NodesContainer.class, msgs);
 			msgs = basicSetNodesContainer(newNodesContainer, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__NODES_CONTAINER, newNodesContainer, newNodesContainer));
 	}
 
@@ -535,11 +553,12 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	@Override
 	public DomainManagerConfiguration getDomainConfiguration() {
 		if (domainConfiguration != null && domainConfiguration.eIsProxy()) {
-			InternalEObject oldDomainConfiguration = (InternalEObject)domainConfiguration;
-			domainConfiguration = (DomainManagerConfiguration)eResolveProxy(oldDomainConfiguration);
-			if (! domainConfiguration.equals(oldDomainConfiguration)) {
+			InternalEObject oldDomainConfiguration = (InternalEObject) domainConfiguration;
+			domainConfiguration = (DomainManagerConfiguration) eResolveProxy(oldDomainConfiguration);
+			if (domainConfiguration != oldDomainConfiguration) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, SdrPackage.SDR_ROOT__DOMAIN_CONFIGURATION, oldDomainConfiguration, domainConfiguration));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, SdrPackage.SDR_ROOT__DOMAIN_CONFIGURATION, oldDomainConfiguration,
+						domainConfiguration));
 			}
 		}
 		return domainConfiguration;
@@ -586,7 +605,10 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		idlLibrary = newIdlLibrary;
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__IDL_LIBRARY, oldIdlLibrary, newIdlLibrary);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
+			if (msgs == null)
+				msgs = notification;
+			else
+				msgs.add(notification);
 		}
 		return msgs;
 	}
@@ -601,13 +623,13 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		if (newIdlLibrary != idlLibrary) {
 			NotificationChain msgs = null;
 			if (idlLibrary != null)
-				msgs = ((InternalEObject)idlLibrary).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__IDL_LIBRARY, null, msgs);
+				msgs = ((InternalEObject) idlLibrary).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__IDL_LIBRARY, null, msgs);
 			if (newIdlLibrary != null)
-				msgs = ((InternalEObject)newIdlLibrary).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__IDL_LIBRARY, null, msgs);
+				msgs = ((InternalEObject) newIdlLibrary).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__IDL_LIBRARY, null, msgs);
 			msgs = basicSetIdlLibrary(newIdlLibrary, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__IDL_LIBRARY, newIdlLibrary, newIdlLibrary));
 	}
 
@@ -738,7 +760,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			return new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, "SDR Dev Root is 'null'", null);
 		}
 		// BEGIN GENERATED CODE
-		}
+	}
 
 	private IStatus loadDomFileSystem(TransactionalEditingDomain editingDomain, IProgressMonitor monitor) {
 		// END GENERATED CODE
@@ -757,7 +779,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		} else {
 			return new Status(IStatus.ERROR, IdeSdrActivator.PLUGIN_ID, "SDR Domain Root is 'null'", null);
 		}
-	// BEGIN GENERATED CODE
+		// BEGIN GENERATED CODE
 	}
 
 	private IStatus processResource(EditingDomain domain, IFile resource, IProgressMonitor monitor) {
@@ -987,26 +1009,28 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
-				if (componentsContainer != null)
-					msgs = ((InternalEObject)componentsContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER, null, msgs);
-				return basicSetComponentsContainer((ComponentsContainer)otherEnd, msgs);
-			case SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER:
-				if (waveformsContainer != null)
-					msgs = ((InternalEObject)waveformsContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER, null, msgs);
-				return basicSetWaveformsContainer((WaveformsContainer)otherEnd, msgs);
-			case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
-				if (devicesContainer != null)
-					msgs = ((InternalEObject)devicesContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__DEVICES_CONTAINER, null, msgs);
-				return basicSetDevicesContainer((DevicesContainer)otherEnd, msgs);
-			case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
-				if (servicesContainer != null)
-					msgs = ((InternalEObject)servicesContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__SERVICES_CONTAINER, null, msgs);
-				return basicSetServicesContainer((ServicesContainer)otherEnd, msgs);
-			case SdrPackage.SDR_ROOT__NODES_CONTAINER:
-				if (nodesContainer != null)
-					msgs = ((InternalEObject)nodesContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__NODES_CONTAINER, null, msgs);
-				return basicSetNodesContainer((NodesContainer)otherEnd, msgs);
+		case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
+			if (componentsContainer != null)
+				msgs = ((InternalEObject) componentsContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER, null,
+					msgs);
+			return basicSetComponentsContainer((ComponentsContainer) otherEnd, msgs);
+		case SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER:
+			if (waveformsContainer != null)
+				msgs = ((InternalEObject) waveformsContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER, null,
+					msgs);
+			return basicSetWaveformsContainer((WaveformsContainer) otherEnd, msgs);
+		case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
+			if (devicesContainer != null)
+				msgs = ((InternalEObject) devicesContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__DEVICES_CONTAINER, null, msgs);
+			return basicSetDevicesContainer((DevicesContainer) otherEnd, msgs);
+		case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
+			if (servicesContainer != null)
+				msgs = ((InternalEObject) servicesContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__SERVICES_CONTAINER, null, msgs);
+			return basicSetServicesContainer((ServicesContainer) otherEnd, msgs);
+		case SdrPackage.SDR_ROOT__NODES_CONTAINER:
+			if (nodesContainer != null)
+				msgs = ((InternalEObject) nodesContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__NODES_CONTAINER, null, msgs);
+			return basicSetNodesContainer((NodesContainer) otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -1019,18 +1043,18 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
-				return basicSetComponentsContainer(null, msgs);
-			case SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER:
-				return basicSetWaveformsContainer(null, msgs);
-			case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
-				return basicSetDevicesContainer(null, msgs);
-			case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
-				return basicSetServicesContainer(null, msgs);
-			case SdrPackage.SDR_ROOT__NODES_CONTAINER:
-				return basicSetNodesContainer(null, msgs);
-			case SdrPackage.SDR_ROOT__IDL_LIBRARY:
-				return basicSetIdlLibrary(null, msgs);
+		case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
+			return basicSetComponentsContainer(null, msgs);
+		case SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER:
+			return basicSetWaveformsContainer(null, msgs);
+		case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
+			return basicSetDevicesContainer(null, msgs);
+		case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
+			return basicSetServicesContainer(null, msgs);
+		case SdrPackage.SDR_ROOT__NODES_CONTAINER:
+			return basicSetNodesContainer(null, msgs);
+		case SdrPackage.SDR_ROOT__IDL_LIBRARY:
+			return basicSetIdlLibrary(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -1043,29 +1067,30 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case SdrPackage.SDR_ROOT__LOAD_STATUS:
-				return getLoadStatus();
-			case SdrPackage.SDR_ROOT__STATE:
-				return getState();
-			case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
-				return getComponentsContainer();
-			case SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER:
-				return getWaveformsContainer();
-			case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
-				return getDevicesContainer();
-			case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
-				return getServicesContainer();
-			case SdrPackage.SDR_ROOT__NODES_CONTAINER:
-				return getNodesContainer();
-			case SdrPackage.SDR_ROOT__DOMAIN_CONFIGURATION:
-				if (resolve) return getDomainConfiguration();
-				return basicGetDomainConfiguration();
-			case SdrPackage.SDR_ROOT__IDL_LIBRARY:
-				return getIdlLibrary();
-			case SdrPackage.SDR_ROOT__DEV_FILE_SYSTEM_ROOT:
-				return getDevFileSystemRoot();
-			case SdrPackage.SDR_ROOT__DOM_FILE_SYSTEM_ROOT:
-				return getDomFileSystemRoot();
+		case SdrPackage.SDR_ROOT__LOAD_STATUS:
+			return getLoadStatus();
+		case SdrPackage.SDR_ROOT__STATE:
+			return getState();
+		case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
+			return getComponentsContainer();
+		case SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER:
+			return getWaveformsContainer();
+		case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
+			return getDevicesContainer();
+		case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
+			return getServicesContainer();
+		case SdrPackage.SDR_ROOT__NODES_CONTAINER:
+			return getNodesContainer();
+		case SdrPackage.SDR_ROOT__DOMAIN_CONFIGURATION:
+			if (resolve)
+				return getDomainConfiguration();
+			return basicGetDomainConfiguration();
+		case SdrPackage.SDR_ROOT__IDL_LIBRARY:
+			return getIdlLibrary();
+		case SdrPackage.SDR_ROOT__DEV_FILE_SYSTEM_ROOT:
+			return getDevFileSystemRoot();
+		case SdrPackage.SDR_ROOT__DOM_FILE_SYSTEM_ROOT:
+			return getDomFileSystemRoot();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -1078,39 +1103,39 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case SdrPackage.SDR_ROOT__LOAD_STATUS:
-				setLoadStatus((IStatus)newValue);
-				return;
-			case SdrPackage.SDR_ROOT__STATE:
-				setState((LoadState)newValue);
-				return;
-			case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
-				setComponentsContainer((ComponentsContainer)newValue);
-				return;
-			case SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER:
-				setWaveformsContainer((WaveformsContainer)newValue);
-				return;
-			case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
-				setDevicesContainer((DevicesContainer)newValue);
-				return;
-			case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
-				setServicesContainer((ServicesContainer)newValue);
-				return;
-			case SdrPackage.SDR_ROOT__NODES_CONTAINER:
-				setNodesContainer((NodesContainer)newValue);
-				return;
-			case SdrPackage.SDR_ROOT__DOMAIN_CONFIGURATION:
-				setDomainConfiguration((DomainManagerConfiguration)newValue);
-				return;
-			case SdrPackage.SDR_ROOT__IDL_LIBRARY:
-				setIdlLibrary((IdlLibrary)newValue);
-				return;
-			case SdrPackage.SDR_ROOT__DEV_FILE_SYSTEM_ROOT:
-				setDevFileSystemRoot((URI)newValue);
-				return;
-			case SdrPackage.SDR_ROOT__DOM_FILE_SYSTEM_ROOT:
-				setDomFileSystemRoot((URI)newValue);
-				return;
+		case SdrPackage.SDR_ROOT__LOAD_STATUS:
+			setLoadStatus((IStatus) newValue);
+			return;
+		case SdrPackage.SDR_ROOT__STATE:
+			setState((LoadState) newValue);
+			return;
+		case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
+			setComponentsContainer((ComponentsContainer) newValue);
+			return;
+		case SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER:
+			setWaveformsContainer((WaveformsContainer) newValue);
+			return;
+		case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
+			setDevicesContainer((DevicesContainer) newValue);
+			return;
+		case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
+			setServicesContainer((ServicesContainer) newValue);
+			return;
+		case SdrPackage.SDR_ROOT__NODES_CONTAINER:
+			setNodesContainer((NodesContainer) newValue);
+			return;
+		case SdrPackage.SDR_ROOT__DOMAIN_CONFIGURATION:
+			setDomainConfiguration((DomainManagerConfiguration) newValue);
+			return;
+		case SdrPackage.SDR_ROOT__IDL_LIBRARY:
+			setIdlLibrary((IdlLibrary) newValue);
+			return;
+		case SdrPackage.SDR_ROOT__DEV_FILE_SYSTEM_ROOT:
+			setDevFileSystemRoot((URI) newValue);
+			return;
+		case SdrPackage.SDR_ROOT__DOM_FILE_SYSTEM_ROOT:
+			setDomFileSystemRoot((URI) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -1123,39 +1148,39 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case SdrPackage.SDR_ROOT__LOAD_STATUS:
-				setLoadStatus(LOAD_STATUS_EDEFAULT);
-				return;
-			case SdrPackage.SDR_ROOT__STATE:
-				setState(STATE_EDEFAULT);
-				return;
-			case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
-				setComponentsContainer((ComponentsContainer)null);
-				return;
-			case SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER:
-				setWaveformsContainer((WaveformsContainer)null);
-				return;
-			case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
-				setDevicesContainer((DevicesContainer)null);
-				return;
-			case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
-				setServicesContainer((ServicesContainer)null);
-				return;
-			case SdrPackage.SDR_ROOT__NODES_CONTAINER:
-				setNodesContainer((NodesContainer)null);
-				return;
-			case SdrPackage.SDR_ROOT__DOMAIN_CONFIGURATION:
-				setDomainConfiguration((DomainManagerConfiguration)null);
-				return;
-			case SdrPackage.SDR_ROOT__IDL_LIBRARY:
-				setIdlLibrary((IdlLibrary)null);
-				return;
-			case SdrPackage.SDR_ROOT__DEV_FILE_SYSTEM_ROOT:
-				setDevFileSystemRoot(DEV_FILE_SYSTEM_ROOT_EDEFAULT);
-				return;
-			case SdrPackage.SDR_ROOT__DOM_FILE_SYSTEM_ROOT:
-				setDomFileSystemRoot(DOM_FILE_SYSTEM_ROOT_EDEFAULT);
-				return;
+		case SdrPackage.SDR_ROOT__LOAD_STATUS:
+			setLoadStatus(LOAD_STATUS_EDEFAULT);
+			return;
+		case SdrPackage.SDR_ROOT__STATE:
+			setState(STATE_EDEFAULT);
+			return;
+		case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
+			setComponentsContainer((ComponentsContainer) null);
+			return;
+		case SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER:
+			setWaveformsContainer((WaveformsContainer) null);
+			return;
+		case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
+			setDevicesContainer((DevicesContainer) null);
+			return;
+		case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
+			setServicesContainer((ServicesContainer) null);
+			return;
+		case SdrPackage.SDR_ROOT__NODES_CONTAINER:
+			setNodesContainer((NodesContainer) null);
+			return;
+		case SdrPackage.SDR_ROOT__DOMAIN_CONFIGURATION:
+			setDomainConfiguration((DomainManagerConfiguration) null);
+			return;
+		case SdrPackage.SDR_ROOT__IDL_LIBRARY:
+			setIdlLibrary((IdlLibrary) null);
+			return;
+		case SdrPackage.SDR_ROOT__DEV_FILE_SYSTEM_ROOT:
+			setDevFileSystemRoot(DEV_FILE_SYSTEM_ROOT_EDEFAULT);
+			return;
+		case SdrPackage.SDR_ROOT__DOM_FILE_SYSTEM_ROOT:
+			setDomFileSystemRoot(DOM_FILE_SYSTEM_ROOT_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -1168,28 +1193,28 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case SdrPackage.SDR_ROOT__LOAD_STATUS:
-				return LOAD_STATUS_EDEFAULT == null ? loadStatus != null : !LOAD_STATUS_EDEFAULT.equals(loadStatus);
-			case SdrPackage.SDR_ROOT__STATE:
-				return state != STATE_EDEFAULT;
-			case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
-				return componentsContainer != null;
-			case SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER:
-				return waveformsContainer != null;
-			case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
-				return devicesContainer != null;
-			case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
-				return servicesContainer != null;
-			case SdrPackage.SDR_ROOT__NODES_CONTAINER:
-				return nodesContainer != null;
-			case SdrPackage.SDR_ROOT__DOMAIN_CONFIGURATION:
-				return domainConfiguration != null;
-			case SdrPackage.SDR_ROOT__IDL_LIBRARY:
-				return idlLibrary != null;
-			case SdrPackage.SDR_ROOT__DEV_FILE_SYSTEM_ROOT:
-				return DEV_FILE_SYSTEM_ROOT_EDEFAULT == null ? devFileSystemRoot != null : !DEV_FILE_SYSTEM_ROOT_EDEFAULT.equals(devFileSystemRoot);
-			case SdrPackage.SDR_ROOT__DOM_FILE_SYSTEM_ROOT:
-				return DOM_FILE_SYSTEM_ROOT_EDEFAULT == null ? domFileSystemRoot != null : !DOM_FILE_SYSTEM_ROOT_EDEFAULT.equals(domFileSystemRoot);
+		case SdrPackage.SDR_ROOT__LOAD_STATUS:
+			return LOAD_STATUS_EDEFAULT == null ? loadStatus != null : !LOAD_STATUS_EDEFAULT.equals(loadStatus);
+		case SdrPackage.SDR_ROOT__STATE:
+			return state != STATE_EDEFAULT;
+		case SdrPackage.SDR_ROOT__COMPONENTS_CONTAINER:
+			return componentsContainer != null;
+		case SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER:
+			return waveformsContainer != null;
+		case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
+			return devicesContainer != null;
+		case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
+			return servicesContainer != null;
+		case SdrPackage.SDR_ROOT__NODES_CONTAINER:
+			return nodesContainer != null;
+		case SdrPackage.SDR_ROOT__DOMAIN_CONFIGURATION:
+			return domainConfiguration != null;
+		case SdrPackage.SDR_ROOT__IDL_LIBRARY:
+			return idlLibrary != null;
+		case SdrPackage.SDR_ROOT__DEV_FILE_SYSTEM_ROOT:
+			return DEV_FILE_SYSTEM_ROOT_EDEFAULT == null ? devFileSystemRoot != null : !DEV_FILE_SYSTEM_ROOT_EDEFAULT.equals(devFileSystemRoot);
+		case SdrPackage.SDR_ROOT__DOM_FILE_SYSTEM_ROOT:
+			return DOM_FILE_SYSTEM_ROOT_EDEFAULT == null ? domFileSystemRoot != null : !DOM_FILE_SYSTEM_ROOT_EDEFAULT.equals(domFileSystemRoot);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -1201,7 +1226,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (loadStatus: ");
@@ -1298,12 +1324,12 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, e.getMessage(), e);
 		}
 		submonitor.worked(1);
-		
-		IStatus retVal = Status.OK_STATUS; 
+
+		IStatus retVal = Status.OK_STATUS;
 		for (SoftPkg spd : getDevicesContainer().getComponents()) {
 			if (PluginUtil.equals(spd.getId(), softPkg.getId())) {
-				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, convertFileURI(spdFileUri) + " duplicate ID of " 
-						+ convertFileURI(spd.eResource().getURI()) + ". IDs should be unique.");
+				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, convertFileURI(spdFileUri) + " duplicate ID of "
+					+ convertFileURI(spd.eResource().getURI()) + ". IDs should be unique.");
 				break;
 			}
 		}
@@ -1421,7 +1447,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		domain.getCommandStack().execute(new AddCommand(domain, getServicesContainer().getComponents(), softPkg));
 		// BEGIN GENERATED CODE
 	}
-	
+
 	private String convertFileURI(org.eclipse.emf.common.util.URI fileURI) {
 		// END GENERATED CODE
 		if (ScaFileSystemConstants.SCHEME.equals(fileURI.scheme())) {
@@ -1457,11 +1483,11 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		}
 		submonitor.worked(1);
 
-		IStatus retVal = Status.OK_STATUS; 
+		IStatus retVal = Status.OK_STATUS;
 		for (SoftwareAssembly currentSad : getWaveformsContainer().getWaveforms()) {
 			if (PluginUtil.equals(currentSad.getId(), sad.getId())) {
-				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, convertFileURI(sadFileUri) + " duplicate ID of " 
-						+ convertFileURI(currentSad.eResource().getURI()) + ". IDs should be unique.");
+				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, convertFileURI(sadFileUri) + " duplicate ID of "
+					+ convertFileURI(currentSad.eResource().getURI()) + ". IDs should be unique.");
 				break;
 			}
 		}
@@ -1491,11 +1517,11 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load DCD " + convertFileURI(dcdFileURI), e);
 		}
-		
+
 		IStatus retVal = Status.OK_STATUS;
 		for (DeviceConfiguration current : getNodesContainer().getNodes()) {
 			if (PluginUtil.equals(current.getId(), dcd.getId())) {
-				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, convertFileURI(dcdFileURI) + " duplicate ID of " 
+				retVal = new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, convertFileURI(dcdFileURI) + " duplicate ID of "
 					+ convertFileURI(current.eResource().getURI()) + ". IDs should be unique.");
 				break;
 			}
@@ -1529,7 +1555,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		} catch (Exception e) { // SUPPRESS CHECKSTYLE Logged Catch all exception
 			return new Status(Status.ERROR, IdeSdrActivator.PLUGIN_ID, "Failed to load DMD " + convertFileURI(dmdURI), e);
 		}
-		
+
 		IStatus retVal = Status.OK_STATUS;
 		if (getDomainConfiguration() != null) {
 			return new Status(Status.WARNING, IdeSdrActivator.PLUGIN_ID, "Multiple DMD files found and only one supported.  Ignoring " + convertFileURI(dmdURI));

@@ -11,6 +11,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
+import gov.redhawk.ide.sdr.*;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.LoadState;
@@ -45,12 +46,11 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 */
 	public static SdrFactory init() {
 		try {
-			SdrFactory theSdrFactory = (SdrFactory)EPackage.Registry.INSTANCE.getEFactory(SdrPackage.eNS_URI);
+			SdrFactory theSdrFactory = (SdrFactory) EPackage.Registry.INSTANCE.getEFactory(SdrPackage.eNS_URI);
 			if (theSdrFactory != null) {
 				return theSdrFactory;
 			}
-		}
-		catch (Exception exception) {
+		} catch (Exception exception) {
 			EcorePlugin.INSTANCE.log(exception);
 		}
 		return new SdrFactoryImpl();
@@ -74,15 +74,24 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case SdrPackage.SDR_ROOT: return createSdrRoot();
-			case SdrPackage.COMPONENTS_CONTAINER: return createComponentsContainer();
-			case SdrPackage.WAVEFORMS_CONTAINER: return createWaveformsContainer();
-			case SdrPackage.DEVICES_CONTAINER: return createDevicesContainer();
-			case SdrPackage.SERVICES_CONTAINER: return createServicesContainer();
-			case SdrPackage.NODES_CONTAINER: return createNodesContainer();
-			case SdrPackage.STRING_TO_ABSTRACT_PROPERTY: return (EObject)createStringToAbstractProperty();
-			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+		case SdrPackage.SDR_ROOT:
+			return createSdrRoot();
+		case SdrPackage.COMPONENTS_CONTAINER:
+			return createComponentsContainer();
+		case SdrPackage.COMPONENTS_SUB_CONTAINER:
+			return createComponentsSubContainer();
+		case SdrPackage.WAVEFORMS_CONTAINER:
+			return createWaveformsContainer();
+		case SdrPackage.DEVICES_CONTAINER:
+			return createDevicesContainer();
+		case SdrPackage.SERVICES_CONTAINER:
+			return createServicesContainer();
+		case SdrPackage.NODES_CONTAINER:
+			return createNodesContainer();
+		case SdrPackage.STRING_TO_ABSTRACT_PROPERTY:
+			return (EObject) createStringToAbstractProperty();
+		default:
+			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
 	}
 
@@ -94,10 +103,10 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-			case SdrPackage.LOAD_STATE:
-				return createLoadStateFromString(eDataType, initialValue);
-			default:
-				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		case SdrPackage.LOAD_STATE:
+			return createLoadStateFromString(eDataType, initialValue);
+		default:
+			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
 	}
 
@@ -109,10 +118,10 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-			case SdrPackage.LOAD_STATE:
-				return convertLoadStateToString(eDataType, instanceValue);
-			default:
-				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		case SdrPackage.LOAD_STATE:
+			return convertLoadStateToString(eDataType, instanceValue);
+		default:
+			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
 	}
 
@@ -136,6 +145,16 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	public ComponentsContainer createComponentsContainer() {
 		ComponentsContainerImpl componentsContainer = new ComponentsContainerImpl();
 		return componentsContainer;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ComponentsSubContainer createComponentsSubContainer() {
+		ComponentsSubContainerImpl componentsSubContainer = new ComponentsSubContainerImpl();
+		return componentsSubContainer;
 	}
 
 	/**
@@ -199,7 +218,8 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 */
 	public LoadState createLoadStateFromString(EDataType eDataType, String initialValue) {
 		LoadState result = LoadState.get(initialValue);
-		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		if (result == null)
+			throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
 		return result;
 	}
 
@@ -219,7 +239,7 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 */
 	@Override
 	public SdrPackage getSdrPackage() {
-		return (SdrPackage)getEPackage();
+		return (SdrPackage) getEPackage();
 	}
 
 	/**
