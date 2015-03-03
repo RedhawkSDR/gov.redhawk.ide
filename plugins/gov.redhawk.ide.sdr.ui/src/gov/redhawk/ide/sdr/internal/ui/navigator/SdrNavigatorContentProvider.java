@@ -10,9 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.sdr.internal.ui.navigator;
 
-import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.SdrFactory;
+import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrContentProvider;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.model.sca.ScaDomainManagerRegistry;
@@ -47,18 +47,17 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 	@Override
 	public Object[] getChildren(final Object parentElement) {
 		final Object element = AdapterFactoryEditingDomain.unwrap(parentElement);
-		if (element instanceof ComponentsContainer) {
-			List<Object> children = createNameSpaceStructure(Arrays.asList(super.getChildren(parentElement)));
-
-			return children.toArray(new Object[0]);
-		} else if (element instanceof ComponentsSubContainer) {
+		if (element instanceof ComponentsSubContainer) {
 			ComponentsSubContainer container = (ComponentsSubContainer) element;
 			List<Object> children = new ArrayList<Object>();
 			children.addAll(Arrays.asList(super.getChildren(parentElement)));
 			children.addAll(container.getSubContainers());
 			return children.toArray();
-		} else if (element instanceof EObject) {
+		} else if (element instanceof SdrRoot) {
 			return super.getChildren(parentElement);
+		} else if (element instanceof EObject) {
+			List<Object> children = createNameSpaceStructure(Arrays.asList(super.getChildren(parentElement)));
+			return children.toArray(new Object[0]);
 		} else {
 			return Collections.EMPTY_LIST.toArray();
 		}
