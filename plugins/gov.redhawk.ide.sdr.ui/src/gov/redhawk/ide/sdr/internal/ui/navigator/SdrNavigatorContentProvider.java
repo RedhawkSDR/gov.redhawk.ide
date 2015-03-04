@@ -14,7 +14,6 @@ import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.SdrFactory;
-import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ServicesContainer;
 import gov.redhawk.ide.sdr.ui.SdrContentProvider;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;

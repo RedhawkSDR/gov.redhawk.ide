@@ -13,6 +13,7 @@ package gov.redhawk.ide.graphiti.sad.ui.runtime.domain.tests;
 import gov.redhawk.ide.swtbot.ConsoleUtils;
 import gov.redhawk.ide.swtbot.UIRuntimeTest;
 import gov.redhawk.ide.swtbot.WaitForEditorCondition;
+import gov.redhawk.ide.swtbot.diagram.RHTestBot;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
@@ -32,7 +33,7 @@ public abstract class AbstractGraphitiDomainWaveformRuntimeTest extends UIRuntim
 	public static final String DOMAIN_MANAGER_PROCESS = "Domain Manager";
 	public static final String DEVICE_MANAGER_PROCESS = "Device Manager";
 	public static final String DEVICE_MANAGER = "DevMgr";
-	protected SWTGefBot gefBot = new SWTGefBot(); // SUPPRESS CHECKSTYLE VisibilityModifier
+	protected SWTGefBot gefBot = new RHTestBot(); // SUPPRESS CHECKSTYLE VisibilityModifier
 	private String waveFormFullName; // full name of waveform that is launched
 
 	@Before

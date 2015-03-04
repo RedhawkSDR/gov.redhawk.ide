@@ -15,25 +15,29 @@ import static org.junit.Assert.assertEquals;
 import gov.redhawk.ide.swtbot.ViewUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
+import gov.redhawk.logging.ui.LogLevels;
 
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class WaveformExplorerTest extends AbstractGraphitiDomainWaveformRuntimeTest {
 
+	private static final String SIGGEN = "SigGen";
+	private static final String SIGGEN_1 = "SigGen_1";
 	private static final String HARD_LIMIT = "HardLimit";
 	private static final String HARD_LIMIT_1 = "HardLimit_1";
 	private static final String DATA_READER = "DataReader";
 
 	/**
-	 * IDE-969  Opens Graphiti diagram using the Waveform Explorer editor.
-	 *          This editor is "look but don't touch". All design functionality should be disabled.
-	 *          Runtime functionality (start/stop, plot, etc) should still work.
+	 * IDE-969 Opens Graphiti diagram using the Waveform Explorer editor.
+	 * This editor is "look but don't touch". All design functionality should be disabled.
+	 * Runtime functionality (start/stop, plot, etc) should still work.
 	 * IDE-1001 Hide grid on runtime diagram.
 	 */
 	@Test
@@ -74,11 +78,99 @@ public class WaveformExplorerTest extends AbstractGraphitiDomainWaveformRuntimeT
 		editor.setFocus();
 		SWTBotGefEditPart dataReader = editor.getEditPart(DATA_READER);
 		Assert.assertNull(DATA_READER + " component should not have be drawn in diagram", dataReader);
-		
+
 		// IDE-1001 check that grid is hidden on runtime diagram
 		Diagram diagram = DiagramTestUtils.getDiagram(editor);
 		Assert.assertNotNull("Found in Diagram (model object) on editor", diagram);
 		int gridUnit = diagram.getGridUnit();
 		assertEquals("Grid is hidden on diagram", -1, gridUnit); // -1 means it is hidden
 	}
+
+	@Test
+	public void runtimeExplorerContextMenuTest() {
+		SWTBotGefEditor editor = gefBot.gefEditor(getWaveFormFullName());
+		editor.setFocus();
+
+		// Start the component
+		DiagramTestUtils.startComponentFromDiagram(editor, SIGGEN);
+		ScaExplorerTestUtils.waitUntilComponentAppearsStartedInScaExplorer(bot, DOMAIN_WAVEFORM_PARENT_PATH, getWaveFormFullName(), SIGGEN_1);
+
+		// Check that we can't undo certain actions
+		Assert.assertFalse("IDE-1038 No Undo Start Command context menu item", DiagramTestUtils.hasContentMenuItem(editor, SIGGEN, "Undo Start Command"));
+		Assert.assertFalse("IDE-1065 No Undo Do Command context menu item", DiagramTestUtils.hasContentMenuItem(editor, SIGGEN, "Undo Do Command"));
+
+		// Test Log Levels
+		DiagramTestUtils.changeLogLevelFromDiagram(editor, SIGGEN, LogLevels.TRACE);
+		DiagramTestUtils.confirmLogLevelFromDiagram(editor, SIGGEN, LogLevels.TRACE);
+
+		DiagramTestUtils.changeLogLevelFromDiagram(editor, SIGGEN, LogLevels.FATAL);
+		DiagramTestUtils.confirmLogLevelFromDiagram(editor, SIGGEN, LogLevels.FATAL);
+
+		// plot port data for SIGGEN
+		editor.setFocus();
+		try {
+			DiagramTestUtils.plotPortDataOnComponentPort(editor, SIGGEN, null);
+			SWTBotView plotView = ViewUtils.getPlotView(bot);
+			plotView.close();
+		} catch (WidgetNotFoundException e) {
+			SWTBotView plotView = ViewUtils.getPlotView(bot);
+			plotView.close();
+		}
+
+		// SRI view test
+		DiagramTestUtils.displaySRIDataOnComponentPort(editor, SIGGEN, null);
+		// verify sriView displayed
+		ViewUtils.waitUntilSRIViewPopulates(bot);
+		SWTBotView sriView = ViewUtils.getSRIView(bot);
+		Assert.assertEquals("streamID property is missing for column 1", "streamID: ", sriView.bot().tree().cell(0, "Property: "));
+		Assert.assertEquals("streamID property is wrong", SIGGEN + " Stream", sriView.bot().tree().cell(0, "Value: "));
+		sriView.close();
+
+		// Audio/Play port view test
+		DiagramTestUtils.playPortDataOnComponentPort(editor, SIGGEN, null);
+		// wait until audio view populates
+		ViewUtils.waitUntilAudioViewPopulates(bot);
+		// get audio view
+		SWTBotView audioView = ViewUtils.getAudioView(bot);
+		String item = audioView.bot().list().getItems()[0];
+		Assert.assertTrue("SigGen not found in Audio Port Playback", item.matches(SIGGEN + ".*"));
+		audioView.close();
+
+		// open data list view
+		DiagramTestUtils.displayDataListViewOnComponentPort(editor, SIGGEN, null);
+		// verify data list view opens
+		ViewUtils.waitUntilDataListViewDisplays(bot);
+		// start acquire
+		ViewUtils.startAquireOnDataListView(bot);
+		// wait until view populates
+		ViewUtils.waitUntilDataListViewPopulates(bot);
+		// close data list view
+		SWTBotView dataListView = ViewUtils.getDataListView(bot);
+		dataListView.close();
+
+		// Snapshot view test
+		DiagramTestUtils.displaySnapshotDialogOnComponentPort(editor, SIGGEN, null);
+		// wait until Snapshot dialog appears
+		ViewUtils.waitUntilSnapshotDialogDisplays(bot);
+		// get snapshot dialog
+		SWTBotShell snapshotDialog = ViewUtils.getSnapshotDialog(bot);
+		Assert.assertNotNull(snapshotDialog);
+		snapshotDialog.close();
+
+		// Monitor ports test
+		DiagramTestUtils.displayPortMonitorViewOnComponentPort(editor, SIGGEN, null);
+		// wait until port monitor view appears
+		ViewUtils.waitUntilPortMonitorViewPopulates(bot, SIGGEN);
+		// close PortMonitor View
+		SWTBotView monitorView = ViewUtils.getPortMonitorView(bot);
+		monitorView.close();
+
+		// stop component
+		DiagramTestUtils.stopComponentFromDiagram(editor, SIGGEN);
+		ScaExplorerTestUtils.waitUntilComponentAppearsStoppedInScaExplorer(bot, DOMAIN_WAVEFORM_PARENT_PATH, getWaveFormFullName(), SIGGEN_1);
+
+		Assert.assertFalse("IDE-1038 No Undo Stop Command context menu item", DiagramTestUtils.hasContentMenuItem(editor, SIGGEN, "Undo Stop Command"));
+		Assert.assertFalse("IDE-1065 No Undo Do Command context menu item", DiagramTestUtils.hasContentMenuItem(editor, SIGGEN, "Undo Do Command"));
+	}
+
 }
