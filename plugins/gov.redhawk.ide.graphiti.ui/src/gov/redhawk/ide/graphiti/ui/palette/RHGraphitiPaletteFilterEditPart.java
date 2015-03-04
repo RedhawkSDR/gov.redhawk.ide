@@ -42,12 +42,11 @@ public class RHGraphitiPaletteFilterEditPart extends org.eclipse.gef.editparts.A
 
 			@Override
 			public void partActivated(EditPart editpart) {
-//				performDirectEdit();
+
 			}
 
 			@Override
 			public void partDeactivated(EditPart editpart) {
-				// TODO Auto-generated method stub
 				
 			}
 
@@ -58,8 +57,9 @@ public class RHGraphitiPaletteFilterEditPart extends org.eclipse.gef.editparts.A
 
 			@Override
 			public void selectedStateChanged(EditPart editpart) {
-				performDirectEdit();
-				
+				if (isActive()) {
+					performDirectEdit();
+				}
 			}
 			
 		});
