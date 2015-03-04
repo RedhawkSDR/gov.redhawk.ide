@@ -29,6 +29,7 @@ import org.eclipse.emf.common.util.EList;
  * @see gov.redhawk.ide.sdr.SdrPackage#getComponentsSubContainer()
  * @model
  * @generated
+ * @since 9.0
  */
 public interface ComponentsSubContainer extends SoftPkgRegistry {
 

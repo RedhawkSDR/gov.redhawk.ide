@@ -11,8 +11,8 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.util;
 
-import gov.redhawk.ide.sdr.*;
 import gov.redhawk.ide.sdr.ComponentsContainer;
+import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.NodesContainer;
 import gov.redhawk.ide.sdr.PropertyRegistry;
@@ -21,8 +21,11 @@ import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ServicesContainer;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.WaveformsContainer;
+
 import java.util.Map;
+
 import mil.jpeojtrs.sca.prf.AbstractProperty;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
@@ -219,6 +222,7 @@ public class SdrSwitch< T > extends Switch<T> {
 	 * @return the result of interpreting the object as an instance of '<em>Components Sub Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
+	 * @since 9.0
 	 */
 	public T caseComponentsSubContainer(ComponentsSubContainer object) {
 		return null;

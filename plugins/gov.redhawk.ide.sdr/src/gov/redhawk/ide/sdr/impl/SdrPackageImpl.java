@@ -24,12 +24,15 @@ import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ServicesContainer;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.WaveformsContainer;
+
 import java.util.Map;
+
 import mil.jpeojtrs.sca.dcd.DcdPackage;
 import mil.jpeojtrs.sca.dmd.DmdPackage;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.spd.SpdPackage;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -335,6 +338,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
+	 * @since 9.0
 	 */
 	public EClass getComponentsSubContainer() {
 		return componentsSubContainerEClass;
@@ -344,6 +348,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
+	 * @since 9.0
 	 */
 	public EReference getComponentsSubContainer_SubContainers() {
 		return (EReference) componentsSubContainerEClass.getEStructuralFeatures().get(0);
@@ -353,6 +358,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
+	 * @since 9.0
 	 */
 	public EAttribute getComponentsSubContainer_ContainerName() {
 		return (EAttribute) componentsSubContainerEClass.getEStructuralFeatures().get(1);

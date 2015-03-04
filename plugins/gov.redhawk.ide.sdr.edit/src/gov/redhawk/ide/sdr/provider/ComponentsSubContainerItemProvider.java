@@ -29,6 +29,7 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
+ * @since 4.2
  */
 public class ComponentsSubContainerItemProvider extends SoftPkgRegistryItemProvider {
 	/**
