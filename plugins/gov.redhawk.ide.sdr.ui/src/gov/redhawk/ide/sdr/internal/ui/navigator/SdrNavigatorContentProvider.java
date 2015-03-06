@@ -27,6 +27,7 @@ import java.util.List;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.ui.IMemento;
@@ -127,15 +128,20 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 				}
 
 				// If there are already subContainers, see if the one we want already exists
-				for (ComponentsSubContainer c : parent.getSubContainers()) {
+				EList<ComponentsSubContainer> subList = parent.getSubContainers();
+				boolean foundIt = false;
+				for (ComponentsSubContainer c : subList) {
 					if (names[i].equals(c.getContainerName())) {
 						container = c;
+						foundIt = true;
 						break;
 					}
 
+				}
+				if (!foundIt) {
 					parent.getSubContainers().add(container);
 				}
-
+				
 				// Add the component to the final subContainer
 				if (i == (numOfContainers - 1)) {
 					container.getComponents().add(component);
