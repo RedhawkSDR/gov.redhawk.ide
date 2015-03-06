@@ -260,4 +260,8 @@ public abstract class AbstractCodeGenerator implements IScaComponentCodegen {
 		}
 		return retVal;
 	}
+	
+	protected String getDefaultEntryPoint(SoftPkg spd) {
+		return spd.getName().replace('.', File.separatorChar);
+	}
 }
