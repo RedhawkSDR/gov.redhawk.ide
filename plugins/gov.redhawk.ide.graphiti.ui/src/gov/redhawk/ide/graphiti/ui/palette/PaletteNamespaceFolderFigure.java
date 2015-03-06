@@ -70,7 +70,7 @@ public class PaletteNamespaceFolderFigure extends Figure {
 	protected static final Border SCROLL_PANE_LIST_BORDER = new MarginBorder(0,
 		INDENT_WIDTH, 0, 0);
 	/** Title margin border constant **/
-	protected static final Border TITLE_MARGIN_BORDER = new MarginBorder(4, 2,
+	protected static final Border TITLE_MARGIN_BORDER = new MarginBorder(4, 15,
 			2, 2);
 	/** Toggle button border constant **/
 	protected static final Border TOGGLE_BUTTON_BORDER = new RaisedBorder();
