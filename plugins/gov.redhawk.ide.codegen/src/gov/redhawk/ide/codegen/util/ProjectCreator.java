@@ -58,6 +58,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.URI;
@@ -108,6 +109,8 @@ public abstract class ProjectCreator {
 
 		if (projectLocation != null) {
 			description.setLocationURI(projectLocation);
+		} else {
+			description.setLocationURI(Platform.getLocation().append(projectName.replace('.', File.separatorChar)).toFile().toURI());
 		}
 
 		description.setNatureIds(natureIds.toArray(new String[natureIds.size()]));
@@ -523,7 +526,7 @@ public abstract class ProjectCreator {
 		final IProgressMonitor monitor) throws CoreException {
 
 		// IDE-1111: Make sure correct file names are being used
-		String spdFileBaseName = (spdName == null) ? getBaseFileName(project) : spdName;
+		String spdFileBaseName = (spdName == null) ? getBaseFileName(project) : getBaseFileName(spdName);
 		String spdFileName = spdFileBaseName + SpdPackage.FILE_EXTENSION; // SUPPRESS
 
 		final SubMonitor progress = SubMonitor.convert(monitor, 2);

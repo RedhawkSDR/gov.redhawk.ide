@@ -146,7 +146,7 @@ public class ExportUtils {
 
 		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting waveforms", 1 + proj.members().length);
 
-		final IPath outputFolder = new Path("dom/waveforms").append(proj.getName());
+		final IPath outputFolder = new Path("dom/waveforms").append(proj.getName().replace('.', File.separatorChar));
 		exporter.mkdir(outputFolder, progress.newChild(1));
 		ExportUtils.exportFiles(proj, outputFolder, exporter, progress, ExportUtils.WAVEFORM_EXPORT_EXTENSIONS);
 	}
@@ -202,7 +202,7 @@ public class ExportUtils {
 		final SubMonitor progress = SubMonitor.convert(monitor, "Exporting nodes", EXPORT_NODE_WORK + EXPORT_COMPONENT_WORK);
 		final SubMonitor nodeProgress = progress.newChild(EXPORT_NODE_WORK).setWorkRemaining(1 + proj.members().length);
 
-		final IPath outputFolder = new Path("dev/nodes").append(proj.getName());
+		final IPath outputFolder = new Path("dev/nodes").append(proj.getName().replace('.', File.separatorChar));
 		exporter.mkdir(outputFolder, nodeProgress.newChild(1));
 		ExportUtils.exportFiles(proj, outputFolder, exporter, nodeProgress, ExportUtils.NODE_EXPORT_EXTENSIONS);
 	}
@@ -346,7 +346,7 @@ public class ExportUtils {
 				}
 			}
 
-			outputFolder = outputFolder.append(proj.getName());
+			outputFolder = outputFolder.append(proj.getName().replace('.', File.separatorChar));
 
 			// Copy the SPD File
 			final IPath spdOutputPath = outputFolder.append(spdResource.getName());
