@@ -22,17 +22,15 @@ import gov.redhawk.ide.sdr.SdrFactory;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ServicesContainer;
+import gov.redhawk.ide.sdr.SharedLibrariesContainer;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.WaveformsContainer;
-
 import java.util.Map;
-
 import mil.jpeojtrs.sca.dcd.DcdPackage;
 import mil.jpeojtrs.sca.dmd.DmdPackage;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.spd.SpdPackage;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -88,6 +86,12 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * @generated
 	 */
 	private EClass servicesContainerEClass = null;
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass sharedLibrariesContainerEClass = null;
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -279,8 +283,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	public EReference getSdrRoot_DomainConfiguration() {
+	public EReference getSdrRoot_SharedLibrariesContainer() {
 		return (EReference) sdrRootEClass.getEStructuralFeatures().get(7);
 	}
 
@@ -290,7 +293,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * @generated
 	 */
 	@Override
-	public EReference getSdrRoot_IdlLibrary() {
+	public EReference getSdrRoot_DomainConfiguration() {
 		return (EReference) sdrRootEClass.getEStructuralFeatures().get(8);
 	}
 
@@ -300,8 +303,18 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * @generated
 	 */
 	@Override
+	public EReference getSdrRoot_IdlLibrary() {
+		return (EReference) sdrRootEClass.getEStructuralFeatures().get(9);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EAttribute getSdrRoot_DevFileSystemRoot() {
-		return (EAttribute) sdrRootEClass.getEStructuralFeatures().get(9);
+		return (EAttribute) sdrRootEClass.getEStructuralFeatures().get(10);
 	}
 
 	/**
@@ -311,7 +324,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 */
 	@Override
 	public EAttribute getSdrRoot_DomFileSystemRoot() {
-		return (EAttribute) sdrRootEClass.getEStructuralFeatures().get(10);
+		return (EAttribute) sdrRootEClass.getEStructuralFeatures().get(11);
 	}
 
 	/**
@@ -338,7 +351,6 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 9.0
 	 */
 	public EClass getComponentsSubContainer() {
 		return componentsSubContainerEClass;
@@ -348,7 +360,6 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 9.0
 	 */
 	public EReference getComponentsSubContainer_SubContainers() {
 		return (EReference) componentsSubContainerEClass.getEStructuralFeatures().get(0);
@@ -358,7 +369,6 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 9.0
 	 */
 	public EAttribute getComponentsSubContainer_ContainerName() {
 		return (EAttribute) componentsSubContainerEClass.getEStructuralFeatures().get(1);
@@ -432,6 +442,24 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	@Override
 	public EReference getServicesContainer_SdrRoot() {
 		return (EReference) servicesContainerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getSharedLibrariesContainer() {
+		return sharedLibrariesContainerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getSharedLibrariesContainer_SdrRoot() {
+		return (EReference) sharedLibrariesContainerEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -592,6 +620,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 		createEReference(sdrRootEClass, SDR_ROOT__DEVICES_CONTAINER);
 		createEReference(sdrRootEClass, SDR_ROOT__SERVICES_CONTAINER);
 		createEReference(sdrRootEClass, SDR_ROOT__NODES_CONTAINER);
+		createEReference(sdrRootEClass, SDR_ROOT__SHARED_LIBRARIES_CONTAINER);
 		createEReference(sdrRootEClass, SDR_ROOT__DOMAIN_CONFIGURATION);
 		createEReference(sdrRootEClass, SDR_ROOT__IDL_LIBRARY);
 		createEAttribute(sdrRootEClass, SDR_ROOT__DEV_FILE_SYSTEM_ROOT);
@@ -613,6 +642,9 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 
 		servicesContainerEClass = createEClass(SERVICES_CONTAINER);
 		createEReference(servicesContainerEClass, SERVICES_CONTAINER__SDR_ROOT);
+
+		sharedLibrariesContainerEClass = createEClass(SHARED_LIBRARIES_CONTAINER);
+		createEReference(sharedLibrariesContainerEClass, SHARED_LIBRARIES_CONTAINER__SDR_ROOT);
 
 		nodesContainerEClass = createEClass(NODES_CONTAINER);
 		createEReference(nodesContainerEClass, NODES_CONTAINER__SDR_ROOT);
@@ -677,6 +709,7 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 		componentsSubContainerEClass.getESuperTypes().add(this.getSoftPkgRegistry());
 		devicesContainerEClass.getESuperTypes().add(this.getSoftPkgRegistry());
 		servicesContainerEClass.getESuperTypes().add(this.getSoftPkgRegistry());
+		sharedLibrariesContainerEClass.getESuperTypes().add(this.getSoftPkgRegistry());
 		softPkgRegistryEClass.getESuperTypes().add(this.getPropertyRegistry());
 
 		// Initialize classes and features; add operations and parameters
@@ -695,6 +728,9 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 			SdrRoot.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEReference(getSdrRoot_NodesContainer(), this.getNodesContainer(), this.getNodesContainer_SdrRoot(), "nodesContainer", null, 0, 1, SdrRoot.class,
 			IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEReference(getSdrRoot_SharedLibrariesContainer(), this.getSharedLibrariesContainer(), this.getSharedLibrariesContainer_SdrRoot(),
+			"sharedLibrariesContainer", null, 0, 1, SdrRoot.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+			!IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEReference(getSdrRoot_DomainConfiguration(), theDmdPackage.getDomainManagerConfiguration(), null, "domainConfiguration", null, 0, 1, SdrRoot.class,
 			IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEReference(getSdrRoot_IdlLibrary(), theLibraryPackage.getIdlLibrary(), null, "idlLibrary", null, 0, 1, SdrRoot.class, !IS_TRANSIENT, !IS_VOLATILE,
@@ -751,6 +787,12 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 		initEClass(servicesContainerEClass, ServicesContainer.class, "ServicesContainer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getServicesContainer_SdrRoot(), this.getSdrRoot(), this.getSdrRoot_ServicesContainer(), "sdrRoot", null, 0, 1, ServicesContainer.class,
 			IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(sharedLibrariesContainerEClass, SharedLibrariesContainer.class, "SharedLibrariesContainer", !IS_ABSTRACT, !IS_INTERFACE,
+			IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getSharedLibrariesContainer_SdrRoot(), this.getSdrRoot(), this.getSdrRoot_SharedLibrariesContainer(), "sdrRoot", null, 0, 1,
+			SharedLibrariesContainer.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE,
+			!IS_DERIVED, IS_ORDERED);
 
 		initEClass(nodesContainerEClass, NodesContainer.class, "NodesContainer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getNodesContainer_SdrRoot(), this.getSdrRoot(), this.getSdrRoot_NodesContainer(), "sdrRoot", null, 0, 1, NodesContainer.class,

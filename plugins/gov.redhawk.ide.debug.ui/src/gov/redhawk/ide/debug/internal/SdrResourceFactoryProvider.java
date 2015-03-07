@@ -118,6 +118,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 	private final Map<EObject, ResourceDesc> resourceMap = Collections.synchronizedMap(new HashMap<EObject, ResourceDesc>());
 	private SdrRoot root;
 	private SPDListener componentsListener;
+	private SPDListener sharedLibraryListener;
 	private SPDListener devicesListener;
 	private SPDListener serviceListener;
 	private boolean disposed;
@@ -132,6 +133,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 		}
 		if (this.root != null) {
 			this.componentsListener = new SPDListener();
+			this.sharedLibraryListener = new SPDListener();
 			this.devicesListener = new SPDListener();
 			this.serviceListener = new SPDListener();
 			ScaModelCommand.execute(this.root, new ScaModelCommand() {
@@ -139,6 +141,9 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 				@Override
 				public void execute() {
 					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getComponentsContainer().getComponents()) {
+						addResource(spd, new SpdResourceFactory(spd));
+					}
+					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getSharedLibrariesContainer().getComponents()) {
 						addResource(spd, new SpdResourceFactory(spd));
 					}
 					for (final SoftPkg spd : SdrResourceFactoryProvider.this.root.getDevicesContainer().getComponents()) {
@@ -152,6 +157,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 					//						addResource(sad, new SdrWaveformFactory(sad));
 					//					}
 					SdrResourceFactoryProvider.this.root.getComponentsContainer().eAdapters().add(SdrResourceFactoryProvider.this.componentsListener);
+					SdrResourceFactoryProvider.this.root.getSharedLibrariesContainer().eAdapters().add(SdrResourceFactoryProvider.this.sharedLibraryListener);
 					SdrResourceFactoryProvider.this.root.getDevicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.devicesListener);
 					SdrResourceFactoryProvider.this.root.getServicesContainer().eAdapters().add(SdrResourceFactoryProvider.this.serviceListener);
 					SdrResourceFactoryProvider.this.root.getWaveformsContainer().eAdapters().add(SdrResourceFactoryProvider.this.waveformsListener);
@@ -189,6 +195,7 @@ public class SdrResourceFactoryProvider extends AbstractResourceFactoryProvider 
 			Job.getJobManager().endRule(RULE);
 		}
 		this.root.getComponentsContainer().eAdapters().remove(this.componentsListener);
+		this.root.getSharedLibrariesContainer().eAdapters().remove(this.sharedLibraryListener);
 		this.root.getDevicesContainer().eAdapters().remove(this.devicesListener);
 		this.root.getServicesContainer().eAdapters().remove(this.serviceListener);
 		this.root.getWaveformsContainer().eAdapters().remove(this.waveformsListener);

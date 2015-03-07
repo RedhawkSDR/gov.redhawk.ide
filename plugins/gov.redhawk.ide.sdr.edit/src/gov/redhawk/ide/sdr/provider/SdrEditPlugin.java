@@ -55,20 +55,9 @@ public final class SdrEditPlugin extends EMFPlugin {
 	 * @generated
 	 */
 	public SdrEditPlugin() {
-		super
-		  (new ResourceLocator [] {
-		     DcdEditPlugin.INSTANCE,
-		     DmdEditPlugin.INSTANCE,
-		     EcoreEditPlugin.INSTANCE,
-		     IdlEditPlugin.INSTANCE,
-		     LibraryEditPlugin.INSTANCE,
-		     PrfEditPlugin.INSTANCE,
-		     SadEditPlugin.INSTANCE,
-		     ScdEditPlugin.INSTANCE,
-		     SpdEditPlugin.INSTANCE,
-		     PartitioningEditPlugin.INSTANCE,
-		     DpdEditPlugin.INSTANCE,
-		   });
+		super(new ResourceLocator[] { DcdEditPlugin.INSTANCE, DmdEditPlugin.INSTANCE, EcoreEditPlugin.INSTANCE, IdlEditPlugin.INSTANCE,
+			LibraryEditPlugin.INSTANCE, PrfEditPlugin.INSTANCE, SadEditPlugin.INSTANCE, ScdEditPlugin.INSTANCE, SpdEditPlugin.INSTANCE,
+			PartitioningEditPlugin.INSTANCE, DpdEditPlugin.INSTANCE, });
 	}
 
 	/**

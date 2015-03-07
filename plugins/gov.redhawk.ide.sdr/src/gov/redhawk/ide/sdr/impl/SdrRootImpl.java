@@ -21,13 +21,16 @@ import gov.redhawk.ide.sdr.SdrFactory;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ServicesContainer;
+import gov.redhawk.ide.sdr.SharedLibrariesContainer;
 import gov.redhawk.ide.sdr.WaveformsContainer;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.PluginUtil;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import mil.jpeojtrs.sca.dcd.DcdPackage;
@@ -39,6 +42,8 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.scd.ComponentType;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.scd.SupportsInterface;
+import mil.jpeojtrs.sca.spd.CodeFileType;
+import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.QueryParser;
@@ -59,6 +64,7 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -85,6 +91,7 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
  *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getDevicesContainer <em>Devices Container</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getServicesContainer <em>Services Container</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getNodesContainer <em>Nodes Container</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getSharedLibrariesContainer <em>Shared Libraries Container</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getDomainConfiguration <em>Domain Configuration</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getIdlLibrary <em>Idl Library</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.impl.SdrRootImpl#getDevFileSystemRoot <em>Dev File System Root</em>}</li>
@@ -180,6 +187,16 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 */
 	protected NodesContainer nodesContainer;
 	/**
+	 * The cached value of the '{@link #getSharedLibrariesContainer() <em>Shared Libraries Container</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSharedLibrariesContainer()
+	 * @generated
+	 * @ordered
+	 * @since 9.0
+	 */
+	protected SharedLibrariesContainer sharedLibrariesContainer;
+	/**
 	 * The cached value of the '{@link #getDomainConfiguration() <em>Domain Configuration</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -249,6 +266,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		setWaveformsContainer(SdrFactory.eINSTANCE.createWaveformsContainer());
 		setNodesContainer(SdrFactory.eINSTANCE.createNodesContainer());
 		setServicesContainer(SdrFactory.eINSTANCE.createServicesContainer());
+		setSharedLibrariesContainer(SdrFactory.eINSTANCE.createSharedLibrariesContainer());
 		// BEGIN GENERATED CODE
 	}
 
@@ -543,6 +561,59 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 				msgs.dispatch();
 		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__NODES_CONTAINER, newNodesContainer, newNodesContainer));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @since 9.0
+	 */
+	public SharedLibrariesContainer getSharedLibrariesContainer() {
+		return sharedLibrariesContainer;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @since 9.0
+	 */
+	public NotificationChain basicSetSharedLibrariesContainer(SharedLibrariesContainer newSharedLibrariesContainer, NotificationChain msgs) {
+		SharedLibrariesContainer oldSharedLibrariesContainer = sharedLibrariesContainer;
+		sharedLibrariesContainer = newSharedLibrariesContainer;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER,
+				oldSharedLibrariesContainer, newSharedLibrariesContainer);
+			if (msgs == null)
+				msgs = notification;
+			else
+				msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @since 9.0
+	 */
+	public void setSharedLibrariesContainer(SharedLibrariesContainer newSharedLibrariesContainer) {
+		if (newSharedLibrariesContainer != sharedLibrariesContainer) {
+			NotificationChain msgs = null;
+			if (sharedLibrariesContainer != null)
+				msgs = ((InternalEObject) sharedLibrariesContainer).eInverseRemove(this, SdrPackage.SHARED_LIBRARIES_CONTAINER__SDR_ROOT,
+					SharedLibrariesContainer.class, msgs);
+			if (newSharedLibrariesContainer != null)
+				msgs = ((InternalEObject) newSharedLibrariesContainer).eInverseAdd(this, SdrPackage.SHARED_LIBRARIES_CONTAINER__SDR_ROOT,
+					SharedLibrariesContainer.class, msgs);
+			msgs = basicSetSharedLibrariesContainer(newSharedLibrariesContainer, msgs);
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER, newSharedLibrariesContainer,
+				newSharedLibrariesContainer));
 	}
 
 	/**
@@ -880,6 +951,7 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			public void execute() {
 				getNodesContainer().getNodes().clear();
 				getComponentsContainer().getComponents().clear();
+				getSharedLibrariesContainer().getComponents().clear();
 				getDevicesContainer().getComponents().clear();
 				getServicesContainer().getComponents().clear();
 				getWaveformsContainer().getWaveforms().clear();
@@ -1031,6 +1103,11 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			if (nodesContainer != null)
 				msgs = ((InternalEObject) nodesContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SdrPackage.SDR_ROOT__NODES_CONTAINER, null, msgs);
 			return basicSetNodesContainer((NodesContainer) otherEnd, msgs);
+		case SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER:
+			if (sharedLibrariesContainer != null)
+				msgs = ((InternalEObject) sharedLibrariesContainer).eInverseRemove(this, EOPPOSITE_FEATURE_BASE
+					- SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER, null, msgs);
+			return basicSetSharedLibrariesContainer((SharedLibrariesContainer) otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -1053,6 +1130,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			return basicSetServicesContainer(null, msgs);
 		case SdrPackage.SDR_ROOT__NODES_CONTAINER:
 			return basicSetNodesContainer(null, msgs);
+		case SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER:
+			return basicSetSharedLibrariesContainer(null, msgs);
 		case SdrPackage.SDR_ROOT__IDL_LIBRARY:
 			return basicSetIdlLibrary(null, msgs);
 		}
@@ -1081,6 +1160,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			return getServicesContainer();
 		case SdrPackage.SDR_ROOT__NODES_CONTAINER:
 			return getNodesContainer();
+		case SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER:
+			return getSharedLibrariesContainer();
 		case SdrPackage.SDR_ROOT__DOMAIN_CONFIGURATION:
 			if (resolve)
 				return getDomainConfiguration();
@@ -1123,6 +1204,9 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			return;
 		case SdrPackage.SDR_ROOT__NODES_CONTAINER:
 			setNodesContainer((NodesContainer) newValue);
+			return;
+		case SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER:
+			setSharedLibrariesContainer((SharedLibrariesContainer) newValue);
 			return;
 		case SdrPackage.SDR_ROOT__DOMAIN_CONFIGURATION:
 			setDomainConfiguration((DomainManagerConfiguration) newValue);
@@ -1169,6 +1253,9 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		case SdrPackage.SDR_ROOT__NODES_CONTAINER:
 			setNodesContainer((NodesContainer) null);
 			return;
+		case SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER:
+			setSharedLibrariesContainer((SharedLibrariesContainer) null);
+			return;
 		case SdrPackage.SDR_ROOT__DOMAIN_CONFIGURATION:
 			setDomainConfiguration((DomainManagerConfiguration) null);
 			return;
@@ -1207,6 +1294,8 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 			return servicesContainer != null;
 		case SdrPackage.SDR_ROOT__NODES_CONTAINER:
 			return nodesContainer != null;
+		case SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER:
+			return sharedLibrariesContainer != null;
 		case SdrPackage.SDR_ROOT__DOMAIN_CONFIGURATION:
 			return domainConfiguration != null;
 		case SdrPackage.SDR_ROOT__IDL_LIBRARY:
@@ -1391,12 +1480,17 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 */
 	private void addResource(EditingDomain domain, final SoftPkg softPkg, final SoftwareComponent component) {
 		// END GENERATED CODE
-		for (SoftPkg spd : getComponentsContainer().getComponents()) {
+		List<SoftPkg> existingSpds = new ArrayList<SoftPkg>();
+		existingSpds.addAll(getComponentsContainer().getComponents());
+		existingSpds.addAll(getSharedLibrariesContainer().getComponents());
+		
+		for (SoftPkg spd : existingSpds) {
 			if (PluginUtil.equals(spd.getId(), softPkg.getId())) {
 				// Skip it is already in the SDR
 				return;
 			}
 		}
+		
 		if (component != null) {
 			boolean isDevice = false;
 			for (final SupportsInterface iface : component.getComponentFeatures().getSupportsInterface()) {
@@ -1414,10 +1508,20 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 				}
 				addDevice(domain, softPkg, component);
 			} else {
-				domain.getCommandStack().execute(new AddCommand(domain, getComponentsContainer().getComponents(), softPkg));
+				EList<Implementation> impl = softPkg.getImplementation();
+				if (!impl.isEmpty() && CodeFileType.SHARED_LIBRARY.equals(impl.get(0).getCode().getType())) {
+					domain.getCommandStack().execute(new AddCommand(domain, getSharedLibrariesContainer().getComponents(), softPkg));
+				} else {
+					domain.getCommandStack().execute(new AddCommand(domain, getComponentsContainer().getComponents(), softPkg));
+				}
 			}
 		} else {
-			domain.getCommandStack().execute(new AddCommand(domain, getComponentsContainer().getComponents(), softPkg));
+			EList<Implementation> impl = softPkg.getImplementation();
+			if (!impl.isEmpty() && CodeFileType.SHARED_LIBRARY.equals(impl.get(0).getCode().getType())) {
+				domain.getCommandStack().execute(new AddCommand(domain, getSharedLibrariesContainer().getComponents(), softPkg));
+			} else {
+				domain.getCommandStack().execute(new AddCommand(domain, getComponentsContainer().getComponents(), softPkg));
+			}
 		}
 		// BEGIN GENERATED CODE
 	}

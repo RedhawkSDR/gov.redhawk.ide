@@ -36,6 +36,7 @@ import org.eclipse.emf.ecore.resource.Resource;
  *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getDevicesContainer <em>Devices Container</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getServicesContainer <em>Services Container</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getNodesContainer <em>Nodes Container</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getSharedLibrariesContainer <em>Shared Libraries Container</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getDomainConfiguration <em>Domain Configuration</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getIdlLibrary <em>Idl Library</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getDevFileSystemRoot <em>Dev File System Root</em>}</li>
@@ -166,6 +167,24 @@ public interface SdrRoot extends EObject {
 	 * @generated
 	 */
 	NodesContainer getNodesContainer();
+
+	/**
+	 * Returns the value of the '<em><b>Shared Libraries Container</b></em>' containment reference.
+	 * It is bidirectional and its opposite is '{@link gov.redhawk.ide.sdr.SharedLibrariesContainer#getSdrRoot <em>Sdr Root</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Shared Libraries Container</em>' containment reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Shared Libraries Container</em>' containment reference.
+	 * @see gov.redhawk.ide.sdr.SdrPackage#getSdrRoot_SharedLibrariesContainer()
+	 * @see gov.redhawk.ide.sdr.SharedLibrariesContainer#getSdrRoot
+	 * @model opposite="sdrRoot" containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
+	 * @generated
+	 * @since 9.0
+	 */
+	SharedLibrariesContainer getSharedLibrariesContainer();
 
 	/**
 	 * Returns the value of the '<em><b>Domain Configuration</b></em>' reference.

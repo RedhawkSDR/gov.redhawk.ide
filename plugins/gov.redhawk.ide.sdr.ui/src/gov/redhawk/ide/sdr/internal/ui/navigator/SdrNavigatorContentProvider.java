@@ -15,6 +15,7 @@ import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.SdrFactory;
 import gov.redhawk.ide.sdr.ServicesContainer;
+import gov.redhawk.ide.sdr.SharedLibrariesContainer;
 import gov.redhawk.ide.sdr.ui.SdrContentProvider;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.model.sca.ScaDomainManagerRegistry;
@@ -50,7 +51,7 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 	@Override
 	public Object[] getChildren(final Object parentElement) {
 		final Object element = AdapterFactoryEditingDomain.unwrap(parentElement);
-		if (element instanceof ComponentsContainer || element instanceof DevicesContainer || element instanceof ServicesContainer) {
+		if (element instanceof ComponentsContainer || element instanceof DevicesContainer || element instanceof ServicesContainer || element instanceof SharedLibrariesContainer) {
 			List<Object> children = createNameSpaceStructure(Arrays.asList(super.getChildren(parentElement)));
 			return children.toArray(new Object[0]);
 		} else if (element instanceof ComponentsSubContainer) {

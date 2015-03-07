@@ -148,6 +148,9 @@
                        value="gov.redhawk.ide.sdr.ServicesContainer">
                  </instanceof>
                  <instanceof
+                       value="gov.redhawk.ide.sdr.SharedLibraryContainer">
+                 </instanceof>
+                 <instanceof
                        value="gov.redhawk.eclipsecorba.library.IdlLibrary">
                  </instanceof>
               </or>

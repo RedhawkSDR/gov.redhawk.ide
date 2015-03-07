@@ -11,6 +11,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.util;
 
+import gov.redhawk.ide.sdr.*;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
@@ -146,6 +147,17 @@ public class SdrSwitch< T > extends Switch<T> {
 				result = defaultCase(theEObject);
 			return result;
 		}
+		case SdrPackage.SHARED_LIBRARIES_CONTAINER: {
+			SharedLibrariesContainer sharedLibrariesContainer = (SharedLibrariesContainer) theEObject;
+			T result = caseSharedLibrariesContainer(sharedLibrariesContainer);
+			if (result == null)
+				result = caseSoftPkgRegistry(sharedLibrariesContainer);
+			if (result == null)
+				result = casePropertyRegistry(sharedLibrariesContainer);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
 		case SdrPackage.NODES_CONTAINER: {
 			NodesContainer nodesContainer = (NodesContainer) theEObject;
 			T result = caseNodesContainer(nodesContainer);
@@ -222,7 +234,6 @@ public class SdrSwitch< T > extends Switch<T> {
 	 * @return the result of interpreting the object as an instance of '<em>Components Sub Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
-	 * @since 9.0
 	 */
 	public T caseComponentsSubContainer(ComponentsSubContainer object) {
 		return null;
@@ -270,6 +281,21 @@ public class SdrSwitch< T > extends Switch<T> {
 	 * @generated
 	 */
 	public T caseServicesContainer(ServicesContainer object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Shared Libraries Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Shared Libraries Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseSharedLibrariesContainer(SharedLibrariesContainer object) {
 		return null;
 	}
 

@@ -11,7 +11,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.provider;
 
-
 import gov.redhawk.ide.sdr.NodesContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
 
@@ -37,14 +36,8 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * <!-- end-user-doc -->
  * @generated
  */
-public class NodesContainerItemProvider
-	extends ItemProviderAdapter
-	implements
-		IEditingDomainItemProvider,
-		IStructuredItemContentProvider,
-		ITreeItemContentProvider,
-		IItemLabelProvider,
-		IItemPropertySource {
+public class NodesContainerItemProvider extends ItemProviderAdapter implements IEditingDomainItemProvider, IStructuredItemContentProvider,
+		ITreeItemContentProvider, IItemLabelProvider, IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
@@ -79,7 +72,7 @@ public class NodesContainerItemProvider
 	 * @generated
 	 */
 	@Override
-	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
+	public Collection< ? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(SdrPackage.Literals.NODES_CONTAINER__NODES);
@@ -146,9 +139,9 @@ public class NodesContainerItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(NodesContainer.class)) {
-			case SdrPackage.NODES_CONTAINER__NODES:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
-				return;
+		case SdrPackage.NODES_CONTAINER__NODES:
+			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
+			return;
 		}
 		super.notifyChanged(notification);
 	}

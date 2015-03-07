@@ -1,14 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    This file is protected by Copyright.
-    Please refer to the COPYRIGHT file distributed with this source distribution.
-
-    This file is part of REDHAWK IDE.
-
-    All rights reserved.  This program and the accompanying materials are made available under
-    the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
-    http://www.eclipse.org/legal/epl-v10.html.
--->
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="sdr" nsURI="http://www.redhawk.gov/model/ide/sdr" nsPrefix="sdr">
   <eClassifiers xsi:type="ecore:EClass" name="SdrRoot">
@@ -81,6 +71,14 @@
         <details key="suppressedUnsetVisibility" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sharedLibrariesContainer"
+        eType="#//SharedLibrariesContainer" transient="true" derived="true" containment="true"
+        eOpposite="#//SharedLibrariesContainer/sdrRoot">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="suppressedSetVisibility" value="true"/>
+        <details key="suppressedUnsetVisibility" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="domainConfiguration" eType="ecore:EClass ../../mil.jpeojtrs.sca.dmd/model/dmd.ecore#//DomainManagerConfiguration"
         transient="true" derived="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -134,6 +132,15 @@
   <eClassifiers xsi:type="ecore:EClass" name="ServicesContainer" eSuperTypes="#//SoftPkgRegistry">
     <eStructuralFeatures xsi:type="ecore:EReference" name="sdrRoot" eType="#//SdrRoot"
         transient="true" eOpposite="#//SdrRoot/servicesContainer">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="suppressedSetVisibility" value="true"/>
+        <details key="suppressedUnsetVisibility" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SharedLibrariesContainer" eSuperTypes="#//SoftPkgRegistry">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sdrRoot" eType="#//SdrRoot"
+        transient="true" eOpposite="#//SdrRoot/sharedLibrariesContainer">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="suppressedSetVisibility" value="true"/>
         <details key="suppressedUnsetVisibility" value="true"/>

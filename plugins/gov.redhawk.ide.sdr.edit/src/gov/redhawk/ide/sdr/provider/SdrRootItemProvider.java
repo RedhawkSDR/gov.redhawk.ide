@@ -245,6 +245,7 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 			childrenFeatures.add(SdrPackage.Literals.SDR_ROOT__DEVICES_CONTAINER);
 			childrenFeatures.add(SdrPackage.Literals.SDR_ROOT__SERVICES_CONTAINER);
 			childrenFeatures.add(SdrPackage.Literals.SDR_ROOT__NODES_CONTAINER);
+			childrenFeatures.add(SdrPackage.Literals.SDR_ROOT__SHARED_LIBRARIES_CONTAINER);
 			childrenFeatures.add(SdrPackage.Literals.SDR_ROOT__IDL_LIBRARY);
 		}
 		return childrenFeatures;
@@ -322,6 +323,7 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 		case SdrPackage.SDR_ROOT__DEVICES_CONTAINER:
 		case SdrPackage.SDR_ROOT__SERVICES_CONTAINER:
 		case SdrPackage.SDR_ROOT__NODES_CONTAINER:
+		case SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER:
 		case SdrPackage.SDR_ROOT__IDL_LIBRARY:
 			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 			return;
@@ -341,6 +343,9 @@ public class SdrRootItemProvider extends ItemProviderAdapter implements IEditing
 		super.collectNewChildDescriptors(newChildDescriptors, object);
 
 		newChildDescriptors.add(createChildParameter(SdrPackage.Literals.SDR_ROOT__SERVICES_CONTAINER, SdrFactory.eINSTANCE.createServicesContainer()));
+
+		newChildDescriptors.add(createChildParameter(SdrPackage.Literals.SDR_ROOT__SHARED_LIBRARIES_CONTAINER,
+			SdrFactory.eINSTANCE.createSharedLibrariesContainer()));
 
 		newChildDescriptors.add(createChildParameter(SdrPackage.Literals.SDR_ROOT__IDL_LIBRARY, LibraryFactory.eINSTANCE.createIdlLibrary()));
 	}

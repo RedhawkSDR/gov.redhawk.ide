@@ -11,7 +11,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.provider;
 
-
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.WaveformsContainer;
 
@@ -37,14 +36,8 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * <!-- end-user-doc -->
  * @generated
  */
-public class WaveformsContainerItemProvider
-extends ItemProviderAdapter
-implements
-IEditingDomainItemProvider,
-IStructuredItemContentProvider,
-ITreeItemContentProvider,
-IItemLabelProvider,
-IItemPropertySource {
+public class WaveformsContainerItemProvider extends ItemProviderAdapter implements IEditingDomainItemProvider, IStructuredItemContentProvider,
+		ITreeItemContentProvider, IItemLabelProvider, IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
@@ -79,7 +72,7 @@ IItemPropertySource {
 	 * @generated
 	 */
 	@Override
-	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
+	public Collection< ? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(SdrPackage.Literals.WAVEFORMS_CONTAINER__WAVEFORMS);
@@ -146,9 +139,9 @@ IItemPropertySource {
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(WaveformsContainer.class)) {
-			case SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
-				return;
+		case SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS:
+			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
+			return;
 		}
 		super.notifyChanged(notification);
 	}

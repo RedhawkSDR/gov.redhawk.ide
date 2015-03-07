@@ -129,13 +129,21 @@ public interface SdrPackage extends EPackage {
 	 */
 	int SDR_ROOT__NODES_CONTAINER = 6;
 	/**
+	 * The feature id for the '<em><b>Shared Libraries Container</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SDR_ROOT__SHARED_LIBRARIES_CONTAINER = 7;
+	/**
 	 * The feature id for the '<em><b>Domain Configuration</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SDR_ROOT__DOMAIN_CONFIGURATION = 7;
+	int SDR_ROOT__DOMAIN_CONFIGURATION = 8;
 	/**
 	 * The feature id for the '<em><b>Idl Library</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
@@ -143,7 +151,7 @@ public interface SdrPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SDR_ROOT__IDL_LIBRARY = 8;
+	int SDR_ROOT__IDL_LIBRARY = 9;
 	/**
 	 * The feature id for the '<em><b>Dev File System Root</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -151,7 +159,7 @@ public interface SdrPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SDR_ROOT__DEV_FILE_SYSTEM_ROOT = 9;
+	int SDR_ROOT__DEV_FILE_SYSTEM_ROOT = 10;
 	/**
 	 * The feature id for the '<em><b>Dom File System Root</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -159,7 +167,7 @@ public interface SdrPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SDR_ROOT__DOM_FILE_SYSTEM_ROOT = 10;
+	int SDR_ROOT__DOM_FILE_SYSTEM_ROOT = 11;
 	/**
 	 * The number of structural features of the '<em>Root</em>' class.
 	 * <!-- begin-user-doc -->
@@ -167,7 +175,7 @@ public interface SdrPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SDR_ROOT_FEATURE_COUNT = 11;
+	int SDR_ROOT_FEATURE_COUNT = 12;
 	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.sdr.impl.PropertyRegistryImpl <em>Property Registry</em>}' class.
 	 * <!-- begin-user-doc -->
@@ -176,7 +184,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getPropertyRegistry()
 	 * @generated
 	 */
-	int PROPERTY_REGISTRY = 8;
+	int PROPERTY_REGISTRY = 9;
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' map.
 	 * <!-- begin-user-doc -->
@@ -201,7 +209,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getSoftPkgRegistry()
 	 * @generated
 	 */
-	int SOFT_PKG_REGISTRY = 9;
+	int SOFT_PKG_REGISTRY = 10;
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' map.
 	 * <!-- begin-user-doc -->
@@ -432,6 +440,47 @@ public interface SdrPackage extends EPackage {
 	 */
 	int SERVICES_CONTAINER_FEATURE_COUNT = SOFT_PKG_REGISTRY_FEATURE_COUNT + 1;
 	/**
+	 * The meta object id for the '{@link gov.redhawk.ide.sdr.impl.SharedLibrariesContainerImpl <em>Shared Libraries Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gov.redhawk.ide.sdr.impl.SharedLibrariesContainerImpl
+	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getSharedLibrariesContainer()
+	 * @generated
+	 */
+	int SHARED_LIBRARIES_CONTAINER = 6;
+	/**
+	 * The feature id for the '<em><b>Properties</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SHARED_LIBRARIES_CONTAINER__PROPERTIES = SOFT_PKG_REGISTRY__PROPERTIES;
+	/**
+	 * The feature id for the '<em><b>Components</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SHARED_LIBRARIES_CONTAINER__COMPONENTS = SOFT_PKG_REGISTRY__COMPONENTS;
+	/**
+	 * The feature id for the '<em><b>Sdr Root</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SHARED_LIBRARIES_CONTAINER__SDR_ROOT = SOFT_PKG_REGISTRY_FEATURE_COUNT + 0;
+	/**
+	 * The number of structural features of the '<em>Shared Libraries Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SHARED_LIBRARIES_CONTAINER_FEATURE_COUNT = SOFT_PKG_REGISTRY_FEATURE_COUNT + 1;
+	/**
 	 * The meta object id for the '{@link gov.redhawk.ide.sdr.impl.NodesContainerImpl <em>Nodes Container</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -439,7 +488,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getNodesContainer()
 	 * @generated
 	 */
-	int NODES_CONTAINER = 6;
+	int NODES_CONTAINER = 7;
 	/**
 	 * The feature id for the '<em><b>Sdr Root</b></em>' container reference.
 	 * <!-- begin-user-doc -->
@@ -472,7 +521,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getStringToAbstractProperty()
 	 * @generated
 	 */
-	int STRING_TO_ABSTRACT_PROPERTY = 7;
+	int STRING_TO_ABSTRACT_PROPERTY = 8;
 	/**
 	 * The feature id for the '<em><b>Key</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -505,7 +554,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getLoadState()
 	 * @generated
 	 */
-	int LOAD_STATE = 10;
+	int LOAD_STATE = 11;
 	/**
 	 * The meta object id for the '<em>IStatus</em>' data type.
 	 * <!-- begin-user-doc -->
@@ -514,7 +563,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getIStatus()
 	 * @generated
 	 */
-	int ISTATUS = 11;
+	int ISTATUS = 12;
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.sdr.SdrRoot <em>Root</em>}'.
@@ -602,6 +651,17 @@ public interface SdrPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getSdrRoot_NodesContainer();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link gov.redhawk.ide.sdr.SdrRoot#getSharedLibrariesContainer <em>Shared Libraries Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Shared Libraries Container</em>'.
+	 * @see gov.redhawk.ide.sdr.SdrRoot#getSharedLibrariesContainer()
+	 * @see #getSdrRoot()
+	 * @generated
+	 */
+	EReference getSdrRoot_SharedLibrariesContainer();
 
 	/**
 	 * Returns the meta object for the reference '{@link gov.redhawk.ide.sdr.SdrRoot#getDomainConfiguration <em>Domain Configuration</em>}'.
@@ -773,6 +833,27 @@ public interface SdrPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getServicesContainer_SdrRoot();
+
+	/**
+	 * Returns the meta object for class '{@link gov.redhawk.ide.sdr.SharedLibrariesContainer <em>Shared Libraries Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Shared Libraries Container</em>'.
+	 * @see gov.redhawk.ide.sdr.SharedLibrariesContainer
+	 * @generated
+	 */
+	EClass getSharedLibrariesContainer();
+
+	/**
+	 * Returns the meta object for the container reference '{@link gov.redhawk.ide.sdr.SharedLibrariesContainer#getSdrRoot <em>Sdr Root</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the container reference '<em>Sdr Root</em>'.
+	 * @see gov.redhawk.ide.sdr.SharedLibrariesContainer#getSdrRoot()
+	 * @see #getSharedLibrariesContainer()
+	 * @generated
+	 */
+	EReference getSharedLibrariesContainer_SdrRoot();
 
 	/**
 	 * Returns the meta object for class '{@link gov.redhawk.ide.sdr.NodesContainer <em>Nodes Container</em>}'.
@@ -985,6 +1066,13 @@ public interface SdrPackage extends EPackage {
 		 */
 		EReference SDR_ROOT__NODES_CONTAINER = eINSTANCE.getSdrRoot_NodesContainer();
 		/**
+		 * The meta object literal for the '<em><b>Shared Libraries Container</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SDR_ROOT__SHARED_LIBRARIES_CONTAINER = eINSTANCE.getSdrRoot_SharedLibrariesContainer();
+		/**
 		 * The meta object literal for the '<em><b>Domain Configuration</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1106,6 +1194,22 @@ public interface SdrPackage extends EPackage {
 		 * @generated
 		 */
 		EReference SERVICES_CONTAINER__SDR_ROOT = eINSTANCE.getServicesContainer_SdrRoot();
+		/**
+		 * The meta object literal for the '{@link gov.redhawk.ide.sdr.impl.SharedLibrariesContainerImpl <em>Shared Libraries Container</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see gov.redhawk.ide.sdr.impl.SharedLibrariesContainerImpl
+		 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getSharedLibrariesContainer()
+		 * @generated
+		 */
+		EClass SHARED_LIBRARIES_CONTAINER = eINSTANCE.getSharedLibrariesContainer();
+		/**
+		 * The meta object literal for the '<em><b>Sdr Root</b></em>' container reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SHARED_LIBRARIES_CONTAINER__SDR_ROOT = eINSTANCE.getSharedLibrariesContainer_SdrRoot();
 		/**
 		 * The meta object literal for the '{@link gov.redhawk.ide.sdr.impl.NodesContainerImpl <em>Nodes Container</em>}' class.
 		 * <!-- begin-user-doc -->

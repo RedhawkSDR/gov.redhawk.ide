@@ -64,8 +64,9 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	 */
 	@Override
 	public SdrRoot getSdrRoot() {
-		if (eContainerFeatureID() != SdrPackage.SERVICES_CONTAINER__SDR_ROOT) return null;
-		return (SdrRoot)eInternalContainer();
+		if (eContainerFeatureID() != SdrPackage.SERVICES_CONTAINER__SDR_ROOT)
+			return null;
+		return (SdrRoot) eInternalContainer();
 	}
 
 	/**
@@ -74,7 +75,7 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	 * @generated
 	 */
 	public NotificationChain basicSetSdrRoot(SdrRoot newSdrRoot, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject)newSdrRoot, SdrPackage.SERVICES_CONTAINER__SDR_ROOT, msgs);
+		msgs = eBasicSetContainer((InternalEObject) newSdrRoot, SdrPackage.SERVICES_CONTAINER__SDR_ROOT, msgs);
 		return msgs;
 	}
 
@@ -91,11 +92,11 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
 			if (newSdrRoot != null)
-				msgs = ((InternalEObject)newSdrRoot).eInverseAdd(this, SdrPackage.SDR_ROOT__SERVICES_CONTAINER, SdrRoot.class, msgs);
+				msgs = ((InternalEObject) newSdrRoot).eInverseAdd(this, SdrPackage.SDR_ROOT__SERVICES_CONTAINER, SdrRoot.class, msgs);
 			msgs = basicSetSdrRoot(newSdrRoot, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.SERVICES_CONTAINER__SDR_ROOT, newSdrRoot, newSdrRoot));
 	}
 
@@ -107,10 +108,10 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
-				if (eInternalContainer() != null)
-					msgs = eBasicRemoveFromContainer(msgs);
-				return basicSetSdrRoot((SdrRoot)otherEnd, msgs);
+		case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
+			if (eInternalContainer() != null)
+				msgs = eBasicRemoveFromContainer(msgs);
+			return basicSetSdrRoot((SdrRoot) otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -123,8 +124,8 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
-				return basicSetSdrRoot(null, msgs);
+		case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
+			return basicSetSdrRoot(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -137,8 +138,8 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	@Override
 	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
 		switch (eContainerFeatureID()) {
-			case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
-				return eInternalContainer().eInverseRemove(this, SdrPackage.SDR_ROOT__SERVICES_CONTAINER, SdrRoot.class, msgs);
+		case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
+			return eInternalContainer().eInverseRemove(this, SdrPackage.SDR_ROOT__SERVICES_CONTAINER, SdrRoot.class, msgs);
 		}
 		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
@@ -151,8 +152,8 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
-				return getSdrRoot();
+		case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
+			return getSdrRoot();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -165,9 +166,9 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
-				setSdrRoot((SdrRoot)newValue);
-				return;
+		case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
+			setSdrRoot((SdrRoot) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -180,9 +181,9 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
-				setSdrRoot((SdrRoot)null);
-				return;
+		case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
+			setSdrRoot((SdrRoot) null);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -195,8 +196,8 @@ public class ServicesContainerImpl extends SoftPkgRegistryImpl implements Servic
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
-				return getSdrRoot() != null;
+		case SdrPackage.SERVICES_CONTAINER__SDR_ROOT:
+			return getSdrRoot() != null;
 		}
 		return super.eIsSet(featureID);
 	}

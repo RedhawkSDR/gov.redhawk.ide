@@ -217,6 +217,29 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link gov.redhawk.ide.sdr.SharedLibrariesContainer} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected SharedLibrariesContainerItemProvider sharedLibrariesContainerItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link gov.redhawk.ide.sdr.SharedLibrariesContainer}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createSharedLibrariesContainerAdapter() {
+		if (sharedLibrariesContainerItemProvider == null) {
+			sharedLibrariesContainerItemProvider = new SharedLibrariesContainerItemProvider(this);
+		}
+
+		return sharedLibrariesContainerItemProvider;
+	}
+
+	/**
 	 * This keeps track of the one adapter used for all {@link gov.redhawk.ide.sdr.NodesContainer} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -379,6 +402,8 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 			devicesContainerItemProvider.dispose();
 		if (servicesContainerItemProvider != null)
 			servicesContainerItemProvider.dispose();
+		if (sharedLibrariesContainerItemProvider != null)
+			sharedLibrariesContainerItemProvider.dispose();
 		if (nodesContainerItemProvider != null)
 			nodesContainerItemProvider.dispose();
 		if (stringToAbstractPropertyItemProvider != null)

@@ -11,6 +11,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.util;
 
+import gov.redhawk.ide.sdr.*;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
@@ -118,6 +119,11 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 		}
 
 		@Override
+		public Adapter caseSharedLibrariesContainer(SharedLibrariesContainer object) {
+			return createSharedLibrariesContainerAdapter();
+		}
+
+		@Override
 		public Adapter caseNodesContainer(NodesContainer object) {
 			return createNodesContainerAdapter();
 		}
@@ -193,7 +199,6 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 	 * @return the new adapter.
 	 * @see gov.redhawk.ide.sdr.ComponentsSubContainer
 	 * @generated
-	 * @since 9.0
 	 */
 	public Adapter createComponentsSubContainerAdapter() {
 		return null;
@@ -238,6 +243,20 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createServicesContainerAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.sdr.SharedLibrariesContainer <em>Shared Libraries Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see gov.redhawk.ide.sdr.SharedLibrariesContainer
+	 * @generated
+	 */
+	public Adapter createSharedLibrariesContainerAdapter() {
 		return null;
 	}
 

@@ -11,7 +11,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.provider;
 
-
 import gov.redhawk.ide.sdr.SdrPackage;
 
 import java.util.Collection;
@@ -39,14 +38,8 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * <!-- end-user-doc -->
  * @generated
  */
-public class StringToAbstractPropertyItemProvider
-	extends ItemProviderAdapter
-	implements
-		IEditingDomainItemProvider,
-		IStructuredItemContentProvider,
-		ITreeItemContentProvider,
-		IItemLabelProvider,
-		IItemPropertySource {
+public class StringToAbstractPropertyItemProvider extends ItemProviderAdapter implements IEditingDomainItemProvider, IStructuredItemContentProvider,
+		ITreeItemContentProvider, IItemLabelProvider, IItemPropertySource {
 
 	/**
 	 * This constructs an instance from a factory and a notifier.
@@ -82,19 +75,10 @@ public class StringToAbstractPropertyItemProvider
 	 * @generated
 	 */
 	protected void addKeyPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_StringToAbstractProperty_key_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_StringToAbstractProperty_key_feature", "_UI_StringToAbstractProperty_type"),
-				 SdrPackage.Literals.STRING_TO_ABSTRACT_PROPERTY__KEY,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
+		itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+			getString("_UI_StringToAbstractProperty_key_feature"),
+			getString("_UI_PropertyDescriptor_description", "_UI_StringToAbstractProperty_key_feature", "_UI_StringToAbstractProperty_type"),
+			SdrPackage.Literals.STRING_TO_ABSTRACT_PROPERTY__KEY, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
 	}
 
 	/**
@@ -104,19 +88,10 @@ public class StringToAbstractPropertyItemProvider
 	 * @generated
 	 */
 	protected void addValuePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_StringToAbstractProperty_value_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_StringToAbstractProperty_value_feature", "_UI_StringToAbstractProperty_type"),
-				 SdrPackage.Literals.STRING_TO_ABSTRACT_PROPERTY__VALUE,
-				 true,
-				 false,
-				 true,
-				 null,
-				 null,
-				 null));
+		itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+			getString("_UI_StringToAbstractProperty_value_feature"),
+			getString("_UI_PropertyDescriptor_description", "_UI_StringToAbstractProperty_value_feature", "_UI_StringToAbstractProperty_type"),
+			SdrPackage.Literals.STRING_TO_ABSTRACT_PROPERTY__VALUE, true, false, true, null, null, null));
 	}
 
 	/**
@@ -138,7 +113,7 @@ public class StringToAbstractPropertyItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		Map.Entry<?, ?> stringToAbstractProperty = (Map.Entry<?, ?>)object;
+		Map.Entry< ? , ? > stringToAbstractProperty = (Map.Entry< ? , ? >) object;
 		return "" + stringToAbstractProperty.getKey() + " -> " + stringToAbstractProperty.getValue();
 	}
 
@@ -154,9 +129,9 @@ public class StringToAbstractPropertyItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(Map.Entry.class)) {
-			case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__KEY:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-				return;
+		case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__KEY:
+			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
+			return;
 		}
 		super.notifyChanged(notification);
 	}

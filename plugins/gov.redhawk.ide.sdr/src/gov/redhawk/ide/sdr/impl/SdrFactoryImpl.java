@@ -11,6 +11,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
+import gov.redhawk.ide.sdr.*;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
@@ -89,6 +90,8 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 			return createDevicesContainer();
 		case SdrPackage.SERVICES_CONTAINER:
 			return createServicesContainer();
+		case SdrPackage.SHARED_LIBRARIES_CONTAINER:
+			return createSharedLibrariesContainer();
 		case SdrPackage.NODES_CONTAINER:
 			return createNodesContainer();
 		case SdrPackage.STRING_TO_ABSTRACT_PROPERTY:
@@ -154,7 +157,6 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 9.0
 	 */
 	public ComponentsSubContainer createComponentsSubContainer() {
 		ComponentsSubContainerImpl componentsSubContainer = new ComponentsSubContainerImpl();
@@ -192,6 +194,16 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	public ServicesContainer createServicesContainer() {
 		ServicesContainerImpl servicesContainer = new ServicesContainerImpl();
 		return servicesContainer;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public SharedLibrariesContainer createSharedLibrariesContainer() {
+		SharedLibrariesContainerImpl sharedLibrariesContainer = new SharedLibrariesContainerImpl();
+		return sharedLibrariesContainer;
 	}
 
 	/**

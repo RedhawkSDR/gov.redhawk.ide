@@ -11,38 +11,40 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
-import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
+import gov.redhawk.ide.sdr.SharedLibrariesContainer;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
+
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Devices Container</b></em>'.
+ * An implementation of the model object '<em><b>Shared Libraries Container</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.impl.DevicesContainerImpl#getSdrRoot <em>Sdr Root</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sdr.impl.SharedLibrariesContainerImpl#getSdrRoot <em>Sdr Root</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class DevicesContainerImpl extends SoftPkgRegistryImpl implements DevicesContainer {
-
+public class SharedLibrariesContainerImpl extends SoftPkgRegistryImpl implements SharedLibrariesContainer {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected DevicesContainerImpl() {
+	protected SharedLibrariesContainerImpl() {
 		super();
 	}
 
@@ -53,7 +55,7 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return SdrPackage.Literals.DEVICES_CONTAINER;
+		return SdrPackage.Literals.SHARED_LIBRARIES_CONTAINER;
 	}
 
 	/**
@@ -61,9 +63,8 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public SdrRoot getSdrRoot() {
-		if (eContainerFeatureID() != SdrPackage.DEVICES_CONTAINER__SDR_ROOT)
+		if (eContainerFeatureID() != SdrPackage.SHARED_LIBRARIES_CONTAINER__SDR_ROOT)
 			return null;
 		return (SdrRoot) eInternalContainer();
 	}
@@ -74,7 +75,7 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	 * @generated
 	 */
 	public NotificationChain basicSetSdrRoot(SdrRoot newSdrRoot, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject) newSdrRoot, SdrPackage.DEVICES_CONTAINER__SDR_ROOT, msgs);
+		msgs = eBasicSetContainer((InternalEObject) newSdrRoot, SdrPackage.SHARED_LIBRARIES_CONTAINER__SDR_ROOT, msgs);
 		return msgs;
 	}
 
@@ -84,19 +85,19 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	 * @generated
 	 */
 	public void setSdrRoot(SdrRoot newSdrRoot) {
-		if (newSdrRoot != eInternalContainer() || (eContainerFeatureID() != SdrPackage.DEVICES_CONTAINER__SDR_ROOT && newSdrRoot != null)) {
+		if (newSdrRoot != eInternalContainer() || (eContainerFeatureID() != SdrPackage.SHARED_LIBRARIES_CONTAINER__SDR_ROOT && newSdrRoot != null)) {
 			if (EcoreUtil.isAncestor(this, newSdrRoot))
 				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
 			NotificationChain msgs = null;
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
 			if (newSdrRoot != null)
-				msgs = ((InternalEObject) newSdrRoot).eInverseAdd(this, SdrPackage.SDR_ROOT__DEVICES_CONTAINER, SdrRoot.class, msgs);
+				msgs = ((InternalEObject) newSdrRoot).eInverseAdd(this, SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER, SdrRoot.class, msgs);
 			msgs = basicSetSdrRoot(newSdrRoot, msgs);
 			if (msgs != null)
 				msgs.dispatch();
 		} else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.DEVICES_CONTAINER__SDR_ROOT, newSdrRoot, newSdrRoot));
+			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.SHARED_LIBRARIES_CONTAINER__SDR_ROOT, newSdrRoot, newSdrRoot));
 	}
 
 	/**
@@ -107,7 +108,7 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-		case SdrPackage.DEVICES_CONTAINER__SDR_ROOT:
+		case SdrPackage.SHARED_LIBRARIES_CONTAINER__SDR_ROOT:
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
 			return basicSetSdrRoot((SdrRoot) otherEnd, msgs);
@@ -123,7 +124,7 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-		case SdrPackage.DEVICES_CONTAINER__SDR_ROOT:
+		case SdrPackage.SHARED_LIBRARIES_CONTAINER__SDR_ROOT:
 			return basicSetSdrRoot(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -137,8 +138,8 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	@Override
 	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
 		switch (eContainerFeatureID()) {
-		case SdrPackage.DEVICES_CONTAINER__SDR_ROOT:
-			return eInternalContainer().eInverseRemove(this, SdrPackage.SDR_ROOT__DEVICES_CONTAINER, SdrRoot.class, msgs);
+		case SdrPackage.SHARED_LIBRARIES_CONTAINER__SDR_ROOT:
+			return eInternalContainer().eInverseRemove(this, SdrPackage.SDR_ROOT__SHARED_LIBRARIES_CONTAINER, SdrRoot.class, msgs);
 		}
 		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
@@ -151,7 +152,7 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-		case SdrPackage.DEVICES_CONTAINER__SDR_ROOT:
+		case SdrPackage.SHARED_LIBRARIES_CONTAINER__SDR_ROOT:
 			return getSdrRoot();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -165,7 +166,7 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-		case SdrPackage.DEVICES_CONTAINER__SDR_ROOT:
+		case SdrPackage.SHARED_LIBRARIES_CONTAINER__SDR_ROOT:
 			setSdrRoot((SdrRoot) newValue);
 			return;
 		}
@@ -180,7 +181,7 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-		case SdrPackage.DEVICES_CONTAINER__SDR_ROOT:
+		case SdrPackage.SHARED_LIBRARIES_CONTAINER__SDR_ROOT:
 			setSdrRoot((SdrRoot) null);
 			return;
 		}
@@ -195,10 +196,10 @@ public class DevicesContainerImpl extends SoftPkgRegistryImpl implements Devices
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-		case SdrPackage.DEVICES_CONTAINER__SDR_ROOT:
+		case SdrPackage.SHARED_LIBRARIES_CONTAINER__SDR_ROOT:
 			return getSdrRoot() != null;
 		}
 		return super.eIsSet(featureID);
 	}
 
-} //DevicesContainerImpl
+} //SharedLibrariesContainerImpl

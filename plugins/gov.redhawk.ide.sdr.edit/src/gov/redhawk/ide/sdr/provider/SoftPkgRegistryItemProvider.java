@@ -11,22 +11,14 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.provider;
 
-
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
-
 import java.util.Collection;
 import java.util.List;
-
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
-import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
-import org.eclipse.emf.edit.provider.IItemPropertySource;
-import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
-import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
@@ -36,14 +28,7 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * <!-- end-user-doc -->
  * @generated
  */
-public class SoftPkgRegistryItemProvider
-	extends PropertyRegistryItemProvider
-	implements
-		IEditingDomainItemProvider,
-		IStructuredItemContentProvider,
-		ITreeItemContentProvider,
-		IItemLabelProvider,
-		IItemPropertySource {
+public class SoftPkgRegistryItemProvider extends PropertyRegistryItemProvider {
 
 	/**
 	 * This constructs an instance from a factory and a notifier.
@@ -79,7 +64,7 @@ public class SoftPkgRegistryItemProvider
 	 * @generated
 	 */
 	@Override
-	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
+	public Collection< ? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(SdrPackage.Literals.SOFT_PKG_REGISTRY__COMPONENTS);
@@ -123,9 +108,9 @@ public class SoftPkgRegistryItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(SoftPkgRegistry.class)) {
-			case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
-				return;
+		case SdrPackage.SOFT_PKG_REGISTRY__COMPONENTS:
+			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
+			return;
 		}
 		super.notifyChanged(notification);
 	}

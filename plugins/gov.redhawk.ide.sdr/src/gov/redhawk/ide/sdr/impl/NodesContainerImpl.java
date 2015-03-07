@@ -81,8 +81,9 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	 */
 	@Override
 	public SdrRoot getSdrRoot() {
-		if (eContainerFeatureID() != SdrPackage.NODES_CONTAINER__SDR_ROOT) return null;
-		return (SdrRoot)eInternalContainer();
+		if (eContainerFeatureID() != SdrPackage.NODES_CONTAINER__SDR_ROOT)
+			return null;
+		return (SdrRoot) eInternalContainer();
 	}
 
 	/**
@@ -91,7 +92,7 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	 * @generated
 	 */
 	public NotificationChain basicSetSdrRoot(SdrRoot newSdrRoot, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject)newSdrRoot, SdrPackage.NODES_CONTAINER__SDR_ROOT, msgs);
+		msgs = eBasicSetContainer((InternalEObject) newSdrRoot, SdrPackage.NODES_CONTAINER__SDR_ROOT, msgs);
 		return msgs;
 	}
 
@@ -108,11 +109,11 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
 			if (newSdrRoot != null)
-				msgs = ((InternalEObject)newSdrRoot).eInverseAdd(this, SdrPackage.SDR_ROOT__NODES_CONTAINER, SdrRoot.class, msgs);
+				msgs = ((InternalEObject) newSdrRoot).eInverseAdd(this, SdrPackage.SDR_ROOT__NODES_CONTAINER, SdrRoot.class, msgs);
 			msgs = basicSetSdrRoot(newSdrRoot, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.NODES_CONTAINER__SDR_ROOT, newSdrRoot, newSdrRoot));
 	}
 
@@ -137,10 +138,10 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case SdrPackage.NODES_CONTAINER__SDR_ROOT:
-				if (eInternalContainer() != null)
-					msgs = eBasicRemoveFromContainer(msgs);
-				return basicSetSdrRoot((SdrRoot)otherEnd, msgs);
+		case SdrPackage.NODES_CONTAINER__SDR_ROOT:
+			if (eInternalContainer() != null)
+				msgs = eBasicRemoveFromContainer(msgs);
+			return basicSetSdrRoot((SdrRoot) otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -153,8 +154,8 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case SdrPackage.NODES_CONTAINER__SDR_ROOT:
-				return basicSetSdrRoot(null, msgs);
+		case SdrPackage.NODES_CONTAINER__SDR_ROOT:
+			return basicSetSdrRoot(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -167,8 +168,8 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	@Override
 	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
 		switch (eContainerFeatureID()) {
-			case SdrPackage.NODES_CONTAINER__SDR_ROOT:
-				return eInternalContainer().eInverseRemove(this, SdrPackage.SDR_ROOT__NODES_CONTAINER, SdrRoot.class, msgs);
+		case SdrPackage.NODES_CONTAINER__SDR_ROOT:
+			return eInternalContainer().eInverseRemove(this, SdrPackage.SDR_ROOT__NODES_CONTAINER, SdrRoot.class, msgs);
 		}
 		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
@@ -181,10 +182,10 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case SdrPackage.NODES_CONTAINER__SDR_ROOT:
-				return getSdrRoot();
-			case SdrPackage.NODES_CONTAINER__NODES:
-				return getNodes();
+		case SdrPackage.NODES_CONTAINER__SDR_ROOT:
+			return getSdrRoot();
+		case SdrPackage.NODES_CONTAINER__NODES:
+			return getNodes();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -198,13 +199,13 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case SdrPackage.NODES_CONTAINER__SDR_ROOT:
-				setSdrRoot((SdrRoot)newValue);
-				return;
-			case SdrPackage.NODES_CONTAINER__NODES:
-				getNodes().clear();
-				getNodes().addAll((Collection<? extends DeviceConfiguration>)newValue);
-				return;
+		case SdrPackage.NODES_CONTAINER__SDR_ROOT:
+			setSdrRoot((SdrRoot) newValue);
+			return;
+		case SdrPackage.NODES_CONTAINER__NODES:
+			getNodes().clear();
+			getNodes().addAll((Collection< ? extends DeviceConfiguration>) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -217,12 +218,12 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case SdrPackage.NODES_CONTAINER__SDR_ROOT:
-				setSdrRoot((SdrRoot)null);
-				return;
-			case SdrPackage.NODES_CONTAINER__NODES:
-				getNodes().clear();
-				return;
+		case SdrPackage.NODES_CONTAINER__SDR_ROOT:
+			setSdrRoot((SdrRoot) null);
+			return;
+		case SdrPackage.NODES_CONTAINER__NODES:
+			getNodes().clear();
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -235,10 +236,10 @@ public class NodesContainerImpl extends EObjectImpl implements NodesContainer {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case SdrPackage.NODES_CONTAINER__SDR_ROOT:
-				return getSdrRoot() != null;
-			case SdrPackage.NODES_CONTAINER__NODES:
-				return nodes != null && !nodes.isEmpty();
+		case SdrPackage.NODES_CONTAINER__SDR_ROOT:
+			return getSdrRoot() != null;
+		case SdrPackage.NODES_CONTAINER__NODES:
+			return nodes != null && !nodes.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

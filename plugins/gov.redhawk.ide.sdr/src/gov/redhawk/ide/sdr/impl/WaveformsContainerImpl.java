@@ -81,8 +81,9 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	 */
 	@Override
 	public SdrRoot getSdrRoot() {
-		if (eContainerFeatureID() != SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT) return null;
-		return (SdrRoot)eInternalContainer();
+		if (eContainerFeatureID() != SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT)
+			return null;
+		return (SdrRoot) eInternalContainer();
 	}
 
 	/**
@@ -91,7 +92,7 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	 * @generated
 	 */
 	public NotificationChain basicSetSdrRoot(SdrRoot newSdrRoot, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject)newSdrRoot, SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT, msgs);
+		msgs = eBasicSetContainer((InternalEObject) newSdrRoot, SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT, msgs);
 		return msgs;
 	}
 
@@ -108,11 +109,11 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
 			if (newSdrRoot != null)
-				msgs = ((InternalEObject)newSdrRoot).eInverseAdd(this, SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER, SdrRoot.class, msgs);
+				msgs = ((InternalEObject) newSdrRoot).eInverseAdd(this, SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER, SdrRoot.class, msgs);
 			msgs = basicSetSdrRoot(newSdrRoot, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT, newSdrRoot, newSdrRoot));
 	}
 
@@ -137,10 +138,10 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT:
-				if (eInternalContainer() != null)
-					msgs = eBasicRemoveFromContainer(msgs);
-				return basicSetSdrRoot((SdrRoot)otherEnd, msgs);
+		case SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT:
+			if (eInternalContainer() != null)
+				msgs = eBasicRemoveFromContainer(msgs);
+			return basicSetSdrRoot((SdrRoot) otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -153,8 +154,8 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT:
-				return basicSetSdrRoot(null, msgs);
+		case SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT:
+			return basicSetSdrRoot(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -167,8 +168,8 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	@Override
 	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
 		switch (eContainerFeatureID()) {
-			case SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT:
-				return eInternalContainer().eInverseRemove(this, SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER, SdrRoot.class, msgs);
+		case SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT:
+			return eInternalContainer().eInverseRemove(this, SdrPackage.SDR_ROOT__WAVEFORMS_CONTAINER, SdrRoot.class, msgs);
 		}
 		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
@@ -181,10 +182,10 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT:
-				return getSdrRoot();
-			case SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS:
-				return getWaveforms();
+		case SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT:
+			return getSdrRoot();
+		case SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS:
+			return getWaveforms();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -198,13 +199,13 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT:
-				setSdrRoot((SdrRoot)newValue);
-				return;
-			case SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS:
-				getWaveforms().clear();
-				getWaveforms().addAll((Collection<? extends SoftwareAssembly>)newValue);
-				return;
+		case SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT:
+			setSdrRoot((SdrRoot) newValue);
+			return;
+		case SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS:
+			getWaveforms().clear();
+			getWaveforms().addAll((Collection< ? extends SoftwareAssembly>) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -217,12 +218,12 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT:
-				setSdrRoot((SdrRoot)null);
-				return;
-			case SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS:
-				getWaveforms().clear();
-				return;
+		case SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT:
+			setSdrRoot((SdrRoot) null);
+			return;
+		case SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS:
+			getWaveforms().clear();
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -235,10 +236,10 @@ public class WaveformsContainerImpl extends EObjectImpl implements WaveformsCont
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT:
-				return getSdrRoot() != null;
-			case SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS:
-				return waveforms != null && !waveforms.isEmpty();
+		case SdrPackage.WAVEFORMS_CONTAINER__SDR_ROOT:
+			return getSdrRoot() != null;
+		case SdrPackage.WAVEFORMS_CONTAINER__WAVEFORMS:
+			return waveforms != null && !waveforms.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

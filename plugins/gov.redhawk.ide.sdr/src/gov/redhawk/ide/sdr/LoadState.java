@@ -35,7 +35,8 @@ public enum LoadState implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	UNLOADED(0, "UNLOADED", "UNLOADED"), /**
+	UNLOADED(0, "UNLOADED", "UNLOADED"),
+	/**
 	 * The '<em><b>LOADING</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -43,7 +44,8 @@ public enum LoadState implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	LOADING(1, "LOADING", "LOADING"), /**
+	LOADING(1, "LOADING", "LOADING"),
+	/**
 	 * The '<em><b>LOADED</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -53,7 +55,7 @@ public enum LoadState implements Enumerator {
 	 */
 	LOADED(2, "LOADED", "LOADED");
 
-/**
+	/**
 	 * The '<em><b>UNLOADED</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -67,7 +69,7 @@ public enum LoadState implements Enumerator {
 	 * @ordered
 	 */
 	public static final int UNLOADED_VALUE = 0;
-/**
+	/**
 	 * The '<em><b>LOADING</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -81,7 +83,7 @@ public enum LoadState implements Enumerator {
 	 * @ordered
 	 */
 	public static final int LOADING_VALUE = 1;
-/**
+	/**
 	 * The '<em><b>LOADED</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -95,19 +97,14 @@ public enum LoadState implements Enumerator {
 	 * @ordered
 	 */
 	public static final int LOADED_VALUE = 2;
-/**
+	/**
 	 * An array of all the '<em><b>Load State</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private static final LoadState[] VALUES_ARRAY =
-		new LoadState[] {
-			UNLOADED,
-			LOADING,
-			LOADED,
-		};
-/**
+	private static final LoadState[] VALUES_ARRAY = new LoadState[] { UNLOADED, LOADING, LOADED, };
+	/**
 	 * A public read-only list of all the '<em><b>Load State</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -115,7 +112,7 @@ public enum LoadState implements Enumerator {
 	 */
 	public static final List<LoadState> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
-/**
+	/**
 	 * Returns the '<em><b>Load State</b></em>' literal with the specified literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -131,7 +128,7 @@ public enum LoadState implements Enumerator {
 		return null;
 	}
 
-/**
+	/**
 	 * Returns the '<em><b>Load State</b></em>' literal with the specified name.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -147,7 +144,7 @@ public enum LoadState implements Enumerator {
 		return null;
 	}
 
-/**
+	/**
 	 * Returns the '<em><b>Load State</b></em>' literal with the specified integer value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -155,33 +152,36 @@ public enum LoadState implements Enumerator {
 	 */
 	public static LoadState get(int value) {
 		switch (value) {
-			case UNLOADED_VALUE: return UNLOADED;
-			case LOADING_VALUE: return LOADING;
-			case LOADED_VALUE: return LOADED;
+		case UNLOADED_VALUE:
+			return UNLOADED;
+		case LOADING_VALUE:
+			return LOADING;
+		case LOADED_VALUE:
+			return LOADED;
 		}
 		return null;
 	}
 
-/**
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private final int value;
-/**
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private final String name;
-/**
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	private final String literal;
 
-/**
+	/**
 	 * Only this class can construct instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -193,37 +193,37 @@ public enum LoadState implements Enumerator {
 		this.literal = literal;
 	}
 
-/**
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public int getValue() {
-	  return value;
+		return value;
 	}
 
-/**
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public String getName() {
-	  return name;
+		return name;
 	}
 
-/**
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public String getLiteral() {
-	  return literal;
+		return literal;
 	}
 
-/**
+	/**
 	 * Returns the literal value of the enumerator, which is its string representation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -233,5 +233,5 @@ public enum LoadState implements Enumerator {
 	public String toString() {
 		return literal;
 	}
-	
+
 } //LoadState

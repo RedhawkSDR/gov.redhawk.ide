@@ -87,6 +87,15 @@ public interface SdrFactory extends EFactory {
 	ServicesContainer createServicesContainer();
 
 	/**
+	 * Returns a new object of class '<em>Shared Libraries Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Shared Libraries Container</em>'.
+	 * @generated
+	 */
+	SharedLibrariesContainer createSharedLibrariesContainer();
+
+	/**
 	 * Returns a new object of class '<em>Nodes Container</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

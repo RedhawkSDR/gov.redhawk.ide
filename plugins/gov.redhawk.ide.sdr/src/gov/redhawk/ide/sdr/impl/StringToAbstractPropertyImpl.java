@@ -38,7 +38,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  *
  * @generated
  */
-public class StringToAbstractPropertyImpl extends EObjectImpl implements BasicEMap.Entry<String,AbstractProperty> {
+public class StringToAbstractPropertyImpl extends EObjectImpl implements BasicEMap.Entry<String, AbstractProperty> {
 
 	/**
 	 * The default value of the '{@link #getTypedKey() <em>Key</em>}' attribute.
@@ -115,8 +115,8 @@ public class StringToAbstractPropertyImpl extends EObjectImpl implements BasicEM
 	 */
 	public AbstractProperty getTypedValue() {
 		if (value != null && value.eIsProxy()) {
-			InternalEObject oldValue = (InternalEObject)value;
-			value = (AbstractProperty)eResolveProxy(oldValue);
+			InternalEObject oldValue = (InternalEObject) value;
+			value = (AbstractProperty) eResolveProxy(oldValue);
 			if (value != oldValue) {
 				if (eNotificationRequired())
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, SdrPackage.STRING_TO_ABSTRACT_PROPERTY__VALUE, oldValue, value));
@@ -154,11 +154,12 @@ public class StringToAbstractPropertyImpl extends EObjectImpl implements BasicEM
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__KEY:
-				return getTypedKey();
-			case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__VALUE:
-				if (resolve) return getTypedValue();
-				return basicGetTypedValue();
+		case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__KEY:
+			return getTypedKey();
+		case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__VALUE:
+			if (resolve)
+				return getTypedValue();
+			return basicGetTypedValue();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -171,12 +172,12 @@ public class StringToAbstractPropertyImpl extends EObjectImpl implements BasicEM
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__KEY:
-				setTypedKey((String)newValue);
-				return;
-			case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__VALUE:
-				setTypedValue((AbstractProperty)newValue);
-				return;
+		case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__KEY:
+			setTypedKey((String) newValue);
+			return;
+		case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__VALUE:
+			setTypedValue((AbstractProperty) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -189,12 +190,12 @@ public class StringToAbstractPropertyImpl extends EObjectImpl implements BasicEM
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__KEY:
-				setTypedKey(KEY_EDEFAULT);
-				return;
-			case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__VALUE:
-				setTypedValue((AbstractProperty)null);
-				return;
+		case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__KEY:
+			setTypedKey(KEY_EDEFAULT);
+			return;
+		case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__VALUE:
+			setTypedValue((AbstractProperty) null);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -207,10 +208,10 @@ public class StringToAbstractPropertyImpl extends EObjectImpl implements BasicEM
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__KEY:
-				return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
-			case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__VALUE:
-				return value != null;
+		case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__KEY:
+			return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
+		case SdrPackage.STRING_TO_ABSTRACT_PROPERTY__VALUE:
+			return value != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -222,7 +223,8 @@ public class StringToAbstractPropertyImpl extends EObjectImpl implements BasicEM
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (key: ");
@@ -312,7 +314,7 @@ public class StringToAbstractPropertyImpl extends EObjectImpl implements BasicEM
 	@SuppressWarnings("unchecked")
 	public EMap<String, AbstractProperty> getEMap() {
 		EObject container = eContainer();
-		return container == null ? null : (EMap<String, AbstractProperty>)container.eGet(eContainmentFeature());
+		return container == null ? null : (EMap<String, AbstractProperty>) container.eGet(eContainmentFeature());
 	}
 
 } //StringToAbstractPropertyImpl

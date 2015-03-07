@@ -77,7 +77,8 @@ public abstract class PropertyRegistryImpl extends EObjectImpl implements Proper
 	@Override
 	public EMap<String, AbstractProperty> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String,AbstractProperty>(SdrPackage.Literals.STRING_TO_ABSTRACT_PROPERTY, StringToAbstractPropertyImpl.class, this, SdrPackage.PROPERTY_REGISTRY__PROPERTIES);
+			properties = new EcoreEMap<String, AbstractProperty>(SdrPackage.Literals.STRING_TO_ABSTRACT_PROPERTY, StringToAbstractPropertyImpl.class, this,
+				SdrPackage.PROPERTY_REGISTRY__PROPERTIES);
 		}
 		return properties;
 	}
@@ -90,8 +91,8 @@ public abstract class PropertyRegistryImpl extends EObjectImpl implements Proper
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case SdrPackage.PROPERTY_REGISTRY__PROPERTIES:
-				return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
+		case SdrPackage.PROPERTY_REGISTRY__PROPERTIES:
+			return ((InternalEList< ? >) getProperties()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -104,9 +105,11 @@ public abstract class PropertyRegistryImpl extends EObjectImpl implements Proper
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case SdrPackage.PROPERTY_REGISTRY__PROPERTIES:
-				if (coreType) return getProperties();
-				else return getProperties().map();
+		case SdrPackage.PROPERTY_REGISTRY__PROPERTIES:
+			if (coreType)
+				return getProperties();
+			else
+				return getProperties().map();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -119,9 +122,9 @@ public abstract class PropertyRegistryImpl extends EObjectImpl implements Proper
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case SdrPackage.PROPERTY_REGISTRY__PROPERTIES:
-				((EStructuralFeature.Setting)getProperties()).set(newValue);
-				return;
+		case SdrPackage.PROPERTY_REGISTRY__PROPERTIES:
+			((EStructuralFeature.Setting) getProperties()).set(newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -134,9 +137,9 @@ public abstract class PropertyRegistryImpl extends EObjectImpl implements Proper
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case SdrPackage.PROPERTY_REGISTRY__PROPERTIES:
-				getProperties().clear();
-				return;
+		case SdrPackage.PROPERTY_REGISTRY__PROPERTIES:
+			getProperties().clear();
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -149,8 +152,8 @@ public abstract class PropertyRegistryImpl extends EObjectImpl implements Proper
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case SdrPackage.PROPERTY_REGISTRY__PROPERTIES:
-				return properties != null && !properties.isEmpty();
+		case SdrPackage.PROPERTY_REGISTRY__PROPERTIES:
+			return properties != null && !properties.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
