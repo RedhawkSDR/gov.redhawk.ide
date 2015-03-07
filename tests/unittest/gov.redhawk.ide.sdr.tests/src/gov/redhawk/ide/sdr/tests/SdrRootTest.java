@@ -40,6 +40,7 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
  *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getDevicesContainer() <em>Devices Container</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getServicesContainer() <em>Services Container</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getNodesContainer() <em>Nodes Container</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getSharedLibrariesContainer() <em>Shared Libraries Container</em>}</li>
  *   <li>{@link gov.redhawk.ide.sdr.SdrRoot#getDomainConfiguration() <em>Domain Configuration</em>}</li>
  * </ul>
  * </p>
@@ -204,6 +205,19 @@ public class SdrRootTest extends TestCase {
 		// END GENERATED CODE
 		Assert.assertNotNull("The Nodes Container should not be null.", this.fixture.getNodesContainer());
 		// BEGIN GENERATED CODE
+	}
+
+	/**
+	 * Tests the '{@link gov.redhawk.ide.sdr.SdrRoot#getSharedLibrariesContainer() <em>Shared Libraries Container</em>}' feature getter.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gov.redhawk.ide.sdr.SdrRoot#getSharedLibrariesContainer()
+	 * @generated
+	 */
+	public void testGetSharedLibrariesContainer() {
+		// TODO: implement this feature getter test method
+		// Ensure that you remove @generated or mark it @generated NOT
+		fail();
 	}
 
 	/**
