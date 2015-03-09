@@ -60,6 +60,7 @@ import CF.Device;
 import CF.DeviceManagerOperations;
 import CF.ErrorNumberType;
 import CF.FileSystem;
+import CF.InvalidIdentifier;
 import CF.InvalidObjectReference;
 import CF.LifeCycle;
 import CF.LifeCycleHelper;
@@ -134,6 +135,16 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 	@Override
 	public void query(final PropertiesHolder configProperties) throws UnknownProperties {
 		// Do nothing
+	}
+
+	@Override
+	public String registerPropertyListener(org.omg.CORBA.Object obj, String[] propIds, float interval) throws UnknownProperties, InvalidObjectReference {
+		throw new IllegalStateException("Not implemented");
+	}
+
+	@Override
+	public void unregisterPropertyListener(String id) throws InvalidIdentifier {
+		throw new IllegalStateException("Not implemented");
 	}
 
 	/**

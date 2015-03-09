@@ -60,7 +60,14 @@ public class AnalogDevice extends Device implements ExecutableDeviceOperations {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
+
+	@Override
+	public int executeLinked(String name, DataType[] options, DataType[] parameters, String[] deps) throws InvalidState, InvalidFunction, InvalidParameters,
+		InvalidOptions, InvalidFileName, ExecuteFail {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	@Override
 	public String softwareProfile() {
 		URI uri = URI.createPlatformPluginURI("gov.redhawk.ide.tests.ui/resources/analogDevice/analogDevice.spd.xml", true);

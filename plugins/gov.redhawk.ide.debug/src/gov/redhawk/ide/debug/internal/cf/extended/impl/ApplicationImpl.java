@@ -98,6 +98,8 @@ import CF.ComponentType;
 import CF.DataType;
 import CF.DeviceAssignmentType;
 import CF.ErrorNumberType;
+import CF.InvalidIdentifier;
+import CF.InvalidObjectReference;
 import CF.LogEvent;
 import CF.PortType;
 import CF.PropertiesHolder;
@@ -668,7 +670,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 
 		Map<String, List<DataType>> configMap = new HashMap<String, List<DataType>>();
 		ExternalProperties externalProperties = waveform.getProfileObj().getExternalProperties();
-		
+
 		config: for (DataType t : configProperties) {
 			if (externalProperties != null) {
 				for (ExternalProperty p : externalProperties.getProperties()) {
@@ -680,13 +682,13 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 							configMap.put(p.getCompRefID(), configList);
 						}
 						configList.add(new DataType(p.getPropID(), t.value));
-						
+
 						// External prop, go to new config property item
 						continue config;
 					}
 				}
 			}
-			
+
 			List<DataType> configList = configMap.get(null);
 			if (configList == null) {
 				configList = new ArrayList<DataType>();
@@ -774,6 +776,18 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 		configProperties.value = retVal.toArray(new DataType[retVal.size()]);
 
+	}
+
+	@Override
+	public String registerPropertyListener(org.omg.CORBA.Object obj, String[] propIds, float interval) throws UnknownProperties, InvalidObjectReference {
+		// TODO Auto-generated method stub
+		throw new IllegalStateException("Not implemented");
+	}
+
+	@Override
+	public void unregisterPropertyListener(String id) throws InvalidIdentifier {
+		// TODO Auto-generated method stub
+		throw new IllegalStateException("Not implemented");
 	}
 
 	/**
@@ -987,7 +1001,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean trusted() {
+	public boolean aware() {
 		return true;
 	}
 
