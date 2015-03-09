@@ -129,6 +129,7 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
+	 * @since 5.0
 	 */
 	protected ComponentsSubContainerItemProvider componentsSubContainerItemProvider;
 
@@ -221,6 +222,7 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
+	 * @since 5.0
 	 */
 	protected SharedLibrariesContainerItemProvider sharedLibrariesContainerItemProvider;
 

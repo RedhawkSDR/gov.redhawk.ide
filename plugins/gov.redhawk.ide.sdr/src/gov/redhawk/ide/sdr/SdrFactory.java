@@ -56,6 +56,7 @@ public interface SdrFactory extends EFactory {
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Components Sub Container</em>'.
 	 * @generated
+	 * @since 9.0
 	 */
 	ComponentsSubContainer createComponentsSubContainer();
 
@@ -92,6 +93,7 @@ public interface SdrFactory extends EFactory {
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Shared Libraries Container</em>'.
 	 * @generated
+	 * @since 9.0
 	 */
 	SharedLibrariesContainer createSharedLibrariesContainer();
 

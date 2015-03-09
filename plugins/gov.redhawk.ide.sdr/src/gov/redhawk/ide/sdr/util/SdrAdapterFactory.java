@@ -11,7 +11,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.util;
 
-import gov.redhawk.ide.sdr.*;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
@@ -20,6 +19,7 @@ import gov.redhawk.ide.sdr.PropertyRegistry;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ServicesContainer;
+import gov.redhawk.ide.sdr.SharedLibrariesContainer;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.WaveformsContainer;
 
@@ -199,6 +199,7 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 	 * @return the new adapter.
 	 * @see gov.redhawk.ide.sdr.ComponentsSubContainer
 	 * @generated
+	 * @since 9.0
 	 */
 	public Adapter createComponentsSubContainerAdapter() {
 		return null;
@@ -255,6 +256,7 @@ public class SdrAdapterFactory extends AdapterFactoryImpl {
 	 * @return the new adapter.
 	 * @see gov.redhawk.ide.sdr.SharedLibrariesContainer
 	 * @generated
+	 * @since 9.0
 	 */
 	public Adapter createSharedLibrariesContainerAdapter() {
 		return null;

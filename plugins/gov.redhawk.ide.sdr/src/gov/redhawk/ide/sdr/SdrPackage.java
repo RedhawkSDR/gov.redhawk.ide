@@ -134,6 +134,7 @@ public interface SdrPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
+	 * @since 9.0
 	 */
 	int SDR_ROOT__SHARED_LIBRARIES_CONTAINER = 7;
 	/**
@@ -282,6 +283,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.ComponentsSubContainerImpl
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getComponentsSubContainer()
 	 * @generated
+	 * @since 9.0
 	 */
 	int COMPONENTS_SUB_CONTAINER = 2;
 	/**
@@ -290,6 +292,7 @@ public interface SdrPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
+	 * @since 9.0
 	 */
 	int COMPONENTS_SUB_CONTAINER__PROPERTIES = SOFT_PKG_REGISTRY__PROPERTIES;
 	/**
@@ -298,6 +301,7 @@ public interface SdrPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
+	 * @since 9.0
 	 */
 	int COMPONENTS_SUB_CONTAINER__COMPONENTS = SOFT_PKG_REGISTRY__COMPONENTS;
 	/**
@@ -306,6 +310,7 @@ public interface SdrPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
+	 * @since 9.0
 	 */
 	int COMPONENTS_SUB_CONTAINER__SUB_CONTAINERS = SOFT_PKG_REGISTRY_FEATURE_COUNT + 0;
 	/**
@@ -314,6 +319,7 @@ public interface SdrPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
+	 * @since 9.0
 	 */
 	int COMPONENTS_SUB_CONTAINER__CONTAINER_NAME = SOFT_PKG_REGISTRY_FEATURE_COUNT + 1;
 	/**
@@ -322,6 +328,7 @@ public interface SdrPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
+	 * @since 9.0
 	 */
 	int COMPONENTS_SUB_CONTAINER_FEATURE_COUNT = SOFT_PKG_REGISTRY_FEATURE_COUNT + 2;
 	/**
@@ -446,6 +453,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.impl.SharedLibrariesContainerImpl
 	 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getSharedLibrariesContainer()
 	 * @generated
+	 * @since 9.0
 	 */
 	int SHARED_LIBRARIES_CONTAINER = 6;
 	/**
@@ -454,6 +462,7 @@ public interface SdrPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
+	 * @since 9.0
 	 */
 	int SHARED_LIBRARIES_CONTAINER__PROPERTIES = SOFT_PKG_REGISTRY__PROPERTIES;
 	/**
@@ -462,6 +471,7 @@ public interface SdrPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
+	 * @since 9.0
 	 */
 	int SHARED_LIBRARIES_CONTAINER__COMPONENTS = SOFT_PKG_REGISTRY__COMPONENTS;
 	/**
@@ -470,6 +480,7 @@ public interface SdrPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
+	 * @since 9.0
 	 */
 	int SHARED_LIBRARIES_CONTAINER__SDR_ROOT = SOFT_PKG_REGISTRY_FEATURE_COUNT + 0;
 	/**
@@ -478,6 +489,7 @@ public interface SdrPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
+	 * @since 9.0
 	 */
 	int SHARED_LIBRARIES_CONTAINER_FEATURE_COUNT = SOFT_PKG_REGISTRY_FEATURE_COUNT + 1;
 	/**
@@ -660,6 +672,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.SdrRoot#getSharedLibrariesContainer()
 	 * @see #getSdrRoot()
 	 * @generated
+	 * @since 9.0
 	 */
 	EReference getSdrRoot_SharedLibrariesContainer();
 
@@ -735,6 +748,7 @@ public interface SdrPackage extends EPackage {
 	 * @return the meta object for class '<em>Components Sub Container</em>'.
 	 * @see gov.redhawk.ide.sdr.ComponentsSubContainer
 	 * @generated
+	 * @since 9.0
 	 */
 	EClass getComponentsSubContainer();
 
@@ -746,6 +760,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.ComponentsSubContainer#getSubContainers()
 	 * @see #getComponentsSubContainer()
 	 * @generated
+	 * @since 9.0
 	 */
 	EReference getComponentsSubContainer_SubContainers();
 
@@ -757,6 +772,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.ComponentsSubContainer#getContainerName()
 	 * @see #getComponentsSubContainer()
 	 * @generated
+	 * @since 9.0
 	 */
 	EAttribute getComponentsSubContainer_ContainerName();
 
@@ -841,6 +857,7 @@ public interface SdrPackage extends EPackage {
 	 * @return the meta object for class '<em>Shared Libraries Container</em>'.
 	 * @see gov.redhawk.ide.sdr.SharedLibrariesContainer
 	 * @generated
+	 * @since 9.0
 	 */
 	EClass getSharedLibrariesContainer();
 
@@ -852,6 +869,7 @@ public interface SdrPackage extends EPackage {
 	 * @see gov.redhawk.ide.sdr.SharedLibrariesContainer#getSdrRoot()
 	 * @see #getSharedLibrariesContainer()
 	 * @generated
+	 * @since 9.0
 	 */
 	EReference getSharedLibrariesContainer_SdrRoot();
 
@@ -1070,6 +1088,7 @@ public interface SdrPackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
+		 * @since 9.0
 		 */
 		EReference SDR_ROOT__SHARED_LIBRARIES_CONTAINER = eINSTANCE.getSdrRoot_SharedLibrariesContainer();
 		/**
@@ -1123,6 +1142,7 @@ public interface SdrPackage extends EPackage {
 		 * @see gov.redhawk.ide.sdr.impl.ComponentsSubContainerImpl
 		 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getComponentsSubContainer()
 		 * @generated
+		 * @since 9.0
 		 */
 		EClass COMPONENTS_SUB_CONTAINER = eINSTANCE.getComponentsSubContainer();
 		/**
@@ -1130,6 +1150,7 @@ public interface SdrPackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
+		 * @since 9.0
 		 */
 		EReference COMPONENTS_SUB_CONTAINER__SUB_CONTAINERS = eINSTANCE.getComponentsSubContainer_SubContainers();
 		/**
@@ -1137,6 +1158,7 @@ public interface SdrPackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
+		 * @since 9.0
 		 */
 		EAttribute COMPONENTS_SUB_CONTAINER__CONTAINER_NAME = eINSTANCE.getComponentsSubContainer_ContainerName();
 		/**
@@ -1201,6 +1223,7 @@ public interface SdrPackage extends EPackage {
 		 * @see gov.redhawk.ide.sdr.impl.SharedLibrariesContainerImpl
 		 * @see gov.redhawk.ide.sdr.impl.SdrPackageImpl#getSharedLibrariesContainer()
 		 * @generated
+		 * @since 9.0
 		 */
 		EClass SHARED_LIBRARIES_CONTAINER = eINSTANCE.getSharedLibrariesContainer();
 		/**
@@ -1208,6 +1231,7 @@ public interface SdrPackage extends EPackage {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
+		 * @since 9.0
 		 */
 		EReference SHARED_LIBRARIES_CONTAINER__SDR_ROOT = eINSTANCE.getSharedLibrariesContainer_SdrRoot();
 		/**

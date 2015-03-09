@@ -11,7 +11,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
-import gov.redhawk.ide.sdr.*;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
@@ -21,6 +20,7 @@ import gov.redhawk.ide.sdr.SdrFactory;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ServicesContainer;
+import gov.redhawk.ide.sdr.SharedLibrariesContainer;
 import gov.redhawk.ide.sdr.WaveformsContainer;
 
 import java.util.Map;
@@ -157,6 +157,7 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
+	 * @since 9.0
 	 */
 	public ComponentsSubContainer createComponentsSubContainer() {
 		ComponentsSubContainerImpl componentsSubContainer = new ComponentsSubContainerImpl();
@@ -200,6 +201,7 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
+	 * @since 9.0
 	 */
 	public SharedLibrariesContainer createSharedLibrariesContainer() {
 		SharedLibrariesContainerImpl sharedLibrariesContainer = new SharedLibrariesContainerImpl();

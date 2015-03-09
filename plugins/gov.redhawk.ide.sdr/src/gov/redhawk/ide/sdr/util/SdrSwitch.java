@@ -11,7 +11,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.util;
 
-import gov.redhawk.ide.sdr.*;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
@@ -20,6 +19,7 @@ import gov.redhawk.ide.sdr.PropertyRegistry;
 import gov.redhawk.ide.sdr.SdrPackage;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ServicesContainer;
+import gov.redhawk.ide.sdr.SharedLibrariesContainer;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.WaveformsContainer;
 
@@ -234,6 +234,7 @@ public class SdrSwitch< T > extends Switch<T> {
 	 * @return the result of interpreting the object as an instance of '<em>Components Sub Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
+	 * @since 9.0
 	 */
 	public T caseComponentsSubContainer(ComponentsSubContainer object) {
 		return null;
@@ -294,6 +295,7 @@ public class SdrSwitch< T > extends Switch<T> {
 	 * @return the result of interpreting the object as an instance of '<em>Shared Libraries Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
+	 * @since 9.0
 	 */
 	public T caseSharedLibrariesContainer(SharedLibrariesContainer object) {
 		return null;

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: gov.redhawk.ide.sdr.edit;singleton:=true
-Bundle-Version: 4.2.0.qualifier
+Bundle-Version: 5.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: gov.redhawk.ide.sdr.provider.SdrEditPlugin$Implementation
 Bundle-Vendor: %providerName
@@ -10,7 +10,7 @@ Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: gov.redhawk.ide.sdr.provider
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
- gov.redhawk.ide.sdr;bundle-version="8.0.0";visibility:=reexport,
+ gov.redhawk.ide.sdr;bundle-version="9.0.0";visibility:=reexport,
  org.eclipse.emf.edit;bundle-version="2.8.0";visibility:=reexport,
  mil.jpeojtrs.sca.dcd;bundle-version="2.2.2";visibility:=reexport,
  mil.jpeojtrs.sca.dcd.edit;bundle-version="2.2.2";visibility:=reexport,
