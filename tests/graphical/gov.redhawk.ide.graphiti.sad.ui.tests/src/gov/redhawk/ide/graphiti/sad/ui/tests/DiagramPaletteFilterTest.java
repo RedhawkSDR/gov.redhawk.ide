@@ -20,6 +20,7 @@ import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.palette.PaletteContainer;
+import org.eclipse.gef.palette.PaletteEntry;
 import org.eclipse.gef.palette.PaletteStack;
 import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.swt.widgets.Composite;
@@ -137,11 +138,14 @@ public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 		waveformName = "IDE-962-Test";
 		final String component1 = "SigGen";
 		final String component2 = "HardLimit";
+		// IDE-1112: test presence of namespaced component in palette
+		final String component3 = "ide1112.test.name.spaced.comp1";
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		final SWTBotGefEditor editor = gefBot.gefEditor(waveformName);
 
 		Assert.assertTrue(toolIsPresent(editor, component1));
 		Assert.assertTrue(toolIsPresent(editor, component2));
+		Assert.assertTrue(toolIsPresent(editor, component3));
 
 		FilterRunnable filterer = new FilterRunnable(editor);
 		filterer.setFilterString("s");
@@ -150,24 +154,56 @@ public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 
 		Assert.assertTrue(toolIsPresent(editor, component1));
 		Assert.assertFalse(toolIsPresent(editor, component2));
+		Assert.assertTrue(toolIsPresent(editor, component3));
 		
 		filterer.setFilterString("sh");
 
 		Assert.assertFalse(toolIsPresent(editor, component1));
 		Assert.assertFalse(toolIsPresent(editor, component2));
+		Assert.assertFalse(toolIsPresent(editor, component3));
 
 		filterer.setFilterString("h");
 
 		Assert.assertFalse(toolIsPresent(editor, component1));
 		Assert.assertTrue(toolIsPresent(editor, component2));
+		Assert.assertFalse(toolIsPresent(editor, component3));
+
+		filterer.setFilterString(".");
+
+		Assert.assertFalse(toolIsPresent(editor, component1));
+		Assert.assertFalse(toolIsPresent(editor, component2));
+		Assert.assertTrue(toolIsPresent(editor, component3));
 
 		filterer.setFilterString("");
 
 		Assert.assertTrue(toolIsPresent(editor, component1));
 		Assert.assertTrue(toolIsPresent(editor, component2));
+		Assert.assertTrue(toolIsPresent(editor, component3));
 	}
 	
 	private boolean toolIsPresent(SWTBotGefEditor editor, final String label) {
+		if (label.contains(".")) {
+			String[] segments = label.split("\\.");
+			int numFolders = segments.length - 1;
+			try {
+				editor.activateTool(segments[numFolders]);
+			} catch (WidgetNotFoundException e) {
+				return false;
+			}
+			PaletteEntry entry = editor.getActiveTool();
+			for (int index = numFolders - 1; index >= 0; --index) {
+				if (segments[index].equals(entry.getParent().getLabel())) {
+					entry = entry.getParent();
+				} else {
+					return false;
+				}
+			}
+			return true;
+		}
+		return simpleToolIsPresent(editor, label);
+	}
+	
+	private boolean simpleToolIsPresent(SWTBotGefEditor editor, final String label) {
 		String[] impls = new String[] {"",  " (cpp)", " (java)", " (python)"};
 		for (String impl: impls) {
 			try {
