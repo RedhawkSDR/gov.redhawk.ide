@@ -21,6 +21,7 @@ import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
 import gov.redhawk.sca.util.Debug;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -1356,7 +1357,7 @@ public class NotifyingNamingContextImpl extends EObjectImpl implements Notifying
 
 	@Override
 	public NameComponent[] to_name(final String sn) throws InvalidName {
-		return Name.toName(sn);
+		return Name.toName(sn.replace('.', File.separatorChar));
 	}
 
 	/**

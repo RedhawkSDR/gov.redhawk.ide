@@ -48,7 +48,12 @@ public class NameBindingResolver extends AbstractLauncherResolver {
 		NamingContextExt namingContext = null;
 		try {
 			namingContext = NamingContextExtHelper.narrow(session.getOrb().string_to_object(namingContextIOR));
-			final String name = spd.getName();
+			String tmpName = spd.getName();
+			int lastDot = tmpName.lastIndexOf('.');
+			if (lastDot > -1) {
+				tmpName = tmpName.substring(lastDot + 1);
+			}
+			final String name = tmpName;
 			String retVal = name;
 			for (int i = 1; true; i++) {
 				org.omg.CORBA.Object ref = null;
