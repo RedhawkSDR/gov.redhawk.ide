@@ -17,6 +17,7 @@ import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
 import gov.redhawk.ide.sdr.LoadState;
 import gov.redhawk.ide.sdr.NodesContainer;
+import gov.redhawk.ide.sdr.NodesSubContainer;
 import gov.redhawk.ide.sdr.PropertyRegistry;
 import gov.redhawk.ide.sdr.SdrFactory;
 import gov.redhawk.ide.sdr.SdrPackage;
@@ -26,6 +27,7 @@ import gov.redhawk.ide.sdr.SharedLibrariesContainer;
 import gov.redhawk.ide.sdr.SoftPkgRegistry;
 import gov.redhawk.ide.sdr.WaveformsContainer;
 
+import gov.redhawk.ide.sdr.WaveformsSubContainer;
 import java.util.Map;
 
 import mil.jpeojtrs.sca.dcd.DcdPackage;
@@ -82,6 +84,12 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass waveformsSubContainerEClass = null;
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass devicesContainerEClass = null;
 	/**
 	 * <!-- begin-user-doc -->
@@ -101,6 +109,12 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * @generated
 	 */
 	private EClass nodesContainerEClass = null;
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass nodesSubContainerEClass = null;
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -285,7 +299,6 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 9.0
 	 */
 	public EReference getSdrRoot_SharedLibrariesContainer() {
 		return (EReference) sdrRootEClass.getEStructuralFeatures().get(7);
@@ -355,7 +368,6 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 9.0
 	 */
 	public EClass getComponentsSubContainer() {
 		return componentsSubContainerEClass;
@@ -365,7 +377,6 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 9.0
 	 */
 	public EReference getComponentsSubContainer_SubContainers() {
 		return (EReference) componentsSubContainerEClass.getEStructuralFeatures().get(0);
@@ -375,7 +386,6 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 9.0
 	 */
 	public EAttribute getComponentsSubContainer_ContainerName() {
 		return (EAttribute) componentsSubContainerEClass.getEStructuralFeatures().get(1);
@@ -409,6 +419,42 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	@Override
 	public EReference getWaveformsContainer_Waveforms() {
 		return (EReference) waveformsContainerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getWaveformsSubContainer() {
+		return waveformsSubContainerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getWaveformsSubContainer_SubContainers() {
+		return (EReference) waveformsSubContainerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getWaveformsSubContainer_ContainerName() {
+		return (EAttribute) waveformsSubContainerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getWaveformsSubContainer_Waveforms() {
+		return (EReference) waveformsSubContainerEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -455,7 +501,6 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 9.0
 	 */
 	public EClass getSharedLibrariesContainer() {
 		return sharedLibrariesContainerEClass;
@@ -465,7 +510,6 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 9.0
 	 */
 	public EReference getSharedLibrariesContainer_SdrRoot() {
 		return (EReference) sharedLibrariesContainerEClass.getEStructuralFeatures().get(0);
@@ -499,6 +543,42 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 	@Override
 	public EReference getNodesContainer_Nodes() {
 		return (EReference) nodesContainerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getNodesSubContainer() {
+		return nodesSubContainerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getNodesSubContainer_SubContainers() {
+		return (EReference) nodesSubContainerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getNodesSubContainer_ContainerName() {
+		return (EAttribute) nodesSubContainerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getNodesSubContainer_Nodes() {
+		return (EReference) nodesSubContainerEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -646,6 +726,11 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 		createEReference(waveformsContainerEClass, WAVEFORMS_CONTAINER__SDR_ROOT);
 		createEReference(waveformsContainerEClass, WAVEFORMS_CONTAINER__WAVEFORMS);
 
+		waveformsSubContainerEClass = createEClass(WAVEFORMS_SUB_CONTAINER);
+		createEReference(waveformsSubContainerEClass, WAVEFORMS_SUB_CONTAINER__SUB_CONTAINERS);
+		createEAttribute(waveformsSubContainerEClass, WAVEFORMS_SUB_CONTAINER__CONTAINER_NAME);
+		createEReference(waveformsSubContainerEClass, WAVEFORMS_SUB_CONTAINER__WAVEFORMS);
+
 		devicesContainerEClass = createEClass(DEVICES_CONTAINER);
 		createEReference(devicesContainerEClass, DEVICES_CONTAINER__SDR_ROOT);
 
@@ -658,6 +743,11 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 		nodesContainerEClass = createEClass(NODES_CONTAINER);
 		createEReference(nodesContainerEClass, NODES_CONTAINER__SDR_ROOT);
 		createEReference(nodesContainerEClass, NODES_CONTAINER__NODES);
+
+		nodesSubContainerEClass = createEClass(NODES_SUB_CONTAINER);
+		createEReference(nodesSubContainerEClass, NODES_SUB_CONTAINER__SUB_CONTAINERS);
+		createEAttribute(nodesSubContainerEClass, NODES_SUB_CONTAINER__CONTAINER_NAME);
+		createEReference(nodesSubContainerEClass, NODES_SUB_CONTAINER__NODES);
 
 		stringToAbstractPropertyEClass = createEClass(STRING_TO_ABSTRACT_PROPERTY);
 		createEAttribute(stringToAbstractPropertyEClass, STRING_TO_ABSTRACT_PROPERTY__KEY);
@@ -789,6 +879,15 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 		initEReference(getWaveformsContainer_Waveforms(), theSadPackage.getSoftwareAssembly(), null, "waveforms", null, 0, -1, WaveformsContainer.class,
 			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+		initEClass(waveformsSubContainerEClass, WaveformsSubContainer.class, "WaveformsSubContainer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getWaveformsSubContainer_SubContainers(), this.getWaveformsSubContainer(), null, "subContainers", null, 0, -1,
+			WaveformsSubContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED,
+			IS_ORDERED);
+		initEAttribute(getWaveformsSubContainer_ContainerName(), theXMLTypePackage.getString(), "containerName", null, 0, 1, WaveformsSubContainer.class,
+			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getWaveformsSubContainer_Waveforms(), theSadPackage.getSoftwareAssembly(), null, "waveforms", null, 0, -1, WaveformsSubContainer.class,
+			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
 		initEClass(devicesContainerEClass, DevicesContainer.class, "DevicesContainer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getDevicesContainer_SdrRoot(), this.getSdrRoot(), this.getSdrRoot_DevicesContainer(), "sdrRoot", null, 0, 1, DevicesContainer.class,
 			IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -808,6 +907,14 @@ public class SdrPackageImpl extends EPackageImpl implements SdrPackage {
 			IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getNodesContainer_Nodes(), theDcdPackage.getDeviceConfiguration(), null, "nodes", null, 0, -1, NodesContainer.class, !IS_TRANSIENT,
 			!IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(nodesSubContainerEClass, NodesSubContainer.class, "NodesSubContainer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getNodesSubContainer_SubContainers(), this.getNodesSubContainer(), null, "subContainers", null, 0, -1, NodesSubContainer.class,
+			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getNodesSubContainer_ContainerName(), theXMLTypePackage.getString(), "containerName", null, 0, 1, NodesSubContainer.class,
+			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getNodesSubContainer_Nodes(), theDcdPackage.getDeviceConfiguration(), null, "nodes", null, 0, -1, NodesSubContainer.class,
+			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(stringToAbstractPropertyEClass, Map.Entry.class, "StringToAbstractProperty", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getStringToAbstractProperty_Key(), thePrfPackage.getDceUUID(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE,

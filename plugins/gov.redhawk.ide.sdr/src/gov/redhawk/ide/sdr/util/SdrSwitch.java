@@ -11,6 +11,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.util;
 
+import gov.redhawk.ide.sdr.*;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
@@ -125,6 +126,13 @@ public class SdrSwitch< T > extends Switch<T> {
 				result = defaultCase(theEObject);
 			return result;
 		}
+		case SdrPackage.WAVEFORMS_SUB_CONTAINER: {
+			WaveformsSubContainer waveformsSubContainer = (WaveformsSubContainer) theEObject;
+			T result = caseWaveformsSubContainer(waveformsSubContainer);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
 		case SdrPackage.DEVICES_CONTAINER: {
 			DevicesContainer devicesContainer = (DevicesContainer) theEObject;
 			T result = caseDevicesContainer(devicesContainer);
@@ -161,6 +169,13 @@ public class SdrSwitch< T > extends Switch<T> {
 		case SdrPackage.NODES_CONTAINER: {
 			NodesContainer nodesContainer = (NodesContainer) theEObject;
 			T result = caseNodesContainer(nodesContainer);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
+		case SdrPackage.NODES_SUB_CONTAINER: {
+			NodesSubContainer nodesSubContainer = (NodesSubContainer) theEObject;
+			T result = caseNodesSubContainer(nodesSubContainer);
 			if (result == null)
 				result = defaultCase(theEObject);
 			return result;
@@ -234,7 +249,6 @@ public class SdrSwitch< T > extends Switch<T> {
 	 * @return the result of interpreting the object as an instance of '<em>Components Sub Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
-	 * @since 9.0
 	 */
 	public T caseComponentsSubContainer(ComponentsSubContainer object) {
 		return null;
@@ -252,6 +266,21 @@ public class SdrSwitch< T > extends Switch<T> {
 	 * @generated
 	 */
 	public T caseWaveformsContainer(WaveformsContainer object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Waveforms Sub Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Waveforms Sub Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseWaveformsSubContainer(WaveformsSubContainer object) {
 		return null;
 	}
 
@@ -295,7 +324,6 @@ public class SdrSwitch< T > extends Switch<T> {
 	 * @return the result of interpreting the object as an instance of '<em>Shared Libraries Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
-	 * @since 9.0
 	 */
 	public T caseSharedLibrariesContainer(SharedLibrariesContainer object) {
 		return null;
@@ -313,6 +341,21 @@ public class SdrSwitch< T > extends Switch<T> {
 	 * @generated
 	 */
 	public T caseNodesContainer(NodesContainer object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Nodes Sub Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Nodes Sub Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseNodesSubContainer(NodesSubContainer object) {
 		return null;
 	}
 

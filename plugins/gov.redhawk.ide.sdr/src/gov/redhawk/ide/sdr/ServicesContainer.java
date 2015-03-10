@@ -11,7 +11,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr;
 
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Services Container</b></em>'.

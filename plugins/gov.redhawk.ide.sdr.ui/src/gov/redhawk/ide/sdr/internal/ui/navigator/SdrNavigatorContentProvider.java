@@ -13,9 +13,13 @@ package gov.redhawk.ide.sdr.internal.ui.navigator;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
+import gov.redhawk.ide.sdr.NodesContainer;
+import gov.redhawk.ide.sdr.NodesSubContainer;
 import gov.redhawk.ide.sdr.SdrFactory;
 import gov.redhawk.ide.sdr.ServicesContainer;
 import gov.redhawk.ide.sdr.SharedLibrariesContainer;
+import gov.redhawk.ide.sdr.WaveformsContainer;
+import gov.redhawk.ide.sdr.WaveformsSubContainer;
 import gov.redhawk.ide.sdr.ui.SdrContentProvider;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.model.sca.ScaDomainManagerRegistry;
@@ -25,6 +29,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -51,17 +57,23 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 	@Override
 	public Object[] getChildren(final Object parentElement) {
 		final Object element = AdapterFactoryEditingDomain.unwrap(parentElement);
-		if (element instanceof ComponentsContainer || element instanceof DevicesContainer || element instanceof ServicesContainer || element instanceof SharedLibrariesContainer) {
-			List<Object> children = createNameSpaceStructure(Arrays.asList(super.getChildren(parentElement)));
-			return children.toArray(new Object[0]);
-		} else if (element instanceof ComponentsSubContainer) {
-			ComponentsSubContainer container = (ComponentsSubContainer) element;
+		if (element instanceof ComponentsSubContainer || element instanceof WaveformsSubContainer || element instanceof NodesSubContainer) {
 			List<Object> children = new ArrayList<Object>();
+
+			// Add the appropriate sub-container children, which should already contain any spds, sads, or dcds.
+			if (element instanceof ComponentsSubContainer) {
+				children.addAll(((ComponentsSubContainer) element).getSubContainers());
+			} else if (element instanceof WaveformsSubContainer) {
+				children.addAll(((WaveformsSubContainer) element).getSubContainers());
+			} else if (element instanceof NodesSubContainer) {
+				children.addAll(((NodesSubContainer) element).getSubContainers());
+			}
+
 			children.addAll(Arrays.asList(super.getChildren(parentElement)));
-			children.addAll(container.getSubContainers());
 			return children.toArray();
 		} else if (element instanceof EObject) {
-			return super.getChildren(parentElement);
+			List<Object> children = createNameSpaceStructure(element, Arrays.asList(super.getChildren(parentElement)));
+			return children.toArray(new Object[0]);
 		} else {
 			return Collections.EMPTY_LIST.toArray();
 		}
@@ -69,26 +81,64 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 
 	/**
 	 * Searches the list of elements and properly nests any namespaced softpackages
+	 * @param container
 	 */
-	private List<Object> createNameSpaceStructure(List<Object> children) {
-		List<Object> retList = new ArrayList<Object>();
-		List<ComponentsSubContainer> nameSpacedContainers = new ArrayList<ComponentsSubContainer>();
+	private List<Object> createNameSpaceStructure(Object container, List<Object> children) {
 
-		for (Object child : children) {
-			if (child instanceof SoftPkg) {
-				SoftPkg component = (SoftPkg) child;
-				if (component.getName().contains(".")) {
-					ComponentsSubContainer newSubContainer = createSubContainers(component, nameSpacedContainers);
-					if (newSubContainer != null) {
-						nameSpacedContainers.add(newSubContainer);
+		List<Object> retList = new ArrayList<Object>();
+
+		if (container instanceof ComponentsContainer || container instanceof DevicesContainer || container instanceof ServicesContainer
+			|| container instanceof SharedLibrariesContainer) {
+			List<ComponentsSubContainer> nameSpacedContainers = new ArrayList<ComponentsSubContainer>();
+			for (Object child : children) {
+				if (child instanceof SoftPkg) {
+					SoftPkg component = (SoftPkg) child;
+					if (component.getName().contains(".")) {
+						ComponentsSubContainer newSubContainer = createSubContainers(component, nameSpacedContainers);
+						if (newSubContainer != null) {
+							nameSpacedContainers.add(newSubContainer);
+						}
+					} else {
+						retList.add(child);
 					}
-				} else {
-					retList.add(child);
 				}
 			}
+			retList.addAll(nameSpacedContainers);
+		} else if (container instanceof WaveformsContainer) {
+			List<WaveformsSubContainer> nameSpacedContainers = new ArrayList<WaveformsSubContainer>();
+			for (Object child : children) {
+				if (child instanceof SoftwareAssembly) {
+					SoftwareAssembly sad = (SoftwareAssembly) child;
+					if (sad.getName().contains(".")) {
+						WaveformsSubContainer newSubContainer = createSubContainers(sad, nameSpacedContainers);
+						if (newSubContainer != null) {
+							nameSpacedContainers.add(newSubContainer);
+						}
+					} else {
+						retList.add(child);
+					}
+				}
+			}
+			retList.addAll(nameSpacedContainers);
+		} else if (container instanceof NodesContainer) {
+			List<NodesSubContainer> nameSpacedContainers = new ArrayList<NodesSubContainer>();
+			for (Object child : children) {
+				if (child instanceof DeviceConfiguration) {
+					DeviceConfiguration dcd = (DeviceConfiguration) child;
+					if (dcd.getName().contains(".")) {
+						NodesSubContainer newSubContainer = createSubContainers(dcd, nameSpacedContainers);
+						if (newSubContainer != null) {
+							nameSpacedContainers.add(newSubContainer);
+						}
+					} else {
+						retList.add(child);
+					}
+				}
+			}
+			retList.addAll(nameSpacedContainers);
+		} else {
+			return children;
 		}
-
-		retList.addAll(nameSpacedContainers);
 
 		return retList;
 	}
@@ -142,10 +192,142 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 				if (!foundIt) {
 					parent.getSubContainers().add(container);
 				}
-				
+
 				// Add the component to the final subContainer
 				if (i == (numOfContainers - 1)) {
 					container.getComponents().add(component);
+				}
+			}
+
+			containerList.add(container);
+		}
+
+		if (!alreadyExists) {
+			return containerList.get(0);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Utility method used for namespace structure, including reusing existing componentSubContainers
+	 */
+	private WaveformsSubContainer createSubContainers(SoftwareAssembly sad, List<WaveformsSubContainer> nameSpacedContainers) {
+		List<WaveformsSubContainer> containerList = new ArrayList<WaveformsSubContainer>();
+		boolean alreadyExists = false;
+		String[] names = sad.getName().split("\\.");
+		int numOfContainers = names.length - 1;
+
+		// Create a subContainer for all names but the last one (which is used for the component itself)
+		for (int i = 0; i < (numOfContainers); i++) {
+			WaveformsSubContainer container = SdrFactory.eINSTANCE.createWaveformsSubContainer();
+			container.setContainerName(names[i]);
+
+			// For the top level name, check and see if that subContainer already exists
+			if (i == 0) {
+				for (WaveformsSubContainer c : nameSpacedContainers) {
+					if (names[i].equals(c.getContainerName())) {
+						container = c;
+						alreadyExists = true;
+						break;
+					}
+
+				}
+			}
+
+			// Make sure all containers beyond the first are properly nested
+			if (i != 0) {
+				WaveformsSubContainer parent = containerList.get(i - 1);
+
+				// If there are no other subContainers, then add this one
+				if (parent.getSubContainers().isEmpty()) {
+					parent.getSubContainers().add(container);
+				}
+
+				// If there are already subContainers, see if the one we want already exists
+				EList<WaveformsSubContainer> subList = parent.getSubContainers();
+				boolean foundIt = false;
+				for (WaveformsSubContainer c : subList) {
+					if (names[i].equals(c.getContainerName())) {
+						container = c;
+						foundIt = true;
+						break;
+					}
+
+				}
+				if (!foundIt) {
+					parent.getSubContainers().add(container);
+				}
+
+				// Add the waveform to the final subContainer
+				if (i == (numOfContainers - 1)) {
+					container.getWaveforms().add(sad);
+				}
+			}
+
+			containerList.add(container);
+		}
+
+		if (!alreadyExists) {
+			return containerList.get(0);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Utility method used for namespace structure, including reusing existing componentSubContainers
+	 */
+	private NodesSubContainer createSubContainers(DeviceConfiguration dcd, List<NodesSubContainer> nameSpacedContainers) {
+		List<NodesSubContainer> containerList = new ArrayList<NodesSubContainer>();
+		boolean alreadyExists = false;
+		String[] names = dcd.getName().split("\\.");
+		int numOfContainers = names.length - 1;
+
+		// Create a subContainer for all names but the last one (which is used for the component itself)
+		for (int i = 0; i < (numOfContainers); i++) {
+			NodesSubContainer container = SdrFactory.eINSTANCE.createNodesSubContainer();
+			container.setContainerName(names[i]);
+
+			// For the top level name, check and see if that subContainer already exists
+			if (i == 0) {
+				for (NodesSubContainer c : nameSpacedContainers) {
+					if (names[i].equals(c.getContainerName())) {
+						container = c;
+						alreadyExists = true;
+						break;
+					}
+
+				}
+			}
+
+			// Make sure all containers beyond the first are properly nested
+			if (i != 0) {
+				NodesSubContainer parent = containerList.get(i - 1);
+
+				// If there are no other subContainers, then add this one
+				if (parent.getSubContainers().isEmpty()) {
+					parent.getSubContainers().add(container);
+				}
+
+				// If there are already subContainers, see if the one we want already exists
+				EList<NodesSubContainer> subList = parent.getSubContainers();
+				boolean foundIt = false;
+				for (NodesSubContainer c : subList) {
+					if (names[i].equals(c.getContainerName())) {
+						container = c;
+						foundIt = true;
+						break;
+					}
+
+				}
+				if (!foundIt) {
+					parent.getSubContainers().add(container);
+				}
+
+				// Add the waveform to the final subContainer
+				if (i == (numOfContainers - 1)) {
+					container.getNodes().add(dcd);
 				}
 			}
 

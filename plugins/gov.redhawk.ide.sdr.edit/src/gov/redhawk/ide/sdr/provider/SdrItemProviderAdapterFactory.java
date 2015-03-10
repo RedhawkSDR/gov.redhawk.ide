@@ -129,7 +129,6 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 5.0
 	 */
 	protected ComponentsSubContainerItemProvider componentsSubContainerItemProvider;
 
@@ -169,6 +168,29 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 		}
 
 		return waveformsContainerItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link gov.redhawk.ide.sdr.WaveformsSubContainer} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected WaveformsSubContainerItemProvider waveformsSubContainerItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link gov.redhawk.ide.sdr.WaveformsSubContainer}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createWaveformsSubContainerAdapter() {
+		if (waveformsSubContainerItemProvider == null) {
+			waveformsSubContainerItemProvider = new WaveformsSubContainerItemProvider(this);
+		}
+
+		return waveformsSubContainerItemProvider;
 	}
 
 	/**
@@ -222,7 +244,6 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 5.0
 	 */
 	protected SharedLibrariesContainerItemProvider sharedLibrariesContainerItemProvider;
 
@@ -262,6 +283,29 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 		}
 
 		return nodesContainerItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link gov.redhawk.ide.sdr.NodesSubContainer} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected NodesSubContainerItemProvider nodesSubContainerItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link gov.redhawk.ide.sdr.NodesSubContainer}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createNodesSubContainerAdapter() {
+		if (nodesSubContainerItemProvider == null) {
+			nodesSubContainerItemProvider = new NodesSubContainerItemProvider(this);
+		}
+
+		return nodesSubContainerItemProvider;
 	}
 
 	/**
@@ -400,6 +444,8 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 			componentsSubContainerItemProvider.dispose();
 		if (waveformsContainerItemProvider != null)
 			waveformsContainerItemProvider.dispose();
+		if (waveformsSubContainerItemProvider != null)
+			waveformsSubContainerItemProvider.dispose();
 		if (devicesContainerItemProvider != null)
 			devicesContainerItemProvider.dispose();
 		if (servicesContainerItemProvider != null)
@@ -408,6 +454,8 @@ public class SdrItemProviderAdapterFactory extends SdrAdapterFactory implements 
 			sharedLibrariesContainerItemProvider.dispose();
 		if (nodesContainerItemProvider != null)
 			nodesContainerItemProvider.dispose();
+		if (nodesSubContainerItemProvider != null)
+			nodesSubContainerItemProvider.dispose();
 		if (stringToAbstractPropertyItemProvider != null)
 			stringToAbstractPropertyItemProvider.dispose();
 	}

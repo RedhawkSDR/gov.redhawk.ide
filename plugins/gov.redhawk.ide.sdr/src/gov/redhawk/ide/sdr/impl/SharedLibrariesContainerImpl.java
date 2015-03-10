@@ -34,7 +34,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * </p>
  *
  * @generated
- * @since 9.0
  */
 public class SharedLibrariesContainerImpl extends SoftPkgRegistryImpl implements SharedLibrariesContainer {
 	/**

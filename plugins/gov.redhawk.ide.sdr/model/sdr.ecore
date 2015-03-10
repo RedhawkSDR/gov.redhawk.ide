@@ -120,6 +120,13 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="waveforms" upperBound="-1"
         eType="ecore:EClass ../../mil.jpeojtrs.sca.sad/model/sad.ecore#//SoftwareAssembly"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="WaveformsSubContainer">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="subContainers" upperBound="-1"
+        eType="#//WaveformsSubContainer"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="containerName" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="waveforms" upperBound="-1"
+        eType="ecore:EClass ../../mil.jpeojtrs.sca.sad/model/sad.ecore#//SoftwareAssembly"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DevicesContainer" eSuperTypes="#//SoftPkgRegistry">
     <eStructuralFeatures xsi:type="ecore:EReference" name="sdrRoot" eType="#//SdrRoot"
         transient="true" eOpposite="#//SdrRoot/devicesContainer">
@@ -158,6 +165,13 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
         eType="ecore:EClass ../../mil.jpeojtrs.sca.dcd/model/dcd.ecore#//DeviceConfiguration"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NodesSubContainer">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="subContainers" upperBound="-1"
+        eType="#//NodesSubContainer"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="containerName" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
+        eType="ecore:EClass ../../mil.jpeojtrs.sca.dcd/model/dcd.ecore#//DeviceConfiguration"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="LoadState">
     <eLiterals name="UNLOADED"/>
     <eLiterals name="LOADING" value="1"/>
@@ -166,8 +180,8 @@
   <eClassifiers xsi:type="ecore:EDataType" name="IStatus" instanceClassName="org.eclipse.core.runtime.IStatus"
       serializable="false"/>
   <eClassifiers xsi:type="ecore:EClass" name="StringToAbstractProperty" instanceClassName="java.util.Map$Entry">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType ../../mil.jpeojtrs.sca.prf/model/prf.ecore#//DceUUID"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass ../../mil.jpeojtrs.sca.prf/model/prf.ecore#//AbstractProperty"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType platform:/plugin/mil.jpeojtrs.sca.prf/model/prf.ecore#//DceUUID"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass platform:/plugin/mil.jpeojtrs.sca.prf/model/prf.ecore#//AbstractProperty"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PropertyRegistry" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
@@ -175,7 +189,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SoftPkgRegistry" abstract="true" eSuperTypes="#//PropertyRegistry">
     <eOperations name="getSoftPkg" eType="ecore:EClass ../../mil.jpeojtrs.sca.spd/model/spd.ecore#//SoftPkg">
-      <eParameters name="softPkgId" eType="ecore:EDataType ../../mil.jpeojtrs.sca.prf/model/prf.ecore#//DceUUID"/>
+      <eParameters name="softPkgId" eType="ecore:EDataType platform:/plugin/mil.jpeojtrs.sca.prf/model/prf.ecore#//DceUUID"/>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
         eType="ecore:EClass ../../mil.jpeojtrs.sca.spd/model/spd.ecore#//SoftPkg"/>

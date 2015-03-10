@@ -193,7 +193,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * @see #getSharedLibrariesContainer()
 	 * @generated
 	 * @ordered
-	 * @since 9.0
 	 */
 	protected SharedLibrariesContainer sharedLibrariesContainer;
 	/**
@@ -567,7 +566,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 9.0
 	 */
 	public SharedLibrariesContainer getSharedLibrariesContainer() {
 		return sharedLibrariesContainer;
@@ -577,7 +575,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 9.0
 	 */
 	public NotificationChain basicSetSharedLibrariesContainer(SharedLibrariesContainer newSharedLibrariesContainer, NotificationChain msgs) {
 		SharedLibrariesContainer oldSharedLibrariesContainer = sharedLibrariesContainer;
@@ -597,7 +594,6 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 9.0
 	 */
 	public void setSharedLibrariesContainer(SharedLibrariesContainer newSharedLibrariesContainer) {
 		if (newSharedLibrariesContainer != sharedLibrariesContainer) {
@@ -1483,14 +1479,14 @@ public class SdrRootImpl extends EObjectImpl implements SdrRoot {
 		List<SoftPkg> existingSpds = new ArrayList<SoftPkg>();
 		existingSpds.addAll(getComponentsContainer().getComponents());
 		existingSpds.addAll(getSharedLibrariesContainer().getComponents());
-		
+
 		for (SoftPkg spd : existingSpds) {
 			if (PluginUtil.equals(spd.getId(), softPkg.getId())) {
 				// Skip it is already in the SDR
 				return;
 			}
 		}
-		
+
 		if (component != null) {
 			boolean isDevice = false;
 			for (final SupportsInterface iface : component.getComponentFeatures().getSupportsInterface()) {

@@ -182,7 +182,6 @@ public interface SdrRoot extends EObject {
 	 * @see gov.redhawk.ide.sdr.SharedLibrariesContainer#getSdrRoot
 	 * @model opposite="sdrRoot" containment="true" transient="true" derived="true" suppressedSetVisibility="true" suppressedUnsetVisibility="true"
 	 * @generated
-	 * @since 9.0
 	 */
 	SharedLibrariesContainer getSharedLibrariesContainer();
 

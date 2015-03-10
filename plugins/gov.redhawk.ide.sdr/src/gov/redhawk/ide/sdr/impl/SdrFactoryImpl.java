@@ -11,6 +11,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
+import gov.redhawk.ide.sdr.*;
 import gov.redhawk.ide.sdr.ComponentsContainer;
 import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.sdr.DevicesContainer;
@@ -86,6 +87,8 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 			return createComponentsSubContainer();
 		case SdrPackage.WAVEFORMS_CONTAINER:
 			return createWaveformsContainer();
+		case SdrPackage.WAVEFORMS_SUB_CONTAINER:
+			return createWaveformsSubContainer();
 		case SdrPackage.DEVICES_CONTAINER:
 			return createDevicesContainer();
 		case SdrPackage.SERVICES_CONTAINER:
@@ -94,6 +97,8 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 			return createSharedLibrariesContainer();
 		case SdrPackage.NODES_CONTAINER:
 			return createNodesContainer();
+		case SdrPackage.NODES_SUB_CONTAINER:
+			return createNodesSubContainer();
 		case SdrPackage.STRING_TO_ABSTRACT_PROPERTY:
 			return (EObject) createStringToAbstractProperty();
 		default:
@@ -157,7 +162,6 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 9.0
 	 */
 	public ComponentsSubContainer createComponentsSubContainer() {
 		ComponentsSubContainerImpl componentsSubContainer = new ComponentsSubContainerImpl();
@@ -173,6 +177,16 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	public WaveformsContainer createWaveformsContainer() {
 		WaveformsContainerImpl waveformsContainer = new WaveformsContainerImpl();
 		return waveformsContainer;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public WaveformsSubContainer createWaveformsSubContainer() {
+		WaveformsSubContainerImpl waveformsSubContainer = new WaveformsSubContainerImpl();
+		return waveformsSubContainer;
 	}
 
 	/**
@@ -201,7 +215,6 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
-	 * @since 9.0
 	 */
 	public SharedLibrariesContainer createSharedLibrariesContainer() {
 		SharedLibrariesContainerImpl sharedLibrariesContainer = new SharedLibrariesContainerImpl();
@@ -217,6 +230,16 @@ public class SdrFactoryImpl extends EFactoryImpl implements SdrFactory {
 	public NodesContainer createNodesContainer() {
 		NodesContainerImpl nodesContainer = new NodesContainerImpl();
 		return nodesContainer;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NodesSubContainer createNodesSubContainer() {
+		NodesSubContainerImpl nodesSubContainer = new NodesSubContainerImpl();
+		return nodesSubContainer;
 	}
 
 	/**

@@ -56,7 +56,6 @@ public interface SdrFactory extends EFactory {
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Components Sub Container</em>'.
 	 * @generated
-	 * @since 9.0
 	 */
 	ComponentsSubContainer createComponentsSubContainer();
 
@@ -68,6 +67,15 @@ public interface SdrFactory extends EFactory {
 	 * @generated
 	 */
 	WaveformsContainer createWaveformsContainer();
+
+	/**
+	 * Returns a new object of class '<em>Waveforms Sub Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Waveforms Sub Container</em>'.
+	 * @generated
+	 */
+	WaveformsSubContainer createWaveformsSubContainer();
 
 	/**
 	 * Returns a new object of class '<em>Devices Container</em>'.
@@ -93,7 +101,6 @@ public interface SdrFactory extends EFactory {
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Shared Libraries Container</em>'.
 	 * @generated
-	 * @since 9.0
 	 */
 	SharedLibrariesContainer createSharedLibrariesContainer();
 
@@ -105,6 +112,15 @@ public interface SdrFactory extends EFactory {
 	 * @generated
 	 */
 	NodesContainer createNodesContainer();
+
+	/**
+	 * Returns a new object of class '<em>Nodes Sub Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Nodes Sub Container</em>'.
+	 * @generated
+	 */
+	NodesSubContainer createNodesSubContainer();
 
 	/**
 	 * Returns the package supported by this factory.

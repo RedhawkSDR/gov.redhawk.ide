@@ -26,7 +26,6 @@ package gov.redhawk.ide.sdr;
  * @see gov.redhawk.ide.sdr.SdrPackage#getSharedLibrariesContainer()
  * @model
  * @generated
- * @since 9.0
  */
 public interface SharedLibrariesContainer extends SoftPkgRegistry {
 	/**

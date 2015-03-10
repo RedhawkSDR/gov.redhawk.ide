@@ -11,30 +11,34 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr;
 
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+
 import org.eclipse.emf.common.util.EList;
+
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Components Sub Container</b></em>'.
+ * A representation of the model object '<em><b>Nodes Sub Container</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.ComponentsSubContainer#getSubContainers <em>Sub Containers</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.ComponentsSubContainer#getContainerName <em>Container Name</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sdr.NodesSubContainer#getSubContainers <em>Sub Containers</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sdr.NodesSubContainer#getContainerName <em>Container Name</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sdr.NodesSubContainer#getNodes <em>Nodes</em>}</li>
  * </ul>
  * </p>
  *
- * @see gov.redhawk.ide.sdr.SdrPackage#getComponentsSubContainer()
+ * @see gov.redhawk.ide.sdr.SdrPackage#getNodesSubContainer()
  * @model
  * @generated
  */
-public interface ComponentsSubContainer extends SoftPkgRegistry {
-
+public interface NodesSubContainer extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Sub Containers</b></em>' reference list.
-	 * The list contents are of type {@link gov.redhawk.ide.sdr.ComponentsSubContainer}.
+	 * The list contents are of type {@link gov.redhawk.ide.sdr.NodesSubContainer}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Sub Containers</em>' reference list isn't clear,
@@ -42,11 +46,11 @@ public interface ComponentsSubContainer extends SoftPkgRegistry {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Sub Containers</em>' reference list.
-	 * @see gov.redhawk.ide.sdr.SdrPackage#getComponentsSubContainer_SubContainers()
+	 * @see gov.redhawk.ide.sdr.SdrPackage#getNodesSubContainer_SubContainers()
 	 * @model
 	 * @generated
 	 */
-	EList<ComponentsSubContainer> getSubContainers();
+	EList<NodesSubContainer> getSubContainers();
 
 	/**
 	 * Returns the value of the '<em><b>Container Name</b></em>' attribute.
@@ -58,14 +62,14 @@ public interface ComponentsSubContainer extends SoftPkgRegistry {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Container Name</em>' attribute.
 	 * @see #setContainerName(String)
-	 * @see gov.redhawk.ide.sdr.SdrPackage#getComponentsSubContainer_ContainerName()
+	 * @see gov.redhawk.ide.sdr.SdrPackage#getNodesSubContainer_ContainerName()
 	 * @model dataType="org.eclipse.emf.ecore.xml.type.String"
 	 * @generated
 	 */
 	String getContainerName();
 
 	/**
-	 * Sets the value of the '{@link gov.redhawk.ide.sdr.ComponentsSubContainer#getContainerName <em>Container Name</em>}' attribute.
+	 * Sets the value of the '{@link gov.redhawk.ide.sdr.NodesSubContainer#getContainerName <em>Container Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Container Name</em>' attribute.
@@ -73,4 +77,21 @@ public interface ComponentsSubContainer extends SoftPkgRegistry {
 	 * @generated
 	 */
 	void setContainerName(String value);
-} // ComponentsSubContainer
+
+	/**
+	 * Returns the value of the '<em><b>Nodes</b></em>' reference list.
+	 * The list contents are of type {@link mil.jpeojtrs.sca.dcd.DeviceConfiguration}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Nodes</em>' reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Nodes</em>' reference list.
+	 * @see gov.redhawk.ide.sdr.SdrPackage#getNodesSubContainer_Nodes()
+	 * @model
+	 * @generated
+	 */
+	EList<DeviceConfiguration> getNodes();
+
+} // NodesSubContainer

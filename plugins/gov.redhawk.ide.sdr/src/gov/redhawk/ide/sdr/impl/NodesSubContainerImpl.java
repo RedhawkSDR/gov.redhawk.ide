@@ -11,32 +11,40 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sdr.impl;
 
-import gov.redhawk.ide.sdr.ComponentsSubContainer;
+import gov.redhawk.ide.sdr.NodesSubContainer;
 import gov.redhawk.ide.sdr.SdrPackage;
 
 import java.util.Collection;
 
+import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+
 import org.eclipse.emf.common.notify.Notification;
+
 import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EClass;
+
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
+
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Components Sub Container</b></em>'.
+ * An implementation of the model object '<em><b>Nodes Sub Container</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link gov.redhawk.ide.sdr.impl.ComponentsSubContainerImpl#getSubContainers <em>Sub Containers</em>}</li>
- *   <li>{@link gov.redhawk.ide.sdr.impl.ComponentsSubContainerImpl#getContainerName <em>Container Name</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sdr.impl.NodesSubContainerImpl#getSubContainers <em>Sub Containers</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sdr.impl.NodesSubContainerImpl#getContainerName <em>Container Name</em>}</li>
+ *   <li>{@link gov.redhawk.ide.sdr.impl.NodesSubContainerImpl#getNodes <em>Nodes</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class ComponentsSubContainerImpl extends SoftPkgRegistryImpl implements ComponentsSubContainer {
+public class NodesSubContainerImpl extends EObjectImpl implements NodesSubContainer {
 	/**
 	 * The cached value of the '{@link #getSubContainers() <em>Sub Containers</em>}' reference list.
 	 * <!-- begin-user-doc -->
@@ -45,7 +53,7 @@ public class ComponentsSubContainerImpl extends SoftPkgRegistryImpl implements C
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<ComponentsSubContainer> subContainers;
+	protected EList<NodesSubContainer> subContainers;
 
 	/**
 	 * The default value of the '{@link #getContainerName() <em>Container Name</em>}' attribute.
@@ -56,6 +64,7 @@ public class ComponentsSubContainerImpl extends SoftPkgRegistryImpl implements C
 	 * @ordered
 	 */
 	protected static final String CONTAINER_NAME_EDEFAULT = null;
+
 	/**
 	 * The cached value of the '{@link #getContainerName() <em>Container Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -67,11 +76,21 @@ public class ComponentsSubContainerImpl extends SoftPkgRegistryImpl implements C
 	protected String containerName = CONTAINER_NAME_EDEFAULT;
 
 	/**
+	 * The cached value of the '{@link #getNodes() <em>Nodes</em>}' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getNodes()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<DeviceConfiguration> nodes;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ComponentsSubContainerImpl() {
+	protected NodesSubContainerImpl() {
 		super();
 	}
 
@@ -82,7 +101,7 @@ public class ComponentsSubContainerImpl extends SoftPkgRegistryImpl implements C
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return SdrPackage.Literals.COMPONENTS_SUB_CONTAINER;
+		return SdrPackage.Literals.NODES_SUB_CONTAINER;
 	}
 
 	/**
@@ -90,10 +109,9 @@ public class ComponentsSubContainerImpl extends SoftPkgRegistryImpl implements C
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<ComponentsSubContainer> getSubContainers() {
+	public EList<NodesSubContainer> getSubContainers() {
 		if (subContainers == null) {
-			subContainers = new EObjectResolvingEList<ComponentsSubContainer>(ComponentsSubContainer.class, this,
-				SdrPackage.COMPONENTS_SUB_CONTAINER__SUB_CONTAINERS);
+			subContainers = new EObjectResolvingEList<NodesSubContainer>(NodesSubContainer.class, this, SdrPackage.NODES_SUB_CONTAINER__SUB_CONTAINERS);
 		}
 		return subContainers;
 	}
@@ -116,7 +134,19 @@ public class ComponentsSubContainerImpl extends SoftPkgRegistryImpl implements C
 		String oldContainerName = containerName;
 		containerName = newContainerName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.COMPONENTS_SUB_CONTAINER__CONTAINER_NAME, oldContainerName, containerName));
+			eNotify(new ENotificationImpl(this, Notification.SET, SdrPackage.NODES_SUB_CONTAINER__CONTAINER_NAME, oldContainerName, containerName));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EList<DeviceConfiguration> getNodes() {
+		if (nodes == null) {
+			nodes = new EObjectResolvingEList<DeviceConfiguration>(DeviceConfiguration.class, this, SdrPackage.NODES_SUB_CONTAINER__NODES);
+		}
+		return nodes;
 	}
 
 	/**
@@ -127,10 +157,12 @@ public class ComponentsSubContainerImpl extends SoftPkgRegistryImpl implements C
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-		case SdrPackage.COMPONENTS_SUB_CONTAINER__SUB_CONTAINERS:
+		case SdrPackage.NODES_SUB_CONTAINER__SUB_CONTAINERS:
 			return getSubContainers();
-		case SdrPackage.COMPONENTS_SUB_CONTAINER__CONTAINER_NAME:
+		case SdrPackage.NODES_SUB_CONTAINER__CONTAINER_NAME:
 			return getContainerName();
+		case SdrPackage.NODES_SUB_CONTAINER__NODES:
+			return getNodes();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -144,12 +176,16 @@ public class ComponentsSubContainerImpl extends SoftPkgRegistryImpl implements C
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-		case SdrPackage.COMPONENTS_SUB_CONTAINER__SUB_CONTAINERS:
+		case SdrPackage.NODES_SUB_CONTAINER__SUB_CONTAINERS:
 			getSubContainers().clear();
-			getSubContainers().addAll((Collection< ? extends ComponentsSubContainer>) newValue);
+			getSubContainers().addAll((Collection< ? extends NodesSubContainer>) newValue);
 			return;
-		case SdrPackage.COMPONENTS_SUB_CONTAINER__CONTAINER_NAME:
+		case SdrPackage.NODES_SUB_CONTAINER__CONTAINER_NAME:
 			setContainerName((String) newValue);
+			return;
+		case SdrPackage.NODES_SUB_CONTAINER__NODES:
+			getNodes().clear();
+			getNodes().addAll((Collection< ? extends DeviceConfiguration>) newValue);
 			return;
 		}
 		super.eSet(featureID, newValue);
@@ -163,11 +199,14 @@ public class ComponentsSubContainerImpl extends SoftPkgRegistryImpl implements C
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-		case SdrPackage.COMPONENTS_SUB_CONTAINER__SUB_CONTAINERS:
+		case SdrPackage.NODES_SUB_CONTAINER__SUB_CONTAINERS:
 			getSubContainers().clear();
 			return;
-		case SdrPackage.COMPONENTS_SUB_CONTAINER__CONTAINER_NAME:
+		case SdrPackage.NODES_SUB_CONTAINER__CONTAINER_NAME:
 			setContainerName(CONTAINER_NAME_EDEFAULT);
+			return;
+		case SdrPackage.NODES_SUB_CONTAINER__NODES:
+			getNodes().clear();
 			return;
 		}
 		super.eUnset(featureID);
@@ -181,10 +220,12 @@ public class ComponentsSubContainerImpl extends SoftPkgRegistryImpl implements C
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-		case SdrPackage.COMPONENTS_SUB_CONTAINER__SUB_CONTAINERS:
+		case SdrPackage.NODES_SUB_CONTAINER__SUB_CONTAINERS:
 			return subContainers != null && !subContainers.isEmpty();
-		case SdrPackage.COMPONENTS_SUB_CONTAINER__CONTAINER_NAME:
+		case SdrPackage.NODES_SUB_CONTAINER__CONTAINER_NAME:
 			return CONTAINER_NAME_EDEFAULT == null ? containerName != null : !CONTAINER_NAME_EDEFAULT.equals(containerName);
+		case SdrPackage.NODES_SUB_CONTAINER__NODES:
+			return nodes != null && !nodes.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -206,4 +247,4 @@ public class ComponentsSubContainerImpl extends SoftPkgRegistryImpl implements C
 		return result.toString();
 	}
 
-} //ComponentsSubContainerImpl
+} //NodesSubContainerImpl
