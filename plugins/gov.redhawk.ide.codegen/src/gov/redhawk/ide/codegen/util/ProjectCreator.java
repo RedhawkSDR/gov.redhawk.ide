@@ -109,8 +109,6 @@ public abstract class ProjectCreator {
 
 		if (projectLocation != null) {
 			description.setLocationURI(projectLocation);
-		} else {
-			description.setLocationURI(Platform.getLocation().append(projectName.replace('.', File.separatorChar)).toFile().toURI());
 		}
 
 		description.setNatureIds(natureIds.toArray(new String[natureIds.size()]));
