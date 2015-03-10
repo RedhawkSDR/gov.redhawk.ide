@@ -10,25 +10,31 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
+import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+
+import org.eclipse.swtbot.eclipse.finder.waits.Conditions;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 
 /**
  * 
  */
-public class SoftpackageUtils {
+public class SharedLibraryUtils {
 
-	public static final String SOFTPACKAGE_MENU_NAME = "SCA Softpackage Project";
+	public static final String SHARED_LIBRARY_MENU_NAME = "SCA Shared Library Project";
 
 	/** private to prevent instantiation since all functions are static. */
-	private SoftpackageUtils() {
+	private SharedLibraryUtils() {
 	}
 
-	public static void createSoftpackageProject(SWTBot bot, String softpackageProjectName, String projectType) {
-		SWTBotShell origShell = bot.activeShell();
+	public static void createSharedLibraryProject(SWTBot bot, String sharedLibraryProjectName, String projectType) {
 		StandardTestActions.configurePyDev();
+
+		SWTBotShell origShell = bot.activeShell();
 
 		if (projectType == null) {
 			projectType = "C++ Library";
@@ -42,13 +48,13 @@ public class SoftpackageUtils {
 
 			@Override
 			public String getFailureMessage() {
-				return "Could not find menu option for: " + SOFTPACKAGE_MENU_NAME;
+				return "Could not find menu option for: " + SHARED_LIBRARY_MENU_NAME;
 			}
 
 			@Override
 			public boolean test() throws Exception {
 				try {
-					wizardBot.tree().getTreeItem("SCA").expand().getNode(SOFTPACKAGE_MENU_NAME).select();
+					wizardBot.tree().getTreeItem("SCA").expand().getNode(SHARED_LIBRARY_MENU_NAME).select();
 					return true;
 				} catch (WidgetNotFoundException e) {
 					return false;
@@ -58,10 +64,25 @@ public class SoftpackageUtils {
 		});
 		wizardBot.button("Next >").click();
 
-		wizardBot.textWithLabel("Project name:").setText(softpackageProjectName);
+		wizardBot.textWithLabel("Project name:").setText(sharedLibraryProjectName);
 		wizardBot.comboBoxWithLabel("Type:").setSelection(projectType);
-		wizardBot.button("Finish").click();
+		SWTBotButton finishButton = wizardBot.button("Finish");
+		wizardBot.waitUntil(Conditions.widgetIsEnabled(finishButton));
+		finishButton.click();
 
 		origShell.activate();
+	}
+
+	/**
+	 * Generates the project using the Generate button in the overview tab
+	 * Generates all files
+	 */
+	public static void generateSharedLibraryProject(SWTBot bot, SWTBotEditor editor) {
+		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.OVERVIEW_TAB);
+
+		editor.bot().toolbarButton(0).click();
+		bot.waitUntil(Conditions.shellIsActive("Regenerate Files"), 10000);
+		SWTBotShell fileShell = bot.shell("Regenerate Files");
+		fileShell.bot().button("OK").click();
 	}
 }

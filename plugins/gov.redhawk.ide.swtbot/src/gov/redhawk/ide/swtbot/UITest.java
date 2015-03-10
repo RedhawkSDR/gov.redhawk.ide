@@ -40,6 +40,7 @@ public abstract class UITest {
 	
 	@After
 	public void after() throws Exception {
+		StandardTestActions.cleanup(bot);
 		StandardTestActions.assertNoOpenDialogs();
 		bot = null;
 	}

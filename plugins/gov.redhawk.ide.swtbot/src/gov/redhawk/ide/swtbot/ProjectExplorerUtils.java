@@ -13,6 +13,7 @@ package gov.redhawk.ide.swtbot;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class ProjectExplorerUtils {
@@ -23,8 +24,16 @@ public class ProjectExplorerUtils {
 	}
 
 	/**
+	 * Double-clicks a project file to open it in it's default editor view
+	 */
+	public static void openProjectInEditor(SWTWorkbenchBot bot, String... nodes) {
+		SWTBotTreeItem projectItem = selectNode(bot, nodes);
+		projectItem.doubleClick();
+	}
+
+	/**
 	 * Expands nodes in the project explorer to the given point, and selects the lowest level tree item
-	 * @return 
+	 * @return
 	 */
 	public static SWTBotTreeItem selectNode(SWTWorkbenchBot bot, String... nodes) {
 		SWTBotView view = bot.viewById(PROJECT_EXPLORER_VIEW_ID);
@@ -34,11 +43,26 @@ public class ProjectExplorerUtils {
 		return node;
 	}
 
-	/**
-	 * Double-clicks a project file to open it in it's default editor view
-	 */
-	public static void openProjectInEditor(SWTWorkbenchBot bot, String... nodes) {
-		SWTBotTreeItem projectItem = selectNode(bot, nodes);
-		projectItem.doubleClick();
+	public static SWTBotTreeItem waitUntilNodeAppears(SWTWorkbenchBot bot, final String... nodePath) {
+		SWTBotView view = bot.viewById(PROJECT_EXPLORER_VIEW_ID);
+		view.setFocus();
+
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return nodePath + " did not load into Project Explorer";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				SWTBotTreeItem treeItem = selectNode((SWTWorkbenchBot) bot, nodePath);
+				if (treeItem != null) {
+					return true;
+				}
+				return false;
+			}
+		});
+
+		return selectNode((SWTWorkbenchBot) bot, nodePath);
 	}
 }

@@ -16,7 +16,7 @@ import gov.redhawk.ide.swtbot.ComponentUtils;
 import gov.redhawk.ide.swtbot.DeviceUtils;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.ServiceUtils;
-import gov.redhawk.ide.swtbot.SoftpackageUtils;
+import gov.redhawk.ide.swtbot.SharedLibraryUtils;
 import gov.redhawk.ide.swtbot.StandardTestActions;
 
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
@@ -106,7 +106,7 @@ public class ChalkboardWorkspaceTest extends AbstractGraphitiChalkboardTest {
 
 		// create test Softpackage in workspace
 		final String wkspSftpkgName = "testSftpkgInWorkspace";
-		SoftpackageUtils.createSoftpackageProject(bot, wkspSftpkgName, null);
+		SharedLibraryUtils.createSharedLibraryProject(bot, wkspSftpkgName, null);
 
 		editor = openChalkboardDiagram(gefBot);
 

@@ -504,26 +504,11 @@ public class ScaExplorerTestUtils {
 	/**
 	 * Waits until Waveform disappears in ScaExplorer
 	 * @param componentName
+	 * @deprecated use the type agnostic method call 'waitUntilNodeRemovedAppearsInScaExplorer' instead
 	 */
+	@Deprecated
 	public static void waitUntilScaExplorerWaveformDisappears(SWTWorkbenchBot bot, final String[] waveformParentPath, final String waveform) {
-		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
-		scaExplorerView.setFocus();
-
-		bot.waitUntil(new DefaultCondition() {
-			@Override
-			public String getFailureMessage() {
-				return waveform + " waveform did not disappear from SCA Explorer";
-			}
-
-			@Override
-			public boolean test() throws Exception {
-				SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, waveformParentPath, waveform);
-				if (waveformTreeItem == null) {
-					return true;
-				}
-				return false;
-			}
-		});
+		waitUntilNodeRemovedFromScaExplorer(bot, waveformParentPath, waveform);
 	}
 
 	/**
@@ -722,30 +707,76 @@ public class ScaExplorerTestUtils {
 		waveformEntry.select();
 		waveformEntry.contextMenu("Launch in Sandbox").menu("Default").click();
 	}
-
-	/**
-	 * Waits until Waveform displays in ScaExplorer
-	 * @param componentName
+	
+	/** 
+	 * Type agnostic check to find if a node exists in the SCA Explorer.  Can be used for anything, Sandbox, Target SDR, etc. 
+	 * @param bot
+	 * @param nodeParentPath
+	 * @param nodeName
+	 * @return 
 	 */
-	public static void waitUntilWaveformAppearsInScaExplorer(SWTWorkbenchBot bot, final String[] waveformParentPath, final String waveformName) {
-
+	public static SWTBotTreeItem waitUntilNodeAppearsInScaExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-
+		
+		// 30 second wait, since projects build when exported
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return waveformName + " did not load into SCA Explorer";
+				return nodeName + " did not load into SCA Explorer";
 			}
 
 			@Override
 			public boolean test() throws Exception {
-				SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, waveformParentPath, waveformName);
-				if (waveformTreeItem != null) {
+				SWTBotTreeItem treeItem = getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
+				if (treeItem != null) {
+					return true;
+				}
+				return false;
+			}
+		}, 30000);
+		
+		return getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
+	}
+	
+	/** 
+	 * Type agnostic check to find if a node removed from SCA Explorer.  Can be used for anything, Sandbox, Target SDR, etc. 
+	 * @param bot
+	 * @param nodeParentPath
+	 * @param nodeName
+	 * @return 
+	 */
+	public static SWTBotTreeItem waitUntilNodeRemovedFromScaExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
+		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
+		scaExplorerView.setFocus();
+		
+		bot.waitUntil(new DefaultCondition() {
+			@Override
+			public String getFailureMessage() {
+				return nodeName + " was not removed from the SCA Explorer";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				SWTBotTreeItem treeItem = getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
+				if (treeItem == null) {
 					return true;
 				}
 				return false;
 			}
 		});
+		
+		return getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
 	}
+
+	/**
+	 * Waits until Waveform displays in ScaExplorer
+	 * @param componentName
+	 * @deprecated use the type agnostic method call 'waitUntilNodeAppearsInScaExplorer' instead
+	 */
+	@Deprecated
+	public static void waitUntilWaveformAppearsInScaExplorer(SWTWorkbenchBot bot, final String[] waveformParentPath, final String waveformName) {
+		waitUntilNodeAppearsInScaExplorer(bot, waveformParentPath, waveformName);
+	}
+	
 }
