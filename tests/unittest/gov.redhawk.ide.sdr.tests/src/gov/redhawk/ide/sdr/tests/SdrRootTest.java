@@ -212,12 +212,12 @@ public class SdrRootTest extends TestCase {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see gov.redhawk.ide.sdr.SdrRoot#getSharedLibrariesContainer()
-	 * @generated
+	 * @generated NOT
 	 */
 	public void testGetSharedLibrariesContainer() {
-		// TODO: implement this feature getter test method
-		// Ensure that you remove @generated or mark it @generated NOT
-		fail();
+		// END GENERATED CODE
+		Assert.assertNotNull("The Shared Libraries Container should not be null.", this.fixture.getSharedLibrariesContainer());
+		// BEGIN GENERATED CODE
 	}
 
 	/**
