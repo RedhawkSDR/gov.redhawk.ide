@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas;
-import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -128,6 +127,8 @@ public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 	public void testFilter() {
 		projectName = "Filter-Test";
 
+		final String device3 = "ide1112.test.name.spaced.comp1";
+		
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
 		editor = gefBot.gefEditor(projectName);
@@ -135,6 +136,7 @@ public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 
 		Assert.assertTrue(toolIsPresent(editor, GPP));
 		Assert.assertTrue(toolIsPresent(editor, DEVICE_STUB));
+		Assert.assertTrue(toolIsPresent(editor, device3));
 
 		FilterRunnable filterer = new FilterRunnable(editor);
 		filterer.setFilterString("g");
@@ -143,33 +145,31 @@ public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 
 		Assert.assertTrue(toolIsPresent(editor, GPP));
 		Assert.assertFalse(toolIsPresent(editor, DEVICE_STUB));
+		Assert.assertFalse(toolIsPresent(editor, device3));
 
 		filterer.setFilterString("sh");
 
 		Assert.assertFalse(toolIsPresent(editor, GPP));
 		Assert.assertFalse(toolIsPresent(editor, DEVICE_STUB));
+		Assert.assertFalse(toolIsPresent(editor, device3));
 
 		filterer.setFilterString("d");
 
 		Assert.assertFalse(toolIsPresent(editor, GPP));
 		Assert.assertTrue(toolIsPresent(editor, DEVICE_STUB));
+		Assert.assertTrue(toolIsPresent(editor, device3));
+
+		filterer.setFilterString(".");
+
+		Assert.assertFalse(toolIsPresent(editor, GPP));
+		Assert.assertFalse(toolIsPresent(editor, DEVICE_STUB));
+		Assert.assertTrue(toolIsPresent(editor, device3));
 
 		filterer.setFilterString("");
 
 		Assert.assertTrue(toolIsPresent(editor, GPP));
 		Assert.assertTrue(toolIsPresent(editor, DEVICE_STUB));
+		Assert.assertTrue(toolIsPresent(editor, device3));
 	}
 
-	private boolean toolIsPresent(SWTBotGefEditor editor, final String label) {
-		String[] impls = new String[] { "", " (cpp)", " (java)", " (python)" };
-		for (String impl : impls) {
-			try {
-				editor.activateTool(label + impl);
-			} catch (WidgetNotFoundException e) {
-				continue;
-			}
-			return true;
-		}
-		return false;
-	}
 }
