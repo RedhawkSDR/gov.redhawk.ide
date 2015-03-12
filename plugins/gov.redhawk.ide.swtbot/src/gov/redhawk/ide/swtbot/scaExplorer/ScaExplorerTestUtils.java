@@ -43,6 +43,17 @@ public class ScaExplorerTestUtils {
 
 	protected ScaExplorerTestUtils() {
 	}
+	
+	/**
+	 * Opens and sets focus to the SCA Explorer view
+	 * @return Returns the SWTBot associated with the view
+	 */
+	public static SWTBot showScaExplorerView(SWTWorkbenchBot bot) {
+		SWTBotView explorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
+		explorerView.show();
+		explorerView.setFocus();
+		return explorerView.bot();
+	}
 
 	/**
 	 * Open the specified Graphiti Diagram from ScaExplorer.
@@ -746,7 +757,7 @@ public class ScaExplorerTestUtils {
 	 * @param nodeName
 	 * @return 
 	 */
-	public static SWTBotTreeItem waitUntilNodeRemovedFromScaExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
+	public static void waitUntilNodeRemovedFromScaExplorer(SWTWorkbenchBot bot, final String[] nodeParentPath, final String nodeName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
 		
@@ -758,15 +769,18 @@ public class ScaExplorerTestUtils {
 
 			@Override
 			public boolean test() throws Exception {
-				SWTBotTreeItem treeItem = getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
+				SWTBotTreeItem treeItem;
+				try {
+					treeItem = getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
+				} catch (WidgetNotFoundException e) {
+					return true;
+				}
 				if (treeItem == null) {
 					return true;
 				}
 				return false;
 			}
 		});
-		
-		return getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
 	}
 
 	/**

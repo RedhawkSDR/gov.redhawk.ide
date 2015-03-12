@@ -11,8 +11,8 @@
  */
 package gov.redhawk.ide.swtbot;
 
+import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
-import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
@@ -28,7 +28,7 @@ public class NodeUtils {
 	 * @param bot - the executing SWTBot
 	 * @param waveformName
 	 */
-	public static void createNewNodeProject(SWTGefBot bot, String projectName, String domainName) {
+	public static void createNewNodeProject(SWTWorkbenchBot bot, String projectName, String domainName) {
 		// Open the new waveform project wizard
 		SWTBotMenu fileMenu = bot.menu("File");
 		SWTBotMenu newMenu = fileMenu.menu("New");

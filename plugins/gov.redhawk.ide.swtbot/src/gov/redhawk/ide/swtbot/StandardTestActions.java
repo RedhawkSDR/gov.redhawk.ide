@@ -13,6 +13,7 @@ package gov.redhawk.ide.swtbot;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
+import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.internal.ProjectRecord;
 import gov.redhawk.model.sca.ScaDomainManagerRegistry;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
@@ -59,6 +60,8 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.eclipse.finder.waits.Conditions;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
@@ -67,6 +70,7 @@ import org.eclipse.swtbot.swt.finder.keyboard.Keyboard;
 import org.eclipse.swtbot.swt.finder.keyboard.KeyboardFactory;
 import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
@@ -166,6 +170,36 @@ public final class StandardTestActions {
 		perspective.activate();
 		bot.resetActivePerspective();
 		bot.sleep(100);
+	}
+
+	/**
+	 * Generates the project using the Generate button in the overview tab
+	 * Generates all files
+	 */
+	public static void generateProject(SWTWorkbenchBot bot, SWTBotEditor editor) {
+		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.OVERVIEW_TAB);
+
+		editor.bot().toolbarButton(0).click();
+		bot.waitUntil(Conditions.shellIsActive("Regenerate Files"), 10000);
+		SWTBotShell fileShell = bot.shell("Regenerate Files");
+
+		fileShell.bot().button("OK").click();
+
+		// Catch the Fabio popup...
+		try {
+			SWTBotShell pyDevShell = bot.shell("Default Eclipse preferences for PyDev");
+			pyDevShell.close();
+			bot.closeAllShells();
+		} catch (WidgetNotFoundException e) {
+			// PASS
+		}
+
+		try {
+			SWTBotShell genShell = bot.shell("Generating...");
+			bot.waitUntil(Conditions.shellCloses(genShell));
+		} catch (WidgetNotFoundException e) {
+			// PASS
+		}
 	}
 
 	public static void assertNoOpenDialogs() {
@@ -508,12 +542,12 @@ public final class StandardTestActions {
 			throw e;
 		}
 	}
-	
+
 	public static SWTBotToolbarButton viewToolbarWithToolTip(final SWTBotView view, final String tooltip) {
 		Assert.assertNotNull(view);
 		Assert.assertNotNull(tooltip);
-		
-		final SWTBotToolbarButton [] button = new SWTBotToolbarButton[1];
+
+		final SWTBotToolbarButton[] button = new SWTBotToolbarButton[1];
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
 			@Override
@@ -526,14 +560,14 @@ public final class StandardTestActions {
 					}
 				}
 			}
-			
+
 		});
-		
+
 		Assert.assertNotNull("Unable to find button with tooltip: " + tooltip, button[0]);
-		
+
 		return button[0];
 	}
-	
+
 	public static void cleanUpConnections() {
 		final ScaDomainManagerRegistry domReg = ScaPlugin.getDefault().getDomainManagerRegistry(null);
 		ScaModelCommand.execute(domReg, new ScaModelCommand() {
@@ -551,15 +585,15 @@ public final class StandardTestActions {
 			launch.terminate();
 		}
 	}
-	
-	public static SWTBotTreeItem getTreeItemMatches(SWTBotTree tree, String ... regexp) {
+
+	public static SWTBotTreeItem getTreeItemMatches(SWTBotTree tree, String... regexp) {
 		SWTBotTreeItem result = getTreeItemMatches(tree, Arrays.asList(regexp));
 		if (result == null) {
 			throw new WidgetNotFoundException("Could not find TreeItem with text that matches: " + Arrays.toString(regexp)); //$NON-NLS-1$
 		}
 		return result;
 	}
-	
+
 	private static SWTBotTreeItem getTreeItemMatches(SWTBotTree parent, List<String> regexp) {
 		if (regexp.isEmpty()) {
 			return null;
@@ -576,7 +610,7 @@ public final class StandardTestActions {
 		}
 		return null;
 	}
-	
+
 	private static SWTBotTreeItem getTreeItemMatches(SWTBotTreeItem parent, List<String> regexp) {
 		if (regexp.isEmpty()) {
 			return parent;
@@ -593,7 +627,7 @@ public final class StandardTestActions {
 		}
 		return null;
 	}
-	
+
 	public static SWTBotTreeItem getTreeItemMatches(SWTBotTreeItem tree, String regexp) {
 		List<String> labels = tree.getNodes();
 		for (String l : labels) {

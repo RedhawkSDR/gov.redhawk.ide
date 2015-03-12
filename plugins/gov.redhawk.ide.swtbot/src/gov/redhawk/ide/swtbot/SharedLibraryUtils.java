@@ -10,10 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
 
-import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
-
 import org.eclipse.swtbot.eclipse.finder.waits.Conditions;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
@@ -71,18 +68,5 @@ public class SharedLibraryUtils {
 		finishButton.click();
 
 		origShell.activate();
-	}
-
-	/**
-	 * Generates the project using the Generate button in the overview tab
-	 * Generates all files
-	 */
-	public static void generateSharedLibraryProject(SWTBot bot, SWTBotEditor editor) {
-		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.OVERVIEW_TAB);
-
-		editor.bot().toolbarButton(0).click();
-		bot.waitUntil(Conditions.shellIsActive("Regenerate Files"), 10000);
-		SWTBotShell fileShell = bot.shell("Regenerate Files");
-		fileShell.bot().button("OK").click();
 	}
 }
