@@ -107,24 +107,4 @@ public class ScaNamespaceTest extends UIRuntimeTest{
 		SWTBotTreeItem amIHere;
 		ScaExplorerTestUtils.waitUntilNodeRemovedFromScaExplorer(bot, scaPath, projectName);
 	}
-	
-	/**
-	 * IDE-1122
-	 * Check that name-spaced components with similar but not identical paths display
-	 * properly in the SCA Explorer
-	 */
-	@Test
-	public void similarNamespaceTest() {
-		
-		// TODO: Create three components 
-			// name.space.comp
-			// name.space.deep.dive.comp
-			// name.space.comp.realComp
-		
-		// TODO: Generate and export each component
-		
-		// TODO: Make sure components sure up in expected location
-		
-		// TODO: Delete each component, make sure it is removed, and make sure the other components are not affected
-	}
 }
