@@ -16,7 +16,9 @@ import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceProperty;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -68,7 +70,11 @@ public class PropertiesContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof ViewerStructProperty) {
-			return ((ViewerStructProperty) parentElement).getSimples().toArray();
+			List<Object> children = new ArrayList<Object>();
+			ViewerStructProperty element = (ViewerStructProperty) parentElement;
+			children.addAll(element.getSimples());
+			children.addAll(element.getSequences());
+			return children.toArray();
 		} else if (parentElement instanceof ViewerStructSequenceProperty) {
 			return ((ViewerStructSequenceProperty) parentElement).getSimples().toArray();
 		} else if (parentElement instanceof ViewerComponent) {
@@ -95,7 +101,8 @@ public class PropertiesContentProvider implements ITreeContentProvider {
 	@Override
 	public boolean hasChildren(Object parentElement) {
 		if (parentElement instanceof ViewerStructProperty) {
-			return !((ViewerStructProperty) parentElement).getSimples().isEmpty();
+			ViewerStructProperty element = (ViewerStructProperty) parentElement;
+			return !(element.getSimples().isEmpty() && element.getSequences().isEmpty());
 		} else if (parentElement instanceof ViewerStructSequenceProperty) {
 			return !((ViewerStructSequenceProperty) parentElement).getSimples().isEmpty();
 		} else if (parentElement instanceof ViewerComponent) {

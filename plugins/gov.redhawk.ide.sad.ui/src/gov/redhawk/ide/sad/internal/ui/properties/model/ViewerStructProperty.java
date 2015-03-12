@@ -15,6 +15,8 @@ import java.util.List;
 
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
+import mil.jpeojtrs.sca.prf.SimpleSequence;
+import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
 import mil.jpeojtrs.sca.prf.Struct;
 import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.prf.StructValue;
@@ -25,6 +27,7 @@ import mil.jpeojtrs.sca.prf.StructValue;
 public class ViewerStructProperty extends ViewerProperty<Struct> {
 
 	private List<ViewerSimpleProperty> simples = new ArrayList<ViewerSimpleProperty>();
+	private List<ViewerSequenceProperty> sequences = new ArrayList<ViewerSequenceProperty>();
 
 	public ViewerStructProperty(Struct def, Object parent) {
 		super(def, parent);
@@ -35,11 +38,19 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 		return simples;
 	}
 
+	public List<ViewerSequenceProperty> getSequences() {
+		return sequences;
+	}
+
 	@Override
 	public void setToDefault() {
 		simples.clear();
 		for (Simple s : def.getSimple()) {
 			simples.add(new ViewerSimpleProperty(s, this));
+		}
+		sequences.clear();
+		for (SimpleSequence s: def.getSimpleSequence()) {
+			sequences.add(new ViewerSequenceProperty(s, this));
 		}
 	}
 
@@ -52,9 +63,19 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 					}
 				}
 			}
+			for (SimpleSequenceRef ref : value.getSimpleSequenceRef()) {
+				for (ViewerSequenceProperty prop : sequences) {
+					if (prop.getDefinition().getId().equals(ref.getRefID())) {
+						prop.setValues(ref);
+					}
+				}
+			}
 		} else {
 			for (ViewerSimpleProperty prop : simples) {
 				prop.setValue((SimpleRef) null);
+			}
+			for (ViewerSequenceProperty prop : sequences) {
+				prop.setValues((SimpleSequenceRef) null);
 			}
 		}
 	}
@@ -65,12 +86,18 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 		for (ViewerSimpleProperty p : simples) {
 			p.addPropertyChangeListener(listener);
 		}
+		for (ViewerSequenceProperty p : sequences) {
+			p.addPropertyChangeListener(listener);
+		}
 	}
 	
 	@Override
 	public void removePropertyChangeListener(IViewerPropertyChangeListener listener) {
 		super.removePropertyChangeListener(listener);
 		for (ViewerSimpleProperty p : simples) {
+			p.removePropertyChangeListener(listener);
+		}
+		for (ViewerSequenceProperty p : sequences) {
 			p.removePropertyChangeListener(listener);
 		}
 	}
@@ -84,9 +111,19 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 					}
 				}
 			}
+			for (SimpleSequenceRef ref : value.getSimpleSequenceRef()) {
+				for (ViewerSequenceProperty prop : sequences) {
+					if (prop.getDefinition().getId().equals(ref.getRefID())) {
+						prop.setValues(ref);
+					}
+				}
+			}
 		} else {
 			for (ViewerSimpleProperty prop : simples) {
 				prop.setValue((SimpleRef) null);
+			}
+			for (ViewerSequenceProperty prop : sequences) {
+				prop.setValues((SimpleSequenceRef) null);
 			}
 		}
 	}
