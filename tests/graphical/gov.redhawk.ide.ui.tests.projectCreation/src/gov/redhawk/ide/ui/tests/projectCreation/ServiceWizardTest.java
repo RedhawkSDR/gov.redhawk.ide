@@ -12,6 +12,7 @@ package gov.redhawk.ide.ui.tests.projectCreation;
 
 import java.io.IOException;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -90,6 +91,7 @@ public class ServiceWizardTest extends ComponentWizardTest {
 	@Override
 	public void testNamespacedObjectCreation() {
 		testProjectCreation("namespaced.service.IDE1111", "Python", null, null);
+		Assert.assertEquals("customOutput/IDE1111.py", bot.activeEditor().bot().textWithLabel("Entry Point:").getText());
 		verifyEditorTabPresent("IDE1111.scd.xml");
 	}
 	

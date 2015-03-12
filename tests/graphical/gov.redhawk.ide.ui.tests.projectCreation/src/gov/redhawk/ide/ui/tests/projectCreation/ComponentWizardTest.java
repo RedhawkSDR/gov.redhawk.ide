@@ -188,6 +188,7 @@ public class ComponentWizardTest extends AbstractCreationWizardTest {
 	@Test
 	public void testNamespacedObjectCreation() {
 		testProjectCreation("namespaced.component.IDE1111", "Python", null, null);
+		Assert.assertEquals("customOutput/IDE1111.py", bot.activeEditor().bot().textWithLabel("Entry Point:").getText());
 		verifyEditorTabPresent("IDE1111.prf.xml");
 		verifyEditorTabPresent("IDE1111.scd.xml");
 	}

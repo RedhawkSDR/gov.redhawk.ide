@@ -83,6 +83,7 @@ public class DeviceCreationWizardTest extends ComponentWizardTest {
 	@Override
 	public void testNamespacedObjectCreation() {
 		super.testProjectCreation("namespaced.device.IDE1111", "Python", null, null);
+		Assert.assertEquals("customOutput/IDE1111.py", bot.activeEditor().bot().textWithLabel("Entry Point:").getText());
 		verifyEditorTabPresent("IDE1111.prf.xml");
 		verifyEditorTabPresent("IDE1111.scd.xml");
 	}
