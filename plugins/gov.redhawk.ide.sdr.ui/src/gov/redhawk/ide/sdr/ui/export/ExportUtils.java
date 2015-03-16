@@ -379,7 +379,7 @@ public class ExportUtils {
 				scdOutputPath = outputFolder.append(scdPath);
 			}
 			progress.setWorkRemaining(IMPL_WORK);
-			
+
 			boolean useExporter = true;
 			if (softPkg.getImplementation() != null) {
 				int implWork = softPkg.getImplementation().size() * (PRF_WORK + ((includeCode) ? IMPL_WORK : 0)); // SUPPRESS
@@ -392,7 +392,7 @@ public class ExportUtils {
 					progress.setWorkRemaining(implWork);
 				}
 			}
-			
+
 			if (useExporter) {
 				exporter.mkdir(outputFolder, progress.newChild(MKDIR_WORK));
 				exporter.write(spdResource, spdOutputPath, progress.newChild(SPD_WORK));
@@ -409,16 +409,16 @@ public class ExportUtils {
 	private static boolean exportImpl(final IScaExporter exporter, final boolean includeCode, final SubMonitor progress, IPath outputFolder,
 		final IPath spdRootPath, final Implementation impl) throws CoreException, IOException {
 		progress.beginTask("Exporting Implementation " + impl.getId(), 1);
-		
+
 		ImplementationSettings implSettings = CodegenUtil.getImplementationSettings(impl);
 		String outputDir = implSettings.getOutputDir();
 		IResource outputDirResource = ExportUtils.getWorkspaceResource(spdRootPath.append(outputDir));
-		
+
 		if (useInstallImplScript(outputDirResource)) {
 			installImpl(progress, impl.getId(), (IContainer) outputDirResource);
 			return false;
 		}
-		
+
 		final String localFileName = impl.getCode().getLocalFile().getName();
 		final IPath codeLocalFile;
 		if (localFileName != null) {
@@ -453,7 +453,7 @@ public class ExportUtils {
 			outputPath = outputFolder.append(prfPath);
 			exporter.write(srcPrfPath, outputPath, progress.newChild(1));
 		}
-		
+
 		return true;
 	}
 
@@ -504,7 +504,8 @@ public class ExportUtils {
 	private static boolean useInstallImplScript(IResource outputDir) {
 		if (outputDir instanceof IContainer) {
 			IContainer container = (IContainer) outputDir;
-			return container.getFile(new Path("reconf")).exists() || container.getFile(new Path("configure")).exists() || container.getFile(new Path("Makefile")).exists();
+			return container.getFile(new Path("reconf")).exists() || container.getFile(new Path("configure")).exists()
+				|| container.getFile(new Path("Makefile")).exists();
 		}
 		return false;
 	}
@@ -519,35 +520,33 @@ public class ExportUtils {
 	}
 
 	/**
-	 * Make sure top level build.sh exists.
-	 * Then check generated files list to make sure "../build.sh" (which is top level build.sh since it is relative to implementation dir)
-	 * and additionalRequiredFile (when not null) (e.g. for C++, the implementation level build.sh) exists in list.
+	 * Check generated files list to make sure "../build.sh" will be generated (which is top level build.sh since it is
+	 * relative to implementation dir),
+	 * as well as additionalRequiredFile (when not null).
 	 * @since 3.4
 	 */
 	public static void setUseBuildSH(@NonNull IProject project, @NonNull String[] generateFiles, @Nullable String additionalRequiredFile) {
-		if (project.getFile(new Path("build.sh")).exists()) {
-			boolean foundTopLevelBuildSh = false;
-			boolean foundAdditionalFile = (additionalRequiredFile == null); // allow null additionalRequiredFile
-			for (String file : generateFiles) {
-				if ("../build.sh".equals(file)) {
-					foundTopLevelBuildSh = true;
-				} else if (foundAdditionalFile || additionalRequiredFile.equals(file)) {
-					foundAdditionalFile = true;
-				}
-				if (foundTopLevelBuildSh && foundAdditionalFile) {
-					break; // found all necessary generated files, so break out of loop
-				}
+		boolean foundTopLevelBuildSh = false;
+		boolean foundAdditionalFile = (additionalRequiredFile == null); // allow null additionalRequiredFile
+		for (String file : generateFiles) {
+			if ("../build.sh".equals(file)) {
+				foundTopLevelBuildSh = true;
+			} else if (foundAdditionalFile || additionalRequiredFile.equals(file)) {
+				foundAdditionalFile = true;
 			}
-
 			if (foundTopLevelBuildSh && foundAdditionalFile) {
-				IScopeContext projectScope = new ProjectScope(project);
-				IEclipsePreferences node = projectScope.getNode(SdrUiPlugin.PLUGIN_ID);
-				node.putBoolean("useBuild.sh", true);
-				try {
-					node.flush();
-				} catch (BackingStoreException e) {
-					SdrUiPlugin.getDefault().logError("Unable to enable useBuild.sh project preference for " + project, e);
-				}
+				break; // found all necessary generated files, so break out of loop
+			}
+		}
+
+		if (foundTopLevelBuildSh && foundAdditionalFile) {
+			IScopeContext projectScope = new ProjectScope(project);
+			IEclipsePreferences node = projectScope.getNode(SdrUiPlugin.PLUGIN_ID);
+			node.putBoolean("useBuild.sh", true);
+			try {
+				node.flush();
+			} catch (BackingStoreException e) {
+				SdrUiPlugin.getDefault().logError("Unable to enable useBuild.sh project preference for " + project, e);
 			}
 		}
 	}
