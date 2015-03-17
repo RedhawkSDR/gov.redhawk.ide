@@ -40,6 +40,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
@@ -427,7 +428,8 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @param portEditPart - The SWTBotGefEditPart of the port you are trying to get the anchor for
 	 * @return
 	 */
-	public static SWTBotGefEditPart getDiagramPortAnchor(SWTBotGefEditPart portEditPart) {
+	public static SWTBotGefEditPart getDiagramPortAnchor(@NonNull SWTBotGefEditPart portEditPart) {
+		Assert.assertNotNull(portEditPart);
 		EditPart part = portEditPart.part();
 		if (part != null && part.getModel() instanceof Anchor) {
 			return portEditPart;
