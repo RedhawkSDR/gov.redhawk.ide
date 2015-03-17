@@ -428,7 +428,8 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @return
 	 */
 	public static SWTBotGefEditPart getDiagramPortAnchor(SWTBotGefEditPart portEditPart) {
-		if (portEditPart.part().getModel() instanceof Anchor) {
+		EditPart part = portEditPart.part();
+		if (part != null && part.getModel() instanceof Anchor) {
 			return portEditPart;
 		}
 		for (SWTBotGefEditPart child : portEditPart.children()) {
