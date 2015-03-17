@@ -526,6 +526,12 @@ public class GraphitiModelMap implements IPortStatListener {
 	 * @param oldValue
 	 */
 	private void delete(@Nullable final SadComponentInstantiation sadComponentInstantiation) {
+
+		// No need to process delete if the waveform is disposed, since we are closing the editor anyways.
+		if (waveform.isDisposed()) {
+			return;
+		}
+
 		if (sadComponentInstantiation == null || editor.isDisposed()) {
 			return;
 		}
