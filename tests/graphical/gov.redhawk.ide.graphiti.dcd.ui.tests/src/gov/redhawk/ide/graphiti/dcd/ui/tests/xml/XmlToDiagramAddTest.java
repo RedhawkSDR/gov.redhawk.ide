@@ -110,7 +110,7 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		String editorText = editor.toTextEditor().getText();
 		String newConnection = "</partitioning> <connections> <connectinterface id=\"connection_1\"> "
 			+ "<usesport> <usesidentifier>propEvent</usesidentifier> <componentinstantiationref refid=\"" + projectName + ":GPP_1\"/> "
-			+ "</usesport> <providesport> <providesidentifier>eventChannel</providesidentifier> " + "<componentinstantiationref refid=\"" + projectName
+			+ "</usesport> <providesport> <providesidentifier>dataDouble_in</providesidentifier> " + "<componentinstantiationref refid=\"" + projectName
 			+ ":DeviceStub_1\"/> </providesport> </connectinterface> </connections>";
 		editorText = editorText.replace("</partitioning>", newConnection);
 		editor.toTextEditor().setText(editorText);
@@ -120,7 +120,7 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
 
 		gppUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, GPP);
-		SWTBotGefEditPart deviceStubProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, DEVICE_STUB, "eventChannel");
+		SWTBotGefEditPart deviceStubProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, DEVICE_STUB, "dataDouble_in");
 
 		sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, gppUsesEditPart);
 		Assert.assertFalse("Connection should exist", sourceConnections.isEmpty());

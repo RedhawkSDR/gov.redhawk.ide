@@ -54,7 +54,7 @@ public class FindByTest extends AbstractGraphitiTest {
 		projectName = "PictogramShapesNode";
 
 		final String findByName = "FindBy";
-		final String[] provides = { "eventChannel" };
+		final String[] provides = { "dataDouble_in" };
 		final String[] uses = { "dataDouble_out" };
 
 		// Create an empty node project
@@ -183,7 +183,7 @@ public class FindByTest extends AbstractGraphitiTest {
 		projectName = "FindBy_Connection";
 		final String FIND_BY_NAME = "FindBy";
 		final String newFindByName = "NewFindByName";
-		final String[] provides = { "eventChannel" };
+		final String[] provides = { "dataDouble_in" };
 		final String[] uses = { "data_out" };
 		final String NEW_USES_PORT = "dataDouble_out";
 

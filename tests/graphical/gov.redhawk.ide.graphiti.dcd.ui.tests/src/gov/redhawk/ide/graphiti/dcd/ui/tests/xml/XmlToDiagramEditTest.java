@@ -117,7 +117,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		// Edit content of dcd.xml
 		DiagramTestUtils.openTabInEditor(editor, "DeviceManager.dcd.xml");
 		String editorText = editor.toTextEditor().getText();
-		editorText = editorText.replace("<providesidentifier>dataDouble</providesidentifier>", "<providesidentifier>eventChannel</providesidentifier>");
+		editorText = editorText.replace("<providesidentifier>dataDouble_in</providesidentifier>", "<providesidentifier>dataFloat_in</providesidentifier>");
 		editor.toTextEditor().setText(editorText);
 		MenuUtils.save(editor);
 
@@ -133,7 +133,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(connection.getStart());
 		Assert.assertEquals("Connection uses port not correct", usesPort, DUtil.getBusinessObject((ContainerShape) gppUsesEditPart.part().getModel()));
 
-		final SWTBotGefEditPart deviceStubProvidesPort = DiagramTestUtils.getDiagramProvidesPort(editor, DEVICE_STUB, "eventChannel");
+		final SWTBotGefEditPart deviceStubProvidesPort = DiagramTestUtils.getDiagramProvidesPort(editor, DEVICE_STUB, "dataFloat_in");
 		ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(connection.getEnd());
 		Assert.assertEquals("Connect provides port not correct", DUtil.getBusinessObject((ContainerShape) deviceStubProvidesPort.part().getModel()), providesPort);
 	}

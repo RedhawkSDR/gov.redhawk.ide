@@ -65,7 +65,7 @@ public class ConnectionTest extends AbstractGraphitiTest {
 
 		// Get port edit parts
 		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, GPP);
-		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, DEVICE_STUB, "eventChannel");
+		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, DEVICE_STUB, "dataDouble_in");
 
 		// Confirm that no connections currently exist
 		Diagram diagram = DUtil.findDiagram(gppShape);
