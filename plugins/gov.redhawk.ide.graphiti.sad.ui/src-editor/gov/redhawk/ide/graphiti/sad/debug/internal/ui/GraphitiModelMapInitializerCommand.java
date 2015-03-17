@@ -13,6 +13,7 @@ package gov.redhawk.ide.graphiti.sad.debug.internal.ui;
 import gov.redhawk.ide.debug.LocalScaComponent;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.ui.diagram.LocalScaDiagramPlugin;
+import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaConnection;
 import gov.redhawk.model.sca.ScaPort;
@@ -23,6 +24,7 @@ import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.PluginUtil;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -47,8 +49,15 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.ProtectedThreadExecutor;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.command.AbstractCommand;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ExtendedCF.UsesConnection;
 
@@ -154,7 +163,32 @@ public class GraphitiModelMapInitializerCommand extends AbstractCommand {
 	}
 
 	public static void initComponent(@NonNull final LocalScaComponent comp, SoftwareAssembly sad, GraphitiModelMap modelMap) {
+
+		if (comp.getProfileObj() == null) {
+			try {
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
+				dialog.run(true, true, new IRunnableWithProgress() {
+
+					@Override
+					public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						monitor.beginTask("Loading Component: " + comp, IProgressMonitor.UNKNOWN);
+						try {
+							comp.setProfileObj(comp.fetchProfileObject(monitor));
+							monitor.worked(1);
+						} finally {
+							monitor.done();
+						}
+					}
+				});
+			} catch (final InvocationTargetException | InterruptedException e) {
+				StatusManager.getManager().handle(
+					new Status(IStatus.ERROR, SADUIGraphitiPlugin.PLUGIN_ID, "Errors occured while loading component: " + comp, e),
+					StatusManager.SHOW | StatusManager.LOG);
+			}
+		}
+
 		final SoftPkg spd = comp.getProfileObj();
+
 		if (spd == null) {
 			// For some reason we couldn't find the SPD Abort.
 			PluginUtil.logError(LocalScaDiagramPlugin.getDefault(), "Failed to find Soft Pkg for comp: " + comp.getInstantiationIdentifier(), null);

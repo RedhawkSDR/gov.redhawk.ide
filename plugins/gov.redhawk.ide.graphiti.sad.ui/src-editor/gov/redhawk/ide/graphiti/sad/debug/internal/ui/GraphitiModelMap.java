@@ -113,6 +113,7 @@ public class GraphitiModelMap implements IPortStatListener {
 	private final StopAction stopAction = new StopAction();
 
 	private final LocalScaWaveform waveform;
+	private final SoftwareAssembly sad;
 
 	public GraphitiModelMap(@NonNull final GraphitiWaveformSandboxEditor editor, @NonNull final SoftwareAssembly sad, @NonNull final LocalScaWaveform waveform) {
 		Assert.isNotNull(waveform, "Sandbox Waveform must not be null");
@@ -120,6 +121,7 @@ public class GraphitiModelMap implements IPortStatListener {
 		Assert.isNotNull(sad, "Software Assembly must not be null");
 		this.waveform = waveform;
 		this.editor = editor;
+		this.sad = sad;
 	}
 
 	/**
