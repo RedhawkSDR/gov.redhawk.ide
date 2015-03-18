@@ -171,7 +171,7 @@ public class DependencyWizardPage extends WizardPage {
 		label.setText("Kind:");
 		dependencyKindCombo = new Combo(client, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
 		dependencyKindCombo.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
-		dependencyKindCombo.setItems(new String[] { "Property Reference", "SoftPkg Reference" });
+		dependencyKindCombo.setItems(new String[] { "Property Reference", "Shared Library (SoftPkg) Reference" });
 		dependencyKindCombo.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -327,7 +327,7 @@ public class DependencyWizardPage extends WizardPage {
 
 	private void createSoftPkgRefGroup(final Composite parent) {
 		this.softPkgRefGroup = new Group(parent, SWT.BORDER);
-		this.softPkgRefGroup.setText("SoftPkg Reference");
+		this.softPkgRefGroup.setText("Shared Library (SoftPkg) Reference");
 		this.softPkgRefGroup.setLayout(new FillLayout());
 		this.softPkgRefViewer = new TreeViewer(this.softPkgRefGroup, SWT.FULL_SELECTION | SWT.SINGLE);
 		this.softPkgRefViewer.setComparer(new IElementComparer() {
