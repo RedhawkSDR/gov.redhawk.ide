@@ -10,9 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.spd.internal.ui.editor.wizard;
 
-import gov.redhawk.ide.sdr.ComponentsContainer;
-import gov.redhawk.ide.sdr.DevicesContainer;
-import gov.redhawk.ide.sdr.ServicesContainer;
+import gov.redhawk.ide.sdr.SharedLibrariesContainer;
 import gov.redhawk.ide.sdr.ui.SdrContentProvider;
 import gov.redhawk.ide.sdr.ui.SdrLabelProvider;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
@@ -173,9 +171,7 @@ public class DependencyWizardPage extends WizardPage {
 		label.setText("Kind:");
 		dependencyKindCombo = new Combo(client, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
 		dependencyKindCombo.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
-		dependencyKindCombo.setItems(new String[] {
-		        "Property Reference", "SoftPkg Reference"
-		});
+		dependencyKindCombo.setItems(new String[] { "Property Reference", "SoftPkg Reference" });
 		dependencyKindCombo.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -186,12 +182,14 @@ public class DependencyWizardPage extends WizardPage {
 					}
 					DependencyWizardPage.this.dependency.setSoftPkgRef(null);
 					DependencyWizardPage.this.detailsPageBook.showPage(DependencyWizardPage.this.propertyRefGroup);
+					dependencyTypeComboViewer.setInput(new String[] { "allocation", "matching", "other" });
 				} else if (dependencyKindCombo.getSelectionIndex() == 1) {
 					DependencyWizardPage.this.dependency.setPropertyRef(null);
 					if (DependencyWizardPage.this.dependency.getSoftPkgRef() == null) {
 						DependencyWizardPage.this.dependency.setSoftPkgRef(SpdFactory.eINSTANCE.createSoftPkgRef());
 					}
 					DependencyWizardPage.this.detailsPageBook.showPage(DependencyWizardPage.this.softPkgRefGroup);
+					dependencyTypeComboViewer.setInput(new String[] { "other" });
 				}
 			}
 		});
@@ -201,9 +199,7 @@ public class DependencyWizardPage extends WizardPage {
 		this.dependencyTypeComboViewer = new ComboViewer(client, SWT.DROP_DOWN | SWT.BORDER);
 		this.dependencyTypeComboViewer.getControl().setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
 		this.dependencyTypeComboViewer.setContentProvider(new ArrayContentProvider());
-		this.dependencyTypeComboViewer.setInput(new String[] {
-		        "allocation", "matching", "other"
-		});
+		dependencyTypeComboViewer.setInput(new String[0]);
 		this.dependencyTypeComboViewer.setComparator(new ViewerComparator());
 
 		this.detailsPageBook = new PageBook(client, SWT.NONE);
@@ -288,14 +284,12 @@ public class DependencyWizardPage extends WizardPage {
 		}
 
 		final IEMFValueProperty propRefIdPath = EMFProperties.value(FeaturePath.fromList(SpdPackage.Literals.DEPENDENCY__PROPERTY_REF,
-		        SpdPackage.Literals.PROPERTY_REF__REF_ID));
+			SpdPackage.Literals.PROPERTY_REF__REF_ID));
 		final IEMFValueProperty propValuePath = EMFProperties.value(FeaturePath.fromList(SpdPackage.Literals.DEPENDENCY__PROPERTY_REF,
-		        SpdPackage.Literals.PROPERTY_REF__VALUE));
+			SpdPackage.Literals.PROPERTY_REF__VALUE));
 
-		this.context.bindValue(SWTObservables.observeText(this.refIdText, SWT.Modify),
-		        propRefIdPath.observe(this.dependency),
-		        new EMFEmptyStringToNullUpdateValueStrategy(),
-		        null);
+		this.context.bindValue(SWTObservables.observeText(this.refIdText, SWT.Modify), propRefIdPath.observe(this.dependency),
+			new EMFEmptyStringToNullUpdateValueStrategy(), null);
 
 		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy();
 		strategy.setConverter(new Converter(PropertyRef.class, String.class) {
@@ -313,29 +307,21 @@ public class DependencyWizardPage extends WizardPage {
 			}
 
 		});
-		this.context.bindValue(SWTObservables.observeText(this.propNameText, SWT.None),
-		        propRefIdPath.observe(this.dependency),
-		        new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
-		        strategy);
-		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.valueText),
-		        propValuePath.observe(this.dependency),
-		        new EMFEmptyStringToNullUpdateValueStrategy(),
-		        null);
+		this.context.bindValue(SWTObservables.observeText(this.propNameText, SWT.None), propRefIdPath.observe(this.dependency), new UpdateValueStrategy(
+			UpdateValueStrategy.POLICY_NEVER), strategy);
+		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.valueText), propValuePath.observe(this.dependency),
+			new EMFEmptyStringToNullUpdateValueStrategy(), null);
 
 		final EMFUpdateValueStrategy targetToModel = new EMFUpdateValueStrategy();
 		targetToModel.setConverter(new ViewerToSoftPkgRef());
 		final EMFUpdateValueStrategy modelToTarget = new EMFUpdateValueStrategy();
 		modelToTarget.setConverter(new SoftPkgRefToViewer());
 		final IEMFValueProperty softPkgRef = EMFProperties.value(FeaturePath.fromList(SpdPackage.Literals.DEPENDENCY__SOFT_PKG_REF));
-		this.context.bindValue(ViewersObservables.observeSingleSelection(this.softPkgRefViewer),
-		        softPkgRef.observe(this.dependency),
-		        targetToModel,
-		        modelToTarget);
+		this.context.bindValue(ViewersObservables.observeSingleSelection(this.softPkgRefViewer), softPkgRef.observe(this.dependency), targetToModel,
+			modelToTarget);
 
 		this.context.bindValue(SWTObservables.observeText(this.dependencyTypeComboViewer.getCombo()),
-		        EMFObservables.observeValue(this.dependency, SpdPackage.Literals.DEPENDENCY__TYPE),
-		        new EMFEmptyStringToNullUpdateValueStrategy(),
-		        null);
+			EMFObservables.observeValue(this.dependency, SpdPackage.Literals.DEPENDENCY__TYPE), new EMFEmptyStringToNullUpdateValueStrategy(), null);
 
 	}
 
@@ -372,23 +358,19 @@ public class DependencyWizardPage extends WizardPage {
 		this.softPkgRefViewer.setUseHashlookup(true);
 		this.softPkgRefViewer.setContentProvider(new SdrContentProvider());
 		this.softPkgRefViewer.setLabelProvider(new SdrLabelProvider());
-		this.softPkgRefViewer.setFilters(new ViewerFilter[] {
-			new ViewerFilter() {
+		this.softPkgRefViewer.setFilters(new ViewerFilter[] { new ViewerFilter() {
 
-				@Override
-				public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-					final Class< ? >[] showTypes = new Class< ? >[] {
-					        ComponentsContainer.class, DevicesContainer.class, ServicesContainer.class, SoftPkg.class, Implementation.class
-					};
-					for (final Class< ? > type : showTypes) {
-						if (type.isInstance(element)) {
-							return true;
-						}
+			@Override
+			public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
+				final Class< ? >[] showTypes = new Class< ? >[] { SharedLibrariesContainer.class, SoftPkg.class, Implementation.class };
+				for (final Class< ? > type : showTypes) {
+					if (type.isInstance(element)) {
+						return true;
 					}
-					return false;
 				}
+				return false;
 			}
-		});
+		} });
 		this.softPkgRefViewer.setInput(SdrUiPlugin.getDefault().getTargetSdrRoot());
 	}
 
