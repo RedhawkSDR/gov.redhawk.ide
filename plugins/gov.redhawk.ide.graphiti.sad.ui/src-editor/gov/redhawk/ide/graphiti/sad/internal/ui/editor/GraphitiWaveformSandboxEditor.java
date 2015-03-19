@@ -336,8 +336,11 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 									}
 								}
 
-								monitor.worked(newProgress);
-								totalProgress += newProgress;
+								if (newProgress > totalProgress) {
+									monitor.worked(newProgress - totalProgress);
+									totalProgress = newProgress;
+								}
+								Thread.sleep(250);
 							}
 							return null;
 						}

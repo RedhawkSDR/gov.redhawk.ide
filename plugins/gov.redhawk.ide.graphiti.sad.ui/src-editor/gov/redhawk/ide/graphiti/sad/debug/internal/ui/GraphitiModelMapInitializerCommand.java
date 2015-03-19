@@ -173,7 +173,7 @@ public class GraphitiModelMapInitializerCommand extends AbstractCommand {
 					public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 						monitor.beginTask("Loading Component: " + comp, IProgressMonitor.UNKNOWN);
 						try {
-							comp.setProfileObj(comp.fetchProfileObject(monitor));
+							comp.fetchProfileObject(monitor);
 							monitor.worked(1);
 						} finally {
 							monitor.done();
