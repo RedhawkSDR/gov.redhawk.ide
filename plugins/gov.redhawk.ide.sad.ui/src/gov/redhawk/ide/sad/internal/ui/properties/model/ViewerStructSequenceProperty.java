@@ -15,20 +15,27 @@ import java.util.List;
 
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
+import mil.jpeojtrs.sca.prf.SimpleSequence;
+import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
 import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
 import mil.jpeojtrs.sca.prf.StructValue;
+import mil.jpeojtrs.sca.prf.Values;
 
 /**
  * 
  */
 public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence> {
 	private List<ViewerStructSequenceSimpleProperty> simplesArray = new ArrayList<ViewerStructSequenceSimpleProperty>();
+	private List<ViewerStructSequenceSequenceProperty> sequencesArray = new ArrayList<ViewerStructSequenceSequenceProperty>();
 
 	public ViewerStructSequenceProperty(StructSequence def, Object parent) {
 		super(def, parent);
 		for (Simple simple : def.getStruct().getSimple()) {
 			simplesArray.add(new ViewerStructSequenceSimpleProperty(simple, this));
+		}
+		for (SimpleSequence sequence : def.getStruct().getSimpleSequence()) {
+			sequencesArray.add(new ViewerStructSequenceSequenceProperty(sequence, this));
 		}
 		setToDefault();
 	}
@@ -39,12 +46,18 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 		for (ViewerStructSequenceSimpleProperty p : simplesArray) {
 			p.addPropertyChangeListener(listener);
 		}
+		for (ViewerStructSequenceSequenceProperty p : sequencesArray) {
+			p.addPropertyChangeListener(listener);
+		}
 	}
 
 	@Override
 	public void removePropertyChangeListener(IViewerPropertyChangeListener listener) {
 		super.removePropertyChangeListener(listener);
 		for (ViewerStructSequenceSimpleProperty p : simplesArray) {
+			p.removePropertyChangeListener(listener);
+		}
+		for (ViewerStructSequenceSequenceProperty p : sequencesArray) {
 			p.removePropertyChangeListener(listener);
 		}
 	}
@@ -54,10 +67,17 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 		for (ViewerStructSequenceSimpleProperty v : simplesArray) {
 			v.setToDefault();
 		}
+		for (ViewerStructSequenceSequenceProperty v : sequencesArray) {
+			v.setToDefault();
+		}
 	}
 
 	public List<ViewerStructSequenceSimpleProperty> getSimples() {
 		return simplesArray;
+	}
+
+	public List<ViewerStructSequenceSequenceProperty> getSequences() {
+		return sequencesArray;
 	}
 
 	public void setValue(StructSequenceRef value) {
@@ -77,12 +97,27 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 			}
 			prop.setValues(newValues);
 		}
+		for (ViewerStructSequenceSequenceProperty prop : sequencesArray) {
+			ArrayList<Values> newValues = new ArrayList<Values>(value.getStructValue().size());
+			Values sequenceValue = prop.def.getValues();
+			for (int i = 0; i < value.getStructValue().size(); i++) {
+				newValues.add(sequenceValue);
+			}
+			prop.setValues(newValues);
+		}
 
 		for (int i = 0; i < value.getStructValue().size(); i++) {
 			StructValue struct = value.getStructValue().get(i);
 			for (int j = 0; j < struct.getSimpleRef().size(); j++) {
 				SimpleRef simple = struct.getSimpleRef().get(j);
 				simplesArray.get(j).getValues().set(i, simple.getValue());
+			}
+		}
+		for (int i = 0; i < value.getStructValue().size(); i++) {
+			StructValue struct = value.getStructValue().get(i);
+			for (int j = 0; j < struct.getSimpleSequenceRef().size(); j++) {
+				SimpleSequenceRef sequence = struct.getSimpleSequenceRef().get(j);
+				sequencesArray.get(j).getValues().set(i, sequence.getValues().getValue());
 			}
 		}
 

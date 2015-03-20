@@ -14,6 +14,7 @@ import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSequenceProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSimpleProperty;
+import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceSequenceProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceSimpleProperty;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import mil.jpeojtrs.sca.prf.Kind;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
+import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
 import mil.jpeojtrs.sca.prf.Struct;
 import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.StructValue;
@@ -363,8 +365,18 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 			EList<StructValue> value = seq.getStructValue();
 			List<String> retVal = new ArrayList<String>(value.size());
 			for (StructValue v : value) {
-				SimpleRef ref = v.getRef(prop.getDefinition().getId());
+				SimpleRef ref = (SimpleRef) v.getRef(prop.getDefinition().getId());
 				retVal.add(ref.getValue());
+			}
+			return Arrays.toString(retVal.toArray());
+		} else if (element instanceof ViewerStructSequenceSequenceProperty) {
+			ViewerStructSequenceSequenceProperty prop = (ViewerStructSequenceSequenceProperty) element;
+			StructSequence seq = prop.getParent().getDefinition();
+			EList<StructValue> value = seq.getStructValue();
+			List<List<String>> retVal = new ArrayList<List<String>>(value.size());
+			for (StructValue v : value) {
+				SimpleSequenceRef ref = (SimpleSequenceRef) v.getRef(prop.getDefinition().getId());
+				retVal.add(ref.getValues().getValue());
 			}
 			return Arrays.toString(retVal.toArray());
 		}
