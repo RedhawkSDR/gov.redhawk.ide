@@ -41,7 +41,7 @@ public class LocalComponentPropertyEditWizardPage extends AbstractPropertyEditWi
 
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (evt.getPropertyName().equals("softPkg")) {
+				if ("softPkg".equals(evt.getPropertyName())) {
 					init((SoftPkg) evt.getNewValue());
 				}
 			}

@@ -41,14 +41,18 @@ public class DeviceProjectSettings {
 	 * @param aggregate the aggregate to set
 	 */
 	public void setAggregate(boolean aggregate) {
-		firePropertyChange("aggregate", this.aggregate, this.aggregate = aggregate);
+		final boolean oldValue = this.aggregate;
+		this.aggregate = aggregate;
+		firePropertyChange("aggregate", oldValue, this.aggregate);
 	}
 
 	/**
 	 * @param deviceType the deviceType to set
 	 */
 	public void setDeviceType(String deviceType) {
-		firePropertyChange("deviceType", this.deviceType, this.deviceType = deviceType);
+		final String oldValue = this.deviceType;
+		this.deviceType = deviceType;
+		firePropertyChange("deviceType", oldValue, this.deviceType);
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {

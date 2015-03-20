@@ -248,7 +248,7 @@ public class ImplementationWizard extends Wizard implements ScaImplementationWiz
 
 			ImplementationSettings settings = this.implPage.getImplSettings();
 			
-			ICodegenWizardPage codeGenPages[] = null;
+			ICodegenWizardPage[] codeGenPages = null;
 			
 			boolean createControl = true;
 			final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(codeGeneratorDescriptor.getId(),

@@ -38,7 +38,7 @@ public class LocalWaveformPropertyEditWizardPage extends AbstractPropertyEditWiz
 
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (evt.getPropertyName().equals("softwareAssembly")) {
+				if ("softwareAssembly".equals(evt.getPropertyName())) {
 					init((SoftwareAssembly) evt.getNewValue());
 				}
 			}
