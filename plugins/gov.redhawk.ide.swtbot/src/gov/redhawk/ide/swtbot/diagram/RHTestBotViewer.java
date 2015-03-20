@@ -10,22 +10,28 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.diagram;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.draw2d.LightweightSystem;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefViewer;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.finders.UIThreadRunnable;
 import org.eclipse.swtbot.swt.finder.results.VoidResult;
+import org.hamcrest.Matcher;
 
 /**
  * Viewer class to use RHTestBotCanvas for better dragging functionality with Graphiti diagrams.
  */
 public class RHTestBotViewer extends SWTBotGefViewer {
 
+	private SWTBotGefEditPart palettePart = null;
 	/**
 	 * @param graphicalViewer
 	 * @throws WidgetNotFoundException
@@ -61,5 +67,16 @@ public class RHTestBotViewer extends SWTBotGefViewer {
 
 	public RHTestBotCanvas getCanvas() {
 		return (RHTestBotCanvas) canvas;
+	}
+	
+	public SWTBotGefEditPart getPalettePart() {
+		if (palettePart == null) {
+			palettePart = createEditPart(editDomain.getPaletteViewer().getRootEditPart());
+		}
+		return palettePart;
+	}
+	
+	public List<SWTBotGefEditPart> paletteEditParts(Matcher< ? extends EditPart> matcher) throws WidgetNotFoundException {
+		return getPalettePart().descendants(matcher);
 	}
 }

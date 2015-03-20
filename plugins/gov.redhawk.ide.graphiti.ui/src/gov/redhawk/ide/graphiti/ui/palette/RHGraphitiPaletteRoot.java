@@ -178,7 +178,8 @@ public class RHGraphitiPaletteRoot extends PaletteRoot {
 		}
 		if (model instanceof PaletteTreeEntry) {
 			PaletteTreeEntry treeEntry = (PaletteTreeEntry) model;
-			PaletteContainer folder = new PaletteNamespaceFolder(treeEntry.getLabel());
+			PaletteNamespaceFolder folder = new PaletteNamespaceFolder(treeEntry.getLabel());
+			folder.setInitialState(treeEntry.isInitiallyOpen() ? PaletteDrawer.INITIAL_STATE_OPEN : PaletteDrawer.INITIAL_STATE_CLOSED);
 			fillContainer(folder, treeEntry.getToolEntries());
 			return folder;
 		}

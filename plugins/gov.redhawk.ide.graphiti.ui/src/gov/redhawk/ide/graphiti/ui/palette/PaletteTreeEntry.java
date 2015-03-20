@@ -24,7 +24,7 @@ public class PaletteTreeEntry extends PaletteCompartmentEntry implements IToolEn
 	
 	public PaletteTreeEntry(String label, PaletteCompartmentEntry container) {
 		super(label, null);
-		setInitiallyOpen(true);
+		setInitiallyOpen(false);
 		if (container != null) {
 			container.addToolEntry(this);
 			parent = container;

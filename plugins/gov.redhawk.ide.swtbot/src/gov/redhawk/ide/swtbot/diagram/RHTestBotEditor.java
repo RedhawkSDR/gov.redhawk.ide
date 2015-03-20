@@ -13,7 +13,6 @@ package gov.redhawk.ide.swtbot.diagram;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
-import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefViewer;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.finders.UIThreadRunnable;
 import org.eclipse.swtbot.swt.finder.results.Result;
@@ -48,7 +47,7 @@ public class RHTestBotEditor extends SWTBotGefEditor {
 	 * 
 	 * @return The RHTestBotViewer used for drag operations
 	 */
-	public SWTBotGefViewer getDragViewer() {
+	public RHTestBotViewer getDragViewer() {
 		return dragViewer;
 	}
 	

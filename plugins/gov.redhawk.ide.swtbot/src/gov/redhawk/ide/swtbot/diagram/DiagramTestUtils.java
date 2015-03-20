@@ -307,7 +307,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 */
 	public static RHTestBotCanvas getCanvas(SWTBotGefEditor editor) {
 		RHTestBotEditor rhTestBotEditor = (RHTestBotEditor) editor;
-		RHTestBotViewer viewer = (RHTestBotViewer) rhTestBotEditor.getDragViewer();
+		RHTestBotViewer viewer = rhTestBotEditor.getDragViewer();
 		RHTestBotCanvas canvas = (RHTestBotCanvas) viewer.getCanvas();
 		return canvas;
 	}
