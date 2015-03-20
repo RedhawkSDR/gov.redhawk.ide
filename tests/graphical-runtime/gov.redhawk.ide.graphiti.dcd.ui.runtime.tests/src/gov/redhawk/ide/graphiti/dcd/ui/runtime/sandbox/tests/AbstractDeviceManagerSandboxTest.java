@@ -32,9 +32,12 @@ public abstract class AbstractDeviceManagerSandboxTest extends UIRuntimeTest {
 	// Common Test Component Names
 	static final String GPP = "GPP";
 	static final String GPP_1 = "GPP_1";
+
 	static final String DEVICE_STUB = "DeviceStub";
 	static final String DEVICE_STUB_1 = "DeviceStub_1";
 	static final String DEVICE_STUB_2 = "DeviceStub_2";
+	static final String DEVICE_STUB_DOUBLE_IN_PORT = "dataDouble_in";
+	static final String DEVICE_STUB_DOUBLE_OUT_PORT = "dataDouble_out";
 
 	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE VisibilityModifier
 

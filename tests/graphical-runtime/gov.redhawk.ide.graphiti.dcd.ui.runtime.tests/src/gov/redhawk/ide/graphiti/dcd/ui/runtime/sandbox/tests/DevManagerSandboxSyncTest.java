@@ -29,23 +29,18 @@ public class DevManagerSandboxSyncTest extends AbstractDeviceManagerSandboxTest 
 
 	/**
 	 * IDE-1119
-	 * Adds, then removes a device component via dev manager chalkboard diagram.
+	 * Adds, then removes a device via dev manager chalkboard diagram.
 	 * Verify its no longer present in ScaExplorer Sandbox or Diagram
 	 */
 	@Test
 	public void addRemoveDeviceInDeviceManagerDiagram() {
 		editor = openNodeChalkboardDiagram(gefBot);
 
-		// Add component to diagram from palette
 		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 0, 0);
-
-		// wait for component to show up in ScaExplorer Chalkboard
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, DEVICE_STUB_1);
-
-		// RELEASE component from diagram
 		DiagramTestUtils.releaseFromDiagram(editor, editor.getEditPart(DEVICE_STUB));
 
-		// wait until hard limit component not present in ScaExplorer Chalkboard & Diagram
+		// wait until device not present in ScaExplorer Chalkboard & Diagram
 		ScaExplorerTestUtils.waitUntilComponentDisappearsInScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, DEVICE_STUB_1);
 		Assert.assertNull(editor.getEditPart(DEVICE_STUB));
 	}
@@ -59,23 +54,18 @@ public class DevManagerSandboxSyncTest extends AbstractDeviceManagerSandboxTest 
 	public void addTerminateDeviceInChalkboardDiagram() {
 		editor = openNodeChalkboardDiagram(gefBot);
 
-		// Add component to diagram from palette
 		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 0, 0);
-
-		// wait for component to show up in ScaExplorer Chalkboard
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, DEVICE_STUB_1);
-
-		// TERMINATE component from diagram
 		DiagramTestUtils.terminateFromDiagram(editor, editor.getEditPart(DEVICE_STUB));
 
-		// wait until hard limit component not present in ScaExplorer Chalkboard & Diagram
+		// wait until device not present in ScaExplorer Chalkboard & Diagram
 		ScaExplorerTestUtils.waitUntilComponentDisappearsInScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, DEVICE_STUB_1);
 		Assert.assertNull(editor.getEditPart(DEVICE_STUB));
 	}
 
 	/**
 	 * IDE-1119
-	 * Adds, then removes a device connections via dev manager chalkboard diagram.
+	 * Adds, then removes a device connection via dev manager chalkboard diagram.
 	 * Verify its no longer present in ScaExplorer Chalkboard
 	 */
 	@Test
@@ -84,18 +74,12 @@ public class DevManagerSandboxSyncTest extends AbstractDeviceManagerSandboxTest 
 
 		// Add a device stub to diagram from palette, which will connect to itself for this test
 		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 0, 0);
-
-		// wait for component to show up in ScaExplorer Chalkboard (connections don't always work correctly if you don't
-		// wait.
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, DEVICE_STUB_1);
-		// Get port edit parts
-		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, DEVICE_STUB_1);
-		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, DEVICE_STUB_1);
 
 		// Draw connection
+		SWTBotGefEditPart usesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, DEVICE_STUB_1, DEVICE_STUB_DOUBLE_OUT_PORT);
+		SWTBotGefEditPart providesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, DEVICE_STUB_1, DEVICE_STUB_DOUBLE_IN_PORT);
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
-		
-		// wait for connection to show up in ScaExplorer Chalkboard
 		ScaExplorerTestUtils.waitUntilConnectionDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, DEVICE_STUB_1, "dataDouble_out",
 			"connection_1");
 
@@ -104,8 +88,6 @@ public class DevManagerSandboxSyncTest extends AbstractDeviceManagerSandboxTest 
 		for (SWTBotGefConnectionEditPart con : sourceConnections) {
 			DiagramTestUtils.deleteFromDiagram(editor, con);
 		}
-
-		// wait until connection not present in ScaExplorer Chalkboard
 		ScaExplorerTestUtils.waitUntilConnectionDisappearsInScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, DEVICE_STUB_1, "dataDouble_out",
 			"connection_1");
 	}
@@ -162,7 +144,7 @@ public class DevManagerSandboxSyncTest extends AbstractDeviceManagerSandboxTest 
 		DiagramTestUtils.waitUntilComponentAppearsStoppedInDiagram(bot, editor, DEVICE_STUB_1);
 		ScaExplorerTestUtils.waitUntilComponentAppearsStoppedInScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, DEVICE_STUB_1);
 
-		// start both components
+		// start both devices
 		DiagramTestUtils.startComponentFromDiagram(editor, GPP_1);
 		DiagramTestUtils.startComponentFromDiagram(editor, DEVICE_STUB_1);
 
@@ -191,7 +173,7 @@ public class DevManagerSandboxSyncTest extends AbstractDeviceManagerSandboxTest 
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, DEVICE_STUB_1);
 		ScaExplorerTestUtils.terminateDeviceInScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, DEVICE_STUB_1);
 
-		// verify DeviceStub component not present in Diagram
+		// verify DeviceStub device not present in Diagram
 		DiagramTestUtils.waitUntilComponentDisappearsInChalkboardDiagram(bot, editor, DEVICE_STUB);
 
 		// Launch device from TargetSDR
@@ -209,49 +191,50 @@ public class DevManagerSandboxSyncTest extends AbstractDeviceManagerSandboxTest 
 
 	/**
 	 * IDE-1119
-	 * Adds, then removes device connections via SCA Explorer Sandbox Dev Manager.
+	 * Adds, then removes device connections via SCA Explorer view.
 	 * Verify its no longer present in Diagram
 	 */
 	@Test
 	public void addRemoveDeviceConnectionInScaExplorer() {
 		editor = openNodeChalkboardDiagram(gefBot);
 
-		// Launch two components from TargetSDR
+		// Launch two devices from TargetSDR
+		ScaExplorerTestUtils.launchDeviceFromTargetSDR(bot, DEVICE_STUB, "python");
 		ScaExplorerTestUtils.launchDeviceFromTargetSDR(bot, DEVICE_STUB, "python");
 
-		// verify components were added to the diagram
-		DiagramTestUtils.waitUntilComponentDisplaysInDiagram(bot, editor, DEVICE_STUB);
+		// verify devices were added to the diagram
+		DiagramTestUtils.waitUntilComponentDisplaysInDiagram(bot, editor, DEVICE_STUB_1);
+		DiagramTestUtils.waitUntilComponentDisplaysInDiagram(bot, editor, DEVICE_STUB_2);
 
-		// create connection between components via Sca Explorer Chalkboard
+		// create connection between devices via Sca Explorer
 		ScaExplorerTestUtils.waitUntilComponentDisplaysInScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, DEVICE_STUB_1);
 		ScaExplorerTestUtils.connectComponentPortsInScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, "connection_1", DEVICE_STUB_1, "dataDouble_out",
-			DEVICE_STUB_1, "dataDouble_in");
+			DEVICE_STUB_2, "dataDouble_in");
 
 		// verify connection exists in diagram
-		DiagramTestUtils.waitUntilConnectionDisplaysInDiagram(bot, editor, DEVICE_STUB);
+		DiagramTestUtils.waitUntilConnectionDisplaysInDiagram(bot, editor, DEVICE_STUB_2);
 
-		// disconnect connection_1 via Sca Explorer Chalkboard
+		// disconnect connection_1 via Sca Explorer
 		ScaExplorerTestUtils.disconnectConnectionInScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, "connection_1", DEVICE_STUB_1, "dataDouble_out");
 
 		// verify connection does NOT exist in diagram
-		DiagramTestUtils.waitUntilConnectionDisappearsInDiagram(bot, editor, DEVICE_STUB);
+		DiagramTestUtils.waitUntilConnectionDisappearsInDiagram(bot, editor, DEVICE_STUB_2);
 	}
 
 	/**
 	 * IDE-1119
 	 * Adds devices, starts/stops them from ScaExplorer Dev Manager Chalkboard and verifies
 	 * devices in diagram reflect appropriate color changes
-	 * 
 	 */
 	@Test
 	public void startStopDevicesFromScaExplorer() {
 		editor = openNodeChalkboardDiagram(gefBot);
 
-		// Launch two components from TargetSDR
+		// Launch two devices from TargetSDR
 		ScaExplorerTestUtils.launchDeviceFromTargetSDR(bot, GPP, "DCE:35406744-52f8-4fed-aded-0bcd3aae362b");
 		ScaExplorerTestUtils.launchDeviceFromTargetSDR(bot, DEVICE_STUB, "python");
 
-		// verify components were added to the diagram
+		// verify devices were added to the diagram
 		DiagramTestUtils.waitUntilComponentDisplaysInDiagram(bot, editor, GPP);
 		DiagramTestUtils.waitUntilComponentDisplaysInDiagram(bot, editor, DEVICE_STUB);
 		DiagramTestUtils.stopComponentFromDiagram(editor, GPP_1); // GPP starts when launched
@@ -287,7 +270,7 @@ public class DevManagerSandboxSyncTest extends AbstractDeviceManagerSandboxTest 
 		// verify SigGen stopped
 		DiagramTestUtils.waitUntilComponentAppearsStoppedInDiagram(bot, editor, GPP);
 
-		// start both components
+		// start both devices
 		ScaExplorerTestUtils.startComponentFromScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, DEVICE_STUB_1);
 		ScaExplorerTestUtils.startComponentFromScaExplorer(bot, CHALKBOARD_PARENT_PATH, DEVICE_MANAGER, GPP_1);
 
