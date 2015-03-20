@@ -678,32 +678,34 @@ public class ScaExplorerTestUtils {
 
 	/**
 	 * Launch component from ScaExplorer TargetSDR
-	 * @param componentName
-	 * @param componentLanguage
+	 * @Param bot The SWTBot
+	 * @param componentName The component's name
+	 * @param implementationId The implementation ID to be launched
 	 */
-	public static void launchComponentFromTargetSDR(SWTWorkbenchBot bot, String componentName, String componentLanguage) {
+	public static void launchComponentFromTargetSDR(SWTWorkbenchBot bot, String componentName, String implementationId) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
 		SWTBotTreeItem componentEntry = scaExplorerView.bot().tree().expandNode("Target SDR", "Components", componentName);
 		componentEntry.select();
 		SWTBotMenu launchInSandbox = componentEntry.contextMenu("Launch in Sandbox");
-		SWTBotMenu python = launchInSandbox.menu(componentLanguage);
-		python.click();
+		SWTBotMenu impl = launchInSandbox.menu(implementationId);
+		impl.click();
 	}
 	
 	/**
 	 * Launch component from ScaExplorer TargetSDR
-	 * @param componentName
-	 * @param componentLanguage
+	 * @param bot The SWTBot
+	 * @param deviceName The device's name
+	 * @param implementationId The implementation ID to be launched
 	 */
-	public static void launchDeviceFromTargetSDR(SWTWorkbenchBot bot, String deviceName, String deviceLanguage) {
+	public static void launchDeviceFromTargetSDR(SWTWorkbenchBot bot, String deviceName, String implementationId) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
 		SWTBotTreeItem deviceEntry = scaExplorerView.bot().tree().expandNode("Target SDR", "Devices", deviceName);
 		deviceEntry.select();
 		SWTBotMenu launchInSandbox = deviceEntry.contextMenu("Launch in Sandbox");
-		SWTBotMenu python = launchInSandbox.menu(deviceLanguage);
-		python.click();
+		SWTBotMenu impl = launchInSandbox.menu(implementationId);
+		impl.click();
 	}
 
 	/**
