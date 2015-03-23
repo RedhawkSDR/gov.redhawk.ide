@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.draw2d.LightweightSystem;
+import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.swt.widgets.Canvas;
@@ -74,6 +75,10 @@ public class RHTestBotViewer extends SWTBotGefViewer {
 			palettePart = createEditPart(editDomain.getPaletteViewer().getRootEditPart());
 		}
 		return palettePart;
+	}
+	
+	public EditDomain getEditDomain() {
+		return editDomain;
 	}
 	
 	public List<SWTBotGefEditPart> paletteEditParts(Matcher< ? extends EditPart> matcher) throws WidgetNotFoundException {

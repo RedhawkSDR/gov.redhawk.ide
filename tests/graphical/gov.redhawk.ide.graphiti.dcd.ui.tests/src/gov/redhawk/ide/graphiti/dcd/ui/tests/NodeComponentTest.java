@@ -12,17 +12,20 @@ package gov.redhawk.ide.graphiti.dcd.ui.tests;
 
 import gov.redhawk.ide.graphiti.dcd.ext.impl.DeviceShapeImpl;
 import gov.redhawk.ide.graphiti.dcd.ext.impl.ServiceShapeImpl;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.NodeUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+import gov.redhawk.ide.swtbot.diagram.RHTestBotEditor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 
+import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
@@ -73,6 +76,34 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		DiagramTestUtils.dragServiceFromTargetSDRToDiagram(gefBot, editor, SERVICE_STUB);
 		editor.select(editor.getEditPart(SERVICE_STUB));
 		assertServiceStub(editor.getEditPart(SERVICE_STUB));
+	}
+	
+	/**
+	 * IDE-1131
+	 * Name-spaced devices should have their component file id set to basename_UUID, not the fully qualified name
+	 */
+	@Test
+	public void checkNameSpacedDeviceInDcd() {
+		projectName = "NameSpacedDeviceTest";
+		String deviceName = "name.space.device";
+		String deviceBaseName = "device"; 
+
+		NodeUtils.createNewNodeProject(bot, projectName, DOMAIN_NAME);
+		editor = gefBot.gefEditor(projectName);
+
+		ToolEntry deviceToolEntry = getToolEntry((RHTestBotEditor) editor, deviceName);
+		DiagramTestUtils.addFromPaletteToDiagramWithNameSpace((RHTestBotEditor) editor, deviceToolEntry, 0, 0);
+		MenuUtils.save(editor);
+
+		// Build expected xml string for device
+		final String componentFileString = "(?s).*<componentfile id=\"" + deviceBaseName + ".*";
+		final String deviceXmlString = DiagramTestUtils.regexStringForDevice((RHContainerShapeImpl) editor.getEditPart(deviceName).part().getModel());
+
+		// Check dcd.xml for string
+		DiagramTestUtils.openTabInEditor(editor, "DeviceManager.dcd.xml");
+		String editorText = editor.toTextEditor().getText();
+		Assert.assertTrue("The componentfile should only include the basename_UUID", editorText.matches(componentFileString));
+		Assert.assertTrue("The dcd.xml should include " + deviceName + "'s device configuration", editorText.matches(deviceXmlString));
 	}
 
 	/**

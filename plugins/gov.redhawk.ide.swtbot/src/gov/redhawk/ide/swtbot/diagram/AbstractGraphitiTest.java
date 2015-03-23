@@ -16,6 +16,9 @@ import gov.redhawk.ide.swtbot.UITest;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.internal.ui.palette.editparts.DrawerEditPart;
 import org.eclipse.gef.palette.PaletteContainer;
@@ -27,6 +30,7 @@ import org.eclipse.swtbot.eclipse.gef.finder.matchers.ToolEntryLabelMatcher;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.ui.progress.UIJob;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Before;
@@ -45,13 +49,13 @@ public abstract class AbstractGraphitiTest extends UITest {
 	}
 
 	private class FolderMatcher extends BaseMatcher<PaletteNamespaceFolderEditPart> {
-		
+
 		private String partLabel;
-		
+
 		FolderMatcher(String label) {
 			partLabel = label;
 		}
-		
+
 		@Override
 		public boolean matches(Object item) {
 			if (item instanceof PaletteNamespaceFolderEditPart) {
@@ -64,17 +68,17 @@ public abstract class AbstractGraphitiTest extends UITest {
 		@Override
 		public void describeTo(Description description) {
 		}
-		
+
 	}
-	
+
 	private class ToolMatcher extends BaseMatcher<PaletteEditPart> {
 
 		private ToolEntryLabelMatcher innerMatcher;
-		
+
 		ToolMatcher(String label) {
 			innerMatcher = new ToolEntryLabelMatcher(label);
 		}
-		
+
 		@Override
 		public boolean matches(Object item) {
 			if (item instanceof PaletteEditPart) {
@@ -87,17 +91,31 @@ public abstract class AbstractGraphitiTest extends UITest {
 		@Override
 		public void describeTo(Description description) {
 		}
-		
+
 	}
-	
+
 	private void ensureExpanded(SWTBotGefEditPart gefPart) {
-		EditPart part = gefPart.part();
-		if (part instanceof DrawerEditPart && !((DrawerEditPart) part).isExpanded() 
-				|| part instanceof PaletteNamespaceFolderEditPart && !((PaletteNamespaceFolderEditPart) part).isExpanded()) {
-			gefPart.click();
+		final EditPart part = gefPart.part();
+		if (part instanceof DrawerEditPart && !((DrawerEditPart) part).isExpanded() || part instanceof PaletteNamespaceFolderEditPart
+			&& !((PaletteNamespaceFolderEditPart) part).isExpanded()) {
+			if (part instanceof PaletteNamespaceFolderEditPart) {
+				final PaletteNamespaceFolderEditPart partFolder = ((PaletteNamespaceFolderEditPart) part);
+				UIJob uiJob = new UIJob("Expanding palette node") {
+
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						partFolder.setExpanded(true);
+						return Status.OK_STATUS;
+					}
+				};
+
+				uiJob.schedule();
+				bot.sleep(500);
+			}
+
 		}
 	}
-	
+
 	protected ToolEntry getToolEntry(RHTestBotEditor editor, final String label) {
 		if (label.contains(".")) {
 			String[] segments = label.split("\\.");
@@ -107,7 +125,7 @@ public abstract class AbstractGraphitiTest extends UITest {
 			for (int index = 0; index < numFolders; ++index) {
 				List<SWTBotGefEditPart> gefParts = viewer.paletteEditParts(new FolderMatcher(segments[index]));
 				SWTBotGefEditPart foundParent = null;
-				for (SWTBotGefEditPart gefPart: gefParts) {
+				for (SWTBotGefEditPart gefPart : gefParts) {
 					// Check parent node of each part in list to determine if it is the right path segment
 					EditPart part = gefPart.part();
 					if (part == null) {
@@ -135,31 +153,25 @@ public abstract class AbstractGraphitiTest extends UITest {
 				}
 				currentParent = foundParent;
 			}
-//			try {
-//				editor.activateTool(segments[numFolders]);
-//			} catch (WidgetNotFoundException e) {
-//				return null;
-//			}
-//			PaletteEntry entry = editor.getActiveTool();
+
 			// Resolved whole namespace, time to find tool itself
-			List<SWTBotGefEditPart> gefParts = viewer.paletteEditParts(new ToolMatcher(segments[numFolders]));
-			for (SWTBotGefEditPart gefPart: gefParts) {
-				if (gefPart.parent().equals(currentParent)) {
-					EditPart part = gefPart.part();
-					if (part == null) {
-						continue;
-					}
-					Object model = part.getModel();
-					if (model instanceof ToolEntry) {
-						return (ToolEntry) model;
-					}
+//			List<SWTBotGefEditPart> gefParts = viewer.paletteEditParts(new FolderMatcher(segments[numFolders - 1]));
+			List<SWTBotGefEditPart> gefParts = currentParent.children();
+			for (SWTBotGefEditPart gefPart : gefParts) {
+				EditPart part = gefPart.part();
+				if (part == null) {
+					continue;
+				}
+				Object model = part.getModel();
+				if (model instanceof ToolEntry) {
+					return (ToolEntry) model;
 				}
 			}
 			return null;
 		}
 		return getSimpleTool(editor, label);
 	}
-	
+
 	protected boolean toolIsPresent(SWTBotGefEditor editor, final String label) {
 		if (editor instanceof RHTestBotEditor) {
 			RHTestBotEditor realEditor = (RHTestBotEditor) editor;
@@ -167,10 +179,10 @@ public abstract class AbstractGraphitiTest extends UITest {
 		}
 		return (getSimpleTool(editor, label) != null);
 	}
-	
+
 	protected ToolEntry getSimpleTool(SWTBotGefEditor editor, final String label) {
-		String[] impls = new String[] {"",  " (cpp)", " (java)", " (python)"};
-		for (String impl: impls) {
+		String[] impls = new String[] { "", " (cpp)", " (java)", " (python)" };
+		for (String impl : impls) {
 			try {
 				editor.activateTool(label + impl);
 			} catch (WidgetNotFoundException e) {
@@ -180,5 +192,5 @@ public abstract class AbstractGraphitiTest extends UITest {
 		}
 		return null;
 	}
-	
+
 }

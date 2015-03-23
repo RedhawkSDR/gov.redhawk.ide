@@ -32,6 +32,7 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
@@ -67,7 +68,8 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.junit.Assert;
 
 @SuppressWarnings("restriction")
-public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility method is intended to be public
+public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKSTYLE INLINE - this utility method is
+																// intended to be public
 
 	/** hide constructor, since all functions are static. */
 	private DiagramTestUtils() {
@@ -113,6 +115,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @param yTargetPosition - y coordinate for drop location
 	 */
 	public static void addFromPaletteToDiagram(SWTBotGefEditor editor, String componentName, int xTargetPosition, int yTargetPosition) {
+
 		String[] impls = { " (python)", " (cpp)", " (java)", "" };
 		for (int i = 0; i < impls.length; i++) {
 			try {
@@ -126,6 +129,28 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 				}
 			}
 		}
+		editor.click(xTargetPosition, yTargetPosition);
+	}
+
+	/**
+	 * Adds a namespaced component onto the SAD diagram editor from the palette
+	 * Position is determined relative to the last item dropped on the diagram.
+	 * 
+	 * @param editor - SWTBotGefEditor
+	 * @param componentToolEntry - Palette tool entry for namespaced component. Use AbstractGraphitiTest.getToolEntry().
+	 * @param xTargetPosition - x coordinate for drop location
+	 * @param yTargetPosition - y coordinate for drop location
+	 */
+	public static void addFromPaletteToDiagramWithNameSpace(final RHTestBotEditor editor, final ToolEntry componentToolEntry, int xTargetPosition,
+		int yTargetPosition) {
+		editor.bot().getDisplay().syncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				editor.getDragViewer().getEditDomain().getPaletteViewer().setActiveTool(componentToolEntry);
+//				editor.activateTool(componentToolEntry.getLabel());
+			}
+		});
 		editor.click(xTargetPosition, yTargetPosition);
 	}
 
@@ -204,7 +229,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	public static void addUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor) {
 		addUseFrontEndTunerDeviceToDiagram(gefBot, editor, 0, 0);
 	}
-	
+
 	/**
 	 * Add a Use FrontEnd Tuner Device to the SAD diagram editor at the specified coordinates
 	 */
@@ -300,7 +325,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	public static ComponentShapeImpl getComponentShape(SWTBotGefEditor editor, String componentName) {
 		return (ComponentShapeImpl) getRHContainerShape(editor, componentName);
 	}
-	
+
 	/**
 	 * Utility method to return the {@link RHTestBotCanvas}, generally for direct mouse control
 	 * @return RHTestBotCanvas reference
@@ -572,7 +597,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		// If you get here, no matching provides port was found
 		return null;
 	}
-	
+
 	/**
 	 * 
 	 * @param editor - SWTBotGefEditor
@@ -593,7 +618,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 
 			List<SWTBotGefEditPart> providesPortsEditParts = child.children();
 			if (providesPortsEditParts != null && providesPortsEditParts.size() > 0
-					&& providesPortsEditParts.get(0).part().getModel() instanceof FixPointAnchor) {
+				&& providesPortsEditParts.get(0).part().getModel() instanceof FixPointAnchor) {
 				return providesPortsEditParts.get(0);
 			}
 		}
@@ -651,7 +676,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 
 	 * @param editor - SWTBotGefEditor
@@ -671,14 +696,12 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 			}
 
 			List<SWTBotGefEditPart> usesPortsEditParts = child.children();
-			if (usesPortsEditParts != null && usesPortsEditParts.size() > 0
-					&& usesPortsEditParts.get(0).part().getModel() instanceof FixPointAnchor) {
+			if (usesPortsEditParts != null && usesPortsEditParts.size() > 0 && usesPortsEditParts.get(0).part().getModel() instanceof FixPointAnchor) {
 				return usesPortsEditParts.get(0);
 			}
 		}
 		return null;
 	}
-
 
 	/**
 	 * 
@@ -718,7 +741,7 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 	 * @param componentShape
 	 * @return
 	 */
-	public static String regexStringForSadComponent(ComponentShapeImpl componentShape) {
+	public static String regexStringForComponent(ComponentShapeImpl componentShape) {
 		Object bo = DUtil.getBusinessObject(componentShape);
 		SadComponentInstantiation ci = (SadComponentInstantiation) bo;
 		String componentinstantiation = "<componentinstantiation id=\"" + ci.getUsageName() + "\""
@@ -728,6 +751,20 @@ public class DiagramTestUtils { // SUPPRESS CHECKSTYLE INLINE - this utility met
 
 		return "(?s).*" + componentinstantiation + ".*" + usagename + ".*" + namingservice + ".*";
 
+	}
+
+	/**
+	 * Checks dcd.xml for device instantiation code
+	 * @param deviceShape
+	 * @return
+	 */
+	public static String regexStringForDevice(RHContainerShapeImpl deviceShape) {
+		Object bo = DUtil.getBusinessObject(deviceShape);
+		DcdComponentInstantiation ci = (DcdComponentInstantiation) bo;
+		String componentinstantiation = "<componentinstantiation id=\"" + ci.getId() + "\">";
+		String usagename = "<usagename>" + ci.getUsageName() + "</usagename>";
+
+		return "(?s).*" + componentinstantiation + ".*" + usagename + ".*";
 	}
 
 	/**
