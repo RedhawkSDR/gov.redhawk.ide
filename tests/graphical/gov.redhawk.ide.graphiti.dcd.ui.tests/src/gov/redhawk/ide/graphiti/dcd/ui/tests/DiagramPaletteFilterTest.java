@@ -123,53 +123,66 @@ public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 
 	}
 
+	/**
+	 * Test filtering of the device/service list
+	 */
 	@Test
 	public void testFilter() {
 		projectName = "Filter-Test";
 
+		final String device1 = GPP;
+		final String device2 = DEVICE_STUB;
+		// IDE-1112: test presence of namespaced device in palette
 		final String device3 = "ide1112.test.name.spaced.comp1";
-		
+
+		final String errorMissing1 = "Device " + device1 + " is missing from the palette";
+		final String errorMissing2 = "Device " + device2 + " is missing from the palette";
+		final String errorMissing3 = "Device " + device3 + " is missing from the palette";
+		final String errorShown1 = "Device " + device1 + " should be filtered out of the palette";
+		final String errorShown2 = "Device " + device2 + " should be filtered out of the palette";
+		final String errorShown3 = "Device " + device3 + " should be filtered out of the palette";
+
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 
-		Assert.assertTrue(toolIsPresent(editor, GPP));
-		Assert.assertTrue(toolIsPresent(editor, DEVICE_STUB));
-		Assert.assertTrue(toolIsPresent(editor, device3));
+		Assert.assertTrue(errorMissing1, toolIsPresent(editor, device1));
+		Assert.assertTrue(errorMissing2, toolIsPresent(editor, device2));
+		Assert.assertTrue(errorMissing3, toolIsPresent(editor, device3));
 
 		FilterRunnable filterer = new FilterRunnable(editor);
 		filterer.setFilterString("g");
 		Rectangle filterRect = filterer.getRectangle();
 		Assert.assertNotNull(filterRect);
 
-		Assert.assertTrue(toolIsPresent(editor, GPP));
-		Assert.assertFalse(toolIsPresent(editor, DEVICE_STUB));
-		Assert.assertFalse(toolIsPresent(editor, device3));
+		Assert.assertTrue(errorMissing1, toolIsPresent(editor, device1));
+		Assert.assertFalse(errorShown2, toolIsPresent(editor, device2));
+		Assert.assertFalse(errorShown3, toolIsPresent(editor, device3));
 
 		filterer.setFilterString("sh");
 
-		Assert.assertFalse(toolIsPresent(editor, GPP));
-		Assert.assertFalse(toolIsPresent(editor, DEVICE_STUB));
-		Assert.assertFalse(toolIsPresent(editor, device3));
+		Assert.assertFalse(errorShown1, toolIsPresent(editor, device1));
+		Assert.assertFalse(errorShown2, toolIsPresent(editor, device2));
+		Assert.assertFalse(errorShown3, toolIsPresent(editor, device3));
 
 		filterer.setFilterString("d");
 
-		Assert.assertFalse(toolIsPresent(editor, GPP));
-		Assert.assertTrue(toolIsPresent(editor, DEVICE_STUB));
-		Assert.assertTrue(toolIsPresent(editor, device3));
+		Assert.assertFalse(errorShown1, toolIsPresent(editor, device1));
+		Assert.assertTrue(errorMissing2, toolIsPresent(editor, device2));
+		Assert.assertTrue(errorMissing3, toolIsPresent(editor, device3));
 
 		filterer.setFilterString(".");
 
-		Assert.assertFalse(toolIsPresent(editor, GPP));
-		Assert.assertFalse(toolIsPresent(editor, DEVICE_STUB));
-		Assert.assertTrue(toolIsPresent(editor, device3));
+		Assert.assertFalse(errorShown1, toolIsPresent(editor, device1));
+		Assert.assertFalse(errorShown2, toolIsPresent(editor, device2));
+		Assert.assertTrue(errorMissing3, toolIsPresent(editor, device3));
 
 		filterer.setFilterString("");
 
-		Assert.assertTrue(toolIsPresent(editor, GPP));
-		Assert.assertTrue(toolIsPresent(editor, DEVICE_STUB));
-		Assert.assertTrue(toolIsPresent(editor, device3));
+		Assert.assertTrue(errorMissing1, toolIsPresent(editor, device1));
+		Assert.assertTrue(errorMissing2, toolIsPresent(editor, device2));
+		Assert.assertTrue(errorMissing3, toolIsPresent(editor, device3));
 	}
 
 }

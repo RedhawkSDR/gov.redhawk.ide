@@ -131,6 +131,9 @@ public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 		
 	}
 	
+	/**
+	 * Test filtering of the component list
+	 */
 	@Test
 	public void testFilter() {
 		waveformName = "IDE-962-Test";
@@ -138,45 +141,53 @@ public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 		final String component2 = "HardLimit";
 		// IDE-1112: test presence of namespaced component in palette
 		final String component3 = "ide1112.test.name.spaced.comp1";
+
+		final String errorMissing1 = "Component " + component1 + " is missing from the palette";
+		final String errorMissing2 = "Component " + component2 + " is missing from the palette";
+		final String errorMissing3 = "Component " + component3 + " is missing from the palette";
+		final String errorShown1 = "Component " + component1 + " should be filtered out of the palette";
+		final String errorShown2 = "Component " + component2 + " should be filtered out of the palette";
+		final String errorShown3 = "Component " + component3 + " should be filtered out of the palette";
+
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		final SWTBotGefEditor editor = gefBot.gefEditor(waveformName);
 
-		Assert.assertTrue(toolIsPresent(editor, component1));
-		Assert.assertTrue(toolIsPresent(editor, component2));
-		Assert.assertTrue(toolIsPresent(editor, component3));
+		Assert.assertTrue(errorMissing1, toolIsPresent(editor, component1));
+		Assert.assertTrue(errorMissing2, toolIsPresent(editor, component2));
+		Assert.assertTrue(errorMissing3, toolIsPresent(editor, component3));
 
 		FilterRunnable filterer = new FilterRunnable(editor);
 		filterer.setFilterString("s");
 		Rectangle filterRect = filterer.getRectangle();
 		Assert.assertNotNull(filterRect);
 
-		Assert.assertTrue(toolIsPresent(editor, component1));
-		Assert.assertFalse(toolIsPresent(editor, component2));
-		Assert.assertTrue(toolIsPresent(editor, component3));
+		Assert.assertTrue(errorMissing1, toolIsPresent(editor, component1));
+		Assert.assertFalse(errorShown2, toolIsPresent(editor, component2));
+		Assert.assertTrue(errorMissing3, toolIsPresent(editor, component3));
 		
 		filterer.setFilterString("sh");
 
-		Assert.assertFalse(toolIsPresent(editor, component1));
-		Assert.assertFalse(toolIsPresent(editor, component2));
-		Assert.assertFalse(toolIsPresent(editor, component3));
+		Assert.assertFalse(errorShown1, toolIsPresent(editor, component1));
+		Assert.assertFalse(errorShown2, toolIsPresent(editor, component2));
+		Assert.assertFalse(errorShown3, toolIsPresent(editor, component3));
 
 		filterer.setFilterString("h");
 
-		Assert.assertFalse(toolIsPresent(editor, component1));
-		Assert.assertTrue(toolIsPresent(editor, component2));
-		Assert.assertFalse(toolIsPresent(editor, component3));
+		Assert.assertFalse(errorShown1, toolIsPresent(editor, component1));
+		Assert.assertTrue(errorMissing2, toolIsPresent(editor, component2));
+		Assert.assertFalse(errorShown3, toolIsPresent(editor, component3));
 
 		filterer.setFilterString(".");
 
-		Assert.assertFalse(toolIsPresent(editor, component1));
-		Assert.assertFalse(toolIsPresent(editor, component2));
-		Assert.assertTrue(toolIsPresent(editor, component3));
+		Assert.assertFalse(errorShown1, toolIsPresent(editor, component1));
+		Assert.assertFalse(errorShown2, toolIsPresent(editor, component2));
+		Assert.assertTrue(errorMissing3, toolIsPresent(editor, component3));
 
 		filterer.setFilterString("");
 
-		Assert.assertTrue(toolIsPresent(editor, component1));
-		Assert.assertTrue(toolIsPresent(editor, component2));
-		Assert.assertTrue(toolIsPresent(editor, component3));
+		Assert.assertTrue(errorMissing1, toolIsPresent(editor, component1));
+		Assert.assertTrue(errorMissing2, toolIsPresent(editor, component2));
+		Assert.assertTrue(errorMissing3, toolIsPresent(editor, component3));
 	}
 	
 	@Test
