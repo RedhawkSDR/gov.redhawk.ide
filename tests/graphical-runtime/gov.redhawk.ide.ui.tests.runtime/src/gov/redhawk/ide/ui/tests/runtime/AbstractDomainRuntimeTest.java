@@ -18,7 +18,7 @@ import gov.redhawk.ide.swtbot.UIRuntimeTest;
 import java.io.File;
 
 import org.eclipse.ui.PlatformUI;
-import org.junit.Assume;
+import org.junit.Assert;
 
 /**
  * 
@@ -36,7 +36,7 @@ public abstract class AbstractDomainRuntimeTest extends UIRuntimeTest {
 		String sdrRoot = System.getenv("SDRROOT");
 		File dmdSpd = new File(new File(sdrRoot), "dom/mgr/DomainManager.spd.xml");
 		
-		Assume.assumeTrue("${SDROOT}/mgr/DomainManager.spd.xml does not exist", dmdSpd.isFile());
+		Assert.assertTrue("${SDROOT}/mgr/DomainManager.spd.xml does not exist", dmdSpd.isFile());
 		
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
