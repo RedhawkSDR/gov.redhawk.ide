@@ -33,7 +33,7 @@ import org.junit.Test;
 public class PortMonitorViewTest extends UIRuntimeTest {
 
 	private static final String[] LOCAL_WAVEFORM_PARENT_PATH = { "Sandbox" };
-	private static final String WAVEFORM_NAME = "MonitorPortsWaveform";
+	private static final String WAVEFORM_NAME = "ExampleWaveform06";
 	private String waveFormFullName; // full name of waveform that is launched
 
 	private SWTGefBot gefBot;
@@ -64,7 +64,7 @@ public class PortMonitorViewTest extends UIRuntimeTest {
 		Assert.assertTrue("Root tree item should be the waveform", waveFormFullName.equals(rootItem.getText()));
 
 		List<String> nodes = rootItem.getNodes();
-		Assert.assertTrue("Expected nine (9) ports to be monitored, instead found: " + nodes.size(), nodes.size() == 9);
+		Assert.assertEquals("Wrong number of ports being monitored", 6, nodes.size());
 
 	}
 

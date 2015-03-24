@@ -19,7 +19,6 @@ import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Test;
 
@@ -42,10 +41,10 @@ public class WaveformReleaseTest extends UIRuntimeTest {
 	 */
 	@Test
 	public void releaseWaveformTest() {
-		final String WAVEFORM = "CorbaNameBrowseWaveform";
+		final String WAVEFORM = "ExampleWaveform01";
 		final String COMPONENT = "SigGen";
 		final String COMPONENT_IMPL = "python";
-		final String COMPONENT_PORT = "out";
+		final String COMPONENT_PORT = "dataFloat_out";
 		
 		SWTBotTreeItem waveformTreeItem = WaveformUtils.launchLocalWaveform(bot, WAVEFORM);
 		SWTBotTreeItem componentTreeItem = ComponentUtils.launchLocalComponent(bot, COMPONENT, COMPONENT_IMPL);

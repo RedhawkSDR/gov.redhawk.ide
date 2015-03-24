@@ -44,7 +44,7 @@ public class LocalWaveformRuntimeTest extends AbstractGraphitiLocalWaveformRunti
 		editor.setFocus();
 		
 		//verify existing component exists
-		Assert.assertNotNull(editor.getEditPart("ExamplePythonComponent"));
+		Assert.assertNotNull(editor.getEditPart("DataReader"));
 
 		// Add component to diagram from palette
 		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);

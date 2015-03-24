@@ -45,11 +45,11 @@
   <connections>
     <connectinterface id="connection_1">
       <usesport>
-        <usesidentifier>out</usesidentifier>
+        <usesidentifier>dataFloat_out</usesidentifier>
         <componentinstantiationref refid="SigGen_1"/>
       </usesport>
       <providesport>
-        <providesidentifier>dataDouble_in</providesidentifier>
+        <providesidentifier>dataFloat_in</providesidentifier>
         <componentinstantiationref refid="HardLimit_1"/>
       </providesport>
     </connectinterface>
