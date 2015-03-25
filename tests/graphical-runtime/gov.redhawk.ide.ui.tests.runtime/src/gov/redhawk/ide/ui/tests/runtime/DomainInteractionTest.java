@@ -19,7 +19,6 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -309,12 +308,6 @@ public class DomainInteractionTest extends AbstractDomainRuntimeTest {
 	}
 
 	@Test
-	public void testLaunch07() {
-
-	}
-
-	@Ignore
-	@Test
 	public void testLaunch08() {
 		viewBot.tree().getTreeItem("Target SDR").select();
 		viewBot.tree().getTreeItem("Target SDR").contextMenu("Launch Domain ...").click();
@@ -330,6 +323,27 @@ public class DomainInteractionTest extends AbstractDomainRuntimeTest {
 		viewBot.tree().getTreeItem("Target SDR").select();
 
 		viewBot.tree().getTreeItem("Target SDR").contextMenu("Launch Domain ...").click();
+
+		// Choose an acceptable domain name. The OK button should enable.
+		bot.textWithLabel("Domain Name: ").setText("REDHAWK_DEV_2");
+		bot.waitWhile(new ICondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				return !bot.button("OK").isEnabled();
+			}
+
+			@Override
+			public void init(SWTBot bot) {
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "OK button did not enable";
+			}
+		}, 5000, 1000);
+
+		// Choose an unacceptable domain name. The OK button should disable.
 		bot.textWithLabel("Domain Name: ").setText("REDHAWK_DEV");
 		bot.waitWhile(new ICondition() {
 
@@ -340,16 +354,14 @@ public class DomainInteractionTest extends AbstractDomainRuntimeTest {
 
 			@Override
 			public void init(SWTBot bot) {
-
 			}
 
 			@Override
 			public String getFailureMessage() {
-				return "OK enabled";
+				return "OK button did not disable";
 			}
 
-		}, 30000, 1000);
-		Assert.assertFalse(bot.button("OK").isEnabled());
+		}, 5000, 1000);
 		bot.button("Cancel").click();
 	}
 
@@ -368,7 +380,23 @@ public class DomainInteractionTest extends AbstractDomainRuntimeTest {
 		bot.button("OK").click();
 
 		explorerView.show();
-		viewBot.tree().expandNode("REDHAWK_DEV_ports CONNECTED", "Device Managers", "DevMgr_localhost", "GPP_1 STARTED").expand();
+		bot.waitUntil(new ICondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				viewBot.tree().expandNode("REDHAWK_DEV_ports CONNECTED", "Device Managers", "DevMgr_localhost", "GPP_1 STARTED").expand();
+				return true;
+			}
+
+			@Override
+			public void init(SWTBot bot) {
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Couldn't find some element in the tree leading up to 'GPP_1 STARTED'";
+			}
+		}, 10000, 1000);
 		viewBot.tree().getTreeItem("REDHAWK_DEV_ports CONNECTED").select();
 
 		viewBot.tree().getTreeItem("REDHAWK_DEV_ports CONNECTED").contextMenu("Launch Waveform...").click();
