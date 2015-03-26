@@ -13,6 +13,7 @@ package gov.redhawk.ide.graphiti.sad.ui.tests;
 import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteFilterFigure;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
+import gov.redhawk.ide.swtbot.diagram.PaletteUtils;
 
 import java.util.regex.Pattern;
 
@@ -152,42 +153,42 @@ public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		final SWTBotGefEditor editor = gefBot.gefEditor(waveformName);
 
-		Assert.assertTrue(errorMissing1, toolIsPresent(editor, component1));
-		Assert.assertTrue(errorMissing2, toolIsPresent(editor, component2));
-		Assert.assertTrue(errorMissing3, toolIsPresent(editor, component3));
+		Assert.assertTrue(errorMissing1, PaletteUtils.toolIsPresent(editor, component1));
+		Assert.assertTrue(errorMissing2, PaletteUtils.toolIsPresent(editor, component2));
+		Assert.assertTrue(errorMissing3, PaletteUtils.toolIsPresent(editor, component3));
 
 		FilterRunnable filterer = new FilterRunnable(editor);
 		filterer.setFilterString("s");
 		Rectangle filterRect = filterer.getRectangle();
 		Assert.assertNotNull(filterRect);
 
-		Assert.assertTrue(errorMissing1, toolIsPresent(editor, component1));
-		Assert.assertFalse(errorShown2, toolIsPresent(editor, component2));
-		Assert.assertTrue(errorMissing3, toolIsPresent(editor, component3));
+		Assert.assertTrue(errorMissing1, PaletteUtils.toolIsPresent(editor, component1));
+		Assert.assertFalse(errorShown2, PaletteUtils.toolIsPresent(editor, component2));
+		Assert.assertTrue(errorMissing3, PaletteUtils.toolIsPresent(editor, component3));
 		
 		filterer.setFilterString("sh");
 
-		Assert.assertFalse(errorShown1, toolIsPresent(editor, component1));
-		Assert.assertFalse(errorShown2, toolIsPresent(editor, component2));
-		Assert.assertFalse(errorShown3, toolIsPresent(editor, component3));
+		Assert.assertFalse(errorShown1, PaletteUtils.toolIsPresent(editor, component1));
+		Assert.assertFalse(errorShown2, PaletteUtils.toolIsPresent(editor, component2));
+		Assert.assertFalse(errorShown3, PaletteUtils.toolIsPresent(editor, component3));
 
 		filterer.setFilterString("h");
 
-		Assert.assertFalse(errorShown1, toolIsPresent(editor, component1));
-		Assert.assertTrue(errorMissing2, toolIsPresent(editor, component2));
-		Assert.assertFalse(errorShown3, toolIsPresent(editor, component3));
+		Assert.assertFalse(errorShown1, PaletteUtils.toolIsPresent(editor, component1));
+		Assert.assertTrue(errorMissing2, PaletteUtils.toolIsPresent(editor, component2));
+		Assert.assertFalse(errorShown3, PaletteUtils.toolIsPresent(editor, component3));
 
 		filterer.setFilterString(".");
 
-		Assert.assertFalse(errorShown1, toolIsPresent(editor, component1));
-		Assert.assertFalse(errorShown2, toolIsPresent(editor, component2));
-		Assert.assertTrue(errorMissing3, toolIsPresent(editor, component3));
+		Assert.assertFalse(errorShown1, PaletteUtils.toolIsPresent(editor, component1));
+		Assert.assertFalse(errorShown2, PaletteUtils.toolIsPresent(editor, component2));
+		Assert.assertTrue(errorMissing3, PaletteUtils.toolIsPresent(editor, component3));
 
 		filterer.setFilterString("");
 
-		Assert.assertTrue(errorMissing1, toolIsPresent(editor, component1));
-		Assert.assertTrue(errorMissing2, toolIsPresent(editor, component2));
-		Assert.assertTrue(errorMissing3, toolIsPresent(editor, component3));
+		Assert.assertTrue(errorMissing1, PaletteUtils.toolIsPresent(editor, component1));
+		Assert.assertTrue(errorMissing2, PaletteUtils.toolIsPresent(editor, component2));
+		Assert.assertTrue(errorMissing3, PaletteUtils.toolIsPresent(editor, component3));
 	}
 	
 	@Test
@@ -203,7 +204,7 @@ public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 	}
 	
 	private boolean hasMultipleImplementations(SWTBotGefEditor editor, String component) {
-		Assert.assertTrue(toolIsPresent(editor, component));
+		Assert.assertTrue(PaletteUtils.toolIsPresent(editor, component));
 		ToolEntry entry = editor.getActiveTool();
 		Assert.assertNotNull(entry);
 		PaletteContainer container = entry.getParent();

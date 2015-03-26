@@ -13,6 +13,7 @@ package gov.redhawk.ide.graphiti.sad.ui.runtime.domain.tests;
 
 import static org.junit.Assert.assertEquals;
 import gov.redhawk.ide.swtbot.ViewUtils;
+import gov.redhawk.ide.swtbot.WaitForEditorCondition;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
 import gov.redhawk.logging.ui.LogLevels;
@@ -84,6 +85,33 @@ public class WaveformExplorerTest extends AbstractGraphitiDomainWaveformRuntimeT
 		Assert.assertNotNull("Found in Diagram (model object) on editor", diagram);
 		int gridUnit = diagram.getGridUnit();
 		assertEquals("Grid is hidden on diagram", -1, gridUnit); // -1 means it is hidden
+	}
+	
+	/**
+	 * IDE-1187 Opens Graphiti diagram using the Waveform Explorer editor.
+	 * Diagram should contain namespaced components
+	 */
+	@Test
+	public void waveformExplorerNamespaceComponentsTest() {
+		final String comp1 = "comp_1";
+		final String comp2 = "comp_2";
+		
+		bot.closeAllEditors();
+		
+		ScaExplorerTestUtils.launchWaveformFromDomain(bot, DOMAIN, NAMESPACE_DOMAIN_WAVEFORM);
+		bot.waitUntil(new WaitForEditorCondition());
+		ScaExplorerTestUtils.waitUntilNodeAppearsInScaExplorer(bot, DOMAIN_WAVEFORM_PARENT_PATH, NAMESPACE_DOMAIN_WAVEFORM);
+		setWaveFormFullName(ScaExplorerTestUtils.getFullNameFromScaExplorer(bot, DOMAIN_WAVEFORM_PARENT_PATH, NAMESPACE_DOMAIN_WAVEFORM));
+		
+		SWTBotGefEditor editor = gefBot.gefEditor(getWaveFormFullName());
+		editor.setFocus();
+
+		// check for components
+		Assert.assertNotNull(editor.getEditPart(comp1));
+		Assert.assertNotNull(editor.getEditPart(comp2));
+		SWTBotGefEditPart providesPort = DiagramTestUtils.getDiagramProvidesPort(editor, comp2);
+		SWTBotGefEditPart providesAnchor = DiagramTestUtils.getDiagramPortAnchor(providesPort);
+		Assert.assertTrue(providesAnchor.targetConnections().size() == 1);
 	}
 
 	@Test

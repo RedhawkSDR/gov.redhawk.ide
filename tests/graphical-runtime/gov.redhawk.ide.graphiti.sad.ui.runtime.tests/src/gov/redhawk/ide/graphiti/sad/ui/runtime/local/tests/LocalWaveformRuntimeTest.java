@@ -61,6 +61,37 @@ public class LocalWaveformRuntimeTest extends AbstractGraphitiLocalWaveformRunti
 		editor = gefBot.gefEditor(getWaveFormFullName());
 		Assert.assertNotNull(editor.getEditPart(HARD_LIMIT));
 	}
+	
+	/**
+	 * IDE-671
+	 * Launch local waveform waveform diagram that contains namespaced components
+	 * Verify component exists
+	 * Add components to diagram from palette and TargetSDR
+	 * Close diagram and re-open, verify newly added component exists
+	 */
+	@Test
+	public void checkLocalWaveformNamespaceComponents() {
+		final String comp1 = "comp_1";
+		final String comp2 = "comp_2";
+		
+		bot.closeAllEditors();
+		
+		ScaExplorerTestUtils.launchWaveformFromTargetSDR(gefBot, NAMESPACE_LOCAL_WAVEFORM);
+		ScaExplorerTestUtils.waitUntilNodeAppearsInScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, NAMESPACE_LOCAL_WAVEFORM);
+		ScaExplorerTestUtils.openDiagramFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, NAMESPACE_LOCAL_WAVEFORM, DiagramType.GRAPHITI_CHALKBOARD);
+		setWaveFormFullName(ScaExplorerTestUtils.getFullNameFromScaExplorer(gefBot, LOCAL_WAVEFORM_PARENT_PATH, NAMESPACE_LOCAL_WAVEFORM));
+
+		editor = gefBot.gefEditor(getWaveFormFullName());
+		editor.setFocus();
+		
+		//verify waveform elements exist
+		Assert.assertNotNull(editor.getEditPart(comp1));
+		Assert.assertNotNull(editor.getEditPart(comp2));
+		SWTBotGefEditPart providesPort = DiagramTestUtils.getDiagramProvidesPort(editor, comp2);
+		SWTBotGefEditPart providesAnchor = DiagramTestUtils.getDiagramPortAnchor(providesPort);
+		Assert.assertTrue(providesAnchor.targetConnections().size() == 1);
+
+	}
 
 	/**
 	 * IDE-928

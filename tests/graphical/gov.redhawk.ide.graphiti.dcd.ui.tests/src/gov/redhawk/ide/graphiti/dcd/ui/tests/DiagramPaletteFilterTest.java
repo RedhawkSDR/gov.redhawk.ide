@@ -13,6 +13,7 @@ package gov.redhawk.ide.graphiti.dcd.ui.tests;
 import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteFilterFigure;
 import gov.redhawk.ide.swtbot.NodeUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
+import gov.redhawk.ide.swtbot.diagram.PaletteUtils;
 
 import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.draw2d.IFigure;
@@ -147,42 +148,42 @@ public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(projectName);
 		editor.setFocus();
 
-		Assert.assertTrue(errorMissing1, toolIsPresent(editor, device1));
-		Assert.assertTrue(errorMissing2, toolIsPresent(editor, device2));
-		Assert.assertTrue(errorMissing3, toolIsPresent(editor, device3));
+		Assert.assertTrue(errorMissing1, PaletteUtils.toolIsPresent(editor, device1));
+		Assert.assertTrue(errorMissing2, PaletteUtils.toolIsPresent(editor, device2));
+		Assert.assertTrue(errorMissing3, PaletteUtils.toolIsPresent(editor, device3));
 
 		FilterRunnable filterer = new FilterRunnable(editor);
 		filterer.setFilterString("g");
 		Rectangle filterRect = filterer.getRectangle();
 		Assert.assertNotNull(filterRect);
 
-		Assert.assertTrue(errorMissing1, toolIsPresent(editor, device1));
-		Assert.assertFalse(errorShown2, toolIsPresent(editor, device2));
-		Assert.assertFalse(errorShown3, toolIsPresent(editor, device3));
+		Assert.assertTrue(errorMissing1, PaletteUtils.toolIsPresent(editor, device1));
+		Assert.assertFalse(errorShown2, PaletteUtils.toolIsPresent(editor, device2));
+		Assert.assertFalse(errorShown3, PaletteUtils.toolIsPresent(editor, device3));
 
 		filterer.setFilterString("sh");
 
-		Assert.assertFalse(errorShown1, toolIsPresent(editor, device1));
-		Assert.assertFalse(errorShown2, toolIsPresent(editor, device2));
-		Assert.assertFalse(errorShown3, toolIsPresent(editor, device3));
+		Assert.assertFalse(errorShown1, PaletteUtils.toolIsPresent(editor, device1));
+		Assert.assertFalse(errorShown2, PaletteUtils.toolIsPresent(editor, device2));
+		Assert.assertFalse(errorShown3, PaletteUtils.toolIsPresent(editor, device3));
 
 		filterer.setFilterString("d");
 
-		Assert.assertFalse(errorShown1, toolIsPresent(editor, device1));
-		Assert.assertTrue(errorMissing2, toolIsPresent(editor, device2));
-		Assert.assertTrue(errorMissing3, toolIsPresent(editor, device3));
+		Assert.assertFalse(errorShown1, PaletteUtils.toolIsPresent(editor, device1));
+		Assert.assertTrue(errorMissing2, PaletteUtils.toolIsPresent(editor, device2));
+		Assert.assertTrue(errorMissing3, PaletteUtils.toolIsPresent(editor, device3));
 
 		filterer.setFilterString(".");
 
-		Assert.assertFalse(errorShown1, toolIsPresent(editor, device1));
-		Assert.assertFalse(errorShown2, toolIsPresent(editor, device2));
-		Assert.assertTrue(errorMissing3, toolIsPresent(editor, device3));
+		Assert.assertFalse(errorShown1, PaletteUtils.toolIsPresent(editor, device1));
+		Assert.assertFalse(errorShown2, PaletteUtils.toolIsPresent(editor, device2));
+		Assert.assertTrue(errorMissing3, PaletteUtils.toolIsPresent(editor, device3));
 
 		filterer.setFilterString("");
 
-		Assert.assertTrue(errorMissing1, toolIsPresent(editor, device1));
-		Assert.assertTrue(errorMissing2, toolIsPresent(editor, device2));
-		Assert.assertTrue(errorMissing3, toolIsPresent(editor, device3));
+		Assert.assertTrue(errorMissing1, PaletteUtils.toolIsPresent(editor, device1));
+		Assert.assertTrue(errorMissing2, PaletteUtils.toolIsPresent(editor, device2));
+		Assert.assertTrue(errorMissing3, PaletteUtils.toolIsPresent(editor, device3));
 	}
 
 }

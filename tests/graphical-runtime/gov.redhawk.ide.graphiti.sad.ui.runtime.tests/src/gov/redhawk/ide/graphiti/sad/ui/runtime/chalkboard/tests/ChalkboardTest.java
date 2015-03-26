@@ -15,6 +15,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.ViewUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.FindByUtils;
+import gov.redhawk.ide.swtbot.diagram.RHTestBotEditor;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
@@ -33,6 +34,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	 * IDE-884 Create the chalkboard waveform diagram. Add components to diagram from palette and TargetSDR.
 	 * IDE-658 Open chalkboard with components already launched in the Sandbox.
 	 * IDE-960 Show Console Feature.
+	 * IDE-1187 Add namespaced component to chalkboard
 	 */
 	@Test
 	public void checkChalkboardComponents() {
@@ -50,7 +52,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		// Add component to diagram from Target SDR
 		DiagramTestUtils.dragComponentFromTargetSDRToDiagram(gefBot, editor, HARD_LIMIT);
 		assertHardLimit(editor.getEditPart(HARD_LIMIT));
-		
+
 		// Open the chalkboard with components already launched
 		editor.close();
 		editor = openChalkboardDiagram(gefBot);
@@ -86,6 +88,11 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 			Assert.assertNotNull("console label text for " + component, consoleLabelText);
 			Assert.assertTrue("Console view for " + component + " did not display", consoleLabelText.matches(".*" + component + ".*"));
 		}
+
+		// Add namespaced component to the chalkboard
+		String nameSpaceComp = "name.space.comp";
+		DiagramTestUtils.addFromPaletteToDiagramWithNameSpace((RHTestBotEditor) editor, nameSpaceComp, 200, 300);
+		Assert.assertNotNull(editor.getEditPart(nameSpaceComp));
 	}
 
 	/**
@@ -94,7 +101,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 	 */
 	@Test
 	public void checkNotInSandbox() {
-		
+
 		// Check for Find Bys
 		editor = openChalkboardDiagram(gefBot);
 		String[] findByList = { FindByUtils.FIND_BY_NAME, FindByUtils.FIND_BY_DOMAIN_MANAGER, FindByUtils.FIND_BY_EVENT_CHANNEL,
@@ -108,7 +115,7 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 				Assert.assertTrue(e.getMessage(), e.getMessage().matches(".*" + findByType + ".*"));
 			}
 		}
-		
+
 		// Check for Uses Devices
 		String usesDevice = "Use FrontEnd Tuner Device";
 		try {
@@ -172,14 +179,12 @@ public class ChalkboardTest extends AbstractGraphitiChalkboardTest {
 		Assert.assertEquals("inner text should match component usage name", ci.getUsageName(), componentShape.getInnerText().getValue());
 		Assert.assertNotNull("component supported interface graphic should not be null", componentShape.getLollipop());
 		Assert.assertNull("start order shape/text should be null", componentShape.getStartOrderText());
-		// TODO
-//		Assert.assertFalse("should not be assembly controller", ComponentUtils.isAssemblyController(componentShape));
 
 		// HardLimit only has the two ports
 		Assert.assertTrue(componentShape.getUsesPortStubs().size() == 1 && componentShape.getProvidesPortStubs().size() == 1);
 
 		// Both ports are of type dataDouble
-		Assert.assertEquals(componentShape.getUsesPortStubs().get(0).getUses().getInterface().getName(), "dataDouble");
-		Assert.assertEquals(componentShape.getProvidesPortStubs().get(0).getProvides().getInterface().getName(), "dataDouble");
+		Assert.assertEquals(componentShape.getUsesPortStubs().get(0).getUses().getInterface().getName(), "dataFloat");
+		Assert.assertEquals(componentShape.getProvidesPortStubs().get(0).getProvides().getInterface().getName(), "dataFloat");
 	}
 }

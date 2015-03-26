@@ -25,7 +25,6 @@ import java.util.List;
 
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 
-import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
@@ -91,8 +90,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		NodeUtils.createNewNodeProject(bot, projectName, DOMAIN_NAME);
 		editor = gefBot.gefEditor(projectName);
 
-		ToolEntry deviceToolEntry = getToolEntry((RHTestBotEditor) editor, deviceName);
-		DiagramTestUtils.addFromPaletteToDiagramWithNameSpace((RHTestBotEditor) editor, deviceToolEntry, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagramWithNameSpace((RHTestBotEditor) editor, deviceName, 0, 0);
 		MenuUtils.save(editor);
 
 		// Build expected xml string for device
@@ -207,8 +205,8 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		Assert.assertEquals("inner text should match component usage name", ci.getUsageName(), deviceShape.getInnerText().getValue());
 		Assert.assertNotNull("component supported interface graphic should not be null", deviceShape.getLollipop());
 
-		// GPP only has the one port
-		Assert.assertTrue(deviceShape.getUsesPortStubs().size() == 1 && deviceShape.getProvidesPortStubs().size() == 0);
+		// GPP only has the two ports
+		Assert.assertTrue(deviceShape.getUsesPortStubs().size() == 2 && deviceShape.getProvidesPortStubs().size() == 0);
 
 		// Port is of type propEvent
 		Assert.assertEquals("propEvent", deviceShape.getUsesPortStubs().get(0).getUses().getName());

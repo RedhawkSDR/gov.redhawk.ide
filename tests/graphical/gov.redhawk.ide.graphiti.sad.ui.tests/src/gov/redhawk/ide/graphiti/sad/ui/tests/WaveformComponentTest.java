@@ -30,7 +30,6 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
@@ -257,8 +256,8 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		editor = gefBot.gefEditor(waveformName);
 
-		ToolEntry componentToolEntry = getToolEntry((RHTestBotEditor) editor, componentName);
-		DiagramTestUtils.addFromPaletteToDiagramWithNameSpace((RHTestBotEditor) editor, componentToolEntry, 0, 0);
+		// Add namespaced component to the diagram
+		DiagramTestUtils.addFromPaletteToDiagramWithNameSpace((RHTestBotEditor) editor, componentName, 0, 0);
 		MenuUtils.save(editor);
 
 		// Build expected xml string for component

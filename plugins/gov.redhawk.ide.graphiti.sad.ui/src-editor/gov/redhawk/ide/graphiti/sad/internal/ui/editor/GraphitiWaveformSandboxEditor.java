@@ -475,7 +475,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 				final IEditorInput input = createDiagramInput(sadResource);
 				pageIndex = addPage(editor, input);
 				setPageText(pageIndex, "Diagram");
-				setPartName("Waveform Chalkboard");
+				setPartName(waveform.getName());
 
 				// set layout for diagram editors
 				DUtil.layout(editor);

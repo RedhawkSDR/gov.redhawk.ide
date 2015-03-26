@@ -28,6 +28,7 @@ public abstract class AbstractGraphitiLocalWaveformRuntimeTest extends UIRuntime
 
 	public static final String[] LOCAL_WAVEFORM_PARENT_PATH = {"Sandbox"};
 	public static final String LOCAL_WAVEFORM = "ExampleWaveform01";
+	public static final String NAMESPACE_LOCAL_WAVEFORM = "namespaceWF"; // Contains namespaced components
 	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE INLINE
 	private String waveFormFullName; //full name of waveform that is launched
 

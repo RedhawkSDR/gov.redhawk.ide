@@ -29,6 +29,7 @@ public abstract class AbstractGraphitiDomainNodeRuntimeTest extends UIRuntimeTes
 	static final String DOMAIN_MANAGER_PROCESS = "Domain Manager";
 	static final String DEVICE_MANAGER_PROCESS = "Device Manager";
 	static final String DEVICE_MANAGER = "DevMgr";
+	static final String NAMESPACE_DEVICE_MANAGER = "namespaceNode";
 	protected SWTGefBot gefBot; // SUPPRESS CHECKSTYLE VisibilityModifier
 	private String nodeFullName; //full name of device node that is launched
 

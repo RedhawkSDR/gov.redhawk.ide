@@ -6,8 +6,11 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: gov.redhawk.ide.graphiti.dcd.ui.runtime.tests.DcdGraphitiRuntimeTestsActivator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
+ org.eclipse.gef,
  gov.redhawk.ide.swtbot,
- org.eclipse.graphiti
+ org.eclipse.graphiti,
+ gov.redhawk.ide.graphiti.dcd.ui,
+ mil.jpeojtrs.sca.dcd
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.draw2d.geometry

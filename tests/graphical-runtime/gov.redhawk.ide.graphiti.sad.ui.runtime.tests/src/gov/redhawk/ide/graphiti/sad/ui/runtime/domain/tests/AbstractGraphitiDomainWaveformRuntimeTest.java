@@ -29,6 +29,7 @@ public abstract class AbstractGraphitiDomainWaveformRuntimeTest extends UIRuntim
 
 	public static final String[] DOMAIN_WAVEFORM_PARENT_PATH = { "REDHAWK_DEV CONNECTED", "Waveforms" };
 	public static final String DOMAIN_WAVEFORM = "ExampleWaveform06";
+	public static final String NAMESPACE_DOMAIN_WAVEFORM = "namespaceWF"; // Contains namespaced components
 	public static final String DOMAIN = "REDHAWK_DEV";
 	public static final String DOMAIN_MANAGER_PROCESS = "Domain Manager";
 	public static final String DEVICE_MANAGER_PROCESS = "Device Manager";

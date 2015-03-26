@@ -11,12 +11,16 @@
  */
 package gov.redhawk.ide.swtbot;
 
+import gov.redhawk.ide.swtbot.scaExplorer.ScaExplorerTestUtils;
+
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class NodeUtils {
 
@@ -54,6 +58,30 @@ public class NodeUtils {
 		SWTBotEditor nodeEditor = bot.editorByTitle(projectName);
 		nodeEditor.setFocus();
 		nodeEditor.bot().cTabItem("Diagram").activate();
+	}
+	
+	/**
+	 * Launches the names node in a running domain and opens the node explorer diagram.
+	 * Assumes domain is already running and visible in the SCA Explorer
+	 * @param domainName
+	 * @param nodeName
+	 */
+	public static void launchNodeInDomain(final SWTWorkbenchBot bot, String domainName, String nodeName) {
+		SWTBotView explorerView = bot.viewById(ScaExplorerTestUtils.SCA_EXPLORER_VIEW_ID);
+		explorerView.show();
+		explorerView.setFocus();
+		SWTBot viewBot = explorerView.bot();
+
+		SWTBotTreeItem nodeScaTreeItem = viewBot.tree().expandNode("Target SDR", "Nodes", nodeName);
+		nodeScaTreeItem.contextMenu("Launch Device Manager").click();
+		
+		SWTBotShell wizard = bot.shell("Launch Device Manager");
+		wizard.bot().table().select(domainName);
+		wizard.bot().button("OK").click();
+		
+		SWTBotTreeItem nodeDomainTreeItem = viewBot.tree().expandNode(domainName + " CONNECTED", "Device Managers", nodeName);
+		nodeDomainTreeItem.contextMenu("Open With").menu("Node Explorer").click();
+		
 	}
 
 }
