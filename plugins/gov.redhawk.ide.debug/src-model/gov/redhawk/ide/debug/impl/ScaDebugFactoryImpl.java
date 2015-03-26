@@ -224,7 +224,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 	 * Creates a {@link LocalScaWaveform} from a {@link ScaWaveform}. This new object is intended to serve as a
 	 * 'proxy' to the actual domain waveform. This is used to 'duplicate' a waveform into the sandbox.
 	 *
-	 * @since 7.0
+	 * @since 8.0
 	 */
 	@Override
 	public LocalScaWaveform createLocalScaWaveform(final ScaWaveform domainWaveform) {

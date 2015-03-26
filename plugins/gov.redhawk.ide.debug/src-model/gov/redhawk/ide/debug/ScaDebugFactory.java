@@ -76,7 +76,7 @@ public interface ScaDebugFactory extends EFactory {
 	 *
 	 * @param domainWaveform The domain waveform to be proxied
 	 * @return A proxy object for the domain waveform
-	 * @since 7.0
+	 * @since 8.0
 	 */
 	LocalScaWaveform createLocalScaWaveform(ScaWaveform domainWaveform);
 

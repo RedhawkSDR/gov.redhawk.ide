@@ -40,7 +40,7 @@ public class EarlyTerminationException extends Exception {
 	}
 
 	/**
-	 * @since 7.0
+	 * @since 8.0
 	 */
 	public static String getExitCodeMessage(int exitCode) {
 		String endString;
