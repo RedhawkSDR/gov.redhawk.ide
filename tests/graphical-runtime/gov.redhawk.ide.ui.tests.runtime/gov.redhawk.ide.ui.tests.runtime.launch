@@ -20,6 +20,7 @@
 <listEntry value="4"/>
 </listAttribute>
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
+<mapEntry key="DISPLAY" value=":1"/>
 <mapEntry key="SDRROOT" value="${workspace_loc:/gov.redhawk.ide-releng/swtbot/runtime/sdr}"/>
 </mapAttribute>
 <stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value="=gov.redhawk.ide.ui.tests.runtime"/>
