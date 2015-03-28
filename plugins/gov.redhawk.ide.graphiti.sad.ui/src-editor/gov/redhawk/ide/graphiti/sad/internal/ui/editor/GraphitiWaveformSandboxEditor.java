@@ -391,6 +391,13 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 		if (isLocalSca) {
 			// Use the SCA Model source to build the SAD when in the chalkboard since the SAD file isn't modified
 			getEditingDomain().getCommandStack().execute(new SadGraphitiModelInitializerCommand(modelMap, sad, waveform));
+			ScaModelCommand.execute(this.waveform, new ScaModelCommand() {
+
+				@Override
+				public void execute() {
+					scaListener.addAdapter(waveform);
+				}
+			});
 		} else {
 			// Use the existing SAD file as a template when initializing the modeling map
 			TransactionalEditingDomain ed = (TransactionalEditingDomain) getEditingDomain();
