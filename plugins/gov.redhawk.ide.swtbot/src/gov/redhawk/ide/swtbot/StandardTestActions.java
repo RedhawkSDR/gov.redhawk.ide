@@ -185,15 +185,6 @@ public final class StandardTestActions {
 
 		fileShell.bot().button("OK").click();
 
-		// Catch the Fabio popup...
-		try {
-			SWTBotShell pyDevShell = bot.shell("Default Eclipse preferences for PyDev");
-			pyDevShell.close();
-			bot.closeAllShells();
-		} catch (WidgetNotFoundException e) {
-			// PASS
-		}
-
 		try {
 			SWTBotShell genShell = bot.shell("Generating...");
 			bot.waitUntil(Conditions.shellCloses(genShell));
