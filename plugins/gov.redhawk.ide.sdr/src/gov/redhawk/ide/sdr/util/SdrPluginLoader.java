@@ -28,15 +28,29 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 
 /**
+ * This class is used primarily by tests to load an {@link SdrRoot} model object for an SDRROOT located within a bundle.
  * @since 8.2
  */
 public class SdrPluginLoader {
 
+	/**
+	 * Gets an {@link SdrRoot} model for an SDRROOT inside a bundle.
+	 * @param pluginID The bundle ID
+	 * @param path A path inside the bundle
+	 * @return
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
 	public static SdrRoot getSdrRoot(String pluginID, String path) throws URISyntaxException, IOException {
 		final java.net.URI rootPath = FileLocator.toFileURL(FileLocator.find(Platform.getBundle(pluginID), new Path(path), null)).toURI();
 		return SdrPluginLoader.getSdrRoot(URI.createURI(rootPath.toString()));
 	}
 
+	/**
+	 * Gets an {@link SdrRoot} model for a given URI.
+	 * @param sdrRootPath The URI of the SDRROOT
+	 * @return
+	 */
 	public static synchronized SdrRoot getSdrRoot(final URI sdrRootPath) {
 		Assert.isNotNull(sdrRootPath);
 		final TransactionalEditingDomain editingDomain = TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain();
