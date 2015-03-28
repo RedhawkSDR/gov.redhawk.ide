@@ -535,6 +535,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		setHasSuperPortsContainerShape(hideDetailsPref);
 		setHasPortsContainerShape(!hideDetailsPref);
 		setHideUnusedPorts(hidePortsPref);
+		
+		// allow ports to be edited
+		getPortUpdateStatus().setPortsUpdatable(true);
 
 		// add property for this shape
 		Graphiti.getPeService().setPropertyValue(this, DUtil.GA_TYPE, SHAPE_OUTER_CONTAINER);

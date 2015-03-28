@@ -990,7 +990,7 @@ public class GraphitiModelMap implements IPortStatListener {
 			}
 
 			SadComponentInstantiation sadCi = nodeMapEntry.getProfile();
-			if (this.editor.getDiagramEditor() == null) {
+			if (this.editor.getDiagramEditor() == null || editor.getDiagramEditor().getDiagramBehavior() == null) {
 				return;
 			}
 			final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
@@ -1040,7 +1040,7 @@ public class GraphitiModelMap implements IPortStatListener {
 	public void newStatistics(ScaPort< ? , ? > port, String connectionId, PortStatistics stats) {
 		IPreferenceStore store = SADUIGraphitiPlugin.getDefault().getPreferenceStore();
 
-		if (editor.getDiagramEditor() == null) {
+		if (editor.getDiagramEditor() == null || editor.getDiagramEditor().getDiagramBehavior() == null) {
 			return;
 		}
 		final IDiagramTypeProvider provider = editor.getDiagramEditor().getDiagramTypeProvider();
