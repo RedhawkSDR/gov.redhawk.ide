@@ -212,7 +212,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		}
 
 		// add external port menu item if we clicked on a port
-		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
+		if (!DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram()) && (context.getPictogramElements() != null && context.getPictogramElements().length > 0)) {
 			EObject obj = (EObject) DUtil.getBusinessObject(context.getPictogramElements()[0]);
 
 			// make sure business object is port stub and container is a component
