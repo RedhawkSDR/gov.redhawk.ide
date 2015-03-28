@@ -18,7 +18,6 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.IncrementStartOrd
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkExternalPortFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkNonExternalPortFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.ShowConsoleFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.SetLogLevelFeature;
@@ -40,6 +39,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseShapeFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandAllShapesFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandShapeFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.FindByEditFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;

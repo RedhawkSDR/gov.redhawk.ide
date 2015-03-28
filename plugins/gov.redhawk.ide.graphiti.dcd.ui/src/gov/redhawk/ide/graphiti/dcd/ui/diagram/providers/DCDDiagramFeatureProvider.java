@@ -33,6 +33,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseShapeFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandAllShapesFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandShapeFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.FindByEditFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -169,6 +170,7 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 				if (obj instanceof DcdComponentInstantiation && (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
 					retList.add(new StartFeature(this));
 					retList.add(new StopFeature(this));
+					retList.add(new ShowConsoleFeature(this));
 
 					// Don't add ability to remove components to Graphiti Waveform Explorer
 					if (!DUtil.isDiagramExplorer(getDiagramTypeProvider().getDiagram())) {
