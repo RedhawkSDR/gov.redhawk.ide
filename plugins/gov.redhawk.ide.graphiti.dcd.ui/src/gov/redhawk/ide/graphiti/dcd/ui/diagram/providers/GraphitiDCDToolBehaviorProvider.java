@@ -185,11 +185,9 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 
 		final PaletteCompartmentEntry compartmentEntry;
 		if (container instanceof DevicesContainer) {
-			deviceCompartment = initializeCompartment(deviceCompartment, "Devices");
-			compartmentEntry = deviceCompartment;
+			compartmentEntry = new PaletteCompartmentEntry("Devices", null);
 		} else if (container instanceof ServicesContainer) {
-			serviceCompartment = initializeCompartment(serviceCompartment, "Services");
-			compartmentEntry = serviceCompartment;
+			compartmentEntry = new PaletteCompartmentEntry("Services", null);
 		} else {
 			compartmentEntry = null;
 		}
@@ -241,7 +239,7 @@ public class GraphitiDCDToolBehaviorProvider extends AbstractGraphitiToolBehavio
 				} else if ("Services".equals(compartmentEntry.getLabel())) {
 					iconId = NodeImageProvider.IMG_SCA_SERVICE;
 				}
-				this.addToolToCompartment(deviceCompartment, spd, iconId);
+				this.addToolToCompartment(compartmentEntry, spd, iconId);
 
 //				if (spd.getImplementation().size() > 1) {
 //					StackEntry stackEntry = new StackEntry(spd.getName() + spd.getImplementation().get(0).getId(), spd.getDescription(),
