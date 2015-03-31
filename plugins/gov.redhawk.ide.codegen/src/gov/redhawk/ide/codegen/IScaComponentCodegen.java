@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.osgi.framework.Version;
 
 /**
  * The Interface IScaComponentCodegen.
@@ -125,4 +126,11 @@ public interface IScaComponentCodegen {
 	 * @since 7.0
 	 */
 	IStatus validate();
+	
+	/**
+	 * Requests that the code generator supply the redhawk-codegen version number.
+	 * @return code generator's version. Should fall back to the empty version (0.0.0) if not able to determine it's version (i.e. unknown).
+	 * @since 11.0
+	 */
+	Version getCodegenVersion();
 }

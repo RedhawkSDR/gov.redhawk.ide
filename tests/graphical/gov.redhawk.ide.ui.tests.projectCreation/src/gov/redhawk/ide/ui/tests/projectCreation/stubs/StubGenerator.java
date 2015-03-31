@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.osgi.framework.Version;
 
 /**
  * 
@@ -97,6 +98,11 @@ public class StubGenerator extends AbstractCodeGenerator implements IScaComponen
 	@Override
 	public boolean shouldGenerate() {
 		return false;
+	}
+
+	@Override
+	public Version getCodegenVersion() {
+		return new Version("0.0.0");
 	}
 
 }

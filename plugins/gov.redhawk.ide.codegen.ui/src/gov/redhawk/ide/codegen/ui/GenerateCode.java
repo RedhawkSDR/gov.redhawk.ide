@@ -28,6 +28,7 @@ import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.sca.util.SubMonitor;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,6 +50,7 @@ import java.util.concurrent.TimeoutException;
 import mil.jpeojtrs.sca.spd.CodeFileType;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.NamedThreadFactory;
 
 import org.eclipse.core.resources.IFile;
@@ -62,27 +64,36 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.command.BasicCommandStack;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.transaction.RunnableWithResult;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.osgi.framework.Version;
 
 /**
  * @since 7.0
@@ -142,7 +153,8 @@ public final class GenerateCode {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				// Map of Implementation ->  ( map of FileName relative to output location -> true will regenerate, false wants to regenerate but contents different
+				// Map of Implementation -> ( map of FileName relative to output location -> true will regenerate, 
+				// false wants to regenerate but contents different
 				final Map<Implementation, Set<FileStatus>> implMap = new HashMap<Implementation, Set<FileStatus>>();
 				for (Implementation impl : impls) {
 					try {
@@ -175,7 +187,6 @@ public final class GenerateCode {
 							showDialog = true;
 						}
 
-
 						if (showDialog) {
 							GenerateFilesDialog dialog = new GenerateFilesDialog(shell, aggregate);
 							dialog.setBlockOnOpen(true);
@@ -195,7 +206,7 @@ public final class GenerateCode {
 									filesToGenerate.add(s.getFilename());
 								}
 							}
-							
+
 							// If Generate ALL
 							if (filesToGenerate.size() == aggregate.size()) {
 								filesToGenerate = null;
@@ -252,7 +263,7 @@ public final class GenerateCode {
 		try {
 			SubMonitor progress = SubMonitor.convert(monitor, "Generating...", implMap.size() + 2);
 			final SoftPkg softPkg = (SoftPkg) implMap.entrySet().iterator().next().getKey().eContainer();
-			TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(softPkg);
+			final TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(softPkg);
 			final IProject project = ModelUtil.getProject(softPkg);
 			final WaveDevSettings waveDev = CodegenUtil.loadWaveDevSettings(softPkg);
 
@@ -297,6 +308,79 @@ public final class GenerateCode {
 					updateCRCs(domain, settings, mapping);
 				} catch (final IOException e) {
 					retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID, "Problem while generating CRCs for implementations", e));
+				}
+
+				ImplementationSettings implSettings = getImplSettings(impl);
+				final IScaComponentCodegen generator = getGenerator(implSettings);
+				final Version codeGenVersion = generator.getCodegenVersion();
+
+				if (codeGenVersion.getMajor() >= 2 || (codeGenVersion.getMajor() == 1 && codeGenVersion.getMinor() >= 10)) {
+					if (domain != null) {
+						Command command = new SetCommand(domain, softPkg, SpdPackage.Literals.SOFT_PKG__TYPE, generator.getCodegenVersion().toString());
+						domain.getCommandStack().execute(command);
+					} else {
+						softPkg.eSet(SpdPackage.Literals.SOFT_PKG__TYPE, generator.getCodegenVersion().toString());
+						try {
+							softPkg.eResource().save(null);
+						} catch (IOException e) {
+							retStatus.add(new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Error when updating generator version", e));
+						}
+					}
+					RunnableWithResult<Boolean> saveViaEditor = new RunnableWithResult<Boolean>() {
+
+						private boolean saved = false;
+
+						@Override
+						public void run() {
+							IEditorPart editorPart = ResourceUtil.findEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
+								project.getFile("cpp_comp.spd.xml"));
+							if (editorPart != null) {
+								editorPart.doSave(new NullProgressMonitor());
+								saved = true;
+							}
+						}
+
+						@Override
+						public void setStatus(IStatus status) {
+						}
+
+						@Override
+						public IStatus getStatus() {
+							return null;
+						}
+
+						@Override
+						public Boolean getResult() {
+							return saved;
+						}
+					};
+					Display.getDefault().syncExec(saveViaEditor);
+					if (!saveViaEditor.getResult()) {
+						try {
+							new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
+
+								@Override
+								public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+									try {
+										softPkg.eResource().save(null);
+										project.getFile("cpp_comp.spd.xml").refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
+										if (domain != null) {
+											((BasicCommandStack) domain.getCommandStack()).saveIsDone();
+											domain.getCommandStack().flush();
+										}
+									} catch (IOException e) {
+										retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID, "Problem while saving spd.xml", e));
+									} catch (CoreException e) {
+										retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID, "Problem while saving spd.xml", e));
+									}
+								}
+							}).run(new NullProgressMonitor());
+						} catch (InvocationTargetException e) {
+							retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID, "Problem while saving spd.xml", e));
+						} catch (InterruptedException e) {
+							retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID, "Problem while saving spd.xml", e));
+						}
+					}
 				}
 			}
 
@@ -549,7 +633,7 @@ public final class GenerateCode {
 	 * @param impls The {@link Implementation}s to be generated
 	 * @param waveDev The wavedev to validate
 	 * @return An {@link IStatus} indicating any issues found; problems should be of severity {@link IStatus#ERROR} to
-	 *   prevent code generation
+	 * prevent code generation
 	 */
 	private static IStatus validate(final IProject project, final SoftPkg softPkg, Implementation impl, final WaveDevSettings waveDev) {
 		final MultiStatus retStatus = new MultiStatus(RedhawkCodegenUiActivator.PLUGIN_ID, IStatus.OK, "Validation problems prior to generating code", null);
@@ -596,10 +680,10 @@ public final class GenerateCode {
 								break;
 							}
 						}
-					
+
 					}
 				}
-			
+
 				// Check PRF file
 				final String prfFileName = ModelUtil.getPrfFileName(softPkg.getPropertyFile());
 				if (prfFileName != null) {

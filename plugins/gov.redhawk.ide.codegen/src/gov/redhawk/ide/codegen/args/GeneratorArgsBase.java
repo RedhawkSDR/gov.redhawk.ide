@@ -23,11 +23,11 @@ public class GeneratorArgsBase {
 	public static final String SOFTPKG_FILE_KEY = "softpkg_file";
 	public static final String AUTHOR_NAME_KEY = "author_name";
 	/**
-	 * @since 10.2
+	 * @since 11.0
 	 */
 	public static final String PRF_FILE_KEY = "prf_file";
 	/**
-	 * @since 10.2
+	 * @since 11.0
 	 */
 	public static final String SCD_FILE_KEY = "scd_file";
 	
@@ -110,28 +110,28 @@ public class GeneratorArgsBase {
 	}
 	
 	/**
-	 * @since 10.2
+	 * @since 11.0
 	 */
 	public void setPrfFile(String prfFile) {
 		this.setProperty(PRF_FILE_KEY, prfFile);
 	}
 
 	/**
-	 * @since 10.2
+	 * @since 11.0
 	 */
 	public String getPrfFile() {
 		return this.getProperty(PRF_FILE_KEY);
 	}
 	
 	/**
-	 * @since 10.2
+	 * @since 11.0
 	 */
 	public void setScdFile(String scdFile) {
 		this.setProperty(SCD_FILE_KEY, scdFile);
 	}
 
 	/**
-	 * @since 10.2
+	 * @since 11.0
 	 */
 	public String getScdFile() {
 		return this.getProperty(SCD_FILE_KEY);

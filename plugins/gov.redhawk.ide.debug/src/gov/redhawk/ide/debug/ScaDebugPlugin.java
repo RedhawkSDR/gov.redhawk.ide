@@ -107,7 +107,7 @@ public class ScaDebugPlugin extends Plugin {
 	}
 
 	/**
-	 * @since 7.0
+	 * @since 8.0
 	 */
 	public static void logWarning(final String msg, final Throwable e) {
 		ScaDebugPlugin.instance.getLog().log(new Status(IStatus.WARNING, ScaDebugPlugin.ID, msg, e));
