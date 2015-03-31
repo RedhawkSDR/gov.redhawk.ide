@@ -333,7 +333,7 @@ public final class GenerateCode {
 						@Override
 						public void run() {
 							IEditorPart editorPart = ResourceUtil.findEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
-								project.getFile("cpp_comp.spd.xml"));
+								project.getFile(softPkg.eResource().getURI().lastSegment()));
 							if (editorPart != null) {
 								editorPart.doSave(new NullProgressMonitor());
 								saved = true;
