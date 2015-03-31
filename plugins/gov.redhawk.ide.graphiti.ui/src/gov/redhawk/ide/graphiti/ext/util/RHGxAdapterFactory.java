@@ -85,11 +85,6 @@ public class RHGxAdapterFactory extends AdapterFactoryImpl {
 		}
 
 		@Override
-		public Adapter casePortUpdateStatus(PortUpdateStatus object) {
-			return createPortUpdateStatusAdapter();
-		}
-
-		@Override
 		public Adapter casePropertyContainer(PropertyContainer object) {
 			return createPropertyContainerAdapter();
 		}
@@ -163,20 +158,6 @@ public class RHGxAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createRHContainerShapeAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link gov.redhawk.ide.graphiti.ext.PortUpdateStatus <em>Port Update Status</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see gov.redhawk.ide.graphiti.ext.PortUpdateStatus
-	 * @generated
-	 */
-	public Adapter createPortUpdateStatusAdapter() {
 		return null;
 	}
 

@@ -3,7 +3,6 @@
 package gov.redhawk.ide.graphiti.ext.impl;
 
 import gov.redhawk.ide.graphiti.ext.Event;
-import gov.redhawk.ide.graphiti.ext.PortUpdateStatus;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ext.RHGxFactory;
 import gov.redhawk.ide.graphiti.ext.RHGxPackage;
@@ -24,7 +23,6 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -32,7 +30,6 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.MmPackage;
-import org.eclipse.graphiti.mm.algorithms.AlgorithmsPackage;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramsPackage;
 import org.eclipse.graphiti.util.IColorConstant;
@@ -57,12 +54,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * @generated
 	 */
 	private EClass rhContainerShapeEClass = null;
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass portUpdateStatusEClass = null;
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -209,8 +200,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		isInited = true;
 
 		// Initialize simple dependencies
-		PictogramsPackage.eINSTANCE.eClass();
-		AlgorithmsPackage.eINSTANCE.eClass();
 		MmPackage.eINSTANCE.eClass();
 		EcorePackage.eINSTANCE.eClass();
 
@@ -287,17 +276,8 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getRHContainerShape_PortUpdateStatus() {
-		return (EReference) rhContainerShapeEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getRHContainerShape_HasSuperPortsContainerShape() {
-		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(5);
+		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -306,7 +286,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * @generated
 	 */
 	public EAttribute getRHContainerShape_HasPortsContainerShape() {
-		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(6);
+		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -315,34 +295,7 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 	 * @generated
 	 */
 	public EAttribute getRHContainerShape_HideUnusedPorts() {
-		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(7);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getPortUpdateStatus() {
-		return portUpdateStatusEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getPortUpdateStatus_PortsUpdatable() {
-		return (EAttribute) portUpdateStatusEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getPortUpdateStatus_SettingObject() {
-		return (EAttribute) portUpdateStatusEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) rhContainerShapeEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -525,14 +478,9 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__CONNECTION_MAP);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__EVENT);
-		createEReference(rhContainerShapeEClass, RH_CONTAINER_SHAPE__PORT_UPDATE_STATUS);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__HAS_SUPER_PORTS_CONTAINER_SHAPE);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__HAS_PORTS_CONTAINER_SHAPE);
 		createEAttribute(rhContainerShapeEClass, RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS);
-
-		portUpdateStatusEClass = createEClass(PORT_UPDATE_STATUS);
-		createEAttribute(portUpdateStatusEClass, PORT_UPDATE_STATUS__PORTS_UPDATABLE);
-		createEAttribute(portUpdateStatusEClass, PORT_UPDATE_STATUS__SETTING_OBJECT);
 
 		// Create enums
 		eventEEnum = createEEnum(EVENT);
@@ -603,8 +551,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_Event(), this.getEvent(), "event", null, 0, 1, RHContainerShape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
 			!IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getRHContainerShape_PortUpdateStatus(), this.getPortUpdateStatus(), null, "portUpdateStatus", null, 0, 1, RHContainerShape.class,
-			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_HasSuperPortsContainerShape(), theEcorePackage.getEBoolean(), "hasSuperPortsContainerShape", null, 0, 1,
 			RHContainerShape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRHContainerShape_HasPortsContainerShape(), theEcorePackage.getEBoolean(), "hasPortsContainerShape", null, 0, 1,
@@ -661,12 +607,6 @@ public class RHGxPackageImpl extends EPackageImpl implements RHGxPackage {
 		op = addEOperation(rhContainerShapeEClass, this.getReason(), "updateNeeded", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIUpdateContext(), "context", 0, 1, !IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getAbstractContainerPattern(), "pattern", 0, 1, !IS_UNIQUE, IS_ORDERED);
-
-		initEClass(portUpdateStatusEClass, PortUpdateStatus.class, "PortUpdateStatus", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getPortUpdateStatus_PortsUpdatable(), theEcorePackage.getEBoolean(), "portsUpdatable", null, 0, 1, PortUpdateStatus.class,
-			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getPortUpdateStatus_SettingObject(), theEcorePackage.getEJavaObject(), "settingObject", null, 0, 1, PortUpdateStatus.class,
-			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(eventEEnum, Event.class, "Event");

@@ -21,6 +21,7 @@ import gov.redhawk.sca.sad.validation.ConnectionsConstraint;
 import gov.redhawk.sca.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,8 @@ import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -264,93 +267,153 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 
 	// Utility method to either highlight compatible ports, or return them to default styling
 	private void highlightCompatiblePorts(EObject originatingPort, boolean shouldHighlight) {
+
 		if (originatingPort == null) {
 			return;
 		}
-		
+
 		// Don't execute highlighting if a super port is involved.
 		ContainerShape portContainer = (ContainerShape) DUtil.getPictogramElementForBusinessObject(getDiagram(), originatingPort, ContainerShape.class);
 		if (DUtil.isSuperPort(portContainer)) {
 			return;
 		}
 
-		setPortStyleLock(shouldHighlight);
-
-		TransactionalEditingDomain editingDomain = getDiagramBehavior().getEditingDomain();
-		List<ContainerShape> diagramPorts = null;
+		List<ContainerShape> compatiblePorts = new ArrayList<ContainerShape>();
 
 		if (originatingPort instanceof UsesPortStub) {
+			UsesPortStub usesPort = (UsesPortStub) originatingPort;
 
-			// If the originating port is a uses, build a list of compatible provides
-			diagramPorts = DUtil.getDiagramProvidesPorts(getDiagram());
-			List<ContainerShape> incompatiblePorts = new ArrayList<ContainerShape>();
-			for (int i = 0; i < diagramPorts.size(); i++) {
-				ContainerShape port = diagramPorts.get(i);
-				ProvidesPortStub providesStub = (ProvidesPortStub) DUtil.getBusinessObject(port);
+			// The first time we come across an component instance, add the valid ports to this map.
+			// If we come across this component type again, refer to the map rather than redoing the port comparisons
+			Map<String, ArrayList<String>> compatiblePortsMap = new HashMap<String, ArrayList<String>>();
 
-				// Remove from port list all FindBy and incompatible ports
-				if (providesStub.eContainer() instanceof FindByStub) {
-					incompatiblePorts.add(port);
-				} else if (providesStub.eContainer() instanceof UsesDeviceStub
-					&& !InterfacesUtil.areSuggestedMatch((UsesPortStub) originatingPort, providesStub)) {
-					incompatiblePorts.add(port);
-				} else if (!InterfacesUtil.areCompatible((UsesPortStub) originatingPort, providesStub)) {
-					incompatiblePorts.add(port);
+			// A list to hold all component shapes found in the diagram
+			List<ContainerShape> componentShapes = DUtil.getAllContainerShapes(getDiagram(), RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+
+			for (ContainerShape componentShape : componentShapes) {
+				if (DUtil.getBusinessObject(componentShape) instanceof FindByStub) {
+					// Not interested in highlighting ports of FindBy shapes
+					continue;
+				} else if (DUtil.getBusinessObject(componentShape) instanceof UsesDeviceStub) {
+					UsesDeviceStub usesDevice = (UsesDeviceStub) DUtil.getBusinessObject(componentShape);
+					for (ProvidesPortStub providesPort : usesDevice.getProvidesPortStubs()) {
+						if (InterfacesUtil.areSuggestedMatch(usesPort, providesPort)) {
+							Object portShape = DUtil.getPictogramElementForBusinessObject(getDiagram(), providesPort, ContainerShape.class);
+							compatiblePorts.add((ContainerShape) portShape);
+						}
+					}
+				} else {
+					SadComponentInstantiation component = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
+					String componentRefId = ((SadComponentPlacement) component.eContainer()).getComponentFileRef().getRefid();
+					if (!compatiblePortsMap.isEmpty() && compatiblePortsMap.containsKey(componentRefId)) {
+						// If we have already seen a component of this type, just grab the ports we know are compatible
+						ArrayList<String> portNames = compatiblePortsMap.get(componentRefId);
+						for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
+							ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
+							if (portNames.contains(providesPort.getName())) {
+								compatiblePorts.add(portShape);
+							}
+						}
+					} else {
+						// If new component type, find compatible ports and add them to the map for future reference
+						ArrayList<String> portNames = new ArrayList<String>();
+						for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
+							ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
+							if (InterfacesUtil.areCompatible(usesPort, providesPort)) {
+								compatiblePorts.add(portShape);
+								portNames.add(providesPort.getName());
+							}
+						}
+						compatiblePortsMap.put(componentRefId, portNames);
+					}
 				}
 			}
-			diagramPorts.removeAll(incompatiblePorts);
 		} else if (originatingPort instanceof ProvidesPortStub) {
-			// If the originating port is a provides, build a list of compatible uses
-			diagramPorts = DUtil.getDiagramUsesPorts(getDiagram());
-			List<ContainerShape> incompatiblePorts = new ArrayList<ContainerShape>();
-			for (int i = 0; i < diagramPorts.size(); i++) {
-				ContainerShape port = diagramPorts.get(i);
-				UsesPortStub usesStub = (UsesPortStub) DUtil.getBusinessObject(port);
+			ProvidesPortStub providesPort = (ProvidesPortStub) originatingPort;
 
-				// Remove from port list all FindBy and incompatible ports
-				if (usesStub.eContainer() instanceof FindByStub) {
-					incompatiblePorts.add(port);
-				} else if (usesStub.eContainer() instanceof UsesDeviceStub && !InterfacesUtil.areSuggestedMatch(usesStub, (ProvidesPortStub) originatingPort)) {
-					incompatiblePorts.add(port);
-				} else if (!InterfacesUtil.areCompatible(usesStub, (ProvidesPortStub) originatingPort)) {
-					incompatiblePorts.add(port);
+			// The first time we come across an component instance, add the valid ports to this map.
+			// If we come across this component type again, refer to the map rather than redoing the port comparisons
+			Map<String, ArrayList<String>> compatiblePortsMap = new HashMap<String, ArrayList<String>>();
+
+			// A list to hold all component shapes found in the diagram
+			List<ContainerShape> componentShapes = DUtil.getAllContainerShapes(getDiagram(), RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+
+			for (ContainerShape componentShape : componentShapes) {
+				if (DUtil.getBusinessObject(componentShape) instanceof FindByStub) {
+					// Not interested in highlighting ports of FindBy shapes
+					continue;
+				} else if (DUtil.getBusinessObject(componentShape) instanceof UsesDeviceStub) {
+					UsesDeviceStub usesDevice = (UsesDeviceStub) DUtil.getBusinessObject(componentShape);
+					for (UsesPortStub usesPort : usesDevice.getUsesPortStubs()) {
+						if (InterfacesUtil.areSuggestedMatch(usesPort, providesPort)) {
+							Object portShape = DUtil.getPictogramElementForBusinessObject(getDiagram(), usesPort, ContainerShape.class);
+							compatiblePorts.add((ContainerShape) portShape);
+						}
+					}
+				} else {
+					SadComponentInstantiation component = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
+					String componentRefId = ((SadComponentPlacement) component.eContainer()).getComponentFileRef().getRefid();
+					if (!compatiblePortsMap.isEmpty() && compatiblePortsMap.containsKey(componentRefId)) {
+						// If we have already seen a component of this type, just grab the ports we know are compatible
+						ArrayList<String> portNames = compatiblePortsMap.get(componentRefId);
+						for (ContainerShape portShape : DUtil.getDiagramUsesPorts(componentShape)) {
+							UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(portShape);
+							if (portNames.contains(usesPort.getName())) {
+								compatiblePorts.add(portShape);
+							}
+						}
+					} else {
+						// If new component type, find compatible ports and add them to the map for future reference
+						ArrayList<String> portNames = new ArrayList<String>();
+						for (ContainerShape portShape : DUtil.getDiagramUsesPorts(componentShape)) {
+							UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(portShape);
+							if (InterfacesUtil.areCompatible(usesPort, providesPort)) {
+								compatiblePorts.add(portShape);
+								portNames.add(usesPort.getName());
+							}
+						}
+						compatiblePortsMap.put(componentRefId, portNames);
+					}
 				}
 			}
-			diagramPorts.removeAll(incompatiblePorts);
 		} else {
 			// Most likely user clicked a component supported interface shape
 			return;
 		}
 
-		// Change style to highlight or default, depending on passed boolean
-		for (ContainerShape port : diagramPorts) {
-			Rectangle anchorGa = (Rectangle) port.getChildren().get(0).getAnchors().get(0).getGraphicsAlgorithm();
-			if (shouldHighlight) {
+		// Clear any existing port styles before highlighting
+		StyleUtil.toggleUpdatePort(true, null);
+		setPortStyleDefault();
+
+		// Make sure port styles can be changed. Compatible port highlighting always takes precedence
+		StyleUtil.toggleUpdatePort(true, null);
+
+		// Highlight compatible ports
+		TransactionalEditingDomain editingDomain = getDiagramBehavior().getEditingDomain();
+		if (shouldHighlight) {
+			for (ContainerShape port : compatiblePorts) {
+				Rectangle anchorGa = (Rectangle) port.getChildren().get(0).getAnchors().get(0).getGraphicsAlgorithm();
 				StyleUtil.updatePortStyle(anchorGa, getDiagram(), StyleUtil.COMPATIBLE_PORT, editingDomain);
-			} else {
-				StyleUtil.updatePortStyle(anchorGa, getDiagram(), null, editingDomain);
 			}
+			// Block other classes from changing port styles while connection is in progress
+			StyleUtil.toggleUpdatePort(false, this);
+		} else {
+			// Unlock and reset styles to default
+			StyleUtil.toggleUpdatePort(true, null);
+			setPortStyleDefault();
 		}
 	}
 
 	/**
-	 * Connection highlighting takes precident over all other styling options, so wipe them out and
-	 * block future style updates until after the connection attempt completes.
+	 * Sets the ports to default style
 	 */
-	private void setPortStyleLock(boolean shouldLock) {
-		TransactionalEditingDomain editingDomain = getDiagramBehavior().getEditingDomain();
-
+	private void setPortStyleDefault() {
 		List<ContainerShape> allPorts = new ArrayList<ContainerShape>();
 		allPorts.addAll(DUtil.getDiagramProvidesPorts(getDiagram()));
 		allPorts.addAll(DUtil.getDiagramUsesPorts(getDiagram()));
 		for (ContainerShape port : allPorts) {
-			if (shouldLock) {
-				Rectangle anchorGa = (Rectangle) port.getChildren().get(0).getAnchors().get(0).getGraphicsAlgorithm();
-				StyleUtil.updatePortStyle(anchorGa, getDiagram(), null, getDiagramBehavior().getEditingDomain());
-				StyleUtil.toggleUpdatePort(((RHContainerShapeImpl) port.eContainer().eContainer()), false, editingDomain, this);
-			} else {
-				StyleUtil.toggleUpdatePort(((RHContainerShapeImpl) port.eContainer().eContainer()), true, editingDomain, null);
-			}
+			Rectangle anchorGa = (Rectangle) port.getChildren().get(0).getAnchors().get(0).getGraphicsAlgorithm();
+			StyleUtil.updatePortStyle(anchorGa, getDiagram(), null, getDiagramBehavior().getEditingDomain());
 		}
 	}
 
@@ -416,11 +479,11 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 			sadConnectInterface = (SadConnectInterface) DUtil.assignAnchorObjectsToConnection(SadFactory.eINSTANCE.createSadConnectInterface(),
 				context.getTargetAnchor(), context.getSourceAnchor());
 		}
-		
-		// TODO: Hack to make sure ports revert to default color after connection attempt 
+
+		// TODO: Hack to make sure ports revert to default color after connection attempt
 		highlightCompatiblePorts(sourcePort, false);
 		highlightCompatiblePorts(targetPort, false);
-		
+
 		if (sadConnectInterface == null) {
 			// can't make a connection
 			return null;
