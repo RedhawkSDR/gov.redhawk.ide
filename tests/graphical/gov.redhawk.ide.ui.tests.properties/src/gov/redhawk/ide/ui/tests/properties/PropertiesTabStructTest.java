@@ -79,6 +79,15 @@ public class PropertiesTabStructTest extends PropertiesTabSimpleTest {
 		selectSimple();
 		super.testRange();
 	}
+
+	@Test
+	@Override
+	public void testOptional() {
+		selectSimple();
+		testOptional(true);
+		selectStruct();
+		testOptional(false);
+	}
 	
 	@Test
 	public void testSimpleDescription() {
@@ -104,8 +113,6 @@ public class PropertiesTabStructTest extends PropertiesTabSimpleTest {
 		
 		testKind(false);
 	}
-	
-	
 
 	@Test
 	public void testAddSecondSimple() {
@@ -141,6 +148,5 @@ public class PropertiesTabStructTest extends PropertiesTabSimpleTest {
 		bot.sleep(500);
 		super.testMode();
 	}
-
 
 }
