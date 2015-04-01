@@ -363,7 +363,7 @@ public final class GenerateCode {
 								public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 									try {
 										softPkg.eResource().save(null);
-										project.getFile("cpp_comp.spd.xml").refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
+										project.getFile(softPkg.eResource().getURI().lastSegment()).refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
 										if (domain != null) {
 											((BasicCommandStack) domain.getCommandStack()).saveIsDone();
 											domain.getCommandStack().flush();
