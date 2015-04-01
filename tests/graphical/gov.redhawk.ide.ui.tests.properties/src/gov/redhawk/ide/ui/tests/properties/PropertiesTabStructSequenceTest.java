@@ -51,7 +51,7 @@ public class PropertiesTabStructSequenceTest extends PropertiesTabSimpleTest {
 	protected void selectSimple() {
 		editor.bot().tree().expandNode("ID", "Struct").select("Simple");
 	}
-	
+
 	@Test
 	public void testSelectStructSequence() {
 		selectStructSequence();
@@ -69,7 +69,7 @@ public class PropertiesTabStructSequenceTest extends PropertiesTabSimpleTest {
 		selectSimple();
 		assertFormValid();
 	}
-	
+
 	@Test
 	public void testIDSimple() throws CoreException {
 		selectSimple();
@@ -109,7 +109,13 @@ public class PropertiesTabStructSequenceTest extends PropertiesTabSimpleTest {
 		selectSimple();
 		super.testRange();
 	}
-	
+
+	@Test
+	public void testOptionalInSimpleInStruct() {
+		selectSimple();
+		testOptional(true); // optional should exists in simple in struct
+	}
+
 	@Test
 	public void testDescriptionSimple() {
 		selectSimple();
@@ -185,4 +191,5 @@ public class PropertiesTabStructSequenceTest extends PropertiesTabSimpleTest {
 	public void testAction() {
 		// Disable Action element for Struct sequences
 	}
+	
 }
