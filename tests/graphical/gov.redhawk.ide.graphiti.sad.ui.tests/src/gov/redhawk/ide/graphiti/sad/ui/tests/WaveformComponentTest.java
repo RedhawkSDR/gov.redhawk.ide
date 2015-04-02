@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.sdr.ComponentsSubContainer;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
@@ -29,9 +30,12 @@ import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.transaction.RunnableWithResult;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
@@ -275,7 +279,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 	 * IDE-741 Palette has all Components in Target SDR.
 	 */
 	@Test
-	public void checkTargetSDRComponentsInPalete() {
+	public void checkTargetSDRComponentsInPalette() {
 		waveformName = "IDE-741-Test";
 		// Create an empty waveform project
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
@@ -359,9 +363,45 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		SWTBotTreeItem componentsItem = scaTree.expandNode("Target SDR", "Components");
 		SWTBotTreeItem[] sdrComponents = componentsItem.getItems();
 
-		for (SWTBotTreeItem item : sdrComponents) {
-			final String compName = item.getText();
-			list.add(compName);
+		for (final SWTBotTreeItem item : sdrComponents) {
+
+			// Don't include name-spaced components in this list,
+			// we test those elsewhere, specifically in the DiagramPaletteFilterTest
+			RunnableWithResult<Boolean> softPkgAssert = new RunnableWithResult<Boolean>() {
+
+				private boolean isSoftPkg;
+
+				@Override
+				public void run() {
+					if (item.widget.getData() instanceof ComponentsSubContainer) {
+						isSoftPkg = false;
+					} else {
+						isSoftPkg = true;
+					}
+				}
+
+				@Override
+				public Boolean getResult() {
+					return isSoftPkg;
+				}
+
+				@Override
+				public void setStatus(IStatus status) {
+				}
+
+				@Override
+				public IStatus getStatus() {
+					return null;
+				}
+
+			};
+
+			Display.getDefault().syncExec(softPkgAssert);
+
+			if (softPkgAssert.getResult()) {
+				final String compName = item.getText();
+				list.add(compName);
+			}
 		}
 
 		return list;
