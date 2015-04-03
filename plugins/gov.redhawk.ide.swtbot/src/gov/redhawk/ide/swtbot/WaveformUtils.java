@@ -67,7 +67,7 @@ public class WaveformUtils {
 		SWTBotShell wizardShell = bot.shell("New");
 		wizardShell.activate();
 		SWTBot wizardBot = wizardShell.bot();
-		wizardBot.tree().getTreeItem("SCA").expand().getNode("Graphiti SCA Waveform Project").select();
+		wizardBot.tree().getTreeItem("SCA").expand().getNode("SCA Waveform Project").select();
 		wizardBot.button("Next >").click();
 
 		// Enter the name for the new waveform

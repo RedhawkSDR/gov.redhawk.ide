@@ -90,7 +90,7 @@ public class FindByUtils {
 	}
 	
 	public static void addFindByEventChannel(SWTBot bot, String name) {
-		bot.textWithLabel("Event Channel:").setText(name);
+		bot.textWithLabel("Name:").setText(name);
 		bot.button("OK").click();
 	}
 	

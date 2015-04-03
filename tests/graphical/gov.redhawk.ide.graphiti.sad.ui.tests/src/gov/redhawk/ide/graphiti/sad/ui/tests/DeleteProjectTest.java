@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.tests;
 
+import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
@@ -46,6 +47,7 @@ public class DeleteProjectTest extends AbstractGraphitiTest {
 
 		// Add component to the diagram
 		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
+		MenuUtils.save(editor);
 		
 		// Delete project from the project explorer
 		SWTBotView projectExplorerView = gefBot.viewById("org.eclipse.ui.navigator.ProjectExplorer");

@@ -215,8 +215,8 @@ public class ConnectionTest extends AbstractGraphitiTest {
 	@Test
 	public void highlightTest() {
 		waveformName = "HighlightTestWF";
-		String sigGenPort = "dataFloat_out";
-		String dataConPort = "dataFloat";
+		String sigGenPort = "out";
+		String dataConPort = "dataDouble";
 
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 

@@ -146,7 +146,7 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 		DiagramTestUtils.addFromPaletteToDiagram(editor, HOSTCOLLOCATION_PALETTE, 0, 0);
 
 		gefBot.waitUntil(Conditions.shellIsActive("New Host Collocation"));
-		gefBot.textWithLabel("Host Collocation:").setText("AAA");
+		gefBot.textWithLabel("Name:").setText("AAA");
 		gefBot.button("OK").click();
 		//add component inside host collocation (so host collocation is valid)
 		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 5, 5);
@@ -200,23 +200,27 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 		MenuUtils.save(editor);
 		
 		// Confirm edits appear in the diagram
-		DiagramTestUtils.openTabInEditor(editor, "Diagram");
+		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.DIAGRAM_TAB);
 		//assert port set to external in diagram
 		SWTBotGefEditPart hardLimitUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, HARDLIMIT);
 		DiagramTestUtils.assertExternalPort(hardLimitUsesEditPart, true);
 		
 		//switch to overview tab and verify there are external ports
-		DiagramTestUtils.openTabInEditor(editor, "Overview");
+		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.OVERVIEW_TAB);
 		Assert.assertEquals("There are no external ports", 1, bot.table(0).rowCount());
 		
 		// Edit content of (remove external port) sad.xml
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		editorText = editor.toTextEditor().getText();
-		editorText = editorText.replace(externalports, "</assemblycontroller>");
+		int extPortStartIndex = editorText.indexOf("<externalports>");
+		int extPortEndIndex = editorText.indexOf("</externalports>") + ("</externalports>".length());
+		externalports = editorText.substring(extPortStartIndex, extPortEndIndex);
+		editorText = editorText.replace(externalports, "");
 		editor.toTextEditor().setText(editorText);
 		MenuUtils.save(editor);
 		
 		// Confirm that no external ports exist in diagram
+		DiagramTestUtils.openTabInEditor(editor, DiagramTestUtils.DIAGRAM_TAB);
 		hardLimitUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, HARDLIMIT);
 		DiagramTestUtils.assertExternalPort(hardLimitUsesEditPart, false);
 		

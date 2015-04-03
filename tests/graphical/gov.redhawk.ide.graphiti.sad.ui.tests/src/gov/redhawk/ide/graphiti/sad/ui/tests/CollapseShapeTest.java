@@ -62,8 +62,8 @@ public class CollapseShapeTest extends AbstractGraphitiTest {
 		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_READER, 0, 0);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 150);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_CONVERTER, 300, 150);
-		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_WRITER, 500, 0);
-		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 500, 150);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_WRITER, 600, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 600, 150);
 
 		// Get gefEditParts for port shapes
 		// SWTBotGefEditPart dataReaderDataFloatOut = DiagramTestUtils.getDiagramUsesPort(editor, DATA_READER,

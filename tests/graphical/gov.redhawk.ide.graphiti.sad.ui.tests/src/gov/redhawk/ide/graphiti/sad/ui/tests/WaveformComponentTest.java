@@ -225,7 +225,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		DiagramTestUtils.addFromPaletteToDiagram(editor, "SigGen", 0, 0);
 		MenuUtils.save(editor);
 
-		// Add a HardLimit component instantiation to the diagram
+		// Add a HardLimit component instantiation to the diagram.  Should be added to the sad.xml, even without a save
 		DiagramTestUtils.addFromPaletteToDiagram(editor, "HardLimit", 0, 0);
 
 		// Find expected xml string for SigGen and HardLimit components
@@ -236,7 +236,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		String editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The sad.xml should include SigGen's software assembly", editorText.matches(sigGenSad));
-		Assert.assertFalse("The sad.xml should not yet include HardLimit's software assembly", editorText.matches(hardLimitSad));
+		Assert.assertTrue("The sad.xml should include HardLimit's software assembly", editorText.matches(hardLimitSad));
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
 
 		// Save project and check to see if HardLimit is now in the sad.xml

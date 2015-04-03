@@ -185,7 +185,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		DiagramTestUtils.addFromPaletteToDiagram(editor, HOST_CO, 0, 0);
 		SWTBotShell hostCoShell = gefBot.shell("New " + HOST_CO);
 		hostCoShell.setFocus();
-		SWTBotText hostCoName = gefBot.textWithLabel(HOST_CO + ":");
+		SWTBotText hostCoName = gefBot.textWithLabel("Name:");
 		hostCoName.setFocus();
 		hostCoName.typeText(HOST_CO_NAME);
 		gefBot.button("OK").click();

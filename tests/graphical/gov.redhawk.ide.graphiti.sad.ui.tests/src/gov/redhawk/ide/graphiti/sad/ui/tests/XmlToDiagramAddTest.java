@@ -217,7 +217,7 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		waveformName = "Add_FindBy_Xml";
 		final String SIGGEN_NAME = "SigGen";
 		final String SIGGEN_REF = SIGGEN_NAME + "_1";
-		final String SIGGEN_PORT = "dataFloat_out";
+		final String SIGGEN_PORT = "out";
 		final String FIND_BY_NAME = "FindByName";
 		final String FBN_PORT_NAME = "NamePort";
 		final String FIND_BY_SERVICE = "FindByService";

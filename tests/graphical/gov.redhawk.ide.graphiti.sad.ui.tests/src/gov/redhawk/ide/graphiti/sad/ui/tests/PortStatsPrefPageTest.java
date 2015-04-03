@@ -41,7 +41,7 @@ public class PortStatsPrefPageTest extends AbstractGraphitiTest {
 		bot.menu("Window").menu("Preferences").click();
 		SWTBotShell prefShell = bot.shell("Preferences");
 		SWTBot prefBot = prefShell.bot();
-		prefBot.tree().getTreeItem("REDHAWK").expand().getNode("SAD Port Statistics").select();
+		prefBot.tree().getTreeItem("REDHAWK").expand().getNode("Port Statistics").select();
 
 		SWTBotButton applyButton = prefBot.button("Apply");
 		SWTBotButton defaultButton = prefBot.button("Restore Defaults");
