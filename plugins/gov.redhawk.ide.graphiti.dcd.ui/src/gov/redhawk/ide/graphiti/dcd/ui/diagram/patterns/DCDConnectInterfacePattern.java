@@ -54,7 +54,7 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 	public static final String NAME = "Connection";
 	public static final String SHAPE_IMG_CONNECTION_DECORATOR = "imgConnectionDecorator";
 	public static final String SHAPE_TEXT_CONNECTION_DECORATOR = "textConnectionDecorator";
-	
+
 	public static final String OVERRIDE_CONNECTION_ID = "OverrideConnectionId";
 
 	@Override
@@ -119,19 +119,20 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 
 		// link ports to connection
 		getFeatureProvider().link(connectionPE, new Object[] { connectInterface, source, target });
-		
+
 		return connectionPE;
 	}
 
 	/**
 	 * Add decorators to connection if applicable
-	 * Note: Unfortunately Graphiti doesn't support ConnectionDecorators with tooltips like it does with Shape Decorators (see RHToolBehaviorProvider)
+	 * Note: Unfortunately Graphiti doesn't support ConnectionDecorators with tooltips like it does with Shape
+	 * Decorators (see RHToolBehaviorProvider)
 	 * @param connectionPE
 	 */
 	public static void decorateConnection(Connection connectionPE, DcdConnectInterface connectInterface, Diagram diagram) {
 		// Clear any existing connection decorators
 		connectionPE.getConnectionDecorators().clear();
-		
+
 		IGaService gaService = Graphiti.getGaService();
 		IPeCreateService peCreateService = Graphiti.getPeCreateService();
 		boolean isFindByConnection = false;
@@ -140,24 +141,23 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 				isFindByConnection = true;
 			}
 		}
-		
+
 		if (connectInterface.getSource() != null && connectInterface.getTarget() != null || isFindByConnection) {
 			// Connection validation
 			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
-			
+
 			// don't check for compatibility if this is a FindBy connection
 			boolean compatibleConnection = true;
 			if (!isFindByConnection) {
 				compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
 			}
-			
-			
+
 			// Add error decorator if necessary
 			if (!compatibleConnection || !uniqueConnection) {
-				
+
 				// add graphical X to the middle of the erroneous connection
 				ConnectionDecorator errorDecorator = peCreateService.createConnectionDecorator(connectionPE, false, 0.5, true);
-				Polyline errPolyline = gaService.createPolyline(errorDecorator, new int[] { -7, 7, 0, 0, -7, -7, 0, 0, 7, -7, 0, 0, 7, 7});
+				Polyline errPolyline = gaService.createPolyline(errorDecorator, new int[] { -7, 7, 0, 0, -7, -7, 0, 0, 7, -7, 0, 0, 7, 7 });
 				errPolyline.setForeground(gaService.manageColor(diagram, IColorConstant.RED));
 				errPolyline.setLineWidth(2);
 			}
@@ -168,7 +168,7 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 				arrowColor = IColorConstant.RED;
 			} else {
 				arrowColor = IColorConstant.BLACK;
-			}			
+			}
 			ConnectionDecorator arrowDecorator = peCreateService.createConnectionDecorator(connectionPE, false, 1.0, true);
 			Polyline polyline = gaService.createPolyline(arrowDecorator, new int[] { -15, 10, 0, 0, -15, -10 });
 			polyline.setForeground(gaService.manageColor(diagram, arrowColor));
@@ -181,11 +181,6 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 	 */
 	@Override
 	public boolean canStartConnection(ICreateConnectionContext context) {
-		// Don't allow connections to be drawn in the waveform explorer
-		if (DUtil.DIAGRAM_CONTEXT_EXPLORER.equals(DUtil.getDiagramContext(getDiagram()))) {
-			return false;
-		}
-
 		// get sad from diagram
 		final DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());
 
@@ -199,11 +194,23 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 
 		return false;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.graphiti.pattern.AbstractConnectionPattern#startConnecting()
+	 */
+	@Override
+	public void startConnecting() {
+		super.startConnecting();
+		// Don't allow connections to be drawn in the node explorer
+		if (DUtil.DIAGRAM_CONTEXT_EXPLORER.equals(DUtil.getDiagramContext(getDiagram()))) {
+			return;
+		}
+	}
+
 	/**
 	 * Determines whether creation of an interface connection is possible between source and destination anchors.
 	 * User can begin drawing connection from either direction.
-	 * Source anchor of connection must be UsesPort. 
+	 * Source anchor of connection must be UsesPort.
 	 * Target Anchor must be ConnectionTarget which is the parent class for a variety of types.
 	 */
 	@Override
@@ -213,7 +220,7 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 		if (dcd == null) {
 			return false;
 		}
-		
+
 		// doing the null check because it breaks when loading a findby without a diagram
 		if (((GraphitiDcdDiagramEditor) getFeatureProvider().getDiagramTypeProvider().getDiagramBehavior().getDiagramContainer()).getGraphicalViewer() != null) {
 			// force selection of shape so that we can then right click for contextual options
@@ -223,7 +230,7 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 					new PictogramElement[] { context.getSourcePictogramElement() });
 			}
 		}
-		
+
 		// determine source
 		UsesPortStub source = getUsesPortStub(context);
 		if (source == null) {
@@ -251,16 +258,15 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 
 		Connection newConnection = null;
 
-		DcdConnectInterface dcdConnectInterface = (DcdConnectInterface) DUtil.assignAnchorObjectsToConnection(
-			DcdFactory.eINSTANCE.createDcdConnectInterface(), 
+		DcdConnectInterface dcdConnectInterface = (DcdConnectInterface) DUtil.assignAnchorObjectsToConnection(DcdFactory.eINSTANCE.createDcdConnectInterface(),
 			context.getSourceAnchor(), context.getTargetAnchor());
 		if (dcdConnectInterface == null) {
-			//switch source/target direction and try again
-			dcdConnectInterface = (DcdConnectInterface) DUtil.assignAnchorObjectsToConnection(
-				DcdFactory.eINSTANCE.createDcdConnectInterface(), context.getTargetAnchor(), context.getSourceAnchor());
+			// switch source/target direction and try again
+			dcdConnectInterface = (DcdConnectInterface) DUtil.assignAnchorObjectsToConnection(DcdFactory.eINSTANCE.createDcdConnectInterface(),
+				context.getTargetAnchor(), context.getSourceAnchor());
 		}
 		if (dcdConnectInterface == null) {
-			//can't make a connection
+			// can't make a connection
 			return null;
 		}
 
@@ -269,13 +275,14 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 
 		// get sad from diagram
 		final DeviceConfiguration dcd = DUtil.getDiagramDCD(getDiagram());
-		
-		//create connectionId first check if provided in context (currently used by GraphitiModelMap), otherwise generate unique connection id
+
+		// create connectionId first check if provided in context (currently used by GraphitiModelMap), otherwise
+		// generate unique connection id
 		final String connectionId = (context.getProperty(OVERRIDE_CONNECTION_ID) != null) ? (String) context.getProperty(OVERRIDE_CONNECTION_ID)
-						: createConnectionId(dcd);
+			: createConnectionId(dcd);
 		// set connection id
 		dcdConnectInterface.setId(connectionId);
-				
+
 		// container for new DcdConnectInterface, necessary for reference after command execution
 		final DcdConnectInterface[] dcdConnectInterfaces = new DcdConnectInterface[1];
 		dcdConnectInterfaces[0] = dcdConnectInterface;
@@ -314,7 +321,7 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 		source = getUsesPortStub(context.getTargetAnchor());
 		return source;
 	}
-	
+
 	private UsesPortStub getUsesPortStub(Anchor anchor) {
 		if (anchor != null) {
 			Object object = getBusinessObjectForPictogramElement(anchor.getParent());
