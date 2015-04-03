@@ -250,10 +250,10 @@ public class PropertiesTabSimpleTest extends AbstractBasicPropertyTest {
 			SWTBotCombo combo = bot.comboBoxWithLabel("Optional:");
 			found = true;
 			if (shouldExist) {
-				String[] test_scenarios = { "false", "true", "" };
+				String[] testScenarios = { "false", "true", "" };
 				String text = combo.getText();
 				Assert.assertEquals("default optional selection", "", text);
-				for (String test : test_scenarios) {
+				for (String test : testScenarios) {
 					combo.setSelection(test);
 					text = combo.getText();
 					Assert.assertEquals("text after selection", test, text);
