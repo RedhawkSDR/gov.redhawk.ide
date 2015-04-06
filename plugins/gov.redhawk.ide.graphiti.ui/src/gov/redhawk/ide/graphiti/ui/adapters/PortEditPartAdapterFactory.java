@@ -22,6 +22,7 @@ import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
 
+import java.util.List;
 import java.util.Map;
 
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
@@ -35,6 +36,7 @@ import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.ui.internal.parts.AdvancedAnchorEditPart;
@@ -74,7 +76,7 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 					final Map<String, String> query = QueryParser.parseQuery(uri.query());
 					final String wfRef = query.get(ScaFileSystemConstants.QUERY_PARAM_WF);
 
-					if ((ComponentInstantiation) uses.eContainer() instanceof SadComponentInstantiation) {
+					if (uses.eContainer() instanceof SadComponentInstantiation) {
 						final ScaWaveform waveform = ScaModelPlugin.getDefault().findEObject(ScaWaveform.class, wfRef);
 						final String myId = ((ComponentInstantiation) uses.eContainer()).getId();
 						for (final ScaComponent component : GraphitiAdapterUtil.safeFetchComponents(waveform)) {
@@ -91,25 +93,24 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 								}
 							}
 						}
-					} else if ((ComponentInstantiation) uses.eContainer() instanceof DcdComponentInstantiation) {
-//						final ScaDeviceManager devMgr = ScaModelPlugin.getDefault().findEObject(LocalScaDeviceManager.class, wfRef);
-//						final String myId = ((ComponentInstantiation) uses.eContainer()).getId();
-//						if (devMgr != null) {
-//							for (final ScaDevice device : GraphitiAdapterUtil.safeFetchComponents(devMgr)) {
-//								final String scaDeviceId = device.getIdentifier();
-//								if (scaDeviceId.startsWith(myId)) {
-//									for (final ScaPort< ? , ? > port : GraphitiAdapterUtil.safeFetchPorts(device)) {
-//										if (port != null && (port instanceof ScaUsesPort)) {
-//											final String name = port.getName();
-//											if (name != null && name.equals(uses.getName())) {
-//												return port;
-//											}
-//
-//										}
-//									}
-//								}
-//							}
-//						}
+					} else if (uses.eContainer() instanceof DcdComponentInstantiation) {
+						final ScaDeviceManager devMgr = ScaModelPlugin.getDefault().findEObject(ScaDeviceManager.class, wfRef);
+						if (devMgr != null) {
+							final String myId = ((ComponentInstantiation) uses.eContainer()).getId();
+							for (final ScaDevice device : GraphitiAdapterUtil.safeFetchComponents(devMgr)) {
+								final String scaDeviceId = device.getIdentifier();
+								if (scaDeviceId.startsWith(myId)) {
+									for (final ScaPort< ? , ? > port : GraphitiAdapterUtil.safeFetchPorts(device)) {
+										if (port != null && (port instanceof ScaUsesPort)) {
+											final String name = port.getName();
+											if (name != null && name.equals(uses.getName())) {
+												return port;
+											}
+										}
+									}
+								}
+							}
+						}
 					}
 				}
 			}
@@ -124,7 +125,7 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 					final Map<String, String> query = QueryParser.parseQuery(uri.query());
 					final String wfRef = query.get(ScaFileSystemConstants.QUERY_PARAM_WF);
 
-					if ((ComponentInstantiation) provides.eContainer() instanceof SadComponentInstantiation) {
+					if (provides.eContainer() instanceof SadComponentInstantiation) {
 						final ScaWaveform waveform = ScaModelPlugin.getDefault().findEObject(ScaWaveform.class, wfRef);
 						final String myId = ((ComponentInstantiation) provides.eContainer()).getId();
 						for (final ScaComponent component : GraphitiAdapterUtil.safeFetchComponents(waveform)) {
@@ -140,24 +141,24 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 								}
 							}
 						}
-					} else if ((ComponentInstantiation) provides.eContainer() instanceof DcdComponentInstantiation) {
-//						final ScaDeviceManager devMgr = ScaModelPlugin.getDefault().findEObject(LocalScaDeviceManager.class, wfRef);
-//						final String myId = ((ComponentInstantiation) provides.eContainer()).getId();
-//						if (devMgr != null) {
-//							for (final ScaDevice< ? > device : GraphitiAdapterUtil.safeFetchComponents(devMgr)) {
-//								final String scaDeviceId = device.identifier();
-//								if (scaDeviceId != null && scaDeviceId.startsWith(myId)) {
-//									for (final ScaPort< ? , ? > port : GraphitiAdapterUtil.safeFetchPorts(device)) {
-//										if (port != null && (port instanceof ScaProvidesPort)) {
-//											final String name = port.getName();
-//											if (name != null && name.equals(provides.getName())) {
-//												return port;
-//											}
-//										}
-//									}
-//								}
-//							}
-//						}
+					} else if (provides.eContainer() instanceof DcdComponentInstantiation) {
+						final ScaDeviceManager devMgr = ScaModelPlugin.getDefault().findEObject(LocalScaDeviceManager.class, wfRef);
+						if (devMgr != null) {
+							final String myId = ((ComponentInstantiation) provides.eContainer()).getId();
+							for (final ScaDevice< ? > device : GraphitiAdapterUtil.safeFetchComponents(devMgr)) {
+								final String scaDeviceId = device.identifier();
+								if (scaDeviceId != null && scaDeviceId.startsWith(myId)) {
+									for (final ScaPort< ? , ? > port : GraphitiAdapterUtil.safeFetchPorts(device)) {
+										if (port != null && (port instanceof ScaProvidesPort)) {
+											final String name = port.getName();
+											if (name != null && name.equals(provides.getName())) {
+												return port;
+											}
+										}
+									}
+								}
+							}
+						}
 					}
 
 				}
