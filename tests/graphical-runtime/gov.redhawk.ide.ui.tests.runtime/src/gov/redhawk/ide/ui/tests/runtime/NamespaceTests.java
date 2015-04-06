@@ -31,7 +31,6 @@ import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class NamespaceTests extends UIRuntimeTest {
@@ -207,7 +206,6 @@ public class NamespaceTests extends UIRuntimeTest {
 	 * Check that a name-spaced shared library can be created, generated and exported.
 	 * It should also be represented in the SCA Explorer.
 	 */
-	@Ignore
 	@Test
 	public void namespaceBehaviorSharedLib() {
 		final String sharedLibraryBaseName = "sharedLibrary";
