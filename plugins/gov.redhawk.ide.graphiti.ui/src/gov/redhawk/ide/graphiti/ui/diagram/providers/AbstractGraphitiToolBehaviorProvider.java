@@ -229,7 +229,7 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 	protected List<IToolEntry> createPaletteEntries(SoftPkg spd, String iconId) {
 		String label = getLastSegment(getNameSegments(spd));
 		List<IToolEntry> retVal = new ArrayList<IToolEntry>(spd.getImplementation().size());
-		if (spd.getImplementation().size() == 1) {
+		if (spd.getImplementation().size() == 1 || DUtil.isDiagramDesign(this.getDiagramTypeProvider().getDiagram())) {
 			ICreateFeature createComponentFeature = getCreateFeature(spd, spd.getImplementation().get(0).getId(), iconId);
 			SpdToolEntry entry = new SpdToolEntry(label, spd.getDescription(), EcoreUtil.getURI(spd), spd.getId(),
 				spd.getImplementation().get(0).getId(), iconId, createComponentFeature);
