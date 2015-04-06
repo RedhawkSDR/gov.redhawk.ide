@@ -34,7 +34,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class ScaNamespaceTest extends UIRuntimeTest {
+public class NamespaceTests extends UIRuntimeTest {
 
 	private static final String PREFIX_DOTS = "runtime.test.";
 
