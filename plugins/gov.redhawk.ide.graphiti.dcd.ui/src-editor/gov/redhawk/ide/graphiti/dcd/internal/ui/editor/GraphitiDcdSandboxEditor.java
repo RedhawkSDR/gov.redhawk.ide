@@ -42,7 +42,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.ui.URIEditorInput;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.edit.ui.util.EditUIUtil;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -75,8 +77,15 @@ public class GraphitiDcdSandboxEditor extends GraphitiDcdMultipageEditor {
 
 	@Override
 	protected void createModel() {
-		mainResource = getEditingDomain().getResourceSet().createResource(ScaDebugInstance.getLocalSandboxDeviceManagerURI());
+
+		final URI resourceURI = EditUIUtil.getURI(getEditorInput());
+		// For safety we'll decode the URI to make sure escape sequences have been correctly represented
+		String decodedURIString = URI.decode(resourceURI.toString());
+		final URI decodedURI = URI.createURI(decodedURIString);
+		mainResource = getEditingDomain().getResourceSet().createResource(decodedURI);
+
 		dcd = DcdFactory.eINSTANCE.createDeviceConfiguration();
+
 		getEditingDomain().getCommandStack().execute(new ScaModelCommand() {
 
 			@Override
