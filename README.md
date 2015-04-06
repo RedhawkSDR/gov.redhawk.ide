@@ -18,11 +18,10 @@ REDHAWK IDE is licensed under the Eclipse Public License (EPL).
 
 ## Testing
 
-We break our tests down into three groups:
+We break our tests down into two groups:
 
 | Directory | Description
 |-----------|------------
 | unittest  | Tests that are run with the maven build of the plugins/features
 | graphical | Tests that require an X environment to run
-| graphical-runtime | Tests that require an X environment and REDHAWK install to run
 
