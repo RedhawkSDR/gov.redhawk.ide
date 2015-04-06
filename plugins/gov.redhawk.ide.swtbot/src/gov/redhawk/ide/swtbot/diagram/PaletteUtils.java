@@ -15,6 +15,7 @@ import gov.redhawk.ide.graphiti.ui.palette.PaletteNamespaceFolder;
 import gov.redhawk.ide.graphiti.ui.palette.PaletteNamespaceFolderEditPart;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -24,9 +25,8 @@ import org.eclipse.gef.internal.ui.palette.editparts.DrawerEditPart;
 import org.eclipse.gef.palette.PaletteContainer;
 import org.eclipse.gef.palette.PaletteDrawer;
 import org.eclipse.gef.palette.PaletteEntry;
+import org.eclipse.gef.palette.PaletteStack;
 import org.eclipse.gef.palette.ToolEntry;
-import org.eclipse.gef.ui.palette.editparts.PaletteEditPart;
-import org.eclipse.swtbot.eclipse.gef.finder.matchers.ToolEntryLabelMatcher;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.SWTBot;
@@ -34,6 +34,7 @@ import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.ui.progress.UIJob;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.junit.Assert;
 
 @SuppressWarnings("restriction")
 public class PaletteUtils {
@@ -54,29 +55,6 @@ public class PaletteUtils {
 			if (item instanceof PaletteNamespaceFolderEditPart) {
 				PaletteNamespaceFolderEditPart part = (PaletteNamespaceFolderEditPart) item;
 				return partLabel.equals(part.getFolder().getLabel());
-			}
-			return false;
-		}
-
-		@Override
-		public void describeTo(Description description) {
-		}
-
-	}
-
-	private static class ToolMatcher extends BaseMatcher<PaletteEditPart> {
-
-		private ToolEntryLabelMatcher innerMatcher;
-
-		ToolMatcher(String label) {
-			innerMatcher = new ToolEntryLabelMatcher(label);
-		}
-
-		@Override
-		public boolean matches(Object item) {
-			if (item instanceof PaletteEditPart) {
-				PaletteEditPart part = (PaletteEditPart) item;
-				return innerMatcher.matches(part.getModel());
 			}
 			return false;
 		}
@@ -185,4 +163,23 @@ public class PaletteUtils {
 		}
 		return null;
 	}
+	
+	public static boolean hasMultipleImplementations(SWTBotGefEditor editor, String component) {
+		Assert.assertTrue(PaletteUtils.toolIsPresent(editor, component));
+		ToolEntry entry = editor.getActiveTool();
+		Assert.assertNotNull(entry);
+		PaletteContainer container = entry.getParent();
+		Assert.assertTrue(container instanceof PaletteStack);
+		Assert.assertTrue(container.getChildren().size() > 1);
+		Pattern match = Pattern.compile(component + " \\(\\w+\\)");
+		for (Object obj: container.getChildren()) {
+			if (obj instanceof ToolEntry) {
+				Assert.assertTrue(match.matcher(((ToolEntry) obj).getLabel()).matches());
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+
 }

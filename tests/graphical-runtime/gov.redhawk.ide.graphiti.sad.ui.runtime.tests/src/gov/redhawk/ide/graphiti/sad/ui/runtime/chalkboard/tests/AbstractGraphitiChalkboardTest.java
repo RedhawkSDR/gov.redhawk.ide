@@ -27,7 +27,7 @@ public abstract class AbstractGraphitiChalkboardTest extends UIRuntimeTest {
 
 	static final String[] CHALKBOARD_PARENT_PATH = { "Sandbox" };
 	static final String CHALKBOARD = "Chalkboard";
-	static final String CHALKBOARD_TAB_TITLE = "Waveform Chalkboard";
+	static final String CHALKBOARD_TAB_TITLE = "Chalkboard";
 
 	// Common Test Component Names
 	static final String HARD_LIMIT = "HardLimit";
