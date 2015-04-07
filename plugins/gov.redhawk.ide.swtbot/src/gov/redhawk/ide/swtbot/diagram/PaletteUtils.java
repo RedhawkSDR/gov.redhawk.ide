@@ -166,7 +166,12 @@ public class PaletteUtils {
 	
 	public static boolean hasMultipleImplementations(SWTBotGefEditor editor, String component) {
 		Assert.assertTrue(PaletteUtils.toolIsPresent(editor, component));
-		ToolEntry entry = editor.getActiveTool();
+		ToolEntry entry;
+		if (editor instanceof RHTestBotEditor) {
+			entry = PaletteUtils.getToolEntry((RHTestBotEditor) editor, component);
+		} else {
+			entry = editor.getActiveTool();
+		}
 		Assert.assertNotNull(entry);
 		PaletteContainer container = entry.getParent();
 		Assert.assertTrue(container instanceof PaletteStack);
