@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.tests.projectCreation;
 
-import gov.redhawk.ide.swtbot.WaitForEditorCondition;
+import gov.redhawk.ide.swtbot.condition.WaitForEditorCondition;
 import gov.redhawk.model.sca.util.ModelUtil;
 
 import java.io.File;

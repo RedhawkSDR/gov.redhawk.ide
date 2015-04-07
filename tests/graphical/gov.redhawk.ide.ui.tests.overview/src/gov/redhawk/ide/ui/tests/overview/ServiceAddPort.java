@@ -12,7 +12,7 @@ package gov.redhawk.ide.ui.tests.overview;
 
 import gov.redhawk.ide.swtbot.ServiceUtils;
 import gov.redhawk.ide.swtbot.UITest;
-import gov.redhawk.ide.swtbot.WaitForEditorCondition;
+import gov.redhawk.ide.swtbot.condition.WaitForEditorCondition;
 
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.junit.Assert;

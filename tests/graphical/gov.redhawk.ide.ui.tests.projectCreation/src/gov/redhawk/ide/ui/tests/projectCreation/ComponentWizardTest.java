@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.IOException;
 
 import gov.redhawk.ide.spd.internal.ui.editor.ComponentEditor;
-import gov.redhawk.ide.swtbot.WaitForEditorCondition;
+import gov.redhawk.ide.swtbot.condition.WaitForEditorCondition;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;

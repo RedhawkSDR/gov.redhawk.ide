@@ -12,7 +12,7 @@ package gov.redhawk.ide.ui.tests.projectCreation;
 
 import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.UITest;
-import gov.redhawk.ide.swtbot.WaitForEditorCondition;
+import gov.redhawk.ide.swtbot.condition.WaitForEditorCondition;
 
 import java.io.File;
 import java.io.IOException;

@@ -14,7 +14,7 @@ import gov.redhawk.ide.spd.internal.ui.editor.ComponentEditor;
 import gov.redhawk.ide.spd.internal.ui.editor.ComponentOverviewPage;
 import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.UITest;
-import gov.redhawk.ide.swtbot.WaitForEditorCondition;
+import gov.redhawk.ide.swtbot.condition.WaitForEditorCondition;
 import mil.jpeojtrs.sca.scd.Ports;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.DceUuidUtil;

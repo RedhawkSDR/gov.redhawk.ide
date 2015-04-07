@@ -11,8 +11,8 @@
 package gov.redhawk.ide.graphiti.sad.ui.tests;
 
 import gov.redhawk.ide.swtbot.SWTBotRadioMenu;
-import gov.redhawk.ide.swtbot.WaitForEditorCondition;
 import gov.redhawk.ide.swtbot.WaveformUtils;
+import gov.redhawk.ide.swtbot.condition.WaitForEditorCondition;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;

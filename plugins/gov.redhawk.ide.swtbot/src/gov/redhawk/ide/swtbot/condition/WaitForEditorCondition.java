@@ -8,14 +8,15 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.swtbot;
+package gov.redhawk.ide.swtbot.condition;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 
 /**
- * 
+ * Waits until there is an active editor (any). If you need to wait for a specific editor, just use
+ * {@link SWTWorkbenchBot#editorByTitle(String)}. It will wait for the editor to open.
  */
 public class WaitForEditorCondition implements ICondition {
 

@@ -16,6 +16,9 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 
+/**
+ * Waits for any/all launches to terminated
+ */
 public class WaitForLaunchTermination implements ICondition {
 	
 	private final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();

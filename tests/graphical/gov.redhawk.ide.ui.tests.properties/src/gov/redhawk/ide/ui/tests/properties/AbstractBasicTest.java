@@ -13,7 +13,7 @@ package gov.redhawk.ide.ui.tests.properties;
 import gov.redhawk.ide.spd.internal.ui.editor.ComponentEditor;
 import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.UITest;
-import gov.redhawk.ide.swtbot.WaitForEditorCondition;
+import gov.redhawk.ide.swtbot.condition.WaitForEditorCondition;
 import gov.redhawk.prf.ui.editor.page.PropertiesFormPage;
 
 import org.eclipse.core.runtime.Path;
@@ -26,7 +26,6 @@ import org.junit.Before;
 public abstract class AbstractBasicTest extends UITest {
 	
 	protected SWTBotEditor editor;
-
 
 	@Before
 	public void before() throws Exception {
