@@ -383,7 +383,7 @@ public abstract class ProjectCreator {
 	 * IDE-1111: Make usable file/class names out of project names
 	 * @param project The project for which to generate file names
 	 * @return The base name to be used for files and classes in the project
-	 * @since 10.2
+	 * @since 11.0
 	 */
 	protected static String getBaseFileName(IProject project) {
 		return getBaseFileName(project.getName());
@@ -393,7 +393,7 @@ public abstract class ProjectCreator {
 	 * IDE-1111: Make usable file/class names out of project names
 	 * @param name The original project name
 	 * @return The base name to be used for files and classes in the project
-	 * @since 10.2
+	 * @since 11.0
 	 */
 	public static String getBaseFileName(String name) {
 		if (name == null) {
