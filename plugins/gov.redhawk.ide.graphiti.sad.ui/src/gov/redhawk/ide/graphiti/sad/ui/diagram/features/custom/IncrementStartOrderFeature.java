@@ -63,7 +63,8 @@ public class IncrementStartOrderFeature extends AbstractCustomFeature {
 					return false;
 				}
 
-				// don't allow increment if its already the highest (components with start orders of null are removed from this assessment)
+				// don't allow increment if its already the highest (components with start orders of null are removed
+				// from this assessment)
 				EList<SadComponentInstantiation> sortedComponents = sad.getComponentInstantiationsInStartOrder();
 				for (int i = 0; i < sortedComponents.size(); i++) {
 					if (sortedComponents.get(i).getStartOrder() == null) {
@@ -95,6 +96,10 @@ public class IncrementStartOrderFeature extends AbstractCustomFeature {
 
 		// swap start orders, also handle assembly controller changes
 		ComponentPattern.swapStartOrder(sad, getFeatureProvider(), ci, swapCI);
+
+		// force pictogram objects to update
+		updatePictogramElement(componentShape);
+		updatePictogramElement(DUtil.getPictogramElementForBusinessObject(getDiagram(), swapCI, ComponentShape.class));
 	}
 
 }

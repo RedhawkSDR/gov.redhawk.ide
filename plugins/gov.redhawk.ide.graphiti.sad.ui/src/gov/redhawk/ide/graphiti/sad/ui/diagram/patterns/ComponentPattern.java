@@ -46,6 +46,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.IRemoveFeature;
+import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
@@ -55,6 +56,7 @@ import org.eclipse.graphiti.features.context.IRemoveContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.context.impl.RemoveContext;
+import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
@@ -275,7 +277,6 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		// create shape
 		ComponentShape componentShape = RHSadGxFactory.eINSTANCE.createComponentShape();
 		componentShape.init(context, this);
-	
 
 		// set shape location to user's selection
 		Graphiti.getGaLayoutService().setLocation(componentShape.getGraphicsAlgorithm(), context.getX(), context.getY());
@@ -595,30 +596,18 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 						@Override
 						protected void doExecute() {
 							ci.setStartOrder(newStartOrder);
+
+							// Force pictogram elements to update
+							ComponentShape componentShape = (ComponentShape) DUtil.getPictogramElementForBusinessObject(diagram, ci, ComponentShape.class);
+							UpdateContext context = new UpdateContext(componentShape);
+							IUpdateFeature feature = featureProvider.getUpdateFeature(context);
+							feature.execute(context);
 						}
 					});
 				}
 			}
-
-			// get external ports
-			// TODO: This breaks the assembly update logic, can end up changing start order ellipse style for
-			// non-assembly controllers
-//			ExternalPorts externalPorts = DUtil.getDiagramSAD(featureProvider, diagram).getExternalPorts();
-//
-//			List<PictogramElement> elements = Graphiti.getLinkService().getPictogramElements(diagram, ci);
-//			for (PictogramElement e : elements) {
-//				if (e instanceof ComponentShape) {
-//					((ComponentShape) e).update(ci, featureProvider, externalPorts, assemblyController);
-//				}
-//			}
 		}
 	}
-
-//	@Override
-//	public boolean canUpdate(IUpdateContext context) {
-//		PictogramElement pictogramElement = context.getPictogramElement();
-//		return isPatternControlled(pictogramElement);
-//	}
 
 	// returns the assembly controller for this waveform
 	private static AssemblyController getAssemblyController(IFeatureProvider featureProvider, Diagram diagram) {
@@ -629,12 +618,6 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		return null;
 
 	}
-
-//	@Override
-//	public boolean canUpdate(IUpdateContext context) {
-//		PictogramElement pictogramElement = context.getPictogramElement();
-//		return isPatternControlled(pictogramElement);
-//	}
 
 	// returns the assembly controller for this waveform if it happens to be the passed in Component
 	public AssemblyController getComponentAssemblyController(SadComponentInstantiation ci) {
@@ -822,9 +805,9 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 	public Style createStyleForInner() {
 		return StyleUtil.createStyleForComponentInner(getDiagram());
 	}
-	
+
 	/**
-	 * Returns component, sad, and external ports.  Order does matter.
+	 * Returns component, sad, and external ports. Order does matter.
 	 */
 	public List<EObject> getBusinessObjectsToLink(EObject componentInstantiation) {
 		// get external ports
@@ -840,7 +823,7 @@ public class ComponentPattern extends AbstractContainerPattern implements IPatte
 		if (externalPorts != null) {
 			businessObjectsToLink.add(externalPorts);
 		}
-		
+
 		return businessObjectsToLink;
 	}
 }

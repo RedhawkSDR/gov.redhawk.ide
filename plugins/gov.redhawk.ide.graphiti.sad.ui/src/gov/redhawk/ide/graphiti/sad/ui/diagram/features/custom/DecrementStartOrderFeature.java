@@ -53,7 +53,7 @@ public class DecrementStartOrderFeature extends AbstractCustomFeature {
 			if (obj instanceof SadComponentInstantiation) {
 				// its a component
 				SadComponentInstantiation ci = (SadComponentInstantiation) obj;
-				
+
 				// get sad from diagram
 				final SoftwareAssembly sad = DUtil.getDiagramSAD(getDiagram());
 
@@ -62,7 +62,7 @@ public class DecrementStartOrderFeature extends AbstractCustomFeature {
 				if (sortedComponents.get(0).equals(ci)) {
 					return false;
 				}
-				
+
 				// start order NOT zero
 				if (ci.getStartOrder() != null) {
 					if (ci.getStartOrder().compareTo(BigInteger.ZERO) != 0) {
@@ -90,6 +90,10 @@ public class DecrementStartOrderFeature extends AbstractCustomFeature {
 
 		// swap start orders, also handle assembly controller changes
 		ComponentPattern.swapStartOrder(sad, getFeatureProvider(), swapCI, ci);
+
+		// force pictogram objects to update
+		updatePictogramElement(componentShape);
+		updatePictogramElement(DUtil.getPictogramElementForBusinessObject(getDiagram(), swapCI, ComponentShape.class));
 	}
 
 }
