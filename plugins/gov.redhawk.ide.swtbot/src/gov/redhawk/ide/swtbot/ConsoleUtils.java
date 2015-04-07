@@ -84,4 +84,44 @@ public class ConsoleUtils {
 		});
 	}
 
+	/**
+	 * Terminate all processes in the console
+	 * @param bot
+	 */
+	public static void terminateAllProcesses(SWTWorkbenchBot bot) {
+		final SWTBotView view = ViewUtils.getConsoleView(bot);
+		view.show();
+
+		final Matcher<MenuItem> matcher = new AnyMenuItemMatcher<MenuItem>();
+
+		// Cycle through each process, terminating it and removing it from the view
+		SWTBotToolbarDropDownButton consoleButton = (SWTBotToolbarDropDownButton) view.toolbarButton("Display Selected Console");
+		while (consoleButton.isEnabled()) {
+			int consoles = consoleButton.menuItems(matcher).size();
+			if (consoles <= 0) {
+				break;
+			}
+
+			final SWTBotToolbarButton terminateButton = view.toolbarButton("Terminate");
+			terminateButton.click();
+
+			bot.waitUntil(new DefaultCondition() {
+
+				@Override
+				public boolean test() throws Exception {
+					SWTBotToolbarButton removeTerminatedButton = view.toolbarButton("Remove All Terminated Launches");
+					if (removeTerminatedButton.isEnabled()) {
+						removeTerminatedButton.click();
+						return true;
+					}
+					return false;
+				}
+
+				@Override
+				public String getFailureMessage() {
+					return "Remove all terminated launches button never enabled";
+				}
+			}, 10000);
+		}
+	}
 }
