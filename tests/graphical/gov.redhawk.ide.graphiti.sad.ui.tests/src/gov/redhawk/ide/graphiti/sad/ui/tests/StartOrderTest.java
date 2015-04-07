@@ -62,6 +62,8 @@ public class StartOrderTest extends AbstractGraphitiTest {
 		// Decrement start order test - Assert new start orders and new assembly controller assignment
 		ComponentUtils.decrementStartOrder(editor, componentOne);
 		MenuUtils.save(editor);
+		componentOneObj = DiagramTestUtils.getComponentObject(editor, componentOne);
+		componentTwoObj = DiagramTestUtils.getComponentObject(editor, componentTwo);
 		Assert.assertFalse("Assembly controller was not updated correctly", ComponentUtils.isAssemblyController(gefBot, editor, componentOne));
 		Assert.assertTrue("Assembly controller was not updated correctly", ComponentUtils.isAssemblyController(gefBot, editor, componentTwo));
 		Assert.assertEquals("Model object start order is incorrect", BigInteger.ONE, componentOneObj.getStartOrder());
@@ -72,6 +74,8 @@ public class StartOrderTest extends AbstractGraphitiTest {
 		// Increment start order test - Assert new start orders and new assembly controller assignment
 		ComponentUtils.incrementStartOrder(editor, componentOne);
 		MenuUtils.save(editor);
+		componentOneObj = DiagramTestUtils.getComponentObject(editor, componentOne);
+		componentTwoObj = DiagramTestUtils.getComponentObject(editor, componentTwo);
 		Assert.assertTrue("Assembly controller was not updated correctly", ComponentUtils.isAssemblyController(gefBot, editor, componentOne));
 		Assert.assertFalse("Assembly controller was not updated correctly", ComponentUtils.isAssemblyController(gefBot, editor, componentTwo));
 		Assert.assertEquals("Model object start order is incorrect", BigInteger.ZERO, componentOneObj.getStartOrder());
@@ -82,6 +86,8 @@ public class StartOrderTest extends AbstractGraphitiTest {
 		// Set a new assembly controller - Assert new start orders and new assembly controller assignment
 		ComponentUtils.setAsAssemblyController(editor, componentTwo);
 		MenuUtils.save(editor);
+		componentOneObj = DiagramTestUtils.getComponentObject(editor, componentOne);
+		componentTwoObj = DiagramTestUtils.getComponentObject(editor, componentTwo);
 		Assert.assertFalse("Assembly controller was not updated correctly", ComponentUtils.isAssemblyController(gefBot, editor, componentOne));
 		Assert.assertTrue("Assembly controller was not updated correctly", ComponentUtils.isAssemblyController(gefBot, editor, componentTwo));
 		Assert.assertEquals("Model object start order is incorrect", BigInteger.ONE, componentOneObj.getStartOrder());
