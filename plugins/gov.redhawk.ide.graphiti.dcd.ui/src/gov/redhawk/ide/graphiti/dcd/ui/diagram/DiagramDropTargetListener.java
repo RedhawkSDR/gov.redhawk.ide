@@ -73,10 +73,17 @@ public class DiagramDropTargetListener extends AbstractTransferDropTargetListene
 			if (((IStructuredSelection) selection).getFirstElement() instanceof SoftPkg) {
 				SoftPkg spd = (SoftPkg) ((IStructuredSelection) selection).getFirstElement();
 				ICreateFeature createFeature = null;
-				if (spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.DEVICE.getLiteral())) {
-					createFeature = new DeviceCreateFeature(diagramBehavior.getDiagramTypeProvider().getFeatureProvider(), spd,
-						spd.getImplementation().get(0).getId());
-				} else if (spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.SERVICE.getLiteral())) {
+
+				String componentType = spd.getDescriptor().getComponent().getComponentType();
+				String[] deviceTypes = { mil.jpeojtrs.sca.scd.ComponentType.DEVICE.getLiteral(), "loadabledevice", "executabledevice" };
+				for (String deviceType : deviceTypes) {
+					if (deviceType.equals(componentType)) {
+						createFeature = new DeviceCreateFeature(diagramBehavior.getDiagramTypeProvider().getFeatureProvider(), spd,
+							spd.getImplementation().get(0).getId());
+					}
+				}
+
+				if (createFeature == null && componentType.equals(mil.jpeojtrs.sca.scd.ComponentType.SERVICE.getLiteral())) {
 					createFeature = new ServiceCreateFeature(diagramBehavior.getDiagramTypeProvider().getFeatureProvider(), spd,
 						spd.getImplementation().get(0).getId());
 				}
@@ -108,12 +115,20 @@ public class DiagramDropTargetListener extends AbstractTransferDropTargetListene
 
 		if (((IStructuredSelection) selection).getFirstElement() instanceof SoftPkg) {
 			SoftPkg spd = (SoftPkg) ((IStructuredSelection) selection).getFirstElement();
-			// Only allow components to be dropped
-			if (!spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.DEVICE.getLiteral())
-				&& !spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.SERVICE.getLiteral())) {
-				return false;
+			// Only allow devices or services to be dropped
+			String componentType = spd.getDescriptor().getComponent().getComponentType();
+
+			String[] deviceTypes = { mil.jpeojtrs.sca.scd.ComponentType.DEVICE.getLiteral(), "loadabledevice", "executabledevice" };
+			for (String deviceType : deviceTypes) {
+				if (deviceType.equals(componentType)) {
+					return true;
+				}
+			}
+
+			if (componentType.equals(mil.jpeojtrs.sca.scd.ComponentType.SERVICE.getLiteral())) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 }
