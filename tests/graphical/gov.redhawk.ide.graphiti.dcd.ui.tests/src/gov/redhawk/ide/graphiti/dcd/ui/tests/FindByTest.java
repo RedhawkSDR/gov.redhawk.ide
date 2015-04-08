@@ -194,7 +194,7 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		// Add component to the diagram
 		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
-		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 200, 20);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 250, 20);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, FindByUtils.FIND_BY_NAME, 0, 150);
 		FindByUtils.completeFindByWizard(gefBot, FindByUtils.FIND_BY_NAME, FIND_BY_NAME, provides, uses);
 		MenuUtils.save(editor);
@@ -253,7 +253,7 @@ public class FindByTest extends AbstractGraphitiTest {
 		UsesPortStub connectionSource = (UsesPortStub) DUtil.getBusinessObject(connection.getStart());
 		ProvidesPortStub connectionTarget = (ProvidesPortStub) DUtil.getBusinessObject(connection.getEnd());
 		Assert.assertEquals("Connection source incorrect", uses[0], connectionSource.getName());
-		Assert.assertEquals("Connection target incorrect", "dataDouble", connectionTarget.getName());
+		Assert.assertEquals("Connection target incorrect", provides[0], connectionTarget.getName());
 	}
 
 	/**

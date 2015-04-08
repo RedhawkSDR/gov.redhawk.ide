@@ -74,9 +74,6 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 		editor.setFocus();
 
-		// Confirm component impl is displayed
-		editor.activateTool(HARD_LIMIT + " (java)");
-
 		// Add component to diagram from palette
 		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 0, 0);
 
