@@ -282,7 +282,7 @@ public class CollapseShapeTest extends AbstractGraphitiTest {
 
 		bot.waitUntil(Conditions.shellIsActive("Connect"));
 		SWTBot connectBot = bot.shell("Connect").bot();
-		String[] ports = { "dataChar", "dataOctet", "dataShort", "dataUshort", "dataFloat", "dataDouble" };
+		String[] ports = { "dataOctet", "dataUshort", "dataShort", "dataUlong", "dataLong", "dataFloat", "dataDouble" };
 		SWTBotButton finishButton = connectBot.button("Finish");
 
 		Assert.assertTrue("Finish Button should not be enabled unless source and target are selected", !finishButton.isEnabled());
