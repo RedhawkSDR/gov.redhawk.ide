@@ -85,7 +85,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		}, 10000, 1000);
 
 		DcdComponentInstantiation deviceObj = DiagramTestUtils.getDeviceObject(editor, GPP);
-		Assert.assertEquals("Component ID did not update correctly", projectName + ":" + GPP + "_2", deviceObj.getId());
+		Assert.assertEquals("Component ID did not update correctly", GPP + "_2", deviceObj.getId());
 		Assert.assertEquals("Usage Name did not update correctly", GPP + "_2", deviceObj.getUsageName());
 	}
 
