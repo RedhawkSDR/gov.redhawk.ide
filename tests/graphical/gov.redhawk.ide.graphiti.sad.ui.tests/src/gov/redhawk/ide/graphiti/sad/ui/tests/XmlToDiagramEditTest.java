@@ -138,7 +138,22 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 
 		// Check that SigGen connection data has changed
 		sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
-		List<SWTBotGefConnectionEditPart> sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesEditPart);
+		final List<SWTBotGefConnectionEditPart> sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesEditPart);
+
+		bot.waitUntil(new DefaultCondition() {
+
+			@Override
+			public boolean test() throws Exception {
+				return (sourceConnections.size() == 1);
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return "Wrong number of connections found, expected 1, but found " + sourceConnections.size();
+			}
+
+		});
+
 		Assert.assertEquals("Wrong number of connections found", 1, sourceConnections.size());
 		final Connection connection = (Connection) sourceConnections.get(0).part().getModel();
 
@@ -147,7 +162,8 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 
 		final SWTBotGefEditPart dataConverterProvidesPort = DiagramTestUtils.getDiagramProvidesPort(editor, DATA_CONVERTER, "dataDouble");
 		ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(connection.getEnd());
-		Assert.assertEquals("Connect provides port not correct", DUtil.getBusinessObject((ContainerShape) dataConverterProvidesPort.part().getModel()),	providesPort);
+		Assert.assertEquals("Connect provides port not correct", DUtil.getBusinessObject((ContainerShape) dataConverterProvidesPort.part().getModel()),
+			providesPort);
 
 		// Check that HardLimit is no longer a part of a connection
 		hardLimitProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
@@ -330,7 +346,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 			}
 		}, 10000, 1000);
 	}
-	
+
 	/**
 	 * IDE-124
 	 * Edit use device to the diagram via the sad.xml
@@ -357,7 +373,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		SWTBotGefEditPart useDeviceEditPart = editor.getEditPart(UsesDeviceTest.USE_DEVICE);
 		UsesDeviceTest.assertUsesDevice(useDeviceEditPart);
 
-		//edit device id via xml
+		// edit device id via xml
 		// Edit content of sad.xml
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		editorText = editor.toTextEditor().getText();
