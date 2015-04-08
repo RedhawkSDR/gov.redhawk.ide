@@ -135,15 +135,16 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
-
-		// Check that SigGen connection data has changed
-		sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
-		final List<SWTBotGefConnectionEditPart> sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesEditPart);
+		
+		// TODO: test wait
+		bot.sleep(500);
 
 		bot.waitUntil(new DefaultCondition() {
+			private List<SWTBotGefConnectionEditPart> sourceConnections;
 
 			@Override
 			public boolean test() throws Exception {
+				sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN));
 				return (sourceConnections.size() == 1);
 			}
 
@@ -154,6 +155,9 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 
 		});
 
+		// Check that SigGen connection data has changed
+		sigGenUsesEditPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
+		final List<SWTBotGefConnectionEditPart> sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, sigGenUsesEditPart);
 		Assert.assertEquals("Wrong number of connections found", 1, sourceConnections.size());
 		final Connection connection = (Connection) sourceConnections.get(0).part().getModel();
 
