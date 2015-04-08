@@ -20,7 +20,9 @@ import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
+import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -40,6 +42,18 @@ public class DevicePattern extends AbstractNodeComponentPattern implements IPatt
 	@Override
 	public String getCreateName() {
 		return "Device";
+	}
+
+	@Override
+	public boolean canAdd(IAddContext context) {
+		if (context.getNewObject() instanceof DcdComponentInstantiation) {
+			DcdComponentInstantiation ci = (DcdComponentInstantiation) context.getNewObject();
+			SoftPkg spd = ci.getPlacement().getComponentFileRef().getFile().getSoftPkg();
+			if (spd.getDescriptor().getComponent().getComponentType().equals(mil.jpeojtrs.sca.scd.ComponentType.DEVICE.getLiteral())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

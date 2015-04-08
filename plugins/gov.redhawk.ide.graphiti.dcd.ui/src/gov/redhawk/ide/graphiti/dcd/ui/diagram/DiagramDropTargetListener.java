@@ -114,6 +114,6 @@ public class DiagramDropTargetListener extends AbstractTransferDropTargetListene
 				return false;
 			}
 		}
-		return super.isEnabled(event);
+		return true;
 	}
 }
