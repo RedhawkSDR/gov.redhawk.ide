@@ -139,11 +139,12 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
 		editor.getEditPart(GPP).click();
 		view.setFocus();
-		String propertyname = gefBot.viewByTitle("Properties").bot().tree().cell(0, "Property").toString();
-		String newValue = "log";
+		String propertyname = gefBot.viewByTitle("Properties").bot().tree().cell(6, "Property").toString();
+		String newValue = "1.023";
 		for (SWTBotTreeItem item : gefBot.viewByTitle("Properties").bot().tree().getAllItems()) {
 			if (item.getText().equals(propertyname)) {
-				KeyStroke[] keystrokes = { Keystrokes.create('l')[0], Keystrokes.create('o')[0], Keystrokes.create('g')[0] };
+				KeyStroke[] keystrokes = { Keystrokes.create('1')[0], Keystrokes.create('.')[0], Keystrokes.create('0')[0],
+					Keystrokes.create('2')[0], Keystrokes.create('3')[0]};
 				item.click(1).pressShortcut(keystrokes);
 				break;
 			}
@@ -151,7 +152,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 
 		editor.getEditPart(GPP).click();
 		MenuUtils.save(editor);
-		String regex = DiagramTestUtils.regexStringForProperty(propertyname, newValue);
+		String regex = "(?s).*value=\"" + newValue + "\"/>.*</componentproperties>.*";
 		DiagramTestUtils.openTabInEditor(editor, "DeviceManager.dcd.xml");
 		String editorText = editor.toTextEditor().getText();
 		Assert.assertTrue("The dcd.xml should include GPP's changed property", editorText.matches(regex));
