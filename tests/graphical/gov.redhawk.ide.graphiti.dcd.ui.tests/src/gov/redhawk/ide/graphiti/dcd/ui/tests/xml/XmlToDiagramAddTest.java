@@ -10,20 +10,19 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.tests.xml;
 
-import java.util.List;
-
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.NodeUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+
+import java.util.List;
+
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
-import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
@@ -109,9 +108,9 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		DiagramTestUtils.openTabInEditor(editor, "DeviceManager.dcd.xml");
 		String editorText = editor.toTextEditor().getText();
 		String newConnection = "</partitioning> <connections> <connectinterface id=\"connection_1\"> "
-			+ "<usesport> <usesidentifier>propEvent</usesidentifier> <componentinstantiationref refid=\"" + projectName + ":GPP_1\"/> "
-			+ "</usesport> <providesport> <providesidentifier>dataDouble_in</providesidentifier> " + "<componentinstantiationref refid=\"" + projectName
-			+ ":DeviceStub_1\"/> </providesport> </connectinterface> </connections>";
+			+ "<usesport> <usesidentifier>propEvent</usesidentifier> <componentinstantiationref refid=\"GPP_1\"/> "
+			+ "</usesport> <providesport> <providesidentifier>dataDouble_in</providesidentifier> "
+			+ "<componentinstantiationref refid=\"DeviceStub_1\"/> </providesport> </connectinterface> </connections>";
 		editorText = editorText.replace("</partitioning>", newConnection);
 		editor.toTextEditor().setText(editorText);
 		MenuUtils.save(editor);
@@ -132,10 +131,5 @@ public class XmlToDiagramAddTest extends AbstractGraphitiTest {
 		ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(connection.getEnd());
 		Assert.assertEquals("Connect provides port not correct", providesPort,
 			DUtil.getBusinessObject((ContainerShape) deviceStubProvidesEditPart.part().getModel()));
-
-		Assert.assertTrue("Only arrowhead decorator should be present", connection.getConnectionDecorators().size() == 1);
-		for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
-			Assert.assertTrue("Only arrowhead decorator should be present", decorator.getGraphicsAlgorithm() instanceof Polyline);
-		}
 	}
 }
