@@ -172,10 +172,11 @@ public class PaletteUtils {
 		} else {
 			entry = editor.getActiveTool();
 		}
-		Assert.assertNotNull(entry);
+		Assert.assertNotNull("Tool entry is null", entry);
 		PaletteContainer container = entry.getParent();
-		Assert.assertTrue(container instanceof PaletteStack);
-		Assert.assertTrue(container.getChildren().size() > 1);
+		if (!(container instanceof PaletteStack && container.getChildren().size() > 1)) {
+			return false;
+		}
 		Pattern match = Pattern.compile(component + " \\(\\w+\\)");
 		for (Object obj: container.getChildren()) {
 			if (obj instanceof ToolEntry) {
