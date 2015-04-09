@@ -91,8 +91,8 @@ public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 		final SWTBotGefEditor editor = gefBot.gefEditor(waveformName);
 		
-		Assert.assertTrue(PaletteUtils.hasMultipleImplementations(editor, component1));
-		Assert.assertTrue(PaletteUtils.hasMultipleImplementations(editor, component2));
+		Assert.assertFalse("Different implementations should not be visible in design-time palette", PaletteUtils.hasMultipleImplementations(editor, component1));
+		Assert.assertFalse("Different implementations should not be visible in design-time palette", PaletteUtils.hasMultipleImplementations(editor, component2));
 	}
 	
 }
