@@ -109,14 +109,10 @@ public class CollapseShapeTest extends AbstractGraphitiTest {
 		Assert.assertTrue("HardLimit Super Provides port shape does not exist", hardLimitSuperProvides != null);
 
 		// create connections via super ports and verify
-		Assert.assertTrue("Connection DataReader -> DataConverter via super ports failed",
-			DiagramTestUtils.drawConnectionBetweenPorts(editor, dataReaderSuperUses, dataConverterSuperProvides));
-		Assert.assertTrue("Connection SigGen -> DataConverter via super ports failed",
-			DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenSuperUses, dataConverterSuperProvides));
-		Assert.assertTrue("Connection DataConverter -> DataWriter via super ports failed",
-			DiagramTestUtils.drawConnectionBetweenPorts(editor, dataConverterSuperUses, dataWriterSuperProvides));
-		Assert.assertTrue("Connection DataConverter -> HardLimit via super ports failed",
-			DiagramTestUtils.drawConnectionBetweenPorts(editor, dataConverterSuperUses, hardLimitSuperProvides));
+		Assert.assertTrue("Connection SigGen -> DataConverter via super ports failed", DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenSuperUses, dataConverterSuperProvides));
+		Assert.assertTrue("Connection DataReader -> DataConverter via super ports failed", DiagramTestUtils.drawConnectionBetweenPorts(editor, dataReaderSuperUses, dataConverterSuperProvides));
+		Assert.assertTrue("Connection DataConverter -> DataWriter via super ports failed", DiagramTestUtils.drawConnectionBetweenPorts(editor, dataConverterSuperUses, dataWriterSuperProvides));
+		Assert.assertTrue("Connection DataConverter -> HardLimit via super ports failed", DiagramTestUtils.drawConnectionBetweenPorts(editor, dataConverterSuperUses, hardLimitSuperProvides));
 
 		// expand data converter only
 		SWTBotGefEditPart dataConverterGefEditPart = editor.getEditPart(DATA_CONVERTER);
@@ -131,9 +127,11 @@ public class CollapseShapeTest extends AbstractGraphitiTest {
 
 		// verify data convert individual port shapes exist
 		dataConverterDataDouble = DiagramTestUtils.getDiagramProvidesPort(editor, DATA_CONVERTER, "dataDouble");
+		dataConverterDataFloat = DiagramTestUtils.getDiagramProvidesPort(editor, DATA_CONVERTER, "dataFloat");
 		dataConverterDataDoubleOut = DiagramTestUtils.getDiagramUsesPort(editor, DATA_CONVERTER, "dataDouble_out");
 		dataConverterDataFloatOut = DiagramTestUtils.getDiagramUsesPort(editor, DATA_CONVERTER, "dataFloat_out");
 		Assert.assertTrue("DataConverter DataDouble port shape do not exist", dataConverterDataDouble != null);
+		Assert.assertTrue("DataConverter DataFloat port shape do not exist", dataConverterDataFloat != null);
 		Assert.assertTrue("DataConverter DataDouble_out port shape do not exist", dataConverterDataDoubleOut != null);
 		Assert.assertTrue("DataConverter DataFloat_out port shape do not exist", dataConverterDataFloatOut != null);
 

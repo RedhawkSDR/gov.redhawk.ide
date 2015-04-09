@@ -141,11 +141,10 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	 * @param xTargetPosition - x coordinate for drop location
 	 * @param yTargetPosition - y coordinate for drop location
 	 */
-	public static void addFromPaletteToDiagramWithNameSpace(final RHTestBotEditor editor, final String componentName, int xTargetPosition,
-		int yTargetPosition) {
-		
+	public static void addFromPaletteToDiagramWithNameSpace(final RHTestBotEditor editor, final String componentName, int xTargetPosition, int yTargetPosition) {
+
 		final ToolEntry componentToolEntry = PaletteUtils.getToolEntry((RHTestBotEditor) editor, componentName);
-		
+
 		editor.bot().getDisplay().syncExec(new Runnable() {
 
 			@Override
@@ -250,6 +249,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	public static boolean drawConnectionBetweenPorts(SWTBotGefEditor editor, SWTBotGefEditPart usesEditPart, SWTBotGefEditPart providesEditPart) {
 		final SWTBotGefEditPart usesAnchor = getDiagramPortAnchor(usesEditPart);
 		final SWTBotGefEditPart providesAnchor = getDiagramPortAnchor(providesEditPart);
+		usesAnchor.select();
 
 		// Count original number of connections on each port for comparison
 		final int numTargetConnections = providesAnchor.targetConnections().size();
@@ -258,7 +258,9 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 		final Point providesPos = getDiagramRelativeCenter(providesAnchor);
 		final Point usesPos = getDiagramRelativeCenter(usesAnchor);
 		RHTestBotCanvas canvas = DiagramTestUtils.getCanvas(editor);
-		canvas.mouseDrag(providesPos.x, providesPos.y, usesPos.x, usesPos.y);
+		
+		// Need to offset the drag start location, otherwise the mouse may select existing connections, and the operation fails
+		canvas.mouseDrag(providesPos.x + (numTargetConnections * 2), providesPos.y + (numTargetConnections * 2), usesPos.x, usesPos.y);
 
 		// Wait to see if new connection appears for both ports
 		try {
