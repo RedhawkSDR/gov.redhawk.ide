@@ -16,7 +16,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 
+ *
  */
 public class ServiceWizardTest extends ComponentWizardTest {
 	
@@ -91,7 +91,8 @@ public class ServiceWizardTest extends ComponentWizardTest {
 	@Override
 	public void testNamespacedObjectCreation() {
 		testProjectCreation("namespaced.service.IDE1111", "Python", null, null);
-		Assert.assertEquals("customOutput/IDE1111.py", bot.activeEditor().bot().textWithLabel("Entry Point:").getText());
+		// IDE-1219 TODO: skip below check, until moved to redhawk-ide-uitests repo to test against IDE product
+//		Assert.assertEquals("code.entrypoint", "customOutput/IDE1111.py", bot.activeEditor().bot().textWithLabel("Entry Point:").getText());
 		verifyEditorTabPresent("IDE1111.scd.xml");
 	}
 	
