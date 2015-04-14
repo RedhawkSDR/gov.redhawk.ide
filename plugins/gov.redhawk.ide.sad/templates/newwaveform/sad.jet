@@ -1,6 +1,7 @@
 <%@ jet package="gov.redhawk.ide.sad.generator.newwaveform" skeleton="generator.skeleton"
     class="SadFileTemplate" 
-    imports="gov.redhawk.ide.sad.generator.newwaveform.GeneratorArgs
+    imports="gov.redhawk.ide.codegen.util.ProjectCreator
+    gov.redhawk.ide.sad.generator.newwaveform.GeneratorArgs
     mil.jpeojtrs.sca.spd.SoftPkg
     mil.jpeojtrs.sca.util.DceUuidUtil
     java.util.UUID
@@ -11,11 +12,13 @@
 	SoftPkg assemblyController = null;
 	HashMap<SoftPkg, String> comToId = new HashMap<SoftPkg, String>();
 	String assemblyId = null;
+	String usageName = null;
 
 	if (args.getAssemblyController() != null) {
 		assemblyController = args.getAssemblyController();
-		comToId.put(assemblyController, assemblyController.getName() + "_" + UUID.randomUUID());
-		assemblyId = assemblyController.getName() + "_1";
+		usageName = ProjectCreator.getBaseFileName(assemblyController.getName());
+		comToId.put(assemblyController, usageName + "_" + UUID.randomUUID());
+		assemblyId = usageName + "_1";
 	}
 %>
 <?xml version="1.0" encoding="UTF-8"?>
@@ -33,9 +36,9 @@
     <componentplacement>
       <componentfileref refid="<%=comToId.get(assemblyController)%>"/>
       <componentinstantiation id="<%=assemblyId%>">
-        <usagename><%=assemblyController.getName()%>_1</usagename>
+        <usagename><%=usageName%>_1</usagename>
         <findcomponent>
-          <namingservice name="<%=assemblyController.getName()%>_1"/>
+          <namingservice name="<%=usageName%>_1"/>
         </findcomponent>
       </componentinstantiation>
     </componentplacement>

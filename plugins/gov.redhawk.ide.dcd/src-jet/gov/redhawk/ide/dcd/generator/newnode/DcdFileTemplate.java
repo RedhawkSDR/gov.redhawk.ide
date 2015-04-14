@@ -11,6 +11,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.dcd.generator.newnode;
  
+import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.dcd.generator.newnode.GeneratorArgs;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -43,12 +44,13 @@ public class DcdFileTemplate
   protected final String TEXT_10 = "\"/>" + NL + "      <componentinstantiation id=\"";
   protected final String TEXT_11 = "\">" + NL + "        <usagename>";
   protected final String TEXT_12 = "_";
-  protected final String TEXT_13 = "</usagename>" + NL + "      </componentinstantiation>" + NL + "    </componentplacement>" + NL + "  </partitioning>";
-  protected final String TEXT_14 = NL + "  <partitioning/>";
-  protected final String TEXT_15 = NL + "  <domainmanager>" + NL + "    <namingservice name=\"";
-  protected final String TEXT_16 = "/";
-  protected final String TEXT_17 = "\"/>" + NL + "  </domainmanager>" + NL + "</deviceconfiguration>";
-  protected final String TEXT_18 = NL;
+  protected final String TEXT_13 = "</usagename>" + NL + "      </componentinstantiation>" + NL + "    </componentplacement>";
+  protected final String TEXT_14 = NL + "  </partitioning>";
+  protected final String TEXT_15 = NL + "  <partitioning/>";
+  protected final String TEXT_16 = NL + "  <domainmanager>" + NL + "    <namingservice name=\"";
+  protected final String TEXT_17 = "/";
+  protected final String TEXT_18 = "\"/>" + NL + "  </domainmanager>" + NL + "</deviceconfiguration>";
+  protected final String TEXT_19 = NL;
 
     /**
      * {@inheritDoc}
@@ -71,7 +73,8 @@ public class DcdFileTemplate
     stringBuffer.append(TEXT_4);
     
     	for (SoftPkg device : args.getDevices()) { 
-        	devToId.put(device, device.getName() + "_" + UUID.randomUUID());
+    		String usageName = ProjectCreator.getBaseFileName(device.getName());
+        	devToId.put(device, usageName + "_" + UUID.randomUUID());
 
     stringBuffer.append(TEXT_5);
     stringBuffer.append(devToId.get(device));
@@ -83,29 +86,32 @@ public class DcdFileTemplate
     
     for (SoftPkg device : args.getDevices()) {
         int devNum = 1;
-        while (deviceList.contains(device.getName() + "_" + devNum)) {
+    	String usageName = ProjectCreator.getBaseFileName(device.getName());
+        while (deviceList.contains(usageName + "_" + devNum)) {
             devNum++;
         }
-        deviceList.add(device.getName() + "_" + devNum);
+        deviceList.add(usageName + "_" + devNum);
 
     stringBuffer.append(TEXT_9);
     stringBuffer.append(devToId.get(device));
     stringBuffer.append(TEXT_10);
     stringBuffer.append(DceUuidUtil.createDceUUID());
     stringBuffer.append(TEXT_11);
-    stringBuffer.append(device.getName());
+    stringBuffer.append(usageName);
     stringBuffer.append(TEXT_12);
     stringBuffer.append(devNum);
     stringBuffer.append(TEXT_13);
-     }} else {
-    stringBuffer.append(TEXT_14);
      } 
+    stringBuffer.append(TEXT_14);
+     } else {
     stringBuffer.append(TEXT_15);
-    stringBuffer.append(args.getDomainManagerName());
+     } 
     stringBuffer.append(TEXT_16);
     stringBuffer.append(args.getDomainManagerName());
     stringBuffer.append(TEXT_17);
+    stringBuffer.append(args.getDomainManagerName());
     stringBuffer.append(TEXT_18);
+    stringBuffer.append(TEXT_19);
     return stringBuffer.toString();
   }
 }

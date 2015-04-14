@@ -1,5 +1,6 @@
 <%@ jet package="gov.redhawk.ide.dcd.generator.newnode" skeleton="../generator.skeleton"
-class="DcdFileTemplate" imports="gov.redhawk.ide.dcd.generator.newnode.GeneratorArgs
+class="DcdFileTemplate" imports="gov.redhawk.ide.codegen.util.ProjectCreator
+gov.redhawk.ide.dcd.generator.newnode.GeneratorArgs
 mil.jpeojtrs.sca.util.DceUuidUtil 
 mil.jpeojtrs.sca.spd.SoftPkg
 java.util.ArrayList
@@ -23,7 +24,8 @@ java.util.UUID"
   <componentfiles>
     <%
     	for (SoftPkg device : args.getDevices()) { 
-        	devToId.put(device, device.getName() + "_" + UUID.randomUUID());
+    		String usageName = ProjectCreator.getBaseFileName(device.getName());
+        	devToId.put(device, usageName + "_" + UUID.randomUUID());
 %>
     <componentfile id="<%=devToId.get(device)%>" type="SPD">
       <localfile name="<%=device.eResource().getURI().path()%>"/>
@@ -34,19 +36,21 @@ java.util.UUID"
 <%
     for (SoftPkg device : args.getDevices()) {
         int devNum = 1;
-        while (deviceList.contains(device.getName() + "_" + devNum)) {
+    	String usageName = ProjectCreator.getBaseFileName(device.getName());
+        while (deviceList.contains(usageName + "_" + devNum)) {
             devNum++;
         }
-        deviceList.add(device.getName() + "_" + devNum);
+        deviceList.add(usageName + "_" + devNum);
 %>
     <componentplacement>
       <componentfileref refid="<%=devToId.get(device)%>"/>
       <componentinstantiation id="<%=DceUuidUtil.createDceUUID()%>">
-        <usagename><%=device.getName()%>_<%=devNum%></usagename>
+        <usagename><%=usageName%>_<%=devNum%></usagename>
       </componentinstantiation>
     </componentplacement>
+<% } %>
   </partitioning>
-<% }} else {%>
+<% } else {%>
   <partitioning/>
 <% } %>
   <domainmanager>

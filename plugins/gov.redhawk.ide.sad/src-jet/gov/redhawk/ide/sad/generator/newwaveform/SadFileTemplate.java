@@ -11,6 +11,7 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.sad.generator.newwaveform;
 
+import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.sad.generator.newwaveform.GeneratorArgs;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
@@ -55,11 +56,13 @@ public class SadFileTemplate
 	SoftPkg assemblyController = null;
 	HashMap<SoftPkg, String> comToId = new HashMap<SoftPkg, String>();
 	String assemblyId = null;
+	String usageName = null;
 
 	if (args.getAssemblyController() != null) {
 		assemblyController = args.getAssemblyController();
-		comToId.put(assemblyController, assemblyController.getName() + "_" + UUID.randomUUID());
-		assemblyId = assemblyController.getName() + "_1";
+		usageName = ProjectCreator.getBaseFileName(assemblyController.getName());
+		comToId.put(assemblyController, usageName + "_" + UUID.randomUUID());
+		assemblyId = usageName + "_1";
 	}
 
     stringBuffer.append(TEXT_1);
@@ -79,9 +82,9 @@ public class SadFileTemplate
     stringBuffer.append(TEXT_7);
     stringBuffer.append(assemblyId);
     stringBuffer.append(TEXT_8);
-    stringBuffer.append(assemblyController.getName());
+    stringBuffer.append(usageName);
     stringBuffer.append(TEXT_9);
-    stringBuffer.append(assemblyController.getName());
+    stringBuffer.append(usageName);
     stringBuffer.append(TEXT_10);
     stringBuffer.append(assemblyId);
     stringBuffer.append(TEXT_11);
