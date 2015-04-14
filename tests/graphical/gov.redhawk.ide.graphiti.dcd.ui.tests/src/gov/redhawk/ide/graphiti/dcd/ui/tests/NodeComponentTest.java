@@ -16,6 +16,7 @@ import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.NodeUtils;
+import gov.redhawk.ide.swtbot.ProjectExplorerUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.RHTestBotEditor;
@@ -76,7 +77,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		editor.select(editor.getEditPart(SERVICE_STUB));
 		assertServiceStub(editor.getEditPart(SERVICE_STUB));
 	}
-	
+
 	/**
 	 * IDE-1131
 	 * Name-spaced devices should have their component file id set to basename_UUID, not the fully qualified name
@@ -85,7 +86,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 	public void checkNameSpacedDeviceInDcd() {
 		projectName = "NameSpacedDeviceTest";
 		String deviceName = "name.space.device";
-		String deviceBaseName = "device"; 
+		String deviceBaseName = "device";
 
 		NodeUtils.createNewNodeProject(bot, projectName, DOMAIN_NAME);
 		editor = gefBot.gefEditor(projectName);
@@ -137,21 +138,30 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 
 		SWTBotView view = MenuUtils.showView(gefBot, "org.eclipse.ui.views.PropertySheet");
 		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
+
+		// TODO: This is a bit of a hack to make sure SWTBot is not interacting with stale objects
+		MenuUtils.save(editor);
+		bot.closeAllEditors();
+		ProjectExplorerUtils.openProjectInEditor(bot, projectName, "DeviceManager.dcd.xml");
+		editor = gefBot.gefEditor(projectName);
+
+		// Edit one of the property values
 		editor.getEditPart(GPP).click();
 		view.setFocus();
 		String propertyname = gefBot.viewByTitle("Properties").bot().tree().cell(6, "Property").toString();
 		String newValue = "1.023";
 		for (SWTBotTreeItem item : gefBot.viewByTitle("Properties").bot().tree().getAllItems()) {
 			if (item.getText().equals(propertyname)) {
-				KeyStroke[] keystrokes = { Keystrokes.create('1')[0], Keystrokes.create('.')[0], Keystrokes.create('0')[0],
-					Keystrokes.create('2')[0], Keystrokes.create('3')[0]};
+				KeyStroke[] keystrokes = { Keystrokes.create('1')[0], Keystrokes.create('.')[0], Keystrokes.create('0')[0], Keystrokes.create('2')[0],
+					Keystrokes.create('3')[0], Keystrokes.LF };
 				item.click(1).pressShortcut(keystrokes);
 				break;
 			}
 		}
 
-		editor.getEditPart(GPP).click();
+		// Make sure the edited property is updated in the XML
 		MenuUtils.save(editor);
+		editor = gefBot.gefEditor(projectName);
 		String regex = "(?s).*value=\"" + newValue + "\"/>.*</componentproperties>.*";
 		DiagramTestUtils.openTabInEditor(editor, "DeviceManager.dcd.xml");
 		String editorText = editor.toTextEditor().getText();
