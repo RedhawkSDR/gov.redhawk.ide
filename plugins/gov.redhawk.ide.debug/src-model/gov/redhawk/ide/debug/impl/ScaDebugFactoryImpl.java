@@ -44,6 +44,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.jacorb.naming.Name;
 import org.omg.CosNaming.NamingContext;
 
@@ -270,6 +271,7 @@ public class ScaDebugFactoryImpl extends EFactoryImpl implements ScaDebugFactory
 						case ScaPackage.SCA_WAVEFORM__DISPOSED:
 							if (msg.getNewBooleanValue()) {
 								localScaWaveform.dispose();
+								EcoreUtil.delete(localScaWaveform);
 							}
 							break;
 						default:
