@@ -16,7 +16,6 @@ import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.NodeUtils;
-import gov.redhawk.ide.swtbot.ProjectExplorerUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.RHTestBotEditor;
@@ -138,12 +137,6 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 
 		SWTBotView view = MenuUtils.showView(gefBot, "org.eclipse.ui.views.PropertySheet");
 		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
-
-		// TODO: This is a bit of a hack to make sure SWTBot is not interacting with stale objects
-		MenuUtils.save(editor);
-		bot.closeAllEditors();
-		ProjectExplorerUtils.openProjectInEditor(bot, projectName, "DeviceManager.dcd.xml");
-		editor = gefBot.gefEditor(projectName);
 
 		// Edit one of the property values
 		editor.getEditPart(GPP).click();
