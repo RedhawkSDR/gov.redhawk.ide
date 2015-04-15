@@ -15,7 +15,6 @@ import gov.redhawk.ide.spd.internal.ui.editor.ComponentOverviewPage;
 import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.UITest;
 import gov.redhawk.ide.swtbot.condition.WaitForEditorCondition;
-import mil.jpeojtrs.sca.scd.Ports;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.util.DceUuidUtil;
 
@@ -23,9 +22,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.eclipse.swtbot.swt.finder.waits.ICondition;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotTableItem;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,24 +35,6 @@ public class ComponentOverviewTabTest extends UITest {
 	private ComponentOverviewPage overviewPage;
 	private SoftPkg spd;
 	private SWTBot editorBot;
-	private ICondition interfaceWait = new ICondition() {
-
-		@Override
-		public boolean test() throws Exception {
-			bot.tree().getTreeItem("SAMPLE").expand().getNode("SampleInterface");
-			return true;
-		}
-
-		@Override
-		public void init(SWTBot bot) {
-		}
-
-		@Override
-		public String getFailureMessage() {
-			return "Failed to find sampleInterface";
-		}
-		
-	};
 
 	@Before
 	public void before() throws Exception {
@@ -202,97 +180,6 @@ public class ComponentOverviewTabTest extends UITest {
 		editorBot.textWithLabel("Title:", 2).setText("CppComTest.scd.xml");
 		editorBot.sleep(600);
 		assertFormValid();
-	}
-
-	@Test
-	public void testAddPort() {
-		editorBot.button("Add...").click();
-		Assert.assertEquals("Add Port", bot.activeShell().getText());
-
-		bot.textWithLabel("Name:").setText("inTestPort");
-		bot.comboBoxWithLabel("Direction:").setSelection("in <provides>");
-		bot.waitUntil(interfaceWait);
-		bot.tree().getTreeItem("SAMPLE").expand().getNode("SampleInterface").select();
-
-		// Check type table
-		SWTBotTable typeTable = bot.tableWithLabel("Type:");
-		Assert.assertEquals(3, typeTable.rowCount());
-		typeTable.getTableItem("data").check();
-		typeTable.getTableItem("responses").check();
-		typeTable.getTableItem("control").check();
-		typeTable.getTableItem("control").uncheck();
-		typeTable.getTableItem("responses").uncheck();
-		typeTable.getTableItem("data").uncheck();
-
-		bot.button("Finish").click();
-
-		editorBot.button("Add...").click();
-		bot.sleep(600);
-		bot.textWithLabel("Name:").setText("inTestPort");
-		Assert.assertFalse("Wizard should be in error", bot.button("Finish").isEnabled());
-		bot.textWithLabel("Name:").setText("outTestPort");
-		bot.comboBox().setSelection("out <uses>");
-		bot.waitUntil(interfaceWait);
-		bot.tree().getTreeItem("SAMPLE").expand().getNode("SampleInterface").select();
-		bot.button("Finish").click();
-
-		bot.button("Add...").click();
-		bot.sleep(600);
-		bot.textWithLabel("Name:").setText("bidirTestPort");
-		bot.comboBox().setSelection("bidir <uses/provides>");
-		bot.waitUntil(interfaceWait);
-		bot.tree().getTreeItem("SAMPLE").getNode("SampleInterface").select();
-		bot.button("Finish").click();
-
-		Assert.assertEquals(3, editorBot.table().rowCount());
-		Ports ports = spd.getDescriptor().getComponent().getComponentFeatures().getPorts();
-
-		Assert.assertEquals(4, ports.getAllPorts().size());
-	}
-
-	@Test
-	public void testEditPort() {
-		Assert.assertFalse("Edit should be disabled", bot.button("Edit").isEnabled());
-		editorBot.button("Add...").click();
-		Assert.assertEquals("Add Port", bot.activeShell().getText());
-		bot.textWithLabel("Name:").setText("inTestPort");
-		bot.comboBoxWithLabel("Direction:").setSelection("in <provides>");
-		bot.waitUntil(interfaceWait);
-		bot.tree().getTreeItem("SAMPLE").expand().getNode("SampleInterface").select();
-		bot.button("Finish").click();
-
-		bot.table().doubleClick(0, 0);
-		Assert.assertEquals("Edit Port", bot.activeShell().getText());
-		bot.activeShell().close();
-
-		bot.table().select(0);
-		bot.button("Edit").click();
-		Assert.assertEquals("Edit Port", bot.activeShell().getText());
-		bot.textWithLabel("Name:").setText("outTestPort");
-		bot.comboBox().setSelection("out <uses>");
-		bot.waitUntil(interfaceWait);
-		bot.button("Finish").click();
-
-		SWTBotTableItem item = bot.table().getTableItem(0);
-		Assert.assertEquals("<uses> outTestPort", item.getText());
-		Assert.assertEquals("IDL:SAMPLE/SampleInterface:1.0", item.getText(1));
-	}
-
-	@Test
-	public void testRemovePort() {
-		Assert.assertFalse("Remove should be disabled", bot.button("Remove").isEnabled());
-		editorBot.button("Add...").click();
-		Assert.assertEquals("Add Port", bot.activeShell().getText());
-		bot.textWithLabel("Name:").setText("inTestPort");
-		bot.comboBoxWithLabel("Direction:").setSelection("in <provides>");
-		bot.waitUntil(interfaceWait);
-		bot.tree().getTreeItem("SAMPLE").getNode("SampleInterface").select();
-		bot.button("Finish").click();
-
-		bot.table().select(0);
-		bot.button("Remove").click();
-
-		Assert.assertEquals(0, bot.table().rowCount());
 	}
 
 	@Test
