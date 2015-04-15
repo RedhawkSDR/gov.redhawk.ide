@@ -66,15 +66,10 @@ public class CollapseShapeTest extends AbstractGraphitiTest {
 		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 600, 150);
 
 		// Get gefEditParts for port shapes
-		// SWTBotGefEditPart dataReaderDataFloatOut = DiagramTestUtils.getDiagramUsesPort(editor, DATA_READER,
-		// "dataFloatOut");
-		// SWTBotGefEditPart sigGenOut = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN, "out");
 		SWTBotGefEditPart dataConverterDataFloat = DiagramTestUtils.getDiagramProvidesPort(editor, DATA_CONVERTER, "dataFloat");
 		SWTBotGefEditPart dataConverterDataDouble = DiagramTestUtils.getDiagramProvidesPort(editor, DATA_CONVERTER, "dataDouble");
 		SWTBotGefEditPart dataConverterDataFloatOut = DiagramTestUtils.getDiagramUsesPort(editor, DATA_CONVERTER, "dataFloat_out");
 		SWTBotGefEditPart dataConverterDataDoubleOut = DiagramTestUtils.getDiagramUsesPort(editor, DATA_CONVERTER, "dataDouble_out");
-		// SWTBotGefEditPart dataWriterDataFloat = DiagramTestUtils.getDiagramProvidesPort(editor, DATA_WRITER,
-		// "dataFloat");
 		SWTBotGefEditPart hardLimitDataDoubleIn = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT, "dataDouble_in");
 
 		// for simplicity just verify a couple port shapes
@@ -109,10 +104,14 @@ public class CollapseShapeTest extends AbstractGraphitiTest {
 		Assert.assertTrue("HardLimit Super Provides port shape does not exist", hardLimitSuperProvides != null);
 
 		// create connections via super ports and verify
-		Assert.assertTrue("Connection SigGen -> DataConverter via super ports failed", DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenSuperUses, dataConverterSuperProvides));
-		Assert.assertTrue("Connection DataReader -> DataConverter via super ports failed", DiagramTestUtils.drawConnectionBetweenPorts(editor, dataReaderSuperUses, dataConverterSuperProvides));
-		Assert.assertTrue("Connection DataConverter -> DataWriter via super ports failed", DiagramTestUtils.drawConnectionBetweenPorts(editor, dataConverterSuperUses, dataWriterSuperProvides));
-		Assert.assertTrue("Connection DataConverter -> HardLimit via super ports failed", DiagramTestUtils.drawConnectionBetweenPorts(editor, dataConverterSuperUses, hardLimitSuperProvides));
+		Assert.assertTrue("Connection SigGen -> DataConverter via super ports failed",
+			DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenSuperUses, dataConverterSuperProvides));
+		Assert.assertTrue("Connection DataReader -> DataConverter via super ports failed",
+			DiagramTestUtils.drawConnectionBetweenPorts(editor, dataReaderSuperUses, dataConverterSuperProvides));
+		Assert.assertTrue("Connection DataConverter -> DataWriter via super ports failed",
+			DiagramTestUtils.drawConnectionBetweenPorts(editor, dataConverterSuperUses, dataWriterSuperProvides));
+		Assert.assertTrue("Connection DataConverter -> HardLimit via super ports failed",
+			DiagramTestUtils.drawConnectionBetweenPorts(editor, dataConverterSuperUses, hardLimitSuperProvides));
 
 		// expand data converter only
 		SWTBotGefEditPart dataConverterGefEditPart = editor.getEditPart(DATA_CONVERTER);
@@ -209,7 +208,6 @@ public class CollapseShapeTest extends AbstractGraphitiTest {
 		// verify no connections in diagram
 		Diagram diagram = DUtil.findDiagram((ContainerShape) editor.getEditPart(HARD_LIMIT).part().getModel());
 		Assert.assertTrue("No connections should exist", diagram.getConnections().isEmpty());
-
 	}
 
 	@Test
@@ -301,6 +299,8 @@ public class CollapseShapeTest extends AbstractGraphitiTest {
 		SWTBotGefEditPart dataConverterOut = DiagramTestUtils.getDiagramUsesPort(editor, DATA_CONVERTER);
 		List<SWTBotGefConnectionEditPart> sourceConnections = DiagramTestUtils.getSourceConnectionsFromPort(editor, dataConverterOut);
 		Assert.assertTrue("Data Converter DataDouble_out doesn't have a connection", sourceConnections.size() == 1);
+
+		setPortCollapsePreference(false);
 
 	}
 
