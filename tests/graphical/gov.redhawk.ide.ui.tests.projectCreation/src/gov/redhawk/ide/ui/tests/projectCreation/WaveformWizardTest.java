@@ -91,12 +91,22 @@ public class WaveformWizardTest extends AbstractCreationWizardTest {
 		Assert.assertNotEquals("DCE:64a7d543-7055-494d-936f-30225b3b283e", editorBot.bot().textWithLabel("ID:").getText());
 	}
 
+	
 	@Test
-	public void testSelectAssemblyController() throws IOException {
+	public void testWithAssemblyController() throws IOException {
+		testSelectAssemblyController("SigGen (/components/SigGen/)");
+	}
+
+	@Test
+	public void testWithNamespacedAssemblyController() throws IOException {
+		testSelectAssemblyController("name.spaced.component (/components/name/spaced/component/)");
+	}
+
+	protected void testSelectAssemblyController(String acName) throws IOException {
 		bot.textWithLabel("&Project name:").setText("WaveformProj01");
 		bot.button("Next >").click();
 
-		bot.activeShell().bot().table().select("SigGen (/components/SigGen/)");
+		bot.activeShell().bot().table().select(acName);
 		bot.button("Finish").click();
 
 		// Ensure SAD file was created

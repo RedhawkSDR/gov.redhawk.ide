@@ -12,7 +12,6 @@ package gov.redhawk.ide.ui.tests.projectCreation;
 
 import java.io.IOException;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 /**

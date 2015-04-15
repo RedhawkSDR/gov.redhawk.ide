@@ -18,7 +18,6 @@ import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotCombo;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -41,7 +40,7 @@ public class NodeCreationWizardTest extends AbstractCreationWizardTest {
 	@Test
 	public void testNamespacedNodeCreation() {
 		final String nodeName = "namespaced.node.IDE1111";
-		createNodeWithDevice(nodeName, null, null);
+		createNodeWithDevice(nodeName, null, "name.spaced.device");
 
 		checkFiles(nodeName);
 	}
