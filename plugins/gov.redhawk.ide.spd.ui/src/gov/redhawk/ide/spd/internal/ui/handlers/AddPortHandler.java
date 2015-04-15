@@ -15,7 +15,6 @@ import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.ide.spd.internal.ui.editor.ComponentEditor;
 import gov.redhawk.ide.spd.internal.ui.editor.wizard.PortWizard;
 import gov.redhawk.ide.spd.internal.ui.editor.wizard.PortWizardPage.PortWizardModel;
-import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.model.sca.util.ModelUtil;
 
 import java.util.Map;
@@ -33,8 +32,6 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -43,7 +40,6 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * An implementation of {@link AbstractHandler} for adding a port to a SoftwareComponent.
@@ -100,13 +96,8 @@ public class AddPortHandler extends AbstractHandler {
 		wizard.setWindowTitle("Add Port");
 		final WizardDialog dialog = new WizardDialog(this.editor.getSite().getShell(), wizard);
 		if (dialog.open() == Window.OK) {
-			try {
-				PortsHandlerUtil.execute(this.createAddPortCommand(wizard.getIdlLibrary(), wizard.getValue()), this.editingDomain);
-			} catch (CoreException e) {
-				StatusManager.getManager().handle(
-					new Status(e.getStatus().getSeverity(), ComponentUiPlugin.PLUGIN_ID, "Failed to add port", e.getStatus().getException()),
-					StatusManager.SHOW | StatusManager.LOG);
-			}
+			Command command = this.createAddPortCommand(wizard.getIdlLibrary(), wizard.getValue());
+			this.editingDomain.getCommandStack().execute(command);
 		}
 	}
 

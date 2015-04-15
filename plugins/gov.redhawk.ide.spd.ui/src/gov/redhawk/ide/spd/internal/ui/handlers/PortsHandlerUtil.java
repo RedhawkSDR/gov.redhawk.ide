@@ -12,7 +12,6 @@ package gov.redhawk.ide.spd.internal.ui.handlers;
 
 import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
-import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,12 +27,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.edit.domain.EditingDomain;
 
 /**
  * @since 6.0
@@ -51,19 +45,6 @@ public class PortsHandlerUtil {
 
 	private PortsHandlerUtil() {
 		//Prevent instantiation
-	}
-
-	/**
-	 * Executes the specified command if it can be executed.
-	 * 
-	 * @param command the command
-	 */
-	public static void execute(final Command command, final EditingDomain editingDomain) throws CoreException {
-		if (command.canExecute()) {
-			editingDomain.getCommandStack().execute(command);
-		} else {
-			throw new CoreException(new Status(IStatus.ERROR, ComponentUiPlugin.getPluginId(), "Failed to execute: " + command.getLabel(), new Exception().fillInStackTrace()));
-		}
 	}
 
 	/**

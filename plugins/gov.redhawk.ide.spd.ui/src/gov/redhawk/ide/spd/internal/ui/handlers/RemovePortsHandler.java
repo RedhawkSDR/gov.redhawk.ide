@@ -11,7 +11,6 @@
 package gov.redhawk.ide.spd.internal.ui.handlers;
 
 import gov.redhawk.ide.spd.internal.ui.editor.ComponentEditor;
-import gov.redhawk.ide.spd.ui.ComponentUiPlugin;
 import gov.redhawk.model.sca.util.ModelUtil;
 
 import java.util.ArrayList;
@@ -35,8 +34,6 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.ecore.EObject;
@@ -48,7 +45,6 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * An implementation of {@link AbstractHandler} for removing ports from a SoftwareComponent.
@@ -95,13 +91,10 @@ public class RemovePortsHandler extends AbstractHandler {
 		this.softPkg = ModelUtil.getSoftPkg(this.resource);
 		this.interfaceMap = PortsHandlerUtil.getInterfaceMap(this.softPkg);
 		final List<Object> ports = Arrays.asList(((IStructuredSelection) selection).toArray());
-		try {
-			PortsHandlerUtil.execute(this.createRemovePortCommand(ports, new HashSet<String>()), this.editingDomain);
-		} catch (CoreException e) {
-			StatusManager.getManager().handle(
-				new Status(e.getStatus().getSeverity(), ComponentUiPlugin.PLUGIN_ID, "Failed to add port", e.getStatus().getException()),
-				StatusManager.SHOW | StatusManager.LOG);
-		}
+
+		Command command = this.createRemovePortCommand(ports, new HashSet<String>());
+		this.editingDomain.getCommandStack().execute(command);
+
 		return null;
 	}
 

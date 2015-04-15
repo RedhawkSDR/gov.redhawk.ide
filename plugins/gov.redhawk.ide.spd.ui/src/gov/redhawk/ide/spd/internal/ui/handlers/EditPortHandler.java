@@ -133,9 +133,6 @@ public class EditPortHandler extends AbstractHandler {
 	 * @throws CoreException 
 	 */
 	public void handleEditPort(final IdlLibrary library, final AbstractPort oldPort, final PortWizardModel model) throws CoreException {
-
-		final CompoundCommand command = new CompoundCommand("Edit Port Command");
-
 		final RemovePortsHandler removeHandler = new RemovePortsHandler(this.editingDomain, this.resource, this.softPkg);
 		final AddPortHandler addHandler = new AddPortHandler(this.editingDomain, this.resource, this.softPkg);
 
@@ -144,9 +141,10 @@ public class EditPortHandler extends AbstractHandler {
 		ignore.add(model.getRepId());
 		ignore.addAll(PortsHandlerUtil.getInheritedInterfaces(library, model.getRepId()));
 
+		final CompoundCommand command = new CompoundCommand("Edit Port Command");
 		command.append(removeHandler.createRemovePortCommand(Collections.singleton((Object) oldPort), ignore));
 		command.append(addHandler.createAddPortCommand(library, model));
-		PortsHandlerUtil.execute(command, this.editingDomain);
+		this.editingDomain.getCommandStack().execute(command);
 	}
 
 	private Ports getPorts() {
