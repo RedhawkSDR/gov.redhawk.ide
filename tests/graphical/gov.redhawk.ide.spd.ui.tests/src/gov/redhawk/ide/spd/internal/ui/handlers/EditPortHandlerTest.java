@@ -25,12 +25,14 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Assert;
+
 import mil.jpeojtrs.sca.scd.Provides;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -74,7 +76,8 @@ public class EditPortHandlerTest {
 	public void testHandleEditPort() throws CoreException {
 		//Add a port
 		final Provides provides = SpdUiTestUtils.createProvides("IDL:SAMPLE/SampleInterface:1.0");
-		PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides)), this.editingDomain);
+		Command command = this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides));
+		this.editingDomain.getCommandStack().execute(command);
 		Assert.assertTrue("The provides port " + provides.getRepID() + " should be contained in the SCD", this.scd.getComponentFeatures()
 		        .getPorts()
 		        .getProvides()
@@ -108,10 +111,12 @@ public class EditPortHandlerTest {
 						if (definition instanceof IdlInterfaceDcl) {
 							final Provides provides = SpdUiTestUtils.createProvides(definition.getRepId());
 							ports.add(provides);
-							PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides)), this.editingDomain);
+							Command commandAdd1 = this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides));
+							this.editingDomain.getCommandStack().execute(commandAdd1);
 							final Provides provides2 = SpdUiTestUtils.createProvides(definition.getRepId());
 							ports.add(provides2);
-							PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides2)), this.editingDomain);
+							Command commandAdd2 = this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides2));
+							this.editingDomain.getCommandStack().execute(commandAdd2);
 							for (final Definition newDef : module.getDefinitions()) {
 								if (newDef instanceof IdlInterfaceDcl) {
 									final Provides newPort = SpdUiTestUtils.createProvides(newDef.getRepId());

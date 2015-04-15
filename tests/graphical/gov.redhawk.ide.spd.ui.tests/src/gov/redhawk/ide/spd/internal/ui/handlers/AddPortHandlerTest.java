@@ -22,6 +22,7 @@ import gov.redhawk.ide.spd.ui.tests.SpdUiTestUtils;
 import java.io.IOException;
 
 import org.junit.Assert;
+
 import mil.jpeojtrs.sca.scd.Provides;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import mil.jpeojtrs.sca.scd.Uses;
@@ -29,6 +30,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -74,7 +76,8 @@ public class AddPortHandlerTest {
 	public void addPort() throws CoreException {
 		//Add a port
 		final Provides provides = SpdUiTestUtils.createProvides("IDL:SAMPLE/SampleInterface:1.0");
-		PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides)), this.editingDomain);
+		Command command = this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides));
+		this.editingDomain.getCommandStack().execute(command);
 		Assert.assertEquals("The provides port " + provides.getRepID() + " should be contained in the SCD", true, this.scd.getComponentFeatures()
 		        .getPorts()
 		        .getProvides()
@@ -99,13 +102,15 @@ public class AddPortHandlerTest {
 		for (final Definition definition : module.getDefinitions()) {
 			if (definition instanceof IdlInterfaceDcl) {
 				final Provides provides = SpdUiTestUtils.createProvides(definition.getRepId());
-				PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides)), this.editingDomain);
+				Command addCommand1 = this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides));
+				this.editingDomain.getCommandStack().execute(addCommand1);
 				Assert.assertEquals("The provides port " + provides.getRepID() + " should be contained in the SCD", true, this.scd.getComponentFeatures()
 				        .getPorts()
 				        .getProvides()
 				        .contains(provides));
 				final Uses uses = SpdUiTestUtils.createUses(definition.getRepId());
-				PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, new PortWizardModel(uses)), this.editingDomain);
+				Command addCommand2 = this.addhandler.createAddPortCommand(this.library, new PortWizardModel(uses));
+				this.editingDomain.getCommandStack().execute(addCommand2);
 				Assert.assertEquals("The uses port " + uses.getRepID() + " should be contained in the SCD", true, this.scd.getComponentFeatures()
 				        .getPorts()
 				        .getUses()

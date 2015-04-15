@@ -79,7 +79,8 @@ public class RemovePortsHandlerTest {
 	public void removePort() throws CoreException {
 		//Add a port
 		final Provides provides = SpdUiTestUtils.createProvides("IDL:SAMPLE/SampleInterface:1.0");
-		PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides)), this.editingDomain);
+		Command addCommand1 = this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides));
+		this.editingDomain.getCommandStack().execute(addCommand1);
 		Assert.assertEquals("The provides port " + provides.getRepID() + " should be contained in the SCD", true, this.scd.getComponentFeatures()
 		        .getPorts()
 		        .getProvides()
@@ -87,7 +88,8 @@ public class RemovePortsHandlerTest {
 
 		//Now remove it
 		final Collection<Object> removePorts = Collections.singleton((Object) provides);
-		PortsHandlerUtil.execute(this.removeHandler.createRemovePortCommand(removePorts, new HashSet<String>()), this.editingDomain);
+		Command removeCommand1 = this.removeHandler.createRemovePortCommand(removePorts, new HashSet<String>());
+		this.editingDomain.getCommandStack().execute(removeCommand1);
 		Assert.assertEquals("The provides port " + provides.getRepID() + " should not be contained in the SCD", false, this.scd.getComponentFeatures()
 		        .getPorts()
 		        .getProvides()
@@ -106,7 +108,7 @@ public class RemovePortsHandlerTest {
 			removePorts.add(entry.getValue());
 		}
 		final Command command = this.removeHandler.createRemovePortCommand(removePorts, new HashSet<String>());
-		PortsHandlerUtil.execute(command, this.editingDomain);
+		this.editingDomain.getCommandStack().execute(command);
 		Assert.assertEquals(true, this.scd.getComponentFeatures().getPorts().getGroup().size() == 0);
 	}
 
@@ -121,9 +123,11 @@ public class RemovePortsHandlerTest {
 				for (final Definition definition : module.getDefinitions()) {
 					if (definition instanceof IdlInterfaceDcl) {
 						final Provides provides = SpdUiTestUtils.createProvides(definition.getRepId());
-						PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides)), this.editingDomain);
+						Command addCommand1 = this.addhandler.createAddPortCommand(this.library, new PortWizardModel(provides));
+						this.editingDomain.getCommandStack().execute(addCommand1);
 						final Uses uses = SpdUiTestUtils.createUses(definition.getRepId());
-						PortsHandlerUtil.execute(this.addhandler.createAddPortCommand(this.library, new PortWizardModel(uses)), this.editingDomain);
+						Command addCommand2 = this.addhandler.createAddPortCommand(this.library, new PortWizardModel(uses));
+						this.editingDomain.getCommandStack().execute(addCommand2);
 					}
 				}
 			}
