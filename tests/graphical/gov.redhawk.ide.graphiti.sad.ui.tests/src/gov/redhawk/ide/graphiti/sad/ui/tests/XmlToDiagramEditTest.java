@@ -124,14 +124,24 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		SWTBotGefEditPart hardLimitProvidesEditPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARDLIMIT);
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, sigGenUsesEditPart, hardLimitProvidesEditPart);
 		MenuUtils.save(editor);
+		Assert.assertEquals("Wrong number of connections before edit", 1, DiagramTestUtils.getSourceConnectionsFromPort(editor, DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN)).size());
 
 		// Edit content of sad.xml
+		final String connectionProvidesBefore = "<providesidentifier>dataDouble_in</providesidentifier>";
+		final String connectionProvidesAfter = "<providesidentifier>dataDouble</providesidentifier>";
+		final String connectionCiBefore = "<componentinstantiationref refid=\"HardLimit_1\"/>";
+		final String connectionCiAfter = "<componentinstantiationref refid=\"DataConverter_1\"/>";
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
 		String editorText = editor.toTextEditor().getText();
-		editorText = editorText.replace("<providesidentifier>dataDouble_in</providesidentifier>", "<providesidentifier>dataDouble</providesidentifier>");
-		editorText = editorText.replace("<componentinstantiationref refid=\"HardLimit_1\"/>", "<componentinstantiationref refid=\"DataConverter_1\"/>");
+		Assert.assertTrue("Connection does not reference correct provides port before editing", editorText.contains(connectionProvidesBefore));
+		Assert.assertTrue("Connection does not reference correct component instantiation before editing", editorText.contains(connectionCiBefore));
+		editorText = editorText.replace(connectionProvidesBefore, connectionProvidesAfter);
+		editorText = editorText.replace(connectionCiBefore, connectionCiAfter);
 		editor.toTextEditor().setText(editorText);
 		MenuUtils.save(editor);
+		editorText = editor.toTextEditor().getText();
+		Assert.assertTrue("Connection does not reference correct provides port after editing", editorText.contains(connectionProvidesAfter));
+		Assert.assertTrue("Connection does not reference correct component instantiation after editing", editorText.contains(connectionCiAfter));
 
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
