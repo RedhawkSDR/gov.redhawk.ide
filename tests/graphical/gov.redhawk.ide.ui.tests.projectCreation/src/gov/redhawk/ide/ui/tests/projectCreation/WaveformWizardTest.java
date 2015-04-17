@@ -94,15 +94,15 @@ public class WaveformWizardTest extends AbstractCreationWizardTest {
 	
 	@Test
 	public void testWithAssemblyController() throws IOException {
-		testSelectAssemblyController("SigGen (/components/SigGen/)");
+		testSelectAssemblyController("SigGen (/components/SigGen/)", "SigGen_1");
 	}
 
 	@Test
 	public void testWithNamespacedAssemblyController() throws IOException {
-		testSelectAssemblyController("name.spaced.component (/components/name/spaced/component/)");
+		testSelectAssemblyController("name.spaced.component (/components/name/spaced/component/)", "component_1");
 	}
 
-	protected void testSelectAssemblyController(String acName) throws IOException {
+	protected void testSelectAssemblyController(String acName, String ciName) throws IOException {
 		bot.textWithLabel("&Project name:").setText("WaveformProj01");
 		bot.button("Next >").click();
 
@@ -124,11 +124,14 @@ public class WaveformWizardTest extends AbstractCreationWizardTest {
 
 		Assert.assertEquals("WaveformProj01", editorBot.bot().textWithLabel("Name:").getText());
 
+		if (ciName == null) {
+			ciName = acName + "_1";
+		}
 		URI uri = URI.createPlatformResourceURI("/WaveformProj01/WaveformProj01.sad.xml", true);
 		SoftwareAssembly sad = ModelUtil.loadSoftwareAssembly(uri);
 		Assert.assertEquals(1, sad.getPartitioning().getComponentPlacement().size());
 		Assert.assertEquals(1, sad.getPartitioning().getComponentPlacement().get(0).getComponentInstantiation().size());
-		Assert.assertEquals("SigGen_1", sad.getPartitioning().getComponentPlacement().get(0).getComponentInstantiation().get(0).getUsageName());
+		Assert.assertEquals(ciName, sad.getPartitioning().getComponentPlacement().get(0).getComponentInstantiation().get(0).getUsageName());
 		Assert.assertEquals(sad.getPartitioning().getComponentPlacement().get(0).getComponentInstantiation().get(0),
 			sad.getAssemblyController().getComponentInstantiationRef().getInstantiation());
 	}
