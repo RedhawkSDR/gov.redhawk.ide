@@ -11,18 +11,24 @@
 package gov.redhawk.ide.graphiti.ui.properties;
 
 import gov.redhawk.diagram.sheet.properties.ComponentInstantiationPropertyViewerAdapter;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.IDisposable;
+import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.model.sca.ScaPropertyContainer;
 import gov.redhawk.sca.ui.ScaComponentFactory;
 import gov.redhawk.sca.ui.properties.ScaPropertiesAdapterFactory;
 import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.platform.GraphitiShapeEditPart;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -93,10 +99,27 @@ public class ComponentPropertiesSection extends RHDiagramElementPropertySection 
 		final EObject eObj = getEObject();
 		if (eObj instanceof ComponentInstantiation) {
 			final ComponentInstantiation newInput = (ComponentInstantiation) eObj;
-			this.adapter.setInput(newInput);
+			if (DUtil.isDiagramDesign(getDiagram())) {
+				this.adapter.setInput(newInput);
+			} else {
+				getViewer().setInput(getPropertyContainer(selection));
+			}
 		} else {
 			this.adapter.setInput(null);
 		}
+	}
+	
+	private Object getPropertyContainer(final ISelection selection) {
+		if (selection instanceof StructuredSelection) {
+			StructuredSelection ss = (StructuredSelection) selection;
+			Object element = ss.getFirstElement();
+			if (element instanceof EditPart) {
+				EditPart ep = (EditPart) element;
+				Object component = Platform.getAdapterManager().getAdapter(ep, ScaComponent.class);
+				return Platform.getAdapterManager().getAdapter(component, ScaPropertyContainer.class);				
+			}
+		}
+		return null;
 	}
 
 	/**
