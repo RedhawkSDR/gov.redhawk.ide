@@ -72,6 +72,7 @@ import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.InitializeError;
 import CF.LifeCyclePackage.ReleaseError;
 import CF.PortSupplierPackage.UnknownPort;
+import CF.PropertySetPackage.AlreadyInitialized;
 import CF.PropertySetPackage.InvalidConfiguration;
 import CF.PropertySetPackage.PartialConfiguration;
 
@@ -119,6 +120,11 @@ public class DeviceManagerImpl extends EObjectImpl implements DeviceManagerOpera
 			}
 
 		};
+	}
+
+	@Override
+	public void initializeProperties(final DataType[] configProperties) throws AlreadyInitialized, InvalidConfiguration, PartialConfiguration {
+		throw new InvalidConfiguration();
 	}
 
 	/**

@@ -114,6 +114,7 @@ import CF.LifeCyclePackage.ReleaseError;
 import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
 import CF.PortSupplierPackage.UnknownPort;
+import CF.PropertySetPackage.AlreadyInitialized;
 import CF.PropertySetPackage.InvalidConfiguration;
 import CF.PropertySetPackage.PartialConfiguration;
 import CF.ResourcePackage.StartError;
@@ -646,6 +647,11 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		} catch (final UnknownProperties e) {
 			throw logException("Errors during Run Test", e);
 		}
+	}
+
+	@Override
+	public void initializeProperties(final DataType[] configProperties) throws AlreadyInitialized, InvalidConfiguration, PartialConfiguration {
+		throw new InvalidConfiguration("Cannot call construct on an application", configProperties);
 	}
 
 	/**
