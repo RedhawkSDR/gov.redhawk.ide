@@ -113,6 +113,7 @@ import CF.LifeCyclePackage.InitializeError;
 import CF.LifeCyclePackage.ReleaseError;
 import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
+import CF.PortSupplierPackage.PortInfoType;
 import CF.PortSupplierPackage.UnknownPort;
 import CF.PropertySetPackage.AlreadyInitialized;
 import CF.PropertySetPackage.InvalidConfiguration;
@@ -839,6 +840,62 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		} catch (final UnknownPort e) {
 			throw logException("Error during get port " + name, e);
 		}
+	}
+
+	@Override
+	public PortInfoType[] getPortSet() {
+		try {
+			waitOnLaunch();
+		} catch (InterruptedException e) {
+			logException("Interrupted while waiting for application to launch", e);
+		}
+		getStreamsProxy().getOutStream().println("Get port set");
+
+		final ExternalPorts externalPorts = waveform.getProfileObj().getExternalPorts();
+		if (externalPorts == null) {
+			return new PortInfoType[0];
+		}
+
+		List<PortInfoType> portInfo = new ArrayList<PortInfoType>(externalPorts.getPort().size());
+		for (final Port p : externalPorts.getPort()) {
+			final String nameOnComponent;
+			final String direction;
+			if (p.getProvidesIndentifier() != null) {
+				nameOnComponent = p.getProvidesIndentifier();
+				direction = "Provides";
+			} else {
+				nameOnComponent = p.getUsesIdentifier();
+				direction = "Uses";
+			}
+
+			final String nameOnWaveform;
+			if (p.getExternalName() != null) {
+				nameOnWaveform = p.getExternalName();
+			} else {
+				nameOnWaveform = nameOnComponent;
+			}
+
+			final ScaComponent component = findComponent(p.getComponentInstantiationRef().getRefid());
+			final ScaPort< ? , ? > port = (component == null) ? null : component.getScaPort(nameOnComponent);
+
+			String description = "";
+			String repId = "";
+			org.omg.CORBA.Object portObj = null;
+			if (port != null) {
+				if (port.getProfileObj() != null) {
+					description = port.getProfileObj().getDescription();
+					repId = port.getRepid();
+				}
+				portObj = port.getCorbaObj();
+			}
+			if (p.getDescription() != null) {
+				description = p.getDescription();
+			}
+
+			portInfo.add(new PortInfoType(portObj, nameOnWaveform, repId, description, direction));
+		}
+
+		return portInfo.toArray(new PortInfoType[externalPorts.getPort().size()]);
 	}
 
 	private ScaComponent findComponent(final String instId) {
