@@ -38,6 +38,7 @@ import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
+import mil.jpeojtrs.sca.sad.ExternalProperties;
 import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -389,11 +390,14 @@ public class LocalApplicationFactory {
 		if (this.assemblyConfig != null /*&& isAssemblyController(comp.getComponentInstantiation())*/) {
 			configuration = this.assemblyConfig;
 		}
+		final ExternalProperties externalProperties = sad.getExternalProperties();
 		for (DataType t : configuration) {
-			for (ExternalProperty extProp: sad.getExternalProperties().getProperties()) {
+			if (externalProperties != null) {
+			for (ExternalProperty extProp: externalProperties.getProperties()) {
 				if (t.id.equals(extProp.getExternalPropID()) && extProp.getCompRefID().equals(comp.getName())) {
 					t.id = extProp.getPropID();
 				}
+			}
 			}
 			app.getStreams().getOutStream().println(LocalApplicationFactory.toString(t));
 		}
