@@ -10,9 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.internal.ui;
 
-import java.util.Collection;
-
-import gov.redhawk.ide.debug.LocalAbstractComponent;
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.model.sca.IDisposable;
 import gov.redhawk.model.sca.ScaConnection;
@@ -20,6 +17,8 @@ import gov.redhawk.model.sca.ScaDevice;
 import gov.redhawk.model.sca.ScaDeviceManager;
 import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaUsesPort;
+
+import java.util.Collection;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
@@ -57,7 +56,7 @@ public class ScaGraphitiModelAdapter extends EContentAdapter {
 				break;
 			}
 
-		} else if (notification.getNotifier() instanceof ScaDevice && notification.getNotifier() instanceof LocalAbstractComponent) {
+		} else if (notification.getNotifier() instanceof ScaDevice) {
 			switch (notification.getFeatureID(ScaDevice.class)) {
 			case ScaPackage.SCA_DEVICE__IDENTIFIER:
 				switch (notification.getEventType()) {
