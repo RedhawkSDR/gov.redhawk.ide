@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
@@ -340,6 +341,28 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 		RHTestBotCanvas canvas = (RHTestBotCanvas) viewer.getCanvas();
 		return canvas;
 	}
+	
+	/**
+	 * 
+	 * @param editor
+	 * @param shapeName
+	 * @return the edit part for the shapes component supported interface, or null if not found
+	 */
+	public static SWTBotGefEditPart getComponentSupportedInterface(SWTBotGefEditor editor, String shapeName) {
+		SWTBotGefEditPart shapeEditPart = editor.getEditPart(shapeName);
+		Assert.assertNotNull(shapeEditPart);
+		for (SWTBotGefEditPart child : shapeEditPart.children()) {
+			ContainerShape containerShape = (ContainerShape) child.part().getModel();
+			Object bo = DUtil.getBusinessObject(containerShape);
+
+			// Only return objects of type UsesPortStub
+			if (bo != null && (bo instanceof ComponentSupportedInterfaceStub)) {
+				return child;
+			}
+		}
+		
+		return null;
+	}
 
 	/**
 	 * Utility method to get {@link Diagram} from the GEF Editor.
@@ -639,7 +662,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	public static SWTBotGefEditPart getDiagramUsesPort(SWTBotGefEditor editor, String componentName) {
 		return getDiagramUsesPort(editor, componentName, null);
 	}
-
+	
 	/**
 	 * 
 	 * @param editor - SWTBotGefEditor

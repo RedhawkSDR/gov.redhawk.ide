@@ -20,7 +20,8 @@ Require-Bundle: org.eclipse.ui,
  gov.redhawk.logging.ui,
  org.eclipse.graphiti,
  org.eclipse.jdt.annotation;bundle-version="[1.1.0,2.0.0)",
- org.eclipse.swtbot.swt.finder
+ org.eclipse.swtbot.swt.finder,
+ org.eclipse.graphiti.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: REDHAWK

@@ -202,9 +202,21 @@ public class ConnectionTest extends AbstractGraphitiTest {
 		// Draw incompatible connection and confirm error decorator exists
 		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, providesEditPart);
 		List<SWTBotGefConnectionEditPart> connections = DiagramTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
-		Assert.assertTrue(connections.size() == 1);
+		Assert.assertTrue("Connection was not added", connections.size() == 1);
 
 		Connection connection = (Connection) connections.get(0).part().getModel();
+		Assert.assertTrue("Error decorator should have been added", connection.getConnectionDecorators().size() == 2);
+		connections.get(0).select();
+		editor.clickContextMenu("Delete");
+		connections = DiagramTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
+		Assert.assertTrue("Connection was not removed", connections.size() == 0);
+		
+		// Test incompatible connection to component supported interface
+		SWTBotGefEditPart lollipopEditPart = DiagramTestUtils.getComponentSupportedInterface(editor, DATA_CONVERTER);
+		DiagramTestUtils.drawConnectionBetweenPorts(editor, usesEditPart, lollipopEditPart);
+		connections = DiagramTestUtils.getSourceConnectionsFromPort(editor, usesEditPart);
+		Assert.assertTrue("Connection was not added", connections.size() == 1);
+		connection = (Connection) connections.get(0).part().getModel();
 		Assert.assertTrue("Error decorator should have been added", connection.getConnectionDecorators().size() == 2);
 	}
 
