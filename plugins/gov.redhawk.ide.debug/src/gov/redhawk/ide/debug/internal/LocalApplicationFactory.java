@@ -10,47 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.debug.internal;
 
-import gov.redhawk.ide.debug.LocalSca;
-import gov.redhawk.ide.debug.LocalScaComponent;
-import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.NotifyingNamingContext;
-import gov.redhawk.ide.debug.ScaDebugFactory;
-import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
-import gov.redhawk.model.sca.RefreshDepth;
-import gov.redhawk.model.sca.ScaAbstractProperty;
-import gov.redhawk.model.sca.ScaComponent;
-import gov.redhawk.model.sca.ScaPackage;
-import gov.redhawk.model.sca.ScaPort;
-import gov.redhawk.model.sca.ScaUsesPort;
-import gov.redhawk.model.sca.ScaWaveform;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
-import gov.redhawk.sca.util.SubMonitor;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import mil.jpeojtrs.sca.partitioning.ComponentProperties;
-import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
-import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
-import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
-import mil.jpeojtrs.sca.prf.SimpleRef;
-import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
-import mil.jpeojtrs.sca.sad.ExternalProperties;
-import mil.jpeojtrs.sca.sad.ExternalProperty;
-import mil.jpeojtrs.sca.sad.HostCollocation;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SadComponentPlacement;
-import mil.jpeojtrs.sca.sad.SadConnectInterface;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.util.AnyUtils;
-import mil.jpeojtrs.sca.util.DceUuidUtil;
-import mil.jpeojtrs.sca.util.QueryParser;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
-import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.runtime.CoreException;
@@ -83,6 +46,41 @@ import CF.PortPackage.InvalidPort;
 import CF.PortPackage.OccupiedPort;
 import CF.PropertySetPackage.InvalidConfiguration;
 import CF.PropertySetPackage.PartialConfiguration;
+import gov.redhawk.ide.debug.LocalSca;
+import gov.redhawk.ide.debug.LocalScaComponent;
+import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.debug.NotifyingNamingContext;
+import gov.redhawk.ide.debug.ScaDebugFactory;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
+import gov.redhawk.model.sca.RefreshDepth;
+import gov.redhawk.model.sca.ScaAbstractProperty;
+import gov.redhawk.model.sca.ScaComponent;
+import gov.redhawk.model.sca.ScaPackage;
+import gov.redhawk.model.sca.ScaPort;
+import gov.redhawk.model.sca.ScaUsesPort;
+import gov.redhawk.model.sca.ScaWaveform;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.sca.util.SubMonitor;
+import mil.jpeojtrs.sca.partitioning.ComponentProperties;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
+import mil.jpeojtrs.sca.prf.PropertyConfigurationType;
+import mil.jpeojtrs.sca.prf.SimpleRef;
+import mil.jpeojtrs.sca.prf.util.PropertiesUtil;
+import mil.jpeojtrs.sca.sad.ExternalProperties;
+import mil.jpeojtrs.sca.sad.ExternalProperty;
+import mil.jpeojtrs.sca.sad.HostCollocation;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadComponentPlacement;
+import mil.jpeojtrs.sca.sad.SadConnectInterface;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
+import mil.jpeojtrs.sca.spd.SoftPkg;
+import mil.jpeojtrs.sca.util.AnyUtils;
+import mil.jpeojtrs.sca.util.DceUuidUtil;
+import mil.jpeojtrs.sca.util.QueryParser;
+import mil.jpeojtrs.sca.util.ScaEcoreUtils;
+import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 /**
  * 
@@ -383,23 +381,33 @@ public class LocalApplicationFactory {
 
 	private void configureComponent(ApplicationImpl app, final ScaComponent comp, final SoftwareAssembly sad, final DataType[] assemblyConfig) throws InvalidConfiguration, PartialConfiguration {
 		DataType[] configuration = getConfiguration(comp);
+		final ApplicationOutputStream outStream = app.getStreams().getOutStream();
 		if (configuration == null || configuration.length == 0) {
-			app.getStreams().getOutStream().println("\tNo configuration.");
+			outStream.println("\tNo configuration.");
 			return;
 		}
-		if (this.assemblyConfig != null /*&& isAssemblyController(comp.getComponentInstantiation())*/) {
-			configuration = this.assemblyConfig;
+		final boolean isAssemblyController = isAssemblyController(comp.getComponentInstantiation());
+		if (assemblyConfig != null && assemblyConfig.length > 0 && isAssemblyController) {
+			// apply user property overrides (in assemblyConfig)
+			for (DataType userOverrideProperty : assemblyConfig) {
+				for (DataType compSadProperty : configuration) {
+					if (userOverrideProperty.id.equals(compSadProperty.id)) {
+						compSadProperty.value = userOverrideProperty.value;
+						break;
+					}
+				}
+			}
 		}
 		final ExternalProperties externalProperties = sad.getExternalProperties();
 		for (DataType t : configuration) {
 			if (externalProperties != null) {
-			for (ExternalProperty extProp: externalProperties.getProperties()) {
-				if (t.id.equals(extProp.getExternalPropID()) && extProp.getCompRefID().equals(comp.getName())) {
-					t.id = extProp.getPropID();
+				for (ExternalProperty extProp: externalProperties.getProperties()) {
+					if (t.id.equals(extProp.getExternalPropID()) && extProp.getCompRefID().equals(comp.getName())) {
+						t.id = extProp.getPropID();
+					}
 				}
 			}
-			}
-			app.getStreams().getOutStream().println(LocalApplicationFactory.toString(t));
+			outStream.println(LocalApplicationFactory.toString(t));
 		}
 		comp.configure(configuration);
 		comp.fetchProperties(null);
@@ -450,6 +458,7 @@ public class LocalApplicationFactory {
 		}
 	}
 
+	/** Gets Component's properties, override with values from Waveform (SAD) */
 	private DataType[] getConfiguration(final ScaComponent comp) {
 		final Map<String, DataType> retVal = new HashMap<String, DataType>();
 		comp.fetchProperties(null);
@@ -473,10 +482,10 @@ public class LocalApplicationFactory {
 			throw new IllegalStateException("Unable to find component instantiation");
 		}
 
-		final ComponentProperties props = compInst.getComponentProperties();
-		if (props != null) {
-			// Override default values
-			for (final Entry entry : props.getProperties()) {
+		final ComponentProperties sadProps = compInst.getComponentProperties();
+		if (sadProps != null) {
+			// 2. Override default values with values from SAD
+			for (final Entry entry : sadProps.getProperties()) {
 				if (entry.getValue() instanceof AbstractPropertyRef< ? >) {
 					final AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
 					if (retVal.containsKey(ref.getRefID())) {
