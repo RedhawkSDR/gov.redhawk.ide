@@ -78,8 +78,8 @@ public class RHDeviceGxPackageImpl extends EPackageImpl implements RHDeviceGxPac
 			return (RHDeviceGxPackage) EPackage.Registry.INSTANCE.getEPackage(RHDeviceGxPackage.eNS_URI);
 
 		// Obtain or create and register package
-		RHDeviceGxPackageImpl theRHDeviceGxPackage = (RHDeviceGxPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof RHDeviceGxPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI)
-			: new RHDeviceGxPackageImpl());
+		RHDeviceGxPackageImpl theRHDeviceGxPackage = (RHDeviceGxPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof RHDeviceGxPackageImpl
+			? EPackage.Registry.INSTANCE.get(eNS_URI) : new RHDeviceGxPackageImpl());
 
 		isInited = true;
 

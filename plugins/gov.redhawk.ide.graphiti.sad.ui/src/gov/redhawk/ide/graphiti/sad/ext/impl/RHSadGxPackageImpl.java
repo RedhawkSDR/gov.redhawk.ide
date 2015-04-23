@@ -161,8 +161,8 @@ public class RHSadGxPackageImpl extends EPackageImpl implements RHSadGxPackage {
 			return (RHSadGxPackage) EPackage.Registry.INSTANCE.getEPackage(RHSadGxPackage.eNS_URI);
 
 		// Obtain or create and register package
-		RHSadGxPackageImpl theRHSadGxPackage = (RHSadGxPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof RHSadGxPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI)
-			: new RHSadGxPackageImpl());
+		RHSadGxPackageImpl theRHSadGxPackage = (RHSadGxPackageImpl) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof RHSadGxPackageImpl
+			? EPackage.Registry.INSTANCE.get(eNS_URI) : new RHSadGxPackageImpl());
 
 		isInited = true;
 

@@ -51,8 +51,6 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>Component Shape</b></em>'.
  * <!-- end-user-doc -->
- * <p>
- * </p>
  *
  * @generated
  */
