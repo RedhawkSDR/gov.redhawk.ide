@@ -399,26 +399,29 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until component appears stopped in ScaExplorer
-	 * @param componentName
+	 * Waits until node appears stopped in ScaExplorer
+	 * @param bot
+	 * @param parentPath - The domain or local path (e.g {"REDHAWK_DEV", "Device Managers"} or {"Sandbox"}
+	 * @param parent - The direct parent of the node (e.g. the waveform or device manager name) 
+	 * @param nodeName - The full name of the node to be checked
 	 */
-	public static void waitUntilComponentAppearsStoppedInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform,
-		final String componentName) {
+	public static void waitUntilNodeStoppedInScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String parent,
+		final String nodeName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		final SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
+		final SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(bot, parentPath, parent);
 
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return componentName + " Component did not appear stopped in SCA Explorer";
+				return nodeName + " Node did not appear stopped in SCA Explorer";
 			}
 
 			@Override
 			public boolean test() throws Exception {
-				SWTBotTreeItem[] items = waveformTreeItem.getItems();
+				SWTBotTreeItem[] items = treeItem.getItems();
 				for (SWTBotTreeItem item : items) {
-					if (item.getText().equals(componentName)) {
+					if (item.getText().equals(nodeName)) {
 						return true;
 					}
 				}
@@ -428,26 +431,29 @@ public class ScaExplorerTestUtils {
 	}
 
 	/**
-	 * Waits until component appears stopped in ScaExplorer
-	 * @param componentName
+	 * Waits until node appears stopped in ScaExplorer
+	 * @param bot
+	 * @param parentPath - The domain or local path (e.g {"REDHAWK_DEV", "Device Managers"} or {"Sandbox"}
+	 * @param parent - The direct parent of the node (e.g. the waveform or device manager name) 
+	 * @param nodeName - The full name of the node to be checked
 	 */
-	public static void waitUntilComponentAppearsStartedInScaExplorer(SWTWorkbenchBot bot, String[] waveformParentPath, String waveform,
-		final String componentName) {
+	public static void waitUntilNodeStartedInScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String parent,
+		final String nodeName) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		final SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
+		final SWTBotTreeItem treeItem = getTreeItemFromScaExplorer(bot, parentPath, parent);
 
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
-				return componentName + " Component did not appear started in SCA Explorer";
+				return nodeName + " Node did not appear started in SCA Explorer";
 			}
 
 			@Override
 			public boolean test() throws Exception {
-				SWTBotTreeItem[] items = waveformTreeItem.getItems();
+				SWTBotTreeItem[] items = treeItem.getItems();
 				for (SWTBotTreeItem item : items) {
-					if (item.getText().equals(componentName + " STARTED")) {
+					if (item.getText().equals(nodeName + " STARTED")) {
 						return true;
 					}
 				}
