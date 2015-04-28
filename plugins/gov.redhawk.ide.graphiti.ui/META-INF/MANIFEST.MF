@@ -39,7 +39,6 @@ Require-Bundle: org.eclipse.ui,
  gov.redhawk.sca.ui;bundle-version="10.0.0",
  gov.redhawk.ide.debug,
  org.eclipse.debug.ui,
- org.eclipse.swtbot.eclipse.gef.finder,
  org.junit
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: gov.redhawk.ide.graphiti.ext,
