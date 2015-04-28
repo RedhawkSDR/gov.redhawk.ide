@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.util;
 
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.model.sca.commands.NonDirtyingCommand;
 import gov.redhawk.sca.util.PluginUtil;
 
@@ -18,9 +17,7 @@ import java.util.Collection;
 
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.transaction.TransactionalCommandStack;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.mm.StyleContainer;

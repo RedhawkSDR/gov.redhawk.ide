@@ -22,7 +22,6 @@ import gov.redhawk.model.sca.ScaProvidesPort;
 import gov.redhawk.model.sca.ScaUsesPort;
 import gov.redhawk.model.sca.ScaWaveform;
 
-import java.util.List;
 import java.util.Map;
 
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
@@ -36,7 +35,6 @@ import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.ui.internal.parts.AdvancedAnchorEditPart;

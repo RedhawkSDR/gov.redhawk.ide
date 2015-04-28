@@ -85,7 +85,7 @@ public class FindByUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @param performUpdate
 	 * @return
 	 */
-	public static Reason replaceDirectFindByConnection(List<SadConnectInterface> sadConnectInterfaces, Class objectClass, String pictogramLabel,
+	public static Reason replaceDirectFindByConnection(List<SadConnectInterface> sadConnectInterfaces, Class<?> objectClass, String pictogramLabel,
 		Diagram diagram, IFeatureProvider featureProvider, boolean performUpdate) {
 
 		boolean updateStatus = false;
@@ -117,7 +117,7 @@ public class FindByUtil { // SUPPRESS CHECKSTYLE INLINE
 
 							// add FindBYShape for Target
 							if (findByStub != null) {
-								PictogramElement pe = DUtil.addShapeViaFeature(featureProvider, diagram, findByStub);
+								DUtil.addShapeViaFeature(featureProvider, diagram, findByStub);
 							}
 						} else {
 							return new Reason(true, "Add FindBy Shape");
