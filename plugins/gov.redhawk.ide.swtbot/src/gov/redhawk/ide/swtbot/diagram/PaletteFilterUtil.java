@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.ui.diagram.util;
+package gov.redhawk.ide.swtbot.diagram;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,22 +26,20 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas;
 import org.junit.Assert;
-/**
- * 
- */
+
 public class PaletteFilterUtil {
 
-	/**
-	 * 
-	 */
-	private static Map <SWTBotGefEditor, FilterRunnable> RUNNABLES;
-	private static PaletteFilterUtil INSTANCE;
-	
+	private static final Map<SWTBotGefEditor, FilterRunnable> RUNNABLES;
+	private static final PaletteFilterUtil INSTANCE;
+
 	static {
 		INSTANCE = new PaletteFilterUtil();
 		RUNNABLES = new HashMap<SWTBotGefEditor, FilterRunnable>();
 	}
-	
+
+	private PaletteFilterUtil() {
+	}
+
 	public static void setFilter(SWTBotGefEditor editor, String filterString) {
 		FilterRunnable runnable = RUNNABLES.get(editor);
 		if (runnable == null) {
@@ -50,18 +48,18 @@ public class PaletteFilterUtil {
 		}
 		runnable.setFilterString(filterString);
 	}
-	
+
 	private class FilterRunnable implements Runnable {
-	
+
 		private final SWTBotGefEditor editor;
 		private String filterString;
 		private Rectangle rect = null;
 		private SWTBotGefFigureCanvas paletteCanvas = null;
-		
+
 		FilterRunnable(SWTBotGefEditor editor) {
 			this.editor = editor;
 		}
-		
+
 		@Override
 		public void run() {
 			if (filterString == null) {
@@ -69,12 +67,12 @@ public class PaletteFilterUtil {
 			}
 			typeInFilter(editor.getWidget(), filterString);
 		}
-		
+
 		public void setFilterString(String filterText) {
 			this.filterString = filterText;
 			Display.getDefault().syncExec(this);
 		}
-		
+
 		private void clickAndType(String filterText, int x, int y) {
 			paletteCanvas.mouseMoveLeftClick(x, y);
 			Control text = editor.bot().getFocusedWidget();
@@ -89,7 +87,7 @@ public class PaletteFilterUtil {
 			}
 			Assert.assertNotNull(text);
 		}
-		
+
 		private Rectangle typeInFilter(Widget w, String filterText) {
 			if (paletteCanvas != null && rect != null) {
 				clickAndType(filterText, 0, 0);
@@ -106,7 +104,7 @@ public class PaletteFilterUtil {
 			}
 			if (w instanceof Composite) {
 				Composite comp = (Composite) w;
-				for (Control c: comp.getChildren()) {
+				for (Control c : comp.getChildren()) {
 					Rectangle rectangle = typeInFilter(c, filterText);
 					if (rectangle != null) {
 						return rectangle;
@@ -115,7 +113,7 @@ public class PaletteFilterUtil {
 			}
 			return null;
 		}
-		
+
 		private Rectangle typeInFilter(IFigure f, FigureCanvas canvas, String filterText) {
 			if (f instanceof RHGraphitiPaletteFilterFigure) {
 				paletteCanvas = new SWTBotGefFigureCanvas(canvas);
@@ -124,7 +122,7 @@ public class PaletteFilterUtil {
 				clickAndType(filterText, rect.x, rect.y);
 				return figure.getBounds();
 			}
-			for (Object obj: f.getChildren()) {
+			for (Object obj : f.getChildren()) {
 				Rectangle rectangle = typeInFilter((IFigure) obj, canvas, filterText);
 				if (rectangle != null) {
 					return rectangle;
@@ -132,8 +130,7 @@ public class PaletteFilterUtil {
 			}
 			return null;
 		}
-		
-	}
-	
-}
 
+	}
+
+}
