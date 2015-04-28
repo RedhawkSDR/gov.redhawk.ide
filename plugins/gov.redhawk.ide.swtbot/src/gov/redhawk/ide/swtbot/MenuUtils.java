@@ -19,7 +19,8 @@ import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 
 public class MenuUtils {
-
+	static final String PROPERTIES_VIEW_ID = "org.eclipse.ui.views.PropertySheet";
+	
 	protected MenuUtils() {
 	}
 
@@ -105,10 +106,12 @@ public class MenuUtils {
 	 * @return 
 	 */
 	public static SWTBotView showView(SWTWorkbenchBot bot, String viewID) {
-		// Open the new waveform project wizard
-		SWTBotView viewToOpen = bot.viewById(viewID);
+		SWTBotView viewToOpen = bot.viewById(viewID); // SWTBot uses ViewMenuFinder underneath
 		viewToOpen.show();
 		return viewToOpen;
 	}
 
+	public static SWTBotView showPropertiesView(SWTWorkbenchBot bot) {
+		return showView(bot, PROPERTIES_VIEW_ID);
+	}
 }
