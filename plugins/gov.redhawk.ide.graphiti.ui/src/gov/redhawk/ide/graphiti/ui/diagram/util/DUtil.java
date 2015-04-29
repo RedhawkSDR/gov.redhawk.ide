@@ -1300,21 +1300,19 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 			DiagramBehavior diagramBehavior = diagramEditor.getDiagramBehavior();
 			IFeatureProvider featureProvider = diagramEditor.getDiagramTypeProvider().getFeatureProvider();
 
-			if (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram)) {
-				final ICustomContext context = new CustomContext(new PictogramElement[] { diagram });
-				ICustomFeature[] features = featureProvider.getCustomFeatures(context);
-				for (final ICustomFeature feature : features) {
-					if (feature instanceof LayoutDiagramFeature) {
-						TransactionalEditingDomain ed = diagramBehavior.getEditingDomain();
-						TransactionalCommandStack cs = (TransactionalCommandStack) ed.getCommandStack();
-						cs.execute(new RecordingCommand(ed) {
+			final ICustomContext context = new CustomContext(new PictogramElement[] { diagram });
+			ICustomFeature[] features = featureProvider.getCustomFeatures(context);
+			for (final ICustomFeature feature : features) {
+				if (feature instanceof LayoutDiagramFeature) {
+					TransactionalEditingDomain ed = diagramBehavior.getEditingDomain();
+					TransactionalCommandStack cs = (TransactionalCommandStack) ed.getCommandStack();
+					cs.execute(new RecordingCommand(ed) {
 
-							@Override
-							protected void doExecute() {
-								((LayoutDiagramFeature) feature).execute(context);
-							}
-						});
-					}
+						@Override
+						protected void doExecute() {
+							((LayoutDiagramFeature) feature).execute(context);
+						}
+					});
 				}
 			}
 		}

@@ -135,11 +135,16 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 	protected String getPropertyEditorPageKey(final IFileEditorInput input) {
 		final String retVal = super.getPropertyEditorPageKey(input);
 		if (retVal == null) {
-			return DIAGRAM_PAGE_ID;
+			return getDefaultPageKey();
 		}
 		return retVal;
 	}
 
+	@Override
+	protected String getDefaultPageKey() {
+		return DIAGRAM_PAGE_ID;
+	}
+	
 	@Override
 	public void gotoMarker(final IMarker marker) {
 		try {
@@ -374,7 +379,6 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 	}
 	
 	@Override
-	@SuppressWarnings("restriction")
 	protected TransactionalEditingDomain createEditingDomain() {
 
 		final ResourceSet resourceSet = new ResourceSetImpl();
