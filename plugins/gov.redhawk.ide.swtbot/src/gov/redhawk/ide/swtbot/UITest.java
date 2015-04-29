@@ -16,10 +16,12 @@ import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
+/** run with SWTBotJunit4ClassRunner to capture screenshots on test failures. */
 @RunWith(SWTBotJunit4ClassRunner.class)
 public abstract class UITest {
 
@@ -51,9 +53,14 @@ public abstract class UITest {
 
 	@After
 	public void after() throws Exception {
-		StandardTestActions.cleanup(bot);
 		StandardTestActions.assertNoOpenDialogs();
 		bot = null;
+	}
+	
+	@AfterClass
+	public static void afterClass() throws Exception {
+		// final cleanup of any open dialogs/editors/etc 
+		StandardTestActions.cleanup(new SWTWorkbenchBot());
 	}
 
 }
