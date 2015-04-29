@@ -29,13 +29,7 @@ public class SharedLibraryUtils {
 	}
 
 	public static void createSharedLibraryProject(SWTBot bot, String sharedLibraryProjectName, String projectType) {
-		StandardTestActions.configurePyDev();
-
-		SWTBotShell origShell = bot.activeShell();
-
-		if (projectType == null) {
-			projectType = "C++ Library";
-		}
+		StandardTestActions.configurePyDev(bot);
 
 		bot.menu("File").menu("New").menu("Project...").click();
 		SWTBotShell wizardShell = bot.shell("New Project");
@@ -67,6 +61,6 @@ public class SharedLibraryUtils {
 		wizardBot.waitUntil(Conditions.widgetIsEnabled(finishButton));
 		finishButton.click();
 
-		origShell.activate();
+		bot.waitUntil(Conditions.shellCloses(wizardShell));
 	}
 }

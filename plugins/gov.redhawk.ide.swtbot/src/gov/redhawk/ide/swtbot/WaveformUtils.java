@@ -13,6 +13,7 @@ package gov.redhawk.ide.swtbot;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
@@ -49,8 +50,7 @@ public class WaveformUtils {
 		SWTBotButton finishButton = wizardBot.button("Finish");
 		finishButton.click();
 
-		// TODO Why doesn't this work?
-//		bot.waitWhile(Conditions.shellCloses(wizardShell), 30000);
+		bot.waitUntil(Conditions.shellCloses(wizardShell));
 	}
 
 	/**

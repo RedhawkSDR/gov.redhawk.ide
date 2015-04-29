@@ -90,47 +90,50 @@ import org.python.pydev.ui.pythonpathconf.IInterpreterProviderFactory.Interprete
 
 public final class StandardTestActions {
 
-	private static boolean pydevSetup = false;
+	private static volatile boolean pydevSetup = false;
 
 	private StandardTestActions() {
 
 	}
 
-	public static void configurePyDev() {
+	public static void configurePyDev(SWTBot bot) {
 		if (pydevSetup) {
 			return;
 		}
-		boolean advanced = false;
-		InterpreterType interpreterType = InterpreterType.PYTHON;
-		final AutoConfigMaker a = new AutoConfigMaker(interpreterType, advanced, null, null);
+
+		String originalShellText = bot.activeShell().getText();
+
+		final AutoConfigMaker a = new AutoConfigMaker(InterpreterType.PYTHON, false, null, null);
 		final Object block = new Object();
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
+		final JobChangeAdapter adapter = new JobChangeAdapter() {
 			@Override
-			public void run() {
-				a.autoConfigSingleApply(new JobChangeAdapter() {
-					@Override
-					public void done(IJobChangeEvent event) {
-						super.done(event);
-						synchronized (block) {
-							pydevSetup = true;
-							block.notifyAll();
-						}
-					}
-				});
-			}
-
-		});
-
-		synchronized (block) {
-			while (!pydevSetup) {
-				try {
-					block.wait();
-				} catch (InterruptedException e) {
-					// PASS
+			public void done(IJobChangeEvent event) {
+				synchronized (block) {
+					pydevSetup = true;
+					block.notifyAll();
 				}
 			}
+		};
+
+		synchronized (block) {
+			// Perform auto-config (our adapter will notify us when the scheduled job completes)
+			Display.getDefault().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					a.autoConfigSingleApply(adapter);
+				}
+			});
+
+			// Wait until our monitor gets notified, or we time out
+			try {
+				block.wait(30000);
+				Assert.assertTrue("Pydev setup timed out", pydevSetup);
+			} catch (InterruptedException e) {
+				Assert.fail("Pydev setup interrupted");
+			}
 		}
+
+		bot.waitUntil(Conditions.shellIsActive(originalShellText));
 	}
 
 	/**
@@ -222,9 +225,7 @@ public final class StandardTestActions {
 	 * @throws CoreException
 	 */
 	public static void clearWorkspace() throws CoreException {
-		for (IProject p : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-			p.delete(true, true, null);
-		}
+		ResourcesPlugin.getWorkspace().getRoot().delete(true, true, new NullProgressMonitor());
 	}
 
 	/**

@@ -12,6 +12,7 @@ package gov.redhawk.ide.swtbot;
 
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 
@@ -28,8 +29,7 @@ public class DeviceUtils {
 	
 	/** create SCA Device in Workspace using default location */
 	public static void createDeviceProject(SWTBot bot, String deviceProjectName, String progLanguage) {
-		SWTBotShell origShell = bot.activeShell();
-		StandardTestActions.configurePyDev();
+		StandardTestActions.configurePyDev(bot);
 
 		bot.menu("File").menu("New").menu("Project...").click();
 		SWTBotShell wizardShell = bot.shell("New Project");
@@ -61,8 +61,8 @@ public class DeviceUtils {
 		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection(progLanguage);
 		wizardBot.button("Next >").click();
 		wizardBot.button("Finish").click();
-		
-		origShell.activate();
+
+		bot.waitUntil(Conditions.shellCloses(wizardShell));
 	}
 
 }

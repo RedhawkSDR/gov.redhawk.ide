@@ -17,6 +17,7 @@ import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
@@ -53,6 +54,8 @@ public class NodeUtils {
 		// Close wizard
 		SWTBotButton finishButton = wizardBot.button("Finish");
 		finishButton.click();
+
+		bot.waitUntil(Conditions.shellCloses(wizardShell));
 
 		// Set focus to Node
 		SWTBotEditor nodeEditor = bot.editorByTitle(projectName);

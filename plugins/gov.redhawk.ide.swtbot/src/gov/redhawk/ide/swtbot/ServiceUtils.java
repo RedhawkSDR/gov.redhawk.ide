@@ -12,6 +12,7 @@ package gov.redhawk.ide.swtbot;
 
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 
@@ -28,13 +29,9 @@ public class ServiceUtils {
 
 	/** create SCA Service in Workspace using default location */
 	public static void createServiceProject(SWTBot bot, String serviceProjectName, String interfaceName, String progLanguage) {
-		SWTBotShell origShell = bot.activeShell();
-		StandardTestActions.configurePyDev();
+		StandardTestActions.configurePyDev(bot);
 		
-		if (interfaceName == null) {
-			interfaceName = "IDL:BULKIO/dataDouble:1.0";
-		}
-
+		String text = bot.activeShell().getText();
 		bot.menu("File").menu("New").menu("Project...").click();
 		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();
@@ -67,6 +64,6 @@ public class ServiceUtils {
 		wizardBot.button("Next >").click();
 		wizardBot.button("Finish").click();
 		
-		origShell.activate();
+		bot.waitUntil(Conditions.shellCloses(wizardShell));
 	}
 }

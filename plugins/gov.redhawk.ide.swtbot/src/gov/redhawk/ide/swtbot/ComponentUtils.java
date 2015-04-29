@@ -15,6 +15,7 @@ import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
@@ -77,7 +78,7 @@ public class ComponentUtils {
 
 	/** create SCA Component in Workspace using default location */
 	public static void createComponentProject(SWTBot bot, String componentProjectName, String progLanguage) {
-		StandardTestActions.configurePyDev();
+		StandardTestActions.configurePyDev(bot);
 
 		bot.menu("File").menu("New").menu("Project...").click();
 		SWTBotShell wizardShell = bot.shell("New Project");
@@ -109,5 +110,7 @@ public class ComponentUtils {
 		wizardBot.comboBoxWithLabel("Prog. Lang:").setSelection(progLanguage);
 		wizardBot.button("Next >").click();
 		wizardBot.button("Finish").click();
+
+		bot.waitUntil(Conditions.shellCloses(wizardShell));
 	}
 }

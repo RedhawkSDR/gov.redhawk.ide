@@ -20,6 +20,7 @@ import java.io.IOException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.junit.Assert;
@@ -41,7 +42,7 @@ public abstract class AbstractCreationWizardTest extends UITest {
 	
 	@BeforeClass
 	public static void setupPyDev() throws Exception {
-		StandardTestActions.configurePyDev();
+		StandardTestActions.configurePyDev(new SWTWorkbenchBot());
 	}
 	
 	@Test

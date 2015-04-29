@@ -10,6 +10,9 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.scaExplorer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
@@ -78,14 +81,58 @@ public class ScaExplorerTestUtils {
 	 */
 	public static SWTBotTreeItem getTreeItemFromScaExplorer(SWTWorkbenchBot bot, String[] parentPath, String treeItemName) {
 		SWTBotView scaExplorerView = bot.viewByTitle("SCA Explorer");
-		SWTBotTreeItem treeItemParent = scaExplorerView.bot().tree().expandNode(parentPath);
-		// find tree item
-		// Could be "<tree item>" or "<tree item> STARTED"
-		for (SWTBotTreeItem treeItem : treeItemParent.getItems()) {
-			if (treeItem.getText().startsWith(treeItemName)) {
-				treeItem.expand();
-				return treeItem;
+
+		List<String> path = new ArrayList<String>();
+		for (int i = 1; i < parentPath.length; i++) {
+			path.add(parentPath[i]);
+		}
+		path.add(treeItemName);
+
+		SWTBotTreeItem rootItem = scaExplorerView.bot().tree().getTreeItem(parentPath[0]);
+		return internalGetTreeItem(rootItem, path);
+	}
+
+	/**
+	 * Expands a tree item by item until the last element of the desired path is found and returned. Any nodes expanded
+	 * in the search are collapsed if the desired path is not found.
+	 *
+	 * @param parentItem The tree item to begin the search at
+	 * @param path The path to the tree item under the specified starting item
+	 * @return
+	 */
+	private static SWTBotTreeItem internalGetTreeItem(SWTBotTreeItem parentItem, List<String> path) {
+		// Expand the current item if necessary
+		boolean isExpanded = parentItem.isExpanded();
+		if (!isExpanded) {
+			parentItem.expand();
+		}
+
+		if (path.size() == 1) {
+			// If there is one path element left then we must check each child of the current item to see if it matches
+			// This lets us handle cases where things like " STARTED" get appended to running components, etc.
+			String text = path.get(0);
+			for (SWTBotTreeItem childItem : parentItem.getItems()) {
+				if (childItem.getText().startsWith(text)) {
+					childItem.expand();
+					return childItem;
+				}
 			}
+		} else {
+			// Recursively expand child items
+			try {
+				SWTBotTreeItem childItem = parentItem.getNode(path.get(0));
+				SWTBotTreeItem result = internalGetTreeItem(childItem, path.subList(1, path.size()));
+				if (result != null) {
+					return result;
+				}
+			} catch (WidgetNotFoundException ex) {
+				// PASS
+			}
+		}
+
+		// We failed to find the item; collapse the current tree item if it was initially collapsed
+		if (!isExpanded) {
+			parentItem.collapse();
 		}
 		return null;
 	}
@@ -748,10 +795,7 @@ public class ScaExplorerTestUtils {
 			@Override
 			public boolean test() throws Exception {
 				SWTBotTreeItem treeItem = getTreeItemFromScaExplorer((SWTWorkbenchBot) bot, nodeParentPath, nodeName);
-				if (treeItem != null) {
-					return true;
-				}
-				return false;
+				return treeItem != null;
 			}
 		}, 30000);
 		
