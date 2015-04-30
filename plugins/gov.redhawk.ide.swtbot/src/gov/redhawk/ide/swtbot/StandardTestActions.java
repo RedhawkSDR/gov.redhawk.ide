@@ -96,6 +96,10 @@ public final class StandardTestActions {
 
 	}
 
+	public static void configurePyDev() {
+		configurePyDev(new SWTWorkbenchBot());
+	}
+
 	public static void configurePyDev(SWTBot bot) {
 		if (pydevSetup) {
 			return;

@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
@@ -1019,8 +1020,9 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	 * Waits until Component displays in Chalkboard Diagram
 	 * @param componentName
 	 */
-	public static void waitUntilComponentDisplaysInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, final String componentName) {
+	public static String waitUntilComponentDisplaysInDiagram(SWTWorkbenchBot bot, final SWTBotGefEditor editor, final String componentName) {
 
+		try {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
@@ -1035,6 +1037,29 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 				return false;
 			}
 		});
+		} catch (TimeoutException te) {
+			return null;
+		}
+		return getComponentUsageName(editor.getEditPart(componentName));
+	}
+	
+	private static String getComponentUsageName(SWTBotGefEditPart gefPart) {
+		Object model = gefPart.part().getModel();
+		if (model instanceof ContainerShape) {
+			ContainerShape cs = (ContainerShape) model;
+			Object bo = cs.getLink().getBusinessObjects().get(0);
+			if (bo instanceof ComponentInstantiation) {
+				ComponentInstantiation ci = (ComponentInstantiation) bo;
+				return ci.getUsageName();
+			}
+		}
+		for (SWTBotGefEditPart child: gefPart.children()) {
+			String childName = getComponentUsageName(child);
+			if (childName != null) {
+				return childName;
+			}
+		}
+		return null;
 	}
 
 	/**

@@ -14,7 +14,11 @@ import java.util.List;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.swtbot.swt.finder.keyboard.Keyboard;
+import org.eclipse.swtbot.swt.finder.keyboard.KeyboardFactory;
+import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
@@ -257,4 +261,20 @@ public class ViewUtils {
 		});
 	}
 
+	/**
+	 * Ensures that top tab in Properties view is activated
+	 * @param bot
+	 * @return the SWTBotTree of the selected properties tab
+	 */
+	public static SWTBotTree activateFirstPropertiesTab(SWTWorkbenchBot bot) {
+		SWTBotView propView = bot.viewByTitle("Properties");
+		SWTBot propBot = propView.bot();
+		SWTBotTree propTable = propBot.tree();
+		propTable.select(0);
+		Keyboard kb = KeyboardFactory.getSWTKeyboard(); 
+		kb.pressShortcut(Keystrokes.SHIFT, Keystrokes.TAB);
+		kb.pressShortcut(Keystrokes.UP);
+		return propBot.tree();
+	}
+	
 }

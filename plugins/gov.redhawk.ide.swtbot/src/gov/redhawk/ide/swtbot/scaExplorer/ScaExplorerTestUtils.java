@@ -11,6 +11,7 @@
 package gov.redhawk.ide.swtbot.scaExplorer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
@@ -365,6 +366,9 @@ public class ScaExplorerTestUtils {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
 		SWTBotTreeItem waveformEntry = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
+		if (!waveformEntry.isExpanded()) {
+			waveformEntry.expand();
+		}
 		SWTBotTreeItem componentEntry = waveformEntry.getNode(componentName);
 		componentEntry.select();
 		SWTBotMenu start = componentEntry.contextMenu("Start");
@@ -468,7 +472,7 @@ public class ScaExplorerTestUtils {
 			public boolean test() throws Exception {
 				SWTBotTreeItem[] items = treeItem.getItems();
 				for (SWTBotTreeItem item : items) {
-					if (item.getText().equals(nodeName)) {
+					if (item.getText().trim().equals(nodeName)) {
 						return true;
 					}
 				}
@@ -843,6 +847,19 @@ public class ScaExplorerTestUtils {
 	@Deprecated
 	public static void waitUntilWaveformAppearsInScaExplorer(SWTWorkbenchBot bot, final String[] waveformParentPath, final String waveformName) {
 		waitUntilNodeAppearsInScaExplorer(bot, waveformParentPath, waveformName);
+	}
+	
+	/**
+	 * Consolidates arrays of Strings into one
+	 * @param args
+	 * @return
+	 */
+	public static String[] joinPaths(String[] ... args) {
+		ArrayList<String> retList = new ArrayList<String>();
+		for (String[] arg: args) {
+			retList.addAll(Arrays.asList(arg));
+		}
+		return retList.toArray(new String[retList.size()]);
 	}
 	
 }
