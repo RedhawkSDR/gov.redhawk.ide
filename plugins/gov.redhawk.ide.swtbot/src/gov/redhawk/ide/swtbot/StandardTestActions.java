@@ -1,11 +1,11 @@
 /*******************************************************************************
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
@@ -201,25 +201,23 @@ public final class StandardTestActions {
 	}
 
 	public static void assertNoOpenDialogs() {
-		final boolean[] badDialogs = { false };
+		final String[] badDialog = { null }; // null for none (good)
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
 			@Override
 			public void run() {
 				Shell s = Display.getCurrent().getActiveShell();
 				if (s == PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()) {
-					badDialogs[0] = false;
-				} else {
-					if (s != null) {
-						badDialogs[0] = true;
-					}
+					badDialog[0] = null;        // good
+				} else if (s != null) {
+					badDialog[0] = s.getText(); // bad - set to dialog's title
 				}
 			}
 
 		});
 
-		if (badDialogs[0]) {
-			Assert.fail("Invalid dialogs left open at end of test.");
+		if (badDialog[0] != null) {
+			Assert.fail("Invalid dialog left open at end of test: " + badDialog[0]);
 		}
 	}
 
@@ -304,7 +302,7 @@ public final class StandardTestActions {
 		// location for this workspace
 		URI locationURI = record.description.getLocationURI();
 		// if location is null, project already exists in this location or
-		// some error condition occured.
+		// some error condition occurred.
 		if (locationURI != null) {
 			// validate the location of the project being copied
 			IStatus result = ResourcesPlugin.getWorkspace().validateProjectLocationURI(project, locationURI);
