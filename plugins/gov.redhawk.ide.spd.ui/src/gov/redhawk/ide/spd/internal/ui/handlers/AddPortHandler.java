@@ -13,12 +13,13 @@ package gov.redhawk.ide.spd.internal.ui.handlers;
 import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
 import gov.redhawk.eclipsecorba.library.IdlLibrary;
 import gov.redhawk.ide.spd.internal.ui.editor.ComponentEditor;
-import gov.redhawk.ide.spd.internal.ui.editor.wizard.PortWizard;
-import gov.redhawk.ide.spd.internal.ui.editor.wizard.PortWizardPage.PortWizardModel;
 import gov.redhawk.model.sca.util.ModelUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import mil.jpeojtrs.sca.scd.AbstractPort;
 import mil.jpeojtrs.sca.scd.InheritsInterface;
 import mil.jpeojtrs.sca.scd.Interface;
 import mil.jpeojtrs.sca.scd.PortType;
@@ -26,7 +27,6 @@ import mil.jpeojtrs.sca.scd.Ports;
 import mil.jpeojtrs.sca.scd.Provides;
 import mil.jpeojtrs.sca.scd.ScdFactory;
 import mil.jpeojtrs.sca.scd.ScdPackage;
-import mil.jpeojtrs.sca.scd.Uses;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -37,8 +37,6 @@ import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
@@ -47,17 +45,16 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class AddPortHandler extends AbstractHandler {
 
+	private static final String DEFAULT_PORT_REP_ID = "IDL:BULKIO/dataFloat:1.0";
+	private static final String DEFAULT_PORT_NAME = "dataFloat";
+	
 	private EditingDomain editingDomain;
 	private Resource resource;
 	private SoftPkg softPkg;
 	private ComponentEditor editor;
 	private Map<String, Interface> interfaceMap;
 
-	/**
-	 * Default Constructor for instantiation by framework.
-	 */
 	public AddPortHandler() {
-		// DefaultConstructor
 	}
 
 	/**
@@ -84,68 +81,49 @@ public class AddPortHandler extends AbstractHandler {
 		this.resource = this.editor.getMainResource();
 		this.softPkg = ModelUtil.getSoftPkg(this.resource);
 		this.interfaceMap = PortsHandlerUtil.getInterfaceMap(this.softPkg);
-		this.displayAddWizard();
+
+		// Creates a new port with default settings
+		Command defaultPortCommand = createDefaultAddPortCommand(editor.getIdlLibrary());
+		this.editingDomain.getCommandStack().execute(defaultPortCommand);
+
 		return null;
 	}
-
-	/**
-	 * Displays the AddPort Wizard.
-	 */
-	private void displayAddWizard() {
-		final PortWizard wizard = new PortWizard(getPorts(), this.editor);
-		wizard.setWindowTitle("Add Port");
-		final WizardDialog dialog = new WizardDialog(this.editor.getSite().getShell(), wizard);
-		if (dialog.open() == Window.OK) {
-			Command command = this.createAddPortCommand(wizard.getIdlLibrary(), wizard.getValue());
-			this.editingDomain.getCommandStack().execute(command);
-		}
-	}
-
+	
 	/**
 	 * Adds the port and any associated interfaces.
-	 * 
-	 * @param port the port to add
-	 * @param isEdit <code> true </code> if the addComand should be considered part of an edit command; <code> false
-	 * </code> otherwise
 	 */
-	public Command createAddPortCommand(final IdlLibrary library, final PortWizardModel model) {
-		final String repId = model.getRepId();
+	public Command createDefaultAddPortCommand(final IdlLibrary library) {
+		String defaultRepID = DEFAULT_PORT_REP_ID; 
+		Provides provides = ScdFactory.eINSTANCE.createProvides();
 
-		// Create copies of both port types to reduce duplicate logic in the switch statement
-		final Provides provides = ScdFactory.eINSTANCE.createProvides();
-		provides.setProvidesName(model.getPortName());
-		provides.setRepID(repId);
-		for (final PortType pt : model.getPortTypes()) {
-			provides.getPortType().add(ScdFactory.eINSTANCE.createPortTypeContainer(pt));
+		provides.setName(getDefaultName(getPorts()));
+		provides.setRepID(defaultRepID);
+		provides.getPortType().add(ScdFactory.eINSTANCE.createPortTypeContainer(PortType.DATA));
+
+		final CompoundCommand command = new CompoundCommand("Add Default Port Command");
+		command.append(AddCommand.create(this.editingDomain, PortsHandlerUtil.getPorts(this.softPkg), ScdPackage.Literals.PORTS__PROVIDES, provides));
+
+		if (!this.interfaceMap.containsKey(defaultRepID)) {
+			command.append(createAddInterfaceCommand(library, defaultRepID, this.interfaceMap));
 		}
 
-		final Uses uses = ScdFactory.eINSTANCE.createUses();
-		uses.setUsesName(model.getPortName());
-		uses.setRepID(repId);
-		for (final PortType pt : model.getPortTypes()) {
-			uses.getPortType().add(ScdFactory.eINSTANCE.createPortTypeContainer(pt));
-		}
-
-		final CompoundCommand command = new CompoundCommand("Add Port Command");
-		switch (model.getType()) {
-		case PROVIDES:
-			command.append(AddCommand.create(this.editingDomain, getPorts(), ScdPackage.Literals.PORTS__PROVIDES, provides));
-			break;
-		case USES:
-			command.append(AddCommand.create(this.editingDomain, getPorts(), ScdPackage.Literals.PORTS__USES, uses));
-			break;
-		case BIDIR:
-			command.append(AddCommand.create(this.editingDomain, getPorts(), ScdPackage.Literals.PORTS__PROVIDES, provides));
-			command.append(AddCommand.create(this.editingDomain, getPorts(), ScdPackage.Literals.PORTS__USES, uses));
-			break;
-		default:
-			throw new IllegalStateException();
-		}
-
-		if (!this.interfaceMap.containsKey(repId)) {
-			command.append(createAddInterfaceCommand(library, repId, this.interfaceMap));
-		}
 		return command;
+	}
+
+	private String getDefaultName(Ports ports) {
+		String defaultName = DEFAULT_PORT_NAME;
+		
+		List<String> portNameList = new ArrayList<String>();
+		for (AbstractPort port : ports.getAllPorts()) {
+			portNameList.add(port.getName());
+		}
+		
+		int nameIncrement = 1;
+		while (portNameList.contains(defaultName)) {
+			defaultName = DEFAULT_PORT_NAME + "_" + nameIncrement++;
+		}
+		
+		return (defaultName.toString());
 	}
 
 	/**
@@ -157,7 +135,7 @@ public class AddPortHandler extends AbstractHandler {
 	 * @return the {@link Command} to add the specified {@link Interface} and all {@link InheritsInterface} if they
 	 * don't already exist and are present in the {@link IdlLibrary}; <code> null </code> otherwise
 	 */
-	private Command createAddInterfaceCommand(final IdlLibrary library, final String repId, final Map<String, Interface> interfaceMap) {
+	public Command createAddInterfaceCommand(final IdlLibrary library, final String repId, final Map<String, Interface> interfaceMap) {
 		final Interface i = ScdFactory.eINSTANCE.createInterface();
 		final IdlInterfaceDcl idlInter = (IdlInterfaceDcl) library.find(repId);
 

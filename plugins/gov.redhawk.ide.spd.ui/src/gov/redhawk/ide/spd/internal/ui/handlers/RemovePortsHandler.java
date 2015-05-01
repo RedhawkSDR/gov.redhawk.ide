@@ -150,7 +150,7 @@ public class RemovePortsHandler extends AbstractHandler {
 	 * @return a {@link Command} to remove the specified {@link Interface} and {@link InheritsInterface} if they can be
 	 * removed
 	 */
-	private Command createRemoveInterfaceCommand(final Collection<EObject> removePorts, final Set<String> removeInterfaces, final Interface i) {
+	public Command createRemoveInterfaceCommand(final Collection<EObject> removePorts, final Set<String> removeInterfaces, final Interface i) {
 		if (!containsRepId(i.getRepid(), removePorts)) {
 			final CompoundCommand command = new CompoundCommand("Remove Interfaces");
 			for (final InheritsInterface inherited : i.getInheritsInterfaces()) {

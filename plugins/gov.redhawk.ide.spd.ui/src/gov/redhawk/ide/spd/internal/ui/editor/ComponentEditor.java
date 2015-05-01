@@ -95,6 +95,7 @@ public class ComponentEditor extends SCAFormEditor {
 	        SpdPackage.Literals.SOFT_PKG__DESCRIPTOR, SpdPackage.Literals.DESCRIPTOR__COMPONENT
 	};
 	private ComponentOverviewPage overviewPage;
+	private PortsPage portsPage;
 	private PropertiesFormPage propertiesPage;
 	private ImplementationPage implementationPage;
 
@@ -368,6 +369,10 @@ public class ComponentEditor extends SCAFormEditor {
 			this.overviewPage = new ComponentOverviewPage(this);
 			this.addPage(this.overviewPage);
 			this.overviewPage.setInput(this.getMainResource());
+			
+			this.portsPage = new PortsPage(this);
+			this.addPage(this.portsPage);
+			this.portsPage.setInput(this.getMainResource());
 
 			this.implementationPage = new ImplementationPage(this);
 			this.addPage(this.implementationPage);
@@ -390,6 +395,10 @@ public class ComponentEditor extends SCAFormEditor {
 	
 	public ImplementationPage getImplementationPage() {
 		return implementationPage;
+	}
+	
+	public PortsPage getPortsPage() {
+		return portsPage;
 	}
 
 	/**

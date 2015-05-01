@@ -61,7 +61,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 	/** The Constant Toolbar ID. */
 	public static final String TOOLBAR_ID = "gov.redhawk.ide.spd.internal.ui.editor.overview.toolbar";
 	private GeneralInfoSection fInfoSection;
-	private PortsSection fPortsSection;
 	private InterfaceSection fInterfaceSection;
 	private ComponentContentSection componentContent;
 	private TestingSection testingSection;
@@ -147,8 +146,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 
 		// The following sections don't make sense for libraries, since the don't have .prf or .scd
 		if (!isSoftpackageLibrary()) {
-			createPortSection(managedForm, right, toolkit);
-
 			createInterfaceSection(managedForm, right, toolkit);
 
 			createComponentContentSection(managedForm, right, toolkit);
@@ -208,18 +205,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		this.exportingSection = new ExportingSection(this, right);
 		managedForm.addPart(this.exportingSection);
 
-	}
-
-	/**
-	 * Creates the port section.
-	 * 
-	 * @param managedForm the managed form
-	 * @param right the right
-	 * @param toolkit the toolkit
-	 */
-	private void createPortSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
-		this.fPortsSection = new PortsSection(this, right);
-		managedForm.addPart(this.fPortsSection);
 	}
 
 	/**
@@ -311,9 +296,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 		}
 
 		if (resource == this.scdResource) {
-			if (this.fPortsSection != null) {
-				this.fPortsSection.refresh(this.scdResource);
-			}
 			if (this.fInterfaceSection != null) {
 				this.fInterfaceSection.refresh(this.scdResource);
 			}
@@ -369,9 +351,6 @@ public class ComponentOverviewPage extends AbstractOverviewPage implements IView
 
 	@Override
 	public Viewer getViewer() {
-		if (this.fPortsSection != null) {
-			return this.fPortsSection.getViewer();
-		}
 		return null;
 	}
 }

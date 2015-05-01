@@ -92,11 +92,6 @@
             name="%command.name.1">
       </command>
       <command
-            description="%command.description.2"
-            id="gov.redhawk.ide.spd.ui.command.editPort"
-            name="%command.name.2">
-      </command>
-      <command
             description="%command.description.3"
             id="gov.redhawk.ide.spd.ui.command.recreateSettings"
             name="%command.name.3">
@@ -136,7 +131,7 @@
             <iterate
                   ifEmpty="false">
                <instanceof
-                     value="org.eclipse.emf.edit.provider.IWrapperItemProvider">
+                     value="mil.jpeojtrs.sca.scd.AbstractPort">
                </instanceof>
             </iterate>
          </enabledWhen>
@@ -144,23 +139,6 @@
       <handler
             class="gov.redhawk.ide.spd.internal.ui.handlers.AddPortHandler"
             commandId="gov.redhawk.ide.spd.ui.command.addPort">
-      </handler>
-      <handler
-            class="gov.redhawk.ide.spd.internal.ui.handlers.EditPortHandler"
-            commandId="gov.redhawk.ide.spd.ui.command.editPort">
-         <enabledWhen>
-            <and>
-               <count
-                     value="1">
-               </count>
-               <iterate
-                     ifEmpty="false">
-                  <instanceof
-                        value="org.eclipse.emf.edit.provider.IWrapperItemProvider">
-                  </instanceof>
-               </iterate>
-            </and>
-         </enabledWhen>
       </handler>
       <handler
             class="gov.redhawk.ide.spd.internal.ui.handlers.RecreateSettingsHandler"
@@ -292,5 +270,23 @@
              </objectClass>
           </enablement>
        </decorator>
+    </extension>
+    <extension
+          point="org.eclipse.ui.bindings">
+       <key
+             commandId="gov.redhawk.ide.spd.ui.command.removePorts"
+             contextId="gov.redhawk.ide.spd.ui.ports.context"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="DEL">
+       </key>
+    </extension>
+    <extension
+          point="org.eclipse.ui.contexts">
+       <context
+             description="used to override existing eclipse keybindings"
+             id="gov.redhawk.ide.spd.ui.ports.context"
+             name="Ports tab context"
+             parentId="org.eclipse.ui.contexts.window">
+       </context>
     </extension>
 </plugin>

@@ -11,8 +11,7 @@ Require-Bundle: org.junit;bundle-version="4.8.1",
  mil.jpeojtrs.sca.spd;bundle-version="2.2.2",
  gov.redhawk.eclipsecorba.library;bundle-version="7.0.0",
  org.eclipse.core.commands;bundle-version="3.6.0"
-Export-Package: gov.redhawk.ide.spd.internal.ui.handlers;x-internal:=true,
- gov.redhawk.ide.spd.ui.tests
+Export-Package: gov.redhawk.ide.spd.ui.tests
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
 Bundle-Activator: gov.redhawk.ide.spd.ui.tests.SpdUiTestsActivator

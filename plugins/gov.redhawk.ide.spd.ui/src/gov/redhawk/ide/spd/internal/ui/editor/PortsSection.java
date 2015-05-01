@@ -11,46 +11,39 @@
 package gov.redhawk.ide.spd.internal.ui.editor;
 
 import gov.redhawk.common.ui.editor.FormLayoutFactory;
-import gov.redhawk.eclipsecorba.idl.Identifiable;
-import gov.redhawk.eclipsecorba.idl.IdlInterfaceDcl;
-import gov.redhawk.eclipsecorba.library.IdlLibrary;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-import gov.redhawk.ide.spd.internal.ui.handlers.EditPortHandler;
 import gov.redhawk.ide.spd.internal.ui.handlers.PortsHandlerUtil;
-import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.editor.EMFTableViewerElementSelector;
 import gov.redhawk.ui.editor.EMFViewerElementSelector;
+import gov.redhawk.ui.editor.ScaFormPage;
 import gov.redhawk.ui.editor.ScaSection;
 import gov.redhawk.ui.util.ControlCommandBinder;
 import gov.redhawk.ui.util.ControlCommandBinding;
 import gov.redhawk.ui.util.ResizeTableColumnControlAdapter;
-import gov.redhawk.ui.util.SCAEditorUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import mil.jpeojtrs.sca.scd.AbstractPort;
 import mil.jpeojtrs.sca.scd.Ports;
 import mil.jpeojtrs.sca.scd.SoftwareComponent;
-import mil.jpeojtrs.sca.scd.SupportsInterface;
 import mil.jpeojtrs.sca.scd.Uses;
 import mil.jpeojtrs.sca.scd.provider.ScdItemProviderAdapterFactory;
 
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
-import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.WrapperItemProvider;
-import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -78,7 +71,6 @@ public class PortsSection extends ScaSection {
 	private Resource resource;
 
 	private Button addButton;
-	private Button editButton;
 	private Button removeButton;
 	private final List<ControlCommandBinding> controlBindings = new ArrayList<ControlCommandBinding>();
 
@@ -87,7 +79,8 @@ public class PortsSection extends ScaSection {
 	private EMFViewerElementSelector viewerSelector;
 
 	public enum PortsColumnInfo {
-		NAME(0, "Name"), REP_ID(1, "RepID");
+		NAME(0, "Name"),
+		REP_ID(1, "RepID");
 		private String name;
 		private int index;
 
@@ -110,8 +103,9 @@ public class PortsSection extends ScaSection {
 	 * 
 	 * @param page the page
 	 * @param parent the parent
+	 * @param model
 	 */
-	public PortsSection(final ComponentOverviewPage page, final Composite parent) {
+	public PortsSection(final ScaFormPage page, final Composite parent, PortsPageModel model) {
 		super(page, parent, Section.DESCRIPTION);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
@@ -151,13 +145,15 @@ public class PortsSection extends ScaSection {
 		final GridLayout layout = new GridLayout(2, false);
 		tableComp.setLayout(layout);
 		tableComp.setLayoutData(GridDataFactory.fillDefaults().span(2, 1).grab(true, true).create());
-		final Table table = toolkit.createTable(tableComp, SWT.MULTI | SWT.BORDER);
+		final Table table = toolkit.createTable(tableComp, SWT.SINGLE | SWT.BORDER);
 
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 		this.portsViewer = new TableViewer(table);
 		final TableLayout tableLayout = new TableLayout();
-		table.setLayoutData(GridDataFactory.fillDefaults().span(1, 3).hint(285, 150).grab(true, true).create()); // SUPPRESS CHECKSTYLE MagicNumber
+		table.setLayoutData(GridDataFactory.fillDefaults().span(1, 3).hint(285, 300).grab(true, true).create()); // SUPPRESS
+																													// CHECKSTYLE
+																													// MagicNumber
 		tableLayout.addColumnData(new ColumnWeightData(60, 120, false)); // SUPPRESS CHECKSTYLE MagicNumber
 		tableLayout.addColumnData(new ColumnWeightData(40, 180, false)); // SUPPRESS CHECKSTYLE MagicNumber
 		table.setLayout(tableLayout);
@@ -169,70 +165,39 @@ public class PortsSection extends ScaSection {
 			column.addControlListener(new ResizeTableColumnControlAdapter());
 		}
 
-		this.addButton = toolkit.createButton(tableComp, "Add...", SWT.PUSH);
+		this.addButton = toolkit.createButton(tableComp, "Add", SWT.PUSH);
 		this.addButton.setEnabled(true);
 		this.addButton.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP).create());
 		this.controlBindings.add(ControlCommandBinder.bindButton(this.addButton, PortsHandlerUtil.ADD_COMMAND));
-
-		this.editButton = toolkit.createButton(tableComp, "Edit", SWT.PUSH);
-		this.editButton.setEnabled(false);
-		this.editButton.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP).create());
-		this.controlBindings.add(ControlCommandBinder.bindButton(this.editButton, PortsHandlerUtil.EDIT_COMMAND));
 
 		this.removeButton = toolkit.createButton(tableComp, "Remove", SWT.PUSH);
 		this.removeButton.setEnabled(false);
 		this.removeButton.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP).create());
 		this.controlBindings.add(ControlCommandBinder.bindButton(this.removeButton, PortsHandlerUtil.REMOVE_COMMAND));
 
-		this.portsViewer.setContentProvider(new AdapterFactoryContentProvider(getAdapterFactory()));
+		this.portsViewer.setContentProvider(new ObservableListContentProvider());
 		this.portsViewer.setLabelProvider(new AdapterFactoryLabelProvider(getAdapterFactory()));
 		this.portsViewer.addFilter(new PropertyChannelFilter());
-		this.portsViewer.setFilters(new ViewerFilter[] {
-		        new ViewerFilter() {
+		this.portsViewer.addFilter(new ViewerFilter() {
 
-			        @Override
-			        public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-				        final Object wrappedElement = AdapterFactoryEditingDomain.unwrap(element);
-				        if (wrappedElement instanceof AbstractPort) {
-					        final AbstractPort port = (AbstractPort) wrappedElement;
-					        if (port.getName().equals(PrfListener.PROPERTY_EVENT)) {
-						        return false;
-					        }
-				        }
-				        return true;
-			        }
+			@Override
+			public boolean select(final Viewer viewer, final Object parentElement, Object element) {
+				element = AdapterFactoryEditingDomain.unwrap(element);
+				if (element instanceof Uses) {
+					final Uses pp = (Uses) element;
+					if (pp.isBiDirectional()) {
+						return false;
+					}
+				}
+				return true;
+			}
 
-		        }, new ViewerFilter() {
-
-			        @Override
-			        public boolean select(final Viewer viewer, final Object parentElement, Object element) {
-				        element = AdapterFactoryEditingDomain.unwrap(element);
-				        if (element instanceof Uses) {
-					        final Uses pp = (Uses) element;
-					        if (pp.isBiDirectional()) {
-						        return false;
-					        }
-				        }
-				        return true;
-			        }
-
-		        }
 		});
+
 		this.portsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				getPage().setSelection(event.getSelection());
-			}
-		});
-
-		this.portsViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(final DoubleClickEvent event) {
-				final EditingDomain editingDomain = getPage().getEditingDomain();
-				final ComponentEditor editor = (ComponentEditor) getPage().getEditor();
-				final Resource editResource = editor.getMainResource();
-				final EditPortHandler handler = new EditPortHandler(editor, editingDomain, editResource, ModelUtil.getSoftPkg(editResource));
-				handler.displayEditWizard(event.getSelection());
 			}
 		});
 	}
@@ -246,33 +211,36 @@ public class PortsSection extends ScaSection {
 		if (this.adapterFactory == null) {
 			this.adapterFactory = new ComposedAdapterFactory();
 
-			//			this.adapterFactory.addAdapterFactory(new ResourceItemProviderAdapterFactory());
+			// this.adapterFactory.addAdapterFactory(new ResourceItemProviderAdapterFactory());
 			this.adapterFactory.addAdapterFactory(new ScdItemProviderAdapterFactory());
-			//			this.adapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
+			// this.adapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
 		}
 		return this.adapterFactory;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void refresh(final Resource resource) {
 		this.resource = resource;
 		try {
-			this.portsViewer.setInput(getPorts());
+			IObservableList input = Properties.selfList(AbstractPort.class).observe(getPorts().getAllPorts());
+			this.portsViewer.setInput(input);
 			if (this.viewerSelector == null) {
 				this.viewerSelector = new EMFTableViewerElementSelector(this.portsViewer);
 			}
 			if (!getPorts().eAdapters().contains(this.viewerSelector)) {
 				getPorts().eAdapters().add(this.viewerSelector);
 			}
+
+			// Set default selection
+			if (portsViewer.getSelection().isEmpty() && portsViewer.getTable().getItemCount() >= 1) {
+				portsViewer.setSelection(new StructuredSelection(portsViewer.getElementAt(0)), true);
+			}
 		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Fallback
 			// Some problem occurred while trying to set the viewer input,
 			// therefore set to empty
-			this.portsViewer.setInput(Collections.EMPTY_LIST);
+			// TODO: This catch block is terrible. Throw an error message instead
+			this.portsViewer.setInput(new WritableList());
 		}
-		this.setEditable();
 	}
 
 	@Override
@@ -289,61 +257,12 @@ public class PortsSection extends ScaSection {
 	}
 
 	/**
-	 * Sets this sections widget enablement based on whether the resource is editable.
-	 */
-	private void setEditable() {
-		this.editable = SCAEditorUtil.isEditableResource(getPage(), this.resource);
-		if (!isPortSupplier()) {
-			this.editable = false;
-		}
-		// Don't set enabled on properties viewer since this will disable scrolling
-//		this.portsViewer.getTable().setEnabled(this.editable);
-		this.addButton.setEnabled(this.editable);
-	}
-
-	/**
-	 * @return true if the softpkg is a port supplier
-	 */
-	public boolean isPortSupplier() {
-		final SoftwareComponent softwareComponent = SoftwareComponent.Util.getSoftwareComponent(this.resource);
-		if (softwareComponent == null) {
-			return false;
-		}
-
-		// Find the CF/PortSupplier interface in our library if possible
-		IdlLibrary library = SdrUiPlugin.getDefault().getTargetSdrRoot().getIdlLibrary();
-		IdlInterfaceDcl portSupplierIntf = null;
-		if (library != null) {
-			Identifiable identifiable = library.find("IDL:CF/PortSupplier:1.0");
-			if (identifiable != null && identifiable instanceof IdlInterfaceDcl) {
-				portSupplierIntf = (IdlInterfaceDcl) identifiable;
-			}
-		}
-
-		for (final SupportsInterface si : softwareComponent.getComponentFeatures().getSupportsInterface()) {
-			// Look for direct support of CF/PortSupplier
-			if ("IDL:CF/PortSupplier:1.0".equals(si.getRepId())) {
-				return true;
-			}
-
-			// If we have CF/PortSupplier and the current supported interface in our library, try an 'instanceof' check
-			if (portSupplierIntf != null) {
-				Identifiable identifiable = library.find(si.getRepId());
-				if (identifiable != null && identifiable instanceof IdlInterfaceDcl && ((IdlInterfaceDcl) identifiable).isInstance(portSupplierIntf)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	/**
 	 * Gets the ports associated with the SoftwareComponent.
 	 * 
 	 * @return the {@link Ports} associated with the {@link SoftwareComponent}
 	 */
 	public Ports getPorts() {
+		
 		final SoftwareComponent softwareComponent = SoftwareComponent.Util.getSoftwareComponent(this.resource);
 		if (softwareComponent != null) {
 			return softwareComponent.getComponentFeatures().getPorts();
@@ -354,7 +273,7 @@ public class PortsSection extends ScaSection {
 	public Viewer getViewer() {
 		return this.portsViewer;
 	}
-
+	
 	private class PropertyChannelFilter extends ViewerFilter {
 
 		@Override
