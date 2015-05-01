@@ -1,11 +1,11 @@
 /*******************************************************************************
- * This file is protected by Copyright. 
+ * This file is protected by Copyright.
  * Please refer to the COPYRIGHT file distributed with this source distribution.
  *
  * This file is part of REDHAWK IDE.
  *
- * All rights reserved.  This program and the accompanying materials are made available under 
- * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package gov.redhawk.ide.swtbot;
@@ -20,8 +20,9 @@ import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 
 public class MenuUtils {
 	static final String PROPERTIES_VIEW_ID = "org.eclipse.ui.views.PropertySheet";
-	
-	protected MenuUtils() {
+
+	/** private to prevent instantiation since all functions are static. */
+	private MenuUtils() {
 	}
 
 	/**
@@ -103,7 +104,7 @@ public class MenuUtils {
 	 * Opens the indicated view. If already open, brings view into focus.
 	 * @param bot
 	 * @param view
-	 * @return 
+	 * @return
 	 */
 	public static SWTBotView showView(SWTWorkbenchBot bot, String viewID) {
 		SWTBotView viewToOpen = bot.viewById(viewID); // SWTBot uses ViewMenuFinder underneath

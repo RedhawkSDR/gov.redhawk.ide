@@ -92,8 +92,8 @@ public final class StandardTestActions {
 
 	private static volatile boolean pydevSetup = false;
 
+	/** private to prevent instantiation since all functions are static. */
 	private StandardTestActions() {
-
 	}
 
 	public static void configurePyDev() {

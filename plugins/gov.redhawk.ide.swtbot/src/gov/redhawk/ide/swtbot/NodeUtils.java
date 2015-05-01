@@ -25,7 +25,8 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class NodeUtils {
 
-	protected NodeUtils() {
+	/** private to prevent instantiation since all functions are static. */
+	private NodeUtils() {
 	}
 
 	/**

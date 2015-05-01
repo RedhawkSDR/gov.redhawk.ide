@@ -20,6 +20,7 @@ public class ProjectExplorerUtils {
 
 	public static final String PROJECT_EXPLORER_VIEW_ID = "org.eclipse.ui.navigator.ProjectExplorer";
 
+	/** private to prevent instantiation since all functions are static. */
 	private ProjectExplorerUtils() {
 	}
 
