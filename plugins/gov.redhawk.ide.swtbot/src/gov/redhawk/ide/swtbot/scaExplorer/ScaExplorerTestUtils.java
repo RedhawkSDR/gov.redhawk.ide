@@ -572,7 +572,7 @@ public class ScaExplorerTestUtils {
 	/**
 	 * Waits until Waveform disappears in ScaExplorer
 	 * @param componentName
-	 * @deprecated use the type agnostic method call 'waitUntilNodeRemovedFromScaExplorer' instead
+	 * @deprecated use the type agnostic method call {@link #waitUntilNodeRemovedFromScaExplorer(SWTWorkbenchBot, String[], String)} instead
 	 */
 	@Deprecated
 	public static void waitUntilScaExplorerWaveformDisappears(SWTWorkbenchBot bot, final String[] waveformParentPath, final String waveform) {
@@ -842,7 +842,7 @@ public class ScaExplorerTestUtils {
 	/**
 	 * Waits until Waveform displays in ScaExplorer
 	 * @param componentName
-	 * @deprecated use the type agnostic method call 'waitUntilNodeAppearsInScaExplorer' instead
+	 * @deprecated use the type agnostic method call {@link #waitUntilNodeAppearsInScaExplorer(SWTWorkbenchBot, String[], String)} instead
 	 */
 	@Deprecated
 	public static void waitUntilWaveformAppearsInScaExplorer(SWTWorkbenchBot bot, final String[] waveformParentPath, final String waveformName) {

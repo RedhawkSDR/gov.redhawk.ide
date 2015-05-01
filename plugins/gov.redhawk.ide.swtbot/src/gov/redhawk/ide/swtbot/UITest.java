@@ -33,7 +33,7 @@ public abstract class UITest {
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-		// Stop Pydev from generating pop-ups
+		// Stop PyDev from generating pop-ups
 		ScopedPreferenceStore pydevPrefs = new ScopedPreferenceStore(InstanceScope.INSTANCE, PYDEV_BUNDLE);
 		pydevPrefs.setValue(PYDEV_CHECK_SETTINGS, false);
 		pydevPrefs.setValue(PYDEV_FUNDING_SHOWN, true);

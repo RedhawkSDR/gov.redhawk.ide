@@ -99,7 +99,7 @@ public class WaveformUtils {
 
 	/**
 	 * Launches the selected waveform in the SCA Explorer sandbox
-	 * @returns the SWTBotTreeItem for the waveform
+	 * @returns the SWTBotTreeItem for the Waveform on the Sandbox
 	 */
 	public static SWTBotTreeItem launchLocalWaveform(final SWTWorkbenchBot bot, final String waveformName) {
 		SWTBotView explorerView = bot.viewById("gov.redhawk.ui.sca_explorer");
@@ -134,7 +134,7 @@ public class WaveformUtils {
 			}
 		});
 
-		// Return the treeitem for the running waveform
+		// Return the treeitem for the running waveform from the Sandbox
 		for (SWTBotTreeItem item : sandbox.getItems()) {
 			if (item.getText().matches(waveformName + ".*")) {
 				return item;
