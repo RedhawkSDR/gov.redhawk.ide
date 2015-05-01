@@ -17,7 +17,6 @@ import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
-import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
@@ -42,9 +41,9 @@ public class ComponentUtils {
 		SWTBotTreeItem waveformNode = viewBot.tree().expandNode("Target SDR", "Components", componentName);
 		waveformNode.contextMenu("Launch in Sandbox").menu(implementation.toLowerCase()).click();
 
-		// Wait for the launched waveform to appear in the sandbox
+		// Wait for the launched waveform to appear in the Sandbox > Chalkboard
 		final SWTBotTreeItem chalkboard = viewBot.tree().expandNode("Sandbox", "Chalkboard");
-		bot.waitUntil(new ICondition() {
+		bot.waitUntil(new DefaultCondition() {
 
 			@Override
 			public boolean test() throws Exception {
@@ -54,10 +53,6 @@ public class ComponentUtils {
 					}
 				}
 				return false;
-			}
-
-			@Override
-			public void init(SWTBot bot) {
 			}
 
 			@Override
