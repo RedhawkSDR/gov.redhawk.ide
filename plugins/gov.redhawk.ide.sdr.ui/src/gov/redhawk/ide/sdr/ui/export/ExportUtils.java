@@ -68,7 +68,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.prefs.BackingStoreException;
@@ -520,34 +519,17 @@ public class ExportUtils {
 	}
 
 	/**
-	 * Check generated files list to make sure "../build.sh" will be generated (which is top level build.sh since it is
-	 * relative to implementation dir),
-	 * as well as additionalRequiredFile (when not null).
+	 * Sets a preference on the project to enable the use of build.sh for installing to the SDRROOT.
 	 * @since 3.4
 	 */
-	public static void setUseBuildSH(@NonNull IProject project, @NonNull String[] generateFiles, @Nullable String additionalRequiredFile) {
-		boolean foundTopLevelBuildSh = false;
-		boolean foundAdditionalFile = (additionalRequiredFile == null); // allow null additionalRequiredFile
-		for (String file : generateFiles) {
-			if ("../build.sh".equals(file)) {
-				foundTopLevelBuildSh = true;
-			} else if (foundAdditionalFile || additionalRequiredFile.equals(file)) {
-				foundAdditionalFile = true;
-			}
-			if (foundTopLevelBuildSh && foundAdditionalFile) {
-				break; // found all necessary generated files, so break out of loop
-			}
-		}
-
-		if (foundTopLevelBuildSh && foundAdditionalFile) {
-			IScopeContext projectScope = new ProjectScope(project);
-			IEclipsePreferences node = projectScope.getNode(SdrUiPlugin.PLUGIN_ID);
-			node.putBoolean("useBuild.sh", true);
-			try {
-				node.flush();
-			} catch (BackingStoreException e) {
-				SdrUiPlugin.getDefault().logError("Unable to enable useBuild.sh project preference for " + project, e);
-			}
+	public static void setUseBuildSH(@NonNull IProject project) {
+		IScopeContext projectScope = new ProjectScope(project);
+		IEclipsePreferences node = projectScope.getNode(SdrUiPlugin.PLUGIN_ID);
+		node.putBoolean("useBuild.sh", true);
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			SdrUiPlugin.getDefault().logError("Unable to enable useBuild.sh project preference for " + project, e);
 		}
 	}
 
