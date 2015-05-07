@@ -106,7 +106,7 @@ public class UsesDeviceFrontEndTunerWizardPage extends WizardPage {
 	
 	public UsesDeviceFrontEndTunerWizardPage(SoftwareAssembly sad) {
 		super("UsesDeviceFrontEndTunerWizardPage", "Allocate Tuner", TITLE_IMAGE);
-		this.setDescription("Provide the ID for the device you want to allocate and use.\nYou may optionally provide the device model.");
+		this.setDescription("Provide a unique ID for the uses device dependency.\nYou may optionally provide the device model.");
 
 		model = new Model();
 		dbc = new DataBindingContext();
@@ -136,9 +136,9 @@ public class UsesDeviceFrontEndTunerWizardPage extends WizardPage {
 		composite.setLayout(new GridLayout(2, false));
 
 		Label usesDeviceIdLabel = new Label(composite, SWT.NONE);
-		usesDeviceIdLabel.setText("Uses Device Id");
+		usesDeviceIdLabel.setText("Uses Device ID");
 		usesDeviceIdText = new Text(composite, SWT.BORDER);
-		usesDeviceIdText.setToolTipText("Unique id for Device");
+		usesDeviceIdText.setToolTipText("Unique ID for the uses device dependency (the default should normally be fine)");
 		usesDeviceIdText.setEnabled(true);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(usesDeviceIdText);
 		dbc.bindValue(SWTObservables.observeText(usesDeviceIdText, SWT.Modify), 

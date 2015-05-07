@@ -104,7 +104,7 @@ public class PortsWizardPage extends WizardPage {
 
 	public PortsWizardPage() {
 		super("portWizardPage", "Identify Ports", TITLE_IMAGE);
-		this.setDescription("Enter any uses and provides ports from the device you want to use");
+		this.setDescription("Enter the names of any uses and provides ports from the device you want to use");
 
 		model = new Model();
 		dbc = new DataBindingContext();
@@ -142,12 +142,14 @@ public class PortsWizardPage extends WizardPage {
 		// add provides port "Add" button
 		providesPortAddBtn = new Button(providesPortComposite, SWT.PUSH);
 		providesPortAddBtn.setImage(addImage);
+		providesPortAddBtn.setToolTipText("Add new port to list");
 		//providesPortAddBtn.setText("Add Provides Port");
 		// add provides port list
 		providesPortList = addPortList(providesPortComposite, Model.PROVIDES_PORT_NAMES);
 		// add provides port "Delete" button
 		providesPortDeleteBtn = new Button(providesPortComposite, SWT.PUSH);
 		providesPortDeleteBtn.setImage(removeImage);
+		providesPortDeleteBtn.setToolTipText("Remove port from list");
 		//providesPortDeleteBtn.setText("Delete");
 		if (providesPortList.getItemCount() <= 0) {
 			providesPortDeleteBtn.setEnabled(false);
@@ -167,12 +169,14 @@ public class PortsWizardPage extends WizardPage {
 		// add uses port "Add" button
 		usesPortAddBtn = new Button(usesPortComposite, SWT.PUSH);
 		usesPortAddBtn.setImage(addImage);
+		usesPortAddBtn.setToolTipText("Add new port to list");
 		//usesPortAddBtn.setText("Add Uses Port");
 		// add uses port list
 		usesPortList = addPortList(usesPortComposite, Model.USES_PORT_NAMES);
 		// add uses port "Delete" button
 		usesPortDeleteBtn = new Button(usesPortComposite, SWT.PUSH);
 		usesPortDeleteBtn.setImage(removeImage);
+		usesPortDeleteBtn.setToolTipText("Remove port from list");
 		//usesPortDeleteBtn.setText("Delete");
 		if (usesPortList.getItemCount() <= 0) {
 			usesPortDeleteBtn.setEnabled(false);

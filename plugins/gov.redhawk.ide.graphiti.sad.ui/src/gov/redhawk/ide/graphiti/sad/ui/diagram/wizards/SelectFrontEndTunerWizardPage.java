@@ -54,8 +54,8 @@ public class SelectFrontEndTunerWizardPage extends WizardPage {
 	private TableViewer tableViewer;
 	
 	public SelectFrontEndTunerWizardPage() {
-		super("SelectFrontEndTunerWizardPage", "Allocate Tuner", TITLE_IMAGE);
-		this.setDescription("Select a FrontEnd Tuner installed on your system.\nThis will pre-populate device model and ports in the pages ahead.");
+		super("SelectFrontEndTunerWizardPage", "Select Target Device", TITLE_IMAGE);
+		this.setDescription("Select a FrontEnd tuner installed on your system.\nThis will pre-populate many of the fields in the following wizard pages.");
 
 		SoftPkg[] targetSDRDevices = SdrUiPlugin.getDefault().getTargetSdrRoot().getDevicesContainer().getComponents().toArray(new SoftPkg[0]);
 		targetSDRFrontEndDevices = getFrontEndDevices(targetSDRDevices).toArray(new SoftPkg[0]);
@@ -99,7 +99,7 @@ public class SelectFrontEndTunerWizardPage extends WizardPage {
 		composite.setLayout(new GridLayout(1, false));
 
 		Label usesDeviceIdLabel = new Label(composite, SWT.NONE);
-		usesDeviceIdLabel.setText("Select which FrontEnd device you would like to use?");
+		usesDeviceIdLabel.setText("Which FrontEnd device you would like to use?");
 
 		createFrontEndDeviceTable(composite);
 		
