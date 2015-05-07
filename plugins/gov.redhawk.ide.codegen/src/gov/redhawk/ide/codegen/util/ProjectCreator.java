@@ -388,7 +388,7 @@ public abstract class ProjectCreator {
 	protected static String getBaseFileName(IProject project) {
 		return getBaseFileName(project.getName());
 	}
-	
+
 	/**
 	 * IDE-1111: Make usable file/class names out of project names
 	 * @param name The original project name
@@ -402,7 +402,7 @@ public abstract class ProjectCreator {
 		String[] tokens = name.split("\\.");
 		return tokens[tokens.length - 1];
 	}
-	
+
 	/**
 	 * Makes sure that a project has been cleaned out.
 	 * @param project

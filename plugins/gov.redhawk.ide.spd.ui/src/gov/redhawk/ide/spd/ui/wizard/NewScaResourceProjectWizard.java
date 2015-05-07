@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+
 /**
  * The Class NewScaResourceProjectWizard.
  * 
@@ -52,12 +53,12 @@ public class NewScaResourceProjectWizard extends NewScaResourceWizard implements
 		this.addPage(getResourcePropertiesPage());
 		setImplPage(new ImplementationWizardPage("", ICodeGeneratorDescriptor.COMPONENT_TYPE_RESOURCE));
 		this.getImplPage().setImpl(this.getImplementation());
-		
+
 		getImplPage().setDescription("Choose the initial settings for the new implementation.");
 		this.addPage(getImplPage());
 
 		this.getImplList().add(new ImplementationAndSettings(getImplPage().getImplementation(), getImplPage().getImplSettings()));
-		
+
 		try {
 			final Field field = Wizard.class.getDeclaredField("pages");
 			field.getModifiers();
@@ -77,13 +78,13 @@ public class NewScaResourceProjectWizard extends NewScaResourceWizard implements
 	}
 
 	@Override
-    protected IFile createComponentFiles(IProject project, String name, String spdId, String authorName, IProgressMonitor monitor) throws CoreException {
-	    return ComponentProjectCreator.createComponentFiles(project, name, spdId, authorName, monitor);
-    }
+	protected IFile createComponentFiles(IProject project, String name, String spdId, String authorName, IProgressMonitor monitor) throws CoreException {
+		return ComponentProjectCreator.createComponentFiles(project, name, spdId, authorName, monitor);
+	}
 
 	@Override
-    protected IProject createEmptyProject(String projectName, URI locationURI, IProgressMonitor monitor) throws CoreException {
+	protected IProject createEmptyProject(String projectName, URI locationURI, IProgressMonitor monitor) throws CoreException {
 		return ComponentProjectCreator.createEmptyProject(projectName, locationURI, monitor);
-    }
+	}
 
 }

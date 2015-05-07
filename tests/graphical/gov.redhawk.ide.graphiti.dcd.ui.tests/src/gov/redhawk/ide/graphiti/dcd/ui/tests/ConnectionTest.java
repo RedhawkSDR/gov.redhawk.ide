@@ -123,7 +123,7 @@ public class ConnectionTest extends AbstractGraphitiTest {
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
 
-		// Add components to diagram from palette
+		// Add devices and a service to diagram from palette
 		editor = gefBot.gefEditor(projectName);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 300, 0);

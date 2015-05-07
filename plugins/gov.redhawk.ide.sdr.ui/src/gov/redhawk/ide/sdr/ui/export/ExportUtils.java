@@ -171,10 +171,9 @@ public class ExportUtils {
 
 		if (useBuildSH(proj)) {
 			buildSH(monitor, proj);
-			return;
+		} else {
+			ExportUtils.basicExportComponent(proj, exporter, true, monitor);
 		}
-
-		ExportUtils.basicExportComponent(proj, exporter, true, monitor);
 	}
 
 	/**
@@ -533,6 +532,14 @@ public class ExportUtils {
 		}
 	}
 
+	/**
+	 * Invokes "build.sh install" for a project.
+	 * @param progress
+	 * @param project
+	 * @throws CoreException
+	 * @throws IOException
+	 * @throws DebugException
+	 */
 	private static void buildSH(final IProgressMonitor progress, IProject project) throws CoreException, IOException, DebugException {
 		String configTypeId = IExternalToolConstants.ID_PROGRAM_LAUNCH_CONFIGURATION_TYPE;
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
