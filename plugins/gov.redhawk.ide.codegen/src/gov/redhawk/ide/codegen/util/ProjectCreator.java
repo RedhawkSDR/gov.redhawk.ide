@@ -428,11 +428,16 @@ public abstract class ProjectCreator {
 
 		// Save EMF resources
 		try {
-			final SubMonitor loopProgress = progress.newChild(1).setWorkRemaining(resourceSet.getResources().size());
+			final SubMonitor loopProgress = progress.newChild(1).setWorkRemaining(resourceSet.getResources().size() * 2);
 			for (final Resource resource : resourceSet.getResources()) {
 				loopProgress.setTaskName("Saving " + resource.getURI().lastSegment());
+				// Save the resource to disk
 				resource.save(null);
 				loopProgress.worked(1);
+
+				// Generate an Eclipse resource change notification
+				String platformURI = resource.getURI().toPlatformString(true);
+				ResourcesPlugin.getWorkspace().getRoot().findMember(platformURI).refreshLocal(IResource.DEPTH_ZERO, progress.newChild(1));
 			}
 		} catch (final IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Internal Error", e));
@@ -578,11 +583,16 @@ public abstract class ProjectCreator {
 
 		// Save EMF resources
 		try {
-			final SubMonitor loopProgress = progress.newChild(1).setWorkRemaining(resourceSet.getResources().size());
+			final SubMonitor loopProgress = progress.newChild(1).setWorkRemaining(resourceSet.getResources().size() * 2);
 			for (final Resource resource : resourceSet.getResources()) {
 				loopProgress.setTaskName("Saving " + resource.getURI().lastSegment());
+				// Save the resource to disk
 				resource.save(null);
 				loopProgress.worked(1);
+
+				// Generate an Eclipse resource change notification
+				String platformURI = resource.getURI().toPlatformString(true);
+				ResourcesPlugin.getWorkspace().getRoot().findMember(platformURI).refreshLocal(IResource.DEPTH_ZERO, loopProgress.newChild(1));
 			}
 		} catch (final IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, RedhawkIdeActivator.PLUGIN_ID, "Internal Error", e));
