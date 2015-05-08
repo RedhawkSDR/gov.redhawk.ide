@@ -38,6 +38,7 @@ import org.eclipse.graphiti.ui.editor.DefaultPaletteBehavior;
 import org.eclipse.graphiti.ui.editor.DefaultUpdateBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramBehavior;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
+import org.eclipse.graphiti.ui.editor.IDiagramEditorInput;
 import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -84,7 +85,7 @@ public class GraphitiDcdDiagramEditor extends DiagramEditor {
 					// In order to work with a Graphiti diagram, our form creates an editing domain with the Graphiti
 					// supplied Command stack.
 					@Override
-					protected void createEditingDomain() {
+					protected void createEditingDomain(IDiagramEditorInput input) {
 						initializeEditingDomain((TransactionalEditingDomain) editingDomain);
 					}
 

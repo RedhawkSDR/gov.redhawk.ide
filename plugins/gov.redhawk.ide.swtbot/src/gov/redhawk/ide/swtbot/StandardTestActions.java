@@ -257,7 +257,7 @@ public final class StandardTestActions {
 		Assert.assertTrue("SDR failed to load: " + root.getLoadStatus(), root.getLoadStatus().isOK());
 	}
 
-	public static void importProject(Bundle bundle, IPath path, Map< ? , ? > override) throws CoreException {
+	public static void importProject(Bundle bundle, IPath path, Map< String , String > override) throws CoreException {
 		if (!".project".equals(path.lastSegment())) {
 			path = path.append(".project");
 		}
