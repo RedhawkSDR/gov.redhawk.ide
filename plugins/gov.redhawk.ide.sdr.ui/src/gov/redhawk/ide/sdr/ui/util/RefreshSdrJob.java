@@ -13,6 +13,7 @@ package gov.redhawk.ide.sdr.ui.util;
 import gov.redhawk.ide.sdr.SdrRoot;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -49,6 +50,9 @@ public class RefreshSdrJob extends Job {
 		if (this.sdrRoot != null) {
 			this.sdrRoot.reload(monitor);
 		}
+		
+		// Refresh the dynamic C++ include paths in case there has been change to a shared library in the SDR.
+		CoreModel.getDefault().getProjectDescriptionManager().updateExternalSettingsProviders(new String[] { "gov.redhawk.ide.cplusplus.utils.CppExternalSettingProvider" }, monitor);
 		return Status.OK_STATUS;
 	}
 
