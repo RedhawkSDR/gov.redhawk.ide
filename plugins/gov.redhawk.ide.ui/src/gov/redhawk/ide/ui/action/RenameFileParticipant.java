@@ -27,10 +27,9 @@ import mil.jpeojtrs.sca.scd.ScdPackage;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 
-import org.eclipse.core.internal.resources.File;
-import org.eclipse.core.internal.resources.Folder;
-import org.eclipse.core.internal.resources.Project;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -57,7 +56,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
-@SuppressWarnings("restriction")
 public class RenameFileParticipant extends RenameParticipant {
 
 	/** String builder for creating paths */
@@ -70,10 +68,10 @@ public class RenameFileParticipant extends RenameParticipant {
 	private IEditorReference[] activeEditors;
 
 	/** The project that is being refactored */
-	private Project currentProject;
+	private IProject currentProject;
 
 	/** The main spd file in the project that is currently being refactored */
-	private File currentSpdFile;
+	private IFile currentSpdFile;
 
 	/** The current project's editor input...used to find out if a particular editor matches up with the spd we have on file */
 	private FileEditorInput input;
@@ -99,10 +97,10 @@ public class RenameFileParticipant extends RenameParticipant {
 	};
 
 	/** List of files that will be changed */
-	private final List<File> affectedFiles = new ArrayList<File>();
+	private final List<IFile> affectedFiles = new ArrayList<IFile>();
 
 	/** List of folders that will be changed */
-	private final List<Folder> affectedFolders = new ArrayList<Folder>();
+	private final List<IFolder> affectedFolders = new ArrayList<IFolder>();
 
 	/** List of SCA Resource types */
 	private static final List<String> SUPPORTED_FILES = Arrays.asList(new String[] {
@@ -116,7 +114,7 @@ public class RenameFileParticipant extends RenameParticipant {
 	@Override
 	protected boolean initialize(final Object element) {
 		/*
-		 *  Verify object for refactoring is a Projet with SCA Comonent Nature.
+		 *  Verify object for refactoring is a project with the SCA component nature.
 		 *  
 		 *  Grab it's spd file.
 		 *  
@@ -125,8 +123,8 @@ public class RenameFileParticipant extends RenameParticipant {
 		 *  
 		 *  Finally, refresh the local resource to make Eclipse full aware of our changes.
 		 */
-		if (element instanceof Project) {
-			final Project project = (Project) element;
+		if (element instanceof IProject) {
+			final IProject project = (IProject) element;
 
 			try {
 				if (project.hasNature(ScaComponentProjectNature.ID) && !project.hasNature(ScaNodeProjectNature.ID)) {
@@ -137,7 +135,7 @@ public class RenameFileParticipant extends RenameParticipant {
 						for (final String s : SUPPORTED_FILES) {
 							if (resource.getName().endsWith(s)) {
 								if (resource.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-									this.currentSpdFile = (File) resource;
+									this.currentSpdFile = (IFile) resource;
 								}
 								resources.add(resource);
 							}
@@ -226,7 +224,7 @@ public class RenameFileParticipant extends RenameParticipant {
 		final TextSearchRequestor collector = new TextSearchRequestor() {
 			@Override
 			public boolean acceptPatternMatch(final TextSearchMatchAccess matchAccess) throws CoreException {
-				final File matchedFile = (File) matchAccess.getFile();
+				final IFile matchedFile = (IFile) matchAccess.getFile();
 
 				if (!RenameFileParticipant.this.affectedFiles.contains(matchedFile)) {
 					RenameFileParticipant.this.affectedFiles.add(matchedFile);
@@ -269,7 +267,7 @@ public class RenameFileParticipant extends RenameParticipant {
 			String fileName = "";
 			RenameResourceChange change;
 
-			for (final File file : this.affectedFiles) {
+			for (final IFile file : this.affectedFiles) {
 				if (file.getFullPath().lastSegment().contains(oldName)) {
 					fileName = file.getFullPath().lastSegment().replace(oldName, newName);
 
@@ -277,18 +275,18 @@ public class RenameFileParticipant extends RenameParticipant {
 					result.add(change);
 
 					if (fileName.endsWith(".spec") || fileName.endsWith(".java")) {
-						if (file.getParent() instanceof Folder) {
-							final Folder parentFolder = (Folder) file.getParent();
+						if (file.getParent() instanceof IFolder) {
+							final IFolder parentFolder = (IFolder) file.getParent();
 
 							if (!this.affectedFolders.contains(parentFolder)) {
-								this.affectedFolders.add((Folder) file.getParent());
+								this.affectedFolders.add((IFolder) file.getParent());
 							}
 						}
 					}
 				}
 			}
 
-			for (final Folder folder : this.affectedFolders) {
+			for (final IFolder folder : this.affectedFolders) {
 				fileName = folder.getFullPath().lastSegment().replace(oldName, newName);
 
 				change = new RenameResourceChange(folder.getFullPath(), fileName);
@@ -307,12 +305,12 @@ public class RenameFileParticipant extends RenameParticipant {
 	 * @param files a list of affected files that was gathered while searching for potential candidates for refactoring.
 	 * @return boolean whether or not the list of files has references for SPD, SCD and PRF files. 
 	 */
-	private boolean hasAllResourceFiles(final List<File> files) {
-		File spdFile = null;
-		File scdFile = null;
-		File prfFile = null;
+	private boolean hasAllResourceFiles(final List<IFile> files) {
+		IFile spdFile = null;
+		IFile scdFile = null;
+		IFile prfFile = null;
 
-		for (final File file : files) {
+		for (final IFile file : files) {
 			if (file.getFileExtension() != null) {
 				if ("xml".equals(file.getFileExtension())) {
 					final String scaType = file.getFullPath().toString().split("[.]")[1];
@@ -332,8 +330,8 @@ public class RenameFileParticipant extends RenameParticipant {
 		final URI spdURI = URI.createPlatformResourceURI(spdFile.getFullPath().toString(), false);
 		final SoftPkg softPkg = ModelUtil.loadSoftPkg(spdURI);
 
-		scdFile = (File) ModelUtil.getScdFile(softPkg.getDescriptor());
-		prfFile = (File) ModelUtil.getPrfFile(softPkg.getPropertyFile());
+		scdFile = (IFile) ModelUtil.getScdFile(softPkg.getDescriptor());
+		prfFile = (IFile) ModelUtil.getPrfFile(softPkg.getPropertyFile());
 
 		if (scdFile.exists() && prfFile.exists()) {
 			if (!files.contains(scdFile)) {
