@@ -161,6 +161,7 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (scdResource.getEObject("/") == null) {
+					PortsPage.this.fPortDetailsSection.getSection().setVisible(false);
 					return;
 				}
 				
@@ -168,11 +169,14 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 				if (ports != null && model.getPorts() != ports) {
 					model.setPorts(ports);
 				}
-				
+
 				StructuredSelection ss = (StructuredSelection) event.getSelection();
 				AbstractPort port = (AbstractPort) ss.getFirstElement();
-				if (port != null && model.getPort() != port) {
+				if (port == null) {
+					PortsPage.this.fPortDetailsSection.getSection().setVisible(false);
+				} else if (port != null && model.getPort() != port) {
 					model.setPort(port);
+					PortsPage.this.fPortDetailsSection.getSection().setVisible(true);
 				}
 
 				PortsPage.this.fPortsSection.refresh(scdResource);
