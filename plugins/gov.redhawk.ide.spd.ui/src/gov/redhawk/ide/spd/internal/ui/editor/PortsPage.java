@@ -216,6 +216,7 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 	 */
 	private void createPortDetailsSection(final IManagedForm managedForm, final Composite right, final FormToolkit toolkit) {
 		this.fPortDetailsSection = new PortDetailsSection(this, right, getEditor(), model);
+		this.fPortDetailsSection.getSection().setVisible(false);
 		managedForm.addPart(this.fPortDetailsSection);
 	}
 
