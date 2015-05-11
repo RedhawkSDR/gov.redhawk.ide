@@ -57,6 +57,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
@@ -179,6 +180,13 @@ public final class StandardTestActions {
 		bot.sleep(100);
 	}
 
+	/**
+	 * Uses the hotkey ctrl+b to build all projects in the workspace
+	 */
+	public static void buildAll() {
+		KeyboardFactory.getSWTKeyboard().pressShortcut(SWT.CTRL, 'b');
+	}
+	
 	/**
 	 * Generates the project using the Generate button in the overview tab
 	 * Generates all files
