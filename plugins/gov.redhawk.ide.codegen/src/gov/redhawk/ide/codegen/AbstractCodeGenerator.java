@@ -264,8 +264,7 @@ public abstract class AbstractCodeGenerator implements IScaComponentCodegen {
 	/**
 	 * @since 11.0
 	 */
-	protected String getDefaultEntryPoint(SoftPkg spd) {
-		// IDE-1178: modified to use only the last segment of a namespaced name
+	protected String getSpdBaseName(SoftPkg spd) {
 		String name = spd.getName();
 		int lastDot = name.lastIndexOf('.');
 		if (lastDot > -1) {
