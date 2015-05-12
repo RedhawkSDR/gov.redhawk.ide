@@ -384,8 +384,8 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
 
-		SWTBotGefEditPart useDeviceEditPart = editor.getEditPart(UsesDeviceTest.USE_DEVICE);
-		UsesDeviceTest.assertUsesDevice(useDeviceEditPart);
+		SWTBotGefEditPart useDeviceEditPart = editor.getEditPart(SadTestUtils.USE_DEVICE);
+		SadTestUtils.assertUsesDevice(useDeviceEditPart);
 
 		// edit device id via xml
 		// Edit content of sad.xml
@@ -398,7 +398,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
 
-		useDeviceEditPart = editor.getEditPart(UsesDeviceTest.USE_DEVICE);
-		UsesDeviceTest.assertUsesDevice(useDeviceEditPart);
+		useDeviceEditPart = editor.getEditPart(SadTestUtils.USE_DEVICE);
+		SadTestUtils.assertUsesDevice(useDeviceEditPart);
 	}
 }

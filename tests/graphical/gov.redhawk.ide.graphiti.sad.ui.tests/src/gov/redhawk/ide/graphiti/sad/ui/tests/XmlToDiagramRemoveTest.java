@@ -254,8 +254,8 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 		// Confirm edits appear in the diagram
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
 
-		SWTBotGefEditPart useDeviceEditPart = editor.getEditPart(UsesDeviceTest.USE_DEVICE);
-		UsesDeviceTest.assertUsesDevice(useDeviceEditPart);
+		SWTBotGefEditPart useDeviceEditPart = editor.getEditPart(SadTestUtils.USE_DEVICE);
+		SadTestUtils.assertUsesDevice(useDeviceEditPart);
 
 		//remove device id via xml
 		DiagramTestUtils.openTabInEditor(editor, waveformName + ".sad.xml");
@@ -267,7 +267,7 @@ public class XmlToDiagramRemoveTest extends AbstractGraphitiTest {
 		// Confirm use device shape disappears
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
 
-		useDeviceEditPart = editor.getEditPart(UsesDeviceTest.USE_DEVICE);
+		useDeviceEditPart = editor.getEditPart(SadTestUtils.USE_DEVICE);
 		Assert.assertNull("Uses device exists but should have disappeared", useDeviceEditPart);
 	}
 }

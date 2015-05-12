@@ -35,10 +35,6 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 
 	private SWTBotGefEditor editor;
 	private String waveformName;
-	public static final String USE_DEVICE = "Use Device";
-	public static final String USE_FRONTEND_TUNER_DEVICE = "Use FrontEnd Tuner Device";
-
-
 	
 	/**
 	 * IDE-124
@@ -63,7 +59,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		editor.setFocus();
 
 		// Confirm created component truly is Generic FrontEnd Tuner
-		SWTBotGefEditPart frontEndTunerGefEditPart = editor.getEditPart(USE_FRONTEND_TUNER_DEVICE);
+		SWTBotGefEditPart frontEndTunerGefEditPart = editor.getEditPart(SadTestUtils.USE_FRONTEND_TUNER_DEVICE);
 		assertFrontEndTuner(frontEndTunerGefEditPart);
 
 		RHContainerShapeImpl rhContainerShape = (RHContainerShapeImpl) frontEndTunerGefEditPart.part().getModel();
@@ -86,10 +82,10 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
 
 		//delete
-		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(USE_FRONTEND_TUNER_DEVICE));
+		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(SadTestUtils.USE_FRONTEND_TUNER_DEVICE));
 
 		//verify deleted
-		Assert.assertNull(editor.getEditPart(USE_FRONTEND_TUNER_DEVICE));
+		Assert.assertNull(editor.getEditPart(SadTestUtils.USE_FRONTEND_TUNER_DEVICE));
 	}
 
 	/**
@@ -125,7 +121,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		editor.setFocus();
 
 		// Confirm created component truly is Generic FrontEnd Tuner
-		SWTBotGefEditPart frontEndTunerGefEditPart = editor.getEditPart(USE_FRONTEND_TUNER_DEVICE);
+		SWTBotGefEditPart frontEndTunerGefEditPart = editor.getEditPart(SadTestUtils.USE_FRONTEND_TUNER_DEVICE);
 		assertFrontEndTuner(frontEndTunerGefEditPart);
 
 		RHContainerShapeImpl rhContainerShape = (RHContainerShapeImpl) frontEndTunerGefEditPart.part().getModel();
@@ -158,10 +154,10 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
 
 		//delete
-		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(USE_FRONTEND_TUNER_DEVICE));
+		DiagramTestUtils.deleteFromDiagram(editor, editor.getEditPart(SadTestUtils.USE_FRONTEND_TUNER_DEVICE));
 
 		//verify deleted
-		Assert.assertNull(editor.getEditPart(USE_FRONTEND_TUNER_DEVICE));
+		Assert.assertNull(editor.getEditPart(SadTestUtils.USE_FRONTEND_TUNER_DEVICE));
 	}
 
 	/**
@@ -197,10 +193,10 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		// Get a handle on ports
 		SWTBotGefEditPart sigGenUsesPart = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN);
 		SWTBotGefEditPart hardLimitProvidesPart = DiagramTestUtils.getDiagramProvidesPort(editor, HARD_LIMIT);
-		SWTBotGefEditPart usesDeviceProvidesDoublePart = DiagramTestUtils.getDiagramProvidesPort(editor, USE_FRONTEND_TUNER_DEVICE, "dataDouble_in");
-		SWTBotGefEditPart usesDeviceProvidesDouble2Part = DiagramTestUtils.getDiagramProvidesPort(editor, USE_FRONTEND_TUNER_DEVICE, "dataDouble2_in");
-		SWTBotGefEditPart usesDeviceUsesDoublePart = DiagramTestUtils.getDiagramUsesPort(editor, USE_FRONTEND_TUNER_DEVICE, "dataDouble_out");
-		SWTBotGefEditPart usesDeviceUsesDouble2Part = DiagramTestUtils.getDiagramUsesPort(editor, USE_FRONTEND_TUNER_DEVICE, "dataDouble2_out");
+		SWTBotGefEditPart usesDeviceProvidesDoublePart = DiagramTestUtils.getDiagramProvidesPort(editor, SadTestUtils.USE_FRONTEND_TUNER_DEVICE, "dataDouble_in");
+		SWTBotGefEditPart usesDeviceProvidesDouble2Part = DiagramTestUtils.getDiagramProvidesPort(editor, SadTestUtils.USE_FRONTEND_TUNER_DEVICE, "dataDouble2_in");
+		SWTBotGefEditPart usesDeviceUsesDoublePart = DiagramTestUtils.getDiagramUsesPort(editor, SadTestUtils.USE_FRONTEND_TUNER_DEVICE, "dataDouble_out");
+		SWTBotGefEditPart usesDeviceUsesDouble2Part = DiagramTestUtils.getDiagramUsesPort(editor, SadTestUtils.USE_FRONTEND_TUNER_DEVICE, "dataDouble2_out");
 
 		//maximize window
 		DiagramTestUtils.maximizeActiveWindow(gefBot);
@@ -216,7 +212,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 			DiagramTestUtils.drawConnectionBetweenPorts(editor, usesDeviceUsesDouble2Part, hardLimitProvidesPart));
 
 		// Open USE_FRONTEND_TUNER_DEVICE edit wizard and change name, remove existing port, and add a new one
-		editor.getEditPart(USE_FRONTEND_TUNER_DEVICE).select();
+		editor.getEditPart(SadTestUtils.USE_FRONTEND_TUNER_DEVICE).select();
 		editor.clickContextMenu("Edit Uses FrontEnd Device");
 
 		// Change Name
@@ -250,7 +246,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 
 		// Confirm that changes were made
 		// Confirm created component truly is Generic FrontEnd Tuner
-		SWTBotGefEditPart frontEndTunerGefEditPart = editor.getEditPart(USE_FRONTEND_TUNER_DEVICE);
+		SWTBotGefEditPart frontEndTunerGefEditPart = editor.getEditPart(SadTestUtils.USE_FRONTEND_TUNER_DEVICE);
 		assertFrontEndTuner(frontEndTunerGefEditPart);
 
 		RHContainerShapeImpl rhContainerShape = (RHContainerShapeImpl) frontEndTunerGefEditPart.part().getModel();
@@ -320,7 +316,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		DiagramTestUtils.openTabInEditor(editor, "Diagram");
 		
 		// Open edit wizard and change name, remove existing port, and add a new one
-		editor.getEditPart(USE_DEVICE).select();
+		editor.getEditPart(SadTestUtils.USE_DEVICE).select();
 		editor.clickContextMenu("Edit Uses Device");
 
 		// Change Name
@@ -346,8 +342,8 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		gefBot.button("Finish").click();
 		
 		// Confirm that changes were made
-		SWTBotGefEditPart useDeviceEditPart = editor.getEditPart(USE_DEVICE);
-		assertUsesDevice(useDeviceEditPart);
+		SWTBotGefEditPart useDeviceEditPart = editor.getEditPart(SadTestUtils.USE_DEVICE);
+		SadTestUtils.assertUsesDevice(useDeviceEditPart);
 
 		RHContainerShapeImpl rhContainerShape = (RHContainerShapeImpl) useDeviceEditPart.part().getModel();
 
@@ -363,31 +359,10 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 	}
 
 	/**
-	 * Assert UsesDevice
-	 * @param gefEditPart
-	 */
-	public static void assertUsesDevice(SWTBotGefEditPart gefEditPart) {
-		Assert.assertNotNull(gefEditPart);
-		// Drill down to graphiti component shape
-		RHContainerShapeImpl rhContainerShape = (RHContainerShapeImpl) gefEditPart.part().getModel();
-
-		// Grab the associated business object and confirm it is a UsesDeviceStub
-		Object bo = DUtil.getBusinessObject(rhContainerShape);
-		Assert.assertTrue("business object should be of type UsesDeviceStub", bo instanceof UsesDeviceStub);
-		UsesDeviceStub usesDeviceStub = (UsesDeviceStub) bo;
-
-		// Run assertions on expected properties
-		Assert.assertEquals("outer text should match shape type", USE_DEVICE, rhContainerShape.getOuterText().getValue());
-		Assert.assertEquals("inner text should match usesdevice id", usesDeviceStub.getUsesDevice().getId(), rhContainerShape.getInnerText().getValue());
-		Assert.assertNotNull("component supported interface graphic should not be null", rhContainerShape.getLollipop());
-
-	}
-
-	/**
 	 * Assert FrontEnd Tuner
 	 * @param gefEditPart
 	 */
-	public static void assertFrontEndTuner(SWTBotGefEditPart gefEditPart) {
+	private void assertFrontEndTuner(SWTBotGefEditPart gefEditPart) {
 		Assert.assertNotNull(gefEditPart);
 		// Drill down to graphiti component shape
 		RHContainerShapeImpl rhContainerShape = (RHContainerShapeImpl) gefEditPart.part().getModel();
@@ -398,7 +373,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 		UsesDeviceStub usesDeviceStub = (UsesDeviceStub) bo;
 
 		// Run assertions on expected properties
-		Assert.assertEquals("outer text should match shape type", USE_FRONTEND_TUNER_DEVICE, rhContainerShape.getOuterText().getValue());
+		Assert.assertEquals("outer text should match shape type", SadTestUtils.USE_FRONTEND_TUNER_DEVICE, rhContainerShape.getOuterText().getValue());
 		Assert.assertEquals("inner text should match usesdevice id", usesDeviceStub.getUsesDevice().getId(), rhContainerShape.getInnerText().getValue());
 		Assert.assertNotNull("component supported interface graphic should not be null", rhContainerShape.getLollipop());
 
@@ -409,7 +384,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 	 * @param componentShape
 	 * @return
 	 */
-	public static String regexStringForGenericUseFrontEndTunerDeviceListenById(String usesDeviceId, String existingAllocationId, String allocationId) {
+	private String regexStringForGenericUseFrontEndTunerDeviceListenById(String usesDeviceId, String existingAllocationId, String allocationId) {
 		String usesDevice = "<usesdevice id=\"" + usesDeviceId + "\">";
 		String propertyRef = "<propertyref refid=\"DCE:cdc5ee18-7ceb-4ae6-bf4c-31f983179b4d\" value=\"FRONTEND::TUNER\"/>";
 		String structRef = "<structref refid=\"FRONTEND::listener_allocation\">";
@@ -538,7 +513,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 	 * @param componentShape
 	 * @return
 	 */
-	public static String regexStringFor_sim_rx_digitizer_UseFrontEndTunerDeviceControlTuner(final Map<String, String> params) {
+	private String regexStringFor_sim_rx_digitizer_UseFrontEndTunerDeviceControlTuner(final Map<String, String> params) {
 		final String usesDeviceId = params.get("usesDeviceId");
 		final String tunerType = params.get("tunerType");
 		final String allocationId = params.get("newAllocationId");

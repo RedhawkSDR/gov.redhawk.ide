@@ -23,7 +23,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.swtbot.swt.finder,
  gov.redhawk.ide.sdr
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-Activator: gov.redhawk.ide.graphiti.sad.ui.tests.GraphitiTestsActivator
 Bundle-Vendor: REDHAWK
 Import-Package: gov.redhawk.ide.graphiti.sad.ext,
  gov.redhawk.ide.graphiti.sad.ext.impl,
