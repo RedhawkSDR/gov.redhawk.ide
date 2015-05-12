@@ -70,7 +70,7 @@
             </dependency>
             <dependency>
               <type>eclipse-feature</type>
-              <artifactId>org.eclipse.epp.package.standard.feature</artifactId>
+              <artifactId>org.eclipse.epp.package.committers.feature</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
