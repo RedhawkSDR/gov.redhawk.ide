@@ -165,6 +165,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 	 * Edit existing UsesFrontEndTuner name, model and ports
 	 * Change names, add & remove ports
 	 */
+	@Test
 	public void editGenericFrontEndTunerDevice() {
 		waveformName = "IDE-124-editGenericFrontEndTunerDevice";
 
@@ -400,8 +401,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 	 * @param existingAllocationId
 	 * @param newAllocationId
 	 */
-	public void createGenericFrontEndTunerDeviceListenById(String existingAllocationId, String newAllocationId) {
-		
+	private void createGenericFrontEndTunerDeviceListenById(String existingAllocationId, String newAllocationId) {
 		DiagramTestUtils.addUseFrontEndTunerDeviceToDiagram(gefBot, editor);
 		
 		SWTBotShell allocateTunerShell = gefBot.shell("Allocate Tuner");
@@ -454,7 +454,7 @@ public class UsesDeviceTest extends AbstractGraphitiTest {
 	 * @param existingAllocationId
 	 * @param newAllocationId
 	 */
-	public void create_sim_rx_digitizer_FrontEndTunerDeviceControlTuner(String tunerType, String newAllocationId, String centerFrequency, String bandwidth, String sampleRate, String groupId) {
+	private void create_sim_rx_digitizer_FrontEndTunerDeviceControlTuner(String tunerType, String newAllocationId, String centerFrequency, String bandwidth, String sampleRate, String groupId) {
 		
 		DiagramTestUtils.addUseFrontEndTunerDeviceToDiagram(gefBot, editor);
 		
