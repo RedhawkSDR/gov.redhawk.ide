@@ -36,7 +36,12 @@ public abstract class AbstractCreationWizardTest extends UITest {
 
 	@Rule
 	public TemporaryFolder folder = new TemporaryFolder();
-
+	
+	@BeforeClass
+	public static void setupPyDev() throws Exception {
+		StandardTestActions.configurePyDev(new SWTWorkbenchBot());
+	}
+	
 	@Test
 	public void testUUID() {
 		wizardBot.textWithLabel("&Project name:").setText("WizardTest02");
