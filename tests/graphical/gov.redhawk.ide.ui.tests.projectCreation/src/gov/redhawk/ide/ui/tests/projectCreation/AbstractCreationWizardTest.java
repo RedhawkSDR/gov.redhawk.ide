@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.ui.tests.projectCreation;
 
+import gov.redhawk.ide.swtbot.StandardTestActions;
 import gov.redhawk.ide.swtbot.UITest;
 import gov.redhawk.ide.swtbot.condition.WaitForEditorCondition;
 
@@ -23,6 +24,7 @@ import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -39,7 +41,7 @@ public abstract class AbstractCreationWizardTest extends UITest {
 	
 	@BeforeClass
 	public static void setupPyDev() throws Exception {
-		StandardTestActions.configurePyDev(new SWTWorkbenchBot());
+		StandardTestActions.configurePyDev();
 	}
 	
 	@Test
