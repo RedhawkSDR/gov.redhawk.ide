@@ -267,7 +267,6 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 
 	// Utility method to either highlight compatible ports, or return them to default styling
 	private void highlightCompatiblePorts(EObject originatingPort, boolean shouldHighlight) {
-
 		if (originatingPort == null) {
 			return;
 		}
@@ -278,104 +277,13 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 			return;
 		}
 
-		List<ContainerShape> compatiblePorts = new ArrayList<ContainerShape>();
-
+		List<ContainerShape> compatiblePorts;
 		if (originatingPort instanceof UsesPortStub) {
 			UsesPortStub usesPort = (UsesPortStub) originatingPort;
-
-			// The first time we come across an component instance, add the valid ports to this map.
-			// If we come across this component type again, refer to the map rather than redoing the port comparisons
-			Map<String, ArrayList<String>> compatiblePortsMap = new HashMap<String, ArrayList<String>>();
-
-			// A list to hold all component shapes found in the diagram
-			List<ContainerShape> componentShapes = DUtil.getAllContainerShapes(getDiagram(), RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-
-			for (ContainerShape componentShape : componentShapes) {
-				if (DUtil.getBusinessObject(componentShape) instanceof FindByStub) {
-					// Not interested in highlighting ports of FindBy shapes
-					continue;
-				} else if (DUtil.getBusinessObject(componentShape) instanceof UsesDeviceStub) {
-					UsesDeviceStub usesDevice = (UsesDeviceStub) DUtil.getBusinessObject(componentShape);
-					for (ProvidesPortStub providesPort : usesDevice.getProvidesPortStubs()) {
-						if (InterfacesUtil.areSuggestedMatch(usesPort, providesPort)) {
-							Object portShape = DUtil.getPictogramElementForBusinessObject(getDiagram(), providesPort, ContainerShape.class);
-							compatiblePorts.add((ContainerShape) portShape);
-						}
-					}
-				} else {
-					SadComponentInstantiation component = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
-					String componentRefId = ((SadComponentPlacement) component.eContainer()).getComponentFileRef().getRefid();
-					if (!compatiblePortsMap.isEmpty() && compatiblePortsMap.containsKey(componentRefId)) {
-						// If we have already seen a component of this type, just grab the ports we know are compatible
-						ArrayList<String> portNames = compatiblePortsMap.get(componentRefId);
-						for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
-							ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
-							if (portNames.contains(providesPort.getName())) {
-								compatiblePorts.add(portShape);
-							}
-						}
-					} else {
-						// If new component type, find compatible ports and add them to the map for future reference
-						ArrayList<String> portNames = new ArrayList<String>();
-						for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
-							ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
-							if (InterfacesUtil.areCompatible(usesPort, providesPort)) {
-								compatiblePorts.add(portShape);
-								portNames.add(providesPort.getName());
-							}
-						}
-						compatiblePortsMap.put(componentRefId, portNames);
-					}
-				}
-			}
+			compatiblePorts = getCompatiblePorts(usesPort);
 		} else if (originatingPort instanceof ProvidesPortStub) {
 			ProvidesPortStub providesPort = (ProvidesPortStub) originatingPort;
-
-			// The first time we come across an component instance, add the valid ports to this map.
-			// If we come across this component type again, refer to the map rather than redoing the port comparisons
-			Map<String, ArrayList<String>> compatiblePortsMap = new HashMap<String, ArrayList<String>>();
-
-			// A list to hold all component shapes found in the diagram
-			List<ContainerShape> componentShapes = DUtil.getAllContainerShapes(getDiagram(), RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
-
-			for (ContainerShape componentShape : componentShapes) {
-				if (DUtil.getBusinessObject(componentShape) instanceof FindByStub) {
-					// Not interested in highlighting ports of FindBy shapes
-					continue;
-				} else if (DUtil.getBusinessObject(componentShape) instanceof UsesDeviceStub) {
-					UsesDeviceStub usesDevice = (UsesDeviceStub) DUtil.getBusinessObject(componentShape);
-					for (UsesPortStub usesPort : usesDevice.getUsesPortStubs()) {
-						if (InterfacesUtil.areSuggestedMatch(usesPort, providesPort)) {
-							Object portShape = DUtil.getPictogramElementForBusinessObject(getDiagram(), usesPort, ContainerShape.class);
-							compatiblePorts.add((ContainerShape) portShape);
-						}
-					}
-				} else {
-					SadComponentInstantiation component = (SadComponentInstantiation) DUtil.getBusinessObject(componentShape);
-					String componentRefId = ((SadComponentPlacement) component.eContainer()).getComponentFileRef().getRefid();
-					if (!compatiblePortsMap.isEmpty() && compatiblePortsMap.containsKey(componentRefId)) {
-						// If we have already seen a component of this type, just grab the ports we know are compatible
-						ArrayList<String> portNames = compatiblePortsMap.get(componentRefId);
-						for (ContainerShape portShape : DUtil.getDiagramUsesPorts(componentShape)) {
-							UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(portShape);
-							if (portNames.contains(usesPort.getName())) {
-								compatiblePorts.add(portShape);
-							}
-						}
-					} else {
-						// If new component type, find compatible ports and add them to the map for future reference
-						ArrayList<String> portNames = new ArrayList<String>();
-						for (ContainerShape portShape : DUtil.getDiagramUsesPorts(componentShape)) {
-							UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(portShape);
-							if (InterfacesUtil.areCompatible(usesPort, providesPort)) {
-								compatiblePorts.add(portShape);
-								portNames.add(usesPort.getName());
-							}
-						}
-						compatiblePortsMap.put(componentRefId, portNames);
-					}
-				}
-			}
+			compatiblePorts = getCompatiblePorts(providesPort);
 		} else {
 			// Most likely user clicked a component supported interface shape
 			return;
@@ -402,6 +310,110 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 			StyleUtil.toggleUpdatePort(true, null);
 			setPortStyleDefault();
 		}
+	}
+
+	private List<ContainerShape> getCompatiblePorts(UsesPortStub usesPort) {
+		List<ContainerShape> compatiblePorts = new ArrayList<ContainerShape>();
+
+		// The first time we come across an component instance, add the valid ports to this map.
+		// If we come across this component type again, refer to the map rather than redoing the port comparisons
+		Map<String, ArrayList<String>> compatiblePortsMap = new HashMap<String, ArrayList<String>>();
+
+		// A list to hold all component shapes found in the diagram
+		List<ContainerShape> componentShapes = DUtil.getAllContainerShapes(getDiagram(), RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+
+		for (ContainerShape componentShape : componentShapes) {
+			Object businessObj = DUtil.getBusinessObject(componentShape);
+			if (businessObj instanceof FindByStub) {
+				// Not interested in highlighting ports of FindBy shapes
+				continue;
+			} else if (businessObj instanceof UsesDeviceStub) {
+				UsesDeviceStub usesDevice = (UsesDeviceStub) businessObj;
+				for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
+					ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
+					if (InterfacesUtil.areSuggestedMatch(usesPort, providesPort)) {
+						compatiblePorts.add(portShape);
+					}
+				}
+			} else {
+				SadComponentInstantiation component = (SadComponentInstantiation) businessObj;
+				String componentRefId = ((SadComponentPlacement) component.eContainer()).getComponentFileRef().getRefid();
+				if (compatiblePortsMap.containsKey(componentRefId)) {
+					// If we have already seen a component of this type, just grab the ports we know are compatible
+					ArrayList<String> portNames = compatiblePortsMap.get(componentRefId);
+					for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
+						ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
+						if (portNames.contains(providesPort.getName())) {
+							compatiblePorts.add(portShape);
+						}
+					}
+				} else {
+					// We haven't yet evaluated this component type. We'll find compatible ports and cache them in the map for future reference.
+					ArrayList<String> portNames = new ArrayList<String>();
+					for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
+						ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(portShape);
+						if (InterfacesUtil.areCompatible(usesPort, providesPort)) {
+							compatiblePorts.add(portShape);
+							portNames.add(providesPort.getName());
+						}
+					}
+					compatiblePortsMap.put(componentRefId, portNames);
+				}
+			}
+		}
+		return compatiblePorts;
+	}
+
+	private List<ContainerShape> getCompatiblePorts(ProvidesPortStub providesPort) {
+		List<ContainerShape> compatiblePorts = new ArrayList<ContainerShape>();
+
+		// The first time we come across an component instance, add the valid ports to this map.
+		// If we come across this component type again, refer to the map rather than redoing the port comparisons
+		Map<String, ArrayList<String>> compatiblePortsMap = new HashMap<String, ArrayList<String>>();
+
+		// A list to hold all component shapes found in the diagram
+		List<ContainerShape> componentShapes = DUtil.getAllContainerShapes(getDiagram(), RHContainerShapeImpl.SHAPE_OUTER_CONTAINER);
+
+		for (ContainerShape componentShape : componentShapes) {
+			Object businessObj = DUtil.getBusinessObject(componentShape);
+			if (businessObj instanceof FindByStub) {
+				// Not interested in highlighting ports of FindBy shapes
+				continue;
+			} else if (businessObj instanceof UsesDeviceStub) {
+				UsesDeviceStub usesDevice = (UsesDeviceStub) businessObj;
+				for (ContainerShape portShape : DUtil.getDiagramUsesPorts(componentShape)) {
+					UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(portShape);
+					if (InterfacesUtil.areSuggestedMatch(usesPort, providesPort)) {
+						compatiblePorts.add(portShape);
+					}
+				}
+			} else {
+				SadComponentInstantiation component = (SadComponentInstantiation) businessObj;
+				String componentRefId = ((SadComponentPlacement) component.eContainer()).getComponentFileRef().getRefid();
+				if (!compatiblePortsMap.isEmpty() && compatiblePortsMap.containsKey(componentRefId)) {
+					// If we have already seen a component of this type, just grab the ports we know are compatible
+					ArrayList<String> portNames = compatiblePortsMap.get(componentRefId);
+					for (ContainerShape portShape : DUtil.getDiagramUsesPorts(componentShape)) {
+						UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(portShape);
+						if (portNames.contains(usesPort.getName())) {
+							compatiblePorts.add(portShape);
+						}
+					}
+				} else {
+					// If new component type, find compatible ports and add them to the map for future reference
+					ArrayList<String> portNames = new ArrayList<String>();
+					for (ContainerShape portShape : DUtil.getDiagramUsesPorts(componentShape)) {
+						UsesPortStub usesPort = (UsesPortStub) DUtil.getBusinessObject(portShape);
+						if (InterfacesUtil.areCompatible(usesPort, providesPort)) {
+							compatiblePorts.add(portShape);
+							portNames.add(usesPort.getName());
+						}
+					}
+					compatiblePortsMap.put(componentRefId, portNames);
+				}
+			}
+		}
+		return compatiblePorts;
 	}
 
 	/**
