@@ -834,11 +834,11 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @param cls
 	 * @return
 	 */
-	public static < T > EObject getBusinessObject(PictogramElement pe, Class<T> cls) {
+	public static < T > T getBusinessObject(PictogramElement pe, Class<T> cls) {
 		if (pe != null && pe.getLink() != null) {
 			for (EObject eObj : pe.getLink().getBusinessObjects()) {
 				if (cls.isInstance(eObj)) {
-					return eObj;
+					return cls.cast(eObj);
 				}
 			}
 		}
@@ -1092,12 +1092,12 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	 * @param pictogramClass
 	 * @return
 	 */
-	public static < T > PictogramElement getPictogramElementForBusinessObject(Diagram diagram, EObject eObj, Class<T> pictogramClass) {
+	public static < T > T getPictogramElementForBusinessObject(Diagram diagram, EObject eObj, Class<T> pictogramClass) {
 		List<PictogramElement> pes = Graphiti.getLinkService().getPictogramElements(diagram, eObj);
 		if (pes != null && pes.size() > 0) {
 			for (PictogramElement p : pes) {
 				if (pictogramClass.isInstance(p)) {
-					return p;
+					return pictogramClass.cast(p);
 				}
 			}
 		}
