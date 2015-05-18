@@ -501,7 +501,7 @@ public class HostCollocationTest extends AbstractGraphitiTest {
 		// Add component/findby to the host collocation
 		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 20, 150);
 		DiagramTestUtils.addUseFrontEndTunerDeviceToDiagram(gefBot, editor, 450, 150);
-		UsesDeviceTestUtils.completeUsesDeviceWizard(gefBot, "existingAllocId", "newAllocId", new String[] { "provides" }, new String[] { "uses" });
+		UsesDeviceTestUtils.completeUsesFEDeviceWizard(gefBot, "existingAllocId", "newAllocId", new String[] { "provides" }, new String[] { "uses" });
 		MenuUtils.save(editor);
 
 		// HostCOllocation objects

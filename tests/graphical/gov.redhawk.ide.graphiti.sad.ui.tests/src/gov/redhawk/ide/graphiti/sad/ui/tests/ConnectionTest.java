@@ -19,6 +19,7 @@ import gov.redhawk.ide.swtbot.condition.WaitForEditorCondition;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.RHTestBotCanvas;
+import gov.redhawk.ide.swtbot.diagram.RHTestBotEditor;
 
 import java.util.List;
 
@@ -42,7 +43,6 @@ import org.junit.Test;
 
 public class ConnectionTest extends AbstractGraphitiTest {
 
-	private SWTBotGefEditor editor;
 	private String waveformName;
 	private static final String SIGGEN = "SigGen";
 	private static final String HARD_LIMIT = "HardLimit";
@@ -60,7 +60,7 @@ public class ConnectionTest extends AbstractGraphitiTest {
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 
 		// Add components to diagram from palette
-		editor = gefBot.gefEditor(waveformName);
+		SWTBotGefEditor editor = gefBot.gefEditor(waveformName);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
 
@@ -140,7 +140,7 @@ public class ConnectionTest extends AbstractGraphitiTest {
 
 		// Add components to diagram from palette
 		gefBot.waitUntil(new WaitForEditorCondition());
-		editor = gefBot.gefEditor(waveformName);
+		SWTBotGefEditor editor = gefBot.gefEditor(waveformName);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, HARD_LIMIT, 300, 0);
 
@@ -191,7 +191,7 @@ public class ConnectionTest extends AbstractGraphitiTest {
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 
 		// Add components to diagram from palette
-		editor = gefBot.gefEditor(waveformName);
+		SWTBotGefEditor editor = gefBot.gefEditor(waveformName);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_CONVERTER, 300, 0);
 
@@ -233,14 +233,15 @@ public class ConnectionTest extends AbstractGraphitiTest {
 		WaveformUtils.createNewWaveform(gefBot, waveformName);
 
 		// Add components to diagram from palette
-		editor = gefBot.gefEditor(waveformName);
+		// We need the RHTestBotEditor so we can get the canvas and do direct mouse events
+		RHTestBotEditor editor = gefBot.rhGefEditor(waveformName);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_CONVERTER, 300, 0);
 		SWTBotGefEditPart usesPort = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN, sigGenPort).children().get(0);
 		usesPort.select();
 
-		// Mouse down on target port
-		RHTestBotCanvas canvas = DiagramTestUtils.getCanvas(editor);
+		// Mouse down on target port (direct mouse event)
+		RHTestBotCanvas canvas = editor.getDragViewer().getCanvas();
 		Point point = DiagramTestUtils.getDiagramRelativeCenter(usesPort);
 		canvas.mouseDown(point.x(), point.y());
 

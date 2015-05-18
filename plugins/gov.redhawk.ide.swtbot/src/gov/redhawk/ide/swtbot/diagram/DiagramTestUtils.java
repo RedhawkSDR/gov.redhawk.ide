@@ -328,17 +328,6 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	public static ComponentShapeImpl getComponentShape(SWTBotGefEditor editor, String componentName) {
 		return (ComponentShapeImpl) getRHContainerShape(editor, componentName);
 	}
-
-	/**
-	 * Utility method to return the {@link RHTestBotCanvas}, generally for direct mouse control
-	 * @return RHTestBotCanvas reference
-	 */
-	public static RHTestBotCanvas getCanvas(SWTBotGefEditor editor) {
-		RHTestBotEditor rhTestBotEditor = (RHTestBotEditor) editor;
-		RHTestBotViewer viewer = rhTestBotEditor.getDragViewer();
-		RHTestBotCanvas canvas = (RHTestBotCanvas) viewer.getCanvas();
-		return canvas;
-	}
 	
 	/**
 	 * 

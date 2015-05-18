@@ -13,12 +13,20 @@ package gov.redhawk.ide.swtbot.diagram;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.gef.finder.SWTGefBot;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.ui.IEditorReference;
 
 /**
  * Uses RHTestBotEditor for improved connection drawing in Graphiti diagrams
  */
 public class RHTestBot extends SWTGefBot {
+
+	/**
+	 * @see SWTGefBot#gefEditor(String)
+	 */
+	public RHTestBotEditor rhGefEditor(String fileName) throws WidgetNotFoundException {
+		return (RHTestBotEditor) gefEditor(fileName, 0);
+	}
 
 	@Override
 	protected SWTBotGefEditor createEditor(IEditorReference reference, SWTWorkbenchBot bot) {
