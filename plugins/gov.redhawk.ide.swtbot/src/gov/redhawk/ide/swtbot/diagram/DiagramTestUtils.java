@@ -242,7 +242,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 
 	/**
 	 * Draws a connection between two ports using drag-and-drop on the editor.
-	 * Provided editor MUST use RHTestBot subclass of SWTGefBot
+	 * The editor should be created from an RHTestBot.
 	 *
 	 * @param editor - SWTBotGefEditor
 	 * @param usesEditPart - SWTBotGefEditPart for the uses/source port
@@ -259,10 +259,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 
 		final Point providesPos = getDiagramRelativeCenter(providesAnchor);
 		final Point usesPos = getDiagramRelativeCenter(usesAnchor);
-		RHTestBotCanvas canvas = DiagramTestUtils.getCanvas(editor);
-		
-		// Need to offset the drag start location, otherwise the mouse may select existing connections, and the operation fails
-		canvas.mouseDrag(providesPos.x + (numTargetConnections * 2), providesPos.y + (numTargetConnections * 2), usesPos.x, usesPos.y);
+		editor.drag(providesPos.x, providesPos.y, usesPos.x, usesPos.y);
 
 		// Wait to see if new connection appears for both ports
 		try {
