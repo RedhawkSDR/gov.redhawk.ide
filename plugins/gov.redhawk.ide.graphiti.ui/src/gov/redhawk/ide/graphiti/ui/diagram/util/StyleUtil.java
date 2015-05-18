@@ -835,7 +835,7 @@ public class StyleUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * Toggles whether or not the update/internal update methods should run on a port
+	 * Toggles whether or not the update/internal update methods should run on a port.
 	 * Only blocks automated updates. Explicitly changing port styles will still work.
 	 * @param canUpdate - Setting to false locks port styles from being changed
 	 * @param lockingObject - Used in cases of conflict to determine priority for locking/unlocking style edits.

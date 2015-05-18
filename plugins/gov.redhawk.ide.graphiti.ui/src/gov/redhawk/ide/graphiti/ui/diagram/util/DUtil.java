@@ -245,22 +245,21 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * @return A list of all provides ports found in the diagram
+	 * @return All provides ports which are descendants of the specified shape in the diagram
 	 */
-	public static List<ContainerShape> getDiagramProvidesPorts(ContainerShape diagram) {
-		return getDiagramPorts(diagram, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER);
+	public static List<ContainerShape> getDiagramProvidesPorts(ContainerShape shape) {
+		return getDiagramPorts(shape, RHContainerShapeImpl.SHAPE_PROVIDES_PORT_CONTAINER);
 	}
 
 	/**
-	 * @return A list of all uses ports found in the diagram
+	 * @return All uses ports which are descendants of the specified shape in the diagram
 	 */
-	public static List<ContainerShape> getDiagramUsesPorts(ContainerShape diagram) {
-		return getDiagramPorts(diagram, RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER);
+	public static List<ContainerShape> getDiagramUsesPorts(ContainerShape shape) {
+		return getDiagramPorts(shape, RHContainerShapeImpl.SHAPE_USES_PORT_CONTAINER);
 	}
 
 	/**
-	 * Returns all of the ports that exist on the diagram as a List.
-	 * Does a recursive search through all children or the provided shape
+	 * Finds all ports of the specified type which are descendants of the specified shape in the diagram.
 	 * @param shape - The parent shape that you want to find ports of
 	 * @param portType - property value of the desired port type
 	 * @see {@link RHContainerShapeImpl} static property strings
