@@ -166,8 +166,8 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		IPeCreateService peCreateService = Graphiti.getPeCreateService();
 
 		// establish source/target for connection
-		EObject source = connectInterface.getSource();
-		EObject target = connectInterface.getTarget();
+		UsesPortStub source = connectInterface.getSource();
+		ConnectionTarget target = connectInterface.getTarget();
 
 		// source and target will be null if findBy or usesDevice is used, in this case pull stubs from diagram
 		if (source == null) {

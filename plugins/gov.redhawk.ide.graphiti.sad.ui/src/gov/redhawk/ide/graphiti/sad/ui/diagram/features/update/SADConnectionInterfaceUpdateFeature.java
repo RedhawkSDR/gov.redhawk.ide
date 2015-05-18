@@ -18,7 +18,6 @@ import mil.jpeojtrs.sca.partitioning.ConnectionTarget;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadConnectInterface;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
@@ -99,8 +98,8 @@ public class SADConnectionInterfaceUpdateFeature extends AbstractUpdateFeature {
 			SADConnectInterfacePattern.SHAPE_TEXT_CONNECTION_DECORATOR);
 		
 		//establish source/target for connection
-		EObject source = connectInterface.getSource();
-		EObject target = connectInterface.getTarget();
+		UsesPortStub source = connectInterface.getSource();
+		ConnectionTarget target = connectInterface.getTarget();
 		
 		//source and target will be null if findBy or usesDevice is used, in this case pull stubs from diagram
 		if (source == null) {

@@ -1371,10 +1371,19 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 		UsesPortStub source = null;
 		ConnectionTarget target = null;
 
-		if (!(anchorObjects1.size() > 0 && anchorObjects1.get(0) instanceof UsesPortStub)
-			|| !(anchorObjects2.size() > 0 && anchorObjects2.get(0) instanceof ConnectionTarget)) {
-			// either first anchor wasn't UsesPortStub or second anchor wasn't ConnectionTarget
+		// Check to ensure the first anchor is a UsesPortStub and the second is a ConnectionTarget
+		if (anchorObjects1.size() == 0 || anchorObjects2.size() == 0) {
 			return null;
+		}
+		for (EObject sourceObj : anchorObjects1) {
+			if (!(sourceObj instanceof UsesPortStub)) {
+				return null;
+			}
+		}
+		for (EObject targetObj : anchorObjects2) {
+			if (!(targetObj instanceof ConnectionTarget)) {
+				return null;
+			}
 		}
 
 		List<UsesPortStub> possibleSources = new ArrayList<UsesPortStub>();
@@ -1388,7 +1397,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 			// If either side is a super port, then build a list of possible connections
 			for (EObject sourceObj : anchorObjects1) {
 				for (EObject targetObj : anchorObjects2) {
-					if (InterfacesUtil.areSuggestedMatch(sourceObj, targetObj)) {
+					if (InterfacesUtil.areSuggestedMatch((UsesPortStub) sourceObj, targetObj)) {
 						if (!possibleSources.contains(sourceObj)) {
 							possibleSources.add((UsesPortStub) sourceObj);
 						}
