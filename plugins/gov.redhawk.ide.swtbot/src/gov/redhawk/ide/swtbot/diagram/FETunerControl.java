@@ -38,7 +38,7 @@ public class FETunerControl {
 	}
 
 	/**
-	 * @see gov.redhawk.frontend.ui.FrontEndUIActivator#SUPPORTED_TUNER_TYPES
+	 * See FRONTEND.TUNER_TYPE_XXX for possible values
 	 */
 	public String getTunerType() {
 		return tunerType;
