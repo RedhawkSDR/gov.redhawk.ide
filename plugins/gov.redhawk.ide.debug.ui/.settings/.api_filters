@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="gov.redhawk.ide.debug.ui" version="2">
+    <resource path="src/gov/redhawk/ide/debug/ui/tabs/AbstractMainTab.java" type="gov.redhawk.ide.debug.ui.tabs.AbstractMainTab">
+        <filter id="576720909">
+            <message_arguments>
+                <message_argument value="ExternalToolsMainTab"/>
+                <message_argument value="AbstractMainTab"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

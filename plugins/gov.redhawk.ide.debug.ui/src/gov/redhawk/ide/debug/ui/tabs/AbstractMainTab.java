@@ -44,6 +44,7 @@ import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
  * @since 3.0
  * 
  */
+@SuppressWarnings("restriction")
 public abstract class AbstractMainTab extends ExternalToolsMainTab implements ILaunchConfigurationTab2 {
 
 	private Image mainImage;
