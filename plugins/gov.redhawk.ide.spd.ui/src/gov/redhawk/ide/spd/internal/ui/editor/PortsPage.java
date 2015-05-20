@@ -116,7 +116,9 @@ public class PortsPage extends ScaFormPage implements IViewerProvider {
 		deactivateAllContexts();
 		this.removeResourceListener(this.scdResource);
 		this.removeResourceChangedListener(this.scdResource);
-		this.fPortsSection.getViewer().removeSelectionChangedListener(portViewerListener);
+		if (this.fPortsSection != null) {
+			this.fPortsSection.getViewer().removeSelectionChangedListener(portViewerListener);
+		}
 		// TODO: Was getting errors when I tried to remove this
 //		this.fPortDetailsSection.getDirectionCombo().getCombo().removeSelectionListener(directionComboListener);
 		super.dispose();
