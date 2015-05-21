@@ -16,7 +16,7 @@ import mil.jpeojtrs.sca.spd.UsesDevice;
 
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFObservables;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
@@ -63,7 +63,7 @@ public class UsesDeviceWizardPage extends WizardPage {
 		text = new Text(client, SWT.BORDER);
 		text.setLayoutData(textFactory.create());
 		label.setText("ID:");
-		this.context.bindValue(SWTObservables.observeText(text, SWT.Modify), EMFObservables.observeValue(this.device,
+		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(text), EMFObservables.observeValue(this.device,
 		        SpdPackage.Literals.USES_DEVICE__ID), null, null);
 
 		label = new Label(client, SWT.NULL);
@@ -71,7 +71,7 @@ public class UsesDeviceWizardPage extends WizardPage {
 		text = new Text(client, SWT.BORDER);
 		text.setLayoutData(textFactory.create());
 		label.setText("Type:");
-		this.context.bindValue(SWTObservables.observeText(text, SWT.Modify), EMFObservables.observeValue(this.device,
+		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(text), EMFObservables.observeValue(this.device,
 		        SpdPackage.Literals.USES_DEVICE__TYPE), null, null);
 
 		this.setControl(client);

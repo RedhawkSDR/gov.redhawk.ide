@@ -35,7 +35,7 @@ import mil.jpeojtrs.sca.scd.SoftwareComponent;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
@@ -335,7 +335,7 @@ public class PortDetailsSection extends ScaSection {
 
 		/** Bind portDirection combo to the type of port (provides, uses, bi-directional) **/
 		Binding portDirectionModelBinding = this.context.bindValue(ViewerProperties.singleSelection().observe(portViewer),
-			BeansObservables.observeValue(this.model, PortsPageModel.PROP_PORT_DIRECTION));
+			BeanProperties.value(this.model.getClass(), PortsPageModel.PROP_PORT_DIRECTION).observe(this.model));
 		this.bindings.add(portDirectionModelBinding);
 
 		// TODO: Add a validator to the portDirectionalModelBinding target-to-model strategy to check the following:

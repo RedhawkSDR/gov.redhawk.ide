@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -283,11 +283,11 @@ public class DeployableScaExportWizardPage extends WizardPage {
 		// Setup databinding
 		dbc.bindSet(ViewersObservables.observeCheckedElements(availableProjectsViewer, IProject.class), this.model.projectsToExport, null, null);
 
-		dbc.bindValue(SWTObservables.observeSelection(directoryRadio), this.model.directoryExport, null, null);
+		dbc.bindValue(WidgetProperties.selection().observe(directoryRadio), this.model.directoryExport, null, null);
 
-		dbc.bindValue(SWTObservables.observeSelection(archiveRadio), this.model.archiveExport, null, null);
+		dbc.bindValue(WidgetProperties.selection().observe(archiveRadio), this.model.archiveExport, null, null);
 
-		dbc.bindValue(SWTObservables.observeText(directoryText, SWT.Modify), this.model.directoryDestination,
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(directoryText), this.model.directoryDestination,
 		        new UpdateValueStrategy().setAfterConvertValidator(new IValidator() {
 			        @Override
 					public IStatus validate(final Object value) {
@@ -303,7 +303,7 @@ public class DeployableScaExportWizardPage extends WizardPage {
 			        }
 		        }), null);
 
-		dbc.bindValue(SWTObservables.observeText(archiveText, SWT.Modify), this.model.archiveDestination,
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(archiveText), this.model.archiveDestination,
 		        new UpdateValueStrategy().setAfterConvertValidator(new IValidator() {
 			        @Override
 					public IStatus validate(final Object value) {

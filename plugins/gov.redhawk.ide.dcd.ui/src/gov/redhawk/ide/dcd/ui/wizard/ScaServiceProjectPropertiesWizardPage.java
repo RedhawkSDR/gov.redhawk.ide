@@ -15,11 +15,11 @@ import gov.redhawk.eclipsecorba.library.ui.IdlInterfaceSelectionDialog;
 import gov.redhawk.ide.spd.ui.wizard.ScaResourceProjectPropertiesWizardPage;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -132,7 +132,7 @@ public class ScaServiceProjectPropertiesWizardPage extends ScaResourceProjectPro
 				validate();
 			}
 		});
-		context.bindValue(SWTObservables.observeText(this.serviceIdlText, SWT.Modify), PojoObservables.observeValue(this.model, "repID"));
+		context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.serviceIdlText), PojoProperties.value(this.model.getClass(), "repID").observe(this.model));
 
 		final Button idlBrowseButton = new Button(serviceGroup, SWT.NONE);
 		idlBrowseButton.setText("Browse...");

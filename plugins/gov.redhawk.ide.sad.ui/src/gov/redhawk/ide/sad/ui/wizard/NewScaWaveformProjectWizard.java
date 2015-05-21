@@ -111,7 +111,7 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 	 */
 	@Override
 	public boolean canFinish() {
-		if (this.waveformPropertiesPage.getContentsGroup().isCreateNewResource()) {
+		if (this.waveformPropertiesPage.isCreateNewResource()) {
 			return super.canFinish();
 		} else {
 			return this.waveformPropertiesPage.isPageComplete();
@@ -142,8 +142,8 @@ public class NewScaWaveformProjectWizard extends Wizard implements INewWizard, I
 				locationURI = this.waveformPropertiesPage.getLocationURI();
 			}
 			final String id = this.waveformPropertiesPage.getID();
-			final boolean isCreateNewResource = this.waveformPropertiesPage.getContentsGroup().isCreateNewResource();
-			final IPath existingSadPath = this.waveformPropertiesPage.getContentsGroup().getExistingResourcePath();
+			final boolean isCreateNewResource = this.waveformPropertiesPage.isCreateNewResource();
+			final IPath existingSadPath = this.waveformPropertiesPage.getExistingResourcePath();
 			final String projectName = this.waveformPropertiesPage.getProjectName();
 			final SoftPkg assemblyController = this.waveformACpage.getAssemblyController();
 

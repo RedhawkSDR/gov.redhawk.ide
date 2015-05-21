@@ -21,11 +21,10 @@ import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -188,7 +187,7 @@ public class FindByServiceWizardPage extends WizardPage {
 		serviceNameBtn.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		serviceNameBtn.setText("Service Name");
 		serviceNameBtn.setSelection(model.getEnableServiceName());
-		dbc.bindValue(WidgetProperties.selection().observe(serviceNameBtn), BeansObservables.observeValue(model, Model.ENABLE_SERVICE_NAME));
+		dbc.bindValue(WidgetProperties.selection().observe(serviceNameBtn), BeanProperties.value(model.getClass(), Model.ENABLE_SERVICE_NAME).observe(model));
 
 		// service name
 		final Label serviceNameLabel = new Label(composite, SWT.NONE);
@@ -204,7 +203,7 @@ public class FindByServiceWizardPage extends WizardPage {
 				dbc.updateModels();
 			}
 		});
-		dbc.bindValue(SWTObservables.observeText(serviceNameText, SWT.Modify), BeansObservables.observeValue(model, Model.SERVICE_NAME),
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(serviceNameText), BeanProperties.value(model.getClass(), Model.SERVICE_NAME).observe(model),
 			new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
 				@Override
 				public IStatus validate(Object value) {
@@ -233,7 +232,7 @@ public class FindByServiceWizardPage extends WizardPage {
 		serviceTypeBtn.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		serviceTypeBtn.setText("Service Type");
 		serviceTypeBtn.setSelection(model.getEnableServiceType());
-		dbc.bindValue(WidgetProperties.selection().observe(serviceTypeBtn), BeansObservables.observeValue(model, Model.ENABLE_SERVICE_TYPE));
+		dbc.bindValue(WidgetProperties.selection().observe(serviceTypeBtn), BeanProperties.value(model.getClass(), Model.ENABLE_SERVICE_TYPE).observe(model));
 
 		// service type
 		final Label serviceTypeLabel = new Label(composite, SWT.NONE);
@@ -253,7 +252,8 @@ public class FindByServiceWizardPage extends WizardPage {
 				dbc.updateModels();
 			}
 		});
-		dbc.bindValue(SWTObservables.observeText(serviceTypeText, SWT.Modify), BeansObservables.observeValue(model, Model.SERVICE_TYPE),
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(serviceTypeText),
+			BeanProperties.value(model.getClass(), Model.SERVICE_TYPE).observe(model),
 			new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
 				@Override
 				public IStatus validate(Object value) {
@@ -448,7 +448,7 @@ public class FindByServiceWizardPage extends WizardPage {
 		GridData listLayout = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		listLayout.heightHint = 80;
 		portList.setLayoutData(listLayout);
-		dbc.bindList(SWTObservables.observeItems(portList), BeansObservables.observeList(model, propertyName));
+		dbc.bindList(WidgetProperties.items().observe(portList), BeanProperties.list(model.getClass(), propertyName).observe(model));
 		return portList;
 	}
 

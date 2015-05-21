@@ -47,7 +47,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
@@ -288,7 +287,7 @@ public class DependencyWizardPage extends WizardPage {
 		final IEMFValueProperty propValuePath = EMFProperties.value(FeaturePath.fromList(SpdPackage.Literals.DEPENDENCY__PROPERTY_REF,
 			SpdPackage.Literals.PROPERTY_REF__VALUE));
 
-		this.context.bindValue(SWTObservables.observeText(this.refIdText, SWT.Modify), propRefIdPath.observe(this.dependency),
+		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.refIdText), propRefIdPath.observe(this.dependency),
 			new EMFEmptyStringToNullUpdateValueStrategy(), null);
 
 		final EMFEmptyStringToNullUpdateValueStrategy strategy = new EMFEmptyStringToNullUpdateValueStrategy();
@@ -307,7 +306,7 @@ public class DependencyWizardPage extends WizardPage {
 			}
 
 		});
-		this.context.bindValue(SWTObservables.observeText(this.propNameText, SWT.None), propRefIdPath.observe(this.dependency), new UpdateValueStrategy(
+		this.context.bindValue(WidgetProperties.text(SWT.None).observe(this.propNameText), propRefIdPath.observe(this.dependency), new UpdateValueStrategy(
 			UpdateValueStrategy.POLICY_NEVER), strategy);
 		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.valueText), propValuePath.observe(this.dependency),
 			new EMFEmptyStringToNullUpdateValueStrategy(), null);
@@ -320,7 +319,7 @@ public class DependencyWizardPage extends WizardPage {
 		this.context.bindValue(ViewersObservables.observeSingleSelection(this.softPkgRefViewer), softPkgRef.observe(this.dependency), targetToModel,
 			modelToTarget);
 
-		this.context.bindValue(SWTObservables.observeText(this.dependencyTypeComboViewer.getCombo()),
+		this.context.bindValue(WidgetProperties.text().observe(this.dependencyTypeComboViewer.getCombo()),
 			EMFObservables.observeValue(this.dependency, SpdPackage.Literals.DEPENDENCY__TYPE), new EMFEmptyStringToNullUpdateValueStrategy(), null);
 
 	}

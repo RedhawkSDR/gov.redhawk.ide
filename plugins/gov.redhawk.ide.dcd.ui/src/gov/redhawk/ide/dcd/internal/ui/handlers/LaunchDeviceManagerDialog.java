@@ -10,17 +10,17 @@
  *******************************************************************************/
 package gov.redhawk.ide.dcd.internal.ui.handlers;
 
-import java.util.ArrayList;
-
 import gov.redhawk.ide.sdr.ui.util.DebugLevel;
 import gov.redhawk.ide.sdr.ui.util.DeviceManagerLaunchConfiguration;
 import gov.redhawk.model.sca.provider.ScaItemProviderAdapterFactory;
 import gov.redhawk.sca.ScaPlugin;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -68,13 +68,13 @@ public class LaunchDeviceManagerDialog extends ListDialog {
 		debugViewer.setInput(DebugLevel.values());
 		debugViewer.setSelection(new StructuredSelection(DebugLevel.Info));
 		context.bindValue(ViewersObservables.observeSingleSelection(debugViewer),
-			PojoObservables.observeValue(configuration, DeviceManagerLaunchConfiguration.PROP_DEBUG_LEVEL));
+			PojoProperties.value(configuration.getClass(), DeviceManagerLaunchConfiguration.PROP_DEBUG_LEVEL).observe(configuration));
 
 		label = new Label(parent, SWT.NULL);
 		label.setText("Arguments: ");
 		Text text = new Text(parent, SWT.BORDER);
-		context.bindValue(SWTObservables.observeText(text, SWT.Modify),
-			PojoObservables.observeValue(configuration, DeviceManagerLaunchConfiguration.PROP_ARGUMENTS));
+		context.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
+			PojoProperties.value(configuration.getClass(), DeviceManagerLaunchConfiguration.PROP_ARGUMENTS).observe(configuration));
 		
 		super.createButtonsForButtonBar(parent);
 	}

@@ -16,7 +16,7 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
@@ -103,8 +103,8 @@ public class SoftwareAssemblySelectionPage extends WizardPage {
 			}
 		});
 
-		dbc.bindValue(ViewersObservables.observeInput(viewer), BeansObservables.observeValue(wizard, "waveformsContainer"));
-		dbc.bindValue(ViewersObservables.observeSingleSelection(viewer), BeansObservables.observeValue(wizard, "softwareAssembly"),
+		dbc.bindValue(ViewersObservables.observeInput(viewer), BeanProperties.value(wizard.getClass(), "waveformsContainer").observe(wizard));
+		dbc.bindValue(ViewersObservables.observeSingleSelection(viewer), BeanProperties.value(wizard.getClass(), "softwareAssembly").observe(wizard),
 			new UpdateValueStrategy().setAfterConvertValidator(new IValidator() {
 
 				@Override

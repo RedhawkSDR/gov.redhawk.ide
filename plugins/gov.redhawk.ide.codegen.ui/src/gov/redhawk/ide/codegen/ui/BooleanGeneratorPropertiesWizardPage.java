@@ -40,7 +40,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFObservables;
 import org.eclipse.emf.databinding.EMFUpdateValueStrategy;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -416,7 +416,7 @@ public class BooleanGeneratorPropertiesWizardPage extends WizardPage implements 
 			EMFObservables.observeValue(this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__TEMPLATE), createTemplateTargetToModel(),
 			createTemplateModelToTarget()));
 
-		this.bindings.add(this.context.bindValue(SWTObservables.observeText(this.outputDirText, SWT.Modify),
+		this.bindings.add(this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.outputDirText),
 			EMFObservables.observeValue(this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR),
 			new UpdateValueStrategy().setAfterConvertValidator(new OutputDirectoryValidator(this.softPkg)), null));
 

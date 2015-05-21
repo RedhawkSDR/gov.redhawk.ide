@@ -39,7 +39,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFObservables;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -610,15 +610,15 @@ public class ImplementationWizardPage extends WizardPage {
 	}
 
 	private void bind(boolean importingCode) {
-		this.context.bindValue(SWTObservables.observeText(this.idText, SWT.Modify),
+		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.idText),
 			EMFObservables.observeValue(this.impl, SpdPackage.Literals.IMPLEMENTATION__ID),
 			new EMFEmptyStringToNullUpdateValueStrategy().setAfterConvertValidator(new ImplementationIdValidator(this.softPkg, importingCode)), null);
 
-		this.context.bindValue(SWTObservables.observeText(this.getProgLangEntryViewer()),
+		this.context.bindValue(WidgetProperties.text().observe(this.getProgLangEntryViewer()),
 			EMFObservables.observeValue(this.getProgLang(), SpdPackage.Literals.PROGRAMMING_LANGUAGE__NAME), new EMFEmptyStringToNullUpdateValueStrategy(),
 			null);
 
-		this.context.bindValue(SWTObservables.observeText(this.descriptionText, SWT.Modify),
+		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.descriptionText),
 			EMFObservables.observeValue(this.impl, SpdPackage.Literals.IMPLEMENTATION__DESCRIPTION), new EMFEmptyStringToNullUpdateValueStrategy(), null);
 
 		this.pageSupport = WizardPageSupport.create(this, this.context);

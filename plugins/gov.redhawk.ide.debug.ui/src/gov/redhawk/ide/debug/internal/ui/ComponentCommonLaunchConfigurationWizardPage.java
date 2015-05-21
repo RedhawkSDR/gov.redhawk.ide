@@ -11,8 +11,8 @@
 package gov.redhawk.ide.debug.internal.ui;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -57,10 +57,10 @@ public class ComponentCommonLaunchConfigurationWizardPage extends CommonLaunchCo
 	@Override
 	protected void bindControls() {
 		if (getStartButton() != null) {
-			dbc.bindValue(SWTObservables.observeSelection(getStartButton()), BeansObservables.observeValue(wizard, "autoStart"));
+			dbc.bindValue(WidgetProperties.selection().observe(getStartButton()), BeanProperties.value(wizard.getClass(), "autoStart").observe(wizard));
 		}
-		dbc.bindValue(SWTObservables.observeSelection(getTimeout()), BeansObservables.observeValue(wizard, "timeout"));
-		dbc.bindValue(SWTObservables.observeSelection(levelCombo), BeansObservables.observeValue(wizard, "debugLevel"));
-		dbc.bindValue(SWTObservables.observeSelection(getRunConfigurationButton()), BeansObservables.observeValue(wizard, "saveRunConfiguration"));
+		dbc.bindValue(WidgetProperties.selection().observe(getTimeout()), BeanProperties.value(wizard.getClass(), "timeout").observe(wizard));
+		dbc.bindValue(WidgetProperties.selection().observe(levelCombo), BeanProperties.value(wizard.getClass(), "debugLevel").observe(wizard));
+		dbc.bindValue(WidgetProperties.selection().observe(getRunConfigurationButton()), BeanProperties.value(wizard.getClass(), "saveRunConfiguration").observe(wizard));
 	}
 }

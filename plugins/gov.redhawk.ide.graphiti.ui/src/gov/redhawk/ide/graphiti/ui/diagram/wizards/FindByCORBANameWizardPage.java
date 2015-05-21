@@ -20,11 +20,11 @@ import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
@@ -144,8 +144,8 @@ public class FindByCORBANameWizardPage extends WizardPage {
 				dbc.updateModels();
 			}
 		});
-		dbc.bindValue(SWTObservables.observeText(corbaNameText, SWT.Modify), 
-			BeansObservables.observeValue(model, CORBANameModel.CORBA_NAME),
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(corbaNameText),
+			BeanProperties.value(model.getClass(), CORBANameModel.CORBA_NAME).observe(model),
 			new UpdateValueStrategy().setAfterGetValidator(new IValidator() {
 				@Override
 				public IStatus validate(Object value) {
@@ -242,7 +242,7 @@ public class FindByCORBANameWizardPage extends WizardPage {
 		GridData listLayout = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		listLayout.heightHint = 80;
 		portList.setLayoutData(listLayout);
-		dbc.bindList(SWTObservables.observeItems(portList), BeansObservables.observeList(model, propertyName));
+		dbc.bindList(WidgetProperties.items().observe(portList), BeanProperties.list(model.getClass(), propertyName).observe(model));
 		return portList;
 	}
 

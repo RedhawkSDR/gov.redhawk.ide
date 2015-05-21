@@ -20,8 +20,8 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -116,10 +116,8 @@ public class UsesDeviceWizardPage extends WizardPage {
 		usesDeviceIdText.setToolTipText("Unique id for Device");
 		usesDeviceIdText.setEnabled(true);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(usesDeviceIdText);
-		dbc.bindValue(SWTObservables.observeText(usesDeviceIdText, SWT.Modify), 
-			BeansObservables.observeValue(model, Model.USES_DEVICE_ID),  
-			new UpdateValueStrategy().setAfterGetValidator(new AbstractUsesDevicePattern.UsesDeviceIdValidator(sad, model.getUsesDeviceId())),
-			null);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(usesDeviceIdText), BeanProperties.value(model.getClass(), Model.USES_DEVICE_ID).observe(model),
+			new UpdateValueStrategy().setAfterGetValidator(new AbstractUsesDevicePattern.UsesDeviceIdValidator(sad, model.getUsesDeviceId())), null);
 		
 		setControl(composite);
 

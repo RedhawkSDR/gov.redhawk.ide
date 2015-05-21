@@ -59,7 +59,6 @@ import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -471,7 +470,7 @@ public class GeneralInfoSection extends ScaSection {
 		this.bindings.add(context.bindValue(
 			WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(), this.client.getNameEntry().getText()),
 			EMFEditObservables.observeValue(getEditingDomain(), model, SpdPackage.Literals.SOFT_PKG__NAME), new EMFEmptyStringToNullUpdateValueStrategy(), null));
-		SWTObservables.observeText(this.client.getNameEntry().getText(), SWT.Modify);
+		WidgetProperties.text(SWT.Modify).observe(this.client.getNameEntry().getText());
 
 		this.bindings.add(context.bindValue(
 			WidgetProperties.text(SWT.Modify).observeDelayed(SCAFormEditor.getFieldBindingDelay(), this.client.getTitleEntry().getText()),

@@ -16,7 +16,7 @@ import mil.jpeojtrs.sca.spd.SpdPackage;
 
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFObservables;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -102,7 +102,7 @@ public class AuthorWizardPage extends WizardPage {
 		label.setText("Company:");
 		text = new Text(client, SWT.BORDER);
 		text.setLayoutData(textFactory.create());
-		this.context.bindValue(SWTObservables.observeText(text, SWT.Modify), EMFObservables.observeValue(this.author,
+		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(text), EMFObservables.observeValue(this.author,
 		        SpdPackage.Literals.AUTHOR__COMPANY), null, null);
 
 		label = new Label(client, SWT.NULL);
@@ -110,7 +110,7 @@ public class AuthorWizardPage extends WizardPage {
 		label.setText("Webpage:");
 		text = new Text(client, SWT.BORDER);
 		text.setLayoutData(textFactory.create());
-		this.context.bindValue(SWTObservables.observeText(text, SWT.Modify), EMFObservables.observeValue(this.author,
+		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(text), EMFObservables.observeValue(this.author,
 		        SpdPackage.Literals.AUTHOR__WEBPAGE), null, null);
 
 		label = new Label(client, SWT.NULL);

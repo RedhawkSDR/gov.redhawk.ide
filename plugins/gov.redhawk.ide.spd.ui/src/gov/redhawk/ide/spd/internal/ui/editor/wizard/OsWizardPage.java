@@ -30,7 +30,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -125,7 +125,7 @@ public class OsWizardPage extends WizardPage {
 		this.comboViewer.setComparator(new ViewerComparator());
 
 		// Bind and validate
-		this.context.bindValue(SWTObservables.observeText(this.comboViewer.getCombo()), EMFObservables.observeValue(this.os, SpdPackage.Literals.OS__NAME),
+		this.context.bindValue(WidgetProperties.text().observe(this.comboViewer.getCombo()), EMFObservables.observeValue(this.os, SpdPackage.Literals.OS__NAME),
 		        new EMFEmptyStringToNullUpdateValueStrategy(), null);
 
 		label = new Label(client, SWT.NULL);
@@ -133,7 +133,7 @@ public class OsWizardPage extends WizardPage {
 		text = new Text(client, SWT.BORDER);
 		text.setToolTipText("The version of the OS.");
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
-		this.context.bindValue(SWTObservables.observeText(text, SWT.Modify), EMFObservables.observeValue(this.os, SpdPackage.Literals.OS__VERSION), null, null);
+		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(text), EMFObservables.observeValue(this.os, SpdPackage.Literals.OS__VERSION), null, null);
 
 		final EmfValidationStatusProvider provider = new EmfValidationStatusProvider(this.os, this.context, this.adapterFactory);
 		this.context.addValidationStatusProvider(provider);

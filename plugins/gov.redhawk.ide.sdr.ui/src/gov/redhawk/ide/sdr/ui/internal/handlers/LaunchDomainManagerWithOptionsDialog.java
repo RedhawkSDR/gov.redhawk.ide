@@ -33,7 +33,7 @@ import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
@@ -43,7 +43,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -227,8 +227,8 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		data = textFactory.create();
 		data.horizontalSpan = 2;
 		text.setLayoutData(data);
-		this.nameBinding = this.context.bindValue(SWTObservables.observeText(text, SWT.Modify),
-			PojoObservables.observeValue(this.model, DomainManagerLaunchConfiguration.PROP_DOMAIN_NAME),
+		this.nameBinding = this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
+			PojoProperties.value(this.model.getClass(), DomainManagerLaunchConfiguration.PROP_DOMAIN_NAME).observe(this.model),
 			new UpdateValueStrategy().setAfterConvertValidator(this.nameValidator), null);
 		text.addModifyListener(new ModifyListener() {
 
@@ -248,14 +248,14 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		debugViewer.setInput(DebugLevel.values());
 		debugViewer.getControl().setLayoutData(data);
 		this.context.bindValue(ViewersObservables.observeSingleSelection(debugViewer),
-			PojoObservables.observeValue(this.model, DomainManagerLaunchConfiguration.PROP_DEBUG_LEVEL));
+			PojoProperties.value(this.model.getClass(), DomainManagerLaunchConfiguration.PROP_DEBUG_LEVEL).observe(this.model));
 
 		label = new Label(domainManagerGroup, SWT.NULL);
 		label.setText("Arguments:");
 		text = new Text(domainManagerGroup, SWT.BORDER);
 		text.setLayoutData(data);
-		this.context.bindValue(SWTObservables.observeText(text, SWT.Modify),
-			PojoObservables.observeValue(this.model, DomainManagerLaunchConfiguration.PROP_ARGUMENTS));
+		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
+			PojoProperties.value(this.model.getClass(), DomainManagerLaunchConfiguration.PROP_ARGUMENTS).observe(this.model));
 
 		final Group deviceManagerGroup = new Group(composite, SWT.NULL);
 
@@ -414,7 +414,7 @@ public class LaunchDomainManagerWithOptionsDialog extends CheckedTreeSelectionDi
 		label.setText("Arguments:");
 		Text text = new Text(subContainer, SWT.BORDER);
 		text.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-		this.context.bindValue(SWTObservables.observeText(text, SWT.Modify), nodeArguments, null, null);
+		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(text), nodeArguments, null, null);
 
 		return root;
 	}

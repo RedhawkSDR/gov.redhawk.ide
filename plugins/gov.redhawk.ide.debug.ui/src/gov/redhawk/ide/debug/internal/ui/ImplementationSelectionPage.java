@@ -16,7 +16,7 @@ import mil.jpeojtrs.sca.spd.Implementation;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
@@ -85,8 +85,8 @@ public class ImplementationSelectionPage extends WizardPage {
 				return super.compare(viewer, e1, e2);
 			}
 		});
-		dbc.bindValue(ViewersObservables.observeInput(viewer), BeansObservables.observeValue(wizard, "softPkg"));
-		dbc.bindValue(ViewersObservables.observeSingleSelection(viewer), BeansObservables.observeValue(wizard, "implementation"),
+		dbc.bindValue(ViewersObservables.observeInput(viewer), BeanProperties.value(wizard.getClass(), "softPkg").observe(wizard));
+		dbc.bindValue(ViewersObservables.observeSingleSelection(viewer), BeanProperties.value(wizard.getClass(), "implementation").observe(wizard),
 			new UpdateValueStrategy().setAfterConvertValidator(new IValidator() {
 
 				@Override

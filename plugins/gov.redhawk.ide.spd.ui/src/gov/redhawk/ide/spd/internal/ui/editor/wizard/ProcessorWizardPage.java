@@ -30,7 +30,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -116,7 +116,7 @@ public class ProcessorWizardPage extends WizardPage {
 		this.comboViewer.setComparator(new ViewerComparator());
 
 		// Bind and validate
-		this.context.bindValue(SWTObservables.observeText(this.comboViewer.getCombo()),
+		this.context.bindValue(WidgetProperties.text().observe(this.comboViewer.getCombo()),
 		        EMFObservables.observeValue(this.processor, SpdPackage.Literals.PROCESSOR__NAME), new EMFEmptyStringToNullUpdateValueStrategy(), null);
 		this.context.addValidationStatusProvider(new EmfValidationStatusProvider(this.processor, this.context, this.adapterFactory));
 		this.pageSupport = WizardPageSupport.create(this, this.context);

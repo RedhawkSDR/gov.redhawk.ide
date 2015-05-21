@@ -22,9 +22,9 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -141,10 +141,8 @@ public class UsesDeviceFrontEndTunerWizardPage extends WizardPage {
 		usesDeviceIdText.setToolTipText("Unique ID for the uses device dependency (the default should normally be fine)");
 		usesDeviceIdText.setEnabled(true);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(usesDeviceIdText);
-		dbc.bindValue(SWTObservables.observeText(usesDeviceIdText, SWT.Modify), 
-			BeansObservables.observeValue(model, Model.USES_DEVICE_ID),  
-			new UpdateValueStrategy().setAfterGetValidator(new AbstractUsesDevicePattern.UsesDeviceIdValidator(sad, model.getUsesDeviceId())),
-			null);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(usesDeviceIdText), BeanProperties.value(model.getClass(), Model.USES_DEVICE_ID).observe(model),
+			new UpdateValueStrategy().setAfterGetValidator(new AbstractUsesDevicePattern.UsesDeviceIdValidator(sad, model.getUsesDeviceId())), null);
 	
 		Label deviceModelLabel = new Label(composite, SWT.NONE);
 		deviceModelLabel.setText("Device Model (optional)");
@@ -152,8 +150,7 @@ public class UsesDeviceFrontEndTunerWizardPage extends WizardPage {
 		deviceModelText.setToolTipText("The device's model (optional)");
 		deviceModelText.setEnabled(true);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(deviceModelText);
-		dbc.bindValue(SWTObservables.observeText(deviceModelText, SWT.Modify), 
-			BeansObservables.observeValue(model, Model.DEVICE_MODEL));
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(deviceModelText), BeanProperties.value(model.getClass(), Model.DEVICE_MODEL).observe(model));
 
 		setControl(composite);
 

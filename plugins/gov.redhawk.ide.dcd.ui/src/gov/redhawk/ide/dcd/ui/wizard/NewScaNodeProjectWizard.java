@@ -90,7 +90,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 
 	@Override
 	public boolean canFinish() {
-		if (this.nodePropertiesPage.getContentsGroup().isCreateNewResource()) {
+		if (this.nodePropertiesPage.isCreateNewResource()) {
 			return super.canFinish();
 		} else {
 			return this.nodePropertiesPage.isPageComplete();
@@ -106,7 +106,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 			getContainer().getCurrentPage().getControl().setEnabled(false);
 			// Find the working sets and where the new project should be located on disk
 			final IWorkingSet[] workingSets = this.nodePropertiesPage.getSelectedWorkingSets();
-			final boolean isCreateNewResource = this.nodePropertiesPage.getContentsGroup().isCreateNewResource();
+			final boolean isCreateNewResource = this.nodePropertiesPage.isCreateNewResource();
 			final String projectName = this.nodePropertiesPage.getProjectName();
 			final java.net.URI locationURI;
 			if (this.nodePropertiesPage.useDefaults()) {
@@ -115,7 +115,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 				locationURI = this.nodePropertiesPage.getLocationURI();
 			}
 			final String id = this.nodePropertiesPage.getID();
-			final IPath existingDcdPath = this.nodePropertiesPage.getContentsGroup().getExistingResourcePath();
+			final IPath existingDcdPath = this.nodePropertiesPage.getExistingResourcePath();
 
 			final String domainManagerName = this.nodePropertiesPage.getDomain();
 			final SoftPkg[] devices = this.nodeDevicesPage.getNodeDevices();
@@ -210,7 +210,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 
 	@Override
 	public IWizardPage getNextPage(final IWizardPage page) {
-		if (!this.nodePropertiesPage.getContentsGroup().isCreateNewResource() && (page == this.nodePropertiesPage)) {
+		if (!this.nodePropertiesPage.isCreateNewResource() && (page == this.nodePropertiesPage)) {
 			return null;
 		} else {
 			return super.getNextPage(page);

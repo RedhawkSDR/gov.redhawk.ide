@@ -17,4 +17,5 @@ Require-Bundle: gov.redhawk.ide.swtbot;bundle-version="1.0.0",
  gov.redhawk.ide.codegen;bundle-version="10.1.0",
  gov.redhawk.ide.codegen.ui;bundle-version="8.1.0",
  mil.jpeojtrs.sca.validator;bundle-version="3.0.0",
- gov.redhawk.codegen.validation
+ gov.redhawk.codegen.validation,
+ org.eclipse.core.databinding.property;bundle-version="1.5.0"

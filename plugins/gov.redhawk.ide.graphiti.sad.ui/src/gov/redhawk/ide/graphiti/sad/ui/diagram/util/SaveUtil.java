@@ -68,7 +68,7 @@ public class SaveUtil { // SUPPRESS CHECKSTYLE INLINE
 			Resource createResource = rSet.createResource(uri);
 			createResource.getContents().add(docRoot);
 			try {
-				createResource.save(new HashMap());
+				createResource.save(new HashMap<Object, Object>());
 			} catch (IOException e) {
 				ErrorDialog.openError(Display.getDefault().getActiveShell(), "Error", "Problem opening the Software Assembly configuration file",
 					new org.eclipse.core.runtime.Status(IStatus.ERROR, SADUIGraphitiPlugin.getDefault().getBundle().getSymbolicName(),

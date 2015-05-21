@@ -55,7 +55,7 @@ import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -569,7 +569,7 @@ public class DefaultGeneratorPropertiesWizardPage extends WizardPage implements 
 			EMFObservables.observeValue(this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__TEMPLATE), createTemplateTargetToModel(),
 			createTemplateModelToTarget());
 
-		this.context.bindValue(SWTObservables.observeText(this.outputDirText, SWT.Modify),
+		this.context.bindValue(WidgetProperties.text(SWT.Modify).observe(this.outputDirText),
 			EMFObservables.observeValue(this.implSettings, CodegenPackage.Literals.IMPLEMENTATION_SETTINGS__OUTPUT_DIR),
 			new UpdateValueStrategy().setAfterConvertValidator(new OutputDirectoryValidator(this.softPkg)), null);
 

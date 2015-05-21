@@ -126,7 +126,7 @@ public class ScaProjectPropertiesWizardPage extends WizardNewProjectCreationPage
 
 	/**
 	 * Returns the possibly null contents group
-	 * @deprecated use {@link getIsCreateNewResource()} instead if that is needed
+	 * @deprecated use {@link #isCreateNewResource()} instead if that is needed
 	 * @return
 	 */
 	@Deprecated

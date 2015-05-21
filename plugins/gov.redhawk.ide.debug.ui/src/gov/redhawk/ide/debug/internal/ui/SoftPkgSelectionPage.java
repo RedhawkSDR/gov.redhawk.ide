@@ -18,7 +18,7 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
@@ -132,8 +132,8 @@ public class SoftPkgSelectionPage extends WizardPage {
 			}
 		});
 
-		dbc.bindValue(ViewersObservables.observeInput(viewer), BeansObservables.observeValue(wizard, "spdContainer"));
-		dbc.bindValue(ViewersObservables.observeSingleSelection(viewer), BeansObservables.observeValue(wizard, "softPkg"),
+		dbc.bindValue(ViewersObservables.observeInput(viewer), BeanProperties.value(wizard.getClass(), "spdContainer").observe(wizard));
+		dbc.bindValue(ViewersObservables.observeSingleSelection(viewer), BeanProperties.value(wizard.getClass(), "softPkg").observe(wizard),
 			new UpdateValueStrategy().setAfterConvertValidator(new IValidator() {
 
 				@Override

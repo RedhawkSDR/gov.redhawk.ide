@@ -245,8 +245,8 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 				deleteUsesDeviceStubConnections(usesDeviceStub, sad);
 				
 				//remove device
-				for (Iterator iter = sad.getUsesDeviceDependencies().getUsesdevice().iterator(); iter.hasNext();) {
-					UsesDevice s = (UsesDevice) iter.next();
+				for (Iterator<UsesDevice> iter = sad.getUsesDeviceDependencies().getUsesdevice().iterator(); iter.hasNext();) {
+					UsesDevice s = iter.next();
 					if (usesDeviceStub.getUsesDevice().getId().equals(s.getId())) {
 						iter.remove();
 					}
