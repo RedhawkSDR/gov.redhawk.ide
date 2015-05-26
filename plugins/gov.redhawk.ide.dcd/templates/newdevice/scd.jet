@@ -50,8 +50,7 @@
         <supportsinterface repid="IDL:CF/PortSupplier:1.0" supportsname="PortSupplier"/>
         <supportsinterface repid="IDL:CF/PropertySet:1.0" supportsname="PropertySet"/>
         <supportsinterface repid="IDL:CF/TestableObject:1.0" supportsname="TestableObject"/>
-        <ports>
-        </ports>
+        <ports/>
     </componentfeatures>
     <interfaces>
 <%
