@@ -47,11 +47,11 @@
     <componentinstantiationref refid="<%=assemblyId%>"/>
   </assemblycontroller>
 <%
-} else {
+	} else {
 %>
   <partitioning/>
   <assemblycontroller/>
 <%
-}
+	}
 %>
 </softwareassembly>

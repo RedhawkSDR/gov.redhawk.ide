@@ -67,30 +67,32 @@ public class DcdFileTemplate
     stringBuffer.append(TEXT_2);
     stringBuffer.append(args.getNodeName());
     stringBuffer.append(TEXT_3);
-    
+    	
 	HashMap<SoftPkg, String> devToId = new HashMap<SoftPkg, String>(); 
 	if (args.getDevices() != null && args.getDevices().length > 0) { 
     stringBuffer.append(TEXT_4);
     
-    	for (SoftPkg device : args.getDevices()) { 
-    		String usageName = ProjectCreator.getBaseFileName(device.getName());
-        	devToId.put(device, usageName + "_" + UUID.randomUUID());
+        for (SoftPkg device : args.getDevices()) {
+            String usageName = ProjectCreator.getBaseFileName(device.getName());
+            devToId.put(device, usageName + "_" + UUID.randomUUID());
 
     stringBuffer.append(TEXT_5);
     stringBuffer.append(devToId.get(device));
     stringBuffer.append(TEXT_6);
     stringBuffer.append(device.eResource().getURI().path());
     stringBuffer.append(TEXT_7);
-     		} 
+    
+        }
+
     stringBuffer.append(TEXT_8);
     
-    for (SoftPkg device : args.getDevices()) {
-        int devNum = 1;
-    	String usageName = ProjectCreator.getBaseFileName(device.getName());
-        while (deviceList.contains(usageName + "_" + devNum)) {
-            devNum++;
-        }
-        deviceList.add(usageName + "_" + devNum);
+        for (SoftPkg device : args.getDevices()) {
+            int devNum = 1;
+            String usageName = ProjectCreator.getBaseFileName(device.getName());
+            while (deviceList.contains(usageName + "_" + devNum)) {
+                devNum++;
+            }
+            deviceList.add(usageName + "_" + devNum);
 
     stringBuffer.append(TEXT_9);
     stringBuffer.append(devToId.get(device));
@@ -101,11 +103,17 @@ public class DcdFileTemplate
     stringBuffer.append(TEXT_12);
     stringBuffer.append(devNum);
     stringBuffer.append(TEXT_13);
-     } 
+    
+        }
+
     stringBuffer.append(TEXT_14);
-     } else {
+    
+    } else {
+
     stringBuffer.append(TEXT_15);
-     } 
+    
+    }
+
     stringBuffer.append(TEXT_16);
     stringBuffer.append(args.getDomainManagerName());
     stringBuffer.append(TEXT_17);

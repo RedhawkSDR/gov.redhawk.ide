@@ -89,11 +89,11 @@ public class SadFileTemplate
     stringBuffer.append(assemblyId);
     stringBuffer.append(TEXT_11);
     
-} else {
+	} else {
 
     stringBuffer.append(TEXT_12);
     
-}
+	}
 
     stringBuffer.append(TEXT_13);
     stringBuffer.append(TEXT_14);

@@ -18,29 +18,31 @@ java.util.UUID"
   <devicemanagersoftpkg>
     <localfile name="/mgr/DeviceManager.spd.xml"/>
   </devicemanagersoftpkg>
-<%
+<%	
 	HashMap<SoftPkg, String> devToId = new HashMap<SoftPkg, String>(); 
 	if (args.getDevices() != null && args.getDevices().length > 0) { %>
   <componentfiles>
-    <%
-    	for (SoftPkg device : args.getDevices()) { 
-    		String usageName = ProjectCreator.getBaseFileName(device.getName());
-        	devToId.put(device, usageName + "_" + UUID.randomUUID());
+<%
+        for (SoftPkg device : args.getDevices()) {
+            String usageName = ProjectCreator.getBaseFileName(device.getName());
+            devToId.put(device, usageName + "_" + UUID.randomUUID());
 %>
     <componentfile id="<%=devToId.get(device)%>" type="SPD">
       <localfile name="<%=device.eResource().getURI().path()%>"/>
     </componentfile>
-<% 		} %>
+<%
+        }
+%>
   </componentfiles>
   <partitioning>
 <%
-    for (SoftPkg device : args.getDevices()) {
-        int devNum = 1;
-    	String usageName = ProjectCreator.getBaseFileName(device.getName());
-        while (deviceList.contains(usageName + "_" + devNum)) {
-            devNum++;
-        }
-        deviceList.add(usageName + "_" + devNum);
+        for (SoftPkg device : args.getDevices()) {
+            int devNum = 1;
+            String usageName = ProjectCreator.getBaseFileName(device.getName());
+            while (deviceList.contains(usageName + "_" + devNum)) {
+                devNum++;
+            }
+            deviceList.add(usageName + "_" + devNum);
 %>
     <componentplacement>
       <componentfileref refid="<%=devToId.get(device)%>"/>
@@ -48,11 +50,17 @@ java.util.UUID"
         <usagename><%=usageName%>_<%=devNum%></usagename>
       </componentinstantiation>
     </componentplacement>
-<% } %>
+<%
+        }
+%>
   </partitioning>
-<% } else {%>
+<%
+    } else {
+%>
   <partitioning/>
-<% } %>
+<%
+    }
+%>
   <domainmanager>
     <namingservice name="<%=args.getDomainManagerName()%>/<%=args.getDomainManagerName()%>"/>
   </domainmanager>
