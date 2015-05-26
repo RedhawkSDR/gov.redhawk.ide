@@ -25,11 +25,11 @@ public class SpdFileTemplate
   }
 
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
-  protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<!DOCTYPE softpkg PUBLIC \"-//JTRS//DTD SCA V2.2.2 SPD//EN\" \"softpkg.dtd\">" + NL + "<!-- Created with REDHAWK IDE-->" + NL + "<!-- Powered by Eclipse -->" + NL + "<softpkg type=\"sca_compliant\" name=\"";
-  protected final String TEXT_2 = "\" id=\"";
-  protected final String TEXT_3 = "\">" + NL + "    <title/>" + NL + "    <author>" + NL + "        <name>";
-  protected final String TEXT_4 = "</name> " + NL + "    </author>" + NL + "    <descriptor>" + NL + "        <localfile name=\"";
-  protected final String TEXT_5 = ".scd.xml\"/>" + NL + "    </descriptor>" + NL + "</softpkg>";
+  protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<!DOCTYPE softpkg PUBLIC \"-//JTRS//DTD SCA V2.2.2 SPD//EN\" \"softpkg.dtd\">" + NL + "<softpkg id=\"";
+  protected final String TEXT_2 = "\" name=\"";
+  protected final String TEXT_3 = "\" type=\"sca_compliant\">" + NL + "  <title/>" + NL + "  <author>" + NL + "    <name>";
+  protected final String TEXT_4 = "</name>" + NL + "  </author>" + NL + "  <descriptor>" + NL + "    <localfile name=\"";
+  protected final String TEXT_5 = ".scd.xml\"/>" + NL + "  </descriptor>" + NL + "</softpkg>";
   protected final String TEXT_6 = NL;
 
     /**
@@ -40,9 +40,9 @@ public class SpdFileTemplate
     final StringBuffer stringBuffer = new StringBuffer();
      GeneratorArgs args = (GeneratorArgs)argument; 
     stringBuffer.append(TEXT_1);
-    stringBuffer.append(args.getProjectName());
-    stringBuffer.append(TEXT_2);
     stringBuffer.append(args.getProjectId());
+    stringBuffer.append(TEXT_2);
+    stringBuffer.append(args.getProjectName());
     stringBuffer.append(TEXT_3);
     stringBuffer.append(args.getAuthorName());
     stringBuffer.append(TEXT_4);
