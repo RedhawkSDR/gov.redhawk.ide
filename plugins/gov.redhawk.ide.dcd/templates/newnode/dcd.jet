@@ -13,48 +13,52 @@ java.util.UUID"
 %>
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE deviceconfiguration PUBLIC "-//JTRS//DTD SCA V2.2.2 DCD//EN" "deviceconfiguration.dtd">
-<deviceconfiguration name="<%=args.getNodeName()%>" id="<%=args.getNodeId()%>">
-    <devicemanagersoftpkg>
-    	<localfile name="/mgr/DeviceManager.spd.xml">
-    	</localfile>
-    </devicemanagersoftpkg>
+<deviceconfiguration id="<%=args.getNodeId()%>" name="<%=args.getNodeName()%>">
+  <devicemanagersoftpkg>
+    <localfile name="/mgr/DeviceManager.spd.xml"/>
+  </devicemanagersoftpkg>
 <%	
 	HashMap<SoftPkg, String> devToId = new HashMap<SoftPkg, String>(); 
 	if (args.getDevices() != null && args.getDevices().length > 0) { %>
-    <componentfiles> 
-    <%
-    	
-    	for (SoftPkg device : args.getDevices()) { 
-        	devToId.put(device, device.getName() + "_" + UUID.randomUUID());
-%>
-    	<componentfile type="SPD" id="<%=devToId.get(device)%>">
-    		<localfile name="<%=device.eResource().getURI().path()%>">
-    		</localfile>
-    	</componentfile>
-<% 		} %>
-    </componentfiles>
-<%  } 
-%>    
-    <partitioning>
+  <componentfiles>
 <%
-    for (SoftPkg device : args.getDevices()) {
-        int devNum = 1;
-        while (deviceList.contains(device.getName() + "_" + devNum)) {
-            devNum++;
-        }
-        deviceList.add(device.getName() + "_" + devNum);
+        for (SoftPkg device : args.getDevices()) {
+            devToId.put(device, device.getName() + "_" + UUID.randomUUID());
 %>
-		<componentplacement>
-	    	<componentfileref refid="<%=devToId.get(device)%>">
-    		</componentfileref>
-	     	<componentinstantiation id="<%=DceUuidUtil.createDceUUID()%>">
-	     		<usagename><%=device.getName()%>_<%=devNum%></usagename>
-	     	</componentinstantiation>
-    	</componentplacement>
-<% } %>
-    </partitioning>
-    <domainmanager>
-    	<namingservice name="<%=args.getDomainManagerName()%>/<%=args.getDomainManagerName()%>">
-    	</namingservice>
-    </domainmanager>
+    <componentfile id="<%=devToId.get(device)%>" type="SPD">
+      <localfile name="<%=device.eResource().getURI().path()%>"/>
+    </componentfile>
+<%
+        }
+%>
+  </componentfiles>
+  <partitioning>
+<%
+        for (SoftPkg device : args.getDevices()) {
+            int devNum = 1;
+            while (deviceList.contains(device.getName() + "_" + devNum)) {
+                devNum++;
+            }
+            deviceList.add(device.getName() + "_" + devNum);
+%>
+    <componentplacement>
+      <componentfileref refid="<%=devToId.get(device)%>"/>
+      <componentinstantiation id="<%=DceUuidUtil.createDceUUID()%>">
+        <usagename><%=device.getName()%>_<%=devNum%></usagename>
+      </componentinstantiation>
+    </componentplacement>
+<%
+        }
+%>
+  </partitioning>
+<%
+    } else {
+%>
+  <partitioning/>
+<%
+    }
+%>
+  <domainmanager>
+    <namingservice name="<%=args.getDomainManagerName()%>/<%=args.getDomainManagerName()%>"/>
+  </domainmanager>
 </deviceconfiguration>
