@@ -22,16 +22,16 @@ import org.eclipse.ui.IEditorReference;
 /**
  * Bot editor class to use RHTestBotEditor for better dragging functionality with Graphiti diagrams.
  */
-public class RHTestBotEditor extends SWTBotGefEditor {
+public class RHBotGefEditor extends SWTBotGefEditor {
 
 	private RHTestBotViewer dragViewer;
-	
+
 	/**
 	 * @param reference
 	 * @param bot
 	 * @throws WidgetNotFoundException
 	 */
-	public RHTestBotEditor(IEditorReference reference, SWTWorkbenchBot bot) throws WidgetNotFoundException {
+	public RHBotGefEditor(IEditorReference reference, SWTWorkbenchBot bot) throws WidgetNotFoundException {
 		super(reference, bot);
 		GraphicalViewer graphicalViewer = UIThreadRunnable.syncExec(new Result<GraphicalViewer>() {
 			public GraphicalViewer run() {
@@ -50,7 +50,7 @@ public class RHTestBotEditor extends SWTBotGefEditor {
 	public RHTestBotViewer getDragViewer() {
 		return dragViewer;
 	}
-	
+
 	/**
 	 * Uses dragViewer instead of viewer
 	 */
@@ -58,5 +58,5 @@ public class RHTestBotEditor extends SWTBotGefEditor {
 	public void drag(final int fromXPosition, final int fromYPosition, final int toXPosition, final int toYPosition) {
 		getDragViewer().drag(fromXPosition, fromYPosition, toXPosition, toYPosition);
 	}
-	
+
 }

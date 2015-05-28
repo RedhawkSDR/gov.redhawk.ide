@@ -18,7 +18,7 @@ import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.NodeUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
-import gov.redhawk.ide.swtbot.diagram.RHTestBotEditor;
+import gov.redhawk.ide.swtbot.diagram.RHBotGefEditor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +90,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		NodeUtils.createNewNodeProject(bot, projectName, DOMAIN_NAME);
 		editor = gefBot.gefEditor(projectName);
 
-		DiagramTestUtils.addFromPaletteToDiagramWithNameSpace((RHTestBotEditor) editor, deviceName, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagramWithNameSpace((RHBotGefEditor) editor, deviceName, 0, 0);
 		MenuUtils.save(editor);
 
 		// Build expected xml string for device

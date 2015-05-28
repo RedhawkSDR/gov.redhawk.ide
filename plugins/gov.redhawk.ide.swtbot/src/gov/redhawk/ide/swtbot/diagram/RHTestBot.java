@@ -24,13 +24,13 @@ public class RHTestBot extends SWTGefBot {
 	/**
 	 * @see SWTGefBot#gefEditor(String)
 	 */
-	public RHTestBotEditor rhGefEditor(String fileName) throws WidgetNotFoundException {
-		return (RHTestBotEditor) gefEditor(fileName, 0);
+	public RHBotGefEditor rhGefEditor(String fileName) throws WidgetNotFoundException {
+		return (RHBotGefEditor) gefEditor(fileName, 0);
 	}
 
 	@Override
 	protected SWTBotGefEditor createEditor(IEditorReference reference, SWTWorkbenchBot bot) {
-		return new RHTestBotEditor(reference, bot);
+		return new RHBotGefEditor(reference, bot);
 	}
 
 }

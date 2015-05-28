@@ -19,7 +19,7 @@ import gov.redhawk.ide.swtbot.condition.WaitForEditorCondition;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.RHTestBotCanvas;
-import gov.redhawk.ide.swtbot.diagram.RHTestBotEditor;
+import gov.redhawk.ide.swtbot.diagram.RHBotGefEditor;
 
 import java.util.List;
 
@@ -234,7 +234,7 @@ public class ConnectionTest extends AbstractGraphitiTest {
 
 		// Add components to diagram from palette
 		// We need the RHTestBotEditor so we can get the canvas and do direct mouse events
-		RHTestBotEditor editor = gefBot.rhGefEditor(waveformName);
+		RHBotGefEditor editor = gefBot.rhGefEditor(waveformName);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, SIGGEN, 0, 0);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, DATA_CONVERTER, 300, 0);
 		SWTBotGefEditPart usesPort = DiagramTestUtils.getDiagramUsesPort(editor, SIGGEN, sigGenPort).children().get(0);

@@ -87,7 +87,7 @@ public class PaletteUtils {
 		}
 	}
 
-	public static ToolEntry getToolEntry(RHTestBotEditor editor, final String label) {
+	public static ToolEntry getToolEntry(RHBotGefEditor editor, final String label) {
 		if (label.contains(".")) {
 			String[] segments = label.split("\\.");
 			int numFolders = segments.length - 1;
@@ -144,8 +144,8 @@ public class PaletteUtils {
 	}
 
 	public static boolean toolIsPresent(SWTBotGefEditor editor, final String label) {
-		if (editor instanceof RHTestBotEditor) {
-			RHTestBotEditor realEditor = (RHTestBotEditor) editor;
+		if (editor instanceof RHBotGefEditor) {
+			RHBotGefEditor realEditor = (RHBotGefEditor) editor;
 			return (getToolEntry(realEditor, label) != null);
 		}
 		return (getSimpleTool(editor, label) != null);
@@ -167,8 +167,8 @@ public class PaletteUtils {
 	public static boolean hasMultipleImplementations(SWTBotGefEditor editor, String component) {
 		Assert.assertTrue(PaletteUtils.toolIsPresent(editor, component));
 		ToolEntry entry;
-		if (editor instanceof RHTestBotEditor) {
-			entry = PaletteUtils.getToolEntry((RHTestBotEditor) editor, component);
+		if (editor instanceof RHBotGefEditor) {
+			entry = PaletteUtils.getToolEntry((RHBotGefEditor) editor, component);
 		} else {
 			entry = editor.getActiveTool();
 		}
