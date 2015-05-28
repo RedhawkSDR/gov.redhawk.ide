@@ -55,8 +55,6 @@ public class SadFileTemplateTest {
 		final SoftwareAssembly assembly = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(URI.createFileURI(sadFile.toString()), true));
 		assertEquals("ID", args.getWaveformId(), assembly.getId());
 		assertEquals("Name", args.getWaveformName(), assembly.getName());
-		// <componentfiles> tag is no longer included on initial Waveform creation when an Assembly Controller is not selected for 1.11
-//		assertNotNull("componentfiles", assembly.getComponentFiles()); 
 		assertNotNull("partitioning", assembly.getPartitioning());
 		assertNotNull("assemblycontroller", assembly.getAssemblyController());
 	}
