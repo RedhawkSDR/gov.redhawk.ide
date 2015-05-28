@@ -39,6 +39,7 @@ public class UsesDeviceComposite extends Composite implements IScaComposite {
 
 		createIDEntry();
 		createTypeEntry();
+
 		this.toolkit.paintBordersFor(this);
 	}
 

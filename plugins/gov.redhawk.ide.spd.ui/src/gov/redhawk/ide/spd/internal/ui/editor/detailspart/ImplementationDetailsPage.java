@@ -735,16 +735,16 @@ public class ImplementationDetailsPage extends ScaDetails {
 		this.dependencyComposite.getProcessorViewer().setInput(this.input);
 		this.dependencyComposite.getDependencyViewer().setInput(this.input);
 
+		retVal.add(FormEntryBindingFactory.bind(context, this.codeComposite.getEntryPoint(), getEditingDomain(), SpdPackage.Literals.CODE__ENTRY_POINT,
+			this.input.getCode(), new EMFEmptyStringToNullUpdateValueStrategy(), null));
 		retVal.add(FormEntryBindingFactory.bind(context, this.codeComposite.getCodePriority(), getEditingDomain(), SpdPackage.Literals.CODE__PRIORITY,
 			this.input.getCode(), new EMFEmptyStringToNullUpdateValueStrategy(), null));
+		retVal.add(FormEntryBindingFactory.bind(context, this.codeComposite.getLocalFile(), getEditingDomain(), SpdPackage.Literals.CODE__LOCAL_FILE,
+			this.input.getCode(), createCodeLocalFileTargetToModel(), createCodeLocalFileModelToTarget()));
 		retVal.add(FormEntryBindingFactory.bind(context, this.codeComposite.getCodeStackSize(), getEditingDomain(), SpdPackage.Literals.CODE__STACK_SIZE,
-			this.input.getCode(), new EMFEmptyStringToNullUpdateValueStrategy(), null));
-		retVal.add(FormEntryBindingFactory.bind(context, this.codeComposite.getEntryPoint(), getEditingDomain(), SpdPackage.Literals.CODE__ENTRY_POINT,
 			this.input.getCode(), new EMFEmptyStringToNullUpdateValueStrategy(), null));
 		retVal.add(context.bindValue(ViewersObservables.observeSingleSelection(this.codeComposite.getCodeTypeViewer()),
 			EMFEditObservables.observeValue(getEditingDomain(), this.input.getCode(), SpdPackage.Literals.CODE__TYPE), null, null));
-		retVal.add(FormEntryBindingFactory.bind(context, this.codeComposite.getLocalFile(), getEditingDomain(), SpdPackage.Literals.CODE__LOCAL_FILE,
-			this.input.getCode(), createCodeLocalFileTargetToModel(), createCodeLocalFileModelToTarget()));
 
 		this.codeComposite.setFieldsEditable(implSettings);
 

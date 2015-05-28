@@ -96,17 +96,18 @@ import org.eclipse.ui.progress.WorkbenchJob;
 import org.osgi.framework.Version;
 
 /**
+ * This class is the primary entry point to code generation.
  * @since 7.0
  */
 public final class GenerateCode {
 
 	private GenerateCode() {
-
 	}
 
 	private static final ExecutorService EXECUTOR_POOL = Executors.newSingleThreadExecutor(new NamedThreadFactory(GenerateCode.class.getName()));
 
 	/**
+	 * @see #generate(Shell, List)
 	 * @since 8.0
 	 */
 	@SuppressWarnings("unchecked")
@@ -126,6 +127,7 @@ public final class GenerateCode {
 	}
 
 	/**
+	 * @see #generate(Shell, List)
 	 * @since 8.0
 	 */
 	public static void generate(Shell parent, IFile spd) {
@@ -136,6 +138,7 @@ public final class GenerateCode {
 	}
 
 	/**
+	 * @see #generate(Shell, List)
 	 * @since 8.0
 	 */
 	public static void generate(Shell parent, final Implementation impl) {
@@ -143,6 +146,8 @@ public final class GenerateCode {
 	}
 
 	/**
+	 * Performs the code generation process for the specified implementation(s). The process may prompt the user for
+	 * input. The process occurs in a job and is thus asynchronous.
 	 * @since 8.0
 	 */
 	public static void generate(final Shell shell, final List<Implementation> impls) {

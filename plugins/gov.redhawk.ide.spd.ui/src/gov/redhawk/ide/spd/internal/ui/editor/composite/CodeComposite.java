@@ -64,13 +64,9 @@ public class CodeComposite extends Composite implements IScaComposite {
 		setLayout(FormLayoutFactory.createSectionClientGridLayout(false, CodeComposite.NUM_COLUMNS));
 
 		createCodeEntryPointEntry();
-
 		createCodePriorityEntry();
-
 		createCodeLocalFileEntry();
-
 		createCodeStackSizeEntry();
-
 		createCodeTypeEntry();
 
 		toolkit.paintBordersFor(this);

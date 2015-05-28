@@ -44,8 +44,8 @@ public class PropertyRefComposite extends Composite implements IScaComposite {
 		setLayout(FormLayoutFactory.createSectionClientGridLayout(false, PropertyRefComposite.NUM_COLUMNS));
 
 		createRefIDEntry();
-
 		createValueEntry();
+
 		this.toolkit.paintBordersFor(this);
 	}
 
