@@ -75,7 +75,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -486,7 +485,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 		try {
 			res.save(null);
 		} catch (final IOException e) {
-			IDEWorkbenchPlugin.log(e.getMessage(), e);
+			RedhawkCodegenUiActivator.logError(e.getMessage(), e);
 		}
 
 		return waveDev;
