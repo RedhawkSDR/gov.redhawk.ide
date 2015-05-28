@@ -791,7 +791,7 @@ public class ImplementationDetailsPage extends ScaDetails {
 			}
 
 		});
-		return null;
+		return strategy;
 	}
 
 	/**
