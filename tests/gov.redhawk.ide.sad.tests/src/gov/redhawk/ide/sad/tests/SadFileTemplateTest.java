@@ -54,7 +54,6 @@ public class SadFileTemplateTest {
 		final SoftwareAssembly assembly = SoftwareAssembly.Util.getSoftwareAssembly(resourceSet.getResource(URI.createFileURI(sadFile.toString()), true));
 		Assert.assertEquals(args.getWaveformId(), assembly.getId());
 		Assert.assertEquals(args.getWaveformName(), assembly.getName());
-		Assert.assertNotNull(assembly.getComponentFiles());
 		Assert.assertNotNull(assembly.getPartitioning());
 		Assert.assertNotNull(assembly.getAssemblyController());
 	}
