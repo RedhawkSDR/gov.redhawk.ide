@@ -29,7 +29,7 @@ public class SpdFileTemplate
   protected final String TEXT_2 = "\" name=\"";
   protected final String TEXT_3 = "\" type=\"sca_compliant\">" + NL + "  <title/>" + NL + "  <author>" + NL + "    <name>";
   protected final String TEXT_4 = "</name>" + NL + "  </author>" + NL + "  <descriptor>" + NL + "    <localfile name=\"";
-  protected final String TEXT_5 = ".scd.xml\"/>" + NL + "  </descriptor>" + NL + "</softpkg>";
+  protected final String TEXT_5 = "\"/>" + NL + "  </descriptor>" + NL + "</softpkg>";
   protected final String TEXT_6 = NL;
 
     /**

@@ -10,6 +10,6 @@
     <name><%=args.getAuthorName()%></name>
   </author>
   <descriptor>
-    <localfile name="<%=args.getScdFile()%>.scd.xml"/>
+    <localfile name="<%=args.getScdFile()%>"/>
   </descriptor>
 </softpkg>
