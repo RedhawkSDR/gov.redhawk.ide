@@ -82,95 +82,111 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-
 		// GenerateCode Class simply takes an object to generate from. It should be either a list of implementations, an
 		// implementation or IFile
 
 		// If the user used a context menu, generate code on the selection(s)
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
+		if (selection != null && !selection.isEmpty()) {
+			handleMenuSelection(event, selection);
+			return null;
+		}
 
-		// for each of the elements in the selection
-		// if its empty or null then its the editor (IFile)
-		// if its not empty / null then it should be either an Implementation or an IFile.
-		// We need to get the project so we can save related resources.
-		// Fom the IFile its easy, from the implementation we need to get the EMF Resource and get the IFile from there
-
-		// If the menu selection is empty then Generate button was pressed within the editor
-		if (selection == null || selection.isEmpty()) {
-			final IEditorPart editor = HandlerUtil.getActiveEditor(event);
-			if (editor != null) {
-				if (editor instanceof SCAFormEditor) {
-					SCAFormEditor scaEditor = (SCAFormEditor) editor;
-					SoftPkg spd = SoftPkg.Util.getSoftPkg(scaEditor.getMainResource());
-					if (spd != null) {
-						IProject project = ModelUtil.getProject(spd);
-						try {
-							saveAndGenerate(spd, project, HandlerUtil.getActiveShell(event));
-						} catch (CoreException e) {
-							StatusManager.getManager().handle(
-								new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
-								StatusManager.SHOW | StatusManager.LOG);
-							return null;
-						}
-						return null;
-					}
-				} else {
-					final IEditorInput editorInput = editor.getEditorInput();
-					if (editorInput instanceof IFileEditorInput) {
-						final IFile f = ((IFileEditorInput) editorInput).getFile();
-						if (isSpdFile(f)) {
-							try {
-								saveAndGenerate(f, f.getProject(), HandlerUtil.getActiveShell(event));
-							} catch (CoreException e) {
-								StatusManager.getManager().handle(
-									new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
-									StatusManager.SHOW | StatusManager.LOG);
-								return null;
-							}
-							return null;
-						}
-					}
-				}
-			}
-		} else { // The selection was made either via the right click menu from the Project Explorer, or in the
-					// Implementations tab.
-			if (selection instanceof IStructuredSelection) {
-				final IStructuredSelection ss = (IStructuredSelection) selection;
-
-				for (Object obj : ss.toList()) {
-					if (obj instanceof IFile && isSpdFile((IFile) obj)) {
-						try {
-							saveAndGenerate(obj, ((IFile) obj).getProject(), HandlerUtil.getActiveShell(event));
-						} catch (CoreException e) {
-							StatusManager.getManager().handle(
-								new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
-								StatusManager.SHOW | StatusManager.LOG);
-							return null;
-						}
-					} else if (obj instanceof Implementation) {
-						Implementation impl = (Implementation) obj;
-						String platformURI = impl.eResource().getURI().toPlatformString(true);
-						IResource spdFile = ResourcesPlugin.getWorkspace().getRoot().findMember(platformURI);
-
-						if (spdFile instanceof IFile && isSpdFile((IFile) spdFile)) {
-							try {
-								saveAndGenerate(impl, ((IFile) spdFile).getProject(), HandlerUtil.getActiveShell(event));
-							} catch (CoreException e) {
-								StatusManager.getManager().handle(
-									new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
-									StatusManager.SHOW | StatusManager.LOG);
-								return null;
-							}
-						}
-					}
-				}
-				return null;
-			}
+		// If the user clicked the generate code button in an editor, generate code on the editor input
+		final IEditorPart editor = HandlerUtil.getActiveEditor(event);
+		if (editor != null) {
+			handleEditor(event, editor);
+			return null;
 		}
 
 		// If we get here, somehow the generate code handler was triggered from somewhere it shouldn't be - log this
 		RedhawkCodegenUiActivator.logError("Generate code handler was triggered without a valid selection", null);
 		return null;
+	}
+
+	/**
+	 * Handle invoking codegen from a context menu selection in either the Project Explorer or an implementation on the
+	 * implementations tab
+	 * @param event
+	 * @param selection The current selection
+	 */
+	private void handleMenuSelection(final ExecutionEvent event, final ISelection selection) {
+		if (!(selection instanceof IStructuredSelection)) {
+			RedhawkCodegenUiActivator.logError("Generate code handler was triggered with an invalid selection", null);
+			return;
+		}
+
+		final IStructuredSelection ss = (IStructuredSelection) selection;
+		for (Object obj : ss.toList()) {
+			if (obj instanceof IFile && isSpdFile((IFile) obj)) {
+				try {
+					saveAndGenerate(obj, ((IFile) obj).getProject(), HandlerUtil.getActiveShell(event));
+				} catch (CoreException e) {
+					StatusManager.getManager().handle(
+						new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
+						StatusManager.SHOW | StatusManager.LOG);
+					return;
+				}
+			} else if (obj instanceof Implementation) {
+				Implementation impl = (Implementation) obj;
+				String platformURI = impl.eResource().getURI().toPlatformString(true);
+				IResource spdFile = ResourcesPlugin.getWorkspace().getRoot().findMember(platformURI);
+
+				if (spdFile instanceof IFile && isSpdFile((IFile) spdFile)) {
+					try {
+						saveAndGenerate(impl, ((IFile) spdFile).getProject(), HandlerUtil.getActiveShell(event));
+					} catch (CoreException e) {
+						StatusManager.getManager().handle(
+							new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
+							StatusManager.SHOW | StatusManager.LOG);
+						return;
+					}
+				}
+			}
+		}
+		return;
+	}
+
+	/**
+	 * Handle invoking codegen by clicking the generate code button on an editor.
+	 * @param event
+	 * @param editor The current editor
+	 */
+	private void handleEditor(final ExecutionEvent event, final IEditorPart editor) {
+		if (editor instanceof SCAFormEditor) {
+			SCAFormEditor scaEditor = (SCAFormEditor) editor;
+			SoftPkg spd = SoftPkg.Util.getSoftPkg(scaEditor.getMainResource());
+			if (spd != null) {
+				IProject project = ModelUtil.getProject(spd);
+				try {
+					saveAndGenerate(spd, project, HandlerUtil.getActiveShell(event));
+				} catch (CoreException e) {
+					StatusManager.getManager().handle(
+						new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
+						StatusManager.SHOW | StatusManager.LOG);
+				}
+			} else {
+				RedhawkCodegenUiActivator.logError("Couldn't get SPD from editor in generate code handler", null);
+			}
+		} else {
+			final IEditorInput editorInput = editor.getEditorInput();
+			if (editorInput instanceof IFileEditorInput) {
+				final IFile f = ((IFileEditorInput) editorInput).getFile();
+				if (isSpdFile(f)) {
+					try {
+						saveAndGenerate(f, f.getProject(), HandlerUtil.getActiveShell(event));
+					} catch (CoreException e) {
+						StatusManager.getManager().handle(
+							new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
+							StatusManager.SHOW | StatusManager.LOG);
+					}
+				} else {
+					RedhawkCodegenUiActivator.logError("Editor input is not an SPD file in generate code handler", null);
+				}
+			} else {
+				RedhawkCodegenUiActivator.logError("Couldn't determine input from editor in generate code handler", null);
+			}
+		}
 	}
 
 	/**
