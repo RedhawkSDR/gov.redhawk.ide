@@ -69,15 +69,11 @@ public class ComponentPropertiesSection extends GFPropertySection implements ITa
 	@Override
 	public final void setInput(final IWorkbenchPart part, final ISelection selection) {
 		super.setInput(part, selection);
-		Object newInput = null;
+		ScaPropertyContainer< ? , ? > newInput = null;
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection ss = (IStructuredSelection) selection;
 			final Object obj = ss.getFirstElement();
-			final Object theAdapter = Platform.getAdapterManager().getAdapter(obj, ScaPropertyContainer.class);
-			if (theAdapter instanceof ScaPropertyContainer< ? , ? >) {
-				final ScaPropertyContainer< ? , ? > comps = (ScaPropertyContainer< ? , ? >) theAdapter;
-				newInput = comps;
-			}
+			newInput = Platform.getAdapterManager().getAdapter(obj, ScaPropertyContainer.class);
 		}
 		getViewer().setInput(newInput);
 	}
