@@ -104,7 +104,7 @@ public class ComponentPropertiesSection extends RHDiagramElementPropertySection 
 			} else if (DUtil.isDiagramTargetSdr(getDiagram())){
 				this.adapter.setInput(newInput);
 			} else {
-//				getViewer().setInput(getPropertyContainer(selection));
+				getViewer().setInput(getPropertyContainer(selection));
 			}
 		} else {
 			this.adapter.setInput(null);
