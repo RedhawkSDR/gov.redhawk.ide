@@ -104,14 +104,14 @@ public class ComponentPropertiesSection extends RHDiagramElementPropertySection 
 		}
 	}
 
-	private Object getPropertyContainer(final ISelection selection) {
+	private ScaPropertyContainer<?,?> getPropertyContainer(final ISelection selection) {
 		if (selection instanceof StructuredSelection) {
 			StructuredSelection ss = (StructuredSelection) selection;
 			Object element = ss.getFirstElement();
 			if (element instanceof EditPart) {
 				EditPart ep = (EditPart) element;
-				Object component = Platform.getAdapterManager().getAdapter(ep, ScaComponent.class);
-				return Platform.getAdapterManager().getAdapter(component, ScaPropertyContainer.class);
+				final ScaComponent component = Platform.getAdapterManager().getAdapter(ep, ScaComponent.class);
+				return component;
 			}
 		}
 		return null;
