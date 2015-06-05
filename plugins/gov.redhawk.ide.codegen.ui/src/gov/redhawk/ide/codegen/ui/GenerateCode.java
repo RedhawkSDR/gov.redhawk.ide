@@ -22,6 +22,8 @@ import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.ide.codegen.ui.internal.GenerateFilesDialog;
 import gov.redhawk.ide.codegen.ui.internal.GeneratorConsole;
+import gov.redhawk.ide.codegen.ui.internal.GeneratorUtil;
+import gov.redhawk.ide.codegen.ui.internal.WaveDevUtil;
 import gov.redhawk.ide.codegen.ui.preferences.CodegenPreferenceConstants;
 import gov.redhawk.ide.codegen.util.PropertyUtil;
 import gov.redhawk.model.sca.util.ModelUtil;
@@ -72,7 +74,6 @@ import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.util.EMap;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -105,45 +106,6 @@ public final class GenerateCode {
 	}
 
 	private static final ExecutorService EXECUTOR_POOL = Executors.newSingleThreadExecutor(new NamedThreadFactory(GenerateCode.class.getName()));
-
-	/**
-	 * @see #generate(Shell, List)
-	 * @since 8.0
-	 */
-	@SuppressWarnings("unchecked")
-	public static void generate(Shell parent, Object objectToGenerate) {
-		if (objectToGenerate instanceof IFile) {
-			generate(parent, (IFile) objectToGenerate);
-		} else if (objectToGenerate instanceof SoftPkg) {
-			generate(parent, ((SoftPkg) objectToGenerate).getImplementation());
-		} else if (objectToGenerate instanceof Implementation) {
-			generate(parent, (Implementation) objectToGenerate);
-		} else if (objectToGenerate instanceof List< ? >) {
-			generate(parent, (List<Implementation>) objectToGenerate);
-		} else {
-			throw new IllegalArgumentException("Unknown object to generate" + objectToGenerate);
-		}
-
-	}
-
-	/**
-	 * @see #generate(Shell, List)
-	 * @since 8.0
-	 */
-	public static void generate(Shell parent, IFile spd) {
-		final IFile file = (IFile) spd;
-		final URI spdURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
-		final SoftPkg softpkg = ModelUtil.loadSoftPkg(spdURI);
-		generate(parent, softpkg.getImplementation());
-	}
-
-	/**
-	 * @see #generate(Shell, List)
-	 * @since 8.0
-	 */
-	public static void generate(Shell parent, final Implementation impl) {
-		generate(parent, Collections.singletonList(impl));
-	}
 
 	/**
 	 * Performs the code generation process for the specified implementation(s). The process may prompt the user for
@@ -312,11 +274,11 @@ public final class GenerateCode {
 				try {
 					updateCRCs(domain, settings, mapping);
 				} catch (final IOException e) {
-					retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID, "Problem while generating CRCs for implementations", e));
+					retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID, "Problem while generating CRCs for implementations", e));
 				}
 
-				ImplementationSettings implSettings = getImplSettings(impl);
-				final IScaComponentCodegen generator = getGenerator(implSettings);
+				ImplementationSettings implSettings = WaveDevUtil.getImplSettings(impl);
+				final IScaComponentCodegen generator = GeneratorUtil.getGenerator(implSettings);
 				final Version codeGenVersion = generator.getCodegenVersion();
 
 				if (codeGenVersion.getMajor() >= 2 || (codeGenVersion.getMajor() == 1 && codeGenVersion.getMinor() >= 10)) {
@@ -374,16 +336,16 @@ public final class GenerateCode {
 											domain.getCommandStack().flush();
 										}
 									} catch (IOException e) {
-										retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID, "Problem while saving spd.xml", e));
+										retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID, "Problem while saving spd.xml", e));
 									} catch (CoreException e) {
-										retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID, "Problem while saving spd.xml", e));
+										retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID, "Problem while saving spd.xml", e));
 									}
 								}
 							}).run(new NullProgressMonitor());
 						} catch (InvocationTargetException e) {
-							retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID, "Problem while saving spd.xml", e));
+							retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID, "Problem while saving spd.xml", e));
 						} catch (InterruptedException e) {
-							retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenActivator.PLUGIN_ID, "Problem while saving spd.xml", e));
+							retStatus.add(new Status(IStatus.WARNING, RedhawkCodegenUiActivator.PLUGIN_ID, "Problem while saving spd.xml", e));
 						}
 					}
 				}
@@ -538,16 +500,16 @@ public final class GenerateCode {
 				}
 
 				if (retStatus.isOK()) {
-					return new Status(IStatus.OK, RedhawkCodegenActivator.PLUGIN_ID, "Succeeded generating code for implementation");
+					return new Status(IStatus.OK, RedhawkCodegenUiActivator.PLUGIN_ID, "Succeeded generating code for implementation");
 				}
 
 			} catch (final CoreException e) {
-				retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenActivator.PLUGIN_ID, "Unexpected error", e));
+				retStatus.add(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Unexpected error", e));
 			}
 		} else {
 			retStatus.add(new Status(
 				IStatus.WARNING,
-				RedhawkCodegenActivator.PLUGIN_ID,
+				RedhawkCodegenUiActivator.PLUGIN_ID,
 				"No code generator is specified in the settings (wavedev). Code generation was skipped for the implementation. Check your generator selection for the implementation."));
 		}
 
@@ -569,8 +531,8 @@ public final class GenerateCode {
 	private static Set<FileStatus> getFilesToGenerate(IProgressMonitor monitor, Implementation impl) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, "Calculating files to generate...", IProgressMonitor.UNKNOWN);
 		try {
-			final ImplementationSettings implSettings = getImplSettings(impl);
-			final IScaComponentCodegen generator = getGenerator(implSettings);
+			final ImplementationSettings implSettings = WaveDevUtil.getImplSettings(impl);
+			final IScaComponentCodegen generator = GeneratorUtil.getGenerator(implSettings);
 
 			final SoftPkg softpkg = (SoftPkg) impl.eContainer();
 
@@ -610,24 +572,6 @@ public final class GenerateCode {
 		} finally {
 			subMonitor.done();
 		}
-	}
-
-	private static ImplementationSettings getImplSettings(Implementation impl) {
-		final WaveDevSettings waveDev = CodegenUtil.loadWaveDevSettings((SoftPkg) impl.eContainer());
-		// Generate code for each implementation
-		final EMap<String, ImplementationSettings> implSet = waveDev.getImplSettings();
-		// Generate code for implementation
-		final ImplementationSettings settings = implSet.get(impl.getId());
-
-		return settings;
-	}
-
-	private static IScaComponentCodegen getGenerator(ImplementationSettings settings) throws CoreException {
-		final String codegenId = settings.getGeneratorId();
-		final ICodeGeneratorDescriptor codeGenDesc = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(codegenId);
-		// Get the specific code generator
-		final IScaComponentCodegen generator = codeGenDesc.getGenerator();
-		return generator;
 	}
 
 	/**
