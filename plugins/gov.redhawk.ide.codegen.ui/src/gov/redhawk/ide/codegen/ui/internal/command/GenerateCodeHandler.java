@@ -17,6 +17,7 @@ import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
 import gov.redhawk.ide.codegen.ui.internal.ManualGeneratorUtil;
 import gov.redhawk.ide.codegen.ui.internal.WaveDevUtil;
 import gov.redhawk.ide.codegen.ui.internal.upgrade.DeprecatedCodegenUtil;
+import gov.redhawk.ide.codegen.ui.internal.upgrade.PropertyKindUtil;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.RedhawkUiActivator;
 import gov.redhawk.ui.editor.SCAFormEditor;
@@ -224,6 +225,7 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 		boolean shouldGenerate = true;
 		try {
 			DeprecatedCodegenUtil.checkDeprecated(shell, impls);
+			PropertyKindUtil.checkProperties(shell, parentProject, impls);
 			shouldGenerate = ManualGeneratorUtil.checkManualGenerator(shell, impls);
 		} catch (OperationCanceledException e) {
 			return;
