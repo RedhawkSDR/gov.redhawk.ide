@@ -68,6 +68,7 @@ import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Composite;
@@ -692,7 +693,8 @@ public class ComponentEditor extends SCAFormEditor {
 	protected boolean shouldUpdateSelection(final Collection< ? > selection) {
 		//Only update the selection if the objects show in master viewers.
 		for (final Object object : selection) {
-			if (!(object instanceof AbstractProperty || object instanceof Implementation)) {
+			final Object unwrappedObject = AdapterFactoryEditingDomain.unwrap(object);
+			if (!(unwrappedObject instanceof AbstractProperty || unwrappedObject instanceof Implementation)) {
 				return false;
 			}
 		}
