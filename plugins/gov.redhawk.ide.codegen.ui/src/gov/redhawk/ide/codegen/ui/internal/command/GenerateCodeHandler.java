@@ -65,6 +65,10 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+/**
+ * This handler is the main entry point to code generation in the UI. It performs several checks, possibly upgrading
+ * project file(s) or settings, and then invokes the code generator.
+ */
 public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 
 	@Override

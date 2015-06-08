@@ -48,8 +48,9 @@ public class DeprecatedCodegenUtil {
 	 * @param shell
 	 * @param impls
 	 * @throws CoreException
+	 * @throws OperationCanceledException
 	 */
-	public static void checkDeprecated(Shell shell, List<Implementation> impls) throws CoreException {
+	public static void checkDeprecated(Shell shell, List<Implementation> impls) throws CoreException, OperationCanceledException {
 		if (impls == null || impls.isEmpty()) {
 			return;
 		}
@@ -68,7 +69,7 @@ public class DeprecatedCodegenUtil {
 		}
 	}
 
-	private static boolean shouldUpgrade(Shell parent, String name) throws CoreException {
+	private static boolean shouldUpgrade(Shell parent, String name) throws CoreException, OperationCanceledException {
 		String message = name + " uses deprecated code generators.\n\n" + "Would you like to upgrade this project?";
 		MessageDialog dialog = new MessageDialog(parent, "Deprecated Generator", null, message, MessageDialog.WARNING, new String[] { "Upgrade", "Cancel" }, 1);
 		switch (dialog.open()) {
@@ -80,7 +81,7 @@ public class DeprecatedCodegenUtil {
 		}
 	}
 
-	private static void upgrade(Shell parent, final SoftPkg spd, final WaveDevSettings implSettings) throws CoreException {
+	private static void upgrade(Shell parent, final SoftPkg spd, final WaveDevSettings implSettings) throws CoreException, OperationCanceledException {
 		ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(parent);
 		try {
 			progressDialog.run(true, true, new IRunnableWithProgress() {
