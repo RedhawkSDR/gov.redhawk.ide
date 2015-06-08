@@ -23,7 +23,6 @@ import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -45,7 +44,7 @@ public class ManualGeneratorUtil {
 	 */
 	public static boolean checkManualGenerator(Shell shell, List<Implementation> impls) throws CoreException {
 		if (impls == null || impls.isEmpty()) {
-			throw new OperationCanceledException();
+			return false;
 		}
 		boolean shouldGenerate = true;
 		final SoftPkg softPkg = (SoftPkg) impls.get(0).eContainer();
