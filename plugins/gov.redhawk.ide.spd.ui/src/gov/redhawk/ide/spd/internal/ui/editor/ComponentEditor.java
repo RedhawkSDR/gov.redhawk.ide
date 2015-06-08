@@ -689,18 +689,14 @@ public class ComponentEditor extends SCAFormEditor {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setSelectionToViewer(final Collection< ? > collection) {
-		boolean updateSelection = true;
-		for (final Object obj : collection) {
-			//Only update the selection if the objects show in master viewers.
-			if (!(obj instanceof AbstractProperty || obj instanceof Implementation)) {
-				updateSelection = false;
-				break;
+	protected boolean shouldUpdateSelection(final Collection< ? > selection) {
+		//Only update the selection if the objects show in master viewers.
+		for (final Object object : selection) {
+			if (!(object instanceof AbstractProperty || object instanceof Implementation)) {
+				return false;
 			}
 		}
-		if (updateSelection) {
-			super.setSelectionToViewer(collection);
-		}
+		return true;
 	}
 
 	/**
