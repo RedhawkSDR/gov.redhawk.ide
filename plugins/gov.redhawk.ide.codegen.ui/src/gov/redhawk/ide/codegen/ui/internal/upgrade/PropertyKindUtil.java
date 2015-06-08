@@ -19,7 +19,6 @@ import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.commands.ScaModelCommandWithResult;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -37,11 +36,8 @@ import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -50,12 +46,10 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.transaction.RunnableWithResult;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.osgi.framework.Version;
 
@@ -92,7 +86,7 @@ public class PropertyKindUtil {
 	 * @param parentProject
 	 * @param impls
 	 * @throws CoreException
-	 * @throws OperationCanceledException The user aborts an operation, or codegen is not allowed to proceed
+	 * @throws OperationCanceledException
 	 */
 	public static void checkProperties(Shell shell, IProject parentProject, List<Implementation> impls) throws CoreException, OperationCanceledException {
 		if (impls == null || impls.size() == 0) {
@@ -337,6 +331,7 @@ public class PropertyKindUtil {
 	 * @throws CoreException
 	 */
 	private static void save(final IProject project, final SoftPkg spd, final Properties prf) throws CoreException {
+		// Our model object may / most likely belongs to an editor
 		RunnableWithResult<Boolean> saveViaEditor = new RunnableWithResult.Impl<Boolean>() {
 			@Override
 			public void run() {
@@ -350,7 +345,8 @@ public class PropertyKindUtil {
 						project.getFile(spd.eResource().getURI().lastSegment()));
 				}
 
-				if (editorPart != null) {
+				// If the editor is found and is dirty (i.e. it has our changes), save
+				if (editorPart != null && editorPart.isDirty()) {
 					editorPart.doSave(new NullProgressMonitor());
 					setResult(true);
 				}
@@ -358,26 +354,11 @@ public class PropertyKindUtil {
 		};
 		Display.getDefault().syncExec(saveViaEditor);
 
+		// If we were unable to save via editor, save the resource directly
 		if (saveViaEditor.getResult() == null) {
 			try {
-				new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
-
-					@Override
-					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						try {
-							prf.eResource().save(null);
-							IFile prfFile = project.getFile(prf.eResource().getURI().lastSegment());
-							prfFile.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
-						} catch (IOException e) {
-							throw new InvocationTargetException(e);
-						} catch (CoreException e) {
-							throw new InvocationTargetException(e);
-						}
-					}
-				}).run(new NullProgressMonitor());
-			} catch (InvocationTargetException e) {
-				throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Problem while saving PRF XML file", e.getCause()));
-			} catch (InterruptedException e) {
+				prf.eResource().save(null);
+			} catch (IOException e) {
 				throw new CoreException(new Status(IStatus.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Problem while saving PRF XML file", e));
 			}
 		}
