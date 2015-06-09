@@ -89,7 +89,6 @@ import org.eclipse.ui.progress.WorkbenchJob;
 public final class GenerateCode {
 
 	private GenerateCode() {
-
 	}
 
 	private static final ExecutorService EXECUTOR_POOL = Executors.newSingleThreadExecutor(new NamedThreadFactory(GenerateCode.class.getName()));
@@ -325,7 +324,7 @@ public final class GenerateCode {
 			if (isDeprecated) {
 				CodegenUtil.addTopLevelBuildScriptBuilder(project, progress.newChild(1));
 			} else {
-				progress.notWorked(1);
+				CodegenUtil.removeTopLevelBuildScriptBuilder(project, progress.newChild(1));
 			}
 
 			// Refresh project after generating code
