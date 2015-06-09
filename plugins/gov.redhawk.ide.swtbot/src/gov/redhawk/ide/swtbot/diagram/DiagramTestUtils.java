@@ -143,9 +143,9 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	 * @param xTargetPosition - x coordinate for drop location
 	 * @param yTargetPosition - y coordinate for drop location
 	 */
-	public static void addFromPaletteToDiagramWithNameSpace(final RHTestBotEditor editor, final String componentName, int xTargetPosition, int yTargetPosition) {
+	public static void addFromPaletteToDiagramWithNameSpace(final RHBotGefEditor editor, final String componentName, int xTargetPosition, int yTargetPosition) {
 
-		final ToolEntry componentToolEntry = PaletteUtils.getToolEntry((RHTestBotEditor) editor, componentName);
+		final ToolEntry componentToolEntry = PaletteUtils.getToolEntry((RHBotGefEditor) editor, componentName);
 
 		editor.bot().getDisplay().syncExec(new Runnable() {
 

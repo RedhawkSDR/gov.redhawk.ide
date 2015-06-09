@@ -50,13 +50,9 @@ public class GeneralInformationComposite extends Composite implements IScaCompos
 		this.isLibrary = isLibrary;
 
 		createTypeEntry(this, toolkit, actionBars);
-
 		createIDEntry(this, toolkit, actionBars);
-
 		createNameEntry(this, toolkit, actionBars);
-
 		createVersionEntry(this, toolkit, actionBars);
-
 		createTitleEntry(this, toolkit, actionBars);
 
 		if (!this.isLibrary) {

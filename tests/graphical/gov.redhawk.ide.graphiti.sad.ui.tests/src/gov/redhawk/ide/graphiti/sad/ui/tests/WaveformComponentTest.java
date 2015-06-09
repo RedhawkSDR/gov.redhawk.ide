@@ -20,7 +20,7 @@ import gov.redhawk.ide.swtbot.WaveformUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.ComponentUtils;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
-import gov.redhawk.ide.swtbot.diagram.RHTestBotEditor;
+import gov.redhawk.ide.swtbot.diagram.RHBotGefEditor;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -258,7 +258,7 @@ public class WaveformComponentTest extends AbstractGraphitiTest {
 		editor = gefBot.gefEditor(waveformName);
 
 		// Add namespaced component to the diagram
-		DiagramTestUtils.addFromPaletteToDiagramWithNameSpace((RHTestBotEditor) editor, componentName, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagramWithNameSpace((RHBotGefEditor) editor, componentName, 0, 0);
 		MenuUtils.save(editor);
 
 		// Build expected xml string for component

@@ -99,7 +99,7 @@ public class SelectFrontEndTunerWizardPage extends WizardPage {
 		composite.setLayout(new GridLayout(1, false));
 
 		Label usesDeviceIdLabel = new Label(composite, SWT.NONE);
-		usesDeviceIdLabel.setText("Which FrontEnd device you would like to use?");
+		usesDeviceIdLabel.setText("Which FrontEnd Device you would like to use?");
 
 		createFrontEndDeviceTable(composite);
 		

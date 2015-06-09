@@ -42,9 +42,8 @@ public class ComponentPropertiesSection extends RHDiagramElementPropertySection 
 	private final ComponentInstantiationPropertyViewerAdapter adapter = new ComponentInstantiationPropertyViewerAdapter(this);
 
 	public ComponentPropertiesSection() {
-		
 	}
-	
+
 	/**
 	 * @since 6.0
 	 */
@@ -52,25 +51,22 @@ public class ComponentPropertiesSection extends RHDiagramElementPropertySection 
 		return new ScaPropertiesAdapterFactory();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final void createControls(final Composite parent, final TabbedPropertySheetPage tabbedPropertySheetPage) {
 		super.createControls(parent, tabbedPropertySheetPage);
 		this.adapterFactory = createAdapterFactory();
-		
+
 		final TreeViewer viewer = createTreeViewer(parent);
 		this.adapter.setViewer(viewer);
 	}
-	
+
 	/**
 	 * @since 6.0
 	 */
 	public TreeViewer getViewer() {
 		return adapter.getViewer();
 	}
-	
+
 	/**
 	 * @since 6.0
 	 */
@@ -90,9 +86,6 @@ public class ComponentPropertiesSection extends RHDiagramElementPropertySection 
 		return super.getEditingDomain();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final void setInput(final IWorkbenchPart part, final ISelection selection) {
 		super.setInput(part, selection);
@@ -101,32 +94,29 @@ public class ComponentPropertiesSection extends RHDiagramElementPropertySection 
 			final ComponentInstantiation newInput = (ComponentInstantiation) eObj;
 			if (DUtil.isDiagramDesign(getDiagram())) {
 				this.adapter.setInput(newInput);
-			} else if (DUtil.isDiagramTargetSdr(getDiagram())){
+			} else if (DUtil.isDiagramTargetSdr(getDiagram())) {
 				this.adapter.setInput(newInput);
 			} else {
-//				getViewer().setInput(getPropertyContainer(selection));
+				getViewer().setInput(getPropertyContainer(selection));
 			}
 		} else {
 			this.adapter.setInput(null);
 		}
 	}
-	
-	private Object getPropertyContainer(final ISelection selection) {
+
+	private ScaPropertyContainer<?,?> getPropertyContainer(final ISelection selection) {
 		if (selection instanceof StructuredSelection) {
 			StructuredSelection ss = (StructuredSelection) selection;
 			Object element = ss.getFirstElement();
 			if (element instanceof EditPart) {
 				EditPart ep = (EditPart) element;
-				Object component = Platform.getAdapterManager().getAdapter(ep, ScaComponent.class);
-				return Platform.getAdapterManager().getAdapter(component, ScaPropertyContainer.class);				
+				final ScaComponent component = Platform.getAdapterManager().getAdapter(ep, ScaComponent.class);
+				return component;
 			}
 		}
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final void dispose() {
 		if (this.adapterFactory != null) {
@@ -140,9 +130,6 @@ public class ComponentPropertiesSection extends RHDiagramElementPropertySection 
 		super.dispose();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final boolean shouldUseExtraSpace() {
 		return true;

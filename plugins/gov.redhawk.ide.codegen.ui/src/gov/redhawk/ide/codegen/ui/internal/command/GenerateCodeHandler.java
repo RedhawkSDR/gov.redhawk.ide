@@ -10,29 +10,20 @@
  *******************************************************************************/
 package gov.redhawk.ide.codegen.ui.internal.command;
 
-import gov.redhawk.ide.codegen.CodegenFactory;
 import gov.redhawk.ide.codegen.CodegenUtil;
-import gov.redhawk.ide.codegen.ICodeGeneratorDescriptor;
-import gov.redhawk.ide.codegen.IPropertyDescriptor;
-import gov.redhawk.ide.codegen.IScaComponentCodegen;
-import gov.redhawk.ide.codegen.ITemplateDesc;
-import gov.redhawk.ide.codegen.ImplementationSettings;
-import gov.redhawk.ide.codegen.Property;
-import gov.redhawk.ide.codegen.RedhawkCodegenActivator;
 import gov.redhawk.ide.codegen.WaveDevSettings;
 import gov.redhawk.ide.codegen.ui.GenerateCode;
-import gov.redhawk.ide.codegen.ui.IComponentProjectUpgrader;
 import gov.redhawk.ide.codegen.ui.RedhawkCodegenUiActivator;
-import gov.redhawk.ide.codegen.ui.preferences.CodegenPreferenceConstants;
-import gov.redhawk.ide.ui.RedhawkIDEUiPlugin;
-import gov.redhawk.ide.ui.wizard.IRedhawkImportProjectWizardAssist;
+import gov.redhawk.ide.codegen.ui.internal.ManualGeneratorUtil;
+import gov.redhawk.ide.codegen.ui.internal.WaveDevUtil;
+import gov.redhawk.ide.codegen.ui.internal.upgrade.DeprecatedCodegenUtil;
+import gov.redhawk.ide.codegen.ui.internal.upgrade.PropertyKindUtil;
 import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.ui.RedhawkUiActivator;
 import gov.redhawk.ui.editor.SCAFormEditor;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,7 +32,6 @@ import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
-import mil.jpeojtrs.sca.util.ScaResourceFactoryUtil;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -56,10 +46,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -75,98 +62,32 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+/**
+ * This handler is the main entry point to code generation in the UI. It performs several checks, possibly upgrading
+ * project file(s) or settings, and then invokes the code generator.
+ */
 public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-
 		// GenerateCode Class simply takes an object to generate from. It should be either a list of implementations, an
 		// implementation or IFile
 
 		// If the user used a context menu, generate code on the selection(s)
 		final ISelection selection = HandlerUtil.getActiveMenuSelection(event);
+		if (selection != null && !selection.isEmpty()) {
+			handleMenuSelection(event, selection);
+			return null;
+		}
 
-		// for each of the elements in the selection
-		// if its empty or null then its the editor (IFile)
-		// if its not empty / null then it should be either an Implementation or an IFile.
-		// We need to get the project so we can save related resources.
-		// Fom the IFile its easy, from the implementation we need to get the EMF Resource and get the IFile from there
-
-		// If the menu selection is empty then Generate button was pressed within the editor
-		if (selection == null || selection.isEmpty()) {
-			final IEditorPart editor = HandlerUtil.getActiveEditor(event);
-			if (editor != null) {
-				if (editor instanceof SCAFormEditor) {
-					SCAFormEditor scaEditor = (SCAFormEditor) editor;
-					SoftPkg spd = SoftPkg.Util.getSoftPkg(scaEditor.getMainResource());
-					if (spd != null) {
-						IProject project = ModelUtil.getProject(spd);
-						try {
-							saveAndGenerate(spd, project, HandlerUtil.getActiveShell(event));
-						} catch (CoreException e) {
-							StatusManager.getManager().handle(
-								new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
-								StatusManager.SHOW | StatusManager.LOG);
-							return null;
-						}
-						return null;
-					}
-				} else {
-					final IEditorInput editorInput = editor.getEditorInput();
-					if (editorInput instanceof IFileEditorInput) {
-						final IFile f = ((IFileEditorInput) editorInput).getFile();
-						if (isSpdFile(f)) {
-							try {
-								saveAndGenerate(f, f.getProject(), HandlerUtil.getActiveShell(event));
-							} catch (CoreException e) {
-								StatusManager.getManager().handle(
-									new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
-									StatusManager.SHOW | StatusManager.LOG);
-								return null;
-							}
-							return null;
-						}
-					}
-				}
-			}
-		} else { // The selection was made either via the right click menu from the Project Explorer, or in the
-					// Implementations tab.
-			if (selection instanceof IStructuredSelection) {
-				final IStructuredSelection ss = (IStructuredSelection) selection;
-
-				for (Object obj : ss.toList()) {
-					if (obj instanceof IFile && isSpdFile((IFile) obj)) {
-						try {
-							saveAndGenerate(obj, ((IFile) obj).getProject(), HandlerUtil.getActiveShell(event));
-						} catch (CoreException e) {
-							StatusManager.getManager().handle(
-								new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
-								StatusManager.SHOW | StatusManager.LOG);
-							return null;
-						}
-					} else if (obj instanceof Implementation) {
-						Implementation impl = (Implementation) obj;
-						String platformURI = impl.eResource().getURI().toPlatformString(true);
-						IResource spdFile = ResourcesPlugin.getWorkspace().getRoot().findMember(platformURI);
-
-						if (spdFile instanceof IFile && isSpdFile((IFile) spdFile)) {
-							try {
-								saveAndGenerate(impl, ((IFile) spdFile).getProject(), HandlerUtil.getActiveShell(event));
-							} catch (CoreException e) {
-								StatusManager.getManager().handle(
-									new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
-									StatusManager.SHOW | StatusManager.LOG);
-								return null;
-							}
-						}
-					}
-				}
-				return null;
-			}
+		// If the user clicked the generate code button in an editor, generate code on the editor input
+		final IEditorPart editor = HandlerUtil.getActiveEditor(event);
+		if (editor != null) {
+			handleEditor(event, editor);
+			return null;
 		}
 
 		// If we get here, somehow the generate code handler was triggered from somewhere it shouldn't be - log this
@@ -175,345 +96,158 @@ public class GenerateCodeHandler extends AbstractHandler implements IHandler {
 	}
 
 	/**
-	 * Attempts to save the project associated with the object to generate if there are unsaved changes. The object to
-	 * generate
-	 * is then passed into the GenerateCode class for code generation.
-	 * @param objectToGenerate The object which will be passed into the GenerateCode's generate method.
-	 * @param parentProject The IProject which contains the objectToGenerate resource
-	 * @param shell A shell used for dialog generation
-	 * @return True if code generation has been attempted.
-	 * @throws CoreException
+	 * Handle invoking codegen from a context menu selection in either the Project Explorer or an implementation on the
+	 * implementations tab
+	 * @param event
+	 * @param selection The current selection
 	 */
-	private boolean saveAndGenerate(Object objectToGenerate, IProject parentProject, Shell shell) throws CoreException {
-		if (relatedResourcesSaved(shell, parentProject)) {
-			boolean shouldGenerate = true;
-			try {
-				checkDeprecated(objectToGenerate, shell);
-				shouldGenerate = checkManualGenerator(objectToGenerate, shell);
-			} catch (OperationCanceledException e) {
-				return false;
-			}
-			if (shouldGenerate) {
-				GenerateCode.generate(shell, objectToGenerate);
-			}
-			return true;
-		}
-		return false;
-	}
-
-	@SuppressWarnings("unchecked")
-	private boolean checkManualGenerator(Object selectedObj, Shell parent) throws CoreException {
-		boolean shouldGenerate = true;
-		if (selectedObj instanceof SoftPkg) {
-			shouldGenerate = checkManualGeneratorImpls(parent, ((SoftPkg) selectedObj).getImplementation());
-		} else if (selectedObj instanceof EList) {
-			shouldGenerate = checkManualGeneratorImpls(parent, (List<Implementation>) selectedObj);
-		} else if (selectedObj instanceof Implementation) {
-			final List<Implementation> impls = new ArrayList<Implementation>();
-			impls.add((Implementation) selectedObj);
-			shouldGenerate = checkManualGeneratorImpls(parent, impls);
-		} else if (selectedObj instanceof IFile) {
-			// The selected object should be an IFile for the SPD
-			final IFile file = (IFile) selectedObj;
-			final URI spdURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
-			final SoftPkg softpkg = ModelUtil.loadSoftPkg(spdURI);
-			shouldGenerate = checkManualGeneratorImpls(parent, softpkg.getImplementation());
-		}
-		return shouldGenerate;
-	}
-
-	/**
-	 * Check to see if any implementation is configured using the Manual Code Generator option
-	 * @param parent
-	 * @param impls
-	 * @throws CoreException
-	 */
-	private boolean checkManualGeneratorImpls(Shell parent, List<Implementation> impls) throws CoreException {
-		if (impls == null || impls.isEmpty()) {
-			throw new OperationCanceledException();
-		}
-		boolean shouldGenerate = true;
-		final SoftPkg softPkg = (SoftPkg) impls.get(0).eContainer();
-		final WaveDevSettings waveDev = CodegenUtil.loadWaveDevSettings(softPkg);
-		boolean hasManualGenerator = false;
-		int manualImpls = 0;
-		for (final Implementation impl : impls) {
-			hasManualGenerator = isManualGenerator(impl, waveDev);
-			if (hasManualGenerator) {
-				manualImpls++;
-			}
-		}
-		if (manualImpls > 0) {
-			String name = softPkg.getName();
-			String message = "Some implementations in " + name + " require manual code generation.\n\n"
-				+ "Automatic Code Generation is only available for implementations using supported code generators.";
-			MessageDialog dialog = new MessageDialog(parent, "Manual Code Generation Required", null, message, MessageDialog.INFORMATION,
-				new String[] { "OK" }, 0);
-			dialog.open();
-		}
-		// If all implementations require manual code generation, then do not start the generation process
-		if (manualImpls == impls.size()) {
-			shouldGenerate = false;
-		}
-		return shouldGenerate;
-	}
-
-	/**
-	 * 
-	 * @param impl
-	 * @param waveDev
-	 * @return true if the implementation relies on Manual Code generation
-	 * @throws CoreException
-	 */
-	private boolean isManualGenerator(Implementation impl, WaveDevSettings waveDev) throws CoreException {
-		if (waveDev == null) {
-			waveDev = generateWaveDev(impl.getSoftPkg());
-		}
-		if (waveDev == null) {
-			throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID, "GENERATE FAILED: Failed to find implementation settings in "
-				+ impl.getSoftPkg().getName() + ".wavedev file", null));
-		}
-		final ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
-		if (implSettings != null) {
-			ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(implSettings.getGeneratorId());
-			if (generator != null && generator.getName().matches(".*Manual Generator.*")) {
-				return true;
-			}
-		} else {
-			// try to auto-generate implementation settings
-			ImplementationSettings generatedImplSettings = generateWaveDev(impl.getSoftPkg()).getImplSettings().get(impl.getId());
-			if (generatedImplSettings != null) {
-				ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(generatedImplSettings.getGeneratorId());
-				if (generator != null && generator.getName().matches(".*Manual Generator.*")) {
-					return true;
-				}
-			} else {
-				throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID,
-					"GENERATE FAILED: Failed to find implementation settings for implementation: " + impl.getId(), null));
-			}
-		}
-		return false;
-	}
-
-	@SuppressWarnings("unchecked")
-	private void checkDeprecated(Object selectedObj, Shell parent) throws CoreException {
-		boolean enableDeprecated = RedhawkCodegenUiActivator.getDefault().getPreferenceStore().getBoolean(
-			CodegenPreferenceConstants.P_ENABLE_DEPRECATED_CODE_GENERATORS);
-		// Skip check since the user has asked to enable deprecated generators
-		if (enableDeprecated) {
+	private void handleMenuSelection(final ExecutionEvent event, final ISelection selection) {
+		if (!(selection instanceof IStructuredSelection)) {
+			RedhawkCodegenUiActivator.logError("Generate code handler was triggered with an invalid selection", null);
 			return;
 		}
-		if (selectedObj instanceof SoftPkg) {
-			checkDeprecatedImpls(parent, ((SoftPkg) selectedObj).getImplementation());
-		} else if (selectedObj instanceof EList) {
-			checkDeprecatedImpls(parent, (List<Implementation>) selectedObj);
-		} else if (selectedObj instanceof Implementation) {
-			final List<Implementation> impls = new ArrayList<Implementation>();
-			impls.add((Implementation) selectedObj);
-			checkDeprecatedImpls(parent, impls);
-		} else if (selectedObj instanceof IFile) {
-			// The selected object should be an IFile for the SPD
-			final IFile file = (IFile) selectedObj;
-			final URI spdURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
-			final SoftPkg softpkg = ModelUtil.loadSoftPkg(spdURI);
-			checkDeprecatedImpls(parent, softpkg.getImplementation());
-		}
-	}
 
-	private void checkDeprecatedImpls(Shell parent, List<Implementation> impls) throws CoreException {
-		if (impls == null || impls.isEmpty()) {
-			throw new OperationCanceledException();
-		}
+		final IStructuredSelection ss = (IStructuredSelection) selection;
+		for (Object obj : ss.toList()) {
+			if (obj instanceof IFile && isSpdFile((IFile) obj)) {
+				IFile spdFile = (IFile) obj;
+				try {
+					handleSpdFile(spdFile, spdFile.getProject(), HandlerUtil.getActiveShell(event));
+				} catch (CoreException e) {
+					StatusManager.getManager().handle(new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
+						StatusManager.SHOW | StatusManager.LOG);
+					return;
+				}
+			} else if (obj instanceof Implementation) {
+				Implementation impl = (Implementation) obj;
+				String platformURI = impl.eResource().getURI().toPlatformString(true);
+				IResource spdFile = ResourcesPlugin.getWorkspace().getRoot().findMember(platformURI);
 
-		final SoftPkg softPkg = (SoftPkg) impls.get(0).eContainer();
-		final WaveDevSettings waveDev = CodegenUtil.loadWaveDevSettings(softPkg);
-		boolean hasDeprecated = false;
-		for (final Implementation impl : impls) {
-			hasDeprecated = isDeprecated(impl, waveDev);
-			if (hasDeprecated) {
-				break;
-			}
-		}
-		if (hasDeprecated && shouldUpgrade(parent, softPkg.getName())) {
-			upgrade(parent, softPkg, waveDev);
-		}
-	}
-
-	private void upgrade(Shell parent, final SoftPkg spd, final WaveDevSettings implSettings) throws CoreException {
-		ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(parent);
-		try {
-			progressDialog.run(true, true, new IRunnableWithProgress() {
-
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				if (spdFile instanceof IFile && isSpdFile((IFile) spdFile)) {
 					try {
-						IComponentProjectUpgrader service = RedhawkCodegenUiActivator.getDefault().getComponentProjectUpgraderService();
-						if (service != null) {
-							service.upgrade(monitor, spd, implSettings);
-						} else {
-							throw new CoreException(new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to find project upgrade service.",
-								null));
-						}
+						handleImplementations(Collections.singletonList(impl), ((IFile) spdFile).getProject(), HandlerUtil.getActiveShell(event));
 					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
+						StatusManager.getManager().handle(
+							new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
+							StatusManager.SHOW | StatusManager.LOG);
+						return;
 					}
 				}
-			});
-		} catch (InvocationTargetException e1) {
-			if (e1.getCause() instanceof CoreException) {
-				CoreException core = (CoreException) e1.getCause();
-				throw core;
-			} else if (e1.getCause() instanceof OperationCanceledException) {
-				throw new OperationCanceledException();
-			} else {
-				Status status = new Status(Status.ERROR, RedhawkCodegenUiActivator.PLUGIN_ID, "Failed to update code generator.", e1.getCause());
-				throw new CoreException(status);
 			}
-		} catch (InterruptedException e1) {
-			throw new OperationCanceledException();
 		}
+		return;
 	}
 
-	private boolean isDeprecated(Implementation impl, WaveDevSettings waveDev) throws CoreException {
-		if (waveDev == null) {
-			waveDev = generateWaveDev(impl.getSoftPkg());
-		}
-		if (waveDev == null) {
-			throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID, "GENERATE FAILED: Failed to find implementation settings in "
-				+ impl.getSoftPkg().getName() + ".wavedev file", null));
-		}
-		final ImplementationSettings implSettings = waveDev.getImplSettings().get(impl.getId());
-		if (implSettings != null) {
-			ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(implSettings.getGeneratorId());
-			if (generator != null) {
-				return generator.isDeprecated();
-			} else {
-				// Can't find generator assume then deprecated
-				return true;
+	/**
+	 * Handle invoking codegen by clicking the generate code button on an editor.
+	 * @param event
+	 * @param editor The current editor
+	 */
+	private void handleEditor(final ExecutionEvent event, final IEditorPart editor) {
+		if (editor instanceof SCAFormEditor) {
+			SCAFormEditor scaEditor = (SCAFormEditor) editor;
+
+			// Get SoftPkg from the editor
+			SoftPkg spd = SoftPkg.Util.getSoftPkg(scaEditor.getMainResource());
+			if (spd == null) {
+				RedhawkCodegenUiActivator.logError("Couldn't get SPD from editor in generate code handler", null);
+				return;
+			}
+
+			IProject project = ModelUtil.getProject(spd);
+			try {
+				handleImplementations(spd.getImplementation(), project, HandlerUtil.getActiveShell(event));
+			} catch (CoreException e) {
+				StatusManager.getManager().handle(new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
+					StatusManager.SHOW | StatusManager.LOG);
 			}
 		} else {
-			// try to auto-generate implementation settings
-			ImplementationSettings generatedImplSettings = generateWaveDev(impl.getSoftPkg()).getImplSettings().get(impl.getId());
-			if (generatedImplSettings != null) {
-				ICodeGeneratorDescriptor generator = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegen(generatedImplSettings.getGeneratorId());
-				if (generator != null) {
-					return generator.isDeprecated();
-				} else {
-					// Can't find generator assume then deprecated
-					return true;
-				}
-			} else {
-				throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID,
-					"GENERATE FAILED: Failed to find implementation settings for implementation: " + impl.getId(), null));
+			final IEditorInput editorInput = editor.getEditorInput();
+			if (!(editorInput instanceof IFileEditorInput)) {
+				RedhawkCodegenUiActivator.logError("Couldn't determine input from editor in generate code handler", null);
+				return;
+			}
+
+			final IFile f = ((IFileEditorInput) editorInput).getFile();
+			if (!isSpdFile(f)) {
+				RedhawkCodegenUiActivator.logError("Editor input is not an SPD file in generate code handler", null);
+				return;
+			}
+
+			try {
+				handleSpdFile(f, f.getProject(), HandlerUtil.getActiveShell(event));
+			} catch (CoreException e) {
+				StatusManager.getManager().handle(new Status(e.getStatus().getSeverity(), RedhawkCodegenUiActivator.PLUGIN_ID, e.getLocalizedMessage(), e),
+					StatusManager.SHOW | StatusManager.LOG);
 			}
 		}
 	}
 
-	private WaveDevSettings generateWaveDev(SoftPkg softPkg) throws CoreException {
+	/**
+	 * See {@link #handleImplementations(List, IProject, Shell)}
+	 * @param spdFile
+	 * @param parentProject
+	 * @param shell
+	 * @throws CoreException
+	 */
+	private void handleSpdFile(IFile spdFile, IProject parentProject, Shell shell) throws CoreException {
+		// The selected object should be an IFile for the SPD
+		final URI spdURI = URI.createPlatformResourceURI(spdFile.getFullPath().toString(), false);
+		final SoftPkg softpkg = ModelUtil.loadSoftPkg(spdURI);
+		handleImplementations(softpkg.getImplementation(), parentProject, shell);
+	}
 
-		WaveDevSettings waveDev = CodegenFactory.eINSTANCE.createWaveDevSettings();
-
-		// Recreate the basic settings for each implementation
-		// This makes assumptions that the defaults are selected for everything
-		for (final Implementation impl : softPkg.getImplementation()) {
-			final ImplementationSettings settings = CodegenFactory.eINSTANCE.createImplementationSettings();
-			final String lang = impl.getProgrammingLanguage().getName();
-			// Find the code generator if specified, otherwise pick the first
-			// one returned by the registry
-			ICodeGeneratorDescriptor codeGenDesc = null;
-			final ICodeGeneratorDescriptor[] codeGens = RedhawkCodegenActivator.getCodeGeneratorsRegistry().findCodegenByLanguage(lang);
-			if (codeGens.length > 0) {
-				codeGenDesc = codeGens[0];
-			}
-
-			if (codeGenDesc != null) {
-				final IScaComponentCodegen generator = codeGenDesc.getGenerator();
-
-				// Assume that there is <name>[/].+<other> format for the entry point
-				// Pick out <name> for both the output directory and settings name
-				final String lf = impl.getCode().getEntryPoint();
-
-				// Set the generator, settings name and output directory
-				settings.setGeneratorId(generator.getClass().getCanonicalName());
-				settings.setOutputDir(lf.substring(0, lf.lastIndexOf('/')));
-
-				// pick the first selectable and defaultable template returned by the registry
-				ITemplateDesc templateDesc = null;
-				final ITemplateDesc[] templates = RedhawkCodegenActivator.getCodeGeneratorTemplatesRegistry().findTemplatesByCodegen(settings.getGeneratorId());
-				for (final ITemplateDesc itd : templates) {
-					if (itd.isSelectable() && !itd.notDefaultableGenerator()) {
-						templateDesc = itd;
-						break;
-					}
-				}
-				// If we found the template, use it
-				if (templateDesc != null) {
-					// Set the properties to their default values
-					for (final IPropertyDescriptor prop : templateDesc.getPropertyDescriptors()) {
-						final Property p = CodegenFactory.eINSTANCE.createProperty();
-						p.setId(prop.getKey());
-						p.setValue(prop.getDefaultValue());
-						settings.getProperties().add(p);
-					}
-					// Set the template
-					settings.setTemplate(templateDesc.getId());
-					for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
-						if (assistant.handlesLanguage(lang)) {
-							settings.setTemplate(assistant.getDefaultTemplate());
-							break;
-						}
-					}
-				}
-			}
-
-			for (IRedhawkImportProjectWizardAssist assistant : RedhawkIDEUiPlugin.getDefault().getRedhawkImportWizardAssistants()) {
-				if (assistant.handlesLanguage(lang)) {
-					assistant.setupWaveDev(softPkg.getName(), settings);
-					break;
-				}
-			}
-			waveDev.getImplSettings().put(impl.getId(), settings);
+	/**
+	 * First, saves resources in the project with unsaved changes. Performs several upgrade checks, and finally invokes
+	 * code generation.
+	 * @param impls The implementation(s) for which to generate code
+	 * @param parentProject The IProject which contains all the implementation(s)
+	 * @param shell The current shell for user interaction
+	 * @throws CoreException
+	 */
+	private void handleImplementations(List<Implementation> impls, IProject parentProject, Shell shell) throws CoreException {
+		if (impls == null || impls.size() == 0) {
+			return;
 		}
 
-		// Create the URI to the .wavedev file
-		final org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI.createPlatformResourceURI(softPkg.getName() + "/." + softPkg.getName()
-			+ ".wavedev", false);
-		final ResourceSet set = ScaResourceFactoryUtil.createResourceSet();
-		final Resource res = set.createResource(uri);
+		// Prompt to save (if necessary) before continuing
+		if (!saveRelatedResources(shell, parentProject)) {
+			return;
+		}
 
-		// Add the WaveDevSettings to the resource and save to disk to persist the newly created WaveDevSettings
-		res.getContents().add(waveDev);
+		// Ensure there's a .wavedev file
+		final SoftPkg spd = (SoftPkg) impls.get(0).eContainer();
+		WaveDevSettings waveDev = CodegenUtil.loadWaveDevSettings(spd);
+		if (waveDev == null) {
+			waveDev = WaveDevUtil.generateWaveDev(spd);
+		}
+		if (waveDev == null) {
+			String message = "Failed to find implementation settings in " + spd.getName() + ".wavedev file";
+			throw new CoreException(new Status(Status.ERROR, RedhawkUiActivator.PLUGIN_ID, message));
+		}
+
+		boolean shouldGenerate = true;
 		try {
-			res.save(null);
-		} catch (final IOException e) {
-			IDEWorkbenchPlugin.log(e.getMessage(), e);
+			DeprecatedCodegenUtil.checkDeprecated(shell, impls);
+			PropertyKindUtil.checkProperties(shell, parentProject, impls);
+			shouldGenerate = ManualGeneratorUtil.checkManualGenerator(shell, impls);
+		} catch (OperationCanceledException e) {
+			return;
 		}
-
-		return waveDev;
-	}
-
-	private boolean shouldUpgrade(Shell parent, String name) throws CoreException {
-		String message = name + " uses deprecated code generators.\n\n" + "Would you like to upgrade this project?";
-		MessageDialog dialog = new MessageDialog(parent, "Deprecated Generator", null, message, MessageDialog.WARNING, new String[] { "Upgrade", "Cancel" }, 1);
-		switch (dialog.open()) {
-		case 0: // Upgrade
-			return true;
-		case 1:// Cancel
-		default:
-			throw new OperationCanceledException();
+		if (shouldGenerate) {
+			GenerateCode.generate(shell, impls);
 		}
 	}
 
 	/**
 	 * Tries to save the resources which are in the same project as the editorFile provided. The user is prompted to
-	 * save
-	 * if any related unsaved resources are present.
+	 * save if any related unsaved resources are present.
 	 * @param event Handler event
 	 * @param editorFile File who's project we are using to find related editor pages.
 	 * @return True if everything saved correctly. False otherwise.
 	 * @throws CoreException
 	 */
-	private boolean relatedResourcesSaved(final Shell shell, final IProject parentProject) throws CoreException {
+	private boolean saveRelatedResources(final Shell shell, final IProject parentProject) throws CoreException {
 
 		final Set<ISaveablePart> dirtyPartsSet = getRelatedDirtyParts(parentProject);
 

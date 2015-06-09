@@ -42,7 +42,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: gov.redhawk.ide.spd.internal.ui;x-friends:="gov.redhawk.ide.spd.ui.tests",
- gov.redhawk.ide.spd.internal.ui.editor;x-friends:="gov.redhawk.ide.spd.ui.tests",
+ gov.redhawk.ide.spd.internal.ui.editor;x-friends:="gov.redhawk.ide.spd.ui.tests,gov.redhawk.ide.ui.tests.spd",
  gov.redhawk.ide.spd.internal.ui.editor.composite;x-friends:="gov.redhawk.ide.spd.ui.tests",
  gov.redhawk.ide.spd.internal.ui.editor.detailspart;x-friends:="gov.redhawk.ide.spd.ui.tests",
  gov.redhawk.ide.spd.internal.ui.editor.provider;x-friends:="gov.redhawk.ide.spd.ui.tests",

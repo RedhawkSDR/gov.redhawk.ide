@@ -60,13 +60,9 @@ public class ImplementationComposite extends Composite implements IScaComposite 
 		this.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, ImplementationComposite.NUM_COLUMNS));
 
 		createIDEntry();
-
 		createProgLangEntry();
-
 		createCompilerEntry();
-
 		createRuntimeEntry();
-
 		createHumanLangEntry();
 
 		if (!isLibrary) {

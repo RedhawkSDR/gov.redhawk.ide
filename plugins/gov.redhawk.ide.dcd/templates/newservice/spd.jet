@@ -4,12 +4,12 @@
 <% GeneratorArgs args = (GeneratorArgs)argument; %>
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE softpkg PUBLIC "-//JTRS//DTD SCA V2.2.2 SPD//EN" "softpkg.dtd">
-<softpkg type="sca_compliant" name="<%=args.getSoftPkgName()%>" id="<%=args.getSoftPkgId()%>">
-    <title/>
-    <author>
-        <name><%=args.getAuthorName()%></name> 
-    </author>
-    <descriptor>
-        <localfile name="<%=args.getScdFile()%>"/>
-    </descriptor>
+<softpkg id="<%=args.getSoftPkgId()%>" name="<%=args.getSoftPkgName()%>" type="sca_compliant">
+  <title/>
+  <author>
+    <name><%=args.getAuthorName()%></name>
+  </author>
+  <descriptor>
+    <localfile name="<%=args.getScdFile()%>"/>
+  </descriptor>
 </softpkg>

@@ -81,9 +81,7 @@ public class ComponentDependencyComposite extends Composite implements IScaCompo
 		this.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, ComponentDependencyComposite.NUM_COLUMNS));
 
 		createOsArea();
-
 		createProcessorArea();
-
 		createDependencyArea();
 
 		toolkit.paintBordersFor(this);
