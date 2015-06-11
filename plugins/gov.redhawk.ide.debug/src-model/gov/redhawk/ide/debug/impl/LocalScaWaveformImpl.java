@@ -57,7 +57,6 @@ import CF.ComponentType;
 import CF.DataType;
 import CF.Resource;
 import CF.ResourceHelper;
-import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.InitializeError;
 import CF.LifeCyclePackage.ReleaseError;
 
@@ -440,31 +439,6 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * @since 4.0
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public Resource launch(String compId, DataType[] execParams, String spdURI, String implID, String mode) throws ExecuteFail {
-		Assert.isNotNull(spdURI);
-		Assert.isNotNull(implID);
-		Assert.isNotNull(getLocalApp(), "Null application");
-		return ((ApplicationImpl) getLocalApp()).launch(compId, execParams, spdURI, implID, mode);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * @since 4.0
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public Resource reset(String compInstId) throws ReleaseError, ExecuteFail {
-		Assert.isNotNull(compInstId);
-		Assert.isNotNull(getLocalApp(), "Null application");
-		return ((ApplicationImpl) getLocalApp()).reset(compInstId);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -638,12 +612,6 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			throw new IllegalStateException("Null Application type");
 		}
 		// BEGIN GENERATED CODE
-	}
-
-	@Override
-	@Deprecated
-	protected Command createMergeComponentsCommand(final String assemCtrlId, final ComponentType[] compTypes, final IStatus status) {
-		return new LocalScaWaveformMergeComponentsCommand(this, compTypes, status);
 	}
 
 	@Override
