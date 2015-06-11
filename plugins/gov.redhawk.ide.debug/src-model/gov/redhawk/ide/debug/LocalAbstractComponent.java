@@ -13,7 +13,7 @@ package gov.redhawk.ide.debug;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Local Abstract Component</b></em>'.
+ * An abstract base class for sandbox objects.
  * <!-- end-user-doc -->
  *
  * <p>
@@ -34,8 +34,7 @@ public interface LocalAbstractComponent extends LocalLaunch {
 	 * Returns the value of the '<em><b>Implementation ID</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Implementation ID</em>' attribute isn't clear,
-	 * there really should be more of a description here...
+	 * Gets the ID of the implementation that was launched.
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Implementation ID</em>' attribute.
@@ -60,6 +59,7 @@ public interface LocalAbstractComponent extends LocalLaunch {
 	 * Returns the value of the '<em><b>Exec Param</b></em>' attribute.
 	 * The default value is <code>""</code>.
 	 * <!-- begin-user-doc -->
+	 * Gets the string generated from execparam properties that was added to the command-line of the resource.
 	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Exec Param</em>' attribute.

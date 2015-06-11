@@ -15,7 +15,8 @@ import gov.redhawk.model.sca.ScaService;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Local Sca Service</b></em>'.
+ * A model object to represent sandbox services. It is used both for services launched locally as well as domain
+ * services referenced by proxy in the sandbox device manager.
  * <!-- end-user-doc -->
  *
  *

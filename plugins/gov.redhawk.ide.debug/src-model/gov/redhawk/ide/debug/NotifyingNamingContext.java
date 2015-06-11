@@ -25,7 +25,7 @@ import org.omg.PortableServer.POA;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Notifying Naming Context</b></em>'.
+ * An extension of the CORBA {@link NamingContextExtOperations}. It is used by objects in the sandbox.
  * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-user-doc -->
  *
