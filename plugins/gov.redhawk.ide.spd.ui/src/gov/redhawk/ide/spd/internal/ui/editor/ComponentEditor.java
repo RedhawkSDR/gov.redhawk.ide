@@ -687,21 +687,6 @@ public class ComponentEditor extends SCAFormEditor {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected boolean shouldUpdateSelection(final Collection< ? > selection) {
-		//Only update the selection if the objects show in master viewers.
-		for (final Object object : selection) {
-			final Object unwrappedObject = AdapterFactoryEditingDomain.unwrap(object);
-			if (!(unwrappedObject instanceof AbstractProperty || unwrappedObject instanceof Implementation)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
 	 */
 	private IFile getSpdFile() {
 		IFile spdFile = null;
