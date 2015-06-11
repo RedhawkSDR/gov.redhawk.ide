@@ -193,6 +193,10 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		}
 	}
 
+	/**
+	 * The waveform will add this adapter to the naming context given to it. This allows it to react to components
+	 * registering in its naming context.
+	 */
 	private final NotifyingNamingContextAdapter adapter = new NotifyingNamingContextAdapter() {
 
 		@Override
@@ -401,11 +405,11 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			try {
 				ref = ApplicationHelper.narrow(session.getPOA().servant_to_reference(new ApplicationPOATie(newLocalApp)));
 			} catch (ServantNotActive e) {
-				ScaDebugPlugin.logError("Failed to setup Device manager servant.", e);
+				ScaDebugPlugin.logError("Failed to setup waveform application servant.", e);
 			} catch (WrongPolicy e) {
-				ScaDebugPlugin.logError("Failed to setup Device manager servant.", e);
+				ScaDebugPlugin.logError("Failed to setup waveform application servant.", e);
 			} catch (CoreException e) {
-				ScaDebugPlugin.logError("Failed to setup Device manager servant.", e);
+				ScaDebugPlugin.logError("Failed to setup waveform application servant.", e);
 			}
 		}
 
@@ -424,17 +428,14 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	@Override
 	public void unsetProfile() {
-
 	}
 
 	@Override
 	public void unsetProfileURI() {
-
 	}
 
 	@Override
 	public void unsetProfileObj() {
-
 	}
 
 	/**
@@ -673,38 +674,12 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			component.initialize();
 			try {
 				component.refresh(null, RefreshDepth.FULL);
-			} catch (final InterruptedException e1) {
+			} catch (final InterruptedException e) {
 				// PASS
 			}
 			ScaModelCommand.execute(this, new ScaModelCommand() {
-
 				@Override
 				public void execute() {
-					// TODO Find / create component Instantiation and assign
-					//					DomComponentFile cf = PartitioningFactory.eINSTANCE.createDomComponentFile();
-					//					cf.setSoftPkg(component.getProfileObj());
-					//					if (getProfileObj().getComponentFiles() == null) {
-					//						getProfileObj().setComponentFiles(PartitioningFactory.eINSTANCE.createComponentFiles());
-					//					}
-					//					getProfileObj().getComponentFiles().getComponentFile().add(cf);
-					//					
-					//					SadComponentInstantiation inst = SadFactory.eINSTANCE.createSadComponentInstantiation();
-					//					inst.setId(component.getInstantiationIdentifier());
-					//					inst.setUsageName(component.getName());
-					//					inst.setStartOrder(BigInteger.valueOf(getProfileObj().getComponentFiles().getComponentFile().size()));
-					//					
-					//					SadComponentPlacement cp = SadFactory.eINSTANCE.createSadComponentPlacement();
-					//					ComponentFileRef ref = PartitioningFactory.eINSTANCE.createComponentFileRef();
-					//					ref.setFile(cf);
-					//					
-					//					cp.setComponentFileRef(ref);
-					//					cp.getComponentInstantiation().add(inst);
-					//					if (getProfileObj().getPartitioning() == null) {
-					//						getProfileObj().setPartitioning(SadFactory.eINSTANCE.createSadPartitioning());
-					//					}
-					//					getProfileObj().getPartitioning().getComponentPlacement().add(cp);
-					//					
-					//					component.setComponentInstantiation(inst);
 					getComponents().add(component);
 				}
 			});
@@ -713,18 +688,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			} catch (final InterruptedException e) {
 				// PASS
 			}
-		} catch (final InitializeError e) {
+		} catch (final InitializeError | SystemException e) {
 			ScaModelCommand.execute(this, new ScaModelCommand() {
-
-				@Override
-				public void execute() {
-					component.setStatus(ScaPackage.Literals.SCA_COMPONENT__COMPONENT_INSTANTIATION, new Status(IStatus.ERROR, ScaDebugPlugin.ID,
-						"Component failed to initialize", e));
-				}
-			});
-		} catch (final SystemException e) {
-			ScaModelCommand.execute(this, new ScaModelCommand() {
-
 				@Override
 				public void execute() {
 					component.setStatus(ScaPackage.Literals.SCA_COMPONENT__COMPONENT_INSTANTIATION, new Status(IStatus.ERROR, ScaDebugPlugin.ID,
@@ -736,8 +701,6 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	}
 
 	private void removeComponent(final Name name, final Resource resource) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

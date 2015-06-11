@@ -18,12 +18,10 @@ import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugPackage;
-import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.impl.listeners.DisposableObjectContainerListener;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.impl.CorbaObjWrapperImpl;
-import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.OrbSession;
 
 import java.util.ArrayList;
@@ -430,24 +428,18 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		}
 	}
 
-	private static final Debug DEBUG = new Debug(ScaDebugPlugin.getInstance(), "localSca");
-
-
 	private final ILaunchesListener2 launchListener = new ILaunchesListener2() {
 
 		@Override
 		public void launchesRemoved(final ILaunch[] launches) {
-
 		}
 
 		@Override
 		public void launchesChanged(final ILaunch[] launches) {
-
 		}
 
 		@Override
 		public void launchesAdded(final ILaunch[] launches) {
-
 		}
 
 		@Override
