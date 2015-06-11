@@ -10,7 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.properties;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.platform.AbstractPropertySectionFilter;
 
 /**
@@ -18,37 +21,35 @@ import org.eclipse.graphiti.ui.platform.AbstractPropertySectionFilter;
  */
 public class BusinessObjectFilter extends AbstractPropertySectionFilter {
 
-	private Class< ? > objectClass;
+	private final Class<?>[] boFilterClasses;
 	
 	private boolean shouldAllow;
 	
 	/**
-	 * 
-	 * @param filterClass
-	 * @param allow Whether filterClass should be filtered in or out
+	 * @param allow Whether filterClasses should be filtered in or out
 	 */
-	public BusinessObjectFilter(Class< ? > filterClass, boolean allow) {
-		objectClass = filterClass;
-		shouldAllow = allow;
+	public BusinessObjectFilter(boolean allow, Class<?>... filterClasses) {
+		Assert.isTrue(filterClasses.length > 0, "Must specify at least one Business Object class to filter");
+		this.boFilterClasses = filterClasses;
+		this.shouldAllow = allow;
 	}
 
 	/**
 	 * Positive filter by default
-	 * @param filterClass
 	 */
-	public BusinessObjectFilter(Class< ? > filterClass) {
-		this(filterClass, true);
+	public BusinessObjectFilter(Class<?>... filterClass) {
+		this(true, filterClass);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.graphiti.ui.platform.AbstractPropertySectionFilter#accept(org.eclipse.graphiti.mm.pictograms.PictogramElement)
-	 */
 	@Override
 	protected boolean accept(PictogramElement pictogramElement) {
-		if (objectClass.isInstance(pictogramElement.getLink().getBusinessObjects().get(0))) {
-			return shouldAllow;
+		EObject eObject =  Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(pictogramElement);
+		for (Class< ? > filterClass : this.boFilterClasses) {
+			if (filterClass.isInstance(eObject)) {
+				return this.shouldAllow;
+			}
 		}
-		return !shouldAllow;
+		return !this.shouldAllow;
 	}
 
 }

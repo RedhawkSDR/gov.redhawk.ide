@@ -84,9 +84,10 @@ public class PortInterfacePropertiesSection extends GFPropertySection implements
 	@Override
 	public final void createControls(final Composite parent, final TabbedPropertySheetPage tabbedPropertySheetPage) {
 		super.createControls(parent, tabbedPropertySheetPage);
-		final Composite root = getWidgetFactory().createComposite(parent);
-		root.setLayout(GridLayoutFactory.fillDefaults().numColumns(1).create());
+		final Composite root = getWidgetFactory().createFlatFormComposite(parent);
+		root.setLayout(GridLayoutFactory.fillDefaults().numColumns(1).margins(ITabbedPropertyConstants.HMARGIN, ITabbedPropertyConstants.VMARGIN).create());
 		this.label = getWidgetFactory().createLabel(root, "");
+		this.label.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 		final Tree tree = this.getWidgetFactory().createTree(root, SWT.BORDER);
 		tree.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
 		this.adapterFactory = createAdapterFactory();

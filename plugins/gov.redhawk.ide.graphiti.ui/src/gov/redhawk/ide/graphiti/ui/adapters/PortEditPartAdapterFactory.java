@@ -29,6 +29,7 @@ import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.scd.AbstractPort;
 import mil.jpeojtrs.sca.util.QueryParser;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
@@ -62,6 +63,9 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 				portObject = DUtil.getBusinessObject((Anchor) object);
 			}
 
+			final boolean toScaPort = ScaPort.class.isAssignableFrom(adapterType);
+			final boolean toAbstractPort = AbstractPort.class.isAssignableFrom(adapterType);
+
 			if (portObject instanceof UsesPortStub) {
 				UsesPortStub uses = (UsesPortStub) portObject;
 
@@ -69,7 +73,7 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 					return null;
 				}
 
-				if (ScaPort.class.isAssignableFrom(adapterType)) {
+				if (toScaPort || toAbstractPort) {
 					final URI uri = uses.eResource().getURI();
 					final Map<String, String> query = QueryParser.parseQuery(uri.query());
 					final String wfRef = query.get(ScaFileSystemConstants.QUERY_PARAM_WF);
@@ -84,7 +88,12 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 									if (port != null && (port instanceof ScaUsesPort)) {
 										final String name = port.getName();
 										if (name != null && name.equals(uses.getName())) {
-											return port;
+											if (toScaPort) {
+												return port;
+											}
+											if (toAbstractPort && port.getProfileObj() instanceof AbstractPort) {
+												return port.getProfileObj();
+											}
 										}
 
 									}
@@ -102,13 +111,21 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 										if (port != null && (port instanceof ScaUsesPort)) {
 											final String name = port.getName();
 											if (name != null && name.equals(uses.getName())) {
-												return port;
+												if (toScaPort) {
+													return port;
+												}
+												if (toAbstractPort && port.getProfileObj() instanceof AbstractPort) {
+													return port.getProfileObj();
+												}
 											}
 										}
 									}
 								}
 							}
 						}
+					}
+					if (toAbstractPort) {
+						return uses.getUses();
 					}
 				}
 			}
@@ -118,7 +135,8 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 				if (provides == null || provides.eResource() == null || !(provides.eContainer() instanceof ComponentInstantiation)) {
 					return null;
 				}
-				if (ScaPort.class.isAssignableFrom(adapterType)) {
+				
+				if (toScaPort || toAbstractPort) {
 					final URI uri = provides.eResource().getURI();
 					final Map<String, String> query = QueryParser.parseQuery(uri.query());
 					final String wfRef = query.get(ScaFileSystemConstants.QUERY_PARAM_WF);
@@ -133,7 +151,12 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 									if (port != null && (port instanceof ScaProvidesPort)) {
 										final String name = port.getName();
 										if (name != null && name.equals(provides.getName())) {
-											return port;
+											if (toScaPort) {
+												return port;
+											}
+											if (toAbstractPort && port.getProfileObj() instanceof AbstractPort) {
+												return port.getProfileObj();
+											}
 										}
 									}
 								}
@@ -150,7 +173,12 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 										if (port != null && (port instanceof ScaProvidesPort)) {
 											final String name = port.getName();
 											if (name != null && name.equals(provides.getName())) {
-												return port;
+												if (toScaPort) {
+													return port;
+												}
+												if (toAbstractPort && port.getProfileObj() instanceof AbstractPort) {
+													return port.getProfileObj();
+												}
 											}
 										}
 									}
@@ -158,7 +186,9 @@ public class PortEditPartAdapterFactory implements IAdapterFactory {
 							}
 						}
 					}
-
+					if (toAbstractPort) {
+						return provides.getProvides();
+					}
 				}
 			}
 		}
