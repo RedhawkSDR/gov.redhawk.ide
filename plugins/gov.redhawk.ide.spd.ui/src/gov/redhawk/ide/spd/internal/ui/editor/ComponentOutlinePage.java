@@ -53,7 +53,7 @@ public class ComponentOutlinePage extends FormOutlinePage {
 			} else if (object instanceof ScaFormPage) {
 				return "Overview";
 			}
-			return super.getText(object);
+			return super.getText(AdapterFactoryEditingDomain.unwrap(object));
 		}
 
 	}
