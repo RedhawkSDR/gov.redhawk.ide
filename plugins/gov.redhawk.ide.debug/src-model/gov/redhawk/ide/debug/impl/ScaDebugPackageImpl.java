@@ -26,12 +26,9 @@ import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugFactory;
 import gov.redhawk.ide.debug.ScaDebugPackage;
 import gov.redhawk.model.sca.ScaPackage;
-
 import java.util.Map.Entry;
-
 import mil.jpeojtrs.sca.cf.CfPackage;
 import mil.jpeojtrs.sca.spd.SpdPackage;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.ecore.EAttribute;
@@ -41,7 +38,6 @@ import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.jacorb.naming.Name;
 import org.omg.CosNaming.NameComponent;
@@ -49,7 +45,6 @@ import org.omg.CosNaming.NamingContext;
 import org.omg.CosNaming.NamingContextExtOperations;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
-
 import CF.ApplicationOperations;
 import CF.DeviceManagerOperations;
 import ExtendedCF.Sandbox;
@@ -949,7 +944,6 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		// Obtain other dependent packages
 		ScaPackage theScaPackage = (ScaPackage) EPackage.Registry.INSTANCE.getEPackage(ScaPackage.eNS_URI);
 		CfPackage theCfPackage = (CfPackage) EPackage.Registry.INSTANCE.getEPackage(CfPackage.eNS_URI);
-		EcorePackage theEcorePackage = (EcorePackage) EPackage.Registry.INSTANCE.getEPackage(EcorePackage.eNS_URI);
 		SpdPackage theSpdPackage = (SpdPackage) EPackage.Registry.INSTANCE.getEPackage(SpdPackage.eNS_URI);
 
 		// Create type parameters
@@ -1026,7 +1020,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 			!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getNotifyingNamingContext_Poa(), theScaPackage.getPOA(), "poa", null, 1, 1, NotifyingNamingContext.class, IS_TRANSIENT, !IS_VOLATILE,
 			IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getNotifyingNamingContext_Name(), theEcorePackage.getEString(), "name", null, 0, 1, NotifyingNamingContext.class, IS_TRANSIENT,
+		initEAttribute(getNotifyingNamingContext_Name(), ecorePackage.getEString(), "name", null, 0, 1, NotifyingNamingContext.class, IS_TRANSIENT,
 			IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		EOperation op = addEOperation(notifyingNamingContextEClass, this.getNameComponentArray(), "getName", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -1035,7 +1029,7 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		op = addEOperation(notifyingNamingContextEClass, theSpdPackage.getURI(), "getURI", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getNameComponentArray(), "name", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		addEOperation(notifyingNamingContextEClass, theEcorePackage.getEString(), "getFullName", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEOperation(notifyingNamingContextEClass, ecorePackage.getEString(), "getFullName", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		op = addEOperation(notifyingNamingContextEClass, this.getNotifyingNamingContext(), "getResourceContext", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, theSpdPackage.getURI(), "uri", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -1060,13 +1054,13 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		initEClass(localLaunchEClass, LocalLaunch.class, "LocalLaunch", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLocalLaunch_Launch(), this.getILaunch(), "launch", null, 0, 1, LocalLaunch.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
 			!IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getLocalLaunch_Mode(), theEcorePackage.getEString(), "mode", null, 0, 1, LocalLaunch.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+		initEAttribute(getLocalLaunch_Mode(), ecorePackage.getEString(), "mode", null, 0, 1, LocalLaunch.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
 			!IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(localAbstractComponentEClass, LocalAbstractComponent.class, "LocalAbstractComponent", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getLocalAbstractComponent_ImplementationID(), theEcorePackage.getEString(), "implementationID", null, 0, 1,
-			LocalAbstractComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getLocalAbstractComponent_ExecParam(), theEcorePackage.getEString(), "execParam", "", 0, 1, LocalAbstractComponent.class, !IS_TRANSIENT,
+		initEAttribute(getLocalAbstractComponent_ImplementationID(), ecorePackage.getEString(), "implementationID", null, 0, 1, LocalAbstractComponent.class,
+			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLocalAbstractComponent_ExecParam(), ecorePackage.getEString(), "execParam", "", 0, 1, LocalAbstractComponent.class, !IS_TRANSIENT,
 			!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(localScaWaveformEClass, LocalScaWaveform.class, "LocalScaWaveform", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1079,8 +1073,8 @@ public class ScaDebugPackageImpl extends EPackageImpl implements ScaDebugPackage
 		addEParameter(op, ecorePackage.getEString(), "id", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, theScaPackage.getDataTypeArray(), "execParams", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, theSpdPackage.getURI(), "spdURI", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "implID", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "mode", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "implID", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "mode", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEException(op, this.getCoreException());
 
 		initEClass(localScaComponentEClass, LocalScaComponent.class, "LocalScaComponent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

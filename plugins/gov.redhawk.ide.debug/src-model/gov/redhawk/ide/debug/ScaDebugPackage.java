@@ -110,6 +110,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA__DATA_PROVIDERS_ENABLED = ScaPackage.CORBA_OBJ_WRAPPER__DATA_PROVIDERS_ENABLED;
 	/**
+	 * The feature id for the '<em><b>Enabled Data Providers</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA__ENABLED_DATA_PROVIDERS = ScaPackage.CORBA_OBJ_WRAPPER__ENABLED_DATA_PROVIDERS;
+	/**
 	 * The feature id for the '<em><b>Ior</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * @since 4.0
@@ -136,6 +144,14 @@ public interface ScaDebugPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOCAL_SCA__CORBA_OBJ = ScaPackage.CORBA_OBJ_WRAPPER__CORBA_OBJ;
+	/**
+	 * The feature id for the '<em><b>Feature Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA__FEATURE_DATA = ScaPackage.CORBA_OBJ_WRAPPER__FEATURE_DATA;
 	/**
 	 * The feature id for the '<em><b>Waveforms</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -398,6 +414,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_FILE_MANAGER__DATA_PROVIDERS_ENABLED = ScaPackage.SCA_FILE_MANAGER__DATA_PROVIDERS_ENABLED;
 	/**
+	 * The feature id for the '<em><b>Enabled Data Providers</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_FILE_MANAGER__ENABLED_DATA_PROVIDERS = ScaPackage.SCA_FILE_MANAGER__ENABLED_DATA_PROVIDERS;
+	/**
 	 * The feature id for the '<em><b>Ior</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -421,6 +445,14 @@ public interface ScaDebugPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOCAL_FILE_MANAGER__CORBA_OBJ = ScaPackage.SCA_FILE_MANAGER__CORBA_OBJ;
+	/**
+	 * The feature id for the '<em><b>Feature Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_FILE_MANAGER__FEATURE_DATA = ScaPackage.SCA_FILE_MANAGER__FEATURE_DATA;
 	/**
 	 * The feature id for the '<em><b>File Store</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -602,6 +634,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_WAVEFORM__DATA_PROVIDERS_ENABLED = ScaPackage.SCA_WAVEFORM__DATA_PROVIDERS_ENABLED;
 	/**
+	 * The feature id for the '<em><b>Enabled Data Providers</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_WAVEFORM__ENABLED_DATA_PROVIDERS = ScaPackage.SCA_WAVEFORM__ENABLED_DATA_PROVIDERS;
+	/**
 	 * The feature id for the '<em><b>Ior</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -626,6 +666,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_WAVEFORM__CORBA_OBJ = ScaPackage.SCA_WAVEFORM__CORBA_OBJ;
 	/**
+	 * The feature id for the '<em><b>Feature Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_WAVEFORM__FEATURE_DATA = ScaPackage.SCA_WAVEFORM__FEATURE_DATA;
+	/**
 	 * The feature id for the '<em><b>Profile URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -641,14 +689,6 @@ public interface ScaDebugPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOCAL_SCA_WAVEFORM__PROFILE_OBJ = ScaPackage.SCA_WAVEFORM__PROFILE_OBJ;
-	/**
-	 * The feature id for the '<em><b>Root File Store</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA_WAVEFORM__ROOT_FILE_STORE = ScaPackage.SCA_WAVEFORM__ROOT_FILE_STORE;
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -803,6 +843,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_COMPONENT__DATA_PROVIDERS_ENABLED = ScaPackage.SCA_COMPONENT__DATA_PROVIDERS_ENABLED;
 	/**
+	 * The feature id for the '<em><b>Enabled Data Providers</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_COMPONENT__ENABLED_DATA_PROVIDERS = ScaPackage.SCA_COMPONENT__ENABLED_DATA_PROVIDERS;
+	/**
 	 * The feature id for the '<em><b>Ior</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -827,6 +875,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_COMPONENT__CORBA_OBJ = ScaPackage.SCA_COMPONENT__CORBA_OBJ;
 	/**
+	 * The feature id for the '<em><b>Feature Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_COMPONENT__FEATURE_DATA = ScaPackage.SCA_COMPONENT__FEATURE_DATA;
+	/**
 	 * The feature id for the '<em><b>Profile URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -842,14 +898,6 @@ public interface ScaDebugPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOCAL_SCA_COMPONENT__PROFILE_OBJ = ScaPackage.SCA_COMPONENT__PROFILE_OBJ;
-	/**
-	 * The feature id for the '<em><b>Root File Store</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA_COMPONENT__ROOT_FILE_STORE = ScaPackage.SCA_COMPONENT__ROOT_FILE_STORE;
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -888,7 +936,6 @@ public interface ScaDebugPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
-	 * @since 6.0
 	 */
 	int LOCAL_SCA_COMPONENT__PROFILE = ScaPackage.SCA_COMPONENT__PROFILE;
 	/**
@@ -1014,6 +1061,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_DEVICE_MANAGER__DATA_PROVIDERS_ENABLED = ScaPackage.SCA_DEVICE_MANAGER__DATA_PROVIDERS_ENABLED;
 	/**
+	 * The feature id for the '<em><b>Enabled Data Providers</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_DEVICE_MANAGER__ENABLED_DATA_PROVIDERS = ScaPackage.SCA_DEVICE_MANAGER__ENABLED_DATA_PROVIDERS;
+	/**
 	 * The feature id for the '<em><b>Ior</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1038,6 +1093,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_DEVICE_MANAGER__CORBA_OBJ = ScaPackage.SCA_DEVICE_MANAGER__CORBA_OBJ;
 	/**
+	 * The feature id for the '<em><b>Feature Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_DEVICE_MANAGER__FEATURE_DATA = ScaPackage.SCA_DEVICE_MANAGER__FEATURE_DATA;
+	/**
 	 * The feature id for the '<em><b>Profile URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1053,14 +1116,6 @@ public interface ScaDebugPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOCAL_SCA_DEVICE_MANAGER__PROFILE_OBJ = ScaPackage.SCA_DEVICE_MANAGER__PROFILE_OBJ;
-	/**
-	 * The feature id for the '<em><b>Root File Store</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA_DEVICE_MANAGER__ROOT_FILE_STORE = ScaPackage.SCA_DEVICE_MANAGER__ROOT_FILE_STORE;
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -1239,6 +1294,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_EXECUTABLE_DEVICE__DATA_PROVIDERS_ENABLED = ScaPackage.SCA_EXECUTABLE_DEVICE__DATA_PROVIDERS_ENABLED;
 	/**
+	 * The feature id for the '<em><b>Enabled Data Providers</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_EXECUTABLE_DEVICE__ENABLED_DATA_PROVIDERS = ScaPackage.SCA_EXECUTABLE_DEVICE__ENABLED_DATA_PROVIDERS;
+	/**
 	 * The feature id for the '<em><b>Ior</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1263,6 +1326,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_EXECUTABLE_DEVICE__CORBA_OBJ = ScaPackage.SCA_EXECUTABLE_DEVICE__CORBA_OBJ;
 	/**
+	 * The feature id for the '<em><b>Feature Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_EXECUTABLE_DEVICE__FEATURE_DATA = ScaPackage.SCA_EXECUTABLE_DEVICE__FEATURE_DATA;
+	/**
 	 * The feature id for the '<em><b>Profile URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1278,14 +1349,6 @@ public interface ScaDebugPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOCAL_SCA_EXECUTABLE_DEVICE__PROFILE_OBJ = ScaPackage.SCA_EXECUTABLE_DEVICE__PROFILE_OBJ;
-	/**
-	 * The feature id for the '<em><b>Root File Store</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA_EXECUTABLE_DEVICE__ROOT_FILE_STORE = ScaPackage.SCA_EXECUTABLE_DEVICE__ROOT_FILE_STORE;
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -1465,6 +1528,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_LOADABLE_DEVICE__DATA_PROVIDERS_ENABLED = ScaPackage.SCA_LOADABLE_DEVICE__DATA_PROVIDERS_ENABLED;
 	/**
+	 * The feature id for the '<em><b>Enabled Data Providers</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_LOADABLE_DEVICE__ENABLED_DATA_PROVIDERS = ScaPackage.SCA_LOADABLE_DEVICE__ENABLED_DATA_PROVIDERS;
+	/**
 	 * The feature id for the '<em><b>Ior</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1489,6 +1560,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_LOADABLE_DEVICE__CORBA_OBJ = ScaPackage.SCA_LOADABLE_DEVICE__CORBA_OBJ;
 	/**
+	 * The feature id for the '<em><b>Feature Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_LOADABLE_DEVICE__FEATURE_DATA = ScaPackage.SCA_LOADABLE_DEVICE__FEATURE_DATA;
+	/**
 	 * The feature id for the '<em><b>Profile URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1504,14 +1583,6 @@ public interface ScaDebugPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOCAL_SCA_LOADABLE_DEVICE__PROFILE_OBJ = ScaPackage.SCA_LOADABLE_DEVICE__PROFILE_OBJ;
-	/**
-	 * The feature id for the '<em><b>Root File Store</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA_LOADABLE_DEVICE__ROOT_FILE_STORE = ScaPackage.SCA_LOADABLE_DEVICE__ROOT_FILE_STORE;
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -1691,6 +1762,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_DEVICE__DATA_PROVIDERS_ENABLED = ScaPackage.SCA_DEVICE__DATA_PROVIDERS_ENABLED;
 	/**
+	 * The feature id for the '<em><b>Enabled Data Providers</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_DEVICE__ENABLED_DATA_PROVIDERS = ScaPackage.SCA_DEVICE__ENABLED_DATA_PROVIDERS;
+	/**
 	 * The feature id for the '<em><b>Ior</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1715,6 +1794,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_DEVICE__CORBA_OBJ = ScaPackage.SCA_DEVICE__CORBA_OBJ;
 	/**
+	 * The feature id for the '<em><b>Feature Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_DEVICE__FEATURE_DATA = ScaPackage.SCA_DEVICE__FEATURE_DATA;
+	/**
 	 * The feature id for the '<em><b>Profile URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1730,14 +1817,6 @@ public interface ScaDebugPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOCAL_SCA_DEVICE__PROFILE_OBJ = ScaPackage.SCA_DEVICE__PROFILE_OBJ;
-	/**
-	 * The feature id for the '<em><b>Root File Store</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA_DEVICE__ROOT_FILE_STORE = ScaPackage.SCA_DEVICE__ROOT_FILE_STORE;
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -1917,6 +1996,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_SERVICE__DATA_PROVIDERS_ENABLED = ScaPackage.SCA_SERVICE__DATA_PROVIDERS_ENABLED;
 	/**
+	 * The feature id for the '<em><b>Enabled Data Providers</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_SERVICE__ENABLED_DATA_PROVIDERS = ScaPackage.SCA_SERVICE__ENABLED_DATA_PROVIDERS;
+	/**
 	 * The feature id for the '<em><b>Ior</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1941,6 +2028,14 @@ public interface ScaDebugPackage extends EPackage {
 	 */
 	int LOCAL_SCA_SERVICE__CORBA_OBJ = ScaPackage.SCA_SERVICE__CORBA_OBJ;
 	/**
+	 * The feature id for the '<em><b>Feature Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOCAL_SCA_SERVICE__FEATURE_DATA = ScaPackage.SCA_SERVICE__FEATURE_DATA;
+	/**
 	 * The feature id for the '<em><b>Profile URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * @since 4.0
@@ -1958,15 +2053,6 @@ public interface ScaDebugPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOCAL_SCA_SERVICE__PROFILE_OBJ = ScaPackage.SCA_SERVICE__PROFILE_OBJ;
-	/**
-	 * The feature id for the '<em><b>Root File Store</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * @since 4.0
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOCAL_SCA_SERVICE__ROOT_FILE_STORE = ScaPackage.SCA_SERVICE__ROOT_FILE_STORE;
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->

@@ -13,7 +13,7 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/gov.redhawk.ide.debug/src-model" editorDirectory=""
     modelPluginID="gov.redhawk.ide.debug" templateDirectory="/gov.redhawk.ide.debug/templates"
     dynamicTemplates="true" forceOverwrite="true" modelName="ScaDebug" codeFormatting="true"
-    importerID="org.eclipse.emf.importer.ecore" complianceLevel="6.0" copyrightFields="false"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
     runtimeVersion="2.8" usedGenPackages="../../mil.jpeojtrs.sca.cf/model/cf.genmodel#//cf ../../mil.jpeojtrs.sca.cf/model/cf.genmodel#//extended ../../mil.jpeojtrs.sca.dcd/model/dcd.genmodel#//dcd ../../mil.jpeojtrs.sca.dmd/model/dmd.genmodel#//dmd ../../mil.jpeojtrs.sca.dpd/model/dpd.genmodel#//dpd platform:/plugin/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore ../../mil.jpeojtrs.sca.partitioning/model/partitioning.genmodel#//partitioning ../../mil.jpeojtrs.sca.prf/model/prf.genmodel#//prf ../../mil.jpeojtrs.sca.sad/model/sad.genmodel#//sad ../../gov.redhawk.sca.model/model/sca.genmodel#//sca ../../mil.jpeojtrs.sca.scd/model/scd.genmodel#//scd ../../mil.jpeojtrs.sca.spd/model/spd.genmodel#//spd"
     importOrganizing="true">
   <foreignModel>scaDebug.ecore</foreignModel>

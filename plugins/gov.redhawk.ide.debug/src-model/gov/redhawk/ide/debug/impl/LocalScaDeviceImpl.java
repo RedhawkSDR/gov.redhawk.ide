@@ -421,11 +421,11 @@ public class LocalScaDeviceImpl extends ScaDeviceImpl<Device> implements LocalSc
 	@Override
 	public void dispose() {
 		// END GENERATED CODE
-//		try {
-//			releaseObject();
-//		} catch (final ReleaseError e) {
-//			// PASS
-//		}
+		//		try {
+		//			releaseObject();
+		//		} catch (final ReleaseError e) {
+		//			// PASS
+		//		}
 		Job job = new SilentJob("Local Device Release job") {
 
 			@Override
@@ -437,12 +437,12 @@ public class LocalScaDeviceImpl extends ScaDeviceImpl<Device> implements LocalSc
 				}
 				return Status.OK_STATUS;
 			}
-			
+
 		};
 		job.setUser(false);
 		job.setSystem(true);
 		job.schedule();
-		
+
 		super.dispose();
 		// BEGIN GENERATED CODE
 	}

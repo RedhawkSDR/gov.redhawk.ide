@@ -30,9 +30,7 @@ import gov.redhawk.model.sca.ScaPackage;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.util.ScaFileSystemUtil;
-
 import java.util.Map.Entry;
-
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.notify.Notification;
@@ -47,7 +45,6 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.jacorb.naming.Name;
 import org.omg.CosNaming.NamingContext;
-
 import CF.Application;
 
 /**

@@ -8,8 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-  // BEGIN GENERATED CODE
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.tests;
 
 import gov.redhawk.ide.debug.ScaDebugFactory;
@@ -87,7 +86,7 @@ public class NameToNamingContextEntryTest extends TestCase {
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void setUp() throws Exception {
-		setFixture((Entry<Name, NamingContext>)ScaDebugFactory.eINSTANCE.create(ScaDebugPackage.Literals.NAME_TO_NAMING_CONTEXT_ENTRY));
+		setFixture((Entry<Name, NamingContext>) ScaDebugFactory.eINSTANCE.create(ScaDebugPackage.Literals.NAME_TO_NAMING_CONTEXT_ENTRY));
 	}
 
 	/**
@@ -102,6 +101,6 @@ public class NameToNamingContextEntryTest extends TestCase {
 	}
 
 	public void testPass() {
-		
+
 	}
 } //NameToNamingContextEntryTest
