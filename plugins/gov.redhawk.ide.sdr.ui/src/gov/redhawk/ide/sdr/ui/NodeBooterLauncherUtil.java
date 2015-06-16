@@ -11,7 +11,6 @@
 package gov.redhawk.ide.sdr.ui;
 
 import gov.redhawk.ide.sdr.util.ScaEnvironmentUtil;
-import gov.redhawk.sca.ScaPlugin;
 
 import java.util.Map;
 
@@ -63,18 +62,6 @@ public class NodeBooterLauncherUtil {
 			}
 		});
 		return launched;
-	}
-
-	/**
-	 * @deprecated use ScaPlugin.nameServiceObjectExists()
-	 * 
-	 * @param domainName
-	 * @param namingService
-	 * @return
-	 */
-	@Deprecated
-	public static boolean orbObjectExists(final String name, final String nameServiceInitRef) {
-		return ScaPlugin.nameServiceObjectExists(name, nameServiceInitRef);
 	}
 
 	public static ILaunchConfigurationWorkingCopy createNodeBooterLaunchConfig(final String name) throws CoreException {

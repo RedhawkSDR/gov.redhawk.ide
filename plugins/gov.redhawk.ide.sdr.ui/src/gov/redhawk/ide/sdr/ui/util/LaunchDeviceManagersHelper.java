@@ -13,11 +13,8 @@ package gov.redhawk.ide.sdr.ui.util;
 import gov.redhawk.ide.sdr.ui.NodeBooterLauncherUtil;
 import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
 import gov.redhawk.ide.sdr.ui.preferences.SdrUiPreferenceConstants;
-import gov.redhawk.model.sca.ScaDomainManager;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 
@@ -87,51 +84,6 @@ public class LaunchDeviceManagersHelper {
 		} catch (final CoreException e) {
 			return new Status(e.getStatus().getSeverity(), SdrUiPlugin.PLUGIN_ID, e.getLocalizedMessage(), e);
 		}
-	}
-
-	/**
-	 * @since 3.0
-	 * @deprecated Use {@link #launchDeviceManager(IProgressMonitor, DeviceManagerLaunchConfiguration)}
-	 */
-	@Deprecated
-	public static IStatus launchDeviceManagers(final IProgressMonitor monitor, final ScaDomainManager domain, final DeviceConfiguration... devConfigs) {
-		Assert.isNotNull(devConfigs);
-		String domainName = null;
-		if (domain != null) {
-			domainName = domain.getLabel();
-		}
-		final SubMonitor subMonitor = SubMonitor.convert(monitor, "Launching device managers...", devConfigs.length);
-		final MultiStatus retVal = new MultiStatus(SdrUiPlugin.PLUGIN_ID, IStatus.OK, "Failed to launch Device Managers...", null);
-		for (final DeviceConfiguration devConfig : devConfigs) {
-			LaunchDeviceManagersHelper.launchDeviceManager(subMonitor.newChild(1), new DeviceManagerLaunchConfiguration(domainName, devConfig,
-				(DebugLevel) null, null));
-		}
-		if (retVal.isOK()) {
-			return Status.OK_STATUS;
-		}
-		return retVal;
-	}
-
-	/**
-	 * @since 3.0
-	 * @deprecated Use {@link #launchDeviceManager(IProgressMonitor, DeviceManagerLaunchConfiguration)}
-	 */
-	@Deprecated
-	public static IStatus launchDeviceManagersWithDebug(final IProgressMonitor monitor, final String domainName,
-		final Map<DeviceConfiguration, Integer> devicesMap) {
-		Assert.isNotNull(devicesMap);
-		final SubMonitor subMonitor = SubMonitor.convert(monitor, "Launch Device Managers", devicesMap.size());
-		final MultiStatus retVal = new MultiStatus(SdrUiPlugin.PLUGIN_ID, IStatus.OK, "Failed to launch Device Managers...", null);
-
-		for (final Entry<DeviceConfiguration, Integer> ent : devicesMap.entrySet()) {
-			retVal.add(LaunchDeviceManagersHelper.launchDeviceManager(subMonitor.newChild(1), new DeviceManagerLaunchConfiguration(domainName, ent.getKey(),
-				ent.getValue(), null)));
-		}
-		if (retVal.isOK()) {
-			return Status.OK_STATUS;
-		}
-
-		return retVal;
 	}
 
 	/**

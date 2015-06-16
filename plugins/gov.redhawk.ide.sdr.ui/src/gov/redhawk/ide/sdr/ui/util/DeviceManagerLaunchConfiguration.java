@@ -14,7 +14,6 @@ import mil.jpeojtrs.sca.dcd.DeviceConfiguration;
 
 /**
  * @since 3.3
- * 
  */
 public class DeviceManagerLaunchConfiguration {
 	
@@ -29,26 +28,6 @@ public class DeviceManagerLaunchConfiguration {
 	private String additionalArguments;
 
 	public DeviceManagerLaunchConfiguration() {
-
-	}
-
-	/**
-	 * 
-	 * @param domainName
-	 * @param dcd
-	 * @param debugLevel
-	 * @param additionalArguments
-	 * @deprecated Use {@link #DeviceManagerLaunchConfiguration(String, DeviceConfiguration, DebugLevel, String)}
-	 */
-	@Deprecated
-	public DeviceManagerLaunchConfiguration(String domainName, DeviceConfiguration dcd, Integer debugLevel, String additionalArguments) {
-		super();
-		this.domainName = domainName;
-		this.dcd = dcd;
-		if (debugLevel != null) {
-			setDebugLevel(DebugLevel.values()[debugLevel]);
-		}
-		this.additionalArguments = additionalArguments;
 	}
 
 	public DeviceManagerLaunchConfiguration(String domainName, DeviceConfiguration dcd, DebugLevel debugLevel, String additionalArguments) {

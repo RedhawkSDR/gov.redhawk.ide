@@ -207,7 +207,7 @@ public class ExportUtils {
 
 	/**
 	 * @return System environment overridden with preference values
-	 * @since 3.4
+	 * @since 4.0
 	 */
 	public static Map<String, String> getEnv() {
 		Map<String, String> env = new HashMap<String, String>(System.getenv());
@@ -519,7 +519,7 @@ public class ExportUtils {
 
 	/**
 	 * Sets a preference on the project to enable the use of build.sh for installing to the SDRROOT.
-	 * @since 3.4
+	 * @since 4.0
 	 */
 	public static void setUseBuildSH(@NonNull IProject project) {
 		IScopeContext projectScope = new ProjectScope(project);
