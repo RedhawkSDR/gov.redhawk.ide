@@ -27,7 +27,8 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
 
 /**
- * An Eclipse launch delegate which handles launching a SoftPkg (component, device, etc) locally.
+ * An Eclipse launch delegate which handles launching a SoftPkg (component, device, etc) installed in the SDRROOT
+ * locally in the Sandbox. It does not handle launching workspace projects.
  */
 @SuppressWarnings("restriction")
 public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
@@ -35,13 +36,17 @@ public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
 
 	@Override
 	public void launch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
+		final int WORK_LAUNCH = 10;
+		final int WORK_POST_LAUNCH = 100;
+		SubMonitor subMonitor = SubMonitor.convert(monitor, WORK_LAUNCH + WORK_POST_LAUNCH);
+
 		final ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
 		final SoftPkg spd = SpdLauncherUtil.getSpd(configuration);
 		insertProgramArguments(spd, launch, workingCopy);
-		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
+
 		try {
-			super.launch(workingCopy, mode, launch, subMonitor.newChild(90));
-			SpdLauncherUtil.postLaunch(spd, workingCopy, mode, launch, subMonitor.newChild(10));
+			super.launch(workingCopy, mode, launch, subMonitor.newChild(WORK_LAUNCH));
+			SpdLauncherUtil.postLaunch(spd, workingCopy, mode, launch, subMonitor.newChild(WORK_POST_LAUNCH));
 		} finally {
 			if (monitor != null) {
 				monitor.done();

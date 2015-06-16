@@ -28,6 +28,7 @@ import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.ORBUtil;
 import gov.redhawk.sca.util.OrbSession;
+import gov.redhawk.sca.util.SubMonitor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,6 +104,15 @@ public final class SpdLauncherUtil {
 	 */
 	public static void postLaunch(final SoftPkg spd, final ILaunchConfiguration configuration, final String mode, final ILaunch launch,
 		final IProgressMonitor monitor) throws CoreException {
+		final int WORK_FIND_CORBA_OBJ = 10;
+		final int WORK_UPDATE_MODEL = 2;
+		final int WORK_FETCH_PROFILE = 1;
+		final int WORK_REFRESH = 2;
+		final int WORK_CONFIGURE = 1;
+		final int WORK_START = 1;
+		SubMonitor progress = SubMonitor.convert(monitor, "Post-launch tasks", WORK_FIND_CORBA_OBJ + WORK_UPDATE_MODEL + WORK_FETCH_PROFILE + WORK_REFRESH
+			+ WORK_CONFIGURE + WORK_START + WORK_REFRESH);
+
 		final ComponentType type;
 		if (spd.getDescriptor() == null || spd.getDescriptor().getComponent() == null) {
 			String errorMsg = String.format("Unable to determine the component type for %s during post-launch in the sandbox.", spd.getName());
@@ -123,19 +133,19 @@ public final class SpdLauncherUtil {
 		try {
 			switch (type) {
 			case DEVICE:
-				comp = SpdLauncherUtil.postLaunchDevice(launch);
+				comp = SpdLauncherUtil.postLaunchDevice(launch, progress.newChild(WORK_FIND_CORBA_OBJ));
 				break;
 			case EVENT_SERVICE:
 			case SERVICE:
-				comp = SpdLauncherUtil.postLaunchService(launch);
+				comp = SpdLauncherUtil.postLaunchService(launch, progress.newChild(WORK_FIND_CORBA_OBJ));
 				break;
 			case RESOURCE:
-				comp = SpdLauncherUtil.postLaunchComponent(launch);
+				comp = SpdLauncherUtil.postLaunchComponent(launch, progress.newChild(WORK_FIND_CORBA_OBJ));
 				break;
 			default:
 				String errorMsg = String.format("Unsupported component type during post-launch in the sandbox (%s) - treating as component", spd.getName());
 				ScaDebugPlugin.logWarning(errorMsg, null);
-				comp = SpdLauncherUtil.postLaunchComponent(launch);
+				comp = SpdLauncherUtil.postLaunchComponent(launch, progress.newChild(WORK_FIND_CORBA_OBJ));
 				break;
 			}
 		} catch (final CoreException e) {
@@ -167,19 +177,24 @@ public final class SpdLauncherUtil {
 				((ProfileObjectWrapper< ? >) newComponent).setProfileURI(spd.eResource().getURI());
 			}
 		});
+		progress.worked(WORK_UPDATE_MODEL);
 
 		// Fetch profile object, if applicable
 		if (newComponent instanceof ProfileObjectWrapper< ? >) {
-			((ProfileObjectWrapper< ? >) newComponent).fetchProfileObject(null);
+			((ProfileObjectWrapper< ? >) newComponent).fetchProfileObject(progress.newChild(WORK_FETCH_PROFILE));
+		} else {
+			progress.notWorked(WORK_FETCH_PROFILE);
 		}
 
 		// Refresh the model object, if applicable
 		if (newComponent instanceof IRefreshable) {
 			try {
-				((IRefreshable) newComponent).refresh(null, RefreshDepth.FULL);
+				((IRefreshable) newComponent).refresh(progress.newChild(WORK_REFRESH), RefreshDepth.FULL);
 			} catch (InterruptedException e) {
 				// PASS
 			}
+		} else {
+			progress.notWorked(WORK_REFRESH);
 		}
 
 		// Perform configure for properties as needed
@@ -206,6 +221,9 @@ public final class SpdLauncherUtil {
 					}
 				}
 			}
+			progress.worked(WORK_CONFIGURE);
+		} else {
+			progress.notWorked(WORK_CONFIGURE);
 		}
 
 		// Start the component, if requested
@@ -216,16 +234,23 @@ public final class SpdLauncherUtil {
 				} catch (final StartError e) {
 					// PASS
 				}
+				progress.worked(WORK_START);
+			} else {
+				progress.notWorked(WORK_START);
 			}
+		} else {
+			progress.notWorked(WORK_START);
 		}
 
 		// Perform a full refresh of the object, if applicable
 		if (newComponent instanceof IRefreshable) {
 			try {
-				((IRefreshable) newComponent).refresh(null, RefreshDepth.FULL);
+				((IRefreshable) newComponent).refresh(progress.newChild(WORK_REFRESH), RefreshDepth.FULL);
 			} catch (InterruptedException e) {
 				// PASS
 			}
+		} else {
+			progress.notWorked(WORK_REFRESH);
 		}
 	}
 
@@ -235,10 +260,12 @@ public final class SpdLauncherUtil {
 	 * a chalkboard waveform.
 	 *
 	 * @param launch The launch that just occurred
+	 * @param monitor A progress monitor
 	 * @return The newly launched component
 	 * @throws CoreException
 	 */
-	private static LocalAbstractComponent postLaunchComponent(final ILaunch launch) throws CoreException {
+	private static LocalAbstractComponent postLaunchComponent(final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
+		SubMonitor progress = SubMonitor.convert(monitor, "Wait for component to register", 1);
 		final String nameBinding = launch.getAttribute(LaunchVariables.NAME_BINDING);
 		final String namingContextIOR = launch.getAttribute(LaunchVariables.NAMING_CONTEXT_IOR);
 		final String compID = launch.getAttribute(LaunchVariables.COMPONENT_IDENTIFIER);
@@ -259,7 +286,11 @@ public final class SpdLauncherUtil {
 				CF.Resource ref = null;
 
 				try {
-					while (namingContext == null && !launch.isTerminated()) {
+					while (namingContext == null) {
+						if (launch.isTerminated()) {
+							throw new EarlyTerminationException("Component terminated while waiting to launch. " + compID, launch);
+						}
+
 						try {
 							namingContext = NamingContextExtHelper.narrow(session.getOrb().string_to_object(namingContextIOR));
 						} catch (SystemException e) {
@@ -276,7 +307,11 @@ public final class SpdLauncherUtil {
 
 					NotifyingNamingContext namingRef = ScaDebugPlugin.getInstance().getLocalSca().getRootContext().findContext(namingContext);
 
-					while (ref == null && !launch.isTerminated()) {
+					while (ref == null) {
+						if (launch.isTerminated()) {
+							throw new EarlyTerminationException("Component terminated while waiting to launch. " + compID, launch);
+						}
+
 						try {
 							ref = ResourceHelper.narrow(namingRef.resolve_str(nameBinding));
 						} catch (NotFound e) {
@@ -293,7 +328,7 @@ public final class SpdLauncherUtil {
 
 					// If this launch was terminated, immediately bail
 					while (!launch.isTerminated()) {
-						for (ScaComponent comp : localSca.getSandboxWaveform().fetchComponents(null)) {
+						for (ScaComponent comp : localSca.getSandboxWaveform().fetchComponents(null, RefreshDepth.SELF)) {
 							if (comp instanceof LocalScaComponent && ref._is_equivalent(comp.getCorbaObj())) {
 								return (LocalScaComponent) comp;
 							}
@@ -355,6 +390,8 @@ public final class SpdLauncherUtil {
 		} catch (final TimeoutException e1) {
 			future.cancel(true);
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Timed out waiting for component to start. " + compID, e1));
+		} finally {
+			progress.done();
 		}
 
 	}
@@ -364,10 +401,12 @@ public final class SpdLauncherUtil {
 	 * in the sandbox device manager.
 	 *
 	 * @param launch The launch that just occurred
+	 * @param monitor A progress monitor
 	 * @return The newly launched service
 	 * @throws CoreException
 	 */
-	private static LocalAbstractComponent postLaunchService(final ILaunch launch) throws CoreException {
+	private static LocalAbstractComponent postLaunchService(final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
+		SubMonitor progress = SubMonitor.convert(monitor, "Wait for service to register", 1);
 		final String name = launch.getAttribute(LaunchVariables.SERVICE_NAME);
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
 
@@ -381,7 +420,7 @@ public final class SpdLauncherUtil {
 						throw new EarlyTerminationException("Service terminated while waiting to launch. " + name, launch);
 					}
 
-					for (final ScaService service : localSca.getSandboxDeviceManager().fetchServices(null)) {
+					for (final ScaService service : localSca.getSandboxDeviceManager().fetchServices(null, RefreshDepth.SELF)) {
 						if (name.equals(service.getName())) {
 							retVal = (LocalAbstractComponent) service;
 							break;
@@ -419,6 +458,8 @@ public final class SpdLauncherUtil {
 		} catch (final TimeoutException e1) {
 			future.cancel(true);
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Timed out waiting for service to start. " + name, e1));
+		} finally {
+			progress.done();
 		}
 	}
 
@@ -427,10 +468,12 @@ public final class SpdLauncherUtil {
 	 * devices in the sandbox device manager.
 	 *
 	 * @param launch The launch that just occurred
+	 * @param monitor A progress monitor
 	 * @return The newly launched service
 	 * @throws CoreException
 	 */
-	private static LocalAbstractComponent postLaunchDevice(final ILaunch launch) throws CoreException {
+	private static LocalAbstractComponent postLaunchDevice(final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
+		SubMonitor progress = SubMonitor.convert(monitor, "Wait for device to register", 1);
 		final String deviceLabel = launch.getAttribute(LaunchVariables.DEVICE_LABEL);
 		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(null);
 
@@ -444,7 +487,7 @@ public final class SpdLauncherUtil {
 						throw new EarlyTerminationException("Device terminated while waiting to launch. " + deviceLabel, launch);
 					}
 
-					for (final ScaDevice< ? > device : localSca.getSandboxDeviceManager().fetchDevices(null)) {
+					for (final ScaDevice< ? > device : localSca.getSandboxDeviceManager().fetchDevices(null, RefreshDepth.SELF)) {
 						final String label = device.fetchLabel(null);
 						if (deviceLabel.equals(label)) {
 							retVal = (LocalAbstractComponent) device;
@@ -474,7 +517,6 @@ public final class SpdLauncherUtil {
 				return newComponent;
 			} else {
 				final LocalAbstractComponent newComponent = future.get(timeout, TimeUnit.SECONDS);
-//				final LocalAbstractComponent newComponent = future.get(600, TimeUnit.DAYS);
 				return newComponent;
 			}
 		} catch (final InterruptedException e1) {
@@ -484,8 +526,9 @@ public final class SpdLauncherUtil {
 		} catch (final TimeoutException e1) {
 			future.cancel(true);
 			throw new CoreException(new Status(IStatus.ERROR, ScaDebugPlugin.ID, "Timed out waiting for component to start. " + deviceLabel, e1));
+		} finally {
+			progress.done();
 		}
-
 	}
 
 	private static final Pattern VARIABLE_PATTERN = Pattern.compile("\\$\\{((\\w+)(:(\\w+))?)\\}");
@@ -559,7 +602,8 @@ public final class SpdLauncherUtil {
 		case RESOURCE:
 			return SpdLauncherUtil.createDefaultComponentProgramArgs();
 		default:
-			String errorMsg = String.format("Unsupported component type (%s) while launching in the sandbox. It will be treated as a component.", type.getName());
+			String errorMsg = String.format("Unsupported component type (%s) while launching in the sandbox. It will be treated as a component.",
+				type.getName());
 			ScaDebugPlugin.logWarning(errorMsg, null);
 			return SpdLauncherUtil.createDefaultComponentProgramArgs();
 		}
