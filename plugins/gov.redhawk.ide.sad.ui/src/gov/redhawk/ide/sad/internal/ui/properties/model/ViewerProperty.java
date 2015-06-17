@@ -17,12 +17,16 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 
 /**
  * 
  */
-public abstract class ViewerProperty< T extends AbstractProperty > {
+public abstract class ViewerProperty< T extends AbstractProperty > implements ITreeItemContentProvider {
 
 	protected final T def;
 	private String externalID;
@@ -126,4 +130,19 @@ public abstract class ViewerProperty< T extends AbstractProperty > {
 		}
 	}
 
+	public Collection< ? > getElements(Object object) {
+		return getChildren(object);
+	}
+
+	public Collection< ? > getChildren(Object object) {
+		return Collections.EMPTY_LIST;
+	}
+
+	public boolean hasChildren(Object object) {
+		return !getChildren(object).isEmpty();
+	}
+
+	public Object getParent(Object object) {
+		return parent;
+	}
 }

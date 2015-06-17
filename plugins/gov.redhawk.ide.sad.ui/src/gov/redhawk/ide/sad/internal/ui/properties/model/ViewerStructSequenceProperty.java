@@ -11,6 +11,7 @@
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import mil.jpeojtrs.sca.prf.Simple;
@@ -122,5 +123,9 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 		}
 
 		firePropertyChangeEvent();
+	}
+
+	public Collection< ? > getChildren(Object object) {
+		return simplesArray;
 	}
 }

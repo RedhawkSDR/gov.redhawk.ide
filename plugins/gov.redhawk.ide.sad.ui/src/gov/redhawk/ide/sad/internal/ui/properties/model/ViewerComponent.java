@@ -11,6 +11,7 @@
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
@@ -34,8 +35,9 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
+import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 
-public class ViewerComponent {
+public class ViewerComponent implements ITreeItemContentProvider {
 	
 	private static final EStructuralFeature [] PATH = new EStructuralFeature [] {
 		SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
@@ -194,6 +196,26 @@ public class ViewerComponent {
 				}
 			}
 		}
+		return null;
+	}
+
+	@Override
+	public Collection< ? > getElements(Object object) {
+		return getChildren(object);
+	}
+
+	@Override
+	public Collection< ? > getChildren(Object object) {
+		return getProperties();
+	}
+
+	@Override
+	public boolean hasChildren(Object object) {
+		return !getChildren(object).isEmpty();
+	}
+
+	@Override
+	public Object getParent(Object object) {
 		return null;
 	}
 
