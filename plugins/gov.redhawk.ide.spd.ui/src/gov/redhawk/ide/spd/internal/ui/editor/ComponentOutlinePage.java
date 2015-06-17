@@ -111,7 +111,7 @@ public class ComponentOutlinePage extends FormOutlinePage {
 			return PropertiesFormPage.PAGE_ID;
 		} else if (target instanceof EObject) {
 			// Check the parent of the item
-			return getRootPageId(((EObject)target).eContainer());
+			return getRootPageId(((EObject) target).eContainer());
 		} else {
 			return null;
 		}
