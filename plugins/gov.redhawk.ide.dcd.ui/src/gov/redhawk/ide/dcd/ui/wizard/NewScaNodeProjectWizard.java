@@ -14,7 +14,6 @@ package gov.redhawk.ide.dcd.ui.wizard;
 import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.codegen.util.ProjectCreator;
 import gov.redhawk.ide.dcd.generator.newnode.NodeProjectCreator;
-import gov.redhawk.ide.dcd.internal.ui.editor.NodeEditor;
 import gov.redhawk.ide.dcd.ui.DcdUiActivator;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.ide.sdr.SdrRoot;
@@ -43,16 +42,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.gmf.runtime.diagram.ui.internal.properties.WorkspaceViewerProperties;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramGraphicalViewer;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.SWT;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -68,7 +62,6 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
  * The Class NewScaDeviceProjectWizard.
  * @since 1.1
  */
-@SuppressWarnings("restriction")
 public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
 
 	protected static final long SDR_REFRESH_DELAY = 500;
@@ -171,10 +164,7 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 			getContainer().run(false, false, op);
 			final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			if ((this.openEditorOn != null) && this.openEditorOn.exists()) {
-				IEditorPart nodePart = IDE.openEditor(activePage, this.openEditorOn, true);
-				if (nodePart instanceof NodeEditor) {
-					setCustomPreferences((NodeEditor) nodePart);
-				}
+				IDE.openEditor(activePage, this.openEditorOn, true);
 			}
 		} catch (final InvocationTargetException x) {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, DcdUiActivator.PLUGIN_ID, x.getCause().getMessage(), x.getCause()),
@@ -189,23 +179,6 @@ public class NewScaNodeProjectWizard extends Wizard implements INewWizard, IExec
 			getContainer().getCurrentPage().getControl().setEnabled(true);
 		}
 		return true;
-	}
-
-	/**
-	 * Set custom viewing properties for the Node Editor so that we can tell the difference between this editor and the Node Explorer
-	 * 
-	 * @param nodePart The Node Editor instance that we shall change the initial diagram style for
-	 */
-	private void setCustomPreferences(final NodeEditor nodePart) {
-		final DiagramGraphicalViewer viewer = (DiagramGraphicalViewer) nodePart.getDiagramGraphicalViewer();
-		final IPreferenceStore store = viewer.getWorkspaceViewerPreferenceStore();
-
-		store.setValue(WorkspaceViewerProperties.VIEWRULERS, true);
-		store.setValue(WorkspaceViewerProperties.VIEWGRID, true);
-		store.setValue(WorkspaceViewerProperties.GRIDSPACING, .5); // SUPPRESS CHECKSTYLE MagicNumber
-		store.setValue(WorkspaceViewerProperties.GRIDORDER, false);
-		store.setValue(WorkspaceViewerProperties.GRIDLINESTYLE, SWT.LINE_SOLID);
-		store.setValue(WorkspaceViewerProperties.GRIDLINECOLOR, SWT.COLOR_BLACK);
 	}
 
 	@Override
