@@ -12,7 +12,6 @@ package gov.redhawk.ide.debug.internal.ui.diagram;
 
 import gov.redhawk.ide.codegen.CodegenUtil;
 import gov.redhawk.ide.sad.generator.newwaveform.WaveformProjectCreator;
-import gov.redhawk.ide.sad.internal.ui.editor.SadEditor;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.ide.sad.ui.wizard.ScaWaveformProjectPropertiesWizardPage;
 
@@ -46,12 +45,8 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.gmf.runtime.diagram.ui.internal.properties.WorkspaceViewerProperties;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramGraphicalViewer;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkingSet;
@@ -161,8 +156,7 @@ public class NewWaveformFromLocalWizard extends Wizard implements IExecutableExt
 			getContainer().run(false, false, op);
 			final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			if ((this.openEditorOn != null) && this.openEditorOn.exists()) {
-				final SadEditor sadPart = (SadEditor) IDE.openEditor(activePage, this.openEditorOn, true);
-				setCustomPreferences(sadPart);
+				IDE.openEditor(activePage, this.openEditorOn, true);
 			}
 
 			BasicNewProjectResourceWizard.updatePerspective(this.fConfig);
@@ -219,24 +213,6 @@ public class NewWaveformFromLocalWizard extends Wizard implements IExecutableExt
 
 		newSad.getComponentFiles().getComponentFile().clear();
 		newSad.getComponentFiles().getComponentFile().addAll(fileMap.values());
-	}
-
-	/**
-	 * Set custom viewing properties for the Sad Editor so that we can tell the difference between this editor and the
-	 * Sad Explorer
-	 * 
-	 * @param sadPart The Sad Editor instance that we shall change the initial diagram style for
-	 */
-	private void setCustomPreferences(final SadEditor sadPart) {
-		final DiagramGraphicalViewer viewer = (DiagramGraphicalViewer) sadPart.getDiagramGraphicalViewer();
-		final IPreferenceStore store = viewer.getWorkspaceViewerPreferenceStore();
-
-		store.setValue(WorkspaceViewerProperties.VIEWRULERS, true);
-		store.setValue(WorkspaceViewerProperties.VIEWGRID, true);
-		store.setValue(WorkspaceViewerProperties.GRIDSPACING, .5); // SUPPRESS CHECKSTYLE MagicNumber
-		store.setValue(WorkspaceViewerProperties.GRIDORDER, false);
-		store.setValue(WorkspaceViewerProperties.GRIDLINESTYLE, SWT.LINE_SOLID);
-		store.setValue(WorkspaceViewerProperties.GRIDLINECOLOR, SWT.COLOR_BLACK);
 	}
 
 	/**

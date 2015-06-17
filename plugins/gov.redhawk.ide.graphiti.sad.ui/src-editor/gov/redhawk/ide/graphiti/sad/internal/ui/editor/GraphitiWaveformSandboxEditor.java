@@ -17,6 +17,7 @@ import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
 import gov.redhawk.ide.debug.internal.ScaDebugInstance;
 import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
+import gov.redhawk.ide.debug.internal.ui.diagram.NewWaveformFromLocalWizard;
 import gov.redhawk.ide.graphiti.sad.debug.internal.ui.GraphitiModelMap;
 import gov.redhawk.ide.graphiti.sad.debug.internal.ui.GraphitiModelMapInitializerCommand;
 import gov.redhawk.ide.graphiti.sad.debug.internal.ui.SadGraphitiModelAdapter;
@@ -25,7 +26,6 @@ import gov.redhawk.ide.graphiti.sad.debug.internal.ui.ScaGraphitiModelAdapter;
 import gov.redhawk.ide.graphiti.sad.ui.SADUIGraphitiPlugin;
 import gov.redhawk.ide.graphiti.sad.ui.adapters.GraphitiDiagramAdapter;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.GraphitiWaveformDiagramEditor;
-import gov.redhawk.ide.graphiti.sad.ui.wizard.NewGraphitiWaveformFromLocalWizard;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.model.sca.RefreshDepth;
@@ -526,7 +526,7 @@ public class GraphitiWaveformSandboxEditor extends GraphitiWaveformMultiPageEdit
 
 	@Override
 	public void doSaveAs() {
-		final NewGraphitiWaveformFromLocalWizard wizard = new NewGraphitiWaveformFromLocalWizard(SoftwareAssembly.Util.getSoftwareAssembly(getMainResource()));
+		final NewWaveformFromLocalWizard wizard = new NewWaveformFromLocalWizard(SoftwareAssembly.Util.getSoftwareAssembly(getMainResource()));
 		final WizardDialog dialog = new WizardDialog(getSite().getShell(), wizard);
 		dialog.open();
 

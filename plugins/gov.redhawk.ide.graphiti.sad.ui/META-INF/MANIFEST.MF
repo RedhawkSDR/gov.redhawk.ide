@@ -69,8 +69,7 @@ Export-Package: gov.redhawk.ide.graphiti.sad.debug.internal.ui;x-internal:=true,
  gov.redhawk.ide.graphiti.sad.ui.diagram.providers,
  gov.redhawk.ide.graphiti.sad.ui.diagram.util,
  gov.redhawk.ide.graphiti.sad.ui.preferences,
- gov.redhawk.ide.graphiti.sad.ui.properties,
- gov.redhawk.ide.graphiti.sad.ui.wizard
+ gov.redhawk.ide.graphiti.sad.ui.properties
 Import-Package: mil.jpeojtrs.sca.profile.provider,
  org.eclipse.wst.sse.ui;resolution:=optional
 
