@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.emf.ecore.util.FeatureMap;
+
+import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
@@ -27,16 +30,18 @@ import mil.jpeojtrs.sca.prf.Values;
  * 
  */
 public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence> {
-	private List<ViewerStructSequenceSimpleProperty> simplesArray = new ArrayList<ViewerStructSequenceSimpleProperty>();
-	private List<ViewerStructSequenceSequenceProperty> sequencesArray = new ArrayList<ViewerStructSequenceSequenceProperty>();
+	private List<ViewerProperty< ? >> fieldsArray = new ArrayList<ViewerProperty< ? >>();
 
 	public ViewerStructSequenceProperty(StructSequence def, Object parent) {
 		super(def, parent);
-		for (Simple simple : def.getStruct().getSimple()) {
-			simplesArray.add(new ViewerStructSequenceSimpleProperty(simple, this));
-		}
-		for (SimpleSequence sequence : def.getStruct().getSimpleSequence()) {
-			sequencesArray.add(new ViewerStructSequenceSequenceProperty(sequence, this));
+		for (FeatureMap.Entry entry : def.getStruct().getFields()) {
+			if (entry.getEStructuralFeature() == PrfPackage.Literals.STRUCT__SIMPLE) {
+				Simple simple = (Simple) entry.getValue();
+				fieldsArray.add(new ViewerStructSequenceSimpleProperty(simple, this));
+			} else if (entry.getEStructuralFeature() == PrfPackage.Literals.STRUCT__SIMPLE_SEQUENCE) {
+				SimpleSequence sequence = (SimpleSequence) entry.getValue();
+				fieldsArray.add(new ViewerStructSequenceSequenceProperty(sequence, this));
+			}
 		}
 		setToDefault();
 	}
@@ -44,10 +49,7 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 	@Override
 	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
 		super.addPropertyChangeListener(listener);
-		for (ViewerStructSequenceSimpleProperty p : simplesArray) {
-			p.addPropertyChangeListener(listener);
-		}
-		for (ViewerStructSequenceSequenceProperty p : sequencesArray) {
+		for (ViewerProperty< ? > p : fieldsArray) {
 			p.addPropertyChangeListener(listener);
 		}
 	}
@@ -55,30 +57,36 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 	@Override
 	public void removePropertyChangeListener(IViewerPropertyChangeListener listener) {
 		super.removePropertyChangeListener(listener);
-		for (ViewerStructSequenceSimpleProperty p : simplesArray) {
-			p.removePropertyChangeListener(listener);
-		}
-		for (ViewerStructSequenceSequenceProperty p : sequencesArray) {
+		for (ViewerProperty< ? > p : fieldsArray) {
 			p.removePropertyChangeListener(listener);
 		}
 	}
 
 	@Override
 	public void setToDefault() {
-		for (ViewerStructSequenceSimpleProperty v : simplesArray) {
-			v.setToDefault();
-		}
-		for (ViewerStructSequenceSequenceProperty v : sequencesArray) {
+		for (ViewerProperty< ? > v : fieldsArray) {
 			v.setToDefault();
 		}
 	}
 
 	public List<ViewerStructSequenceSimpleProperty> getSimples() {
-		return simplesArray;
+		List<ViewerStructSequenceSimpleProperty> simples = new ArrayList<ViewerStructSequenceSimpleProperty>();
+		for (ViewerProperty< ? > property : fieldsArray) {
+			if (property instanceof ViewerStructSequenceSimpleProperty) {
+				simples.add((ViewerStructSequenceSimpleProperty) property);
+			}
+		}
+		return simples;
 	}
 
 	public List<ViewerStructSequenceSequenceProperty> getSequences() {
-		return sequencesArray;
+		List<ViewerStructSequenceSequenceProperty> sequences = new ArrayList<ViewerStructSequenceSequenceProperty>();
+		for (ViewerProperty< ? > property : fieldsArray) {
+			if (property instanceof ViewerStructSequenceSequenceProperty) {
+				sequences.add((ViewerStructSequenceSequenceProperty) property);
+			}
+		}
+		return sequences;
 	}
 
 	public void setValue(StructSequenceRef value) {
@@ -90,6 +98,7 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 
 		setToDefault();
 
+		List<ViewerStructSequenceSimpleProperty> simplesArray = getSimples();
 		for (ViewerStructSequenceSimpleProperty prop : simplesArray) {
 			ArrayList<String> newValues = new ArrayList<String>(value.getStructValue().size());
 			String simpleValue = prop.def.getValue();
@@ -98,6 +107,7 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 			}
 			prop.setValues(newValues);
 		}
+		List<ViewerStructSequenceSequenceProperty> sequencesArray = getSequences();
 		for (ViewerStructSequenceSequenceProperty prop : sequencesArray) {
 			ArrayList<Values> newValues = new ArrayList<Values>(value.getStructValue().size());
 			Values sequenceValue = prop.def.getValues();
@@ -125,7 +135,8 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 		firePropertyChangeEvent();
 	}
 
+	@Override
 	public Collection< ? > getChildren(Object object) {
-		return simplesArray;
+		return fieldsArray;
 	}
 }

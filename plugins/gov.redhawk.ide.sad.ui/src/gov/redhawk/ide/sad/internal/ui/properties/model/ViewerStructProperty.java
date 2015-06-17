@@ -38,10 +38,6 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 		setToDefault();
 	}
 
-	public Collection< ? > getChildren(Object object) {
-		return getFields();
-	}
-
 	public List<ViewerProperty< ? >> getFields() {
 		return fields;
 	}
@@ -127,4 +123,8 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 		}
 	}
 
+	@Override
+	public Collection< ? > getChildren(Object object) {
+		return getFields();
+	}
 }

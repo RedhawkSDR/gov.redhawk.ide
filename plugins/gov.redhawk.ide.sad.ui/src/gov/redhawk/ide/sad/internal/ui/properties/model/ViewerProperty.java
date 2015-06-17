@@ -130,18 +130,22 @@ public abstract class ViewerProperty< T extends AbstractProperty > implements IT
 		}
 	}
 
+	@Override
 	public Collection< ? > getElements(Object object) {
 		return getChildren(object);
 	}
 
+	@Override
 	public Collection< ? > getChildren(Object object) {
 		return Collections.EMPTY_LIST;
 	}
 
+	@Override
 	public boolean hasChildren(Object object) {
 		return !getChildren(object).isEmpty();
 	}
 
+	@Override
 	public Object getParent(Object object) {
 		return parent;
 	}
