@@ -8,8 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-  // BEGIN GENERATED CODE
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.tests;
 
 import gov.redhawk.ide.debug.ScaDebugFactory;
@@ -86,7 +85,7 @@ public class NameToObjectEntryTest extends TestCase {
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void setUp() throws Exception {
-		setFixture((Entry<Name, org.omg.CORBA.Object>)ScaDebugFactory.eINSTANCE.create(ScaDebugPackage.Literals.NAME_TO_OBJECT_ENTRY));
+		setFixture((Entry<Name, org.omg.CORBA.Object>) ScaDebugFactory.eINSTANCE.create(ScaDebugPackage.Literals.NAME_TO_OBJECT_ENTRY));
 	}
 
 	/**
@@ -101,6 +100,6 @@ public class NameToObjectEntryTest extends TestCase {
 	}
 
 	public void testPass() {
-		
+
 	}
 } //NameToObjectEntryTest

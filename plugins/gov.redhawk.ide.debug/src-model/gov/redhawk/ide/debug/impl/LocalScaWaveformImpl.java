@@ -57,7 +57,6 @@ import CF.ComponentType;
 import CF.DataType;
 import CF.Resource;
 import CF.ResourceHelper;
-import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.InitializeError;
 import CF.LifeCyclePackage.ReleaseError;
 
@@ -68,10 +67,10 @@ import CF.LifeCyclePackage.ReleaseError;
  * <p>
  * The following features are implemented:
  * <ul>
- * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getLaunch <em>Launch</em>}</li>
- * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getMode <em>Mode</em>}</li>
- * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getNamingContext <em>Naming Context</em>}</li>
- * <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getLocalApp <em>Local App</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getLaunch <em>Launch</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getMode <em>Mode</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getNamingContext <em>Naming Context</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.LocalScaWaveformImpl#getLocalApp <em>Local App</em>}</li>
  * </ul>
  * </p>
  *
@@ -96,7 +95,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * @generated
 	 * @ordered
 	 */
-	protected ILaunch launch = LocalScaWaveformImpl.LAUNCH_EDEFAULT;
+	protected ILaunch launch = LAUNCH_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getMode() <em>Mode</em>}' attribute.
@@ -116,7 +115,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * @generated
 	 * @ordered
 	 */
-	protected String mode = LocalScaWaveformImpl.MODE_EDEFAULT;
+	protected String mode = MODE_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getNamingContext() <em>Naming Context</em>}' reference.
@@ -146,7 +145,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 * @generated
 	 * @ordered
 	 */
-	protected ApplicationOperations localApp = LocalScaWaveformImpl.LOCAL_APP_EDEFAULT;
+	protected ApplicationOperations localApp = LOCAL_APP_EDEFAULT;
 
 	private OrbSession session = OrbSession.createSession();
 
@@ -188,11 +187,14 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	public void setLaunch(ILaunch newLaunch) {
 		ILaunch oldLaunch = launch;
 		launch = newLaunch;
-		if (eNotificationRequired()) {
+		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__LAUNCH, oldLaunch, launch));
-		}
 	}
 
+	/**
+	 * The waveform will add this adapter to the naming context given to it. This allows it to react to components
+	 * registering in its naming context.
+	 */
 	private final NotifyingNamingContextAdapter adapter = new NotifyingNamingContextAdapter() {
 
 		@Override
@@ -298,9 +300,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	public void setMode(String newMode) {
 		String oldMode = mode;
 		mode = newMode;
-		if (eNotificationRequired()) {
+		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__MODE, oldMode, mode));
-		}
 	}
 
 	/**
@@ -314,10 +315,9 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			InternalEObject oldNamingContext = (InternalEObject) namingContext;
 			namingContext = (NotifyingNamingContext) eResolveProxy(oldNamingContext);
 			if (namingContext != oldNamingContext) {
-				if (eNotificationRequired()) {
+				if (eNotificationRequired())
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, ScaDebugPackage.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT, oldNamingContext,
 						namingContext));
-				}
 			}
 		}
 		return namingContext;
@@ -356,9 +356,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	public void setNamingContextGen(NotifyingNamingContext newNamingContext) {
 		NotifyingNamingContext oldNamingContext = namingContext;
 		namingContext = newNamingContext;
-		if (eNotificationRequired()) {
+		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT, oldNamingContext, namingContext));
-		}
 	}
 
 	/**
@@ -381,9 +380,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	public void setLocalAppGen(ApplicationOperations newLocalApp) {
 		ApplicationOperations oldLocalApp = localApp;
 		localApp = newLocalApp;
-		if (eNotificationRequired()) {
+		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP, oldLocalApp, localApp));
-		}
 	}
 
 	/**
@@ -401,11 +399,11 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			try {
 				ref = ApplicationHelper.narrow(session.getPOA().servant_to_reference(new ApplicationPOATie(newLocalApp)));
 			} catch (ServantNotActive e) {
-				ScaDebugPlugin.logError("Failed to setup Device manager servant.", e);
+				ScaDebugPlugin.logError("Failed to setup waveform application servant.", e);
 			} catch (WrongPolicy e) {
-				ScaDebugPlugin.logError("Failed to setup Device manager servant.", e);
+				ScaDebugPlugin.logError("Failed to setup waveform application servant.", e);
 			} catch (CoreException e) {
-				ScaDebugPlugin.logError("Failed to setup Device manager servant.", e);
+				ScaDebugPlugin.logError("Failed to setup waveform application servant.", e);
 			}
 		}
 
@@ -424,42 +422,14 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 	@Override
 	public void unsetProfile() {
-
 	}
 
 	@Override
 	public void unsetProfileURI() {
-
 	}
 
 	@Override
 	public void unsetProfileObj() {
-
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * @since 4.0
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public Resource launch(String compId, DataType[] execParams, String spdURI, String implID, String mode) throws ExecuteFail {
-		Assert.isNotNull(spdURI);
-		Assert.isNotNull(implID);
-		Assert.isNotNull(getLocalApp(), "Null application");
-		return ((ApplicationImpl) getLocalApp()).launch(compId, execParams, spdURI, implID, mode);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * @since 4.0
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public Resource reset(String compInstId) throws ReleaseError, ExecuteFail {
-		Assert.isNotNull(compInstId);
-		Assert.isNotNull(getLocalApp(), "Null application");
-		return ((ApplicationImpl) getLocalApp()).reset(compInstId);
 	}
 
 	/**
@@ -475,9 +445,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__MODE:
 			return getMode();
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT:
-			if (resolve) {
+			if (resolve)
 				return getNamingContext();
-			}
 			return basicGetNamingContext();
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
 			return getLocalApp();
@@ -518,16 +487,16 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	public void eUnset(int featureID) {
 		switch (featureID) {
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LAUNCH:
-			setLaunch(LocalScaWaveformImpl.LAUNCH_EDEFAULT);
+			setLaunch(LAUNCH_EDEFAULT);
 			return;
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__MODE:
-			setMode(LocalScaWaveformImpl.MODE_EDEFAULT);
+			setMode(MODE_EDEFAULT);
 			return;
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT:
 			setNamingContext((NotifyingNamingContext) null);
 			return;
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
-			setLocalApp(LocalScaWaveformImpl.LOCAL_APP_EDEFAULT);
+			setLocalApp(LOCAL_APP_EDEFAULT);
 			return;
 		}
 		super.eUnset(featureID);
@@ -542,13 +511,13 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LAUNCH:
-			return LocalScaWaveformImpl.LAUNCH_EDEFAULT == null ? launch != null : !LocalScaWaveformImpl.LAUNCH_EDEFAULT.equals(launch);
+			return LAUNCH_EDEFAULT == null ? launch != null : !LAUNCH_EDEFAULT.equals(launch);
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__MODE:
-			return LocalScaWaveformImpl.MODE_EDEFAULT == null ? mode != null : !LocalScaWaveformImpl.MODE_EDEFAULT.equals(mode);
+			return MODE_EDEFAULT == null ? mode != null : !MODE_EDEFAULT.equals(mode);
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__NAMING_CONTEXT:
 			return namingContext != null;
 		case ScaDebugPackage.LOCAL_SCA_WAVEFORM__LOCAL_APP:
-			return LocalScaWaveformImpl.LOCAL_APP_EDEFAULT == null ? localApp != null : !LocalScaWaveformImpl.LOCAL_APP_EDEFAULT.equals(localApp);
+			return LOCAL_APP_EDEFAULT == null ? localApp != null : !LOCAL_APP_EDEFAULT.equals(localApp);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -600,9 +569,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) {
+		if (eIsProxy())
 			return super.toString();
-		}
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (launch: ");
@@ -640,12 +608,6 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	}
 
 	@Override
-	@Deprecated
-	protected Command createMergeComponentsCommand(final String assemCtrlId, final ComponentType[] compTypes, final IStatus status) {
-		return new LocalScaWaveformMergeComponentsCommand(this, compTypes, status);
-	}
-
-	@Override
 	protected Command createMergeComponentsCommand(final ComponentType[] compTypes, final IStatus status) {
 		return new LocalScaWaveformMergeComponentsCommand(this, compTypes, status);
 	}
@@ -673,38 +635,12 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			component.initialize();
 			try {
 				component.refresh(null, RefreshDepth.FULL);
-			} catch (final InterruptedException e1) {
+			} catch (final InterruptedException e) {
 				// PASS
 			}
 			ScaModelCommand.execute(this, new ScaModelCommand() {
-
 				@Override
 				public void execute() {
-					// TODO Find / create component Instantiation and assign
-					//					DomComponentFile cf = PartitioningFactory.eINSTANCE.createDomComponentFile();
-					//					cf.setSoftPkg(component.getProfileObj());
-					//					if (getProfileObj().getComponentFiles() == null) {
-					//						getProfileObj().setComponentFiles(PartitioningFactory.eINSTANCE.createComponentFiles());
-					//					}
-					//					getProfileObj().getComponentFiles().getComponentFile().add(cf);
-					//					
-					//					SadComponentInstantiation inst = SadFactory.eINSTANCE.createSadComponentInstantiation();
-					//					inst.setId(component.getInstantiationIdentifier());
-					//					inst.setUsageName(component.getName());
-					//					inst.setStartOrder(BigInteger.valueOf(getProfileObj().getComponentFiles().getComponentFile().size()));
-					//					
-					//					SadComponentPlacement cp = SadFactory.eINSTANCE.createSadComponentPlacement();
-					//					ComponentFileRef ref = PartitioningFactory.eINSTANCE.createComponentFileRef();
-					//					ref.setFile(cf);
-					//					
-					//					cp.setComponentFileRef(ref);
-					//					cp.getComponentInstantiation().add(inst);
-					//					if (getProfileObj().getPartitioning() == null) {
-					//						getProfileObj().setPartitioning(SadFactory.eINSTANCE.createSadPartitioning());
-					//					}
-					//					getProfileObj().getPartitioning().getComponentPlacement().add(cp);
-					//					
-					//					component.setComponentInstantiation(inst);
 					getComponents().add(component);
 				}
 			});
@@ -713,18 +649,8 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			} catch (final InterruptedException e) {
 				// PASS
 			}
-		} catch (final InitializeError e) {
+		} catch (final InitializeError | SystemException e) {
 			ScaModelCommand.execute(this, new ScaModelCommand() {
-
-				@Override
-				public void execute() {
-					component.setStatus(ScaPackage.Literals.SCA_COMPONENT__COMPONENT_INSTANTIATION, new Status(IStatus.ERROR, ScaDebugPlugin.ID,
-						"Component failed to initialize", e));
-				}
-			});
-		} catch (final SystemException e) {
-			ScaModelCommand.execute(this, new ScaModelCommand() {
-
 				@Override
 				public void execute() {
 					component.setStatus(ScaPackage.Literals.SCA_COMPONENT__COMPONENT_INSTANTIATION, new Status(IStatus.ERROR, ScaDebugPlugin.ID,
@@ -736,8 +662,6 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	}
 
 	private void removeComponent(final Name name, final Resource resource) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -748,7 +672,7 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		} catch (CoreException e) {
 			// PASS
 		}
-		
+
 		if (localSca != null && this == localSca.getSandboxWaveform()) {
 			ScaModelCommand.execute(this, new ScaModelCommand() {
 
@@ -776,13 +700,13 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 
 				@Override
 				protected IStatus runSilent(IProgressMonitor monitor) {
-			        try {
-		                releaseObject();
-	                } catch (ReleaseError e) {
-		                return new Status(Status.ERROR, ScaDebugPlugin.ID, "Failed to release local waveform: " + getName(), e);
-	                }
-	                return Status.OK_STATUS;
-	            }
+					try {
+						releaseObject();
+					} catch (ReleaseError e) {
+						return new Status(Status.ERROR, ScaDebugPlugin.ID, "Failed to release local waveform: " + getName(), e);
+					}
+					return Status.OK_STATUS;
+				}
 
 			};
 			releaseJob.setSystem(true);

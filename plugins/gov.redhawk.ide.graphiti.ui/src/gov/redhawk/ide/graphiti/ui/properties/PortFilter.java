@@ -8,21 +8,14 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-// BEGIN GENERATED CODE
-package gov.redhawk.ide.debug;
+package gov.redhawk.ide.graphiti.ui.properties;
 
-import gov.redhawk.model.sca.ScaService;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
-/**
- * <!-- begin-user-doc -->
- * A model object to represent sandbox services. It is used both for services launched locally as well as domain
- * services referenced by proxy in the sandbox device manager.
- * <!-- end-user-doc -->
- *
- *
- * @see gov.redhawk.ide.debug.ScaDebugPackage#getLocalScaService()
- * @model
- * @generated
- */
-public interface LocalScaService extends ScaService, LocalAbstractComponent {
-} // LocalScaService
+public class PortFilter extends BusinessObjectFilter {
+
+	public PortFilter() {
+		super(ProvidesPortStub.class, UsesPortStub.class);
+	}
+}

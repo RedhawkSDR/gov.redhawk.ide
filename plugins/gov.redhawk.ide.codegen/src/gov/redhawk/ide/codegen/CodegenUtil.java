@@ -17,7 +17,9 @@ import gov.redhawk.ide.natures.ScaComponentProjectNature;
 import gov.redhawk.sca.util.Debug;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
@@ -285,7 +287,6 @@ public class CodegenUtil {
 
 	/**
 	 * Adds the top level build script generator to an SCA project, if applicable for the project type.
-	 * 
 	 * @param project The project to add the top level build script generator to
 	 * @param progress the progress monitor to use for reporting progress to the user. It is the caller's responsibility
 	 *  to call done() on the given monitor. Accepts null, indicating that no progress should be reported and that the
@@ -319,6 +320,36 @@ public class CodegenUtil {
 			project.setDescription(desc, progress);
 		}
 	}
+
+	/**
+     * Removes the top-level build script builder.
+     * @param project The project to add the top level build script generator to
+     * @param progress the progress monitor to use for reporting progress to the user. It is the caller's responsibility
+     *  to call done() on the given monitor. Accepts null, indicating that no progress should be reported and that the
+     *  operation cannot be canceled.
+     * @throws CoreException
+     * @since 11.0
+     */
+    public static void removeTopLevelBuildScriptBuilder(final IProject project, final IProgressMonitor progress) throws CoreException {
+            if (project.hasNature(ScaComponentProjectNature.ID)) {
+                    final IProjectDescription desc = project.getDescription();
+                    final ICommand[] oldCommands = desc.getBuildSpec();
+                    final List<ICommand> newCommands = new ArrayList<ICommand>();
+
+                    // Keep everything except the top-level build script builder
+                    for (ICommand command : oldCommands) {
+                            if (!TopLevelBuildScript.ID.equals(command.getBuilderName())) {
+                                    newCommands.add(command);
+                            }
+                    }
+
+                    // If we removed it, adjust the project description
+                    if (oldCommands.length != newCommands.size()) {
+                            desc.setBuildSpec(newCommands.toArray(new ICommand[newCommands.size()]));
+                            project.setDescription(desc, progress);
+                    }
+            }
+    }
 
 	/**
 	 * Adds the top level RPM spec file generator to a project.

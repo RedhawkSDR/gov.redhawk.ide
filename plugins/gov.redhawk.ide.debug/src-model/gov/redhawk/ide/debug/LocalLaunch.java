@@ -16,7 +16,7 @@ import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Local Launch</b></em>'.
+ * An interface providing methods to access information about an object launched locally in the IDE's sandbox.
  * <!-- end-user-doc -->
  *
  * <p>
@@ -37,8 +37,8 @@ public interface LocalLaunch extends EObject {
 	 * Returns the value of the '<em><b>Launch</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Launch</em>' attribute isn't clear,
-	 * there really should be more of a description here...
+	 * Returns the {@link ILaunch} for this object, provided it was launched by the IDE. The launch may be null if the
+	 * object is just a proxy for an object in a domain.
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Launch</em>' attribute.
@@ -63,8 +63,8 @@ public interface LocalLaunch extends EObject {
 	 * Returns the value of the '<em><b>Mode</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Mode</em>' attribute isn't clear,
-	 * there really should be more of a description here...
+	 * A constant from {@link org.eclipse.debug.core.ILaunchManager} indicating what mode the launch is in (e.g. debug,
+	 * run, etc).
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Mode</em>' attribute.

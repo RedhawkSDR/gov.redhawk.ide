@@ -61,7 +61,7 @@ public interface LocalSca extends CorbaObjWrapper<Sandbox> {
 	 * @generated
 	 */
 	EList<ScaWaveform> getWaveforms();
-	
+
 	/**
 	 * @since 6.0
 	 */

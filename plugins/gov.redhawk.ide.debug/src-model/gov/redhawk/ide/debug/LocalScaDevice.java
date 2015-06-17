@@ -16,7 +16,8 @@ import CF.Device;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Local Sca Device</b></em>'.
+ * A model object to represent sandbox devices. It is used both for devices launched locally as well as domain
+ * devices referenced by proxy in the sandbox device manager.
  * <!-- end-user-doc -->
  *
  *

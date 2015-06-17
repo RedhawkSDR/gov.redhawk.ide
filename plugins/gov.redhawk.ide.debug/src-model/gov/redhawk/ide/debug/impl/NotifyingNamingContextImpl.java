@@ -78,14 +78,14 @@ import org.omg.PortableServer.POAPackage.WrongPolicy;
  * <p>
  * The following features are implemented:
  * <ul>
- * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#isDisposed <em>Disposed</em>}</li>
- * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getObjectMap <em>Object Map</em>}</li>
- * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getContextMap <em>Context Map</em>}</li>
- * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getNamingContext <em>Naming Context</em>}</li>
- * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getSubContexts <em>Sub Contexts</em>}</li>
- * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getParentContext <em>Parent Context</em>}</li>
- * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getPoa <em>Poa</em>}</li>
- * <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getName <em>Name</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#isDisposed <em>Disposed</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getObjectMap <em>Object Map</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getContextMap <em>Context Map</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getNamingContext <em>Naming Context</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getSubContexts <em>Sub Contexts</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getParentContext <em>Parent Context</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getPoa <em>Poa</em>}</li>
+ *   <li>{@link gov.redhawk.ide.debug.impl.NotifyingNamingContextImpl#getName <em>Name</em>}</li>
  * </ul>
  * </p>
  *

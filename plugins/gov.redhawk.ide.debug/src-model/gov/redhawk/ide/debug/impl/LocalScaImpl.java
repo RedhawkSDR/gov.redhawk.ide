@@ -18,12 +18,10 @@ import gov.redhawk.ide.debug.LocalScaDeviceManager;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.NotifyingNamingContext;
 import gov.redhawk.ide.debug.ScaDebugPackage;
-import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.impl.listeners.DisposableObjectContainerListener;
 import gov.redhawk.model.sca.ScaWaveform;
 import gov.redhawk.model.sca.commands.ScaModelCommand;
 import gov.redhawk.model.sca.impl.CorbaObjWrapperImpl;
-import gov.redhawk.sca.util.Debug;
 import gov.redhawk.sca.util.OrbSession;
 
 import java.util.ArrayList;
@@ -138,7 +136,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 * @generated
 	 * @ordered
 	 */
-	protected SandboxOperations sandbox = LocalScaImpl.SANDBOX_EDEFAULT;
+	protected SandboxOperations sandbox = SANDBOX_EDEFAULT;
 
 	private OrbSession session = OrbSession.createSession();
 
@@ -207,9 +205,8 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 			InternalEObject oldSandboxWaveform = (InternalEObject) sandboxWaveform;
 			sandboxWaveform = (LocalScaWaveform) eResolveProxy(oldSandboxWaveform);
 			if (sandboxWaveform != oldSandboxWaveform) {
-				if (eNotificationRequired()) {
+				if (eNotificationRequired())
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, ScaDebugPackage.LOCAL_SCA__SANDBOX_WAVEFORM, oldSandboxWaveform, sandboxWaveform));
-				}
 			}
 		}
 		return sandboxWaveform;
@@ -233,9 +230,8 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	public void setSandboxWaveform(LocalScaWaveform newSandboxWaveform) {
 		LocalScaWaveform oldSandboxWaveform = sandboxWaveform;
 		sandboxWaveform = newSandboxWaveform;
-		if (eNotificationRequired()) {
+		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__SANDBOX_WAVEFORM, oldSandboxWaveform, sandboxWaveform));
-		}
 	}
 
 	/**
@@ -259,11 +255,10 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__SANDBOX_DEVICE_MANAGER,
 				oldSandboxDeviceManager, newSandboxDeviceManager);
-			if (msgs == null) {
+			if (msgs == null)
 				msgs = notification;
-			} else {
+			else
 				msgs.add(notification);
-			}
 		}
 		return msgs;
 	}
@@ -276,22 +271,18 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	public void setSandboxDeviceManager(LocalScaDeviceManager newSandboxDeviceManager) {
 		if (newSandboxDeviceManager != sandboxDeviceManager) {
 			NotificationChain msgs = null;
-			if (sandboxDeviceManager != null) {
-				msgs = ((InternalEObject) sandboxDeviceManager).eInverseRemove(this, InternalEObject.EOPPOSITE_FEATURE_BASE
-					- ScaDebugPackage.LOCAL_SCA__SANDBOX_DEVICE_MANAGER, null, msgs);
-			}
-			if (newSandboxDeviceManager != null) {
-				msgs = ((InternalEObject) newSandboxDeviceManager).eInverseAdd(this, InternalEObject.EOPPOSITE_FEATURE_BASE
-					- ScaDebugPackage.LOCAL_SCA__SANDBOX_DEVICE_MANAGER, null, msgs);
-			}
+			if (sandboxDeviceManager != null)
+				msgs = ((InternalEObject) sandboxDeviceManager).eInverseRemove(this,
+					EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA__SANDBOX_DEVICE_MANAGER, null, msgs);
+			if (newSandboxDeviceManager != null)
+				msgs = ((InternalEObject) newSandboxDeviceManager).eInverseAdd(this,
+					EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA__SANDBOX_DEVICE_MANAGER, null, msgs);
 			msgs = basicSetSandboxDeviceManager(newSandboxDeviceManager, msgs);
-			if (msgs != null) {
+			if (msgs != null)
 				msgs.dispatch();
-			}
-		} else if (eNotificationRequired()) {
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__SANDBOX_DEVICE_MANAGER, newSandboxDeviceManager,
 				newSandboxDeviceManager));
-		}
 	}
 
 	/**
@@ -315,11 +306,10 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__ROOT_CONTEXT, oldRootContext,
 				newRootContext);
-			if (msgs == null) {
+			if (msgs == null)
 				msgs = notification;
-			} else {
+			else
 				msgs.add(notification);
-			}
 		}
 		return msgs;
 	}
@@ -332,21 +322,15 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	public void setRootContext(NotifyingNamingContext newRootContext) {
 		if (newRootContext != rootContext) {
 			NotificationChain msgs = null;
-			if (rootContext != null) {
-				msgs = ((InternalEObject) rootContext).eInverseRemove(this, InternalEObject.EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA__ROOT_CONTEXT,
-					null, msgs);
-			}
-			if (newRootContext != null) {
-				msgs = ((InternalEObject) newRootContext).eInverseAdd(this, InternalEObject.EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA__ROOT_CONTEXT,
-					null, msgs);
-			}
+			if (rootContext != null)
+				msgs = ((InternalEObject) rootContext).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA__ROOT_CONTEXT, null, msgs);
+			if (newRootContext != null)
+				msgs = ((InternalEObject) newRootContext).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA__ROOT_CONTEXT, null, msgs);
 			msgs = basicSetRootContext(newRootContext, msgs);
-			if (msgs != null) {
+			if (msgs != null)
 				msgs.dispatch();
-			}
-		} else if (eNotificationRequired()) {
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__ROOT_CONTEXT, newRootContext, newRootContext));
-		}
 	}
 
 	/**
@@ -370,11 +354,10 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__FILE_MANAGER, oldFileManager,
 				newFileManager);
-			if (msgs == null) {
+			if (msgs == null)
 				msgs = notification;
-			} else {
+			else
 				msgs.add(notification);
-			}
 		}
 		return msgs;
 	}
@@ -387,21 +370,15 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	public void setFileManager(LocalFileManager newFileManager) {
 		if (newFileManager != fileManager) {
 			NotificationChain msgs = null;
-			if (fileManager != null) {
-				msgs = ((InternalEObject) fileManager).eInverseRemove(this, InternalEObject.EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA__FILE_MANAGER,
-					null, msgs);
-			}
-			if (newFileManager != null) {
-				msgs = ((InternalEObject) newFileManager).eInverseAdd(this, InternalEObject.EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA__FILE_MANAGER,
-					null, msgs);
-			}
+			if (fileManager != null)
+				msgs = ((InternalEObject) fileManager).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA__FILE_MANAGER, null, msgs);
+			if (newFileManager != null)
+				msgs = ((InternalEObject) newFileManager).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ScaDebugPackage.LOCAL_SCA__FILE_MANAGER, null, msgs);
 			msgs = basicSetFileManager(newFileManager, msgs);
-			if (msgs != null) {
+			if (msgs != null)
 				msgs.dispatch();
-			}
-		} else if (eNotificationRequired()) {
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__FILE_MANAGER, newFileManager, newFileManager));
-		}
 	}
 
 	/**
@@ -425,29 +402,22 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	public void setSandbox(SandboxOperations newSandbox) {
 		SandboxOperations oldSandbox = sandbox;
 		sandbox = newSandbox;
-		if (eNotificationRequired()) {
+		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA__SANDBOX, oldSandbox, sandbox));
-		}
 	}
-
-	private static final Debug DEBUG = new Debug(ScaDebugPlugin.getInstance(), "localSca");
-
 
 	private final ILaunchesListener2 launchListener = new ILaunchesListener2() {
 
 		@Override
 		public void launchesRemoved(final ILaunch[] launches) {
-
 		}
 
 		@Override
 		public void launchesChanged(final ILaunch[] launches) {
-
 		}
 
 		@Override
 		public void launchesAdded(final ILaunch[] launches) {
-
 		}
 
 		@Override
@@ -572,9 +542,8 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		case ScaDebugPackage.LOCAL_SCA__WAVEFORMS:
 			return getWaveforms();
 		case ScaDebugPackage.LOCAL_SCA__SANDBOX_WAVEFORM:
-			if (resolve) {
+			if (resolve)
 				return getSandboxWaveform();
-			}
 			return basicGetSandboxWaveform();
 		case ScaDebugPackage.LOCAL_SCA__SANDBOX_DEVICE_MANAGER:
 			return getSandboxDeviceManager();
@@ -644,7 +613,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 			setFileManager((LocalFileManager) null);
 			return;
 		case ScaDebugPackage.LOCAL_SCA__SANDBOX:
-			setSandbox(LocalScaImpl.SANDBOX_EDEFAULT);
+			setSandbox(SANDBOX_EDEFAULT);
 			return;
 		}
 		super.eUnset(featureID);
@@ -669,7 +638,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 		case ScaDebugPackage.LOCAL_SCA__FILE_MANAGER:
 			return fileManager != null;
 		case ScaDebugPackage.LOCAL_SCA__SANDBOX:
-			return LocalScaImpl.SANDBOX_EDEFAULT == null ? sandbox != null : !LocalScaImpl.SANDBOX_EDEFAULT.equals(sandbox);
+			return SANDBOX_EDEFAULT == null ? sandbox != null : !SANDBOX_EDEFAULT.equals(sandbox);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -681,9 +650,8 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) {
+		if (eIsProxy())
 			return super.toString();
-		}
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (sandbox: ");
@@ -713,7 +681,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	public void attachDataProviders() {
 		// Do nothing
 	}
-	
+
 	/**
 	 * @since 6.0
 	 */
@@ -721,7 +689,7 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 	public List<ScaWaveform> fetchWaveforms(IProgressMonitor monitor) {
 		final List<ScaWaveform> retVal = new ArrayList<ScaWaveform>();
 		ScaModelCommand.execute(this, new ScaModelCommand() {
-			
+
 			@Override
 			public void execute() {
 				retVal.addAll(getWaveforms());

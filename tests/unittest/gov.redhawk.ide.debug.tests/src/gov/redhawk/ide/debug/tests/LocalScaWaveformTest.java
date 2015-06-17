@@ -8,8 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-  // BEGIN GENERATED CODE
- // BEGIN GENERATED CODE
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.tests;
 
 import gov.redhawk.ide.debug.LocalScaWaveform;
@@ -32,6 +31,12 @@ import CF.LifeCyclePackage.ReleaseError;
  * <!-- begin-user-doc -->
  * A test case for the model object '<em><b>Local Sca Waveform</b></em>'.
  * <!-- end-user-doc -->
+ * <p>
+ * The following operations are tested:
+ * <ul>
+ *   <li>{@link gov.redhawk.ide.debug.LocalScaWaveform#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String) <em>Launch</em>}</li>
+ * </ul>
+ * </p>
  * @generated
  */
 public class LocalScaWaveformTest extends TestCase {
@@ -103,6 +108,17 @@ public class LocalScaWaveformTest extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		setFixture(null);
+	}
+
+	/**
+	 * Tests the '{@link gov.redhawk.ide.debug.LocalScaWaveform#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String) <em>Launch</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gov.redhawk.ide.debug.LocalScaWaveform#launch(java.lang.String, CF.DataType[], org.eclipse.emf.common.util.URI, java.lang.String, java.lang.String)
+	 * @generated
+	 */
+	public void testLaunch__String_DataType_URI_String_String() {
+		// PASS - This would be difficult/impossible to test in a unit test environment
 	}
 
 	/**

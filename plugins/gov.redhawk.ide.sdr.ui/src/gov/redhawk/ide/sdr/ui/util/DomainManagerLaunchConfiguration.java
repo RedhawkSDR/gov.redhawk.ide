@@ -66,42 +66,42 @@ public class DomainManagerLaunchConfiguration {
 	}
 	
 	/**
-	 * @since 3.4
+	 * @since 4.0
 	 */
 	public String getLocalDomainName() {
 		return localDomainName;
 	}
 	
 	/**
-	 * @since 3.4
+	 * @since 4.0
 	 */
 	public void setLocalDomainName(String localDomainName) {
 		this.localDomainName = localDomainName;
 	}
 
 	/**
-	 * @since 3.4
+	 * @since 4.0
 	 */
 	public String getLaunchConfigName() {
 		return launchConfigName;
 	}
 
 	/**
-	 * @since 3.4
+	 * @since 4.0
 	 */
 	public void setLaunchConfigName(String launchConfigName) {
 		this.launchConfigName = launchConfigName;
 	}
 
 	/**
-	 * @since 3.4
+	 * @since 4.0
 	 */
 	public String getSpdPath() {
 		return spdPath;
 	}
 
 	/**
-	 * @since 3.4
+	 * @since 4.0
 	 */
 	public void setSpdPath(String spdPath) {
 		this.spdPath = spdPath;

@@ -15,7 +15,8 @@ import gov.redhawk.model.sca.ScaComponent;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Local Sca Component</b></em>'.
+ * A model object to represent sandbox components. It is used both for components launched locally as well as domain
+ * components referenced by proxy in a sandbox waveform.
  * <!-- end-user-doc -->
  *
  *

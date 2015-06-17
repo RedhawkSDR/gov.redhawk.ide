@@ -22,7 +22,8 @@ import CF.DataType;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Local Sca Waveform</b></em>'.
+ * A model object to represent sandbox waveforms. It is used both for waveforms launched locally as well as domain
+ * waveforms which have been opened with the sandbox.
  * <!-- end-user-doc -->
  *
  * <p>
@@ -43,8 +44,9 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 	 * Returns the value of the '<em><b>Naming Context</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Naming Context</em>' reference isn't clear,
-	 * there really should be more of a description here...
+	 * This is the naming context of the waveform, which should contain entries for each component in the waveform.
+	 * As components launch, they register themselves with the waveform's naming context which is how they become known
+	 * to the waveform.
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Naming Context</em>' reference.
@@ -68,6 +70,11 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 	/**
 	 * Returns the value of the '<em><b>Local App</b></em>' attribute.
 	 * <!-- begin-user-doc -->
+	 * <p>
+	 * Gets the CORBA object ({@link ApplicationOperations}) for the waveform. In a domain this is the proxy object
+	 * running inside the domain manager process. It responds to the {@link ApplicationOperation} methods and proxies
+	 * the methods inherited from interface {@link CF.Resource} to the waveform's assembly controller.
+	 * </p>
 	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Local App</em>' attribute.
@@ -91,6 +98,7 @@ public interface LocalScaWaveform extends ScaWaveform, LocalLaunch {
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * This method is used to launch a component locally in this waveform.
 	 * @since 4.0
 	 * <!-- end-user-doc -->
 	 * @model exceptions="gov.redhawk.ide.debug.CoreException" execParamsDataType="gov.redhawk.model.sca.DataTypeArray" spdURIDataType="mil.jpeojtrs.sca.spd.URI"

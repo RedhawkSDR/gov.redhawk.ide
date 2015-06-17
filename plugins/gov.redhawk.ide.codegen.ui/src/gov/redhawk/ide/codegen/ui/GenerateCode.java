@@ -340,7 +340,7 @@ public final class GenerateCode {
 			if (isDeprecated) {
 				CodegenUtil.addTopLevelBuildScriptBuilder(project, progress.newChild(1));
 			} else {
-				progress.notWorked(1);
+				CodegenUtil.removeTopLevelBuildScriptBuilder(project, progress.newChild(1));
 			}
 
 			// Refresh project after generating code

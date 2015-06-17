@@ -6,7 +6,7 @@ Bundle-Version: 8.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: gov.redhawk.ide.debug,
  gov.redhawk.ide.debug.impl,
  gov.redhawk.ide.debug.impl.commands;x-internal:=true,
