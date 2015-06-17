@@ -17,12 +17,10 @@ import gov.redhawk.prf.ui.provider.PropertiesEditorPrfItemProviderAdapterFactory
 import gov.redhawk.ui.editor.SCAFormEditor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.Properties;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
@@ -683,24 +681,6 @@ public class ComponentEditor extends SCAFormEditor {
 	@Override
 	public boolean isPersisted(final Resource resource) {
 		return super.isPersisted(resource);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setSelectionToViewer(final Collection< ? > collection) {
-		boolean updateSelection = true;
-		for (final Object obj : collection) {
-			//Only update the selection if the objects show in master viewers.
-			if (!(obj instanceof AbstractProperty || obj instanceof Implementation)) {
-				updateSelection = false;
-				break;
-			}
-		}
-		if (updateSelection) {
-			super.setSelectionToViewer(collection);
-		}
 	}
 
 	/**

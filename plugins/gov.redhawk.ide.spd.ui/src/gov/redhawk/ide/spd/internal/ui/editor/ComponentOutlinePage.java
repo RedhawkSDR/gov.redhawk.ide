@@ -18,15 +18,13 @@ import gov.redhawk.prf.ui.provider.PropertiesEditorPrfItemProviderAdapterFactory
 import gov.redhawk.ui.editor.FormOutlinePage;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
-import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.Properties;
-import mil.jpeojtrs.sca.prf.Struct;
-import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.scd.provider.ScdItemProviderAdapterFactory;
-import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
@@ -55,7 +53,7 @@ public class ComponentOutlinePage extends FormOutlinePage {
 			} else if (object instanceof ScaFormPage) {
 				return "Overview";
 			}
-			return super.getText(object);
+			return super.getText(AdapterFactoryEditingDomain.unwrap(object));
 		}
 
 	}
@@ -89,11 +87,8 @@ public class ComponentOutlinePage extends FormOutlinePage {
 	 */
 	@Override
 	protected boolean getChildren(Object parent) {
-		boolean retVal = false;
-		if (parent instanceof SoftPkg || parent instanceof Properties || parent instanceof Struct || parent instanceof StructSequence) {
-			retVal = true;
-		}
-		return retVal;
+		// Defer to the content provider 
+		return true;
 	}
 
 	/**
@@ -101,16 +96,24 @@ public class ComponentOutlinePage extends FormOutlinePage {
 	 */
 	@Override
 	protected String getParentPageId(Object item) {
-		String pageId = null;
-		if (item instanceof Implementation || item instanceof SoftPkg) {
-			pageId = ImplementationPage.PAGE_ID;
-		} else if (item instanceof Properties || item instanceof AbstractProperty) {
-			pageId = PropertiesFormPage.PAGE_ID;
-		}
+		String pageId = getRootPageId(item);
 		if (pageId != null) {
 			return pageId;
 		}
 		return super.getParentPageId(item);
 	}
 
+	private String getRootPageId(Object item) {
+		Object target = AdapterFactoryEditingDomain.unwrap(item);
+		if (target instanceof SoftPkg) {
+			return ImplementationPage.PAGE_ID;
+		} else if (target instanceof Properties) {
+			return PropertiesFormPage.PAGE_ID;
+		} else if (target instanceof EObject) {
+			// Check the parent of the item
+			return getRootPageId(((EObject)target).eContainer());
+		} else {
+			return null;
+		}
+	}
 }
