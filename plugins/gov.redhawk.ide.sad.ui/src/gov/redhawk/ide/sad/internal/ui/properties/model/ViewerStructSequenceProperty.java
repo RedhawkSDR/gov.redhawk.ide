@@ -144,4 +144,9 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 	public Object getValue() {
 		return null;
 	}
+
+	@Override
+	public String getPrfValue() {
+		return null;
+	}
 }

@@ -132,6 +132,8 @@ public abstract class ViewerProperty< T extends AbstractProperty > implements IT
 
 	public abstract Object getValue();
 
+	public abstract String getPrfValue();
+
 	@Override
 	public Collection< ? > getElements(Object object) {
 		return getChildren(object);

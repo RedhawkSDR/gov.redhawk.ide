@@ -132,4 +132,9 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 	public Object getValue() {
 		return null;
 	}
+
+	@Override
+	public String getPrfValue() {
+		return null;
+	}
 }

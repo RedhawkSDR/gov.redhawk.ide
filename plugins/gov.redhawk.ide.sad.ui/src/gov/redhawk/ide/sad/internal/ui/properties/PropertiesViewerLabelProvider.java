@@ -12,10 +12,6 @@ package gov.redhawk.ide.sad.internal.ui.properties;
 
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSequenceProperty;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSimpleProperty;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceSequenceProperty;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceSimpleProperty;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,13 +22,9 @@ import mil.jpeojtrs.sca.prf.ConfigurationKind;
 import mil.jpeojtrs.sca.prf.Enumeration;
 import mil.jpeojtrs.sca.prf.Kind;
 import mil.jpeojtrs.sca.prf.Simple;
-import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
-import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
 import mil.jpeojtrs.sca.prf.Struct;
 import mil.jpeojtrs.sca.prf.StructSequence;
-import mil.jpeojtrs.sca.prf.StructValue;
-import mil.jpeojtrs.sca.prf.Values;
 import mil.jpeojtrs.sca.prf.provider.PrfItemProviderAdapterFactory;
 import mil.jpeojtrs.sca.sad.provider.SadItemProviderAdapterFactory;
 
@@ -352,33 +344,8 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	public String getPrfValue(Object element) {
-		if (element instanceof ViewerSimpleProperty) {
-			return ((ViewerSimpleProperty) element).getDefinition().getValue();
-		} else if (element instanceof ViewerSequenceProperty) {
-			Values values = ((ViewerSequenceProperty) element).getDefinition().getValues();
-			if (values != null) {
-				return Arrays.toString(values.getValue().toArray());
-			}
-		} else if (element instanceof ViewerStructSequenceSimpleProperty) {
-			ViewerStructSequenceSimpleProperty prop = (ViewerStructSequenceSimpleProperty) element;
-			StructSequence seq = prop.getParent().getDefinition();
-			EList<StructValue> value = seq.getStructValue();
-			List<String> retVal = new ArrayList<String>(value.size());
-			for (StructValue v : value) {
-				SimpleRef ref = (SimpleRef) v.getRef(prop.getDefinition().getId());
-				retVal.add(ref.getValue());
-			}
-			return Arrays.toString(retVal.toArray());
-		} else if (element instanceof ViewerStructSequenceSequenceProperty) {
-			ViewerStructSequenceSequenceProperty prop = (ViewerStructSequenceSequenceProperty) element;
-			StructSequence seq = prop.getParent().getDefinition();
-			EList<StructValue> value = seq.getStructValue();
-			List<List<String>> retVal = new ArrayList<List<String>>(value.size());
-			for (StructValue v : value) {
-				SimpleSequenceRef ref = (SimpleSequenceRef) v.getRef(prop.getDefinition().getId());
-				retVal.add(ref.getValues().getValue());
-			}
-			return Arrays.toString(retVal.toArray());
+		if (element instanceof ViewerProperty< ? >) {
+			return ((ViewerProperty< ? >) element).getPrfValue();
 		}
 		return "";
 	}

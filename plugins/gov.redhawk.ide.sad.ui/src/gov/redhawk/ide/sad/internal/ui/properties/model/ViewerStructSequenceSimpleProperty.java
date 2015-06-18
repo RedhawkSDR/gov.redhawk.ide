@@ -10,10 +10,17 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.emf.common.util.EList;
+
 import mil.jpeojtrs.sca.prf.Simple;
+import mil.jpeojtrs.sca.prf.SimpleRef;
+import mil.jpeojtrs.sca.prf.StructSequence;
+import mil.jpeojtrs.sca.prf.StructValue;
 
 /**
  * 
@@ -47,5 +54,17 @@ public class ViewerStructSequenceSimpleProperty extends ViewerProperty<Simple> {
 	@Override
 	public Object getValue() {
 		return getValues();
+	}
+
+	@Override
+	public String getPrfValue() {
+		StructSequence seq = getParent().getDefinition();
+		EList<StructValue> value = seq.getStructValue();
+		List<String> retVal = new ArrayList<String>(value.size());
+		for (StructValue v : value) {
+			SimpleRef ref = (SimpleRef) v.getRef(getDefinition().getId());
+			retVal.add(ref.getValue());
+		}
+		return Arrays.toString(retVal.toArray());
 	}
 }

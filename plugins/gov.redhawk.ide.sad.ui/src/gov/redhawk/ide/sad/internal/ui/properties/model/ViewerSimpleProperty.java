@@ -22,8 +22,14 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 		super(def, parent);
 	}
 
+	@Override
 	public String getValue() {
 		return value;
+	}
+
+	@Override
+	public String getPrfValue() {
+		return getDefinition().getValue();
 	}
 
 	@Override

@@ -41,6 +41,15 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 		return getValues();
 	}
 
+	@Override
+	public String getPrfValue() {
+		Values values = getDefinition().getValues();
+		if (values != null) {
+			return Arrays.toString(values.getValue().toArray());
+		}
+		return "";
+	}
+
 	public List<String> getValues() {
 		return values;
 	}
