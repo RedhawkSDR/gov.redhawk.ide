@@ -18,8 +18,8 @@ import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
 import gov.redhawk.ide.debug.SpdLauncherUtil;
 import gov.redhawk.ide.debug.internal.ApplicationStreams;
+import gov.redhawk.ide.debug.internal.ComponentLaunch;
 import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
-import gov.redhawk.ide.debug.internal.LocalComponentProgramLaunchDelegate;
 import gov.redhawk.ide.debug.variables.LaunchVariables;
 import gov.redhawk.model.sca.RefreshDepth;
 import gov.redhawk.model.sca.ScaAbstractProperty;
@@ -1363,8 +1363,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		}
 		this.streams.getOutStream().println("\tCalling launch on configuration...");
 		final ILaunch subLaunch = config.launch(mode, new NullProgressMonitor(), false);
-		if (subLaunch instanceof LocalComponentProgramLaunchDelegate.ComponentLaunch) {
-			((LocalComponentProgramLaunchDelegate.ComponentLaunch) subLaunch).setParent(this);
+		if (subLaunch instanceof ComponentLaunch) {
+			((ComponentLaunch) subLaunch).setParent(this);
 		}
 		this.streams.getOutStream().println("\tLaunch configuration succeeded.");
 

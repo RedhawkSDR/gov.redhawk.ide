@@ -21,7 +21,7 @@ import org.eclipse.debug.core.model.ISourceLocator;
 /**
  * IDE-1054 Added special class to override process label in console of waveform components
  */
-class ComponentLaunch extends Launch {
+public class ComponentLaunch extends Launch {
 
 	private IProcess parent;
 	private String label;
