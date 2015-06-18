@@ -14,6 +14,7 @@ import gov.redhawk.sca.util.PluginUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import mil.jpeojtrs.sca.prf.SimpleSequence;
@@ -48,6 +49,11 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 			return Arrays.toString(values.getValue().toArray());
 		}
 		return "";
+	}
+
+	@Override
+	protected Collection< ? > getKindTypes() {
+		return getDefinition().getKind();
 	}
 
 	public List<String> getValues() {

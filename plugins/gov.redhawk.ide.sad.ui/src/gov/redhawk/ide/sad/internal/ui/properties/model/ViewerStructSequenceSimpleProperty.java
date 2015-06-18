@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -66,5 +67,10 @@ public class ViewerStructSequenceSimpleProperty extends ViewerProperty<Simple> {
 			retVal.add(ref.getValue());
 		}
 		return Arrays.toString(retVal.toArray());
+	}
+
+	@Override
+	protected Collection< ? > getKindTypes() {
+		return null;
 	}
 }

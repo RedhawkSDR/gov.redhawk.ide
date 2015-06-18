@@ -137,4 +137,9 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 	public String getPrfValue() {
 		return null;
 	}
+
+	@Override
+	protected Collection< ? > getKindTypes() {
+		return getDefinition().getConfigurationKind();
+	}
 }

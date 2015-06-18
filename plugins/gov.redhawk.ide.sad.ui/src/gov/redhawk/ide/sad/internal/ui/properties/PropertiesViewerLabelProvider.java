@@ -15,6 +15,7 @@ import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import mil.jpeojtrs.sca.prf.AbstractProperty;
@@ -23,12 +24,9 @@ import mil.jpeojtrs.sca.prf.Enumeration;
 import mil.jpeojtrs.sca.prf.Kind;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
-import mil.jpeojtrs.sca.prf.Struct;
-import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.provider.PrfItemProviderAdapterFactory;
 import mil.jpeojtrs.sca.sad.provider.SadItemProviderAdapterFactory;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -284,43 +282,20 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 
 	public String getKind(Object element) {
 		if (element instanceof ViewerProperty< ? >) {
-			ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
-			AbstractProperty def = prop.getDefinition();
-			return getKind(def);
-		} else if (element instanceof Simple) {
-			Simple simple = (Simple) element;
-			if (simple.eContainer() instanceof Struct) {
-				return getKind(simple.eContainer());
-			}
-			return toKindString(simple.getKind());
-		} else if (element instanceof SimpleSequence) {
-			SimpleSequence seq = (SimpleSequence) element;
-			return toKindString(seq.getKind());
-		} else if (element instanceof Struct) {
-			Struct struct = (Struct) element;
-			if (struct.eContainer() instanceof StructSequence) {
-				return getKind(struct.eContainer());
-			}
-			return toConfigurationKindString(struct.getConfigurationKind());
-		} else if (element instanceof StructSequence) {
-			StructSequence seq = (StructSequence) element;
-			return toConfigurationKindString(seq.getConfigurationKind());
+			final Collection< ? > kinds = ((ViewerProperty< ? >) element).getKinds();
+			return toKindString(kinds);
 		}
-		return "";
+		return null;
 	}
 
-	private String toConfigurationKindString(EList<ConfigurationKind> configurationKind) {
-		List<String> retVal = new ArrayList<String>(configurationKind.size());
-		for (ConfigurationKind k : configurationKind) {
-			retVal.add(k.getType().getLiteral());
-		}
-		return Arrays.toString(retVal.toArray());
-	}
-
-	private String toKindString(EList<Kind> kind) {
-		List<String> retVal = new ArrayList<String>(kind.size());
-		for (Kind k : kind) {
-			retVal.add(k.getType().getLiteral());
+	private String toKindString(Collection< ? > kinds) {
+		List<String> retVal = new ArrayList<String>(kinds.size());
+		for (Object kind : kinds) {
+			if (kind instanceof Kind) {
+				retVal.add(((Kind) kind).getType().getLiteral());
+			} else if (kind instanceof ConfigurationKind) {
+				retVal.add(((ConfigurationKind) kind).getType().getLiteral());
+			}
 		}
 		return Arrays.toString(retVal.toArray());
 	}

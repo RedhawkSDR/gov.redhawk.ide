@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
@@ -74,6 +75,11 @@ public class ViewerStructSequenceSequenceProperty extends ViewerProperty<SimpleS
 			retVal.add(ref.getValues().getValue());
 		}
 		return Arrays.toString(retVal.toArray());
+	}
+
+	@Override
+	protected Collection< ? > getKindTypes() {
+		return null;
 	}
 
 }

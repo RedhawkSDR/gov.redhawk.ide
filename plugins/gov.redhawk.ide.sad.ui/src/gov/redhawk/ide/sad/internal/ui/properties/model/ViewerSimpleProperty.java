@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
+import java.util.Collection;
+
 import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
@@ -30,6 +32,11 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 	@Override
 	public String getPrfValue() {
 		return getDefinition().getValue();
+	}
+
+	@Override
+	protected Collection< ? > getKindTypes() {
+		return getDefinition().getKind();
 	}
 
 	@Override

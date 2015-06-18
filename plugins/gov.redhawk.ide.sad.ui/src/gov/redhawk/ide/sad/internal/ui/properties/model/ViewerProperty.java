@@ -134,6 +134,16 @@ public abstract class ViewerProperty< T extends AbstractProperty > implements IT
 
 	public abstract String getPrfValue();
 
+	public Collection< ? > getKinds() {
+		if (getParent() instanceof ViewerProperty< ? >) {
+			return ((ViewerProperty< ? >) getParent()).getKinds();
+		}
+		return getKindTypes();
+	}
+
+	protected abstract Collection< ? > getKindTypes();
+
+
 	@Override
 	public Collection< ? > getElements(Object object) {
 		return getChildren(object);
