@@ -52,7 +52,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
- * 
+ * A collection of utility methods for launching things in the sandbox.
  */
 public final class LaunchUtil {
 	private LaunchUtil() {
