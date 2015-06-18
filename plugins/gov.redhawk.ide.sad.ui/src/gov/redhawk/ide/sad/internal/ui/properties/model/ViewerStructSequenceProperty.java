@@ -139,4 +139,9 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 	public Collection< ? > getChildren(Object object) {
 		return fieldsArray;
 	}
+
+	@Override
+	public Object getValue() {
+		return null;
+	}
 }

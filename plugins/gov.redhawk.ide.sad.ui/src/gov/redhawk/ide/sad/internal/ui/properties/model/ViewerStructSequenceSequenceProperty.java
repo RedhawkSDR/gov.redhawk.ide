@@ -53,4 +53,9 @@ public class ViewerStructSequenceSequenceProperty extends ViewerProperty<SimpleS
 		return (ViewerStructSequenceProperty) super.getParent();
 	}
 
+	@Override
+	public Object getValue() {
+		return getValues();
+	}
+
 }

@@ -36,6 +36,11 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 		setValues((String[]) null);
 	}
 
+	@Override
+	public Object getValue() {
+		return getValues();
+	}
+
 	public List<String> getValues() {
 		return values;
 	}

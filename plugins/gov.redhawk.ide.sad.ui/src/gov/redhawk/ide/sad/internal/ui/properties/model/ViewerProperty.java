@@ -130,6 +130,8 @@ public abstract class ViewerProperty< T extends AbstractProperty > implements IT
 		}
 	}
 
+	public abstract Object getValue();
+
 	@Override
 	public Collection< ? > getElements(Object object) {
 		return getChildren(object);

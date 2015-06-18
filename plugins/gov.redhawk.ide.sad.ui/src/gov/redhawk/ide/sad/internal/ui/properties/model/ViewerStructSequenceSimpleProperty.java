@@ -43,4 +43,9 @@ public class ViewerStructSequenceSimpleProperty extends ViewerProperty<Simple> {
 	public void setToDefault() {
 		this.values = null;
 	}
+
+	@Override
+	public Object getValue() {
+		return getValues();
+	}
 }

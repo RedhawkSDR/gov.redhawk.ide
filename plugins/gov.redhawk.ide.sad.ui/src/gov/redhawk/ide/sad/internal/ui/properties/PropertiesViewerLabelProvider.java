@@ -384,23 +384,12 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	public String getSadValue(Object element) {
-		if (element instanceof ViewerSimpleProperty) {
-			ViewerSimpleProperty prop = ((ViewerSimpleProperty) element);
-			return prop.getValue();
-		} else if (element instanceof ViewerSequenceProperty) {
-			ViewerSequenceProperty prop = (ViewerSequenceProperty) element;
-			if (prop.getValues() == null) {
+		if (element instanceof ViewerProperty< ? >) {
+			Object value = ((ViewerProperty< ? >) element).getValue();
+			if (value == null) {
 				return null;
-			} else {
-				return prop.getValues().toString();
 			}
-		} else if (element instanceof ViewerStructSequenceSimpleProperty) {
-			ViewerStructSequenceSimpleProperty prop = (ViewerStructSequenceSimpleProperty) element;
-			if (prop.getValues() == null) {
-				return null;
-			} else {
-				return prop.getValues().toString();
-			}
+			return value.toString();
 		}
 		return "";
 	}

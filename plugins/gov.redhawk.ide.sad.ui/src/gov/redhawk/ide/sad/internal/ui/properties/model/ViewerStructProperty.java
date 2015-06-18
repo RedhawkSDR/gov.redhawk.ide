@@ -127,4 +127,9 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 	public Collection< ? > getChildren(Object object) {
 		return getFields();
 	}
+
+	@Override
+	public Object getValue() {
+		return null;
+	}
 }
