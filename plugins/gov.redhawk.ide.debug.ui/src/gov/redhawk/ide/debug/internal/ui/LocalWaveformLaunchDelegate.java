@@ -190,9 +190,14 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 	}
 	
 	private void setStructValue(ScaStructProperty struct, Map< ?, ?> valMap) {
-		for (ScaSimpleProperty simp: struct.getSimples()) {
-			if (valMap.containsKey(simp.getId())) {
-				simp.setValue(valMap.get(simp.getId()));
+		for (ScaSimpleProperty simple: struct.getSimples()) {
+			if (valMap.containsKey(simple.getId())) {
+				simple.setValue(valMap.get(simple.getId()));
+			}
+		}
+		for (ScaSimpleSequenceProperty simpleSequence: struct.getSequences()) {
+			if (valMap.containsKey(simpleSequence.getId())) {
+				simpleSequence.setValue((Object[]) valMap.get(simpleSequence.getId()));
 			}
 		}
 	}
