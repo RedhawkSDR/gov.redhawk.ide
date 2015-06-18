@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.debug.internal.ui;
+package gov.redhawk.ide.debug.internal.ui.launchshortcuts;
 
 import gov.redhawk.ide.debug.ui.LaunchUtil;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
@@ -39,13 +39,16 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
- * 
+ * This launch shortcut gives the "Run As -> Component in the Sandbox" (also used by devices/services). It can be
+ * invoked from:
+ * <ul>
+ *   <li>An SPD file's context menu</li>
+ *   <li>A project's context menu</li>
+ *   <li>By clicking the Eclipse run button while the project, XML or SPD editor are selected</li>
+ * </ul>
  */
 public class ComponentLaunchShortcut implements ILaunchShortcut {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void launch(final ISelection selection, final String mode) {
 		if (selection instanceof IStructuredSelection) {
@@ -67,10 +70,6 @@ public class ComponentLaunchShortcut implements ILaunchShortcut {
 
 	}
 
-	/**
-	 * @param mode
-	 * @param file
-	 */
 	private void launch(final String mode, final IFile file) {
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		try {
@@ -99,9 +98,6 @@ public class ComponentLaunchShortcut implements ILaunchShortcut {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void launch(final IEditorPart editor, final String mode) {
 		if (editor instanceof SCAFormEditor) {

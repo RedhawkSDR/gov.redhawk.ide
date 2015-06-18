@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.debug.internal.ui;
+package gov.redhawk.ide.debug.internal.ui.launchshortcuts;
 
 import gov.redhawk.ide.debug.ui.LaunchUtil;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
@@ -38,13 +38,15 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
- * 
+ * This launch shortcut gives the "Run As -> Waveform in the Sandbox". It can be invoked from:
+ * <ul>
+ *   <li>A SAD file's context menu</li>
+ *   <li>A waveform project's context menu</li>
+ *   <li>By clicking the Eclipse run button while the project, XML or SAD editor are selected</li>
+ * </ul>
  */
 public class SadLaunchShortcut implements ILaunchShortcut {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void launch(final ISelection selection, final String mode) {
 		if (selection instanceof IStructuredSelection) {
@@ -93,9 +95,6 @@ public class SadLaunchShortcut implements ILaunchShortcut {
 		LaunchUtil.launch(config, mode);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void launch(final IEditorPart editor, final String mode) {
 		if (editor instanceof SCAFormEditor) {

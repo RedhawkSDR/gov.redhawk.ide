@@ -472,7 +472,7 @@
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            class="gov.redhawk.ide.debug.internal.ui.SadLaunchShortcut"
+            class="gov.redhawk.ide.debug.internal.ui.launchshortcuts.SadLaunchShortcut"
             description="%shortcut.description"
             icon="icons/obj16/RedHawk_Logo16x.gif"
             id="gov.redhawk.ide.debug.ui.shortcut.sad"
@@ -524,7 +524,7 @@
          </contextualLaunch>
       </shortcut>
       <shortcut
-            class="gov.redhawk.ide.debug.internal.ui.ComponentLaunchShortcut"
+            class="gov.redhawk.ide.debug.internal.ui.launchshortcuts.ComponentLaunchShortcut"
             icon="icons/obj16/RedHawk_Logo16x.gif"
             id="gov.redhawk.ide.debug.ui.localComponent"
             label="%shortcut.label.0"
