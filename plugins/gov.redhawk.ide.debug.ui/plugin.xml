@@ -438,7 +438,7 @@
          point="org.eclipse.ui.commands">
       <command
             categoryId="gov.redhawk.ui.commands.category.sca"
-            defaultHandler="gov.redhawk.ide.debug.internal.ui.LaunchHandler"
+            defaultHandler="gov.redhawk.ide.debug.internal.ui.handlers.LaunchHandler"
             id="gov.redhawk.ide.debug.ui.launch"
             name="%command.name">
          <commandParameter
