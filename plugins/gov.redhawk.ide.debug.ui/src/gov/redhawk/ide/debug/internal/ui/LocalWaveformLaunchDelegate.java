@@ -64,20 +64,17 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import CF.DataType;
 
 /**
- * 
+ * An Eclipse launch delegate which handles launching a SoftwareAssembly locally in the Sandbox.
  */
 public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate implements ILaunchConfigurationDelegate2 {
 
 	public static final String ID = "gov.redhawk.ide.debug.ui.launchLocalWaveform";
 
-	private static final EStructuralFeature[] PATH = new EStructuralFeature[] { SadPackage.Literals.SOFTWARE_ASSEMBLY__ASSEMBLY_CONTROLLER,
+	private static final EStructuralFeature[] SAD_TO_ASSEMBLY_CONTROLLER_SPD = new EStructuralFeature[] { SadPackage.Literals.SOFTWARE_ASSEMBLY__ASSEMBLY_CONTROLLER,
 		SadPackage.Literals.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION,
 		PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT, PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF,
 		PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE, PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void launch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
 		final boolean start = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
@@ -91,9 +88,11 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		final String name = sad.getName();
 		final List<DataType> assemblyConfig = new ArrayList<DataType>();
 		final List<DataType> assemblyExec = new ArrayList<DataType>();
-		
-		SoftPkg assemblySoftPkg = ScaEcoreUtils.getFeature(sad, LocalWaveformLaunchDelegate.PATH);
+
+		// Find the assembly controller
+		SoftPkg assemblySoftPkg = ScaEcoreUtils.getFeature(sad, LocalWaveformLaunchDelegate.SAD_TO_ASSEMBLY_CONTROLLER_SPD);
 		if (assemblySoftPkg != null) {
+			// Load properties from the launch configuration that belong to the assembly controller
 			final ScaComponent assemblyController = ScaFactory.eINSTANCE.createScaComponent();
 			assemblyController.setProfileObj(assemblySoftPkg);
 			for (final ScaAbstractProperty< ? > prop : assemblyController.fetchProperties(null)) {
@@ -107,7 +106,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 				}
 			}
 		}
-		
+
 		final Map<String, AbstractProperty> extProps = new HashMap<String, AbstractProperty>();
 		if (sad.getExternalProperties() != null) {
 			for (ExternalProperty extProp: sad.getExternalProperties().getProperties()) {
@@ -122,6 +121,8 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 				extProps.put(extProp.resolveExternalID(), absProp);
 			}
 		}
+
+		// TODO: This looks messy and duplicates code in ScaLaunchConfigurationUtil.loadProperties()
 		final String properties = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROPERTIES, (String) null);
 		if (properties != null) {
 			final XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(properties.getBytes()));

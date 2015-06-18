@@ -28,7 +28,7 @@ import org.eclipse.debug.core.model.ISourceLocator;
 
 /**
  * An Eclipse launch delegate which handles launching a SoftPkg (component, device, etc) installed in the SDRROOT
- * locally in the Sandbox. It does not handle launching workspace projects.
+ * locally in the Sandbox. It does not handle launching workspace projects (which are handled on a per-language basis).
  */
 @SuppressWarnings("restriction")
 public class LocalComponentProgramLaunchDelegate extends ProgramLaunchDelegate {
