@@ -38,6 +38,11 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 		setToDefault();
 	}
 
+	@Override
+	protected StructRef getRef() {
+		return (StructRef) super.getRef();
+	}
+
 	public List<ViewerProperty< ? >> getFields() {
 		return fields;
 	}

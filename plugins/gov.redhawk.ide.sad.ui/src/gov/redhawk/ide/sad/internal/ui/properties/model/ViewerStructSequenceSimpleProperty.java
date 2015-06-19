@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 
+import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.StructSequence;
@@ -34,6 +35,11 @@ public class ViewerStructSequenceSimpleProperty extends ViewerProperty<Simple> {
 		super(def, parent);
 	}
 	
+	@Override
+	protected SimpleRef getRef() {
+		return (SimpleRef) super.getRef();
+	}
+
 	@Override
 	public ViewerStructSequenceProperty getParent() {
 		return (ViewerStructSequenceProperty) super.getParent();

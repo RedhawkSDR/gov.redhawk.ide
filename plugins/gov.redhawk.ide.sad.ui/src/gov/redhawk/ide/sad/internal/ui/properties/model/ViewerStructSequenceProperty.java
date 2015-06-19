@@ -47,6 +47,11 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 	}
 
 	@Override
+	protected StructSequenceRef getRef() {
+		return (StructSequenceRef) super.getRef();
+	}
+
+	@Override
 	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
 		super.addPropertyChangeListener(listener);
 		for (ViewerProperty< ? > p : fieldsArray) {

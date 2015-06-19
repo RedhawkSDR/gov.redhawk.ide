@@ -55,11 +55,9 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 		return null;
 	}
 
+	@Override
 	protected SimpleSequenceRef getRef() {
-		if (getParent() instanceof ViewerComponent) {
-			return ((ViewerComponent) getParent()).getRef(getDefinition());
-		}
-		return null;
+		return (SimpleSequenceRef) super.getRef();
 	}
 
 	@Override

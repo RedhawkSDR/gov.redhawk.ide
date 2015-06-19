@@ -168,7 +168,7 @@ public class ViewerComponent implements ITreeItemContentProvider {
 	}
 
 	protected Command setRefValue(EditingDomain domain, ViewerProperty<?> prop, Object value) {
-		AbstractPropertyRef< ? > ref = getRef(prop.getDefinition());
+		AbstractPropertyRef< ? > ref = getRef(prop.getID());
 		SadComponentInstantiation inst = getComponentInstantiation();
 		ComponentProperties properties = inst.getComponentProperties();
 		if (value == null) {
@@ -202,11 +202,11 @@ public class ViewerComponent implements ITreeItemContentProvider {
 		}
 	}
 
-	protected AbstractPropertyRef< ? > getRef(AbstractProperty property) {
+	protected AbstractPropertyRef< ? > getRef(final String refId) {
 		if (compInst.getComponentProperties() != null) {
 			for (FeatureMap.Entry entry : compInst.getComponentProperties().getProperties()) {
 				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
-				if (ref.getRefID().equals(property.getId())) {
+				if (ref.getRefID().equals(refId)) {
 					return ref;
 				}
 			}

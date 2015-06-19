@@ -42,11 +42,9 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 		return null;
 	}
 
+	@Override
 	protected SimpleRef getRef() {
-		if (getParent() instanceof ViewerComponent) {
-			return ((ViewerComponent) getParent()).getRef(getDefinition());
-		}
-		return null;
+		return (SimpleRef) super.getRef();
 	}
 
 	@Override
