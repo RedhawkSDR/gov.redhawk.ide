@@ -16,15 +16,12 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.util.FeatureMap;
 
-import mil.jpeojtrs.sca.prf.AbstractProperty;
+import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.Simple;
-import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
-import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
 import mil.jpeojtrs.sca.prf.Struct;
 import mil.jpeojtrs.sca.prf.StructRef;
-import mil.jpeojtrs.sca.prf.StructValue;
 
 /**
  * 
@@ -35,30 +32,6 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 
 	public ViewerStructProperty(Struct def, Object parent) {
 		super(def, parent);
-		setToDefault();
-	}
-
-	@Override
-	protected StructRef getRef() {
-		return (StructRef) super.getRef();
-	}
-
-	public List<ViewerProperty< ? >> getFields() {
-		return fields;
-	}
-
-	private ViewerProperty< ? > getField(final String identifier) {
-		for (ViewerProperty< ? > property : fields) {
-			if (((AbstractProperty)property.getDefinition()).getId().equals(identifier)) {
-				return property;
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public void setToDefault() {
-		fields.clear();
 		for (FeatureMap.Entry field : def.getFields()) {
 			if (field.getEStructuralFeature() == PrfPackage.Literals.STRUCT__SIMPLE) {
 				fields.add(new ViewerSimpleProperty((Simple) field.getValue(), this));
@@ -68,42 +41,32 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 		}
 	}
 
-	private void clear() {
-		for (ViewerProperty< ? > property : fields) {
-			if (property instanceof ViewerSimpleProperty) {
-				((ViewerSimpleProperty) property).setValue((SimpleRef) null);
-			} else if (property instanceof ViewerSequenceProperty) {
-				((ViewerSequenceProperty) property).setValues((SimpleSequenceRef) null);
-			}
-		}
+	@Override
+	protected StructRef getRef() {
+		return (StructRef) super.getRef();
 	}
 
-	private void setValue(FeatureMap refs) {
-		for (FeatureMap.Entry entry : refs) {
-			if (entry.getValue() instanceof SimpleRef) {
-				SimpleRef ref = (SimpleRef)entry.getValue();
-				ViewerProperty< ? > property = getField(ref.getRefID());
-				if (property instanceof ViewerSimpleProperty) {
-					((ViewerSimpleProperty) property).setValue(ref);
-				}
-			} else if (entry.getValue() instanceof SimpleSequenceRef) {
-				SimpleSequenceRef ref = (SimpleSequenceRef)entry.getValue();
-				ViewerProperty< ? > property = getField(ref.getRefID());
-				if (property instanceof ViewerSequenceProperty) {
-					((ViewerSequenceProperty) property).setValues(ref);
+	protected AbstractPropertyRef< ? > getRef(final String refId) {
+		StructRef structRef = getRef();
+		if (structRef != null) {
+			for (FeatureMap.Entry entry : structRef.getRefs()) {
+				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
+				if (ref.getRefID().equals(refId)) {
+					return ref;
 				}
 			}
 		}
+		return null;
 	}
 
-	public void setValue(StructRef value) {
-		if (value != null) {
-			setValue(value.getRefs());
-		} else {
-			clear();
-		}
+	public List<ViewerProperty< ? >> getFields() {
+		return fields;
 	}
-	
+
+	@Override
+	public void setToDefault() {
+	}
+
 	@Override
 	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
 		super.addPropertyChangeListener(listener);
@@ -117,14 +80,6 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 		super.removePropertyChangeListener(listener);
 		for (ViewerProperty< ? > p : fields) {
 			p.removePropertyChangeListener(listener);
-		}
-	}
-
-	public void setValue(StructValue value) {
-		if (value != null) {
-			setValue(value.getRefs());
-		} else {
-			clear();
 		}
 	}
 

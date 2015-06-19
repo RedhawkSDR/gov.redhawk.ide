@@ -29,7 +29,6 @@ import mil.jpeojtrs.sca.prf.Struct;
 import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
 import mil.jpeojtrs.sca.prf.StructValue;
-import mil.jpeojtrs.sca.prf.Values;
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.ExternalProperties;
 import mil.jpeojtrs.sca.sad.ExternalProperty;
@@ -539,25 +538,8 @@ public class ViewerModelConverter {
 	}
 
 	private void updateProperties() {
-		for (ViewerComponent c : this.viewerModel) {
-			for (ViewerProperty< ? > p : c.getProperties()) {
-				updateProperty(c.getComponentInstantiation(), p);
-			}
-		}
+		// TODO: Only refresh updated properties
 		refresh();
-	}
-
-	private void updateProperty(SadComponentInstantiation inst, ViewerProperty< ? > p) {
-		AbstractPropertyRef< ? > propRef = getRef(inst, p);
-		if (p instanceof ViewerSimpleProperty && propRef instanceof SimpleRef) {
-			//((ViewerSimpleProperty) p).setValue((SimpleRef) propRef);
-		} else if (p instanceof ViewerSequenceProperty && propRef instanceof SimpleSequenceRef) {
-			//((ViewerSequenceProperty) p).setValues((SimpleSequenceRef) propRef);
-		} else if (p instanceof ViewerStructProperty && propRef instanceof StructRef) {
-			((ViewerStructProperty) p).setValue((StructRef) propRef);
-		} else if (p instanceof ViewerStructSequenceProperty && propRef instanceof StructSequenceRef) {
-			((ViewerStructSequenceProperty) p).setValue((StructSequenceRef) propRef);
-		}
 	}
 
 	public static AbstractPropertyRef< ? > getRef(SadComponentInstantiation inst, ViewerProperty< ? > p) {

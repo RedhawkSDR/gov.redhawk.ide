@@ -73,6 +73,8 @@ public abstract class ViewerProperty< T extends AbstractProperty > implements IT
 	protected AbstractPropertyRef< ? > getRef() {
 		if (parent instanceof ViewerComponent) {
 			return ((ViewerComponent) parent).getRef(this.getID());
+		} else if (parent instanceof ViewerStructProperty) {
+			return ((ViewerStructProperty) parent).getRef(this.getID());
 		}
 		return null;
 	}
