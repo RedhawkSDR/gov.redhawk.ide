@@ -17,6 +17,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
+
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.prf.PrfPackage;
+import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
 import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
 import mil.jpeojtrs.sca.prf.Values;
@@ -39,7 +48,18 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 
 	@Override
 	public Object getValue() {
-		return getValues();
+		SimpleSequenceRef ref = getRef();
+		if (ref != null) {
+			return ref.getValues().getValue();
+		}
+		return null;
+	}
+
+	protected SimpleSequenceRef getRef() {
+		if (getParent() instanceof ViewerComponent) {
+			return ((ViewerComponent) getParent()).getRef(getDefinition());
+		}
+		return null;
 	}
 
 	@Override
@@ -69,6 +89,9 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 		}
 
 		if (!PluginUtil.equals(oldValue, this.values)) {
+			if (getParent() instanceof ViewerComponent) {
+				((ViewerComponent) getParent()).setRef(this, this.values);
+			}
 			firePropertyChangeEvent();
 		}
 	}
@@ -99,4 +122,17 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 			setToDefault();
 		}
 	}
+
+	protected Command createAddCommand(EditingDomain editingDomain, Object owner, Object value) {
+		return AddCommand.create(editingDomain, owner, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF, value);
+	}
+
+	protected Command createSetCommand(EditingDomain editingDomain, Object owner, Object value) {
+		return SetCommand.create(editingDomain, owner, PrfPackage.Literals.SIMPLE_SEQUENCE_REF__VALUES, value);
+	}
+
+	protected Command createRemoveCommand(EditingDomain editingDomain, Object owner, Object object) {
+		return RemoveCommand.create(editingDomain, owner, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF, object);
+	}
+
 }

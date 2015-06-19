@@ -29,6 +29,7 @@ import mil.jpeojtrs.sca.prf.Struct;
 import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
+import mil.jpeojtrs.sca.prf.Values;
 import mil.jpeojtrs.sca.sad.ExternalProperties;
 import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -214,7 +215,47 @@ public class ViewerComponent implements ITreeItemContentProvider {
 		}
 	}
 
-	private SimpleSequenceRef getRef(SimpleSequence prop) {
+	protected Command setRefValue(EditingDomain domain, ViewerSequenceProperty prop, List<String> values) {
+		SimpleSequenceRef ref = getRef(prop.getDefinition());
+		SadComponentInstantiation inst = getComponentInstantiation();
+		ComponentProperties properties = inst.getComponentProperties();
+		if (values == null) {
+			if (ref != null && properties != null) {
+				if (properties.getProperties().size() == 1) {
+					return DeleteCommand.create(domain, properties);
+				} else {
+					return prop.createRemoveCommand(domain, properties, ref);
+				}
+			}
+		} else if (ref == null) {
+			ref = PrfFactory.eINSTANCE.createSimpleSequenceRef();
+			ref.setRefID(prop.getDefinition().getId());
+			Values refValues = PrfFactory.eINSTANCE.createValues();
+			refValues.getValue().addAll(values);
+			ref.setValues(refValues);
+			if (properties == null) {
+				properties = PartitioningFactory.eINSTANCE.createComponentProperties();
+				properties.getSimpleSequenceRef().add(ref);
+				return SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
+			} else {
+				return prop.createAddCommand(domain, properties, ref);
+			}
+		} else {
+			return prop.createSetCommand(domain, ref, values);
+		}
+		return null;
+	}
+
+	protected void setRef(final ViewerSequenceProperty prop, final List<String> values) {
+		TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(sad);
+		Command command = setRefValue(domain, prop, values);
+		if (command != null) {
+			boolean canExecute = command.canExecute();
+			domain.getCommandStack().execute(command);
+		}
+	}
+
+	protected SimpleSequenceRef getRef(SimpleSequence prop) {
 		if (compInst.getComponentProperties() != null) {
 			for (SimpleSequenceRef ref : compInst.getComponentProperties().getSimpleSequenceRef()) {
 				if (ref.getRefID().equals(prop.getId())) {
