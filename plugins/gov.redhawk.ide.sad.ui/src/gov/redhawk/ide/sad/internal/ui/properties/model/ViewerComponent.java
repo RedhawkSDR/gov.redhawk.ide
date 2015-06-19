@@ -15,7 +15,11 @@ import java.util.Collection;
 import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
+import mil.jpeojtrs.sca.partitioning.ComponentProperties;
+import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
+import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.Properties;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
@@ -33,9 +37,15 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
+import org.eclipse.emf.edit.command.DeleteCommand;
+import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.util.TransactionUtil;
 
 public class ViewerComponent implements ITreeItemContentProvider {
 	
@@ -155,7 +165,7 @@ public class ViewerComponent implements ITreeItemContentProvider {
 		return retVal;
 	}
 
-	private SimpleRef getRef(Simple prop) {
+	protected SimpleRef getRef(Simple prop) {
 		if (compInst.getComponentProperties() != null) {
 			for (SimpleRef ref : compInst.getComponentProperties().getSimpleRef()) {
 				if (ref.getRefID().equals(prop.getId())) {
@@ -164,6 +174,44 @@ public class ViewerComponent implements ITreeItemContentProvider {
 			}
 		}
 		return null;
+	}
+
+	protected Command setRefValue(EditingDomain domain, ViewerSimpleProperty prop, String value) {
+		SimpleRef ref = getRef(prop.getDefinition());
+		SadComponentInstantiation inst = getComponentInstantiation();
+		ComponentProperties properties = inst.getComponentProperties();
+		if (value == null) {
+			if (ref != null && properties != null) {
+				if (properties.getProperties().size() == 1) {
+					return DeleteCommand.create(domain, properties);
+				} else {
+					return prop.createRemoveCommand(domain, properties, ref);
+				}
+			}
+		} else if (ref == null) {
+			ref = PrfFactory.eINSTANCE.createSimpleRef();
+			ref.setRefID(prop.getDefinition().getId());
+			ref.setValue(value);
+			if (properties == null) {
+				properties = PartitioningFactory.eINSTANCE.createComponentProperties();
+				properties.getSimpleRef().add(ref);
+				return SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
+			} else {
+				return prop.createAddCommand(domain, properties, ref);
+			}
+		} else {
+			return prop.createSetCommand(domain, ref, value);
+		}
+		return null;
+	}
+
+	protected void setRef(final ViewerSimpleProperty prop, final String value) {
+		TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(sad);
+		Command command = setRefValue(domain, prop, value);
+		if (command != null) {
+			boolean canExecute = command.canExecute();
+			domain.getCommandStack().execute(command);
+		}
 	}
 
 	private SimpleSequenceRef getRef(SimpleSequence prop) {

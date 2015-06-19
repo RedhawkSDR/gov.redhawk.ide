@@ -12,7 +12,15 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 import java.util.Collection;
 
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
+
 import gov.redhawk.sca.util.PluginUtil;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 
@@ -26,7 +34,18 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 
 	@Override
 	public String getValue() {
-		return value;
+		SimpleRef simpleRef = getRef();
+		if (simpleRef != null) {
+			return simpleRef.getValue();
+		}
+		return null;
+	}
+
+	protected SimpleRef getRef() {
+		if (getParent() instanceof ViewerComponent) {
+			return ((ViewerComponent) getParent()).getRef(getDefinition());
+		}
+		return null;
 	}
 
 	@Override
@@ -62,10 +81,24 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 		String oldValue = this.value;
 		this.value = newValue;
 		if (!PluginUtil.equals(oldValue, value)) {
+			if (getParent() instanceof ViewerComponent) {
+				((ViewerComponent) getParent()).setRef(this, newValue);
+			}
 			firePropertyChangeEvent();
 		}
 	}
 
+	protected Command createAddCommand(EditingDomain editingDomain, Object owner, Object value) {
+		return AddCommand.create(editingDomain, owner, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_REF, value);
+	}
+
+	protected Command createSetCommand(EditingDomain editingDomain, Object owner, Object value) {
+		return SetCommand.create(editingDomain, owner, PrfPackage.Literals.SIMPLE_REF__VALUE, value);
+	}
+
+	protected Command createRemoveCommand(EditingDomain editingDomain, Object owner, Object object) {
+		return RemoveCommand.create(editingDomain, owner, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_REF, object);
+	}
 
 	public boolean checkValue(String text) {
 		if (text == null || text.isEmpty() || def.getType().isValueOfType(text, def.isComplex())) {

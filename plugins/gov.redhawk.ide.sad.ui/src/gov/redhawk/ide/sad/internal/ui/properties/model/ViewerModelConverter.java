@@ -307,7 +307,6 @@ public class ViewerModelConverter {
 		if (command != null) {
 			boolean canExecute = command.canExecute();
 			domain.getCommandStack().execute(command);
-			viewer.refresh();
 		}
 	}
 
@@ -317,35 +316,6 @@ public class ViewerModelConverter {
 			String newValue = simpleProp.getValue();
 			Object parent = source.getParent();
 			if (parent instanceof ViewerComponent) {
-				ViewerComponent comp = (ViewerComponent) parent;
-				SadComponentInstantiation inst = comp.getComponentInstantiation();
-				SimpleRef ref = (SimpleRef) getRef(inst, simpleProp);
-				ComponentProperties properties = inst.getComponentProperties();
-				if (ref == null) {
-					ref = createRef(simpleProp.getDefinition(), newValue);
-					if (properties == null) {
-						properties = PartitioningFactory.eINSTANCE.createComponentProperties();
-						properties.getSimpleRef().add(ref);
-						inst.setComponentProperties(properties);
-						//	command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
-					} else {
-						properties.getSimpleRef().add(ref);
-						//	command = AddCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_REF, ref);
-					}
-				} else {
-					if (newValue != null) {
-						ref.setValue(newValue);
-						//	command = SetCommand.create(domain, ref, PrfPackage.Literals.SIMPLE_REF__VALUE, newValue);
-					} else {
-						if (properties.getProperties().size() == 1) {
-							inst.setComponentProperties(null);
-							//	command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, null);
-						} else {
-							properties.getSimpleRef().remove(ref);
-							//	command = RemoveCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_REF, ref);
-						}
-					}
-				}
 			} else if (parent instanceof ViewerStructProperty) {
 				ViewerStructProperty structProp = (ViewerStructProperty) simpleProp.getParent();
 				if (structProp.getParent() instanceof ViewerComponent) {
