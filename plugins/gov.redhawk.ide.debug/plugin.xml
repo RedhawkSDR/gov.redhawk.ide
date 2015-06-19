@@ -47,8 +47,13 @@
              delegate="gov.redhawk.ide.debug.internal.LocalComponentProgramLaunchDelegate"
              id="gov.redhawk.ide.debug.localComponentProgram"
              modes="run"
-             name="%launchConfigurationType.name">
+             name="%launchComponentConfigurationType.name">
        </launchConfigurationType>
+      <launchConfigurationType
+            delegate="gov.redhawk.ide.debug.internal.LocalWaveformLaunchDelegate"
+            id="gov.redhawk.ide.debug.launchLocalWaveform"
+            name="%launchWaveformConfigurationType.name">
+      </launchConfigurationType>
     </extension>
    <extension
          point="org.eclipse.core.variables.dynamicVariables">
@@ -139,5 +144,15 @@
             id="gov.redhawk.ide.debug.bundleFactoryProvider"
             priority="-1">
       </factoryProvider>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchDelegates">
+      <launchDelegate
+            delegate="gov.redhawk.ide.debug.internal.LocalWaveformLaunchDelegate"
+            id="gov.redhawk.ide.debug.launchLocalWaveform"
+            modes="run"
+            name="%launchWaveformDelegate.name"
+            type="gov.redhawk.ide.debug.launchLocalWaveform">
+      </launchDelegate>
    </extension>
 </plugin>

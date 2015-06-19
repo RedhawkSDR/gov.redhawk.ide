@@ -460,16 +460,6 @@
       </command>
    </extension>
    <extension
-         point="org.eclipse.debug.core.launchDelegates">
-      <launchDelegate
-            delegate="gov.redhawk.ide.debug.internal.ui.LocalWaveformLaunchDelegate"
-            id="gov.redhawk.ide.debug.ui.launchLocalWaveform"
-            modes="run"
-            name="%launchDelegate.name"
-            type="gov.redhawk.ide.debug.launchLocalWaveform">
-      </launchDelegate>
-   </extension>
-   <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
             class="gov.redhawk.ide.debug.internal.ui.launchshortcuts.SadLaunchShortcut"
@@ -690,13 +680,4 @@
          </enablement>
       </decorator>
    </extension>
-   <extension
-         point="org.eclipse.debug.core.launchConfigurationTypes">
-      <launchConfigurationType
-            delegate="gov.redhawk.ide.debug.internal.ui.LocalWaveformLaunchDelegate"
-            id="gov.redhawk.ide.debug.launchLocalWaveform"
-            name="Sandbox Waveform">
-      </launchConfigurationType>
-   </extension>
-       
 </plugin>
