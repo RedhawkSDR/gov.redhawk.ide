@@ -374,41 +374,8 @@ public class ViewerModelConverter {
 				throw new UnsupportedOperationException();
 			}
 		} else if (source instanceof ViewerSequenceProperty) {
-			ViewerSequenceProperty seqProp = (ViewerSequenceProperty) source;
 			Object parent = source.getParent();
 			if (parent instanceof ViewerComponent) {
-				ViewerComponent comp = (ViewerComponent) parent;
-				List<String> newValues = seqProp.getValues();
-				SadComponentInstantiation inst = comp.getComponentInstantiation();
-				ComponentProperties properties = inst.getComponentProperties();
-				SimpleSequenceRef ref = (SimpleSequenceRef) getRef(inst, seqProp);
-				if (ref == null) {
-					ref = createRef(seqProp, newValues);
-					if (properties == null) {
-						properties = PartitioningFactory.eINSTANCE.createComponentProperties();
-						properties.getSimpleSequenceRef().add(ref);
-						inst.setComponentProperties(properties);
-						//	command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
-					} else {
-						properties.getSimpleSequenceRef().add(ref);
-						//	command = AddCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF, ref);
-					}
-				} else {
-					if (newValues != null && !newValues.isEmpty()) {
-						final Values values = PrfFactory.eINSTANCE.createValues();
-						values.getValue().addAll(newValues);
-						ref.setValues(values);
-						//	command = SetCommand.create(domain, ref, PrfPackage.Literals.SIMPLE_SEQUENCE__VALUES, values);
-					} else {
-						if (properties.getProperties().size() == 1) {
-							inst.setComponentProperties(null);
-							//	command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, null);
-						} else {
-							properties.getSimpleSequenceRef().remove(ref);
-							// command = RemoveCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF, ref);
-						}
-					}
-				}
 			} else {
 				throw new UnsupportedOperationException();
 			}
@@ -461,14 +428,6 @@ public class ViewerModelConverter {
 			}
 			retVal.getStructValue().add(value);
 		}
-		return retVal;
-	}
-
-	private SimpleSequenceRef createRef(ViewerSequenceProperty seqProp, List<String> newValues) {
-		SimpleSequenceRef retVal = PrfFactory.eINSTANCE.createSimpleSequenceRef();
-		retVal.setRefID(seqProp.getID());
-		retVal.setValues(PrfFactory.eINSTANCE.createValues());
-		retVal.getValues().getValue().addAll(newValues);
 		return retVal;
 	}
 
@@ -591,9 +550,9 @@ public class ViewerModelConverter {
 	private void updateProperty(SadComponentInstantiation inst, ViewerProperty< ? > p) {
 		AbstractPropertyRef< ? > propRef = getRef(inst, p);
 		if (p instanceof ViewerSimpleProperty && propRef instanceof SimpleRef) {
-			((ViewerSimpleProperty) p).setValue((SimpleRef) propRef);
+			//((ViewerSimpleProperty) p).setValue((SimpleRef) propRef);
 		} else if (p instanceof ViewerSequenceProperty && propRef instanceof SimpleSequenceRef) {
-			((ViewerSequenceProperty) p).setValues((SimpleSequenceRef) propRef);
+			//((ViewerSequenceProperty) p).setValues((SimpleSequenceRef) propRef);
 		} else if (p instanceof ViewerStructProperty && propRef instanceof StructRef) {
 			((ViewerStructProperty) p).setValue((StructRef) propRef);
 		} else if (p instanceof ViewerStructSequenceProperty && propRef instanceof StructSequenceRef) {

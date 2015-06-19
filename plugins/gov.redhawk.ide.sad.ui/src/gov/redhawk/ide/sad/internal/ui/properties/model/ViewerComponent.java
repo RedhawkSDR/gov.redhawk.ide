@@ -19,7 +19,7 @@ import mil.jpeojtrs.sca.partitioning.ComponentProperties;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
-import mil.jpeojtrs.sca.prf.PrfFactory;
+import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.prf.Properties;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
@@ -29,7 +29,6 @@ import mil.jpeojtrs.sca.prf.Struct;
 import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
-import mil.jpeojtrs.sca.prf.Values;
 import mil.jpeojtrs.sca.sad.ExternalProperties;
 import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -39,7 +38,9 @@ import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
 import org.eclipse.emf.edit.command.DeleteCommand;
 import org.eclipse.emf.edit.command.SetCommand;
@@ -166,19 +167,8 @@ public class ViewerComponent implements ITreeItemContentProvider {
 		return retVal;
 	}
 
-	protected SimpleRef getRef(Simple prop) {
-		if (compInst.getComponentProperties() != null) {
-			for (SimpleRef ref : compInst.getComponentProperties().getSimpleRef()) {
-				if (ref.getRefID().equals(prop.getId())) {
-					return ref;
-				}
-			}
-		}
-		return null;
-	}
-
-	protected Command setRefValue(EditingDomain domain, ViewerSimpleProperty prop, String value) {
-		SimpleRef ref = getRef(prop.getDefinition());
+	protected Command setRefValue(EditingDomain domain, ViewerProperty<?> prop, Object value) {
+		AbstractPropertyRef< ? > ref = getRef(prop.getDefinition());
 		SadComponentInstantiation inst = getComponentInstantiation();
 		ComponentProperties properties = inst.getComponentProperties();
 		if (value == null) {
@@ -189,70 +179,50 @@ public class ViewerComponent implements ITreeItemContentProvider {
 					return prop.createRemoveCommand(domain, properties, ref);
 				}
 			}
-		} else if (ref == null) {
-			ref = PrfFactory.eINSTANCE.createSimpleRef();
-			ref.setRefID(prop.getDefinition().getId());
-			ref.setValue(value);
-			if (properties == null) {
-				properties = PartitioningFactory.eINSTANCE.createComponentProperties();
-				properties.getSimpleRef().add(ref);
-				return SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
-			} else {
-				return prop.createAddCommand(domain, properties, ref);
-			}
-		} else {
-			return prop.createSetCommand(domain, ref, value);
+			return null;
 		}
-		return null;
+		CompoundCommand command = new CompoundCommand();
+		if (properties == null) {
+			properties = PartitioningFactory.eINSTANCE.createComponentProperties();
+			command.append(SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties));
+		}
+		if (ref == null) {
+			ref = prop.createRef();
+			command.append(prop.createAddCommand(domain, properties, ref));
+		}
+		command.append(prop.createSetCommand(domain, ref, value));
+		return command.unwrap();
 	}
 
-	protected void setRef(final ViewerSimpleProperty prop, final String value) {
+	protected void setRef(final ViewerProperty< ? > prop, final Object value) {
 		TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(sad);
 		Command command = setRefValue(domain, prop, value);
-		if (command != null) {
-			boolean canExecute = command.canExecute();
+		if (command != null && command.canExecute()) {
 			domain.getCommandStack().execute(command);
 		}
 	}
 
-	protected Command setRefValue(EditingDomain domain, ViewerSequenceProperty prop, List<String> values) {
-		SimpleSequenceRef ref = getRef(prop.getDefinition());
-		SadComponentInstantiation inst = getComponentInstantiation();
-		ComponentProperties properties = inst.getComponentProperties();
-		if (values == null) {
-			if (ref != null && properties != null) {
-				if (properties.getProperties().size() == 1) {
-					return DeleteCommand.create(domain, properties);
-				} else {
-					return prop.createRemoveCommand(domain, properties, ref);
+	protected AbstractPropertyRef< ? > getRef(AbstractProperty property) {
+		if (compInst.getComponentProperties() != null) {
+			for (FeatureMap.Entry entry : compInst.getComponentProperties().getProperties()) {
+				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
+				if (ref.getRefID().equals(property.getId())) {
+					return ref;
 				}
 			}
-		} else if (ref == null) {
-			ref = PrfFactory.eINSTANCE.createSimpleSequenceRef();
-			ref.setRefID(prop.getDefinition().getId());
-			Values refValues = PrfFactory.eINSTANCE.createValues();
-			refValues.getValue().addAll(values);
-			ref.setValues(refValues);
-			if (properties == null) {
-				properties = PartitioningFactory.eINSTANCE.createComponentProperties();
-				properties.getSimpleSequenceRef().add(ref);
-				return SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
-			} else {
-				return prop.createAddCommand(domain, properties, ref);
-			}
-		} else {
-			return prop.createSetCommand(domain, ref, values);
 		}
 		return null;
 	}
 
-	protected void setRef(final ViewerSequenceProperty prop, final List<String> values) {
-		TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(sad);
-		Command command = setRefValue(domain, prop, values);
-		if (command != null) {
-			boolean canExecute = command.canExecute();
-			domain.getCommandStack().execute(command);
+	protected SimpleRef getRef(Simple prop) {
+		if (compInst.getComponentProperties() != null) {
+			for (SimpleRef ref : compInst.getComponentProperties().getSimpleRef()) {
+				if (ref.getRefID().equals(prop.getId())) {
+					return ref;
+				}
+			}
 		}
+		return null;
 	}
 
 	protected SimpleSequenceRef getRef(SimpleSequence prop) {

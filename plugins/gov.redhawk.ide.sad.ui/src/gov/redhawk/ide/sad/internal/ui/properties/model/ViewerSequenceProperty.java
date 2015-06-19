@@ -24,8 +24,8 @@ import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.PrfPackage;
-import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
 import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
 import mil.jpeojtrs.sca.prf.Values;
@@ -123,12 +123,20 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 		}
 	}
 
+	protected SimpleSequenceRef createRef() {
+		SimpleSequenceRef ref = PrfFactory.eINSTANCE.createSimpleSequenceRef();
+		ref.setRefID(getID());
+		ref.setValues(PrfFactory.eINSTANCE.createValues());
+		return ref;
+	}
+
 	protected Command createAddCommand(EditingDomain editingDomain, Object owner, Object value) {
 		return AddCommand.create(editingDomain, owner, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF, value);
 	}
 
 	protected Command createSetCommand(EditingDomain editingDomain, Object owner, Object value) {
-		return SetCommand.create(editingDomain, owner, PrfPackage.Literals.SIMPLE_SEQUENCE_REF__VALUES, value);
+		SimpleSequenceRef ref = (SimpleSequenceRef)owner;
+		return SetCommand.create(editingDomain, ref.getValues(), PrfPackage.Literals.VALUES__VALUE, value);
 	}
 
 	protected Command createRemoveCommand(EditingDomain editingDomain, Object owner, Object object) {

@@ -20,6 +20,7 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 
 import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
@@ -86,6 +87,12 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 			}
 			firePropertyChangeEvent();
 		}
+	}
+
+	protected SimpleRef createRef() {
+		SimpleRef ref = PrfFactory.eINSTANCE.createSimpleRef();
+		ref.setRefID(getID());
+		return ref;
 	}
 
 	protected Command createAddCommand(EditingDomain editingDomain, Object owner, Object value) {

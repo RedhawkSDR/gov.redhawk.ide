@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
+import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -21,6 +22,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 
 /**
@@ -143,6 +146,21 @@ public abstract class ViewerProperty< T extends AbstractProperty > implements IT
 
 	protected abstract Collection< ? > getKindTypes();
 
+	protected AbstractPropertyRef< ? > createRef() {
+		return null;
+	}
+
+	protected Command createAddCommand(EditingDomain domain, Object owner, Object value) {
+		return null;
+	}
+
+	protected Command createSetCommand(EditingDomain domain, Object owner, Object value) {
+		return null;
+	}
+
+	protected Command createRemoveCommand(EditingDomain domain, Object owner, Object value) {
+		return null;
+	}
 
 	@Override
 	public Collection< ? > getElements(Object object) {
