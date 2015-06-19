@@ -128,10 +128,19 @@ public class ViewerComponent implements ITreeItemContentProvider {
 	}
 
 	private ViewerSimpleProperty createViewerProperty(Simple def) {
-		ViewerSimpleProperty retVal = new ViewerSimpleProperty(def, this);
-		SimpleRef ref = getRef(def);
-		retVal.setValue(ref);
-		return retVal;
+		return new ViewerSimpleProperty(def, this);
+	}
+
+	private ViewerSequenceProperty createViewerProperty(SimpleSequence def) {
+		return new ViewerSequenceProperty(def, this);
+	}
+
+	private ViewerStructProperty createViewerProperty(Struct def) {
+		return new ViewerStructProperty(def, this);
+	}
+
+	private ViewerStructSequenceProperty createViewerProperty(StructSequence def) {
+		return new ViewerStructSequenceProperty(def, this);
 	}
 
 	private ExternalProperty getExternalProp(AbstractProperty prop) {
@@ -144,27 +153,6 @@ public class ViewerComponent implements ITreeItemContentProvider {
 			}
 		}
 		return null;
-	}
-
-	private ViewerSequenceProperty createViewerProperty(SimpleSequence def) {
-		ViewerSequenceProperty retVal = new ViewerSequenceProperty(def, this);
-		SimpleSequenceRef ref = getRef(def);
-		retVal.setValues(ref);
-		return retVal;
-	}
-
-	private ViewerStructProperty createViewerProperty(Struct def) {
-		ViewerStructProperty retVal = new ViewerStructProperty(def, this);
-		StructRef ref = getRef(def);
-		retVal.setValue(ref);
-		return retVal;
-	}
-
-	private ViewerStructSequenceProperty createViewerProperty(StructSequence def) {
-		ViewerStructSequenceProperty retVal = new ViewerStructSequenceProperty(def, this);
-		StructSequenceRef ref = getRef(def);
-		retVal.setValue(ref);
-		return retVal;
 	}
 
 	protected Command setRefValue(EditingDomain domain, ViewerProperty<?> prop, Object value) {
