@@ -30,7 +30,7 @@ import mil.jpeojtrs.sca.prf.Values;
  * 
  */
 public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence> {
-	private List<ViewerProperty< ? >> fieldsArray = new ArrayList<ViewerProperty< ? >>();
+	private List<ViewerStructSequenceNestedProperty< ? >> fieldsArray = new ArrayList<ViewerStructSequenceNestedProperty< ? >>();
 
 	public ViewerStructSequenceProperty(StructSequence def, Object parent) {
 		super(def, parent);
@@ -115,7 +115,7 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 		List<ViewerStructSequenceSequenceProperty> sequencesArray = getSequences();
 		for (ViewerStructSequenceSequenceProperty prop : sequencesArray) {
 			ArrayList<Values> newValues = new ArrayList<Values>(value.getStructValue().size());
-			Values sequenceValue = prop.def.getValues();
+			Values sequenceValue = ((SimpleSequence)prop.def).getValues();
 			for (int i = 0; i < value.getStructValue().size(); i++) {
 				newValues.add(sequenceValue);
 			}

@@ -11,21 +11,17 @@
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import mil.jpeojtrs.sca.prf.SimpleSequence;
 import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
-import mil.jpeojtrs.sca.prf.StructSequence;
-import mil.jpeojtrs.sca.prf.StructSequenceRef;
 import mil.jpeojtrs.sca.prf.StructValue;
 import mil.jpeojtrs.sca.prf.Values;
 
 /**
  * 
  */
-public class ViewerStructSequenceSequenceProperty extends ViewerProperty<SimpleSequence> {
+public class ViewerStructSequenceSequenceProperty extends ViewerStructSequenceNestedProperty<SimpleSequence> {
 
 	private List<List<String>> values = null;
 
@@ -59,29 +55,7 @@ public class ViewerStructSequenceSequenceProperty extends ViewerProperty<SimpleS
 		setValues(newStrings);
 	}
 	
-	@Override
-	public ViewerStructSequenceProperty getParent() {
-		return (ViewerStructSequenceProperty) super.getParent();
-	}
-
-	@Override
-	public Object getValue() {
-		StructSequenceRef structSequenceRef = getParent().getRef();
-		if (structSequenceRef != null) {
-			List<List<String>> values = getRefValues(structSequenceRef.getStructValue());
-			return Arrays.toString(values.toArray());
-		}
-		return null;
-	}
-
-	@Override
-	public String getPrfValue() {
-		StructSequence seq = getParent().getDefinition();
-		List<List<String>> retVal = getRefValues(seq.getStructValue());
-		return Arrays.toString(retVal.toArray());
-	}
-
-	private List<List<String>> getRefValues(List<StructValue> structValues) {
+	protected List<List<String>> getRefValues(List<StructValue> structValues) {
 		List<List<String>> refValues = new ArrayList<List<String>>(structValues.size());
 		for (StructValue structVal : structValues) {
 			SimpleSequenceRef ref = (SimpleSequenceRef) structVal.getRef(getID());
@@ -92,11 +66,6 @@ public class ViewerStructSequenceSequenceProperty extends ViewerProperty<SimpleS
 			}
 		}
 		return refValues;
-	}
-
-	@Override
-	protected Collection< ? > getKindTypes() {
-		return null;
 	}
 
 }
