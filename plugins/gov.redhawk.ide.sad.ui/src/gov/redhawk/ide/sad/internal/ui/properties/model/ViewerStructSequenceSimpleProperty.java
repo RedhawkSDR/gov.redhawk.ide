@@ -18,10 +18,10 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 
-import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.StructSequence;
+import mil.jpeojtrs.sca.prf.StructSequenceRef;
 import mil.jpeojtrs.sca.prf.StructValue;
 
 /**
@@ -60,19 +60,30 @@ public class ViewerStructSequenceSimpleProperty extends ViewerProperty<Simple> {
 
 	@Override
 	public Object getValue() {
-		return getValues();
+		StructSequenceRef structSequenceRef = getParent().getRef();
+		if (structSequenceRef != null) {
+			List<String> values = getRefValues(structSequenceRef.getStructValue());
+			return Arrays.toString(values.toArray());
+		}
+		return null;
 	}
 
 	@Override
 	public String getPrfValue() {
 		StructSequence seq = getParent().getDefinition();
-		EList<StructValue> value = seq.getStructValue();
-		List<String> retVal = new ArrayList<String>(value.size());
-		for (StructValue v : value) {
-			SimpleRef ref = (SimpleRef) v.getRef(getDefinition().getId());
-			retVal.add(ref.getValue());
-		}
+		List<String> retVal = getRefValues(seq.getStructValue());
 		return Arrays.toString(retVal.toArray());
+	}
+
+	private List<String> getRefValues(List<StructValue> structValues) {
+		List<String> refValues = new ArrayList<String>(structValues.size());
+		for (StructValue structVal : structValues) {
+			SimpleRef ref = (SimpleRef) structVal.getRef(getID());
+			if (ref != null) {
+				refValues.add(ref.getValue());
+			}
+		}
+		return refValues;
 	}
 
 	@Override
