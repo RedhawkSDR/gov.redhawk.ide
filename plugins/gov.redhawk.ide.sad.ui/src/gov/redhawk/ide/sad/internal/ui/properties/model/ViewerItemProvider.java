@@ -4,7 +4,11 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.command.UnexecutableCommand;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 
@@ -36,20 +40,44 @@ public abstract class ViewerItemProvider implements ITreeItemContentProvider {
 
 	public abstract EditingDomain getEditingDomain();
 
+	protected abstract Object getPeer();
+	protected abstract Object createPeer(Object value); 
+
 	protected EStructuralFeature getChildFeature(Object object, Object child) {
 		return null;
 	}
 
-	public Command createAddCommand(EditingDomain editingDomain, Object owner, Object value) {
+	public Command createCommand(EditingDomain domain, Class< ? > commandClass, Object value) {
+		Object peer = getPeer();
+		if (peer == null && (commandClass == AddCommand.class || commandClass == SetCommand.class)) {
+			return createParentCommand(domain, createPeer(value));
+		}
+		if (commandClass == AddCommand.class) {
+			return createAddCommand(domain, peer, getChildFeature(peer, value), value);
+		} else if (commandClass == SetCommand.class){
+			return createSetCommand(domain, peer, value);
+		}
+		return UnexecutableCommand.INSTANCE;
+	}
+
+	protected Command createParentCommand(EditingDomain domain, Object value) {
+		ViewerItemProvider parentItemProvider = (ViewerItemProvider) getParent(this);
+		if (parentItemProvider != null) {
+			return parentItemProvider.createCommand(domain, AddCommand.class, value);
+		}
 		return null;
 	}
 
-	public Command createSetCommand(EditingDomain domain, Object owner, Object value) {
-		return null;
+	protected Command createAddCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {
+		return AddCommand.create(domain, owner, feature, value);
 	}
 
-	public Command createRemoveCommand(EditingDomain domain, Object owner, Object value) {
-		return null;
+	protected Command createSetCommand(EditingDomain domain, Object owner, Object value) {
+		return SetCommand.create(domain, owner, getChildFeature(owner, value), value);
+	}
+
+	protected Command createRemoveCommand(EditingDomain domain, Object owner, Object value) {
+		return RemoveCommand.create(domain, value);
 	}
 	
 }

@@ -84,21 +84,16 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 		}
 	}
 
-	protected SimpleRef createRef() {
+	protected SimpleRef createPeer(Object value) {
 		SimpleRef ref = PrfFactory.eINSTANCE.createSimpleRef();
 		ref.setRefID(getID());
+		ref.setValue((String) value);
 		return ref;
 	}
 
 	@Override
-	public Command createSetCommand(EditingDomain editingDomain, Object owner, Object value) {
-		SimpleRef ref = getRef();
-		if (ref == null) {
-			ref = createRef();
-			ref.setValue((String) value);
-			return ((ViewerItemProvider)getParent()).createAddCommand(editingDomain, null, ref);
-		}
-		return SetCommand.create(editingDomain, ref, PrfPackage.Literals.SIMPLE_REF__VALUE, value);
+	protected Command createSetCommand(EditingDomain domain, Object owner, Object value) {
+		return SetCommand.create(domain, owner, PrfPackage.Literals.SIMPLE_REF__VALUE, value);
 	}
 
 	public boolean checkValue(String text) {

@@ -14,12 +14,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
-import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.domain.EditingDomain;
 
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.prf.PrfFactory;
@@ -110,18 +107,6 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 	}
 
 	@Override
-	public Command createAddCommand(EditingDomain editingDomain, Object owner, Object value) {
-		StructRef ref = getRef();
-		EStructuralFeature feature = getChildFeature(owner, value);
-		if (ref == null) {
-			ref = PrfFactory.eINSTANCE.createStructRef();
-			ref.getRefs().add(feature, value);
-			return ((ViewerItemProvider) getParent()).createAddCommand(editingDomain, null, ref);
-		}
-		return AddCommand.create(editingDomain, ref, feature, value);
-	}
-
-	@Override
 	protected EStructuralFeature getChildFeature(Object object, Object child) {
 		switch (((EObject) child).eClass().getClassifierID()) {
 		case PrfPackage.SIMPLE_REF:
@@ -129,6 +114,15 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 		case PrfPackage.SIMPLE_SEQUENCE_REF:
 			return PrfPackage.Literals.STRUCT_REF__SIMPLE_SEQUENCE_REF;
 		}
-		return super.getChildFeature(object, child);
+		return null;
+	}
+
+	@Override
+	protected Object createPeer(Object value) {
+		StructRef ref = PrfFactory.eINSTANCE.createStructRef();
+		ref.setRefID(getID());
+		EStructuralFeature feature = getChildFeature(ref, value);
+		ref.getRefs().add(feature, value);
+		return ref;
 	}
 }

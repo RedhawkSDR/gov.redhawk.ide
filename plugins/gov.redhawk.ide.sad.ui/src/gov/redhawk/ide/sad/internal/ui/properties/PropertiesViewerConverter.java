@@ -34,6 +34,7 @@ import mil.jpeojtrs.sca.util.AnyUtils;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -184,11 +185,13 @@ public class PropertiesViewerConverter implements XViewerConverter {
 			return null;
 		}
 
-		ViewerItemProvider itemProvider = (ViewerItemProvider) selObject;
-		EditingDomain editingDomain = itemProvider.getEditingDomain();
-		Command command = itemProvider.createSetCommand(editingDomain, itemProvider, newValue);
-		if (command != null && command.canExecute()) {
-			editingDomain.getCommandStack().execute(command);
+		if (selObject instanceof ViewerProperty< ? >) {
+			ViewerProperty< ? > property = (ViewerProperty< ? >) selObject;
+			EditingDomain editingDomain = property.getEditingDomain();
+			Command command = property.createCommand(editingDomain, SetCommand.class, newValue);
+			if (command != null && command.canExecute()) {
+				editingDomain.getCommandStack().execute(command);
+			}
 		}
 		return selObject;
 	}

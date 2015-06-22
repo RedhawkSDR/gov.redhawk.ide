@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
@@ -118,22 +119,22 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 		}
 	}
 
-	protected SimpleSequenceRef createRef() {
+	protected SimpleSequenceRef createPeer(Object value) {
 		SimpleSequenceRef ref = PrfFactory.eINSTANCE.createSimpleSequenceRef();
 		ref.setRefID(getID());
 		ref.setValues(PrfFactory.eINSTANCE.createValues());
+		ref.getValues().eSet(PrfPackage.Literals.VALUES__VALUE, value);
 		return ref;
 	}
 
 	@Override
+	protected EStructuralFeature getChildFeature(Object object, Object child) {
+		return PrfPackage.Literals.VALUES__VALUE;
+	}
+
+	@Override
 	public Command createSetCommand(EditingDomain editingDomain, Object owner, Object value) {
-		SimpleSequenceRef ref = getRef();
-		if (ref == null) {
-			ref = createRef();
-			ref.getValues().eSet(PrfPackage.Literals.VALUES__VALUE, value);
-			return ((ViewerItemProvider) getParent()).createAddCommand(editingDomain, null, ref);
-		}
-		return SetCommand.create(editingDomain, ref.getValues(), PrfPackage.Literals.VALUES__VALUE, value);
+		return SetCommand.create(editingDomain, ((SimpleSequenceRef)owner).getValues(), PrfPackage.Literals.VALUES__VALUE, value);
 	}
 
 }

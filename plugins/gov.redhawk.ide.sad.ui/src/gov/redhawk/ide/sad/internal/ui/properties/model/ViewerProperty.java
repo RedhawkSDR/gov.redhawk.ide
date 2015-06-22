@@ -161,4 +161,14 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 	public EditingDomain getEditingDomain() {
 		return ((ViewerItemProvider) getParent()).getEditingDomain();
 	}
+
+	@Override
+	protected Object getPeer() {
+		return getRef();
+	}
+
+	@Override
+	protected Object createPeer(Object value) {
+		return null;
+	}
 }

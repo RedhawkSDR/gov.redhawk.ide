@@ -39,7 +39,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
-import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.DeleteCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -199,16 +198,8 @@ public class ViewerComponent extends ViewerItemProvider {
 	}
 
 	@Override
-	public Command createAddCommand(EditingDomain editingDomain, Object owner, Object value) {
-		SadComponentInstantiation inst = getComponentInstantiation();
-		ComponentProperties properties = inst.getComponentProperties();
-		EStructuralFeature feature = getChildFeature(this, value);
-		if (properties == null) {
-			properties = PartitioningFactory.eINSTANCE.createComponentProperties();
-			properties.getProperties().add(feature, value);
-			return SetCommand.create(editingDomain, getComponentInstantiation(), PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);			
-		}
-		return AddCommand.create(editingDomain, owner, feature, value);
+	public Command createParentCommand(EditingDomain domain, Object value) {
+		return SetCommand.create(domain, getComponentInstantiation(), PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, value);			
 	}
 
 	@Override
@@ -218,8 +209,25 @@ public class ViewerComponent extends ViewerItemProvider {
 			return PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_REF;
 		case PrfPackage.SIMPLE_SEQUENCE_REF:
 			return PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF;
+		case PrfPackage.STRUCT_REF:
+			return PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_REF;
+		case PrfPackage.STRUCT_SEQUENCE_REF:
+			return PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_SEQUENCE_REF;
 		}
 		return super.getChildFeature(object, child);
+	}
+
+	@Override
+	protected Object getPeer() {
+		return getComponentInstantiation().getComponentProperties();
+	}
+
+	@Override
+	protected Object createPeer(Object value) {
+		ComponentProperties properties = PartitioningFactory.eINSTANCE.createComponentProperties();
+		EStructuralFeature feature = getChildFeature(properties, value);
+		properties.getProperties().add(feature, value);
+		return properties;
 	}
 
 }
