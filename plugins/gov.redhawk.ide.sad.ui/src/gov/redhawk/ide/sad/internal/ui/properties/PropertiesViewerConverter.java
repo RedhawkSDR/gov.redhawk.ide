@@ -11,10 +11,9 @@
 package gov.redhawk.ide.sad.internal.ui.properties;
 
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
+import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerItemProvider;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerModelConverter;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSequenceProperty;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSimpleProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceProperty;
 import gov.redhawk.model.sca.ScaFactory;
 import gov.redhawk.model.sca.ScaSimpleProperty;
@@ -34,6 +33,8 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.AnyUtils;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor;
@@ -183,23 +184,11 @@ public class PropertiesViewerConverter implements XViewerConverter {
 			return null;
 		}
 
-		if (selObject instanceof ViewerSimpleProperty) {
-			ViewerSimpleProperty simpleProp = (ViewerSimpleProperty) selObject;
-			if (simpleProp.checkValue(newValue)) {
-				simpleProp.setValue(newValue);
-			}
-		} else if (selObject instanceof ViewerSequenceProperty) {
-			ViewerSequenceProperty seqProp = (ViewerSequenceProperty) selObject;
-			try {
-				String[] newArray = PropertiesViewerConverter.split(newValue);
-				if (seqProp.checkValues(newArray)) {
-					seqProp.setValues(newArray);
-				} else {
-					return null;
-				}
-			} catch (IllegalArgumentException e) {
-				return null;
-			}
+		ViewerItemProvider itemProvider = (ViewerItemProvider) selObject;
+		EditingDomain editingDomain = itemProvider.getEditingDomain();
+		Command command = itemProvider.createSetCommand(editingDomain, itemProvider, newValue);
+		if (command != null && command.canExecute()) {
+			editingDomain.getCommandStack().execute(command);
 		}
 		return selObject;
 	}

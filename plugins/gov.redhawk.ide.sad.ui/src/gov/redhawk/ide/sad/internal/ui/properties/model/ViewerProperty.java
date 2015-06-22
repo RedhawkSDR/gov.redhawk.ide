@@ -19,17 +19,14 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 
 /**
  * 
  */
-public abstract class ViewerProperty< T extends AbstractProperty > implements ITreeItemContentProvider {
+public abstract class ViewerProperty< T extends AbstractProperty > extends ViewerItemProvider {
 
 	protected final T def;
 	private String externalID;
@@ -155,39 +152,13 @@ public abstract class ViewerProperty< T extends AbstractProperty > implements IT
 
 	protected abstract Collection< ? > getKindTypes();
 
-	protected AbstractPropertyRef< ? > createRef() {
-		return null;
-	}
-
-	protected Command createAddCommand(EditingDomain domain, Object owner, Object value) {
-		return null;
-	}
-
-	protected Command createSetCommand(EditingDomain domain, Object owner, Object value) {
-		return null;
-	}
-
-	protected Command createRemoveCommand(EditingDomain domain, Object owner, Object value) {
-		return null;
-	}
-
-	@Override
-	public Collection< ? > getElements(Object object) {
-		return getChildren(object);
-	}
-
-	@Override
-	public Collection< ? > getChildren(Object object) {
-		return Collections.EMPTY_LIST;
-	}
-
-	@Override
-	public boolean hasChildren(Object object) {
-		return !getChildren(object).isEmpty();
-	}
-
 	@Override
 	public Object getParent(Object object) {
 		return parent;
+	}
+
+	@Override
+	public EditingDomain getEditingDomain() {
+		return ((ViewerItemProvider) getParent()).getEditingDomain();
 	}
 }

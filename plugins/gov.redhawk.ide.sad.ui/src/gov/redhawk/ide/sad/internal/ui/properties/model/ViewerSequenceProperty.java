@@ -18,12 +18,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
-import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
@@ -128,17 +125,15 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 		return ref;
 	}
 
-	protected Command createAddCommand(EditingDomain editingDomain, Object owner, Object value) {
-		return AddCommand.create(editingDomain, owner, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF, value);
-	}
-
-	protected Command createSetCommand(EditingDomain editingDomain, Object owner, Object value) {
-		SimpleSequenceRef ref = (SimpleSequenceRef)owner;
+	@Override
+	public Command createSetCommand(EditingDomain editingDomain, Object owner, Object value) {
+		SimpleSequenceRef ref = getRef();
+		if (ref == null) {
+			ref = createRef();
+			ref.getValues().eSet(PrfPackage.Literals.VALUES__VALUE, value);
+			return ((ViewerItemProvider) getParent()).createAddCommand(editingDomain, null, ref);
+		}
 		return SetCommand.create(editingDomain, ref.getValues(), PrfPackage.Literals.VALUES__VALUE, value);
-	}
-
-	protected Command createRemoveCommand(EditingDomain editingDomain, Object owner, Object object) {
-		return RemoveCommand.create(editingDomain, owner, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF, object);
 	}
 
 }

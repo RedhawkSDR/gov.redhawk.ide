@@ -20,15 +20,12 @@ import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
+import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.Properties;
 import mil.jpeojtrs.sca.prf.Simple;
-import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
-import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
 import mil.jpeojtrs.sca.prf.Struct;
-import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.prf.StructSequence;
-import mil.jpeojtrs.sca.prf.StructSequenceRef;
 import mil.jpeojtrs.sca.sad.ExternalProperties;
 import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -38,18 +35,18 @@ import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.common.command.CompoundCommand;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
+import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.DeleteCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 
-public class ViewerComponent implements ITreeItemContentProvider {
+public class ViewerComponent extends ViewerItemProvider {
 	
 	private static final EStructuralFeature [] PATH = new EStructuralFeature [] {
 		SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
@@ -169,17 +166,7 @@ public class ViewerComponent implements ITreeItemContentProvider {
 			}
 			return null;
 		}
-		CompoundCommand command = new CompoundCommand();
-		if (properties == null) {
-			properties = PartitioningFactory.eINSTANCE.createComponentProperties();
-			command.append(SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties));
-		}
-		if (ref == null) {
-			ref = prop.createRef();
-			command.append(prop.createAddCommand(domain, properties, ref));
-		}
-		command.append(prop.createSetCommand(domain, ref, value));
-		return command.unwrap();
+		return prop.createSetCommand(domain, ref, value);
 	}
 
 	protected void setRef(final ViewerProperty< ? > prop, final Object value) {
@@ -202,68 +189,37 @@ public class ViewerComponent implements ITreeItemContentProvider {
 		return null;
 	}
 
-	protected SimpleRef getRef(Simple prop) {
-		if (compInst.getComponentProperties() != null) {
-			for (SimpleRef ref : compInst.getComponentProperties().getSimpleRef()) {
-				if (ref.getRefID().equals(prop.getId())) {
-					return ref;
-				}
-			}
-		}
-		return null;
-	}
-
-	protected SimpleSequenceRef getRef(SimpleSequence prop) {
-		if (compInst.getComponentProperties() != null) {
-			for (SimpleSequenceRef ref : compInst.getComponentProperties().getSimpleSequenceRef()) {
-				if (ref.getRefID().equals(prop.getId())) {
-					return ref;
-				}
-			}
-		}
-		return null;
-	}
-
-	private StructRef getRef(Struct prop) {
-		if (compInst.getComponentProperties() != null) {
-			for (StructRef ref : compInst.getComponentProperties().getStructRef()) {
-				if (ref.getRefID().equals(prop.getId())) {
-					return ref;
-				}
-			}
-		}
-		return null;
-	}
-
-	private StructSequenceRef getRef(StructSequence prop) {
-		if (compInst.getComponentProperties() != null) {
-			for (StructSequenceRef ref : compInst.getComponentProperties().getStructSequenceRef()) {
-				if (ref.getRefID().equals(prop.getId())) {
-					return ref;
-				}
-			}
-		}
-		return null;
-	}
-
 	@Override
-	public Collection< ? > getElements(Object object) {
-		return getChildren(object);
-	}
-
-	@Override
-	public Collection< ? > getChildren(Object object) {
+	public Collection< ? > getChildren(Object element) {
 		return getProperties();
 	}
 
-	@Override
-	public boolean hasChildren(Object object) {
-		return !getChildren(object).isEmpty();
+	public EditingDomain getEditingDomain() {
+		return TransactionUtil.getEditingDomain(sad);
 	}
 
 	@Override
-	public Object getParent(Object object) {
-		return null;
+	public Command createAddCommand(EditingDomain editingDomain, Object owner, Object value) {
+		SadComponentInstantiation inst = getComponentInstantiation();
+		ComponentProperties properties = inst.getComponentProperties();
+		EStructuralFeature feature = getChildFeature(this, value);
+		if (properties == null) {
+			properties = PartitioningFactory.eINSTANCE.createComponentProperties();
+			properties.getProperties().add(feature, value);
+			return SetCommand.create(editingDomain, getComponentInstantiation(), PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);			
+		}
+		return AddCommand.create(editingDomain, owner, feature, value);
+	}
+
+	@Override
+	protected EStructuralFeature getChildFeature(Object object, Object child) {
+		switch (((EObject)child).eClass().getClassifierID()) {
+		case PrfPackage.SIMPLE_REF:
+			return PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_REF;
+		case PrfPackage.SIMPLE_SEQUENCE_REF:
+			return PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_SEQUENCE_REF;
+		}
+		return super.getChildFeature(object, child);
 	}
 
 }

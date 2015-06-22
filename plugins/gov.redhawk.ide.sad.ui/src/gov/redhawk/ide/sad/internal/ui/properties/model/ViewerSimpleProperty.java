@@ -13,13 +13,10 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 import java.util.Collection;
 
 import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
 import gov.redhawk.sca.util.PluginUtil;
-import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.Simple;
@@ -93,16 +90,15 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 		return ref;
 	}
 
-	protected Command createAddCommand(EditingDomain editingDomain, Object owner, Object value) {
-		return AddCommand.create(editingDomain, owner, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_REF, value);
-	}
-
-	protected Command createSetCommand(EditingDomain editingDomain, Object owner, Object value) {
-		return SetCommand.create(editingDomain, owner, PrfPackage.Literals.SIMPLE_REF__VALUE, value);
-	}
-
-	protected Command createRemoveCommand(EditingDomain editingDomain, Object owner, Object object) {
-		return RemoveCommand.create(editingDomain, owner, PartitioningPackage.Literals.COMPONENT_PROPERTIES__SIMPLE_REF, object);
+	@Override
+	public Command createSetCommand(EditingDomain editingDomain, Object owner, Object value) {
+		SimpleRef ref = getRef();
+		if (ref == null) {
+			ref = createRef();
+			ref.setValue((String) value);
+			return ((ViewerItemProvider)getParent()).createAddCommand(editingDomain, null, ref);
+		}
+		return SetCommand.create(editingDomain, ref, PrfPackage.Literals.SIMPLE_REF__VALUE, value);
 	}
 
 	public boolean checkValue(String text) {
