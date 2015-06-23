@@ -163,6 +163,11 @@
                label="Service Properties">
          </propertyTab>
          <propertyTab
+               category="Graphiti"
+               id="gov.redhawk.ide.graphiti.dcd.ui.propertyTab.portDetails"
+               label="Port Details">
+         </propertyTab>
+         <propertyTab
                category="advanced"
                id="property.tab.ScaAdvanced"
                label="Advanced">
@@ -190,6 +195,13 @@
                filter="gov.redhawk.ide.graphiti.dcd.ui.properties.DcdAdvancedFilter"
                id="property.section.ScaAdvanced"
                tab="property.tab.ScaAdvanced">
+         </propertySection>
+         <propertySection
+               afterSection="001_portDetailsPropertySection"
+               class="gov.redhawk.sca.ui.properties.PortDetailsPropertySection"
+               filter="gov.redhawk.ide.graphiti.ui.properties.PortFilter"
+               id="gov.redhawk.ide.graphiti.dcd.ui.propertySection.PortDetails"
+               tab="gov.redhawk.ide.graphiti.dcd.ui.propertyTab.portDetails">
          </propertySection>
       </propertySections>
    </extension>
