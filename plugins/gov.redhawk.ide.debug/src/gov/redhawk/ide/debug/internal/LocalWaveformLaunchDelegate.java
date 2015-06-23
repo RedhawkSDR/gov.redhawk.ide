@@ -99,7 +99,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 			ScaLaunchConfigurationUtil.loadProperties(configuration, assemblyController);
 			for (final ScaAbstractProperty< ? > prop : assemblyController.getProperties()) {
 				if (!prop.isDefaultValue() && prop.getDefinition() != null
-					&& prop.getDefinition().isKind(PropertyConfigurationType.CONFIGURE, PropertyConfigurationType.EXECPARAM)) {
+					&& prop.getDefinition().isKind(PropertyConfigurationType.PROPERTY, PropertyConfigurationType.CONFIGURE, PropertyConfigurationType.EXECPARAM)) {
 					assemblyConfig.add(prop.getProperty());
 				}
 			}
