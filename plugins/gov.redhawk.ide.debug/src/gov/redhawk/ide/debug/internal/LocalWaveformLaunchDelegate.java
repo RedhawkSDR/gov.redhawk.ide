@@ -67,8 +67,6 @@ import CF.DataType;
  */
 public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate implements ILaunchConfigurationDelegate2 {
 
-	public static final String ID = "gov.redhawk.ide.debug.launchLocalWaveform";
-
 	private static final EStructuralFeature[] SAD_TO_ASSEMBLY_CONTROLLER_SPD = new EStructuralFeature[] {
 		SadPackage.Literals.SOFTWARE_ASSEMBLY__ASSEMBLY_CONTROLLER, SadPackage.Literals.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF,
 		PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,

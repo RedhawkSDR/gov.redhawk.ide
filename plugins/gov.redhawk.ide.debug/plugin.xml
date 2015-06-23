@@ -51,7 +51,7 @@
        </launchConfigurationType>
       <launchConfigurationType
             delegate="gov.redhawk.ide.debug.internal.LocalWaveformLaunchDelegate"
-            id="gov.redhawk.ide.debug.launchLocalWaveform"
+            id="gov.redhawk.ide.debug.launchConfigurationType.localWaveform"
             name="%launchWaveformConfigurationType.name">
       </launchConfigurationType>
     </extension>
@@ -149,10 +149,10 @@
          point="org.eclipse.debug.core.launchDelegates">
       <launchDelegate
             delegate="gov.redhawk.ide.debug.internal.LocalWaveformLaunchDelegate"
-            id="gov.redhawk.ide.debug.launchLocalWaveform"
+            id="gov.redhawk.ide.debug.launchDelegate.localWaveform"
             modes="run"
             name="%launchWaveformDelegate.name"
-            type="gov.redhawk.ide.debug.launchLocalWaveform">
+            type="gov.redhawk.ide.debug.launchConfigurationType.localWaveform">
       </launchDelegate>
    </extension>
 </plugin>

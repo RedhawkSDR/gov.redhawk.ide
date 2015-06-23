@@ -131,7 +131,7 @@ public final class LaunchUtil {
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		final String launcherPrefix = (softwareAssembly.getName() == null) ? softwareAssembly.eResource().getURI().lastSegment() : softwareAssembly.getName();
 		final String launchConfigName = launchManager.generateLaunchConfigurationName(launcherPrefix);
-		final ILaunchConfigurationType configType = launchManager.getLaunchConfigurationType(ScaDebugLaunchConstants.ID_LOCAL_WAVEFORM_LAUNCH);
+		final ILaunchConfigurationType configType = launchManager.getLaunchConfigurationType(ScaDebugLaunchConstants.LAUNCH_CONFIG_TYPE_LOCAL_WAVEFORM);
 		final ILaunchConfigurationWorkingCopy retVal = configType.newInstance(null, launchConfigName);
 		ScaLaunchConfigurationUtil.setProfileURI(retVal, EcoreUtil.getURI(softwareAssembly));
 

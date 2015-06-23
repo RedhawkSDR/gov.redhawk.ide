@@ -571,7 +571,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            configTypeID="gov.redhawk.ide.debug.launchLocalWaveform"
+            configTypeID="gov.redhawk.ide.debug.launchConfigurationType.localWaveform"
             icon="icons/obj16/RedHawk_Logo16x.gif"
             id="gov.redhawk.ide.debug.ui.launchLocalWaveform">
       </launchConfigurationTypeImage>
@@ -586,7 +586,7 @@
       <launchConfigurationTabGroup
             class="gov.redhawk.ide.debug.internal.ui.LocalWaveformLaunchConfigurationTabGroup"
             id="gov.redhawk.ide.debug.ui.tabs.waveform"
-            type="gov.redhawk.ide.debug.launchLocalWaveform">
+            type="gov.redhawk.ide.debug.launchConfigurationType.localWaveform">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             class="gov.redhawk.ide.debug.internal.ui.LocalComponentProgramTabGroup"
