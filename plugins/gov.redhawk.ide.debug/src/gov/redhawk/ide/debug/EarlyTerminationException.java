@@ -19,6 +19,9 @@ import org.eclipse.debug.core.model.IProcess;
  * 
  */
 public class EarlyTerminationException extends Exception {
+
+	private static final long serialVersionUID = -924351171912651187L;
+
 	public EarlyTerminationException(String msg, ILaunch launch) {
 		super(msg + " " + getReturnMsg(launch));
 	}
