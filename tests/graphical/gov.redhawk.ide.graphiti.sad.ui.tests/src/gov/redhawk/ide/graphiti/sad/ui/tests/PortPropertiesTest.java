@@ -10,11 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.tests;
 
-import gov.redhawk.ide.swtbot.MenuUtils;
-import gov.redhawk.ide.swtbot.WaveformUtils;
-import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
-import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
-
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
@@ -27,6 +22,11 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Assert;
 import org.junit.Test;
+
+import gov.redhawk.ide.swtbot.MenuUtils;
+import gov.redhawk.ide.swtbot.WaveformUtils;
+import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
+import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 
 @SuppressWarnings("restriction")
 public class PortPropertiesTest extends AbstractGraphitiTest {
@@ -46,12 +46,15 @@ public class PortPropertiesTest extends AbstractGraphitiTest {
 		DiagramTestUtils.addFromPaletteToDiagram(editor, onlyComponent, 0, 0);
 		SWTBotGefEditPart part;
 		SWTBotTree tree;
+		String description;
 		
 		part = getAnchorPart(DiagramTestUtils.getDiagramProvidesPort(editor, onlyComponent));
 		MenuUtils.showView(gefBot, "org.eclipse.ui.views.PropertySheet");
 		editor.select(part);
 		editor.click(part);
-		selectPropertiesTab("Provides Interface");
+		selectPropertiesTab("Port Details");
+		description = gefBot.viewByTitle("Properties").bot().textWithLabel("Description:").getText(); // IDE-1172
+		Assert.assertEquals("provides Port description", "Double input port for data before hard limit is applied. ", description);
 		tree = gefBot.viewByTitle("Properties").bot().tree();
 		tree.expandNode("dataDouble");
 		Assert.assertTrue("Properties view tree should have multiple nodes", tree.visibleRowCount() > 1);
@@ -60,7 +63,9 @@ public class PortPropertiesTest extends AbstractGraphitiTest {
 		MenuUtils.showView(gefBot, "org.eclipse.ui.views.PropertySheet");
 		editor.select(part);
 		editor.click(part);
-		selectPropertiesTab("Uses Interface");
+		selectPropertiesTab("Port Details");
+		description = gefBot.viewByTitle("Properties").bot().textWithLabel("Description:").getText(); // IDE-1172
+		Assert.assertEquals("uses Port description", "Double output port for data after hard limit is applied. ", description);
 		tree = gefBot.viewByTitle("Properties").bot().tree();
 		tree.expandNode("dataDouble");
 		Assert.assertTrue("Properties view tree should have multiple nodes", tree.visibleRowCount() > 1);

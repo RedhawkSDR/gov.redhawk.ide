@@ -22,6 +22,7 @@ program.  If not, see http://www.gnu.org/licenses/.
   <author>
     <name>null</name>
   </author>
+  <description>Threshold data so that all data is between the upper and lower limit as specified by the properties.</description>
   <propertyfile type="PRF">
     <localfile name="HardLimit.prf.xml"/>
   </propertyfile>

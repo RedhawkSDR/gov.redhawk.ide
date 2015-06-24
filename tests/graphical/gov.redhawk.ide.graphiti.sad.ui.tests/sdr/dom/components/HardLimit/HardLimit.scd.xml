@@ -29,9 +29,11 @@ program.  If not, see http://www.gnu.org/licenses/.
     <supportsinterface repid="IDL:CF/TestableObject:1.0" supportsname="TestableObject"/>
     <ports>
       <provides repid="IDL:BULKIO/dataDouble:1.0" providesname="dataDouble_in">
+        <description>Double input port for data before hard limit is applied. </description>
         <porttype type="data"/>
       </provides>
       <uses repid="IDL:BULKIO/dataDouble:1.0" usesname="dataDouble_out">
+        <description>Double output port for data after hard limit is applied. </description>
         <porttype type="data"/>
       </uses>
     </ports>
