@@ -25,6 +25,7 @@ import gov.redhawk.model.sca.impl.ScaFactoryImpl;
 import gov.redhawk.model.sca.util.StartJob;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
+import gov.redhawk.sca.util.SubMonitor;
 
 import java.beans.XMLDecoder;
 import java.io.ByteArrayInputStream;
@@ -75,9 +76,13 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 
 	@Override
 	public void launch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
+		final int WORK_GET_LOCAL_SCA = 1, WORK_FETCH_PROPS = 1;
+		final int WORK_CREATE_WAVEFORM = 10;
+		SubMonitor progress = SubMonitor.convert(monitor, WORK_GET_LOCAL_SCA + WORK_FETCH_PROPS + WORK_CREATE_WAVEFORM);
+
 		final boolean start = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
 
-		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(monitor);
+		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(progress.newChild(WORK_GET_LOCAL_SCA));
 		final Map<String, String> implMap = SadLauncherUtil.getImplementationMap(configuration);
 
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
@@ -93,7 +98,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 			// Load properties from the launch configuration that belong to the assembly controller
 			final ScaComponent assemblyController = ScaFactory.eINSTANCE.createScaComponent();
 			assemblyController.setProfileObj(assemblySoftPkg);
-			for (final ScaAbstractProperty< ? > prop : assemblyController.fetchProperties(null)) {
+			for (final ScaAbstractProperty< ? > prop : assemblyController.fetchProperties(progress.newChild(WORK_FETCH_PROPS))) {
 				prop.setIgnoreRemoteSet(true);
 			}
 			ScaLaunchConfigurationUtil.loadProperties(configuration, assemblyController);
@@ -105,6 +110,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 			}
 		}
 
+		// Collect external properties
 		final Map<String, AbstractProperty> extProps = new HashMap<String, AbstractProperty>();
 		if (sad.getExternalProperties() != null) {
 			for (ExternalProperty extProp : sad.getExternalProperties().getProperties()) {
@@ -156,7 +162,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 			assemblyExec.toArray(new DataType[assemblyExec.size()]), assemblyConfig.toArray(new DataType[assemblyConfig.size()]));
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("DDD_HHmmssSSS");
 		try {
-			final LocalScaWaveform app = factory.create(sad, name + "_" + dateFormat.format(new Date()), monitor);
+			final LocalScaWaveform app = factory.create(sad, name + "_" + dateFormat.format(new Date()), progress.newChild(WORK_CREATE_WAVEFORM));
 			if (start) {
 				final StartJob job = new StartJob(app.getName(), app);
 				job.schedule();
