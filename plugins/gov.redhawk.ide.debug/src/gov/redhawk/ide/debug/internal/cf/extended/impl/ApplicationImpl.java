@@ -1339,7 +1339,7 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		if (usageName == null && compId != null) {
 			usageName = instID;
 		}
-
+		config.setAttribute(LaunchVariables.WAVEFORM_NAME, this.name);
 		if (usageName != null) {
 			this.streams.getOutStream().println("\tLaunching with name: " + usageName);
 			config.setAttribute(LaunchVariables.NAME_BINDING, usageName);
