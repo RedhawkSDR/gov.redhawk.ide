@@ -17,18 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.ComponentProperties;
-import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
-import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.PrfPackage;
-import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
-import mil.jpeojtrs.sca.prf.Struct;
 import mil.jpeojtrs.sca.prf.StructRef;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
-import mil.jpeojtrs.sca.prf.StructValue;
 import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.ExternalProperties;
 import mil.jpeojtrs.sca.sad.ExternalProperty;
@@ -51,7 +46,6 @@ import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
-import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.swt.widgets.Display;
@@ -216,16 +210,7 @@ public class ViewerModelConverter {
 
 		@Override
 		public void valueChanged(ViewerProperty< ? > source) {
-			if (handlingchange) {
-				return;
-			}
-			handlingchange = true;
-			try {
-				handleViewerPropValueChanged(source);
-			} finally {
-				handlingchange = false;
-			}
-			viewer.refresh();
+			viewer.refresh(source);
 		}
 
 		@Override
@@ -290,157 +275,6 @@ public class ViewerModelConverter {
 
 	public PropertiesViewer getViewer() {
 		return viewer;
-	}
-
-	private void handleViewerPropValueChanged(final ViewerProperty< ? > source) {
-		Command command = null;
-		TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(sad);
-		command = new RecordingCommand(domain) {
-
-			@Override
-			protected void doExecute() {
-				doHandlePropertyChange(source);
-			}
-		};
-
-		if (command != null) {
-			boolean canExecute = command.canExecute();
-			domain.getCommandStack().execute(command);
-		}
-	}
-
-	private void doHandlePropertyChange(final ViewerProperty< ? > source) {
-		if (source instanceof ViewerSimpleProperty) {
-			ViewerSimpleProperty simpleProp = (ViewerSimpleProperty) source;
-			String newValue = simpleProp.getValue();
-			Object parent = source.getParent();
-			if (parent instanceof ViewerComponent) {
-			} else if (parent instanceof ViewerStructProperty) {
-				ViewerStructProperty structProp = (ViewerStructProperty) simpleProp.getParent();
-				if (structProp.getParent() instanceof ViewerComponent) {
-					ViewerComponent comp = (ViewerComponent) structProp.getParent();
-					SadComponentInstantiation inst = comp.getComponentInstantiation();
-					StructRef structRef = (StructRef) getRef(inst, structProp);
-					ComponentProperties properties = inst.getComponentProperties();
-					if (structRef != null) {
-						SimpleRef ref = null;
-						for (SimpleRef r : structRef.getSimpleRef()) {
-							if (PluginUtil.equals(r.getRefID(), simpleProp.getID())) {
-								ref = r;
-								break;
-							}
-						}
-						if (ref == null) {
-							ref = createRef(simpleProp.getDefinition(), newValue);
-							structRef.getSimpleRef().add(ref);
-							//	command = AddCommand.create(domain, structRef, PrfPackage.Literals.STRUCT_REF__SIMPLE_REF, ref);
-						} else {
-							if (newValue == null) {
-								if (structRef.getSimpleRef().size() == 1) {
-									if (properties.getProperties().size() == 1) {
-										inst.setComponentProperties(null);
-										//	command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, null);
-									} else {
-										properties.getStructRef().remove(structRef);
-										//	command = RemoveCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_REF, structRef);
-									}
-								} else {
-									structRef.getSimpleRef().remove(ref);
-									// command = RemoveCommand.create(domain, structRef, PrfPackage.Literals.STRUCT_REF__SIMPLE_REF, ref);
-								}
-							} else {
-								ref.setValue(newValue);
-								//	command = SetCommand.create(domain, ref, PrfPackage.Literals.SIMPLE_REF__VALUE, newValue);
-							}
-						}
-					} else {
-						structRef = createRef(structProp.getDefinition());
-						structRef.getSimpleRef().add(createRef(simpleProp.getDefinition(), newValue));
-						if (properties == null) {
-							properties = PartitioningFactory.eINSTANCE.createComponentProperties();
-							properties.getStructRef().add(structRef);
-							inst.setComponentProperties(properties);
-							//	command = SetCommand.create(domain, inst, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
-						} else {
-							properties.getStructRef().add(structRef);
-							//	command = AddCommand.create(domain, properties, PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_REF, structRef);
-						}
-					}
-				} else {
-					throw new UnsupportedOperationException();
-				}
-			} else {
-				throw new UnsupportedOperationException();
-			}
-		} else if (source instanceof ViewerSequenceProperty) {
-			Object parent = source.getParent();
-			if (parent instanceof ViewerComponent) {
-			} else {
-				throw new UnsupportedOperationException();
-			}
-		} else if (source instanceof ViewerStructSequenceProperty) {
-			final ViewerStructSequenceProperty structSeq = (ViewerStructSequenceProperty) source;
-			Object parent = source.getParent();
-			if (parent instanceof ViewerComponent) {
-				final ViewerComponent comp = (ViewerComponent) parent;
-				final SadComponentInstantiation inst = comp.getComponentInstantiation();
-				final ComponentProperties oldProperties = inst.getComponentProperties();
-				final StructSequenceRef oldRef = (StructSequenceRef) getRef(inst, structSeq);
-				if (oldRef != null) {
-					oldProperties.getStructSequenceRef().remove(oldRef);
-				}
-				if (!structSeq.getSimples().isEmpty() && structSeq.getSimples().get(0).getValues() != null) {
-					ComponentProperties properties = oldProperties;
-					if (properties == null) {
-						properties = PartitioningFactory.eINSTANCE.createComponentProperties();
-						inst.setComponentProperties(properties);
-					}
-					StructSequenceRef newRef = createRef(structSeq);
-					properties.getStructSequenceRef().add(newRef);
-				} else if (oldProperties != null && oldProperties.getProperties().isEmpty()) {
-					inst.setComponentProperties(null);
-				}
-			} else {
-				throw new UnsupportedOperationException();
-			}
-		} else {
-			throw new UnsupportedOperationException();
-		}
-	}
-
-	private StructSequenceRef createRef(ViewerStructSequenceProperty structSeq) {
-		if (structSeq == null) {
-			return null;
-		}
-		StructSequenceRef retVal = PrfFactory.eINSTANCE.createStructSequenceRef();
-		retVal.setRefID(structSeq.getID());
-		int numStructs = structSeq.getSimples().get(0).getValues().size();
-		for (int i = 0; i < numStructs; i++) {
-			StructValue value = PrfFactory.eINSTANCE.createStructValue();
-			for (ViewerStructSequenceSimpleProperty simple : structSeq.getSimples()) {
-				if (simple.getValues() != null && !simple.getValues().get(i).equals(simple.def.getValue())) {
-					SimpleRef simpleRef = PrfFactory.eINSTANCE.createSimpleRef();
-					simpleRef.setRefID(simple.getID());
-					simpleRef.setValue(simple.getValues().get(i));
-					value.getSimpleRef().add(simpleRef);
-				}
-			}
-			retVal.getStructValue().add(value);
-		}
-		return retVal;
-	}
-
-	private StructRef createRef(Struct definition) {
-		StructRef retVal = PrfFactory.eINSTANCE.createStructRef();
-		retVal.setRefID(definition.getId());
-		return retVal;
-	}
-
-	private SimpleRef createRef(Simple def, String newValue) {
-		SimpleRef retVal = PrfFactory.eINSTANCE.createSimpleRef();
-		retVal.setRefID(def.getId());
-		retVal.setValue(newValue);
-		return retVal;
 	}
 
 	private void handleExternalPropIDChanged(Notification notification) {
