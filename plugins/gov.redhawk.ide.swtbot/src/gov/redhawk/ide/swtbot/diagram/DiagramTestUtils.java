@@ -744,7 +744,8 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	/**
 	 * Opens the given tab with the given name within the waveform editor.
 	 * @param editor - the editor within which to open the tab
-	 * @param tabName - name of the tab to be opened
+	 * @param tabName - name of the tab to be opened; several helpful constants are defined including
+	 * {@link #OVERVIEW_TAB}, {@link #PROPERTIES_TAB}, {@link #IMPLEMENTATIONS} and {@link #DIAGRAM_TAB}
 	 */
 	public static void openTabInEditor(SWTBotEditor editor, String tabName) {
 		editor.bot().cTabItem(tabName).activate();
