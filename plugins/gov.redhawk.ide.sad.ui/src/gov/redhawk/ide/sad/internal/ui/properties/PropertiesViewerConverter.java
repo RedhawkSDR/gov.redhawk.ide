@@ -85,18 +85,7 @@ public class PropertiesViewerConverter implements XViewerConverter {
 						if (ref != null) {
 							property.fromAny(ref.toAny());
 						}
-						for (int i = 0; i < property.getStructs().size(); i++) {
-							ScaStructProperty struct = property.getStructs().get(i);
-							for (int j = 0; j < struct.getSimples().size(); j++) {
-								ScaSimpleProperty simple = struct.getSimples().get(j);
-								String value = viewerProp.getSimples().get(j).getValues().get(i);
-								if (simple.getDefinition() != null) {
-									Object objValue = AnyUtils.convertString(value, simple.getDefinition().getType().getLiteral(),
-										simple.getDefinition().isComplex());
-									simple.setValue(objValue);
-								}
-							}
-						}
+						// TODO: Get values from SAD file
 						SequencePropertyValueWizard wizard = new SequencePropertyValueWizard(property);
 						WizardDialog dialog = new WizardDialog(button.getShell(), wizard);
 						if (dialog.open() == Window.OK) {

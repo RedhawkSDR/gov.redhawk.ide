@@ -16,15 +16,12 @@ import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
-import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 
 public class ViewerSimpleProperty extends ViewerProperty<Simple> {
-
-	private String value;
 
 	public ViewerSimpleProperty(Simple def, Object parent) {
 		super(def, parent);
@@ -52,36 +49,6 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 	@Override
 	protected Collection< ? > getKindTypes() {
 		return getDefinition().getKind();
-	}
-
-	@Override
-	public void setToDefault() {
-		setValue((String) null);
-	}
-
-	public void setValue(SimpleRef value) {
-		if (value != null) {
-			setValue(value.getValue());
-		} else {
-			setToDefault();
-		}
-	}
-
-	public void setValue(String newValue) {
-		if (newValue != null) {
-			newValue = newValue.trim();
-			if (newValue.isEmpty()) {
-				newValue = null;
-			}
-		}
-		String oldValue = this.value;
-		this.value = newValue;
-		if (!PluginUtil.equals(oldValue, value)) {
-			if (getParent() instanceof ViewerComponent) {
-				((ViewerComponent) getParent()).setRef(this, newValue);
-			}
-			firePropertyChangeEvent();
-		}
 	}
 
 	@Override

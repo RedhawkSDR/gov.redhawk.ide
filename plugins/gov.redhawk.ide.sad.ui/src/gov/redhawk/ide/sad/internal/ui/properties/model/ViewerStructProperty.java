@@ -67,10 +67,6 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 	}
 
 	@Override
-	public void setToDefault() {
-	}
-
-	@Override
 	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
 		super.addPropertyChangeListener(listener);
 		for (ViewerProperty< ? > p : fields) {

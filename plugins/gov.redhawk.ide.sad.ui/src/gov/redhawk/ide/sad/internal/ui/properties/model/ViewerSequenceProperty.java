@@ -10,12 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
-import gov.redhawk.sca.util.PluginUtil;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -33,15 +29,8 @@ import mil.jpeojtrs.sca.prf.Values;
  */
 public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 
-	private List<String> values = null;
-
 	public ViewerSequenceProperty(SimpleSequence def, Object parent) {
 		super(def, parent);
-	}
-
-	@Override
-	public void setToDefault() {
-		setValues((String[]) null);
 	}
 
 	@Override
@@ -72,26 +61,6 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 		return getDefinition().getKind();
 	}
 
-	public List<String> getValues() {
-		return values;
-	}
-
-	public void setValues(String... newValues) {
-		List<String> oldValue = this.values;
-		if (newValues == null || newValues.length == 0) {
-			this.values = null;
-		} else {
-			this.values = new ArrayList<String>(Arrays.asList(newValues));
-		}
-
-		if (!PluginUtil.equals(oldValue, this.values)) {
-			if (getParent() instanceof ViewerComponent) {
-				((ViewerComponent) getParent()).setRef(this, this.values);
-			}
-			firePropertyChangeEvent();
-		}
-	}
-
 	public boolean checkValues(String... newValues) {
 		if (newValues != null) {
 			for (String s : newValues) {
@@ -101,22 +70,6 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 			}
 		}
 		return true;
-	}
-
-	private void setValues(Values newValue) {
-		if (newValue != null) {
-			setValues(newValue.getValue().toArray(new String[newValue.getValue().size()]));
-		} else {
-			setToDefault();
-		}
-	}
-
-	public void setValues(SimpleSequenceRef propRef) {
-		if (propRef != null) {
-			setValues(propRef.getValues());
-		} else {
-			setToDefault();
-		}
 	}
 
 	@Override

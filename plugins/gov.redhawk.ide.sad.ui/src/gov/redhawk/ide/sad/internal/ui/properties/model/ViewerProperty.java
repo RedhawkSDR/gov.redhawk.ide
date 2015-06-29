@@ -82,7 +82,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 		return this.def;
 	}
 
-	public abstract void setToDefault();
+	//public abstract void setToDefault();
 
 	public SadComponentInstantiation getComponentInstantiation() {
 		Object element = getParent();

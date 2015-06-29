@@ -11,7 +11,6 @@
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import mil.jpeojtrs.sca.prf.Simple;
@@ -23,30 +22,10 @@ import mil.jpeojtrs.sca.prf.StructValue;
  */
 public class ViewerStructSequenceSimpleProperty extends ViewerStructSequenceNestedProperty<Simple> {
 
-	private List<String> values = Collections.emptyList();
-
 	public ViewerStructSequenceSimpleProperty(Simple def, ViewerStructSequenceProperty parent) {
 		super(def, parent);
 	}
 	
-	@Override
-	protected SimpleRef getValueRef() {
-		return (SimpleRef) super.getValueRef();
-	}
-
-	public List<String> getValues() {
-		return values;
-	}
-	
-	public void setValues(List<String> values) {
-		this.values = values;
-	}
-
-	@Override
-	public void setToDefault() {
-		this.values = null;
-	}
-
 	protected List<String> getRefValues(List<StructValue> structValues) {
 		List<String> refValues = new ArrayList<String>(structValues.size());
 		for (StructValue structVal : structValues) {

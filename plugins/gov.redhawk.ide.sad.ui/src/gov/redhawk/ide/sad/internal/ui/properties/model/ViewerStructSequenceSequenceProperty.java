@@ -16,45 +16,16 @@ import java.util.List;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
 import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
 import mil.jpeojtrs.sca.prf.StructValue;
-import mil.jpeojtrs.sca.prf.Values;
 
 /**
  * 
  */
 public class ViewerStructSequenceSequenceProperty extends ViewerStructSequenceNestedProperty<SimpleSequence> {
 
-	private List<List<String>> values = null;
-
 	public ViewerStructSequenceSequenceProperty(SimpleSequence def, ViewerStructSequenceProperty parent) {
 		super(def, parent);
 	}
 
-	@Override
-	protected SimpleSequenceRef getValueRef() {
-		return (SimpleSequenceRef) super.getValueRef();
-	}
-
-	@Override
-	public void setToDefault() {
-		values = null;
-	}
-
-	public void setValues(List<List<String>> values) {
-		this.values = values;
-	}
-	
-	public List<List<String>> getValues() {
-		return values;
-	}
-
-	public void setValues(ArrayList<Values> newValues) {
-		List<List<String>> newStrings = new ArrayList<List<String>>();
-		for (Values v: newValues) {
-			newStrings.add(v.getValue());
-		}
-		setValues(newStrings);
-	}
-	
 	protected List<List<String>> getRefValues(List<StructValue> structValues) {
 		List<List<String>> refValues = new ArrayList<List<String>>(structValues.size());
 		for (StructValue structVal : structValues) {

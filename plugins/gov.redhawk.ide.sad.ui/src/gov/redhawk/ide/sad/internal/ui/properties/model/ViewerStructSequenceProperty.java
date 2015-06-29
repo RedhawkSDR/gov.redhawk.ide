@@ -18,13 +18,9 @@ import org.eclipse.emf.ecore.util.FeatureMap;
 
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.Simple;
-import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
-import mil.jpeojtrs.sca.prf.SimpleSequenceRef;
 import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
-import mil.jpeojtrs.sca.prf.StructValue;
-import mil.jpeojtrs.sca.prf.Values;
 
 /**
  * 
@@ -43,7 +39,6 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 				fieldsArray.add(new ViewerStructSequenceSequenceProperty(sequence, this));
 			}
 		}
-		setToDefault();
 	}
 
 	@Override
@@ -67,76 +62,8 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 		}
 	}
 
-	@Override
-	public void setToDefault() {
-		for (ViewerProperty< ? > v : fieldsArray) {
-			v.setToDefault();
-		}
-	}
-
-	public List<ViewerStructSequenceSimpleProperty> getSimples() {
-		List<ViewerStructSequenceSimpleProperty> simples = new ArrayList<ViewerStructSequenceSimpleProperty>();
-		for (ViewerProperty< ? > property : fieldsArray) {
-			if (property instanceof ViewerStructSequenceSimpleProperty) {
-				simples.add((ViewerStructSequenceSimpleProperty) property);
-			}
-		}
-		return simples;
-	}
-
-	public List<ViewerStructSequenceSequenceProperty> getSequences() {
-		List<ViewerStructSequenceSequenceProperty> sequences = new ArrayList<ViewerStructSequenceSequenceProperty>();
-		for (ViewerProperty< ? > property : fieldsArray) {
-			if (property instanceof ViewerStructSequenceSequenceProperty) {
-				sequences.add((ViewerStructSequenceSequenceProperty) property);
-			}
-		}
-		return sequences;
-	}
-
 	public void setValue(StructSequenceRef value) {
-		if (value == null) {
-			setToDefault();
-			firePropertyChangeEvent();
-			return;
-		}
-
-		setToDefault();
-
-		List<ViewerStructSequenceSimpleProperty> simplesArray = getSimples();
-		for (ViewerStructSequenceSimpleProperty prop : simplesArray) {
-			ArrayList<String> newValues = new ArrayList<String>(value.getStructValue().size());
-			String simpleValue = prop.def.getValue();
-			for (int i = 0; i < value.getStructValue().size(); i++) {
-				newValues.add(simpleValue);
-			}
-			prop.setValues(newValues);
-		}
-		List<ViewerStructSequenceSequenceProperty> sequencesArray = getSequences();
-		for (ViewerStructSequenceSequenceProperty prop : sequencesArray) {
-			ArrayList<Values> newValues = new ArrayList<Values>(value.getStructValue().size());
-			Values sequenceValue = ((SimpleSequence)prop.def).getValues();
-			for (int i = 0; i < value.getStructValue().size(); i++) {
-				newValues.add(sequenceValue);
-			}
-			prop.setValues(newValues);
-		}
-
-		for (int i = 0; i < value.getStructValue().size(); i++) {
-			StructValue struct = value.getStructValue().get(i);
-			for (int j = 0; j < struct.getSimpleRef().size(); j++) {
-				SimpleRef simple = struct.getSimpleRef().get(j);
-				simplesArray.get(j).getValues().set(i, simple.getValue());
-			}
-		}
-		for (int i = 0; i < value.getStructValue().size(); i++) {
-			StructValue struct = value.getStructValue().get(i);
-			for (int j = 0; j < struct.getSimpleSequenceRef().size(); j++) {
-				SimpleSequenceRef sequence = struct.getSimpleSequenceRef().get(j);
-				sequencesArray.get(j).getValues().set(i, sequence.getValues().getValue());
-			}
-		}
-
+		// TODO: Update values in SAD
 		firePropertyChangeEvent();
 	}
 
