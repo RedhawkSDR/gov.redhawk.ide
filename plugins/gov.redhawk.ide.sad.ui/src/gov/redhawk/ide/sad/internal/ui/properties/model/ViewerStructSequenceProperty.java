@@ -47,8 +47,8 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 	}
 
 	@Override
-	protected StructSequenceRef getRef() {
-		return (StructSequenceRef) super.getRef();
+	protected StructSequenceRef getValueRef() {
+		return (StructSequenceRef) super.getValueRef();
 	}
 
 	@Override

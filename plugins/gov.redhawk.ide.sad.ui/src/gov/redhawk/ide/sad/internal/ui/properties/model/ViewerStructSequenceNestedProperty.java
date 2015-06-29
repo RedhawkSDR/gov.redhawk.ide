@@ -31,7 +31,7 @@ public abstract class ViewerStructSequenceNestedProperty<E extends AbstractPrope
 
 	@Override
 	public Object getValue() {
-		StructSequenceRef structSequenceRef = getParent().getRef();
+		StructSequenceRef structSequenceRef = getParent().getValueRef();
 		if (structSequenceRef != null) {
 			List< ? > values = getRefValues(structSequenceRef.getStructValue());
 			return Arrays.toString(values.toArray());

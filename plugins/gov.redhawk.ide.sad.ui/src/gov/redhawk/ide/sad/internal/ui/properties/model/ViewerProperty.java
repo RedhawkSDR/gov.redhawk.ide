@@ -69,11 +69,11 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 		return parent;
 	}
 
-	protected AbstractPropertyRef< ? > getRef() {
+	protected AbstractPropertyRef< ? > getValueRef() {
 		if (parent instanceof ViewerComponent) {
-			return ((ViewerComponent) parent).getRef(this.getID());
+			return ((ViewerComponent) parent).getChildRef(this.getID());
 		} else if (parent instanceof ViewerStructProperty) {
-			return ((ViewerStructProperty) parent).getRef(this.getID());
+			return ((ViewerStructProperty) parent).getChildRef(this.getID());
 		}
 		return null;
 	}
@@ -173,16 +173,16 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 	}
 
 	@Override
-	protected Object getPeer(Object feature) {
+	protected Object getContainer(Object feature) {
 		final String stringFeature = (String)feature;
 		if (stringFeature.equals("value")) {
-			return getRef();
+			return getValueRef();
 		}
 		return null;
 	}
 
 	@Override
-	protected Object createPeer(Object feature, Object value) {
+	protected Object createContainer(Object feature, Object value) {
 		return null;
 	}
 }

@@ -153,7 +153,7 @@ public class ViewerComponent extends ViewerItemProvider {
 	}
 
 	protected Command setRefValue(EditingDomain domain, ViewerProperty<?> prop, Object value) {
-		AbstractPropertyRef< ? > ref = getRef(prop.getID());
+		AbstractPropertyRef< ? > ref = getChildRef(prop.getID());
 		SadComponentInstantiation inst = getComponentInstantiation();
 		ComponentProperties properties = inst.getComponentProperties();
 		if (value == null) {
@@ -177,7 +177,7 @@ public class ViewerComponent extends ViewerItemProvider {
 		}
 	}
 
-	protected AbstractPropertyRef< ? > getRef(final String refId) {
+	protected AbstractPropertyRef< ? > getChildRef(final String refId) {
 		if (compInst.getComponentProperties() != null) {
 			for (FeatureMap.Entry entry : compInst.getComponentProperties().getProperties()) {
 				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
@@ -223,7 +223,7 @@ public class ViewerComponent extends ViewerItemProvider {
 	}
 
 	@Override
-	protected Object getPeer(Object feature) {
+	protected Object getContainer(Object feature) {
 		final String stringFeature = (String)feature;
 		if (stringFeature.equals("value")) {
 			return getComponentInstantiation().getComponentProperties();
@@ -232,7 +232,7 @@ public class ViewerComponent extends ViewerItemProvider {
 	}
 
 	@Override
-	protected Object createPeer(Object feature, Object value) {
+	protected Object createContainer(Object feature, Object value) {
 		final String stringFeature = (String)feature;
 		if (stringFeature.equals("value")) {
 			ComponentProperties properties = PartitioningFactory.eINSTANCE.createComponentProperties();

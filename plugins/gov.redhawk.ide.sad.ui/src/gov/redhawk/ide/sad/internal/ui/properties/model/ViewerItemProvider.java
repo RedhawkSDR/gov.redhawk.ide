@@ -40,17 +40,17 @@ public abstract class ViewerItemProvider implements ITreeItemContentProvider {
 
 	public abstract EditingDomain getEditingDomain();
 
-	protected abstract Object getPeer(Object feature);
-	protected abstract Object createPeer(Object feature, Object value); 
+	protected abstract Object getContainer(Object feature);
+	protected abstract Object createContainer(Object feature, Object value);
 
 	protected EStructuralFeature getChildFeature(Object object, Object child) {
 		return null;
 	}
 
 	protected Command createCommand(EditingDomain domain, Class< ? > commandClass, Object feature, Object value) {
-		Object peer = getPeer(feature);
+		Object peer = getContainer(feature);
 		if (peer == null && (commandClass == AddCommand.class || commandClass == SetCommand.class)) {
-			return createParentCommand(domain, feature, createPeer(feature, value));
+			return createParentCommand(domain, feature, createContainer(feature, value));
 		}
 		if (commandClass == AddCommand.class) {
 			return createAddCommand(domain, peer, getChildFeature(peer, value), value);

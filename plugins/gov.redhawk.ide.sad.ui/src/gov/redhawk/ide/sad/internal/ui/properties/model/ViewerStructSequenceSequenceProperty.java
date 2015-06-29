@@ -30,8 +30,8 @@ public class ViewerStructSequenceSequenceProperty extends ViewerStructSequenceNe
 	}
 
 	@Override
-	protected SimpleSequenceRef getRef() {
-		return (SimpleSequenceRef) super.getRef();
+	protected SimpleSequenceRef getValueRef() {
+		return (SimpleSequenceRef) super.getValueRef();
 	}
 
 	@Override

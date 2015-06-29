@@ -45,12 +45,12 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 	}
 
 	@Override
-	protected StructRef getRef() {
-		return (StructRef) super.getRef();
+	protected StructRef getValueRef() {
+		return (StructRef) super.getValueRef();
 	}
 
-	protected AbstractPropertyRef< ? > getRef(final String refId) {
-		StructRef structRef = getRef();
+	protected AbstractPropertyRef< ? > getChildRef(final String refId) {
+		StructRef structRef = getValueRef();
 		if (structRef != null) {
 			for (FeatureMap.Entry entry : structRef.getRefs()) {
 				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
@@ -118,7 +118,7 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 	}
 
 	@Override
-	protected Object createPeer(Object feature, Object value) {
+	protected Object createContainer(Object feature, Object value) {
 		final String stringFeature = (String)feature;
 		if (stringFeature.equals("value")) {
 			StructRef ref = PrfFactory.eINSTANCE.createStructRef();
@@ -126,6 +126,6 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 			ref.getRefs().add(getChildFeature(ref, value), value);
 			return ref;
 		}
-		return super.createPeer(feature, value);
+		return super.createContainer(feature, value);
 	}
 }

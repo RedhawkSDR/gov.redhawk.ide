@@ -46,7 +46,7 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 
 	@Override
 	public Object getValue() {
-		SimpleSequenceRef ref = getRef();
+		SimpleSequenceRef ref = getValueRef();
 		if (ref != null) {
 			return ref.getValues().getValue();
 		}
@@ -54,8 +54,8 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 	}
 
 	@Override
-	protected SimpleSequenceRef getRef() {
-		return (SimpleSequenceRef) super.getRef();
+	protected SimpleSequenceRef getValueRef() {
+		return (SimpleSequenceRef) super.getValueRef();
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 	}
 
 	@Override
-	protected Object createPeer(Object feature, Object value) {
+	protected Object createContainer(Object feature, Object value) {
 		final String stringFeature = (String) feature;
 		if (stringFeature.equals("value")) {
 			SimpleSequenceRef ref = PrfFactory.eINSTANCE.createSimpleSequenceRef();
@@ -129,7 +129,7 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 			ref.getValues().eSet(PrfPackage.Literals.VALUES__VALUE, value);
 			return ref;
 		}
-		return super.createPeer(feature, value);
+		return super.createContainer(feature, value);
 	}
 
 	@Override

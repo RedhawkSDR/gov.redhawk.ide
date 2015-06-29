@@ -32,7 +32,7 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 
 	@Override
 	public String getValue() {
-		SimpleRef simpleRef = getRef();
+		SimpleRef simpleRef = getValueRef();
 		if (simpleRef != null) {
 			return simpleRef.getValue();
 		}
@@ -40,8 +40,8 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 	}
 
 	@Override
-	protected SimpleRef getRef() {
-		return (SimpleRef) super.getRef();
+	protected SimpleRef getValueRef() {
+		return (SimpleRef) super.getValueRef();
 	}
 
 	@Override
@@ -85,7 +85,7 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 	}
 
 	@Override
-	protected Object createPeer(Object feature, Object value) {
+	protected Object createContainer(Object feature, Object value) {
 		final String stringFeature = (String) feature;
 		if (stringFeature.equals("value")) {
 			SimpleRef ref = PrfFactory.eINSTANCE.createSimpleRef();
@@ -93,7 +93,7 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 			ref.setValue((String) value);
 			return ref;
 		}
-		return super.createPeer(feature, value);
+		return super.createContainer(feature, value);
 	}
 
 	@Override
