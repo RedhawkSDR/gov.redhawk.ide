@@ -40,10 +40,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
-import org.eclipse.emf.edit.command.DeleteCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 
 public class ViewerComponent extends ViewerItemProvider {
@@ -113,14 +111,6 @@ public class ViewerComponent extends ViewerItemProvider {
 		} else if (def instanceof StructSequence) {
 			retVal = createViewerProperty((StructSequence) def);
 		}
-		ExternalProperty externalProp = getExternalProp(def);
-		if (retVal != null && externalProp != null) {
-			if (externalProp.getExternalPropID() != null) {
-				retVal.setExternalID(externalProp.getExternalPropID());
-			} else {
-				retVal.setExternalID(externalProp.getPropID());
-			}
-		}
 		return retVal;
 	}
 
@@ -140,43 +130,6 @@ public class ViewerComponent extends ViewerItemProvider {
 		return new ViewerStructSequenceProperty(def, this);
 	}
 
-	private ExternalProperty getExternalProp(AbstractProperty prop) {
-		ExternalProperties externalProperties = sad.getExternalProperties();
-		if (externalProperties != null) {
-			for (ExternalProperty p : externalProperties.getProperties()) {
-				if (p.getCompRefID().equals(compInst.getId()) && p.getPropID().equals(prop.getId())) {
-					return p;
-				}
-			}
-		}
-		return null;
-	}
-
-	protected Command setRefValue(EditingDomain domain, ViewerProperty<?> prop, Object value) {
-		AbstractPropertyRef< ? > ref = getChildRef(prop.getID());
-		SadComponentInstantiation inst = getComponentInstantiation();
-		ComponentProperties properties = inst.getComponentProperties();
-		if (value == null) {
-			if (ref != null && properties != null) {
-				if (properties.getProperties().size() == 1) {
-					return DeleteCommand.create(domain, properties);
-				} else {
-					return prop.createRemoveCommand(domain, properties, ref);
-				}
-			}
-			return null;
-		}
-		return prop.createSetCommand(domain, ref, value);
-	}
-
-	protected void setRef(final ViewerProperty< ? > prop, final Object value) {
-		TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(sad);
-		Command command = setRefValue(domain, prop, value);
-		if (command != null && command.canExecute()) {
-			domain.getCommandStack().execute(command);
-		}
-	}
-
 	protected AbstractPropertyRef< ? > getChildRef(final String refId) {
 		if (compInst.getComponentProperties() != null) {
 			for (FeatureMap.Entry entry : compInst.getComponentProperties().getProperties()) {
@@ -189,11 +142,24 @@ public class ViewerComponent extends ViewerItemProvider {
 		return null;
 	}
 
+	protected ExternalProperty getExternalProperty(final String refId) {
+		final ExternalProperties properties = sad.getExternalProperties();
+		if (properties != null) {
+			for (final ExternalProperty property : properties.getProperties()) {
+				if (property.getCompRefID().equals(compInst.getId()) && property.getPropID().equals(refId)) {
+					return property;
+				}
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public Collection< ? > getChildren(Object element) {
 		return getProperties();
 	}
 
+	@Override
 	public EditingDomain getEditingDomain() {
 		return TransactionUtil.getEditingDomain(sad);
 	}

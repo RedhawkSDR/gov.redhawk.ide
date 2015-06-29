@@ -64,8 +64,11 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 	}
 
 	@Override
-	protected Command createSetCommand(EditingDomain domain, Object owner, Object value) {
-		return SetCommand.create(domain, owner, PrfPackage.Literals.SIMPLE_REF__VALUE, value);
+	protected Command createSetCommand(EditingDomain domain, Object owner, Object feature, Object value) {
+		if (((String)feature).equals("value")) {
+			return SetCommand.create(domain, owner, PrfPackage.Literals.SIMPLE_REF__VALUE, value);
+		}
+		return super.createSetCommand(domain, owner, feature, value);
 	}
 
 	public boolean checkValue(String text) {

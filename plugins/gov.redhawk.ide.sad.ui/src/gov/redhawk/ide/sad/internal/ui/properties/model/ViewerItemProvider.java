@@ -55,7 +55,7 @@ public abstract class ViewerItemProvider implements ITreeItemContentProvider {
 		if (commandClass == AddCommand.class) {
 			return createAddCommand(domain, peer, getChildFeature(peer, value), value);
 		} else if (commandClass == SetCommand.class){
-			return createSetCommand(domain, peer, value);
+			return createSetCommand(domain, peer, feature, value);
 		}
 		return UnexecutableCommand.INSTANCE;
 	}
@@ -72,7 +72,7 @@ public abstract class ViewerItemProvider implements ITreeItemContentProvider {
 		return AddCommand.create(domain, owner, feature, value);
 	}
 
-	protected Command createSetCommand(EditingDomain domain, Object owner, Object value) {
+	protected Command createSetCommand(EditingDomain domain, Object owner, Object feature, Object value) {
 		return SetCommand.create(domain, owner, getChildFeature(owner, value), value);
 	}
 

@@ -91,8 +91,11 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 	}
 
 	@Override
-	public Command createSetCommand(EditingDomain editingDomain, Object owner, Object value) {
-		return SetCommand.create(editingDomain, ((SimpleSequenceRef)owner).getValues(), PrfPackage.Literals.VALUES__VALUE, value);
+	public Command createSetCommand(EditingDomain domain, Object owner, Object feature, Object value) {
+		if (((String)feature).equals("value")) {
+			return SetCommand.create(domain, ((SimpleSequenceRef)owner).getValues(), PrfPackage.Literals.VALUES__VALUE, value);
+		}
+		return super.createSetCommand(domain, owner, feature, value);
 	}
 
 }

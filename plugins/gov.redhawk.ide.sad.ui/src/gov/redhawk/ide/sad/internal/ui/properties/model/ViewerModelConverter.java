@@ -283,21 +283,12 @@ public class ViewerModelConverter {
 			if (externalProp.getCompRefID().equals(comp.getComponentInstantiation().getId())) {
 				for (ViewerProperty< ? > prop : comp.getProperties()) {
 					if (externalProp.getPropID().equals(prop.getID())) {
-						prop.setExternalID(externalProp.getExternalPropID());
 						refresh(prop);
 						return;
 					}
 				}
 			}
 		}
-	}
-
-	private boolean matches(ExternalProperty externalProp, ViewerProperty< ? > prop) {
-		if (prop.getParent() instanceof ViewerComponent) {
-			ViewerComponent comp = (ViewerComponent) prop.getParent();
-			return comp.getComponentInstantiation().getId().equals(externalProp.getCompRefID()) && prop.getID().equals(externalProp.getPropID());
-		}
-		return false;
 	}
 
 	private void handleExternalPropertiesPropertiesChanged(Notification notification) {
@@ -307,28 +298,6 @@ public class ViewerModelConverter {
 	}
 
 	protected void updateExternalProperties(ExternalProperties externalProperties) {
-		for (ViewerComponent comp : this.viewerModel) {
-			for (ViewerProperty< ? > prop : comp.getProperties()) {
-				ExternalProperty externalProp = null;
-				if (externalProperties != null) {
-					for (ExternalProperty p : externalProperties.getProperties()) {
-						if (matches(p, prop)) {
-							externalProp = p;
-							break;
-						}
-					}
-				}
-				if (externalProp != null) {
-					if (externalProp.getExternalPropID() != null) {
-						prop.setExternalID(externalProp.getExternalPropID());
-					} else {
-						prop.setExternalID(externalProp.getPropID());
-					}
-				} else {
-					prop.setExternalID(null);
-				}
-			}
-		}
 	}
 
 	private void handleSoftwareAssemblyExternalPropertiesChanged(Notification notification) {
