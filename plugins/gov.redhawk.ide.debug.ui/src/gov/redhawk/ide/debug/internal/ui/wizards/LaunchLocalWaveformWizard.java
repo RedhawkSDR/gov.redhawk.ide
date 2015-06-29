@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.debug.internal.ui;
+package gov.redhawk.ide.debug.internal.ui.wizards;
 
 import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
 import gov.redhawk.ide.debug.ui.LaunchUtil;
@@ -33,7 +33,8 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
- * 
+ * This wizard handles launching a waveform with advanced settings. The user can set property values, auto-start the
+ * waveform, etc.
  */
 public class LaunchLocalWaveformWizard extends Wizard {
 
@@ -46,12 +47,12 @@ public class LaunchLocalWaveformWizard extends Wizard {
 	private int timeout = ScaDebugLaunchConstants.DEFAULT_ATT_LAUNCH_TIMEOUT;
 	private WaveformCommonLaunchConfigurationWizardPage commonPage;
 	private boolean saveRunConfiguration;
-	
+
 	public LaunchLocalWaveformWizard() {
 		setNeedsProgressMonitor(true);
 		setWindowTitle("Launch Waveform");
 	}
-	
+
 	@Override
 	public void addPages() {
 		if (sad == null) {
@@ -63,16 +64,12 @@ public class LaunchLocalWaveformWizard extends Wizard {
 		commonPage = new WaveformCommonLaunchConfigurationWizardPage(this);
 		addPage(commonPage);
 	}
-	
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		try {
 			getContainer().run(true, false, new IRunnableWithProgress() {
-				
+
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
@@ -81,7 +78,7 @@ public class LaunchLocalWaveformWizard extends Wizard {
 
 						config.setAttribute(ScaLaunchConfigurationConstants.ATT_START, isAutoStart());
 						config.setAttribute(ScaDebugLaunchConstants.ATT_LAUNCH_TIMEOUT, getTimeout());
-						
+
 						ILaunchConfiguration finalConfig = config;
 						if (isSaveRunConfiguration()) {
 							finalConfig = config.doSave();
@@ -93,7 +90,8 @@ public class LaunchLocalWaveformWizard extends Wizard {
 				}
 			});
 		} catch (InvocationTargetException e) {
-			StatusManager.getManager().handle(new Status(Status.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to launch waveform ", e.getCause()), StatusManager.SHOW | StatusManager.LOG);
+			StatusManager.getManager().handle(new Status(Status.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Failed to launch waveform ", e.getCause()),
+				StatusManager.SHOW | StatusManager.LOG);
 			return false;
 		} catch (InterruptedException e) {
 			return false;
@@ -110,11 +108,11 @@ public class LaunchLocalWaveformWizard extends Wizard {
 	public SoftwareAssembly getSoftwareAssembly() {
 		return sad;
 	}
-	
+
 	public WaveformsContainer getWaveformsContainer() {
 		return waveformsContainer;
 	}
-	
+
 	public void setWaveformsContainer(WaveformsContainer waveformsContainer) {
 		WaveformsContainer oldValue = this.waveformsContainer;
 		this.waveformsContainer = waveformsContainer;
@@ -128,21 +126,21 @@ public class LaunchLocalWaveformWizard extends Wizard {
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
 	}
-	
+
 	public void setAutoStart(boolean autoStart) {
 		boolean oldValue = this.autoStart;
 		this.autoStart = autoStart;
 		pcs.firePropertyChange("autoStart", oldValue, this.autoStart);
 	}
-	
+
 	public boolean isAutoStart() {
 		return this.autoStart;
 	}
-	
+
 	public int getTimeout() {
 		return timeout;
 	}
-	
+
 	public void setTimeout(int timeout) {
 		int oldValue = this.timeout;
 		this.timeout = timeout;
@@ -158,7 +156,5 @@ public class LaunchLocalWaveformWizard extends Wizard {
 		this.saveRunConfiguration = saveRunConfiguration;
 		pcs.firePropertyChange("saveConfiguration", oldValue, this.saveRunConfiguration);
 	}
-	
-	
 
 }

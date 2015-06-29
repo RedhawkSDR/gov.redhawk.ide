@@ -18,6 +18,11 @@ public final class LaunchVariables {
 
 	}
 
+	/**
+	 * @since 8.0
+	 */
+	public static final String WAVEFORM_NAME = "WAVEFORM_NAME";
+
 	public static final String NAMING_CONTEXT_IOR = "NAMING_CONTEXT_IOR";
 	public static final String NAME_BINDING = "NAME_BINDING";
 	public static final String COMPONENT_IDENTIFIER = "COMPONENT_IDENTIFIER";

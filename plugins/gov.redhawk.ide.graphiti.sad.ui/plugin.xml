@@ -119,18 +119,6 @@
                id="gov.redhawk.ide.graphiti.sad.ui.propertyTab.portDetails"
                label="Port Details">
          </propertyTab>
-<!-- BEGIN TODO check that these property Tabs are unused then remove them -->
-         <propertyTab
-               category="Graphiti"
-               id="property.tab.ProvidesPort"
-               label="Provides Interface">
-         </propertyTab>
-         <propertyTab
-               category="Graphiti"
-               id="property.tab.UsesPort"
-               label="Uses Interface">
-         </propertyTab>
-<!-- END TODO check that these property Tabs are unused then remove them -->
          <propertyTab
                category="advanced"
                id="property.tab.ScaAdvanced"
@@ -146,7 +134,7 @@
 
 
          <propertySection
-         	   class="gov.redhawk.ide.graphiti.ui.properties.ComponentPropertiesSection"
+               class="gov.redhawk.ide.graphiti.ui.properties.ComponentPropertiesSection"
                filter="gov.redhawk.ide.graphiti.sad.ui.properties.ComponentFilter"
                id="property.section.ComponentProperties"
                tab="property.tab.ComponentProperties">

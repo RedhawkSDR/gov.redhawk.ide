@@ -9,7 +9,7 @@
  * http://www.eclipse.org/legal/epl-v10.html.
  *
  */
-package gov.redhawk.ide.debug.internal.ui;
+package gov.redhawk.ide.debug.internal.ui.wizards;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.wizard.WizardPage;

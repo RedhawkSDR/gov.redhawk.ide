@@ -14,7 +14,6 @@ import gov.redhawk.ide.debug.ILaunchConfigurationFactory;
 import gov.redhawk.ide.debug.ILaunchConfigurationFactoryRegistry;
 import gov.redhawk.ide.debug.ScaDebugLaunchConstants;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.model.sca.util.ModelUtil;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
 
@@ -25,10 +24,8 @@ import java.util.List;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.Implementation;
 import mil.jpeojtrs.sca.spd.SoftPkg;
-import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.spd.provider.SpdItemProviderAdapterFactory;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,7 +39,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
@@ -52,7 +48,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
- * 
+ * A collection of utility methods for launching things in the sandbox.
  */
 public final class LaunchUtil {
 	private LaunchUtil() {
@@ -135,7 +131,7 @@ public final class LaunchUtil {
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		final String launcherPrefix = (softwareAssembly.getName() == null) ? softwareAssembly.eResource().getURI().lastSegment() : softwareAssembly.getName();
 		final String launchConfigName = launchManager.generateLaunchConfigurationName(launcherPrefix);
-		final ILaunchConfigurationType configType = launchManager.getLaunchConfigurationType(ScaDebugLaunchConstants.ID_LOCAL_WAVEFORM_LAUNCH);
+		final ILaunchConfigurationType configType = launchManager.getLaunchConfigurationType(ScaDebugLaunchConstants.LAUNCH_CONFIG_TYPE_LOCAL_WAVEFORM);
 		final ILaunchConfigurationWorkingCopy retVal = configType.newInstance(null, launchConfigName);
 		ScaLaunchConfigurationUtil.setProfileURI(retVal, EcoreUtil.getURI(softwareAssembly));
 
@@ -190,26 +186,6 @@ public final class LaunchUtil {
 		return config;
 	}
 
-	/**
-	 * @deprecated Use {@link #createLaunchConfiguration(SoftPkg, Shell)} instead
-	 * Doesn't save launch configuration 
-	 * @param file
-	 * @param mode
-	 * @param shell
-	 * @throws CoreException 
-	 */
-	@Deprecated
-	public static void launch(IFile file, String mode, Shell shell) throws CoreException {
-		if (!file.exists()) {
-			return;
-		}
-		if (file.getName().endsWith(SpdPackage.FILE_EXTENSION)) {
-			SoftPkg spd = ModelUtil.loadSoftPkg(URI.createURI(file.getLocationURI().toString()));
-			ILaunchConfigurationWorkingCopy config = LaunchUtil.createLaunchConfiguration(spd, shell);
-			LaunchUtil.launch(config, mode);
-		}
-	}
-	
 	/**
 	 *
 	 * @param config

@@ -191,23 +191,6 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 			eNotify(new ENotificationImpl(this, Notification.SET, ScaDebugPackage.LOCAL_SCA_WAVEFORM__LAUNCH, oldLaunch, launch));
 	}
 
-	/**
-	 * The waveform will add this adapter to the naming context given to it. This allows it to react to components
-	 * registering in its naming context.
-	 */
-	private final NotifyingNamingContextAdapter adapter = new NotifyingNamingContextAdapter() {
-
-		@Override
-		protected void removeObject(final NameComponent[] location, final org.omg.CORBA.Object obj, final Notification msg) {
-			removeResource(location, obj, msg);
-		}
-
-		@Override
-		protected void addObject(final NameComponent[] location, final org.omg.CORBA.Object obj, final Notification msg) {
-			addResource(location, obj, msg);
-		}
-	};
-
 	private final SilentJob refreshJob = new SilentJob("Refresh") {
 		{
 			setSystem(true);
@@ -226,55 +209,6 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 		}
 
 	};
-
-	protected void addResource(final NameComponent[] location, final org.omg.CORBA.Object obj, final Notification msg) {
-		// END GENERATED CODE
-		final Job addResourceJob = new SilentJob("Add Resource") {
-
-			@Override
-			protected IStatus runSilent(final IProgressMonitor monitor) {
-				try {
-					if (obj._is_a(ApplicationHelper.id())) {
-						// PASS
-					} else if (obj._is_a(ResourceHelper.id())) {
-						addComponent(new Name(location), ResourceHelper.narrow(obj));
-					}
-				} catch (final SystemException e) {
-					// PASS
-				} catch (final InvalidName e) {
-					// PASS
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		addResourceJob.setSystem(true);
-		addResourceJob.schedule();
-		// BEGIN GENERATED CODE
-	}
-
-	protected void removeResource(final NameComponent[] location, final org.omg.CORBA.Object obj, final Notification msg) {
-		// END GENERATED CODE
-		final Job removeResourceJob = new SilentJob("Add Resource") {
-
-			@Override
-			protected IStatus runSilent(final IProgressMonitor monitor) {
-				try {
-					if (obj._is_a(ApplicationHelper.id())) {
-						removeComponent(new Name(location), ApplicationHelper.narrow(obj));
-					}
-				} catch (final SystemException e) {
-					// PASS
-				} catch (final InvalidName e) {
-					// PASS
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		removeResourceJob.setSystem(true);
-		removeResourceJob.schedule();
-		// BEGIN GENERATED CODE
-
-	}
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -335,25 +269,10 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
 	@Override
 	public void setNamingContext(final NotifyingNamingContext newNamingContext) {
-		if (this.namingContext != null) {
-			this.namingContext.eAdapters().remove(this.adapter);
-		}
-		setNamingContextGen(newNamingContext);
-		if (this.namingContext != null) {
-			this.namingContext.eAdapters().add(this.adapter);
-		}
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setNamingContextGen(NotifyingNamingContext newNamingContext) {
 		NotifyingNamingContext oldNamingContext = namingContext;
 		namingContext = newNamingContext;
 		if (eNotificationRequired())
@@ -610,58 +529,6 @@ public class LocalScaWaveformImpl extends ScaWaveformImpl implements LocalScaWav
 	@Override
 	protected Command createMergeComponentsCommand(final ComponentType[] compTypes, final IStatus status) {
 		return new LocalScaWaveformMergeComponentsCommand(this, compTypes, status);
-	}
-
-	private void addComponent(final Name name, final Resource resource) {
-		// END GENERATED CODE
-		final LocalScaComponent component = ScaDebugFactory.eINSTANCE.createLocalScaComponent();
-		component.setCorbaObj(resource);
-		String compName = null;
-		final NameComponent[] nameComponents = name.components();
-		if (nameComponents.length > 0) {
-			final NameComponent lastSegment = nameComponents[nameComponents.length - 1];
-			compName = lastSegment.id;
-		}
-		if (compName != null) {
-			component.setName(compName);
-		}
-		final URI uri = this.namingContext.getURI(nameComponents);
-		if (uri == null) {
-			return;
-		}
-		component.setProfileURI(URI.createURI(uri.toString()));
-
-		try {
-			component.initialize();
-			try {
-				component.refresh(null, RefreshDepth.FULL);
-			} catch (final InterruptedException e) {
-				// PASS
-			}
-			ScaModelCommand.execute(this, new ScaModelCommand() {
-				@Override
-				public void execute() {
-					getComponents().add(component);
-				}
-			});
-			try {
-				component.refresh(null, RefreshDepth.FULL);
-			} catch (final InterruptedException e) {
-				// PASS
-			}
-		} catch (final InitializeError | SystemException e) {
-			ScaModelCommand.execute(this, new ScaModelCommand() {
-				@Override
-				public void execute() {
-					component.setStatus(ScaPackage.Literals.SCA_COMPONENT__COMPONENT_INSTANTIATION, new Status(IStatus.ERROR, ScaDebugPlugin.ID,
-						"Component failed to initialize", e));
-				}
-			});
-		}
-		// BEGIN GENERATED CODE
-	}
-
-	private void removeComponent(final Name name, final Resource resource) {
 	}
 
 	@Override

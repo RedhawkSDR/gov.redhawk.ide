@@ -44,6 +44,9 @@ public interface ScaDebugLaunchConstants extends ScaLaunchConfigurationConstants
 
 	public static final String ARG_SERVICE_NAME = LaunchVariables.SERVICE_NAME;
 
-	public static final String ID_LOCAL_WAVEFORM_LAUNCH = "gov.redhawk.ide.debug.launchLocalWaveform";
+	/**
+	 * @since 8.0
+	 */
+	public static final String LAUNCH_CONFIG_TYPE_LOCAL_WAVEFORM = "gov.redhawk.ide.debug.launchConfigurationType.localWaveform";
 
 }

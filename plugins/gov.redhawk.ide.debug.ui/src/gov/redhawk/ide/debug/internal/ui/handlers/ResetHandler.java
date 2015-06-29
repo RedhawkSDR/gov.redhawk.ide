@@ -8,7 +8,7 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.debug.internal.ui;
+package gov.redhawk.ide.debug.internal.ui.handlers;
 
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
@@ -37,7 +37,7 @@ import CF.ExecutableDevicePackage.ExecuteFail;
 import CF.LifeCyclePackage.ReleaseError;
 
 /**
- * 
+ * Handles the "Reset" action for components belonging to a local (sandbox) waveform.
  */
 public class ResetHandler extends AbstractHandler implements IHandler {
 
@@ -76,9 +76,6 @@ public class ResetHandler extends AbstractHandler implements IHandler {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getActiveMenuSelection(event);

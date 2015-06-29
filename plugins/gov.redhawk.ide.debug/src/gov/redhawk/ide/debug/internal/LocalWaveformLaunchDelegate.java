@@ -8,13 +8,12 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.debug.internal.ui;
+package gov.redhawk.ide.debug.internal;
 
 import gov.redhawk.ide.debug.LocalSca;
 import gov.redhawk.ide.debug.LocalScaWaveform;
 import gov.redhawk.ide.debug.SadLauncherUtil;
 import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.ide.debug.internal.LocalApplicationFactory;
 import gov.redhawk.model.sca.ScaAbstractProperty;
 import gov.redhawk.model.sca.ScaComponent;
 import gov.redhawk.model.sca.ScaFactory;
@@ -26,6 +25,7 @@ import gov.redhawk.model.sca.impl.ScaFactoryImpl;
 import gov.redhawk.model.sca.util.StartJob;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationConstants;
 import gov.redhawk.sca.launch.ScaLaunchConfigurationUtil;
+import gov.redhawk.sca.util.SubMonitor;
 
 import java.beans.XMLDecoder;
 import java.io.ByteArrayInputStream;
@@ -64,25 +64,25 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import CF.DataType;
 
 /**
- * 
+ * An Eclipse launch delegate which handles launching a SoftwareAssembly locally in the Sandbox.
  */
 public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate implements ILaunchConfigurationDelegate2 {
 
-	public static final String ID = "gov.redhawk.ide.debug.ui.launchLocalWaveform";
+	private static final EStructuralFeature[] SAD_TO_ASSEMBLY_CONTROLLER_SPD = new EStructuralFeature[] {
+		SadPackage.Literals.SOFTWARE_ASSEMBLY__ASSEMBLY_CONTROLLER, SadPackage.Literals.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF,
+		PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION, PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT,
+		PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF, PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE,
+		PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
 
-	private static final EStructuralFeature[] PATH = new EStructuralFeature[] { SadPackage.Literals.SOFTWARE_ASSEMBLY__ASSEMBLY_CONTROLLER,
-		SadPackage.Literals.ASSEMBLY_CONTROLLER__COMPONENT_INSTANTIATION_REF, PartitioningPackage.Literals.COMPONENT_INSTANTIATION_REF__INSTANTIATION,
-		PartitioningPackage.Literals.COMPONENT_INSTANTIATION__PLACEMENT, PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_FILE_REF,
-		PartitioningPackage.Literals.COMPONENT_FILE_REF__FILE, PartitioningPackage.Literals.COMPONENT_FILE__SOFT_PKG };
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void launch(final ILaunchConfiguration configuration, final String mode, final ILaunch launch, final IProgressMonitor monitor) throws CoreException {
+		final int WORK_GET_LOCAL_SCA = 1, WORK_FETCH_PROPS = 1;
+		final int WORK_CREATE_WAVEFORM = 10;
+		SubMonitor progress = SubMonitor.convert(monitor, WORK_GET_LOCAL_SCA + WORK_FETCH_PROPS + WORK_CREATE_WAVEFORM);
+
 		final boolean start = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_START, ScaLaunchConfigurationConstants.DEFAULT_VALUE_ATT_START);
 
-		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(monitor);
+		final LocalSca localSca = ScaDebugPlugin.getInstance().getLocalSca(progress.newChild(WORK_GET_LOCAL_SCA));
 		final Map<String, String> implMap = SadLauncherUtil.getImplementationMap(configuration);
 
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
@@ -91,44 +91,50 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		final String name = sad.getName();
 		final List<DataType> assemblyConfig = new ArrayList<DataType>();
 		final List<DataType> assemblyExec = new ArrayList<DataType>();
-		
-		SoftPkg assemblySoftPkg = ScaEcoreUtils.getFeature(sad, LocalWaveformLaunchDelegate.PATH);
+
+		// Find the assembly controller
+		SoftPkg assemblySoftPkg = ScaEcoreUtils.getFeature(sad, LocalWaveformLaunchDelegate.SAD_TO_ASSEMBLY_CONTROLLER_SPD);
 		if (assemblySoftPkg != null) {
+			// Load properties from the launch configuration that belong to the assembly controller
 			final ScaComponent assemblyController = ScaFactory.eINSTANCE.createScaComponent();
 			assemblyController.setProfileObj(assemblySoftPkg);
-			for (final ScaAbstractProperty< ? > prop : assemblyController.fetchProperties(null)) {
+			for (final ScaAbstractProperty< ? > prop : assemblyController.fetchProperties(progress.newChild(WORK_FETCH_PROPS))) {
 				prop.setIgnoreRemoteSet(true);
 			}
 			ScaLaunchConfigurationUtil.loadProperties(configuration, assemblyController);
 			for (final ScaAbstractProperty< ? > prop : assemblyController.getProperties()) {
 				if (!prop.isDefaultValue() && prop.getDefinition() != null
-						&& prop.getDefinition().isKind(PropertyConfigurationType.CONFIGURE, PropertyConfigurationType.EXECPARAM)) {
+					&& prop.getDefinition().isKind(PropertyConfigurationType.PROPERTY, PropertyConfigurationType.CONFIGURE, PropertyConfigurationType.EXECPARAM)) {
 					assemblyConfig.add(prop.getProperty());
 				}
 			}
 		}
-		
+
+		// Collect external properties
 		final Map<String, AbstractProperty> extProps = new HashMap<String, AbstractProperty>();
 		if (sad.getExternalProperties() != null) {
-			for (ExternalProperty extProp: sad.getExternalProperties().getProperties()) {
+			for (ExternalProperty extProp : sad.getExternalProperties().getProperties()) {
 				SadComponentInstantiation inst = sad.getComponentInstantiation(extProp.getCompRefID());
 				if (inst == null) {
 					continue;
 				}
-				AbstractProperty absProp = inst.getPlacement().getComponentFileRef().getFile().getSoftPkg().getPropertyFile().getProperties().getProperty(extProp.getPropID());
+				AbstractProperty absProp = inst.getPlacement().getComponentFileRef().getFile().getSoftPkg().getPropertyFile().getProperties().getProperty(
+					extProp.getPropID());
 				if (absProp == null) {
 					continue;
 				}
 				extProps.put(extProp.resolveExternalID(), absProp);
 			}
 		}
+
+		// TODO: This looks messy and duplicates code in ScaLaunchConfigurationUtil.loadProperties()
 		final String properties = configuration.getAttribute(ScaLaunchConfigurationConstants.ATT_PROPERTIES, (String) null);
 		if (properties != null) {
 			final XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(properties.getBytes()));
 			final Map< ? , ? > propMap = (Map< ? , ? >) decoder.readObject();
 			decoder.close();
 			ScaFactory propFactory = ScaFactoryImpl.init();
-			for (Object key: propMap.keySet()) {
+			for (Object key : propMap.keySet()) {
 				if (extProps.containsKey(key)) {
 					AbstractProperty prop = (AbstractProperty) extProps.get(key);
 					ScaAbstractProperty< ? > newProp = makeScaProperty(propFactory, prop);
@@ -138,14 +144,14 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 					} else if (prop instanceof SimpleSequence) {
 						((ScaSimpleSequenceProperty) newProp).setValue((Object[]) value);
 					} else if (prop instanceof Struct) {
-						setStructValue((ScaStructProperty) newProp, (Map< ?, ? >) value);
+						setStructValue((ScaStructProperty) newProp, (Map< ? , ? >) value);
 					} else if (prop instanceof StructSequence) {
-						for (Object obj: (List< ? >) value) {
-							setStructValue(((ScaStructSequenceProperty) prop).createScaStructProperty(), (Map< ?, ?>) obj);
+						for (Object obj : (List< ? >) value) {
+							setStructValue(((ScaStructSequenceProperty) prop).createScaStructProperty(), (Map< ? , ? >) obj);
 						}
 					}
 					if (!newProp.isDefaultValue() && newProp.getDefinition() != null
-							&& newProp.getDefinition().isKind(PropertyConfigurationType.CONFIGURE, PropertyConfigurationType.EXECPARAM)) {
+						&& newProp.getDefinition().isKind(PropertyConfigurationType.CONFIGURE, PropertyConfigurationType.EXECPARAM)) {
 						newProp.setId((String) key);
 						assemblyConfig.add(newProp.getProperty());
 					}
@@ -156,7 +162,7 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 			assemblyExec.toArray(new DataType[assemblyExec.size()]), assemblyConfig.toArray(new DataType[assemblyConfig.size()]));
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("DDD_HHmmssSSS");
 		try {
-			final LocalScaWaveform app = factory.create(sad, name + "_" + dateFormat.format(new Date()), monitor);
+			final LocalScaWaveform app = factory.create(sad, name + "_" + dateFormat.format(new Date()), progress.newChild(WORK_CREATE_WAVEFORM));
 			if (start) {
 				final StartJob job = new StartJob(app.getName(), app);
 				job.schedule();
@@ -187,13 +193,18 @@ public class LocalWaveformLaunchDelegate extends LaunchConfigurationDelegate imp
 		newProp.fromAny(oldProp.toAny());
 		return newProp;
 	}
-	
-	private void setStructValue(ScaStructProperty struct, Map< ?, ?> valMap) {
-		for (ScaSimpleProperty simp: struct.getSimples()) {
-			if (valMap.containsKey(simp.getId())) {
-				simp.setValue(valMap.get(simp.getId()));
+
+	private void setStructValue(ScaStructProperty struct, Map< ? , ? > valMap) {
+		for (ScaSimpleProperty simple : struct.getSimples()) {
+			if (valMap.containsKey(simple.getId())) {
+				simple.setValue(valMap.get(simple.getId()));
+			}
+		}
+		for (ScaSimpleSequenceProperty simpleSequence : struct.getSequences()) {
+			if (valMap.containsKey(simpleSequence.getId())) {
+				simpleSequence.setValue((Object[]) valMap.get(simpleSequence.getId()));
 			}
 		}
 	}
-	
+
 }

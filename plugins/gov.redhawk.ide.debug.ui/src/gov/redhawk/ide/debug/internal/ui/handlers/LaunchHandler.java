@@ -8,9 +8,11 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.debug.internal.ui;
+package gov.redhawk.ide.debug.internal.ui.handlers;
 
 import gov.redhawk.ide.debug.LocalSca;
+import gov.redhawk.ide.debug.internal.ui.wizards.LaunchComponentWizard;
+import gov.redhawk.ide.debug.internal.ui.wizards.LaunchLocalWaveformWizard;
 import gov.redhawk.ide.debug.ui.LaunchUtil;
 import gov.redhawk.ide.debug.ui.ScaDebugUiPlugin;
 import gov.redhawk.ide.sdr.SdrRoot;
@@ -40,6 +42,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.viewers.ISelection;
@@ -53,21 +56,21 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
- * 
+ * Handles launching something in the sandbox. The event can indicate a default launch, or an advanced launch wizard.
+ * It can be for a component, device, service or waveform.
  */
 public class LaunchHandler extends AbstractHandler implements IHandler {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
+		// Check if we're supposed to use an advanced launch wizard
 		String value = event.getParameter("gov.redhawk.ide.debug.ui.wizardType");
 		if ("waveform".equalsIgnoreCase(value)) {
 			handleLaunchWaveform(event);
 		} else if ("component".equalsIgnoreCase(value) || "device".equalsIgnoreCase(value) || "service".equalsIgnoreCase(value)) {
 			handleLaunchComponentType(event);
 		} else {
+			// Launch with defaults (no wizard)
 			ISelection sel = HandlerUtil.getActiveMenuSelection(event);
 			if (sel == null) {
 				sel = HandlerUtil.getCurrentSelection(event);
@@ -87,6 +90,10 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 		return null;
 	}
 
+	/**
+	 * Handles launching a component/device/service locally based on the results of the advanced launch wizard.
+	 * @param event The event details
+	 */
 	private void handleLaunchComponentType(ExecutionEvent event) {
 		String type = event.getParameter("gov.redhawk.ide.debug.ui.wizardType");
 		ISelection sel = HandlerUtil.getActiveMenuSelection(event);
@@ -144,6 +151,10 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 		}
 	}
 
+	/**
+	 * Handles launching a waveform locally based on the results of the advanced launch wizard.
+	 * @param event The event details
+	 */
 	private void handleLaunchWaveform(ExecutionEvent event) {
 		ISelection sel = HandlerUtil.getActiveMenuSelection(event);
 		if (sel == null) {
@@ -203,6 +214,11 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 		}
 	}
 
+	/**
+	 * Checks if the implementation is something than can be run (i.e. it's not a shared library or something).
+	 * @param impl
+	 * @return
+	 */
 	private boolean checkImpl(Implementation impl) {
 		if (impl.getCode() != null) {
 			Code code = impl.getCode();
@@ -223,6 +239,12 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 		return false;
 	}
 
+	/**
+	 * Handles launching something with default parameters.
+	 * @param element An {@link IFile} to an SPD/SAD, a {@link SoftPkg}, a {@link SoftwareAssembly}, or an {@link Implementation}
+	 * @param event The event details
+	 * @throws CoreException
+	 */
 	private void handleLaunch(Object element, final ExecutionEvent event) throws CoreException {
 		if (element instanceof IFile) {
 			element = loadFile((IFile) element);
@@ -241,7 +263,13 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 		}
 	}
 
-	private Object loadFile(final IFile element) {
+	/**
+	 * Loads the model object for an SPD or SAD file.
+	 * @param element
+	 * @return The model object
+	 * @throws CoreException The model object can't be loaded/created
+	 */
+	private Object loadFile(final IFile element) throws CoreException {
 		final ResourceSet resourceSet = ScaResourceFactoryUtil.createResourceSet();
 		try {
 			final Resource resource = resourceSet.getResource(URI.createURI(URIUtil.toURI(element.getLocation()).toString()), true);
@@ -249,11 +277,16 @@ public class LaunchHandler extends AbstractHandler implements IHandler {
 				return SoftPkg.Util.getSoftPkg(resource);
 			} else if (element.getName().endsWith(SadPackage.FILE_EXTENSION)) {
 				return SoftwareAssembly.Util.getSoftwareAssembly(resource);
+			} else {
+				throw new CoreException(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Unrecognized file extension for file " + element.getFullPath()));
 			}
-		} catch (final Exception e) { // SUPPRESS CHECKSTYLE Fallback
-			// PASS
+		} catch (CoreException e) {
+			throw e;
+		} catch (final WrappedException e) {
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Unable to load XML file " + element.getFullPath()));
+		} catch (RuntimeException e) { // SUPPRESS CHECKSTYLE getResource() has a broad throw definition
+			throw new CoreException(new Status(IStatus.ERROR, ScaDebugUiPlugin.PLUGIN_ID, "Error while creating resource for file " + element.getFullPath()));
 		}
-		return element;
 	}
 
 }
