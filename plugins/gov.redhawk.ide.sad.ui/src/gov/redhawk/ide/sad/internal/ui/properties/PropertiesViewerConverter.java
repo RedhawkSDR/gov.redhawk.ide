@@ -11,7 +11,6 @@
 package gov.redhawk.ide.sad.internal.ui.properties;
 
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerItemProvider;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerModelConverter;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceProperty;
@@ -30,12 +29,8 @@ import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.util.AnyUtils;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
-import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.edit.command.SetCommand;
-import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor;
@@ -155,7 +150,7 @@ public class PropertiesViewerConverter implements XViewerConverter {
 	@Override
 	public Object getInput(Control c, CellEditDescriptor ced, Object selObject) {
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
-			return setExternalValue(c, selObject);
+			return setExternalID(c, selObject);
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
 			return setSadValue(c, selObject);
 		}
@@ -198,7 +193,7 @@ public class PropertiesViewerConverter implements XViewerConverter {
 		return newArray;
 	}
 
-	protected Object setExternalValue(Control c, Object selObject) {
+	protected Object setExternalID(Control c, Object selObject) {
 		String newValue = null;
 		if (c instanceof Combo) {
 			Combo combo = (Combo) c;

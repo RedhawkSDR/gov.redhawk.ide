@@ -31,7 +31,6 @@ import mil.jpeojtrs.sca.sad.HostCollocation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiationRef;
 import mil.jpeojtrs.sca.sad.SadComponentPlacement;
-import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SadPartitioning;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
@@ -39,15 +38,9 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
-import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.RemoveCommand;
-import org.eclipse.emf.edit.command.SetCommand;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -215,7 +208,7 @@ public class ViewerModelConverter {
 
 		@Override
 		public void externalIDChanged(ViewerProperty< ? > source) {
-			handleViewerPropExternalIDChanged(source);
+			viewer.refresh(source);
 		}
 	};
 	private boolean handlingchange = false;
@@ -375,68 +368,6 @@ public class ViewerModelConverter {
 			sad.eAdapters().add(sadListener);
 			//			sadListener.setTarget(sad);
 		}
-	}
-
-	protected void handleViewerPropExternalIDChanged(ViewerProperty< ? > source) {
-		ViewerProperty< ? > prop = source;
-		String newValue = source.getExternalID();
-		if (prop.getParent() instanceof ViewerComponent) {
-			SadComponentInstantiation compInst = prop.getComponentInstantiation();
-			Command command = null;
-			TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(sad);
-			ExternalProperties properties = sad.getExternalProperties();
-			if (properties == null) {
-				properties = SadFactory.eINSTANCE.createExternalProperties();
-				ExternalProperty newProp = SadFactory.eINSTANCE.createExternalProperty();
-				newProp.setCompRefID(compInst.getId());
-				newProp.setPropID(prop.getID());
-				if (!newProp.getPropID().equals(newValue)) {
-					newProp.setExternalPropID(newValue);
-				}
-				properties.getProperties().add(newProp);
-				command = SetCommand.create(domain, sad, SadPackage.Literals.SOFTWARE_ASSEMBLY__EXTERNAL_PROPERTIES, properties);
-			} else {
-				ExternalProperty externalProp = getExternalProperty(prop);
-				if (externalProp == null && newValue != null) {
-					ExternalProperty newProp = SadFactory.eINSTANCE.createExternalProperty();
-					newProp.setCompRefID(compInst.getId());
-					newProp.setPropID(prop.getID());
-					if (!newProp.getPropID().equals(newValue)) {
-						newProp.setExternalPropID(newValue);
-					}
-					command = AddCommand.create(domain, properties, SadPackage.Literals.EXTERNAL_PROPERTIES__PROPERTIES, newProp);
-				} else {
-					if (newValue == null) {
-						if (properties.getProperties().size() == 1) {
-							command = SetCommand.create(domain, sad, SadPackage.Literals.SOFTWARE_ASSEMBLY__EXTERNAL_PROPERTIES, null);
-						} else {
-							command = RemoveCommand.create(domain, properties, SadPackage.Literals.EXTERNAL_PROPERTIES__PROPERTIES, externalProp);
-						}
-					} else {
-						if (newValue.equals(prop.getID())) {
-							command = SetCommand.create(domain, externalProp, SadPackage.Literals.EXTERNAL_PROPERTY__EXTERNAL_PROP_ID, null);
-						} else {
-							command = SetCommand.create(domain, externalProp, SadPackage.Literals.EXTERNAL_PROPERTY__EXTERNAL_PROP_ID, newValue);
-						}
-					}
-				}
-			}
-			if (command != null) {
-				domain.getCommandStack().execute(command);
-			}
-		}
-	}
-
-	private ExternalProperty getExternalProperty(ViewerProperty< ? > prop) {
-		ExternalProperties externalProperties = sad.getExternalProperties();
-		if (externalProperties != null) {
-			for (ExternalProperty p : externalProperties.getProperties()) {
-				if (p.getCompRefID().equals(prop.getComponentInstantiation().getId()) && p.getPropID().equals(prop.getID())) {
-					return p;
-				}
-			}
-		}
-		return null;
 	}
 
 	private void setupModel() {
