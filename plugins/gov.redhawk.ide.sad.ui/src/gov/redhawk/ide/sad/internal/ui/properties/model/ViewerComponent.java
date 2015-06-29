@@ -35,6 +35,7 @@ import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.command.UnexecutableCommand;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
@@ -198,8 +199,12 @@ public class ViewerComponent extends ViewerItemProvider {
 	}
 
 	@Override
-	public Command createParentCommand(EditingDomain domain, Object value) {
-		return SetCommand.create(domain, getComponentInstantiation(), PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, value);			
+	public Command createParentCommand(EditingDomain domain, Object feature, Object value) {
+		final String stringFeature = (String) feature;
+		if (stringFeature.equals("value")) {
+			return SetCommand.create(domain, getComponentInstantiation(), PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, value);
+		}
+		return UnexecutableCommand.INSTANCE;
 	}
 
 	@Override
@@ -218,16 +223,23 @@ public class ViewerComponent extends ViewerItemProvider {
 	}
 
 	@Override
-	protected Object getPeer() {
-		return getComponentInstantiation().getComponentProperties();
+	protected Object getPeer(Object feature) {
+		final String stringFeature = (String)feature;
+		if (stringFeature.equals("value")) {
+			return getComponentInstantiation().getComponentProperties();
+		}
+		return null;
 	}
 
 	@Override
-	protected Object createPeer(Object value) {
-		ComponentProperties properties = PartitioningFactory.eINSTANCE.createComponentProperties();
-		EStructuralFeature feature = getChildFeature(properties, value);
-		properties.getProperties().add(feature, value);
-		return properties;
+	protected Object createPeer(Object feature, Object value) {
+		final String stringFeature = (String)feature;
+		if (stringFeature.equals("value")) {
+			ComponentProperties properties = PartitioningFactory.eINSTANCE.createComponentProperties();
+			properties.getProperties().add(getChildFeature(properties, value), value);
+			return properties;
+		}
+		return null;
 	}
 
 }

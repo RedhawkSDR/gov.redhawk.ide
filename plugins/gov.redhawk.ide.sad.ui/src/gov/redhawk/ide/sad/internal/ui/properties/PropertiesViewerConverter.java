@@ -187,11 +187,7 @@ public class PropertiesViewerConverter implements XViewerConverter {
 
 		if (selObject instanceof ViewerProperty< ? >) {
 			ViewerProperty< ? > property = (ViewerProperty< ? >) selObject;
-			EditingDomain editingDomain = property.getEditingDomain();
-			Command command = property.createCommand(editingDomain, SetCommand.class, newValue);
-			if (command != null && command.canExecute()) {
-				editingDomain.getCommandStack().execute(command);
-			}
+			property.setSadValue(newValue);
 		}
 		return selObject;
 	}

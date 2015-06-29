@@ -84,11 +84,16 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 		}
 	}
 
-	protected SimpleRef createPeer(Object value) {
-		SimpleRef ref = PrfFactory.eINSTANCE.createSimpleRef();
-		ref.setRefID(getID());
-		ref.setValue((String) value);
-		return ref;
+	@Override
+	protected Object createPeer(Object feature, Object value) {
+		final String stringFeature = (String) feature;
+		if (stringFeature.equals("value")) {
+			SimpleRef ref = PrfFactory.eINSTANCE.createSimpleRef();
+			ref.setRefID(getID());
+			ref.setValue((String) value);
+			return ref;
+		}
+		return super.createPeer(feature, value);
 	}
 
 	@Override

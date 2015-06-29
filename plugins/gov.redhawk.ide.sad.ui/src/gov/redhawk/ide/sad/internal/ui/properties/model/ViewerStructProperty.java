@@ -118,11 +118,14 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 	}
 
 	@Override
-	protected Object createPeer(Object value) {
-		StructRef ref = PrfFactory.eINSTANCE.createStructRef();
-		ref.setRefID(getID());
-		EStructuralFeature feature = getChildFeature(ref, value);
-		ref.getRefs().add(feature, value);
-		return ref;
+	protected Object createPeer(Object feature, Object value) {
+		final String stringFeature = (String)feature;
+		if (stringFeature.equals("value")) {
+			StructRef ref = PrfFactory.eINSTANCE.createStructRef();
+			ref.setRefID(getID());
+			ref.getRefs().add(getChildFeature(ref, value), value);
+			return ref;
+		}
+		return super.createPeer(feature, value);
 	}
 }

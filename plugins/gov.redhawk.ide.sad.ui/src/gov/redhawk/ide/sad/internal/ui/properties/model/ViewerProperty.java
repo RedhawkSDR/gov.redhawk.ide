@@ -21,6 +21,8 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
 /**
@@ -139,6 +141,14 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 		}
 	}
 
+	public void setSadValue(Object value) {
+		EditingDomain editingDomain = getEditingDomain();
+		Command command = createCommand(editingDomain, SetCommand.class, "value", value);
+		if (command != null && command.canExecute()) {
+			editingDomain.getCommandStack().execute(command);
+		}
+	}
+
 	public abstract Object getValue();
 
 	public abstract String getPrfValue();
@@ -163,12 +173,16 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 	}
 
 	@Override
-	protected Object getPeer() {
-		return getRef();
+	protected Object getPeer(Object feature) {
+		final String stringFeature = (String)feature;
+		if (stringFeature.equals("value")) {
+			return getRef();
+		}
+		return null;
 	}
 
 	@Override
-	protected Object createPeer(Object value) {
+	protected Object createPeer(Object feature, Object value) {
 		return null;
 	}
 }

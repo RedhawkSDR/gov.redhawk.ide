@@ -119,12 +119,17 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 		}
 	}
 
-	protected SimpleSequenceRef createPeer(Object value) {
-		SimpleSequenceRef ref = PrfFactory.eINSTANCE.createSimpleSequenceRef();
-		ref.setRefID(getID());
-		ref.setValues(PrfFactory.eINSTANCE.createValues());
-		ref.getValues().eSet(PrfPackage.Literals.VALUES__VALUE, value);
-		return ref;
+	@Override
+	protected Object createPeer(Object feature, Object value) {
+		final String stringFeature = (String) feature;
+		if (stringFeature.equals("value")) {
+			SimpleSequenceRef ref = PrfFactory.eINSTANCE.createSimpleSequenceRef();
+			ref.setRefID(getID());
+			ref.setValues(PrfFactory.eINSTANCE.createValues());
+			ref.getValues().eSet(PrfPackage.Literals.VALUES__VALUE, value);
+			return ref;
+		}
+		return super.createPeer(feature, value);
 	}
 
 	@Override

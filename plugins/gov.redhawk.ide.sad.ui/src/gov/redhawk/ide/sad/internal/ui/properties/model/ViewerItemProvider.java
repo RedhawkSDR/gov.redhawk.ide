@@ -40,17 +40,17 @@ public abstract class ViewerItemProvider implements ITreeItemContentProvider {
 
 	public abstract EditingDomain getEditingDomain();
 
-	protected abstract Object getPeer();
-	protected abstract Object createPeer(Object value); 
+	protected abstract Object getPeer(Object feature);
+	protected abstract Object createPeer(Object feature, Object value); 
 
 	protected EStructuralFeature getChildFeature(Object object, Object child) {
 		return null;
 	}
 
-	public Command createCommand(EditingDomain domain, Class< ? > commandClass, Object value) {
-		Object peer = getPeer();
+	protected Command createCommand(EditingDomain domain, Class< ? > commandClass, Object feature, Object value) {
+		Object peer = getPeer(feature);
 		if (peer == null && (commandClass == AddCommand.class || commandClass == SetCommand.class)) {
-			return createParentCommand(domain, createPeer(value));
+			return createParentCommand(domain, feature, createPeer(feature, value));
 		}
 		if (commandClass == AddCommand.class) {
 			return createAddCommand(domain, peer, getChildFeature(peer, value), value);
@@ -60,12 +60,12 @@ public abstract class ViewerItemProvider implements ITreeItemContentProvider {
 		return UnexecutableCommand.INSTANCE;
 	}
 
-	protected Command createParentCommand(EditingDomain domain, Object value) {
+	protected Command createParentCommand(EditingDomain domain, Object feature, Object value) {
 		ViewerItemProvider parentItemProvider = (ViewerItemProvider) getParent(this);
 		if (parentItemProvider != null) {
-			return parentItemProvider.createCommand(domain, AddCommand.class, value);
+			return parentItemProvider.createCommand(domain, AddCommand.class, feature, value);
 		}
-		return null;
+		return UnexecutableCommand.INSTANCE;
 	}
 
 	protected Command createAddCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {
