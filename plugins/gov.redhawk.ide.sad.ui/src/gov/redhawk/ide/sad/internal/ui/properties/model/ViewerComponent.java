@@ -36,6 +36,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
+import org.eclipse.emf.edit.command.CommandParameter;
+import org.eclipse.emf.edit.command.DeleteCommand;
+import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
@@ -173,6 +176,19 @@ public class ViewerComponent extends ViewerItemProvider {
 			return properties;
 		}
 		return null;
+	}
+
+	@Override
+	protected Command createRemoveChildCommand(EditingDomain domain, Object child, EStructuralFeature feature) {
+		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
+			ComponentProperties properties = getComponentInstantiation().getComponentProperties();
+			if (properties.getProperties().size() == 1) {
+				return RemoveCommand.create(domain, properties);
+			} else {
+				return RemoveCommand.create(domain, properties, getChildFeature(properties, child), child);
+			}
+		}
+		return super.createRemoveChildCommand(domain, child, feature);
 	}
 
 }

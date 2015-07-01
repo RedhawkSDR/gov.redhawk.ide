@@ -12,10 +12,14 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 import java.util.Collection;
 
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
+import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
 
+import mil.jpeojtrs.sca.partitioning.ComponentProperties;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.PrfPackage;
@@ -109,5 +113,18 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 			return ref;
 		}
 		return super.createModelObject(feature, value);
+	}
+
+	@Override
+	protected Command createRemoveChildCommand(EditingDomain domain, Object child, EStructuralFeature feature) {
+		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
+			StructRef ref = getValueRef();
+			if (ref.getRefs().size() == 1) {
+				return ((ViewerItemProvider)getParent()).createRemoveChildCommand(domain, ref, feature);
+			} else {
+				return RemoveCommand.create(domain, ref, getChildFeature(ref, child), child);
+			}
+		}
+		return super.createRemoveChildCommand(domain, child, feature);
 	}
 }

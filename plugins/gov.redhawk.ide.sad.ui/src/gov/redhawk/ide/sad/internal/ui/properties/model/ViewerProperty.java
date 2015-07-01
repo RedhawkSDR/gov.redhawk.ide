@@ -29,7 +29,7 @@ import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.DeleteCommand;
+import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
@@ -146,7 +146,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 		EditingDomain editingDomain = getEditingDomain();
 		Class< ? > commandClass;
 		if (value == null) {
-			commandClass = DeleteCommand.class;
+			commandClass = RemoveCommand.class;
 		} else {
 			commandClass = SetCommand.class;
 		}
@@ -237,13 +237,16 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 	}
 
 	@Override
-	protected Command createDeleteCommand(EditingDomain domain, Object object, EStructuralFeature feature) {
+	protected Command createRemoveCommand(EditingDomain domain, Object object, EStructuralFeature feature) {
 		if (feature == ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
 			ExternalProperties properties = (ExternalProperties) ((EObject) object).eContainer();
 			if (properties.getProperties().size() == 1) {
-				return DeleteCommand.create(domain, properties);
+				return RemoveCommand.create(domain, properties);
 			}
+		} else if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
+			ViewerItemProvider parentProvider = (ViewerItemProvider) getParent();
+			return parentProvider.createRemoveChildCommand(domain, object, feature);
 		}
-		return super.createDeleteCommand(domain, object, feature);
+		return super.createRemoveCommand(domain, object, feature);
 	}
 }
