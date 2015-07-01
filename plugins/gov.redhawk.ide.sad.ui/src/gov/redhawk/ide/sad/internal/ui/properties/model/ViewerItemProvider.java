@@ -14,7 +14,7 @@ import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.UnexecutableCommand;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.emf.edit.command.DeleteCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ItemProvider;
@@ -44,6 +44,8 @@ public abstract class ViewerItemProvider extends ItemProvider {
 			return createAddCommand(domain, peer, getChildFeature(peer, value), value);
 		} else if (commandClass == SetCommand.class) {
 			return createSetCommand(domain, peer, feature, value);
+		} else if (commandClass == DeleteCommand.class) {
+			return createDeleteCommand(domain, peer, feature);
 		}
 		return UnexecutableCommand.INSTANCE;
 	}
@@ -64,8 +66,8 @@ public abstract class ViewerItemProvider extends ItemProvider {
 		return SetCommand.create(domain, owner, getChildFeature(owner, value), value);
 	}
 
-	protected Command createRemoveCommand(EditingDomain domain, Object owner, Object value) {
-		return RemoveCommand.create(domain, value);
+	protected Command createDeleteCommand(EditingDomain domain, Object object, EStructuralFeature feature) {
+		return DeleteCommand.create(domain, object);
 	}
 
 }

@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.DeleteCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
@@ -140,12 +141,22 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 		}
 	}
 
-	public void setSadValue(Object value) {
+	protected void setFeatureValue(EStructuralFeature feature, Object value) {
 		EditingDomain editingDomain = getEditingDomain();
-		Command command = createCommand(editingDomain, SetCommand.class, ViewerPackage.Literals.SAD_PROPERTY__VALUE, value);
+		Class< ? > commandClass;
+		if (value == null) {
+			commandClass = DeleteCommand.class;
+		} else {
+			commandClass = SetCommand.class;
+		}
+		Command command = createCommand(editingDomain, commandClass, feature, value);
 		if (command != null && command.canExecute()) {
 			editingDomain.getCommandStack().execute(command);
 		}
+	}
+
+	public void setSadValue(Object value) {
+		setFeatureValue(ViewerPackage.Literals.SAD_PROPERTY__VALUE, value);
 	}
 
 	public void setExternalID(String newExternalID) {
@@ -155,12 +166,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 				newExternalID = null;
 			}
 		}
-
-		EditingDomain editingDomain = getEditingDomain();
-		Command command = createCommand(editingDomain, SetCommand.class, ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID, newExternalID);
-		if (command != null && command.canExecute()) {
-			editingDomain.getCommandStack().execute(command);
-		}
+		setFeatureValue(ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID, newExternalID);
 	}
 
 	public abstract Object getValue();
