@@ -34,7 +34,6 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.ui.IMemento;
@@ -94,10 +93,7 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 				if (child instanceof SoftPkg) {
 					SoftPkg component = (SoftPkg) child;
 					if (component.getName().contains(".")) {
-						ComponentsSubContainer newSubContainer = createSubContainers(component, nameSpacedContainers);
-						if (newSubContainer != null) {
-							nameSpacedContainers.add(newSubContainer);
-						}
+						createSubContainers(component, nameSpacedContainers);
 					} else {
 						retList.add(child);
 					}
@@ -110,10 +106,7 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 				if (child instanceof SoftwareAssembly) {
 					SoftwareAssembly sad = (SoftwareAssembly) child;
 					if (sad.getName().contains(".")) {
-						WaveformsSubContainer newSubContainer = createSubContainers(sad, nameSpacedContainers);
-						if (newSubContainer != null) {
-							nameSpacedContainers.add(newSubContainer);
-						}
+						createSubContainers(sad, nameSpacedContainers);
 					} else {
 						retList.add(child);
 					}
@@ -126,10 +119,7 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 				if (child instanceof DeviceConfiguration) {
 					DeviceConfiguration dcd = (DeviceConfiguration) child;
 					if (dcd.getName().contains(".")) {
-						NodesSubContainer newSubContainer = createSubContainers(dcd, nameSpacedContainers);
-						if (newSubContainer != null) {
-							nameSpacedContainers.add(newSubContainer);
-						}
+						createSubContainers(dcd, nameSpacedContainers);
 					} else {
 						retList.add(child);
 					}
@@ -144,201 +134,174 @@ public class SdrNavigatorContentProvider extends SdrContentProvider implements I
 	}
 
 	/**
-	 * Utility method used for namespace structure, including reusing existing componentSubContainers
+	 * Utility method to place a component in the proper tree hierarchy based on its namespace. Creates any containers
+	 * needed for the namespace.
+	 * @param component The component to add
+	 * @param topLevelContainers The list of top-level namespace containers
 	 */
-	private ComponentsSubContainer createSubContainers(SoftPkg component, List<ComponentsSubContainer> nameSpacedContainers) {
-		List<ComponentsSubContainer> containerList = new ArrayList<ComponentsSubContainer>();
-		boolean alreadyExists = false;
+	private void createSubContainers(SoftPkg component, List<ComponentsSubContainer> topLevelContainers) {
+		// Namespaces are all segments of the name except the last (the 'basename')
 		String[] names = component.getName().split("\\.");
-		int numOfContainers = names.length - 1;
+		int numContainers = names.length - 1;
+		List<ComponentsSubContainer> containerList = new ArrayList<ComponentsSubContainer>();
 
-		// Create a subContainer for all names but the last one (which is used for the component itself)
-		for (int i = 0; i < (numOfContainers); i++) {
-			ComponentsSubContainer container = SdrFactory.eINSTANCE.createComponentsSubContainer();
-			container.setContainerName(names[i]);
+		// Create containers for each namespace
+		for (int i = 0; i < numContainers; i++) {
+			ComponentsSubContainer container = null;
 
-			// For the top level name, check and see if that subContainer already exists
 			if (i == 0) {
-				for (ComponentsSubContainer c : nameSpacedContainers) {
-					if (names[i].equals(c.getContainerName())) {
-						container = c;
-						alreadyExists = true;
+				// Top-level namespace -- check if a container already exists
+				for (ComponentsSubContainer topLevelContainer : topLevelContainers) {
+					if (names[i].equals(topLevelContainer.getContainerName())) {
+						container = topLevelContainer;
 						break;
 					}
-
 				}
-			}
 
-			// Make sure all containers beyond the first are properly nested
-			if (i != 0) {
+				// Create a new container if we couldn't find an existing one
+				if (container == null) {
+					container = SdrFactory.eINSTANCE.createComponentsSubContainer();
+					container.setContainerName(names[i]);
+					topLevelContainers.add(container);
+				}
+			} else {
+				// Namespace OTHER than top-level -- check if its parent already has a container for the namespace
 				ComponentsSubContainer parent = containerList.get(i - 1);
-
-				// If there are no other subContainers, then add this one
-				if (parent.getSubContainers().isEmpty()) {
-					parent.getSubContainers().add(container);
-				}
-
-				// If there are already subContainers, see if the one we want already exists
-				EList<ComponentsSubContainer> subList = parent.getSubContainers();
-				boolean foundIt = false;
-				for (ComponentsSubContainer c : subList) {
-					if (names[i].equals(c.getContainerName())) {
-						container = c;
-						foundIt = true;
+				for (ComponentsSubContainer child : parent.getSubContainers()) {
+					if (names[i].equals(child.getContainerName())) {
+						container = child;
 						break;
 					}
-
 				}
-				if (!foundIt) {
+
+				// Create a new container if we couldn't find an existing one
+				if (container == null) {
+					container = SdrFactory.eINSTANCE.createComponentsSubContainer();
+					container.setContainerName(names[i]);
 					parent.getSubContainers().add(container);
-				}
-
-				// Add the component to the final subContainer
-				if (i == (numOfContainers - 1)) {
-					container.getComponents().add(component);
 				}
 			}
 
+			// Keep track of the containers for this component
 			containerList.add(container);
 		}
 
-		if (!alreadyExists) {
-			return containerList.get(0);
-		} else {
-			return null;
-		}
+		// Add the component to the final container
+		containerList.get(numContainers - 1).getComponents().add(component);
 	}
 
 	/**
-	 * Utility method used for namespace structure, including reusing existing componentSubContainers
+	 * Utility method to place a waveform in the proper tree hierarchy based on its namespace. Creates any containers
+	 * needed for the namespace.
+	 * @param sad The waveform to add
+	 * @param topLevelContainers The list of top-level namespace containers
 	 */
-	private WaveformsSubContainer createSubContainers(SoftwareAssembly sad, List<WaveformsSubContainer> nameSpacedContainers) {
-		List<WaveformsSubContainer> containerList = new ArrayList<WaveformsSubContainer>();
-		boolean alreadyExists = false;
+	private void createSubContainers(SoftwareAssembly sad, List<WaveformsSubContainer> topLevelContainers) {
+		// Namespaces are all segments of the name except the last (the 'basename')
 		String[] names = sad.getName().split("\\.");
-		int numOfContainers = names.length - 1;
+		int numContainers = names.length - 1;
+		List<WaveformsSubContainer> containerList = new ArrayList<WaveformsSubContainer>();
 
-		// Create a subContainer for all names but the last one (which is used for the component itself)
-		for (int i = 0; i < (numOfContainers); i++) {
-			WaveformsSubContainer container = SdrFactory.eINSTANCE.createWaveformsSubContainer();
-			container.setContainerName(names[i]);
+		// Create containers for each namespace
+		for (int i = 0; i < numContainers; i++) {
+			WaveformsSubContainer container = null;
 
-			// For the top level name, check and see if that subContainer already exists
 			if (i == 0) {
-				for (WaveformsSubContainer c : nameSpacedContainers) {
-					if (names[i].equals(c.getContainerName())) {
-						container = c;
-						alreadyExists = true;
+				// Top-level namespace -- check if a container already exists
+				for (WaveformsSubContainer topLevelContainer : topLevelContainers) {
+					if (names[i].equals(topLevelContainer.getContainerName())) {
+						container = topLevelContainer;
 						break;
 					}
-
 				}
-			}
 
-			// Make sure all containers beyond the first are properly nested
-			if (i != 0) {
+				// Create a new container if we couldn't find an existing one
+				if (container == null) {
+					container = SdrFactory.eINSTANCE.createWaveformsSubContainer();
+					container.setContainerName(names[i]);
+					topLevelContainers.add(container);
+				}
+			} else {
+				// Namespace OTHER than top-level -- check if its parent already has a container for the namespace
 				WaveformsSubContainer parent = containerList.get(i - 1);
-
-				// If there are no other subContainers, then add this one
-				if (parent.getSubContainers().isEmpty()) {
-					parent.getSubContainers().add(container);
-				}
-
-				// If there are already subContainers, see if the one we want already exists
-				EList<WaveformsSubContainer> subList = parent.getSubContainers();
-				boolean foundIt = false;
-				for (WaveformsSubContainer c : subList) {
-					if (names[i].equals(c.getContainerName())) {
-						container = c;
-						foundIt = true;
+				for (WaveformsSubContainer child : parent.getSubContainers()) {
+					if (names[i].equals(child.getContainerName())) {
+						container = child;
 						break;
 					}
-
 				}
-				if (!foundIt) {
+
+				// Create a new container if we couldn't find an existing one
+				if (container == null) {
+					container = SdrFactory.eINSTANCE.createWaveformsSubContainer();
+					container.setContainerName(names[i]);
 					parent.getSubContainers().add(container);
-				}
-
-				// Add the waveform to the final subContainer
-				if (i == (numOfContainers - 1)) {
-					container.getWaveforms().add(sad);
 				}
 			}
 
+			// Keep track of the containers for this waveform
 			containerList.add(container);
 		}
 
-		if (!alreadyExists) {
-			return containerList.get(0);
-		} else {
-			return null;
-		}
+		// Add the waveform to the final container
+		containerList.get(numContainers - 1).getWaveforms().add(sad);
 	}
 
 	/**
-	 * Utility method used for namespace structure, including reusing existing componentSubContainers
+	 * Utility method to place a node in the proper tree hierarchy based on its namespace. Creates any containers
+	 * needed for the namespace.
+	 * @param dcd The node to add
+	 * @param topLevelContainers The list of top-level namespace containers
 	 */
-	private NodesSubContainer createSubContainers(DeviceConfiguration dcd, List<NodesSubContainer> nameSpacedContainers) {
-		List<NodesSubContainer> containerList = new ArrayList<NodesSubContainer>();
-		boolean alreadyExists = false;
+	private void createSubContainers(DeviceConfiguration dcd, List<NodesSubContainer> topLevelContainers) {
+		// Namespaces are all segments of the name except the last (the 'basename')
 		String[] names = dcd.getName().split("\\.");
-		int numOfContainers = names.length - 1;
+		int numContainers = names.length - 1;
+		List<NodesSubContainer> containerList = new ArrayList<NodesSubContainer>();
 
-		// Create a subContainer for all names but the last one (which is used for the component itself)
-		for (int i = 0; i < (numOfContainers); i++) {
-			NodesSubContainer container = SdrFactory.eINSTANCE.createNodesSubContainer();
-			container.setContainerName(names[i]);
+		// Create containers for each namespace
+		for (int i = 0; i < numContainers; i++) {
+			NodesSubContainer container = null;
 
-			// For the top level name, check and see if that subContainer already exists
 			if (i == 0) {
-				for (NodesSubContainer c : nameSpacedContainers) {
-					if (names[i].equals(c.getContainerName())) {
-						container = c;
-						alreadyExists = true;
+				// Top-level namespace -- check if a container already exists
+				for (NodesSubContainer topLevelContainer : topLevelContainers) {
+					if (names[i].equals(topLevelContainer.getContainerName())) {
+						container = topLevelContainer;
 						break;
 					}
-
 				}
-			}
 
-			// Make sure all containers beyond the first are properly nested
-			if (i != 0) {
+				// Create a new container if we couldn't find an existing one
+				if (container == null) {
+					container = SdrFactory.eINSTANCE.createNodesSubContainer();
+					container.setContainerName(names[i]);
+					topLevelContainers.add(container);
+				}
+			} else {
+				// Namespace OTHER than top-level -- check if its parent already has a container for the namespace
 				NodesSubContainer parent = containerList.get(i - 1);
-
-				// If there are no other subContainers, then add this one
-				if (parent.getSubContainers().isEmpty()) {
-					parent.getSubContainers().add(container);
-				}
-
-				// If there are already subContainers, see if the one we want already exists
-				EList<NodesSubContainer> subList = parent.getSubContainers();
-				boolean foundIt = false;
-				for (NodesSubContainer c : subList) {
-					if (names[i].equals(c.getContainerName())) {
-						container = c;
-						foundIt = true;
+				for (NodesSubContainer child : parent.getSubContainers()) {
+					if (names[i].equals(child.getContainerName())) {
+						container = child;
 						break;
 					}
-
 				}
-				if (!foundIt) {
+
+				// Create a new container if we couldn't find an existing one
+				if (container == null) {
+					container = SdrFactory.eINSTANCE.createNodesSubContainer();
+					container.setContainerName(names[i]);
 					parent.getSubContainers().add(container);
-				}
-
-				// Add the waveform to the final subContainer
-				if (i == (numOfContainers - 1)) {
-					container.getNodes().add(dcd);
 				}
 			}
 
+			// Keep track of the containers for this node
 			containerList.add(container);
 		}
 
-		if (!alreadyExists) {
-			return containerList.get(0);
-		} else {
-			return null;
-		}
+		// Add the node to the final container
+		containerList.get(numContainers - 1).getNodes().add(dcd);
 	}
 
 	@Override
