@@ -10,10 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import mil.jpeojtrs.sca.partitioning.ComponentFile;
 import mil.jpeojtrs.sca.partitioning.ComponentProperties;
 import mil.jpeojtrs.sca.partitioning.PartitioningFactory;
@@ -51,7 +47,6 @@ public class ViewerComponent extends ViewerItemProvider {
 		SpdPackage.Literals.PROPERTY_FILE__PROPERTIES,
 	};
 
-	private List<ViewerProperty< ? >> properties = new ArrayList<ViewerProperty< ? >>();
 	private SadComponentInstantiation compInst;
 	private SoftPkg spd;
 	private SoftwareAssembly sad;
@@ -74,21 +69,21 @@ public class ViewerComponent extends ViewerItemProvider {
 				final Object value = i.next();
 				if (value instanceof AbstractProperty) {
 					AbstractProperty def = (AbstractProperty) value;
-					properties.add(createViewerProperty(def));
+					children.add(createViewerProperty(def));
 				}
 			}
 		}
 	}
 
 	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
-		for (ViewerProperty< ? > p : properties) {
-			p.addPropertyChangeListener(listener);
+		for (Object child : children) {
+			((ViewerProperty< ? >) child).addPropertyChangeListener(listener);
 		}
 	}
 
 	public void removePropertyChangeListener(IViewerPropertyChangeListener listener) {
-		for (ViewerProperty< ? > p : properties) {
-			p.removePropertyChangeListener(listener);
+		for (Object child : children) {
+			((ViewerProperty< ? >) child).removePropertyChangeListener(listener);
 		}
 	}
 
@@ -96,38 +91,18 @@ public class ViewerComponent extends ViewerItemProvider {
 		return compInst;
 	}
 
-	public List<ViewerProperty< ? >> getProperties() {
-		return properties;
-	}
-
 	private ViewerProperty< ? > createViewerProperty(AbstractProperty def) {
-		ViewerProperty< ? > retVal = null;
-		if (def instanceof Simple) {
-			retVal = createViewerProperty((Simple) def);
-		} else if (def instanceof SimpleSequence) {
-			retVal = createViewerProperty((SimpleSequence) def);
-		} else if (def instanceof Struct) {
-			retVal = createViewerProperty((Struct) def);
-		} else if (def instanceof StructSequence) {
-			retVal = createViewerProperty((StructSequence) def);
+		switch (def.eClass().getClassifierID()) {
+		case PrfPackage.SIMPLE:
+			return new ViewerSimpleProperty((Simple) def, this);
+		case PrfPackage.SIMPLE_SEQUENCE:
+			return new ViewerSequenceProperty((SimpleSequence) def, this);
+		case PrfPackage.STRUCT:
+			return new ViewerStructProperty((Struct) def, this);
+		case PrfPackage.STRUCT_SEQUENCE:
+			return new ViewerStructSequenceProperty((StructSequence) def, this);
 		}
-		return retVal;
-	}
-
-	private ViewerSimpleProperty createViewerProperty(Simple def) {
-		return new ViewerSimpleProperty(def, this);
-	}
-
-	private ViewerSequenceProperty createViewerProperty(SimpleSequence def) {
-		return new ViewerSequenceProperty(def, this);
-	}
-
-	private ViewerStructProperty createViewerProperty(Struct def) {
-		return new ViewerStructProperty(def, this);
-	}
-
-	private ViewerStructSequenceProperty createViewerProperty(StructSequence def) {
-		return new ViewerStructSequenceProperty(def, this);
+		return null;
 	}
 
 	protected AbstractPropertyRef< ? > getChildRef(final String refId) {
@@ -152,11 +127,6 @@ public class ViewerComponent extends ViewerItemProvider {
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public Collection< ? > getChildren(Object element) {
-		return getProperties();
 	}
 
 	@Override

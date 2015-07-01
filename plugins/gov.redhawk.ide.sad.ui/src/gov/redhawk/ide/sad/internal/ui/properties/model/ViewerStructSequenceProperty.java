@@ -10,9 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.emf.ecore.util.FeatureMap;
 
@@ -26,17 +24,16 @@ import mil.jpeojtrs.sca.prf.StructSequenceRef;
  * 
  */
 public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence> {
-	private List<ViewerStructSequenceNestedProperty< ? >> fieldsArray = new ArrayList<ViewerStructSequenceNestedProperty< ? >>();
 
 	public ViewerStructSequenceProperty(StructSequence def, Object parent) {
 		super(def, parent);
 		for (FeatureMap.Entry entry : def.getStruct().getFields()) {
 			if (entry.getEStructuralFeature() == PrfPackage.Literals.STRUCT__SIMPLE) {
 				Simple simple = (Simple) entry.getValue();
-				fieldsArray.add(new ViewerStructSequenceSimpleProperty(simple, this));
+				getChildren().add(new ViewerStructSequenceSimpleProperty(simple, this));
 			} else if (entry.getEStructuralFeature() == PrfPackage.Literals.STRUCT__SIMPLE_SEQUENCE) {
 				SimpleSequence sequence = (SimpleSequence) entry.getValue();
-				fieldsArray.add(new ViewerStructSequenceSequenceProperty(sequence, this));
+				getChildren().add(new ViewerStructSequenceSequenceProperty(sequence, this));
 			}
 		}
 	}
@@ -49,27 +46,22 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 	@Override
 	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
 		super.addPropertyChangeListener(listener);
-		for (ViewerProperty< ? > p : fieldsArray) {
-			p.addPropertyChangeListener(listener);
+		for (Object child : getChildren()) {
+			((ViewerProperty< ? >) child).addPropertyChangeListener(listener);
 		}
 	}
 
 	@Override
 	public void removePropertyChangeListener(IViewerPropertyChangeListener listener) {
 		super.removePropertyChangeListener(listener);
-		for (ViewerProperty< ? > p : fieldsArray) {
-			p.removePropertyChangeListener(listener);
+		for (Object child : getChildren()) {
+			((ViewerProperty< ? >) child).removePropertyChangeListener(listener);
 		}
 	}
 
 	public void setValue(StructSequenceRef value) {
 		// TODO: Update values in SAD
 		firePropertyChangeEvent();
-	}
-
-	@Override
-	public Collection< ? > getChildren(Object object) {
-		return fieldsArray;
 	}
 
 	@Override

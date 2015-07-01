@@ -36,7 +36,6 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 public abstract class ViewerProperty< T extends AbstractProperty > extends ViewerItemProvider {
 
 	protected final T def;
-	private Object parent;
 	private ListenerList listenerList = new ListenerList(ListenerList.IDENTITY);
 
 	/**
@@ -175,11 +174,6 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 	}
 
 	protected abstract Collection< ? > getKindTypes();
-
-	@Override
-	public Object getParent(Object object) {
-		return parent;
-	}
 
 	@Override
 	public EditingDomain getEditingDomain() {

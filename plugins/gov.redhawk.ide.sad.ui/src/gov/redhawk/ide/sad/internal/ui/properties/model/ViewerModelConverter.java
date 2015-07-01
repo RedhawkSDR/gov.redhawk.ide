@@ -271,17 +271,6 @@ public class ViewerModelConverter {
 	}
 
 	private void handleExternalPropIDChanged(Notification notification) {
-		ExternalProperty externalProp = (ExternalProperty) notification.getNotifier();
-		for (ViewerComponent comp : this.viewerModel) {
-			if (externalProp.getCompRefID().equals(comp.getComponentInstantiation().getId())) {
-				for (ViewerProperty< ? > prop : comp.getProperties()) {
-					if (externalProp.getPropID().equals(prop.getID())) {
-						refresh(prop);
-						return;
-					}
-				}
-			}
-		}
 	}
 
 	private void handleExternalPropertiesPropertiesChanged(Notification notification) {

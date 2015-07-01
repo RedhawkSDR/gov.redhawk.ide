@@ -1,8 +1,5 @@
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.UnexecutableCommand;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -10,32 +7,12 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
+import org.eclipse.emf.edit.provider.ItemProvider;
 
-public abstract class ViewerItemProvider implements ITreeItemContentProvider {
+public abstract class ViewerItemProvider extends ItemProvider {
 
 	public ViewerItemProvider() {
 		super();
-	}
-
-	@Override
-	public Collection< ? > getElements(Object object) {
-		return getChildren(object);
-	}
-
-	@Override
-	public Collection< ? > getChildren(Object object) {
-		return Collections.EMPTY_LIST;
-	}
-
-	@Override
-	public boolean hasChildren(Object object) {
-		return !getChildren(object).isEmpty();
-	}
-
-	@Override
-	public Object getParent(Object object) {
-		return null;
 	}
 
 	public abstract EditingDomain getEditingDomain();

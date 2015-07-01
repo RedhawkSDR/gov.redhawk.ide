@@ -10,9 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -31,15 +29,13 @@ import mil.jpeojtrs.sca.prf.StructRef;
  */
 public class ViewerStructProperty extends ViewerProperty<Struct> {
 
-	private List<ViewerProperty< ? >> fields = new ArrayList<ViewerProperty< ? >>();
-
 	public ViewerStructProperty(Struct def, Object parent) {
 		super(def, parent);
 		for (FeatureMap.Entry field : def.getFields()) {
 			if (field.getEStructuralFeature() == PrfPackage.Literals.STRUCT__SIMPLE) {
-				fields.add(new ViewerSimpleProperty((Simple) field.getValue(), this));
+				getChildren().add(new ViewerSimpleProperty((Simple) field.getValue(), this));
 			} else if (field.getEStructuralFeature() == PrfPackage.Literals.STRUCT__SIMPLE_SEQUENCE) {
-				fields.add(new ViewerSequenceProperty((SimpleSequence) field.getValue(), this));				
+				getChildren().add(new ViewerSequenceProperty((SimpleSequence) field.getValue(), this));
 			}
 		}
 	}
@@ -62,29 +58,20 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 		return null;
 	}
 
-	public List<ViewerProperty< ? >> getFields() {
-		return fields;
-	}
-
 	@Override
 	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
 		super.addPropertyChangeListener(listener);
-		for (ViewerProperty< ? > p : fields) {
-			p.addPropertyChangeListener(listener);
+		for (Object child : children) {
+			((ViewerProperty< ? >) child).addPropertyChangeListener(listener);
 		}
 	}
 	
 	@Override
 	public void removePropertyChangeListener(IViewerPropertyChangeListener listener) {
 		super.removePropertyChangeListener(listener);
-		for (ViewerProperty< ? > p : fields) {
-			p.removePropertyChangeListener(listener);
+		for (Object child : children) {
+			((ViewerProperty< ? >) child).removePropertyChangeListener(listener);
 		}
-	}
-
-	@Override
-	public Collection< ? > getChildren(Object object) {
-		return getFields();
 	}
 
 	@Override
