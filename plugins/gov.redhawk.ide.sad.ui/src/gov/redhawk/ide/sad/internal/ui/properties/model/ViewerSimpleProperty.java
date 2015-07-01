@@ -13,6 +13,7 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 import java.util.Collection;
 
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
@@ -52,9 +53,8 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 	}
 
 	@Override
-	protected Object createContainer(Object feature, Object value) {
-		final String stringFeature = (String) feature;
-		if (stringFeature.equals("value")) {
+	protected Object createContainer(EStructuralFeature feature, Object value) {
+		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
 			SimpleRef ref = PrfFactory.eINSTANCE.createSimpleRef();
 			ref.setRefID(getID());
 			ref.setValue((String) value);
@@ -64,8 +64,8 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 	}
 
 	@Override
-	protected Command createSetCommand(EditingDomain domain, Object owner, Object feature, Object value) {
-		if (((String)feature).equals("value")) {
+	protected Command createSetCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {
+		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
 			return SetCommand.create(domain, owner, PrfPackage.Literals.SIMPLE_REF__VALUE, value);
 		}
 		return super.createSetCommand(domain, owner, feature, value);

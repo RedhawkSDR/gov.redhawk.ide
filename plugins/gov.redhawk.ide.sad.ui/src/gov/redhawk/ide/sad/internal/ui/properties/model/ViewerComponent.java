@@ -135,9 +135,8 @@ public class ViewerComponent extends ViewerItemProvider {
 	}
 
 	@Override
-	public Command createParentCommand(EditingDomain domain, Object feature, Object value) {
-		final String stringFeature = (String) feature;
-		if (stringFeature.equals("value")) {
+	public Command createParentCommand(EditingDomain domain, EStructuralFeature feature, Object value) {
+		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
 			return SetCommand.create(domain, getComponentInstantiation(), PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, value);
 		}
 		return UnexecutableCommand.INSTANCE;
@@ -159,18 +158,16 @@ public class ViewerComponent extends ViewerItemProvider {
 	}
 
 	@Override
-	protected Object getContainer(Object feature) {
-		final String stringFeature = (String)feature;
-		if (stringFeature.equals("value")) {
+	protected Object getContainer(EStructuralFeature feature) {
+		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
 			return getComponentInstantiation().getComponentProperties();
 		}
 		return null;
 	}
 
 	@Override
-	protected Object createContainer(Object feature, Object value) {
-		final String stringFeature = (String)feature;
-		if (stringFeature.equals("value")) {
+	protected Object createContainer(EStructuralFeature feature, Object value) {
+		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
 			ComponentProperties properties = PartitioningFactory.eINSTANCE.createComponentProperties();
 			properties.getProperties().add(getChildFeature(properties, value), value);
 			return properties;

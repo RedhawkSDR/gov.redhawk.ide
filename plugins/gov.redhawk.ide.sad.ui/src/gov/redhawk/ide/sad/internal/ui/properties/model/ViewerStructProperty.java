@@ -101,9 +101,8 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 	}
 
 	@Override
-	protected Object createContainer(Object feature, Object value) {
-		final String stringFeature = (String)feature;
-		if (stringFeature.equals("value")) {
+	protected Object createContainer(EStructuralFeature feature, Object value) {
+		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
 			StructRef ref = PrfFactory.eINSTANCE.createStructRef();
 			ref.setRefID(getID());
 			ref.getRefs().add(getChildFeature(ref, value), value);

@@ -26,6 +26,7 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -141,7 +142,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 
 	public void setSadValue(Object value) {
 		EditingDomain editingDomain = getEditingDomain();
-		Command command = createCommand(editingDomain, SetCommand.class, "value", value);
+		Command command = createCommand(editingDomain, SetCommand.class, ViewerPackage.Literals.SAD_PROPERTY__VALUE, value);
 		if (command != null && command.canExecute()) {
 			editingDomain.getCommandStack().execute(command);
 		}
@@ -156,7 +157,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 		}
 
 		EditingDomain editingDomain = getEditingDomain();
-		Command command = createCommand(editingDomain, SetCommand.class, "id", newExternalID);
+		Command command = createCommand(editingDomain, SetCommand.class, ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID, newExternalID);
 		if (command != null && command.canExecute()) {
 			editingDomain.getCommandStack().execute(command);
 		}
@@ -181,20 +182,18 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 	}
 
 	@Override
-	protected Object getContainer(Object feature) {
-		final String stringFeature = (String)feature;
-		if (stringFeature.equals("value")) {
+	protected Object getContainer(EStructuralFeature feature) {
+		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
 			return getValueRef();
-		} else if (stringFeature.equals("id")) {
+		} else if (feature == ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
 			return getExternalProperty();
 		}
 		return null;
 	}
 
 	@Override
-	protected Object createContainer(Object feature, Object value) {
-		final String stringFeature = (String)feature;
-		if (stringFeature.equals("id")) {
+	protected Object createContainer(EStructuralFeature feature, Object value) {
+		if (feature == ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
 			ExternalProperty property = SadFactory.eINSTANCE.createExternalProperty();
 			SadComponentInstantiation compInst = getComponentInstantiation();
 			property.setCompRefID(compInst.getId());
@@ -206,8 +205,8 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 	}
 
 	@Override
-	protected Command createParentCommand(EditingDomain domain, Object feature, Object value) {
-		if (((String) feature).equals("id")) {
+	protected Command createParentCommand(EditingDomain domain, EStructuralFeature feature, Object value) {
+		if (feature == ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
 			SadComponentInstantiation compInst = getComponentInstantiation();
 			SoftwareAssembly sad = ScaEcoreUtils.getEContainerOfType(compInst, SoftwareAssembly.class);
 			ExternalProperties properties = sad.getExternalProperties();
@@ -223,8 +222,8 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 	}
 
 	@Override
-	protected Command createSetCommand(EditingDomain domain, Object owner, Object feature, Object value) {
-		if (((String)feature).equals("id")) {
+	protected Command createSetCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {
+		if (feature == ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
 			return SetCommand.create(domain, owner, SadPackage.Literals.EXTERNAL_PROPERTY__EXTERNAL_PROP_ID, value);
 		}
 		return super.createSetCommand(domain, owner, feature, value);
