@@ -26,6 +26,7 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.DeleteCommand;
@@ -233,5 +234,16 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 			return SetCommand.create(domain, owner, SadPackage.Literals.EXTERNAL_PROPERTY__EXTERNAL_PROP_ID, value);
 		}
 		return super.createSetCommand(domain, owner, feature, value);
+	}
+
+	@Override
+	protected Command createDeleteCommand(EditingDomain domain, Object object, EStructuralFeature feature) {
+		if (feature == ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
+			ExternalProperties properties = (ExternalProperties) ((EObject) object).eContainer();
+			if (properties.getProperties().size() == 1) {
+				return DeleteCommand.create(domain, properties);
+			}
+		}
+		return super.createDeleteCommand(domain, object, feature);
 	}
 }
