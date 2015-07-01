@@ -158,7 +158,7 @@ public class ViewerComponent extends ViewerItemProvider {
 	}
 
 	@Override
-	protected Object getContainer(EStructuralFeature feature) {
+	protected Object getModelObject(EStructuralFeature feature) {
 		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
 			return getComponentInstantiation().getComponentProperties();
 		}
@@ -166,7 +166,7 @@ public class ViewerComponent extends ViewerItemProvider {
 	}
 
 	@Override
-	protected Object createContainer(EStructuralFeature feature, Object value) {
+	protected Object createModelObject(EStructuralFeature feature, Object value) {
 		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
 			ComponentProperties properties = PartitioningFactory.eINSTANCE.createComponentProperties();
 			properties.getProperties().add(getChildFeature(properties, value), value);

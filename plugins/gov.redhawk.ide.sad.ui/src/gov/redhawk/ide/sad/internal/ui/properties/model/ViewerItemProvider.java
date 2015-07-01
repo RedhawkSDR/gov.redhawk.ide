@@ -27,31 +27,31 @@ public abstract class ViewerItemProvider extends ItemProvider {
 
 	public abstract EditingDomain getEditingDomain();
 
-	protected abstract Object getContainer(EStructuralFeature feature);
+	protected abstract Object getModelObject(EStructuralFeature feature);
 
-	protected abstract Object createContainer(EStructuralFeature feature, Object value);
+	protected abstract Object createModelObject(EStructuralFeature feature, Object value);
 
 	protected EStructuralFeature getChildFeature(Object object, Object child) {
 		return null;
 	}
 
 	protected Command createCommand(EditingDomain domain, Class< ? > commandClass, EStructuralFeature feature, Object value) {
-		Object peer = getContainer(feature);
-		if (peer == null && (commandClass == AddCommand.class || commandClass == SetCommand.class)) {
-			return createParentCommand(domain, feature, createContainer(feature, value));
+		Object modelObject = getModelObject(feature);
+		if (modelObject == null && (commandClass == AddCommand.class || commandClass == SetCommand.class)) {
+			return createParentCommand(domain, feature, createModelObject(feature, value));
 		}
 		if (commandClass == AddCommand.class) {
-			return createAddCommand(domain, peer, getChildFeature(peer, value), value);
+			return createAddCommand(domain, modelObject, getChildFeature(modelObject, value), value);
 		} else if (commandClass == SetCommand.class) {
-			return createSetCommand(domain, peer, feature, value);
+			return createSetCommand(domain, modelObject, feature, value);
 		} else if (commandClass == DeleteCommand.class) {
-			return createDeleteCommand(domain, peer, feature);
+			return createDeleteCommand(domain, modelObject, feature);
 		}
 		return UnexecutableCommand.INSTANCE;
 	}
 
 	protected Command createParentCommand(EditingDomain domain, EStructuralFeature feature, Object value) {
-		ViewerItemProvider parentItemProvider = (ViewerItemProvider) getParent(this);
+		ViewerItemProvider parentItemProvider = (ViewerItemProvider) getParent();
 		if (parentItemProvider != null) {
 			return parentItemProvider.createCommand(domain, AddCommand.class, feature, value);
 		}

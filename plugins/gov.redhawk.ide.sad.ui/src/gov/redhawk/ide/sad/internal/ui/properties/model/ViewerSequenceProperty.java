@@ -73,7 +73,7 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 	}
 
 	@Override
-	protected Object createContainer(EStructuralFeature feature, Object value) {
+	protected Object createModelObject(EStructuralFeature feature, Object value) {
 		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
 			SimpleSequenceRef ref = PrfFactory.eINSTANCE.createSimpleSequenceRef();
 			ref.setRefID(getID());
@@ -81,7 +81,7 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 			ref.getValues().eSet(PrfPackage.Literals.VALUES__VALUE, value);
 			return ref;
 		}
-		return super.createContainer(feature, value);
+		return super.createModelObject(feature, value);
 	}
 
 	@Override
