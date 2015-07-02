@@ -1049,8 +1049,8 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 						// determine which usesPortStub we are targeting
 						UsesPortStub usesPortStub = null;
 						for (UsesPortStub p : findByStub.getUses()) {
-							if (p != null && sadConnectInterface.getUsesPort().getUsesIndentifier() != null
-								&& p.getName().equals(sadConnectInterface.getUsesPort().getUsesIndentifier())) {
+							if (p != null && sadConnectInterface.getUsesPort().getUsesIdentifier() != null
+								&& p.getName().equals(sadConnectInterface.getUsesPort().getUsesIdentifier())) {
 								usesPortStub = p;
 							}
 						}

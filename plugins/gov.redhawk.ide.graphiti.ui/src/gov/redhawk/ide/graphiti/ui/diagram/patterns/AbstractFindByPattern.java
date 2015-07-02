@@ -382,7 +382,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 
 	public static void addUsesPortStubToFindByStub(final FindByStub findByStub, final UsesPort< ? > usesPortStub, IFeatureProvider featureProvider) {
 
-		final String usesPortName = usesPortStub.getUsesIndentifier();
+		final String usesPortName = usesPortStub.getUsesIdentifier();
 
 		// editing domain for our transaction
 		TransactionalEditingDomain editingDomain = featureProvider.getDiagramTypeProvider().getDiagramBehavior().getEditingDomain();
@@ -412,7 +412,7 @@ public abstract class AbstractFindByPattern extends AbstractContainerPattern imp
 	 */
 	public static void addUsesPortStubToFindByStub2(final FindByStub findByStub, final SadUsesPort usesPort, IFeatureProvider featureProvider) {
 
-		final String usesPortName = usesPort.getUsesIndentifier();
+		final String usesPortName = usesPort.getUsesIdentifier();
 
 		// add uses port stub
 		if (usesPortName != null && !usesPortName.isEmpty()) {

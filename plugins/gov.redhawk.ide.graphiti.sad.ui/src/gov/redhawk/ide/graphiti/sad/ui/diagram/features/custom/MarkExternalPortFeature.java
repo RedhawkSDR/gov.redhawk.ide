@@ -108,7 +108,7 @@ public class MarkExternalPortFeature extends AbstractCustomFeature {
 
 				// set port identifier
 				if (obj instanceof ProvidesPortStub) {
-					port.setProvidesIndentifier(((ProvidesPortStub) obj).getName());
+					port.setProvidesIdentifier(((ProvidesPortStub) obj).getName());
 				} else if (obj instanceof UsesPortStub) {
 					port.setUsesIdentifier(((UsesPortStub) obj).getName());
 				}

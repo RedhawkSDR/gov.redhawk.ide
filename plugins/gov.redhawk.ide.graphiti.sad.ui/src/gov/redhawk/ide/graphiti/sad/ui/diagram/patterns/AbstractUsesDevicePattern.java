@@ -525,7 +525,7 @@ public abstract class AbstractUsesDevicePattern extends AbstractContainerPattern
 				}
 				if (!uPFound) {
 					UsesPortStub usesPortStub = PartitioningFactory.eINSTANCE.createUsesPortStub();
-					usesPortStub.setName(sadConnectInterface.getUsesPort().getUsesIndentifier());
+					usesPortStub.setName(sadConnectInterface.getUsesPort().getUsesIdentifier());
 					usesDeviceStub.getUsesPortStubs().add(usesPortStub);
 				}
 			} else if (sadConnectInterface.getProvidesPort() != null && sadConnectInterface.getProvidesPort().getDeviceUsedByApplication() != null) {

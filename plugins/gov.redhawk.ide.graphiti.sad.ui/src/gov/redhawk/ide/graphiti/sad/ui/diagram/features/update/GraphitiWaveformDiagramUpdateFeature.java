@@ -486,8 +486,8 @@ public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFe
 					// determine which usesPortStub
 					UsesPortStub usesPortStub = null;
 					for (UsesPortStub p : findByStub.getUses()) {
-						if (p != null && sadConnectInterface.getUsesPort().getUsesIndentifier() != null
-							&& p.getName().equals(sadConnectInterface.getUsesPort().getUsesIndentifier())) {
+						if (p != null && sadConnectInterface.getUsesPort().getUsesIdentifier() != null
+							&& p.getName().equals(sadConnectInterface.getUsesPort().getUsesIdentifier())) {
 							usesPortStub = p;
 						}
 					}
@@ -503,8 +503,8 @@ public class GraphitiWaveformDiagramUpdateFeature extends DefaultUpdateDiagramFe
 					// determine which usesPortStub we are targeting
 					UsesPortStub usesPortStub = null;
 					for (UsesPortStub p : usesDeviceStub.getUsesPortStubs()) {
-						if (p != null && sadConnectInterface.getUsesPort().getUsesIndentifier() != null
-							&& p.getName().equals(sadConnectInterface.getUsesPort().getUsesIndentifier())) {
+						if (p != null && sadConnectInterface.getUsesPort().getUsesIdentifier() != null
+							&& p.getName().equals(sadConnectInterface.getUsesPort().getUsesIdentifier())) {
 							usesPortStub = p;
 						}
 					}

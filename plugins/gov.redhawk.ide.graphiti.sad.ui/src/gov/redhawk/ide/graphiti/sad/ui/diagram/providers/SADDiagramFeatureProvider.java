@@ -231,7 +231,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 					// if it's already there disable this feature
 					if (obj instanceof ProvidesPortStub) {
 						for (Port p : externalPortList) {
-							if (((ProvidesPortStub) obj).getName().equals(p.getProvidesIndentifier())
+							if (((ProvidesPortStub) obj).getName().equals(p.getProvidesIdentifier())
 								&& ((ProvidesPortStub) obj).eContainer().equals(p.getComponentInstantiationRef().getInstantiation())) {
 								mark = false;
 							}

@@ -89,7 +89,7 @@ public class MarkNonExternalPortFeature extends AbstractCustomFeature {
 				// set port identifier
 				if (obj instanceof ProvidesPortStub) {
 					for (Port p : externalPortList) {
-						if (((ProvidesPortStub) obj).getName().equals(p.getProvidesIndentifier())
+						if (((ProvidesPortStub) obj).getName().equals(p.getProvidesIdentifier())
 							&& ((ProvidesPortStub) obj).eContainer().equals(p.getComponentInstantiationRef().getInstantiation())) {
 							portToRemove = p;
 						}

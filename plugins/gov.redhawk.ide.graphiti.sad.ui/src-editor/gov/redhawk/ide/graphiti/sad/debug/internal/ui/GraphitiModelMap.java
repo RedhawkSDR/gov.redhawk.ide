@@ -396,7 +396,7 @@ public class GraphitiModelMap implements IPortStatListener {
 			return null;
 		}
 		sourceComp.fetchPorts(null);
-		final ScaUsesPort usesPort = (ScaUsesPort) sourceComp.getScaPort(conn.getUsesPort().getUsesIndentifier());
+		final ScaUsesPort usesPort = (ScaUsesPort) sourceComp.getScaPort(conn.getUsesPort().getUsesIdentifier());
 		org.omg.CORBA.Object targetObj = null;
 		if (conn.getComponentSupportedInterface() != null) {
 			final LocalScaComponent targetComp = get((SadComponentInstantiation) conn.getComponentSupportedInterface().getComponentInstantiationRef().getInstantiation());
