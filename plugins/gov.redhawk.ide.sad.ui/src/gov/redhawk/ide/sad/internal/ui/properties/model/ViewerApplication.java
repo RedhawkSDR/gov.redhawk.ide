@@ -14,21 +14,21 @@ import gov.redhawk.sca.util.PluginUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import mil.jpeojtrs.sca.partitioning.ComponentProperties;
+import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 
 public class ViewerApplication extends ItemProviderAdapter implements ITreeItemContentProvider {
-
-	private List<ViewerComponent> children = null;
 
 	public ViewerApplication(AdapterFactory adapterFactory) {
 		super(adapterFactory);
@@ -51,14 +51,20 @@ public class ViewerApplication extends ItemProviderAdapter implements ITreeItemC
 	}
 
 	@Override
-	public Collection< ? > getChildren(Object object) {
-		if (children == null) {
-			children = new ArrayList<ViewerComponent>();
-			for (SadComponentInstantiation inst : ((SoftwareAssembly) object).getAllComponentInstantiations()) {
-				ViewerComponent comp = new ViewerComponent(inst);
-				children.add(comp);
-			}
+	protected Object getValue(EObject eObject, EStructuralFeature eStructuralFeature) {
+		if (eStructuralFeature == PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_INSTANTIATION) {
+			return ((SoftwareAssembly)eObject).getAllComponentInstantiations();
 		}
-		return children;
+		return super.getValue(eObject, eStructuralFeature);
 	}
+
+	@Override
+	protected Collection< ? extends EStructuralFeature> getChildrenFeatures(Object object) {
+		if (childrenFeatures == null) {
+			childrenFeatures = new ArrayList<EStructuralFeature>();
+			childrenFeatures.add(PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_INSTANTIATION);
+		}
+		return childrenFeatures;
+	}
+
 }

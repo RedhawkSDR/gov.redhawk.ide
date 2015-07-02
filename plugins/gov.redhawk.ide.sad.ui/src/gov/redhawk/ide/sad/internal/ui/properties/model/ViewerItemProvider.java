@@ -12,6 +12,9 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.UnexecutableCommand;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
@@ -19,7 +22,7 @@ import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ItemProvider;
 
-public abstract class ViewerItemProvider extends ItemProvider {
+public abstract class ViewerItemProvider extends ItemProvider implements Adapter {
 
 	public ViewerItemProvider() {
 		super();
@@ -72,5 +75,27 @@ public abstract class ViewerItemProvider extends ItemProvider {
 
 	protected Command createRemoveChildCommand(EditingDomain domain, Object child, EStructuralFeature feature) {
 		return createRemoveCommand(domain, child, feature);
+	}
+
+	@Override
+	public void notifyChanged(Notification notification) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public Notifier getTarget() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTarget(Notifier newTarget) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public boolean isAdapterForType(Object type) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

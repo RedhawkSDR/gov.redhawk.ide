@@ -10,7 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties;
 
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 
 import java.util.ArrayList;
@@ -25,6 +24,7 @@ import mil.jpeojtrs.sca.prf.Kind;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
 import mil.jpeojtrs.sca.prf.provider.PrfItemProviderAdapterFactory;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.provider.SadItemProviderAdapterFactory;
 
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
@@ -86,12 +86,11 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	@Override
 	public Image getColumnImage(Object element, XViewerColumn xCol, int columnIndex) throws Exception {
 		if (columnIndex == 0) {
-			if (element instanceof ViewerComponent) {
-				ViewerComponent component = ((ViewerComponent) element);
-				return labelProvider.getImage(component.getComponentInstantiation());
-			} else if (element instanceof ViewerProperty< ? >) {
+			if (element instanceof ViewerProperty< ? >) {
 				ViewerProperty< ? > prop = (ViewerProperty< ? >) element;
 				return labelProvider.getImage(prop.getDefinition());
+			} else {
+				return labelProvider.getImage(element);
 			}
 		}
 		return null;
@@ -301,8 +300,8 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	public String getID(Object element) {
-		if (element instanceof ViewerComponent) {
-			return ((ViewerComponent) element).getComponentInstantiation().getId();
+		if (element instanceof SadComponentInstantiation) {
+			return ((SadComponentInstantiation) element).getId();
 		} else if (element instanceof ViewerProperty< ? >) {
 			return ((ViewerProperty< ? >) element).getDefinition().getId();
 		}
@@ -310,8 +309,8 @@ public class PropertiesViewerLabelProvider extends XViewerLabelProvider {
 	}
 
 	public String getName(Object element) {
-		if (element instanceof ViewerComponent) {
-			return ((ViewerComponent) element).getComponentInstantiation().getUsageName();
+		if (element instanceof SadComponentInstantiation) {
+			return ((SadComponentInstantiation) element).getUsageName();
 		} else if (element instanceof ViewerProperty< ? >) {
 			return ((ViewerProperty< ? >) element).getDefinition().getName();
 		}

@@ -14,6 +14,7 @@ import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 public class ViewerAdapterFactory extends AdapterFactoryImpl {
@@ -21,6 +22,8 @@ public class ViewerAdapterFactory extends AdapterFactoryImpl {
 	@Override
 	public boolean isFactoryForType(Object type) {
 		if (type instanceof SoftwareAssembly) {
+			return true;
+		} else if (type instanceof SadComponentInstantiation) {
 			return true;
 		}
 		return super.isFactoryForType(type);
@@ -30,6 +33,8 @@ public class ViewerAdapterFactory extends AdapterFactoryImpl {
 	protected Adapter createAdapter(Notifier target) {
 		if (target instanceof SoftwareAssembly) {
 			return new ViewerApplication(this);
+		} else if (target instanceof SadComponentInstantiation) {
+			return new ViewerComponent((SadComponentInstantiation) target);
 		}
 		return super.createAdapter(target);
 	}
