@@ -24,7 +24,6 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import java.util.Collection;
 
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -39,7 +38,6 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 public abstract class ViewerProperty< T extends AbstractProperty > extends ViewerItemProvider {
 
 	protected final T def;
-	private ListenerList listenerList = new ListenerList(ListenerList.IDENTITY);
 
 	/**
 	 * 
@@ -47,28 +45,6 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 	public ViewerProperty(T def, Object parent) {
 		this.def = def;
 		this.parent = parent;
-	}
-
-	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
-		listenerList.add(listener);
-	}
-
-	public void removePropertyChangeListener(IViewerPropertyChangeListener listener) {
-		listenerList.add(listener);
-	}
-
-	protected void firePropertyChangeEvent() {
-		Object[] listeners = listenerList.getListeners();
-		for (Object obj : listeners) {
-			((IViewerPropertyChangeListener) obj).valueChanged(this);
-		}
-	}
-
-	protected void fireExternalIDChangeEvent() {
-		Object[] listeners = listenerList.getListeners();
-		for (Object obj : listeners) {
-			((IViewerPropertyChangeListener) obj).externalIDChanged(this);
-		}
 	}
 
 	public Object getParent() {

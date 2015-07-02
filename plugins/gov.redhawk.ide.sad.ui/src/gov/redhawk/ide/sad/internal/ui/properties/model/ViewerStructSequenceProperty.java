@@ -43,25 +43,8 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 		return (StructSequenceRef) super.getValueRef();
 	}
 
-	@Override
-	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
-		super.addPropertyChangeListener(listener);
-		for (Object child : getChildren()) {
-			((ViewerProperty< ? >) child).addPropertyChangeListener(listener);
-		}
-	}
-
-	@Override
-	public void removePropertyChangeListener(IViewerPropertyChangeListener listener) {
-		super.removePropertyChangeListener(listener);
-		for (Object child : getChildren()) {
-			((ViewerProperty< ? >) child).removePropertyChangeListener(listener);
-		}
-	}
-
 	public void setValue(StructSequenceRef value) {
 		// TODO: Update values in SAD
-		firePropertyChangeEvent();
 	}
 
 	@Override

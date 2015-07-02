@@ -35,18 +35,6 @@ public class ViewerApplication implements ITreeItemContentProvider {
 	private SoftwareAssembly sad;
 	private List<ViewerComponent> viewerModel = new ArrayList<ViewerComponent>();
 
-	private IViewerPropertyChangeListener propertyListener = new IViewerPropertyChangeListener() {
-
-		@Override
-		public void valueChanged(ViewerProperty< ? > source) {
-			viewer.refresh(source);
-		}
-
-		@Override
-		public void externalIDChanged(ViewerProperty< ? > source) {
-			viewer.refresh(source);
-		}
-	};
 	private PropertiesViewer viewer;
 	private WorkbenchJob refreshJob = new WorkbenchJob("Refresh Viewer") {
 		{
@@ -109,7 +97,6 @@ public class ViewerApplication implements ITreeItemContentProvider {
 		viewerModel.clear();
 		for (SadComponentInstantiation inst : sad.getAllComponentInstantiations()) {
 			ViewerComponent comp = new ViewerComponent(inst);
-			comp.addPropertyChangeListener(propertyListener);
 			viewerModel.add(comp);
 		}
 		refresh();

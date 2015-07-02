@@ -62,22 +62,6 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 	}
 
 	@Override
-	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
-		super.addPropertyChangeListener(listener);
-		for (Object child : children) {
-			((ViewerProperty< ? >) child).addPropertyChangeListener(listener);
-		}
-	}
-	
-	@Override
-	public void removePropertyChangeListener(IViewerPropertyChangeListener listener) {
-		super.removePropertyChangeListener(listener);
-		for (Object child : children) {
-			((ViewerProperty< ? >) child).removePropertyChangeListener(listener);
-		}
-	}
-
-	@Override
 	public Object getValue() {
 		return null;
 	}

@@ -76,18 +76,6 @@ public class ViewerComponent extends ViewerItemProvider {
 		}
 	}
 
-	public void addPropertyChangeListener(IViewerPropertyChangeListener listener) {
-		for (Object child : children) {
-			((ViewerProperty< ? >) child).addPropertyChangeListener(listener);
-		}
-	}
-
-	public void removePropertyChangeListener(IViewerPropertyChangeListener listener) {
-		for (Object child : children) {
-			((ViewerProperty< ? >) child).removePropertyChangeListener(listener);
-		}
-	}
-
 	public SadComponentInstantiation getComponentInstantiation() {
 		return compInst;
 	}
