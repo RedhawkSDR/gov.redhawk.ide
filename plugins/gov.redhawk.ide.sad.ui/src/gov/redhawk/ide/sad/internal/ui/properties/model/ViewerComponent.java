@@ -108,7 +108,7 @@ public class ViewerComponent extends ViewerItemProvider implements NestedPropert
 		return null;
 	}
 
-	protected AbstractPropertyRef< ? > getChildRef(final String refId) {
+	public AbstractPropertyRef< ? > getChildRef(final String refId) {
 		if (compInst.getComponentProperties() != null) {
 			for (FeatureMap.Entry entry : compInst.getComponentProperties().getProperties()) {
 				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();

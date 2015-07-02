@@ -50,7 +50,8 @@ public class ViewerStructProperty extends ViewerProperty<Struct> implements Nest
 		return (StructRef) super.getValueRef();
 	}
 
-	protected AbstractPropertyRef< ? > getChildRef(final String refId) {
+	@Override
+	public AbstractPropertyRef< ? > getChildRef(final String refId) {
 		StructRef structRef = getValueRef();
 		if (structRef != null) {
 			for (FeatureMap.Entry entry : structRef.getRefs()) {
@@ -78,7 +79,6 @@ public class ViewerStructProperty extends ViewerProperty<Struct> implements Nest
 		return getDefinition().getConfigurationKind();
 	}
 
-	@Override
 	protected EStructuralFeature getChildFeature(Object object, Object child) {
 		switch (((EObject) child).eClass().getClassifierID()) {
 		case PrfPackage.SIMPLE_REF:

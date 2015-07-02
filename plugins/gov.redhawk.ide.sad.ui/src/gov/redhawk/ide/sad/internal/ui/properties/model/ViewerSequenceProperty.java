@@ -85,11 +85,6 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 	}
 
 	@Override
-	protected EStructuralFeature getChildFeature(Object object, Object child) {
-		return PrfPackage.Literals.VALUES__VALUE;
-	}
-
-	@Override
 	public Command createSetCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {
 		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
 			return SetCommand.create(domain, ((SimpleSequenceRef)owner).getValues(), PrfPackage.Literals.VALUES__VALUE, value);

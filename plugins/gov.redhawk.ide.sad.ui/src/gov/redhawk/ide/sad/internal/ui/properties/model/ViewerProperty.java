@@ -51,12 +51,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 	}
 
 	protected AbstractPropertyRef< ? > getValueRef() {
-		if (parent instanceof ViewerComponent) {
-			return ((ViewerComponent) parent).getChildRef(this.getID());
-		} else if (parent instanceof ViewerStructProperty) {
-			return ((ViewerStructProperty) parent).getChildRef(this.getID());
-		}
-		return null;
+		return ((NestedPropertyItemProvider) getParent()).getChildRef(this.getID());
 	}
 
 	protected ExternalProperty getExternalProperty() {
@@ -113,11 +108,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 		if (value == null) {
 			commandClass = RemoveCommand.class;
 		} else {
-			if (this.getModelObject(feature) == null) {
-				commandClass = AddCommand.class;
-			} else {
-				commandClass = SetCommand.class;
-			}
+			commandClass = SetCommand.class;
 		}
 		Command command = createCommand(editingDomain, commandClass, feature, value);
 		if (command != null && command.canExecute()) {
@@ -157,10 +148,6 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 		return ((ViewerItemProvider) getParent()).getEditingDomain();
 	}
 
-	protected EStructuralFeature getChildFeature(Object object, Object child) {
-		return null;
-	}
-
 	protected Object getModelObject(EStructuralFeature feature) {
 		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
 			return getValueRef();
@@ -184,21 +171,15 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 
 	protected Command createCommand(EditingDomain domain, Class< ? > commandClass, EStructuralFeature feature, Object value) {
 		Object modelObject = getModelObject(feature);
-		if (modelObject == null && (commandClass == AddCommand.class || commandClass == SetCommand.class)) {
+		if (modelObject == null && (commandClass == SetCommand.class)) {
 			return createParentCommand(domain, feature, createModelObject(feature, value));
 		}
-		if (commandClass == AddCommand.class) {
-			return createAddCommand(domain, modelObject, getChildFeature(modelObject, value), value);
-		} else if (commandClass == SetCommand.class) {
+		if (commandClass == SetCommand.class) {
 			return createSetCommand(domain, modelObject, feature, value);
 		} else if (commandClass == RemoveCommand.class) {
 			return createRemoveCommand(domain, modelObject, feature);
 		}
 		return UnexecutableCommand.INSTANCE;
-	}
-
-	protected Command createAddCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {
-		return AddCommand.create(domain, owner, feature, value);
 	}
 
 	protected Command createParentCommand(EditingDomain domain, EStructuralFeature feature, Object value) {
