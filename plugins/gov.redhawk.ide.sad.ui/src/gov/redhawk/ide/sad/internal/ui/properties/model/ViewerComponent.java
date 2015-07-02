@@ -49,7 +49,6 @@ public class ViewerComponent extends ViewerItemProvider {
 	};
 
 	private SadComponentInstantiation compInst;
-	private SoftPkg spd;
 	private SoftwareAssembly sad;
 
 	public ViewerComponent(SadComponentInstantiation compInst) {
@@ -61,9 +60,8 @@ public class ViewerComponent extends ViewerItemProvider {
 		// The component file can be null if the component file reference does not map back to any SPD (likely due to a copy paste error on the users part)
 		if (theCompFile == null || theCompFile.getSoftPkg() == null) {
 			return;
-		} else {
-			spd = theCompFile.getSoftPkg();
 		}
+		SoftPkg spd = theCompFile.getSoftPkg();
 		Properties prf = ScaEcoreUtils.getFeature(spd, PATH);
 		if (prf != null) {
 			for (ValueListIterator<Object> i = prf.getProperties().valueListIterator(); i.hasNext();) {
