@@ -15,7 +15,7 @@ import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewer;
 import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerControlFactory;
 import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerConverter;
 import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerLabelProvider;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerModelConverter;
+import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerApplication;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
@@ -50,7 +50,7 @@ public class SadPropertiesPage extends ScaFormPage {
 
 	private static final String TOOLBAR_ID = "gov.redhawk.ide.sad.internal.ui.editor.properties.toolbar";
 	private PropertiesViewer viewer;
-	private final ViewerModelConverter model = new ViewerModelConverter();
+	private final ViewerApplication model = new ViewerApplication();
 	private IAction expandAllAction = new Action() {
 		{
 			setToolTipText("Expand All");

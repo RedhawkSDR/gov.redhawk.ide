@@ -11,7 +11,7 @@
 package gov.redhawk.ide.sad.internal.ui.properties;
 
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerModelConverter;
+import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerApplication;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceProperty;
 import gov.redhawk.model.sca.ScaFactory;
@@ -75,7 +75,7 @@ public class PropertiesViewerConverter implements XViewerConverter {
 						ScaStructSequenceProperty property = ScaFactory.eINSTANCE.createScaStructSequenceProperty();
 						ViewerComponent component = (ViewerComponent) viewerProp.getParent();
 						SadComponentInstantiation inst = component.getComponentInstantiation();
-						StructSequenceRef ref = (StructSequenceRef) ViewerModelConverter.getRef(inst, viewerProp);
+						StructSequenceRef ref = (StructSequenceRef) ViewerApplication.getRef(inst, viewerProp);
 						property.setDefinition(viewerProp.getDefinition());
 						if (ref != null) {
 							property.fromAny(ref.toAny());

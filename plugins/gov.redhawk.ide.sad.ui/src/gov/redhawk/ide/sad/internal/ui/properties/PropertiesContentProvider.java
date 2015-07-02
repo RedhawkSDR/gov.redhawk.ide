@@ -10,7 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties;
 
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerModelConverter;
+import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerApplication;
 
 import java.util.Collections;
 
@@ -53,8 +53,8 @@ public class PropertiesContentProvider implements ITreeContentProvider {
 	 */
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof ViewerModelConverter) {
-			return ((ViewerModelConverter) inputElement).getViewerModel().toArray();
+		if (inputElement instanceof ITreeItemContentProvider) {
+			return ((ITreeItemContentProvider) inputElement).getChildren(inputElement).toArray();
 		}
 		return Collections.EMPTY_LIST.toArray();
 	}
