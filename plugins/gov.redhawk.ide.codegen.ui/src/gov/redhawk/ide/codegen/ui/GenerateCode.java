@@ -158,9 +158,7 @@ public final class GenerateCode {
 							dialog.setBlockOnOpen(true);
 							if (dialog.open() == Window.OK) {
 								String[] result = dialog.getFilesToGenerate();
-								if (result == null) {
-									filesToGenerate = null;
-								} else {
+								if (result != null) {
 									filesToGenerate.addAll(Arrays.asList(result));
 								}
 							} else {
@@ -172,33 +170,19 @@ public final class GenerateCode {
 									filesToGenerate.add(s.getFilename());
 								}
 							}
-
-							// If Generate ALL
-							if (filesToGenerate.size() == aggregate.size()) {
-								filesToGenerate = null;
-							}
-						}
-
-						if (filesToGenerate != null && filesToGenerate.isEmpty()) {
-							return Status.CANCEL_STATUS;
 						}
 
 						final Map<Implementation, String[]> implFileMap = new HashMap<Implementation, String[]>();
 						for (Map.Entry<Implementation, Set<FileStatus>> entry : implMap.entrySet()) {
-							if (filesToGenerate == null) {
-								implFileMap.put(entry.getKey(), null);
-								continue;
-							} else {
-								Set<String> subsetFilesToGenerate = new HashSet<String>();
-								for (FileStatus s : entry.getValue()) {
-									subsetFilesToGenerate.add(s.getFilename());
-								}
-								Set<String> filesToRemove = new HashSet<String>(subsetFilesToGenerate);
-								filesToRemove.removeAll(filesToGenerate);
-								subsetFilesToGenerate.removeAll(filesToRemove);
-
-								implFileMap.put(entry.getKey(), subsetFilesToGenerate.toArray(new String[subsetFilesToGenerate.size()]));
+							Set<String> subsetFilesToGenerate = new HashSet<String>();
+							for (FileStatus s : entry.getValue()) {
+								subsetFilesToGenerate.add(s.getFilename());
 							}
+							Set<String> filesToRemove = new HashSet<String>(subsetFilesToGenerate);
+							filesToRemove.removeAll(filesToGenerate);
+							subsetFilesToGenerate.removeAll(filesToRemove);
+
+							implFileMap.put(entry.getKey(), subsetFilesToGenerate.toArray(new String[subsetFilesToGenerate.size()]));
 						}
 
 						WorkspaceJob processJob = new WorkspaceJob("Generating...") {
