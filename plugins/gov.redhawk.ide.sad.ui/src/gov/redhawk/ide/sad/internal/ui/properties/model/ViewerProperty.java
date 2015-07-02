@@ -23,6 +23,7 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import java.util.Collection;
 
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.command.UnexecutableCommand;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.AddCommand;
@@ -112,7 +113,11 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 		if (value == null) {
 			commandClass = RemoveCommand.class;
 		} else {
-			commandClass = SetCommand.class;
+			if (this.getModelObject(feature) == null) {
+				commandClass = AddCommand.class;
+			} else {
+				commandClass = SetCommand.class;
+			}
 		}
 		Command command = createCommand(editingDomain, commandClass, feature, value);
 		if (command != null && command.canExecute()) {
@@ -152,7 +157,10 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 		return ((ViewerItemProvider) getParent()).getEditingDomain();
 	}
 
-	@Override
+	protected EStructuralFeature getChildFeature(Object object, Object child) {
+		return null;
+	}
+
 	protected Object getModelObject(EStructuralFeature feature) {
 		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
 			return getValueRef();
@@ -162,7 +170,6 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 		return null;
 	}
 
-	@Override
 	protected Object createModelObject(EStructuralFeature feature, Object value) {
 		if (feature == ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
 			ExternalProperty property = SadFactory.eINSTANCE.createExternalProperty();
@@ -175,7 +182,25 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 		return null;
 	}
 
-	@Override
+	protected Command createCommand(EditingDomain domain, Class< ? > commandClass, EStructuralFeature feature, Object value) {
+		Object modelObject = getModelObject(feature);
+		if (modelObject == null && (commandClass == AddCommand.class || commandClass == SetCommand.class)) {
+			return createParentCommand(domain, feature, createModelObject(feature, value));
+		}
+		if (commandClass == AddCommand.class) {
+			return createAddCommand(domain, modelObject, getChildFeature(modelObject, value), value);
+		} else if (commandClass == SetCommand.class) {
+			return createSetCommand(domain, modelObject, feature, value);
+		} else if (commandClass == RemoveCommand.class) {
+			return createRemoveCommand(domain, modelObject, feature);
+		}
+		return UnexecutableCommand.INSTANCE;
+	}
+
+	protected Command createAddCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {
+		return AddCommand.create(domain, owner, feature, value);
+	}
+
 	protected Command createParentCommand(EditingDomain domain, EStructuralFeature feature, Object value) {
 		if (feature == ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
 			SadComponentInstantiation compInst = getComponentInstantiation();
@@ -189,28 +214,28 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 				return SetCommand.create(domain, sad, SadPackage.Literals.SOFTWARE_ASSEMBLY__EXTERNAL_PROPERTIES, properties);
 			}
 		}
-		return super.createParentCommand(domain, feature, value);
+		return ((NestedPropertyItemProvider)getParent()).createAddChildCommand(domain, value, feature);
 	}
 
-	@Override
 	protected Command createSetCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {
 		if (feature == ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
 			return SetCommand.create(domain, owner, SadPackage.Literals.EXTERNAL_PROPERTY__EXTERNAL_PROP_ID, value);
 		}
-		return super.createSetCommand(domain, owner, feature, value);
+		return UnexecutableCommand.INSTANCE;
 	}
 
-	@Override
 	protected Command createRemoveCommand(EditingDomain domain, Object object, EStructuralFeature feature) {
 		if (feature == ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
 			ExternalProperties properties = (ExternalProperties) ((EObject) object).eContainer();
 			if (properties.getProperties().size() == 1) {
 				return RemoveCommand.create(domain, properties);
+			} else {
+				return RemoveCommand.create(domain, object);
 			}
 		} else if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
-			ViewerItemProvider parentProvider = (ViewerItemProvider) getParent();
+			NestedPropertyItemProvider parentProvider = (NestedPropertyItemProvider) getParent();
 			return parentProvider.createRemoveChildCommand(domain, object, feature);
 		}
-		return super.createRemoveCommand(domain, object, feature);
+		return UnexecutableCommand.INSTANCE;
 	}
 }

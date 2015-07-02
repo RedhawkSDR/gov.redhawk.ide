@@ -37,6 +37,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
+import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -44,7 +45,7 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
 
 import gov.redhawk.sca.util.PluginUtil;
 
-public class ViewerComponent extends ViewerItemProvider {
+public class ViewerComponent extends ViewerItemProvider implements NestedPropertyItemProvider {
 	
 	private static final EStructuralFeature [] PATH = new EStructuralFeature [] {
 		SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
@@ -136,15 +137,6 @@ public class ViewerComponent extends ViewerItemProvider {
 		return TransactionUtil.getEditingDomain(sad);
 	}
 
-	@Override
-	public Command createParentCommand(EditingDomain domain, EStructuralFeature feature, Object value) {
-		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
-			return SetCommand.create(domain, getComponentInstantiation(), PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, value);
-		}
-		return UnexecutableCommand.INSTANCE;
-	}
-
-	@Override
 	protected EStructuralFeature getChildFeature(Object object, Object child) {
 		switch (((EObject)child).eClass().getClassifierID()) {
 		case PrfPackage.SIMPLE_REF:
@@ -156,29 +148,26 @@ public class ViewerComponent extends ViewerItemProvider {
 		case PrfPackage.STRUCT_SEQUENCE_REF:
 			return PartitioningPackage.Literals.COMPONENT_PROPERTIES__STRUCT_SEQUENCE_REF;
 		}
-		return super.getChildFeature(object, child);
-	}
-
-	@Override
-	protected Object getModelObject(EStructuralFeature feature) {
-		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
-			return getComponentInstantiation().getComponentProperties();
-		}
 		return null;
 	}
 
 	@Override
-	protected Object createModelObject(EStructuralFeature feature, Object value) {
+	public Command createAddChildCommand(EditingDomain domain, Object child, EStructuralFeature feature) {
 		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
-			ComponentProperties properties = PartitioningFactory.eINSTANCE.createComponentProperties();
-			properties.getProperties().add(getChildFeature(properties, value), value);
-			return properties;
+			ComponentProperties properties = getComponentInstantiation().getComponentProperties();
+			if (properties == null) {
+				properties = PartitioningFactory.eINSTANCE.createComponentProperties();
+				properties.getProperties().add(getChildFeature(properties, child), child);
+				return SetCommand.create(domain, getComponentInstantiation(), PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES, properties);
+			} else {
+				return AddCommand.create(domain, properties, getChildFeature(properties, child), child);
+			}
 		}
-		return null;
+		return UnexecutableCommand.INSTANCE;
 	}
 
 	@Override
-	protected Command createRemoveChildCommand(EditingDomain domain, Object child, EStructuralFeature feature) {
+	public Command createRemoveChildCommand(EditingDomain domain, Object child, EStructuralFeature feature) {
 		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
 			ComponentProperties properties = getComponentInstantiation().getComponentProperties();
 			if (properties.getProperties().size() == 1) {
@@ -187,7 +176,7 @@ public class ViewerComponent extends ViewerItemProvider {
 				return RemoveCommand.create(domain, properties, getChildFeature(properties, child), child);
 			}
 		}
-		return super.createRemoveChildCommand(domain, child, feature);
+		return UnexecutableCommand.INSTANCE;
 	}
 
 }

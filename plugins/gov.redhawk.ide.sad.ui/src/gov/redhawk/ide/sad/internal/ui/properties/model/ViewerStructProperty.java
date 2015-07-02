@@ -13,9 +13,11 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 import java.util.Collection;
 
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.command.UnexecutableCommand;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
+import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
@@ -30,7 +32,7 @@ import mil.jpeojtrs.sca.prf.StructRef;
 /**
  * 
  */
-public class ViewerStructProperty extends ViewerProperty<Struct> {
+public class ViewerStructProperty extends ViewerProperty<Struct> implements NestedPropertyItemProvider {
 
 	public ViewerStructProperty(Struct def, Object parent) {
 		super(def, parent);
@@ -99,15 +101,28 @@ public class ViewerStructProperty extends ViewerProperty<Struct> {
 	}
 
 	@Override
-	protected Command createRemoveChildCommand(EditingDomain domain, Object child, EStructuralFeature feature) {
+	public Command createAddChildCommand(EditingDomain domain, Object child, EStructuralFeature feature) {
+		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
+			StructRef ref = getValueRef();
+			if (ref == null) {
+				return ((NestedPropertyItemProvider) getParent()).createAddChildCommand(domain, createModelObject(feature, child), feature);
+			} else {
+				return AddCommand.create(domain, ref, getChildFeature(ref, child), child);
+			}
+		}
+		return UnexecutableCommand.INSTANCE;
+	}
+
+	@Override
+	public Command createRemoveChildCommand(EditingDomain domain, Object child, EStructuralFeature feature) {
 		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
 			StructRef ref = getValueRef();
 			if (ref.getRefs().size() == 1) {
-				return ((ViewerItemProvider)getParent()).createRemoveChildCommand(domain, ref, feature);
+				return ((NestedPropertyItemProvider)getParent()).createRemoveChildCommand(domain, ref, feature);
 			} else {
 				return RemoveCommand.create(domain, ref, getChildFeature(ref, child), child);
 			}
 		}
-		return super.createRemoveChildCommand(domain, child, feature);
+		return UnexecutableCommand.INSTANCE;
 	}
 }
