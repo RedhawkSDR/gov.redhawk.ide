@@ -22,6 +22,7 @@ import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
 import mil.jpeojtrs.sca.prf.Struct;
 import mil.jpeojtrs.sca.prf.StructSequence;
+import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.ExternalProperties;
 import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -40,6 +41,8 @@ import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
+
+import gov.redhawk.sca.util.PluginUtil;
 
 public class ViewerComponent extends ViewerItemProvider {
 	
@@ -76,6 +79,18 @@ public class ViewerComponent extends ViewerItemProvider {
 
 	public SadComponentInstantiation getComponentInstantiation() {
 		return compInst;
+	}
+
+	public boolean isAssemblyController() {
+		if (sad.getAssemblyController() != null) {
+			AssemblyController assemblyController = sad.getAssemblyController();
+			if (assemblyController.getComponentInstantiationRef() != null) {
+				if (PluginUtil.equals(compInst.getId(), assemblyController.getComponentInstantiationRef().getRefid())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private ViewerProperty< ? > createViewerProperty(AbstractProperty def) {

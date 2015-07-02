@@ -10,10 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
-import gov.redhawk.sca.util.PluginUtil;
 import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
-import mil.jpeojtrs.sca.sad.AssemblyController;
 import mil.jpeojtrs.sca.sad.ExternalProperties;
 import mil.jpeojtrs.sca.sad.ExternalProperty;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
@@ -71,16 +69,16 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 		return this.def;
 	}
 
-	public SadComponentInstantiation getComponentInstantiation() {
-		Object element = getParent();
-		while (element != null) {
-			if (element instanceof ViewerComponent) {
-				return ((ViewerComponent) element).getComponentInstantiation();
-			} else if (element instanceof ViewerProperty< ? >) {
-				element = ((ViewerProperty< ? >) element).getParent();
-			}
+	public ViewerComponent getComponent() {
+		if (parent instanceof ViewerComponent) {
+			return (ViewerComponent) parent;
+		} else {
+			return ((ViewerProperty< ? >) parent).getComponent();
 		}
-		return null;
+	}
+
+	public SadComponentInstantiation getComponentInstantiation() {
+		return getComponent().getComponentInstantiation();
 	}
 
 	public String getExternalID() {
@@ -96,17 +94,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 	}
 
 	public boolean isAssemblyControllerProperty() {
-		SadComponentInstantiation compInst = getComponentInstantiation();
-		SoftwareAssembly sad = ScaEcoreUtils.getEContainerOfType(compInst, SoftwareAssembly.class);
-		if (sad.getAssemblyController() != null) {
-			AssemblyController assemblyController = sad.getAssemblyController();
-			if (assemblyController.getComponentInstantiationRef() != null) {
-				if (PluginUtil.equals(compInst.getId(), assemblyController.getComponentInstantiationRef().getRefid())) {
-					return true;
-				}
-			}
-		}
-		return false;
+		return getComponent().isAssemblyController();
 	}
 
 	public String resolveExternalID() {
