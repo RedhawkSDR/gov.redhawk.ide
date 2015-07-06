@@ -854,21 +854,17 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 		editor.setFocus();
 		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
 		componentPart.select();
-		editor.clickContextMenu("Logging");
+		//editor.clickContextMenu("Logging");
 		editor.clickContextMenu("Log Level");
 
 		final SWTBot editorBot = editor.bot();
+		SWTBotShell shell = editorBot.shell("Set Debug Level");
+		shell.setFocus();
 
-		// Make sure the dialog comes up.
-		editorBot.waitUntil(Conditions.shellIsActive("Set Debug Level"));
-
-		editorBot.shell("Set Debug Level").setFocus();
-		SWTBot dialogBot = editorBot.shell("Set Debug Level").bot();
-
-		SWTBotCombo newLogLevelCombo = dialogBot.comboBox();
-		newLogLevelCombo.setSelection(logLevel.getLabel());
-
+		SWTBot dialogBot = shell.bot();
+		dialogBot.comboBox().setSelection(logLevel.getLabel());
 		dialogBot.button("OK").click();
+		editorBot.waitUntil(Conditions.shellCloses(shell));
 	}
 
 	/**
@@ -880,21 +876,18 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 		editor.setFocus();
 		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
 		componentPart.select();
-		editor.clickContextMenu("Logging");
+		//editor.clickContextMenu("Logging");
 		editor.clickContextMenu("Log Level");
 
 		final SWTBot editorBot = editor.bot();
+		SWTBotShell shell = editorBot.shell("Set Debug Level");
+		shell.setFocus();
 
-		// Make sure the dialog comes up.
-		editorBot.waitUntil(Conditions.shellIsActive("Set Debug Level"));
-
-		editorBot.shell("Set Debug Level").setFocus();
 		SWTBot dialogBot = editorBot.shell("Set Debug Level").bot();
-
 		SWTBotLabel currentLogLevelLabel = dialogBot.label(2);
 		Assert.assertTrue("Current Log Level is not the expected value: " + logLevel.getLabel(), logLevel.getLabel().equals(currentLogLevelLabel.getText()));
-
 		dialogBot.button("Cancel").click();
+		editorBot.waitUntil(Conditions.shellCloses(shell));
 	}
 
 	/**
