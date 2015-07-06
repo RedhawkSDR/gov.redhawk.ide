@@ -33,7 +33,6 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.UnexecutableCommand;
@@ -41,7 +40,6 @@ import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
-import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
@@ -61,35 +59,46 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 
 	private SadComponentInstantiation compInst;
 	private SoftwareAssembly sad;
-	private List<ViewerProperty< ? >> children = new ArrayList<ViewerProperty< ? >>();
 
 	public ViewerComponent(AdapterFactory adapterFactory, SadComponentInstantiation compInst) {
 		super(adapterFactory);
 		this.compInst = compInst;
 		this.sad = ScaEcoreUtils.getEContainerOfType(compInst, SoftwareAssembly.class);
-		
-		ComponentFile theCompFile = compInst.getPlacement().getComponentFileRef().getFile();
-		
-		// The component file can be null if the component file reference does not map back to any SPD (likely due to a copy paste error on the users part)
-		if (theCompFile == null || theCompFile.getSoftPkg() == null) {
-			return;
-		}
-		SoftPkg spd = theCompFile.getSoftPkg();
-		Properties prf = ScaEcoreUtils.getFeature(spd, PATH);
-		if (prf != null) {
-			for (ValueListIterator<Object> i = prf.getProperties().valueListIterator(); i.hasNext();) {
-				final Object value = i.next();
-				if (value instanceof AbstractProperty) {
-					AbstractProperty def = (AbstractProperty) value;
-					children.add(createViewerProperty(def));
-				}
-			}
-		}
 	}
 
 	@Override
-	public Collection< ? > getChildren(Object object) {
-		return children;
+	protected Object getValue(EObject eObject, EStructuralFeature eStructuralFeature) {
+		if (eStructuralFeature == PrfPackage.Literals.PROPERTIES__PROPERTIES) {
+			ComponentFile theCompFile = compInst.getPlacement().getComponentFileRef().getFile();
+
+			// The component file can be null if the component file reference does not map back to any SPD (likely due to a copy paste error on the users part)
+			if (theCompFile != null && theCompFile.getSoftPkg() != null) {
+				SoftPkg spd = theCompFile.getSoftPkg();
+				Properties properties = ScaEcoreUtils.getFeature(spd, PATH);
+				if (properties != null) {
+					return properties.getProperties();
+				}
+			}
+		}
+		return super.getValue(eObject, eStructuralFeature);
+	}
+
+	@Override
+	protected Collection< ? extends EStructuralFeature> getChildrenFeatures(Object object) {
+		if (childrenFeatures == null) {
+			childrenFeatures = new ArrayList<EStructuralFeature>();
+			childrenFeatures.add(PrfPackage.Literals.PROPERTIES__PROPERTIES);
+		}
+		return super.getChildrenFeatures(object);
+	}
+
+	@Override
+	protected Object createWrapper(EObject object, EStructuralFeature feature, Object value, int index) {
+		if (feature == PrfPackage.Literals.PROPERTIES__PROPERTIES){
+			FeatureMap.Entry entry = (FeatureMap.Entry) value;
+			return createViewerProperty((AbstractProperty) entry.getValue());
+		}
+		return super.createWrapper(object, feature, value, index);
 	}
 
 	public SadComponentInstantiation getComponentInstantiation() {
@@ -122,6 +131,7 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 		return null;
 	}
 
+	@Override
 	public AbstractPropertyRef< ? > getChildRef(final String refId) {
 		if (compInst.getComponentProperties() != null) {
 			for (FeatureMap.Entry entry : compInst.getComponentProperties().getProperties()) {
