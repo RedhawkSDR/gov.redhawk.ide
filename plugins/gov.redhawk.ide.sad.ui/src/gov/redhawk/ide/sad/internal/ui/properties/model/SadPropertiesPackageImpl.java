@@ -14,19 +14,19 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
-public class ViewerPackageImpl extends EPackageImpl implements ViewerPackage {
+public class SadPropertiesPackageImpl extends EPackageImpl implements SadPropertiesPackage {
 	private EClass sadPropertyEClass = null;
 
-	public static ViewerPackage init() {
-		return new ViewerPackageImpl();
+	public static SadPropertiesPackage init() {
+		return new SadPropertiesPackageImpl();
 	}
 
-	private ViewerPackageImpl() {
-		sadPropertyEClass = createEClass(ViewerPackage.SAD_PROPERTY);
+	private SadPropertiesPackageImpl() {
+		sadPropertyEClass = createEClass(SadPropertiesPackage.SAD_PROPERTY);
 		sadPropertyEClass.setName("SadProperty");
 
-		createEAttribute(sadPropertyEClass, ViewerPackage.SAD_PROPERTY__EXTERNAL_ID);
-		createEAttribute(sadPropertyEClass, ViewerPackage.SAD_PROPERTY__VALUE);
+		createEAttribute(sadPropertyEClass, SadPropertiesPackage.SAD_PROPERTY__EXTERNAL_ID);
+		createEAttribute(sadPropertyEClass, SadPropertiesPackage.SAD_PROPERTY__VALUE);
 	}
 
 	@Override

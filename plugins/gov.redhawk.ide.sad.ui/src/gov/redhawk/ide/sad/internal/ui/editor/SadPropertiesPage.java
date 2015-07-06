@@ -14,7 +14,7 @@ import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewer;
 import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerControlFactory;
 import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerConverter;
 import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerLabelProvider;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerAdapterFactory;
+import gov.redhawk.ide.sad.internal.ui.properties.model.SadPropertiesAdapterFactory;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
 import gov.redhawk.ui.editor.SCAFormEditor;
 import gov.redhawk.ui.editor.ScaFormPage;
@@ -125,7 +125,7 @@ public class SadPropertiesPage extends ScaFormPage {
 		parent.setLayout(GridLayoutFactory.fillDefaults().numColumns(1).create());
 		viewer = new PropertiesViewer(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		viewer.getTree().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
-		viewer.setContentProvider(new AdapterFactoryContentProvider(new ViewerAdapterFactory()));
+		viewer.setContentProvider(new AdapterFactoryContentProvider(new SadPropertiesAdapterFactory()));
 		PropertiesViewerLabelProvider labelProvider = new PropertiesViewerLabelProvider(viewer);
 		viewer.setLabelProvider(labelProvider);
 

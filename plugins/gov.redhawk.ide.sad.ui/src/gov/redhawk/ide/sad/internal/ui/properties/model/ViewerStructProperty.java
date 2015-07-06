@@ -91,7 +91,7 @@ public class ViewerStructProperty extends ViewerProperty<Struct> implements Nest
 
 	@Override
 	protected Object createModelObject(EStructuralFeature feature, Object value) {
-		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
+		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			StructRef ref = PrfFactory.eINSTANCE.createStructRef();
 			ref.setRefID(getID());
 			ref.getRefs().add(getChildFeature(ref, value), value);
@@ -102,7 +102,7 @@ public class ViewerStructProperty extends ViewerProperty<Struct> implements Nest
 
 	@Override
 	public Command createAddChildCommand(EditingDomain domain, Object child, EStructuralFeature feature) {
-		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
+		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			StructRef ref = getValueRef();
 			if (ref == null) {
 				return ((NestedPropertyItemProvider) getParent()).createAddChildCommand(domain, createModelObject(feature, child), feature);
@@ -115,7 +115,7 @@ public class ViewerStructProperty extends ViewerProperty<Struct> implements Nest
 
 	@Override
 	public Command createRemoveChildCommand(EditingDomain domain, Object child, EStructuralFeature feature) {
-		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
+		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			StructRef ref = getValueRef();
 			if (ref.getRefs().size() == 1) {
 				return ((NestedPropertyItemProvider)getParent()).createRemoveChildCommand(domain, ref, feature);

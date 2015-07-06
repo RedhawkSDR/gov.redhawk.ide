@@ -13,8 +13,8 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 
-public interface ViewerPackage {
-	public static ViewerPackage eINSTANCE = ViewerPackageImpl.init();
+public interface SadPropertiesPackage {
+	public static SadPropertiesPackage eINSTANCE = SadPropertiesPackageImpl.init();
 
 	public EClass getSadProperty();
 
@@ -27,8 +27,8 @@ public interface ViewerPackage {
 	public static int SAD_PROPERTY__VALUE = 1;
 
 	public interface Literals {
-		public static EClass SAD_PROPERTY = ViewerPackage.eINSTANCE.getSadProperty();
-		public static EAttribute SAD_PROPERTY__VALUE = ViewerPackage.eINSTANCE.getSadProperty_Value();
-		public static EAttribute SAD_PROPERTY__EXTERNAL_ID = ViewerPackage.eINSTANCE.getSadProperty_ExternalId();
+		public static EClass SAD_PROPERTY = SadPropertiesPackage.eINSTANCE.getSadProperty();
+		public static EAttribute SAD_PROPERTY__VALUE = SadPropertiesPackage.eINSTANCE.getSadProperty_Value();
+		public static EAttribute SAD_PROPERTY__EXTERNAL_ID = SadPropertiesPackage.eINSTANCE.getSadProperty_ExternalId();
 	}
 }

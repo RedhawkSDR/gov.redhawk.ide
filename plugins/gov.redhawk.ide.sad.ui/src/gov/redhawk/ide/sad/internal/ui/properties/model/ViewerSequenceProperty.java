@@ -74,7 +74,7 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 
 	@Override
 	protected Object createModelObject(EStructuralFeature feature, Object value) {
-		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
+		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			SimpleSequenceRef ref = PrfFactory.eINSTANCE.createSimpleSequenceRef();
 			ref.setRefID(getID());
 			ref.setValues(PrfFactory.eINSTANCE.createValues());
@@ -86,7 +86,7 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 
 	@Override
 	public Command createSetCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {
-		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
+		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			return SetCommand.create(domain, ((SimpleSequenceRef)owner).getValues(), PrfPackage.Literals.VALUES__VALUE, value);
 		}
 		return super.createSetCommand(domain, owner, feature, value);

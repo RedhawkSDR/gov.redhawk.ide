@@ -177,7 +177,7 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 
 	@Override
 	public Command createAddChildCommand(EditingDomain domain, Object child, EStructuralFeature feature) {
-		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
+		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			ComponentProperties properties = getComponentInstantiation().getComponentProperties();
 			if (properties == null) {
 				properties = PartitioningFactory.eINSTANCE.createComponentProperties();
@@ -192,7 +192,7 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 
 	@Override
 	public Command createRemoveChildCommand(EditingDomain domain, Object child, EStructuralFeature feature) {
-		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
+		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			ComponentProperties properties = getComponentInstantiation().getComponentProperties();
 			if (properties.getProperties().size() == 1) {
 				return RemoveCommand.create(domain, properties);

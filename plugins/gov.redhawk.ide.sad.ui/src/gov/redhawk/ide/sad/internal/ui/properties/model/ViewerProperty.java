@@ -118,7 +118,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 	}
 
 	public void setSadValue(Object value) {
-		setFeatureValue(ViewerPackage.Literals.SAD_PROPERTY__VALUE, value);
+		setFeatureValue(SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE, value);
 	}
 
 	public void setExternalID(String newExternalID) {
@@ -128,7 +128,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 				newExternalID = null;
 			}
 		}
-		setFeatureValue(ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID, newExternalID);
+		setFeatureValue(SadPropertiesPackage.Literals.SAD_PROPERTY__EXTERNAL_ID, newExternalID);
 	}
 
 	public abstract Object getValue();
@@ -149,16 +149,16 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 	}
 
 	protected Object getModelObject(EStructuralFeature feature) {
-		if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
+		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			return getValueRef();
-		} else if (feature == ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
+		} else if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
 			return getExternalProperty();
 		}
 		return null;
 	}
 
 	protected Object createModelObject(EStructuralFeature feature, Object value) {
-		if (feature == ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
+		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
 			ExternalProperty property = SadFactory.eINSTANCE.createExternalProperty();
 			SadComponentInstantiation compInst = getComponentInstantiation();
 			property.setCompRefID(compInst.getId());
@@ -183,7 +183,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 	}
 
 	protected Command createParentCommand(EditingDomain domain, EStructuralFeature feature, Object value) {
-		if (feature == ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
+		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
 			SadComponentInstantiation compInst = getComponentInstantiation();
 			SoftwareAssembly sad = ScaEcoreUtils.getEContainerOfType(compInst, SoftwareAssembly.class);
 			ExternalProperties properties = sad.getExternalProperties();
@@ -199,21 +199,21 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 	}
 
 	protected Command createSetCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {
-		if (feature == ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
+		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
 			return SetCommand.create(domain, owner, SadPackage.Literals.EXTERNAL_PROPERTY__EXTERNAL_PROP_ID, value);
 		}
 		return UnexecutableCommand.INSTANCE;
 	}
 
 	protected Command createRemoveCommand(EditingDomain domain, Object object, EStructuralFeature feature) {
-		if (feature == ViewerPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
+		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
 			ExternalProperties properties = (ExternalProperties) ((EObject) object).eContainer();
 			if (properties.getProperties().size() == 1) {
 				return RemoveCommand.create(domain, properties);
 			} else {
 				return RemoveCommand.create(domain, object);
 			}
-		} else if (feature == ViewerPackage.Literals.SAD_PROPERTY__VALUE) {
+		} else if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			NestedPropertyItemProvider parentProvider = (NestedPropertyItemProvider) getParent();
 			return parentProvider.createRemoveChildCommand(domain, object, feature);
 		}

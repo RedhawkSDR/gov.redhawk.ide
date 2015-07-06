@@ -17,7 +17,7 @@ import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
-public class ViewerAdapterFactory extends AdapterFactoryImpl {
+public class SadPropertiesAdapterFactory extends AdapterFactoryImpl {
 
 	@Override
 	public boolean isFactoryForType(Object type) {
