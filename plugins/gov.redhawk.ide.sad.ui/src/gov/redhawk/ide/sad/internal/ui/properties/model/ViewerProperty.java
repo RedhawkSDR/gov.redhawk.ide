@@ -30,11 +30,12 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.edit.provider.ItemProvider;
 
 /**
  * 
  */
-public abstract class ViewerProperty< T extends AbstractProperty > extends ViewerItemProvider {
+public abstract class ViewerProperty< T extends AbstractProperty > extends ItemProvider {
 
 	protected final T def;
 
@@ -143,9 +144,8 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends Viewe
 
 	protected abstract Collection< ? > getKindTypes();
 
-	@Override
 	public EditingDomain getEditingDomain() {
-		return ((ViewerItemProvider) getParent()).getEditingDomain();
+		return ((NestedPropertyItemProvider) getParent()).getEditingDomain();
 	}
 
 	protected Object getModelObject(EStructuralFeature feature) {

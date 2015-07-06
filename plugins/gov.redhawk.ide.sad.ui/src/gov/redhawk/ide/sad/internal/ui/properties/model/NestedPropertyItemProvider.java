@@ -22,4 +22,6 @@ public interface NestedPropertyItemProvider {
 	public Command createAddChildCommand(EditingDomain domain, Object child, EStructuralFeature feature);
 
 	public Command createRemoveChildCommand(EditingDomain domain, Object child, EStructuralFeature feature);
+
+	public EditingDomain getEditingDomain();
 }

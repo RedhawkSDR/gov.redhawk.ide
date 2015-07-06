@@ -34,7 +34,7 @@ public class ViewerAdapterFactory extends AdapterFactoryImpl {
 		if (target instanceof SoftwareAssembly) {
 			return new ViewerApplication(this);
 		} else if (target instanceof SadComponentInstantiation) {
-			return new ViewerComponent((SadComponentInstantiation) target);
+			return new ViewerComponent(this, (SadComponentInstantiation) target);
 		}
 		return super.createAdapter(target);
 	}

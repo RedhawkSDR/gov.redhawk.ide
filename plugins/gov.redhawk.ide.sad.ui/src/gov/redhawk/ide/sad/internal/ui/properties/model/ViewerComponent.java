@@ -31,8 +31,13 @@ import mil.jpeojtrs.sca.spd.SoftPkg;
 import mil.jpeojtrs.sca.spd.SpdPackage;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.UnexecutableCommand;
+import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
@@ -41,11 +46,13 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
+import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 
 import gov.redhawk.sca.util.PluginUtil;
 
-public class ViewerComponent extends ViewerItemProvider implements NestedPropertyItemProvider {
+public class ViewerComponent extends ItemProviderAdapter implements ITreeItemContentProvider, NestedPropertyItemProvider {
 	
 	private static final EStructuralFeature [] PATH = new EStructuralFeature [] {
 		SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
@@ -54,8 +61,10 @@ public class ViewerComponent extends ViewerItemProvider implements NestedPropert
 
 	private SadComponentInstantiation compInst;
 	private SoftwareAssembly sad;
+	private List<ViewerProperty< ? >> children = new ArrayList<ViewerProperty< ? >>();
 
-	public ViewerComponent(SadComponentInstantiation compInst) {
+	public ViewerComponent(AdapterFactory adapterFactory, SadComponentInstantiation compInst) {
+		super(adapterFactory);
 		this.compInst = compInst;
 		this.sad = ScaEcoreUtils.getEContainerOfType(compInst, SoftwareAssembly.class);
 		
@@ -76,6 +85,11 @@ public class ViewerComponent extends ViewerItemProvider implements NestedPropert
 				}
 			}
 		}
+	}
+
+	@Override
+	public Collection< ? > getChildren(Object object) {
+		return children;
 	}
 
 	public SadComponentInstantiation getComponentInstantiation() {
