@@ -19,7 +19,7 @@ import org.eclipse.ui.IEditorReference;
 /**
  * Uses RHTestBotEditor for improved connection drawing in Graphiti diagrams
  */
-public class RHTestBot extends SWTGefBot {
+public class RHSWTGefBot extends SWTGefBot {
 
 	/**
 	 * @see SWTGefBot#gefEditor(String)
