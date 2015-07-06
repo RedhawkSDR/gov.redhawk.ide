@@ -10,29 +10,28 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.tests;
 
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.swtbot.MenuUtils;
-import gov.redhawk.ide.swtbot.NodeUtils;
-import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
-import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
-
 import java.util.List;
-
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
-import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.junit.Assert;
 import org.junit.Test;
 
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.swtbot.MenuUtils;
+import gov.redhawk.ide.swtbot.NodeUtils;
+import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
+import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+import gov.redhawk.ide.swtbot.diagram.RHBotGefEditor;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+
 public class ConnectionTest extends AbstractGraphitiTest {
 
-	private SWTBotGefEditor editor;
+	private RHBotGefEditor editor;
 	private String projectName;
 	private static final String DOMAIN_NAME = "REDHAWK_DEV";
 	private static final String GPP = "GPP";
@@ -49,7 +48,7 @@ public class ConnectionTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		editor.setFocus();
 
 		// Add to diagram from palette
@@ -124,7 +123,7 @@ public class ConnectionTest extends AbstractGraphitiTest {
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
 
 		// Add devices and a service to diagram from palette
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, DEVICE_STUB, 300, 0);
 		DiagramTestUtils.addFromPaletteToDiagram(editor, SERVICE_STUB, 300, 300);

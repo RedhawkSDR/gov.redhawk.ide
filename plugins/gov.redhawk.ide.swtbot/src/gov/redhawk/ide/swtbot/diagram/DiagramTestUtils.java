@@ -215,7 +215,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	/**
 	 * Add a HostCollocation to the SAD diagram editor
 	 */
-	public static void addHostCollocationToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String hostCoName) {
+	public static void addHostCollocationToDiagram(SWTGefBot gefBot, RHBotGefEditor editor, String hostCoName) {
 		addFromPaletteToDiagram(editor, "Host Collocation", 0, 0);
 		SWTBotShell hostCoShell = gefBot.shell("New Host Collocation");
 		hostCoShell.setFocus();
@@ -229,14 +229,14 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	/**
 	 * Add a Use FrontEnd Tuner Device to the SAD diagram editor
 	 */
-	public static void addUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor) {
+	public static void addUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, RHBotGefEditor editor) {
 		addUseFrontEndTunerDeviceToDiagram(gefBot, editor, 0, 0);
 	}
 
 	/**
 	 * Add a Use FrontEnd Tuner Device to the SAD diagram editor at the specified coordinates
 	 */
-	public static void addUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, int xPosition, int yPosition) {
+	public static void addUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, RHBotGefEditor editor, int xPosition, int yPosition) {
 		addFromPaletteToDiagram(editor, "Use FrontEnd Tuner Device", xPosition, yPosition);
 	}
 

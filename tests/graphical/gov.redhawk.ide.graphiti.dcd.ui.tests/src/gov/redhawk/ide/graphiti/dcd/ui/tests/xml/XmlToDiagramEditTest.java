@@ -12,30 +12,30 @@ package gov.redhawk.ide.graphiti.dcd.ui.tests.xml;
 
 import java.util.List;
 
+import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.junit.Assert;
+import org.junit.Test;
+
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
 import gov.redhawk.ide.swtbot.NodeUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
+import gov.redhawk.ide.swtbot.diagram.RHBotGefEditor;
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-
-import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
-import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
-import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
-import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * Test class that deals with editing elements to the sad.xml and making sure they appear correctly in the diagram
  */
 public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 
-	private SWTBotGefEditor editor;
+	private RHBotGefEditor editor;
 	private String projectName;
 	private static final String DOMAIN_NAME = "REDHAWK_DEV";
 	private static final String GPP = "GPP";
@@ -52,7 +52,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		editor.setFocus();
 
 		// Add devices to the diagram
@@ -100,7 +100,7 @@ public class XmlToDiagramEditTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		editor.setFocus();
 
 		// Add devices to the diagram
