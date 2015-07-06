@@ -59,4 +59,11 @@ public class RHBotGefEditor extends SWTBotGefEditor {
 		getDragViewer().drag(fromXPosition, fromYPosition, toXPosition, toYPosition);
 	}
 
+	public void activateNamespacedTool(final String[] labels) {
+		getDragViewer().activateNamespacedTool(labels);
+	}
+
+	public void activateNamespacedTool(final String[] labels, final int index) {
+		getDragViewer().activateNamespacedTool(labels, index);
+	}
 }

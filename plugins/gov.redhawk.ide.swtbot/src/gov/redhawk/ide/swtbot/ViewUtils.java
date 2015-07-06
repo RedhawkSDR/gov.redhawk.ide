@@ -240,8 +240,9 @@ public class ViewUtils {
 	/**
 	 * Waits until PortMonitor View populates
 	 * @param bot
+	 * @param componentInstanceName The component's instance name (e.g. foo_1)
 	 */
-	public static void waitUntilPortMonitorViewPopulates(final SWTWorkbenchBot bot, final String componentName) {
+	public static void waitUntilPortMonitorViewPopulates(final SWTWorkbenchBot bot, final String componentInstanceName) {
 		bot.waitUntil(new DefaultCondition() {
 			@Override
 			public String getFailureMessage() {
@@ -252,7 +253,7 @@ public class ViewUtils {
 			public boolean test() throws Exception {
 				SWTBotView monitorView = ViewUtils.getPortMonitorView((SWTWorkbenchBot) bot);
 				for (SWTBotTreeItem item : monitorView.bot().tree().getAllItems()) {
-					if (item.getText().matches(componentName + ".*")) {
+					if (item.getText().matches(componentInstanceName + ".*")) {
 						return true;
 					}
 				}
