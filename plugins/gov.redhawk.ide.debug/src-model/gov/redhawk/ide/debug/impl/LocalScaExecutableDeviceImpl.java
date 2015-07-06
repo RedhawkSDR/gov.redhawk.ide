@@ -15,6 +15,7 @@ import gov.redhawk.ide.debug.LocalAbstractComponent;
 import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.debug.LocalScaExecutableDevice;
 import gov.redhawk.ide.debug.ScaDebugPackage;
+import gov.redhawk.ide.debug.internal.jobs.TerminateJob;
 import gov.redhawk.model.sca.impl.ScaExecutableDeviceImpl;
 
 import org.eclipse.core.runtime.jobs.Job;
@@ -404,12 +405,18 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 
 	@Override
 	public void releaseObject() throws ReleaseError {
-		final String tmpName = getLabel();
+		// END GENERATED CODE
+		final String tmpLabel = getLabel();
+		final ILaunch tmpLaunch = getLaunch();
+
 		super.releaseObject();
-		if (this.launch != null) {
-			final Job terminateJob = new TerminateJob(this, tmpName);
+
+		// If it's a local launch, schedule termination after a few seconds to ensure it cleans up
+		if (tmpLaunch != null) {
+			final Job terminateJob = new TerminateJob(tmpLaunch, tmpLabel);
 			terminateJob.schedule(5000);
 		}
+		// BEGIN GENERATED CODE
 	}
 
 	@Override
