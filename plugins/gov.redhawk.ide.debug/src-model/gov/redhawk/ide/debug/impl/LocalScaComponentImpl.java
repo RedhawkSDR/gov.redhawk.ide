@@ -408,29 +408,17 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 
 	@Override
 	public void dispose() {
+		// END GENERATED CODE
 		// If we have a launch object (i.e. this IDE launched the object locally)
 		if (getLaunch() != null) {
-			// Call releaseObject() in a job. The dispose method may be called by UI / model threads, and thus cannot
-			// block.
-			Job job = new SilentJob("Local Component Release job") {
-
-				@Override
-				protected IStatus runSilent(IProgressMonitor monitor) {
-					try {
-						releaseObject();
-					} catch (final ReleaseError e) {
-						// PASS
-					}
-					return Status.OK_STATUS;
-				}
-
-			};
-			job.setUser(false);
-			job.setSystem(true);
-			job.schedule();
+			Job terminateJob = new TerminateJob(getLaunch(), getName());
+			terminateJob.setUser(false);
+			terminateJob.setSystem(true);
+			terminateJob.schedule();
 		}
 
 		super.dispose();
+		// BEGIN GENERATED CODE
 	}
 
 	@Override
@@ -453,14 +441,12 @@ public class LocalScaComponentImpl extends ScaComponentImpl implements LocalScaC
 	public void unsetProfileURI() {
 		// END GENERATED CODE
 		// BEGIN GENERATED CODE
-
 	}
 
 	@Override
 	public void unsetComponentInstantiation() {
 		// END GENERATED CODE
 		// BEGIN GENERATED CODE
-
 	}
 
 	/*

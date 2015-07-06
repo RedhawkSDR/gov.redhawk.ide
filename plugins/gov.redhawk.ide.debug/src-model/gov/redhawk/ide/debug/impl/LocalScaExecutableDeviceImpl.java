@@ -421,12 +421,17 @@ public class LocalScaExecutableDeviceImpl extends ScaExecutableDeviceImpl implem
 
 	@Override
 	public void dispose() {
-		try {
-			releaseObject();
-		} catch (final ReleaseError e) {
-			// PASS
+		// END GENERATED CODE
+		// If we have a launch object (i.e. this IDE launched the object locally)
+		if (getLaunch() != null) {
+			Job terminateJob = new TerminateJob(getLaunch(), getLabel());
+			terminateJob.setUser(false);
+			terminateJob.setSystem(true);
+			terminateJob.schedule();
 		}
+
 		super.dispose();
+		// BEGIN GENERATED CODE
 	}
 
 	@Override

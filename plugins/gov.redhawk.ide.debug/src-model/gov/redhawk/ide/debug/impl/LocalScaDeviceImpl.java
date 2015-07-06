@@ -426,27 +426,13 @@ public class LocalScaDeviceImpl extends ScaDeviceImpl<Device> implements LocalSc
 	@Override
 	public void dispose() {
 		// END GENERATED CODE
-		//		try {
-		//			releaseObject();
-		//		} catch (final ReleaseError e) {
-		//			// PASS
-		//		}
-		Job job = new SilentJob("Local Device Release job") {
-
-			@Override
-			protected IStatus runSilent(IProgressMonitor monitor) {
-				try {
-					releaseObject();
-				} catch (final ReleaseError e) {
-					// PASS
-				}
-				return Status.OK_STATUS;
-			}
-
-		};
-		job.setUser(false);
-		job.setSystem(true);
-		job.schedule();
+		// If we have a launch object (i.e. this IDE launched the object locally)
+		if (getLaunch() != null) {
+			Job terminateJob = new TerminateJob(getLaunch(), getLabel());
+			terminateJob.setUser(false);
+			terminateJob.setSystem(true);
+			terminateJob.schedule();
+		}
 
 		super.dispose();
 		// BEGIN GENERATED CODE
