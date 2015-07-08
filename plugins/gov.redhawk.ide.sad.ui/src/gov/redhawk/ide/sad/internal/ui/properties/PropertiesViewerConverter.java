@@ -11,7 +11,6 @@
 package gov.redhawk.ide.sad.internal.ui.properties;
 
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
-import gov.redhawk.ide.sad.internal.ui.editor.XViewerDialogCellEditor;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerApplication;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
@@ -33,7 +32,6 @@ import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
-import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor;
@@ -66,12 +64,7 @@ public class PropertiesViewerConverter implements XViewerConverter {
 			String value = getUniqueValue(prop);
 			setControlValue(c, value);
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
-			if (c.getData("XViewerCellEditor") != null) {
-				CellEditor editor = (CellEditor)c.getData("XViewerCellEditor");
-				Object value = ((ViewerProperty< ? >) selObject).getValue();
-				editor.setValue(value);
-				editor.setFocus();
-			} else if (c instanceof XViewerCellEditor) {
+			if (c instanceof XViewerCellEditor) {
 				Object value = ((ViewerProperty< ? >) selObject).getValue();
 				((XViewerCellEditor) c).setValue(value);
 			} else {
