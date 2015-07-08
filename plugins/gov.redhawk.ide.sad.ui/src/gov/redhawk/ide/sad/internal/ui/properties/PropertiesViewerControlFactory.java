@@ -10,6 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties;
 
+import gov.redhawk.ide.sad.internal.ui.editor.XViewerDialogCellEditor;
+import gov.redhawk.ide.sad.internal.ui.editor.XViewerTextCellEditor;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSequenceProperty;
@@ -31,6 +33,7 @@ import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor;
@@ -43,7 +46,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -114,75 +116,26 @@ public class PropertiesViewerControlFactory extends DefaultXViewerControlFactory
 					combo.setItems(values.toArray(new String[values.size()]));
 					return combo;
 				} else {
-					final Text text = new Text(xv.getTree(), ced.getSwtStyle());
-					final ControlDecoration dec = new ControlDecoration(text, SWT.TOP | SWT.LEFT);
-					text.addDisposeListener(new DisposeListener() {
+					XViewerTextCellEditor editor = new XViewerTextCellEditor(xv.getTree(), ced.getSwtStyle());
+					editor.setValidator(new ICellEditorValidator() {
 
 						@Override
-						public void widgetDisposed(DisposeEvent e) {
-							dec.dispose();
-						}
-					});
-					dec.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR));
-					dec.hide();
-					dec.setShowOnlyOnFocus(true);
-					dec.setShowHover(true);
-					if (simple.isComplex()) {
-						dec.setDescriptionText("Value must of of type complex " + simple.getType());
-					} else {
-						dec.setDescriptionText("Value must of of type " + simple.getType());
-					}
-					text.addModifyListener(new ModifyListener() {
-
-						@Override
-						public void modifyText(ModifyEvent e) {
-							if (simpleProp.checkValue(text.getText())) {
-								dec.hide();
+						public String isValid(Object value) {
+							if (simpleProp.checkValue((String) value)) {
+								return null;
 							} else {
-								dec.show();
+								if (simple.isComplex()) {
+									return "Value must be of type complex " + simple.getType();
+								} else {
+									return "Value must be of type " + simple.getType();
+								}
 							}
 						}
 					});
-					return text;
+					return editor;
 				}
 			} else if (editElement instanceof ViewerSequenceProperty) {
-				final ViewerSequenceProperty seqProperty = (ViewerSequenceProperty) editElement;
-				final Text text = new Text(xv.getTree(), ced.getSwtStyle());
-				final ControlDecoration dec = new ControlDecoration(text, SWT.TOP | SWT.LEFT);
-				text.addDisposeListener(new DisposeListener() {
-
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						dec.dispose();
-					}
-				});
-				dec.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR));
-				dec.hide();
-				dec.setShowOnlyOnFocus(true);
-				dec.setShowHover(true);
-				if (seqProperty.getDefinition().isComplex()) {
-					dec.setDescriptionText("Value must of of type complex " + seqProperty.getDefinition().getType() + "[]");
-				} else {
-					dec.setDescriptionText("Value must of of type " + seqProperty.getDefinition().getType() + "[]");
-				}
-				text.addModifyListener(new ModifyListener() {
-
-					@Override
-					public void modifyText(ModifyEvent event) {
-						try {
-							String[] newValue = PropertiesViewerConverter.split(text.getText());
-							if (seqProperty.checkValues(newValue)) {
-								dec.hide();
-							} else {
-								dec.show();
-							}
-						} catch (IllegalArgumentException e) {
-							dec.show();
-						}
-
-					}
-				});
-				return text;
+				return new XViewerDialogCellEditor(xv.getTree(), ced.getSwtStyle());
 			} else if (editElement instanceof ViewerStructSequenceProperty) {
 				final Button button = new Button(xv.getTree(), SWT.PUSH);
 				button.setText("Edit");

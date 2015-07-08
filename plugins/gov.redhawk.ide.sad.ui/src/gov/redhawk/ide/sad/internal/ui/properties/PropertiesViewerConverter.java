@@ -11,6 +11,8 @@
 package gov.redhawk.ide.sad.internal.ui.properties;
 
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
+import gov.redhawk.ide.sad.internal.ui.editor.XViewerDialogCellEditor;
+import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerApplication;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceProperty;
@@ -31,6 +33,7 @@ import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor;
@@ -40,7 +43,9 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -64,32 +69,37 @@ public class PropertiesViewerConverter implements XViewerConverter {
 			String value = getUniqueValue(prop);
 			setControlValue(c, value);
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
-			String value = labelProvider.getSadValue(selObject);
-			if (c instanceof Button) {
-				final Button button = (Button) c;
+			if (c instanceof XViewerCellEditor) {
+				Object value = ((ViewerProperty< ? >) selObject).getValue();
+				((XViewerCellEditor) c).setValue(value);
+			} else {
+				String value = labelProvider.getSadValue(selObject);
+				if (c instanceof Button) {
+					final Button button = (Button) c;
 
-				final ViewerStructSequenceProperty viewerProp = (ViewerStructSequenceProperty) selObject;
-				button.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						ScaStructSequenceProperty property = ScaFactory.eINSTANCE.createScaStructSequenceProperty();
-						ViewerComponent component = (ViewerComponent) viewerProp.getParent();
-						SadComponentInstantiation inst = component.getComponentInstantiation();
-						StructSequenceRef ref = (StructSequenceRef) ViewerApplication.getRef(inst, viewerProp);
-						property.setDefinition(viewerProp.getDefinition());
-						if (ref != null) {
-							property.fromAny(ref.toAny());
+					final ViewerStructSequenceProperty viewerProp = (ViewerStructSequenceProperty) selObject;
+					button.addSelectionListener(new SelectionAdapter() {
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							ScaStructSequenceProperty property = ScaFactory.eINSTANCE.createScaStructSequenceProperty();
+							ViewerComponent component = (ViewerComponent) viewerProp.getParent();
+							SadComponentInstantiation inst = component.getComponentInstantiation();
+							StructSequenceRef ref = (StructSequenceRef) ViewerApplication.getRef(inst, viewerProp);
+							property.setDefinition(viewerProp.getDefinition());
+							if (ref != null) {
+								property.fromAny(ref.toAny());
+							}
+							// TODO: Get values from SAD file
+							SequencePropertyValueWizard wizard = new SequencePropertyValueWizard(property);
+							WizardDialog dialog = new WizardDialog(button.getShell(), wizard);
+							if (dialog.open() == Window.OK) {
+								viewerProp.setValue(createRef(property));
+							}
 						}
-						// TODO: Get values from SAD file
-						SequencePropertyValueWizard wizard = new SequencePropertyValueWizard(property);
-						WizardDialog dialog = new WizardDialog(button.getShell(), wizard);
-						if (dialog.open() == Window.OK) {
-							viewerProp.setValue(createRef(property));
-						}
-					}
-				});
+					});
+				}
+				setControlValue(c, value);
 			}
-			setControlValue(c, value);
 		}
 	}
 
@@ -158,13 +168,15 @@ public class PropertiesViewerConverter implements XViewerConverter {
 	}
 
 	protected Object setSadValue(Control c, Object selObject) {
-		String newValue = null;
+		Object newValue = null;
 		if (c instanceof Combo) {
 			Combo combo = (Combo) c;
 			newValue = combo.getText();
 		} else if (c instanceof Text) {
 			Text text = (Text) c;
 			newValue = text.getText();
+		} else if (c instanceof XViewerCellEditor) {
+			newValue = ((XViewerCellEditor) c).getValue();
 		} else {
 			return null;
 		}
