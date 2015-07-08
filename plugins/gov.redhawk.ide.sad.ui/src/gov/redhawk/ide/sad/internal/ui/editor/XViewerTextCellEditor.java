@@ -82,8 +82,10 @@ public class XViewerTextCellEditor extends XViewerCellEditor {
 		if (!isCorrect(value)) {
 			decoration.show();
 			decoration.setDescriptionText(getErrorMessage());
+			setValueValid(false);
 		} else {
 			decoration.hide();
+			setValueValid(true);
 		}
 	}
 }

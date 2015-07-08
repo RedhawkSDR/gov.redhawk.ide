@@ -35,6 +35,7 @@ import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor;
 import org.eclipse.nebula.widgets.xviewer.edit.DefaultXViewerControlFactory;

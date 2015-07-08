@@ -43,10 +43,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
 /**
  * 
@@ -69,7 +66,12 @@ public class PropertiesViewerConverter implements XViewerConverter {
 			String value = getUniqueValue(prop);
 			setControlValue(c, value);
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
-			if (c instanceof XViewerCellEditor) {
+			if (c.getData("XViewerCellEditor") != null) {
+				CellEditor editor = (CellEditor)c.getData("XViewerCellEditor");
+				Object value = ((ViewerProperty< ? >) selObject).getValue();
+				editor.setValue(value);
+				editor.setFocus();
+			} else if (c instanceof XViewerCellEditor) {
 				Object value = ((ViewerProperty< ? >) selObject).getValue();
 				((XViewerCellEditor) c).setValue(value);
 			} else {
@@ -147,10 +149,6 @@ public class PropertiesViewerConverter implements XViewerConverter {
 			Combo combo = (Combo) c;
 			combo.setText(value);
 			combo.setSelection(new Point(0, combo.getText().length()));
-		} else if (c instanceof Text) {
-			Text text = (Text) c;
-			text.setText(value);
-			text.setSelection(new Point(0, text.getText().length()));
 		}
 	}
 
@@ -169,14 +167,14 @@ public class PropertiesViewerConverter implements XViewerConverter {
 
 	protected Object setSadValue(Control c, Object selObject) {
 		Object newValue = null;
-		if (c instanceof Combo) {
+		if (c instanceof XViewerCellEditor) {
+			newValue = ((XViewerCellEditor) c).getValue();
+			if (newValue == null) {
+				return null;
+			}
+		} else if (c instanceof Combo) {
 			Combo combo = (Combo) c;
 			newValue = combo.getText();
-		} else if (c instanceof Text) {
-			Text text = (Text) c;
-			newValue = text.getText();
-		} else if (c instanceof XViewerCellEditor) {
-			newValue = ((XViewerCellEditor) c).getValue();
 		} else {
 			return null;
 		}

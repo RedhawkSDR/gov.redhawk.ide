@@ -19,6 +19,7 @@ public abstract class XViewerCellEditor extends Composite {
 
 	private ICellEditorValidator validator = null;
 	private String errorMessage = null;
+	boolean valid = false;
 
 	public XViewerCellEditor(Composite parent, int style) {
 		super(parent, style);
@@ -33,6 +34,10 @@ public abstract class XViewerCellEditor extends Composite {
 	protected abstract void doSetValue(Object value);
 
 	public Object getValue() {
+		if (!valid) {
+			return null;
+		}
+
 		return doGetValue();
 	}
 
@@ -60,6 +65,14 @@ public abstract class XViewerCellEditor extends Composite {
 
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
+	}
+
+	public boolean isValueValid() {
+		return valid;
+	}
+
+	protected void setValueValid(boolean valid) {
+		this.valid = valid;
 	}
 
 	protected boolean isCorrect(Object value) {
