@@ -10,31 +10,20 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.editor;
 
-import org.eclipse.jface.fieldassist.ControlDecoration;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 
 public class XViewerTextCellEditor extends XViewerCellEditor {
 
 	private Text text;
-	private ControlDecoration decoration;
-
 	public XViewerTextCellEditor(Composite parent, int style) {
 		super(parent, style);
 
 		text = new Text(this, style);
-		decoration = new ControlDecoration(text, SWT.TOP | SWT.LEFT);
-		decoration.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR));
-		decoration.hide();
-		decoration.setShowOnlyOnFocus(true);
-		decoration.setShowHover(true);
 
 		text.addModifyListener(new ModifyListener() {
 			@Override
@@ -44,12 +33,6 @@ public class XViewerTextCellEditor extends XViewerCellEditor {
 		});
 
 		setLayout(new FillLayout());
-	}
-
-	@Override
-	public void dispose() {
-		decoration.dispose();
-		super.dispose();
 	}
 
 	@Override
@@ -80,11 +63,10 @@ public class XViewerTextCellEditor extends XViewerCellEditor {
 			value = "";//$NON-NLS-1$
 		}
 		if (!isCorrect(value)) {
-			decoration.show();
-			decoration.setDescriptionText(getErrorMessage());
+			showControlDecoration(getErrorMessage());
 			setValueValid(false);
 		} else {
-			decoration.hide();
+			hideControlDecoration();
 			setValueValid(true);
 		}
 	}
