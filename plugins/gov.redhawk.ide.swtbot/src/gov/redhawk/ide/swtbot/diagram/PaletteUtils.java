@@ -11,8 +11,14 @@
  */
 package gov.redhawk.ide.swtbot.diagram;
 
+import java.util.List;
+
 import org.eclipse.gef.palette.ToolEntry;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.junit.Assert;
+
+import gov.redhawk.ide.swtbot.matchers.PaletteFilterMatcher;
 
 public class PaletteUtils {
 
@@ -75,6 +81,13 @@ public class PaletteUtils {
 		} catch (WidgetNotFoundException e) {
 			return false;
 		}
+	}
+
+	public static void setFilter(RHBotGefEditor editor, String filterString) {
+		List<SWTBotGefEditPart> editParts = editor.getDragViewer().editPartsPalette(new PaletteFilterMatcher());
+		Assert.assertTrue("Couldn't find palette filter", editParts.size() == 1);
+		editParts.get(0).activateDirectEdit();
+		editor.bot().text().setText(filterString);
 	}
 
 }

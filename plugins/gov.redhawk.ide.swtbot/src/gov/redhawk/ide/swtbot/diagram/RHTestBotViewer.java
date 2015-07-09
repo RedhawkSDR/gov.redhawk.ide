@@ -88,7 +88,13 @@ public class RHTestBotViewer extends SWTBotGefViewer {
 		return editDomain;
 	}
 
-	public List<SWTBotGefEditPart> paletteEditParts(Matcher< ? extends EditPart> matcher) throws WidgetNotFoundException {
+	/**
+	 * Finds {@link org.eclipse.gef.EditPart}s in the palette.
+	 * @param matcher the matcher that matches on {@link org.eclipse.gef.EditPart}
+	 * @return a collection of {@link SWTBotGefEditPart}
+	 * @throws WidgetNotFoundException
+	 */
+	public List<SWTBotGefEditPart> editPartsPalette(Matcher< ? extends EditPart> matcher) throws WidgetNotFoundException {
 		return getPalettePart().descendants(matcher);
 	}
 
