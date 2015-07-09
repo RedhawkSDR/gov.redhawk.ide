@@ -11,19 +11,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
-import gov.redhawk.ide.debug.LocalFileManager;
-import gov.redhawk.ide.debug.LocalLaunch;
-import gov.redhawk.ide.debug.LocalSca;
-import gov.redhawk.ide.debug.LocalScaDeviceManager;
-import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.NotifyingNamingContext;
-import gov.redhawk.ide.debug.ScaDebugPackage;
-import gov.redhawk.ide.debug.impl.listeners.DisposableObjectContainerListener;
-import gov.redhawk.model.sca.ScaWaveform;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
-import gov.redhawk.model.sca.impl.CorbaObjWrapperImpl;
-import gov.redhawk.sca.util.OrbSession;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,6 +35,18 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import ExtendedCF.Sandbox;
 import ExtendedCF.SandboxHelper;
 import ExtendedCF.SandboxOperations;
+import gov.redhawk.ide.debug.LocalFileManager;
+import gov.redhawk.ide.debug.LocalLaunch;
+import gov.redhawk.ide.debug.LocalSca;
+import gov.redhawk.ide.debug.LocalScaDeviceManager;
+import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.debug.NotifyingNamingContext;
+import gov.redhawk.ide.debug.ScaDebugPackage;
+import gov.redhawk.ide.debug.impl.listeners.DisposableObjectContainerListener;
+import gov.redhawk.model.sca.ScaWaveform;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.model.sca.impl.CorbaObjWrapperImpl;
+import gov.redhawk.sca.util.OrbSession;
 
 /**
  * <!-- begin-user-doc -->

@@ -11,17 +11,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
-import gov.redhawk.ide.debug.LocalAbstractComponent;
-import gov.redhawk.ide.debug.LocalLaunch;
-import gov.redhawk.ide.debug.LocalScaDevice;
-import gov.redhawk.ide.debug.ScaDebugPackage;
-import gov.redhawk.ide.debug.internal.jobs.TerminateJob;
-import gov.redhawk.model.sca.impl.ScaDeviceImpl;
-import gov.redhawk.sca.util.SilentJob;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.emf.common.notify.Notification;
@@ -30,6 +19,12 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import CF.Device;
 import CF.LifeCyclePackage.ReleaseError;
+import gov.redhawk.ide.debug.LocalAbstractComponent;
+import gov.redhawk.ide.debug.LocalLaunch;
+import gov.redhawk.ide.debug.LocalScaDevice;
+import gov.redhawk.ide.debug.ScaDebugPackage;
+import gov.redhawk.ide.debug.internal.jobs.TerminateJob;
+import gov.redhawk.model.sca.impl.ScaDeviceImpl;
 
 /**
  * <!-- begin-user-doc -->
