@@ -74,7 +74,7 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 	@Override
 	protected Object getValue(EObject eObject, EStructuralFeature eStructuralFeature) {
 		if (eStructuralFeature == PrfPackage.Literals.PROPERTIES__PROPERTIES) {
-			ComponentFile theCompFile = compInst.getPlacement().getComponentFileRef().getFile();
+			ComponentFile theCompFile = ((SadComponentInstantiation) eObject).getPlacement().getComponentFileRef().getFile();
 
 			// The component file can be null if the component file reference does not map back to any SPD (likely due to a copy paste error on the users part)
 			if (theCompFile != null && theCompFile.getSoftPkg() != null) {
@@ -84,6 +84,7 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 					return properties.getProperties();
 				}
 			}
+			return null;
 		}
 		return super.getValue(eObject, eStructuralFeature);
 	}
@@ -94,7 +95,7 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 			childrenFeatures = new ArrayList<EStructuralFeature>();
 			childrenFeatures.add(PrfPackage.Literals.PROPERTIES__PROPERTIES);
 		}
-		return super.getChildrenFeatures(object);
+		return childrenFeatures;
 	}
 
 	@Override
