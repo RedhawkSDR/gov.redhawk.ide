@@ -67,6 +67,11 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 	}
 
 	@Override
+	public Object getParent(Object object) {
+		return ScaEcoreUtils.getEContainerOfType((EObject) object, SoftwareAssembly.class);
+	}
+
+	@Override
 	protected Object getValue(EObject eObject, EStructuralFeature eStructuralFeature) {
 		if (eStructuralFeature == PrfPackage.Literals.PROPERTIES__PROPERTIES) {
 			ComponentFile theCompFile = compInst.getPlacement().getComponentFileRef().getFile();
