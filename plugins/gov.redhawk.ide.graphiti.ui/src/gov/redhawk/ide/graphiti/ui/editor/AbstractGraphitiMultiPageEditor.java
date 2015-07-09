@@ -41,9 +41,6 @@ import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -53,7 +50,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
@@ -406,45 +402,6 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 
 	public void setDirtyAllowed(boolean isDirtyAllowed) {
 		this.isDirtyAllowed = isDirtyAllowed;
-	}
-	
-	/**
-	 * Adds a complete editor part to the multi-page editor and associates an editor document with a resource; adds a
-	 * document listener to allow document changes to be propagated to the resource.
-	 * 
-	 * @param editor the nested editor
-	 * @param input the input of the nested editor
-	 * @param resource the resource to associate with the editor
-	 * @return the index of the page in the editor
-	 * @throws PartInitException
-	 */
-	public int addPage(int index, final IEditorPart editor, final IEditorInput input, final Resource resource) throws PartInitException {
-		if (index == -1) {
-			index = super.addPage(editor, input);
-		} else {
-			super.addPage(index, editor, input);
-		}
-		if (editor instanceof TextEditor) {
-			final IDocument document = ((TextEditor) editor).getDocumentProvider().getDocument(editor.getEditorInput());
-			getResourceToDocumentMap().put(resource, document);
-			document.addDocumentListener(new IDocumentListener() {
-
-				@Override
-				public void documentAboutToBeChanged(final DocumentEvent documentEvent) {
-					// Ignore
-				}
-
-				@Override
-				public void documentChanged(final DocumentEvent documentEvent) {
-					try {
-						handleDocumentChange(resource);
-					} catch (final Exception exception) { // SUPPRESS CHECKSTYLE Fallback
-						// PASS
-					}
-				}
-			});
-		}
-		return index;
 	}
 	
 }
