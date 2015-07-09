@@ -76,7 +76,6 @@ public class SadPropertiesPage extends ScaFormPage {
 			viewer.collapseAll();
 		}
 	};
-	private IAction configureAction;
 
 	/**
 	 * @param editor
@@ -123,7 +122,8 @@ public class SadPropertiesPage extends ScaFormPage {
 		toolBarManager.add(new Separator("Action"));
 		toolBarManager.add(expandAllAction);
 		toolBarManager.add(collapseAllAction);
-		if (configureAction != null) {
+		if (viewer != null) {
+			IAction configureAction = viewer.getCustomizeAction();
 			toolBarManager.add(configureAction);
 		}
 	}
@@ -145,10 +145,6 @@ public class SadPropertiesPage extends ScaFormPage {
 		XViewerControlFactory cFactory = new PropertiesViewerControlFactory();
 		XViewerConverter converter = new PropertiesViewerConverter(labelProvider);
 		viewer.setXViewerEditAdapter(new XViewerEditAdapter(cFactory, converter));
-
-		configureAction = viewer.getCustomizeAction();
-
-		viewer.expandToLevel(2);
 	}
 
 	/* (non-Javadoc)
