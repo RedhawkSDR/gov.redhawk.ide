@@ -51,6 +51,17 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		return parent;
 	}
 
+	public Object getParent(Object object) {
+		// Workaround for reverse tree traversal via an AdapterFactoryContentProvider, which will always call the
+		// 1-argument getParent. If we return the ViewerComponent object, getParent(Object) on it will fail because
+		// it's not the EObject, so this unwraps it. Property-specific code that needs to refer to the parent should
+		// use the no argument version.
+		if (parent instanceof ViewerComponent) {
+			return ((ViewerComponent) parent).getComponentInstantiation();
+		}
+		return parent;
+	}
+
 	protected AbstractPropertyRef< ? > getValueRef() {
 		return ((NestedPropertyItemProvider) getParent()).getChildRef(this.getID());
 	}
