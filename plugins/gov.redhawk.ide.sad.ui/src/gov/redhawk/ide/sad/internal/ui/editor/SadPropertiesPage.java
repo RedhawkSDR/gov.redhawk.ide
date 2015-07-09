@@ -98,6 +98,13 @@ public class SadPropertiesPage extends ScaFormPage {
 	}
 
 	@Override
+	public void dispose() {
+		super.dispose();
+		viewer.dispose();
+		viewer = null;
+	}
+
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 		form.setText("Properties");
