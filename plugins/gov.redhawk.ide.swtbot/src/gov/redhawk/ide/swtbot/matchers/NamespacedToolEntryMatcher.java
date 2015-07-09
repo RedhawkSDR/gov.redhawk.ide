@@ -31,7 +31,7 @@ public class NamespacedToolEntryMatcher extends BaseMatcher<ToolEntry> {
 		partLabels = labels;
 
 		String lastSegment = Pattern.quote(labels[labels.length - 1]);
-		pattern = Pattern.compile(lastSegment + "(?: \\(.*\\))");
+		pattern = Pattern.compile(lastSegment + "(?: \\(.*\\))?");
 	}
 
 	@Override
