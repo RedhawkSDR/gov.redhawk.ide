@@ -48,9 +48,6 @@ public abstract class XViewerCellEditor extends Composite {
 		if (decoration == null) {
 			decoration = new ControlDecoration(this, SWT.TOP | SWT.LEFT);
 			decoration.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR));
-			decoration.hide();
-			decoration.setShowOnlyOnFocus(true);
-			decoration.setShowHover(true);
 		}
 		return decoration;
 	}

@@ -20,24 +20,31 @@ import org.eclipse.swt.widgets.Text;
 public class XViewerTextCellEditor extends XViewerCellEditor {
 
 	private Text text;
+	private ModifyListener modifyListener;
+
 	public XViewerTextCellEditor(Composite parent, int style) {
 		super(parent, style);
 
 		text = new Text(this, style);
 
-		text.addModifyListener(new ModifyListener() {
+		modifyListener = new ModifyListener() {
+
 			@Override
 			public void modifyText(ModifyEvent e) {
 				editOccurred(e);
 			}
-		});
+		};
+
+		text.addModifyListener(modifyListener);
 
 		setLayout(new FillLayout());
 	}
 
 	@Override
 	protected void doSetValue(Object value) {
+		text.removeModifyListener(modifyListener);
 		text.setText((String) value);
+		text.addModifyListener(modifyListener);
 	}
 
 	@Override
