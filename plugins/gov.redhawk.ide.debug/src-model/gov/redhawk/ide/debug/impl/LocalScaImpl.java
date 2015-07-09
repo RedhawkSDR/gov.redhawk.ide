@@ -426,18 +426,23 @@ public class LocalScaImpl extends CorbaObjWrapperImpl<Sandbox> implements LocalS
 
 					@Override
 					public void execute() {
+						// Find a model object with a matching ILaunch
 						final TreeIterator<Object> iterator = EcoreUtil.getAllContents(LocalScaImpl.this, false);
 						while (iterator.hasNext()) {
 							final Object obj = iterator.next();
-							if (obj instanceof LocalSca) {
-								continue;
-							} else if (obj instanceof LocalLaunch) {
+							if (obj instanceof LocalLaunch) {
+								// See if this is the model object we're looking for
 								final LocalLaunch scaLaunch = (LocalLaunch) obj;
 								if (scaLaunch.getLaunch() == launch) {
+									// TODO: Unset the CORBA Obj? Unset launch?
 									EcoreUtil.delete(scaLaunch);
 									return;
 								}
+							} else if (obj instanceof LocalSca) {
+								// LocalSca is the root. We have to ignore it, but check its children
+								continue;
 							} else {
+								// We're not interested in this object nor any of its children
 								iterator.prune();
 								continue;
 							}
