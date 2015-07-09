@@ -62,7 +62,7 @@ public class PropertiesViewerConverter implements XViewerConverter {
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId()) && selObject instanceof ViewerProperty< ? >) {
 			ViewerProperty< ? > prop = ((ViewerProperty< ? >) selObject);
 			String value = getUniqueValue(prop);
-			setControlValue(c, value);
+			((XViewerCellEditor) c).setValue(value);
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
 			if (c instanceof XViewerCellEditor) {
 				Object value = ((ViewerProperty< ? >) selObject).getValue();
@@ -165,9 +165,6 @@ public class PropertiesViewerConverter implements XViewerConverter {
 			if (newValue == null) {
 				return null;
 			}
-		} else if (c instanceof Combo) {
-			Combo combo = (Combo) c;
-			newValue = combo.getText();
 		} else {
 			return null;
 		}
@@ -197,19 +194,12 @@ public class PropertiesViewerConverter implements XViewerConverter {
 	}
 
 	protected Object setExternalID(Control c, Object selObject) {
-		String newValue = null;
-		if (c instanceof Combo) {
-			Combo combo = (Combo) c;
-			newValue = combo.getText();
-		} else {
+		Object value = ((XViewerCellEditor) c).getValue();
+		if (value == null) {
 			return null;
 		}
-
-		if (selObject instanceof ViewerProperty< ? >) {
-			((ViewerProperty< ? >) selObject).setExternalID(newValue);
-			return selObject;
-		}
-		return null;
+		((ViewerProperty< ? >) selObject).setExternalID((String) value);
+		return selObject;
 	}
 
 	@Override
