@@ -17,7 +17,10 @@ import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.swt.widgets.Composite;
 
+import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
+import gov.redhawk.ide.sad.internal.ui.editor.XViewerDialogCellEditor;
 import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
@@ -90,6 +93,11 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 			return SetCommand.create(domain, ((SimpleSequenceRef)owner).getValues(), PrfPackage.Literals.VALUES__VALUE, value);
 		}
 		return super.createSetCommand(domain, owner, feature, value);
+	}
+
+	@Override
+	public XViewerCellEditor createCellEditor(Composite parent, int style) {
+		return new XViewerDialogCellEditor(parent, style);
 	}
 
 }

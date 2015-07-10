@@ -13,7 +13,9 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 import java.util.Collection;
 
 import org.eclipse.emf.ecore.util.FeatureMap;
+import org.eclipse.swt.widgets.Composite;
 
+import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
@@ -61,5 +63,10 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 	@Override
 	protected Collection< ? > getKindTypes() {
 		return getDefinition().getConfigurationKind();
+	}
+
+	@Override
+	public XViewerCellEditor createCellEditor(Composite parent, int style) {
+		return null;
 	}
 }

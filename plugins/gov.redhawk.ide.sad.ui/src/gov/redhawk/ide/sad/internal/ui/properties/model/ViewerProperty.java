@@ -30,6 +30,9 @@ import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ItemProvider;
+import org.eclipse.swt.widgets.Composite;
+
+import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
 
 /**
  * 
@@ -78,6 +81,10 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 
 	public T getDefinition() {
 		return this.def;
+	}
+
+	public XViewerCellEditor createCellEditor(Composite parent, int style) {
+		return null;
 	}
 
 	public ViewerComponent getComponent() {
