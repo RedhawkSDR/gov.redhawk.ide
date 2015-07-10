@@ -79,7 +79,6 @@ public class PropertiesViewerConverter implements XViewerConverter {
 							if (ref != null) {
 								property.fromAny(ref.toAny());
 							}
-							// TODO: Get values from SAD file
 							SequencePropertyValueWizard wizard = new SequencePropertyValueWizard(property);
 							WizardDialog dialog = new WizardDialog(button.getShell(), wizard);
 							if (dialog.open() == Window.OK) {
