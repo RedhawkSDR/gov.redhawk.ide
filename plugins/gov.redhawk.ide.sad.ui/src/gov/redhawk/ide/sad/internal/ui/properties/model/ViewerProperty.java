@@ -23,7 +23,10 @@ import java.util.Collection;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.UnexecutableCommand;
+import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.AddCommand;
@@ -31,6 +34,7 @@ import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ItemProvider;
+import org.eclipse.emf.edit.provider.ViewerNotification;
 import org.eclipse.swt.widgets.Composite;
 
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
@@ -41,6 +45,15 @@ import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
 public abstract class ViewerProperty< T extends AbstractProperty > extends ItemProvider {
 
 	protected final T def;
+
+	private Adapter adapter = new AdapterImpl() {
+
+		@Override
+		public void notifyChanged(Notification msg) {
+			ViewerProperty.this.notifyChanged(msg);
+		}
+
+	};
 
 	/**
 	 * 
@@ -243,8 +256,20 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 	}
 
 	public void referenceAdded(AbstractPropertyRef< ? > reference) {
+		if (reference != null) {
+			reference.eAdapters().add(adapter);
+		}
 	}
 
 	public void referenceRemoved(AbstractPropertyRef< ? > reference) {
+		if (reference != null) {
+			reference.eAdapters().remove(adapter);
+		}
+	}
+
+	protected void notifyChanged(Notification msg) {
+		if (msg.getEventType() == Notification.SET) {
+			fireNotifyChanged(new ViewerNotification(msg, this, false, true));
+		}
 	}
 }

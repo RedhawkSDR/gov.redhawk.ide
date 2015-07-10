@@ -64,6 +64,7 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 	public ViewerComponent(AdapterFactory adapterFactory, SadComponentInstantiation compInst) {
 		super(adapterFactory);
 		this.compInst = compInst;
+		propertiesAdded(compInst.getComponentProperties());
 	}
 
 	@Override
@@ -233,10 +234,12 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 				AbstractPropertyRef< ? > ref = unwrapProperty(msg.getNewValue());
 				ViewerProperty< ? > property = getProperty(ref.getRefID());
 				property.referenceAdded(ref);
+				fireNotifyChanged(new ViewerNotification(msg, property, false, true));
 			} else if (msg.getEventType() == Notification.REMOVE) {
 				AbstractPropertyRef< ? > ref = unwrapProperty(msg.getOldValue());
 				ViewerProperty< ? > property = getProperty(ref.getRefID());
 				property.referenceRemoved(ref);
+				fireNotifyChanged(new ViewerNotification(msg, property, false, true));
 			}
 		}
 	}
