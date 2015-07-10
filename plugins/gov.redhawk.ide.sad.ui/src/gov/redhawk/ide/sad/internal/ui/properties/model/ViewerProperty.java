@@ -239,4 +239,10 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		}
 		return UnexecutableCommand.INSTANCE;
 	}
+
+	public void referenceAdded(AbstractPropertyRef< ? > reference) {
+	}
+
+	public void referenceRemoved(AbstractPropertyRef< ? > reference) {
+	}
 }

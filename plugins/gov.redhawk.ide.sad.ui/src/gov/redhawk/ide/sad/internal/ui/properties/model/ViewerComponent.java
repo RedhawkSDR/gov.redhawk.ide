@@ -37,6 +37,7 @@ import java.util.Collection;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.UnexecutableCommand;
 import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
@@ -210,6 +211,77 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 			}
 		}
 		return UnexecutableCommand.INSTANCE;
+	}
+
+	@Override
+	public void notifyChanged(Notification msg) {
+		super.notifyChanged(msg);
+		final Object feature = msg.getFeature();
+		if (feature == PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES) {
+			if (msg.getEventType() == Notification.SET) {
+				ComponentProperties properties = (ComponentProperties) msg.getNewValue();
+				if (properties == null) {
+					propertiesRemoved((ComponentProperties) msg.getOldValue());
+				} else {
+					propertiesAdded(properties);
+				}
+			}
+		} else if (feature == PartitioningPackage.Literals.COMPONENT_PROPERTIES__PROPERTIES) {
+			if (msg.getEventType() == Notification.ADD) {
+				AbstractPropertyRef< ? > ref = unwrapProperty(msg.getNewValue());
+				ViewerProperty< ? > property = getProperty(ref.getRefID());
+				property.referenceAdded(ref);
+			} else if (msg.getEventType() == Notification.REMOVE) {
+				AbstractPropertyRef< ? > ref = unwrapProperty(msg.getOldValue());
+				ViewerProperty< ? > property = getProperty(ref.getRefID());
+				property.referenceRemoved(ref);
+			}
+		}
+	}
+
+	private AbstractPropertyRef< ? > unwrapProperty(Object value) {
+		FeatureMap.Entry entry = (FeatureMap.Entry) value;
+		return (AbstractPropertyRef< ? >) entry.getValue();
+	}
+
+	@Override
+	public boolean isAdapterForType(Object type) {
+		if (type instanceof Class< ? >) {
+			return ((Class< ? >) type).isInstance(this);
+		}
+		return super.isAdapterForType(type);
+	}
+
+	protected ViewerProperty< ? > getProperty(String identifier) {
+		for (Object child : getChildren(compInst)) {
+			ViewerProperty< ? > property = (ViewerProperty< ? >) child;
+			if (property.getID().equals(identifier)) {
+				return property;
+			}
+		}
+		return null;
+	}
+
+	private void propertiesAdded(ComponentProperties properties) {
+		if (properties != null) {
+			properties.eAdapters().add(this);
+			for (FeatureMap.Entry entry : properties.getProperties()) {
+				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
+				ViewerProperty< ? > property = getProperty(ref.getRefID());
+				property.referenceAdded(ref);
+			}
+		}
+	}
+
+	private void propertiesRemoved(ComponentProperties properties) {
+		if (properties != null) {
+			properties.eAdapters().remove(this);
+			for (FeatureMap.Entry entry : properties.getProperties()) {
+				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
+				ViewerProperty< ? > property = getProperty(ref.getRefID());
+				property.referenceRemoved(ref);
+			}
+		}
 	}
 
 }
