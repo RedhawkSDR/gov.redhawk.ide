@@ -58,17 +58,15 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 	};
 
 	private SadComponentInstantiation compInst;
-	private SoftwareAssembly sad;
 
 	public ViewerComponent(AdapterFactory adapterFactory, SadComponentInstantiation compInst) {
 		super(adapterFactory);
 		this.compInst = compInst;
-		this.sad = ScaEcoreUtils.getEContainerOfType(compInst, SoftwareAssembly.class);
 	}
 
 	@Override
 	public Object getParent(Object object) {
-		return ScaEcoreUtils.getEContainerOfType((EObject) object, SoftwareAssembly.class);
+		return getSoftwareAssembly();
 	}
 
 	@Override
@@ -107,13 +105,18 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 		return super.createWrapper(object, feature, value, index);
 	}
 
+	public SoftwareAssembly getSoftwareAssembly() {
+		return ScaEcoreUtils.getEContainerOfType(compInst, SoftwareAssembly.class);
+	}
+
 	public SadComponentInstantiation getComponentInstantiation() {
 		return compInst;
 	}
 
 	public boolean isAssemblyController() {
-		if (sad.getAssemblyController() != null) {
-			AssemblyController assemblyController = sad.getAssemblyController();
+		SoftwareAssembly softwareAssembly = getSoftwareAssembly();
+		if (softwareAssembly.getAssemblyController() != null) {
+			AssemblyController assemblyController = softwareAssembly.getAssemblyController();
 			if (assemblyController.getComponentInstantiationRef() != null) {
 				if (PluginUtil.equals(compInst.getId(), assemblyController.getComponentInstantiationRef().getRefid())) {
 					return true;
@@ -151,7 +154,7 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 	}
 
 	protected ExternalProperty getExternalProperty(final String refId) {
-		final ExternalProperties properties = sad.getExternalProperties();
+		final ExternalProperties properties = getSoftwareAssembly().getExternalProperties();
 		if (properties != null) {
 			for (final ExternalProperty property : properties.getProperties()) {
 				if (property.getCompRefID().equals(compInst.getId()) && property.getPropID().equals(refId)) {
@@ -164,7 +167,7 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 
 	@Override
 	public EditingDomain getEditingDomain() {
-		return TransactionUtil.getEditingDomain(sad);
+		return TransactionUtil.getEditingDomain(getSoftwareAssembly());
 	}
 
 	protected EStructuralFeature getChildFeature(Object object, Object child) {

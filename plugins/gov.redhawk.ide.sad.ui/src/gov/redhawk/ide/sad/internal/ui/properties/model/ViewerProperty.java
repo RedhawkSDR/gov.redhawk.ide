@@ -18,7 +18,6 @@ import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
-import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
 import java.util.Collection;
 
@@ -199,8 +198,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 
 	protected Command createParentCommand(EditingDomain domain, EStructuralFeature feature, Object value) {
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
-			SadComponentInstantiation compInst = getComponentInstantiation();
-			SoftwareAssembly sad = ScaEcoreUtils.getEContainerOfType(compInst, SoftwareAssembly.class);
+			SoftwareAssembly sad = getComponent().getSoftwareAssembly();
 			ExternalProperties properties = sad.getExternalProperties();
 			if (properties != null) {
 				return AddCommand.create(domain, properties, SadPackage.Literals.EXTERNAL_PROPERTIES__PROPERTIES, (ExternalProperty)value);
