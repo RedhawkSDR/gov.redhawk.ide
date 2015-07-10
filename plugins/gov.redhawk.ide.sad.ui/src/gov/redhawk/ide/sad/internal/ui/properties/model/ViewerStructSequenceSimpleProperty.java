@@ -13,6 +13,8 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.common.notify.AdapterFactory;
+
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.StructValue;
@@ -22,8 +24,8 @@ import mil.jpeojtrs.sca.prf.StructValue;
  */
 public class ViewerStructSequenceSimpleProperty extends ViewerStructSequenceNestedProperty<Simple> {
 
-	public ViewerStructSequenceSimpleProperty(Simple def, ViewerStructSequenceProperty parent) {
-		super(def, parent);
+	public ViewerStructSequenceSimpleProperty(AdapterFactory adapterFactory, Simple def, ViewerStructSequenceProperty parent) {
+		super(adapterFactory, def, parent);
 	}
 	
 	protected List<String> getRefValues(List<StructValue> structValues) {

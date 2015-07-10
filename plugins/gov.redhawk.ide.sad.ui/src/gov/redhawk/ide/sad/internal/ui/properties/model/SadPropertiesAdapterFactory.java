@@ -11,15 +11,21 @@
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
+import org.eclipse.emf.edit.provider.ChangeNotifier;
 import org.eclipse.emf.edit.provider.Disposable;
+import org.eclipse.emf.edit.provider.IChangeNotifier;
 import org.eclipse.emf.edit.provider.IDisposable;
+import org.eclipse.emf.edit.provider.INotifyChangedListener;
 
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
-public class SadPropertiesAdapterFactory extends AdapterFactoryImpl implements IDisposable {
+public class SadPropertiesAdapterFactory extends AdapterFactoryImpl implements IChangeNotifier, IDisposable {
+
+	private IChangeNotifier changeNotifier = new ChangeNotifier();
 
 	private Disposable disposable = new Disposable();
 
@@ -49,6 +55,21 @@ public class SadPropertiesAdapterFactory extends AdapterFactoryImpl implements I
 		if (adapter != null) {
 			disposable.add(adapter);
 		}
+	}
+
+	@Override
+	public void fireNotifyChanged(Notification notification) {
+		changeNotifier.fireNotifyChanged(notification);
+	}
+
+	@Override
+	public void addListener(INotifyChangedListener notifyChangedListener) {
+		changeNotifier.addListener(notifyChangedListener);
+	}
+
+	@Override
+	public void removeListener(INotifyChangedListener notifyChangedListener) {
+		changeNotifier.addListener(notifyChangedListener);
 	}
 
 	@Override

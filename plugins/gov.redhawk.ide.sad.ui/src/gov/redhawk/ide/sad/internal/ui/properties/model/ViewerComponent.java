@@ -47,6 +47,7 @@ import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemProviderAdapter;
+import org.eclipse.emf.edit.provider.ViewerNotification;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 
 import gov.redhawk.sca.util.PluginUtil;
@@ -130,13 +131,13 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 	private ViewerProperty< ? > createViewerProperty(AbstractProperty def) {
 		switch (def.eClass().getClassifierID()) {
 		case PrfPackage.SIMPLE:
-			return new ViewerSimpleProperty((Simple) def, this);
+			return new ViewerSimpleProperty(adapterFactory, (Simple) def, this);
 		case PrfPackage.SIMPLE_SEQUENCE:
-			return new ViewerSequenceProperty((SimpleSequence) def, this);
+			return new ViewerSequenceProperty(adapterFactory, (SimpleSequence) def, this);
 		case PrfPackage.STRUCT:
-			return new ViewerStructProperty((Struct) def, this);
+			return new ViewerStructProperty(adapterFactory, (Struct) def, this);
 		case PrfPackage.STRUCT_SEQUENCE:
-			return new ViewerStructSequenceProperty((StructSequence) def, this);
+			return new ViewerStructSequenceProperty(adapterFactory, (StructSequence) def, this);
 		}
 		return null;
 	}
@@ -225,6 +226,7 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 				} else {
 					propertiesAdded(properties);
 				}
+				fireNotifyChanged(msg);
 			}
 		} else if (feature == PartitioningPackage.Literals.COMPONENT_PROPERTIES__PROPERTIES) {
 			if (msg.getEventType() == Notification.ADD) {

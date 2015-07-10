@@ -23,6 +23,7 @@ import java.util.Collection;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.UnexecutableCommand;
+import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.AddCommand;
@@ -44,7 +45,8 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 	/**
 	 * 
 	 */
-	public ViewerProperty(T def, Object parent) {
+	public ViewerProperty(AdapterFactory adapterFactory, T def, Object parent) {
+		super(adapterFactory);
 		this.def = def;
 		this.parent = parent;
 	}

@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -32,8 +33,8 @@ import mil.jpeojtrs.sca.prf.Values;
  */
 public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 
-	public ViewerSequenceProperty(SimpleSequence def, Object parent) {
-		super(def, parent);
+	public ViewerSequenceProperty(AdapterFactory adapterFactory, SimpleSequence def, Object parent) {
+		super(adapterFactory, def, parent);
 	}
 
 	@Override

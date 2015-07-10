@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 
 import java.util.Collection;
 
+import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.swt.widgets.Composite;
 
@@ -27,15 +28,15 @@ import mil.jpeojtrs.sca.prf.StructSequenceRef;
  */
 public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence> {
 
-	public ViewerStructSequenceProperty(StructSequence def, Object parent) {
-		super(def, parent);
+	public ViewerStructSequenceProperty(AdapterFactory adapterFactory, StructSequence def, Object parent) {
+		super(adapterFactory, def, parent);
 		for (FeatureMap.Entry entry : def.getStruct().getFields()) {
 			if (entry.getEStructuralFeature() == PrfPackage.Literals.STRUCT__SIMPLE) {
 				Simple simple = (Simple) entry.getValue();
-				getChildren().add(new ViewerStructSequenceSimpleProperty(simple, this));
+				getChildren().add(new ViewerStructSequenceSimpleProperty(adapterFactory, simple, this));
 			} else if (entry.getEStructuralFeature() == PrfPackage.Literals.STRUCT__SIMPLE_SEQUENCE) {
 				SimpleSequence sequence = (SimpleSequence) entry.getValue();
-				getChildren().add(new ViewerStructSequenceSequenceProperty(sequence, this));
+				getChildren().add(new ViewerStructSequenceSequenceProperty(adapterFactory, sequence, this));
 			}
 		}
 	}

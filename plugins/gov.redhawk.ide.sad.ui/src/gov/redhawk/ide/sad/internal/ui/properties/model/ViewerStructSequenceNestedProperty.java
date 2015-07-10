@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.emf.common.notify.AdapterFactory;
+
 import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
@@ -11,8 +13,8 @@ import mil.jpeojtrs.sca.prf.StructValue;
 
 public abstract class ViewerStructSequenceNestedProperty<E extends AbstractProperty> extends ViewerProperty<E> {
 
-	public ViewerStructSequenceNestedProperty(E def, Object parent) {
-		super(def, parent);
+	public ViewerStructSequenceNestedProperty(AdapterFactory adapterFactory, E def, Object parent) {
+		super(adapterFactory, def, parent);
 	}
 
 	@Override

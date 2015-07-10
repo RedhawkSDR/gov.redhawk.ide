@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -34,8 +35,8 @@ import mil.jpeojtrs.sca.prf.SimpleRef;
 
 public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 
-	public ViewerSimpleProperty(Simple def, Object parent) {
-		super(def, parent);
+	public ViewerSimpleProperty(AdapterFactory adapterFactory, Simple def, Object parent) {
+		super(adapterFactory, def, parent);
 	}
 
 	@Override
