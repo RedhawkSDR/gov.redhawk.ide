@@ -65,7 +65,7 @@ public class ViewerStructProperty extends ViewerProperty<Struct> implements Nest
 	}
 
 	@Override
-	public Object getValue() {
+	public Object getSadValue() {
 		return null;
 	}
 

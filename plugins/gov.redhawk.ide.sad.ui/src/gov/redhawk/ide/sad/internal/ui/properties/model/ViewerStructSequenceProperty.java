@@ -43,12 +43,13 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 		return (StructSequenceRef) super.getValueRef();
 	}
 
-	public void setValue(StructSequenceRef value) {
+	@Override
+	public void setSadValue(Object value) {
 		// TODO: Update values in SAD
 	}
 
 	@Override
-	public Object getValue() {
+	public Object getSadValue() {
 		return null;
 	}
 

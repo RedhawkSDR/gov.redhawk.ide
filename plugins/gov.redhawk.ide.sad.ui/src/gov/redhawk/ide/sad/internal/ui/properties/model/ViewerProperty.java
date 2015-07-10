@@ -146,7 +146,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		setFeatureValue(SadPropertiesPackage.Literals.SAD_PROPERTY__EXTERNAL_ID, newExternalID);
 	}
 
-	public abstract Object getValue();
+	public abstract Object getSadValue();
 
 	public abstract String getPrfValue();
 

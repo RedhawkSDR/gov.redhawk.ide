@@ -29,7 +29,7 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 	}
 
 	@Override
-	public String getValue() {
+	public String getSadValue() {
 		SimpleRef simpleRef = getValueRef();
 		if (simpleRef != null) {
 			return simpleRef.getValue();

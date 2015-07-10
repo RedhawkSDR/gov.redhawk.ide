@@ -62,7 +62,7 @@ public class PropertiesViewerConverter implements XViewerConverter {
 			((XViewerCellEditor) c).setValue(value);
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
 			if (c instanceof XViewerCellEditor) {
-				Object value = ((ViewerProperty< ? >) selObject).getValue();
+				Object value = ((ViewerProperty< ? >) selObject).getSadValue();
 				((XViewerCellEditor) c).setValue(value);
 			} else {
 				String value = labelProvider.getSadValue(selObject);
@@ -82,7 +82,7 @@ public class PropertiesViewerConverter implements XViewerConverter {
 							SequencePropertyValueWizard wizard = new SequencePropertyValueWizard(property);
 							WizardDialog dialog = new WizardDialog(button.getShell(), wizard);
 							if (dialog.open() == Window.OK) {
-								viewerProp.setValue(createRef(property));
+								viewerProp.setSadValue(createRef(property));
 							}
 						}
 					});

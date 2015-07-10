@@ -34,7 +34,7 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 	}
 
 	@Override
-	public Object getValue() {
+	public Object getSadValue() {
 		SimpleSequenceRef ref = getValueRef();
 		if (ref != null) {
 			return ref.getValues().getValue();
