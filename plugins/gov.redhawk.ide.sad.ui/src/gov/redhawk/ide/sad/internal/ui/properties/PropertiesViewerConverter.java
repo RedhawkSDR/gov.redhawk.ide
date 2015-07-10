@@ -10,9 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties;
 
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerApplication;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceProperty;
 import gov.redhawk.model.sca.ScaFactory;
@@ -27,7 +25,6 @@ import mil.jpeojtrs.sca.prf.SimpleRef;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
 import mil.jpeojtrs.sca.prf.StructValue;
 import mil.jpeojtrs.sca.sad.ExternalProperty;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
@@ -77,9 +74,7 @@ public class PropertiesViewerConverter implements XViewerConverter {
 						@Override
 						public void widgetSelected(SelectionEvent e) {
 							ScaStructSequenceProperty property = ScaFactory.eINSTANCE.createScaStructSequenceProperty();
-							ViewerComponent component = (ViewerComponent) viewerProp.getParent();
-							SadComponentInstantiation inst = component.getComponentInstantiation();
-							StructSequenceRef ref = (StructSequenceRef) ViewerApplication.getRef(inst, viewerProp);
+							StructSequenceRef ref = viewerProp.getValueRef();
 							property.setDefinition(viewerProp.getDefinition());
 							if (ref != null) {
 								property.fromAny(ref.toAny());

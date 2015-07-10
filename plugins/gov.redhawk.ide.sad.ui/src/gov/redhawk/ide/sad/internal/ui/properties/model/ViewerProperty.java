@@ -62,6 +62,10 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		return parent;
 	}
 
+	public boolean canSetExternalId() {
+		return (parent instanceof ViewerComponent);
+	}
+
 	protected AbstractPropertyRef< ? > getValueRef() {
 		return ((NestedPropertyItemProvider) getParent()).getChildRef(this.getID());
 	}

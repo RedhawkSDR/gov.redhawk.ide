@@ -10,21 +10,15 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
-import gov.redhawk.sca.util.PluginUtil;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
-import mil.jpeojtrs.sca.partitioning.ComponentProperties;
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
-import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.util.FeatureMap.ValueListIterator;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 
@@ -32,22 +26,6 @@ public class ViewerApplication extends ItemProviderAdapter implements ITreeItemC
 
 	public ViewerApplication(AdapterFactory adapterFactory) {
 		super(adapterFactory);
-	}
-
-	public static AbstractPropertyRef< ? > getRef(SadComponentInstantiation inst, ViewerProperty< ? > p) {
-		ComponentProperties properties = inst.getComponentProperties();
-		if (properties != null) {
-			for (ValueListIterator<Object> i = properties.getProperties().valueListIterator(); i.hasNext();) {
-				Object obj = i.next();
-				if (obj instanceof AbstractPropertyRef< ? >) {
-					AbstractPropertyRef< ? > propRef = (AbstractPropertyRef< ? >) obj;
-					if (PluginUtil.equals(propRef.getRefID(), p.getID())) {
-						return propRef;
-					}
-				}
-			}
-		}
-		return null;
 	}
 
 	@Override

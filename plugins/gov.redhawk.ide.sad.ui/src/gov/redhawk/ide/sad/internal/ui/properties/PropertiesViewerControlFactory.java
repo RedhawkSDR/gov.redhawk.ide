@@ -13,7 +13,6 @@ package gov.redhawk.ide.sad.internal.ui.properties;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerComboCellEditor;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerDialogCellEditor;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerTextCellEditor;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerComponent;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSequenceProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSimpleProperty;
@@ -53,7 +52,7 @@ public class PropertiesViewerControlFactory extends DefaultXViewerControlFactory
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
 			if (editElement instanceof ViewerProperty< ? >) {
 				final ViewerProperty< ? > prop = (ViewerProperty< ? >) editElement;
-				if (prop.getParent() instanceof ViewerComponent) {
+				if (prop.canSetExternalId()) {
 
 					String[] items = new String[] { "", prop.getDefinition().getId() };
 					XViewerComboCellEditor editor = new XViewerComboCellEditor(xv.getTree(), items, ced.getSwtStyle());
