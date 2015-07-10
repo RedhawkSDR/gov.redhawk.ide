@@ -13,11 +13,15 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
+import org.eclipse.emf.edit.provider.Disposable;
+import org.eclipse.emf.edit.provider.IDisposable;
 
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
-public class SadPropertiesAdapterFactory extends AdapterFactoryImpl {
+public class SadPropertiesAdapterFactory extends AdapterFactoryImpl implements IDisposable {
+
+	private Disposable disposable = new Disposable();
 
 	@Override
 	public boolean isFactoryForType(Object type) {
@@ -37,6 +41,19 @@ public class SadPropertiesAdapterFactory extends AdapterFactoryImpl {
 			return new ViewerComponent(this, (SadComponentInstantiation) target);
 		}
 		return super.createAdapter(target);
+	}
+
+	@Override
+	protected void associate(Adapter adapter, Notifier target) {
+		super.associate(adapter, target);
+		if (adapter != null) {
+			disposable.add(adapter);
+		}
+	}
+
+	@Override
+	public void dispose() {
+		disposable.dispose();
 	}
 
 }

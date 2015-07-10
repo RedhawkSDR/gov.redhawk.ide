@@ -77,6 +77,8 @@ public class SadPropertiesPage extends ScaFormPage {
 		}
 	};
 
+	private SadPropertiesAdapterFactory adapterFactory = null;
+
 	/**
 	 * @param editor
 	 * @param id
@@ -99,8 +101,14 @@ public class SadPropertiesPage extends ScaFormPage {
 	@Override
 	public void dispose() {
 		super.dispose();
-		viewer.dispose();
-		viewer = null;
+		if (viewer != null) {
+			viewer.dispose();
+			viewer = null;
+		}
+		if (adapterFactory != null) {
+			adapterFactory.dispose();
+			adapterFactory = null;
+		}
 	}
 
 	@Override
@@ -132,7 +140,8 @@ public class SadPropertiesPage extends ScaFormPage {
 		parent.setLayout(GridLayoutFactory.fillDefaults().numColumns(1).create());
 		viewer = new PropertiesViewer(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		viewer.getTree().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
-		viewer.setContentProvider(new AdapterFactoryContentProvider(new SadPropertiesAdapterFactory()));
+		adapterFactory = new SadPropertiesAdapterFactory();
+		viewer.setContentProvider(new AdapterFactoryContentProvider(adapterFactory));
 		PropertiesViewerLabelProvider labelProvider = new PropertiesViewerLabelProvider(viewer);
 		viewer.setLabelProvider(labelProvider);
 
