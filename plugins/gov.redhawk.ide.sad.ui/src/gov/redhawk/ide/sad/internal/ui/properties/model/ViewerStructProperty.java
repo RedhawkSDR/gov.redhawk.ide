@@ -126,4 +126,36 @@ public class ViewerStructProperty extends ViewerProperty<Struct> implements Nest
 		}
 		return UnexecutableCommand.INSTANCE;
 	}
+
+	protected ViewerProperty< ? > getField(String identifier) {
+		for (Object child : children) {
+			ViewerProperty< ? > field = (ViewerProperty< ? >) child;
+			if (field.getID().equals(identifier)) {
+				return field;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void referenceAdded(AbstractPropertyRef< ? > reference) {
+		super.referenceAdded(reference);
+		StructRef structRef = (StructRef) reference;
+		for (FeatureMap.Entry ref : structRef.getRefs()) {
+			AbstractPropertyRef< ? > childRef = (AbstractPropertyRef< ? >)ref.getValue();
+			ViewerProperty< ? > field = getField(childRef.getRefID());
+			field.referenceAdded(childRef);
+		}
+	}
+
+	@Override
+	public void referenceRemoved(AbstractPropertyRef< ? > reference) {
+		super.referenceRemoved(reference);
+		StructRef structRef = (StructRef) reference;
+		for (FeatureMap.Entry ref : structRef.getRefs()) {
+			AbstractPropertyRef< ? > childRef = (AbstractPropertyRef< ? >)ref.getValue();
+			ViewerProperty< ? > field = getField(childRef.getRefID());
+			field.referenceRemoved(childRef);
+		}
+	}
 }
