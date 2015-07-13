@@ -11,11 +11,12 @@
 package gov.redhawk.ide.sad.internal.ui.editor;
 
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 public class XViewerComboCellEditor extends XViewerCellEditor {
 
@@ -42,6 +43,14 @@ public class XViewerComboCellEditor extends XViewerCellEditor {
 
 		combo.addModifyListener(modifyListener);
 
+		combo.addFocusListener(new FocusAdapter() {
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				XViewerComboCellEditor.this.focusLost();
+			}
+		});
+
 		setLayout(new FillLayout());
 	}
 
@@ -58,11 +67,6 @@ public class XViewerComboCellEditor extends XViewerCellEditor {
 	@Override
 	protected Object doGetValue() {
 		return combo.getText();
-	}
-
-	@Override
-	protected Control getMainControl() {
-		return combo;
 	}
 
 	private void editOccurred(ModifyEvent e) {

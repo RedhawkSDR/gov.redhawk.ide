@@ -14,7 +14,7 @@ import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -73,16 +73,14 @@ public abstract class XViewerCellEditor extends Composite {
 
 	protected abstract Object doGetValue();
 
-	protected abstract Control getMainControl();
-
-	@Override
-	public void addListener(int eventType, Listener listener) {
-		getMainControl().addListener(eventType, listener);
-	}
-
-	@Override
-	public void removeListener(int eventType, Listener listener) {
-		getMainControl().removeListener(eventType, listener);
+	protected void focusLost() {
+		Event event = new Event();
+		event.type = SWT.FocusOut;
+		event.widget = this;
+		event.display = getDisplay();
+		for (Listener listener : getListeners(SWT.FocusOut)) {
+			listener.handleEvent(event);
+		}
 	}
 
 	public void setValidator(ICellEditorValidator validator) {

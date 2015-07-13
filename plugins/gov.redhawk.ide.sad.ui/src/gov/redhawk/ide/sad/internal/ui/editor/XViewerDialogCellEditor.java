@@ -11,13 +11,15 @@
 package gov.redhawk.ide.sad.internal.ui.editor;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 
@@ -25,7 +27,8 @@ public abstract class XViewerDialogCellEditor extends XViewerCellEditor {
 
 	private Label label;
 	private Button button;
-	private Object value;
+	protected Object value;
+	private FocusListener focusListener;
 
 	/**
 	 * Internal class for laying out the dialog.
@@ -67,11 +70,26 @@ public abstract class XViewerDialogCellEditor extends XViewerCellEditor {
 
 		button = new Button(this, SWT.DOWN);
 		button.setText("...");
+
+		focusListener = new FocusAdapter() {
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				XViewerDialogCellEditor.this.focusLost();
+			}
+		};
+		button.addFocusListener(focusListener);
+
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				button.removeFocusListener(focusListener);
 				Object newValue = openDialogBox();
-				doSetValue(newValue);
+				if (newValue != null) {
+					setValueValid(true);
+					doSetValue(newValue);
+				}
+				XViewerDialogCellEditor.this.focusLost();
 			}
 
 		});
@@ -104,9 +122,4 @@ public abstract class XViewerDialogCellEditor extends XViewerCellEditor {
 	}
 
 	protected abstract Object openDialogBox();
-
-	@Override
-	protected Control getMainControl() {
-		return button;
-	}
 }
