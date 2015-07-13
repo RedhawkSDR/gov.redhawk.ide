@@ -14,13 +14,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import mil.jpeojtrs.sca.partitioning.PartitioningPackage;
+import mil.jpeojtrs.sca.sad.ExternalProperties;
+import mil.jpeojtrs.sca.sad.ExternalProperty;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SadPackage;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemProviderAdapter;
+import org.eclipse.emf.edit.provider.ViewerNotification;
 
 public class ViewerApplication extends ItemProviderAdapter implements ITreeItemContentProvider {
 
@@ -43,6 +50,104 @@ public class ViewerApplication extends ItemProviderAdapter implements ITreeItemC
 			childrenFeatures.add(PartitioningPackage.Literals.COMPONENT_PLACEMENT__COMPONENT_INSTANTIATION);
 		}
 		return childrenFeatures;
+	}
+
+	@Override
+	public void setTarget(Notifier target) {
+		super.setTarget(target);
+		if (target instanceof SoftwareAssembly) {
+			SoftwareAssembly softwareAssembly = (SoftwareAssembly) target;
+			externalPropertiesAdded(softwareAssembly, softwareAssembly.getExternalProperties());
+		}
+	}
+
+	@Override
+	public void notifyChanged(Notification msg) {
+		final Object feature = msg.getFeature();
+		if (feature == SadPackage.Literals.SOFTWARE_ASSEMBLY__EXTERNAL_PROPERTIES) {
+			if (msg.getEventType() == Notification.SET) {
+				SoftwareAssembly softwareAssembly = (SoftwareAssembly) msg.getNotifier();
+				ExternalProperties properties = (ExternalProperties) msg.getNewValue();
+				if (properties != null) {
+					externalPropertiesAdded(softwareAssembly, properties);
+				} else {
+					properties = (ExternalProperties) msg.getOldValue();
+					externalPropertiesRemoved(softwareAssembly, properties);
+				}
+				fireNotifyChanged(msg);
+			}
+		} else if (feature == SadPackage.Literals.EXTERNAL_PROPERTIES__PROPERTIES) {
+			ExternalProperties properties = (ExternalProperties) msg.getNotifier();
+			SoftwareAssembly softwareAssembly = (SoftwareAssembly) properties.eContainer();
+			if (msg.getEventType() == Notification.ADD) {
+				ExternalProperty externalProperty = (ExternalProperty) msg.getNewValue();
+				ViewerProperty< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
+				viewerProperty.externalPropertyAdded(externalProperty);
+				fireNotifyChanged(new ViewerNotification(msg, viewerProperty, true, true));
+			} else if (msg.getEventType() == Notification.REMOVE){
+				ExternalProperty externalProperty = (ExternalProperty) msg.getOldValue();
+				ViewerProperty< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
+				viewerProperty.externalPropertyRemoved(externalProperty);
+				fireNotifyChanged(new ViewerNotification(msg, viewerProperty, true, true));
+			}
+		}
+	}
+
+	@Override
+	public boolean isAdapterForType(Object type) {
+		if (type instanceof Class< ? >) {
+			return ((Class< ? >) type).isInstance(this);
+		}
+		return super.isAdapterForType(type);
+	}
+
+	private void externalPropertiesAdded(SoftwareAssembly softwareAssembly, ExternalProperties properties) {
+		if (properties != null) {
+			properties.eAdapters().add(this);
+			for (ExternalProperty externalProperty : properties.getProperties()) {
+				ViewerProperty< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
+				if (viewerProperty != null) {
+					viewerProperty.externalPropertyAdded(externalProperty);
+				}
+			}
+		}
+	}
+
+	private void externalPropertiesRemoved(SoftwareAssembly softwareAssembly, ExternalProperties properties) {
+		if (properties != null) {
+			properties.eAdapters().remove(this);
+			for (ExternalProperty externalProperty : properties.getProperties()) {
+				ViewerProperty< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
+				if (viewerProperty != null) {
+					viewerProperty.externalPropertyRemoved(externalProperty);
+				}
+			}
+		}
+	}
+
+	private SadComponentInstantiation getComponentInstantiation(SoftwareAssembly softwareAssembly, String componentId) {
+		for (SadComponentInstantiation instantiation : softwareAssembly.getAllComponentInstantiations()) {
+			if (instantiation.getId().equals(componentId)) {
+				return instantiation;
+			}
+		}
+		return null;
+	}
+
+	private ViewerProperty< ? > getComponentProperty(SoftwareAssembly softwareAssembly, ExternalProperty externalProperty) {
+		final String componentId = externalProperty.getCompRefID();
+		SadComponentInstantiation instantiation = getComponentInstantiation(softwareAssembly, componentId);
+		ViewerComponent component = (ViewerComponent) adapterFactory.adapt(instantiation, ViewerComponent.class);
+		if (component != null) {
+			final String propertyId = externalProperty.getPropID();
+			for (Object child : component.getChildren(instantiation)) {
+				ViewerProperty< ? > viewerProperty = (ViewerProperty< ? >) child;
+				if (viewerProperty.getID().equals(propertyId)) {
+					return viewerProperty;
+				}
+			}
+		}
+		return null;
 	}
 
 }

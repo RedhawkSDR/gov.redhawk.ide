@@ -46,6 +46,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 
 	protected final T def;
 	protected AbstractPropertyRef< ? > ref;
+	protected ExternalProperty externalProperty;
 
 	private Adapter adapter = new AdapterImpl() {
 
@@ -88,13 +89,6 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		return ref;
 	}
 
-	protected ExternalProperty getExternalProperty() {
-		if (parent instanceof ViewerComponent) {
-			return ((ViewerComponent) parent).getExternalProperty(getID());
-		}
-		return null;
-	}
-
 	public T getDefinition() {
 		return this.def;
 	}
@@ -116,9 +110,8 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 	}
 
 	public String getExternalID() {
-		final ExternalProperty property = getExternalProperty();
-		if (property != null) {
-			return property.getExternalPropID();
+		if (externalProperty != null) {
+			return externalProperty.getExternalPropID();
 		}
 		return null;
 	}
@@ -187,9 +180,9 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 
 	protected Object getModelObject(EStructuralFeature feature) {
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
-			return getValueRef();
+			return ref;
 		} else if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__EXTERNAL_ID) {
-			return getExternalProperty();
+			return externalProperty;
 		}
 		return null;
 	}
@@ -267,6 +260,20 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		ref = null;
 		if (reference != null) {
 			reference.eAdapters().remove(adapter);
+		}
+	}
+
+	public void externalPropertyAdded(ExternalProperty externalProperty) {
+		this.externalProperty = externalProperty;
+		if (externalProperty != null) {
+			externalProperty.eAdapters().add(adapter);
+		}
+	}
+
+	public void externalPropertyRemoved(ExternalProperty externalProperty) {
+		this.externalProperty = null;
+		if (externalProperty != null) {
+			externalProperty.eAdapters().remove(adapter);
 		}
 	}
 

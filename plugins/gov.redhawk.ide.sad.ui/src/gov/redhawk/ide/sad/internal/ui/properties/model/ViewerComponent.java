@@ -103,7 +103,12 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 	protected Object createWrapper(EObject object, EStructuralFeature feature, Object value, int index) {
 		if (feature == PrfPackage.Literals.PROPERTIES__PROPERTIES){
 			FeatureMap.Entry entry = (FeatureMap.Entry) value;
-			return createViewerProperty((AbstractProperty) entry.getValue());
+			ViewerProperty< ? > property = createViewerProperty((AbstractProperty) entry.getValue());
+			ExternalProperty externalProperty = getExternalProperty(property.getID());
+			if (externalProperty != null) {
+				property.externalPropertyAdded(externalProperty);
+			}
+			return property;
 		}
 		return super.createWrapper(object, feature, value, index);
 	}
@@ -143,7 +148,7 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 		return null;
 	}
 
-	protected ExternalProperty getExternalProperty(final String refId) {
+	private ExternalProperty getExternalProperty(final String refId) {
 		final ExternalProperties properties = getSoftwareAssembly().getExternalProperties();
 		if (properties != null) {
 			for (final ExternalProperty property : properties.getProperties()) {
