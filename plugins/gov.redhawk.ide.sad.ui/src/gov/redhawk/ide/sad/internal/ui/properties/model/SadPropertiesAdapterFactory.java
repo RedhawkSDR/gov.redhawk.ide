@@ -42,7 +42,7 @@ public class SadPropertiesAdapterFactory extends AdapterFactoryImpl implements I
 	@Override
 	protected Adapter createAdapter(Notifier target) {
 		if (target instanceof SoftwareAssembly) {
-			return new ViewerApplication(this);
+			return new SadPropertiesApplicationItemProvider(this);
 		} else if (target instanceof SadComponentInstantiation) {
 			return new ViewerComponent(this, (SadComponentInstantiation) target);
 		}

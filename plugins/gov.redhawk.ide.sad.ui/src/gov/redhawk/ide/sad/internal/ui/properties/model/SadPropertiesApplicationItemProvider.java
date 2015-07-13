@@ -29,9 +29,9 @@ import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
-public class ViewerApplication extends ItemProviderAdapter implements ITreeItemContentProvider {
+public class SadPropertiesApplicationItemProvider extends ItemProviderAdapter implements ITreeItemContentProvider {
 
-	public ViewerApplication(AdapterFactory adapterFactory) {
+	public SadPropertiesApplicationItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
