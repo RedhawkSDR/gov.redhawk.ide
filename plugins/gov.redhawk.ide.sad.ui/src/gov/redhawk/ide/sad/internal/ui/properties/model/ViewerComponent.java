@@ -52,7 +52,7 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
 
 import gov.redhawk.sca.util.PluginUtil;
 
-public class ViewerComponent extends ItemProviderAdapter implements ITreeItemContentProvider, NestedPropertyItemProvider {
+public class ViewerComponent extends ItemProviderAdapter implements ITreeItemContentProvider, NestedItemProvider {
 	
 	private static final EStructuralFeature [] PATH = new EStructuralFeature [] {
 		SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
@@ -139,19 +139,6 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 			return new ViewerStructProperty(adapterFactory, (Struct) def, this);
 		case PrfPackage.STRUCT_SEQUENCE:
 			return new ViewerStructSequenceProperty(adapterFactory, (StructSequence) def, this);
-		}
-		return null;
-	}
-
-	@Override
-	public AbstractPropertyRef< ? > getChildRef(final String refId) {
-		if (compInst.getComponentProperties() != null) {
-			for (FeatureMap.Entry entry : compInst.getComponentProperties().getProperties()) {
-				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
-				if (ref.getRefID().equals(refId)) {
-					return ref;
-				}
-			}
 		}
 		return null;
 	}

@@ -33,7 +33,7 @@ import mil.jpeojtrs.sca.prf.StructRef;
 /**
  * 
  */
-public class ViewerStructProperty extends ViewerProperty<Struct> implements NestedPropertyItemProvider {
+public class ViewerStructProperty extends ViewerProperty<Struct> implements NestedItemProvider {
 
 	public ViewerStructProperty(AdapterFactory adapterFactory, Struct def, Object parent) {
 		super(adapterFactory, def, parent);
@@ -49,20 +49,6 @@ public class ViewerStructProperty extends ViewerProperty<Struct> implements Nest
 	@Override
 	protected StructRef getValueRef() {
 		return (StructRef) super.getValueRef();
-	}
-
-	@Override
-	public AbstractPropertyRef< ? > getChildRef(final String refId) {
-		StructRef structRef = getValueRef();
-		if (structRef != null) {
-			for (FeatureMap.Entry entry : structRef.getRefs()) {
-				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
-				if (ref.getRefID().equals(refId)) {
-					return ref;
-				}
-			}
-		}
-		return null;
 	}
 
 	@Override
@@ -106,7 +92,7 @@ public class ViewerStructProperty extends ViewerProperty<Struct> implements Nest
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			StructRef ref = getValueRef();
 			if (ref == null) {
-				return ((NestedPropertyItemProvider) getParent()).createAddChildCommand(domain, createModelObject(feature, child), feature);
+				return ((NestedItemProvider) getParent()).createAddChildCommand(domain, createModelObject(feature, child), feature);
 			} else {
 				return AddCommand.create(domain, ref, getChildFeature(ref, child), child);
 			}
@@ -119,7 +105,7 @@ public class ViewerStructProperty extends ViewerProperty<Struct> implements Nest
 		if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
 			StructRef ref = getValueRef();
 			if (ref.getRefs().size() == 1) {
-				return ((NestedPropertyItemProvider)getParent()).createRemoveChildCommand(domain, ref, feature);
+				return ((NestedItemProvider)getParent()).createRemoveChildCommand(domain, ref, feature);
 			} else {
 				return RemoveCommand.create(domain, ref, getChildFeature(ref, child), child);
 			}

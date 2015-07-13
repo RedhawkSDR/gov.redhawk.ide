@@ -45,6 +45,7 @@ import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
 public abstract class ViewerProperty< T extends AbstractProperty > extends ItemProvider {
 
 	protected final T def;
+	protected AbstractPropertyRef< ? > ref;
 
 	private Adapter adapter = new AdapterImpl() {
 
@@ -84,7 +85,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 	}
 
 	protected AbstractPropertyRef< ? > getValueRef() {
-		return ((NestedPropertyItemProvider) getParent()).getChildRef(this.getID());
+		return ref;
 	}
 
 	protected ExternalProperty getExternalProperty() {
@@ -181,7 +182,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 	protected abstract Collection< ? > getKindTypes();
 
 	public EditingDomain getEditingDomain() {
-		return ((NestedPropertyItemProvider) getParent()).getEditingDomain();
+		return ((NestedItemProvider) getParent()).getEditingDomain();
 	}
 
 	protected Object getModelObject(EStructuralFeature feature) {
@@ -230,7 +231,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 				return SetCommand.create(domain, sad, SadPackage.Literals.SOFTWARE_ASSEMBLY__EXTERNAL_PROPERTIES, properties);
 			}
 		}
-		return ((NestedPropertyItemProvider)getParent()).createAddChildCommand(domain, value, feature);
+		return ((NestedItemProvider)getParent()).createAddChildCommand(domain, value, feature);
 	}
 
 	protected Command createSetCommand(EditingDomain domain, Object owner, EStructuralFeature feature, Object value) {
@@ -249,19 +250,21 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 				return RemoveCommand.create(domain, object);
 			}
 		} else if (feature == SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE) {
-			NestedPropertyItemProvider parentProvider = (NestedPropertyItemProvider) getParent();
+			NestedItemProvider parentProvider = (NestedItemProvider) getParent();
 			return parentProvider.createRemoveChildCommand(domain, object, feature);
 		}
 		return UnexecutableCommand.INSTANCE;
 	}
 
 	public void referenceAdded(AbstractPropertyRef< ? > reference) {
+		ref = reference;
 		if (reference != null) {
 			reference.eAdapters().add(adapter);
 		}
 	}
 
 	public void referenceRemoved(AbstractPropertyRef< ? > reference) {
+		ref = null;
 		if (reference != null) {
 			reference.eAdapters().remove(adapter);
 		}

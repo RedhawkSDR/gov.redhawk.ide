@@ -14,10 +14,7 @@ import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
-import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
-
-public interface NestedPropertyItemProvider {
-	public AbstractPropertyRef< ? > getChildRef(String refId);
+public interface NestedItemProvider {
 
 	public Command createAddChildCommand(EditingDomain domain, Object child, EStructuralFeature feature);
 
