@@ -77,18 +77,10 @@ public class ViewerApplication extends ItemProviderAdapter implements ITreeItemC
 				fireNotifyChanged(msg);
 			}
 		} else if (feature == SadPackage.Literals.EXTERNAL_PROPERTIES__PROPERTIES) {
-			ExternalProperties properties = (ExternalProperties) msg.getNotifier();
-			SoftwareAssembly softwareAssembly = (SoftwareAssembly) properties.eContainer();
 			if (msg.getEventType() == Notification.ADD) {
-				ExternalProperty externalProperty = (ExternalProperty) msg.getNewValue();
-				ViewerProperty< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
-				viewerProperty.externalPropertyAdded(externalProperty);
-				fireNotifyChanged(new ViewerNotification(msg, viewerProperty, true, true));
+				externalPropertyChanged(msg, (ExternalProperty) msg.getNewValue());
 			} else if (msg.getEventType() == Notification.REMOVE){
-				ExternalProperty externalProperty = (ExternalProperty) msg.getOldValue();
-				ViewerProperty< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
-				viewerProperty.externalPropertyRemoved(externalProperty);
-				fireNotifyChanged(new ViewerNotification(msg, viewerProperty, true, true));
+				externalPropertyChanged(msg, (ExternalProperty) msg.getOldValue());
 			}
 		}
 	}
@@ -123,6 +115,21 @@ public class ViewerApplication extends ItemProviderAdapter implements ITreeItemC
 				}
 			}
 		}
+	}
+
+	private void externalPropertyChanged(Notification msg, ExternalProperty externalProperty) {
+		ExternalProperties properties = (ExternalProperties) msg.getNotifier();
+		SoftwareAssembly softwareAssembly = (SoftwareAssembly) properties.eContainer();
+		ViewerProperty< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
+		switch (msg.getEventType()) {
+		case Notification.ADD:
+			viewerProperty.externalPropertyAdded(externalProperty);
+			break;
+		case Notification.REMOVE:
+			viewerProperty.externalPropertyRemoved(externalProperty);
+			break;
+		}
+		fireNotifyChanged(new ViewerNotification(msg, viewerProperty, true, true));
 	}
 
 	private SadComponentInstantiation getComponentInstantiation(SoftwareAssembly softwareAssembly, String componentId) {
