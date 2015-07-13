@@ -122,23 +122,6 @@ public class PropertiesViewerConverter implements XViewerConverter {
 		return selObject;
 	}
 
-	public static String[] split(String seqValue) {
-		if (seqValue == null || seqValue.isEmpty()) {
-			return null;
-		}
-		if (seqValue.charAt(0) == '[') {
-			seqValue = seqValue.substring(1);
-		}
-		if (seqValue.charAt(seqValue.length() - 1) == ']') {
-			seqValue = seqValue.substring(0, seqValue.length() - 1);
-		}
-		String[] newArray = seqValue.split(",");
-		for (int i = 0; i < newArray.length; i++) {
-			newArray[i] = newArray[i].trim();
-		}
-		return newArray;
-	}
-
 	protected Object setExternalID(Control c, Object selObject) {
 		Object value = ((XViewerCellEditor) c).getValue();
 		if (value == null) {

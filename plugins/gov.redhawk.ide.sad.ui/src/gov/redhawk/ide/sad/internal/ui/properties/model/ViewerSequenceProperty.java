@@ -10,18 +10,23 @@
  *******************************************************************************/
 package gov.redhawk.ide.sad.internal.ui.properties.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Composite;
 
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerDialogCellEditor;
+import gov.redhawk.sca.internal.ui.wizards.ValuesWizard;
 import mil.jpeojtrs.sca.prf.PrfFactory;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
@@ -47,6 +52,17 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 	}
 
 	@Override
+	public void setSadValue(Object value) {
+		if (value != null) {
+			Collection< ? > values = (Collection< ? >) value;
+			if (values.isEmpty()) {
+				value = null;
+			}
+		}
+		super.setSadValue(value);
+	}
+
+	@Override
 	protected SimpleSequenceRef getValueRef() {
 		return (SimpleSequenceRef) super.getValueRef();
 	}
@@ -63,17 +79,6 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 	@Override
 	protected Collection< ? > getKindTypes() {
 		return getDefinition().getKind();
-	}
-
-	public boolean checkValues(String... newValues) {
-		if (newValues != null) {
-			for (String s : newValues) {
-				if (!def.getType().isValueOfType(s, def.isComplex())) {
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 
 	@Override
@@ -100,9 +105,21 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 	public XViewerCellEditor createCellEditor(Composite parent, int style) {
 		return new XViewerDialogCellEditor(parent, style) {
 
+			@SuppressWarnings("restriction")
 			@Override
 			protected Object openDialogBox() {
-				// TODO Auto-generated method stub
+				ValuesWizard wizard = new ValuesWizard(def.getType(), def.isComplex());
+				List<String> values = new ArrayList<String>();
+				if (value != null) {
+					for (Object item : (Collection< ? >) value) {
+						values.add((String) item);
+					}
+				}
+				wizard.setInput(values.toArray(new String[values.size()]));
+				WizardDialog dialog = new WizardDialog(getShell(), wizard);
+				if (dialog.open() == Window.OK) {
+					return Arrays.asList(wizard.getValues());
+				}
 				return null;
 			}
 
