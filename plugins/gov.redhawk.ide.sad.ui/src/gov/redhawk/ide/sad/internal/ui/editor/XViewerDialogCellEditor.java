@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 
-public class XViewerDialogCellEditor extends XViewerCellEditor {
+public abstract class XViewerDialogCellEditor extends XViewerCellEditor {
 
 	private Label label;
 	private Button button;
@@ -103,9 +103,7 @@ public class XViewerDialogCellEditor extends XViewerCellEditor {
 		label.setText(text);
 	}
 
-	protected Object openDialogBox() {
-		return null;
-	}
+	protected abstract Object openDialogBox();
 
 	@Override
 	protected Control getMainControl() {

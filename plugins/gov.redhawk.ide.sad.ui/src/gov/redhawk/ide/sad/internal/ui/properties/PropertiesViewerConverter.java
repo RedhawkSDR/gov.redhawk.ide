@@ -12,12 +12,9 @@ package gov.redhawk.ide.sad.internal.ui.properties;
 
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceProperty;
-import gov.redhawk.model.sca.ScaFactory;
 import gov.redhawk.model.sca.ScaSimpleProperty;
 import gov.redhawk.model.sca.ScaStructProperty;
 import gov.redhawk.model.sca.ScaStructSequenceProperty;
-import gov.redhawk.sca.internal.ui.properties.SequencePropertyValueWizard;
 import gov.redhawk.sca.sad.validation.DuplicateAssemblyExternalPropertyIDConstraint;
 import gov.redhawk.sca.sad.validation.DuplicateExternalPropertyIDConstraint;
 import mil.jpeojtrs.sca.prf.PrfFactory;
@@ -29,15 +26,8 @@ import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
-import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor;
 import org.eclipse.nebula.widgets.xviewer.edit.XViewerConverter;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -45,10 +35,7 @@ import org.eclipse.swt.widgets.Control;
  */
 public class PropertiesViewerConverter implements XViewerConverter {
 
-	private PropertiesViewerLabelProvider labelProvider;
-
 	public PropertiesViewerConverter(PropertiesViewerLabelProvider labelProvider) {
-		this.labelProvider = labelProvider;
 	}
 
 	/* (non-Javadoc)
@@ -64,30 +51,6 @@ public class PropertiesViewerConverter implements XViewerConverter {
 			if (c instanceof XViewerCellEditor) {
 				Object value = ((ViewerProperty< ? >) selObject).getSadValue();
 				((XViewerCellEditor) c).setValue(value);
-			} else {
-				String value = labelProvider.getSadValue(selObject);
-				if (c instanceof Button) {
-					final Button button = (Button) c;
-
-					final ViewerStructSequenceProperty viewerProp = (ViewerStructSequenceProperty) selObject;
-					button.addSelectionListener(new SelectionAdapter() {
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							ScaStructSequenceProperty property = ScaFactory.eINSTANCE.createScaStructSequenceProperty();
-							StructSequenceRef ref = viewerProp.getValueRef();
-							property.setDefinition(viewerProp.getDefinition());
-							if (ref != null) {
-								property.fromAny(ref.toAny());
-							}
-							SequencePropertyValueWizard wizard = new SequencePropertyValueWizard(property);
-							WizardDialog dialog = new WizardDialog(button.getShell(), wizard);
-							if (dialog.open() == Window.OK) {
-								viewerProp.setSadValue(createRef(property));
-							}
-						}
-					});
-				}
-				setControlValue(c, value);
 			}
 		}
 	}
@@ -126,17 +89,6 @@ public class PropertiesViewerConverter implements XViewerConverter {
 			retVal.getStructValue().add(structRef);
 		}
 		return retVal;
-	}
-
-	private void setControlValue(Control c, String value) {
-		if (value == null) {
-			value = "";
-		}
-		if (c instanceof Combo) {
-			Combo combo = (Combo) c;
-			combo.setText(value);
-			combo.setSelection(new Point(0, combo.getText().length()));
-		}
 	}
 
 	/* (non-Javadoc)

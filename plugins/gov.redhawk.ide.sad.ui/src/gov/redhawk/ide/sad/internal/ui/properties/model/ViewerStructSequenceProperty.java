@@ -14,9 +14,15 @@ import java.util.Collection;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.util.FeatureMap;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Composite;
 
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
+import gov.redhawk.ide.sad.internal.ui.editor.XViewerDialogCellEditor;
+import gov.redhawk.model.sca.ScaFactory;
+import gov.redhawk.model.sca.ScaStructSequenceProperty;
+import gov.redhawk.sca.internal.ui.properties.SequencePropertyValueWizard;
 import mil.jpeojtrs.sca.prf.PrfPackage;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleSequence;
@@ -68,6 +74,24 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 
 	@Override
 	public XViewerCellEditor createCellEditor(Composite parent, int style) {
-		return null;
+		return new XViewerDialogCellEditor(parent, style) {
+
+			@Override
+			protected Object openDialogBox() {
+				ScaStructSequenceProperty property = ScaFactory.eINSTANCE.createScaStructSequenceProperty();
+				StructSequenceRef ref = getValueRef();
+				property.setDefinition(getDefinition());
+				if (ref != null) {
+					property.fromAny(ref.toAny());
+				}
+				SequencePropertyValueWizard wizard = new SequencePropertyValueWizard(property);
+				WizardDialog dialog = new WizardDialog(getShell(), wizard);
+				if (dialog.open() == Window.OK) {
+					// TODO: Create value from editor
+					return null;
+				}
+				return null;
+			}
+		};
 	}
 }

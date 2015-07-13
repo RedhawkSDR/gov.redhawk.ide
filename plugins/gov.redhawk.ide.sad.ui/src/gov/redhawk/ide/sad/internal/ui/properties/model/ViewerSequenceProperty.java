@@ -98,7 +98,15 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 
 	@Override
 	public XViewerCellEditor createCellEditor(Composite parent, int style) {
-		return new XViewerDialogCellEditor(parent, style);
+		return new XViewerDialogCellEditor(parent, style) {
+
+			@Override
+			protected Object openDialogBox() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+		};
 	}
 
 }
