@@ -231,15 +231,9 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 			}
 		} else if (feature == PartitioningPackage.Literals.COMPONENT_PROPERTIES__PROPERTIES) {
 			if (msg.getEventType() == Notification.ADD) {
-				AbstractPropertyRef< ? > ref = unwrapProperty(msg.getNewValue());
-				ViewerProperty< ? > property = getProperty(ref.getRefID());
-				property.referenceAdded(ref);
-				fireNotifyChanged(new ViewerNotification(msg, property, false, true));
+				propertyChanged(msg, msg.getNewValue());
 			} else if (msg.getEventType() == Notification.REMOVE) {
-				AbstractPropertyRef< ? > ref = unwrapProperty(msg.getOldValue());
-				ViewerProperty< ? > property = getProperty(ref.getRefID());
-				property.referenceRemoved(ref);
-				fireNotifyChanged(new ViewerNotification(msg, property, false, true));
+				propertyChanged(msg, msg.getOldValue());
 			}
 		}
 	}
@@ -289,4 +283,18 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 		}
 	}
 
+	private void propertyChanged(Notification msg, Object value) {
+		AbstractPropertyRef< ? > ref = unwrapProperty(value);
+		ViewerProperty< ? > property = getProperty(ref.getRefID());
+		switch (msg.getEventType()) {
+		case Notification.ADD:
+			property.referenceAdded(ref);
+			break;
+		case Notification.REMOVE:
+			property.referenceRemoved(ref);
+			break;
+		}
+		boolean contentRefresh = property.hasChildren();
+		fireNotifyChanged(new ViewerNotification(msg, property, contentRefresh, true));		
+	}
 }
