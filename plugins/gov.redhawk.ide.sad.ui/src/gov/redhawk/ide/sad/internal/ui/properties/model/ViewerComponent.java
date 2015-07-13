@@ -209,7 +209,6 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 
 	@Override
 	public void notifyChanged(Notification msg) {
-		super.notifyChanged(msg);
 		final Object feature = msg.getFeature();
 		if (feature == PartitioningPackage.Literals.COMPONENT_INSTANTIATION__COMPONENT_PROPERTIES) {
 			if (msg.getEventType() == Notification.SET) {
