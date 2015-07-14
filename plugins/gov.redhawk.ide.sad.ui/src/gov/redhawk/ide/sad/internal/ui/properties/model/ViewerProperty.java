@@ -43,7 +43,7 @@ import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
 /**
  * 
  */
-public abstract class ViewerProperty< T extends AbstractProperty > extends ItemProvider {
+public abstract class ViewerProperty< T extends AbstractProperty > extends ItemProvider implements SadProperty {
 
 	protected final T def;
 	protected AbstractPropertyRef< ? > ref;
@@ -96,6 +96,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		return parent;
 	}
 
+	@Override
 	public boolean canSetExternalId() {
 		return (parent instanceof SadPropertiesComponent);
 	}
@@ -104,6 +105,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		return ref;
 	}
 
+	@Override
 	public T getDefinition() {
 		return this.def;
 	}
@@ -124,6 +126,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		return getComponent().getComponentInstantiation();
 	}
 
+	@Override
 	public String getExternalID() {
 		if (externalProperty != null) {
 			return externalProperty.getExternalPropID();
@@ -131,10 +134,12 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		return null;
 	}
 
+	@Override
 	public String getID() {
 		return def.getId();
 	}
 
+	@Override
 	public boolean isAssemblyControllerProperty() {
 		return getComponent().isAssemblyController();
 	}
@@ -162,10 +167,12 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		}
 	}
 
+	@Override
 	public void setSadValue(Object value) {
 		setFeatureValue(SadPropertiesPackage.Literals.SAD_PROPERTY__VALUE, value);
 	}
 
+	@Override
 	public void setExternalID(String newExternalID) {
 		if (newExternalID != null) {
 			newExternalID = newExternalID.trim();
@@ -176,13 +183,10 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		setFeatureValue(SadPropertiesPackage.Literals.SAD_PROPERTY__EXTERNAL_ID, newExternalID);
 	}
 
-	public abstract Object getSadValue();
-
-	public abstract String getPrfValue();
-
+	@Override
 	public Collection< ? > getKinds() {
 		if (getParent() instanceof ViewerProperty< ? >) {
-			return ((ViewerProperty< ? >) getParent()).getKinds();
+			return ((SadProperty) getParent()).getKinds();
 		}
 		return getKindTypes();
 	}

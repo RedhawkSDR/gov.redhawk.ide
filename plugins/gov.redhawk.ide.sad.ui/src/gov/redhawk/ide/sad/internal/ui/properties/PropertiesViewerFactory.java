@@ -11,11 +11,11 @@
 package gov.redhawk.ide.sad.internal.ui.properties;
 
 import gov.redhawk.ide.sad.internal.ui.editor.SadEditor;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.SadPropertiesSimpleSequence;
 import gov.redhawk.ide.sad.internal.ui.properties.model.SadPropertiesSimple;
 import gov.redhawk.ide.sad.internal.ui.properties.model.SadPropertiesStruct;
 import gov.redhawk.ide.sad.internal.ui.properties.model.SadPropertiesStructSequence;
+import gov.redhawk.ide.sad.internal.ui.properties.model.SadProperty;
 
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn.SortDataType;
@@ -69,7 +69,7 @@ public class PropertiesViewerFactory extends XViewerFactory {
 		
 		// All top-level property types can potentially set an external ID; at edit time, we check whether the current
 		// selection is actually a top-level property (i.e., is not part of a struct).
-		CellEditDescriptor externalDescriptor = new CellEditDescriptor(Control.class, SWT.NONE, EXTERNAL.getId(), ViewerProperty.class);
+		CellEditDescriptor externalDescriptor = new CellEditDescriptor(Control.class, SWT.NONE, EXTERNAL.getId(), SadProperty.class);
 		EXTERNAL.addMapEntry(SadPropertiesSimple.class, externalDescriptor);
 		EXTERNAL.addMapEntry(SadPropertiesSimpleSequence.class, externalDescriptor);
 		EXTERNAL.addMapEntry(SadPropertiesStruct.class, externalDescriptor);
@@ -78,7 +78,7 @@ public class PropertiesViewerFactory extends XViewerFactory {
 		// SAD values can only be set via the simple, simple sequence and struct sequence items. Struct properties do
 		// not provide an editor themselves, but rather rely on the child items. The children of struct sequences are
 		// used strictly for display and cannot be directly edited.
-		CellEditDescriptor sadValueDescriptor = new CellEditDescriptor(Control.class, SWT.NONE, SAD_VALUE.getId(), ViewerProperty.class);
+		CellEditDescriptor sadValueDescriptor = new CellEditDescriptor(Control.class, SWT.NONE, SAD_VALUE.getId(), SadProperty.class);
 		SAD_VALUE.addMapEntry(SadPropertiesSimple.class, sadValueDescriptor);
 		SAD_VALUE.addMapEntry(SadPropertiesSimpleSequence.class, sadValueDescriptor);
 		SAD_VALUE.addMapEntry(SadPropertiesStructSequence.class, sadValueDescriptor);

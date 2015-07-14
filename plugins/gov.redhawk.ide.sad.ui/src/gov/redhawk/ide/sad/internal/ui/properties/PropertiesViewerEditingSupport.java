@@ -12,6 +12,7 @@ package gov.redhawk.ide.sad.internal.ui.properties;
 
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerComboCellEditor;
+import gov.redhawk.ide.sad.internal.ui.properties.model.SadProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 import gov.redhawk.model.sca.ScaSimpleProperty;
 import gov.redhawk.model.sca.ScaStructProperty;
@@ -88,7 +89,7 @@ public class PropertiesViewerEditingSupport implements XViewerControlFactory, XV
 			((XViewerCellEditor) c).setValue(value);
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
 			if (c instanceof XViewerCellEditor) {
-				Object value = ((ViewerProperty< ? >) selObject).getSadValue();
+				Object value = ((SadProperty) selObject).getSadValue();
 				((XViewerCellEditor) c).setValue(value);
 			}
 		}
@@ -154,8 +155,8 @@ public class PropertiesViewerEditingSupport implements XViewerControlFactory, XV
 			return null;
 		}
 
-		if (selObject instanceof ViewerProperty< ? >) {
-			ViewerProperty< ? > property = (ViewerProperty< ? >) selObject;
+		if (selObject instanceof SadProperty) {
+			SadProperty property = (SadProperty) selObject;
 			property.setSadValue(newValue);
 		}
 		return selObject;
@@ -166,14 +167,14 @@ public class PropertiesViewerEditingSupport implements XViewerControlFactory, XV
 		if (value == null) {
 			return null;
 		}
-		((ViewerProperty< ? >) selObject).setExternalID((String) value);
+		((SadProperty) selObject).setExternalID((String) value);
 		return selObject;
 	}
 
 	@Override
 	public boolean isValid(CellEditDescriptor ced, Object selObject) {
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
-			return ((ViewerProperty< ? >) selObject).canSetExternalId();
+			return ((SadProperty) selObject).canSetExternalId();
 		}
 		return true;
 	}
