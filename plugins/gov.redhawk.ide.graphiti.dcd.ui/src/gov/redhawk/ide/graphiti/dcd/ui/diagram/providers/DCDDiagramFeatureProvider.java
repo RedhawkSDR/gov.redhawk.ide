@@ -167,7 +167,7 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 			if (context.getPictogramElements()[0] instanceof RHContainerShape) {
 				Diagram diagram = DUtil.findDiagram((RHContainerShape) context.getPictogramElements()[0]);
-				if (obj instanceof DcdComponentInstantiation && (DUtil.isDiagramRuntime(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
+				if (obj instanceof DcdComponentInstantiation && DUtil.isDiagramRuntime(diagram)) {
 					retList.add(new StartFeature(this));
 					retList.add(new StopFeature(this));
 					retList.add(new ShowConsoleFeature(this));
