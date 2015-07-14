@@ -10,51 +10,8 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.providers;
 
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.DecrementStartOrderFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.IncrementStartOrderFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkExternalPortFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkNonExternalPortFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.SetLogLevelFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.StartComponentFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.StopComponentFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.TerminateComponentFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete.ReleaseComponentFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete.SADConnectionInterfaceDeleteFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.reconnect.SADReconnectFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.update.GraphitiWaveformDiagramUpdateFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.update.SADConnectionInterfaceUpdateFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDevicePattern;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseAllShapesFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseShapeFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandAllShapesFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandShapeFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.FindByEditFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
-import mil.jpeojtrs.sca.partitioning.FindByStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.Port;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
-import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -93,6 +50,48 @@ import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
 import org.eclipse.graphiti.pattern.DirectEditingFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
+
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.DecrementStartOrderFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.IncrementStartOrderFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkExternalPortFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkNonExternalPortFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.TerminateComponentFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete.ReleaseComponentFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete.SADConnectionInterfaceDeleteFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.reconnect.SADReconnectFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.update.GraphitiWaveformDiagramUpdateFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.update.SADConnectionInterfaceUpdateFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.ComponentPattern;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.SADConnectInterfacePattern;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDevicePattern;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseAllShapesFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseShapeFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandAllShapesFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandShapeFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.FindByEditFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StartFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StopFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
+import mil.jpeojtrs.sca.partitioning.FindByStub;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesDeviceStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.Port;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 
 public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
@@ -158,7 +157,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			retList.add(new CollapseAllShapesFeature(this.getDiagramTypeProvider().getFeatureProvider()));
 		}
 		
-		// if diagram selected
+		// if container shape selected
 		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0 && context.getPictogramElements()[0] instanceof RHContainerShape) {
 
 			//expand shape
@@ -194,13 +193,13 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			if (context.getPictogramElements()[0] instanceof ContainerShape) {
 				Diagram diagram = DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]);
 				if (obj instanceof SadComponentInstantiation && (DUtil.isDiagramRuntime(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
-					retList.add(new StartComponentFeature(this));
-					retList.add(new StopComponentFeature(this));
+					retList.add(new StartFeature(this));
+					retList.add(new StopFeature(this));
 					retList.add(new ShowConsoleFeature(this));
-					
-					// Only allow logging if a sginle element is selected
+
+					// Only allow logging if a single element is selected
 					if (context.getPictogramElements().length == 1) {
-						retList.add(new SetLogLevelFeature(this));
+						retList.add(new LogLevelFeature(this));
 					}
 
 					// Don't add ability to remove components to Graphiti Waveform Explorer

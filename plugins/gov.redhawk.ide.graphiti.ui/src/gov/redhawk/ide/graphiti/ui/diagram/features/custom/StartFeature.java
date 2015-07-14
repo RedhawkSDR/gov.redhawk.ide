@@ -8,34 +8,25 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime;
-
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.util.SadStyleUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.NonUndoableCustomFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
+package gov.redhawk.ide.graphiti.ui.diagram.features.custom;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.internal.parts.ContainerShapeEditPart;
 
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
+
 @SuppressWarnings("restriction")
-public class StartComponentFeature extends NonUndoableCustomFeature {
+public class StartFeature extends NonUndoableCustomFeature {
 
-	public StartComponentFeature(IFeatureProvider fp) {
+	public StartFeature(IFeatureProvider fp) {
 		super(fp);
-	}
-
-	@Override
-	public String getDescription() {
-		return "Start component";
 	}
 
 	@Override
@@ -44,13 +35,15 @@ public class StartComponentFeature extends NonUndoableCustomFeature {
 	}
 
 	@Override
+	public String getDescription() {
+		return "Start resource";
+	}
+
+	@Override
 	public boolean canExecute(ICustomContext context) {
-		ComponentShape componentShape = (ComponentShape) context.getPictogramElements()[0];
-		Object object = DUtil.getBusinessObject(componentShape);
-		Diagram diagram = DUtil.findDiagram((ContainerShape) componentShape);
-		if (object instanceof SadComponentInstantiation
-				&& !componentShape.isStarted()
-				&& (DUtil.isDiagramRuntime(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
+		RHContainerShape shape = (RHContainerShape) context.getPictogramElements()[0];
+		Object object = DUtil.getBusinessObject(shape);
+		if (object instanceof ComponentInstantiation && !shape.isStarted()) {
 			return true;
 		}
 
@@ -61,13 +54,13 @@ public class StartComponentFeature extends NonUndoableCustomFeature {
 	public void execute(ICustomContext context) {
 		// IDE-1021: Check context in case we were called by hover context pad button on unselected component
 		boolean executed = false;
-		for (PictogramElement pe: context.getPictogramElements()) {
-			if (pe instanceof ComponentShapeImpl) {
-				ComponentShapeImpl shape = (ComponentShapeImpl) pe;
+		for (PictogramElement pe : context.getPictogramElements()) {
+			if (pe instanceof RHContainerShape) {
+				RHContainerShape shape = (RHContainerShape) pe;
 				RoundedRectangle innerRoundedRectangle = (RoundedRectangle) DUtil.findFirstPropertyContainer(shape,
 					RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE);
-				innerRoundedRectangle.setStyle(SadStyleUtil.createStyleForComponentInnerStarted(getDiagram()));
-				shape.setStarted(true);  //GraphitiModelMap is listening
+				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInnerStarted(getDiagram()));
+				shape.setStarted(true); // GraphitiModelMap is listening
 				executed = true;
 			}
 		}
@@ -79,12 +72,12 @@ public class StartComponentFeature extends NonUndoableCustomFeature {
 		for (Object obj : selection) {
 			if (obj instanceof ContainerShapeEditPart) {
 				Object modelObj = ((ContainerShapeEditPart) obj).getModel();
-				if (modelObj instanceof ComponentShapeImpl) {
-					ComponentShapeImpl shape = (ComponentShapeImpl) modelObj;
+				if (modelObj instanceof RHContainerShape) {
+					RHContainerShape shape = (RHContainerShape) modelObj;
 					RoundedRectangle innerRoundedRectangle = (RoundedRectangle) DUtil.findFirstPropertyContainer(shape,
 						RHContainerShapeImpl.GA_INNER_ROUNDED_RECTANGLE);
-					innerRoundedRectangle.setStyle(SadStyleUtil.createStyleForComponentInnerStarted(getDiagram()));
-					shape.setStarted(true);  //GraphitiModelMap is listening
+					innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInnerStarted(getDiagram()));
+					shape.setStarted(true); // GraphitiModelMap is listening
 				}
 			}
 		}
@@ -94,4 +87,5 @@ public class StartComponentFeature extends NonUndoableCustomFeature {
 	public String getImageId() {
 		return gov.redhawk.ide.graphiti.ui.diagram.providers.ImageProvider.IMG_START;
 	}
+
 }
