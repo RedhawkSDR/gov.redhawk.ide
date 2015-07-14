@@ -45,7 +45,7 @@ public class StopFeature extends NonUndoableCustomFeature {
 		Diagram diagram = DUtil.findDiagram((ContainerShape) shape);
 		if (object instanceof DcdComponentInstantiation
 				&& shape.isStarted()
-				&& (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
+				&& (DUtil.isDiagramRuntime(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
 			return true;
 		}
 		

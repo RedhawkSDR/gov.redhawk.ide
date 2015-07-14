@@ -51,7 +51,7 @@ public class StopComponentFeature extends NonUndoableCustomFeature {
 		Diagram diagram = DUtil.findDiagram((ContainerShape) componentShape);
 		if (object instanceof SadComponentInstantiation
 				&& componentShape.isStarted()
-				&& (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
+				&& (DUtil.isDiagramRuntime(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
 			return true;
 		}
 		

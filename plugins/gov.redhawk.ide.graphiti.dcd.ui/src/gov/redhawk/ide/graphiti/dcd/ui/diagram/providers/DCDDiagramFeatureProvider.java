@@ -167,7 +167,7 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 			if (context.getPictogramElements()[0] instanceof RHContainerShape) {
 				Diagram diagram = DUtil.findDiagram((RHContainerShape) context.getPictogramElements()[0]);
-				if (obj instanceof DcdComponentInstantiation && (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
+				if (obj instanceof DcdComponentInstantiation && (DUtil.isDiagramRuntime(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
 					retList.add(new StartFeature(this));
 					retList.add(new StopFeature(this));
 					retList.add(new ShowConsoleFeature(this));
@@ -259,7 +259,7 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		}
 
 		// If the element is in the Chalkboard, it's removal will be handled by the Release and Terminate features
-		if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+		if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
 			if (context.getPictogramElement() instanceof DeviceShape || context.getPictogramElement() instanceof ServiceShape) {
 				return new ReleaseShapeFeature(this);
 			}
@@ -336,7 +336,7 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 	@Override
 	public IReconnectionFeature getReconnectionFeature(IReconnectionContext context) {
-		if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+		if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
 			// We don't currently support reconnect actions for runtime
 			return null;
 		}

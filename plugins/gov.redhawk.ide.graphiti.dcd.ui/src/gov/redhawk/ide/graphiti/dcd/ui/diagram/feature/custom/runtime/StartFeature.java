@@ -42,7 +42,7 @@ public class StartFeature extends NonUndoableCustomFeature {
 		RHContainerShape shape = (RHContainerShape) context.getPictogramElements()[0];
 		Object object = DUtil.getBusinessObject(shape);
 		Diagram diagram = DUtil.findDiagram((ContainerShape) shape);
-		if (object instanceof DcdComponentInstantiation && !shape.isStarted() && (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
+		if (object instanceof DcdComponentInstantiation && !shape.isStarted() && (DUtil.isDiagramRuntime(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
 			return true;
 		}
 

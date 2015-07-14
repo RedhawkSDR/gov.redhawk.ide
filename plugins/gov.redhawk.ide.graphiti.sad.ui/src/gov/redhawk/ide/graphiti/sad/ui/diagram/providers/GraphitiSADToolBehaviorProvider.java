@@ -192,7 +192,7 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		}
 		
 		// WORKSPACE Compartment
-		if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+		if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
 			PaletteCompartmentEntry workspaceEntry = getWorkspaceCompartmentEntry();
 			workspaceEntry.setInitiallyOpen(true);
 			if (!workspaceEntry.getToolEntries().isEmpty()) {
@@ -229,7 +229,7 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 			}
 		}
 		// Uses Device
-		if (!DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+		if (!DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
 			for (ICreateFeature cf : createFeatures) {
 				if (UsesDeviceFrontEndTunerPattern.NAME.equals(cf.getCreateName())) {
 					ObjectCreationToolEntry objectCreationToolEntry = new ObjectCreationToolEntry(cf.getCreateName(), cf.getCreateDescription(),

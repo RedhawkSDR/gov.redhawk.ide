@@ -193,7 +193,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 			if (context.getPictogramElements()[0] instanceof ContainerShape) {
 				Diagram diagram = DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]);
-				if (obj instanceof SadComponentInstantiation && (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
+				if (obj instanceof SadComponentInstantiation && (DUtil.isDiagramRuntime(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
 					retList.add(new StartComponentFeature(this));
 					retList.add(new StopComponentFeature(this));
 					retList.add(new ShowConsoleFeature(this));
@@ -212,7 +212,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		}
 
 		// add external port menu item if we clicked on a port
-		if (!DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram()) && (context.getPictogramElements() != null && context.getPictogramElements().length > 0)) {
+		if (!DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram()) && (context.getPictogramElements() != null && context.getPictogramElements().length > 0)) {
 			EObject obj = (EObject) DUtil.getBusinessObject(context.getPictogramElements()[0]);
 
 			// make sure business object is port stub and container is a component
@@ -259,7 +259,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		// add Set As Assembly Controller menu item
 		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof SadComponentInstantiation && !DUtil.isDiagramLocal(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
+			if (obj instanceof SadComponentInstantiation && !DUtil.isDiagramRuntime(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
 				retList.add(new SetAsAssemblyControllerFeature(this.getDiagramTypeProvider().getFeatureProvider()));
 			}
 		}
@@ -267,7 +267,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		// add Increment Start Order menu item
 		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof SadComponentInstantiation && !DUtil.isDiagramLocal(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
+			if (obj instanceof SadComponentInstantiation && !DUtil.isDiagramRuntime(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
 				retList.add(new IncrementStartOrderFeature(this.getDiagramTypeProvider().getFeatureProvider()));
 			}
 		}
@@ -275,7 +275,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		// add Decrement Start Order menu item
 		if (context.getPictogramElements() != null && context.getPictogramElements().length > 0) {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
-			if (obj instanceof SadComponentInstantiation && !DUtil.isDiagramLocal(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
+			if (obj instanceof SadComponentInstantiation && !DUtil.isDiagramRuntime(DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]))) {
 				retList.add(new DecrementStartOrderFeature(this.getDiagramTypeProvider().getFeatureProvider()));
 			}
 		}
@@ -366,7 +366,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		}
 
 		// If the element is in the Chalkboard, it's removal will be handled by the Release and Terminate features
-		if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+		if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
 			if (context.getPictogramElement() instanceof ComponentShapeImpl) {
 				return new ReleaseComponentFeature(this);
 			}
@@ -421,7 +421,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 	@Override
 	public IReconnectionFeature getReconnectionFeature(IReconnectionContext context) {
-		if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+		if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
 			// We don't currently support reconnect actions for runtime
 			return null;
 		}

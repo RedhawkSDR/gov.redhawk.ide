@@ -56,7 +56,7 @@ public class ShowConsoleFeature extends AbstractCustomFeature {
 
 	@Override
 	public boolean canExecute(ICustomContext context) {
-		if (context.getPictogramElements()[0] instanceof RHContainerShapeImpl && DUtil.isDiagramLocal(getDiagram())) {
+		if (context.getPictogramElements()[0] instanceof RHContainerShapeImpl && DUtil.isDiagramRuntime(getDiagram())) {
 			return true;
 		}
 		return super.canExecute(context);

@@ -50,7 +50,7 @@ public class SetLogLevelFeature extends NonUndoableCustomFeature {
 			Object object = DUtil.getBusinessObject(componentShape);
 			Diagram diagram = DUtil.findDiagram((ContainerShape) componentShape);
 			if (object instanceof SadComponentInstantiation
-					&& (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
+					&& (DUtil.isDiagramRuntime(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
 				return true;
 			}
 		}
