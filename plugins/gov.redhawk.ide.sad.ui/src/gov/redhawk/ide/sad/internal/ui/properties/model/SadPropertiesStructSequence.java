@@ -32,9 +32,9 @@ import mil.jpeojtrs.sca.prf.StructSequenceRef;
 /**
  * 
  */
-public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence> {
+public class SadPropertiesStructSequence extends ViewerProperty<StructSequence> {
 
-	public ViewerStructSequenceProperty(AdapterFactory adapterFactory, StructSequence def, Object parent) {
+	public SadPropertiesStructSequence(AdapterFactory adapterFactory, StructSequence def, Object parent) {
 		super(adapterFactory, def, parent);
 		for (FeatureMap.Entry entry : def.getStruct().getFields()) {
 			if (entry.getEStructuralFeature() == PrfPackage.Literals.STRUCT__SIMPLE) {

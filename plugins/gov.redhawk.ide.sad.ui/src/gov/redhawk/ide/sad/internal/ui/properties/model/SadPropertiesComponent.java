@@ -137,13 +137,13 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 	private ViewerProperty< ? > createViewerProperty(AbstractProperty def) {
 		switch (def.eClass().getClassifierID()) {
 		case PrfPackage.SIMPLE:
-			return new ViewerSimpleProperty(adapterFactory, (Simple) def, this);
+			return new SadPropertiesSimple(adapterFactory, (Simple) def, this);
 		case PrfPackage.SIMPLE_SEQUENCE:
-			return new ViewerSequenceProperty(adapterFactory, (SimpleSequence) def, this);
+			return new SadPropertiesSimpleSequence(adapterFactory, (SimpleSequence) def, this);
 		case PrfPackage.STRUCT:
-			return new ViewerStructProperty(adapterFactory, (Struct) def, this);
+			return new SadPropertiesStruct(adapterFactory, (Struct) def, this);
 		case PrfPackage.STRUCT_SEQUENCE:
-			return new ViewerStructSequenceProperty(adapterFactory, (StructSequence) def, this);
+			return new SadPropertiesStructSequence(adapterFactory, (StructSequence) def, this);
 		}
 		return null;
 	}

@@ -33,15 +33,15 @@ import mil.jpeojtrs.sca.prf.StructRef;
 /**
  * 
  */
-public class ViewerStructProperty extends ViewerProperty<Struct> implements NestedItemProvider {
+public class SadPropertiesStruct extends ViewerProperty<Struct> implements NestedItemProvider {
 
-	public ViewerStructProperty(AdapterFactory adapterFactory, Struct def, Object parent) {
+	public SadPropertiesStruct(AdapterFactory adapterFactory, Struct def, Object parent) {
 		super(adapterFactory, def, parent);
 		for (FeatureMap.Entry field : def.getFields()) {
 			if (field.getEStructuralFeature() == PrfPackage.Literals.STRUCT__SIMPLE) {
-				getChildren().add(new ViewerSimpleProperty(adapterFactory, (Simple) field.getValue(), this));
+				getChildren().add(new SadPropertiesSimple(adapterFactory, (Simple) field.getValue(), this));
 			} else if (field.getEStructuralFeature() == PrfPackage.Literals.STRUCT__SIMPLE_SEQUENCE) {
-				getChildren().add(new ViewerSequenceProperty(adapterFactory, (SimpleSequence) field.getValue(), this));
+				getChildren().add(new SadPropertiesSimpleSequence(adapterFactory, (SimpleSequence) field.getValue(), this));
 			}
 		}
 	}

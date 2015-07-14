@@ -33,9 +33,9 @@ import mil.jpeojtrs.sca.prf.PropertyValueType;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 
-public class ViewerSimpleProperty extends ViewerProperty<Simple> {
+public class SadPropertiesSimple extends ViewerProperty<Simple> {
 
-	public ViewerSimpleProperty(AdapterFactory adapterFactory, Simple def, Object parent) {
+	public SadPropertiesSimple(AdapterFactory adapterFactory, Simple def, Object parent) {
 		super(adapterFactory, def, parent);
 	}
 

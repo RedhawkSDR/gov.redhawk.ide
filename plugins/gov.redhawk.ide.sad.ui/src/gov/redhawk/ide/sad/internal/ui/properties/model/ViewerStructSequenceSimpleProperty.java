@@ -24,7 +24,7 @@ import mil.jpeojtrs.sca.prf.StructValue;
  */
 public class ViewerStructSequenceSimpleProperty extends ViewerStructSequenceNestedProperty<Simple> {
 
-	public ViewerStructSequenceSimpleProperty(AdapterFactory adapterFactory, Simple def, ViewerStructSequenceProperty parent) {
+	public ViewerStructSequenceSimpleProperty(AdapterFactory adapterFactory, Simple def, SadPropertiesStructSequence parent) {
 		super(adapterFactory, def, parent);
 	}
 	

@@ -18,8 +18,8 @@ public abstract class ViewerStructSequenceNestedProperty<E extends AbstractPrope
 	}
 
 	@Override
-	public ViewerStructSequenceProperty getParent() {
-		return (ViewerStructSequenceProperty) super.getParent();
+	public SadPropertiesStructSequence getParent() {
+		return (SadPropertiesStructSequence) super.getParent();
 	}
 
 	protected abstract List< ? > getRefValues(List<StructValue> values);
