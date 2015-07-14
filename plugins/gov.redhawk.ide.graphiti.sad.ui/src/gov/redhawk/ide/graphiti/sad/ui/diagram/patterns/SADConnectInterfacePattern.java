@@ -178,12 +178,14 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 		}
 
 		if (source != null && target != null) {
-			// Connection validation
-			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
-			boolean compatibleConnection = InterfacesUtil.areCompatible(source, target);
+			// Connection validation (only diagrams which aren't runtime)
+			boolean validationProblem = false;
+			if (!DUtil.isDiagramRuntime(diagram)) {
+				validationProblem = !ConnectionsConstraint.uniqueConnection(connectInterface) || !InterfacesUtil.areCompatible(source, target);
+			}
 
 			// Add error decorator if necessary
-			if (!compatibleConnection || !uniqueConnection) {
+			if (validationProblem) {
 
 				// add graphical X to the middle of the erroneous connection
 				ConnectionDecorator errorDecorator = peCreateService.createConnectionDecorator(connectionPE, false, 0.5, true);
@@ -194,7 +196,7 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 
 			// add graphical arrow to end of the connection
 			IColorConstant arrowColor;
-			if (!compatibleConnection || !uniqueConnection) {
+			if (validationProblem) {
 				arrowColor = IColorConstant.RED;
 			} else if (defaultColor != null) {
 				arrowColor = defaultColor;
@@ -348,7 +350,8 @@ public class SADConnectInterfacePattern extends AbstractConnectionPattern implem
 						}
 					}
 				} else {
-					// We haven't yet evaluated this component type. We'll find compatible ports and cache them in the map for future reference.
+					// We haven't yet evaluated this component type. We'll find compatible ports and cache them in the
+					// map for future reference.
 					ArrayList<String> portNames = new ArrayList<String>();
 					for (ContainerShape portShape : DUtil.getDiagramProvidesPorts(componentShape)) {
 						ProvidesPortStub providesPort = (ProvidesPortStub) DUtil.getBusinessObject(portShape);

@@ -143,17 +143,15 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 		}
 
 		if (connectInterface.getSource() != null && connectInterface.getTarget() != null || isFindByConnection) {
-			// Connection validation
-			boolean uniqueConnection = ConnectionsConstraint.uniqueConnection(connectInterface);
-
-			// don't check for compatibility if this is a FindBy connection
-			boolean compatibleConnection = true;
-			if (!isFindByConnection) {
-				compatibleConnection = InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget());
+			// Connection validation (only diagrams which aren't runtime)
+			boolean validationProblem = false;
+			if (!DUtil.isDiagramRuntime(diagram)) {
+				validationProblem = !ConnectionsConstraint.uniqueConnection(connectInterface)
+					|| (!isFindByConnection && !InterfacesUtil.areCompatible(connectInterface.getSource(), connectInterface.getTarget()));
 			}
 
 			// Add error decorator if necessary
-			if (!compatibleConnection || !uniqueConnection) {
+			if (validationProblem) {
 
 				// add graphical X to the middle of the erroneous connection
 				ConnectionDecorator errorDecorator = peCreateService.createConnectionDecorator(connectionPE, false, 0.5, true);
@@ -164,7 +162,7 @@ public class DCDConnectInterfacePattern extends AbstractConnectionPattern implem
 
 			// add graphical arrow to end of the connection
 			IColorConstant arrowColor;
-			if (!compatibleConnection || !uniqueConnection) {
+			if (validationProblem) {
 				arrowColor = IColorConstant.RED;
 			} else {
 				arrowColor = IColorConstant.BLACK;
