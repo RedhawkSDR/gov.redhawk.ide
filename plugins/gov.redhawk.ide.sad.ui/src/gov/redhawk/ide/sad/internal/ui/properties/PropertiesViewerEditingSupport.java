@@ -11,6 +11,7 @@
 package gov.redhawk.ide.sad.internal.ui.properties;
 
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
+import gov.redhawk.ide.sad.internal.ui.editor.XViewerComboCellEditor;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
 import gov.redhawk.model.sca.ScaSimpleProperty;
 import gov.redhawk.model.sca.ScaStructProperty;
@@ -26,16 +27,54 @@ import mil.jpeojtrs.sca.sad.SadFactory;
 import mil.jpeojtrs.sca.sad.SoftwareAssembly;
 import mil.jpeojtrs.sca.util.ScaEcoreUtils;
 
+import org.eclipse.jface.viewers.ICellEditorValidator;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor;
+import org.eclipse.nebula.widgets.xviewer.edit.XViewerControlFactory;
 import org.eclipse.nebula.widgets.xviewer.edit.XViewerConverter;
 import org.eclipse.swt.widgets.Control;
 
 /**
  * 
  */
-public class PropertiesViewerConverter implements XViewerConverter {
+public class PropertiesViewerEditingSupport implements XViewerControlFactory, XViewerConverter {
 
-	public PropertiesViewerConverter(PropertiesViewerLabelProvider labelProvider) {
+	@Override
+	public Control createControl(CellEditDescriptor ced, final XViewer xv) {
+		IStructuredSelection ss = (IStructuredSelection) xv.getSelection();
+		Object editElement = ss.getFirstElement();
+		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
+			final ViewerProperty< ? > prop = (ViewerProperty< ? >) editElement;
+
+			String[] items = new String[] { "", prop.getDefinition().getId() };
+			XViewerComboCellEditor editor = new XViewerComboCellEditor(xv.getTree(), items, ced.getSwtStyle());
+
+			final SoftwareAssembly sad = ScaEcoreUtils.getEContainerOfType(prop.getComponentInstantiation(), SoftwareAssembly.class);
+			editor.setValidator(new ICellEditorValidator() {
+
+				@Override
+				public String isValid(Object value) {
+					if (value == null || value.equals(prop.getExternalID())) {
+						return null;
+					} else if (!isUniqueProperty((String) value, sad)) {
+						return "Duplicate external property ID";
+					}
+					return null;
+				}
+			});
+
+			return editor;
+		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
+			return ((ViewerProperty< ? >) editElement).createCellEditor(xv.getTree());
+		}
+		return null;
+	}
+
+	protected boolean isUniqueProperty(String text, SoftwareAssembly sad) {
+		ExternalProperty prop = SadFactory.eINSTANCE.createExternalProperty();
+		prop.setPropID(text);
+		return DuplicateExternalPropertyIDConstraint.validateProperty(prop, sad);
 	}
 
 	/* (non-Javadoc)
@@ -133,6 +172,9 @@ public class PropertiesViewerConverter implements XViewerConverter {
 
 	@Override
 	public boolean isValid(CellEditDescriptor ced, Object selObject) {
+		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
+			return ((ViewerProperty< ? >) selObject).canSetExternalId();
+		}
 		return true;
 	}
 }

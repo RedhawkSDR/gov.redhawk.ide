@@ -11,8 +11,7 @@
 package gov.redhawk.ide.sad.internal.ui.editor;
 
 import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewer;
-import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerControlFactory;
-import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerConverter;
+import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerEditingSupport;
 import gov.redhawk.ide.sad.internal.ui.properties.PropertiesViewerLabelProvider;
 import gov.redhawk.ide.sad.internal.ui.properties.model.SadPropertiesAdapterFactory;
 import gov.redhawk.ide.sad.ui.SadUiActivator;
@@ -151,9 +150,8 @@ public class SadPropertiesPage extends ScaFormPage {
 			viewer.setInput(sad);
 		}
 
-		XViewerControlFactory cFactory = new PropertiesViewerControlFactory();
-		XViewerConverter converter = new PropertiesViewerConverter(labelProvider);
-		viewer.setXViewerEditAdapter(new XViewerEditAdapter(cFactory, converter));
+		PropertiesViewerEditingSupport editingSupport = new PropertiesViewerEditingSupport();
+		viewer.setXViewerEditAdapter(new XViewerEditAdapter(editingSupport, editingSupport));
 	}
 
 	/* (non-Javadoc)
