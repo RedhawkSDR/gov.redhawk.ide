@@ -13,7 +13,7 @@ package gov.redhawk.ide.sad.internal.ui.properties;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
 import gov.redhawk.ide.sad.internal.ui.editor.XViewerComboCellEditor;
 import gov.redhawk.ide.sad.internal.ui.properties.model.SadProperty;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerProperty;
+import gov.redhawk.ide.sad.internal.ui.properties.model.SadPropertyImpl;
 import gov.redhawk.model.sca.ScaSimpleProperty;
 import gov.redhawk.model.sca.ScaStructProperty;
 import gov.redhawk.model.sca.ScaStructSequenceProperty;
@@ -46,7 +46,7 @@ public class PropertiesViewerEditingSupport implements XViewerControlFactory, XV
 		IStructuredSelection ss = (IStructuredSelection) xv.getSelection();
 		Object editElement = ss.getFirstElement();
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
-			final ViewerProperty< ? > prop = (ViewerProperty< ? >) editElement;
+			final SadPropertyImpl< ? > prop = (SadPropertyImpl< ? >) editElement;
 
 			String[] items = new String[] { "", prop.getDefinition().getId() };
 			XViewerComboCellEditor editor = new XViewerComboCellEditor(xv.getTree(), items, ced.getSwtStyle());
@@ -67,7 +67,7 @@ public class PropertiesViewerEditingSupport implements XViewerControlFactory, XV
 
 			return editor;
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
-			return ((ViewerProperty< ? >) editElement).createCellEditor(xv.getTree());
+			return ((SadPropertyImpl< ? >) editElement).createCellEditor(xv.getTree());
 		}
 		return null;
 	}
@@ -83,8 +83,8 @@ public class PropertiesViewerEditingSupport implements XViewerControlFactory, XV
 	 */
 	@Override
 	public void setInput(Control c, CellEditDescriptor ced, Object selObject) {
-		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId()) && selObject instanceof ViewerProperty< ? >) {
-			ViewerProperty< ? > prop = ((ViewerProperty< ? >) selObject);
+		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId()) && selObject instanceof SadPropertyImpl< ? >) {
+			SadPropertyImpl< ? > prop = ((SadPropertyImpl< ? >) selObject);
 			String value = getUniqueValue(prop);
 			((XViewerCellEditor) c).setValue(value);
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
@@ -95,7 +95,7 @@ public class PropertiesViewerEditingSupport implements XViewerControlFactory, XV
 		}
 	}
 
-	private String getUniqueValue(ViewerProperty< ? > viewerProp) {
+	private String getUniqueValue(SadPropertyImpl< ? > viewerProp) {
 		if (viewerProp.getExternalID() != null) {
 			return viewerProp.getExternalID();
 		}

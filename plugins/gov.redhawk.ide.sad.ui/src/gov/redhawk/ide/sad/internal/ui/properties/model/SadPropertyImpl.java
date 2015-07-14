@@ -43,7 +43,7 @@ import gov.redhawk.ide.sad.internal.ui.editor.XViewerCellEditor;
 /**
  * 
  */
-public abstract class ViewerProperty< T extends AbstractProperty > extends ItemProvider implements SadProperty {
+public abstract class SadPropertyImpl< T extends AbstractProperty > extends ItemProvider implements SadProperty {
 
 	protected final T def;
 	protected AbstractPropertyRef< ? > ref;
@@ -53,7 +53,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 
 		@Override
 		public void notifyChanged(Notification msg) {
-			ViewerProperty.this.notifyChanged(msg);
+			SadPropertyImpl.this.notifyChanged(msg);
 		}
 
 	};
@@ -61,7 +61,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 	/**
 	 * 
 	 */
-	public ViewerProperty(AdapterFactory adapterFactory, T def, Object parent) {
+	public SadPropertyImpl(AdapterFactory adapterFactory, T def, Object parent) {
 		super(adapterFactory);
 		this.def = def;
 		this.parent = parent;
@@ -118,7 +118,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		if (parent instanceof SadPropertiesComponent) {
 			return (SadPropertiesComponent) parent;
 		} else {
-			return ((ViewerProperty< ? >) parent).getComponent();
+			return ((SadPropertyImpl< ? >) parent).getComponent();
 		}
 	}
 
@@ -185,7 +185,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 
 	@Override
 	public Collection< ? > getKinds() {
-		if (getParent() instanceof ViewerProperty< ? >) {
+		if (getParent() instanceof SadPropertyImpl< ? >) {
 			return ((SadProperty) getParent()).getKinds();
 		}
 		return getKindTypes();

@@ -11,9 +11,9 @@ import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
 import mil.jpeojtrs.sca.prf.StructValue;
 
-public abstract class ViewerStructSequenceNestedProperty<E extends AbstractProperty> extends ViewerProperty<E> {
+public abstract class SadPropertiesStructSequenceNestedProperty<E extends AbstractProperty> extends SadPropertyImpl<E> {
 
-	public ViewerStructSequenceNestedProperty(AdapterFactory adapterFactory, E def, Object parent) {
+	public SadPropertiesStructSequenceNestedProperty(AdapterFactory adapterFactory, E def, Object parent) {
 		super(adapterFactory, def, parent);
 	}
 

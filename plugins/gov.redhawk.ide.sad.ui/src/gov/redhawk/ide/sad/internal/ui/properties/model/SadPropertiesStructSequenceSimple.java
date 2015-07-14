@@ -22,9 +22,9 @@ import mil.jpeojtrs.sca.prf.StructValue;
 /**
  * 
  */
-public class ViewerStructSequenceSimpleProperty extends ViewerStructSequenceNestedProperty<Simple> {
+public class SadPropertiesStructSequenceSimple extends SadPropertiesStructSequenceNestedProperty<Simple> {
 
-	public ViewerStructSequenceSimpleProperty(AdapterFactory adapterFactory, Simple def, SadPropertiesStructSequence parent) {
+	public SadPropertiesStructSequenceSimple(AdapterFactory adapterFactory, Simple def, SadPropertiesStructSequence parent) {
 		super(adapterFactory, def, parent);
 	}
 	

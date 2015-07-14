@@ -36,7 +36,7 @@ import mil.jpeojtrs.sca.prf.Values;
 /**
  * 
  */
-public class SadPropertiesSimpleSequence extends ViewerProperty<SimpleSequence> {
+public class SadPropertiesSimpleSequence extends SadPropertyImpl<SimpleSequence> {
 
 	public SadPropertiesSimpleSequence(AdapterFactory adapterFactory, SimpleSequence def, Object parent) {
 		super(adapterFactory, def, parent);

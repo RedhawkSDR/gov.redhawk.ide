@@ -103,7 +103,7 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 	protected Object createWrapper(EObject object, EStructuralFeature feature, Object value, int index) {
 		if (feature == PrfPackage.Literals.PROPERTIES__PROPERTIES){
 			FeatureMap.Entry entry = (FeatureMap.Entry) value;
-			ViewerProperty< ? > property = createViewerProperty((AbstractProperty) entry.getValue());
+			SadPropertyImpl< ? > property = createViewerProperty((AbstractProperty) entry.getValue());
 			ExternalProperty externalProperty = getExternalProperty(property.getID());
 			property.setExternalProperty(externalProperty);
 			return property;
@@ -132,7 +132,7 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 		return false;
 	}
 
-	private ViewerProperty< ? > createViewerProperty(AbstractProperty def) {
+	private SadPropertyImpl< ? > createViewerProperty(AbstractProperty def) {
 		switch (def.eClass().getClassifierID()) {
 		case PrfPackage.SIMPLE:
 			return new SadPropertiesSimple(adapterFactory, (Simple) def, this);
@@ -240,9 +240,9 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 		return super.isAdapterForType(type);
 	}
 
-	protected ViewerProperty< ? > getProperty(String identifier) {
+	protected SadPropertyImpl< ? > getProperty(String identifier) {
 		for (Object child : getChildren(compInst)) {
-			ViewerProperty< ? > property = (ViewerProperty< ? >) child;
+			SadPropertyImpl< ? > property = (SadPropertyImpl< ? >) child;
 			if (property.getID().equals(identifier)) {
 				return property;
 			}
@@ -255,7 +255,7 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 			properties.eAdapters().add(this);
 			for (FeatureMap.Entry entry : properties.getProperties()) {
 				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
-				ViewerProperty< ? > property = getProperty(ref.getRefID());
+				SadPropertyImpl< ? > property = getProperty(ref.getRefID());
 				property.referenceAdded(ref);
 			}
 		}
@@ -266,7 +266,7 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 			properties.eAdapters().remove(this);
 			for (FeatureMap.Entry entry : properties.getProperties()) {
 				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
-				ViewerProperty< ? > property = getProperty(ref.getRefID());
+				SadPropertyImpl< ? > property = getProperty(ref.getRefID());
 				property.referenceRemoved(ref);
 			}
 		}
@@ -274,7 +274,7 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 
 	private void propertyChanged(Notification msg, Object value) {
 		AbstractPropertyRef< ? > ref = unwrapProperty(value);
-		ViewerProperty< ? > property = getProperty(ref.getRefID());
+		SadPropertyImpl< ? > property = getProperty(ref.getRefID());
 		switch (msg.getEventType()) {
 		case Notification.ADD:
 			property.referenceAdded(ref);

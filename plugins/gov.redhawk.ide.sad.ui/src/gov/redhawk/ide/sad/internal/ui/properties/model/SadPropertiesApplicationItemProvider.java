@@ -97,7 +97,7 @@ public class SadPropertiesApplicationItemProvider extends ItemProviderAdapter im
 		if (properties != null) {
 			properties.eAdapters().add(this);
 			for (ExternalProperty externalProperty : properties.getProperties()) {
-				ViewerProperty< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
+				SadPropertyImpl< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
 				if (viewerProperty != null) {
 					viewerProperty.setExternalProperty(externalProperty);
 				}
@@ -109,7 +109,7 @@ public class SadPropertiesApplicationItemProvider extends ItemProviderAdapter im
 		if (properties != null) {
 			properties.eAdapters().remove(this);
 			for (ExternalProperty externalProperty : properties.getProperties()) {
-				ViewerProperty< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
+				SadPropertyImpl< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
 				if (viewerProperty != null) {
 					viewerProperty.setExternalProperty(null);
 				}
@@ -120,7 +120,7 @@ public class SadPropertiesApplicationItemProvider extends ItemProviderAdapter im
 	private void externalPropertyChanged(Notification msg, ExternalProperty externalProperty) {
 		ExternalProperties properties = (ExternalProperties) msg.getNotifier();
 		SoftwareAssembly softwareAssembly = (SoftwareAssembly) properties.eContainer();
-		ViewerProperty< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
+		SadPropertyImpl< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
 		viewerProperty.setExternalProperty((ExternalProperty) msg.getNewValue());
 		fireNotifyChanged(new ViewerNotification(msg, viewerProperty, true, true));
 	}
@@ -134,14 +134,14 @@ public class SadPropertiesApplicationItemProvider extends ItemProviderAdapter im
 		return null;
 	}
 
-	private ViewerProperty< ? > getComponentProperty(SoftwareAssembly softwareAssembly, ExternalProperty externalProperty) {
+	private SadPropertyImpl< ? > getComponentProperty(SoftwareAssembly softwareAssembly, ExternalProperty externalProperty) {
 		final String componentId = externalProperty.getCompRefID();
 		SadComponentInstantiation instantiation = getComponentInstantiation(softwareAssembly, componentId);
 		SadPropertiesComponent component = (SadPropertiesComponent) adapterFactory.adapt(instantiation, SadPropertiesComponent.class);
 		if (component != null) {
 			final String propertyId = externalProperty.getPropID();
 			for (Object child : component.getChildren(instantiation)) {
-				ViewerProperty< ? > viewerProperty = (ViewerProperty< ? >) child;
+				SadPropertyImpl< ? > viewerProperty = (SadPropertyImpl< ? >) child;
 				if (viewerProperty.getID().equals(propertyId)) {
 					return viewerProperty;
 				}

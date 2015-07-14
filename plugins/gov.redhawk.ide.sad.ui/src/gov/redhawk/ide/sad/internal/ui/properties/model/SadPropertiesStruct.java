@@ -33,7 +33,7 @@ import mil.jpeojtrs.sca.prf.StructRef;
 /**
  * 
  */
-public class SadPropertiesStruct extends ViewerProperty<Struct> implements NestedItemProvider {
+public class SadPropertiesStruct extends SadPropertyImpl<Struct> implements NestedItemProvider {
 
 	public SadPropertiesStruct(AdapterFactory adapterFactory, Struct def, Object parent) {
 		super(adapterFactory, def, parent);
@@ -113,9 +113,9 @@ public class SadPropertiesStruct extends ViewerProperty<Struct> implements Neste
 		return UnexecutableCommand.INSTANCE;
 	}
 
-	protected ViewerProperty< ? > getField(String identifier) {
+	protected SadPropertyImpl< ? > getField(String identifier) {
 		for (Object child : children) {
-			ViewerProperty< ? > field = (ViewerProperty< ? >) child;
+			SadPropertyImpl< ? > field = (SadPropertyImpl< ? >) child;
 			if (field.getID().equals(identifier)) {
 				return field;
 			}
@@ -129,7 +129,7 @@ public class SadPropertiesStruct extends ViewerProperty<Struct> implements Neste
 		StructRef structRef = (StructRef) reference;
 		for (FeatureMap.Entry ref : structRef.getRefs()) {
 			AbstractPropertyRef< ? > childRef = (AbstractPropertyRef< ? >)ref.getValue();
-			ViewerProperty< ? > field = getField(childRef.getRefID());
+			SadPropertyImpl< ? > field = getField(childRef.getRefID());
 			field.referenceAdded(childRef);
 		}
 	}
@@ -140,7 +140,7 @@ public class SadPropertiesStruct extends ViewerProperty<Struct> implements Neste
 		StructRef structRef = (StructRef) reference;
 		for (FeatureMap.Entry ref : structRef.getRefs()) {
 			AbstractPropertyRef< ? > childRef = (AbstractPropertyRef< ? >)ref.getValue();
-			ViewerProperty< ? > field = getField(childRef.getRefID());
+			SadPropertyImpl< ? > field = getField(childRef.getRefID());
 			field.referenceRemoved(childRef);
 		}
 	}

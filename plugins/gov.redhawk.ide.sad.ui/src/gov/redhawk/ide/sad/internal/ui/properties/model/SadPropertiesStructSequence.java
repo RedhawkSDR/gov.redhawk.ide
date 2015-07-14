@@ -32,17 +32,17 @@ import mil.jpeojtrs.sca.prf.StructSequenceRef;
 /**
  * 
  */
-public class SadPropertiesStructSequence extends ViewerProperty<StructSequence> {
+public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence> {
 
 	public SadPropertiesStructSequence(AdapterFactory adapterFactory, StructSequence def, Object parent) {
 		super(adapterFactory, def, parent);
 		for (FeatureMap.Entry entry : def.getStruct().getFields()) {
 			if (entry.getEStructuralFeature() == PrfPackage.Literals.STRUCT__SIMPLE) {
 				Simple simple = (Simple) entry.getValue();
-				getChildren().add(new ViewerStructSequenceSimpleProperty(adapterFactory, simple, this));
+				getChildren().add(new SadPropertiesStructSequenceSimple(adapterFactory, simple, this));
 			} else if (entry.getEStructuralFeature() == PrfPackage.Literals.STRUCT__SIMPLE_SEQUENCE) {
 				SimpleSequence sequence = (SimpleSequence) entry.getValue();
-				getChildren().add(new ViewerStructSequenceSequenceProperty(adapterFactory, sequence, this));
+				getChildren().add(new SadPropertiesStructSequenceSimpleSequence(adapterFactory, sequence, this));
 			}
 		}
 	}

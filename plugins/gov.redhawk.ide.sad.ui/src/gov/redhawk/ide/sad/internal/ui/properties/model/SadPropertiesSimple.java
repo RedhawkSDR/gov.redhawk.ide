@@ -33,7 +33,7 @@ import mil.jpeojtrs.sca.prf.PropertyValueType;
 import mil.jpeojtrs.sca.prf.Simple;
 import mil.jpeojtrs.sca.prf.SimpleRef;
 
-public class SadPropertiesSimple extends ViewerProperty<Simple> {
+public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 
 	public SadPropertiesSimple(AdapterFactory adapterFactory, Simple def, Object parent) {
 		super(adapterFactory, def, parent);
