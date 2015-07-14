@@ -75,14 +75,14 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		// 1-argument getParent. If we return the ViewerComponent object, getParent(Object) on it will fail because
 		// it's not the EObject, so this unwraps it. Property-specific code that needs to refer to the parent should
 		// use the no argument version.
-		if (parent instanceof ViewerComponent) {
-			return ((ViewerComponent) parent).getComponentInstantiation();
+		if (parent instanceof SadPropertiesComponent) {
+			return ((SadPropertiesComponent) parent).getComponentInstantiation();
 		}
 		return parent;
 	}
 
 	public boolean canSetExternalId() {
-		return (parent instanceof ViewerComponent);
+		return (parent instanceof SadPropertiesComponent);
 	}
 
 	protected AbstractPropertyRef< ? > getValueRef() {
@@ -97,9 +97,9 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		return null;
 	}
 
-	public ViewerComponent getComponent() {
-		if (parent instanceof ViewerComponent) {
-			return (ViewerComponent) parent;
+	public SadPropertiesComponent getComponent() {
+		if (parent instanceof SadPropertiesComponent) {
+			return (SadPropertiesComponent) parent;
 		} else {
 			return ((ViewerProperty< ? >) parent).getComponent();
 		}

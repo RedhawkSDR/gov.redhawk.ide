@@ -52,7 +52,7 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
 
 import gov.redhawk.sca.util.PluginUtil;
 
-public class ViewerComponent extends ItemProviderAdapter implements ITreeItemContentProvider, NestedItemProvider {
+public class SadPropertiesComponent extends ItemProviderAdapter implements ITreeItemContentProvider, NestedItemProvider {
 	
 	private static final EStructuralFeature [] PATH = new EStructuralFeature [] {
 		SpdPackage.Literals.SOFT_PKG__PROPERTY_FILE,
@@ -61,7 +61,7 @@ public class ViewerComponent extends ItemProviderAdapter implements ITreeItemCon
 
 	private SadComponentInstantiation compInst;
 
-	public ViewerComponent(AdapterFactory adapterFactory, SadComponentInstantiation compInst) {
+	public SadPropertiesComponent(AdapterFactory adapterFactory, SadComponentInstantiation compInst) {
 		super(adapterFactory);
 		this.compInst = compInst;
 		propertiesAdded(compInst.getComponentProperties());

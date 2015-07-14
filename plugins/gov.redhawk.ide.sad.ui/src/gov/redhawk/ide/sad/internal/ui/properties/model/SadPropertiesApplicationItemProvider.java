@@ -144,7 +144,7 @@ public class SadPropertiesApplicationItemProvider extends ItemProviderAdapter im
 	private ViewerProperty< ? > getComponentProperty(SoftwareAssembly softwareAssembly, ExternalProperty externalProperty) {
 		final String componentId = externalProperty.getCompRefID();
 		SadComponentInstantiation instantiation = getComponentInstantiation(softwareAssembly, componentId);
-		ViewerComponent component = (ViewerComponent) adapterFactory.adapt(instantiation, ViewerComponent.class);
+		SadPropertiesComponent component = (SadPropertiesComponent) adapterFactory.adapt(instantiation, SadPropertiesComponent.class);
 		if (component != null) {
 			final String propertyId = externalProperty.getPropID();
 			for (Object child : component.getChildren(instantiation)) {

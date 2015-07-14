@@ -44,7 +44,7 @@ public class SadPropertiesAdapterFactory extends AdapterFactoryImpl implements I
 		if (target instanceof SoftwareAssembly) {
 			return new SadPropertiesApplicationItemProvider(this);
 		} else if (target instanceof SadComponentInstantiation) {
-			return new ViewerComponent(this, (SadComponentInstantiation) target);
+			return new SadPropertiesComponent(this, (SadComponentInstantiation) target);
 		}
 		return super.createAdapter(target);
 	}
