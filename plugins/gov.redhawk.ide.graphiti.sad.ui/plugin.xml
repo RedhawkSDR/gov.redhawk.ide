@@ -182,25 +182,6 @@
                         </adapter>
                 </factory>
                 <factory
-                      adaptableType="org.eclipse.graphiti.ui.internal.parts.ContainerShapeEditPart"
-                      class="gov.redhawk.ide.graphiti.sad.ui.adapters.ComponentShapeAdapterFactory">
-                   <adapter
-                         type="gov.redhawk.model.sca.ScaComponent">
-                   </adapter>
-                   <adapter
-                         type="gov.redhawk.model.sca.ScaAbstractComponent">
-                   </adapter>
-                   <adapter
-                         type="gov.redhawk.model.sca.ScaPropertyContainer">
-                   </adapter>
-                   <adapter
-                         type="CF.ResourceOperations">
-                   </adapter>
-                   <adapter
-                         type="CF.LoggingOperations">
-                   </adapter>
-                </factory>
-                <factory
                       adaptableType="org.eclipse.graphiti.ui.internal.parts.IAnchorEditPart"
                       class="gov.redhawk.ide.graphiti.ui.adapters.PortEditPartAdapterFactory">
                    <adapter

@@ -10,25 +10,21 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.properties;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.gef.EditPart;
+
 import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.sad.ui.adapters.ComponentShapeAdapterFactory;
 import gov.redhawk.ide.graphiti.ui.properties.AdvancedEditPartPropertySection;
 import gov.redhawk.model.sca.ScaComponent;
 
-import org.eclipse.gef.EditPart;
-
-/**
- * 
- */
 public class SadAdvancedEditPartPropertySection extends AdvancedEditPartPropertySection {
 
 	@Override
 	protected Object getScaObjectForEditPart(EditPart ep) {
-		final Object obj = ep.getModel();
-		if (obj instanceof ComponentShape) {
-			return new ComponentShapeAdapterFactory().getAdapter(obj, ScaComponent.class);
+		if (ep.getModel() instanceof ComponentShape) {
+			return Platform.getAdapterManager().getAdapter(ep, ScaComponent.class);
 		}
 		return super.getScaObjectForEditPart(ep);
 	}
-	
+
 }
