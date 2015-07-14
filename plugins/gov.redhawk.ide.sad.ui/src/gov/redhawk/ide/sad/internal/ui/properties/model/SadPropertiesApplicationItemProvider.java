@@ -99,7 +99,7 @@ public class SadPropertiesApplicationItemProvider extends ItemProviderAdapter im
 			for (ExternalProperty externalProperty : properties.getProperties()) {
 				ViewerProperty< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
 				if (viewerProperty != null) {
-					viewerProperty.externalPropertyAdded(externalProperty);
+					viewerProperty.setExternalProperty(externalProperty);
 				}
 			}
 		}
@@ -111,7 +111,7 @@ public class SadPropertiesApplicationItemProvider extends ItemProviderAdapter im
 			for (ExternalProperty externalProperty : properties.getProperties()) {
 				ViewerProperty< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
 				if (viewerProperty != null) {
-					viewerProperty.externalPropertyRemoved(externalProperty);
+					viewerProperty.setExternalProperty(null);
 				}
 			}
 		}
@@ -121,14 +121,7 @@ public class SadPropertiesApplicationItemProvider extends ItemProviderAdapter im
 		ExternalProperties properties = (ExternalProperties) msg.getNotifier();
 		SoftwareAssembly softwareAssembly = (SoftwareAssembly) properties.eContainer();
 		ViewerProperty< ? > viewerProperty = getComponentProperty(softwareAssembly, externalProperty);
-		switch (msg.getEventType()) {
-		case Notification.ADD:
-			viewerProperty.externalPropertyAdded(externalProperty);
-			break;
-		case Notification.REMOVE:
-			viewerProperty.externalPropertyRemoved(externalProperty);
-			break;
-		}
+		viewerProperty.setExternalProperty((ExternalProperty) msg.getNewValue());
 		fireNotifyChanged(new ViewerNotification(msg, viewerProperty, true, true));
 	}
 

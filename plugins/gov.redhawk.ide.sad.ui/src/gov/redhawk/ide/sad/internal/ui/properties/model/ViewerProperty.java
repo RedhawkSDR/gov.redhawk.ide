@@ -33,6 +33,7 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.edit.provider.IDisposable;
 import org.eclipse.emf.edit.provider.ItemProvider;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 import org.eclipse.swt.widgets.Composite;
@@ -64,6 +65,20 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		super(adapterFactory);
 		this.def = def;
 		this.parent = parent;
+	}
+
+	@Override
+	public void dispose() {
+		if (ref != null) {
+			ref.eAdapters().remove(adapter);
+		}
+		setExternalProperty(null);
+
+		// Dispose of nested children (e.g., in structs and struct sequences)
+		for (Object child : children) {
+			((IDisposable) child).dispose();
+		}
+		children.clear();
 	}
 
 	public Object getParent() {
@@ -263,23 +278,31 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		}
 	}
 
-	public void externalPropertyAdded(ExternalProperty externalProperty) {
-		this.externalProperty = externalProperty;
-		if (externalProperty != null) {
-			externalProperty.eAdapters().add(adapter);
+	public void setExternalProperty(ExternalProperty externalProperty) {
+		if (this.externalProperty == externalProperty) {
+			return;
 		}
-	}
 
-	public void externalPropertyRemoved(ExternalProperty externalProperty) {
-		this.externalProperty = null;
-		if (externalProperty != null) {
-			externalProperty.eAdapters().remove(adapter);
-		}
+		unregisterAdapter(this.externalProperty);
+		registerAdapter(externalProperty);
+		this.externalProperty = externalProperty;
 	}
 
 	protected void notifyChanged(Notification msg) {
 		if (msg.getEventType() == Notification.SET) {
 			fireNotifyChanged(new ViewerNotification(msg, this, false, true));
+		}
+	}
+
+	private void registerAdapter(EObject eObject) {
+		if (eObject != null) {
+			eObject.eAdapters().add(adapter);
+		}
+	}
+
+	private void unregisterAdapter(EObject eObject) {
+		if (eObject != null) {
+			eObject.eAdapters().remove(adapter);
 		}
 	}
 }

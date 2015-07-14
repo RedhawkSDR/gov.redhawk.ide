@@ -105,9 +105,7 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 			FeatureMap.Entry entry = (FeatureMap.Entry) value;
 			ViewerProperty< ? > property = createViewerProperty((AbstractProperty) entry.getValue());
 			ExternalProperty externalProperty = getExternalProperty(property.getID());
-			if (externalProperty != null) {
-				property.externalPropertyAdded(externalProperty);
-			}
+			property.setExternalProperty(externalProperty);
 			return property;
 		}
 		return super.createWrapper(object, feature, value, index);
