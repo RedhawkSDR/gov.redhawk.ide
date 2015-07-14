@@ -59,8 +59,8 @@ public abstract class XViewerDialogCellEditor extends XViewerCellEditor {
 		}
 	}
 
-	public XViewerDialogCellEditor(Composite parent, int style) {
-		super(parent, style);
+	public XViewerDialogCellEditor(Composite parent) {
+		super(parent);
 		value = null;
 		createControl();
 	}

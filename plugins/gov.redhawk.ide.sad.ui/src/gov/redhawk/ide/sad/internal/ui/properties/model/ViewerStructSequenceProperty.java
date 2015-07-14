@@ -73,8 +73,8 @@ public class ViewerStructSequenceProperty extends ViewerProperty<StructSequence>
 	}
 
 	@Override
-	public XViewerCellEditor createCellEditor(Composite parent, int style) {
-		return new XViewerDialogCellEditor(parent, style) {
+	public XViewerCellEditor createCellEditor(Composite parent) {
+		return new XViewerDialogCellEditor(parent) {
 
 			@Override
 			protected Object openDialogBox() {

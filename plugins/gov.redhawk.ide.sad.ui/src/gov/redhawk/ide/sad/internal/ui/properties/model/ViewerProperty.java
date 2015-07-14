@@ -93,7 +93,7 @@ public abstract class ViewerProperty< T extends AbstractProperty > extends ItemP
 		return this.def;
 	}
 
-	public XViewerCellEditor createCellEditor(Composite parent, int style) {
+	public XViewerCellEditor createCellEditor(Composite parent) {
 		return null;
 	}
 

@@ -63,7 +63,7 @@ public class PropertiesViewerControlFactory extends DefaultXViewerControlFactory
 			return null;
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
 			if (editElement instanceof ViewerProperty<?>) {
-				return ((ViewerProperty< ? >) editElement).createCellEditor(xv.getTree(), ced.getSwtStyle());
+				return ((ViewerProperty< ? >) editElement).createCellEditor(xv.getTree());
 			}
 		}
 		return super.createControl(ced, xv);

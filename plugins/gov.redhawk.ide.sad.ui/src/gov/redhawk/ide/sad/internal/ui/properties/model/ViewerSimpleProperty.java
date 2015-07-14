@@ -102,10 +102,10 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 	}
 
 	@Override
-	public XViewerCellEditor createCellEditor(Composite parent, int style) {
+	public XViewerCellEditor createCellEditor(Composite parent) {
 		if (def.getType() == PropertyValueType.BOOLEAN) {
 			String[] items = new String[] { "", "true", "false" };
-			return new XViewerComboCellEditor(parent, items, style | SWT.READ_ONLY);
+			return new XViewerComboCellEditor(parent, items, SWT.BORDER | SWT.READ_ONLY);
 		} else if (def.getEnumerations() != null) {
 			List<String> values = new ArrayList<String>(def.getEnumerations().getEnumeration().size());
 			values.add("");
@@ -113,9 +113,9 @@ public class ViewerSimpleProperty extends ViewerProperty<Simple> {
 				values.add(v.getLabel());
 			}
 			String[] items = values.toArray(new String[values.size()]);
-			return new XViewerComboCellEditor(parent, items, style | SWT.READ_ONLY);
+			return new XViewerComboCellEditor(parent, items, SWT.BORDER | SWT.READ_ONLY);
 		} else {
-			XViewerTextCellEditor editor = new XViewerTextCellEditor(parent, style);
+			XViewerTextCellEditor editor = new XViewerTextCellEditor(parent, SWT.BORDER);
 			editor.setValidator(new ICellEditorValidator() {
 
 				@Override

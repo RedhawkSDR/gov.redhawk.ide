@@ -102,8 +102,8 @@ public class ViewerSequenceProperty extends ViewerProperty<SimpleSequence> {
 	}
 
 	@Override
-	public XViewerCellEditor createCellEditor(Composite parent, int style) {
-		return new XViewerDialogCellEditor(parent, style) {
+	public XViewerCellEditor createCellEditor(Composite parent) {
+		return new XViewerDialogCellEditor(parent) {
 
 			@SuppressWarnings("restriction")
 			@Override

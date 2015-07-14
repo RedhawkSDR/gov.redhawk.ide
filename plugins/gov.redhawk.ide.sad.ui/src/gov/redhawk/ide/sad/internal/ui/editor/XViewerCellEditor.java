@@ -26,7 +26,7 @@ public abstract class XViewerCellEditor extends Composite {
 	boolean valid = false;
 	private ControlDecoration decoration = null;
 
-	public XViewerCellEditor(Composite parent, int style) {
+	public XViewerCellEditor(Composite parent) {
 		super(parent, SWT.NONE);
 
 		validator = null;

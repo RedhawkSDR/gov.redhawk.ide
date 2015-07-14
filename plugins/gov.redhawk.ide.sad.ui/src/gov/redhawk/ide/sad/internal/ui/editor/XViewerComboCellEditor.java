@@ -28,7 +28,7 @@ public class XViewerComboCellEditor extends XViewerCellEditor {
 	}
 
 	public XViewerComboCellEditor(Composite parent, String[] items, int style) {
-		super(parent, style);
+		super(parent);
 
 		combo = new CCombo(this, style);
 		combo.setItems(items);

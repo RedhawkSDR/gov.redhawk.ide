@@ -24,7 +24,7 @@ public class XViewerTextCellEditor extends XViewerCellEditor {
 	private ModifyListener modifyListener;
 
 	public XViewerTextCellEditor(Composite parent, int style) {
-		super(parent, style);
+		super(parent);
 
 		text = new Text(this, style);
 
