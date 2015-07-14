@@ -172,6 +172,11 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 					retList.add(new StopFeature(this));
 					retList.add(new ShowConsoleFeature(this));
 
+					// Only allow logging if a single element is selected
+					if (context.getPictogramElements().length == 1) {
+						retList.add(new LogLevelFeature(this));
+					}
+
 					// Don't add ability to remove components to Graphiti Waveform Explorer
 					if (!DUtil.isDiagramExplorer(getDiagramTypeProvider().getDiagram())) {
 						retList.add(new TerminateShapeFeature(this));
