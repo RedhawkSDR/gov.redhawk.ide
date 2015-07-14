@@ -11,6 +11,7 @@ import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
 import mil.jpeojtrs.sca.prf.StructValue;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 public abstract class SadPropertiesStructSequenceNestedProperty<E extends AbstractProperty> extends ItemProvider implements SadProperty {
 
@@ -82,5 +83,10 @@ public abstract class SadPropertiesStructSequenceNestedProperty<E extends Abstra
 	@Override
 	public String getID() {
 		return definition.getId();
+	}
+
+	@Override
+	public SadComponentInstantiation getComponentInstantiation() {
+		return getParent().getComponentInstantiation();
 	}
 }

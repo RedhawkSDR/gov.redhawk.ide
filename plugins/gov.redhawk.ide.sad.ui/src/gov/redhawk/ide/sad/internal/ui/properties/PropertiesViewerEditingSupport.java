@@ -46,7 +46,7 @@ public class PropertiesViewerEditingSupport implements XViewerControlFactory, XV
 		IStructuredSelection ss = (IStructuredSelection) xv.getSelection();
 		Object editElement = ss.getFirstElement();
 		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
-			final SadPropertyImpl< ? > prop = (SadPropertyImpl< ? >) editElement;
+			final SadProperty prop = (SadProperty) editElement;
 
 			String[] items = new String[] { "", prop.getDefinition().getId() };
 			XViewerComboCellEditor editor = new XViewerComboCellEditor(xv.getTree(), items, ced.getSwtStyle());
@@ -83,8 +83,8 @@ public class PropertiesViewerEditingSupport implements XViewerControlFactory, XV
 	 */
 	@Override
 	public void setInput(Control c, CellEditDescriptor ced, Object selObject) {
-		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId()) && selObject instanceof SadPropertyImpl< ? >) {
-			SadPropertyImpl< ? > prop = ((SadPropertyImpl< ? >) selObject);
+		if (ced.getInputField().equals(PropertiesViewerFactory.EXTERNAL.getId())) {
+			SadProperty prop = ((SadProperty) selObject);
 			String value = getUniqueValue(prop);
 			((XViewerCellEditor) c).setValue(value);
 		} else if (ced.getInputField().equals(PropertiesViewerFactory.SAD_VALUE.getId())) {
@@ -95,13 +95,13 @@ public class PropertiesViewerEditingSupport implements XViewerControlFactory, XV
 		}
 	}
 
-	private String getUniqueValue(SadPropertyImpl< ? > viewerProp) {
+	private String getUniqueValue(SadProperty viewerProp) {
 		if (viewerProp.getExternalID() != null) {
 			return viewerProp.getExternalID();
 		}
 
 		ExternalProperty prop = SadFactory.eINSTANCE.createExternalProperty();
-		prop.setPropID(viewerProp.resolveExternalID());
+		prop.setPropID(viewerProp.getID());
 		SoftwareAssembly sad = ScaEcoreUtils.getEContainerOfType(viewerProp.getComponentInstantiation(), SoftwareAssembly.class);
 		for (int i = 1; !DuplicateAssemblyExternalPropertyIDConstraint.validateProperty(prop, sad); i++) {
 			prop.setPropID(viewerProp.getID() + "_" + i);

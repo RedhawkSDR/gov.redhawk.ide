@@ -122,6 +122,7 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 		}
 	}
 
+	@Override
 	public SadComponentInstantiation getComponentInstantiation() {
 		return getComponent().getComponentInstantiation();
 	}
@@ -142,15 +143,6 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 	@Override
 	public boolean isAssemblyControllerProperty() {
 		return getComponent().isAssemblyController();
-	}
-
-	public String resolveExternalID() {
-		String externalIdentifier = getExternalID();
-		if (externalIdentifier != null) {
-			return externalIdentifier;
-		} else {
-			return this.getID();
-		}
 	}
 
 	protected void setFeatureValue(EStructuralFeature feature, Object value) {
@@ -185,7 +177,7 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 
 	@Override
 	public Collection< ? > getKinds() {
-		if (getParent() instanceof SadPropertyImpl< ? >) {
+		if (getParent() instanceof SadProperty) {
 			return ((SadProperty) getParent()).getKinds();
 		}
 		return getKindTypes();

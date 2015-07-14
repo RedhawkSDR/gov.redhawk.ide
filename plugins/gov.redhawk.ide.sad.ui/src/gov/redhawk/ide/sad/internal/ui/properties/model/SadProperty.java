@@ -3,6 +3,7 @@ package gov.redhawk.ide.sad.internal.ui.properties.model;
 import java.util.Collection;
 
 import mil.jpeojtrs.sca.prf.AbstractProperty;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 public interface SadProperty {
 
@@ -25,5 +26,7 @@ public interface SadProperty {
 	String getID();
 
 	Collection< ? > getKinds();
+
+	SadComponentInstantiation getComponentInstantiation();
 
 }
