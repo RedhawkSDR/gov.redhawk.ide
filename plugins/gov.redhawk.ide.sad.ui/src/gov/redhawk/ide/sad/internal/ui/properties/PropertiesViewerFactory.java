@@ -16,7 +16,6 @@ import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSequenceProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerSimpleProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructProperty;
 import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceProperty;
-import gov.redhawk.ide.sad.internal.ui.properties.model.ViewerStructSequenceSimpleProperty;
 
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn.SortDataType;
@@ -25,8 +24,7 @@ import org.eclipse.nebula.widgets.xviewer.customize.IXViewerCustomizations;
 import org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor;
 import org.eclipse.nebula.widgets.xviewer.edit.ExtendedViewerColumn;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * 
@@ -63,18 +61,27 @@ public class PropertiesViewerFactory extends XViewerFactory {
 		SortDataType.String_MultiLine, false, "Description of the property");
 	
 	static {
-		EXTERNAL.addMapEntry(ViewerSimpleProperty.class, new CellEditDescriptor(Combo.class, SWT.BORDER, EXTERNAL.getId(), ViewerProperty.class));
-		EXTERNAL.addMapEntry(ViewerSequenceProperty.class, new CellEditDescriptor(Combo.class, SWT.BORDER, EXTERNAL.getId(), ViewerProperty.class));
-		EXTERNAL.addMapEntry(ViewerStructProperty.class, new CellEditDescriptor(Combo.class, SWT.BORDER, EXTERNAL.getId(), ViewerProperty.class));
-		EXTERNAL.addMapEntry(ViewerStructSequenceProperty.class, new CellEditDescriptor(Combo.class, SWT.BORDER, EXTERNAL.getId(), ViewerProperty.class));
-		EXTERNAL.addMapEntry(ViewerStructSequenceSimpleProperty.class, new CellEditDescriptor(Combo.class, SWT.BORDER, EXTERNAL.getId(), ViewerProperty.class));
+		// We handle the creation of cell editors ourselves to behave in a more EMF-like manner; however, to work
+		// within XViewer, it is still necessary to register a CellEditDescriptor for each item class. There are only
+		// two fields that are used: "control" and "inputField". The former must be non-null, or XViewerEditAdapter
+		// will not call the createControl() method, but is otherwise ignored. The latter is the column ID and is used
+		// to distinguish what value we are editing.
 		
-		SAD_VALUE.addMapEntry(ViewerSimpleProperty.class, new CellEditDescriptor(Text.class, SWT.BORDER, SAD_VALUE.getId(), ViewerSimpleProperty.class));
-		SAD_VALUE.addMapEntry(ViewerSequenceProperty.class, new CellEditDescriptor(Text.class, SWT.BORDER, SAD_VALUE.getId(), ViewerSequenceProperty.class));
-		SAD_VALUE.addMapEntry(ViewerStructSequenceProperty.class, new CellEditDescriptor(Text.class, SWT.BORDER, SAD_VALUE.getId(),
-			ViewerStructSequenceProperty.class));
-		SAD_VALUE.addMapEntry(ViewerStructSequenceSimpleProperty.class, new CellEditDescriptor(Text.class, SWT.BORDER, SAD_VALUE.getId(),
-			ViewerStructSequenceSimpleProperty.class));
+		// All top-level property types can potentially set an external ID; at edit time, we check whether the current
+		// selection is actually a top-level property (i.e., is not part of a struct).
+		CellEditDescriptor externalDescriptor = new CellEditDescriptor(Control.class, SWT.NONE, EXTERNAL.getId(), ViewerProperty.class);
+		EXTERNAL.addMapEntry(ViewerSimpleProperty.class, externalDescriptor);
+		EXTERNAL.addMapEntry(ViewerSequenceProperty.class, externalDescriptor);
+		EXTERNAL.addMapEntry(ViewerStructProperty.class, externalDescriptor);
+		EXTERNAL.addMapEntry(ViewerStructSequenceProperty.class, externalDescriptor);
+
+		// SAD values can only be set via the simple, simple sequence and struct sequence items. Struct properties do
+		// not provide an editor themselves, but rather rely on the child items. The children of struct sequences are
+		// used strictly for display and cannot be directly edited.
+		CellEditDescriptor sadValueDescriptor = new CellEditDescriptor(Control.class, SWT.NONE, SAD_VALUE.getId(), ViewerProperty.class);
+		SAD_VALUE.addMapEntry(ViewerSimpleProperty.class, sadValueDescriptor);
+		SAD_VALUE.addMapEntry(ViewerSequenceProperty.class, sadValueDescriptor);
+		SAD_VALUE.addMapEntry(ViewerStructSequenceProperty.class, sadValueDescriptor);
 	}
 
 	/**
