@@ -5,16 +5,21 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.edit.provider.ItemProvider;
 
 import mil.jpeojtrs.sca.prf.AbstractProperty;
 import mil.jpeojtrs.sca.prf.StructSequence;
 import mil.jpeojtrs.sca.prf.StructSequenceRef;
 import mil.jpeojtrs.sca.prf.StructValue;
 
-public abstract class SadPropertiesStructSequenceNestedProperty<E extends AbstractProperty> extends SadPropertyImpl<E> {
+public abstract class SadPropertiesStructSequenceNestedProperty<E extends AbstractProperty> extends ItemProvider implements SadProperty {
+
+	protected final E definition;
 
 	public SadPropertiesStructSequenceNestedProperty(AdapterFactory adapterFactory, E def, Object parent) {
-		super(adapterFactory, def, parent);
+		super(adapterFactory);
+		this.parent = parent;
+		this.definition = def;
 	}
 
 	@Override
@@ -42,7 +47,40 @@ public abstract class SadPropertiesStructSequenceNestedProperty<E extends Abstra
 	}
 
 	@Override
-	protected Collection< ? > getKindTypes() {
+	public Collection< ? > getKinds() {
+		return getParent().getKinds();
+	}
+
+	@Override
+	public AbstractProperty getDefinition() {
+		return definition;
+	}
+
+	@Override
+	public boolean isAssemblyControllerProperty() {
+		return getParent().isAssemblyControllerProperty();
+	}
+
+	@Override
+	public String getExternalID() {
 		return null;
+	}
+
+	@Override
+	public boolean canSetExternalId() {
+		return false;
+	}
+
+	@Override
+	public void setExternalID(String newExternalID) {
+	}
+
+	@Override
+	public void setSadValue(Object value) {
+	}
+
+	@Override
+	public String getID() {
+		return definition.getId();
 	}
 }
