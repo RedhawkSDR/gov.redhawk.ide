@@ -192,7 +192,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 			if (context.getPictogramElements()[0] instanceof ContainerShape) {
 				Diagram diagram = DUtil.findDiagram((ContainerShape) context.getPictogramElements()[0]);
-				if (obj instanceof SadComponentInstantiation && (DUtil.isDiagramRuntime(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
+				if (obj instanceof SadComponentInstantiation && DUtil.isDiagramRuntime(diagram)) {
 					retList.add(new StartFeature(this));
 					retList.add(new StopFeature(this));
 					retList.add(new ShowConsoleFeature(this));
