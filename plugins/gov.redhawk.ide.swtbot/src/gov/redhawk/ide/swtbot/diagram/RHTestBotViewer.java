@@ -10,6 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.diagram;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -18,8 +19,11 @@ import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.palette.PaletteEntry;
+import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swtbot.eclipse.gef.finder.finders.PaletteFinder;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefViewer;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
@@ -27,12 +31,15 @@ import org.eclipse.swtbot.swt.finder.finders.UIThreadRunnable;
 import org.eclipse.swtbot.swt.finder.results.VoidResult;
 import org.hamcrest.Matcher;
 
+import gov.redhawk.ide.swtbot.matchers.NamespacedToolEntryMatcher;
+
 /**
  * Viewer class to use RHTestBotCanvas for better dragging functionality with Graphiti diagrams.
  */
 public class RHTestBotViewer extends SWTBotGefViewer {
 
 	private SWTBotGefEditPart palettePart = null;
+
 	/**
 	 * @param graphicalViewer
 	 * @throws WidgetNotFoundException
@@ -69,19 +76,55 @@ public class RHTestBotViewer extends SWTBotGefViewer {
 	public RHTestBotCanvas getCanvas() {
 		return (RHTestBotCanvas) canvas;
 	}
-	
-	public SWTBotGefEditPart getPalettePart() {
+
+	private SWTBotGefEditPart getPalettePart() {
 		if (palettePart == null) {
 			palettePart = createEditPart(editDomain.getPaletteViewer().getRootEditPart());
 		}
 		return palettePart;
 	}
-	
-	public EditDomain getEditDomain() {
+
+	private EditDomain getEditDomain() {
 		return editDomain;
 	}
-	
-	public List<SWTBotGefEditPart> paletteEditParts(Matcher< ? extends EditPart> matcher) throws WidgetNotFoundException {
+
+	/**
+	 * Finds {@link org.eclipse.gef.EditPart}s in the palette.
+	 * @param matcher the matcher that matches on {@link org.eclipse.gef.EditPart}
+	 * @return a collection of {@link SWTBotGefEditPart}
+	 * @throws WidgetNotFoundException
+	 */
+	public List<SWTBotGefEditPart> editPartsPalette(Matcher< ? extends EditPart> matcher) throws WidgetNotFoundException {
 		return getPalettePart().descendants(matcher);
+	}
+
+	public RHTestBotViewer activateNamespacedTool(final String[] labels) {
+		activateNamespacedTool(labels, 0);
+		return this;
+	}
+
+	public RHTestBotViewer activateNamespacedTool(final String[] labels, final int index) {
+		final WidgetNotFoundException[] exception = new WidgetNotFoundException[1];
+		UIThreadRunnable.syncExec(new VoidResult() {
+			public void run() {
+				final EditDomain editDomain = getEditDomain();
+				final List<PaletteEntry> entries = new PaletteFinder(editDomain).findEntries(new NamespacedToolEntryMatcher(labels));
+				if (entries.size() > 0) {
+					final PaletteEntry paletteEntry = entries.get(index);
+					if (paletteEntry instanceof ToolEntry) {
+						editDomain.getPaletteViewer().setActiveTool((ToolEntry) paletteEntry);
+					} else {
+						exception[0] = new WidgetNotFoundException(
+							String.format("%s is not a tool entry, it's a %s", Arrays.toString(labels).toString(), paletteEntry.getClass().getName()));
+					}
+				} else {
+					exception[0] = new WidgetNotFoundException(Arrays.toString(labels));
+				}
+			}
+		});
+		if (exception[0] != null) {
+			throw exception[0];
+		}
+		return this;
 	}
 }

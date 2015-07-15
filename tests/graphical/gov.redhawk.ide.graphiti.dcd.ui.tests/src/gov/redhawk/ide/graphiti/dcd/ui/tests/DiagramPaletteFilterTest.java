@@ -10,11 +10,6 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.tests;
 
-import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteFilterFigure;
-import gov.redhawk.ide.swtbot.NodeUtils;
-import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
-import gov.redhawk.ide.swtbot.diagram.PaletteUtils;
-
 import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -28,9 +23,15 @@ import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefFigureCanvas;
 import org.junit.Assert;
 import org.junit.Test;
 
+import gov.redhawk.ide.graphiti.ui.palette.RHGraphitiPaletteFilterFigure;
+import gov.redhawk.ide.swtbot.NodeUtils;
+import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
+import gov.redhawk.ide.swtbot.diagram.PaletteUtils;
+import gov.redhawk.ide.swtbot.diagram.RHBotGefEditor;
+
 public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 
-	private SWTBotGefEditor editor;
+	private RHBotGefEditor editor;
 	private String projectName;
 	private static final String DOMAIN_NAME = "REDHAWK_DEV";
 	private static final String GPP = "GPP";
@@ -145,7 +146,7 @@ public class DiagramPaletteFilterTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		editor.setFocus();
 
 		Assert.assertTrue(errorMissing1, PaletteUtils.toolIsPresent(editor, device1));

@@ -261,7 +261,7 @@ public class ScaExplorerTestUtils {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
 		SWTBotTreeItem waveformTreeItem = getTreeItemFromScaExplorer(bot, waveformParentPath, waveform);
-		SWTBotTreeItem componentEntry = waveformTreeItem.expandNode(componentName);
+		SWTBotTreeItem componentEntry = waveformTreeItem.expandNode(componentName.split("\\."));
 		componentEntry.select();
 		SWTBotMenu terminate = componentEntry.contextMenu("Terminate");
 		terminate.click();
@@ -742,7 +742,7 @@ public class ScaExplorerTestUtils {
 	public static void launchComponentFromTargetSDR(SWTWorkbenchBot bot, String componentName, String implementationId) {
 		SWTBotView scaExplorerView = bot.viewById(SCA_EXPLORER_VIEW_ID);
 		scaExplorerView.setFocus();
-		SWTBotTreeItem componentEntry = scaExplorerView.bot().tree().expandNode("Target SDR", "Components", componentName);
+		SWTBotTreeItem componentEntry = scaExplorerView.bot().tree().expandNode("Target SDR", "Components").expandNode(componentName.split("\\."));
 		componentEntry.select();
 		SWTBotMenu launchInSandbox = componentEntry.contextMenu("Launch in Sandbox");
 		SWTBotMenu impl = launchInSandbox.menu(implementationId);

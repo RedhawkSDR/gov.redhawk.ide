@@ -97,7 +97,7 @@ public class AddExternalPortAction extends Action {
 		port.setComponentInstantiationRef(ref);
 		if (this.componentPort instanceof ProvidesPortStub) {
 			final ProvidesPortStub providesPort = (ProvidesPortStub) this.componentPort;
-			port.setProvidesIndentifier(providesPort.getProvides().getProvidesName());
+			port.setProvidesIdentifier(providesPort.getProvides().getProvidesName());
 		} else if (this.componentPort instanceof UsesPortStub) {
 			final UsesPortStub usesPort = (UsesPortStub) this.componentPort;
 			port.setUsesIdentifier(usesPort.getUses().getUsesName());

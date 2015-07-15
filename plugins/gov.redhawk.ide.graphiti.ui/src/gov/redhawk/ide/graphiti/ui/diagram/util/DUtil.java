@@ -115,7 +115,6 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	public static final String DIAGRAM_CONTEXT = "DiagramContext"; // key for Diagram contexts
 	public static final String DIAGRAM_CONTEXT_DESIGN = "design";
-	public static final String DIAGRAM_CONTEXT_DOMAIN = "domain";
 	public static final String DIAGRAM_CONTEXT_LOCAL = "local";
 	public static final String DIAGRAM_CONTEXT_TARGET_SDR = "target-sdr";
 	public static final String DIAGRAM_CONTEXT_EXPLORER = "explorer";
@@ -1049,8 +1048,8 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 						// determine which usesPortStub we are targeting
 						UsesPortStub usesPortStub = null;
 						for (UsesPortStub p : findByStub.getUses()) {
-							if (p != null && sadConnectInterface.getUsesPort().getUsesIndentifier() != null
-								&& p.getName().equals(sadConnectInterface.getUsesPort().getUsesIndentifier())) {
+							if (p != null && sadConnectInterface.getUsesPort().getUsesIdentifier() != null
+								&& p.getName().equals(sadConnectInterface.getUsesPort().getUsesIdentifier())) {
 								usesPortStub = p;
 							}
 						}
@@ -1242,7 +1241,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * 
+	 * Determines if the diagram is for the sandbox waveform.
 	 * @param resource
 	 * @return
 	 */
@@ -1251,26 +1250,37 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 	}
 
 	/**
-	 * Returns true if the diagram is running in local mode
+	 * Determines if this is a runtime diagram.
 	 * @param diagram
 	 * @return
 	 */
-	public static boolean isDiagramLocal(final Diagram diagram) {
+	public static boolean isDiagramRuntime(final Diagram diagram) {
 		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_LOCAL) || getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_EXPLORER);
 	}
 
 	/**
-	 * Returns true is the diagram is running in explorer mode
+	 * Determines if the diagram is running in explorer mode.
 	 */
 	public static boolean isDiagramExplorer(final Diagram diagram) {
 		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_EXPLORER);
 	}
 
+	/**
+	 * Determines if the diagram is a design-time diagram for a file in the target SDR (usually these editors are
+	 * read-only).
+	 * @param diagram
+	 * @return
+	 */
 	public static boolean isDiagramTargetSdr(final Diagram diagram) {
 		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_TARGET_SDR);
 	}
 
-	public static boolean isDiagramDesign(final Diagram diagram) {
+	/**
+	 * Determines if the diagram is a design-time diagram for file in the workspace.
+	 * @param diagram
+	 * @return
+	 */
+	public static boolean isDiagramWorkpace(final Diagram diagram) {
 		return getDiagramContext(diagram).equals(DIAGRAM_CONTEXT_DESIGN);
 	}
 
@@ -1295,7 +1305,7 @@ public class DUtil { // SUPPRESS CHECKSTYLE INLINE
 
 	public static void layout(DiagramEditor diagramEditor) {
 		Diagram diagram = diagramEditor.getDiagramTypeProvider().getDiagram();
-		if (isDiagramTargetSdr(diagram) || isDiagramLocal(diagram)) {
+		if (isDiagramTargetSdr(diagram) || isDiagramRuntime(diagram)) {
 			DiagramBehavior diagramBehavior = diagramEditor.getDiagramBehavior();
 			IFeatureProvider featureProvider = diagramEditor.getDiagramTypeProvider().getFeatureProvider();
 

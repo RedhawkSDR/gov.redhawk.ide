@@ -20,10 +20,10 @@ import org.junit.Before;
 @SuppressWarnings("restriction")
 public abstract class AbstractGraphitiTest extends UITest {
 
-	protected RHTestBot gefBot; // SUPPRESS CHECKSTYLE VisibilityModifier
+	protected RHSWTGefBot gefBot; // SUPPRESS CHECKSTYLE VisibilityModifier
 
 	@Before
 	public void beforeTest() throws Exception {
-		gefBot = new RHTestBot();
+		gefBot = new RHSWTGefBot();
 	}
 }

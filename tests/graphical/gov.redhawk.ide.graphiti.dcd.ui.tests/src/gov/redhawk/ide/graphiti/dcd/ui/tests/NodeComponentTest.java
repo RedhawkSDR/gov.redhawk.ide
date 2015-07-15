@@ -10,6 +10,18 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+import org.junit.Assert;
+import org.junit.Test;
+
 import gov.redhawk.ide.graphiti.dcd.ext.impl.DeviceShapeImpl;
 import gov.redhawk.ide.graphiti.dcd.ext.impl.ServiceShapeImpl;
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
@@ -19,25 +31,11 @@ import gov.redhawk.ide.swtbot.NodeUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.RHBotGefEditor;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
-
-import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
-import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
-import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
-import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
-import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
-import org.junit.Assert;
-import org.junit.Test;
 
 public class NodeComponentTest extends AbstractGraphitiTest {
 
-	private SWTBotGefEditor editor;
+	private RHBotGefEditor editor;
 	private String projectName;
 	private static final String DOMAIN_NAME = "REDHAWK_DEV";
 	private static final String GPP = "GPP";
@@ -54,7 +52,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		editor.setFocus();
 
 		// Add to diagram from palette
@@ -88,9 +86,9 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		String deviceBaseName = "device";
 
 		NodeUtils.createNewNodeProject(bot, projectName, DOMAIN_NAME);
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 
-		DiagramTestUtils.addFromPaletteToDiagramWithNameSpace((RHBotGefEditor) editor, deviceName, 0, 0);
+		DiagramTestUtils.addFromPaletteToDiagram(editor, deviceName, 0, 0);
 		MenuUtils.save(editor);
 
 		// Build expected xml string for device
@@ -113,7 +111,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		editor.setFocus();
 
 		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);
@@ -132,7 +130,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		editor.setFocus();
 
 		SWTBotView view = MenuUtils.showView(gefBot, "org.eclipse.ui.views.PropertySheet");
@@ -154,7 +152,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 
 		// Make sure the edited property is updated in the XML
 		MenuUtils.save(editor);
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		String regex = "(?s).*value=\"" + newValue + "\"/>.*</componentproperties>.*";
 		DiagramTestUtils.openTabInEditor(editor, "DeviceManager.dcd.xml");
 		String editorText = editor.toTextEditor().getText();
@@ -169,7 +167,7 @@ public class NodeComponentTest extends AbstractGraphitiTest {
 		projectName = "No-Delete-Port-Test";
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		editor.setFocus();
 
 		DiagramTestUtils.addFromPaletteToDiagram(editor, GPP, 0, 0);

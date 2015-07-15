@@ -51,12 +51,12 @@ public class TopLevelSadRpmSpecTemplate
   protected final String TEXT_8 = NL + "BuildArch: noarch" + NL + "BuildRoot: %{_tmppath}/%{name}-%{version}" + NL + "" + NL + "%description";
   protected final String TEXT_9 = NL;
   protected final String TEXT_10 = NL + NL + "%prep" + NL + "%setup" + NL + "" + NL + "%install" + NL + "%__rm -rf $RPM_BUILD_ROOT" + NL + "%__mkdir_p \"$RPM_BUILD_ROOT%{_prefix}";
-  protected final String TEXT_11 = "/%{name}\"" + NL + "%__install -m 644 ";
+  protected final String TEXT_11 = "\"" + NL + "%__install -m 644 ";
   protected final String TEXT_12 = " $RPM_BUILD_ROOT%{_prefix}";
-  protected final String TEXT_13 = "/%{name}/";
+  protected final String TEXT_13 = "/";
   protected final String TEXT_14 = NL + NL + "%files" + NL + "%defattr(-,redhawk,redhawk)" + NL + "%dir %{_prefix}";
-  protected final String TEXT_15 = "/%{name}" + NL + "%{_prefix}";
-  protected final String TEXT_16 = "/%{name}/";
+  protected final String TEXT_15 = NL + "%{_prefix}";
+  protected final String TEXT_16 = "/";
   protected final String TEXT_17 = NL;
 
   public String generate(Object argument) throws CoreException
@@ -86,7 +86,7 @@ public class TopLevelSadRpmSpecTemplate
     }
     
     final List<ComponentFile> componentFiles = sad.getComponentFiles().getComponentFile();
-    final String waveformSubDir = "/dom/waveforms";
+    final String waveformSubDir = "/dom/waveforms/" + sad.getName().replace('.', '/');
 
     stringBuffer.append(TEXT_1);
     stringBuffer.append(sad.getName());

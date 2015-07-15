@@ -10,6 +10,15 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.tests;
 
+import java.util.List;
+
+import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.junit.Assert;
+import org.junit.Test;
+
 import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.ide.swtbot.MenuUtils;
@@ -17,24 +26,14 @@ import gov.redhawk.ide.swtbot.NodeUtils;
 import gov.redhawk.ide.swtbot.diagram.AbstractGraphitiTest;
 import gov.redhawk.ide.swtbot.diagram.DiagramTestUtils;
 import gov.redhawk.ide.swtbot.diagram.FindByUtils;
-
-import java.util.List;
-
+import gov.redhawk.ide.swtbot.diagram.RHBotGefEditor;
 import mil.jpeojtrs.sca.partitioning.FindByStub;
 import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
 import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
-import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefConnectionEditPart;
-import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
-import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
-import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
-import org.junit.Assert;
-import org.junit.Test;
-
 public class FindByTest extends AbstractGraphitiTest {
 
-	private SWTBotGefEditor editor;
+	private RHBotGefEditor editor;
 	private String projectName;
 	private static final String DOMAIN_NAME = "REDHAWK_DEV";
 	private static final String GPP = "GPP";
@@ -59,7 +58,7 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		editor.setFocus();
 
 		// Add component to the diagram
@@ -102,7 +101,7 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		editor.setFocus();
 
 		for (String s : findByList) {
@@ -130,7 +129,7 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		editor.setFocus();
 
 		// Add component to the diagram
@@ -162,7 +161,7 @@ public class FindByTest extends AbstractGraphitiTest {
 			Assert.assertTrue(e.getMessage().matches(".*" + "Confirm Delete" + ".*"));
 		}
 
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		editor.setFocus();
 		gefBot.menu("File").menu("Save").click();
 
@@ -189,7 +188,7 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		editor.setFocus();
 
 		// Add component to the diagram
@@ -268,7 +267,7 @@ public class FindByTest extends AbstractGraphitiTest {
 
 		// Create an empty node project
 		NodeUtils.createNewNodeProject(gefBot, projectName, DOMAIN_NAME);
-		editor = gefBot.gefEditor(projectName);
+		editor = gefBot.rhGefEditor(projectName);
 		editor.setFocus();
 
 		// Add component to the diagram

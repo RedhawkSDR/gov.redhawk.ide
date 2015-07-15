@@ -356,7 +356,7 @@ public class LocalApplicationFactory {
 				}
 
 				if (target != null) {
-					final String usesID = connection.getUsesPort().getUsesIndentifier();
+					final String usesID = connection.getUsesPort().getUsesIdentifier();
 					if (connection.getUsesPort().getComponentInstantiationRef() == null) {
 						app.getStreams().getErrStream().println("Failed to create connection " + connection.getId());
 						continue;

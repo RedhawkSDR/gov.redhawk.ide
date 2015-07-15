@@ -392,8 +392,8 @@ public class GraphitiDcdDiagramUpdateFeature extends DefaultUpdateDiagramFeature
 					// determine which usesPortStub
 					UsesPortStub usesPortStub = null;
 					for (UsesPortStub p : findByStub.getUses()) {
-						if (p != null && dcdConnectInterface.getUsesPort().getUsesIndentifier() != null
-							&& p.getName().equals(dcdConnectInterface.getUsesPort().getUsesIndentifier())) {
+						if (p != null && dcdConnectInterface.getUsesPort().getUsesIdentifier() != null
+							&& p.getName().equals(dcdConnectInterface.getUsesPort().getUsesIdentifier())) {
 							usesPortStub = p;
 						}
 					}

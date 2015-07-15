@@ -815,12 +815,12 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 			ExternalPorts externalPorts = waveform.getProfileObj().getExternalPorts();
 			if (externalPorts != null) {
 				for (final Port p : externalPorts.getPort()) {
-					if (name.equals(p.getProvidesIndentifier()) || name.equals(p.getUsesIdentifier()) || name.equals(p.getExternalName())) {
+					if (name.equals(p.getProvidesIdentifier()) || name.equals(p.getUsesIdentifier()) || name.equals(p.getExternalName())) {
 						final ScaComponent comp = findComponent(p.getComponentInstantiationRef().getRefid());
 						if (comp != null) {
 							String portName;
-							if (p.getProvidesIndentifier() != null) {
-								portName = p.getProvidesIndentifier();
+							if (p.getProvidesIdentifier() != null) {
+								portName = p.getProvidesIdentifier();
 							} else {
 								portName = p.getUsesIdentifier();
 							}
@@ -860,8 +860,8 @@ public class ApplicationImpl extends PlatformObject implements IProcess, Applica
 		for (final Port p : externalPorts.getPort()) {
 			final String nameOnComponent;
 			final String direction;
-			if (p.getProvidesIndentifier() != null) {
-				nameOnComponent = p.getProvidesIndentifier();
+			if (p.getProvidesIdentifier() != null) {
+				nameOnComponent = p.getProvidesIdentifier();
 				direction = "Provides";
 			} else {
 				nameOnComponent = p.getUsesIdentifier();

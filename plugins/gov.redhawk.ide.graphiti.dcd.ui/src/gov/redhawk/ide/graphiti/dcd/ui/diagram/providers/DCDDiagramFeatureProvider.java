@@ -11,41 +11,8 @@
  */
 package gov.redhawk.ide.graphiti.dcd.ui.diagram.providers;
 
-import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
-import gov.redhawk.ide.graphiti.dcd.ext.ServiceShape;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.custom.runtime.StartFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.custom.runtime.StopFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.custom.runtime.TerminateShapeFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.DCDConnectionInterfaceDeleteFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.ReleaseShapeFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.reconnect.DCDReconnectFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update.DCDConnectionInterfaceUpdateFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update.GraphitiDcdDiagramUpdateFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.ServiceCreateFeature;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.ServicePattern;
-import gov.redhawk.ide.graphiti.ext.RHContainerShape;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseAllShapesFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseShapeFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandAllShapesFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandShapeFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.FindByEditFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
-import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
-import mil.jpeojtrs.sca.partitioning.FindByStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
@@ -81,6 +48,39 @@ import org.eclipse.graphiti.pattern.AddFeatureForPattern;
 import org.eclipse.graphiti.pattern.DirectEditingFeatureForPattern;
 import org.eclipse.graphiti.pattern.IPattern;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
+
+import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
+import gov.redhawk.ide.graphiti.dcd.ext.ServiceShape;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.custom.runtime.TerminateShapeFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.DCDConnectionInterfaceDeleteFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.ReleaseShapeFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.reconnect.DCDReconnectFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update.DCDConnectionInterfaceUpdateFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.update.GraphitiDcdDiagramUpdateFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.DeviceCreateFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.features.create.ServiceCreateFeature;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DCDConnectInterfacePattern;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.DevicePattern;
+import gov.redhawk.ide.graphiti.dcd.ui.diagram.patterns.ServicePattern;
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseAllShapesFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.CollapseShapeFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandAllShapesFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ExpandShapeFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.FindByEditFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StartFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StopFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
+import mil.jpeojtrs.sca.partitioning.FindByStub;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
 
 public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
@@ -167,10 +167,15 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 			Object obj = DUtil.getBusinessObject(context.getPictogramElements()[0]);
 			if (context.getPictogramElements()[0] instanceof RHContainerShape) {
 				Diagram diagram = DUtil.findDiagram((RHContainerShape) context.getPictogramElements()[0]);
-				if (obj instanceof DcdComponentInstantiation && (DUtil.isDiagramLocal(diagram) || DUtil.isDiagramTargetSdr(diagram))) {
+				if (obj instanceof DcdComponentInstantiation && DUtil.isDiagramRuntime(diagram)) {
 					retList.add(new StartFeature(this));
 					retList.add(new StopFeature(this));
 					retList.add(new ShowConsoleFeature(this));
+
+					// Only allow logging if a single element is selected
+					if (context.getPictogramElements().length == 1) {
+						retList.add(new LogLevelFeature(this));
+					}
 
 					// Don't add ability to remove components to Graphiti Waveform Explorer
 					if (!DUtil.isDiagramExplorer(getDiagramTypeProvider().getDiagram())) {
@@ -259,7 +264,7 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 		}
 
 		// If the element is in the Chalkboard, it's removal will be handled by the Release and Terminate features
-		if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+		if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
 			if (context.getPictogramElement() instanceof DeviceShape || context.getPictogramElement() instanceof ServiceShape) {
 				return new ReleaseShapeFeature(this);
 			}
@@ -336,7 +341,7 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 	@Override
 	public IReconnectionFeature getReconnectionFeature(IReconnectionContext context) {
-		if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+		if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
 			// We don't currently support reconnect actions for runtime
 			return null;
 		}

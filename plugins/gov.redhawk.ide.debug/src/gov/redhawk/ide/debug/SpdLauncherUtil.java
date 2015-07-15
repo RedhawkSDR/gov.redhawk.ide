@@ -790,21 +790,7 @@ public final class SpdLauncherUtil {
 				EcoreUtil.delete(localLaunch);
 			}
 		});
-		if (localLaunch.getLaunch() != null) {
-			final Job job = new Job("Terminating") {
-
-				@Override
-				protected IStatus run(final IProgressMonitor monitor) {
-					try {
-						localLaunch.getLaunch().terminate();
-					} catch (final DebugException e) {
-						return new Status(e.getStatus().getSeverity(), ScaDebugPlugin.ID, "Failed to terminate.", e);
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
-		} else if (localLaunch instanceof LocalScaWaveform) {
+		if (localLaunch instanceof LocalScaWaveform) {
 			final Job job = new Job("Terminating") {
 
 				@Override

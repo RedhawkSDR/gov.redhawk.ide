@@ -13,14 +13,8 @@ package gov.redhawk.ide.graphiti.sad.ui.properties;
 import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 import gov.redhawk.ide.graphiti.ui.properties.AdvancedFilter;
 
-/**
- * 
- */
 public class SadAdvancedFilter extends AdvancedFilter {
 
-	/**
-	 * 
-	 */
 	public SadAdvancedFilter() {
 		super(SadComponentInstantiation.class);
 	}

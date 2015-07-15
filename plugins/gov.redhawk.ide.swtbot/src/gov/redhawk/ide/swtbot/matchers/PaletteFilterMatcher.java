@@ -8,23 +8,22 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package gov.redhawk.ide.graphiti.sad.ui.properties;
+package gov.redhawk.ide.swtbot.matchers;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef.EditPart;
+import org.eclipse.swtbot.swt.finder.matchers.AbstractMatcher;
+import org.hamcrest.Description;
 
-import gov.redhawk.ide.graphiti.sad.ext.ComponentShape;
-import gov.redhawk.ide.graphiti.ui.properties.AdvancedEditPartPropertySection;
-import gov.redhawk.model.sca.ScaComponent;
-
-public class SadAdvancedEditPartPropertySection extends AdvancedEditPartPropertySection {
+public class PaletteFilterMatcher extends AbstractMatcher<EditPart> {
 
 	@Override
-	protected Object getScaObjectForEditPart(EditPart ep) {
-		if (ep.getModel() instanceof ComponentShape) {
-			return Platform.getAdapterManager().getAdapter(ep, ScaComponent.class);
-		}
-		return super.getScaObjectForEditPart(ep);
+	public void describeTo(Description description) {
+		description.appendText("of type RHGraphitiPaletteFilterEditPart");
+	}
+
+	@Override
+	protected boolean doMatch(Object item) {
+		return "RHGraphitiPaletteFilterEditPart".equals(item.getClass().getSimpleName());
 	}
 
 }

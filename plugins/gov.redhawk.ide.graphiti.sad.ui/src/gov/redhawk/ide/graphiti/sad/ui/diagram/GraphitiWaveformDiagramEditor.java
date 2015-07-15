@@ -129,7 +129,7 @@ public class GraphitiWaveformDiagramEditor extends DiagramEditor {
 
 			@Override
 			protected ContextMenuProvider createContextMenuProvider() {
-				if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+				if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
 					return new ChalkboardContextMenuProvider(getDiagramContainer().getGraphicalViewer(), getDiagramContainer().getActionRegistry(),
 						getConfigurationProvider());
 				}

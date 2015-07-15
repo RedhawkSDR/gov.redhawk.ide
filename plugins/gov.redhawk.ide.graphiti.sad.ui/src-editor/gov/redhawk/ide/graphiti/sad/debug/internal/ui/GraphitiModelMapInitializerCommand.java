@@ -89,7 +89,7 @@ public class GraphitiModelMapInitializerCommand extends AbstractCommand {
 		final SadComponentInstantiationRef usesCompRef = SadFactory.eINSTANCE.createSadComponentInstantiationRef();
 		usesCompRef.setInstantiation(modelMap.get(comp));
 		usesPort.setComponentInstantiationRef(usesCompRef);
-		usesPort.setUsesIndentifier(uses.getName());
+		usesPort.setUsesIdentifier(uses.getName());
 		sadCon.setUsesPort(usesPort);
 		sadCon.setId(con.getId());
 

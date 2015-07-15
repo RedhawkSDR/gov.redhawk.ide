@@ -580,7 +580,7 @@ public class GraphitiDcdModelMap {
 			return null;
 		}
 		sourceDevice.fetchPorts(null);
-		final ScaUsesPort usesPort = (ScaUsesPort) sourceDevice.getScaPort(conn.getUsesPort().getUsesIndentifier());
+		final ScaUsesPort usesPort = (ScaUsesPort) sourceDevice.getScaPort(conn.getUsesPort().getUsesIdentifier());
 		org.omg.CORBA.Object targetObj = null;
 		if (conn.getComponentSupportedInterface() != null) {
 			final ScaDevice< ? > targetDevice = get((DcdComponentInstantiation) conn.getComponentSupportedInterface().getComponentInstantiationRef().getInstantiation());

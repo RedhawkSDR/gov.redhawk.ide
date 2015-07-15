@@ -10,14 +10,19 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.diagram;
 
+import java.util.List;
+
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditPart;
 import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.finders.UIThreadRunnable;
 import org.eclipse.swtbot.swt.finder.results.Result;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.hamcrest.Matcher;
 
 /**
  * Bot editor class to use RHTestBotEditor for better dragging functionality with Graphiti diagrams.
@@ -57,6 +62,24 @@ public class RHBotGefEditor extends SWTBotGefEditor {
 	@Override
 	public void drag(final int fromXPosition, final int fromYPosition, final int toXPosition, final int toYPosition) {
 		getDragViewer().drag(fromXPosition, fromYPosition, toXPosition, toYPosition);
+	}
+
+	public void activateNamespacedTool(final String[] labels) {
+		getDragViewer().activateNamespacedTool(labels);
+	}
+
+	public void activateNamespacedTool(final String[] labels, final int index) {
+		getDragViewer().activateNamespacedTool(labels, index);
+	}
+
+	/**
+	 * Finds {@link org.eclipse.gef.EditPart}s in the palette.
+	 * @param matcher the matcher that matches on {@link org.eclipse.gef.EditPart}
+	 * @return a collection of {@link SWTBotGefEditPart}
+	 * @throws WidgetNotFoundException
+	 */
+	public List<SWTBotGefEditPart> editPartsPalette(Matcher< ? extends EditPart> matcher) throws WidgetNotFoundException {
+		return getDragViewer().editPartsPalette(matcher);
 	}
 
 }

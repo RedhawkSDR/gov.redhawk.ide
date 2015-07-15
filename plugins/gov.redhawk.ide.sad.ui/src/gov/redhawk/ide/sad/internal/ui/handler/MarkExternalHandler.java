@@ -163,7 +163,7 @@ public class MarkExternalHandler extends AbstractHandler implements IElementUpda
 		final String providesName = provides.getProvides().getProvidesName();
 		if (sad.getExternalPorts() != null) {
 			for (final Port port : sad.getExternalPorts().getPort()) {
-				final String id = port.getProvidesIndentifier();
+				final String id = port.getProvidesIdentifier();
 				if (provides.eContainer() == port.getComponentInstantiationRef().getInstantiation() && providesName.equals(id)) {
 					return port;
 				}

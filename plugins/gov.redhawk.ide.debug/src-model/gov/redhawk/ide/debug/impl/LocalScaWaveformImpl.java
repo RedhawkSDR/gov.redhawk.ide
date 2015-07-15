@@ -11,23 +11,6 @@
 // BEGIN GENERATED CODE
 package gov.redhawk.ide.debug.impl;
 
-import gov.redhawk.ide.debug.LocalLaunch;
-import gov.redhawk.ide.debug.LocalSca;
-import gov.redhawk.ide.debug.LocalScaComponent;
-import gov.redhawk.ide.debug.LocalScaWaveform;
-import gov.redhawk.ide.debug.NotifyingNamingContext;
-import gov.redhawk.ide.debug.ScaDebugFactory;
-import gov.redhawk.ide.debug.ScaDebugPackage;
-import gov.redhawk.ide.debug.ScaDebugPlugin;
-import gov.redhawk.ide.debug.impl.commands.LocalScaWaveformMergeComponentsCommand;
-import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
-import gov.redhawk.model.sca.RefreshDepth;
-import gov.redhawk.model.sca.ScaPackage;
-import gov.redhawk.model.sca.commands.ScaModelCommand;
-import gov.redhawk.model.sca.impl.ScaWaveformImpl;
-import gov.redhawk.sca.util.OrbSession;
-import gov.redhawk.sca.util.SilentJob;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,10 +25,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.jdt.annotation.NonNull;
-import org.jacorb.naming.Name;
-import org.omg.CORBA.SystemException;
-import org.omg.CosNaming.NameComponent;
-import org.omg.CosNaming.NamingContextPackage.InvalidName;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
@@ -55,10 +34,21 @@ import CF.ApplicationOperations;
 import CF.ApplicationPOATie;
 import CF.ComponentType;
 import CF.DataType;
-import CF.Resource;
-import CF.ResourceHelper;
-import CF.LifeCyclePackage.InitializeError;
 import CF.LifeCyclePackage.ReleaseError;
+import gov.redhawk.ide.debug.LocalLaunch;
+import gov.redhawk.ide.debug.LocalSca;
+import gov.redhawk.ide.debug.LocalScaComponent;
+import gov.redhawk.ide.debug.LocalScaWaveform;
+import gov.redhawk.ide.debug.NotifyingNamingContext;
+import gov.redhawk.ide.debug.ScaDebugPackage;
+import gov.redhawk.ide.debug.ScaDebugPlugin;
+import gov.redhawk.ide.debug.impl.commands.LocalScaWaveformMergeComponentsCommand;
+import gov.redhawk.ide.debug.internal.cf.extended.impl.ApplicationImpl;
+import gov.redhawk.model.sca.RefreshDepth;
+import gov.redhawk.model.sca.commands.ScaModelCommand;
+import gov.redhawk.model.sca.impl.ScaWaveformImpl;
+import gov.redhawk.sca.util.OrbSession;
+import gov.redhawk.sca.util.SilentJob;
 
 /**
  * <!-- begin-user-doc -->

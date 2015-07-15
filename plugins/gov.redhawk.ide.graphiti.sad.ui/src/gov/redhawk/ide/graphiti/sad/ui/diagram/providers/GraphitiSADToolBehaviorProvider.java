@@ -10,38 +10,12 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.sad.ui.diagram.providers;
 
-import gov.redhawk.core.resourcefactory.ComponentDesc;
-import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
-import gov.redhawk.core.resourcefactory.ResourceDesc;
-import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.SetLogLevelFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
-import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
-import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.sdr.ComponentsContainer;
-import gov.redhawk.ide.sdr.SdrPackage;
-import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.spd.Code;
-import mil.jpeojtrs.sca.spd.CodeFileType;
-import mil.jpeojtrs.sca.spd.Implementation;
-import mil.jpeojtrs.sca.spd.SoftPkg;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -73,6 +47,31 @@ import org.eclipse.graphiti.tb.ContextMenuEntry;
 import org.eclipse.graphiti.tb.IContextButtonPadData;
 import org.eclipse.graphiti.tb.IContextMenuEntry;
 import org.eclipse.ui.progress.WorkbenchJob;
+
+import gov.redhawk.core.resourcefactory.ComponentDesc;
+import gov.redhawk.core.resourcefactory.IResourceFactoryRegistry;
+import gov.redhawk.core.resourcefactory.ResourceDesc;
+import gov.redhawk.core.resourcefactory.ResourceFactoryPlugin;
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.create.ComponentCreateFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.HostCollocationPattern;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.patterns.UsesDeviceFrontEndTunerPattern;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.palette.SpdToolEntry;
+import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiToolBehaviorProvider;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.sdr.ComponentsContainer;
+import gov.redhawk.ide.sdr.SdrPackage;
+import gov.redhawk.ide.sdr.ui.SdrUiPlugin;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.spd.Code;
+import mil.jpeojtrs.sca.spd.CodeFileType;
+import mil.jpeojtrs.sca.spd.Implementation;
+import mil.jpeojtrs.sca.spd.SoftPkg;
 
 public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehaviorProvider {
 
@@ -192,7 +191,7 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		}
 		
 		// WORKSPACE Compartment
-		if (DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+		if (DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
 			PaletteCompartmentEntry workspaceEntry = getWorkspaceCompartmentEntry();
 			workspaceEntry.setInitiallyOpen(true);
 			if (!workspaceEntry.getToolEntries().isEmpty()) {
@@ -229,7 +228,7 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 			}
 		}
 		// Uses Device
-		if (!DUtil.isDiagramLocal(getDiagramTypeProvider().getDiagram())) {
+		if (!DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
 			for (ICreateFeature cf : createFeatures) {
 				if (UsesDeviceFrontEndTunerPattern.NAME.equals(cf.getCreateName())) {
 					ObjectCreationToolEntry objectCreationToolEntry = new ObjectCreationToolEntry(cf.getCreateName(), cf.getCreateDescription(),
@@ -490,7 +489,7 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 		ICustomFeature[] customFeatures = getFeatureProvider().getCustomFeatures(context);
 		for (ICustomFeature customFeature : customFeatures) {
 			ContextMenuEntry entry = new ContextMenuEntry(customFeature, context);
-			if (customFeature instanceof SetLogLevelFeature) {
+			if (customFeature instanceof LogLevelFeature) {
 				loggingSubMenu.add(entry);
 			} else {
 				contextMenuItems.add(entry);

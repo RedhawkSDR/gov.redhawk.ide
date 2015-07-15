@@ -1936,7 +1936,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			if (portObject instanceof ProvidesPortStub) {
 				ProvidesPortStub usesPort = (ProvidesPortStub) portObject;
 				for (Port p : externalPorts) {
-					if (p.getProvidesIndentifier() != null && p.getProvidesIndentifier().equals(usesPort.getName())) {
+					if (p.getProvidesIdentifier() != null && p.getProvidesIdentifier().equals(usesPort.getName())) {
 						return p;
 					}
 				}

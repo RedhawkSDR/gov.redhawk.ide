@@ -44,12 +44,12 @@ public class TopLevelDcdRpmSpecTemplate
   protected final String TEXT_7 = NL + "BuildArch: noarch" + NL + "BuildRoot: %{_tmppath}/%{name}-%{version}" + NL + "" + NL + "%description";
   protected final String TEXT_8 = NL;
   protected final String TEXT_9 = NL + NL + "%prep" + NL + "%setup" + NL + "" + NL + "%install" + NL + "%__rm -rf $RPM_BUILD_ROOT" + NL + "%__mkdir_p \"$RPM_BUILD_ROOT%{_prefix}";
-  protected final String TEXT_10 = "/%{name}\"" + NL + "%__install -m 644 ";
+  protected final String TEXT_10 = "\"" + NL + "%__install -m 644 ";
   protected final String TEXT_11 = " $RPM_BUILD_ROOT%{_prefix}";
-  protected final String TEXT_12 = "/%{name}/";
+  protected final String TEXT_12 = "/";
   protected final String TEXT_13 = NL + NL + "%files" + NL + "%defattr(-,redhawk,redhawk)" + NL + "%dir %{_prefix}";
-  protected final String TEXT_14 = "/%{name}" + NL + "%{_prefix}";
-  protected final String TEXT_15 = "/%{name}/";
+  protected final String TEXT_14 = NL + "%{_prefix}";
+  protected final String TEXT_15 = "/";
   protected final String TEXT_16 = NL;
 
   public String generate(Object argument) throws CoreException
@@ -68,7 +68,7 @@ public class TopLevelDcdRpmSpecTemplate
     } else {
     	componentFiles = devCfg.getComponentFiles().getComponentFile();
     }
-    final String nodeSubDir = "/dev/nodes";
+    final String nodeSubDir = "/dev/nodes/" + devCfg.getName().replace('.', '/');
 
     stringBuffer.append(TEXT_1);
     stringBuffer.append(devCfg.getName());

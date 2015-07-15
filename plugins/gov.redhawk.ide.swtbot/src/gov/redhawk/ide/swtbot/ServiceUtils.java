@@ -30,8 +30,7 @@ public class ServiceUtils {
 	/** create SCA Service in Workspace using default location */
 	public static void createServiceProject(SWTBot bot, String serviceProjectName, String interfaceName, String progLanguage) {
 		StandardTestActions.configurePyDev(bot);
-		
-		String text = bot.activeShell().getText();
+
 		bot.menu("File").menu("New").menu("Project...").click();
 		SWTBotShell wizardShell = bot.shell("New Project");
 		wizardShell.activate();

@@ -10,31 +10,13 @@
  *******************************************************************************/
 package gov.redhawk.ide.swtbot.diagram;
 
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.util.SadStyleUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
-import gov.redhawk.logging.ui.LogLevels;
-
 import java.lang.reflect.Field;
 import java.util.List;
-
-import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
-import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
-import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
-import mil.jpeojtrs.sca.partitioning.FindByStub;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-import mil.jpeojtrs.sca.sad.HostCollocation;
-import mil.jpeojtrs.sca.sad.Port;
-import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
-import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.graphiti.mm.PropertyContainer;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
@@ -59,7 +41,6 @@ import org.eclipse.swtbot.swt.finder.utils.SWTUtils;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotCombo;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotLabel;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
@@ -68,6 +49,22 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.junit.Assert;
+
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.sad.ext.impl.ComponentShapeImpl;
+import gov.redhawk.ide.graphiti.sad.ui.diagram.util.SadStyleUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import gov.redhawk.ide.graphiti.ui.diagram.util.StyleUtil;
+import gov.redhawk.logging.ui.LogLevels;
+import mil.jpeojtrs.sca.dcd.DcdComponentInstantiation;
+import mil.jpeojtrs.sca.partitioning.ComponentInstantiation;
+import mil.jpeojtrs.sca.partitioning.ComponentSupportedInterfaceStub;
+import mil.jpeojtrs.sca.partitioning.FindByStub;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+import mil.jpeojtrs.sca.sad.HostCollocation;
+import mil.jpeojtrs.sca.sad.Port;
+import mil.jpeojtrs.sca.sad.SadComponentInstantiation;
 
 @SuppressWarnings("restriction")
 public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKSTYLE INLINE - this utility method is
@@ -110,57 +107,20 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 
 	/**
 	 * Adds a component onto the SAD diagram editor from the palette
-	 * Position is determined relative to the last item dropped on the diagram.
-	 * @param editor - SWTBotGefEditor
-	 * @param componentName - Component to grab from palette
+	 * @param editor
+	 * @param componentName - Component to grab from palette (e.g. 'foo' or 'a.b.foo')
 	 * @param xTargetPosition - x coordinate for drop location
 	 * @param yTargetPosition - y coordinate for drop location
 	 */
-	public static void addFromPaletteToDiagram(SWTBotGefEditor editor, String componentName, int xTargetPosition, int yTargetPosition) {
-
-		String[] impls = { " (python)", " (cpp)", " (java)", "" };
-		for (int i = 0; i < impls.length; i++) {
-			try {
-				editor.activateTool(componentName + impls[i]);
-				break;
-			} catch (WidgetNotFoundException e) {
-				if (i == impls.length - 1) {
-					throw e;
-				} else {
-					continue;
-				}
-			}
-		}
-		editor.click(xTargetPosition, yTargetPosition);
-	}
-
-	/**
-	 * Adds a namespaced component onto the SAD diagram editor from the palette
-	 * Position is determined relative to the last item dropped on the diagram.
-	 * 
-	 * @param editor - SWTBotGefEditor
-	 * @param componentToolEntry - Palette tool entry for namespaced component. Use AbstractGraphitiTest.getToolEntry().
-	 * @param xTargetPosition - x coordinate for drop location
-	 * @param yTargetPosition - y coordinate for drop location
-	 */
-	public static void addFromPaletteToDiagramWithNameSpace(final RHBotGefEditor editor, final String componentName, int xTargetPosition, int yTargetPosition) {
-
-		final ToolEntry componentToolEntry = PaletteUtils.getToolEntry((RHBotGefEditor) editor, componentName);
-
-		editor.bot().getDisplay().syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				editor.getDragViewer().getEditDomain().getPaletteViewer().setActiveTool(componentToolEntry);
-			}
-		});
+	public static void addFromPaletteToDiagram(final RHBotGefEditor editor, String componentName, int xTargetPosition, int yTargetPosition) {
+		editor.activateNamespacedTool(componentName.split("\\."));
 		editor.click(xTargetPosition, yTargetPosition);
 	}
 
 	private static void dragFromTargetSDRToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String componentName, String sdrLocation) {
 		SWTBotView scaExplorerView = gefBot.viewByTitle("SCA Explorer");
 		SWTBotTree scaTree = scaExplorerView.bot().tree();
-		SWTBotTreeItem componentTreeItem = scaTree.expandNode("Target SDR", sdrLocation, componentName);
+		SWTBotTreeItem componentTreeItem = scaTree.expandNode("Target SDR", sdrLocation).expandNode(componentName.split("\\."));
 
 		SWTBotGefViewer viewer = editor.getSWTBotGefViewer();
 		SWTBotGefFigureCanvas canvas = null;
@@ -215,7 +175,7 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	/**
 	 * Add a HostCollocation to the SAD diagram editor
 	 */
-	public static void addHostCollocationToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, String hostCoName) {
+	public static void addHostCollocationToDiagram(SWTGefBot gefBot, RHBotGefEditor editor, String hostCoName) {
 		addFromPaletteToDiagram(editor, "Host Collocation", 0, 0);
 		SWTBotShell hostCoShell = gefBot.shell("New Host Collocation");
 		hostCoShell.setFocus();
@@ -229,14 +189,14 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	/**
 	 * Add a Use FrontEnd Tuner Device to the SAD diagram editor
 	 */
-	public static void addUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor) {
+	public static void addUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, RHBotGefEditor editor) {
 		addUseFrontEndTunerDeviceToDiagram(gefBot, editor, 0, 0);
 	}
 
 	/**
 	 * Add a Use FrontEnd Tuner Device to the SAD diagram editor at the specified coordinates
 	 */
-	public static void addUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, SWTBotGefEditor editor, int xPosition, int yPosition) {
+	public static void addUseFrontEndTunerDeviceToDiagram(SWTGefBot gefBot, RHBotGefEditor editor, int xPosition, int yPosition) {
 		addFromPaletteToDiagram(editor, "Use FrontEnd Tuner Device", xPosition, yPosition);
 	}
 
@@ -744,7 +704,8 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 	/**
 	 * Opens the given tab with the given name within the waveform editor.
 	 * @param editor - the editor within which to open the tab
-	 * @param tabName - name of the tab to be opened
+	 * @param tabName - name of the tab to be opened; several helpful constants are defined including
+	 * {@link #OVERVIEW_TAB}, {@link #PROPERTIES_TAB}, {@link #IMPLEMENTATIONS} and {@link #DIAGRAM_TAB}
 	 */
 	public static void openTabInEditor(SWTBotEditor editor, String tabName) {
 		editor.bot().cTabItem(tabName).activate();
@@ -893,21 +854,17 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 		editor.setFocus();
 		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
 		componentPart.select();
-		editor.clickContextMenu("Logging");
+		//editor.clickContextMenu("Logging");
 		editor.clickContextMenu("Log Level");
 
 		final SWTBot editorBot = editor.bot();
+		SWTBotShell shell = editorBot.shell("Set Debug Level");
+		shell.setFocus();
 
-		// Make sure the dialog comes up.
-		editorBot.waitUntil(Conditions.shellIsActive("Set Debug Level"));
-
-		editorBot.shell("Set Debug Level").setFocus();
-		SWTBot dialogBot = editorBot.shell("Set Debug Level").bot();
-
-		SWTBotCombo newLogLevelCombo = dialogBot.comboBox();
-		newLogLevelCombo.setSelection(logLevel.getLabel());
-
+		SWTBot dialogBot = shell.bot();
+		dialogBot.comboBox().setSelection(logLevel.getLabel());
 		dialogBot.button("OK").click();
+		editorBot.waitUntil(Conditions.shellCloses(shell));
 	}
 
 	/**
@@ -919,21 +876,18 @@ public class DiagramTestUtils extends AbstractGraphitiTest { // SUPPRESS CHECKST
 		editor.setFocus();
 		SWTBotGefEditPart componentPart = editor.getEditPart(componentName);
 		componentPart.select();
-		editor.clickContextMenu("Logging");
+		//editor.clickContextMenu("Logging");
 		editor.clickContextMenu("Log Level");
 
 		final SWTBot editorBot = editor.bot();
+		SWTBotShell shell = editorBot.shell("Set Debug Level");
+		shell.setFocus();
 
-		// Make sure the dialog comes up.
-		editorBot.waitUntil(Conditions.shellIsActive("Set Debug Level"));
-
-		editorBot.shell("Set Debug Level").setFocus();
 		SWTBot dialogBot = editorBot.shell("Set Debug Level").bot();
-
 		SWTBotLabel currentLogLevelLabel = dialogBot.label(2);
 		Assert.assertTrue("Current Log Level is not the expected value: " + logLevel.getLabel(), logLevel.getLabel().equals(currentLogLevelLabel.getText()));
-
 		dialogBot.button("Cancel").click();
+		editorBot.waitUntil(Conditions.shellCloses(shell));
 	}
 
 	/**

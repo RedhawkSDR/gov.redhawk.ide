@@ -143,7 +143,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 		super.init(context, pattern, ciExternalPorts);
 
 		// add start order ellipse
-		if (sad.getId() != null && !(DUtil.isDiagramLocal(DUtil.findDiagram(this)))) {
+		if (sad.getId() != null && !(DUtil.isDiagramRuntime(DUtil.findDiagram(this)))) {
 			addStartOrderEllipse(ci, assemblyController, featureProvider);
 		}
 
@@ -238,7 +238,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 	public void layout() {
 		super.layout();
 
-		if (getStartOrderEllipseShape() != null && !DUtil.isDiagramLocal(DUtil.findDiagram(this))) {
+		if (getStartOrderEllipseShape() != null && !DUtil.isDiagramRuntime(DUtil.findDiagram(this))) {
 			// Set the layout for the start order ellipse
 			Graphiti.getGaLayoutService().setLocation(getStartOrderEllipseShape().getGraphicsAlgorithm(),
 				getInnerContainerShape().getGraphicsAlgorithm().getWidth() - (START_ORDER_ELLIPSE_DIAMETER + START_ORDER_ELLIPSE_RIGHT_PADDING),
@@ -274,7 +274,7 @@ public class ComponentShapeImpl extends RHContainerShapeImpl implements Componen
 			updateStatus = superReason.toBoolean();
 		}
 
-		if (sad.getId() != null && !(DUtil.isDiagramLocal(DUtil.findDiagram(this)))) {
+		if (sad.getId() != null && !(DUtil.isDiagramRuntime(DUtil.findDiagram(this)))) {
 			// update startOrderText
 			Text startOrderTextGA = getStartOrderText();
 			if (ci.getStartOrder() == null && !startOrderTextGA.getValue().equals(NO_START_ORDER_STRING)) {

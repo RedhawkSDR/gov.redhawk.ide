@@ -92,7 +92,7 @@ public class ComponentPropertiesSection extends RHDiagramElementPropertySection 
 		final EObject eObj = getEObject();
 		if (eObj instanceof ComponentInstantiation) {
 			final ComponentInstantiation newInput = (ComponentInstantiation) eObj;
-			if (DUtil.isDiagramDesign(getDiagram())) {
+			if (DUtil.isDiagramWorkpace(getDiagram())) {
 				this.adapter.setInput(newInput);
 			} else if (DUtil.isDiagramTargetSdr(getDiagram())) {
 				this.adapter.setInput(newInput);

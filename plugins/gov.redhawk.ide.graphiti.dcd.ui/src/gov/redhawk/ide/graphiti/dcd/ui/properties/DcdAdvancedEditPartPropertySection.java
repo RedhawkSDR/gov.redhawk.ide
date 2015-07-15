@@ -10,23 +10,19 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.dcd.ui.properties;
 
-import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
-import gov.redhawk.ide.graphiti.dcd.ui.adapters.DeviceShapeAdapterFactory;
-import gov.redhawk.ide.graphiti.ui.properties.AdvancedEditPartPropertySection;
-import gov.redhawk.model.sca.ScaComponent;
-
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef.EditPart;
 
-/**
- * 
- */
+import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
+import gov.redhawk.ide.graphiti.ui.properties.AdvancedEditPartPropertySection;
+import gov.redhawk.model.sca.ScaDevice;
+
 public class DcdAdvancedEditPartPropertySection extends AdvancedEditPartPropertySection {
 
 	@Override
 	protected Object getScaObjectForEditPart(EditPart ep) {
-		final Object obj = ep.getModel();
-		if (obj instanceof DeviceShape) {
-			return new DeviceShapeAdapterFactory().getAdapter(obj, ScaComponent.class);
+		if (ep.getModel() instanceof DeviceShape) {
+			return Platform.getAdapterManager().getAdapter(ep, ScaDevice.class);
 		}
 		return super.getScaObjectForEditPart(ep);
 	}

@@ -105,8 +105,9 @@ public class LocalScaComponentTest extends TestCase {
 	}
 
 	/**
-	 * For IDE-1085. Test that disposing the object calls releaseObject() if it has an ILaunch.
-	 *
+	 * Test that disposing the object triggers a terminate if it has an ILaunch.
+	 * <p/>
+	 * Originially for IDE-1083.
 	 * @see #testDisposeWithoutILaunch()
 	 * @throws CoreException
 	 */
@@ -115,7 +116,7 @@ public class LocalScaComponentTest extends TestCase {
 		ScaDebugPlugin.getInstance().getLocalSca(new NullProgressMonitor());
 
 		// Listen to the job manager for changes
-		ReleaseJobListener jobListener = new ReleaseJobListener();
+		JobListener jobListener = new JobListener();
 		Job.getJobManager().addJobChangeListener(jobListener);
 
 		try {
@@ -127,16 +128,15 @@ public class LocalScaComponentTest extends TestCase {
 			// Call dispose
 			fixture.dispose();
 
-			// Ensure the job to call releaseObject() is scheduled
-			assertTrue(jobListener.jobScheduled);
+			// Ensure the job to terminate the component is scheduled
+			assertTrue(jobListener.terminateJobScheduled);
 		} finally {
 			Job.getJobManager().removeJobChangeListener(jobListener);
 		}
 	}
 
 	/**
-	 * For IDE-1085. Test that disposing the object doesn't call releaseObject() if it has no ILaunch.
-	 *
+	 * For IDE-1083. Test that disposing the object doesn't call releaseObject() if it has no ILaunch.
 	 * @see #testDisposeWithILaunch()
 	 * @throws CoreException
 	 */
@@ -145,7 +145,7 @@ public class LocalScaComponentTest extends TestCase {
 		ScaDebugPlugin.getInstance().getLocalSca(new NullProgressMonitor());
 
 		// Listen to the job manager for changes
-		ReleaseJobListener jobListener = new ReleaseJobListener();
+		JobListener jobListener = new JobListener();
 		Job.getJobManager().addJobChangeListener(jobListener);
 
 		try {
@@ -156,8 +156,9 @@ public class LocalScaComponentTest extends TestCase {
 			// Call dispose
 			fixture.dispose();
 
-			// Ensure the job to call releaseObject() is NOT scheduled
-			assertFalse(jobListener.jobScheduled);
+			// Ensure no call is made to releaseObject(), nor is a job scheduled to terminate it
+			assertFalse(resource.released);
+			assertFalse(jobListener.terminateJobScheduled);
 		} finally {
 			Job.getJobManager().removeJobChangeListener(jobListener);
 		}
@@ -165,8 +166,11 @@ public class LocalScaComponentTest extends TestCase {
 
 	private class FakeResource extends _ResourceStub {
 
+		boolean released = false;
+
 		@Override
 		public void releaseObject() throws ReleaseError {
+			released = true;
 		}
 
 	}
@@ -179,14 +183,15 @@ public class LocalScaComponentTest extends TestCase {
 
 	}
 
-	private class ReleaseJobListener extends JobChangeAdapter {
+	private class JobListener extends JobChangeAdapter {
 
-		public volatile boolean jobScheduled = false;
+		volatile boolean terminateJobScheduled = false;
 
 		@Override
 		public void scheduled(IJobChangeEvent event) {
-			if ("Local Component Release job".equals(event.getJob().getName())) {
-				jobScheduled = true;
+			String jobClass = event.getJob().getClass().getSimpleName();
+			if ("TerminateJob".equals(jobClass)) {
+				terminateJobScheduled = true;
 			}
 		}
 
