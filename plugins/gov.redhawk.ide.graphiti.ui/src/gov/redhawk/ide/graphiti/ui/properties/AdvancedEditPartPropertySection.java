@@ -10,13 +10,7 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.properties;
 
-import gov.redhawk.ide.graphiti.ui.adapters.PortEditPartAdapterFactory;
-import gov.redhawk.model.sca.ScaProvidesPort;
-import gov.redhawk.model.sca.ScaUsesPort;
-import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
-import mil.jpeojtrs.sca.partitioning.UsesPortStub;
-
-import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.jface.viewers.ISelection;
@@ -24,9 +18,11 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.AdvancedPropertySection;
 
-/**
- * 
- */
+import gov.redhawk.model.sca.ScaProvidesPort;
+import gov.redhawk.model.sca.ScaUsesPort;
+import mil.jpeojtrs.sca.partitioning.ProvidesPortStub;
+import mil.jpeojtrs.sca.partitioning.UsesPortStub;
+
 public class AdvancedEditPartPropertySection extends AdvancedPropertySection {
 
 	@Override
@@ -39,28 +35,22 @@ public class AdvancedEditPartPropertySection extends AdvancedPropertySection {
 				EditPart ep = (EditPart) obj;
 				obj = getScaObjectForEditPart(ep);
 			}
-			newSelection = new StructuredSelection(new Object[]{obj});
+			newSelection = new StructuredSelection(new Object[] { obj });
 		}
 		super.setInput(part, newSelection);
 	}
-	
+
 	protected Object getScaObjectForEditPart(EditPart ep) {
-		IAdapterFactory af = null;
-		Class<?> newClass = null;
-		Object obj = ep.getModel();
-		if (obj instanceof Anchor) {
-			af = new PortEditPartAdapterFactory();
-			obj = ((Anchor) obj).getLink().getBusinessObjects().get(0);
-			if (obj instanceof ProvidesPortStub) {
-				newClass = ScaProvidesPort.class;
-			} else if (obj instanceof UsesPortStub) {
-				newClass = ScaUsesPort.class;
+		Object graphitiModel = ep.getModel();
+		if (graphitiModel instanceof Anchor) {
+			Object rhModel = ((Anchor) graphitiModel).getLink().getBusinessObjects().get(0);
+			if (rhModel instanceof ProvidesPortStub) {
+				return Platform.getAdapterManager().getAdapter(ep, ScaProvidesPort.class);
+			} else if (rhModel instanceof UsesPortStub) {
+				return Platform.getAdapterManager().getAdapter(ep, ScaUsesPort.class);
 			}
-		}
-		if (newClass != null) {
-			return af.getAdapter(ep, newClass);
 		}
 		return null;
 	}
-	
+
 }
