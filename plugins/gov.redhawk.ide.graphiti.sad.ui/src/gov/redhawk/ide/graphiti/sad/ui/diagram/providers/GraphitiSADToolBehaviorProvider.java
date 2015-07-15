@@ -479,17 +479,18 @@ public class GraphitiSADToolBehaviorProvider extends AbstractGraphitiToolBehavio
 	public IContextMenuEntry[] getContextMenu(ICustomContext context) {
 		List<IContextMenuEntry> contextMenuItems = new ArrayList<IContextMenuEntry>();
 
-		// Create a sub-menu for logging
-		ContextMenuEntry loggingSubMenu = new ContextMenuEntry(null, context);
-		loggingSubMenu.setText("Logging");
-		loggingSubMenu.setDescription("Logging");
-		loggingSubMenu.setSubmenu(true);
-        contextMenuItems.add(loggingSubMenu);
-
 		ICustomFeature[] customFeatures = getFeatureProvider().getCustomFeatures(context);
 		for (ICustomFeature customFeature : customFeatures) {
 			ContextMenuEntry entry = new ContextMenuEntry(customFeature, context);
 			if (customFeature instanceof LogLevelFeature) {
+				// Create a sub-menu for logging
+				ContextMenuEntry loggingSubMenu = new ContextMenuEntry(null, context);
+				loggingSubMenu.setText("Logging");
+				loggingSubMenu.setDescription("Logging");
+				loggingSubMenu.setSubmenu(true);
+				contextMenuItems.add(0, loggingSubMenu);
+
+				// Make the log level feature a sub-entry of this menu
 				loggingSubMenu.add(entry);
 			} else {
 				contextMenuItems.add(entry);
