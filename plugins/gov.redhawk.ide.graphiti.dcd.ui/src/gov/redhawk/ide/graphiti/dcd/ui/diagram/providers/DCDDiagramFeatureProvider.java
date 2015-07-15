@@ -51,7 +51,6 @@ import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
 import gov.redhawk.ide.graphiti.dcd.ext.DeviceShape;
 import gov.redhawk.ide.graphiti.dcd.ext.ServiceShape;
-import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.custom.runtime.TerminateShapeFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.DCDConnectionInterfaceDeleteFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.delete.ReleaseShapeFeature;
 import gov.redhawk.ide.graphiti.dcd.ui.diagram.feature.reconnect.DCDReconnectFeature;
@@ -73,6 +72,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StartFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StopFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.TerminateFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -179,7 +179,7 @@ public class DCDDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 					// Don't add ability to remove components to Graphiti Waveform Explorer
 					if (!DUtil.isDiagramExplorer(getDiagramTypeProvider().getDiagram())) {
-						retList.add(new TerminateShapeFeature(this));
+						retList.add(new TerminateFeature(this));
 					}
 				}
 			}

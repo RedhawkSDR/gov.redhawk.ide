@@ -61,7 +61,6 @@ import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.MarkNonExternalPo
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.SetAsAssemblyControllerFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesDeviceEditFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.UsesFrontEndDeviceEditFeature;
-import gov.redhawk.ide.graphiti.sad.ui.diagram.features.custom.runtime.TerminateComponentFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete.ReleaseComponentFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.delete.SADConnectionInterfaceDeleteFeature;
 import gov.redhawk.ide.graphiti.sad.ui.diagram.features.reconnect.SADReconnectFeature;
@@ -81,6 +80,7 @@ import gov.redhawk.ide.graphiti.ui.diagram.features.custom.LogLevelFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.ShowConsoleFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StartFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.custom.StopFeature;
+import gov.redhawk.ide.graphiti.ui.diagram.features.custom.TerminateFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.features.layout.LayoutDiagramFeature;
 import gov.redhawk.ide.graphiti.ui.diagram.providers.AbstractGraphitiFeatureProvider;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
@@ -204,7 +204,7 @@ public class SADDiagramFeatureProvider extends AbstractGraphitiFeatureProvider {
 
 					// Don't add ability to remove components to Graphiti Waveform Explorer
 					if (!DUtil.isDiagramExplorer(getDiagramTypeProvider().getDiagram())) {
-						retList.add(new TerminateComponentFeature(this));
+						retList.add(new TerminateFeature(this));
 					}
 				}
 			}
