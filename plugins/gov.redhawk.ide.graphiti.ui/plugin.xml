@@ -85,6 +85,34 @@
                type="gov.redhawk.model.sca.ScaPropertyContainer">
          </adapter>
          <adapter
+               type="gov.redhawk.ide.debug.LocalLaunch">
+         </adapter>
+         <adapter
+               type="CF.ResourceOperations">
+         </adapter>
+         <adapter
+               type="CF.LoggingOperations">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="gov.redhawk.ide.graphiti.ext.RHContainerShape"
+            class="gov.redhawk.ide.graphiti.ui.adapters.ContainerShapeAdapterFactory">
+         <adapter
+               type="gov.redhawk.model.sca.ScaDevice">
+         </adapter>
+         <adapter
+               type="gov.redhawk.model.sca.ScaComponent">
+         </adapter>
+         <adapter
+               type="gov.redhawk.model.sca.ScaAbstractComponent">
+         </adapter>
+         <adapter
+               type="gov.redhawk.model.sca.ScaPropertyContainer">
+         </adapter>
+         <adapter
+               type="gov.redhawk.ide.debug.LocalLaunch">
+         </adapter>
+         <adapter
                type="CF.ResourceOperations">
          </adapter>
          <adapter

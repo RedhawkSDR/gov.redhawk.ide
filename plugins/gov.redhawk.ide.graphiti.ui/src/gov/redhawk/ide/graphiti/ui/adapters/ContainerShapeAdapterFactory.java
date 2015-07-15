@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
+import gov.redhawk.ide.debug.LocalLaunch;
 import gov.redhawk.ide.graphiti.ext.RHContainerShape;
 import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
 import gov.redhawk.model.sca.ScaComponent;
@@ -20,8 +21,16 @@ import mil.jpeojtrs.sca.util.QueryParser;
 import mil.jpeojtrs.sca.util.ScaFileSystemConstants;
 
 /**
- * Adapts an {@link AbstractGraphicalEditPart} from a waveform / node diagram to an {@link ScaComponent} or
- * an {@link ScaDevice}.
+ * Can adapt either:
+ * <ul>
+ * <li>{@link AbstractGraphicalEditPart} (specifically a ContainerShapeEditPart)</li>
+ * <li>{@link RHContainerShape}</li>
+ * </ul>
+ * from any of the diagrams to the following types (and a few of their super types):
+ * <ul>
+ * <li>{@link ScaComponent}</li>
+ * <li>{@link ScaDevice}</li>
+ * </ul>
  */
 public class ContainerShapeAdapterFactory implements IAdapterFactory {
 
@@ -30,11 +39,13 @@ public class ContainerShapeAdapterFactory implements IAdapterFactory {
 	@Override
 	@SuppressWarnings("unchecked")
 	public < T > T getAdapter(Object adaptableObject, Class<T> adapterType) {
-		// Must be an AbstractGraphicalEditPart whose model object is a RHContainerShape
-		if (!(adaptableObject instanceof AbstractGraphicalEditPart)) {
-			return null;
+		// We convert the Graphiti UI part -> Graphiti model object, if not already done for us
+		Object model;
+		if (adaptableObject instanceof AbstractGraphicalEditPart) {
+			model = ((AbstractGraphicalEditPart) adaptableObject).getModel();
+		} else {
+			model = adaptableObject;
 		}
-		Object model = ((AbstractGraphicalEditPart) adaptableObject).getModel();
 		if (!(model instanceof RHContainerShape)) {
 			return null;
 		}
@@ -51,23 +62,33 @@ public class ContainerShapeAdapterFactory implements IAdapterFactory {
 		final String ref = query.get(ScaFileSystemConstants.QUERY_PARAM_WF);
 
 		// Check the type of the instantiation as well as the adapter type to determine the conversion
-		if (ci instanceof SadComponentInstantiation && adapterType.isAssignableFrom(ScaComponent.class)) {
+		if (ci instanceof SadComponentInstantiation) {
 			final ScaWaveform waveform = ScaModelPlugin.getDefault().findEObject(ScaWaveform.class, ref);
 			if (waveform != null) {
 				for (final ScaComponent component : GraphitiAdapterUtil.safeFetchComponents(waveform)) {
 					final String scaComponentId = component.identifier();
 					if (scaComponentId.startsWith(myId)) {
-						return (T) component;
+						if (adapterType.isAssignableFrom(ScaComponent.class) ||
+								(adapterType.isAssignableFrom(LocalLaunch.class) && component instanceof LocalLaunch)) {
+							return (T) component;
+						} else {
+							return null;
+						}
 					}
 				}
 			}
-		} else if (ci instanceof DcdComponentInstantiation && adapterType.isAssignableFrom(ScaDevice.class)) {
+		} else if (ci instanceof DcdComponentInstantiation) {
 			final ScaDeviceManager devMgr = ScaModelPlugin.getDefault().findEObject(ScaDeviceManager.class, ref);
 			if (devMgr != null) {
 				for (final ScaDevice< ? > dev : GraphitiAdapterUtil.safeFetchComponents(devMgr)) {
 					final String scaComponentId = dev.getIdentifier();
 					if (scaComponentId.startsWith(myId)) {
-						return (T) dev;
+						if (adapterType.isAssignableFrom(ScaDevice.class) ||
+								(adapterType.isAssignableFrom(LocalLaunch.class) && dev instanceof LocalLaunch)) {
+							return (T) dev;
+						} else {
+							return null;
+						}
 					}
 				}
 			}
