@@ -16,10 +16,12 @@ import java.util.List;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.edit.provider.ViewerNotification;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Composite;
@@ -116,6 +118,17 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 			return SetCommand.create(domain, owner, PrfPackage.Literals.STRUCT_SEQUENCE_REF__STRUCT_VALUE, value);
 		}
 		return super.createSetCommand(domain, owner, feature, value);
+	}
+
+	@Override
+	protected void notifyChanged(Notification msg) {
+		if (msg.getFeature() == PrfPackage.Literals.STRUCT_SEQUENCE_REF__STRUCT_VALUE) {
+			// When the value changes, it affects all of the children (because their values cut across all of the
+			// struct values), so refresh both content and labels to ensure they are updated
+			fireNotifyChanged(new ViewerNotification(msg, this, true, true));
+			return;
+		}
+		super.notifyChanged(msg);
 	}
 
 	@Override
