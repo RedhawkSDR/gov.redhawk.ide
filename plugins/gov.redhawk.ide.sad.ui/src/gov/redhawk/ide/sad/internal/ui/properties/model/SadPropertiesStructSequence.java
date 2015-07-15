@@ -112,22 +112,6 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 		return new XViewerDialogCellEditor(parent) {
 
 			@Override
-			protected void updateContents(Object value) {
-				StructSequenceRef ref = getValueRef();
-				int count = 0;
-				if (ref != null) {
-					count = ref.getStructValue().size();
-				}
-				String text = Integer.toString(count);
-				if (count == 1) {
-					text += " value";
-				} else {
-					text += " values";
-				}
-				label.setText(text);
-			}
-
-			@Override
 			protected Object openDialogBox() {
 				ScaStructSequenceProperty property = ScaFactory.eINSTANCE.createScaStructSequenceProperty();
 				StructSequenceRef ref = getValueRef();
