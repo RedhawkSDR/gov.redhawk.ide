@@ -15,12 +15,14 @@ import java.util.Collection;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.UnexecutableCommand;
 import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.edit.provider.ViewerNotification;
 
 import mil.jpeojtrs.sca.prf.AbstractPropertyRef;
 import mil.jpeojtrs.sca.prf.PrfFactory;
@@ -124,6 +126,19 @@ public class SadPropertiesStruct extends SadPropertyImpl<Struct> implements Nest
 	}
 
 	@Override
+	protected void notifyChanged(Notification msg) {
+		if (msg.getFeature() == PrfPackage.Literals.STRUCT_REF__REFS) {
+			if (msg.getEventType() == Notification.ADD) {
+				fieldChanged(msg, msg.getNewValue());
+			} else if (msg.getEventType() == Notification.REMOVE) {
+				fieldChanged(msg, msg.getOldValue());
+			}
+			return;
+		}
+		super.notifyChanged(msg);
+	}
+
+	@Override
 	public void referenceAdded(AbstractPropertyRef< ? > reference) {
 		super.referenceAdded(reference);
 		StructRef structRef = (StructRef) reference;
@@ -142,6 +157,20 @@ public class SadPropertiesStruct extends SadPropertyImpl<Struct> implements Nest
 			AbstractPropertyRef< ? > childRef = (AbstractPropertyRef< ? >)ref.getValue();
 			SadPropertyImpl< ? > field = getField(childRef.getRefID());
 			field.referenceRemoved(childRef);
+		}
+	}
+
+	private void fieldChanged(Notification msg, Object object) {
+		FeatureMap.Entry entry = (FeatureMap.Entry) object;
+		AbstractPropertyRef< ? > childRef = (AbstractPropertyRef< ? >) entry.getValue();
+		SadPropertyImpl< ? > field = getField(childRef.getRefID());
+		if (field != null) {
+			if (msg.getEventType() == Notification.ADD) {
+				field.referenceAdded(childRef);
+			} else if (msg.getEventType() == Notification.REMOVE) {
+				field.referenceRemoved(childRef);
+			}
+			fireNotifyChanged(new ViewerNotification(msg, field, false, true));
 		}
 	}
 
