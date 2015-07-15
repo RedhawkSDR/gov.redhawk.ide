@@ -37,7 +37,7 @@ public class SuperPortConnectionWizard extends Wizard {
 	// TODO: Add validator to give warning on possible invalid connections?  Or just gray out non-suggested connections?
 	
 	public static class SuperPortConnectionWizardPage extends WizardPage {
-		private static String CSI = "Component Supported Interface";
+		private static final String CSI = "Component Supported Interface";
 		private List<UsesPortStub> sourcePorts;
 		private List<ConnectionTarget> targetPorts;
 		private UsesPortStub source;
@@ -102,7 +102,7 @@ public class SuperPortConnectionWizard extends Wizard {
 			List<String> targetPortNames = new ArrayList<String>();
 			for (ConnectionTarget port : this.targetPorts) {
 				if (port instanceof ProvidesPortStub) {
-					targetPortNames.add(((ProvidesPortStub)port).getName());
+					targetPortNames.add(((ProvidesPortStub) port).getName());
 				} else if (port instanceof ComponentSupportedInterfaceStub) {
 					targetPortNames.add(CSI);
 				}
@@ -148,7 +148,7 @@ public class SuperPortConnectionWizard extends Wizard {
 		
 		public void setTarget(String targetName) {
 			for (ConnectionTarget port : targetPorts) {
-				if (port instanceof ProvidesPortStub && targetName.equals(((ProvidesPortStub)port).getName())) {
+				if (port instanceof ProvidesPortStub && targetName.equals(((ProvidesPortStub) port).getName())) {
 					this.target = port;
 				} else if (port instanceof ComponentSupportedInterfaceStub && targetName.equals(CSI)) {
 					this.target = port;

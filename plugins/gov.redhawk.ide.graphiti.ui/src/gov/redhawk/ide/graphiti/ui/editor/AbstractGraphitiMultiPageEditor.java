@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * This file is protected by Copyright.
+ * Please refer to the COPYRIGHT file distributed with this source distribution.
+ *
+ * This file is part of REDHAWK IDE.
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.editor;
 
 import gov.redhawk.ide.graphiti.ui.GraphitiUIPlugin;
@@ -103,7 +113,7 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 		});
 	}
 	
-	abstract public void setSelectionToViewer(final Collection< ? > collection);
+	public abstract void setSelectionToViewer(final Collection< ? > collection);
 	
 	/**
 	 * This makes sure that one content viewer, either for the current page or
@@ -250,9 +260,9 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 		return this.diagramEditor.getContributorId();
 	}
 	
-	abstract public String getTitle();
+	public abstract String getTitle();
 	
-	abstract protected void addPages();
+	protected abstract void addPages();
 	
 	public IEditorPart getTextEditor() {
 		return textEditor;
@@ -280,9 +290,9 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 		return null;
 	}
 	
-	abstract protected void addNameListener(final Resource resource);
+	protected abstract void addNameListener(final Resource resource);
 	
-	abstract protected IEditorInput createDiagramInput(final Resource resource) throws IOException, CoreException;
+	protected abstract IEditorInput createDiagramInput(final Resource resource) throws IOException, CoreException;
 	
 	/**
 	 * Returns the property value that should be set for the Diagram container's DIAGRAM_CONTEXT property.
@@ -297,13 +307,13 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 		}
 	}
 	
-	abstract protected DiagramEditor createDiagramEditor();
+	protected abstract DiagramEditor createDiagramEditor();
 	
 	protected void setDiagramEditor(final DiagramEditor diagramEditor) {
 		this.diagramEditor = diagramEditor;
 	}
 	
-	abstract protected IFormPage createOverviewPage(final Resource resource);
+	protected abstract IFormPage createOverviewPage(final Resource resource);
 	
 	public IFormPage getOverviewPage() {
 		return this.overviewPage;
@@ -313,15 +323,15 @@ public abstract class AbstractGraphitiMultiPageEditor extends SCAFormEditor impl
 		this.overviewPage = overviewPage;
 	}
 	
-	abstract public String getEditingDomainId();
+	public abstract String getEditingDomainId();
 	
-	abstract protected AdapterFactory getSpecificAdapterFactory();
+	protected abstract AdapterFactory getSpecificAdapterFactory();
 	
 	public IActionBars getActionBars() {
 		return getActionBarContributor().getActionBars();
 	}
 	
-	abstract public List<Object> getOutlineItems();
+	public abstract List<Object> getOutlineItems();
 
 	/**
 	 * The Text editor always stays in sync with other editor changes therefore always save it.

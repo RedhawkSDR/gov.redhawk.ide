@@ -292,7 +292,7 @@ public class RHGraphitiPaletteRoot extends PaletteRoot {
 
 	@Override
 	public boolean acceptsType(Object type) {
-		if (type.equals("paletteFilter")) {
+		if ("paletteFilter".equals(type)) {
 			return true;
 		}
 		return super.acceptsType(type);

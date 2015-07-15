@@ -56,7 +56,7 @@ public class CollapseShapeFeature extends AbstractCustomFeature {
 	public boolean canExecute(ICustomContext context) {
 		PictogramElement[] pes = context.getPictogramElements();
 		boolean foundRHContainerShape = false;
-		if(pes != null) {
+		if (pes != null) {
 			for (PictogramElement p: pes) {
 				if (!(p instanceof RHContainerShape)) {
 					return false;

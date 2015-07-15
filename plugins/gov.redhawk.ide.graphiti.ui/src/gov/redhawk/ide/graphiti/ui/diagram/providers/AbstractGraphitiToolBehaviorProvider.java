@@ -71,8 +71,7 @@ public abstract class AbstractGraphitiToolBehaviorProvider extends DefaultToolBe
 		
 		// FINDBY Compartment
 		if (!DUtil.isDiagramRuntime(getDiagramTypeProvider().getDiagram())) {
-			PaletteCompartmentEntry findByCompartmentEntry = getFindByCompartmentEntry();
-			compartments.add(findByCompartmentEntry);
+			compartments.add(getFindByCompartmentEntry());
 		}
 		
 		return compartments.toArray(new IPaletteCompartmentEntry[compartments.size()]);

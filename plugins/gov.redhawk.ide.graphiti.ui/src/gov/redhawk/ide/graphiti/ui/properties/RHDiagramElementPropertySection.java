@@ -29,16 +29,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 
-/**
- * 
- */
 public class RHDiagramElementPropertySection extends GFPropertySection {
 
-	protected List<Object> input;
+	private List<Object> input;
 
     private TransactionalEditingDomain editingDomain = null;
 	
-	protected EObject eObject;
+	private EObject eObject;
 
 	private List<Object> eObjectList = new ArrayList<Object>();
 
@@ -51,8 +48,9 @@ public class RHDiagramElementPropertySection extends GFPropertySection {
 		super.setInput(part, selection);
 
 		if (!(selection instanceof IStructuredSelection)
-			|| selection.equals(getInput()))
+			|| selection.equals(getInput())) {
 			return;
+		}
 
         /*
          * Update editing domain
@@ -103,9 +101,9 @@ public class RHDiagramElementPropertySection extends GFPropertySection {
 		// does not have an
 		// underlying eobject. Comments are similar. In this case we show only
 		// the appearanced tab.
-		if (false == eObjectList.isEmpty())
+		if (false == eObjectList.isEmpty()) {
 			setEObject((EObject) eObjectList.get(0));
-
+		}
 	}
 
 	public List<Object> getInput() {
@@ -150,7 +148,7 @@ public class RHDiagramElementPropertySection extends GFPropertySection {
 	 */
 	protected boolean addToEObjectList(Object object) {
 		EObject adapted = unwrap(object);
-		if (adapted != null){
+		if (adapted != null) {
 			getEObjectList().add(adapted);
 			return true;
 		}		
@@ -183,6 +181,12 @@ public class RHDiagramElementPropertySection extends GFPropertySection {
 
 	protected List<Object> getEObjectList() {
 		return eObjectList;
+	}
+
+	@Override
+	public void dispose() {
+		this.input = null;
+		super.dispose();
 	}
 
 }

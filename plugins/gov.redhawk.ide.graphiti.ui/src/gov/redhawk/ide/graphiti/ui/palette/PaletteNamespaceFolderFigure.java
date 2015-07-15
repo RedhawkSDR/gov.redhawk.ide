@@ -59,8 +59,8 @@ import org.eclipse.swt.widgets.Control;
 @SuppressWarnings("restriction")
 public class PaletteNamespaceFolderFigure extends Figure {
 
-	private final static Image FOLDER_CLOSED = InternalImages.DESC_FOLDER_CLOSED.createImage();
-	private final static Image FOLDER_OPEN = InternalImages.DESC_FOLDER_OPEN.createImage();
+	private static final Image FOLDER_CLOSED = InternalImages.DESC_FOLDER_CLOSED.createImage();
+	private static final Image FOLDER_OPEN = InternalImages.DESC_FOLDER_OPEN.createImage();
 	private static final int INDENT_WIDTH = 10;
 	
 	/** Scrollpane border constant for icon and column layout mode **/
@@ -252,8 +252,9 @@ public class PaletteNamespaceFolderFigure extends Figure {
 		tipLabel.setBorder(TOOLTIP_BORDER);
 		collapseToggle.addMouseMotionListener(new MouseMotionListener.Stub() {
 			public void mouseMoved(MouseEvent e) {
-				if (!folderLabel.getBounds().contains(e.getLocation()))
+				if (!folderLabel.getBounds().contains(e.getLocation())) {
 					return;
+				}
 				if (skipNextEvent) {
 					skipNextEvent = false;
 					return;

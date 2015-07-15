@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * This file is protected by Copyright.
+ * Please refer to the COPYRIGHT file distributed with this source distribution.
+ *
+ * This file is part of REDHAWK IDE.
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.adapters;
 
 import java.util.Map;
@@ -69,8 +79,8 @@ public class ContainerShapeAdapterFactory implements IAdapterFactory {
 				for (final ScaComponent component : GraphitiAdapterUtil.safeFetchComponents(waveform)) {
 					final String scaComponentId = component.identifier();
 					if (scaComponentId.startsWith(myId)) {
-						if (adapterType.isAssignableFrom(ScaComponent.class) ||
-								(adapterType.isAssignableFrom(LocalLaunch.class) && component instanceof LocalLaunch)) {
+						if (adapterType.isAssignableFrom(ScaComponent.class)
+							|| (adapterType.isAssignableFrom(LocalLaunch.class) && component instanceof LocalLaunch)) {
 							return (T) component;
 						} else {
 							return null;
@@ -84,8 +94,7 @@ public class ContainerShapeAdapterFactory implements IAdapterFactory {
 				for (final ScaDevice< ? > dev : GraphitiAdapterUtil.safeFetchComponents(devMgr)) {
 					final String scaComponentId = dev.getIdentifier();
 					if (scaComponentId.startsWith(myId)) {
-						if (adapterType.isAssignableFrom(ScaDevice.class) ||
-								(adapterType.isAssignableFrom(LocalLaunch.class) && dev instanceof LocalLaunch)) {
+						if (adapterType.isAssignableFrom(ScaDevice.class) || (adapterType.isAssignableFrom(LocalLaunch.class) && dev instanceof LocalLaunch)) {
 							return (T) dev;
 						} else {
 							return null;

@@ -104,7 +104,7 @@ public class ComponentPropertiesSection extends RHDiagramElementPropertySection 
 		}
 	}
 
-	private ScaPropertyContainer<?,?> getPropertyContainer(final ISelection selection) {
+	private ScaPropertyContainer< ? , ? > getPropertyContainer(final ISelection selection) {
 		if (selection instanceof StructuredSelection) {
 			StructuredSelection ss = (StructuredSelection) selection;
 			Object element = ss.getFirstElement();
@@ -126,7 +126,6 @@ public class ComponentPropertiesSection extends RHDiagramElementPropertySection 
 			this.adapterFactory = null;
 
 		}
-		this.input = null;
 		super.dispose();
 	}
 

@@ -1,8 +1,21 @@
-/**
- */
+/*******************************************************************************
+ * This file is protected by Copyright.
+ * Please refer to the COPYRIGHT file distributed with this source distribution.
+ *
+ * This file is part of REDHAWK IDE.
+ *
+ * All rights reserved.  This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.graphiti.ext.impl;
 
-import gov.redhawk.ide.graphiti.ext.*;
+import gov.redhawk.ide.graphiti.ext.Event;
+import gov.redhawk.ide.graphiti.ext.RHContainerShape;
+import gov.redhawk.ide.graphiti.ext.RHGxFactory;
+import gov.redhawk.ide.graphiti.ext.RHGxPackage;
 import gov.redhawk.ide.graphiti.ui.diagram.patterns.AbstractContainerPattern;
 import java.util.List;
 import java.util.Map;
@@ -183,8 +196,9 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 */
 	public Event createEventFromString(EDataType eDataType, String initialValue) {
 		Event result = Event.get(initialValue);
-		if (result == null)
+		if (result == null) {
 			throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		}
 		return result;
 	}
 
@@ -194,7 +208,7 @@ public class RHGxFactoryImpl extends EFactoryImpl implements RHGxFactory {
 	 * @generated
 	 */
 	public String convertEventToString(EDataType eDataType, Object instanceValue) {
-		return instanceValue == null ? null : instanceValue.toString();
+		return (instanceValue == null) ? null : instanceValue.toString();
 	}
 
 	/**

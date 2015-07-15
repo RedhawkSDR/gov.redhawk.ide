@@ -83,8 +83,9 @@ public class PaletteNamespaceFolderEditPart extends PaletteEditPart {
 					PaletteScrollBar.BUTTON_HEIGHT, 0));
 			return helper;
 		}
-		if (key == MouseWheelHelper.class)
+		if (key == MouseWheelHelper.class) {
 			return new ViewportMouseWheelHelper(this);
+		}
 		return super.getAdapter(key);
 	}
 

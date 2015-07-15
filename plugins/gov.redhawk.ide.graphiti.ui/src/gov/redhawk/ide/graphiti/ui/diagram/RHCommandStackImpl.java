@@ -21,15 +21,12 @@ import org.eclipse.graphiti.ui.internal.editor.GFWorkspaceCommandStackImpl;
 @SuppressWarnings("restriction")
 public class RHCommandStackImpl extends GFWorkspaceCommandStackImpl {
 
-	
 	public RHCommandStackImpl(IOperationHistory history) {
 		super(history);
 	}
 
-	
 	@Override
 	public boolean isSaveNeeded() {
-		
 		//If the last command was NonDirtying, return false so that we don't dirty the editor
 		IUndoableOperation nextUndoableOperation = getOperationHistory().getUndoOperation(getDefaultUndoContext());
 		Command command = null;
@@ -41,8 +38,6 @@ public class RHCommandStackImpl extends GFWorkspaceCommandStackImpl {
 		}
 
 		return super.isSaveNeeded();
-		
 	}
-	
 
 }

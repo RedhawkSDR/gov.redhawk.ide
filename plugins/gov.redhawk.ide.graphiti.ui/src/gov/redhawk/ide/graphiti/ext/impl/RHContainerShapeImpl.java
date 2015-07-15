@@ -8,6 +8,8 @@
  * the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+
+// BEGIN GENERATED CODE
 package gov.redhawk.ide.graphiti.ext.impl;
 
 import gov.redhawk.ide.graphiti.ext.Event;
@@ -218,6 +220,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 */
 	protected boolean hideUnusedPorts = HIDE_UNUSED_PORTS_EDEFAULT;
 
+	// END GENERATED CODE
+
 	// These are property key/value pairs that help us resize an existing shape by properly identifying
 	// graphicsAlgorithms
 	public static final String GA_OUTER_ROUNDED_RECTANGLE = "outerRoundedRectangle", GA_INNER_ROUNDED_RECTANGLE = "innerRoundedRectangle",
@@ -245,6 +249,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			SUPER_PORT_SHAPE_HEIGHT = 25, SUPER_PORT_SHAPE_WIDTH = 10, SUPER_PORT_SHAPE_HEIGHT_MARGIN = 5, PORT_SHAPE_WIDTH = 15, PORT_CHAR_WIDTH = 7,
 			LOLLIPOP_ELLIPSE_DIAMETER = 10, INTERFACE_SHAPE_WIDTH = INNER_CONTAINER_SHAPE_HORIZONTAL_PADDING + PROVIDES_PORTS_LEFT_PADDING,
 			INTERFACE_SHAPE_HEIGHT = 10, REQ_PADDING_BETWEEN_PORT_TYPES = 0, ICON_IMAGE_LENGTH = 16;
+
+	// BEGIN GENERATED CODE
 
 	/**
 	 * 
@@ -283,6 +289,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__STARTED, oldStarted, started));
 
+		// END GENERATED CODE
+
 		// update color according to value
 		final Diagram diagram = DUtil.findDiagram(this);
 		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
@@ -295,6 +303,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInner(diagram));
 			}
 		}
+
+		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -317,6 +327,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__ISTATUS_ERROR_STATE, oldIStatusErrorState, iStatusErrorState));
 
+		// END GENERATED CODE
+
 		// update color according to value
 		final Diagram diagram = DUtil.findDiagram(this);
 		RoundedRectangle innerRoundedRectangle = (RoundedRectangle) getInnerContainerShape().getGraphicsAlgorithm();
@@ -329,6 +341,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 				innerRoundedRectangle.setStyle(StyleUtil.createStyleForComponentInner(diagram));
 			}
 		}
+
+		// BEGIN GENERATED CODE
 	}
 
 	/**
@@ -440,6 +454,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RHGxPackage.RH_CONTAINER_SHAPE__HIDE_UNUSED_PORTS, oldHideUnusedPorts, hideUnusedPorts));
 	}
+
+	// END GENERATED CODE
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -654,6 +670,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		return updateNeeded(context, pattern, null);
 	}
 
+	// BEGIN GENERATED CODE
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -802,6 +820,8 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		return result.toString();
 	}
 
+	// END GENERATED CODE
+
 	/**
 	 * add inner container
 	 */
@@ -860,20 +880,18 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 			INTERFACE_SHAPE_WIDTH - LOLLIPOP_ELLIPSE_DIAMETER, 1);
 
 		// fix point anchor
-		{
-			FixPointAnchor fixPointAnchor = Graphiti.getPeCreateService().createFixPointAnchor(interfaceContainerShape);
-			Point fixAnchorPoint = StylesFactory.eINSTANCE.createPoint();
-			fixAnchorPoint.setX(0);
-			fixAnchorPoint.setY(PORT_SHAPE_HEIGHT / 2);
-			fixPointAnchor.setLocation(fixAnchorPoint);
-			featureProvider.link(fixPointAnchor, anchorBusinessObject);
-			fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
-			fixPointAnchor.setReferencedGraphicsAlgorithm(interfaceRectangle);
-			Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
-			fixPointAnchorRectangle.setTransparency(.99d);
-			Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, 0, -INTERFACE_SHAPE_HEIGHT / 2, INTERFACE_SHAPE_WIDTH,
-				INTERFACE_SHAPE_HEIGHT);
-		}
+		FixPointAnchor fixPointAnchor = Graphiti.getPeCreateService().createFixPointAnchor(interfaceContainerShape);
+		Point fixAnchorPoint = StylesFactory.eINSTANCE.createPoint();
+		fixAnchorPoint.setX(0);
+		fixAnchorPoint.setY(PORT_SHAPE_HEIGHT / 2);
+		fixPointAnchor.setLocation(fixAnchorPoint);
+		featureProvider.link(fixPointAnchor, anchorBusinessObject);
+		fixPointAnchor.setUseAnchorLocationAsConnectionEndpoint(true);
+		fixPointAnchor.setReferencedGraphicsAlgorithm(interfaceRectangle);
+		Rectangle fixPointAnchorRectangle = Graphiti.getCreateService().createRectangle(fixPointAnchor);
+		fixPointAnchorRectangle.setTransparency(.99d);
+		Graphiti.getGaLayoutService().setLocationAndSize(fixPointAnchorRectangle, 0, -INTERFACE_SHAPE_HEIGHT / 2, INTERFACE_SHAPE_WIDTH,
+			INTERFACE_SHAPE_HEIGHT);
 
 		return interfaceContainerShape;
 	}
@@ -928,7 +946,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// port shape
 		ContainerShape superProvidesPortsRectangleShape = Graphiti.getCreateService().createContainerShape(this, true);
-		Graphiti.getPeService().setPropertyValue(superProvidesPortsRectangleShape, DUtil.SHAPE_TYPE, SUPER_PROVIDES_PORTS_RECTANGLE);// ref
+		Graphiti.getPeService().setPropertyValue(superProvidesPortsRectangleShape, DUtil.SHAPE_TYPE, SUPER_PROVIDES_PORTS_RECTANGLE); // ref
 
 		Rectangle superProvidesPortsRectangle = Graphiti.getCreateService().createRectangle(superProvidesPortsRectangleShape);
 		DUtil.addLinks(featureProvider, superProvidesPortsRectangleShape, providesPortStubs);
@@ -972,7 +990,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 		Diagram diagram = DUtil.findDiagram(providesPortsContainerShape);
 
 		ContainerShape providesPortContainerShape = Graphiti.getCreateService().createContainerShape(providesPortsContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(providesPortContainerShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORT_CONTAINER);// ref
+		Graphiti.getPeService().setPropertyValue(providesPortContainerShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORT_CONTAINER);  // ref
 		// prevent
 		// selection/deletion/removal
 		Rectangle providesPortContainerShapeRectangle = Graphiti.getCreateService().createRectangle(providesPortContainerShape);
@@ -983,7 +1001,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 
 		// port shape
 		ContainerShape providesPortRectangleShape = Graphiti.getCreateService().createContainerShape(providesPortContainerShape, true);
-		Graphiti.getPeService().setPropertyValue(providesPortRectangleShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORT_RECTANGLE);// ref
+		Graphiti.getPeService().setPropertyValue(providesPortRectangleShape, DUtil.SHAPE_TYPE, SHAPE_PROVIDES_PORT_RECTANGLE); // ref
 		// prevent
 		// move
 		Rectangle providesPortRectangle = Graphiti.getCreateService().createRectangle(providesPortRectangleShape);
@@ -1413,9 +1431,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 												updateStatus = true;
 												// update style
 												fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForExternalProvidesPort(DUtil.findDiagram(this)));
+												// link to externalPort so that update fires when it changes
 												fixPointAnchorRectangle.getPictogramElement().getLink().getBusinessObjects().add(
-													findExternalPort(portObject, externalPorts));// link to externalPort so
-												// to externalPort so that update fires when it changes
+													findExternalPort(portObject, externalPorts));
 											} else {
 												return new Reason(true, "Port style requires update");
 											}
@@ -1591,10 +1609,9 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 												updateStatus = true;
 												// update style
 												fixPointAnchorRectangle.setStyle(StyleUtil.createStyleForExternalUsesPort(DUtil.findDiagram(this)));
+												// link to externalPort so that update fires when it changes
 												fixPointAnchorRectangle.getPictogramElement().getLink().getBusinessObjects().add(
-													findExternalPort(portObject, externalPorts));// link to externalPort so
-												// that update fires
-												// when it changes
+													findExternalPort(portObject, externalPorts));
 											} else {
 												return new Reason(true, "Port style requires update");
 											}
@@ -1910,11 +1927,7 @@ public class RHContainerShapeImpl extends ContainerShapeImpl implements RHContai
 	 * @return
 	 */
 	public static boolean isExternalPort(Object portObject, List<Port> externalPorts) {
-		if (findExternalPort(portObject, externalPorts) != null) {
-			return true;
-		} else {
-			return false;
-		}
+		return findExternalPort(portObject, externalPorts) != null;
 	}
 
 	/**

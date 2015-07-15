@@ -10,16 +10,11 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.diagram.features.layout;
 
-import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
-import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import mil.jpeojtrs.sca.sad.HostCollocation;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.datatypes.IDimension;
@@ -30,7 +25,6 @@ import org.eclipse.graphiti.internal.datatypes.impl.DimensionImpl;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
-import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
@@ -59,6 +53,10 @@ import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.VerticalLayoutAlgorithm;
 import org.eclipse.zest.layouts.dataStructures.BendPoint;
 import org.eclipse.zest.layouts.exampleStructures.SimpleNode;
+
+import gov.redhawk.ide.graphiti.ext.impl.RHContainerShapeImpl;
+import gov.redhawk.ide.graphiti.ui.diagram.util.DUtil;
+import mil.jpeojtrs.sca.sad.HostCollocation;
 
 @SuppressWarnings("restriction")
 public class LayoutDiagramFeature extends AbstractCustomFeature {
@@ -173,7 +171,7 @@ public class LayoutDiagramFeature extends AbstractCustomFeature {
 	 * The self connections cannot be computed by the LayoutAlgorithmn but the Nodes will probably be moved<br/>
 	 * So we need to recompute the bend points locations based on the offset of the Anchor from the initial location
 	 * 
-	 * @return a {@link Map} of initial {@link Anchor} location {@link Point} per {@link Connection}s
+	 * @return a {@link Map} of initial {@link org.eclipse.graphiti.mm.pictograms.Anchor Anchor} location {@link Point} per {@link Connection}s
 	 */
 	private Map<Connection, Point> getSelfConnections() {
 		IGaService gaService = Graphiti.getGaService();
