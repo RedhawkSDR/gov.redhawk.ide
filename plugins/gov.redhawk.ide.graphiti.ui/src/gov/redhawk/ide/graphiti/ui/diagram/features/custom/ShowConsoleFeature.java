@@ -46,7 +46,8 @@ public class ShowConsoleFeature extends AbstractCustomFeature {
 
 	@Override
 	public boolean canExecute(ICustomContext context) {
-		return true;
+		// It only makes sense to allow the user to do this with one selected resource
+		return context.getPictogramElements().length == 1;
 	}
 
 	@Override
@@ -56,25 +57,23 @@ public class ShowConsoleFeature extends AbstractCustomFeature {
 		}
 		ICustomContext customContext = (ICustomContext) context;
 
-		// Selected objects must be have an ILaunch or we can't show a console
-		for (PictogramElement pe : customContext.getPictogramElements()) {
-			LocalLaunch localLaunch = Platform.getAdapterManager().getAdapter(pe, LocalLaunch.class);
-			if (localLaunch == null || localLaunch.getLaunch() == null) {
-				return false;
-			}
+		// Selected object must have an ILaunch or we can't show a console
+		if (customContext.getPictogramElements().length == 0) {
+			return false;
 		}
-		return true;
+		PictogramElement pe = customContext.getPictogramElements()[0];
+		LocalLaunch localLaunch = Platform.getAdapterManager().getAdapter(pe, LocalLaunch.class);
+		return localLaunch != null && localLaunch.getLaunch() != null;
 	}
 
 	@Override
 	public void execute(ICustomContext context) {
-		for (PictogramElement pe : context.getPictogramElements()) {
-			LocalLaunch localLaunch = Platform.getAdapterManager().getAdapter(pe, LocalLaunch.class);
-			if (localLaunch != null && localLaunch.getLaunch() != null && localLaunch.getLaunch().getProcesses().length > 0) {
-				final IConsole console = DebugUIPlugin.getDefault().getProcessConsoleManager().getConsole(localLaunch.getLaunch().getProcesses()[0]);
-				final IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
-				consoleManager.showConsoleView(console);
-			}
+		PictogramElement pe = context.getPictogramElements()[0];
+		LocalLaunch localLaunch = Platform.getAdapterManager().getAdapter(pe, LocalLaunch.class);
+		if (localLaunch != null && localLaunch.getLaunch() != null && localLaunch.getLaunch().getProcesses().length > 0) {
+			final IConsole console = DebugUIPlugin.getDefault().getProcessConsoleManager().getConsole(localLaunch.getLaunch().getProcesses()[0]);
+			final IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
+			consoleManager.showConsoleView(console);
 		}
 	}
 
