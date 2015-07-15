@@ -18,17 +18,12 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.platform.AbstractPropertySectionFilter;
 import org.eclipse.jface.viewers.IFilter;
 
-/**
- * 
- */
 public class AdvancedFilter extends CompoundFilter {
 
 	public AdvancedFilter() {
 		this(ComponentInstantiation.class);
 	}
-	/**
-	 * 
-	 */
+
 	public AdvancedFilter(Class< ? > objectClass) {
 		super(CompoundFilter.BooleanOperator.FILTER_AND);
 		CompoundFilter typeFilter = new CompoundFilter();
@@ -44,10 +39,7 @@ public class AdvancedFilter extends CompoundFilter {
 				} else {
 					shape = (ContainerShape) pictogramElement.eContainer();
 				}
-				if (!DUtil.DIAGRAM_CONTEXT_DESIGN.equals(DUtil.getDiagramContext((DUtil.findDiagram(shape))))) {
-					return true;
-				}
-				return false;
+				return DUtil.isDiagramRuntime(DUtil.findDiagram(shape));
 			}
 		};
 		addFilter(runtimeFilter);
