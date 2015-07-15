@@ -42,8 +42,8 @@ public class AdvancedFilter extends CompoundFilter {
 				return DUtil.isDiagramRuntime(DUtil.findDiagram(shape));
 			}
 		};
-		addFilter(runtimeFilter);
 		addFilter(typeFilter);
+		addFilter(runtimeFilter);
 	}
 
 }
