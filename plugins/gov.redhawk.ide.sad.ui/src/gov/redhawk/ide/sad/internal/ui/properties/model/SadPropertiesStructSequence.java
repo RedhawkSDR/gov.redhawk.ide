@@ -68,7 +68,10 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 
 	@Override
 	public Object getSadValue() {
-		return null;
+		if (ref != null) {
+			return formatListSize(((StructSequenceRef) ref).getStructValue());
+		}
+		return "";
 	}
 
 	@Override
@@ -78,7 +81,15 @@ public class SadPropertiesStructSequence extends SadPropertyImpl<StructSequence>
 
 	@Override
 	public String getPrfValue() {
-		return null;
+		return formatListSize(def.getStructValue());
+	}
+
+	private String formatListSize(List< ? > value) {
+		if (value != null) {
+			int items = value.size();
+			return "[" + items + "]";
+		}
+		return "";
 	}
 
 	@Override
