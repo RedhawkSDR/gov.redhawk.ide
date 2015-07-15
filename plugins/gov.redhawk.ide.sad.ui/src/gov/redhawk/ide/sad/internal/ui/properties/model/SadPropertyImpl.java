@@ -290,7 +290,7 @@ public abstract class SadPropertyImpl< T extends AbstractProperty > extends Item
 	}
 
 	protected void notifyChanged(Notification msg) {
-		if (msg.getEventType() == Notification.SET) {
+		if (msg.getFeature() == SadPackage.Literals.EXTERNAL_PROPERTY__EXTERNAL_PROP_ID) {
 			fireNotifyChanged(new ViewerNotification(msg, this, false, true));
 		}
 	}

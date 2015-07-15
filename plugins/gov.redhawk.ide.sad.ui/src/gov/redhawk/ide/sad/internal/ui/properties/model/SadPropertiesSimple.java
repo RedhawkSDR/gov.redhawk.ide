@@ -16,9 +16,11 @@ import java.util.List;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.edit.provider.ViewerNotification;
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -92,6 +94,15 @@ public class SadPropertiesSimple extends SadPropertyImpl<Simple> {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	protected void notifyChanged(Notification msg) {
+		if (msg.getFeature() == PrfPackage.Literals.SIMPLE_REF__VALUE){
+			fireNotifyChanged(new ViewerNotification(msg, this, false, true));
+			return;
+		}
+		super.notifyChanged(msg);
 	}
 
 	@Override
