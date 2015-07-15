@@ -18,6 +18,10 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.platform.AbstractPropertySectionFilter;
 import org.eclipse.jface.viewers.IFilter;
 
+/**
+ * This filter is designed for the "Advanced" tab in the properties view. It filters objects of the correct type(s)
+ * which are from a runtime diagram.
+ */
 public class AdvancedFilter extends CompoundFilter {
 
 	public AdvancedFilter() {

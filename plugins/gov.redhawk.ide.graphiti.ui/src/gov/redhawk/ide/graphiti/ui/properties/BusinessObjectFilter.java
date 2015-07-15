@@ -10,6 +10,10 @@
  *******************************************************************************/
 package gov.redhawk.ide.graphiti.ui.properties;
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -17,39 +21,67 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.platform.AbstractPropertySectionFilter;
 
 /**
- * 
+ * Filter that accepts/rejects objects of certain class(es).
  */
 public class BusinessObjectFilter extends AbstractPropertySectionFilter {
 
-	private final Class<?>[] boFilterClasses;
-	
+	private final List<Class< ? >> boFilterClasses;
+
 	private boolean shouldAllow;
-	
+
 	/**
-	 * @param allow Whether filterClasses should be filtered in or out
+	 * Create a filter that accepts or rejects the specified classes
+	 * @param allow Whether classes should should be accepted (true) or rejected (false)
+	 * @param filterClasses The classes to filter on
 	 */
-	public BusinessObjectFilter(boolean allow, Class<?>... filterClasses) {
+	public BusinessObjectFilter(boolean allow, Class< ? >... filterClasses) {
 		Assert.isTrue(filterClasses.length > 0, "Must specify at least one Business Object class to filter");
-		this.boFilterClasses = filterClasses;
+		this.boFilterClasses = Arrays.asList(filterClasses);
 		this.shouldAllow = allow;
 	}
 
 	/**
-	 * Positive filter by default
+	 * Create a filter that accepts any of the specified classes
+	 * @param filterClass The classes to filter on
 	 */
-	public BusinessObjectFilter(Class<?>... filterClass) {
+	public BusinessObjectFilter(Class< ? >... filterClass) {
 		this(true, filterClass);
 	}
 
 	@Override
 	protected boolean accept(PictogramElement pictogramElement) {
-		EObject eObject =  Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(pictogramElement);
+		EObject eObject = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(pictogramElement);
 		for (Class< ? > filterClass : this.boFilterClasses) {
 			if (filterClass.isInstance(eObject)) {
 				return this.shouldAllow;
 			}
 		}
 		return !this.shouldAllow;
+	}
+
+	@Override
+	public String toString() {
+		boolean multipleBO = boFilterClasses.size() > 1;
+		StringBuilder sb = new StringBuilder();
+		if (shouldAllow) {
+			sb.append("of type ");
+		} else {
+			sb.append("not of type ");
+		}
+		if (multipleBO) {
+			sb.append("( ");
+		}
+		Iterator<Class< ? >> iter = boFilterClasses.iterator();
+		while (iter.hasNext()) {
+			sb.append(iter.next().getName());
+			if (iter.hasNext()) {
+				sb.append(" OR ");
+			}
+		}
+		if (multipleBO) {
+			sb.append(" )");
+		}
+		return sb.toString();
 	}
 
 }

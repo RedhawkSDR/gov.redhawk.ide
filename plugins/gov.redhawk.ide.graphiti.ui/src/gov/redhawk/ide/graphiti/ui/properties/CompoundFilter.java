@@ -11,20 +11,28 @@
 package gov.redhawk.ide.graphiti.ui.properties;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IFilter;
 
+/**
+ * A filter that combines the output of several filters with <b>AND</b> or <b>OR</b> operations.
+ */
 public class CompoundFilter implements IFilter {
 
-	public enum BooleanOperator {FILTER_AND, FILTER_OR};
+	public enum BooleanOperator {
+		FILTER_AND,
+		FILTER_OR
+	};
+
 	private List<IFilter> subFilters;
 	private BooleanOperator myOperator;
-	
+
 	public CompoundFilter() {
 		this(BooleanOperator.FILTER_OR);
 	}
-	
+
 	public CompoundFilter(BooleanOperator op) {
 		this.subFilters = new ArrayList<IFilter>();
 		this.myOperator = op;
@@ -34,14 +42,14 @@ public class CompoundFilter implements IFilter {
 	public boolean select(Object toTest) {
 		switch (this.myOperator) {
 		case FILTER_AND:
-			for (IFilter filter: this.subFilters) {
+			for (IFilter filter : this.subFilters) {
 				if (!filter.select(toTest)) {
 					return false;
 				}
 			}
 			return true;
 		case FILTER_OR:
-			for (IFilter filter: this.subFilters) {
+			for (IFilter filter : this.subFilters) {
 				if (filter.select(toTest)) {
 					return true;
 				}
@@ -55,9 +63,27 @@ public class CompoundFilter implements IFilter {
 	public void addFilter(IFilter filter) {
 		this.subFilters.add(filter);
 	}
-	
+
 	public void clearFilters() {
 		this.subFilters.clear();
 	}
-	
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("CompoundFilter ( ");
+		Iterator<IFilter> iter = this.subFilters.iterator();
+		while (iter.hasNext()) {
+			sb.append(iter.next());
+			if (iter.hasNext()) {
+				if (this.myOperator == BooleanOperator.FILTER_AND) {
+					sb.append(" AND ");
+				} else {
+					sb.append(" OR ");
+				}
+			}
+		}
+		sb.append(" )");
+		return sb.toString();
+	}
+
 }
