@@ -257,7 +257,9 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 			for (FeatureMap.Entry entry : properties.getProperties()) {
 				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
 				SadPropertyImpl< ? > property = getProperty(ref.getRefID());
-				property.referenceAdded(ref);
+				if (property != null) {
+					property.referenceAdded(ref);
+				}
 			}
 		}
 	}
@@ -268,7 +270,9 @@ public class SadPropertiesComponent extends ItemProviderAdapter implements ITree
 			for (FeatureMap.Entry entry : properties.getProperties()) {
 				AbstractPropertyRef< ? > ref = (AbstractPropertyRef< ? >) entry.getValue();
 				SadPropertyImpl< ? > property = getProperty(ref.getRefID());
-				property.referenceRemoved(ref);
+				if (property != null) {
+					property.referenceRemoved(ref);
+				}
 			}
 		}
 	}
