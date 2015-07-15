@@ -69,8 +69,8 @@ public class ChalkboardContextMenuProvider extends DiagramEditorContextMenuProvi
 		// Move Release and Terminate to the bottom of the context menu
 		if (actionItem != null && "Release".equals(actionItem.getAction().getText())) {
 			ActionContributionItem terminateAction = findTerminateAction(items);
-			terminateAction.setId("terminate");
 			if (terminateAction != null) {
+				terminateAction.setId("terminate");
 				manager.remove(actionItem);
 				manager.insertBefore(terminateAction.getId(), actionItem);
 			}
